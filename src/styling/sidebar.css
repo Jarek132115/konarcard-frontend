@@ -1,0 +1,100 @@
+.sidebar {
+    height: 100vh;
+    background-color: white;
+    padding: 20px;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(55, 55, 55, 0.10);
+}
+
+.my-account-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 10px;
+}
+
+.profile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-info {
+    flex-grow: 1;
+}
+
+.email {
+    font-size: 12px;
+    color: #888;
+    margin: 0;
+}
+
+.name {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.settings-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 12px 0;
+}
+
+.section-title {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.sidebar-buttons {
+    display: flex;
+    align-items: center;
+    padding: 8px 4px;
+    gap: 10px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.sidebar-buttons:hover {
+    background-color: #f6f6f6;
+    cursor: pointer;
+}
+
+.logout-button {
+    margin-top: auto;
+    gap: 10px;
+}
+
+.logout-text {
+    color: #ff0000;
+    font-weight: 500;
+}
+
+.go-back {
+    color: #000;
+    font-weight: 500;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.footer-actions {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

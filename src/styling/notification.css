@@ -1,0 +1,95 @@
+.notifications-layout {
+  display: flex;
+  height: 100vh;
+  background-color: #f9f9f9;
+}
+
+.notifications-main {
+  flex: 1;
+  padding: 40px;
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.notifications-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.notifications-card {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.notifications-subtitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.notification-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-top: 1px solid #e5e5e5;
+}
+
+.notification-option:first-of-type {
+  border-top: none;
+}
+
+.option-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.option-description {
+  font-size: 13px;
+  color: #666;
+  margin: 2px 0 0;
+}
+
+.switch {
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  position: relative;
+  background: #ccc;
+  transition: background 0.2s ease;
+}
+
+.switch::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s ease;
+}
+
+.switch.on {
+  background: #222;
+}
+
+.switch.on::before {
+  transform: translateX(16px);
+}
+
+.switch.off {
+  background: #ccc;
+}

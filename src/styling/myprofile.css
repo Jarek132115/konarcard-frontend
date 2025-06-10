@@ -1,0 +1,620 @@
+/* myprofile.css */
+
+/* General Layout */
+.myprofile-layout {
+    display: flex;
+    height: 100vh;
+    background-color: #f9f9f9;
+    overflow: hidden;
+}
+
+.myprofile-main {
+    flex: 1;
+    overflow-y: auto;
+    font-family: sans-serif;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-shrink: 0;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.page-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.header-button {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    border: none;
+}
+
+.header-button.black {
+    background-color: black;
+    color: white;
+}
+
+.header-button.white {
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+}
+
+/* MyProfile Content (for the editing page) */
+.myprofile-content {
+    display: flex;
+    gap: 40px;
+    justify-content: space-around;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* MyProfile Preview (for the editing page - acts as a container for mock-phone) */
+.myprofile-preview {
+    width: 100%;
+    max-width: 320px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Mock Phone Styling (Preview Card only) */
+.mock-phone {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 9 / 19.5;
+    background: #fff;
+    border: 0.625rem solid #ccc;
+    /* 10px */
+    border-radius: 2.5rem;
+    /* 40px */
+    padding: 1.5rem;
+    /* 24px */
+    text-align: center;
+    box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1);
+    /* 0 4px 16px */
+    overflow-y: auto;
+    /* Allows content inside the phone to scroll */
+    box-sizing: border-box;
+    max-height: 100%;
+    /* Ensures phone scales down to fit available height */
+
+    /* Dark mode specific styles for mock-phone background and border */
+    /* This will target the main container when its style attribute indicates dark mode */
+    &[style*="background-color: rgb(31, 31, 31)"] {
+        background-color: #1F1F1F !important;
+        border-color: #555 !important;
+    }
+
+    /* Ensure text within mock-phone adapts to theme */
+    &[style*="background-color: rgb(31, 31, 31)"] * {
+        color: white;
+    }
+
+    &[style*="background-color: rgb(31, 31, 31)"] .mock-subtitle,
+    &[style*="background-color: rgb(31, 31, 31)"] .mock-role,
+    &[style*="background-color: rgb(31, 31, 31)"] .mock-service-item span {
+        color: #bbb;
+    }
+
+    &[style*="background-color: rgb(31, 31, 31)"] .mock-about,
+    &[style*="background-color: rgb(31, 31, 31)"] .mock-service-item,
+    &[style*="background-color: rgb(31, 31, 31)"] .mock-review-card {
+        background: #333;
+        color: white;
+    }
+
+    &[style*="background-color: rgb(31, 31, 31)"] .mock-review-card .mock-review-text {
+        color: #ddd;
+    }
+
+    &[style*="background-color: rgb(31, 31, 31)"] .mock-review-card .mock-reviewer-name {
+        color: white;
+    }
+}
+
+/* Keep the mock-specific classes and their styling here for the preview */
+.mock-cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    /* 12px */
+    margin-bottom: 1rem;
+    /* 16px */
+}
+
+.mock-title {
+    font-size: 2rem;
+    /* 32px */
+    font-weight: 700;
+    /* Bold */
+    margin: 0;
+    line-height: 1.2;
+}
+
+.mock-subtitle {
+    font-size: 1rem;
+    /* 16px */
+    font-weight: 600;
+    /* Semi-bold */
+    color: #555;
+    margin: 0.5rem 0 1rem 0;
+}
+
+.mock-button {
+    background: black;
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    border: none;
+    font-weight: 700;
+    /* Bold */
+    font-size: 0.875rem;
+    /* 14px */
+    margin: 1rem 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.mock-section-title {
+    font-size: 1rem;
+    /* 16px */
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    /* Semi-bold */
+    text-align: left;
+}
+
+.mock-about {
+    background: #f1f1f1;
+    border-radius: 1rem;
+    /* INCREASED: to 16px for more rounded corners as per image */
+    padding: 1rem;
+    /* INCREASED: to 16px for more internal spacing as per image */
+    display: flex;
+    gap: 0.75rem;
+    /* 12px */
+    text-align: left;
+    align-items: flex-start;
+    /* IMPORTANT: Align items to the top to stack text correctly */
+    flex-direction: row;
+    /* Ensure it stays row direction for avatar beside text */
+}
+
+.mock-avatar {
+    width: 3.5rem;
+    /* INCREASED: to 56px to match image size better */
+    height: 3.5rem;
+    /* INCREASED: to 56px */
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+/* NEW CLASS: Wrapper for name, role, and bio text */
+.mock-about-text-group {
+    display: flex;
+    flex-direction: column;
+    /* Stack name/role/bio vertically */
+    flex: 1;
+    /* Allow it to take up remaining horizontal space */
+}
+
+.mock-name {
+    font-weight: 700;
+    /* Bolder as per image */
+    margin: 0;
+    font-size: 1.125rem;
+    /* 18px - slightly larger for name */
+}
+
+.mock-role {
+    font-size: 0.9375rem;
+    /* 15px */
+    margin: 0;
+    color: #555;
+    /* Slightly darker for better readability */
+    font-weight: normal;
+    /* Ensure it's not semi-bold or bold */
+}
+
+/* NEW CLASS: For the actual bio text */
+.mock-bio-text {
+    font-size: 0.9375rem;
+    /* 15px */
+    line-height: 1.4;
+    margin-top: 0.75rem;
+    /* Space between role and bio */
+    text-align: left;
+    color: #333;
+    /* Darker color for bio text */
+}
+
+
+.mock-work-images {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+.mock-work-images img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+
+.mock-services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+
+.mock-service-item {
+    background-color: #f6f6f6;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.mock-service-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.mock-service-price {
+    font-size: 0.8125rem;
+    color: #777;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.mock-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.mock-review-card {
+    background-color: #f6f6f6;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    text-align: left;
+}
+
+.mock-star-rating {
+    color: gold;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1rem;
+}
+
+.mock-review-text {
+    font-size: 0.9375rem;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.mock-reviewer-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #555;
+    margin: 0;
+}
+
+/* Media Query for very small screens (still relevant for mock-phone) */
+@media (max-width: 400px) {
+    .mock-phone {
+        padding: 1rem;
+        border-width: 0.375rem;
+        border-radius: 2rem;
+    }
+
+    .mock-title {
+        font-size: 1.1rem;
+    }
+
+    .mock-subtitle {
+        font-size: 0.875rem;
+    }
+
+    .mock-button {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .mock-section-title {
+        font-size: 0.8rem;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .mock-about {
+        padding: 0.6rem;
+        gap: 0.6rem;
+    }
+
+    .mock-avatar {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .mock-name {
+        font-size: 0.9rem;
+    }
+
+    .mock-role {
+        font-size: 0.75rem;
+    }
+
+    .mock-service-item {
+        padding: 0.6rem 0.8rem;
+    }
+
+    .mock-service-name {
+        font-size: 0.875rem;
+    }
+
+    .mock-service-price {
+        font-size: 0.75rem;
+    }
+
+    .mock-review-card {
+        padding: 0.8rem;
+    }
+
+    .mock-star-rating {
+        font-size: 0.9rem;
+    }
+
+    .mock-review-text {
+        font-size: 0.875rem;
+    }
+
+    .mock-reviewer-name {
+        font-size: 0.8rem;
+    }
+}
+
+/* === Editor specific styling === */
+.myprofile-editor {
+    flex-basis: 50%;
+    max-width: 50%;
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.editor-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.editor-subtitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.input-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-block label {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.input-block input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.option-row {
+    display: flex;
+    gap: 10px;
+}
+
+.theme-button,
+.font-button {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.theme-button.is-active,
+.font-button.is-active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.cover-preview {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.divider {
+    margin: 20px 0;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+.work-preview-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 12px;
+}
+
+.work-preview-row img {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.input-block input[type="text"],
+.input-block textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-block button {
+    margin-top: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.input-block button:hover {
+    background-color: #eee;
+}
+
+.review-card {
+    background: #f6f6f6;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.review-card input {
+    margin-bottom: 6px;
+}
+
+.submit-button {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 16px;
+    border: none;
+    margin-top: auto;
+}
+
+/* Media Query for editor previews specific responsiveness (no change) */
+@media (max-width: 400px) {
+    .mock-phone {
+        padding: 1rem;
+        border-width: 0.375rem;
+        border-radius: 2rem;
+    }
+
+    .mock-title {
+        font-size: 1.1rem;
+    }
+
+    .mock-subtitle {
+        font-size: 0.875rem;
+    }
+
+    .mock-button {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .mock-section-title {
+        font-size: 0.8rem;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .mock-about {
+        padding: 0.6rem;
+        gap: 0.6rem;
+    }
+
+    .mock-avatar {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .mock-name {
+        font-size: 0.9rem;
+    }
+
+    .mock-role {
+        font-size: 0.75rem;
+    }
+
+    .mock-service-item {
+        padding: 0.6rem 0.8rem;
+    }
+
+    .mock-service-name {
+        font-size: 0.875rem;
+    }
+
+    .mock-service-price {
+        font-size: 0.75rem;
+    }
+
+    .mock-review-card {
+        padding: 0.8rem;
+    }
+
+    .mock-star-rating {
+        font-size: 0.9rem;
+    }
+
+    .mock-review-text {
+        font-size: 0.875rem;
+    }
+
+    .mock-reviewer-name {
+        font-size: 0.8rem;
+    }
+}

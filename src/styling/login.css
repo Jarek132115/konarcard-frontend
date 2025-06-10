@@ -1,0 +1,359 @@
+.login-wrapper {
+    display: flex;
+    height: 100vh;
+    font-family: 'Inter', sans-serif;
+    background-color: #f9f9f9;
+    overflow: hidden;
+}
+
+.close-button {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    width: 44px;
+    height: 44px;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+.close-button:hover {
+    transform: scale(1.1);
+    background-color: #f0f0f0;
+}
+
+.login-left {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    overflow: hidden;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    padding: 0;
+}
+
+.login-visual {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    z-index: 1;
+}
+
+.login-quote {
+    position: relative;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 24px;
+    max-width: 420px;
+    color: white;
+    border-top-right-radius: 16px;
+    margin: 0;
+    border-bottom-left-radius: 0;
+}
+
+.login-left .login-quote {
+    margin-left: 0;
+    margin-bottom: 0;
+}
+
+/* === QUOTE TEXT === */
+.quote-icon {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.quote-text {
+    font-size: 15px;
+    margin: 12px 0;
+    line-height: 1.5;
+}
+
+.quote-author {
+    font-size: 14px;
+    opacity: 0.85;
+    margin-bottom: 0;
+}
+
+.password-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-field input {
+    flex: 1;
+}
+
+.toggle-password-btn {
+    background: none;
+    border: none;
+    font-size: 0.85rem;
+    color: #007BFF;
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 70px;
+}
+
+.password-wrapper button {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 0.85rem;
+    color: #007BFF;
+    cursor: pointer;
+    padding: 0;
+}
+
+.password-feedback {
+    font-size: 12px;
+}
+
+.password-feedback p {
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+    font-weight: 500;
+}
+
+.feedback-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+}
+
+.password-feedback .valid {
+    color: green;
+}
+
+.password-feedback .invalid {
+    color: red;
+}
+
+
+
+
+/* === RIGHT SIDE (FORM PANEL) === */
+.login-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: #f9f9f9;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-title {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.login-form input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #eef3ff;
+}
+
+.primary-button {
+    padding: 12px;
+    background-color: black;
+    color: white;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-family: 'Inter';
+    transition: background 0.2s ease;
+}
+
+.secondary-button {
+    padding: 12px;
+    background-color: #333;
+    color: white;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Inter';
+    transition: background 0.2s ease;
+}
+
+.primary-button:hover {
+    background-color: #333;
+}
+
+.secondary-button:hover {
+    background-color: #333333b0;
+}
+
+.login-alt-text {
+    margin-top: 14px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.login-alt-text a {
+    font-weight: 600;
+    color: black;
+    text-decoration: none;
+}
+
+/* === DIVIDER === */
+.divider {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+}
+
+.divider span {
+    background: #f9f9f9;
+    padding: 0 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.divider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: #ccc;
+    left: 0;
+    z-index: 0;
+}
+
+/* === SOCIAL BUTTONS === */
+.social-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.social-buttons a {
+    color: #000;
+}
+
+.social-button {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.social-button:hover {
+    background-color: #f0f0f0;
+}
+
+.social-button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* === TERMS === */
+.terms-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* === TABLET === */
+@media (max-width: 1000px) {
+    .login-wrapper {
+        flex-direction: column;
+        height: 100vh;
+    }
+
+
+    .login-left {
+        display: none;
+    }
+
+    .login-right {
+        flex: 1;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 140px;
+        padding-bottom: 40px;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 400px;
+        padding: 0 20px;
+    }
+}
+
+/* === MOBILE === */
+@media (max-width: 600px) {
+    .login-wrapper {
+        height: 100vh;
+    }
+
+    .login-right {
+        padding-top: 100px;
+    }
+
+    .login-card {
+        padding: 0 16px;
+    }
+}
+
+@media (max-width: 500px) {
+    .login-card {
+        padding: 0;
+    }
+}

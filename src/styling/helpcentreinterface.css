@@ -1,0 +1,82 @@
+.help-layout {
+  display: flex;
+  height: 100vh;
+  background-color: #f9f9f9;
+}
+
+.help-main {
+  flex: 1;
+  padding: 40px;
+  font-family: sans-serif;
+  overflow-y: auto;
+}
+
+.help-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.help-video-card {
+  display: flex;
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 30px;
+  max-width: 1000px;
+}
+
+.help-video-card.reverse {
+  flex-direction: row-reverse;
+}
+
+.help-video-thumb {
+  width: 300px;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.help-video-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.help-video-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.help-video-desc {
+  font-size: 14px;
+  color: #444;
+}
+
+.help-video-time {
+  font-size: 13px;
+  color: #777;
+}
+
+.help-video-button {
+  width: fit-content;
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: background 0.2s;
+}
+
+.help-video-button:hover {
+  background: #0066dd;
+}

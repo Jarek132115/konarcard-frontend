@@ -1,0 +1,268 @@
+/* frontend/src/styling/ShareProfile.css */
+
+/* Modal Overlay */
+.share-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    /* Ensure it's on top of everything */
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+/* Modal Content Box */
+.share-modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    /* Adjust max-width as per your image */
+    max-height: 90vh;
+    /* Limit height for smaller screens */
+    overflow-y: auto;
+    /* Allow content to scroll within the modal */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    /* Space between sections */
+    font-family: 'Inter', sans-serif;
+    /* Consistent font */
+}
+
+/* Dark mode for modal content */
+body.dark-mode .share-modal-content {
+    background: #2a2a2a;
+    color: white;
+}
+
+body.dark-mode .share-modal-content h3,
+body.dark-mode .share-modal-content h4 {
+    color: white;
+}
+
+body.dark-mode .share-modal-content .share-link-input {
+    background: #333;
+    color: white;
+    border-color: #555;
+}
+
+body.dark-mode .share-modal-content .share-copy-button,
+body.dark-mode .share-modal-content .share-download-button {
+    /* Still applies if you re-add download button */
+    background-color: #555;
+    color: white;
+}
+
+body.dark-mode .share-modal-content .share-copy-button:hover,
+body.dark-mode .share-modal-content .share-download-button:hover {
+    background-color: #666;
+}
+
+body.dark-mode .share-modal-content .share-wallet-button {
+    border-color: #555;
+    color: white;
+    background-color: #333;
+}
+
+body.dark-mode .share-modal-content .share-wallet-button.share-wallet-contacts,
+body.dark-mode .share-modal-content .share-wallet-button.share-wallet-apple,
+body.dark-mode .share-modal-content .share-wallet-button.share-wallet-google {
+    background-color: #1a1a1a;
+    color: white;
+}
+
+body.dark-mode .share-modal-content .share-wallet-button:hover {
+    background-color: #2a2a2a;
+}
+
+body.dark-mode .modal-content .wallet-note {
+    /* Generic modal-content for notes */
+    color: #bbb;
+}
+
+
+.share-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #888;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.share-modal-close:hover {
+    background-color: #f0f0f0;
+}
+
+
+.share-modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #333;
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
+    text-align: left;
+}
+
+.share-link-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.share-link-input {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #f8f8f8;
+    color: #555;
+    cursor: text;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.share-copy-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+}
+
+.share-copy-button:hover {
+    background-color: #0056b3;
+}
+
+.share-copy-button svg {
+    height: 1.25rem;
+    width: 1.25rem;
+}
+
+/* REMOVED: .share-qr-section and all its children styles */
+/* REMOVED: .share-download-button styles */
+
+
+.share-section {
+    margin-top: 1.5rem;
+}
+
+.share-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    /* Stack by default on small screens */
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.share-wallet-button {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.share-wallet-button:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+.share-wallet-button svg {
+    height: 1.25rem;
+    width: 1.25rem;
+}
+
+/* Specific colors for Wallet buttons */
+.share-wallet-button.share-wallet-contacts {
+    background-color: #28a745;
+    /* Green for Contacts */
+    color: white;
+    border-color: #28a745;
+}
+
+.share-wallet-button.share-wallet-contacts:hover {
+    background-color: #218838;
+    border-color: #218838;
+}
+
+.share-wallet-button.share-wallet-apple {
+    background-color: #000;
+    color: white;
+    border-color: #000;
+}
+
+.share-wallet-button.share-wallet-apple:hover {
+    background-color: #333;
+    border-color: #333;
+}
+
+.share-wallet-button.share-wallet-google {
+    background-color: #4285F4;
+    color: white;
+    border-color: #4285F4;
+}
+
+.share-wallet-button.share-wallet-google:hover {
+    background-color: #357ae8;
+    border-color: #357ae8;
+}
+
+/* Responsive adjustments for modal */
+@media (min-width: 480px) {
+    .share-modal-content {
+        padding: 2.5rem;
+    }
+
+    .share-buttons-grid {
+        grid-template-columns: repeat(2, 1fr);
+        /* Two columns on wider screens */
+        gap: 0.75rem;
+    }
+
+    .share-wallet-button {
+        padding: 0.75rem 1.25rem;
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .share-buttons-grid {
+        grid-template-columns: repeat(3, 1fr);
+        /* Three columns on larger screens */
+    }
+}

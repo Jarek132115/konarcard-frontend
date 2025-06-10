@@ -1,0 +1,161 @@
+/* Main Layout */
+.section-flex {
+    display: flex;
+    width: 1040px;
+    align-items: flex-start;
+    gap: 40px;
+    margin: 40px auto;
+}
+
+.section-policy {
+    max-width: 1040px;
+    margin: auto;
+    margin-bottom: 100px;
+}
+
+.policy-sidebar {
+    flex: 1;
+    max-width: 240px;
+    border-radius: 20px;
+    position: relative;
+    align-self: stretch;
+}
+
+.policy-box,
+.contact-box {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    background-color: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.10);
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.policy-box-footer {
+    display: flex;
+    gap: 20px;
+}
+
+.policy-sticky-box {
+    position: sticky;
+    top: 100px;
+    bottom: 40px;
+}
+
+.policy-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.policy-nav li {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 0;
+    cursor: pointer;
+    border-bottom: 1px solid #e0e0e0;
+    width: 100%;
+    color: #333;
+}
+
+.policy-nav li:last-child {
+    border-bottom: none;
+}
+
+.policy-nav li.active {
+    font-weight: 600;
+    color: black;
+}
+
+.policy-content {
+    flex: 3;
+}
+
+.policy-dot {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.icon-10 {
+    width: 10px;
+    margin-right: 10px;
+    margin-left: 5px;
+}
+
+/* ============ Responsive ============ */
+
+@media (max-width: 1200px) {
+    .section-flex {
+        max-width: 900px;
+        width: 100%;
+        margin: 40px auto;
+    }
+
+    .section-policy {
+        max-width: 900px;
+        width: 100%;
+        margin: auto;
+        margin-bottom: 80px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .section-flex {
+        flex-direction: column;
+        width: 90%;
+        gap: 30px;
+        margin: 40px auto;
+    }
+
+    .policy-sidebar {
+        max-width: 100%;
+        flex: none;
+    }
+
+    .policy-sticky-box {
+        position: static;
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .policy-box,
+    .contact-box {
+        flex: 1 1 45%;
+        margin-bottom: 0;
+    }
+
+    .contact-box {
+        height: fit-content;
+    }
+
+    .policy-content {
+        width: 100%;
+        flex: none;
+    }
+
+    .section-policy {
+        margin: auto;
+        margin-bottom: 80px;
+    }
+}
+
+@media (max-width: 800px) {
+    .policy-sticky-box {
+        flex-direction: column;
+    }
+
+    .policy-box,
+    .contact-box {
+        width: 100%;
+        flex: none;
+    }
+
+    .section-flex {
+        padding: 0 20px;
+    }
+}

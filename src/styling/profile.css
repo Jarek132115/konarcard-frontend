@@ -1,0 +1,157 @@
+.profile-layout {
+    display: flex;
+    height: 100vh;
+    background-color: #f9f9f9;
+}
+
+.profile-main {
+    flex: 1;
+    padding: 40px;
+    font-family: sans-serif;
+    /* Scoped only to the profile area */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+}
+
+.profile-main-title {
+    align-self: flex-start;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.profile-card-box {
+    background: white;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    max-width: 600px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-avatar-section {
+    display: flex;
+    align-items: flex-start;
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e0e0e0;
+}
+
+.upload-avatar-label {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #000;
+    color: #fff;
+    padding: 3px 8px;
+    font-size: 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: 0.2s ease;
+}
+
+.upload-avatar-label:hover {
+    opacity: 1;
+}
+
+.profile-input-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.profile-input-block label {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.profile-input-block input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.profile-input-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.profile-phone-inputs {
+    display: flex;
+    gap: 8px;
+}
+
+.profile-phone-inputs select,
+.profile-phone-inputs input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.profile-password-wrapper {
+    display: flex;
+    gap: 8px;
+}
+
+.profile-password-wrapper input {
+    flex-grow: 1;
+}
+
+.profile-reset-button {
+    padding: 10px 12px;
+    background: #eee;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.profile-action-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.profile-delete-button {
+    background: none;
+    border: 1.5px solid red;
+    color: red;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.profile-save-button {
+    background: black;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
