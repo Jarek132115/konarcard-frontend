@@ -11,7 +11,8 @@ const UserPage = () => {
     useEffect(() => {
         const fetchCard = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/business-card/by_username/${username}`);
+                // FIX: Use VITE_API_URL for API calls
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/business-card/by_username/${username}`);
                 setBusinessCard(response.data);
             } catch (err) {
                 console.error("Failed to load card by username:", err);
@@ -148,6 +149,7 @@ const UserPage = () => {
                                 key={i}
                                 src={url}
                                 alt={`work-${i}`}
+                                className="landing-work-img"
                             />
                         ))}
                     </div>

@@ -18,7 +18,8 @@ export default function Sidebar() {
     const { user, setUser } = useContext(AuthContext);
 
     const handleLogout = async () => {
-        await fetch('http://localhost:8000/logout', {
+        // FIX: Use VITE_API_URL for API calls
+        await fetch(`${import.meta.env.VITE_API_URL}/logout`, {
             method: 'POST',
             credentials: 'include',
         });

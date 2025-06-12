@@ -44,7 +44,8 @@ export default function ContactUs() {
     }
 
     try {
-      const res = await fetch('http://localhost:8000/api/contact', {
+      // FIX: Use VITE_API_URL for API calls
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -190,6 +191,7 @@ export default function ContactUs() {
         <div style={{ marginTop: 40, display: 'flex', justifyContent: 'center' }}>
           <Link to="/faq" className="black-button desktop-button">Frequently Asked Questions</Link>
         </div>
+
       </div>
 
       <Footer />

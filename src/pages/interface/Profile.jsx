@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { AuthContext } from '../../components/AuthContext';
 import { toast } from 'react-hot-toast';
@@ -43,8 +43,9 @@ export default function Profile() {
     }
 
     try {
+      // FIX: Use VITE_API_URL for API calls
       const res = await axios.put(
-        'http://localhost:8000/update-profile',
+        `${import.meta.env.VITE_API_URL}/update-profile`,
         {
           name: updatedName,
           email: updatedEmail,
@@ -76,7 +77,8 @@ export default function Profile() {
     if (!deleteEnabled) return;
 
     try {
-      const res = await axios.delete('http://localhost:8000/delete-account', {
+      // FIX: Use VITE_API_URL for API calls
+      const res = await axios.delete(`${import.meta.env.VITE_API_URL}/delete-account`, {
         withCredentials: true,
       });
 

@@ -1,6 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import { api } from "../services/api";
+// Ensure the import path is correct for the now .js file
+import { api } from "../api/api"; // Changed from '../services/api' to '../api/api'
 
+// Removed TypeScript interface definition (BusinessCardData)
+// You can keep this as a comment for documentation if you like, but it's not functional JS
+/*
 type BusinessCardData = {
   business_card_name?: string;
   page_theme?: string;
@@ -12,16 +16,18 @@ type BusinessCardData = {
   bio?: string;
   job_title?: string;
   full_name?: string;
-  avatar?: File | null;
-  works?: { file: File | null; preview: string }[];
+  avatar?: string | null;
+  avatarFile?: File;
+  workImages?: { file: File; preview: string }[];
   services?: { name: string; price: string }[];
   reviews?: { name: string; text: string; rating: number }[];
   contact_email?: string;
   phone_number?: string;
-  // REMOVED: website_url
 };
+*/
 
-export const buildBusinessCardFormData = (data: BusinessCardData): FormData => {
+// Removed type annotation for data
+export const buildBusinessCardFormData = (data) => {
   const formData = new FormData();
 
   formData.append("business_card_name", data.business_card_name || "");
@@ -69,7 +75,7 @@ export const buildBusinessCardFormData = (data: BusinessCardData): FormData => {
 
 export const useCreateBusinessCard = () => {
   return useMutation({
-    mutationFn: (formData: FormData) =>
+    mutationFn: (formData) => // Removed type annotation for formData
       api("/api/business-card/create_business_card", {
         method: "POST",
         body: formData,

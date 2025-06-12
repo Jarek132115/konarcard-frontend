@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUser = async () => {
         try {
-            const res = await fetch('http://localhost:8000/profile', {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/profile`, {
                 credentials: 'include',
             });
             const data = await res.json();
@@ -17,14 +17,17 @@ export const AuthProvider = ({ children }) => {
                 setUser(null);
             }
         } catch (err) {
+            console.error("AuthContext fetchUser failed:", err);
             setUser(null);
         }
     };
 
     useEffect(() => {
         fetchUser();
-        window.addEventListener('focus', fetchUser);
-        return () => window.removeEventListener('focus', fetchUser);
+        if (typeof window !== 'undefined') {
+            window.addEventListener('focus', fetchUser);
+            return () => window.removeEventListener('focus', fetchUser);
+        }
     }, []);
 
     return (

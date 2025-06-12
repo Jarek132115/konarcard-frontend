@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
-import SubscribeButton from '../../components/SubscribeButton';
+import SubscribeButton from '../../components/SubscribeButton'; // Make sure this is the correct path if you have this component
 import HeroImage from '../../assets/images/Hero-Image-new.png'
 import BackgroundHero from '../../assets/images/background-hero.png'
 import Section1Image from '../../assets/images/Section-1-Image.png'
@@ -38,8 +38,6 @@ import Profile2 from '../../assets/images/Profile2.png'
 import Profile3 from '../../assets/images/Profile3.png'
 import Profile4 from '../../assets/images/Profile4.png'
 import Profile5 from '../../assets/images/Profile5.png'
-import { loadStripe } from '@stripe/stripe-js';
-import { useContext } from 'react';
 import { AuthContext } from '../../components/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -61,7 +59,8 @@ export default function Home() {
     }
 
     try {
-      const res = await fetch('http://localhost:8000/subscribe', {
+      // FIX: Use VITE_API_URL for API calls
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/subscribe`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -278,7 +277,9 @@ export default function Home() {
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Why Tradesmen Love Using This</h2>
-          <h3 className="desktop-h6 text-center">Get noticed, earn trust, and win more work — all from one simple page</h3>
+          <h3 className="desktop-h6 text-center">
+            Get noticed, earn trust, and win more work — all from one simple page
+          </h3>
         </div>
 
         <div className="section-1-content">
@@ -574,7 +575,6 @@ export default function Home() {
 
 
 
-
       {/* SECTION 9 */}
       <div className="section">
         <div className="section-1-title">
@@ -690,4 +690,3 @@ export default function Home() {
     </>
   )
 }
-
