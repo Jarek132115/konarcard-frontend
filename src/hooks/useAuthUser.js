@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-// Ensure the import path is correct for the now .js file
-import { api } from '../api/api'; // Changed from '../services/api' to '../api/api' as api.ts was moved/renamed
+import { api } from '../services/api'; 
 
 export const useAuthUser = () => {
   return useQuery({

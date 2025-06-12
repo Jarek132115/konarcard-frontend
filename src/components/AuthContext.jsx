@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUser = async () => {
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/profile`, {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/profile`, {
                 credentials: 'include',
             });
             const data = await res.json();

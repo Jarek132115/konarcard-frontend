@@ -12,7 +12,7 @@ const UserPage = () => {
         const fetchCard = async () => {
             try {
                 // FIX: Use VITE_API_URL for API calls
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/business-card/by_username/${username}`);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/business-card/by_username/${username}`);
                 setBusinessCard(response.data);
             } catch (err) {
                 console.error("Failed to load card by username:", err);

@@ -14,7 +14,7 @@ export default function Subscription() {
     const fetchSubscriptionStatus = async () => {
       try {
         // FIX: Use VITE_API_URL for API calls
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/subscription-status`, {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/subscription-status`, {
           withCredentials: true,
         });
         setIsSubscribed(res.data.active);
@@ -31,7 +31,7 @@ export default function Subscription() {
   const handleSubscribe = async () => {
     try {
       // FIX: Use VITE_API_URL for API calls
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/subscribe`, {}, { withCredentials: true });
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/subscribe`, {}, { withCredentials: true });
       if (res.data.url) {
         window.location.href = res.data.url;
       }
@@ -43,7 +43,7 @@ export default function Subscription() {
   const handleCancel = async () => {
     try {
       // FIX: Use VITE_API_URL for API calls
-      await axios.post(`${import.meta.env.VITE_API_URL}/cancel-subscription`, {}, { withCredentials: true });
+      await axios.post(`${process.env.REACT_APP_API_URL}/cancel-subscription`, {}, { withCredentials: true });
       toast.success('Subscription cancelled');
       setIsSubscribed(false);
     } catch (err) {

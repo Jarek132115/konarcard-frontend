@@ -26,7 +26,7 @@ const SubscribeButton = () => {
             const stripe = await stripePromise;
 
             // FIX: Use VITE_API_URL for API calls
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/stripe/create-subscription-session`, {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/stripe/create-subscription-session`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

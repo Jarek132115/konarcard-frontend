@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 // Ensure the import path is correct for the now .js file
-import { api } from "../api/api"; // Changed from '../services/api' to '../api/api'
-
+import { api } from '../services/api'; // CORRECTED PATH
 export const useCreateService = () => {
   return useMutation({
     mutationFn: (data) => {

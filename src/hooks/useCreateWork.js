@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { api } from "../api/api"; 
-
+import { api } from '../services/api'; // CORRECTED PATH
 export const buildWorksFormData = (data) => {
   const formData = new FormData();
 
@@ -19,7 +18,7 @@ export const buildWorksFormData = (data) => {
 
 export const useCreateWorks = () => {
   return useMutation({
-    mutationFn: (formData) => { 
+    mutationFn: (formData) => {
       return api("/api/works/add_works", {
         method: "POST",
         body: formData,

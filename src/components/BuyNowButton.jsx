@@ -28,7 +28,7 @@ const BuyNowButton = ({ product, logoFile }) => {
       formData.append('logo', logoFile);
 
       // FIX: Use VITE_API_URL for API calls
-      const uploadRes = await fetch(`${import.meta.env.VITE_API_URL}/api/upload/logo`, {
+      const uploadRes = await fetch(`${process.env.REACT_APP_API_URL}/api/upload/logo`, {
         method: 'POST',
         body: formData,
         credentials: 'include'
@@ -40,7 +40,7 @@ const BuyNowButton = ({ product, logoFile }) => {
 
     const stripe = await stripePromise;
     // FIX: Use VITE_API_URL for API calls
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/stripe/create-checkout-session`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/stripe/create-checkout-session`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

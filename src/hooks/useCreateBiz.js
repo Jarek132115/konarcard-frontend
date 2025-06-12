@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 // Ensure the import path is correct for the now .js file
-import { api } from "../api/api"; // Changed from '../services/api' to '../api/api'
-
+import { api } from '../services/api'; // CORRECTED PATH
 // Removed TypeScript interface definition (BusinessCardData)
 // You can keep this as a comment for documentation if you like, but it's not functional JS
 /*

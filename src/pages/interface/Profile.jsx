@@ -45,7 +45,7 @@ export default function Profile() {
     try {
       // FIX: Use VITE_API_URL for API calls
       const res = await axios.put(
-        `${import.meta.env.VITE_API_URL}/update-profile`,
+        `${process.env.REACT_APP_API_URL}/update-profile`,
         {
           name: updatedName,
           email: updatedEmail,
@@ -78,7 +78,7 @@ export default function Profile() {
 
     try {
       // FIX: Use VITE_API_URL for API calls
-      const res = await axios.delete(`${import.meta.env.VITE_API_URL}/delete-account`, {
+      const res = await axios.delete(`${process.env.REACT_APP_API_URL}/delete-account`, {
         withCredentials: true,
       });
 
