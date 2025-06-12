@@ -2,7 +2,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
-
+import React, { useState, useEffect, useContext } from 'react';
 const stripePromise = loadStripe('pk_test_51RPmTAP7pC1ilLXA3e0hWCJFsirDnrxr7J7LX0ijgrhacpisWWqMrUUfu9VQ44VIAM9j0oVNjldmkqGjFuNUNNWH00RmpQ9vce');
 
 const BuyNowButton = ({ product, logoFile }) => {
