@@ -13,7 +13,7 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     // FIX: Use VITE_API_URL for API calls
-    await fetch(`${process.env.REACT_APP_API_URL}/logout`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/logout`, {
       method: 'POST',
       credentials: 'include',
     });

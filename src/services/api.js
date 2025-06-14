@@ -6,8 +6,7 @@
 // }>;
 
 // Ensure this line uses the VITE_API_URL as previously discussed
-const BASE_URL = process.env.REACT_APP_API_URL;
-
+const BASE_URL = import.meta.env.VITE_API_URL;
 // Removed <T> from function signature and type annotations
 export const api = async (
   endpoint, // init?: RequestInit type annotation removed

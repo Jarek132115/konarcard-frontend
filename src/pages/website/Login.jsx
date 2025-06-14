@@ -32,7 +32,7 @@ export default function Login() {
     const loginUser = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('/login', data);
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/login`, data);
             if (res.data.error) {
                 if (res.data.error.includes('verify your email')) {
                     toast.error('Email not verified. New code sent!');
@@ -54,7 +54,7 @@ export default function Login() {
     const verifyCode = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('/verify-email', {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/verify-email`, {
                 email: data.email,
                 code,
             });
@@ -78,7 +78,7 @@ export default function Login() {
 
     const resendCode = async () => {
         try {
-            const res = await axios.post('/resend-code', { email: data.email });
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/resend-code`, { email: data.email });
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {
@@ -92,7 +92,7 @@ export default function Login() {
 
     const sendResetLink = async () => {
         try {
-            const res = await axios.post('/forgot-password', { email: emailForReset });
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/forgot-password`, { email: emailForReset }); 
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {

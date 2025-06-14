@@ -59,7 +59,7 @@ export default function Register() {
 
         try {
             console.log('Sending registration request...');
-            const res = await axios.post('/register', {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/register`, {
                 name: data.name,
                 email: data.email,
                 username: data.username.trim().toLowerCase(),

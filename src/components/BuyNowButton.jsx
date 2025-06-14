@@ -2,10 +2,11 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
-import React, { useState, useEffect, useContext } from 'react';
+
 const stripePromise = loadStripe('pk_test_51RPmTAP7pC1ilLXA3e0hWCJFsirDnrxr7J7LX0ijgrhacpisWWqMrUUfu9VQ44VIAM9j0oVNjldmkqGjFuNUNNWH00RmpQ9vce');
 
-const BuyNowButton = ({ product, logoFile }) => {
+// REMOVED logoFile prop from component signature
+const BuyNowButton = ({ product }) => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,33 +22,15 @@ const BuyNowButton = ({ product, logoFile }) => {
       return;
     }
 
-    let logoUrl = '';
-
-    if (logoFile) {
-      const formData = new FormData();
-      formData.append('logo', logoFile);
-
-      // FIX: Use VITE_API_URL for API calls
-      const uploadRes = await fetch(`${process.env.REACT_APP_API_URL}/api/upload/logo`, {
-        method: 'POST',
-        body: formData,
-        credentials: 'include'
-      });
-
-      const uploadData = await uploadRes.json();
-      logoUrl = uploadData.url;
-    }
-
     const stripe = await stripePromise;
-    // FIX: Use VITE_API_URL for API calls
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/stripe/create-checkout-session`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/stripe/create-checkout-session`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({
         product,
         returnUrl: window.location.origin + '/success',
-        logoUrl
+        // DELETED: logoUrl no longer passed here
       }),
     });
 

@@ -60,7 +60,7 @@ export default function Home() {
 
     try {
       // FIX: Use VITE_API_URL for API calls
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/subscribe`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/subscribe`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
