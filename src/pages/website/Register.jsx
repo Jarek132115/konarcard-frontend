@@ -100,7 +100,7 @@ export default function Register() {
     const verifyCode = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('/verify-email', {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/verify-email`, {
                 email: data.email,
                 code,
             });
@@ -128,7 +128,7 @@ export default function Register() {
 
     const resendCode = async () => {
         try {
-            const res = await axios.post('/resend-code', { email: data.email });
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/resend-code`, { email: data.email }); 
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {

@@ -15,7 +15,6 @@ export default function WhiteCard() {
   const handleBuyNow = async () => {
     const stripe = await stripePromise;
 
-    // FIX: Use VITE_API_URL for API calls
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/checkout/create-checkout-session`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
