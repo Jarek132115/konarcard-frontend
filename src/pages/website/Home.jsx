@@ -1,8 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
-import SubscribeButton from '../../components/SubscribeButton'; // Make sure this is the correct path if you have this component
 import HeroImage from '../../assets/images/Hero-Image-new.png'
 import BackgroundHero from '../../assets/images/background-hero.png'
 import Section1Image from '../../assets/images/Section-1-Image.png'
