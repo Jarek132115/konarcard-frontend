@@ -28,11 +28,11 @@ import Subscription from './pages/interface/Subscription';
 import ContactSupport from './pages/interface/ContactSupport';
 import UserPage from './pages/interface/UserPage';
 
-axios.defaults.baseURL = 'http://localhost:8000';
+axios.defaults.baseURL = 'https://konarcard-backend-331608269918.europe-west1.run.app'; // Your default Cloud Run URL
 axios.defaults.withCredentials = true;
 
 function App() {
-  const location = useLocation(); 
+  const location = useLocation();
 
   const TIDIO_SCRIPT_URL = "//code.tidio.co/beofp4i2ttjkwkjoem91cbg7an99f40w.js";
 

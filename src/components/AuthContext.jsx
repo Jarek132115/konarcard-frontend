@@ -7,8 +7,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUser = async () => {
         try {
-            const res = await fetch('http://localhost:8000/profile', {
-                credentials: 'include',
+            const res = await fetch('https://konarcard-backend-331608269918.europe-west1.run.app/profile', { // Your default Cloud Run URL                credentials: 'include',
             });
             const data = await res.json();
             if (data && data._id) {
