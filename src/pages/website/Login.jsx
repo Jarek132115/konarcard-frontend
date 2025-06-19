@@ -2,14 +2,15 @@ import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { AuthContext } from '../../components/AuthContext';
+import { AuthContext } from '../../components/AuthContext'; // Import AuthContext
 import backgroundImg from '../../assets/images/background.png';
 
 export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from || '/';
-    const { setUser } = useContext(AuthContext);
+    const from = location.state?.from || '/myprofile'; // Default to /myprofile if no previous state
+    // CORRECTED: Get 'login' function from AuthContext
+    const { login } = useContext(AuthContext);
 
     const [data, setData] = useState({ email: '', password: '' });
     const [code, setCode] = useState('');
@@ -32,7 +33,9 @@ export default function Login() {
     const loginUser = async (e) => {
         e.preventDefault();
         try {
+            // axios.defaults.baseURL is set in App.jsx, so just use '/login'
             const res = await axios.post('/login', data);
+
             if (res.data.error) {
                 if (res.data.error.includes('verify your email')) {
                     toast.error('Email not verified. New code sent!');
@@ -42,19 +45,23 @@ export default function Login() {
                     toast.error(res.data.error);
                 }
             } else {
-                toast.success('Login successful');
-                setUser(res.data);
+                // CORRECTED: Call the login function from AuthContext with token and user data
+                toast.success('Login successful!');
+                login(res.data.token, res.data.user); // Pass token and user data to context
                 navigate(from);
             }
         } catch (err) {
-            toast.error('Login failed');
+            console.error('Login failed:', err.response?.data || err); // More detailed error logging
+            toast.error(err.response?.data?.error || 'Login failed');
         }
     };
 
     const verifyCode = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('/verify-email', {
+            // Use full VITE_API_URL here as this call might not automatically pick up axios.defaults.baseURL
+            // based on how axios is configured with api.js which is now fetch based.
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/verify-email`, {
                 email: data.email,
                 code,
             });
@@ -63,22 +70,26 @@ export default function Login() {
                 toast.error(res.data.error);
             } else {
                 toast.success('Email verified! Logging you in...');
+                // After verification, attempt login again to get the token.
                 const loginRes = await axios.post('/login', data);
                 if (loginRes.data.error) {
                     toast.error(loginRes.data.error);
                 } else {
-                    setUser(loginRes.data);
+                    // CORRECTED: Call the login function from AuthContext after successful verification and re-login
+                    login(loginRes.data.token, loginRes.data.user);
                     navigate(from);
                 }
             }
         } catch (err) {
-            toast.error('Verification failed');
+            console.error('Verification failed:', err.response?.data || err);
+            toast.error(err.response?.data?.error || 'Verification failed');
         }
     };
 
     const resendCode = async () => {
         try {
-            const res = await axios.post('/resend-code', { email: data.email });
+            // Use full VITE_API_URL here
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/resend-code`, { email: data.email });
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {
@@ -86,20 +97,23 @@ export default function Login() {
                 setCooldown(30);
             }
         } catch (err) {
-            toast.error('Could not resend code');
+            console.error('Could not resend code:', err.response?.data || err);
+            toast.error(err.response?.data?.error || 'Could not resend code');
         }
     };
 
     const sendResetLink = async () => {
         try {
-            const res = await axios.post('/forgot-password', { email: emailForReset });
+            // Use full VITE_API_URL here
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/forgot-password`, { email: emailForReset });
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {
                 toast.success('Reset link sent to your email');
             }
         } catch (err) {
-            toast.error('Failed to send reset link');
+            console.error('Failed to send reset link:', err.response?.data || err);
+            toast.error(err.response?.data?.error || 'Failed to send reset link');
         }
     };
 

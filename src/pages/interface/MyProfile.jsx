@@ -1,19 +1,20 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react"; // Added useContext
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import ProfileCardImage from "../../assets/images/background-hero.png";
 import UserAvatar from "../../assets/images/People.png";
 import useBusinessCardStore from "../../store/businessCardStore";
-import { useAuthUser } from "../../hooks/useAuthUser";
-import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
+// REMOVED: useAuthUser import. We will get user from AuthContext directly.
+import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard"; // This hook will now receive userId directly
 import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
 } from "../../hooks/useCreateBiz";
 import { useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import axios from 'axios'; // Still used for verification forms
 import { toast } from 'react-hot-toast';
-import ShareProfile from "../../components/ShareProfile"; // <<<<<<<<<<<<<<< IMPORTANT: CORRECT IMPORT NAME
+import ShareProfile from "../../components/ShareProfile";
+import { AuthContext } from "../../components/AuthContext"; // Import AuthContext
 
 export default function MyProfile() {
   const { state, updateState } = useBusinessCardStore();
@@ -24,12 +25,17 @@ export default function MyProfile() {
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
 
-  const { data: authUser, refetch: refetchAuthUser } = useAuthUser();
-  const userId = authUser?.data?._id;
-  const userEmail = authUser?.data?.email;
-  const isUserVerified = authUser?.data?.isVerified;
-  const userUsername = authUser?.data?.username; // Get username for profile URL
+  // CORRECTED: Get user, loading state, and logout function from AuthContext
+  const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser, logout } = useContext(AuthContext);
 
+  // Derive user info directly from authUser state
+  const userId = authUser?._id;
+  const userEmail = authUser?.email;
+  const isUserVerified = authUser?.isVerified;
+  const userUsername = authUser?.username;
+
+  // useFetchBusinessCard now correctly depends on the userId from AuthContext.
+  // It will only run when userId is available.
   const { data: businessCard } = useFetchBusinessCard(userId);
 
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
@@ -46,12 +52,13 @@ export default function MyProfile() {
   }, [resendCooldown]);
 
   useEffect(() => {
-    if (authUser && !isUserVerified && userEmail) {
+    // Only show prompt if user is loaded (not loading), not verified, and has an email
+    if (!authLoading && authUser && !isUserVerified && userEmail) {
       setShowVerificationPrompt(true);
-    } else if (isUserVerified) {
+    } else if (!authLoading && isUserVerified) {
       setShowVerificationPrompt(false);
     }
-  }, [authUser, isUserVerified, userEmail]);
+  }, [authLoading, authUser, isUserVerified, userEmail]); // Added authLoading to dependencies
 
   useEffect(() => {
     if (businessCard) {
@@ -67,8 +74,8 @@ export default function MyProfile() {
         avatar: businessCard.avatar || null,
         coverPhoto: businessCard.cover_photo || null,
         workImages: (businessCard.works || []).map((url) => ({
-          file: null,
-          preview: url,
+          file: null, // Existing works are URLs, not files for upload
+          preview: url, // This holds the actual URL for display
         })),
         services: (businessCard.services || []).map(s => {
           if (typeof s === 'string') {
@@ -123,7 +130,7 @@ export default function MyProfile() {
     updateState({
       workImages: [...(state.workImages || []), ...newWorkImages],
     });
-    e.target.value = null;
+    e.target.value = null; // Clear the input so same file can be selected again
   };
 
   const handleRemoveWorkImage = (indexToRemove) => {
@@ -177,7 +184,8 @@ export default function MyProfile() {
       return;
     }
     try {
-      const res = await axios.post('/resend-code', { email: userEmail });
+      // Use axios and full VITE_API_URL for non-authenticated verification calls
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/resend-code`, { email: userEmail });
       if (res.data.error) {
         toast.error(res.data.error);
       } else {
@@ -185,7 +193,7 @@ export default function MyProfile() {
         setResendCooldown(30);
       }
     } catch (err) {
-      toast.error('Could not resend code.');
+      toast.error(err.response?.data?.error || 'Could not resend code.');
       console.error('Resend code error:', err);
     }
   };
@@ -197,7 +205,8 @@ export default function MyProfile() {
       return;
     }
     try {
-      const res = await axios.post('/verify-email', {
+      // Use axios and full VITE_API_URL for non-authenticated verification calls
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/verify-email`, {
         email: userEmail,
         code: verificationCodeInput,
       });
@@ -207,19 +216,25 @@ export default function MyProfile() {
       } else {
         toast.success('Email verified successfully!');
         setShowVerificationPrompt(false);
-        refetchAuthUser();
+        refetchAuthUser(); // Re-fetch user to update isVerified status in AuthContext
         setVerificationCodeInput('');
       }
     } catch (err) {
-      toast.error('Verification failed.');
+      toast.error(err.response?.data?.error || 'Verification failed.');
       console.error('Verification error:', err);
     }
   };
 
-
+  // CORRECTED: Handle Submit for saving business card
   const handleSubmit = async () => {
+    // Show a message while user data is still loading
+    if (authLoading) {
+      toast.info("User data is still loading. Please wait a moment.");
+      return;
+    }
+    // Now that loading is done, check if user is truly not loaded
     if (!userId) {
-      alert("User not loaded yet.");
+      toast.error("User not logged in or loaded. Please log in again to save changes.");
       return;
     }
 
@@ -237,9 +252,10 @@ export default function MyProfile() {
       job_title: state.job_title,
       full_name: state.full_name,
       bio: state.bio,
-      user: userId,
+      user: userId, // Pass userId for backend lookup (important for findOneAndUpdate)
       cover_photo: state.coverPhotoFile,
       avatar: state.avatarFile,
+      // Ensure works passes files (new uploads) and preview URLs (existing ones)
       works: state.workImages,
       services: state.services,
       reviews: state.reviews,
@@ -248,12 +264,13 @@ export default function MyProfile() {
     });
 
     try {
-      await createBusinessCard.mutateAsync(formData);
+      await createBusinessCard.mutateAsync(formData); // Use the mutation hook
       toast.success("Business card saved!");
-      queryClient.invalidateQueries(['business-card', userId]);
+      queryClient.invalidateQueries(['business-card', userId]); // Invalidate to refetch fresh data
+      refetchAuthUser(); // Re-fetch auth user to get updated data if needed (e.g. username from DB)
     } catch (error) {
-      toast.error("Something went wrong while saving.");
-      console.error("Error creating business card:", error);
+      toast.error("Something went wrong while saving. Check console for details.");
+      console.error("Error creating/updating business card:", error.response?.data || error);
     }
   };
 
@@ -278,502 +295,512 @@ export default function MyProfile() {
     setShowShareModal(false);
   };
 
-  const currentUserProfileUrl = userUsername ? `<span class="math-inline">\{window\.location\.origin\}/u/</span>{userUsername}` : '';
-
+  // CORRECTED: Construct profile URL using window.location.origin for robustness
+  // and ensure userUsername is available before creating URL
+  const currentUserProfileUrl = userUsername ? `${window.location.origin}/u/${userUsername}` : '';
 
   return (
     <div className="myprofile-layout">
       <Sidebar />
       <main className="myprofile-main page-wrapper">
-        {/* REPLACED with PageHeader Component */}
         <PageHeader
-          title="Good Afternoon Jarek!"
+          title={authUser ? `Good Afternoon ${authUser.name}!` : "My Profile"} // Dynamic title based on authUser
           onActivateCard={handleActivateCard}
           onShareCard={handleShareCard}
         />
 
-        {showVerificationPrompt && (
-          <div style={{
-            backgroundColor: '#fffbe6',
-            border: '1px solid #ffe58f',
-            borderRadius: '8px',
-            padding: '20px',
-            marginBottom: '30px',
-            textAlign: 'center',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-            maxWidth: '600px',
-            margin: '0 auto 30px auto'
-          }}>
-            <p style={{ fontSize: '18px', fontWeight: '600', marginBottom: '15px', color: '#ffcc00' }}>
-              <span role="img" aria-label="warning" style={{ marginRight: '10px' }}>⚠️</span>
-              Your email is not verified!
-            </p>
-            <p style={{ marginBottom: '15px', color: '#555' }}>
-              Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to your business card.
-            </p>
-            <form onSubmit={handleVerifyCode} style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '300px', margin: '0 auto' }}>
-              <input
-                type="text"
-                placeholder="Enter 6-digit code"
-                value={verificationCodeInput}
-                onChange={(e) => setVerificationCodeInput(e.target.value)}
-                maxLength={6}
-                style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc', fontSize: '16px' }}
-              />
-              <button type="submit" style={{
-                padding: '10px 15px',
-                borderRadius: '8px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '16px',
-                fontWeight: '600'
-              }}>
-                Verify Email
-              </button>
-              <button
-                type="button"
-                onClick={sendVerificationCode}
-                disabled={resendCooldown > 0}
-                style={{
-                  padding: '10px 15px',
-                  borderRadius: '8px',
-                  backgroundColor: resendCooldown > 0 ? '#e0e0e0' : '#f0f0f0',
-                  color: resendCooldown > 0 ? '#999' : '#333',
-                  border: '1px solid #ccc',
-                  cursor: resendCooldown > 0 ? 'not-allowed' : 'pointer',
-                  fontSize: '14px'
-                }}
-              >
-                {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
-              </button>
-            </form>
+        {authLoading && (
+          <div style={{ padding: '20px', textAlign: 'center', fontSize: '1.2rem', color: '#666' }}>
+            Loading profile data...
           </div>
         )}
 
-        <div className="myprofile-content">
-          {/* --- PREVIEW SECTION --- */}
-          <div className="myprofile-preview">
-            <div
-              className="mock-phone"
-              style={{ fontFamily: state.font, ...themeStyles }}
-            >
-              <img
-                src={state.coverPhoto || ProfileCardImage}
-                alt="Cover"
-                className="mock-cover"
-              />
-              <h2 className="mock-title">{state.mainHeading}</h2>
-              <p className="mock-subtitle">{state.subHeading}</p>
-              <button
-                type="button"
-                style={{
-                  backgroundColor:
-                    state.pageTheme === "dark" ? "white" : "black",
-                  color: state.pageTheme !== "dark" ? "white" : "black",
-                }}
-                className="mock-button"
-              >
-                Exchange Contact
-              </button>
-              {(state.full_name || state.job_title || state.bio || state.avatar) && (
-                <>
-                  <p className="mock-section-title">
-                    About me
-                  </p>
-                  <div className="mock-about">
-                    {state.avatar && (
-                      <img
-                        src={state.avatar}
-                        alt="Avatar"
-                        className="mock-avatar"
-                      />
-                    )}
-                    <div className="mock-about-text-group">
-                      <div>
-                        <p className="mock-name">{state.full_name}</p>
-                        <p className="mock-role">{state.job_title}</p>
-                      </div>
-                      {state.bio && <p className="mock-bio-text">{state.bio}</p>}
-                    </div>
-                  </div>
-                </>
-              )}
-
-
-              {/* My Work Section (Preview) */}
-              {(state.workImages && state.workImages.length > 0) && (
-                <>
-                  <p className="mock-section-title">My Work</p>
-                  <div className="mock-work-images">
-                    {(state.workImages || []).map((img, i) => (
-                      <img
-                        key={i}
-                        src={img.preview}
-                        alt={`work-${i}`}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {/* My Services Section (Preview) */}
-              {(state.services && state.services.length > 0) && (
-                <>
-                  <p className="mock-section-title">My Services</p>
-                  <div className="mock-services-list">
-                    {(state.services || []).map((s, i) => (
-                      <div key={i} className="mock-service-item">
-                        <p className="mock-service-name">{s.name}</p>
-                        <span className="mock-service-price">{s.price}</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {/* Reviews Section (Preview) */}
-              {(state.reviews && state.reviews.length > 0) && (
-                <>
-                  <p className="mock-section-title">Reviews</p>
-                  <div className="mock-reviews-list">
-                    {(state.reviews || []).map((r, i) => (
-                      <div key={i} className="mock-review-card">
-                        <div className="mock-star-rating">
-                          {Array(r.rating || 0).fill().map((_, starIdx) => (
-                            <span key={`filled-${starIdx}`}>★</span>
-                          ))}
-                          {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
-                            <span key={`empty-${starIdx}`} style={{ color: '#ccc' }}>★</span>
-                          ))}
-                        </div>
-                        <p className="mock-review-text">"{r.text}"</p>
-                        <p className="mock-reviewer-name">{r.name}</p>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
+        {/* Only show this block if loading is complete AND no authUser is found */}
+        {!authLoading && !authUser && (
+          <div style={{ padding: '20px', textAlign: 'center', color: 'red', border: '1px solid red', borderRadius: '8px', marginBottom: '30px', backgroundColor: '#ffe6e6' }}>
+            <p style={{ marginBottom: '10px' }}>User not loaded. Please ensure you are logged in.</p>
+            <button onClick={() => window.location.href = '/login'} style={{ padding: '8px 15px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Go to Login</button>
           </div>
+        )}
 
-          {/* --- EDITOR SECTION --- */}
-          <div className="myprofile-editor">
-            <h2 className="editor-title">Create Your Digital Business Card</h2>
-
-            <div className="input-block">
-              <label>Page Theme</label>
-              <div className="option-row">
-                <button
-                  type="button"
-                  className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
-                  onClick={() => updateState({ pageTheme: "light" })}
-                >
-                  Light Mode
-                </button>
-                <button
-                  type="button"
-                  className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
-                  onClick={() => updateState({ pageTheme: "dark" })}
-                >
-                  Dark Mode
-                </button>
-              </div>
-            </div>
-
-            <div className="input-block">
-              <label>Font</label>
-              <div className="option-row">
-                {["Inter", "Montserrat", "Poppins"].map((font) => (
+        {/* Only render content if user is loaded and exists */}
+        {!authLoading && authUser && (
+          <>
+            {showVerificationPrompt && (
+              <div style={{
+                backgroundColor: '#fffbe6',
+                border: '1px solid #ffe58f',
+                borderRadius: '8px',
+                padding: '20px',
+                marginBottom: '30px',
+                textAlign: 'center',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                maxWidth: '600px',
+                margin: '0 auto 30px auto'
+              }}>
+                <p style={{ fontSize: '18px', fontWeight: '600', marginBottom: '15px', color: '#ffcc00' }}>
+                  <span role="img" aria-label="warning" style={{ marginRight: '10px' }}>⚠️</span>
+                  Your email is not verified!
+                </p>
+                <p style={{ marginBottom: '15px', color: '#555' }}>
+                  Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to your business card.
+                </p>
+                <form onSubmit={handleVerifyCode} style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '300px', margin: '0 auto' }}>
+                  <input
+                    type="text"
+                    placeholder="Enter 6-digit code"
+                    value={verificationCodeInput}
+                    onChange={(e) => setVerificationCodeInput(e.target.value)}
+                    maxLength={6}
+                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc', fontSize: '16px' }}
+                  />
+                  <button type="submit" style={{
+                    padding: '10px 15px',
+                    borderRadius: '8px',
+                    backgroundColor: '#007bff',
+                    color: 'white',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    fontWeight: '600'
+                  }}>
+                    Verify Email
+                  </button>
                   <button
-                    key={font}
                     type="button"
-                    className={`font-button ${state.font === font ? "is-active" : ""}`}
-                    onClick={() => updateState({ font })}
+                    onClick={sendVerificationCode}
+                    disabled={resendCooldown > 0}
                     style={{
-                      fontFamily: font,
+                      padding: '10px 15px',
+                      borderRadius: '8px',
+                      backgroundColor: resendCooldown > 0 ? '#e0e0e0' : '#f0f0f0',
+                      color: resendCooldown > 0 ? '#999' : '#333',
+                      border: '1px solid #ccc',
+                      cursor: resendCooldown > 0 ? 'not-allowed' : 'pointer',
+                      fontSize: '14px'
                     }}
                   >
-                    {font}
+                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
                   </button>
-                ))}
+                </form>
               </div>
-            </div>
+            )}
 
-            <hr className="divider" />
-            <h3 className="editor-subtitle">Hero Section</h3>
+            <div className="myprofile-content">
+              {/* --- PREVIEW SECTION --- */}
+              <div className="myprofile-preview">
+                <div
+                  className="mock-phone"
+                  style={{ fontFamily: state.font, ...themeStyles }}
+                >
+                  <img
+                    src={state.coverPhoto || ProfileCardImage}
+                    alt="Cover"
+                    className="mock-cover"
+                  />
+                  <h2 className="mock-title">{state.mainHeading}</h2>
+                  <p className="mock-subtitle">{state.subHeading}</p>
+                  <button
+                    type="button"
+                    style={{
+                      backgroundColor:
+                        state.pageTheme === "dark" ? "white" : "black",
+                      color: state.pageTheme !== "dark" ? "white" : "black",
+                    }}
+                    className="mock-button"
+                  >
+                    Exchange Contact
+                  </button>
+                  {(state.full_name || state.job_title || state.bio || state.avatar) && (
+                    <>
+                      <p className="mock-section-title">
+                        About me
+                      </p>
+                      <div className="mock-about">
+                        {state.avatar && (
+                          <img
+                            src={state.avatar}
+                            alt="Avatar"
+                            className="mock-avatar"
+                          />
+                        )}
+                        <div className="mock-about-text-group">
+                          <div>
+                            <p className="mock-name">{state.full_name}</p>
+                            <p className="mock-role">{state.job_title}</p>
+                          </div>
+                          {state.bio && <p className="mock-bio-text">{state.bio}</p>}
+                        </div>
+                      </div>
+                    </>
+                  )}
 
-            <div className="input-block">
-              <label htmlFor="coverPhoto">Cover Photo</label>
-              <input
-                ref={fileInputRef}
-                id="coverPhoto"
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                style={{ display: "none" }}
-              />
-              <div
-                className="cover-preview-container"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <img
-                  src={state.coverPhoto || ProfileCardImage}
-                  alt="Cover"
-                  className="cover-preview"
-                />
+
+                  {/* My Work Section (Preview) */}
+                  {(state.workImages && state.workImages.length > 0) && (
+                    <>
+                      <p className="mock-section-title">My Work</p>
+                      <div className="mock-work-images">
+                        {(state.workImages || []).map((img, i) => (
+                          <img
+                            key={i}
+                            src={img.preview}
+                            alt={`work-${i}`}
+                            className="mock-image-item" // Added class for consistency if needed
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* My Services Section (Preview) */}
+                  {(state.services && state.services.length > 0) && (
+                    <>
+                      <p className="mock-section-title">My Services</p>
+                      <div className="mock-services-list">
+                        {(state.services || []).map((s, i) => (
+                          <div key={i} className="mock-service-item">
+                            <p className="mock-service-name">{s.name}</p>
+                            <span className="mock-service-price">{s.price}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Reviews Section (Preview) */}
+                  {(state.reviews && state.reviews.length > 0) && (
+                    <>
+                      <p className="mock-section-title">Reviews</p>
+                      <div className="mock-reviews-list">
+                        {(state.reviews || []).map((r, i) => (
+                          <div key={i} className="mock-review-card">
+                            <div className="mock-star-rating">
+                              {Array(r.rating || 0).fill().map((_, starIdx) => (
+                                <span key={`filled-${starIdx}`}>★</span>
+                              ))}
+                              {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
+                                <span key={`empty-${starIdx}`} style={{ color: '#ccc' }}>★</span>
+                              ))}
+                            </div>
+                            <p className="mock-review-text">"{r.text}"</p>
+                            <p className="mock-reviewer-name">{r.name}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
 
-            <div className="input-block">
-              <label htmlFor="mainHeading">Main Heading</label>
-              <input
-                id="mainHeading"
-                type="text"
-                value={state.mainHeading}
-                onChange={(e) =>
-                  updateState({ mainHeading: e.target.value })
-                }
-              />
-            </div>
+              {/* --- EDITOR SECTION --- */}
+              <div className="myprofile-editor">
+                <h2 className="editor-title">Create Your Digital Business Card</h2>
 
-            <div className="input-block">
-              <label htmlFor="subHeading">Subheading</label>
-              <input
-                id="subHeading"
-                type="text"
-                value={state.subHeading}
-                onChange={(e) =>
-                  updateState({ subHeading: e.target.value })
-                }
-              />
-            </div>
-
-            <div className="input-block">
-              <label htmlFor="jobTitle">Job Title</label>
-              <input
-                id="jobTitle"
-                type="text"
-                value={state.job_title || ""}
-                onChange={(e) => updateState({ job_title: e.target.value })}
-              />
-            </div>
-
-            <div className="input-block">
-              <label htmlFor="avatar">Profile Photo</label>
-              <input
-                ref={avatarInputRef}
-                type="file"
-                accept="image/*"
-                id="avatar"
-                onChange={handleAvatarUpload}
-                style={{ display: "none" }}
-              />
-              <div
-                className="cover-preview-container"
-                onClick={() => avatarInputRef.current?.click()}
-              >
-                <img
-                  src={state.avatar || UserAvatar}
-                  alt="Avatar preview"
-                  style={{
-                    width: 80,
-                    height: 80,
-                    borderRadius: "50%",
-                    marginTop: 8,
-                    objectFit: "cover",
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="input-block">
-              <label htmlFor="fullName">Full Name</label>
-              <input
-                id="fullName"
-                type="text"
-                value={state.full_name || ""}
-                onChange={(e) => updateState({ full_name: e.target.value })}
-              />
-            </div>
-
-            <div className="input-block">
-              <label htmlFor="bio">About Me</label>
-              <textarea
-                id="bio"
-                value={state.bio || ""}
-                onChange={(e) => updateState({ bio: e.target.value })}
-                rows={4}
-              />
-            </div>
-
-            {/* My Work Section (Editor) */}
-            <div className="input-block">
-              <label>My Work</label>
-              <div className="work-preview-row">
-                {(state.workImages || []).map((img, i) => (
-                  <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px' }}>
-                    <img
-                      src={img.preview}
-                      alt={`work-${i}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
-                    />
+                <div className="input-block">
+                  <label>Page Theme</label>
+                  <div className="option-row">
                     <button
                       type="button"
-                      onClick={() => handleRemoveWorkImage(i)}
-                      style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '5px',
-                        background: 'rgba(255, 255, 255, 0.7)',
-                        border: 'none',
-                        borderRadius: '50%',
-                        width: '20px',
-                        height: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        color: '#333',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
-                      }}
+                      className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
+                      onClick={() => updateState({ pageTheme: "light" })}
                     >
-                      X
+                      Light Mode
+                    </button>
+                    <button
+                      type="button"
+                      className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
+                      onClick={() => updateState({ pageTheme: "dark" })}
+                    >
+                      Dark Mode
                     </button>
                   </div>
-                ))}
-                <input
-                  ref={workImageInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAddWorkImage}
-                  multiple
-                  style={{ display: "block", marginTop: "10px" }}
-                />
+                </div>
+
+                <div className="input-block">
+                  <label>Font</label>
+                  <div className="option-row">
+                    {["Inter", "Montserrat", "Poppins"].map((font) => (
+                      <button
+                        key={font}
+                        type="button"
+                        className={`font-button ${state.font === font ? "is-active" : ""}`}
+                        onClick={() => updateState({ font })}
+                        style={{ fontFamily: font }}
+                      >
+                        {font}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <hr className="divider" />
+                <h3 className="editor-subtitle">Hero Section</h3>
+
+                <div className="input-block">
+                  <label htmlFor="coverPhoto">Cover Photo</label>
+                  <input
+                    ref={fileInputRef}
+                    id="coverPhoto"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    style={{ display: "none" }}
+                  />
+                  <div
+                    className="cover-preview-container"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <img
+                      src={state.coverPhoto || ProfileCardImage}
+                      alt="Cover"
+                      className="cover-preview"
+                    />
+                  </div>
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="mainHeading">Main Heading</label>
+                  <input
+                    id="mainHeading"
+                    type="text"
+                    value={state.mainHeading}
+                    onChange={(e) => updateState({ mainHeading: e.target.value })}
+                  />
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="subHeading">Subheading</label>
+                  <input
+                    id="subHeading"
+                    type="text"
+                    value={state.subHeading}
+                    onChange={(e) => updateState({ subHeading: e.target.value })}
+                  />
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="jobTitle">Job Title</label>
+                  <input
+                    id="jobTitle"
+                    type="text"
+                    value={state.job_title || ""}
+                    onChange={(e) => updateState({ job_title: e.target.value })}
+                  />
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="avatar">Profile Photo</label>
+                  <input
+                    ref={avatarInputRef}
+                    type="file"
+                    accept="image/*"
+                    id="avatar"
+                    onChange={handleAvatarUpload}
+                    style={{ display: "none" }}
+                  />
+                  <div
+                    className="cover-preview-container"
+                    onClick={() => avatarInputRef.current?.click()}
+                  >
+                    <img
+                      src={state.avatar || UserAvatar}
+                      alt="Avatar preview"
+                      style={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: "50%",
+                        marginTop: 8,
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="fullName">Full Name</label>
+                  <input
+                    id="fullName"
+                    type="text"
+                    value={state.full_name || ""}
+                    onChange={(e) => updateState({ full_name: e.target.value })}
+                  />
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="bio">About Me</label>
+                  <textarea
+                    id="bio"
+                    value={state.bio || ""}
+                    onChange={(e) => updateState({ bio: e.target.value })}
+                    rows={4}
+                  />
+                </div>
+
+                {/* My Work Section (Editor) */}
+                <div className="input-block">
+                  <label>My Work</label>
+                  <div className="work-preview-row">
+                    {(state.workImages || []).map((img, i) => (
+                      <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px' }}>
+                        <img
+                          src={img.preview}
+                          alt={`work-${i}`}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveWorkImage(i)}
+                          style={{
+                            position: 'absolute',
+                            top: '5px',
+                            right: '5px',
+                            background: 'rgba(255, 255, 255, 0.7)',
+                            border: 'none',
+                            borderRadius: '50%',
+                            width: '20px',
+                            height: '20px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                            color: '#333',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                          }}
+                        >
+                          X
+                        </button>
+                      </div>
+                    ))}
+                    <input
+                      ref={workImageInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAddWorkImage}
+                      multiple
+                      style={{ display: "block", marginTop: "10px" }}
+                    />
+                  </div>
+                </div>
+
+                {/* My Services Section (Editor) */}
+                <div className="input-block">
+                  <label>My Services</label>
+                  {(state.services || []).map((s, i) => (
+                    <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
+                      <input
+                        type="text"
+                        placeholder={`Service Name ${i + 1}`}
+                        value={s.name}
+                        onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                      />
+                      <input
+                        type="text"
+                        placeholder={`Service Price/Detail ${i + 1}`}
+                        value={s.price}
+                        onChange={(e) => handleServiceChange(i, "price", e.target.value)}
+                      />
+                      <button type="button" onClick={() => handleRemoveService(i)} style={{ alignSelf: 'flex-end', padding: '4px 8px', fontSize: '12px' }}>Remove</button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={handleAddService}>
+                    + Add Service
+                  </button>
+                </div>
+
+                {/* Reviews Section (Editor) */}
+                <div className="input-block">
+                  <label>Reviews</label>
+                  {(state.reviews || []).map((r, i) => (
+                    <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
+                      <input
+                        type="text"
+                        placeholder="Reviewer Name"
+                        value={r.name}
+                        onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                      />
+                      <textarea
+                        placeholder="Review"
+                        rows={2}
+                        value={r.text}
+                        onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Rating (1-5)"
+                        min="1"
+                        max="5"
+                        value={r.rating}
+                        onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
+                      />
+                      <button type="button" onClick={() => handleRemoveReview(i)} style={{ alignSelf: 'flex-end', padding: '4px 8px', fontSize: '12px' }}>Remove</button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={handleAddReview}>
+                    + Add Review
+                  </button>
+                </div>
+
+                {/* NEW SECTION: Exchange Contact Fields */}
+                <hr className="divider" />
+                <h3 className="editor-subtitle">Exchange Contact Details</h3>
+
+                <div className="input-block">
+                  <label htmlFor="contactEmail">Email Address</label>
+                  <input
+                    id="contactEmail"
+                    type="email"
+                    value={state.contact_email || ""}
+                    onChange={(e) => updateState({ contact_email: e.target.value })}
+                  />
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="phoneNumber">Phone Number</label>
+                  <input
+                    id="phoneNumber"
+                    type="tel" // Use type="tel" for phone numbers
+                    value={state.phone_number || ""}
+                    onChange={(e) => updateState({ phone_number: e.target.value })}
+                  />
+                </div>
+
+                <button
+                  onClick={handleSubmit}
+                  className="submit-button"
+                  style={{
+                    backgroundColor:
+                      state.pageTheme === "dark" ? "white" : "black",
+                    color: state.pageTheme !== "dark" ? "white" : "black",
+                  }}
+                >
+                  Save Business Card
+                </button>
               </div>
             </div>
-
-            {/* My Services Section (Editor) */}
-            <div className="input-block">
-              <label>My Services</label>
-              {(state.services || []).map((s, i) => (
-                <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
-                  <input
-                    type="text"
-                    placeholder={`Service Name ${i + 1}`}
-                    value={s.name}
-                    onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    placeholder={`Service Price/Detail ${i + 1}`}
-                    value={s.price}
-                    onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                  />
-                  <button type="button" onClick={() => handleRemoveService(i)} style={{ alignSelf: 'flex-end', padding: '4px 8px', fontSize: '12px' }}>Remove</button>
-                </div>
-              ))}
-              <button type="button" onClick={handleAddService}>
-                + Add Service
-              </button>
-            </div>
-
-            {/* Reviews Section (Editor) */}
-            <div className="input-block">
-              <label>Reviews</label>
-              {(state.reviews || []).map((r, i) => (
-                <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
-                  <input
-                    type="text"
-                    placeholder="Reviewer Name"
-                    value={r.name}
-                    onChange={(e) =>
-                      handleReviewChange(i, "name", e.target.value)
-                    }
-                  />
-                  <textarea
-                    placeholder="Review"
-                    rows={2}
-                    value={r.text}
-                    onChange={(e) =>
-                      handleReviewChange(i, "text", e.target.value)
-                    }
-                  />
-                  <input
-                    type="number"
-                    placeholder="Rating (1-5)"
-                    min="1"
-                    max="5"
-                    value={r.rating}
-                    onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
-                  />
-                  <button type="button" onClick={() => handleRemoveReview(i)} style={{ alignSelf: 'flex-end', padding: '4px 8px', fontSize: '12px' }}>Remove</button>
-                </div>
-              ))}
-              <button type="button" onClick={handleAddReview}>
-                + Add Review
-              </button>
-            </div>
-
-            {/* NEW SECTION: Exchange Contact Fields */}
-            <hr className="divider" />
-            <h3 className="editor-subtitle">Exchange Contact Details</h3>
-
-            <div className="input-block">
-              <label htmlFor="contactEmail">Email Address</label>
-              <input
-                id="contactEmail"
-                type="email"
-                value={state.contact_email || ""}
-                onChange={(e) => updateState({ contact_email: e.target.value })}
+            {/* Render ShareProfile Modal */}
+            {showShareModal && ( // Only render if showShareModal is true
+              <ShareProfile
+                isOpen={showShareModal}
+                onClose={handleCloseShareModal}
+                profileUrl={currentUserProfileUrl} // Pass constructed profile URL
+                qrCodeUrl={businessCard?.qrCodeUrl || ''} // Pass QR code URL from businessCard
+                contactDetails={{
+                  full_name: state.full_name,
+                  job_title: state.job_title,
+                  business_card_name: state.businessName,
+                  bio: state.bio,
+                  contact_email: state.contact_email,
+                  phone_number: state.phone_number
+                }}
+                username={userUsername} // Pass username to the modal
               />
-            </div>
-
-            <div className="input-block">
-              <label htmlFor="phoneNumber">Phone Number</label>
-              <input
-                id="phoneNumber"
-                type="tel" // Use type="tel" for phone numbers
-                value={state.phone_number || ""}
-                onChange={(e) => updateState({ phone_number: e.target.value })}
-              />
-            </div>
-
-            <button
-              onClick={handleSubmit}
-              className="submit-button"
-              style={{
-                backgroundColor:
-                  state.pageTheme === "dark" ? "white" : "black",
-                color: state.pageTheme !== "dark" ? "white" : "black",
-              }}
-            >
-              Save Business Card
-            </button>
-          </div>
-        </div>
+            )}
+          </>
+        )} {/* End conditional rendering based on authUser */}
       </main>
-      {/* Render ShareProfile Modal */}
-      {showShareModal && ( // Only render if showShareModal is true
-        <ShareProfile
-          isOpen={showShareModal}
-          onClose={handleCloseShareModal}
-          profileUrl={currentUserProfileUrl} // Pass constructed profile URL
-          qrCodeUrl={businessCard?.qrCodeUrl || ''} // Pass QR code URL from businessCard
-          contactDetails={{
-            full_name: state.full_name,
-            job_title: state.job_title,
-            business_card_name: state.businessName,
-            bio: state.bio,
-            contact_email: state.contact_email,
-            phone_number: state.phone_number
-          }}
-          username={userUsername} // Pass username to the modal
-        />
-      )}
     </div>
   );
 }
