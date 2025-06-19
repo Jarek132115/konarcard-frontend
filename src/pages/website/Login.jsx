@@ -10,7 +10,7 @@ export default function Login() {
     const location = useLocation();
     const from = location.state?.from || '/myprofile'; // Default to /myprofile if no previous state
     // CORRECTED: Get 'login' function from AuthContext
-    const { login } = useContext(AuthContext);
+    const { login } = useContext(AuthContext); // <<< THIS LINE IS KEY
 
     const [data, setData] = useState({ email: '', password: '' });
     const [code, setCode] = useState('');
@@ -33,7 +33,7 @@ export default function Login() {
     const loginUser = async (e) => {
         e.preventDefault();
         try {
-            // axios.defaults.baseURL is set in App.jsx, so just use '/login'
+            // axios.defaults.baseURL is set in App.jsx, so just use '/login' relative path
             const res = await axios.post('/login', data);
 
             if (res.data.error) {
@@ -47,11 +47,11 @@ export default function Login() {
             } else {
                 // CORRECTED: Call the login function from AuthContext with token and user data
                 toast.success('Login successful!');
-                login(res.data.token, res.data.user); // Pass token and user data to context
+                login(res.data.token, res.data.user); // <<< THIS LINE IS KEY
                 navigate(from);
             }
         } catch (err) {
-            console.error('Login failed:', err.response?.data || err); // More detailed error logging
+            console.error('Login failed:', err.response?.data || err);
             toast.error(err.response?.data?.error || 'Login failed');
         }
     };
@@ -59,9 +59,8 @@ export default function Login() {
     const verifyCode = async (e) => {
         e.preventDefault();
         try {
-            // Use full VITE_API_URL here as this call might not automatically pick up axios.defaults.baseURL
-            // based on how axios is configured with api.js which is now fetch based.
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/verify-email`, {
+            // CORRECTED: Use full VITE_API_URL here for verification/resend/forgot password
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/verify-email`, { // <<< THIS LINE IS KEY
                 email: data.email,
                 code,
             });
@@ -76,7 +75,7 @@ export default function Login() {
                     toast.error(loginRes.data.error);
                 } else {
                     // CORRECTED: Call the login function from AuthContext after successful verification and re-login
-                    login(loginRes.data.token, loginRes.data.user);
+                    login(loginRes.data.token, loginRes.data.user); // <<< THIS LINE IS KEY
                     navigate(from);
                 }
             }
@@ -88,8 +87,8 @@ export default function Login() {
 
     const resendCode = async () => {
         try {
-            // Use full VITE_API_URL here
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/resend-code`, { email: data.email });
+            // CORRECTED: Use full VITE_API_URL here
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/resend-code`, { email: data.email }); // <<< THIS LINE IS KEY
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {
@@ -104,8 +103,8 @@ export default function Login() {
 
     const sendResetLink = async () => {
         try {
-            // Use full VITE_API_URL here
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/forgot-password`, { email: emailForReset });
+            // CORRECTED: Use full VITE_API_URL here
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/forgot-password`, { email: emailForReset }); // <<< THIS LINE IS KEY
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {
