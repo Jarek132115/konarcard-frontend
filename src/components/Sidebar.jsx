@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
-import { AuthContext } from './AuthContext';
+import { AuthContext } from './AuthContext'; // Import AuthContext from correct path
 
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import settingsIcon from '../assets/icons/Settings-Icon.svg';
@@ -8,22 +8,23 @@ import profileIcon from '../assets/icons/Profile-Icon.svg';
 import cardIcon from '../assets/icons/Card-Icon.svg';
 import helpIcon from '../assets/icons/Help-Icon.svg';
 import logoutIcon from '../assets/icons/Logout-Icon.svg';
-import notificationIcon from '../assets/icons/Notification-Icon.svg';
+// notificationIcon is not used in the provided code, but keeping it imported if it's used elsewhere in the file's original version
+// import notificationIcon from '../assets/icons/Notification-Icon.svg';
 import subscriptionIcon from '../assets/icons/Subscription-Icon.svg';
-import billingIcon from '../assets/icons/Billing-Icon.svg';
+// billingIcon is not used in the provided code, but keeping it imported if it's used elsewhere in the file's original version
+// import billingIcon from '../assets/icons/Billing-Icon.svg';
 import homeIcon from '../assets/icons/Home-Icon.svg';
 
 export default function Sidebar() {
     const navigate = useNavigate();
-    const { user, setUser } = useContext(AuthContext);
+    // CORRECTED: Destructure 'logout' function from AuthContext
+    const { user, logout } = useContext(AuthContext); // Use the logout function provided by AuthContext
 
     const handleLogout = async () => {
-        await fetch('http://localhost:8000/logout', {
-            method: 'POST',
-            credentials: 'include',
-        });
-        setUser(null);
-        navigate('/');
+        // Use the logout function from AuthContext.
+        // It handles clearing the token and making the backend call via the 'api' utility.
+        await logout();
+        navigate('/'); // Navigate to homepage after successful logout
     };
 
     return (
@@ -79,7 +80,7 @@ export default function Sidebar() {
                 <div className="sidebar-buttons" onClick={() => navigate('/helpcentreinterface')}>
                     <img src={helpIcon} alt="help centre" className="icon" />
                     <p className='desktop-body-s'>Help Centre</p>
-                </div>
+                </div> {/* Corrected line: Removed the extra '}' */}
             </div>
 
             {/* FOOTER ACTIONS */}

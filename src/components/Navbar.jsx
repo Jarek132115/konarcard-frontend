@@ -1,23 +1,22 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { AuthContext } from './AuthContext';
+import { AuthContext } from './AuthContext'; // Import AuthContext from correct path
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import ArrowDown from '../assets/icons/Arrow-Down-Icon.svg';
 
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, setUser, loading } = useContext(AuthContext);
+  // CORRECTED: Destructure 'logout' function from AuthContext
+  const { user, loading, logout } = useContext(AuthContext); // Use the logout function provided by AuthContext
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = async () => {
-    await fetch('http://localhost:8000/logout', {
-      method: 'POST',
-      credentials: 'include',
-    });
-    setUser(null);
-    navigate('/');
+    // Use the logout function from AuthContext.
+    // It handles clearing the token and making the backend call via the 'api' utility.
+    await logout();
+    navigate('/'); // Navigate to homepage after successful logout
   };
 
   return (
