@@ -1,59 +1,68 @@
 import { createContext, useEffect, useState } from 'react';
-import { api } from '../services/api'; // Import the api utility we just modified
+import { api } from '../services/api'; // Import the api utility
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true); // Added a loading state for user fetch
+    const [loading, setLoading] = useState(true);
 
-    // Function to fetch user profile, now using the centralized api utility
     const fetchUser = async () => {
-        setLoading(true); // Start loading
+        setLoading(true);
+        const storedToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        console.log('AuthContext fetchUser: Stored Token Status:', storedToken ? 'Token exists in localStorage' : 'No token found in localStorage'); // ADDED LOG
+
+        // If no token is found, we can immediately set loading to false and exit, no API call needed.
+        if (!storedToken) {
+            setUser(null);
+            setLoading(false);
+            return;
+        }
+
         try {
             // The api utility now automatically adds the Authorization header from localStorage
             const response = await api('/profile', { method: 'GET' });
-            const fetchedUser = response.data; // api utility returns { data, status, ok }
+            const fetchedUser = response.data;
 
             if (fetchedUser && fetchedUser._id) {
                 setUser(fetchedUser);
+                console.log('AuthContext fetchUser: User data fetched successfully.'); // ADDED LOG
             } else {
-                // If profile endpoint returns null or no _id, it means token is invalid or user not found
+                // If profile endpoint returns null or no _id, it means token might be invalid or user not found on backend.
+                // Clear the token and user state.
                 setUser(null);
                 if (typeof window !== 'undefined') {
-                    localStorage.removeItem('token'); // Clear potentially bad token
+                    localStorage.removeItem('token');
+                    console.log('AuthContext fetchUser: Cleared invalid token from localStorage.'); // ADDED LOG
                 }
             }
         } catch (err) {
-            console.error("AuthContext fetchUser failed:", err);
+            console.error("AuthContext fetchUser failed during API call:", err); // More specific error message
             setUser(null);
             if (typeof window !== 'undefined') {
                 localStorage.removeItem('token'); // Clear token on any fetch error
+                console.log('AuthContext fetchUser: Cleared token due to API error.'); // ADDED LOG
             }
         } finally {
-            setLoading(false); // End loading regardless of success or failure
+            setLoading(false);
         }
     };
 
-    // New login function to be called by your Login component
-    // It takes the JWT token and user data received from the backend after successful login
     const login = (token, userData) => {
         if (typeof window !== 'undefined') {
             localStorage.setItem('token', token); // Store token in localStorage
+            console.log('AuthContext login: Token saved to localStorage.'); // ADDED LOG
         }
         setUser(userData); // Set user state immediately based on login response
-        // No need to call fetchUser here immediately unless userData is incomplete
-        // fetchUser will run on initial load and window focus anyway.
+        // fetchUser will run on initial load and window focus anyway to validate this token.
     };
 
-    // New logout function to be called by your Logout button/component
     const logout = async () => {
         if (typeof window !== 'undefined') {
             localStorage.removeItem('token'); // Remove token from localStorage
+            console.log('AuthContext logout: Token removed from localStorage.'); // ADDED LOG
         }
         setUser(null); // Clear user state
-        // Optionally, make an API call to the backend for explicit logout if needed
-        // (For stateless JWTs, clearing client-side token is often enough, but backend might log/invalidate)
         try {
             await api('/logout', { method: 'POST' }); // Call backend logout endpoint (optional for stateless JWT)
         } catch (err) {
@@ -62,29 +71,31 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        // On initial component mount, check localStorage for a token
-        if (typeof window !== 'undefined') {
-            const storedToken = localStorage.getItem('token');
-            if (storedToken) {
-                fetchUser(); // If token exists, try to fetch user data
-            } else {
-                setLoading(false); // No token found, so not loading user, set loading to false
-            }
+        // On initial component mount, always try to fetch user based on potential stored token
+        fetchUser();
 
-            // Re-fetch user profile when the window gains focus (e.g., tab switch)
-            window.addEventListener('focus', fetchUser);
-            return () => window.removeEventListener('focus', fetchUser); // Cleanup
-        }
+        // Re-fetch user profile when the window gains focus (e.g., tab switch, browser tab reactivated)
+        const handleFocus = () => {
+            const storedToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+            if (storedToken) { // Only attempt refetch if a token might exist
+                fetchUser();
+            } else {
+                // If no token exists on focus, ensure user state is null and loading is false
+                setUser(null);
+                setLoading(false);
+            }
+        };
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus); // Cleanup listener
     }, []); // Empty dependency array: runs once on mount
 
-    // The value provided to components using this context
     const contextValue = {
         user,
-        setUser, // Allows direct setting of user if needed
-        fetchUser, // Allows manual re-fetching of user
-        login,     // New: function to handle login after backend response
-        logout,    // New: function to handle logout
-        loading    // New: loading state for user data
+        setUser,
+        fetchUser,
+        login,
+        logout,
+        loading
     };
 
     return (
