@@ -31,7 +31,6 @@ export default function MyProfile() {
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
 
-  // Destructure the 'refetch' function from useFetchBusinessCard
   const { data: businessCard, refetch: refetchBusinessCard } = useFetchBusinessCard(userId);
 
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
@@ -39,6 +38,12 @@ export default function MyProfile() {
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
 
+  // NEW: Separate useState for actual File objects, managed locally within this component
+  const [coverPhotoFile, setCoverPhotoFile] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [workImageFiles, setWorkImageFiles] = useState([]); // Array of File objects for new work images
+
+  // Existing state for tracking removal flags
   const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
   const [avatarRemoved, setAvatarRemoved] = useState(false);
 
@@ -62,8 +67,13 @@ export default function MyProfile() {
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
   // Update local state (Zustand store) when businessCard data is fetched or updated by react-query
+  // And reset the local File states upon new data load from backend
   useEffect(() => {
     if (businessCard) {
+      // Clear any previous blob URLs as we are loading fresh data (actual S3 URLs)
+      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+      setActiveBlobUrls([]);
+
       updateState({
         businessName: businessCard.business_card_name || "",
         pageTheme: businessCard.page_theme || "light",
@@ -73,20 +83,26 @@ export default function MyProfile() {
         job_title: businessCard.job_title || "",
         full_name: businessCard.full_name || "",
         bio: businessCard.bio || "",
+        // avatar and coverPhoto in Zustand now only hold the display URL (S3 URL or blob URL)
         avatar: businessCard.avatar || null,
         coverPhoto: businessCard.cover_photo || null,
+        // workImages in Zustand will be an array of { preview: S3_URL, file: null } after fetch
         workImages: (businessCard.works || []).map((url) => ({
-          file: null, // This is an existing S3 URL, not a new file for upload
-          preview: url, // Use the S3 URL for display
+          file: null, // Always null for existing S3 URLs
+          preview: url,
         })),
         services: businessCard.services || [], // Assuming backend returns parsed array
         reviews: businessCard.reviews || [],   // Assuming backend returns parsed array
         contact_email: businessCard.contact_email || "",
         phone_number: businessCard.phone_number || "",
       });
+      // Reset the local File states and removed flags as we're loading from backend (no new files selected yet)
+      setCoverPhotoFile(null);
+      setAvatarFile(null);
+      setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setAvatarRemoved(false);
-      console.log('MyProfile useEffect: Zustand store updated from fetched businessCard:', businessCard);
+      console.log('MyProfile useEffect: Zustand store updated from fetched businessCard (after load/save):', businessCard);
     }
   }, [businessCard, updateState]);
 
@@ -97,7 +113,7 @@ export default function MyProfile() {
     };
   }, [activeBlobUrls]);
 
-  // Helper to create blob URL and manage it
+  // Helper to create blob URL and manage it in activeBlobUrls state for cleanup
   const createAndTrackBlobUrl = (file) => {
     const blobUrl = URL.createObjectURL(file);
     setActiveBlobUrls(prev => [...prev, blobUrl]);
@@ -109,11 +125,11 @@ export default function MyProfile() {
     console.log('handleImageUpload: Selected file:', file);
     if (file && file.type.startsWith("image/")) {
       const blobUrl = createAndTrackBlobUrl(file);
-      updateState({ coverPhoto: blobUrl, coverPhotoFile: file });
+      updateState({ coverPhoto: blobUrl }); // Update Zustand for preview
+      setCoverPhotoFile(file);             // Store the actual File object in component's local state
       setCoverPhotoRemoved(false);
     }
-    // Clear input value to allow re-uploading the same file
-    e.target.value = null;
+    e.target.value = null; // Clear input value to allow re-uploading the same file
   };
 
   const handleAvatarUpload = (e) => {
@@ -121,31 +137,31 @@ export default function MyProfile() {
     console.log('handleAvatarUpload: Selected file:', file);
     if (file && file.type.startsWith("image/")) {
       const blobUrl = createAndTrackBlobUrl(file);
-      updateState({ avatar: blobUrl, avatarFile: file });
+      updateState({ avatar: blobUrl }); // Update Zustand for preview
+      setAvatarFile(file);               // Store the actual File object in component's local state
       setAvatarRemoved(false);
     }
-    // Clear input value
     e.target.value = null;
   };
 
   const handleRemoveCoverPhoto = () => {
-    // If the current coverPhoto is a blob URL, revoke it
     if (state.coverPhoto && state.coverPhoto.startsWith('blob:')) {
       URL.revokeObjectURL(state.coverPhoto);
       setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
     }
-    updateState({ coverPhoto: null, coverPhotoFile: null });
-    setCoverPhotoRemoved(true);
+    updateState({ coverPhoto: null }); // Clear preview in Zustand
+    setCoverPhotoFile(null);          // Clear local File object
+    setCoverPhotoRemoved(true);       // Set flag for backend
   };
 
   const handleRemoveAvatar = () => {
-    // If the current avatar is a blob URL, revoke it
     if (state.avatar && state.avatar.startsWith('blob:')) {
       URL.revokeObjectURL(state.avatar);
       setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
     }
-    updateState({ avatar: null, avatarFile: null });
-    setAvatarRemoved(true);
+    updateState({ avatar: null }); // Clear preview in Zustand
+    setAvatarFile(null);          // Clear local File object
+    setAvatarRemoved(true);       // Set flag for backend
   };
 
   const handleAddWorkImage = (e) => {
@@ -153,27 +169,32 @@ export default function MyProfile() {
     console.log('handleAddWorkImage: Selected files:', files);
     if (files.length === 0) return;
 
-    const newWorkImages = files.map(file => ({
-      file,
-      preview: createAndTrackBlobUrl(file), // Track blob URLs for work images too
+    const newPreviewImages = files.map(file => ({
+      file: file, // Keep reference to the actual file for FormData
+      preview: createAndTrackBlobUrl(file), // Create and track blob URL for preview
     }));
 
     updateState({
-      workImages: [...(state.workImages || []), ...newWorkImages],
+      workImages: [...(state.workImages || []), ...newPreviewImages],
     });
-    e.target.value = null;
+    setWorkImageFiles(prevFiles => [...prevFiles, ...files]); // Store actual File objects in component's local state
+    e.target.value = null; // Clear input to allow selecting same files again
   };
 
   const handleRemoveWorkImage = (indexToRemove) => {
-    // If the image being removed is a blob URL, revoke it
-    if (state.workImages?.[indexToRemove]?.preview?.startsWith('blob:')) {
-      const urlToRemove = state.workImages[indexToRemove].preview;
-      URL.revokeObjectURL(urlToRemove);
-      setActiveBlobUrls(prev => prev.filter(url => url !== urlToRemove));
+    const removedItem = state.workImages?.[indexToRemove];
+    if (removedItem?.preview?.startsWith('blob:')) {
+      URL.revokeObjectURL(removedItem.preview);
+      setActiveBlobUrls(prev => prev.filter(url => url !== removedItem.preview));
     }
+
+    // Remove from Zustand's workImages (previews and file references)
     updateState({
       workImages: (state.workImages || []).filter((_, index) => index !== indexToRemove),
     });
+
+    // Remove the corresponding file object from local workImageFiles state
+    setWorkImageFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
   const handleAddService = () => {
@@ -274,11 +295,7 @@ export default function MyProfile() {
       return;
     }
 
-    // ADDED LOGS FOR DEBUGGING FILE STATE BEFORE FormData
-    console.log('handleSubmit: state.coverPhotoFile BEFORE FormData:', state.coverPhotoFile);
-    console.log('handleSubmit: state.avatarFile BEFORE FormData:', state.avatarFile);
-    console.log('handleSubmit: state.workImages BEFORE FormData:', state.workImages);
-
+    // Pass the separate File objects (from local useState) to buildBusinessCardFormData
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
@@ -289,23 +306,28 @@ export default function MyProfile() {
       full_name: state.full_name,
       bio: state.bio,
       user: userId,
-      cover_photo: state.coverPhotoFile,
-      avatar: state.avatarFile,
+      cover_photo: coverPhotoFile, // Use local state variable
+      avatar: avatarFile,         // Use local state variable
       cover_photo_removed: coverPhotoRemoved,
       avatar_removed: avatarRemoved,
-      works: state.workImages,
+      works: state.workImages, // This now contains {file: File, preview: blobUrl} for NEW, and {file: null, preview: S3_URL} for existing
       services: state.services,
       reviews: state.reviews,
       contact_email: state.contact_email,
       phone_number: state.phone_number,
     });
 
+    // ADDED LOGS FOR DEBUGGING FILE STATE BEFORE FormData (UPDATED to new state names)
+    console.log('handleSubmit: coverPhotoFile BEFORE FormData:', coverPhotoFile);
+    console.log('handleSubmit: avatarFile BEFORE FormData:', avatarFile);
+    console.log('handleSubmit: workImageFiles (local state) BEFORE FormData:', workImageFiles); // Log the new local state
+
     try {
       const response = await createBusinessCard.mutateAsync(formData);
       toast.success("Business card saved successfully!");
 
       // OPTIONAL: Direct update of Zustand store with response.data for immediate UI feedback.
-      // This duplicates the useEffect logic but ensures immediate consistency without waiting for refetch.
+      // This is now the definitive update to make data persist visually on frontend after save.
       if (response.data) {
         updateState({
           businessName: response.data.business_card_name || "",
@@ -319,7 +341,7 @@ export default function MyProfile() {
           avatar: response.data.avatar || null,
           coverPhoto: response.data.cover_photo || null,
           workImages: (response.data.works || []).map((url) => ({
-            file: null, // It's now an S3 URL, not a local file
+            file: null, // It's now an S3 URL, no longer a local File
             preview: url,
           })),
           services: response.data.services || [],
@@ -330,14 +352,18 @@ export default function MyProfile() {
         console.log('MyProfile handleSubmit: Zustand store updated directly after save with response data:', response.data);
       }
 
-      queryClient.invalidateQueries(['business-card', userId]); // Invalidate cache for react-query to trigger refetch
+      queryClient.invalidateQueries(['business-card', userId]); // Invalidate cache for react-query to trigger refetch in background
       refetchAuthUser(); // Refetch auth user data in case username changed etc.
       // refetchBusinessCard(); // OPTIONAL: This explicit refetch might be redundant if invalidateQueries triggers it reliably
 
+      // Clear the local File states and reset removed flags after successful save, as actual S3 URLs are now stored in Zustand
+      setCoverPhotoFile(null);
+      setAvatarFile(null);
+      setWorkImageFiles([]); // Clear the array of File objects
       setCoverPhotoRemoved(false);
       setAvatarRemoved(false);
 
-      // Clean up all active blob URLs after a successful save, as actual S3 URLs are now used
+      // Clean up all active blob URLs after a successful save, as actual S3 URLs are now used for display
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]); // Clear the tracking array
 
