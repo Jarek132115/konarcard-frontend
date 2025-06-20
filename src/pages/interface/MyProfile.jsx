@@ -31,8 +31,8 @@ export default function MyProfile() {
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
 
-  // IMPORTANT: Destructure the 'refetch' function from useFetchBusinessCard
-  const { data: businessCard, refetch: refetchBusinessCard } = useFetchBusinessCard(userId); // ADD refetch HERE
+  // Destructure the 'refetch' function from useFetchBusinessCard
+  const { data: businessCard, refetch: refetchBusinessCard } = useFetchBusinessCard(userId);
 
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeInput] = useState('');
@@ -41,6 +41,9 @@ export default function MyProfile() {
 
   const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
   const [avatarRemoved, setAvatarRemoved] = useState(false);
+
+  // Keep track of blob URLs created for previews so they can be revoked later
+  const [activeBlobUrls, setActiveBlobUrls] = useState([]);
 
   useEffect(() => {
     let timer;
@@ -58,6 +61,7 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
+  // Update local state (Zustand store) when businessCard data is fetched or updated by react-query
   useEffect(() => {
     if (businessCard) {
       updateState({
@@ -72,71 +76,86 @@ export default function MyProfile() {
         avatar: businessCard.avatar || null,
         coverPhoto: businessCard.cover_photo || null,
         workImages: (businessCard.works || []).map((url) => ({
-          file: null,
-          preview: url,
+          file: null, // This is an existing S3 URL, not a new file for upload
+          preview: url, // Use the S3 URL for display
         })),
-        services: (businessCard.services || []).map(s => {
-          if (typeof s === 'string') {
-            const parts = s.split('Starting from');
-            return {
-              name: parts[0] ? parts[0].trim() : s,
-              price: parts[1] ? `Starting from ${parts[1].trim()}` : '',
-            };
-          }
-          return { name: s.name || '', price: s.price || '' };
-        }),
-        reviews: (businessCard.reviews || []).map(r => {
-          const parsedRating = parseInt(r.rating);
-          const safeRating = isNaN(parsedRating) ? 5 : Math.min(5, Math.max(0, parsedRating));
-          return {
-            name: r.name || '',
-            text: r.text || '',
-            rating: safeRating,
-          };
-        }),
+        services: businessCard.services || [], // Assuming backend returns parsed array
+        reviews: businessCard.reviews || [],   // Assuming backend returns parsed array
         contact_email: businessCard.contact_email || "",
         phone_number: businessCard.phone_number || "",
       });
       setCoverPhotoRemoved(false);
       setAvatarRemoved(false);
+      console.log('MyProfile useEffect: Zustand store updated from fetched businessCard:', businessCard);
     }
   }, [businessCard, updateState]);
 
+  // Cleanup for blob URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [activeBlobUrls]);
+
+  // Helper to create blob URL and manage it
+  const createAndTrackBlobUrl = (file) => {
+    const blobUrl = URL.createObjectURL(file);
+    setActiveBlobUrls(prev => [...prev, blobUrl]);
+    return blobUrl;
+  };
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
+    console.log('handleImageUpload: Selected file:', file);
     if (file && file.type.startsWith("image/")) {
-      const blobUrl = URL.createObjectURL(file);
+      const blobUrl = createAndTrackBlobUrl(file);
       updateState({ coverPhoto: blobUrl, coverPhotoFile: file });
       setCoverPhotoRemoved(false);
     }
+    // Clear input value to allow re-uploading the same file
+    e.target.value = null;
   };
 
   const handleAvatarUpload = (e) => {
     const file = e.target.files?.[0];
+    console.log('handleAvatarUpload: Selected file:', file);
     if (file && file.type.startsWith("image/")) {
-      const blobUrl = URL.createObjectURL(file);
+      const blobUrl = createAndTrackBlobUrl(file);
       updateState({ avatar: blobUrl, avatarFile: file });
       setAvatarRemoved(false);
     }
+    // Clear input value
+    e.target.value = null;
   };
 
   const handleRemoveCoverPhoto = () => {
+    // If the current coverPhoto is a blob URL, revoke it
+    if (state.coverPhoto && state.coverPhoto.startsWith('blob:')) {
+      URL.revokeObjectURL(state.coverPhoto);
+      setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
+    }
     updateState({ coverPhoto: null, coverPhotoFile: null });
     setCoverPhotoRemoved(true);
   };
 
   const handleRemoveAvatar = () => {
+    // If the current avatar is a blob URL, revoke it
+    if (state.avatar && state.avatar.startsWith('blob:')) {
+      URL.revokeObjectURL(state.avatar);
+      setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
+    }
     updateState({ avatar: null, avatarFile: null });
     setAvatarRemoved(true);
   };
 
   const handleAddWorkImage = (e) => {
     const files = Array.from(e.target.files);
+    console.log('handleAddWorkImage: Selected files:', files);
     if (files.length === 0) return;
 
     const newWorkImages = files.map(file => ({
       file,
-      preview: URL.createObjectURL(file),
+      preview: createAndTrackBlobUrl(file), // Track blob URLs for work images too
     }));
 
     updateState({
@@ -146,6 +165,12 @@ export default function MyProfile() {
   };
 
   const handleRemoveWorkImage = (indexToRemove) => {
+    // If the image being removed is a blob URL, revoke it
+    if (state.workImages?.[indexToRemove]?.preview?.startsWith('blob:')) {
+      const urlToRemove = state.workImages[indexToRemove].preview;
+      URL.revokeObjectURL(urlToRemove);
+      setActiveBlobUrls(prev => prev.filter(url => url !== urlToRemove));
+    }
     updateState({
       workImages: (state.workImages || []).filter((_, index) => index !== indexToRemove),
     });
@@ -249,6 +274,11 @@ export default function MyProfile() {
       return;
     }
 
+    // ADDED LOGS FOR DEBUGGING FILE STATE BEFORE FormData
+    console.log('handleSubmit: state.coverPhotoFile BEFORE FormData:', state.coverPhotoFile);
+    console.log('handleSubmit: state.avatarFile BEFORE FormData:', state.avatarFile);
+    console.log('handleSubmit: state.workImages BEFORE FormData:', state.workImages);
+
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
@@ -271,13 +301,46 @@ export default function MyProfile() {
     });
 
     try {
-      await createBusinessCard.mutateAsync(formData);
+      const response = await createBusinessCard.mutateAsync(formData);
       toast.success("Business card saved successfully!");
-      queryClient.invalidateQueries(['business-card', userId]);
-      refetchAuthUser();
-      refetchBusinessCard(); // <--- This line was added for refetching business card data
+
+      // OPTIONAL: Direct update of Zustand store with response.data for immediate UI feedback.
+      // This duplicates the useEffect logic but ensures immediate consistency without waiting for refetch.
+      if (response.data) {
+        updateState({
+          businessName: response.data.business_card_name || "",
+          pageTheme: response.data.page_theme || "light",
+          font: response.data.style || "Inter",
+          mainHeading: response.data.main_heading || "",
+          subHeading: response.data.sub_heading || "",
+          job_title: response.data.job_title || "",
+          full_name: response.data.full_name || "",
+          bio: response.data.bio || "",
+          avatar: response.data.avatar || null,
+          coverPhoto: response.data.cover_photo || null,
+          workImages: (response.data.works || []).map((url) => ({
+            file: null, // It's now an S3 URL, not a local file
+            preview: url,
+          })),
+          services: response.data.services || [],
+          reviews: response.data.reviews || [],
+          contact_email: response.data.contact_email || "",
+          phone_number: response.data.phone_number || "",
+        });
+        console.log('MyProfile handleSubmit: Zustand store updated directly after save with response data:', response.data);
+      }
+
+      queryClient.invalidateQueries(['business-card', userId]); // Invalidate cache for react-query to trigger refetch
+      refetchAuthUser(); // Refetch auth user data in case username changed etc.
+      // refetchBusinessCard(); // OPTIONAL: This explicit refetch might be redundant if invalidateQueries triggers it reliably
+
       setCoverPhotoRemoved(false);
       setAvatarRemoved(false);
+
+      // Clean up all active blob URLs after a successful save, as actual S3 URLs are now used
+      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+      setActiveBlobUrls([]); // Clear the tracking array
+
     } catch (error) {
       toast.error("Something went wrong while saving. Check console for details.");
       console.error("Error creating/updating business card:", error.response?.data || error);
