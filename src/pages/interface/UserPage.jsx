@@ -11,37 +11,45 @@ const UserPage = () => {
     useEffect(() => {
         const fetchCard = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/business-card/by_username/${username}`);
+                // CORRECTED: Use import.meta.env.VITE_API_URL for the live backend URL
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/business-card/by_username/${username}`);
                 setBusinessCard(response.data);
             } catch (err) {
-                console.error("Failed to load card by username:", err);
-                setError("Could not load user profile.");
+                console.error("Failed to load card by username:", err.response?.data || err);
+                setError(err.response?.data?.message || "Could not load user profile. It might not exist or there's a server error.");
+                setBusinessCard(null); // Ensure businessCard is null on error
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchCard();
-    }, [username]);
+        if (username) { // Only fetch if username is available
+            fetchCard();
+        } else {
+            setLoading(false);
+            setError("No username provided in the URL.");
+        }
+    }, [username]); // Re-run effect if username changes
 
-    if (loading) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><p>Loading business card...</p></div>;
-    if (error) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><p className="error-message">{error}</p></div>;
-    if (!businessCard) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><p>No business card found.</p></div>;
+    // Loading, Error, and Not Found States
+    if (loading) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", fontSize: "1.2rem", color: "#666" }}><p>Loading business card...</p></div>;
+    if (error) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", padding: "20px", color: "red", border: "1px solid red", borderRadius: "8px", backgroundColor: "#ffe6e6" }}><p className="error-message">{error}</p></div>;
+    if (!businessCard) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", fontSize: "1.2rem", color: "#888" }}><p>No business card found for this user.</p></div>;
 
     // Determine theme styles dynamically based on fetched businessCard data
     const themeStyles = {
         backgroundColor: businessCard.page_theme === "dark" ? "#1F1F1F" : "#FFFFFF",
         color: businessCard.page_theme === "dark" ? "#FFFFFF" : "#000000",
-        fontFamily: businessCard.style || "Inter"
+        fontFamily: businessCard.style || "Inter" // Fallback to Inter if no style is set
     };
 
     const handleExchangeContact = () => {
         const { full_name, job_title, business_card_name, bio, contact_email, phone_number } = businessCard;
-        // NEW: Dynamically construct the landing page URL
+        // Dynamically construct the landing page URL for the vCard
         const landingPageUrl = `${window.location.origin}/u/${username}`;
 
-        // Split full_name into parts if available for N (Name) field
-        const nameParts = full_name ? full_name.split(' ') : ['', '', '', '', ''];
+        // Split full_name into parts if available for N (Name) field in vCard
+        const nameParts = full_name ? full_name.split(' ') : [];
         const firstName = nameParts[0] || '';
         const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
         const middleNames = nameParts.slice(1, -1).join(' ') || '';
@@ -57,7 +65,7 @@ const UserPage = () => {
         }
         if (job_title) {
             vCardContent += `TITLE:${job_title}\n`; // Job Title
-            vCardContent += `X-NICKNAME:${job_title}\n`; // Use Job Title as Nickname (X-NICKNAME is non-standard but often supported)
+            vCardContent += `X-NICKNAME:${job_title}\n`; // X-NICKNAME is non-standard but often supported by contact apps
         }
         if (phone_number) {
             vCardContent += `TEL;TYPE=CELL,VOICE:${phone_number}\n`; // Phone Number
@@ -65,27 +73,27 @@ const UserPage = () => {
         if (contact_email) {
             vCardContent += `EMAIL;TYPE=PREF,INTERNET:${contact_email}\n`; // Email
         }
-        // NEW: Use the dynamically constructed landing page URL
         if (landingPageUrl) {
             vCardContent += `URL:${landingPageUrl}\n`; // Website URL
         }
         if (bio) {
-            const escapedBio = bio.replace(/\n/g, '\\n');
+            const escapedBio = bio.replace(/\n/g, '\\n'); // Escape newlines for vCard NOTE field
             vCardContent += `NOTE:${escapedBio}\n`; // Biography/Notes
         }
         vCardContent += `END:VCARD\n`;
 
-        // Create a Blob and download it
+        // Create a Blob and trigger download
         const blob = new Blob([vCardContent], { type: 'text/vcard;charset=utf-8' });
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${(full_name || username || 'contact').replace(/\s/g, '_')}.vcf`; // Filename for download
+        // Generate a descriptive filename for the downloaded vCard
+        a.download = `${(full_name || username || 'contact').replace(/\s/g, '_')}.vcf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        URL.revokeObjectURL(url); // Clean up the object URL
     };
 
     return (

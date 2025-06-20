@@ -1,32 +1,32 @@
-import React, { useRef, useEffect, useState, useContext } from "react"; // Added useContext
+import React, { useRef, useEffect, useState, useContext } from "react";
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import ProfileCardImage from "../../assets/images/background-hero.png";
 import UserAvatar from "../../assets/images/People.png";
 import useBusinessCardStore from "../../store/businessCardStore";
-// REMOVED: useAuthUser import. We will get user from AuthContext directly.
-import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard"; // This hook will now receive userId directly
+// REMOVED: useAuthUser import. We use AuthContext directly.
+import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
 } from "../../hooks/useCreateBiz";
 import { useQueryClient } from '@tanstack/react-query';
-import axios from 'axios'; // Still used for verification forms
+import axios from 'axios'; // Still used for verification forms (not via 'api' utility)
 import { toast } from 'react-hot-toast';
 import ShareProfile from "../../components/ShareProfile";
-import { AuthContext } from "../../components/AuthContext"; // Import AuthContext
+import { AuthContext } from "../../components/AuthContext"; // Import AuthContext from current project path
 
 export default function MyProfile() {
   const { state, updateState } = useBusinessCardStore();
-  const fileInputRef = useRef(null);
-  const avatarInputRef = useRef(null);
-  const workImageInputRef = useRef(null);
+  const fileInputRef = useRef(null); // Ref for cover photo file input
+  const avatarInputRef = useRef(null); // Ref for avatar file input
+  const workImageInputRef = useRef(null); // Ref for work image file input
 
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
 
-  // CORRECTED: Get user, loading state, and logout function from AuthContext
-  const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser, logout } = useContext(AuthContext);
+  // Get user, loading state, and refetchAuthUser from AuthContext (CRUCIAL for JWT persistence)
+  const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
 
   // Derive user info directly from authUser state
   const userId = authUser?._id;
@@ -41,25 +41,31 @@ export default function MyProfile() {
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeInput] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
-
   const [showShareModal, setShowShareModal] = useState(false);
 
+  // State to track if an image was explicitly removed (to send to backend)
+  const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
+  const [avatarRemoved, setAvatarRemoved] = useState(false);
+
+  // Cooldown for resend verification code
   useEffect(() => {
+    let timer;
     if (resendCooldown > 0) {
-      const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
-      return () => clearTimeout(timer);
+      timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
     }
+    return () => clearTimeout(timer);
   }, [resendCooldown]);
 
+  // Show verification prompt if user is not verified
   useEffect(() => {
-    // Only show prompt if user is loaded (not loading), not verified, and has an email
     if (!authLoading && authUser && !isUserVerified && userEmail) {
       setShowVerificationPrompt(true);
     } else if (!authLoading && isUserVerified) {
       setShowVerificationPrompt(false);
     }
-  }, [authLoading, authUser, isUserVerified, userEmail]); // Added authLoading to dependencies
+  }, [authLoading, authUser, isUserVerified, userEmail]);
 
+  // Update local state when businessCard data is fetched
   useEffect(() => {
     if (businessCard) {
       updateState({
@@ -73,11 +79,14 @@ export default function MyProfile() {
         bio: businessCard.bio || "",
         avatar: businessCard.avatar || null,
         coverPhoto: businessCard.cover_photo || null,
+        // Map existing work image URLs for display
         workImages: (businessCard.works || []).map((url) => ({
-          file: null, // Existing works are URLs, not files for upload
-          preview: url, // This holds the actual URL for display
+          file: null, // No file for existing images
+          preview: url, // The actual URL for display
         })),
+        // Parse services data if it's stored as a simple array of strings initially
         services: (businessCard.services || []).map(s => {
+          // Handle cases where service might be stored as "Name Starting from Price" string
           if (typeof s === 'string') {
             const parts = s.split('Starting from');
             return {
@@ -85,8 +94,9 @@ export default function MyProfile() {
               price: parts[1] ? `Starting from ${parts[1].trim()}` : '',
             };
           }
-          return { name: s.name || '', price: s.price || '' };
+          return { name: s.name || '', price: s.price || '' }; // Already in object format
         }),
+        // Map existing reviews
         reviews: (businessCard.reviews || []).map(r => {
           const parsedRating = parseInt(r.rating);
           const safeRating = isNaN(parsedRating) ? 5 : Math.min(5, Math.max(0, parsedRating));
@@ -99,72 +109,100 @@ export default function MyProfile() {
         contact_email: businessCard.contact_email || "",
         phone_number: businessCard.phone_number || "",
       });
+      // Reset removed flags when new data is loaded
+      setCoverPhotoRemoved(false);
+      setAvatarRemoved(false);
     }
   }, [businessCard, updateState]);
 
+  // Handle Cover Photo Upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
       const blobUrl = URL.createObjectURL(file);
-      updateState({ coverPhoto: blobUrl, coverPhotoFile: file });
+      updateState({ coverPhoto: blobUrl, coverPhotoFile: file }); // Store both blob for preview and file for upload
+      setCoverPhotoRemoved(false); // If new photo uploaded, it's not removed
     }
   };
 
+  // Handle Avatar Upload
   const handleAvatarUpload = (e) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
       const blobUrl = URL.createObjectURL(file);
-      updateState({ avatar: blobUrl, avatarFile: file });
+      updateState({ avatar: blobUrl, avatarFile: file }); // Store both blob for preview and file for upload
+      setAvatarRemoved(false); // If new avatar uploaded, it's not removed
     }
   };
 
+  // Function to remove cover photo
+  const handleRemoveCoverPhoto = () => {
+    updateState({ coverPhoto: null, coverPhotoFile: null });
+    setCoverPhotoRemoved(true); // Set flag for backend
+  };
+
+  // Function to remove avatar
+  const handleRemoveAvatar = () => {
+    updateState({ avatar: null, avatarFile: null });
+    setAvatarRemoved(true); // Set flag for backend
+  };
+
+
+  // Handle adding new work images
   const handleAddWorkImage = (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
     const newWorkImages = files.map(file => ({
-      file,
-      preview: URL.createObjectURL(file),
+      file, // Store the actual file for FormData upload
+      preview: URL.createObjectURL(file), // Create object URL for immediate preview
     }));
 
     updateState({
       workImages: [...(state.workImages || []), ...newWorkImages],
     });
-    e.target.value = null; // Clear the input so same file can be selected again
+    e.target.value = null; // Clear the input so same file(s) can be selected again
   };
 
+  // Handle removing a work image from the list
   const handleRemoveWorkImage = (indexToRemove) => {
     updateState({
       workImages: (state.workImages || []).filter((_, index) => index !== indexToRemove),
     });
   };
 
+  // Add a new empty service row
   const handleAddService = () => {
     updateState({ services: [...(state.services || []), { name: "", price: "" }] });
   };
 
+  // Handle changes to a specific service field
   const handleServiceChange = (index, field, value) => {
     const updated = [...state.services];
     updated[index] = { ...updated[index], [field]: value };
     updateState({ services: updated });
   };
 
+  // Remove a service row
   const handleRemoveService = (indexToRemove) => {
     updateState({
       services: (state.services || []).filter((_, index) => index !== indexToRemove),
     });
   };
 
+  // Add a new empty review row
   const handleAddReview = () => {
     updateState({
       reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }],
     });
   };
 
+  // Handle changes to a specific review field
   const handleReviewChange = (index, field, value) => {
     const updated = [...state.reviews];
     if (field === 'rating') {
       const parsedRating = parseInt(value);
+      // Ensure rating stays between 0 and 5
       updated[index] = { ...updated[index], [field]: isNaN(parsedRating) ? 0 : Math.min(5, Math.max(0, parsedRating)) };
     } else {
       updated[index] = { ...updated[index], [field]: value };
@@ -172,19 +210,21 @@ export default function MyProfile() {
     updateState({ reviews: updated });
   };
 
+  // Remove a review row
   const handleRemoveReview = (indexToRemove) => {
     updateState({
       reviews: (state.reviews || []).filter((_, index) => index !== indexToRemove),
     });
   };
 
+  // Send verification code (axios used directly for non-authenticated calls)
   const sendVerificationCode = async () => {
     if (!userEmail) {
       toast.error("Email not found. Please log in again.");
       return;
     }
     try {
-      // Use axios and full VITE_API_URL for non-authenticated verification calls
+      // Use axios and full VITE_API_URL here as this is a public/non-authenticated endpoint
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/resend-code`, { email: userEmail });
       if (res.data.error) {
         toast.error(res.data.error);
@@ -198,6 +238,7 @@ export default function MyProfile() {
     }
   };
 
+  // Handle verification code submission (axios used directly for non-authenticated calls)
   const handleVerifyCode = async (e) => {
     e.preventDefault();
     if (!userEmail) {
@@ -205,7 +246,7 @@ export default function MyProfile() {
       return;
     }
     try {
-      // Use axios and full VITE_API_URL for non-authenticated verification calls
+      // Use axios and full VITE_API_URL here as this is a public/non-authenticated endpoint
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/verify-email`, {
         email: userEmail,
         code: verificationCodeInput,
@@ -225,24 +266,26 @@ export default function MyProfile() {
     }
   };
 
-  // CORRECTED: Handle Submit for saving business card
+  // Handle saving the business card
   const handleSubmit = async () => {
-    // Show a message while user data is still loading
+    // Show info message if user data is still loading
     if (authLoading) {
       toast.info("User data is still loading. Please wait a moment.");
       return;
     }
-    // Now that loading is done, check if user is truly not loaded
+    // Check if user is logged in before allowing save
     if (!userId) {
       toast.error("User not logged in or loaded. Please log in again to save changes.");
       return;
     }
 
+    // Prevent saving if email is not verified
     if (!isUserVerified) {
       toast.error("Please verify your email address to save changes.");
       return;
     }
 
+    // Prepare FormData for submission, including files and JSON data
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
@@ -253,27 +296,33 @@ export default function MyProfile() {
       full_name: state.full_name,
       bio: state.bio,
       user: userId, // Pass userId for backend lookup (important for findOneAndUpdate)
-      cover_photo: state.coverPhotoFile,
-      avatar: state.avatarFile,
-      // Ensure works passes files (new uploads) and preview URLs (existing ones)
-      works: state.workImages,
-      services: state.services,
-      reviews: state.reviews,
+      cover_photo: state.coverPhotoFile, // Pass the actual File object
+      avatar: state.avatarFile,         // Pass the actual File object
+      cover_photo_removed: coverPhotoRemoved, // Pass flag to backend
+      avatar_removed: avatarRemoved,         // Pass flag to backend
+      works: state.workImages, // Array of { file: File, preview: URL }
+      services: state.services, // Array of { name: string, price: string }
+      reviews: state.reviews,   // Array of { name: string, text: string, rating: number }
       contact_email: state.contact_email,
       phone_number: state.phone_number,
     });
 
     try {
-      await createBusinessCard.mutateAsync(formData); // Use the mutation hook
-      toast.success("Business card saved!");
-      queryClient.invalidateQueries(['business-card', userId]); // Invalidate to refetch fresh data
-      refetchAuthUser(); // Re-fetch auth user to get updated data if needed (e.g. username from DB)
+      await createBusinessCard.mutateAsync(formData); // Use the TanStack Query mutation hook
+      toast.success("Business card saved successfully!");
+      // Invalidate query cache to refetch fresh data after successful save
+      queryClient.invalidateQueries(['business-card', userId]);
+      refetchAuthUser(); // Re-fetch auth user to get updated data like username or profileUrl if needed
+      // Reset the removed flags after a successful save
+      setCoverPhotoRemoved(false);
+      setAvatarRemoved(false);
     } catch (error) {
       toast.error("Something went wrong while saving. Check console for details.");
       console.error("Error creating/updating business card:", error.response?.data || error);
     }
   };
 
+  // Dynamic theme styles for preview
   const themeStyles = {
     backgroundColor: state.pageTheme === "dark" ? "#1F1F1F" : "#FFFFFF",
     color: state.pageTheme === "dark" ? "#FFFFFF" : "#000000",
@@ -295,8 +344,7 @@ export default function MyProfile() {
     setShowShareModal(false);
   };
 
-  // CORRECTED: Construct profile URL using window.location.origin for robustness
-  // and ensure userUsername is available before creating URL
+  // Construct current user's public profile URL
   const currentUserProfileUrl = userUsername ? `${window.location.origin}/u/${userUsername}` : '';
 
   return (
@@ -309,13 +357,14 @@ export default function MyProfile() {
           onShareCard={handleShareCard}
         />
 
+        {/* Loading indicator for user authentication status */}
         {authLoading && (
           <div style={{ padding: '20px', textAlign: 'center', fontSize: '1.2rem', color: '#666' }}>
             Loading profile data...
           </div>
         )}
 
-        {/* Only show this block if loading is complete AND no authUser is found */}
+        {/* Message if user is not loaded/authenticated after loading is complete */}
         {!authLoading && !authUser && (
           <div style={{ padding: '20px', textAlign: 'center', color: 'red', border: '1px solid red', borderRadius: '8px', marginBottom: '30px', backgroundColor: '#ffe6e6' }}>
             <p style={{ marginBottom: '10px' }}>User not loaded. Please ensure you are logged in.</p>
@@ -323,9 +372,10 @@ export default function MyProfile() {
           </div>
         )}
 
-        {/* Only render content if user is loaded and exists */}
+        {/* Main content rendered only if user is loaded and exists */}
         {!authLoading && authUser && (
           <>
+            {/* Email verification prompt */}
             {showVerificationPrompt && (
               <div style={{
                 backgroundColor: '#fffbe6',
@@ -398,6 +448,15 @@ export default function MyProfile() {
                     alt="Cover"
                     className="mock-cover"
                   />
+                  {state.coverPhoto && (
+                    <button
+                      className="remove-image-button"
+                      onClick={handleRemoveCoverPhoto}
+                      aria-label="Remove cover photo"
+                    >
+                      &times;
+                    </button>
+                  )}
                   <h2 className="mock-title">{state.mainHeading}</h2>
                   <p className="mock-subtitle">{state.subHeading}</p>
                   <button
@@ -418,11 +477,20 @@ export default function MyProfile() {
                       </p>
                       <div className="mock-about">
                         {state.avatar && (
-                          <img
-                            src={state.avatar}
-                            alt="Avatar"
-                            className="mock-avatar"
-                          />
+                          <>
+                            <img
+                              src={state.avatar}
+                              alt="Avatar"
+                              className="mock-avatar"
+                            />
+                            <button
+                              className="remove-avatar-button"
+                              onClick={handleRemoveAvatar}
+                              aria-label="Remove avatar"
+                            >
+                              &times;
+                            </button>
+                          </>
                         )}
                         <div className="mock-about-text-group">
                           <div>
@@ -435,7 +503,6 @@ export default function MyProfile() {
                     </>
                   )}
 
-
                   {/* My Work Section (Preview) */}
                   {(state.workImages && state.workImages.length > 0) && (
                     <>
@@ -446,7 +513,7 @@ export default function MyProfile() {
                             key={i}
                             src={img.preview}
                             alt={`work-${i}`}
-                            className="mock-image-item" // Added class for consistency if needed
+                            className="mock-image-item"
                           />
                         ))}
                       </div>
@@ -557,6 +624,15 @@ export default function MyProfile() {
                       className="cover-preview"
                     />
                   </div>
+                  {state.coverPhoto && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveCoverPhoto}
+                      className="remove-button-below-image"
+                    >
+                      Remove Photo
+                    </button>
+                  )}
                 </div>
 
                 <div className="input-block">
@@ -600,21 +676,29 @@ export default function MyProfile() {
                     style={{ display: "none" }}
                   />
                   <div
-                    className="cover-preview-container"
+                    className="cover-preview-container" // Reusing this class for general image preview containers
                     onClick={() => avatarInputRef.current?.click()}
+                    style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', cursor: 'pointer' }}
                   >
                     <img
                       src={state.avatar || UserAvatar}
                       alt="Avatar preview"
                       style={{
-                        width: 80,
-                        height: 80,
-                        borderRadius: "50%",
-                        marginTop: 8,
-                        objectFit: "cover",
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
                       }}
                     />
                   </div>
+                  {state.avatar && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveAvatar}
+                      className="remove-button-below-image"
+                    >
+                      Remove Avatar
+                    </button>
+                  )}
                 </div>
 
                 <div className="input-block">
@@ -642,11 +726,11 @@ export default function MyProfile() {
                   <label>My Work</label>
                   <div className="work-preview-row">
                     {(state.workImages || []).map((img, i) => (
-                      <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px' }}>
+                      <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px', margin: '5px', borderRadius: '8px', overflow: 'hidden' }}>
                         <img
                           src={img.preview}
                           alt={`work-${i}`}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                         <button
                           type="button"
@@ -670,7 +754,7 @@ export default function MyProfile() {
                             boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
                           }}
                         >
-                          X
+                          &times;
                         </button>
                       </div>
                     ))}
@@ -689,7 +773,7 @@ export default function MyProfile() {
                 <div className="input-block">
                   <label>My Services</label>
                   {(state.services || []).map((s, i) => (
-                    <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
+                    <div key={i} className="dynamic-form-item">
                       <input
                         type="text"
                         placeholder={`Service Name ${i + 1}`}
@@ -698,14 +782,14 @@ export default function MyProfile() {
                       />
                       <input
                         type="text"
-                        placeholder={`Service Price/Detail ${i + 1}`}
+                        placeholder={`Service Price/Detail (e.g., Starting from $50) ${i + 1}`}
                         value={s.price}
                         onChange={(e) => handleServiceChange(i, "price", e.target.value)}
                       />
-                      <button type="button" onClick={() => handleRemoveService(i)} style={{ alignSelf: 'flex-end', padding: '4px 8px', fontSize: '12px' }}>Remove</button>
+                      <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
                     </div>
                   ))}
-                  <button type="button" onClick={handleAddService}>
+                  <button type="button" onClick={handleAddService} className="add-item-button">
                     + Add Service
                   </button>
                 </div>
@@ -714,7 +798,7 @@ export default function MyProfile() {
                 <div className="input-block">
                   <label>Reviews</label>
                   {(state.reviews || []).map((r, i) => (
-                    <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
+                    <div key={i} className="dynamic-form-item">
                       <input
                         type="text"
                         placeholder="Reviewer Name"
@@ -722,7 +806,7 @@ export default function MyProfile() {
                         onChange={(e) => handleReviewChange(i, "name", e.target.value)}
                       />
                       <textarea
-                        placeholder="Review"
+                        placeholder="Review Text"
                         rows={2}
                         value={r.text}
                         onChange={(e) => handleReviewChange(i, "text", e.target.value)}
@@ -735,10 +819,10 @@ export default function MyProfile() {
                         value={r.rating}
                         onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
                       />
-                      <button type="button" onClick={() => handleRemoveReview(i)} style={{ alignSelf: 'flex-end', padding: '4px 8px', fontSize: '12px' }}>Remove</button>
+                      <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
                     </div>
                   ))}
-                  <button type="button" onClick={handleAddReview}>
+                  <button type="button" onClick={handleAddReview} className="add-item-button">
                     + Add Review
                   </button>
                 </div>
@@ -761,7 +845,7 @@ export default function MyProfile() {
                   <label htmlFor="phoneNumber">Phone Number</label>
                   <input
                     id="phoneNumber"
-                    type="tel" // Use type="tel" for phone numbers
+                    type="tel"
                     value={state.phone_number || ""}
                     onChange={(e) => updateState({ phone_number: e.target.value })}
                   />
@@ -771,8 +855,7 @@ export default function MyProfile() {
                   onClick={handleSubmit}
                   className="submit-button"
                   style={{
-                    backgroundColor:
-                      state.pageTheme === "dark" ? "white" : "black",
+                    backgroundColor: state.pageTheme === "dark" ? "white" : "black",
                     color: state.pageTheme !== "dark" ? "white" : "black",
                   }}
                 >
@@ -780,27 +863,27 @@ export default function MyProfile() {
                 </button>
               </div>
             </div>
-            {/* Render ShareProfile Modal */}
-            {showShareModal && ( // Only render if showShareModal is true
-              <ShareProfile
-                isOpen={showShareModal}
-                onClose={handleCloseShareModal}
-                profileUrl={currentUserProfileUrl} // Pass constructed profile URL
-                qrCodeUrl={businessCard?.qrCodeUrl || ''} // Pass QR code URL from businessCard
-                contactDetails={{
-                  full_name: state.full_name,
-                  job_title: state.job_title,
-                  business_card_name: state.businessName,
-                  bio: state.bio,
-                  contact_email: state.contact_email,
-                  phone_number: state.phone_number
-                }}
-                username={userUsername} // Pass username to the modal
-              />
-            )}
           </>
         )} {/* End conditional rendering based on authUser */}
       </main>
+      {/* Render ShareProfile Modal */}
+      {showShareModal && (
+        <ShareProfile
+          isOpen={showShareModal}
+          onClose={handleCloseShareModal}
+          profileUrl={currentUserProfileUrl}
+          qrCodeUrl={businessCard?.qrCodeUrl || ''}
+          contactDetails={{
+            full_name: state.full_name,
+            job_title: state.job_title,
+            business_card_name: state.businessName,
+            bio: state.bio,
+            contact_email: state.contact_email,
+            phone_number: state.phone_number
+          }}
+          username={userUsername}
+        />
+      )}
     </div>
   );
 }
