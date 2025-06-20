@@ -4,50 +4,44 @@ import PageHeader from "../../components/PageHeader";
 import ProfileCardImage from "../../assets/images/background-hero.png";
 import UserAvatar from "../../assets/images/People.png";
 import useBusinessCardStore from "../../store/businessCardStore";
-// REMOVED: useAuthUser import. We use AuthContext directly.
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
 } from "../../hooks/useCreateBiz";
 import { useQueryClient } from '@tanstack/react-query';
-import axios from 'axios'; // Still used for verification forms (not via 'api' utility)
+import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import ShareProfile from "../../components/ShareProfile";
-import { AuthContext } from "../../components/AuthContext"; // Import AuthContext from current project path
+import { AuthContext } from "../../components/AuthContext";
 
 export default function MyProfile() {
   const { state, updateState } = useBusinessCardStore();
-  const fileInputRef = useRef(null); // Ref for cover photo file input
-  const avatarInputRef = useRef(null); // Ref for avatar file input
-  const workImageInputRef = useRef(null); // Ref for work image file input
+  const fileInputRef = useRef(null);
+  const avatarInputRef = useRef(null);
+  const workImageInputRef = useRef(null);
 
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
 
-  // Get user, loading state, and refetchAuthUser from AuthContext (CRUCIAL for JWT persistence)
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
 
-  // Derive user info directly from authUser state
   const userId = authUser?._id;
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
 
-  // useFetchBusinessCard now correctly depends on the userId from AuthContext.
-  // It will only run when userId is available.
-  const { data: businessCard } = useFetchBusinessCard(userId);
+  // IMPORTANT: Destructure the 'refetch' function from useFetchBusinessCard
+  const { data: businessCard, refetch: refetchBusinessCard } = useFetchBusinessCard(userId); // ADD refetch HERE
 
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeInput] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
 
-  // State to track if an image was explicitly removed (to send to backend)
   const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
   const [avatarRemoved, setAvatarRemoved] = useState(false);
 
-  // Cooldown for resend verification code
   useEffect(() => {
     let timer;
     if (resendCooldown > 0) {
@@ -56,7 +50,6 @@ export default function MyProfile() {
     return () => clearTimeout(timer);
   }, [resendCooldown]);
 
-  // Show verification prompt if user is not verified
   useEffect(() => {
     if (!authLoading && authUser && !isUserVerified && userEmail) {
       setShowVerificationPrompt(true);
@@ -65,7 +58,6 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // Update local state when businessCard data is fetched
   useEffect(() => {
     if (businessCard) {
       updateState({
@@ -79,14 +71,11 @@ export default function MyProfile() {
         bio: businessCard.bio || "",
         avatar: businessCard.avatar || null,
         coverPhoto: businessCard.cover_photo || null,
-        // Map existing work image URLs for display
         workImages: (businessCard.works || []).map((url) => ({
-          file: null, // No file for existing images
-          preview: url, // The actual URL for display
+          file: null,
+          preview: url,
         })),
-        // Parse services data if it's stored as a simple array of strings initially
         services: (businessCard.services || []).map(s => {
-          // Handle cases where service might be stored as "Name Starting from Price" string
           if (typeof s === 'string') {
             const parts = s.split('Starting from');
             return {
@@ -94,9 +83,8 @@ export default function MyProfile() {
               price: parts[1] ? `Starting from ${parts[1].trim()}` : '',
             };
           }
-          return { name: s.name || '', price: s.price || '' }; // Already in object format
+          return { name: s.name || '', price: s.price || '' };
         }),
-        // Map existing reviews
         reviews: (businessCard.reviews || []).map(r => {
           const parsedRating = parseInt(r.rating);
           const safeRating = isNaN(parsedRating) ? 5 : Math.min(5, Math.max(0, parsedRating));
@@ -109,100 +97,86 @@ export default function MyProfile() {
         contact_email: businessCard.contact_email || "",
         phone_number: businessCard.phone_number || "",
       });
-      // Reset removed flags when new data is loaded
       setCoverPhotoRemoved(false);
       setAvatarRemoved(false);
     }
   }, [businessCard, updateState]);
 
-  // Handle Cover Photo Upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
       const blobUrl = URL.createObjectURL(file);
-      updateState({ coverPhoto: blobUrl, coverPhotoFile: file }); // Store both blob for preview and file for upload
-      setCoverPhotoRemoved(false); // If new photo uploaded, it's not removed
+      updateState({ coverPhoto: blobUrl, coverPhotoFile: file });
+      setCoverPhotoRemoved(false);
     }
   };
 
-  // Handle Avatar Upload
   const handleAvatarUpload = (e) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
       const blobUrl = URL.createObjectURL(file);
-      updateState({ avatar: blobUrl, avatarFile: file }); // Store both blob for preview and file for upload
-      setAvatarRemoved(false); // If new avatar uploaded, it's not removed
+      updateState({ avatar: blobUrl, avatarFile: file });
+      setAvatarRemoved(false);
     }
   };
 
-  // Function to remove cover photo
   const handleRemoveCoverPhoto = () => {
     updateState({ coverPhoto: null, coverPhotoFile: null });
-    setCoverPhotoRemoved(true); // Set flag for backend
+    setCoverPhotoRemoved(true);
   };
 
-  // Function to remove avatar
   const handleRemoveAvatar = () => {
     updateState({ avatar: null, avatarFile: null });
-    setAvatarRemoved(true); // Set flag for backend
+    setAvatarRemoved(true);
   };
 
-
-  // Handle adding new work images
   const handleAddWorkImage = (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
     const newWorkImages = files.map(file => ({
-      file, // Store the actual file for FormData upload
-      preview: URL.createObjectURL(file), // Create object URL for immediate preview
+      file,
+      preview: URL.createObjectURL(file),
     }));
 
     updateState({
       workImages: [...(state.workImages || []), ...newWorkImages],
     });
-    e.target.value = null; // Clear the input so same file(s) can be selected again
+    e.target.value = null;
   };
 
-  // Handle removing a work image from the list
   const handleRemoveWorkImage = (indexToRemove) => {
     updateState({
       workImages: (state.workImages || []).filter((_, index) => index !== indexToRemove),
     });
   };
 
-  // Add a new empty service row
   const handleAddService = () => {
     updateState({ services: [...(state.services || []), { name: "", price: "" }] });
   };
 
-  // Handle changes to a specific service field
   const handleServiceChange = (index, field, value) => {
     const updated = [...state.services];
     updated[index] = { ...updated[index], [field]: value };
     updateState({ services: updated });
   };
 
-  // Remove a service row
   const handleRemoveService = (indexToRemove) => {
     updateState({
       services: (state.services || []).filter((_, index) => index !== indexToRemove),
     });
   };
 
-  // Add a new empty review row
   const handleAddReview = () => {
     updateState({
       reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }],
     });
   };
 
-  // Handle changes to a specific review field
   const handleReviewChange = (index, field, value) => {
     const updated = [...state.reviews];
     if (field === 'rating') {
       const parsedRating = parseInt(value);
-      // Ensure rating stays between 0 and 5
       updated[index] = { ...updated[index], [field]: isNaN(parsedRating) ? 0 : Math.min(5, Math.max(0, parsedRating)) };
     } else {
       updated[index] = { ...updated[index], [field]: value };
@@ -210,21 +184,18 @@ export default function MyProfile() {
     updateState({ reviews: updated });
   };
 
-  // Remove a review row
   const handleRemoveReview = (indexToRemove) => {
     updateState({
       reviews: (state.reviews || []).filter((_, index) => index !== indexToRemove),
     });
   };
 
-  // Send verification code (axios used directly for non-authenticated calls)
   const sendVerificationCode = async () => {
     if (!userEmail) {
       toast.error("Email not found. Please log in again.");
       return;
     }
     try {
-      // Use axios and full VITE_API_URL here as this is a public/non-authenticated endpoint
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/resend-code`, { email: userEmail });
       if (res.data.error) {
         toast.error(res.data.error);
@@ -238,7 +209,6 @@ export default function MyProfile() {
     }
   };
 
-  // Handle verification code submission (axios used directly for non-authenticated calls)
   const handleVerifyCode = async (e) => {
     e.preventDefault();
     if (!userEmail) {
@@ -246,7 +216,6 @@ export default function MyProfile() {
       return;
     }
     try {
-      // Use axios and full VITE_API_URL here as this is a public/non-authenticated endpoint
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/verify-email`, {
         email: userEmail,
         code: verificationCodeInput,
@@ -257,7 +226,7 @@ export default function MyProfile() {
       } else {
         toast.success('Email verified successfully!');
         setShowVerificationPrompt(false);
-        refetchAuthUser(); // Re-fetch user to update isVerified status in AuthContext
+        refetchAuthUser();
         setVerificationCodeInput('');
       }
     } catch (err) {
@@ -266,26 +235,20 @@ export default function MyProfile() {
     }
   };
 
-  // Handle saving the business card
   const handleSubmit = async () => {
-    // Show info message if user data is still loading
     if (authLoading) {
       toast.info("User data is still loading. Please wait a moment.");
       return;
     }
-    // Check if user is logged in before allowing save
     if (!userId) {
       toast.error("User not logged in or loaded. Please log in again to save changes.");
       return;
     }
-
-    // Prevent saving if email is not verified
     if (!isUserVerified) {
       toast.error("Please verify your email address to save changes.");
       return;
     }
 
-    // Prepare FormData for submission, including files and JSON data
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
@@ -295,25 +258,24 @@ export default function MyProfile() {
       job_title: state.job_title,
       full_name: state.full_name,
       bio: state.bio,
-      user: userId, // Pass userId for backend lookup (important for findOneAndUpdate)
-      cover_photo: state.coverPhotoFile, // Pass the actual File object
-      avatar: state.avatarFile,         // Pass the actual File object
-      cover_photo_removed: coverPhotoRemoved, // Pass flag to backend
-      avatar_removed: avatarRemoved,         // Pass flag to backend
-      works: state.workImages, // Array of { file: File, preview: URL }
-      services: state.services, // Array of { name: string, price: string }
-      reviews: state.reviews,   // Array of { name: string, text: string, rating: number }
+      user: userId,
+      cover_photo: state.coverPhotoFile,
+      avatar: state.avatarFile,
+      cover_photo_removed: coverPhotoRemoved,
+      avatar_removed: avatarRemoved,
+      works: state.workImages,
+      services: state.services,
+      reviews: state.reviews,
       contact_email: state.contact_email,
       phone_number: state.phone_number,
     });
 
     try {
-      await createBusinessCard.mutateAsync(formData); // Use the TanStack Query mutation hook
+      await createBusinessCard.mutateAsync(formData);
       toast.success("Business card saved successfully!");
-      // Invalidate query cache to refetch fresh data after successful save
       queryClient.invalidateQueries(['business-card', userId]);
-      refetchAuthUser(); // Re-fetch auth user to get updated data like username or profileUrl if needed
-      // Reset the removed flags after a successful save
+      refetchAuthUser();
+      refetchBusinessCard(); // <--- This line was added for refetching business card data
       setCoverPhotoRemoved(false);
       setAvatarRemoved(false);
     } catch (error) {
@@ -322,7 +284,6 @@ export default function MyProfile() {
     }
   };
 
-  // Dynamic theme styles for preview
   const themeStyles = {
     backgroundColor: state.pageTheme === "dark" ? "#1F1F1F" : "#FFFFFF",
     color: state.pageTheme === "dark" ? "#FFFFFF" : "#000000",
@@ -344,7 +305,6 @@ export default function MyProfile() {
     setShowShareModal(false);
   };
 
-  // Construct current user's public profile URL
   const currentUserProfileUrl = userUsername ? `${window.location.origin}/u/${userUsername}` : '';
 
   return (
@@ -352,19 +312,17 @@ export default function MyProfile() {
       <Sidebar />
       <main className="myprofile-main page-wrapper">
         <PageHeader
-          title={authUser ? `Good Afternoon ${authUser.name}!` : "My Profile"} // Dynamic title based on authUser
+          title={authUser ? `Good Afternoon ${authUser.name}!` : "My Profile"}
           onActivateCard={handleActivateCard}
           onShareCard={handleShareCard}
         />
 
-        {/* Loading indicator for user authentication status */}
         {authLoading && (
           <div style={{ padding: '20px', textAlign: 'center', fontSize: '1.2rem', color: '#666' }}>
             Loading profile data...
           </div>
         )}
 
-        {/* Message if user is not loaded/authenticated after loading is complete */}
         {!authLoading && !authUser && (
           <div style={{ padding: '20px', textAlign: 'center', color: 'red', border: '1px solid red', borderRadius: '8px', marginBottom: '30px', backgroundColor: '#ffe6e6' }}>
             <p style={{ marginBottom: '10px' }}>User not loaded. Please ensure you are logged in.</p>
@@ -372,10 +330,8 @@ export default function MyProfile() {
           </div>
         )}
 
-        {/* Main content rendered only if user is loaded and exists */}
         {!authLoading && authUser && (
           <>
-            {/* Email verification prompt */}
             {showVerificationPrompt && (
               <div style={{
                 backgroundColor: '#fffbe6',
@@ -676,7 +632,7 @@ export default function MyProfile() {
                     style={{ display: "none" }}
                   />
                   <div
-                    className="cover-preview-container" // Reusing this class for general image preview containers
+                    className="cover-preview-container"
                     onClick={() => avatarInputRef.current?.click()}
                     style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', cursor: 'pointer' }}
                   >
