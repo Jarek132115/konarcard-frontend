@@ -1,0 +1,330 @@
+/* userpage.css */
+
+/* Main container for the public landing page */
+.user-landing-page {
+    width: 100%;
+    min-height: 100vh;
+    /* Ensure it takes full viewport height */
+    background: #fff;
+    /* Default for light mode */
+    padding: 2rem 1.5rem;
+    /* Responsive padding (32px top/bottom, 24px left/right) */
+    text-align: center;
+    /* Center text by default */
+    box-sizing: border-box;
+    /* Include padding in width/height */
+    overflow-x: hidden;
+    /* Prevent horizontal scrolling */
+    display: flex;
+    /* Use flexbox for overall layout */
+    flex-direction: column;
+    /* Stack content vertically */
+    align-items: center;
+    /* Center content horizontally */
+    font-family: 'Inter', sans-serif;
+    /* Default font fallback */
+}
+
+/* Dark mode specific styles for the landing page background and text */
+/* This will target the main container when its style attribute indicates dark mode */
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] {
+    background-color: #1F1F1F !important;
+    /* Ensure dark background */
+    color: white;
+    /* Make all text white in dark mode */
+}
+
+/* Specific text colors for dark mode, for elements that need a different shade */
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-sub-heading,
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-profile-role,
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-service-item span {
+    color: #bbb !important;
+    /* Slightly lighter grey for sub-text in dark mode */
+}
+
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-about-section,
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-service-item,
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-review-card {
+    background-color: #333 !important;
+    /* Darker background for sections/cards in dark mode */
+    color: white !important;
+    /* Ensure text inside these components is white */
+}
+
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-review-card .landing-review-text {
+    color: #ddd !important;
+    /* Review text in dark mode */
+}
+
+
+/* Cover Photo */
+.landing-cover-photo {
+    width: 100%;
+    /* Image fills the container */
+    aspect-ratio: 16 / 9;
+    /* Horizontal aspect ratio */
+    object-fit: cover;
+    /* Ensures image covers the area without distortion */
+    border-radius: 0.75rem;
+    /* 12px */
+    margin-bottom: 1.5rem;
+    /* Increased margin for visual separation */
+    max-width: 800px;
+    /* Limit max width for large screens */
+}
+
+/* Main Heading (Name or Business Name) */
+.landing-main-heading {
+    font-size: 2rem;
+    /* 32px */
+    font-weight: 700;
+    /* Bold */
+    margin: 0;
+    line-height: 1.2;
+    text-align: center;
+    max-width: 800px;
+    /* Limit text width */
+}
+
+/* Subheading (Slogan or Tagline) */
+.landing-sub-heading {
+    font-size: 1rem;
+    /* 16px */
+    font-weight: 600;
+    /* Semi-bold */
+    color: #555;
+    /* Default for light mode */
+    margin: 0.5rem 0 1.5rem 0;
+    /* Adjusted margin */
+    text-align: center;
+    max-width: 800px;
+    /* Limit text width */
+}
+
+/* Exchange Contact Button */
+.landing-action-button {
+    background: black;
+    /* Default for light mode */
+    color: white;
+    /* Default for light mode */
+    padding: 0.875rem 1.5rem;
+    /* 14px 24px - more generous padding */
+    border-radius: 0.5rem;
+    /* 8px */
+    border: none;
+    font-weight: 700;
+    /* Bold */
+    font-size: 0.875rem;
+    /* 14px */
+    margin: 1.5rem 0;
+    /* Adjusted margin */
+    width: 100%;
+    /* Button fills width */
+    max-width: 300px;
+    /* Limit button width */
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.landing-action-button:hover {
+    opacity: 0.9;
+}
+
+/* Common style for section titles */
+.landing-section-title {
+    font-size: 1rem;
+    /* 16px */
+    font-weight: 600;
+    /* Semi-bold */
+    margin-top: 2rem;
+    /* More space above sections */
+    margin-bottom: 1rem;
+    /* Space below title */
+    text-align: left;
+    /* Align to left */
+    width: 100%;
+    /* Span full width */
+    max-width: 800px;
+    /* Limit text width */
+}
+
+/* About Me Section */
+.landing-about-section {
+    background: #f1f1f1;
+    /* Default for light mode */
+    border-radius: 0.75rem;
+    /* 12px */
+    padding: 1rem;
+    /* 16px */
+    display: flex;
+    gap: 1rem;
+    /* 16px gap */
+    text-align: left;
+    align-items: center;
+    width: 100%;
+    /* Fill container width */
+    max-width: 800px;
+    /* Limit max width */
+    box-sizing: border-box;
+}
+
+.landing-avatar {
+    width: 3rem;
+    /* 48px */
+    height: 3rem;
+    /* 48px */
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.landing-profile-name {
+    font-weight: 600;
+    margin: 0;
+    font-size: 1rem;
+    /* 16px */
+}
+
+.landing-profile-role {
+    font-size: 0.875rem;
+    /* 14px */
+    margin: 0;
+    color: #777;
+    /* Default for light mode */
+}
+
+/* Adjusted bio text below the about section */
+.landing-bio-text {
+    text-align: left;
+    font-size: 0.9375rem;
+    /* 15px */
+    margin-top: 1rem;
+    line-height: 1.5;
+    width: 100%;
+    max-width: 800px;
+    /* Limit max width */
+}
+
+
+/* My Work section images gallery */
+.landing-work-gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    /* Single column by default for mobile */
+    gap: 1rem;
+    /* 16px */
+    width: 100%;
+    max-width: 800px;
+    /* Limit max width */
+}
+
+.landing-work-gallery img {
+    width: 100%;
+    /* Image fills the single column */
+    aspect-ratio: 16 / 9;
+    /* Horizontal aspect ratio */
+    object-fit: cover;
+    /* Ensures image covers the area without distortion */
+    border-radius: 0.5rem;
+    /* 8px */
+}
+
+/* My Services List */
+.landing-services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    /* 12px */
+    width: 100%;
+    max-width: 800px;
+    /* Limit max width */
+}
+
+.landing-service-item {
+    background-color: #f6f6f6;
+    /* Light grey background for service items */
+    border-radius: 0.75rem;
+    /* 12px */
+    padding: 0.75rem 1rem;
+    /* 12px 16px */
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.landing-service-name {
+    font-size: 1rem;
+    /* 16px - slightly larger than mock-phone */
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.landing-service-price {
+    font-size: 0.875rem;
+    /* 14px - slightly larger than mock-phone */
+    color: #777;
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* Reviews List */
+.landing-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    /* 12px */
+    width: 100%;
+    max-width: 800px;
+    /* Limit max width */
+}
+
+.landing-review-card {
+    background-color: #f6f6f6;
+    /* Light grey background for review cards */
+    border-radius: 0.75rem;
+    /* 12px */
+    padding: 1rem;
+    /* 16px */
+    text-align: left;
+}
+
+.landing-star-rating {
+    color: gold;
+    font-size: 1.125rem;
+    /* 18px - slightly larger stars */
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1rem;
+}
+
+.landing-review-text {
+    font-size: 0.9375rem;
+    /* 15px */
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.landing-reviewer-name {
+    font-size: 0.875rem;
+    /* 14px */
+    font-weight: 600;
+    color: #555;
+    margin: 0;
+}
+
+/* --- Responsive Adjustments for larger screens (e.g., tablet and desktop) --- */
+@media (min-width: 768px) {
+    .user-landing-page {
+        padding: 3rem 2rem;
+        /* More padding on larger screens */
+    }
+
+    /* Example: Two columns for work images on tablet/desktop */
+    .landing-work-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}

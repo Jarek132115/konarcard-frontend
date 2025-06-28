@@ -1,0 +1,108 @@
+.subscription-layout {
+  display: flex;
+  height: 100vh;
+  background-color: #f9f9f9;
+}
+
+.subscription-main {
+  flex: 1;
+  padding: 40px;
+  font-family: sans-serif;
+  overflow-y: auto;
+}
+
+.subscription-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.subscription-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  padding: 32px;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.subscription-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.subscription-plan-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.subscription-plan-subtitle {
+  font-size: 14px;
+  color: #444;
+  margin: 4px 0 0;
+}
+
+.subscription-badge {
+  background: #f6f6f6;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #111;
+}
+
+.subscription-features {
+  padding-left: 18px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.subscription-note {
+  font-size: 13px;
+  color: #666;
+}
+
+.subscription-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.subscription-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+}
+
+.price-label {
+  font-size: 14px;
+  color: #555;
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.subscription-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.subscription-button:hover {
+  background: #0066dd;
+}

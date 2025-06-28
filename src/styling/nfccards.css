@@ -1,0 +1,114 @@
+.nfc-page-wrapper {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f9f9f9;
+}
+
+.nfc-main-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.nfc-header {
+  margin-bottom: 40px;
+}
+
+.nfc-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.nfc-subtitle {
+  font-size: 16px;
+  color: #555;
+}
+
+.nfc-card-grid {
+  display: flex;
+  gap: 40px;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow-x: auto;
+}
+
+.nfc-card {
+  flex-shrink: 0;
+  width: 260px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  text-align: center;
+}
+
+.nfc-card-img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.nfc-card-tag {
+  background: #eaeaea;
+  font-size: 12px;
+  color: #333;
+  padding: 4px 8px;
+  margin: 8px 0;
+  border-radius: 6px;
+}
+
+.nfc-card-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.nfc-card-desc {
+  font-size: 14px;
+  color: #555;
+  margin: 4px 0 12px;
+}
+
+.nfc-card-price {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.nfc-buy-button {
+  background: black;
+  color: white;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  display: inline-block;
+  transition: background 0.2s ease;
+}
+
+.nfc-buy-button:hover {
+  background: #333;
+}
+
+.Product-Image {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.Prouct-Image-Section img {
+  width: 50%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+
+.Prouct-Image-Section {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}

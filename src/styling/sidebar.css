@@ -1,0 +1,149 @@
+.sidebar {
+    height: 100vh;
+    background-color: white;
+    padding: 20px;
+    width: fit-content;
+    /* Allows sidebar to adjust its width based on content */
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(55, 55, 55, 0.10);
+    box-sizing: border-box;
+    /* Include padding/border in width calculation */
+    min-width: 220px;
+    /* Give it a reasonable minimum width */
+    max-width: 280px;
+    /* Optional: cap maximum width */
+}
+
+.my-account-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 10px;
+}
+
+.profile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-info {
+    flex-grow: 1;
+}
+
+.email {
+    font-size: 12px;
+    color: #888;
+    margin: 0;
+    white-space: nowrap;
+    /* Prevent email from wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Add ellipsis if it overflows */
+}
+
+.name {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.settings-icon {
+    /* This class is not directly used in Sidebar.jsx, might be vestigial */
+    width: 20px;
+    height: 20px;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 12px 0;
+}
+
+.section-title {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 600;
+    padding-left: 4px;
+    /* Align with button text */
+}
+
+/* Unified styling for all sidebar buttons */
+.sidebar-button {
+    /* Changed from .sidebar-buttons */
+    display: flex;
+    align-items: center;
+    padding: 12px 10px;
+    /* Increased padding for a larger click area and consistent size */
+    gap: 12px;
+    /* Increased gap between icon and text */
+    border-radius: 10px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+    /* Ensure no underline on text if it's a link */
+    color: #333;
+    /* Default text color for all buttons */
+    font-weight: 500;
+    /* Default font-weight for all buttons */
+    font-size: 14px;
+    /* Default font size for all buttons, matching desktop-body-s if defined */
+    box-sizing: border-box;
+    width: 100%;
+    /* Ensure full width */
+}
+
+.sidebar-button:hover {
+    background-color: #e0f2ff;
+    /* Light blue hover for clean look */
+    color: #007bff;
+    /* Blue text on hover */
+    cursor: pointer;
+}
+
+/* Specific styling for the Logout button */
+.sidebar-button.logout-button {
+    margin-top: auto;
+    /* Pushes it to the bottom */
+    color: #dc3545;
+    /* Red color for logout */
+}
+
+/* Ensure the text inside logout-button is also red */
+.sidebar-button.logout-button p {
+    color: #dc3545;
+}
+
+/* Remove these if desktop-body-s defines a specific size, or adjust desktop-body-s itself */
+/*
+.logout-text {
+    color: #ff0000;
+    font-weight: 500;
+}
+
+.go-back {
+    color: #000;
+    font-weight: 500;
+}
+*/
+
+.icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.footer-actions {
+    margin-top: 20px;
+    /* Add some margin from the last section */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 10px;
+    /* Small padding from divider */
+    border-top: 1px solid #e0e0e0;
+    /* Add a subtle line to separate from help */
+}
