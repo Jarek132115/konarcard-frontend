@@ -1,18 +1,30 @@
+/* frontend/src/styling/sidebar.css (MODIFIED for responsive behavior) */
+
 .sidebar {
     height: 100vh;
     background-color: white;
     padding: 20px;
     width: fit-content;
-    /* Allows sidebar to adjust its width based on content */
     display: flex;
     flex-direction: column;
     border-right: 1px solid rgba(55, 55, 55, 0.10);
     box-sizing: border-box;
-    /* Include padding/border in width calculation */
     min-width: 220px;
-    /* Give it a reasonable minimum width */
     max-width: 280px;
-    /* Optional: cap maximum width */
+    position: fixed;
+    /* Fixed position for desktop sidebar */
+    top: 0;
+    left: 0;
+    z-index: 100;
+    /* Ensure it's above other content on desktop */
+}
+
+/* New wrapper for content inside sidebar to allow for independent scrolling/flex if needed */
+.sidebar-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Fill available height within sidebar */
 }
 
 .my-account-container {
@@ -38,22 +50,14 @@
     color: #888;
     margin: 0;
     white-space: nowrap;
-    /* Prevent email from wrapping */
     overflow: hidden;
     text-overflow: ellipsis;
-    /* Add ellipsis if it overflows */
 }
 
 .name {
     font-size: 14px;
     font-weight: 500;
     margin: 0;
-}
-
-.settings-icon {
-    /* This class is not directly used in Sidebar.jsx, might be vestigial */
-    width: 20px;
-    height: 20px;
 }
 
 .divider {
@@ -68,42 +72,29 @@
     margin-bottom: 8px;
     font-weight: 600;
     padding-left: 4px;
-    /* Align with button text */
 }
 
-/* Unified styling for all sidebar buttons */
 .sidebar-button {
-    /* Changed from .sidebar-buttons */
     display: flex;
     align-items: center;
     padding: 12px 10px;
-    /* Increased padding for a larger click area and consistent size */
     gap: 12px;
-    /* Increased gap between icon and text */
     border-radius: 10px;
     transition: background-color 0.2s ease, color 0.2s ease;
     text-decoration: none;
-    /* Ensure no underline on text if it's a link */
     color: #333;
-    /* Default text color for all buttons */
     font-weight: 500;
-    /* Default font-weight for all buttons */
     font-size: 14px;
-    /* Default font size for all buttons, matching desktop-body-s if defined */
     box-sizing: border-box;
     width: 100%;
-    /* Ensure full width */
 }
 
 .sidebar-button:hover {
     background-color: #e0f2ff;
-    /* Light blue hover for clean look */
     color: #007bff;
-    /* Blue text on hover */
     cursor: pointer;
 }
 
-/* Specific styling for the Logout button */
 .sidebar-button.logout-button {
     margin-top: auto;
     /* Pushes it to the bottom */
@@ -111,23 +102,10 @@
     /* Red color for logout */
 }
 
-/* Ensure the text inside logout-button is also red */
 .sidebar-button.logout-button p {
     color: #dc3545;
+    /* Ensure the text inside logout-button is also red */
 }
-
-/* Remove these if desktop-body-s defines a specific size, or adjust desktop-body-s itself */
-/*
-.logout-text {
-    color: #ff0000;
-    font-weight: 500;
-}
-
-.go-back {
-    color: #000;
-    font-weight: 500;
-}
-*/
 
 .icon {
     width: 20px;
@@ -138,12 +116,122 @@
 
 .footer-actions {
     margin-top: 20px;
-    /* Add some margin from the last section */
     display: flex;
     flex-direction: column;
     gap: 10px;
     padding-top: 10px;
-    /* Small padding from divider */
     border-top: 1px solid #e0e0e0;
-    /* Add a subtle line to separate from help */
+}
+
+/* --- MOBILE SIDEBAR STYLES (Apply when screen is smaller) --- */
+@media (max-width: 1000px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        /* Initially hide off-screen */
+        width: 280px;
+        /* Fixed width for mobile sidebar */
+        height: 100vh;
+        padding: 20px;
+        background-color: white;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        transition: left 0.3s ease-in-out;
+        /* Slide in/out transition */
+        z-index: 1000;
+        /* Ensure it's on top of all other content */
+        overflow-y: auto;
+        /* Enable scrolling for long content */
+        border-right: none;
+        /* Remove border from right when it's sliding */
+    }
+
+    .sidebar.open {
+        left: 0;
+        /* Slide in from the left */
+    }
+
+    /* Styles for the mobile header within the sidebar */
+    .sidebar-mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding-bottom: 20px;
+        /* Space between header and first link */
+        border-bottom: 1px solid #e0e0e0;
+        /* Separator */
+        margin-bottom: 20px;
+    }
+
+    .sidebar-logo-link .sidebar-logo {
+        height: 32px;
+        /* Adjust logo size for mobile header */
+    }
+
+    /* Hamburger icon for mobile sidebar */
+    .sidebar-hamburger {
+        display: flex;
+        /* Make hamburger visible */
+        flex-direction: column;
+        gap: 5px;
+        cursor: pointer;
+        z-index: 1001;
+        /* Ensure hamburger is clickable */
+    }
+
+    .sidebar-hamburger span {
+        width: 25px;
+        height: 3px;
+        background: black;
+        border-radius: 3px;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .sidebar-hamburger.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .sidebar-hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* Hide the desktop components of the sidebar */
+    .sidebar-content-wrapper {
+        height: auto;
+        /* Allow content to adjust height for mobile */
+        flex-grow: 1;
+        /* Allow content wrapper to take remaining space */
+    }
+
+    /* Ensure user info and links are properly displayed vertically */
+    .my-account-container,
+    .main-links-container,
+    .account-links-container,
+    .help-links-container,
+    .footer-actions {
+        width: 100%;
+    }
+
+    .sidebar-button {
+        justify-content: flex-start;
+        /* Align text left in mobile menu */
+        padding: 10px 15px;
+        /* Adjust padding for mobile links */
+    }
+}
+
+/* Hide hamburger on desktop */
+@media (min-width: 1001px) {
+    .sidebar-mobile-header {
+        display: none;
+    }
+
+    .sidebar-hamburger {
+        display: none;
+    }
 }
