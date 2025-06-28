@@ -432,9 +432,10 @@ export default function Home() {
 
       {/* NEW COMBINED SECTION (formerly SECTION 5 & SECTION 6) - NO BACKGROUND */}
       <div className="section combined-offer-section">
-        <h2 className='desktop-h3'>Our Plan & Cards</h2> {/* REMOVED text-center */}
-        <h3 className='desktop-h6'>Choose what's right for your business.</h3> {/* REMOVED text-center */}
-
+        <div className="section-1-title">
+          <h2 className='desktop-h3 text-center'>Our Plan & Cards</h2>
+          <h3 className='desktop-h6 text-center'>Choose what's right for your business.</h3>
+        </div>
         <div className="combined-offer-container">
           {/* Left Column: Subscription Offer */}
           <div className="subscription-offer-left">
