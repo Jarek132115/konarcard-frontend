@@ -1,4 +1,4 @@
-/* frontend/src/styling/home.css (MODIFIED FOR "Our Plan & Cards" section alignment) */
+/* frontend/src/styling/home.css (COMPLETE AND FINAL FILE - with corrected "Our Plan & Cards" section title alignment) */
 
 /* --- GLOBAL STYLES --- */
 * {
@@ -1139,8 +1139,9 @@ footer {
     padding-top: 100px;
 }
 
-@media (max-width: 1000px) {
-    .combined-offer-container h2, .combined-offer-container h3 {
-        text-align: left !important;
-    }
-}
+/* My addition from last time, causing issues */
+/* @media (max-width: 1000px) {
+    .combined-offer-container h2, .combined-offer-container h3 {
+        text-align: left !important;
+    }
+} */
