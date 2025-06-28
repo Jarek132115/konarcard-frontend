@@ -7,7 +7,7 @@ import Footer from '../../components/Footer';
 // Remove if not used: import SubscribeButton from '../../components/SubscribeButton';
 
 import BackgroundHero from '../../assets/images/background-hero.png';
-import Section1Image from '../../assets/assets/images/Section-1-Image.png'; // Corrected path
+import Section1Image from '../../assets/assets/images/Section-1-Image.png'; // <--- THIS IS THE PROBLEM LINE
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import FormCustomizationIcon from '../../assets/icons/FormCustomization-Icon.svg';
 import CustomizationIcon from '../../assets/icons/Customization-Icon.svg';
