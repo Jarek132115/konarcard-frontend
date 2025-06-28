@@ -1,0 +1,83 @@
+/* frontend/src/styling/TrackOrder.css (Complete File - Cleaned) */
+
+/* Specific styling for the tracking page's main box */
+.product-tracking-box {
+    /* Inherits most base styling from .success-box in App.css */
+    /* Make the container wider */
+    max-width: 800px;
+    /* Increased width */
+    padding: 50px;
+    /* Slightly more padding for better spacing */
+    box-sizing: border-box;
+    /* Include padding in width */
+}
+
+/* Status note at the bottom of the tracking page */
+.status-note {
+    font-size: 0.9em;
+    color: #888;
+    margin-top: 15px;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Skeleton loading for tracking details section (when data is loading) */
+.skeleton-loading-details {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Base style for individual skeleton lines */
+.skeleton-line {
+    height: 1.2em;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    width: 100%;
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+/* Variations for skeleton line widths */
+.skeleton-line.short {
+    width: 60%;
+}
+
+.skeleton-line.medium {
+    width: 85%;
+}
+
+/* Error box specific styles */
+.error-box {
+    border-color: #dc3545;
+    box-shadow: 0 8px 24px rgba(220, 53, 69, 0.15);
+}
+
+.error-box h1 {
+    color: #dc3545;
+}
+
+/* Responsive adjustments specific to the tracking page box */
+@media (max-width: 850px) {
+
+    /* Adjust breakpoint if needed for tablets */
+    .product-tracking-box {
+        max-width: 90%;
+        /* Scale down for slightly smaller screens */
+        padding: 40px;
+    }
+}
+
+@media (max-width: 600px) {
+    .product-tracking-box {
+        padding: 25px;
+        /* Less padding on small mobiles */
+        margin: 0 15px;
+        /* Add horizontal margin */
+        max-width: 100%;
+        /* Ensure it fits within the viewport */
+    }
+}

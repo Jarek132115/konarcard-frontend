@@ -1,3 +1,5 @@
+/* frontend/src/styling/login.css */
+
 .login-wrapper {
     display: flex;
     height: 100vh;
@@ -88,55 +90,176 @@
     margin-bottom: 0;
 }
 
-.password-field {
-    position: relative;
+/* --- FORM STYLES (Shared between Register and Login) --- */
+/* Form Labels */
+.form-label {
+    display: block;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+/* Styling for standard form inputs using a dedicated class */
+.login-form .standard-input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #eef3ff;
+    margin-bottom: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px;
+    outline: none;
+}
+
+.login-form .standard-input:focus {
+    border-color: #0081FF;
+}
+
+/* Specific styling for the username input with prefix (only used in Register) */
+.username-input-wrapper {
     display: flex;
     align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #eef3ff;
+    margin-bottom: 12px;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px;
 }
 
-.password-field input {
-    flex: 1;
+.username-input-wrapper .url-prefix {
+    padding: 0 0 0 12px;
+    font-size: 14px;
+    color: #555;
+    white-space: nowrap;
+    background-color: transparent;
+    border-right: none;
+    box-sizing: border-box;
+    width: 180px;
+    /* Fixed width to prevent shifting */
+    flex-shrink: 0;
+    line-height: 40px;
 }
 
-.toggle-password-btn {
-    background: none;
+.username-input-wrapper input {
+    flex-grow: 1;
     border: none;
-    font-size: 0.85rem;
-    color: #007BFF;
-    cursor: pointer;
-    margin-left: 0.5rem;
+    padding: 0 12px 0 0;
+    margin-bottom: 0;
+    background-color: transparent;
+    outline: none;
+    border-radius: 0 8px 8px 0;
+    box-sizing: border-box;
+    height: 100%;
+    line-height: 40px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
+.username-input-wrapper:focus-within {
+    border-color: #0081FF;
+}
+
+
+/* Password Wrapper */
 .password-wrapper {
     position: relative;
+    display: flex;
+    align-items: stretch;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #eef3ff;
+    margin-bottom: 12px;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px;
 }
 
 .password-wrapper input {
-    width: 100%;
-    padding-right: 70px;
+    flex-grow: 1;
+    padding: 0 12px;
+    padding-right: 60px;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    border-radius: 8px;
+    margin-bottom: 0;
+    box-sizing: border-box;
+    height: 100%;
+    line-height: 40px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
+
+.password-wrapper:focus-within {
+    border-color: #0081FF;
+}
+
 
 .password-wrapper button {
     position: absolute;
-    top: 50%;
-    right: 12px;
-    transform: translateY(-50%);
-    background: none;
+    top: 0;
+    right: 0;
+    height: 100%;
+    padding: 0 15px;
+    background-color: #0081FF;
+    color: white;
     border: none;
-    font-size: 0.85rem;
-    color: #007BFF;
+    font-size: 14px;
+    font-weight: bold;
     cursor: pointer;
-    padding: 0;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    outline: none;
 }
 
+.password-wrapper button:hover {
+    background-color: #0066cc;
+}
+
+/* Password Feedback (only used in Register) */
 .password-feedback {
     font-size: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: -4px;
+    margin-bottom: 12px;
+    text-align: left;
+    transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease, margin 0.3s ease;
+    opacity: 1;
+    transform: translateY(0);
+    height: auto;
+    overflow: visible;
+}
+
+.password-feedback.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    height: 0;
+    margin-bottom: 0;
+    margin-top: 0;
 }
 
 .password-feedback p {
     display: flex;
     align-items: center;
-    margin: 6px 0;
+    margin: 0;
     font-weight: 500;
 }
 
@@ -144,6 +267,7 @@
     width: 16px;
     height: 16px;
     margin-right: 8px;
+    flex-shrink: 0;
 }
 
 .password-feedback .valid {
@@ -153,9 +277,6 @@
 .password-feedback .invalid {
     color: red;
 }
-
-
-
 
 /* === RIGHT SIDE (FORM PANEL) === */
 .login-right {
@@ -170,6 +291,10 @@
 .login-card {
     width: 100%;
     max-width: 400px;
+    padding: 30px;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
 }
 
 .login-title {
@@ -182,17 +307,9 @@
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
 }
 
-.login-form input {
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
-    background-color: #eef3ff;
-}
-
+/* Button Styling (Adjusted for Login/Register pages) */
 .primary-button {
     padding: 12px;
     background-color: black;
@@ -203,8 +320,13 @@
     border-radius: 8px;
     cursor: pointer;
     margin-top: 10px;
+    /* Space above first button */
     font-family: 'Inter';
     transition: background 0.2s ease;
+}
+
+.primary-button:hover {
+    background-color: #333;
 }
 
 .secondary-button {
@@ -216,16 +338,82 @@
     font-weight: 600;
     border-radius: 8px;
     cursor: pointer;
+    margin-top: 10px;
+    /* Max 10px gap between buttons */
     font-family: 'Inter';
     transition: background 0.2s ease;
 }
 
-.primary-button:hover {
+.secondary-button:hover {
+    background-color: #333333b0;
+}
+
+/* Specific styling for the Verify Email button (blue, used in Register and Login verification step) */
+.verify-email-button {
+    background-color: #0081FF;
+}
+
+.verify-email-button:hover {
+    background-color: #0066cc;
+}
+
+/* Specific styling for the Resend Code button (black, used in Register and Login verification step) */
+.resend-code-button {
+    background-color: black;
+}
+
+.resend-code-button:hover {
     background-color: #333;
 }
 
-.secondary-button:hover {
-    background-color: #333333b0;
+/* NEW: Login Specific Button Overrides */
+.sign-in-button {
+    background-color: #0081FF;
+    /* Blue background for Sign In */
+}
+
+.sign-in-button:hover {
+    background-color: #0066cc;
+}
+
+.send-reset-link-button {
+    background-color: #0081FF;
+    /* Blue background for Send Reset Link */
+}
+
+.send-reset-link-button:hover {
+    background-color: #0066cc;
+}
+
+.back-to-login-button {
+    background-color: black;
+    /* Black background for Back to Login */
+}
+
+.back-to-login-button:hover {
+    background-color: #333;
+}
+
+/* NEW: Link Button for Forgot Password (text-based button) */
+.link-button {
+    background: none;
+    border: none;
+    color: black;
+    /* Forgot Password text to be black */
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    padding: 5px 0;
+    /* Add some padding for click target */
+    margin-top: 5px;
+    /* Small space below primary button */
+    transition: color 0.2s ease;
+}
+
+.link-button:hover {
+    color: #333;
+    /* Slightly lighter black on hover */
 }
 
 .login-alt-text {
@@ -237,8 +425,19 @@
 .login-alt-text a {
     font-weight: 600;
     color: black;
+    /* Default black for "Create one" */
     text-decoration: none;
 }
+
+/* NEW: "Create one" link to be blue */
+.login-alt-text .create-account-link {
+    color: #0081FF;
+}
+
+.login-alt-text .create-account-link:hover {
+    text-decoration: underline;
+}
+
 
 /* === DIVIDER === */
 .divider {
@@ -304,18 +503,120 @@
 .terms-label {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     font-size: 12px;
     line-height: 1.4;
+    margin-top: 10px;
+    margin-bottom: 12px;
 }
 
-/* === TABLET === */
+/* HIGHLY SPECIFIC CHECKBOX STYLES */
+.terms-label input[type="checkbox"].konar-checkbox {
+    width: 25px !important;
+    height: 25px !important;
+    min-width: 25px !important;
+    min-height: 25px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    border: 1px solid #ccc !important;
+    border-radius: 4px !important;
+    background-color: white !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Checkmark style */
+.terms-label input[type="checkbox"].konar-checkbox::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 14px !important;
+    height: 8px !important;
+    border: 3px solid black !important;
+    border-top: none !important;
+    border-right: none !important;
+    transform: translate(-50%, -50%) rotate(-45deg) !important;
+    margin-top: -1px !important;
+    margin-left: -1px !important;
+    opacity: 0 !important;
+    transition: opacity 0.1s ease !important;
+}
+
+/* Checkbox checked state */
+.terms-label input[type="checkbox"].konar-checkbox:checked {
+    background-color: #0081FF !important;
+    border-color: #0081FF !important;
+}
+
+.terms-label input[type="checkbox"].konar-checkbox:checked::before {
+    opacity: 1 !important;
+}
+
+/* Checkbox unchecked state */
+.terms-label input[type="checkbox"].konar-checkbox:not(:checked) {
+    background-color: white !important;
+    border-color: #ccc !important;
+}
+
+.terms-label input[type="checkbox"].konar-checkbox:not(:checked)::before {
+    opacity: 0 !important;
+}
+
+/* Terms links */
+.terms-label a {
+    color: #0081FF;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* === VERIFICATION CODE INPUTS === */
+.verification-code-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.verification-code-input {
+    width: 45px;
+    height: 45px;
+    text-align: center;
+    font-size: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #eef3ff;
+    box-sizing: border-box;
+    outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.verification-code-input:focus {
+    border-color: #0081FF;
+}
+
+/* Space after the "code has been sent to..." text */
+.verification-instruction {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Tablet responsiveness */
 @media (max-width: 1000px) {
     .login-wrapper {
         flex-direction: column;
         height: 100vh;
     }
-
 
     .login-left {
         display: none;
@@ -333,11 +634,11 @@
     .login-card {
         width: 100%;
         max-width: 400px;
-        padding: 0 20px;
+        padding: 30px;
     }
 }
 
-/* === MOBILE === */
+/* Mobile responsiveness */
 @media (max-width: 600px) {
     .login-wrapper {
         height: 100vh;
@@ -348,12 +649,16 @@
     }
 
     .login-card {
-        padding: 0 16px;
+        padding: 20px;
     }
-}
 
-@media (max-width: 500px) {
-    .login-card {
-        padding: 0;
+    .verification-code-input {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .verification-code-container {
+        gap: 5px;
     }
 }

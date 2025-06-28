@@ -2,7 +2,7 @@
 .blue-button-login {
     background-color: #0081FF;
     color: white;
-    padding: 8px 20px;
+    padding: 10px 20px;
     border-radius: 10px;
 }
 
@@ -14,7 +14,7 @@
 
 .blue-button {
     background-color: #0081FF;
-    padding: 8px 20px;
+    padding: 10px 20px;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     color: white;
@@ -29,7 +29,7 @@
 
 .black-button {
     background-color: black;
-    padding: 8px 20px;
+    padding: 10px 20px;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     color: white;
@@ -42,6 +42,46 @@
     cursor: pointer;
     transition: all 0.3s ease;
 }
+
+.cta-blue-button {
+    background-color: #0081FF;
+    padding: 10px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+.cta-blue-button:hover {
+    background-color: #006edc;
+    box-shadow: 0px 4px 12px rgba(0, 129, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cta-black-button {
+    background-color: black;
+    padding: 10px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+.cta-black-button:hover {
+    background-color: #333;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.black-button-subscribe {
+    background-color: black;
+    padding: 10px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: white;
+    width: fit-content;
+}
+
 
 @media (max-width: 1000px) {
     .cta-center-text {
@@ -56,5 +96,19 @@
     .cta-center-text .desktop-button {
         width: 100%;
         text-align: center;
+    }
+
+    .black-button {
+        min-width: 100%;
+        display: flex;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .blue-button {
+        min-width: 100%;
+        display: flex;
+        text-align: center;
+        justify-content: center;
     }
 }
