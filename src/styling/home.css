@@ -1138,3 +1138,9 @@ body {
 footer {
     padding-top: 100px;
 }
+
+@media (max-width: 1000px) {
+    .combined-offer-container h2, .combined-offer-container h3 {
+        text-align: left !important;
+    }
+}
