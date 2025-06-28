@@ -1,3 +1,5 @@
+// frontend/src/pages/website/Home.jsx (MODIFIED for CSS alignment)
+
 import React, { useContext } from 'react'; // Removed useEffect, useState
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
@@ -5,7 +7,7 @@ import Footer from '../../components/Footer';
 // Remove if not used: import SubscribeButton from '../../components/SubscribeButton';
 
 import BackgroundHero from '../../assets/images/background-hero.png';
-import Section1Image from '../../assets/images/Section-1-Image.png';
+import Section1Image from '../../assets/assets/images/Section-1-Image.png'; // Corrected path
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import FormCustomizationIcon from '../../assets/icons/FormCustomization-Icon.svg';
 import CustomizationIcon from '../../assets/icons/Customization-Icon.svg';
@@ -37,22 +39,18 @@ import Profile2 from '../../assets/images/Profile2.png';
 import Profile3 from '../../assets/images/Profile3.png';
 import Profile4 from '../../assets/images/Profile4.png';
 import Profile5 from '../../assets/images/Profile5.png';
-// Remove if not used: import { loadStripe } from '@stripe/stripe.js';
 
 import { AuthContext } from '../../components/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import api from '../../services/api'; // Keep api import for handleSubscribe
-import { toast } from 'react-hot-toast'; // Keep toast for handleSubscribe
+import api from '../../services/api';
+import { toast } from 'react-hot-toast';
 
 export default function Home() {
-  // Destructure user and loading from AuthContext
   const { user, loading: authLoading } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // isSubscribed is now directly from the user object if authenticated, otherwise false
   const isSubscribed = user ? user.isSubscribed : false;
-  // Use authLoading from AuthContext to determine if user data is still being fetched
   const loadingStatus = authLoading;
 
   const handleSubscribe = async () => {
@@ -66,8 +64,6 @@ export default function Home() {
       return;
     }
 
-    // This check is now mostly redundant because the button will be disabled,
-    // but it's a good fail-safe for direct calls or unexpected states.
     if (isSubscribed) {
       toast.info('You are already subscribed to the Power Profile.');
       return;
@@ -92,10 +88,8 @@ export default function Home() {
     }
   };
 
-
   return (
     <>
-
       <Navbar />
 
       {/* HERO */}
@@ -438,8 +432,8 @@ export default function Home() {
 
       {/* NEW COMBINED SECTION (formerly SECTION 5 & SECTION 6) - NO BACKGROUND */}
       <div className="section combined-offer-section">
-        <h2 className='desktop-h3 text-center'>Our Plan & Cards</h2>
-        <h3 className='desktop-h6 text-center'>Choose what's right for your business.</h3>
+        <h2 className='desktop-h3'>Our Plan & Cards</h2> {/* REMOVED text-center */}
+        <h3 className='desktop-h6'>Choose what's right for your business.</h3> {/* REMOVED text-center */}
 
         <div className="combined-offer-container">
           {/* Left Column: Subscription Offer */}
