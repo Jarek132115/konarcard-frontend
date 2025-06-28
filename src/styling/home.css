@@ -928,6 +928,10 @@ body {
     box-sizing: border-box;
 }
 
+.combined-offer-container h2, .combined-offer-container h3 {
+    text-align: center;
+}
+
 /* Responsive adjustments for the new combined section */
 @media (max-width: 1000px) {
     .combined-offer-section.section {
@@ -1139,9 +1143,9 @@ footer {
     padding-top: 100px;
 }
 
-/* My addition from last time, causing issues */
-/* @media (max-width: 1000px) {
-    .combined-offer-container h2, .combined-offer-container h3 {
-        text-align: left !important;
-    }
-} */
+@media (max-width: 1000px) {
+    .combined-offer-container h2,
+    .combined-offer-container h3 {
+        text-align: left !important;
+    }
+}
