@@ -6,38 +6,27 @@
     height: 100vh;
     background-color: #f9f9f9;
     overflow-x: hidden;
-    /* Prevent horizontal scroll on the entire layout */
     position: relative;
 }
 
 /* MyProfile Main content area (right side, next to sidebar) */
 .myprofile-main {
     flex: 1;
-    /* Takes up all available width */
     overflow-y: auto;
-    /* This is the primary scrolling container for the right-hand side */
     font-family: sans-serif;
     padding: 30px;
-    /* Space around content */
     display: flex;
     flex-direction: column;
-    /* Stacks header and content vertically */
     min-height: 0;
-    /* Crucial for flex child to allow internal scrolling */
     overflow-x: hidden;
-    /* Prevent horizontal scroll within main content */
     padding-bottom: 20px;
-    /* Add some padding at the bottom of the content section */
 
     /* Desktop positioning to account for fixed sidebar */
     margin-left: 280px;
-    /* Default margin for desktop sidebar width */
     padding-top: 30px;
     /* Default desktop padding-top */
     transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
-    /* Smooth transition for sidebar closing/opening */
     z-index: 1;
-    /* Ensure main content is below mobile sidebar overlay if open */
 }
 
 .page-header {
@@ -46,7 +35,6 @@
     align-items: center;
     margin-bottom: 30px;
     flex-shrink: 0;
-    /* Prevents header from shrinking */
 }
 
 .page-title {
@@ -83,7 +71,7 @@
 /* MyProfile Content (the row containing the preview and editor forms) */
 .myprofile-content {
     display: flex;
-    /* Makes it a flex row */
+    /* Makes it a flex row for desktop */
     gap: 40px;
     justify-content: space-around;
     flex: 1;
@@ -136,7 +124,7 @@
     flex-grow: 0;
     /* Don't allow it to grow beyond its calculated size */
 
-    /* Dark mode specific styles for mock-phone background and border */
+    /* Dark mode styles for mock-phone background and border */
     &[style*="background-color: rgb(31, 31, 31)"] {
         background-color: #1F1F1F !important;
         border-color: #555 !important;
@@ -263,13 +251,13 @@
 .mock-section-title {
     font-size: 1rem;
     margin-top: 0;
-    /* Handled by parent container's padding/gap */
+    /* Margin handled by parent gap */
     margin-bottom: 0.75rem;
     font-weight: 600;
     text-align: left;
 }
 
-/* --- FIX: New container for the About Me section's background and structure --- */
+/* --- FIX: Styles for the new About Me container --- */
 .mock-about-container {
     /* This is the main gray box for the "About Me" section */
     background: #f1f1f1;
@@ -277,13 +265,22 @@
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    /* Stacks header group and bio text vertically */
+    /* Stack header group and bio text vertically */
     gap: 0.75rem;
     /* Space between the header group and the bio text */
     text-align: left;
 }
 
-/* This is the inner flex container for Avatar, Name, Job Title */
+/* This div is inside mock-about-container, wraps avatar+name+job and bio.
+   It doesn't need much styling itself, as mock-about-container gives the background/padding. */
+.mock-about-content-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    /* Space between avatar/name/title line and the bio text */
+}
+
+/* This is for the row with Avatar, Name, Job Title */
 .mock-about-header-group {
     display: flex;
     gap: 0.75rem;

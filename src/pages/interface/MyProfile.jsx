@@ -4,13 +4,9 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-// These are not directly used as fallbacks anymore in src, but ensure their paths are correct in public folder
-// If you want to use them as fallbacks for initial display, ensure initialStoreState sets them.
-// Otherwise, they'd be imported and used as `src={state.coverPhoto || ProfileCardImage}`.
-// For now, removing for clarity based on previous discussions aiming to use initialStoreState fully.
-// import ProfileCardImage from "../../assets/images/background-hero.png";
-// import UserAvatar from "../../assets/images/People.png";
-
+// Keep original imports for default images for explicit fallbacks in JSX
+import ProfileCardImage from "../../assets/images/background-hero.png";
+import UserAvatar from "../../assets/images/People.png";
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
@@ -685,7 +681,7 @@ export default function MyProfile() {
                               <img
                                 src={img.preview} // Direct use of img.preview
                                 alt={`work-${i}`}
-                                className="mock-work-image-item" 
+                                className="mock-work-image-item"
                               />
                               {(img.preview && img.preview.startsWith('blob:')) || (!isInitialDefaultWorkImage) ? (
                                 <button
