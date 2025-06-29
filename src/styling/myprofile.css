@@ -381,7 +381,6 @@
 
 .myprofile-editor-wrapper {
     position: relative;
-    flex: 0 1 50%;
     height: 100%;
     max-width: 600px;
     min-width: 350px;
