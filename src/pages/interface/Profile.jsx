@@ -11,6 +11,9 @@ import redCross from '../../assets/icons/Red-Cross-Icon.svg';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 
+// Import the new specific CSS file for this page
+import '../../assets/css/profile.css';
+
 export default function Profile() {
   const { user: authUser, fetchUser, setUser } = useContext(AuthContext);
   const [updatedName, setUpdatedName] = useState('');
@@ -175,12 +178,12 @@ export default function Profile() {
       )}
 
       <main className="myprofile-main">
-        {/* PageHeader is a direct child of myprofile-main, and now uses a new class */}
+        {/* PageHeader is now a direct child of myprofile-main, outside profile-content-wrapper */}
         <PageHeader
           title="My Account"
           onActivateCard={() => console.log("Activate Card clicked on My Account page")}
           onShareCard={handleShareCard}
-          className="profile-page-header" /* Apply the new class here */
+          className="profile-page-header" /* Apply the new class here for border-bottom */
         />
 
         {/* This div acts as the main content container for the profile page */}

@@ -1,25 +1,26 @@
 /* profile.css */
 
 /* Specific styling for the PageHeader on the Profile page */
+/* This ensures it spans the full width of myprofile-main's content area */
 .profile-page-header {
     width: 100%;
-    /* Default width */
+    /* Make it take full available width of its parent */
     padding-bottom: 30px;
-    /* Space below header */
+    /* Space below header content */
     margin-bottom: 30px;
-    /* Standard margin below header */
+    /* Margin after the header */
     border-bottom: 1px solid #e0e0e0;
     /* Very light gray border-bottom */
     box-sizing: border-box;
-    /* Include padding in width */
+    /* Include padding/border in width calculation */
 
+    /* Inherit/override flex properties from PageHeader component to ensure it aligns correctly */
     display: flex;
-    /* Inherit flex properties from PageHeader component */
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
-    /* Prevents it from shrinking */
 }
+
 
 /* New wrapper for the main content (profile-card-box) to enable centering */
 .profile-content-wrapper {
@@ -59,8 +60,6 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    /* Remove redundant max-width here, already handled by profile-content-wrapper */
-    /* Remove align-items here, should be on profile-content-wrapper if needed */
 }
 
 /* Specific styling for elements inside profile-card-box */
@@ -75,16 +74,13 @@
     font-weight: 500;
 }
 
-/* Ensure inputs/textareas are responsive within the container */
 .profile-input-block input,
 .profile-input-block textarea {
-    /* Added textarea here */
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 14px;
     width: 100%;
-    /* Ensure they take full width of their block */
     box-sizing: border-box;
 }
 
@@ -122,7 +118,6 @@
     height: 16px;
 }
 
-
 .profile-action-row {
     display: flex;
     justify-content: space-between;
@@ -155,39 +150,28 @@
 @media (max-width: 800px) {
     .profile-page-header {
         padding-bottom: 20px;
-        /* Adjust padding for mobile */
         margin-bottom: 20px;
-        /* Adjust margin for mobile */
     }
 
     .profile-content-wrapper {
         max-width: 100%;
-        /* Stretch to full width below 800px */
         padding-left: 15px;
-        /* Adjust padding for mobile */
         padding-right: 15px;
-        /* Adjust padding for mobile */
         margin-left: 0;
         margin-right: 0;
-        /* Remove auto margins on mobile */
     }
 
     .profile-card-box {
         padding: 20px;
-        /* Adjust padding for smaller screens */
     }
 
     .profile-action-row {
         flex-direction: column;
-        /* Stack buttons vertically on mobile */
         align-items: stretch;
-        /* Stretch buttons to full width */
     }
 
     .profile-action-row button {
         width: 100%;
-        /* Ensure buttons take full width */
         box-sizing: border-box;
-        /* Include padding/border in width */
     }
 }
