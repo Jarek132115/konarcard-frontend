@@ -4,10 +4,10 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-// --- REMOVED REDUNDANT IMPORTS ---
-import ProfileCardImage from "../../assets/images/background-hero.png";
-import UserAvatar from "../../assets/images/People.png";
-// --- END REMOVED IMPORTS ---
+// --- RE-ADDED IMPORTS FOR FALLBACK IMAGES ---
+import ProfileCardImage from "../../assets/images/background-hero.png"; // Re-import this
+import UserAvatar from "../../assets/images/People.png"; // Re-import this
+// --- END RE-ADDED IMPORTS ---
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
@@ -58,7 +58,7 @@ export default function MyProfile() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
-  const initialStoreState = useBusinessCardStore.getState().state; // This is a static snapshot of initial state
+  const initialStoreState = useBusinessCardStore.getState().state;
 
   // --- DEBUGGING LOGS START (RUNS ON EVERY RENDER) ---
   // Keep this one to monitor overall state
@@ -113,7 +113,6 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // This useEffect is the source of the infinite loop
   useEffect(() => {
     // console.log("EFFECT - businessCard useEffect triggered. BusinessCard:", businessCard, "isCardLoading:", isCardLoading);
 
@@ -123,7 +122,7 @@ export default function MyProfile() {
         // console.log("EFFECT - Fetched businessCard data. Current state BEFORE updateState:", JSON.parse(JSON.stringify(state)));
 
         updateState({
-          businessName: businessCard.business_card_name || '', // Use empty string for defaults if backend sends null
+          businessName: businessCard.business_card_name || '',
           pageTheme: businessCard.page_theme || 'light',
           font: businessCard.style || 'Inter',
           mainHeading: businessCard.main_heading || '',
@@ -131,8 +130,8 @@ export default function MyProfile() {
           job_title: businessCard.job_title || '',
           full_name: businessCard.full_name || '',
           bio: businessCard.bio || '',
-          avatar: businessCard.avatar || null, // Will be null if backend sends null, so fallback to initial render's state is needed below
-          coverPhoto: businessCard.cover_photo || null, // Same here
+          avatar: businessCard.avatar || null,
+          coverPhoto: businessCard.cover_photo || null,
           workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
           services: (businessCard.services || []),
           reviews: (businessCard.reviews || []),
@@ -149,7 +148,7 @@ export default function MyProfile() {
         // console.log("EFFECT - state after updateState (from fetched data):", JSON.parse(JSON.stringify(useBusinessCardStore.getState().state)));
 
       } else { // businessCard is null, meaning no card exists for this user
-        // console.log("EFFECT - No businessCard found for user. Resetting state to initial defaults.");
+        // console.log("MyProfile useEffect: No business card found for user. Resetting state to initial defaults.");
         resetState(); // Reset to the initial defaults defined in businessCardStore.js
         setCoverPhotoFile(null);
         setAvatarFile(null);
@@ -158,7 +157,7 @@ export default function MyProfile() {
         setIsAvatarRemoved(false);
       }
     }
-  }, [businessCard, isCardLoading, updateState, resetState, authUser]); // <-- REMOVED initialStoreState from dependency array. Added authUser.
+  }, [businessCard, isCardLoading, updateState, resetState, authUser]);
 
 
   useEffect(() => {
@@ -220,7 +219,7 @@ export default function MyProfile() {
   };
 
   const handleRemoveCoverPhoto = () => {
-    // If the current coverPhoto is one of the initial defaults, set it to empty string/null.
+    // Check if the current coverPhoto is one of the initial defaults, set it to empty string/null.
     // It won't be explicitly removed on backend, but new image would overwrite it.
     if (state.coverPhoto === initialStoreState.coverPhoto) {
       updateState({ coverPhoto: null }); // Set to null (or empty string) if it was the default
@@ -344,7 +343,7 @@ export default function MyProfile() {
         toast.success('Email verified successfully!');
         setShowVerificationPrompt(false);
         refetchAuthUser();
-        setVerificationCodeInput('');
+        setVerificationCodeCode('');
       }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Verification failed.');
