@@ -127,7 +127,7 @@
     background: #fff;
     border: 0.625rem solid #ccc;
     border-radius: 2.5rem;
-    padding: 1.5rem;
+    padding: 20px;
     text-align: center;
     box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
@@ -204,7 +204,6 @@
     width: 100%;
     aspect-ratio: 16 / 9;
     border-radius: 0.75rem;
-    min-height: 100px;
 }
 
 .remove-image-button {
