@@ -4,8 +4,8 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-import ProfileCardImage from "../../assets/images/background-hero.png"; // Re-import this
-import UserAvatar from "../../assets/images/People.png"; // Re-import this
+import ProfileCardImage from "../../assets/images/background-hero.png";
+import UserAvatar from "../../assets/images/People.png";
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
@@ -113,7 +113,9 @@ export default function MyProfile() {
 
     if (!isCardLoading && authUser) {
       if (businessCard) {
-        // console.log("EFFECT - Fetched businessCard data. Current state BEFORE updateState:", JSON.parse(JSON.stringify(state)));
+        // console.log("MyProfile useEffect: Business card found. Updating state from fetched data.", businessCard);
+        activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+        setActiveBlobUrls([]);
 
         updateState({
           businessName: businessCard.business_card_name || '',
@@ -208,40 +210,46 @@ export default function MyProfile() {
   };
 
   const handleRemoveCoverPhoto = () => {
-    if (state.coverPhoto === initialStoreState.coverPhoto) {
-      updateState({ coverPhoto: null });
-      setCoverPhotoFile(null);
-      setCoverPhotoRemoved(false);
-    } else {
-      if (state.coverPhoto && state.coverPhoto.startsWith('blob:')) {
-        URL.revokeObjectURL(state.coverPhoto);
-        setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
-      }
-      updateState({ coverPhoto: null });
-      setCoverPhotoFile(null);
+    const isCurrentlyDefault = state.coverPhoto === initialStoreState.coverPhoto;
+    const isLocalBlob = state.coverPhoto && state.coverPhoto.startsWith('blob:');
+
+    if (!isCurrentlyDefault && !isLocalBlob && state.coverPhoto) {
       setCoverPhotoRemoved(true);
+    } else {
+      setCoverPhotoRemoved(false);
     }
+
+    if (isLocalBlob) {
+      URL.revokeObjectURL(state.coverPhoto);
+      setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
+    }
+
+    updateState({ coverPhoto: null });
+    setCoverPhotoFile(null);
   };
 
   const handleRemoveAvatar = () => {
-    if (state.avatar === initialStoreState.avatar) {
-      updateState({ avatar: null });
-      setAvatarFile(null);
-      setIsAvatarRemoved(false);
-    } else {
-      if (state.avatar && state.avatar.startsWith('blob:')) {
-        URL.revokeObjectURL(state.avatar);
-        setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
-      }
-      updateState({ avatar: null });
-      setAvatarFile(null);
+    const isCurrentlyDefault = state.avatar === initialStoreState.avatar;
+    const isLocalBlob = state.avatar && state.avatar.startsWith('blob:');
+
+    if (!isCurrentlyDefault && !isLocalBlob && state.avatar) {
       setIsAvatarRemoved(true);
+    } else {
+      setIsAvatarRemoved(false);
     }
+
+    if (isLocalBlob) {
+      URL.revokeObjectURL(state.avatar);
+      setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
+    }
+
+    updateState({ avatar: null });
+    setAvatarFile(null);
   };
 
   const handleRemoveWorkImage = (indexToRemove) => {
     const removedItem = state.workImages?.[indexToRemove];
-    const isDefaultImage = initialStoreState.workImages.some(defaultImg => defaultImg.preview === removedItem.preview);
+    // const isDefaultImage = initialStoreState.workImages.some(defaultImg => defaultImg.preview === removedItem.preview); // Not needed for removal flag
 
     if (removedItem?.preview?.startsWith('blob:')) {
       URL.revokeObjectURL(removedItem.preview);
@@ -358,12 +366,14 @@ export default function MyProfile() {
 
     const worksToUpload = state.workImages
       .map(item => {
-        if (item.file) {
+        if (item.file) { // If it's a new file upload
           return { file: item.file };
-        } else if (item.preview && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
-          return item.preview;
         }
-        return null;
+        // If it's an existing image URL from backend that is NOT one of our initial defaults
+        else if (item.preview && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
+          return item.preview; // Send its URL to keep it
+        }
+        return null; // It's a default image and hasn't been replaced/modified, so don't send it
       })
       .filter(item => item !== null);
 
@@ -377,8 +387,8 @@ export default function MyProfile() {
       full_name: state.full_name,
       bio: state.bio,
       user: userId,
-      cover_photo: coverPhotoFile,
-      avatar: avatarFile,
+      cover_photo: coverPhotoFile, // Pass the actual File object (or null)
+      avatar: avatarFile,         // Pass the actual File object (or null)
       cover_photo_removed: coverPhotoRemoved,
       avatar_removed: isAvatarRemoved,
       works: worksToUpload,
@@ -622,14 +632,11 @@ export default function MyProfile() {
                     >
                       Exchange Contact
                     </button>
-                    {/* Use state values directly, which now contain defaults */}
+                    {/* --- FIX: New wrapper div for About Me section --- */}
                     {(state.full_name || state.job_title || state.bio || state.avatar) && (
-                      <>
-                        <p className="mock-section-title">
-                          About me
-                        </p>
+                      <div className="mock-about-section-container"> {/* New container for background/padding */}
+                        <p className="mock-section-title">About me</p>
                         <div className="mock-about">
-                          {/* Use state.avatar directly now */}
                           {state.avatar && (
                             <img
                               src={state.avatar || UserAvatar}
@@ -637,13 +644,12 @@ export default function MyProfile() {
                               className="mock-avatar"
                             />
                           )}
-                          {/* Show remove button only if it's an uploaded image (blob) or not the initial default avatar */}
                           {(state.avatar && state.avatar.startsWith('blob:')) || (state.avatar && state.avatar !== initialStoreState.avatar) ? (
                             <button
                               className="remove-image-button"
                               onClick={handleRemoveAvatar}
                               aria-label="Remove avatar"
-                              style={{ top: '10px', left: '10px' }} // Positioning for avatar remove button
+                              style={{ top: '10px', left: '10px' }}
                             >
                               &times;
                             </button>
@@ -653,8 +659,9 @@ export default function MyProfile() {
                             <p className="mock-profile-role">{state.job_title}</p>
                           </div>
                         </div>
+                        {/* Bio text is now inside the new container */}
                         {state.bio && <p className="mock-bio-text">{state.bio}</p>}
-                      </>
+                      </div>
                     )}
 
                     {/* My Work Section (Preview) */}
