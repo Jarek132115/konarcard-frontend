@@ -4,6 +4,7 @@
 /* This now acts more as a layout container than a visual card itself */
 .content-card {
   background: transparent;
+  justify-content: center;
   /* Changed to transparent - no background for this wrapper */
   border-radius: 0;
   /* Remove border-radius */
