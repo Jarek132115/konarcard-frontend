@@ -1,10 +1,10 @@
-// frontend/src/pages/interface/MyProfile.jsx (No changes needed from the previous response for this request)
+// frontend/src/pages/interface/MyProfile.jsx
+// No changes needed for this specific request, the structure is already correct from the previous step.
 
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-// Keep original imports for default images for explicit fallbacks in JSX
 import ProfileCardImage from "../../assets/images/background-hero.png";
 import UserAvatar from "../../assets/images/People.png";
 import useBusinessCardStore from "../../store/businessCardStore";
@@ -677,27 +677,40 @@ export default function MyProfile() {
                       <>
                         <p className="mock-section-title">My Work</p>
                         <div className="mock-work-gallery">
-                          {state.workImages.map((img, i) => {
-                            const isInitialDefaultWorkImage = initialStoreState.workImages.some(defaultImg => defaultImg.preview === img.preview);
-                            return (
-                              <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px' }}>
-                                <img
-                                  src={img.preview} // Direct use of img.preview
-                                  alt={`work-${i}`}
-                                  className="mock-work-image-item"
-                                />
-                                {(img.preview && img.preview.startsWith('blob:')) || (!isInitialDefaultWorkImage) ? (
-                                  <button
-                                    type="button"
-                                    className="remove-image-button"
-                                    onClick={() => handleRemoveWorkImage(i)}
-                                  >
-                                    X
-                                  </button>
-                                ) : null}
-                              </div>
-                            );
-                          })}
+                          {state.workImages.map((img, i) => (
+                            <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px' }}>
+                              <img
+                                src={img.preview}
+                                alt={`work-${i}`}
+                                className="mock-work-image-item"
+                              />
+                              <button
+                                type="button"
+                                className="remove-image-button"
+                                onClick={() => handleRemoveWorkImage(i)}
+                              >
+                                X
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const input = document.createElement('input');
+                              input.type = 'file';
+                              input.accept = 'image/*';
+                              input.multiple = true;
+                              input.onchange = (e) => {
+                                handleAddWorkImage(e);
+                                document.body.removeChild(input);
+                              };
+                              document.body.appendChild(input);
+                              input.click();
+                            }}
+                            style={{ display: "block", marginTop: "10px", padding: "8px 15px", cursor: "pointer" }}
+                          >
+                            Choose files
+                          </button>
                         </div>
                       </>
                     )}

@@ -13,11 +13,13 @@
 .myprofile-main {
     flex: 1;
     overflow-y: auto;
+    /* This still allows main to scroll if overall content is too tall */
     font-family: sans-serif;
     padding: 30px;
     display: flex;
     flex-direction: column;
     min-height: 0;
+    /* Important for flex column children to shrink */
     overflow-x: hidden;
     padding-bottom: 20px;
 
@@ -35,6 +37,7 @@
     align-items: center;
     margin-bottom: 30px;
     flex-shrink: 0;
+    /* Prevent header from shrinking */
 }
 
 .page-title {
@@ -71,50 +74,55 @@
 /* New flex container for side-by-side content */
 .myprofile-flex-container {
     display: flex;
+    /* Arranges preview and editor side-by-side */
     flex: 1;
+    /* Allows this container to take up all available vertical space */
     gap: 40px;
     /* Space between the mock-phone and editor */
     min-height: 0;
-    /* Important for flex children to scroll */
+    /* Crucial for internal scrolling of children */
     overflow: hidden;
-    /* Prevent this container from scrolling itself */
+    /* Prevents this container from having its own scrollbar */
     padding-bottom: 20px;
-    /* Consistent with previous .myprofile-content padding */
+    /* Add some padding at the bottom for overall layout */
     justify-content: space-around;
-    /* Apply space-around here */
-    align-items: center;
-    /* Vertically center them if they have different heights */
+    /* Distribute space around items */
+    align-items: stretch;
+    /* Stretch items to fill the height of the container */
 }
 
-/* MyProfile Content (the row containing the preview) */
+/* MyProfile Content (the preview container) */
 .myprofile-content {
-    /* flex properties adjusted to allow aspect ratio to dictate sizing */
     flex: 0 1 auto;
-    /* Allow shrinking, don't grow, base on content/aspect */
+    /* Don't grow, allow to shrink, base size on content */
     display: flex;
-    /* Make it a flex container to center its child (mock-phone) */
     justify-content: center;
-    /* Center the mock-phone horizontally */
+    /* Center mock-phone inside */
     align-items: center;
-    /* Center the mock-phone vertically */
-    min-height: 0;
-    /* Crucial for content scrolling */
+    /* Center mock-phone inside */
+    height: 100%;
+    /* Take full height of .myprofile-flex-container */
+    aspect-ratio: 9 / 19.5;
+    /* Apply phone aspect ratio to the container */
+    max-width: 320px;
+    /* Keep max width to ensure it doesn't get too large */
+    min-width: 250px;
+    /* Ensure a minimum width to prevent being too small */
+    position: relative;
+    /* For the mock-phone's absolute positioning later */
     overflow: hidden;
-    /* Hide overflow if content is too large */
-    /* Removed justify-content and gap from here, moved flex-direction to .myprofile-flex-container */
+    /* Ensure content inside this div (like mock-phone) doesn't overflow */
 }
 
-/* MyProfile Preview (the mock phone side) */
+/* MyProfile Preview (the mock phone itself) */
 .mock-phone {
     width: 100%;
-    /* Take full width of its parent (.myprofile-content) */
+    /* Fill the width of .myprofile-content */
     height: 100%;
-    /* Take full height of its parent (.myprofile-content) */
-    max-width: 320px;
-    /* Keep a maximum width as before for the phone */
-    aspect-ratio: 9 / 19.5;
-    /* Apply the phone aspect ratio */
-
+    /* Fill the height of .myprofile-content */
+    /* The aspect-ratio on .myprofile-content now dictates the phone's dimensions */
+    /* Remove redundant aspect-ratio here if it's on the parent */
+    /* background, border, padding, shadow, etc. as before */
     background: #fff;
     border: 0.625rem solid #ccc;
     border-radius: 2.5rem;
@@ -126,7 +134,6 @@
     flex-direction: column;
     flex-shrink: 0;
     flex-grow: 0;
-    /* Don't allow it to grow beyond its calculated size */
 
     /* Dark mode styles for mock-phone background and border */
     &[style*="background-color: rgb(31, 31, 31)"] {
@@ -401,7 +408,11 @@
 .myprofile-editor-wrapper {
     position: relative;
     flex: 0 1 auto;
-    /* Allow shrinking, don't grow, base on content/aspect */
+    /* Don't grow, allow to shrink, base size on content */
+    height: 100%;
+    /* Take full height of .myprofile-flex-container */
+    aspect-ratio: 9 / 19.5;
+    /* Apply phone aspect ratio to the editor container */
     max-width: 600px;
     /* Keep a max-width for the editor */
     min-width: 350px;
@@ -409,10 +420,7 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
-    align-self: center;
-    /* Align to center within the flex container */
-    aspect-ratio: 9 / 19.5;
-    /* Apply the phone aspect ratio */
+    /* Crucial for internal scrolling of children */
 }
 
 .myprofile-editor {
@@ -425,7 +433,12 @@
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
+    /* Allows content inside editor to scroll */
     box-sizing: border-box;
+    width: 100%;
+    /* Ensure the editor form fills its wrapper's width */
+    height: 100%;
+    /* Ensure the editor form fills its wrapper's height */
 }
 
 .editor-title {
@@ -618,47 +631,37 @@
 /* MyProfile Mobile Header - This header is separate from the sidebar itself */
 .myprofile-mobile-header {
     display: none;
-    /* Hidden by default on desktop */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 70px;
-    /* Fixed height, consistent with Navbar */
     background-color: white;
     padding: 0 16px;
-    /* Consistent with Navbar */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 900;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* Space out hamburger and logo */
 }
 
 .myprofile-logo-link {
     order: 1;
-    /* Puts logo on the left */
     margin-right: auto;
-    /* Pushes hamburger to the right */
 }
 
 .myprofile-logo-link .myprofile-logo {
     height: 32px;
-    /* Consistent logo size */
 }
 
 .myprofile-hamburger {
     display: none;
-    /* Hidden by default on desktop */
     flex-direction: column;
     gap: 5px;
     cursor: pointer;
     padding: 5px;
     order: 2;
-    /* Puts hamburger on the right */
     margin-left: auto;
-    /* Pushes logo to the left */
 }
 
 .myprofile-hamburger span {
@@ -705,48 +708,55 @@
 @media (max-width: 1000px) {
     .myprofile-main {
         margin-left: 0;
-        /* Remove fixed margin-left on mobile */
         padding-top: 70px;
-        /* Account for fixed mobile header's height (70px) */
     }
 
     .myprofile-mobile-header {
         display: flex;
-        /* Show mobile header */
     }
 
     .myprofile-hamburger {
         display: flex;
-        /* Show hamburger icon */
     }
 
     /* Stack items vertically on mobile */
     .myprofile-flex-container {
         flex-direction: column;
         gap: 20px;
-        /* Adjust gap for mobile stacking */
         padding-top: 0;
-        /* No extra padding at the top for this container on mobile */
         justify-content: flex-start;
-        /* Reset justify-content for column layout */
+        /* Align items to the start in column layout */
         align-items: center;
-        /* Center items in column */
+        /* Center items horizontally in column layout */
     }
 
     .myprofile-content {
         flex: 0 0 auto;
-        /* Reset flex for mobile */
+        /* Allow sizing based on content, no growing */
         width: 100%;
-        /* Take full width */
+        /* Take full width of parent (myprofile-flex-container) */
         max-width: 320px;
-        /* Keep max width to maintain phone-like size */
+        /* Limit the size of the preview on mobile */
         margin: 0 auto;
-        /* Center on mobile */
+        /* Center the preview horizontally */
+        height: auto;
+        /* Let content dictate height on mobile */
+        aspect-ratio: unset;
+        /* Remove aspect ratio on mobile for preview */
+    }
+
+    /* Ensure mock-phone fills its parent on mobile */
+    .mock-phone {
+        width: 100%;
+        height: auto;
+        /* Let content dictate height on mobile */
+        aspect-ratio: 9 / 19.5;
+        /* Keep the aspect ratio on the mock-phone itself for mobile */
     }
 
     .myprofile-editor-wrapper {
         flex: 0 0 auto;
-        /* Reset flex for mobile */
+        /* Allow sizing based on content, no growing */
         max-width: 100%;
         /* Allow to fill width */
         min-width: unset;
@@ -754,11 +764,9 @@
         width: 100%;
         /* Take full width */
         aspect-ratio: unset;
-        /* Remove aspect ratio on mobile for editor */
+        /* Remove aspect ratio on mobile for editor wrapper */
         height: auto;
-        /* Let content dictate height */
-        align-self: stretch;
-        /* Stretch to fill available width */
+        /* Let content dictate height on mobile */
     }
 
     .myprofile-editor {
@@ -781,7 +789,6 @@
 
     .myprofile-main {
         padding-top: 30px;
-        /* Ensure correct padding-top on desktop */
     }
 
     .sidebar {
@@ -791,13 +798,11 @@
 }
 
 /* Consistent navbar/header height across pages for mobile */
-/* This rule affects both Navbar and MyProfile's mobile header */
 @media (max-width: 1000px) {
 
     .navbar,
     .myprofile-mobile-header {
         height: 70px;
-        /* Consistent height for all mobile headers */
         padding: 0 16px;
     }
 }
@@ -807,7 +812,6 @@
     .myprofile-main {
         padding: 15px;
         padding-top: 70px;
-        /* Use exactly 70px for header height */
     }
 
     .page-header {
