@@ -81,8 +81,7 @@ export default function MyProfile() {
   }, [sidebarOpen, isMobile]);
 
   useEffect(() => {
-    if (isCardLoading) console.log("useFetchBusinessCard: Loading business card data...");
-    if (isCardError) console.error("useFetchBusinessCard: Error fetching business card:", cardError);
+    // console.log removed as requested in earlier turns
   }, [isCardLoading, isCardError, cardError]);
 
   useEffect(() => {
@@ -117,13 +116,9 @@ export default function MyProfile() {
         bio: businessCard.bio || initialStoreState.bio,
         avatar: businessCard.avatar || initialStoreState.avatar,
         coverPhoto: businessCard.cover_photo || initialStoreState.coverPhoto,
-        // --- CRITICAL UPDATE FOR WORK IMAGES ---
-        // If businessCard.works has data, map it. Otherwise, use initialStoreState.workImages.
-        // This ensures defaults are loaded when no user-specific work images exist.
         workImages: (businessCard.works && businessCard.works.length > 0)
           ? businessCard.works.map(url => ({ file: null, preview: url }))
-          : initialStoreState.workImages.map(item => ({ ...item })), // Clone initial defaults
-        // --- END CRITICAL UPDATE ---
+          : initialStoreState.workImages.map(item => ({ ...item })), // Cloning initial defaults
         services: (businessCard.services && businessCard.services.length > 0) ? businessCard.services : initialStoreState.services,
         reviews: (businessCard.reviews && businessCard.reviews.length > 0) ? businessCard.reviews : initialStoreState.reviews,
         contact_email: businessCard.contact_email || initialStoreState.contact_email,
@@ -135,7 +130,7 @@ export default function MyProfile() {
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     } else if (!isCardLoading && !businessCard) {
-      resetState(); // This applies all initial defaults including images
+      resetState();
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
@@ -209,9 +204,9 @@ export default function MyProfile() {
     // If the current coverPhoto is one of the initial defaults, set it to null but don't mark as "removed"
     // so it will revert to the default on refresh/next load if not saved.
     if (initialStoreState.coverPhoto && state.coverPhoto === initialStoreState.coverPhoto) {
-      updateState({ coverPhoto: null }); // Or set to a truly empty state if desired
+      updateState({ coverPhoto: null });
       setCoverPhotoFile(null);
-      setCoverPhotoRemoved(false); // Not truly removed from DB perspective
+      setCoverPhotoRemoved(false);
     } else {
       if (state.coverPhoto && state.coverPhoto.startsWith('blob:')) {
         URL.revokeObjectURL(state.coverPhoto);
@@ -219,13 +214,13 @@ export default function MyProfile() {
       }
       updateState({ coverPhoto: null });
       setCoverPhotoFile(null);
-      setCoverPhotoRemoved(true); // Mark as removed for backend
+      setCoverPhotoRemoved(true);
     }
   };
 
   const handleRemoveAvatar = () => {
     if (initialStoreState.avatar && state.avatar === initialStoreState.avatar) {
-      updateState({ avatar: null }); // Or set to truly empty
+      updateState({ avatar: null });
       setAvatarFile(null);
       setIsAvatarRemoved(false);
     } else {
@@ -241,6 +236,7 @@ export default function MyProfile() {
 
   const handleRemoveWorkImage = (indexToRemove) => {
     const removedItem = state.workImages?.[indexToRemove];
+    // Note: The isDefaultImage check here is for display logic; backend removal flags are handled in handleSubmit.
     const isDefaultImage = initialStoreState.workImages.some(defaultImg => defaultImg.preview === removedItem.preview);
 
     if (removedItem?.preview?.startsWith('blob:')) {
@@ -251,9 +247,6 @@ export default function MyProfile() {
     const newWorkImages = state.workImages.filter((_, index) => index !== indexToRemove);
     updateState({ workImages: newWorkImages });
 
-    // If a file was associated (meaning it was uploaded), remove it from workImageFiles
-    // Note: This simple filter assumes indices match, which might not be robust if files are reordered/filtered.
-    // A more robust solution might track IDs for uploaded files.
     setWorkImageFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
@@ -342,40 +335,43 @@ export default function MyProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Removed unnecessary console.logs as requested previously
+
+    // Check if user data is still loading
     if (authLoading) {
       toast.info("User data is still loading. Please wait a moment.");
       return;
     }
+    // Check if userId is available
     if (!userId) {
       toast.error("User not logged in or loaded. Please log in again to save changes.");
       return;
     }
+    // Check if email is verified
     if (!isUserVerified) {
       toast.error("Please verify your email address to save changes.");
       return;
     }
+    // Check if subscribed - THIS IS THE GATING FACTOR
     if (!isSubscribed) {
       toast.error("Please subscribe to edit your profile.");
       return;
     }
 
-    // --- CRITICAL UPDATE FOR SUBMITTING WORK IMAGES ---
     const worksToUpload = state.workImages
       .map(item => {
+        // If it's a File object (a new upload), return the object
         if (item.file) {
-          return { file: item.file }; // It's a new upload, send the file
-        } else if (item.preview && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
-          return item.preview; // It's an existing URL from backend, send the URL
+          return { file: item.file };
         }
-        return null; // It's a default image and hasn't been replaced/modified, don't send it for upload
+        // If it's NOT a default image (i.e., it's an existing URL from backend), return its preview URL string
+        else if (item.preview && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
+          return item.preview;
+        }
+        // If it's a default image and hasn't been replaced/modified, don't send it for upload
+        return null;
       })
-      .filter(item => item !== null); // Filter out nulls
-
-    // If the worksToUpload array is empty and there were previously images
-    // (meaning user removed all their actual images and only defaults remain),
-    // you might need to send a flag to backend to clear works.
-    // For now, if no actual files/non-default URLs are present, `works` will be an empty array.
-    // The backend should handle an empty `works` array for updates correctly.
+      .filter(item => item !== null); // Filter out any nulls
 
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
@@ -391,7 +387,7 @@ export default function MyProfile() {
       avatar: avatarFile,
       cover_photo_removed: coverPhotoRemoved,
       avatar_removed: isAvatarRemoved,
-      works: worksToUpload, // Use the filtered list here
+      works: worksToUpload,
       services: state.services,
       reviews: state.reviews,
       contact_email: state.contact_email,
@@ -405,7 +401,6 @@ export default function MyProfile() {
       if (response.data && response.data.data) {
         const fetchedCardData = response.data.data;
 
-        // Update state with fetched data
         updateState({
           businessName: fetchedCardData.business_card_name,
           pageTheme: fetchedCardData.page_theme,
@@ -677,7 +672,7 @@ export default function MyProfile() {
                             // Check if this work image is one of the initial defaults
                             const isInitialDefaultWorkImage = initialStoreState.workImages.some(defaultImg => defaultImg.preview === img.preview);
                             return (
-                              <div key={i} style={{ position: 'relative', display: 'inline-block' }}>
+                              <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px' }}>
                                 <img
                                   src={img.preview}
                                   alt={`work-${i}`}
@@ -823,7 +818,7 @@ export default function MyProfile() {
                       }}
                     >
                       <img
-                        src={state.coverPhoto} // Use state.coverPhoto directly
+                        src={state.coverPhoto}
                         alt="Cover"
                         className="cover-preview"
                       />
@@ -884,7 +879,7 @@ export default function MyProfile() {
                       }}
                     >
                       <img
-                        src={state.avatar} // Use state.avatar directly
+                        src={state.avatar}
                         alt="Avatar preview"
                         style={{
                           width: 80,
