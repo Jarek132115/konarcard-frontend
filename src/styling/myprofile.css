@@ -649,6 +649,7 @@
         margin-left: 0;
         padding-top: 70px;
         overflow-y: auto;
+        /* Allow main page scroll on mobile */
     }
 
     .myprofile-mobile-header {
@@ -670,7 +671,8 @@
 
     .myprofile-content {
         width: 100%;
-        max-width: 320px;
+        max-width: 100%;
+        /* Make it truly full width */
         min-width: unset;
         margin: 0 auto;
         height: auto;
@@ -720,6 +722,7 @@
     .myprofile-main {
         padding-top: 30px;
         overflow-y: hidden;
+        /* Prevent main page scroll on desktop */
     }
 
     .sidebar {

@@ -1,5 +1,5 @@
 // frontend/src/pages/interface/MyProfile.jsx
-// No changes needed for this specific request, the structure is already correct from the previous step.
+// No changes needed for this specific request, the structure is already correct.
 
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
