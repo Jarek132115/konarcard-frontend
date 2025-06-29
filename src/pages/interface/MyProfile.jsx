@@ -1,5 +1,4 @@
 // frontend/src/pages/interface/MyProfile.jsx
-// No changes needed for this specific request, the structure is already correct.
 
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
@@ -45,14 +44,14 @@ export default function MyProfile() {
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
 
-  const [coverPhotoFile, setCoverPhotoFile] = useState(null); // Actual File object for new cover photo
-  const [avatarFile, setAvatarFile] = useState(null);     // Actual File object for new avatar
-  const [workImageFiles, setWorkImageFiles] = useState([]); // Array of actual File objects for new work images
+  const [coverPhotoFile, setCoverPhotoFile] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [workImageFiles, setWorkImageFiles] = useState([]);
 
-  const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false); // Flag for backend to explicitly remove cover photo
-  const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);    // Flag for backend to explicitly remove avatar
+  const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
+  const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
 
-  const [activeBlobUrls, setActiveBlobUrls] = useState([]); // To keep track of object URLs for cleanup
+  const [activeBlobUrls, setActiveBlobUrls] = useState([]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
@@ -111,53 +110,33 @@ export default function MyProfile() {
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
   useEffect(() => {
-    // console.log("EFFECT - businessCard useEffect triggered. BusinessCard:", businessCard, "isCardLoading:", isCardLoading);
+    if (!isCardLoading && authUser) {
+      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+      setActiveBlobUrls([]);
 
-    if (!isCardLoading && authUser) { // Only proceed if card data is not currently loading AND authUser is loaded
-      if (businessCard) {
-        // console.log("MyProfile useEffect: Business card found. Updating state from fetched data.", businessCard);
-        activeBlobUrls.forEach(url => URL.revokeObjectURL(url)); // Clean up any old blob URLs
-        setActiveBlobUrls([]);
+      updateState({
+        businessName: businessCard?.business_card_name || '',
+        pageTheme: businessCard?.page_theme || 'light',
+        font: businessCard?.style || 'Inter',
+        mainHeading: businessCard?.main_heading || '',
+        subHeading: businessCard?.sub_heading || '',
+        job_title: businessCard?.job_title || '',
+        full_name: businessCard?.full_name || '',
+        bio: businessCard?.bio || '',
+        avatar: businessCard?.avatar || null,
+        coverPhoto: businessCard?.cover_photo || null,
+        workImages: (businessCard?.works || []).map(url => ({ file: null, preview: url })),
+        services: (businessCard?.services || []),
+        reviews: (businessCard?.reviews || []),
+        contact_email: businessCard?.contact_email || '',
+        phone_number: businessCard?.phone_number || '',
+      });
 
-        updateState({
-          businessName: businessCard.business_card_name || '',
-          pageTheme: businessCard.page_theme || 'light',
-          font: businessCard.style || 'Inter',
-          mainHeading: businessCard.main_heading || '',
-          subHeading: businessCard.sub_heading || '',
-          job_title: businessCard.job_title || '',
-          full_name: businessCard.full_name || '',
-          bio: businessCard.bio || '',
-          avatar: businessCard.avatar || null, // Backend should return actual S3 URLs or null
-          coverPhoto: businessCard.cover_photo || null, // Backend should return actual S3 URLs or null
-          workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
-          services: (businessCard.services || []),
-          reviews: (businessCard.reviews || []),
-          contact_email: businessCard.contact_email || '',
-          phone_number: businessCard.phone_number || '',
-        });
-
-        // Reset local file states and removal flags after successful fetch/update
-        setCoverPhotoFile(null);
-        setAvatarFile(null);
-        setWorkImageFiles([]);
-        setCoverPhotoRemoved(false);
-        setIsAvatarRemoved(false);
-
-        // console.log("MyProfile useEffect: state after updateState (from fetched data):", JSON.parse(JSON.stringify(useBusinessCardStore.getState().state)));
-
-      } else { // businessCard is null, meaning no card exists for this user yet
-        // console.log("MyProfile useEffect: No business card found for user. Resetting state to initial defaults.");
-        resetState(); // Reset ALL state to initial defaults from businessCardStore.js
-        // Clear local file states and removal flags, as we're starting fresh
-        activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
-        setActiveBlobUrls([]);
-        setCoverPhotoFile(null);
-        setAvatarFile(null);
-        setWorkImageFiles([]);
-        setCoverPhotoRemoved(false);
-        setIsAvatarRemoved(false);
-      }
+      setCoverPhotoFile(null);
+      setAvatarFile(null);
+      setWorkImageFiles([]);
+      setCoverPhotoRemoved(false);
+      setIsAvatarRemoved(false);
     }
   }, [businessCard, isCardLoading, updateState, resetState, authUser]);
 
@@ -174,24 +153,23 @@ export default function MyProfile() {
     return blobUrl;
   };
 
-  // --- Image Upload Handlers ---
   const handleImageUpload = (e) => {
     e.preventDefault();
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      updateState({ coverPhoto: createAndTrackBlobUrl(file) }); // Update state with blob URL for preview
-      setCoverPhotoFile(file); // Store the actual File object for upload
-      setCoverPhotoRemoved(false); // Not marked for removal
+      updateState({ coverPhoto: createAndTrackBlobUrl(file) });
+      setCoverPhotoFile(file);
+      setCoverPhotoRemoved(false);
     }
   };
 
   const handleAvatarUpload = (event) => {
-    event.preventDefault(); // Changed e to event for consistency
+    event.preventDefault();
     const file = event.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      updateState({ avatar: createAndTrackBlobUrl(file) }); // Update state with blob URL for preview
-      setAvatarFile(file); // Store the actual File object for upload
-      setIsAvatarRemoved(false); // No longer marked for removal
+      updateState({ avatar: createAndTrackBlobUrl(file) });
+      setAvatarFile(file);
+      setIsAvatarRemoved(false);
     }
   };
 
@@ -203,8 +181,8 @@ export default function MyProfile() {
       return;
     }
     const newPreviewItems = newImageFiles.map(file => ({
-      file: file, // Store the actual File object
-      preview: createAndTrackBlobUrl(file), // Store blob URL for preview
+      file: file,
+      preview: createAndTrackBlobUrl(file),
     }));
     updateState({
       workImages: [...state.workImages, ...newPreviewItems],
@@ -212,43 +190,42 @@ export default function MyProfile() {
     setWorkImageFiles(prevFiles => [...prevFiles, ...newImageFiles]);
   };
 
-  // --- Image Removal Handlers ---
   const handleRemoveCoverPhoto = () => {
     const isCurrentlyDefault = state.coverPhoto === initialStoreState.coverPhoto;
     const isLocalBlob = state.coverPhoto && state.coverPhoto.startsWith('blob:');
 
-    if (!isCurrentlyDefault && !isLocalBlob && state.coverPhoto) { // It's a persisted S3 URL
-      setCoverPhotoRemoved(true); // Flag for backend to remove
+    if (!isCurrentlyDefault && !isLocalBlob && state.coverPhoto) {
+      setCoverPhotoRemoved(true);
     } else {
-      setCoverPhotoRemoved(false); // Not removing a persisted image
+      setCoverPhotoRemoved(false);
     }
 
-    if (isLocalBlob) { // Revoke blob URL if it was a local preview
+    if (isLocalBlob) {
       URL.revokeObjectURL(state.coverPhoto);
       setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
     }
 
-    updateState({ coverPhoto: null }); // Clear preview regardless
-    setCoverPhotoFile(null); // Clear file to upload
+    updateState({ coverPhoto: null });
+    setCoverPhotoFile(null);
   };
 
   const handleRemoveAvatar = () => {
     const isCurrentlyDefault = state.avatar === initialStoreState.avatar;
     const isLocalBlob = state.avatar && state.avatar.startsWith('blob:');
 
-    if (!isCurrentlyDefault && !isLocalBlob && state.avatar) { // It's a persisted S3 URL
-      setIsAvatarRemoved(true); // Flag for backend to remove
+    if (!isCurrentlyDefault && !isLocalBlob && state.avatar) {
+      setIsAvatarRemoved(true);
     } else {
-      setIsAvatarRemoved(false); // Not removing a persisted image
+      setIsAvatarRemoved(false);
     }
 
-    if (isLocalBlob) { // Revoke blob URL if it was a local preview
+    if (isLocalBlob) {
       URL.revokeObjectURL(state.avatar);
       setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
     }
 
-    updateState({ avatar: null }); // Clear preview regardless
-    setAvatarFile(null); // Clear file to upload
+    updateState({ avatar: null });
+    setAvatarFile(null);
   };
 
   const handleRemoveWorkImage = (indexToRemove) => {
@@ -266,7 +243,6 @@ export default function MyProfile() {
     setWorkImageFiles(prevFiles => prevFiles.filter(f => f !== removedItem.file));
   };
 
-  // Other Handlers (Services, Reviews, Verification, etc.)
   const handleAddService = () => {
     updateState({ services: [...state.services, { name: "", price: "" }] });
   };
@@ -371,14 +347,13 @@ export default function MyProfile() {
 
     const worksToUpload = state.workImages
       .map(item => {
-        if (item.file) { // If it's a new file upload
+        if (item.file) {
           return { file: item.file };
         }
-        // If it's an existing image URL from backend that is NOT one of our initial defaults
         else if (item.preview && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
-          return item.preview; // Send its URL to keep it
+          return item.preview;
         }
-        return null; // It's a default image and hasn't been replaced/modified, so don't send it
+        return null;
       })
       .filter(item => item !== null);
 
@@ -392,8 +367,8 @@ export default function MyProfile() {
       full_name: state.full_name,
       bio: state.bio,
       user: userId,
-      cover_photo: coverPhotoFile, // Pass the actual File object (or null)
-      avatar: avatarFile,         // Pass the actual File object (or null)
+      cover_photo: coverPhotoFile,
+      avatar: avatarFile,
       cover_photo_removed: coverPhotoRemoved,
       avatar_removed: isAvatarRemoved,
       works: worksToUpload,
@@ -410,7 +385,6 @@ export default function MyProfile() {
       if (response.data && response.data.data) {
         const fetchedCardData = response.data.data;
 
-        // IMPORTANT: Update state using fetched S3 URLs or actual nulls
         updateState({
           businessName: fetchedCardData.business_card_name,
           pageTheme: fetchedCardData.page_theme,
@@ -420,11 +394,11 @@ export default function MyProfile() {
           job_title: fetchedCardData.job_title,
           full_name: fetchedCardData.full_name,
           bio: fetchedCardData.bio,
-          avatar: fetchedCardData.avatar, // This should be the S3 URL or null
-          coverPhoto: fetchedCardData.cover_photo, // This should be the S3 URL or null
+          avatar: fetchedCardData.avatar,
+          coverPhoto: fetchedCardData.cover_photo,
           workImages: (fetchedCardData.works || []).map((url) => ({
-            file: null, // It's no longer a local file after saving
-            preview: url, // This will be the S3 URL
+            file: null,
+            preview: url,
           })),
           services: fetchedCardData.services,
           reviews: fetchedCardData.reviews,
@@ -445,11 +419,6 @@ export default function MyProfile() {
     } catch (error) {
       toast.error("Something went wrong while saving. Check console for details.");
     }
-  };
-
-  const themeStyles = {
-    backgroundColor: state.pageTheme === "dark" ? "#1F1F1F" : "#FFFFFF",
-    color: state.pageTheme === "dark" ? "#FFFFFF" : "#000000",
   };
 
   const handleActivateCard = () => {
@@ -496,13 +465,10 @@ export default function MyProfile() {
 
   return (
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
-      {/* MyProfile Mobile Header - Logo on left, Hamburger on right */}
       <div className="myprofile-mobile-header">
-        {/* Logo on the left (order 1 in CSS) */}
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
-        {/* Hamburger on the right (order 2 in CSS) */}
         <div
           className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -601,19 +567,15 @@ export default function MyProfile() {
               </div>
             )}
 
-            {/* New flex container for side-by-side content */}
             <div className="myprofile-flex-container">
-              {/* myprofile-content now contains only the mock-phone and its related structure */}
               <div className="myprofile-content">
                 <div className="mock-phone">
                   <div className="mock-phone-scrollable-content">
-                    {/* Use state.coverPhoto directly now, as it holds the default path or user upload */}
                     <img
-                      src={state.coverPhoto} // Direct use of state.coverPhoto
+                      src={state.coverPhoto}
                       alt="Cover"
                       className="mock-cover"
                     />
-                    {/* Show remove button only if it's an uploaded image (blob) or not the initial default cover */}
                     {(state.coverPhoto && state.coverPhoto.startsWith('blob:')) || (state.coverPhoto && state.coverPhoto !== initialStoreState.coverPhoto) ? (
                       <button
                         className="remove-image-button"
@@ -628,25 +590,18 @@ export default function MyProfile() {
                     <p className="mock-subtitle">{state.subHeading}</p>
                     <button
                       type="button"
-                      style={{
-                        backgroundColor:
-                          state.pageTheme === "dark" ? "white" : "black",
-                        color: state.pageTheme !== "dark" ? "white" : "black",
-                      }}
                       className="mock-button"
                     >
                       Exchange Contact
                     </button>
-                    {/* --- FIX: New wrapper div for About Me section --- */}
                     {(state.full_name || state.job_title || state.bio || state.avatar) && (
-                      <div className="mock-about-container"> {/* This div will get the gray background */}
-                        <p className="mock-section-title">About me</p> {/* This title is inside the grey box */}
-                        {/* Inner flex container for avatar, name, job title, and bio */}
-                        <div className="mock-about-content-group"> {/* New div to organize content within the grey box */}
-                          <div className="mock-about-header-group"> {/* This div contains avatar, name, job title */}
+                      <div className="mock-about-container">
+                        <p className="mock-section-title">About me</p>
+                        <div className="mock-about-content-group">
+                          <div className="mock-about-header-group">
                             {state.avatar && (
                               <img
-                                src={state.avatar} // Direct use of state.avatar
+                                src={state.avatar}
                                 alt="Avatar"
                                 className="mock-avatar"
                               />
@@ -666,13 +621,11 @@ export default function MyProfile() {
                               <p className="mock-profile-role">{state.job_title}</p>
                             </div>
                           </div>
-                          {/* Bio text is now directly inside mock-about-content-group, after header-group */}
                           {state.bio && <p className="mock-bio-text">{state.bio}</p>}
                         </div>
                       </div>
                     )}
 
-                    {/* My Work Section (Preview) */}
                     {(state.workImages && state.workImages.length > 0) && (
                       <>
                         <p className="mock-section-title">My Work</p>
@@ -715,7 +668,6 @@ export default function MyProfile() {
                       </>
                     )}
 
-                    {/* My Services Section (Preview) */}
                     {(state.services && state.services.length > 0) && (
                       <>
                         <p className="mock-section-title">My Services</p>
@@ -730,7 +682,6 @@ export default function MyProfile() {
                       </>
                     )}
 
-                    {/* Reviews Section (Preview) */}
                     {(state.reviews && state.reviews.length > 0) && (
                       <>
                         <p className="mock-section-title">Reviews</p>
@@ -756,7 +707,6 @@ export default function MyProfile() {
                 </div>
               </div>
 
-              {/* --- EDITOR SECTION (Gated by Subscription) --- */}
               <div className="myprofile-editor-wrapper" style={{ position: 'relative' }}>
                 {!isSubscribed && (
                   <div className="subscription-overlay">
@@ -787,7 +737,6 @@ export default function MyProfile() {
                         type="button"
                         className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
                         onClick={() => updateState({ pageTheme: "dark" })}
-                        style={{ fontFamily: state.font }}
                       >
                         Dark Mode
                       </button>
@@ -803,7 +752,6 @@ export default function MyProfile() {
                           key={font}
                           className={`font-button ${state.font === font ? "is-active" : ""}`}
                           onClick={() => updateState({ font })}
-                          style={{ fontFamily: font }}
                         >
                           {font}
                         </button>
@@ -838,7 +786,7 @@ export default function MyProfile() {
                       }}
                     >
                       <img
-                        src={state.coverPhoto} // Direct use of state.coverPhoto
+                        src={state.coverPhoto}
                         alt="Cover"
                         className="cover-preview"
                       />
@@ -899,7 +847,7 @@ export default function MyProfile() {
                       }}
                     >
                       <img
-                        src={state.avatar} // Direct use of state.avatar
+                        src={state.avatar}
                         alt="Avatar preview"
                         style={{
                           width: 80,
@@ -1054,10 +1002,6 @@ export default function MyProfile() {
                   <button
                     type="submit"
                     className="submit-button"
-                    style={{
-                      backgroundColor: state.pageTheme === "dark" ? "white" : "black",
-                      color: state.pageTheme !== "dark" ? "white" : "black",
-                    }}
                   >
                     Save Business Card
                   </button>
