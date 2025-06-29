@@ -2,18 +2,20 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
-import ShareProfile from '../../components/ShareProfile'; // Import ShareProfile
+import ShareProfile from '../../components/ShareProfile';
 import { AuthContext } from '../../components/AuthContext';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import greenTick from '../../assets/icons/Green-Tick-Icon.svg';
 import redCross from '../../assets/icons/Red-Cross-Icon.svg';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
-import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; // Import useFetchBusinessCard
+import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 
+// Import the new specific CSS file for this page
+import '../../assets/css/profile.css';
 
 export default function Profile() {
-  const { user: authUser, fetchUser, setUser } = useContext(AuthContext); // Rename user to authUser to avoid conflict
+  const { user: authUser, fetchUser, setUser } = useContext(AuthContext);
   const [updatedName, setUpdatedName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -24,14 +26,12 @@ export default function Profile() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-  const [showShareModal, setShowShareModal] = useState(false); // Add share modal state
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const userId = authUser?._id;
   const userUsername = authUser?.username;
 
-  // Fetch business card data for this page as well
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
-
 
   useEffect(() => {
     if (authUser) {
@@ -142,7 +142,6 @@ export default function Profile() {
     setShowShareModal(false);
   };
 
-  // Prepare contact details for VCard
   const contactDetailsForVCard = {
     full_name: businessCard?.full_name || authUser?.name || '',
     job_title: businessCard?.job_title || '',
@@ -155,7 +154,6 @@ export default function Profile() {
 
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
-
 
   return (
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
@@ -180,13 +178,17 @@ export default function Profile() {
       )}
 
       <main className="myprofile-main">
-        <div className="page-wrapper">
-          <PageHeader
-            title="My Account"
-            onActivateCard={() => console.log("Activate Card clicked on My Account page")} // Dummy or specific action
-            onShareCard={handleShareCard}
-          />
+        {/* PageHeader is a direct child of myprofile-main, and now uses a new class */}
+        <PageHeader
+          title="My Account"
+          onActivateCard={() => console.log("Activate Card clicked on My Account page")}
+          onShareCard={handleShareCard}
+          className="profile-page-header" /* Apply the new class here */
+        />
 
+        {/* This div acts as the main content container for the profile page */}
+        {/* It gets the centering, max-width, and its own background/shadow */}
+        <div className="profile-content-wrapper">
           <div className="profile-card-box">
             <div className="profile-input-block">
               <label>Display Name</label>
@@ -259,11 +261,10 @@ export default function Profile() {
                 Save Updates
               </button>
             </div>
-          </div>
-        </div>
+          </div> {/* End of profile-card-box */}
+        </div> {/* End of profile-content-wrapper */}
       </main>
 
-      {/* Render ShareProfile component */}
       <ShareProfile
         isOpen={showShareModal}
         onClose={handleCloseShareModal}

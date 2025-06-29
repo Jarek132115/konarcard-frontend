@@ -1,78 +1,69 @@
-.profile-layout {
-    display: flex;
-    height: 100vh;
-    background-color: #f9f9f9;
-}
+/* profile.css */
 
-.profile-main {
-    flex: 1;
-    padding: 40px;
-    font-family: sans-serif;
-    /* Scoped only to the profile area */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-y: auto;
-}
-
-.profile-main-title {
-    align-self: flex-start;
-    font-size: 24px;
-    font-weight: 600;
+/* Specific styling for the PageHeader on the Profile page */
+.profile-page-header {
+    width: 100%;
+    /* Default width */
+    padding-bottom: 30px;
+    /* Space below header */
     margin-bottom: 30px;
+    /* Standard margin below header */
+    border-bottom: 1px solid #e0e0e0;
+    /* Very light gray border-bottom */
+    box-sizing: border-box;
+    /* Include padding in width */
+
+    display: flex;
+    /* Inherit flex properties from PageHeader component */
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    /* Prevents it from shrinking */
 }
 
+/* New wrapper for the main content (profile-card-box) to enable centering */
+.profile-content-wrapper {
+    width: 100%;
+    max-width: 600px;
+    /* Max width for content as requested */
+    box-sizing: border-box;
+    /* Include padding in width */
+
+    display: flex;
+    /* Make it a flex container to center its children */
+    flex-direction: column;
+    /* Stack content vertically */
+    gap: 20px;
+    /* Space between elements inside */
+
+    flex: 1;
+    /* Allow this wrapper to take all available vertical space */
+    min-height: 0;
+    /* Important for flex children to shrink */
+    overflow-y: auto;
+    /* Allow content inside this wrapper to scroll */
+
+    margin: auto;
+    /* This magic centers it vertically and horizontally within myprofile-main */
+}
+
+/* Original profile-card-box styles (now within profile-content-wrapper) */
 .profile-card-box {
     background: white;
     padding: 32px;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    max-width: 600px;
     width: 100%;
+    /* It should take the full width of its parent (profile-content-wrapper) */
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    /* Remove redundant max-width here, already handled by profile-content-wrapper */
+    /* Remove align-items here, should be on profile-content-wrapper if needed */
 }
 
-.profile-avatar-section {
-    display: flex;
-    align-items: flex-start;
-}
-
-.profile-avatar-wrapper {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    margin-bottom: 10px;
-}
-
-.profile-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #e0e0e0;
-}
-
-.upload-avatar-label {
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #000;
-    color: #fff;
-    padding: 3px 8px;
-    font-size: 11px;
-    border-radius: 6px;
-    cursor: pointer;
-    opacity: 0.9;
-    transition: 0.2s ease;
-}
-
-.upload-avatar-label:hover {
-    opacity: 1;
-}
-
+/* Specific styling for elements inside profile-card-box */
 .profile-input-block {
     display: flex;
     flex-direction: column;
@@ -84,30 +75,17 @@
     font-weight: 500;
 }
 
-.profile-input-block input {
+/* Ensure inputs/textareas are responsive within the container */
+.profile-input-block input,
+.profile-input-block textarea {
+    /* Added textarea here */
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 14px;
-}
-
-.profile-input-row {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-
-.profile-phone-inputs {
-    display: flex;
-    gap: 8px;
-}
-
-.profile-phone-inputs select,
-.profile-phone-inputs input {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
+    width: 100%;
+    /* Ensure they take full width of their block */
+    box-sizing: border-box;
 }
 
 .profile-password-wrapper {
@@ -119,14 +97,31 @@
     flex-grow: 1;
 }
 
-.profile-reset-button {
-    padding: 10px 12px;
-    background: #eee;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
+.password-feedback {
+    margin-top: 10px;
 }
+
+.password-feedback p {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: #666;
+}
+
+.password-feedback p.valid {
+    color: green;
+}
+
+.password-feedback p.invalid {
+    color: red;
+}
+
+.feedback-icon {
+    width: 16px;
+    height: 16px;
+}
+
 
 .profile-action-row {
     display: flex;
@@ -154,4 +149,45 @@
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
+}
+
+/* Mobile Responsiveness for Profile.css specific elements */
+@media (max-width: 800px) {
+    .profile-page-header {
+        padding-bottom: 20px;
+        /* Adjust padding for mobile */
+        margin-bottom: 20px;
+        /* Adjust margin for mobile */
+    }
+
+    .profile-content-wrapper {
+        max-width: 100%;
+        /* Stretch to full width below 800px */
+        padding-left: 15px;
+        /* Adjust padding for mobile */
+        padding-right: 15px;
+        /* Adjust padding for mobile */
+        margin-left: 0;
+        margin-right: 0;
+        /* Remove auto margins on mobile */
+    }
+
+    .profile-card-box {
+        padding: 20px;
+        /* Adjust padding for smaller screens */
+    }
+
+    .profile-action-row {
+        flex-direction: column;
+        /* Stack buttons vertically on mobile */
+        align-items: stretch;
+        /* Stretch buttons to full width */
+    }
+
+    .profile-action-row button {
+        width: 100%;
+        /* Ensure buttons take full width */
+        box-sizing: border-box;
+        /* Include padding/border in width */
+    }
 }
