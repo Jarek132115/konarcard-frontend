@@ -811,3 +811,22 @@
         font-size: 0.8rem;
     }
 }
+
+.input-block input[type=text],
+.input-block textarea {
+    padding: 10px;
+    border: 1px solid #ccc !important;
+    /* Add !important */
+    border-radius: 8px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-block input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc !important;
+    /* Add !important */
+    font-size: 14px;
+}
