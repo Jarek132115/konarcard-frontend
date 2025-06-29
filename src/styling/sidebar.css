@@ -377,3 +377,7 @@
         /* Adjusted padding for mobile */
     }
 }
+
+.body-no-scroll {
+    overflow: hidden !important;
+}
