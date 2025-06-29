@@ -1,4 +1,4 @@
-// frontend/src/pages/interface/MyProfile.jsx
+// frontend/src/pages/interface/MyProfile.jsx (No changes needed from the previous response for this request)
 
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
@@ -603,6 +603,7 @@ export default function MyProfile() {
 
             {/* New flex container for side-by-side content */}
             <div className="myprofile-flex-container">
+              {/* myprofile-content now contains only the mock-phone and its related structure */}
               <div className="myprofile-content">
                 <div className="mock-phone">
                   <div className="mock-phone-scrollable-content">

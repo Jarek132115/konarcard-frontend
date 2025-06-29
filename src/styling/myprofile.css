@@ -71,9 +71,7 @@
 /* New flex container for side-by-side content */
 .myprofile-flex-container {
     display: flex;
-    /* Default to row for desktop */
     flex: 1;
-    /* Allow it to take up remaining vertical space */
     gap: 40px;
     /* Space between the mock-phone and editor */
     min-height: 0;
@@ -82,47 +80,41 @@
     /* Prevent this container from scrolling itself */
     padding-bottom: 20px;
     /* Consistent with previous .myprofile-content padding */
+    justify-content: space-around;
+    /* Apply space-around here */
+    align-items: center;
+    /* Vertically center them if they have different heights */
 }
 
-
-/* MyProfile Content (the row containing the preview and editor forms) */
+/* MyProfile Content (the row containing the preview) */
 .myprofile-content {
-    /* Removed display: flex and gap: 40px from here, moved to .myprofile-flex-container */
-    justify-content: space-around;
-    flex: 1;
-    /* Allows this row to take up all *remaining* vertical space within .myprofile-main */
+    /* flex properties adjusted to allow aspect ratio to dictate sizing */
+    flex: 0 1 auto;
+    /* Allow shrinking, don't grow, base on content/aspect */
+    display: flex;
+    /* Make it a flex container to center its child (mock-phone) */
+    justify-content: center;
+    /* Center the mock-phone horizontally */
+    align-items: center;
+    /* Center the mock-phone vertically */
     min-height: 0;
-    /* CRITICAL: Allows flex items inside to shrink and enables their overflow-y: auto */
+    /* Crucial for content scrolling */
     overflow: hidden;
-    /* Prevents this row from having its own scrollbar, children manage. */
-    /* Removed padding-bottom: 20px; moved to .myprofile-flex-container */
+    /* Hide overflow if content is too large */
+    /* Removed justify-content and gap from here, moved flex-direction to .myprofile-flex-container */
 }
 
 /* MyProfile Preview (the mock phone side) */
-.myprofile-preview {
-    flex: 0 1 320px;
-    /* flex-grow:0, flex-shrink:1, flex-basis:320px */
-    max-width: 320px;
-    /* Hard cap for the width of this container */
-    position: relative;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 0;
-    overflow: hidden;
-    align-self: stretch;
-    /* Make it fill the available height within .myprofile-content */
-}
-
 .mock-phone {
     width: 100%;
+    /* Take full width of its parent (.myprofile-content) */
     height: 100%;
-    max-width: 100%;
-    max-height: 100%;
+    /* Take full height of its parent (.myprofile-content) */
+    max-width: 320px;
+    /* Keep a maximum width as before for the phone */
     aspect-ratio: 9 / 19.5;
-    /* Maintain phone shape. This will make it fit the most constrained dimension. */
+    /* Apply the phone aspect ratio */
+
     background: #fff;
     border: 0.625rem solid #ccc;
     border-radius: 2.5rem;
@@ -132,9 +124,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    /* Stacks content vertically */
     flex-shrink: 0;
-    /* Prevent the phone frame itself from shrinking its content */
     flex-grow: 0;
     /* Don't allow it to grow beyond its calculated size */
 
@@ -170,13 +160,11 @@
 .mock-phone-scrollable-content {
     flex-grow: 1;
     overflow-y: auto;
-    /* THIS IS WHERE THE SCROLLBAR FOR THE CONTENT GOES */
     width: 100%;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    /* Space between sections like hero, about, work, services, reviews */
 }
 
 .mock-phone>*:not(.mock-phone-scrollable-content) {
@@ -188,13 +176,9 @@
 .mock-avatar,
 .mock-work-image-item {
     background-color: #f0f0f0;
-    /* Default background for empty image or during load */
     display: block;
-    /* Ensure block-level for sizing */
     object-fit: cover;
-    /* Cover container while maintaining aspect ratio */
     background-size: 50%;
-    /* For placeholder SVG if added */
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -204,7 +188,6 @@
 .mock-avatar[src=""],
 .mock-work-image-item[src=""] {
     border: 1px dashed #ccc;
-    /* Dashed border for missing images */
 }
 
 
@@ -265,7 +248,6 @@
 .mock-section-title {
     font-size: 1rem;
     margin-top: 0;
-    /* Margin handled by parent gap */
     margin-bottom: 0.75rem;
     font-weight: 600;
     text-align: left;
@@ -273,33 +255,25 @@
 
 /* --- FIX: Styles for the new About Me container --- */
 .mock-about-container {
-    /* This is the main gray box for the "About Me" section */
     background: #f1f1f1;
     border-radius: 1rem;
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    /* Stack header group and bio text vertically */
     gap: 0.75rem;
-    /* Space between the header group and the bio text */
     text-align: left;
 }
 
-/* This div is inside mock-about-container, wraps avatar+name+job and bio.
-    It doesn't need much styling itself, as mock-about-container gives the background/padding. */
 .mock-about-content-group {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    /* Space between avatar/name/title line and the bio text */
 }
 
-/* This is for the row with Avatar, Name, Job Title */
 .mock-about-header-group {
     display: flex;
     gap: 0.75rem;
     align-items: flex-start;
-    /* Align avatar and text to top */
     flex-direction: row;
 }
 
@@ -308,12 +282,9 @@
     height: 3.5rem;
     border-radius: 50%;
     min-width: 3.5rem;
-    /* Ensure avatar always has size */
     min-height: 3.5rem;
     background-color: #ccc;
-    /* Fallback background */
     background-image: url('/Interface-Preview/Profile-Pic.png');
-    /* Default placeholder icon */
     background-size: cover;
     background-position: center;
 }
@@ -336,7 +307,6 @@
     font-size: 0.9375rem;
     line-height: 1.4;
     margin-top: 0;
-    /* Margin handled by parent gap */
     text-align: left;
     color: #333;
 }
@@ -348,19 +318,14 @@
 }
 
 .mock-work-gallery img.mock-work-image-item {
-    /* Target specific class */
     width: 100%;
     height: 90px;
-    /* Fixed height for consistency in grid */
     aspect-ratio: 16 / 9;
-    /* Maintain aspect ratio */
     border-radius: 0.5rem;
     min-width: 50px;
     min-height: 50px;
     background-color: #f0f0f0;
-    /* Fallback background for missing images */
     background-image: url('/Interface-Preview/Work-Images1.png');
-    /* Example placeholder, adjust as needed */
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
@@ -435,13 +400,19 @@
 /* EDITOR SECTION */
 .myprofile-editor-wrapper {
     position: relative;
-    flex: 1;
-    max-width: min(50%, 600px);
+    flex: 0 1 auto;
+    /* Allow shrinking, don't grow, base on content/aspect */
+    max-width: 600px;
+    /* Keep a max-width for the editor */
     min-width: 350px;
+    /* Keep a min-width for the editor */
     display: flex;
     flex-direction: column;
     min-height: 0;
-    align-self: stretch;
+    align-self: center;
+    /* Align to center within the flex container */
+    aspect-ratio: 9 / 19.5;
+    /* Apply the phone aspect ratio */
 }
 
 .myprofile-editor {
@@ -756,13 +727,38 @@
         /* Adjust gap for mobile stacking */
         padding-top: 0;
         /* No extra padding at the top for this container on mobile */
+        justify-content: flex-start;
+        /* Reset justify-content for column layout */
+        align-items: center;
+        /* Center items in column */
     }
 
-    .myprofile-preview,
-    .myprofile-editor-wrapper {
-        max-width: 100%;
-        min-width: unset;
+    .myprofile-content {
+        flex: 0 0 auto;
+        /* Reset flex for mobile */
         width: 100%;
+        /* Take full width */
+        max-width: 320px;
+        /* Keep max width to maintain phone-like size */
+        margin: 0 auto;
+        /* Center on mobile */
+    }
+
+    .myprofile-editor-wrapper {
+        flex: 0 0 auto;
+        /* Reset flex for mobile */
+        max-width: 100%;
+        /* Allow to fill width */
+        min-width: unset;
+        /* Remove min-width constraint */
+        width: 100%;
+        /* Take full width */
+        aspect-ratio: unset;
+        /* Remove aspect ratio on mobile for editor */
+        height: auto;
+        /* Let content dictate height */
+        align-self: stretch;
+        /* Stretch to fill available width */
     }
 
     .myprofile-editor {
@@ -908,7 +904,6 @@
 .input-block textarea {
     padding: 10px;
     border: 1px solid #ccc !important;
-    /* Add !important */
     border-radius: 8px;
     font-size: 14px;
     width: 100%;
@@ -919,6 +914,5 @@
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #ccc !important;
-    /* Add !important */
     font-size: 14px;
 }
