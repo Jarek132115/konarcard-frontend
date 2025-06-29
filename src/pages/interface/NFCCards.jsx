@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from 'react'; // Import useState and useEffect
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader'; // Import PageHeader
 import KonarCard from '../../assets/images/KonarCard.png';
-// Assuming LogoIcon is available in assets/icons
-import LogoIcon from '../../assets/icons/Logo-Icon.svg'; // Import LogoIcon
+import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 export default function NFCCards() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
-  // Effect for handling window resize to update isMobile state
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
       setIsMobile(currentIsMobile);
-      // If resizing from mobile to desktop while sidebar is open, close it
       if (!currentIsMobile && sidebarOpen) {
         setSidebarOpen(false);
       }
@@ -22,23 +20,34 @@ export default function NFCCards() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [sidebarOpen]); // Dependency on sidebarOpen to re-evaluate when it changes
+  }, [sidebarOpen]);
 
-  // Effect for controlling body scroll when sidebar is open on mobile
   useEffect(() => {
     if (sidebarOpen && isMobile) {
       document.body.classList.add('body-no-scroll');
     } else {
       document.body.classList.remove('body-no-scroll');
     }
-  }, [sidebarOpen, isMobile]); // Dependencies to re-evaluate when sidebarOpen or isMobile changes
+  }, [sidebarOpen, isMobile]);
+
+  // Define action functions for PageHeader if needed.
+  // For NFCCards, it seems like these buttons might be static,
+  // so we can pass them as a prop or render them directly inside PageHeader if it supports children.
+  // For now, I'll pass dummy functions as props, assuming PageHeader expects `onActivateCard` and `onShareCard`.
+  // Adjust if your PageHeader component renders its own fixed buttons or expects different props.
+  const handleActivateCard = () => {
+    console.log("Activate Card clicked on NFC Cards page");
+    // Add actual activation logic here
+  };
+
+  const handleShareCard = () => {
+    console.log("Share Card clicked on NFC Cards page");
+    // Add actual share logic here
+  };
 
 
   return (
-    // Apply myprofile-layout and dynamic sidebar-active class
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
-      {/* MyProfile Mobile Header - Logo on left, Hamburger on right */}
-      {/* This mobile header needs to be replicated for all pages */}
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -53,25 +62,20 @@ export default function NFCCards() {
         </div>
       </div>
 
-      {/* Sidebar component, passing state and setter */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* Sidebar overlay for mobile */}
       {sidebarOpen && isMobile && (
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      {/* Main content area, structured like MyProfile page */}
       <main className="myprofile-main">
-        {/* The rest of your NFCCards page content */}
         <div className="page-wrapper">
-          <div className="page-header">
-            <h2 className="page-title">Choose Your Perfect Card</h2>
-            <div className="page-actions">
-              <button className="header-button black">🖱️ Activate Your Card</button>
-              <button className="header-button white">🔗 Share Your Card</button>
-            </div>
-          </div>
+          {/* Replace hardcoded page-header with PageHeader component */}
+          <PageHeader
+            title="Choose Your Perfect Card"
+            onActivateCard={handleActivateCard} // Pass action handlers
+            onShareCard={handleShareCard}     // Pass action handlers
+          />
 
           <p className="nfc-subtitle">
             Premium materials. Custom designs. Instantly share your contact details with a single tap.

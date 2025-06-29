@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom'; // Import Link for Logo
 import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader'; // Import PageHeader
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
-import LogoIcon from '../../assets/icons/Logo-Icon.svg'; // Import LogoIcon
+import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 export default function Subscription() {
   const { user } = useContext(AuthContext);
@@ -15,7 +16,6 @@ export default function Subscription() {
   const [cancelCooldown, setCancelCooldown] = useState(0);
   const [isCancelling, setIsCancelling] = useState(false);
 
-  // New state for sidebar and mobile responsiveness
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
@@ -35,7 +35,6 @@ export default function Subscription() {
     fetchSubscriptionStatus();
   }, []);
 
-  // Countdown useEffect for cancellation
   useEffect(() => {
     let timer;
     if (cancelCooldown > 0 && showCancelConfirm) {
@@ -49,29 +48,26 @@ export default function Subscription() {
     return () => clearTimeout(timer);
   }, [cancelCooldown, showCancelConfirm]);
 
-  // Effect for handling window resize to update isMobile state
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
       setIsMobile(currentIsMobile);
       if (!currentIsMobile && sidebarOpen) {
-        setSidebarOpen(false); // Close sidebar if transitioning from mobile to desktop
+        setSidebarOpen(false);
       }
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [sidebarOpen]); // Re-evaluate when sidebarOpen changes
+  }, [sidebarOpen]);
 
-  // Effect for controlling body scroll when sidebar is open on mobile
   useEffect(() => {
     if (sidebarOpen && isMobile) {
       document.body.classList.add('body-no-scroll');
     } else {
       document.body.classList.remove('body-no-scroll');
     }
-  }, [sidebarOpen, isMobile]); // Re-evaluate when sidebarOpen or isMobile changes
-
+  }, [sidebarOpen, isMobile]);
 
   const handleSubscribe = async () => {
     setIsCancelling(true);
@@ -118,10 +114,12 @@ export default function Subscription() {
     setIsCancelling(false);
   };
 
+  // Define dummy action functions for PageHeader
+  const handleActivateCard = () => console.log("Activate Card clicked on Subscription page");
+  const handleShareCard = () => console.log("Share Card clicked on Subscription page");
+
   return (
-    // Apply myprofile-layout and dynamic sidebar-active class
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
-      {/* MyProfile Mobile Header - Replicated from MyProfile.jsx */}
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -136,24 +134,20 @@ export default function Subscription() {
         </div>
       </div>
 
-      {/* Sidebar component, passing state and setter */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* Sidebar overlay for mobile */}
       {sidebarOpen && isMobile && (
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
       <main className="myprofile-main">
         <div className="page-wrapper">
-          <div className="page-header">
-            <h2 className="page-title">Subscription</h2>
-            {/* These buttons are likely not needed on a subscription page, but keeping them as per original */}
-            <div className="page-actions">
-              <button className="header-button black">🖱️ Activate Your Card</button>
-              <button className="header-button white">🔗 Share Your Card</button>
-            </div>
-          </div>
+          {/* Replace hardcoded page-header with PageHeader component */}
+          <PageHeader
+            title="Subscription" // Title for this page
+            onActivateCard={handleActivateCard} // Pass action handlers
+            onShareCard={handleShareCard}     // Pass action handlers
+          />
 
           <p className="desktop-h3 text-center">Our Plan</p>
           <p className="desktop-h6 text-center">Start free for 7 days — only upgrade if it works for you.</p>

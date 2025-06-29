@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link for Logo
+import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader'; // Import PageHeader
 import { AuthContext } from '../../components/AuthContext';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import greenTick from '../../assets/icons/Green-Tick-Icon.svg';
 import redCross from '../../assets/icons/Red-Cross-Icon.svg';
-import LogoIcon from '../../assets/icons/Logo-Icon.svg'; // Import LogoIcon
+import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 export default function Profile() {
   const { user, fetchUser, setUser } = useContext(AuthContext);
@@ -18,7 +19,6 @@ export default function Profile() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleteEnabled, setDeleteEnabled] = useState(false);
 
-  // New state for sidebar and mobile responsiveness
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
@@ -28,29 +28,26 @@ export default function Profile() {
     }
   }, [user]);
 
-  // Effect for handling window resize to update isMobile state
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
       setIsMobile(currentIsMobile);
       if (!currentIsMobile && sidebarOpen) {
-        setSidebarOpen(false); // Close sidebar if transitioning from mobile to desktop
+        setSidebarOpen(false);
       }
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [sidebarOpen]); // Re-evaluate when sidebarOpen changes
+  }, [sidebarOpen]);
 
-  // Effect for controlling body scroll when sidebar is open on mobile
   useEffect(() => {
     if (sidebarOpen && isMobile) {
       document.body.classList.add('body-no-scroll');
     } else {
       document.body.classList.remove('body-no-scroll');
     }
-  }, [sidebarOpen, isMobile]); // Re-evaluate when sidebarOpen or isMobile changes
-
+  }, [sidebarOpen, isMobile]);
 
   const togglePassword = () => setShowPassword(!showPassword);
   const toggleConfirm = () => setShowConfirm(!showConfirm);
@@ -122,10 +119,12 @@ export default function Profile() {
     }
   };
 
+  // Define dummy action functions for PageHeader if these buttons aren't truly functional on this page
+  const handleActivateCard = () => console.log("Activate Card clicked on Profile page");
+  const handleShareCard = () => console.log("Share Card clicked on Profile page");
+
   return (
-    // Apply myprofile-layout and dynamic sidebar-active class
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
-      {/* MyProfile Mobile Header - Replicated from MyProfile.jsx */}
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -140,24 +139,20 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Sidebar component, passing state and setter */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* Sidebar overlay for mobile */}
       {sidebarOpen && isMobile && (
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
       <main className="myprofile-main">
         <div className="page-wrapper">
-          <div className="page-header">
-            <h2 className="page-title">Profile</h2>
-            {/* These buttons are likely not needed on a profile settings page, but keeping them as per original */}
-            <div className="page-actions">
-              <button className="header-button black">🖱️ Activate Your Card</button>
-              <button className="header-button white">🔗 Share Your Card</button>
-            </div>
-          </div>
+          {/* Replace hardcoded page-header with PageHeader component */}
+          <PageHeader
+            title="My Account" // Title for this page
+            onActivateCard={handleActivateCard} // Pass action handlers
+            onShareCard={handleShareCard}     // Pass action handlers
+          />
 
           <div className="profile-card-box">
             <div className="profile-input-block">
