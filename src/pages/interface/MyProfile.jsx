@@ -35,7 +35,6 @@ export default function MyProfile() {
   const userId = authUser?._id;
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
-  const userUsername = authUser?.username;
 
   const { data: businessCard, refetch: refetchBusinessCard, isLoading: isCardLoading, isError: isCardError, error: cardError } = useFetchBusinessCard(userId);
 
@@ -79,7 +78,6 @@ export default function MyProfile() {
       document.body.classList.remove('body-no-scroll');
     };
   }, [sidebarOpen, isMobile]);
-
 
   useEffect(() => {
     if (isCardLoading) console.log("useFetchBusinessCard: Loading business card data...");
@@ -429,7 +427,7 @@ export default function MyProfile() {
     }
   };
 
-  const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
+  const currentProfileUrl = userId && userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
   const contactDetailsForVCard = {
@@ -445,6 +443,7 @@ export default function MyProfile() {
   return (
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
+        {/* Hamburger on the left */}
         <div
           className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -453,6 +452,7 @@ export default function MyProfile() {
           <span></span>
           <span></span>
         </div>
+        {/* Logo on the right */}
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>

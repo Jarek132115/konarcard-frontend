@@ -4,7 +4,6 @@ import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
-import ArrowDown from '../assets/icons/Arrow-Down-Icon.svg'; // Assuming you might use this for dropdowns in sidebar too, but not strictly needed for this request.
 import settingsIcon from '../assets/icons/Settings-Icon.svg';
 import profileIcon from '../assets/icons/Profile-Icon.svg';
 import cardIcon from '../assets/icons/Card-Icon.svg';
@@ -30,9 +29,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
         <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
             {/* Mobile Header within Sidebar for the 'X' button and logo (when sidebar is open) */}
             <div className="sidebar-mobile-header-inner">
+                {/* Logo on the left */}
                 <Link to="/" className="sidebar-logo-link-mobile" onClick={closeSidebar}>
                     <img src={LogoIcon} alt="Logo" className="sidebar-logo-mobile" />
                 </Link>
+                {/* 'X' close button on the right */}
                 <div className="close-sidebar-button" onClick={closeSidebar}>
                     <span></span>
                     <span></span>
@@ -96,8 +97,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <p className='desktop-body-s'>Help Centre</p>
                         </Link>
                     </div>
-                </div> {/* End of top-links-group */}
-
+                </div>
 
                 {/* FOOTER ACTIONS - pushed to bottom */}
                 <div className="footer-actions">

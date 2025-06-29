@@ -1,5 +1,6 @@
 /* Sidebar.css */
 
+/* DESKTOP SIDEBAR */
 .sidebar {
     position: fixed;
     top: 0;
@@ -21,6 +22,7 @@
 
 .sidebar-mobile-header-inner {
     display: none;
+    /* Hidden on desktop */
 }
 
 .sidebar-content-wrapper {
@@ -28,6 +30,7 @@
     flex-direction: column;
     height: 100%;
     overflow: hidden;
+    /* Desktop sidebar should not scroll internally */
 }
 
 .my-account-container {
@@ -93,8 +96,9 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding-right: 0;
+    /* No internal scroll on desktop for this group */
     gap: 4px;
+    /* Tighter spacing */
 }
 
 .main-links-container,
@@ -168,10 +172,13 @@
         top: 0;
         height: 100vh;
         width: 100vw;
+        /* Fills the whole viewport width */
         transform: translateX(-100%);
         box-shadow: none;
+        /* Remove shadow when fully open to fill screen */
         z-index: 1000;
         overflow: hidden;
+        /* Prevent body scroll when sidebar is open via this */
         background-color: white;
         padding: 0;
         transition: transform 0.3s ease-in-out;
@@ -184,6 +191,7 @@
     .sidebar-mobile-header-inner {
         display: flex;
         justify-content: space-between;
+        /* Spacing between logo and X */
         align-items: center;
         padding: 15px 20px;
         border-bottom: 1px solid #eee;
@@ -191,15 +199,15 @@
         background-color: white;
         width: 100%;
         box-sizing: border-box;
-        order: -1;
     }
 
     .sidebar-logo-link-mobile {
-        order: 2;
-        /* Moved logo to the right */
-        margin-left: auto;
-        /* Pushes logo to the far right */
+        order: 1;
+        /* Logo on the left inside the open sidebar */
+        margin-right: auto;
+        /* Pushes the close button to the right */
         display: flex;
+        /* Ensure it's a flex container for img */
         align-items: center;
     }
 
@@ -219,10 +227,9 @@
         height: 25px;
         align-items: center;
         justify-content: center;
-        order: 1;
-        /* Moved close button to the left */
-        margin-right: auto;
-        /* Pushes close button to the far left */
+        order: 2;
+        /* Close button on the right */
+        margin-left: auto;
     }
 
     .close-sidebar-button span {
@@ -245,15 +252,16 @@
     .sidebar-content-wrapper {
         padding: 20px;
         height: calc(100% - 63px);
+        /* 63px is approx. height of mobile-header-inner (30px padding + border) */
         box-sizing: border-box;
         overflow-y: auto;
+        /* Allow content to scroll if it exceeds screen height */
         padding-bottom: 40px;
     }
 
     .my-account-container {
         padding-bottom: 15px;
         border-bottom: none;
-        /* Removed border here as per the "only one divider" rule */
         margin-bottom: 15px;
     }
 
@@ -286,19 +294,16 @@
 
     .divider {
         display: none;
-        /* Hide all dividers by default on mobile */
     }
 
     .my-account-container+.divider {
-        /* This rule will target the divider immediately after my-account-container */
         display: block;
-        /* Show this specific divider only */
         margin: 15px 0;
-        /* Add margin back for this divider */
     }
 
     .top-links-group {
         overflow-y: visible;
+        /* Ensure all links are visible */
         padding-right: 0;
     }
 
