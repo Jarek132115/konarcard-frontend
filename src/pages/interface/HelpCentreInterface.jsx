@@ -96,15 +96,16 @@ export default function HelpCentre() {
       )}
 
       <main className="myprofile-main">
-        {/* Apply the content-card class here */}
-        <div className="page-wrapper content-card">
-          <PageHeader
-            title="Help Centre"
-            onActivateCard={handleActivateCard}
-            onShareCard={handleShareCard}
-          />
+        {/* PageHeader remains a direct child of myprofile-main */}
+        <PageHeader
+          title="Help Centre"
+          onActivateCard={handleActivateCard}
+          onShareCard={handleShareCard}
+        />
 
-          {/* The video cards already have their own styling and shadow, so they should be fine inside .content-card */}
+        {/* This new div acts as the main content "card" that contains the video cards */}
+        <div className="content-card">
+          {/* The video cards are direct children of content-card now */}
           <div className="help-video-card">
             <img src={HeroBackground} alt="Profile Setup" className="help-video-thumb" />
             <div className="help-video-content">
@@ -127,7 +128,7 @@ export default function HelpCentre() {
             </div>
             <img src={HeroBackground} alt="Card Activation" className="help-video-thumb" />
           </div>
-        </div>
+        </div> {/* End of content-card */}
       </main>
 
       <ShareProfile

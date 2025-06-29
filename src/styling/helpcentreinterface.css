@@ -1,12 +1,8 @@
 /* helpcentreinterface.css */
 
-/* General layout classes from myprofile.css will still apply,
-   but we'll define the specific content area styling here for HelpCentre */
-
-/* Help Centre specific content card styling */
+/* Define the new .content-card styling for this page's main content wrapper */
 .content-card {
   background: white;
-  /* White background */
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   padding: 24px;
@@ -21,29 +17,37 @@
   /* Make it a flex container */
   flex-direction: column;
   /* Stack content vertically inside */
+  gap: 20px;
+  /* Spacing between elements inside the card */
   min-height: 0;
   /* Allow inner content to shrink if needed */
   overflow-y: auto;
   /* Allow content inside this card to scroll if it overflows */
+  margin-top: 0;
+  /* No specific top margin, depends on parent layout */
+  margin-bottom: 20px;
+  /* Add some space below the content card */
 }
 
-/* Adjusting old help-video-card to fit within new .content-card structure */
+/* Original help-video-card styles - re-applying original background/shadow/padding */
 .help-video-card {
   display: flex;
-  background: transparent;
-  /* Changed to transparent if it's inside content-card to avoid double background/shadow */
-  padding: 0;
-  /* Removed padding if content-card provides it, or adjust if needed */
-  border-radius: initial;
-  /* Reset or adjust as needed */
-  box-shadow: none;
-  /* Removed shadow if content-card provides it */
+  background: white;
+  /* Re-add white background */
+  padding: 24px;
+  /* Re-add original padding */
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   gap: 24px;
   align-items: center;
-  margin-bottom: 30px;
+  /* margin-bottom is now handled by the .content-card gap for elements within it,
+       but keep it if help-video-cards can appear outside .content-card */
+  margin-bottom: 0;
+  /* Adjust if needed, depends on context */
   width: 100%;
-  /* Ensure it takes full width of .content-card */
-  /* Removed max-width: 1000px; as .content-card will now control max width */
+  /* Ensure it takes full width of .content-card parent */
+  /* max-width: 1000px; is not needed here if .content-card limits it already */
+  box-sizing: border-box;
 }
 
 .help-video-card.reverse {
@@ -98,27 +102,25 @@
   background: #0066dd;
 }
 
-/* Responsive adjustments for .content-card */
+/* Responsive adjustments */
 @media (max-width: 800px) {
   .content-card {
     max-width: 100%;
-    /* Stretch to full width below 800px */
-    margin-left: 0;
-    /* Override any auto margins if necessary */
-    margin-right: 0;
-    /* Override any auto margins if necessary */
+    /* Go full width below 800px */
     padding: 15px;
-    /* Adjust padding for smaller screens */
+    /* Adjust padding for mobile */
   }
 
-  /* Adjust help-video-card for smaller screens if needed */
+  /* Adjust help-video-card for smaller screens - now always stacks */
   .help-video-card {
     flex-direction: column;
-    /* Stack video cards vertically */
+    /* Always stack content on mobile */
     align-items: flex-start;
-    /* Align content to the start when stacked */
+    /* Align text to left when stacked */
     gap: 15px;
     /* Adjust gap for vertical stacking */
+    padding: 15px;
+    /* Ensure internal padding if needed */
   }
 
   .help-video-card.reverse {
@@ -133,3 +135,14 @@
     /* Maintain aspect ratio */
   }
 }
+
+/* Remove old redundant specific help-centre styling */
+/* If you have these defined globally, remove them. Otherwise, they might not exist. */
+/* .help-layout, .help-main, .help-title {
+    display: initial;
+    height: initial;
+    padding: initial;
+    flex: initial;
+    overflow-y: initial;
+    margin-bottom: initial;
+} */
