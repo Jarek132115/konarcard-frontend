@@ -1,9 +1,9 @@
-// frontend/src/components/Sidebar.jsx (FINAL - receives props for responsive behavior)
+// frontend/src/components/Sidebar.jsx (COMPLETE & FINAL - receives props for responsive behavior)
 
-import React, { useContext } from 'react'; // Removed useState (state now managed by parent)
+import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
-import LogoIcon from '../assets/icons/Logo-Icon.svg'; // Keep LogoIcon for user info
+import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import settingsIcon from '../assets/icons/Settings-Icon.svg';
 import profileIcon from '../assets/icons/Profile-Icon.svg';
 import cardIcon from '../assets/icons/Card-Icon.svg';
@@ -31,8 +31,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
         // Main container for the sidebar, conditionally applies 'open' class
         // 'open' class is controlled by parent component's state (MyProfile.jsx)
         <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-
-            {/* REMOVED: sidebar-mobile-header. It is now rendered in MyProfile.jsx */}
 
             {/* Sidebar content wrapper - now flexible inside the sidebar div */}
             <div className="sidebar-content-wrapper">

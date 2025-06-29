@@ -1,269 +1,228 @@
-/* myprofile.css (COMPLETE & FINAL - for responsive layout and sidebar integration) */
+/* Sidebar.css */
 
-/* General Layout */
-.myprofile-layout {
-    display: flex;
+/* DESKTOP SIDEBAR */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
     height: 100vh;
-    background-color: #f9f9f9;
-    overflow-x: hidden;
-    /* Prevent horizontal scrollbar on the whole layout */
-    position: relative;
-    /* Needed for absolute positioning of overlay */
+    width: 220px;
+    /* Desktop sidebar width */
+    background-color: white;
+    /* Or your desired sidebar background */
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    /* Ensures content is laid out correctly */
+    flex-direction: column;
+    /* Stacks content vertically */
+    padding: 20px;
+    box-sizing: border-box;
+    /* Include padding in width */
+    z-index: 999;
+    /* Ensure it's above other content on desktop */
+    transition: transform 0.3s ease-in-out;
+    /* For mobile slide effect */
 }
 
-/* MyProfile Main content area (right side, next to sidebar) */
-.myprofile-main {
-    flex: 1;
-    overflow-y: auto;
-    /* This is the primary scrolling container for the right-hand side */
-    font-family: sans-serif;
-    padding: 30px;
-    /* Space around content */
+.sidebar-content-wrapper {
     display: flex;
     flex-direction: column;
-    /* Stacks header and content vertically */
-    min-height: 0;
-    overflow-x: hidden;
-    /* Prevent horizontal scroll within main content */
-    padding-bottom: 20px;
-    /* Add some padding at the bottom of the content section */
-
-    /* Desktop positioning to account for fixed sidebar */
-    margin-left: 220px;
-    /* Default margin for desktop sidebar width */
-    transition: margin-left 0.3s ease-in-out;
-    /* Smooth transition for sidebar closing/opening */
-    z-index: 1;
-    /* Ensure main content is below mobile sidebar overlay if open */
+    height: 100%;
+    /* Take full height of sidebar */
+    overflow-y: auto;
+    /* Allow scrolling if content is long */
+    padding-right: 5px;
+    /* Space for scrollbar */
 }
 
-.page-header {
+
+.my-account-container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    flex-shrink: 0;
+    margin-bottom: 20px;
 }
 
-.page-title {
-    font-size: 24px;
-    font-weight: 700;
+.profile-pic {
+    width: 48px;
+    /* Adjust size as needed */
+    height: 48px;
+    border-radius: 50%;
+    margin-right: 12px;
+    object-fit: cover;
+}
+
+.user-info .email {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
     margin: 0;
 }
 
-.page-actions {
-    display: flex;
-    gap: 12px;
+.user-info .name {
+    font-size: 12px;
+    color: #777;
+    margin: 0;
 }
 
-.header-button {
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 14px;
+.divider {
     border: none;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
 }
 
-.header-button.black {
-    background-color: black;
-    color: white;
+.section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #999;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.header-button.white {
-    background-color: white;
-    color: black;
-    border: 1px solid #ccc;
-}
-
-/* MyProfile Content (the row containing the preview and editor forms) */
-.myprofile-content {
+.sidebar-button {
     display: flex;
-    gap: 40px;
-    justify-content: space-around;
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-    padding-bottom: 20px;
-}
-
-
-/* === Editor specific styling === */
-/* NOTE: Existing styles for mock-phone, editor, etc. are as provided before and not repeated here for brevity.
-   Ensure they are present in your local myprofile.css file. */
-
-/* Subscription Overlay Styles */
-.subscription-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(8px);
-    display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 10;
-    border-radius: 16px;
-    overflow: hidden;
-}
-
-.subscription-message {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    z-index: 11;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-.subscription-message h2 {
-    font-size: 24px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    text-decoration: none;
     color: #333;
-    margin-bottom: 0;
-}
-
-.subscription-message p {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 0;
-}
-
-.start-trial-button {
-    background-color: #007bff;
-    color: white;
-    padding: 12px 25px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    cursor: pointer;
     border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.start-trial-button:hover {
-    background-color: #0056b3;
-}
-
-
-/* --- NEW & MODIFIED: Mobile Header and Overlay for MyProfile Layout --- */
-.myprofile-mobile-header {
-    display: none;
-    /* Hidden by default on desktop */
-    position: fixed;
-    top: 0;
-    left: 0;
-    /* Align to the left of the viewport */
+    /* For the logout button */
+    background: none;
+    /* For the logout button */
     width: 100%;
-    background-color: white;
-    padding: 15px 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 900;
-    /* Below the sliding sidebar (1000) but above main content (1) */
-    justify-content: space-between;
-    align-items: center;
+    /* Ensure buttons take full width */
+    text-align: left;
 }
 
-.myprofile-logo-link .myprofile-logo {
-    height: 32px;
+.sidebar-button .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    opacity: 0.7;
+    /* Slightly dim icons */
 }
 
-/* MyProfile Hamburger Icon Styling (now managed here) */
-.myprofile-hamburger {
-    display: none;
-    /* Hidden by default on desktop */
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    padding: 5px;
-    /* Increase clickable area */
+.sidebar-button p {
+    margin: 0;
+    /* Remove default paragraph margin */
+    font-size: 15px;
+    /* Adjust as needed */
 }
 
-.myprofile-hamburger span {
-    width: 25px;
-    height: 3px;
-    background: black;
-    border-radius: 3px;
-    transition: all 0.3s ease;
+.sidebar-button:hover {
+    background-color: #f0f0f0;
+    color: #0081FF;
+    /* Highlight text on hover */
 }
 
-/* Hamburger active state (for X animation) */
-.myprofile-hamburger.active span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-}
-
-.myprofile-hamburger.active span:nth-child(2) {
-    opacity: 0;
-}
-
-.myprofile-hamburger.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
-}
-
-/* Overlay that covers main content when mobile sidebar is open */
-.sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    /* Semi-transparent black */
-    z-index: 999;
-    /* Below sidebar (1000), above main content (1) */
+.sidebar-button:hover .icon {
     opacity: 1;
-    /* Always visible when active class is applied */
-    visibility: visible;
-    /* Always visible when active class is applied */
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    /* Make icon fully visible on hover */
+}
+
+.logout-button {
+    color: #e74c3c;
+    /* Red color for logout */
+}
+
+.logout-button:hover {
+    background-color: #ffebeb;
+    /* Light red background on hover */
+    color: #c0392b;
+}
+
+.main-links-container,
+.account-links-container,
+.help-links-container {
+    margin-bottom: 20px;
+}
+
+.footer-actions {
+    margin-top: auto;
+    /* Pushes footer actions to the bottom */
+    padding-top: 20px;
+    /* Space from the last section */
+    border-top: 1px solid #eee;
+    /* Optional: a subtle line above footer actions */
 }
 
 
-/* --- RESPONSIVE ADJUSTMENTS FOR MYPROFILE LAYOUT --- */
+/* MOBILE SIDEBAR */
 @media (max-width: 1000px) {
-    .myprofile-main {
-        margin-left: 0;
-        /* Remove fixed margin-left on mobile */
-        padding-top: 80px;
-        /* Account for fixed mobile header */
-        /* transition will handle sliding effect if sidebarOpen is toggled */
+    .sidebar {
+        position: fixed;
+        /* Keep it fixed */
+        left: 0;
+        top: 0;
+        height: 100%;
+        /* Full height */
+        width: 280px;
+        /* Wider for mobile, adjust as needed */
+        transform: translateX(-100%);
+        /* Start off-screen to the left */
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        /* Ensure it's on top of everything when open */
     }
 
-    .myprofile-mobile-header {
-        display: flex;
-        /* Show mobile header */
+    .sidebar.open {
+        transform: translateX(0);
+        /* Slide into view */
     }
 
-    .myprofile-hamburger {
-        display: flex;
-        /* Show hamburger icon */
+    /* Make content flexible inside the larger sidebar div */
+    .sidebar-content-wrapper {
+        padding: 80px 20px 20px 20px;
+        /* Add space for the fixed mobile header */
+        height: 100%;
+        box-sizing: border-box;
+        /* Important for padding */
     }
 
-    /* Adjust myprofile-layout to allow scrolling when sidebar is open or closed on mobile */
-    .myprofile-layout {
-        overflow-y: auto;
-        /* Allow y-overflow for main content scrolling */
-        /* If sidebar is active, hide main content's x-overflow more aggressively */
+    /* Adjust my-account-container for mobile view */
+    .my-account-container {
+        flex-direction: row;
+        /* Keep as row */
+        align-items: center;
+        padding-bottom: 20px;
+        /* More space at bottom */
+        border-bottom: 1px solid #eee;
+        /* Separator for top info */
+        margin-bottom: 20px;
     }
 
-    .myprofile-layout.sidebar-active {
-        overflow-x: hidden;
-        /* Prevents horizontal scrollbar when sidebar is open */
+    .profile-pic {
+        width: 60px;
+        /* Larger profile pic on mobile */
+        height: 60px;
     }
-}
 
-/* Hide desktop sidebar when mobile sidebar is active */
-@media (min-width: 1001px) {
+    .user-info .email {
+        font-size: 16px;
+    }
 
-    /* These elements are handled in MyProfile.jsx now, but this is a fail-safe */
-    .myprofile-mobile-header,
-    .myprofile-hamburger {
-        display: none !important;
+    .user-info .name {
+        font-size: 14px;
+    }
+
+    .sidebar-button {
+        padding: 12px 15px;
+        /* Slightly larger clickable area for mobile */
+        font-size: 16px;
+    }
+
+    .sidebar-button .icon {
+        width: 24px;
+        /* Larger icons for mobile */
+        height: 24px;
+    }
+
+    .sidebar-button p {
+        font-size: 16px;
+        /* Larger text for mobile */
     }
 }

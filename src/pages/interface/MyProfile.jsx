@@ -1,7 +1,7 @@
-// frontend/src/pages/interface/MyProfile.jsx (COMPLETE & FINAL - Verified Link import)
+// frontend/src/pages/interface/MyProfile.jsx (COMPLETE & FINAL - for responsive sidebar layout)
 
 import React, { useRef, useEffect, useState, useContext } from "react";
-import { Link, useNavigate, useLocation } from 'react-router-dom'; // <--- ENSURE 'Link' IS HERE
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import ProfileCardImage from "../../assets/images/background-hero.png";
@@ -49,14 +49,31 @@ export default function MyProfile() {
 
   const [coverPhotoFile, setCoverPhotoFile] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
-  const [workImageFiles, setWorkImageFiles] = useState([]); // Corrected initialization
+  const [workImageFiles, setWorkImageFiles] = useState([]);
 
   const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
 
   const [activeBlobUrls, setActiveBlobUrls] = useState([]);
 
-  const [sidebarOpen, setSidebarOpen] = useState(false); // NEW: State for sidebar visibility
+  const [sidebarOpen, setSidebarOpen] = useState(false); // State for sidebar visibility
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000); // State to track mobile view
+
+
+  // Effect to update isMobile state on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      const currentIsMobile = window.innerWidth <= 1000;
+      setIsMobile(currentIsMobile);
+      // If we resize from mobile to desktop, ensure sidebar is closed visually
+      if (!currentIsMobile && sidebarOpen) {
+        setSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [sidebarOpen]); // Dependency on sidebarOpen to ensure correct behavior on resize after opening/closing
 
 
   useEffect(() => {
@@ -454,12 +471,10 @@ export default function MyProfile() {
   };
 
   return (
-    <div className="myprofile-layout">
+    // Apply 'sidebar-active' class to myprofile-layout when sidebar is open on mobile
+    <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
       {/* NEW: Mobile Header for MyProfile page (always visible on mobile) */}
-      <div className={`myprofile-mobile-header ${sidebarOpen ? 'sidebar-active' : ''}`}>
-        <Link to="/" className="myprofile-logo-link">
-          <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
-        </Link>
+      <div className={`myprofile-mobile-header ${sidebarOpen ? 'active' : ''}`}>
         <div
           className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -468,11 +483,22 @@ export default function MyProfile() {
           <span></span>
           <span></span>
         </div>
+        <Link to="/" className="myprofile-logo-link">
+          <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
+        </Link>
+        {/* You might want a "settings" or "notifications" icon here on mobile */}
+        {/* Add an empty div or actual icons to push the logo/hamburger to the ends */}
+        <div style={{ width: '25px' }}></div> {/* Placeholder to balance content if needed */}
       </div>
 
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> {/* Pass state and setter */}
 
-      <main className={`myprofile-main ${sidebarOpen ? 'mobile-sidebar-open' : ''}`}> {/* Apply class for mobile adjustments */}
+      {/* Overlay for mobile sidebar. Only render if sidebarOpen is true AND it's a mobile view */}
+      {sidebarOpen && isMobile && (
+        <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
+      )}
+
+      <main className="myprofile-main"> {/* No specific class like 'mobile-sidebar-open' needed here, CSS handles it */}
         <PageHeader
           title={authUser ? `Good Afternoon ${authUser.name}!` : "My Profile"}
           onActivateCard={handleActivateCard}
@@ -1005,10 +1031,6 @@ export default function MyProfile() {
           username={userUsername}
         />
       </main>
-      {/* NEW: Overlay for mobile sidebar */}
-      {sidebarOpen && (
-        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>
-      )}
     </div>
   );
 }

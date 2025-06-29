@@ -6,11 +6,14 @@
     height: 100vh;
     /* Fixed height to viewport */
     background-color: #f9f9f9;
-    overflow: hidden;
-    /* Hide overflow on the absolute parent. This means no scrollbar on the entire page. */
+    overflow-x: hidden;
+    /* Hide horizontal overflow on the entire layout */
+    position: relative;
+    /* Needed for absolute positioning of overlay */
 }
 
 /* Sidebar Styling (already addressed in previous round, but included for completeness) */
+/* Note: The actual .sidebar styles are in sidebar.css */
 
 .my-account-container {
     display: flex;
@@ -122,6 +125,20 @@
     display: flex;
     flex-direction: column;
     /* Stacks header and content vertically */
+    min-height: 0;
+    /* Crucial for flex child to allow internal scrolling */
+    overflow-x: hidden;
+    /* Prevent horizontal scroll within main content */
+    padding-bottom: 20px;
+    /* Add some padding at the bottom of the content section */
+
+    /* Desktop positioning to account for fixed sidebar */
+    margin-left: 220px;
+    /* Default margin for desktop sidebar width */
+    transition: margin-left 0.3s ease-in-out;
+    /* Smooth transition for sidebar closing/opening */
+    z-index: 1;
+    /* Ensure main content is below mobile sidebar overlay if open */
 }
 
 .page-header {
@@ -170,7 +187,6 @@
     /* Makes it a flex row */
     gap: 40px;
     justify-content: space-around;
-    /* <-- CRITICAL: Re-enabled for horizontal spacing */
     flex: 1;
     /* Allows this row to take up all *remaining* vertical space within .myprofile-main */
     min-height: 0;
@@ -312,6 +328,31 @@
     display: block;
     height: auto;
 }
+
+.remove-image-button {
+    position: absolute;
+    /* positioned relative to the mock-phone-scrollable-content if placed inside, or mock-phone directly */
+    top: 10px;
+    /* Adjust as needed */
+    right: 10px;
+    /* Adjust as needed */
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    z-index: 5;
+    /* Ensure it's above the image */
+}
+
 
 .mock-title {
     font-size: 2rem;
@@ -474,80 +515,6 @@
     margin: 0;
 }
 
-/* Media Query for very small screens (still relevant for mock-phone) */
-@media (max-width: 400px) {
-    .mock-phone {
-        /* Apply responsive styling directly to .mock-phone */
-        padding: 1rem;
-        border-width: 0.375rem;
-        border-radius: 2rem;
-    }
-
-    .mock-title {
-        font-size: 1.1rem;
-    }
-
-    .mock-subtitle {
-        font-size: 0.875rem;
-    }
-
-    .mock-button {
-        font-size: 0.9rem;
-        padding: 0.6rem 1rem;
-    }
-
-    .mock-section-title {
-        font-size: 0.8rem;
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .mock-about {
-        padding: 0.6rem;
-        gap: 0.6rem;
-    }
-
-    .mock-avatar {
-        width: 2rem;
-        height: 2rem;
-    }
-
-    .mock-profile-name {
-        font-size: 0.9rem;
-    }
-
-    .mock-profile-role {
-        font-size: 0.75rem;
-    }
-
-    .mock-service-item {
-        padding: 0.6rem 0.8rem;
-    }
-
-    .mock-service-name {
-        font-size: 0.875rem;
-    }
-
-    .mock-service-price {
-        font-size: 0.75rem;
-    }
-
-    .mock-review-card {
-        padding: 0.8rem;
-    }
-
-    .mock-star-rating {
-        font-size: 0.9rem;
-    }
-
-    .mock-review-text {
-        font-size: 0.875rem;
-    }
-
-    .mock-reviewer-name {
-        font-size: 0.8rem;
-    }
-}
 
 /* === Editor specific styling === */
 .myprofile-editor-wrapper {
@@ -636,6 +603,10 @@
     background-color: #007bff;
     color: white;
     border-color: #007bff;
+}
+
+.cover-preview-container {
+    cursor: pointer;
 }
 
 .cover-preview {
@@ -782,10 +753,195 @@
     background-color: #0056b3;
 }
 
-/* Media Query for editor previews specific responsiveness (no change) */
+/* --- NEW & MODIFIED: Mobile Header and Overlay for MyProfile Layout --- */
+.myprofile-mobile-header {
+    display: none;
+    /* Hidden by default on desktop */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 15px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 900;
+    /* Below the sliding sidebar (1000) but above main content (1) */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.myprofile-logo-link .myprofile-logo {
+    height: 32px;
+}
+
+/* MyProfile Hamburger Icon Styling (now managed here) */
+.myprofile-hamburger {
+    display: none;
+    /* Hidden by default on desktop */
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 5px;
+    /* Increase clickable area */
+}
+
+.myprofile-hamburger span {
+    width: 25px;
+    height: 3px;
+    background: black;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* Hamburger active state (for X animation) */
+.myprofile-hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.myprofile-hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.myprofile-hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Overlay that covers main content when mobile sidebar is open */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent black */
+    z-index: 999;
+    /* Below sidebar (1000), above main content (1) */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* --- RESPONSIVE ADJUSTMENTS FOR MYPROFILE LAYOUT --- */
+@media (max-width: 1000px) {
+    /* Hide the desktop sidebar completely - the sidebar.css will handle its own display */
+    /* .sidebar {
+        transform: translateX(-100%);
+        box-shadow: none;
+    } */
+
+    .myprofile-main {
+        margin-left: 0;
+        /* Remove fixed margin-left on mobile */
+        padding-top: 80px;
+        /* Account for fixed mobile header */
+        /* No transition on margin-left as sidebar doesn't push it */
+    }
+
+    .myprofile-mobile-header {
+        display: flex;
+        /* Show mobile header */
+    }
+
+    .myprofile-hamburger {
+        display: flex;
+        /* Show hamburger icon */
+    }
+
+    /* Adjust myprofile-content for mobile - stack vertically */
+    .myprofile-content {
+        flex-direction: column;
+        /* Stack preview and editor vertically */
+        gap: 20px;
+        /* Reduce gap for mobile */
+        padding-top: 0;
+        /* No extra padding at the top, header already covers it */
+    }
+
+    .myprofile-preview,
+    .myprofile-editor-wrapper {
+        max-width: 100%;
+        /* Allow them to take full width */
+        min-width: unset;
+        /* Remove min-width constraints */
+        width: 100%;
+        /* Take full width */
+    }
+
+    .myprofile-editor {
+        padding: 16px;
+        /* Adjust padding for smaller screens */
+        gap: 15px;
+        /* Adjust gap for smaller screens */
+    }
+
+    /* Prevent horizontal scroll on the layout when sidebar is open */
+    .myprofile-layout.sidebar-active {
+        overflow-x: hidden;
+    }
+}
+
+/* Hide elements specific to mobile layout on desktop */
+@media (min-width: 1001px) {
+
+    .myprofile-mobile-header,
+    .myprofile-hamburger {
+        display: none !important;
+        /* Force hide on desktop */
+    }
+
+    /* Ensure desktop sidebar is visible if it was hidden by mobile styles */
+    /* This rule might not be strictly necessary if sidebar.css handles it,
+       but acts as a safeguard. */
+    .sidebar {
+        transform: translateX(0) !important;
+        /* Force show on desktop */
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1) !important;
+    }
+}
+
+/* Media Query for very small screens (still relevant for mock-phone) */
 @media (max-width: 400px) {
+    .myprofile-main {
+        padding: 15px;
+        /* Reduce overall padding on very small screens */
+        padding-top: 75px;
+        /* Adjust for potentially smaller header on very small screens */
+    }
+
+    .page-header {
+        flex-direction: column;
+        /* Stack header elements on very small screens */
+        align-items: flex-start;
+        gap: 10px;
+        /* Add gap between stacked header elements */
+        margin-bottom: 20px;
+        /* Reduce bottom margin */
+    }
+
+    .page-actions {
+        width: 100%;
+        /* Full width for buttons */
+        justify-content: space-between;
+        /* Space out buttons */
+    }
+
+    .header-button {
+        flex: 1;
+        /* Make buttons take equal space */
+        padding: 8px 10px;
+        /* Adjust padding */
+        font-size: 13px;
+        /* Smaller font size */
+    }
+
     .mock-phone {
-        /* Apply responsive styling directly to .mock-phone */
         padding: 1rem;
         border-width: 0.375rem;
         border-radius: 2rem;
