@@ -125,7 +125,7 @@
     /* The aspect-ratio on .myprofile-content now dictates the phone's dimensions on desktop */
 
     background: #fff;
-    border: 0.625rem solid #ccc;
+    border: 10px solid #ccc;
     border-radius: 2.5rem;
     padding: 20px;
     text-align: center;
