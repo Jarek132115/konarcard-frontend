@@ -73,7 +73,7 @@
     width: 100%; /* Default to full width of its parent (.myprofile-main's padding area) */
     max-width: 600px; /* Max width for desktop/tablet */
     box-sizing: border-box; /* Include padding in width */
-    
+    justify-content: center;
     display: flex; /* Make it a flex container */
     flex-direction: column; /* Stack content vertically inside */
     gap: 20px; /* Spacing between elements inside the card */
