@@ -1,4 +1,4 @@
-// frontend/src/components/Sidebar.jsx (MODIFIED for responsive behavior)
+// frontend/src/components/Sidebar.jsx (MODIFIED - Removed HamburgerIcon SVG import)
 
 import React, { useState, useContext } from 'react'; // Added useState
 import { Link, useNavigate } from 'react-router-dom';
@@ -11,9 +11,7 @@ import helpIcon from '../assets/icons/Help-Icon.svg';
 import logoutIcon from '../assets/icons/Logout-Icon.svg';
 import subscriptionIcon from '../assets/icons/Subscription-Icon.svg';
 import homeIcon from '../assets/icons/Home-Icon.svg';
-import HamburgerIcon from '../assets/icons/Hamburger-Icon.svg'; // Assuming you have a hamburger icon, or use a simple div for now
-// If not, you might need to create this SVG or use a div with CSS for the lines.
-
+// REMOVED: import HamburgerIcon from '../assets/icons/Hamburger-Icon.svg'; // This line is now removed
 
 export default function Sidebar() {
     const navigate = useNavigate();
@@ -38,20 +36,19 @@ export default function Sidebar() {
                 <Link to="/" className="sidebar-logo-link" onClick={closeSidebar}>
                     <img src={LogoIcon} alt="Logo" className="sidebar-logo" />
                 </Link>
-                {/* Hamburger/Close button for mobile sidebar */}
+                {/* Hamburger/Close button for mobile sidebar - now CSS-only */}
                 <div
                     className={`sidebar-hamburger ${sidebarOpen ? 'active' : ''}`}
                     onClick={() => setSidebarOpen(!sidebarOpen)}
                 >
-                    {/* You can use a simple div structure for hamburger lines or an SVG icon */}
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span></span> {/* First line of hamburger */}
+                    <span></span> {/* Second line of hamburger */}
+                    <span></span> {/* Third line of hamburger */}
                 </div>
             </div>
 
-            {/* Sidebar content container (will collapse/expand) */}
-            <div className="sidebar-content-wrapper"> {/* New wrapper for collapsable content */}
+            {/* Sidebar content container */}
+            <div className="sidebar-content-wrapper">
                 {/* USER INFO */}
                 <div className="my-account-container">
                     <img src={LogoIcon} alt="User" className="profile-pic" />
@@ -106,7 +103,7 @@ export default function Sidebar() {
                     </Link>
                 </div>
 
-                {/* FOOTER ACTIONS - Now consistently styled */}
+                {/* FOOTER ACTIONS */}
                 <div className="footer-actions">
                     <Link to="/" className="sidebar-button" onClick={closeSidebar}>
                         <img src={homeIcon} alt="home" className="icon" />
@@ -117,7 +114,7 @@ export default function Sidebar() {
                         <p className='desktop-body-s'>Logout Account</p>
                     </button>
                 </div>
-            </div> {/* End sidebar-content-wrapper */}
-        </div> // End sidebar
+            </div>
+        </div>
     );
 }
