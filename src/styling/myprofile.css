@@ -22,8 +22,9 @@
     padding-bottom: 20px;
 
     /* Desktop positioning to account for fixed sidebar */
-    margin-left: 280px;
-    padding-top: 30px; /* Default desktop padding-top */
+    margin-left: 220px;
+    padding-top: 30px;
+    /* Default desktop padding-top */
     transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
     z-index: 1;
 }
@@ -111,6 +112,7 @@
     flex-shrink: 0;
     flex-grow: 0;
 
+    /* Dark mode styles for mock-phone */
     &[style*="background-color: rgb(31, 31, 31)"] {
         background-color: #1F1F1F !important;
         border-color: #555 !important;
@@ -555,38 +557,48 @@
 
 /* MyProfile Mobile Header - This header is separate from the sidebar itself */
 .myprofile-mobile-header {
-    display: none; /* Hidden by default on desktop */
+    display: none;
+    /* Hidden by default on desktop */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 70px; /* Fixed height, consistent with Navbar */
+    height: 70px;
+    /* Fixed height, consistent with Navbar */
     background-color: white;
-    padding: 0 16px; /* Consistent with Navbar */
+    padding: 0 16px;
+    /* Consistent with Navbar */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 900;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Space out hamburger and logo */
+    justify-content: space-between;
+    /* Space out hamburger and logo */
 }
 
 .myprofile-logo-link {
-    order: 2; /* Puts logo on the right */
-    margin-left: auto; /* Pushes logo to the far right */
+    order: 1;
+    /* Puts logo on the left */
+    margin-right: auto;
+    /* Pushes hamburger to the right */
 }
 
 .myprofile-logo-link .myprofile-logo {
-    height: 32px; /* Consistent logo size */
+    height: 32px;
+    /* Consistent logo size */
 }
 
 .myprofile-hamburger {
-    display: none; /* Hidden by default on desktop */
+    display: none;
+    /* Hidden by default on desktop */
     flex-direction: column;
     gap: 5px;
     cursor: pointer;
     padding: 5px;
-    order: 1; /* Puts hamburger on the left */
-    margin-right: auto; /* Pushes hamburger to the far left */
+    order: 2;
+    /* Puts hamburger on the right */
+    margin-left: auto;
+    /* Pushes logo to the left */
 }
 
 .myprofile-hamburger span {
@@ -632,16 +644,20 @@
 /* RESPONSIVE ADJUSTMENTS FOR MYPROFILE LAYOUT */
 @media (max-width: 1000px) {
     .myprofile-main {
-        margin-left: 0; /* REMOVED fixed margin-left on mobile */
-        padding-top: 70px; /* Account for fixed mobile header's height (70px) */
+        margin-left: 0;
+        /* Remove fixed margin-left on mobile */
+        padding-top: 70px;
+        /* Account for fixed mobile header's height (70px) */
     }
 
     .myprofile-mobile-header {
-        display: flex; /* Show mobile header */
+        display: flex;
+        /* Show mobile header */
     }
 
     .myprofile-hamburger {
-        display: flex; /* Show hamburger icon */
+        display: flex;
+        /* Show hamburger icon */
     }
 
     .myprofile-content {
@@ -669,13 +685,15 @@
 
 /* Hide elements specific to mobile layout on desktop */
 @media (min-width: 1001px) {
+
     .myprofile-mobile-header,
     .myprofile-hamburger {
         display: none !important;
     }
 
     .myprofile-main {
-        padding-top: 30px; /* Ensure correct padding-top on desktop */
+        padding-top: 30px;
+        /* Ensure correct padding-top on desktop */
     }
 
     .sidebar {
@@ -687,9 +705,11 @@
 /* Consistent navbar/header height across pages for mobile */
 /* This rule affects both Navbar and MyProfile's mobile header */
 @media (max-width: 1000px) {
+
     .navbar,
     .myprofile-mobile-header {
-        height: 70px; /* Consistent height for all mobile headers */
+        height: 70px;
+        /* Consistent height for all mobile headers */
         padding: 0 16px;
     }
 }
@@ -698,7 +718,8 @@
 @media (max-width: 400px) {
     .myprofile-main {
         padding: 15px;
-        padding-top: 75px; /* (70px header + 5px buffer) */
+        padding-top: 70px;
+        /* Use exactly 70px for header height */
     }
 
     .page-header {

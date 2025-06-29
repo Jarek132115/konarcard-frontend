@@ -9,6 +9,7 @@
     min-width: 220px;
     width: fit-content;
     max-width: 300px;
+    /* Max width for desktop to prevent it from getting too wide */
     background-color: white;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -18,11 +19,12 @@
     z-index: 999;
     transition: transform 0.3s ease-in-out;
     overflow: hidden;
+    /* Hide internal scroll for desktop */
 }
 
+/* Hide the internal mobile header on desktop */
 .sidebar-mobile-header-inner {
     display: none;
-    /* Hidden on desktop */
 }
 
 .sidebar-content-wrapper {
@@ -30,7 +32,7 @@
     flex-direction: column;
     height: 100%;
     overflow: hidden;
-    /* Desktop sidebar should not scroll internally */
+    /* Desktop sidebar content wrapper should also not scroll internally */
 }
 
 .my-account-container {
@@ -98,7 +100,6 @@
     overflow: hidden;
     /* No internal scroll on desktop for this group */
     gap: 4px;
-    /* Tighter spacing */
 }
 
 .main-links-container,
@@ -168,17 +169,18 @@
 @media (max-width: 1000px) {
     .sidebar {
         position: fixed;
-        left: 0;
         top: 0;
-        height: 100vh;
+        left: 0;
+        /* Ensure it starts from the very left edge */
         width: 100vw;
-        /* Fills the whole viewport width */
+        /* Fills the entire viewport width */
+        height: 100vh;
         transform: translateX(-100%);
         box-shadow: none;
-        /* Remove shadow when fully open to fill screen */
+        /* No shadow when full width */
         z-index: 1000;
         overflow: hidden;
-        /* Prevent body scroll when sidebar is open via this */
+        /* Prevent sidebar internal scrolling for full viewport slide */
         background-color: white;
         padding: 0;
         transition: transform 0.3s ease-in-out;
@@ -188,10 +190,10 @@
         transform: translateX(0);
     }
 
+    /* Header for the mobile menu itself (Logo and X inside the opened sidebar) */
     .sidebar-mobile-header-inner {
         display: flex;
         justify-content: space-between;
-        /* Spacing between logo and X */
         align-items: center;
         padding: 15px 20px;
         border-bottom: 1px solid #eee;
@@ -201,21 +203,24 @@
         box-sizing: border-box;
     }
 
+    /* Logo on the left inside the open sidebar */
     .sidebar-logo-link-mobile {
         order: 1;
-        /* Logo on the left inside the open sidebar */
+        /* Logo on the left */
         margin-right: auto;
         /* Pushes the close button to the right */
         display: flex;
-        /* Ensure it's a flex container for img */
         align-items: center;
     }
 
     .sidebar-logo-link-mobile .sidebar-logo-mobile {
         height: 32px;
+        /* Consistent logo size */
         margin-right: 0;
+        /* Remove any default margin that might push it right */
     }
 
+    /* Close (X) button styles for opened sidebar */
     .close-sidebar-button {
         display: flex;
         flex-direction: column;
@@ -230,6 +235,7 @@
         order: 2;
         /* Close button on the right */
         margin-left: auto;
+        /* Pushes close button to the far right */
     }
 
     .close-sidebar-button span {
@@ -249,19 +255,22 @@
         transform: rotate(-45deg);
     }
 
+    /* Sidebar content wrapper (scrollable area inside the full-screen sidebar) */
     .sidebar-content-wrapper {
         padding: 20px;
         height: calc(100% - 63px);
-        /* 63px is approx. height of mobile-header-inner (30px padding + border) */
+        /* Account for header height (15px top/bottom padding + 1px border) */
         box-sizing: border-box;
         overflow-y: auto;
-        /* Allow content to scroll if it exceeds screen height */
+        /* Allow internal content to scroll if it exceeds screen height */
         padding-bottom: 40px;
+        /* Add space at the bottom */
     }
 
     .my-account-container {
         padding-bottom: 15px;
         border-bottom: none;
+        /* No border here, only via my-account-container + .divider */
         margin-bottom: 15px;
     }
 
@@ -294,16 +303,20 @@
 
     .divider {
         display: none;
+        /* Hide all other dividers on mobile */
     }
 
     .my-account-container+.divider {
+        /* This targets the divider immediately after my-account-container */
         display: block;
+        /* Make sure this one divider is visible */
         margin: 15px 0;
+        /* Restore its margin */
     }
 
     .top-links-group {
         overflow-y: visible;
-        /* Ensure all links are visible */
+        /* Ensure content here isn't clipped if it naturally fits */
         padding-right: 0;
     }
 
@@ -316,8 +329,4 @@
     .footer-actions {
         padding-top: 15px;
     }
-}
-
-.body-no-scroll {
-    overflow: hidden !important;
 }
