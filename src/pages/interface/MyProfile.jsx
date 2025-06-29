@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-// Removed direct imports for default images from assets as they'll now come from public via store
+// No longer importing these directly as they are now handled by the store's initialState (public paths)
 // import ProfileCardImage from "../../assets/images/background-hero.png";
 // import UserAvatar from "../../assets/images/People.png";
 import useBusinessCardStore from "../../store/businessCardStore";
@@ -56,6 +56,9 @@ export default function MyProfile() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+
+  // Get initial state defaults for comparison
+  const initialStoreState = useBusinessCardStore.getState().state;
 
   useEffect(() => {
     const handleResize = () => {
@@ -109,22 +112,23 @@ export default function MyProfile() {
 
       // Populate state with fetched data, falling back to current state values (which include initial defaults)
       updateState({
-        businessName: businessCard.business_card_name || state.businessName,
-        pageTheme: businessCard.page_theme || state.pageTheme,
-        font: businessCard.style || state.font,
-        mainHeading: businessCard.main_heading || state.mainHeading,
-        subHeading: businessCard.sub_heading || state.subHeading,
-        job_title: businessCard.job_title || state.job_title,
-        full_name: businessCard.full_name || state.full_name,
-        bio: businessCard.bio || state.bio,
+        businessName: businessCard.business_card_name || initialStoreState.businessName,
+        pageTheme: businessCard.page_theme || initialStoreState.pageTheme,
+        font: businessCard.style || initialStoreState.font,
+        mainHeading: businessCard.main_heading || initialStoreState.mainHeading,
+        subHeading: businessCard.sub_heading || initialStoreState.subHeading,
+        job_title: businessCard.job_title || initialStoreState.job_title,
+        full_name: businessCard.full_name || initialStoreState.full_name,
+        bio: businessCard.bio || initialStoreState.bio,
         // For images, if the fetched businessCard.field is null, use the state's default
-        avatar: businessCard.avatar || state.avatar,
-        coverPhoto: businessCard.cover_photo || state.coverPhoto,
-        workImages: (businessCard.works && businessCard.works.length > 0) ? businessCard.works.map(url => ({ file: null, preview: url })) : state.workImages,
-        services: (businessCard.services && businessCard.services.length > 0) ? businessCard.services : state.services,
-        reviews: (businessCard.reviews && businessCard.reviews.length > 0) ? businessCard.reviews : state.reviews,
-        contact_email: businessCard.contact_email || state.contact_email,
-        phone_number: businessCard.phone_number || state.phone_number,
+        avatar: businessCard.avatar || initialStoreState.avatar,
+        coverPhoto: businessCard.cover_photo || initialStoreState.coverPhoto,
+        // Convert fetched work URLs into {file: null, preview: url} format, otherwise use initial defaults
+        workImages: (businessCard.works && businessCard.works.length > 0) ? businessCard.works.map(url => ({ file: null, preview: url })) : initialStoreState.workImages,
+        services: (businessCard.services && businessCard.services.length > 0) ? businessCard.services : initialStoreState.services,
+        reviews: (businessCard.reviews && businessCard.reviews.length > 0) ? businessCard.reviews : initialStoreState.reviews,
+        contact_email: businessCard.contact_email || initialStoreState.contact_email,
+        phone_number: businessCard.phone_number || initialStoreState.phone_number,
       });
       setCoverPhotoFile(null);
       setAvatarFile(null);
@@ -141,12 +145,7 @@ export default function MyProfile() {
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     }
-  }, [businessCard, isCardLoading, updateState, resetState,
-    // List all state dependencies here to prevent infinite loops if they change after updateState
-    state.businessName, state.pageTheme, state.font, state.mainHeading, state.subHeading,
-    state.job_title, state.full_name, state.bio, state.avatar, state.coverPhoto,
-    state.workImages, state.services, state.reviews, state.contact_email, state.phone_number
-  ]);
+  }, [businessCard, isCardLoading, updateState, resetState, initialStoreState]);
 
 
   useEffect(() => {
@@ -210,39 +209,61 @@ export default function MyProfile() {
   };
 
   const handleRemoveCoverPhoto = () => {
-    if (state.coverPhoto && state.coverPhoto.startsWith('blob:')) {
-      URL.revokeObjectURL(state.coverPhoto);
-      setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
+    // If the current coverPhoto is one of the initial defaults, set it to null but don't mark as "removed"
+    // so it will revert to the default on refresh/next load if not saved.
+    if (initialStoreState.coverPhoto && state.coverPhoto === initialStoreState.coverPhoto) {
+      updateState({ coverPhoto: null }); // Or set to a truly empty state if desired
+      setCoverPhotoFile(null);
+      setCoverPhotoRemoved(false); // Not truly removed from DB perspective
+    } else {
+      if (state.coverPhoto && state.coverPhoto.startsWith('blob:')) {
+        URL.revokeObjectURL(state.coverPhoto);
+        setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
+      }
+      updateState({ coverPhoto: null });
+      setCoverPhotoFile(null);
+      setCoverPhotoRemoved(true); // Mark as removed for backend
     }
-    updateState({ coverPhoto: null });
-    setCoverPhotoFile(null);
-    setCoverPhotoRemoved(true);
   };
 
   const handleRemoveAvatar = () => {
-    if (state.avatar && state.avatar.startsWith('blob:')) {
-      URL.revokeObjectURL(state.avatar);
-      setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
+    if (initialStoreState.avatar && state.avatar === initialStoreState.avatar) {
+      updateState({ avatar: null }); // Or set to truly empty
+      setAvatarFile(null);
+      setIsAvatarRemoved(false);
+    } else {
+      if (state.avatar && state.avatar.startsWith('blob:')) {
+        URL.revokeObjectURL(state.avatar);
+        setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
+      }
+      updateState({ avatar: null });
+      setAvatarFile(null);
+      setIsAvatarRemoved(true);
     }
-    updateState({ avatar: null });
-    setAvatarFile(null);
-    setIsAvatarRemoved(true);
   };
 
   const handleRemoveWorkImage = (indexToRemove) => {
     const removedItem = state.workImages?.[indexToRemove];
+    const isDefaultImage = initialStoreState.workImages.some(defaultImg => defaultImg.preview === removedItem.preview);
+
     if (removedItem?.preview?.startsWith('blob:')) {
       URL.revokeObjectURL(removedItem.preview);
       setActiveBlobUrls(prev => prev.filter(url => url !== removedItem.preview));
     }
-    updateState({
-      workImages: (state.workImages || []).filter((_, index) => index !== indexToRemove),
-    });
+
+    // Only mark as removed for backend if it's not a default image
+    const newWorkImages = state.workImages.filter((_, index) => index !== indexToRemove);
+    updateState({ workImages: newWorkImages });
+
+    // If a file was associated (meaning it was uploaded), remove it from workImageFiles
     setWorkImageFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
+    // You might need a more complex way to track removed IDs for backend if removing non-default existing images
+    // For now, if an image is removed and it's not a default, it will just not be sent in the `works` array.
   };
 
+
   const handleAddService = () => {
-    updateState({ services: [...(state.services || []), { name: "", price: "" }] });
+    updateState({ services: [...state.services, { name: "", price: "" }] });
   };
 
   const handleServiceChange = (index, field, value) => {
@@ -253,13 +274,13 @@ export default function MyProfile() {
 
   const handleRemoveService = (indexToRemove) => {
     updateState({
-      services: (state.services || []).filter((_, index) => index !== indexToRemove),
+      services: state.services.filter((_, index) => index !== indexToRemove),
     });
   };
 
   const handleAddReview = () => {
     updateState({
-      reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }],
+      reviews: [...state.reviews, { name: "", text: "", rating: 5 }],
     });
   };
 
@@ -276,7 +297,7 @@ export default function MyProfile() {
 
   const handleRemoveReview = (indexToRemove) => {
     updateState({
-      reviews: (state.reviews || []).filter((_, index) => index !== indexToRemove),
+      reviews: state.reviews.filter((_, index) => index !== indexToRemove),
     });
   };
 
@@ -342,7 +363,12 @@ export default function MyProfile() {
       return;
     }
 
-    // Use the current state values, which will contain defaults if no fetched data
+    // Filter out default images from the 'works' array if they haven't been replaced
+    const worksToUpload = state.workImages
+      .filter(item => item.file || !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview))
+      .map(item => item.file ? { file: item.file } : item.preview);
+
+
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
@@ -353,11 +379,11 @@ export default function MyProfile() {
       full_name: state.full_name,
       bio: state.bio,
       user: userId,
-      cover_photo: coverPhotoFile, // These are actual files to upload
-      avatar: avatarFile, // These are actual files to upload
+      cover_photo: coverPhotoFile,
+      avatar: avatarFile,
       cover_photo_removed: coverPhotoRemoved,
       avatar_removed: isAvatarRemoved,
-      works: state.workImages.map(item => item.file ? { file: item.file } : item.preview), // Send actual files or URLs
+      works: worksToUpload, // Use the filtered list here
       services: state.services,
       reviews: state.reviews,
       contact_email: state.contact_email,
@@ -371,7 +397,7 @@ export default function MyProfile() {
       if (response.data && response.data.data) {
         const fetchedCardData = response.data.data;
 
-        // Update state with fetched data, ensuring defaults are only replaced by actual data
+        // Update state with fetched data
         updateState({
           businessName: fetchedCardData.business_card_name,
           pageTheme: fetchedCardData.page_theme,
@@ -442,7 +468,6 @@ export default function MyProfile() {
     }
   };
 
-  // Use state values directly for rendering, which now contain defaults
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
@@ -458,7 +483,7 @@ export default function MyProfile() {
 
   return (
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
-      {/* MyProfile Mobile Header - Hamburger on left, Logo on right (fixed) */}
+      {/* MyProfile Mobile Header - Logo on left, Hamburger on right */}
       <div className="myprofile-mobile-header">
         {/* Logo on the left (order 1 in CSS) */}
         <Link to="/" className="myprofile-logo-link">
@@ -570,14 +595,14 @@ export default function MyProfile() {
                   style={{ fontFamily: state.font, ...themeStyles }}
                 >
                   <div className="mock-phone-scrollable-content">
-                    {/* Use state.coverPhoto directly now, as it holds the default path */}
+                    {/* Use state.coverPhoto directly now, as it holds the default path or user upload */}
                     <img
                       src={state.coverPhoto}
                       alt="Cover"
                       className="mock-cover"
                     />
-                    {/* Only show remove button if image is NOT the default from the store, or if it's a blob (uploaded image) */}
-                    {(state.coverPhoto && !state.coverPhoto.includes("/Interface-Preview/Cover-Photo1.png")) || (state.coverPhoto && state.coverPhoto.startsWith('blob:')) ? (
+                    {/* Show remove button only if it's an uploaded image (blob) or not the initial default cover */}
+                    {(state.coverPhoto && state.coverPhoto.startsWith('blob:')) || (state.coverPhoto && state.coverPhoto !== initialStoreState.coverPhoto) ? (
                       <button
                         className="remove-image-button"
                         onClick={handleRemoveCoverPhoto}
@@ -615,8 +640,8 @@ export default function MyProfile() {
                               className="mock-avatar"
                             />
                           )}
-                          {/* Only show remove button if avatar is NOT the default from the store, or if it's a blob */}
-                          {(state.avatar && !state.avatar.includes("/Interface-Preview/Profile-Pic.png")) || (state.avatar && state.avatar.startsWith('blob:')) ? (
+                          {/* Show remove button only if it's an uploaded image (blob) or not the initial default avatar */}
+                          {(state.avatar && state.avatar.startsWith('blob:')) || (state.avatar && state.avatar !== initialStoreState.avatar) ? (
                             <button
                               className="remove-image-button"
                               onClick={handleRemoveAvatar}
@@ -640,25 +665,29 @@ export default function MyProfile() {
                       <>
                         <p className="mock-section-title">My Work</p>
                         <div className="mock-work-gallery">
-                          {state.workImages.map((img, i) => (
-                            <div key={i} style={{ position: 'relative', display: 'inline-block' }}>
-                              <img
-                                src={img.preview}
-                                alt={`work-${i}`}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
-                              />
-                              {/* Only show remove button if image is NOT a default or if it's a blob */}
-                              {(img.preview && !img.preview.includes("/Interface-Preview/Work-Images2.png")) || (img.preview && img.preview.startsWith('blob:')) ? (
-                                <button
-                                  type="button"
-                                  className="remove-image-button"
-                                  onClick={() => handleRemoveWorkImage(i)}
-                                >
-                                  X
-                                </button>
-                              ) : null}
-                            </div>
-                          ))}
+                          {state.workImages.map((img, i) => {
+                            // Check if this work image is one of the initial defaults
+                            const isInitialDefaultWorkImage = initialStoreState.workImages.some(defaultImg => defaultImg.preview === img.preview);
+                            return (
+                              <div key={i} style={{ position: 'relative', display: 'inline-block' }}>
+                                <img
+                                  src={img.preview}
+                                  alt={`work-${i}`}
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+                                />
+                                {/* Only show remove button if it's an uploaded image (blob) or not an initial default */}
+                                {(img.preview && img.preview.startsWith('blob:')) || (!isInitialDefaultWorkImage) ? (
+                                  <button
+                                    type="button"
+                                    className="remove-image-button"
+                                    onClick={() => handleRemoveWorkImage(i)}
+                                  >
+                                    X
+                                  </button>
+                                ) : null}
+                              </div>
+                            );
+                          })}
                         </div>
                       </>
                     )}
@@ -883,23 +912,20 @@ export default function MyProfile() {
                   <div className="input-block">
                     <label>My Work</label>
                     <div className="work-preview-row">
-                      {(state.workImages || []).map((img, i) => (
+                      {state.workImages.map((img, i) => (
                         <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px' }}>
                           <img
                             src={img.preview}
                             alt={`work-${i}`}
                             style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
                           />
-                          {/* Only show remove button if image is NOT a default or if it's a blob */}
-                          {(img.preview && !img.preview.includes("/Interface-Preview/Work-Images2.png")) || (img.preview && img.preview.startsWith('blob:')) ? (
-                            <button
-                              type="button"
-                              className="remove-image-button"
-                              onClick={() => handleRemoveWorkImage(i)}
-                            >
-                              X
-                            </button>
-                          ) : null}
+                          <button
+                            type="button"
+                            className="remove-image-button"
+                            onClick={() => handleRemoveWorkImage(i)}
+                          >
+                            X
+                          </button>
                         </div>
                       ))}
                       <button
