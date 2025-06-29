@@ -4,29 +4,33 @@
 .myprofile-layout {
     display: flex;
     height: 100vh;
+    /* This ensures the entire layout takes full viewport height */
     background-color: #f9f9f9;
-    overflow-x: hidden;
+    overflow: hidden;
+    /* Prevent body scroll if content overflows, rely on inner scrolls */
     position: relative;
 }
 
 /* MyProfile Main content area (right side, next to sidebar) */
 .myprofile-main {
     flex: 1;
-    overflow-y: auto;
-    /* This still allows main to scroll if overall content is too tall */
+    /* Takes remaining horizontal space from sidebar */
+    /* Removed overflow-y: auto here to prevent the main page from scrolling */
     font-family: sans-serif;
     padding: 30px;
     display: flex;
     flex-direction: column;
+    /* Stacks header and flex-container vertically */
     min-height: 0;
-    /* Important for flex column children to shrink */
+    /* Allows flex children to shrink */
     overflow-x: hidden;
+    /* Still prevent horizontal overflow for main content */
     padding-bottom: 20px;
+    /* Padding for the bottom of the main area */
 
     /* Desktop positioning to account for fixed sidebar */
     margin-left: 280px;
     padding-top: 30px;
-    /* Default desktop padding-top */
     transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
     z-index: 1;
 }
@@ -37,7 +41,7 @@
     align-items: center;
     margin-bottom: 30px;
     flex-shrink: 0;
-    /* Prevent header from shrinking */
+    /* Prevents header from shrinking */
 }
 
 .page-title {
@@ -74,17 +78,15 @@
 /* New flex container for side-by-side content */
 .myprofile-flex-container {
     display: flex;
-    /* Arranges preview and editor side-by-side */
+    /* Default to row for desktop */
     flex: 1;
-    /* Allows this container to take up all available vertical space */
+    /* Takes all available vertical space within .myprofile-main */
     gap: 40px;
-    /* Space between the mock-phone and editor */
+    /* Space between the preview and editor */
     min-height: 0;
     /* Crucial for internal scrolling of children */
     overflow: hidden;
     /* Prevents this container from having its own scrollbar */
-    padding-bottom: 20px;
-    /* Add some padding at the bottom for overall layout */
     justify-content: space-around;
     /* Distribute space around items */
     align-items: stretch;
@@ -105,9 +107,9 @@
     aspect-ratio: 9 / 19.5;
     /* Apply phone aspect ratio to the container */
     max-width: 320px;
-    /* Keep max width to ensure it doesn't get too large */
+    /* Keep max width for the preview */
     min-width: 250px;
-    /* Ensure a minimum width to prevent being too small */
+    /* Ensure a minimum width */
     position: relative;
     /* For the mock-phone's absolute positioning later */
     overflow: hidden;
@@ -120,9 +122,8 @@
     /* Fill the width of .myprofile-content */
     height: 100%;
     /* Fill the height of .myprofile-content */
-    /* The aspect-ratio on .myprofile-content now dictates the phone's dimensions */
-    /* Remove redundant aspect-ratio here if it's on the parent */
-    /* background, border, padding, shadow, etc. as before */
+    /* The aspect-ratio on .myprofile-content now dictates the phone's dimensions on desktop */
+
     background: #fff;
     border: 0.625rem solid #ccc;
     border-radius: 2.5rem;
@@ -167,6 +168,7 @@
 .mock-phone-scrollable-content {
     flex-grow: 1;
     overflow-y: auto;
+    /* THIS IS WHERE THE SCROLLBAR FOR THE PHONE CONTENT GOES */
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -407,12 +409,10 @@
 /* EDITOR SECTION */
 .myprofile-editor-wrapper {
     position: relative;
-    flex: 0 1 auto;
-    /* Don't grow, allow to shrink, base size on content */
+    flex: 0 1 50%;
+    /* New: flex-basis 50% for desktop width */
     height: 100%;
     /* Take full height of .myprofile-flex-container */
-    aspect-ratio: 9 / 19.5;
-    /* Apply phone aspect ratio to the editor container */
     max-width: 600px;
     /* Keep a max-width for the editor */
     min-width: 350px;
@@ -421,10 +421,12 @@
     flex-direction: column;
     min-height: 0;
     /* Crucial for internal scrolling of children */
+    /* Removed aspect-ratio from here */
 }
 
 .myprofile-editor {
     flex: 1;
+    /* Allow editor content to fill available vertical space */
     background: white;
     padding: 24px;
     border-radius: 16px;
@@ -709,6 +711,8 @@
     .myprofile-main {
         margin-left: 0;
         padding-top: 70px;
+        /* Allow main to scroll if overall content needs it on mobile */
+        overflow-y: auto;
     }
 
     .myprofile-mobile-header {
@@ -722,56 +726,52 @@
     /* Stack items vertically on mobile */
     .myprofile-flex-container {
         flex-direction: column;
+        /* Stack vertically on mobile */
         gap: 20px;
         padding-top: 0;
         justify-content: flex-start;
-        /* Align items to the start in column layout */
         align-items: center;
         /* Center items horizontally in column layout */
+        flex: 1;
+        /* Still takes all available vertical space */
     }
 
-    .myprofile-content {
-        flex: 0 0 auto;
-        /* Allow sizing based on content, no growing */
-        width: 100%;
-        /* Take full width of parent (myprofile-flex-container) */
-        max-width: 320px;
-        /* Limit the size of the preview on mobile */
-        margin: 0 auto;
-        /* Center the preview horizontally */
-        height: auto;
-        /* Let content dictate height on mobile */
-        aspect-ratio: unset;
-        /* Remove aspect ratio on mobile for preview */
-    }
-
-    /* Ensure mock-phone fills its parent on mobile */
-    .mock-phone {
-        width: 100%;
-        height: auto;
-        /* Let content dictate height on mobile */
-        aspect-ratio: 9 / 19.5;
-        /* Keep the aspect ratio on the mock-phone itself for mobile */
-    }
-
+    /* Mobile specific styles for preview and editor containers */
+    .myprofile-content,
     .myprofile-editor-wrapper {
-        flex: 0 0 auto;
-        /* Allow sizing based on content, no growing */
-        max-width: 100%;
-        /* Allow to fill width */
-        min-width: unset;
-        /* Remove min-width constraint */
         width: 100%;
         /* Take full width */
+        max-width: 320px;
+        /* Limit overall size, especially for preview */
+        min-width: unset;
+        margin: 0 auto;
+        /* Center on mobile */
+        height: 50%;
+        /* Each takes half the height of myprofile-flex-container */
+        flex-shrink: 1;
+        /* Allow to shrink */
+        flex-grow: 1;
+        /* Allow to grow */
         aspect-ratio: unset;
-        /* Remove aspect ratio on mobile for editor wrapper */
-        height: auto;
-        /* Let content dictate height on mobile */
+        /* Remove aspect ratio constraint on the container */
+        overflow: hidden;
+        /* Ensure no overflow on the container level */
+    }
+
+    /* Ensure mock-phone within myprofile-content keeps its aspect ratio on mobile */
+    .mock-phone {
+        width: 100%;
+        height: 100%;
+        /* Fill parent's height */
+        aspect-ratio: 9 / 19.5;
+        /* Keep the aspect ratio on the mock-phone itself for mobile */
     }
 
     .myprofile-editor {
         padding: 16px;
         gap: 15px;
+        /* Ensure inner editor content is scrollable */
+        overflow-y: auto;
     }
 
     .myprofile-layout.sidebar-active {
@@ -789,6 +789,8 @@
 
     .myprofile-main {
         padding-top: 30px;
+        overflow-y: hidden;
+        /* Prevent main page scroll on desktop */
     }
 
     .sidebar {
@@ -857,7 +859,8 @@
         margin-bottom: 0.5rem;
     }
 
-    .mock-about {
+    .mock-about-container {
+        /* Corrected class name */
         padding: 0.6rem;
         gap: 0.6rem;
     }
