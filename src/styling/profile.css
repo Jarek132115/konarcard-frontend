@@ -1,26 +1,56 @@
 /* profile.css */
 
-/* Specific styling for the PageHeader on the Profile page */
-/* This ensures it spans the full width of myprofile-main's content area */
-.profile-page-header {
-    width: 100%;
-    /* Make it take full available width of its parent */
+/* New class for the PageHeader's full-width container */
+.profile-header-area {
+    width: calc(100% - 280px);
+    /* Full width minus sidebar width */
+    margin-left: 280px;
+    /* Aligned with sidebar margin */
+    padding: 30px;
+    /* Padding to match myprofile-main's horizontal padding */
     padding-bottom: 30px;
     /* Space below header content */
     margin-bottom: 30px;
-    /* Margin after the header */
+    /* Margin after the header itself */
     border-bottom: 1px solid #e0e0e0;
     /* Very light gray border-bottom */
     box-sizing: border-box;
-    /* Include padding/border in width calculation */
+    /* Include padding/border in width */
 
-    /* Inherit/override flex properties from PageHeader component to ensure it aligns correctly */
     display: flex;
+    /* Inherit flex from PageHeader for alignment of its internal elements */
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
+
+    position: relative;
+    /* Needed for z-index if anything overlaps */
+    z-index: 1;
+    /* Keep it above other elements if sidebar is open */
+
+    /* Transition for responsive margin-left */
+    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out, padding 0.3s ease-in-out;
 }
 
+/* Responsive adjustment for profile-header-area */
+@media (max-width: 1000px) {
+    .profile-header-area {
+        width: 100%;
+        /* Full width on mobile */
+        margin-left: 0;
+        /* Remove fixed margin on mobile */
+        padding-top: 70px;
+        /* Account for fixed mobile header height */
+        padding-left: 30px;
+        /* Keep padding */
+        padding-right: 30px;
+        /* Keep padding */
+        padding-bottom: 20px;
+        /* Adjust padding for mobile */
+        margin-bottom: 20px;
+        /* Adjust margin for mobile */
+    }
+}
 
 /* New wrapper for the main content (profile-card-box) to enable centering */
 .profile-content-wrapper {
@@ -46,6 +76,7 @@
 
     margin: auto;
     /* This magic centers it vertically and horizontally within myprofile-main */
+    /* NO margin-top here anymore, as PageHeader is outside myprofile-main */
 }
 
 /* Original profile-card-box styles (now within profile-content-wrapper) */
@@ -148,7 +179,7 @@
 
 /* Mobile Responsiveness for Profile.css specific elements */
 @media (max-width: 800px) {
-    .profile-page-header {
+    .profile-header-area {
         padding-bottom: 20px;
         margin-bottom: 20px;
     }
