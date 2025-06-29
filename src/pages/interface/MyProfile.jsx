@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 // --- REMOVED REDUNDANT IMPORTS ---
-// import ProfileCardImage from "../../assets/images/background-hero.png";
-// import UserAvatar from "../../assets/images/People.png";
+import ProfileCardImage from "../../assets/images/background-hero.png";
+import UserAvatar from "../../assets/images/People.png";
 // --- END REMOVED IMPORTS ---
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
