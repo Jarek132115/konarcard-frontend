@@ -649,7 +649,7 @@
         margin-left: 0;
         padding-top: 70px;
         overflow-y: auto;
-        /* Allow main page scroll on mobile */
+        /* ENABLE PAGE SCROLL ON MOBILE */
     }
 
     .myprofile-mobile-header {
@@ -667,16 +667,22 @@
         justify-content: flex-start;
         align-items: center;
         height: auto;
+        /* Let content dictate height */
+        flex: unset;
+        /* Remove flex:1 from here on mobile to avoid height issues */
     }
 
     .myprofile-content {
         width: 100%;
+        /* Full width of its parent */
         max-width: 100%;
-        /* Make it truly full width */
+        /* Ensure no max-width restriction on mobile */
         min-width: unset;
         margin: 0 auto;
         height: auto;
+        /* Height determined by aspect ratio of mock-phone */
         aspect-ratio: unset;
+        /* Aspect ratio controlled by inner mock-phone */
         flex-shrink: 0;
         flex-grow: 0;
         overflow: hidden;
@@ -684,8 +690,11 @@
 
     .mock-phone {
         width: 100%;
+        /* Fill the width of its parent (.myprofile-content) */
         height: auto;
+        /* Allow aspect-ratio to dictate height */
         aspect-ratio: 9 / 17;
+        /* Phone aspect ratio on the phone itself */
     }
 
     .myprofile-editor-wrapper {
@@ -704,7 +713,9 @@
         padding: 16px;
         gap: 15px;
         overflow-y: auto;
+        /* Ensure inner editor content is scrollable */
         height: 100%;
+        /* Fill the height of its wrapper */
     }
 
     .myprofile-layout.sidebar-active {
