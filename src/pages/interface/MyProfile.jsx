@@ -35,8 +35,9 @@ export default function MyProfile() {
   const userId = authUser?._id;
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
+  const userUsername = authUser?.username; // This is now correctly defined here
 
-  const { data: businessCard, refetch: refetchBusinessCard, isLoading: isCardLoading, isError: isCardError, error: cardError } = useFetchBusinessCard(userId);
+  const { data: businessCard, isLoading: isCardLoading, isError: isCardError, error: cardError } = useFetchBusinessCard(userId);
 
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
@@ -427,7 +428,7 @@ export default function MyProfile() {
     }
   };
 
-  const currentProfileUrl = userId && userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
+  const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
   const contactDetailsForVCard = {
@@ -993,7 +994,7 @@ export default function MyProfile() {
           profileUrl={currentProfileUrl}
           qrCodeUrl={currentQrCodeUrl}
           contactDetails={contactDetailsForVCard}
-          username={userUsername}
+          username={userUsername || ''} // Ensure username is handled if undefined
         />
       </main>
     </div>
