@@ -22,7 +22,7 @@ import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 export default function MyProfile() {
-  const { state, updateState } = useBusinessCardStore();
+  const { state, updateState, resetState } = useBusinessCardStore(); // Get resetState
   const fileInputRef = useRef(null);
   const avatarInputRef = useRef(null);
   const workImageInputRef = useRef(null);
@@ -35,7 +35,7 @@ export default function MyProfile() {
   const userId = authUser?._id;
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
-  const userUsername = authUser?.username; // This is now correctly defined here
+  const userUsername = authUser?.username;
 
   const { data: businessCard, isLoading: isCardLoading, isError: isCardError, error: cardError } = useFetchBusinessCard(userId);
 
@@ -106,33 +106,44 @@ export default function MyProfile() {
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
+      // Populate state with fetched data, falling back to current state values (which might be initial defaults)
       updateState({
-        businessName: businessCard.business_card_name || "",
-        pageTheme: businessCard.page_theme || "light",
-        font: businessCard.style || "Inter",
-        mainHeading: businessCard.main_heading || "",
-        subHeading: businessCard.sub_heading || "",
-        job_title: businessCard.job_title || "",
-        full_name: businessCard.full_name || "",
-        bio: businessCard.bio || "",
-        avatar: businessCard.avatar || null,
-        coverPhoto: businessCard.cover_photo || null,
+        businessName: businessCard.business_card_name || state.businessName,
+        pageTheme: businessCard.page_theme || state.pageTheme,
+        font: businessCard.style || state.font,
+        mainHeading: businessCard.main_heading || state.mainHeading,
+        subHeading: businessCard.sub_heading || state.subHeading,
+        job_title: businessCard.job_title || state.job_title,
+        full_name: businessCard.full_name || state.full_name,
+        bio: businessCard.bio || state.bio,
+        avatar: businessCard.avatar || state.avatar,
+        coverPhoto: businessCard.cover_photo || state.coverPhoto,
         workImages: (businessCard.works || []).map((url) => ({
           file: null,
           preview: url,
         })),
-        services: businessCard.services || [],
-        reviews: businessCard.reviews || [],
-        contact_email: businessCard.contact_email || "",
-        phone_number: businessCard.phone_number || "",
+        services: businessCard.services.length > 0 ? businessCard.services : state.services,
+        reviews: businessCard.reviews.length > 0 ? businessCard.reviews : state.reviews,
+        contact_email: businessCard.contact_email || state.contact_email,
+        phone_number: businessCard.phone_number || state.phone_number,
       });
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
+    } else if (!isCardLoading && !businessCard) {
+      // If no business card is found for the user AND it's not still loading,
+      // explicitly set the state to the store's initial defaults.
+      resetState(); // This will apply the initial defaults from the store
+      setCoverPhotoFile(null);
+      setAvatarFile(null);
+      setWorkImageFiles([]);
+      setCoverPhotoRemoved(false);
+      setIsAvatarRemoved(false);
     }
-  }, [businessCard, updateState]);
+  }, [businessCard, isCardLoading, updateState, resetState, state.businessName, state.pageTheme, state.font, state.mainHeading, state.subHeading, state.job_title, state.full_name, state.bio, state.avatar, state.coverPhoto, state.services, state.reviews, state.contact_email, state.phone_number]);
+
 
   useEffect(() => {
     return () => {
@@ -347,8 +358,8 @@ export default function MyProfile() {
       ],
       services: state.services,
       reviews: state.reviews,
-      contact_email: state.contact_email || "",
-      phone_number: state.phone_number || "",
+      contact_email: state.contact_email,
+      phone_number: state.phone_number,
     });
 
     try {
@@ -359,24 +370,24 @@ export default function MyProfile() {
         const fetchedCardData = response.data.data;
 
         updateState({
-          businessName: fetchedCardData.business_card_name || "",
-          pageTheme: fetchedCardData.page_theme || "light",
-          font: fetchedCardData.style || "Inter",
-          mainHeading: fetchedCardData.main_heading || "",
-          subHeading: fetchedCardData.sub_heading || "",
-          job_title: fetchedCardData.job_title || "",
-          full_name: fetchedCardData.full_name || "",
-          bio: fetchedCardData.bio || "",
-          avatar: fetchedCardData.avatar || null,
-          coverPhoto: fetchedCardData.cover_photo || null,
+          businessName: fetchedCardData.business_card_name,
+          pageTheme: fetchedCardData.page_theme,
+          font: fetchedCardData.style,
+          mainHeading: fetchedCardData.main_heading,
+          subHeading: fetchedCardData.sub_heading,
+          job_title: fetchedCardData.job_title,
+          full_name: fetchedCardData.full_name,
+          bio: fetchedCardData.bio,
+          avatar: fetchedCardData.avatar,
+          coverPhoto: fetchedCardData.cover_photo,
           workImages: (fetchedCardData.works || []).map((url) => ({
             file: null,
             preview: url,
           })),
-          services: fetchedCardData.services || [],
-          reviews: fetchedCardData.reviews || [],
-          contact_email: fetchedCardData.contact_email || "",
-          phone_number: fetchedCardData.phone_number || "",
+          services: fetchedCardData.services,
+          reviews: fetchedCardData.reviews,
+          contact_email: fetchedCardData.contact_email,
+          phone_number: fetchedCardData.phone_number,
         });
       }
 
@@ -428,23 +439,24 @@ export default function MyProfile() {
     }
   };
 
+  // Use state values directly, which will now contain defaults if no fetched data
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
-  const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
+  const currentQrCodeUrl = businessCard?.qrCodeUrl || ''; // businessCard is from fetch, so this is fine
 
   const contactDetailsForVCard = {
-    full_name: state.full_name || '',
-    job_title: state.job_title || '',
-    business_card_name: state.businessName || '',
-    bio: state.bio || '',
-    contact_email: state.contact_email || '',
-    phone_number: state.phone_number || '',
-    username: userUsername || '',
+    full_name: state.full_name, // Will be default if no user data
+    job_title: state.job_title,
+    business_card_name: state.businessName,
+    bio: state.bio,
+    contact_email: state.contact_email,
+    phone_number: state.phone_number,
+    username: userUsername || '', // userUsername still needs this fallback if authUser is null
   };
 
   return (
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
-        {/* Hamburger on the left */}
+        {/* Hamburger on the right (order 2) */}
         <div
           className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -453,7 +465,7 @@ export default function MyProfile() {
           <span></span>
           <span></span>
         </div>
-        {/* Logo on the right */}
+        {/* Logo on the left (order 1) */}
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
@@ -581,6 +593,7 @@ export default function MyProfile() {
                     >
                       Exchange Contact
                     </button>
+                    {/* Use state values directly, which now contain defaults */}
                     {(state.full_name || state.job_title || state.bio || state.avatar) && (
                       <>
                         <p className="mock-section-title">
@@ -774,7 +787,7 @@ export default function MyProfile() {
                     <input
                       id="jobTitle"
                       type="text"
-                      value={state.job_title || ""}
+                      value={state.job_title}
                       onChange={(e) => updateState({ job_title: e.target.value })}
                     />
                   </div>
@@ -821,7 +834,7 @@ export default function MyProfile() {
                     <input
                       id="fullName"
                       type="text"
-                      value={state.full_name || ""}
+                      value={state.full_name}
                       onChange={(e) => updateState({ full_name: e.target.value })}
                     />
                   </div>
@@ -830,7 +843,7 @@ export default function MyProfile() {
                     <label htmlFor="bio">About Me</label>
                     <textarea
                       id="bio"
-                      value={state.bio || ""}
+                      value={state.bio}
                       onChange={(e) => updateState({ bio: e.target.value })}
                       rows={4}
                     />
@@ -896,7 +909,7 @@ export default function MyProfile() {
 
                   <div className="input-block">
                     <label>My Services</label>
-                    {(state.services || []).map((s, i) => (
+                    {state.services.map((s, i) => (
                       <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
                         <input
                           type="text"
@@ -920,7 +933,7 @@ export default function MyProfile() {
 
                   <div className="input-block">
                     <label>Reviews</label>
-                    {(state.reviews || []).map((r, i) => (
+                    {state.reviews.map((r, i) => (
                       <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
                         <input
                           type="text"
@@ -958,7 +971,7 @@ export default function MyProfile() {
                     <input
                       id="contactEmail"
                       type="email"
-                      value={state.contact_email || ""}
+                      value={state.contact_email}
                       onChange={(e) => updateState({ contact_email: e.target.value })}
                     />
                   </div>
@@ -968,7 +981,7 @@ export default function MyProfile() {
                     <input
                       id="phoneNumber"
                       type="tel"
-                      value={state.phone_number || ""}
+                      value={state.phone_number}
                       onChange={(e) => updateState({ phone_number: e.target.value })}
                     />
                   </div>
@@ -994,7 +1007,7 @@ export default function MyProfile() {
           profileUrl={currentProfileUrl}
           qrCodeUrl={currentQrCodeUrl}
           contactDetails={contactDetailsForVCard}
-          username={userUsername || ''} // Ensure username is handled if undefined
+          username={userUsername || ''}
         />
       </main>
     </div>
