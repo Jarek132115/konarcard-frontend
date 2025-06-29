@@ -22,7 +22,7 @@
     padding-bottom: 20px;
 
     /* Desktop positioning to account for fixed sidebar */
-    margin-left: 220px;
+    margin-left: 280px;
     padding-top: 30px;
     /* Default desktop padding-top */
     transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
