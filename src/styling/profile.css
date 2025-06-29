@@ -2,31 +2,21 @@
 
 /* New class for the PageHeader's full-width container */
 .profile-header-area {
-    width: calc(100% - 280px);
-    /* Full width minus sidebar width */
-    margin-left: 280px;
-    /* Aligned with sidebar margin */
-    padding: 30px;
-    /* Padding to match myprofile-main's horizontal padding */
-    padding-bottom: 30px;
-    /* Space below header content */
-    margin-bottom: 30px;
-    /* Margin after the header itself */
-    border-bottom: 1px solid #e0e0e0;
-    /* Very light gray border-bottom */
-    box-sizing: border-box;
-    /* Include padding/border in width */
-
-    display: flex;
-    /* Inherit flex from PageHeader for alignment of its internal elements */
+    width: calc(100% - 280px); /* Full width minus sidebar width */
+    margin-left: 280px; /* Aligned with sidebar margin */
+    padding: 30px; /* Padding to match myprofile-main's horizontal padding */
+    padding-bottom: 30px; /* Space below header content */
+    margin-bottom: 30px; /* Margin after the header itself */
+    border-bottom: 1px solid #e0e0e0; /* Very light gray border-bottom */
+    box-sizing: border-box; /* Include padding/border in width */
+    
+    display: flex; /* Inherit flex from PageHeader for alignment of its internal elements */
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
-
-    position: relative;
-    /* Needed for z-index if anything overlaps */
-    z-index: 1;
-    /* Keep it above other elements if sidebar is open */
+    
+    position: relative; /* Needed for z-index if anything overlaps */
+    z-index: 1; /* Keep it above other elements if sidebar is open */
 
     /* Transition for responsive margin-left */
     transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out, padding 0.3s ease-in-out;
@@ -35,47 +25,31 @@
 /* Responsive adjustment for profile-header-area */
 @media (max-width: 1000px) {
     .profile-header-area {
-        width: 100%;
-        /* Full width on mobile */
-        margin-left: 0;
-        /* Remove fixed margin on mobile */
-        padding-top: 70px;
-        /* Account for fixed mobile header height */
-        padding-left: 30px;
-        /* Keep padding */
-        padding-right: 30px;
-        /* Keep padding */
-        padding-bottom: 20px;
-        /* Adjust padding for mobile */
-        margin-bottom: 20px;
-        /* Adjust margin for mobile */
+        width: 100%; /* Full width on mobile */
+        margin-left: 0; /* Remove fixed margin on mobile */
+        padding-top: 70px; /* Account for fixed mobile header height */
+        padding-left: 30px; /* Keep padding */
+        padding-right: 30px; /* Keep padding */
+        padding-bottom: 20px; /* Adjust padding for mobile */
+        margin-bottom: 20px; /* Adjust margin for mobile */
     }
 }
 
 /* New wrapper for the main content (profile-card-box) to enable centering */
 .profile-content-wrapper {
     width: 100%;
-    max-width: 600px;
-    /* Max width for content as requested */
-    box-sizing: border-box;
-    /* Include padding in width */
+    max-width: 600px; /* Max width for content as requested */
+    box-sizing: border-box; /* Include padding in width */
 
-    display: flex;
-    /* Make it a flex container to center its children */
-    flex-direction: column;
-    /* Stack content vertically */
-    gap: 20px;
-    /* Space between elements inside */
+    display: flex; /* Make it a flex container to center its children */
+    flex-direction: column; /* Stack content vertically */
+    gap: 20px; /* Space between elements inside */
 
-    flex: 1;
-    /* Allow this wrapper to take all available vertical space */
-    min-height: 0;
-    /* Important for flex children to shrink */
-    overflow-y: auto;
-    /* Allow content inside this wrapper to scroll */
+    flex: 1; /* Allow this wrapper to take all available vertical space */
+    min-height: 0; /* Important for flex children to shrink */
+    overflow-y: auto; /* Allow content inside this wrapper to scroll */
 
-    margin: auto;
-    /* This magic centers it vertically and horizontally within myprofile-main */
+    margin: auto; /* This magic centers it vertically and horizontally within myprofile-main */
     /* NO margin-top here anymore, as PageHeader is outside myprofile-main */
 }
 
@@ -85,8 +59,7 @@
     padding: 32px;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    width: 100%;
-    /* It should take the full width of its parent (profile-content-wrapper) */
+    width: 100%; /* It should take the full width of its parent (profile-content-wrapper) */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -183,7 +156,7 @@
         padding-bottom: 20px;
         margin-bottom: 20px;
     }
-
+    
     .profile-content-wrapper {
         max-width: 100%;
         padding-left: 15px;
@@ -200,7 +173,6 @@
         flex-direction: column;
         align-items: stretch;
     }
-
     .profile-action-row button {
         width: 100%;
         box-sizing: border-box;

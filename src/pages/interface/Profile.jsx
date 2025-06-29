@@ -173,20 +173,19 @@ export default function Profile() {
       {sidebarOpen && isMobile && (
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
-
-      {/* NEW: PageHeader is now outside of main.myprofile-main, wrapped in profile-header-area */}
-      <div className="profile-header-area">
+      <div className="pageheader-div">
         <PageHeader
           title="My Account"
           onActivateCard={() => console.log("Activate Card clicked on My Account page")}
           onShareCard={handleShareCard}
-        // The profile-page-header class will be used directly by the PageHeader component
-        // No need for className="profile-page-header" here if PageHeader is styled globally or internally
+          className="profile-page-header" /* Apply the new class here for border-bottom */
         />
       </div>
-
       <main className="myprofile-main">
-        {/* The profile-content-wrapper is now the ONLY direct flex child of myprofile-main (after header moved) */}
+        {/* PageHeader is now a direct child of myprofile-main, outside profile-content-wrapper */}
+
+        {/* This div acts as the main content container for the profile page */}
+        {/* It gets the centering, max-width, and its own background/shadow */}
         <div className="profile-content-wrapper">
           <div className="profile-card-box">
             <div className="profile-input-block">
