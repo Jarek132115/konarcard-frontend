@@ -1,18 +1,21 @@
 /* helpcentreinterface.css */
 
 /* Define the new .content-card styling for this page's main content wrapper */
+/* This now acts more as a layout container than a visual card itself */
 .content-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  padding: 24px;
-  /* Internal padding inside the card */
+  background: transparent;
+  /* Changed to transparent - no background for this wrapper */
+  border-radius: 0;
+  /* Remove border-radius */
+  box-shadow: none;
+  /* Remove box-shadow */
+  padding: 0;
+  /* Remove padding if not needed, let children define their padding */
   width: 100%;
   /* Default to full width of its parent */
   max-width: 600px;
-  /* Max width for desktop/tablet */
+  /* Set max width for content inside main area */
   box-sizing: border-box;
-  /* Include padding in width */
   display: flex;
   /* Make it a flex container */
   flex-direction: column;
@@ -20,34 +23,31 @@
   gap: 20px;
   /* Spacing between elements inside the card */
   min-height: 0;
-  /* Allow inner content to shrink if needed */
   overflow-y: auto;
-  /* Allow content inside this card to scroll if it overflows */
-  margin-top: 0;
-  /* No specific top margin, depends on parent layout */
-  margin-bottom: 20px;
-  /* Add some space below the content card */
+  /* Allow content inside this logical card to scroll if it overflows */
+  margin: 0 auto 20px auto;
+  /* Center it horizontally, add bottom margin */
 }
 
-/* Original help-video-card styles - re-applying original background/shadow/padding */
+
+/* Original help-video-card styles - these are the individual cards */
 .help-video-card {
   display: flex;
   background: white;
-  /* Re-add white background */
+  /* Keep white background for individual cards */
   padding: 24px;
-  /* Re-add original padding */
+  /* Keep original padding for individual cards */
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   gap: 24px;
   align-items: center;
-  /* margin-bottom is now handled by the .content-card gap for elements within it,
-       but keep it if help-video-cards can appear outside .content-card */
-  margin-bottom: 0;
-  /* Adjust if needed, depends on context */
+  margin: 0;
+  /* Reset margins; gap on parent .content-card will handle spacing */
   width: 100%;
-  /* Ensure it takes full width of .content-card parent */
-  /* max-width: 1000px; is not needed here if .content-card limits it already */
+  /* Fill the width of its parent (.content-card) */
   box-sizing: border-box;
+  flex-shrink: 0;
+  /* Prevent individual cards from shrinking their content too much */
 }
 
 .help-video-card.reverse {
@@ -107,11 +107,12 @@
   .content-card {
     max-width: 100%;
     /* Go full width below 800px */
-    padding: 15px;
-    /* Adjust padding for mobile */
+    padding: 0;
+    /* No padding on content-card itself, rely on inner elements */
+    margin: 0 auto 20px auto;
+    /* Still center */
   }
 
-  /* Adjust help-video-card for smaller screens - now always stacks */
   .help-video-card {
     flex-direction: column;
     /* Always stack content on mobile */
@@ -120,7 +121,9 @@
     gap: 15px;
     /* Adjust gap for vertical stacking */
     padding: 15px;
-    /* Ensure internal padding if needed */
+    /* Adjust padding for mobile cards */
+    margin-bottom: 20px;
+    /* Add margin between stacked cards if needed */
   }
 
   .help-video-card.reverse {

@@ -104,7 +104,8 @@ export default function HelpCentre() {
         />
 
         {/* This new div acts as the main content "card" that contains the video cards */}
-        <div className="content-card">
+        {/* It gets the max-width and helps center the content */}
+        <div className="page-wrapper content-card"> {/* Renamed from 'page-wrapper' to 'content-card' here too for consistency with the CSS rule you provided */}
           {/* The video cards are direct children of content-card now */}
           <div className="help-video-card">
             <img src={HeroBackground} alt="Profile Setup" className="help-video-thumb" />
