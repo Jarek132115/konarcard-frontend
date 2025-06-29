@@ -173,16 +173,15 @@ export default function Profile() {
       {sidebarOpen && isMobile && (
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
-      <div className="pageheader-div">
+
+      <main className="myprofile-main">
+        {/* PageHeader is now a direct child of myprofile-main, outside profile-content-wrapper */}
         <PageHeader
           title="My Account"
           onActivateCard={() => console.log("Activate Card clicked on My Account page")}
           onShareCard={handleShareCard}
           className="profile-page-header" /* Apply the new class here for border-bottom */
         />
-      </div>
-      <main className="myprofile-main">
-        {/* PageHeader is now a direct child of myprofile-main, outside profile-content-wrapper */}
 
         {/* This div acts as the main content container for the profile page */}
         {/* It gets the centering, max-width, and its own background/shadow */}
