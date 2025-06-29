@@ -6,27 +6,38 @@
     height: 100vh;
     background-color: #f9f9f9;
     overflow-x: hidden;
+    /* Prevent horizontal scroll on the entire layout */
     position: relative;
 }
 
 /* MyProfile Main content area (right side, next to sidebar) */
 .myprofile-main {
     flex: 1;
+    /* Takes up all available width */
     overflow-y: auto;
+    /* This is the primary scrolling container for the right-hand side */
     font-family: sans-serif;
     padding: 30px;
+    /* Space around content */
     display: flex;
     flex-direction: column;
+    /* Stacks header and content vertically */
     min-height: 0;
+    /* Crucial for flex child to allow internal scrolling */
     overflow-x: hidden;
+    /* Prevent horizontal scroll within main content */
     padding-bottom: 20px;
+    /* Add some padding at the bottom of the content section */
 
     /* Desktop positioning to account for fixed sidebar */
     margin-left: 280px;
+    /* Default margin for desktop sidebar width */
     padding-top: 30px;
     /* Default desktop padding-top */
     transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
+    /* Smooth transition for sidebar closing/opening */
     z-index: 1;
+    /* Ensure main content is below mobile sidebar overlay if open */
 }
 
 .page-header {
@@ -35,6 +46,7 @@
     align-items: center;
     margin-bottom: 30px;
     flex-shrink: 0;
+    /* Prevents header from shrinking */
 }
 
 .page-title {
@@ -71,18 +83,25 @@
 /* MyProfile Content (the row containing the preview and editor forms) */
 .myprofile-content {
     display: flex;
+    /* Makes it a flex row */
     gap: 40px;
     justify-content: space-around;
     flex: 1;
+    /* Allows this row to take up all *remaining* vertical space within .myprofile-main */
     min-height: 0;
+    /* CRITICAL: Allows flex items inside to shrink and enables their overflow-y: auto */
     overflow: hidden;
+    /* Prevents this row from having its own scrollbar, children manage. */
     padding-bottom: 20px;
+    /* Add some padding at the bottom of the content section */
 }
 
 /* MyProfile Preview (the mock phone side) */
 .myprofile-preview {
     flex: 0 1 320px;
+    /* flex-grow:0, flex-shrink:1, flex-basis:320px */
     max-width: 320px;
+    /* Hard cap for the width of this container */
     position: relative;
     box-sizing: border-box;
     display: flex;
@@ -92,6 +111,7 @@
     min-height: 0;
     overflow: hidden;
     align-self: stretch;
+    /* Make it fill the available height within .myprofile-content */
 }
 
 .mock-phone {
@@ -100,6 +120,7 @@
     max-width: 100%;
     max-height: 100%;
     aspect-ratio: 9 / 19.5;
+    /* Maintain phone shape. This will make it fit the most constrained dimension. */
     background: #fff;
     border: 0.625rem solid #ccc;
     border-radius: 2.5rem;
@@ -109,10 +130,13 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    /* Stacks content vertically */
     flex-shrink: 0;
+    /* Prevent the phone frame itself from shrinking its content */
     flex-grow: 0;
+    /* Don't allow it to grow beyond its calculated size */
 
-    /* Dark mode styles for mock-phone */
+    /* Dark mode specific styles for mock-phone background and border */
     &[style*="background-color: rgb(31, 31, 31)"] {
         background-color: #1F1F1F !important;
         border-color: #555 !important;
@@ -128,8 +152,8 @@
         color: #bbb;
     }
 
-    /* Target new mock-about-content-wrapper */
-    &[style*="background-color: rgb(31, 31, 31)"] .mock-about-content-wrapper,
+    /* Target new mock-about-container for dark mode background */
+    &[style*="background-color: rgb(31, 31, 31)"] .mock-about-container,
     &[style*="background-color: rgb(31, 31, 31)"] .mock-service-item,
     &[style*="background-color: rgb(31, 31, 31)"] .mock-review-card {
         background: #333;
@@ -144,6 +168,7 @@
 .mock-phone-scrollable-content {
     flex-grow: 1;
     overflow-y: auto;
+    /* THIS IS WHERE THE SCROLLBAR FOR THE CONTENT GOES */
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -156,29 +181,37 @@
     flex-shrink: 0;
 }
 
-.mock-cover {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    border-radius: 0.75rem;
-    display: block;
-    height: auto;
-    min-height: 100px;
-    /* Ensure some height for empty image */
+/* Base image styling for previews - ensure they always have a size */
+.mock-cover,
+.mock-avatar,
+.mock-work-image-item {
     background-color: #f0f0f0;
-    /* Fallback background for missing image */
-    background-image: url('/path/to/default-cover-placeholder.svg');
-    /* Optional: a subtle placeholder SVG */
+    /* Default background for empty image or during load */
+    display: block;
+    /* Ensure block-level for sizing */
+    object-fit: cover;
+    /* Cover container while maintaining aspect ratio */
     background-size: 50%;
+    /* For placeholder SVG if added */
     background-repeat: no-repeat;
     background-position: center;
 }
 
-.mock-cover[src=""] {
-    /* Style for genuinely empty src */
+/* Specific styling for empty/broken image sources */
+.mock-cover[src=""],
+.mock-avatar[src=""],
+.mock-work-image-item[src=""] {
     border: 1px dashed #ccc;
+    /* Dashed border for missing images */
 }
 
+
+.mock-cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.75rem;
+    min-height: 100px;
+}
 
 .remove-image-button {
     position: absolute;
@@ -232,26 +265,25 @@
     margin-top: 0;
     /* Handled by parent container's padding/gap */
     margin-bottom: 0.75rem;
-    /* Space between title and content wrapper */
     font-weight: 600;
     text-align: left;
 }
 
-/* --- FIX: New container for the About Me section's background --- */
+/* --- FIX: New container for the About Me section's background and structure --- */
 .mock-about-container {
-    /* This is the main gray box for "About Me" section */
+    /* This is the main gray box for the "About Me" section */
     background: #f1f1f1;
     border-radius: 1rem;
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    /* Stack avatar/name/job and bio vertically */
+    /* Stacks header group and bio text vertically */
     gap: 0.75rem;
     /* Space between the header group and the bio text */
     text-align: left;
 }
 
-/* This is for the row with Avatar, Name, Job Title */
+/* This is the inner flex container for Avatar, Name, Job Title */
 .mock-about-header-group {
     display: flex;
     gap: 0.75rem;
@@ -264,33 +296,17 @@
     width: 3.5rem;
     height: 3.5rem;
     border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-    display: block;
     min-width: 3.5rem;
     /* Ensure avatar always has size */
     min-height: 3.5rem;
     background-color: #ccc;
     /* Fallback background */
-    background-image: url('/path/to/default-avatar-placeholder.svg');
-    /* Optional: a subtle placeholder SVG */
+    background-image: url('/Interface-Preview/Profile-Pic.png');
+    /* Default placeholder icon */
     background-size: cover;
-    /* Cover the whole area */
     background-position: center;
 }
 
-.mock-avatar[src=""] {
-    /* Style for genuinely empty src */
-    border: 1px dashed #999;
-}
-
-
-.mock-about-text-group {
-    /* This class is no longer used in JSX, can remove if confirmed */
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
 
 .mock-profile-name {
     font-weight: 700;
@@ -320,31 +336,23 @@
     gap: 0.75rem;
 }
 
-.mock-work-gallery img {
+.mock-work-gallery img.mock-work-image-item {
+    /* Target specific class */
     width: 100%;
+    height: 90px;
+    /* Fixed height for consistency in grid */
     aspect-ratio: 16 / 9;
     /* Maintain aspect ratio */
-    object-fit: cover;
     border-radius: 0.5rem;
-    display: block;
-    height: auto;
-    /* Allow height to adjust to aspect ratio */
     min-width: 50px;
-    /* Ensure a minimum size */
     min-height: 50px;
-    /* Ensure a minimum size */
     background-color: #f0f0f0;
     /* Fallback background for missing images */
-    background-image: url('/path/to/default-work-placeholder.svg');
-    /* Optional: a subtle placeholder SVG */
+    background-image: url('/Interface-Preview/Work-Images1.png');
+    /* Example placeholder, adjust as needed */
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
-}
-
-.mock-work-gallery img[src=""] {
-    /* Style for genuinely empty src */
-    border: 1px dashed #ccc;
 }
 
 
@@ -412,6 +420,8 @@
     margin: 0;
 }
 
+
+/* EDITOR SECTION */
 .myprofile-editor-wrapper {
     position: relative;
     flex: 1;

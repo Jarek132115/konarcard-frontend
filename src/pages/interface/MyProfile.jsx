@@ -4,9 +4,13 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-// Keep original imports for default images for explicit fallbacks in JSX
-import ProfileCardImage from "../../assets/images/background-hero.png";
-import UserAvatar from "../../assets/images/People.png";
+// These are not directly used as fallbacks anymore in src, but ensure their paths are correct in public folder
+// If you want to use them as fallbacks for initial display, ensure initialStoreState sets them.
+// Otherwise, they'd be imported and used as `src={state.coverPhoto || ProfileCardImage}`.
+// For now, removing for clarity based on previous discussions aiming to use initialStoreState fully.
+// import ProfileCardImage from "../../assets/images/background-hero.png";
+// import UserAvatar from "../../assets/images/People.png";
+
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
@@ -128,9 +132,8 @@ export default function MyProfile() {
           job_title: businessCard.job_title || '',
           full_name: businessCard.full_name || '',
           bio: businessCard.bio || '',
-          // Backend should return actual S3 URLs or null. Use the fallback for display.
-          avatar: businessCard.avatar || null,
-          coverPhoto: businessCard.cover_photo || null,
+          avatar: businessCard.avatar || null, // Backend should return actual S3 URLs or null
+          coverPhoto: businessCard.cover_photo || null, // Backend should return actual S3 URLs or null
           workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
           services: (businessCard.services || []),
           reviews: (businessCard.reviews || []),
@@ -607,7 +610,7 @@ export default function MyProfile() {
                 <div className="mock-phone-scrollable-content">
                   {/* Use state.coverPhoto directly now, as it holds the default path or user upload */}
                   <img
-                    src={state.coverPhoto || ProfileCardImage}
+                    src={state.coverPhoto} // Direct use of state.coverPhoto
                     alt="Cover"
                     className="mock-cover"
                   />
@@ -644,7 +647,7 @@ export default function MyProfile() {
                         <div className="mock-about-header-group"> {/* This div contains avatar, name, job title */}
                           {state.avatar && (
                             <img
-                              src={state.avatar || UserAvatar}
+                              src={state.avatar} // Direct use of state.avatar
                               alt="Avatar"
                               className="mock-avatar"
                             />
@@ -682,7 +685,7 @@ export default function MyProfile() {
                               <img
                                 src={img.preview} // Direct use of img.preview
                                 alt={`work-${i}`}
-                                className="mock-work-image-item"
+                                className="mock-work-image-item" 
                               />
                               {(img.preview && img.preview.startsWith('blob:')) || (!isInitialDefaultWorkImage) ? (
                                 <button
@@ -823,7 +826,7 @@ export default function MyProfile() {
                     }}
                   >
                     <img
-                      src={state.coverPhoto} // Direct use, relies on state being correct
+                      src={state.coverPhoto} // Direct use of state.coverPhoto
                       alt="Cover"
                       className="cover-preview"
                     />
