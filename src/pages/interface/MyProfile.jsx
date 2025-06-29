@@ -1,5 +1,7 @@
+// frontend/src/pages/interface/MyProfile.jsx (COMPLETE & FINAL for responsive sidebar layout)
+
 import React, { useRef, useEffect, useState, useContext } from "react";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../components/Sidebar"; // Updated import to pass props
 import PageHeader from "../../components/PageHeader";
 import ProfileCardImage from "../../assets/images/background-hero.png";
 import UserAvatar from "../../assets/images/People.png";
@@ -16,6 +18,9 @@ import { toast } from 'react-hot-toast';
 import ShareProfile from "../../components/ShareProfile";
 import { AuthContext } from "../../components/AuthContext";
 import api from '../../services/api';
+
+// Icon imports for MyProfile's mobile header (make sure these paths are correct)
+import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 export default function MyProfile() {
   const { state, updateState } = useBusinessCardStore();
@@ -43,12 +48,15 @@ export default function MyProfile() {
 
   const [coverPhotoFile, setCoverPhotoFile] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
-  const [workImageFiles, setWorkImageFiles] = useState([]);
+  const [workImageFiles, setWorkImageFiles] = []; // Changed to empty array for initial state
 
   const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
 
   const [activeBlobUrls, setActiveBlobUrls] = useState([]);
+
+  const [sidebarOpen, setSidebarOpen] = useState(false); // NEW: State for sidebar visibility
+
 
   useEffect(() => {
     console.log("MyProfile Component Rendered. AuthUser:", authUser, "AuthLoading:", authLoading, "isSubscribed:", isSubscribed);
@@ -316,7 +324,7 @@ export default function MyProfile() {
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
-      style: state.font,
+      font: state.font,
       main_heading: state.mainHeading,
       sub_heading: state.subHeading,
       job_title: state.job_title,
@@ -446,8 +454,24 @@ export default function MyProfile() {
 
   return (
     <div className="myprofile-layout">
-      <Sidebar />
-      <main className="myprofile-main">
+      {/* NEW: Mobile Header for MyProfile page (always visible on mobile) */}
+      <div className={`myprofile-mobile-header ${sidebarOpen ? 'sidebar-active' : ''}`}>
+        <Link to="/" className="myprofile-logo-link">
+          <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
+        </Link>
+        <div
+          className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> {/* Pass state and setter */}
+
+      <main className={`myprofile-main ${sidebarOpen ? 'mobile-sidebar-open' : ''}`}> {/* Apply class for mobile adjustments */}
         <PageHeader
           title={authUser ? `Good Afternoon ${authUser.name}!` : "My Profile"}
           onActivateCard={handleActivateCard}
@@ -532,14 +556,11 @@ export default function MyProfile() {
             <div className="myprofile-content">
               {/* --- PREVIEW SECTION --- */}
               <div className="myprofile-preview">
-                {/* REMOVED myprofile-preview-card. IT WAS CAUSING NESTING ISSUES. */}
                 <div
                   className="mock-phone"
                   style={{ fontFamily: state.font, ...themeStyles }}
                 >
-                  {/* REMOVED mock-phone-frame-inner. Styles applied directly to mock-phone now. */}
                   <div className="mock-phone-scrollable-content">
-                    {/* All your existing content goes here: */}
                     <img
                       src={state.coverPhoto || ProfileCardImage}
                       alt="Cover"
@@ -642,7 +663,7 @@ export default function MyProfile() {
                         </div>
                       </>
                     )}
-                  </div> {/* END mock-phone-scrollable-content */}
+                  </div>
                 </div>
               </div>
 
@@ -834,6 +855,7 @@ export default function MyProfile() {
                           />
                           <button
                             type="button"
+                            className="remove-image-button"
                             onClick={() => handleRemoveWorkImage(i)}
                             style={{
                               position: 'absolute',
@@ -982,6 +1004,10 @@ export default function MyProfile() {
           username={userUsername}
         />
       </main>
+      {/* NEW: Overlay for mobile sidebar */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>
+      )}
     </div>
   );
 }

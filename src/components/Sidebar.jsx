@@ -1,9 +1,9 @@
-// frontend/src/components/Sidebar.jsx (MODIFIED - Removed HamburgerIcon SVG import)
+// frontend/src/components/Sidebar.jsx (FINAL - receives props for responsive behavior)
 
-import React, { useState, useContext } from 'react'; // Added useState
+import React, { useContext } from 'react'; // Removed useState (state now managed by parent)
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
-import LogoIcon from '../assets/icons/Logo-Icon.svg';
+import LogoIcon from '../assets/icons/Logo-Icon.svg'; // Keep LogoIcon for user info
 import settingsIcon from '../assets/icons/Settings-Icon.svg';
 import profileIcon from '../assets/icons/Profile-Icon.svg';
 import cardIcon from '../assets/icons/Card-Icon.svg';
@@ -11,43 +11,30 @@ import helpIcon from '../assets/icons/Help-Icon.svg';
 import logoutIcon from '../assets/icons/Logout-Icon.svg';
 import subscriptionIcon from '../assets/icons/Subscription-Icon.svg';
 import homeIcon from '../assets/icons/Home-Icon.svg';
-// REMOVED: import HamburgerIcon from '../assets/icons/Hamburger-Icon.svg'; // This line is now removed
 
-export default function Sidebar() {
+// Sidebar now receives sidebarOpen state and its setter from parent (MyProfile)
+export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
     const { user, logout } = useContext(AuthContext);
-    const [sidebarOpen, setSidebarOpen] = useState(false); // State to control sidebar visibility
 
     const handleLogout = async () => {
         await logout();
         navigate('/');
     };
 
+    // This function will close the sidebar whenever a navigation link is clicked
     const closeSidebar = () => {
-        setSidebarOpen(false);
+        setSidebarOpen(false); // Call the setter passed from MyProfile
     };
 
     return (
         // Main container for the sidebar, conditionally applies 'open' class
+        // 'open' class is controlled by parent component's state (MyProfile.jsx)
         <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
 
-            {/* Mobile Header for Sidebar (will be visible only on mobile/tablet) */}
-            <div className="sidebar-mobile-header">
-                <Link to="/" className="sidebar-logo-link" onClick={closeSidebar}>
-                    <img src={LogoIcon} alt="Logo" className="sidebar-logo" />
-                </Link>
-                {/* Hamburger/Close button for mobile sidebar - now CSS-only */}
-                <div
-                    className={`sidebar-hamburger ${sidebarOpen ? 'active' : ''}`}
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                >
-                    <span></span> {/* First line of hamburger */}
-                    <span></span> {/* Second line of hamburger */}
-                    <span></span> {/* Third line of hamburger */}
-                </div>
-            </div>
+            {/* REMOVED: sidebar-mobile-header. It is now rendered in MyProfile.jsx */}
 
-            {/* Sidebar content container */}
+            {/* Sidebar content wrapper - now flexible inside the sidebar div */}
             <div className="sidebar-content-wrapper">
                 {/* USER INFO */}
                 <div className="my-account-container">
