@@ -45,7 +45,6 @@
 .myprofile-main {
     flex: 1;
     font-family: var(--main-font-family);
-    padding: 30px;
     display: flex;
     flex-direction: column;
     min-height: 0;
