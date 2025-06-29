@@ -68,11 +68,26 @@
     border: 1px solid #ccc;
 }
 
+/* New flex container for side-by-side content */
+.myprofile-flex-container {
+    display: flex;
+    /* Default to row for desktop */
+    flex: 1;
+    /* Allow it to take up remaining vertical space */
+    gap: 40px;
+    /* Space between the mock-phone and editor */
+    min-height: 0;
+    /* Important for flex children to scroll */
+    overflow: hidden;
+    /* Prevent this container from scrolling itself */
+    padding-bottom: 20px;
+    /* Consistent with previous .myprofile-content padding */
+}
+
+
 /* MyProfile Content (the row containing the preview and editor forms) */
 .myprofile-content {
-    display: flex;
-    /* Makes it a flex row for desktop */
-    gap: 40px;
+    /* Removed display: flex and gap: 40px from here, moved to .myprofile-flex-container */
     justify-content: space-around;
     flex: 1;
     /* Allows this row to take up all *remaining* vertical space within .myprofile-main */
@@ -80,8 +95,7 @@
     /* CRITICAL: Allows flex items inside to shrink and enables their overflow-y: auto */
     overflow: hidden;
     /* Prevents this row from having its own scrollbar, children manage. */
-    padding-bottom: 20px;
-    /* Add some padding at the bottom of the content section */
+    /* Removed padding-bottom: 20px; moved to .myprofile-flex-container */
 }
 
 /* MyProfile Preview (the mock phone side) */
@@ -272,7 +286,7 @@
 }
 
 /* This div is inside mock-about-container, wraps avatar+name+job and bio.
-   It doesn't need much styling itself, as mock-about-container gives the background/padding. */
+    It doesn't need much styling itself, as mock-about-container gives the background/padding. */
 .mock-about-content-group {
     display: flex;
     flex-direction: column;
@@ -735,10 +749,13 @@
         /* Show hamburger icon */
     }
 
-    .myprofile-content {
+    /* Stack items vertically on mobile */
+    .myprofile-flex-container {
         flex-direction: column;
         gap: 20px;
+        /* Adjust gap for mobile stacking */
         padding-top: 0;
+        /* No extra padding at the top for this container on mobile */
     }
 
     .myprofile-preview,
