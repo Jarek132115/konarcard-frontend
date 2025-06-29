@@ -4,10 +4,10 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-// --- RE-ADDED IMPORTS FOR FALLBACK IMAGES ---
+// --- CRITICAL FIX: RE-ADDED IMPORTS FOR FALLBACK IMAGES ---
 import ProfileCardImage from "../../assets/images/background-hero.png"; // Re-import this
 import UserAvatar from "../../assets/images/People.png"; // Re-import this
-// --- END RE-ADDED IMPORTS ---
+// --- END CRITICAL FIX ---
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
@@ -60,8 +60,6 @@ export default function MyProfile() {
 
   const initialStoreState = useBusinessCardStore.getState().state;
 
-  // --- DEBUGGING LOGS START (RUNS ON EVERY RENDER) ---
-  // Keep this one to monitor overall state
   useEffect(() => {
     // console.log("RENDER - Current State:", JSON.parse(JSON.stringify(state)));
     // console.log("RENDER - isSubscribed:", isSubscribed);
@@ -69,7 +67,6 @@ export default function MyProfile() {
     // console.log("RENDER - isCardLoading (fetching card data):", isCardLoading);
     // console.log("RENDER - businessCard (fetched data):", businessCard);
   });
-  // --- DEBUGGING LOGS END ---
 
 
   useEffect(() => {
@@ -116,7 +113,6 @@ export default function MyProfile() {
   useEffect(() => {
     // console.log("EFFECT - businessCard useEffect triggered. BusinessCard:", businessCard, "isCardLoading:", isCardLoading);
 
-    // Only proceed if card data is not currently loading and authUser is loaded
     if (!isCardLoading && authUser) {
       if (businessCard) {
         // console.log("EFFECT - Fetched businessCard data. Current state BEFORE updateState:", JSON.parse(JSON.stringify(state)));
@@ -139,6 +135,8 @@ export default function MyProfile() {
           phone_number: businessCard.phone_number || '',
         });
 
+        activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+        setActiveBlobUrls([]);
         setCoverPhotoFile(null);
         setAvatarFile(null);
         setWorkImageFiles([]);
@@ -150,6 +148,8 @@ export default function MyProfile() {
       } else { // businessCard is null, meaning no card exists for this user
         // console.log("MyProfile useEffect: No business card found for user. Resetting state to initial defaults.");
         resetState(); // Reset to the initial defaults defined in businessCardStore.js
+        activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+        setActiveBlobUrls([]);
         setCoverPhotoFile(null);
         setAvatarFile(null);
         setWorkImageFiles([]);
@@ -219,27 +219,24 @@ export default function MyProfile() {
   };
 
   const handleRemoveCoverPhoto = () => {
-    // Check if the current coverPhoto is one of the initial defaults, set it to empty string/null.
-    // It won't be explicitly removed on backend, but new image would overwrite it.
     if (state.coverPhoto === initialStoreState.coverPhoto) {
-      updateState({ coverPhoto: null }); // Set to null (or empty string) if it was the default
+      updateState({ coverPhoto: null });
       setCoverPhotoFile(null);
       setCoverPhotoRemoved(false);
     } else {
-      // It's a user-uploaded image or a previously saved image from backend
       if (state.coverPhoto && state.coverPhoto.startsWith('blob:')) {
         URL.revokeObjectURL(state.coverPhoto);
         setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
       }
       updateState({ coverPhoto: null });
       setCoverPhotoFile(null);
-      setCoverPhotoRemoved(true); // Flag for backend removal
+      setCoverPhotoRemoved(true);
     }
   };
 
   const handleRemoveAvatar = () => {
     if (state.avatar === initialStoreState.avatar) {
-      updateState({ avatar: null }); // Set to null (or empty string) if it was the default
+      updateState({ avatar: null });
       setAvatarFile(null);
       setIsAvatarRemoved(false);
     } else {
