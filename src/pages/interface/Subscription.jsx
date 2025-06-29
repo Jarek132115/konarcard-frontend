@@ -1,15 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Link } from 'react-router-dom'; // Import Link for Logo
+import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader'; // Import PageHeader
+import PageHeader from '../../components/PageHeader';
+import ShareProfile from '../../components/ShareProfile'; // Import ShareProfile
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
+import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; // Import useFetchBusinessCard
 
 export default function Subscription() {
-  const { user } = useContext(AuthContext);
+  const { user: authUser } = useContext(AuthContext); // Rename user to authUser
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -18,6 +20,14 @@ export default function Subscription() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+  const [showShareModal, setShowShareModal] = useState(false); // Add share modal state
+
+  const userId = authUser?._id;
+  const userUsername = authUser?.username;
+
+  // Fetch business card data for this page as well
+  const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
+
 
   useEffect(() => {
     const fetchSubscriptionStatus = async () => {
@@ -114,9 +124,32 @@ export default function Subscription() {
     setIsCancelling(false);
   };
 
-  // Define dummy action functions for PageHeader
-  const handleActivateCard = () => console.log("Activate Card clicked on Subscription page");
-  const handleShareCard = () => console.log("Share Card clicked on Subscription page");
+  const handleShareCard = () => {
+    if (!authUser?.isVerified) {
+      toast.error("Please verify your email to share your card.");
+      return;
+    }
+    setShowShareModal(true);
+  };
+
+  const handleCloseShareModal = () => {
+    setShowShareModal(false);
+  };
+
+  // Prepare contact details for VCard
+  const contactDetailsForVCard = {
+    full_name: businessCard?.full_name || authUser?.name || '',
+    job_title: businessCard?.job_title || '',
+    business_card_name: businessCard?.business_card_name || '',
+    bio: businessCard?.bio || '',
+    contact_email: businessCard?.contact_email || authUser?.email || '',
+    phone_number: businessCard?.phone_number || '',
+    username: userUsername || '',
+  };
+
+  const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
+  const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
+
 
   return (
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
@@ -142,11 +175,10 @@ export default function Subscription() {
 
       <main className="myprofile-main">
         <div className="page-wrapper">
-          {/* Replace hardcoded page-header with PageHeader component */}
           <PageHeader
-            title="Subscription" // Title for this page
-            onActivateCard={handleActivateCard} // Pass action handlers
-            onShareCard={handleShareCard}     // Pass action handlers
+            title="Subscription"
+            onActivateCard={() => console.log("Activate Card clicked on Subscription page")} // Dummy or specific action
+            onShareCard={handleShareCard}
           />
 
           <p className="desktop-h3 text-center">Our Plan</p>
@@ -258,6 +290,16 @@ export default function Subscription() {
           </div>
         </div>
       </main>
+
+      {/* Render ShareProfile component */}
+      <ShareProfile
+        isOpen={showShareModal}
+        onClose={handleCloseShareModal}
+        profileUrl={currentProfileUrl}
+        qrCodeUrl={currentQrCodeUrl}
+        contactDetails={contactDetailsForVCard}
+        username={userUsername || ''}
+      />
     </div>
   );
 }

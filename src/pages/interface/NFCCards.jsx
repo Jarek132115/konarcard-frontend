@@ -1,13 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react'; // Add useContext
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader'; // Import PageHeader
+import PageHeader from '../../components/PageHeader';
+import ShareProfile from '../../components/ShareProfile'; // Import ShareProfile
 import KonarCard from '../../assets/images/KonarCard.png';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
+import { AuthContext } from '../../components/AuthContext'; // Import AuthContext
+import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; // Import useFetchBusinessCard
 
 export default function NFCCards() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+  const [showShareModal, setShowShareModal] = useState(false); // Add share modal state
+
+  const { user: authUser, loading: authLoading } = useContext(AuthContext); // Get auth user
+  const userId = authUser?._id;
+  const userUsername = authUser?.username;
+
+  // Fetch business card data for this page as well
+  const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
 
   useEffect(() => {
     const handleResize = () => {
@@ -30,20 +41,36 @@ export default function NFCCards() {
     }
   }, [sidebarOpen, isMobile]);
 
-  // Define action functions for PageHeader if needed.
-  // For NFCCards, it seems like these buttons might be static,
-  // so we can pass them as a prop or render them directly inside PageHeader if it supports children.
-  // For now, I'll pass dummy functions as props, assuming PageHeader expects `onActivateCard` and `onShareCard`.
-  // Adjust if your PageHeader component renders its own fixed buttons or expects different props.
   const handleActivateCard = () => {
     console.log("Activate Card clicked on NFC Cards page");
     // Add actual activation logic here
   };
 
   const handleShareCard = () => {
-    console.log("Share Card clicked on NFC Cards page");
-    // Add actual share logic here
+    if (!authUser?.isVerified) { // Check if user is verified before sharing
+      toast.error("Please verify your email to share your card.");
+      return;
+    }
+    setShowShareModal(true);
   };
+
+  const handleCloseShareModal = () => {
+    setShowShareModal(false);
+  };
+
+  // Prepare contact details for VCard (basic dummy data if not explicitly stored here)
+  const contactDetailsForVCard = {
+    full_name: authUser?.name || '',
+    job_title: '', // You might need to fetch this or make it dynamic if used
+    business_card_name: businessCard?.business_card_name || '',
+    bio: '', // You might need to fetch this or make it dynamic if used
+    contact_email: authUser?.email || '',
+    phone_number: '', // You might need to fetch this or make it dynamic if used
+    username: userUsername || '',
+  };
+
+  const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
+  const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
 
   return (
@@ -70,11 +97,10 @@ export default function NFCCards() {
 
       <main className="myprofile-main">
         <div className="page-wrapper">
-          {/* Replace hardcoded page-header with PageHeader component */}
           <PageHeader
             title="Choose Your Perfect Card"
-            onActivateCard={handleActivateCard} // Pass action handlers
-            onShareCard={handleShareCard}     // Pass action handlers
+            onActivateCard={handleActivateCard}
+            onShareCard={handleShareCard}
           />
 
           <p className="nfc-subtitle">
@@ -95,6 +121,16 @@ export default function NFCCards() {
           </div>
         </div>
       </main>
+
+      {/* Render ShareProfile component */}
+      <ShareProfile
+        isOpen={showShareModal}
+        onClose={handleCloseShareModal}
+        profileUrl={currentProfileUrl}
+        qrCodeUrl={currentQrCodeUrl}
+        contactDetails={contactDetailsForVCard}
+        username={userUsername || ''}
+      />
     </div>
   );
 }
