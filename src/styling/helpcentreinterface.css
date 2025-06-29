@@ -1,32 +1,49 @@
-.help-layout {
-  display: flex;
-  height: 100vh;
-  background-color: #f9f9f9;
-}
+/* helpcentreinterface.css */
 
-.help-main {
-  flex: 1;
-  padding: 40px;
-  font-family: sans-serif;
-  overflow-y: auto;
-}
+/* General layout classes from myprofile.css will still apply,
+   but we'll define the specific content area styling here for HelpCentre */
 
-.help-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 30px;
-}
-
-.help-video-card {
-  display: flex;
+/* Help Centre specific content card styling */
+.content-card {
   background: white;
-  padding: 24px;
+  /* White background */
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  /* Internal padding inside the card */
+  width: 100%;
+  /* Default to full width of its parent */
+  max-width: 600px;
+  /* Max width for desktop/tablet */
+  box-sizing: border-box;
+  /* Include padding in width */
+  display: flex;
+  /* Make it a flex container */
+  flex-direction: column;
+  /* Stack content vertically inside */
+  min-height: 0;
+  /* Allow inner content to shrink if needed */
+  overflow-y: auto;
+  /* Allow content inside this card to scroll if it overflows */
+}
+
+/* Adjusting old help-video-card to fit within new .content-card structure */
+.help-video-card {
+  display: flex;
+  background: transparent;
+  /* Changed to transparent if it's inside content-card to avoid double background/shadow */
+  padding: 0;
+  /* Removed padding if content-card provides it, or adjust if needed */
+  border-radius: initial;
+  /* Reset or adjust as needed */
+  box-shadow: none;
+  /* Removed shadow if content-card provides it */
   gap: 24px;
   align-items: center;
   margin-bottom: 30px;
-  max-width: 1000px;
+  width: 100%;
+  /* Ensure it takes full width of .content-card */
+  /* Removed max-width: 1000px; as .content-card will now control max width */
 }
 
 .help-video-card.reverse {
@@ -73,10 +90,46 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background 0.2s;
 }
 
 .help-video-button:hover {
   background: #0066dd;
+}
+
+/* Responsive adjustments for .content-card */
+@media (max-width: 800px) {
+  .content-card {
+    max-width: 100%;
+    /* Stretch to full width below 800px */
+    margin-left: 0;
+    /* Override any auto margins if necessary */
+    margin-right: 0;
+    /* Override any auto margins if necessary */
+    padding: 15px;
+    /* Adjust padding for smaller screens */
+  }
+
+  /* Adjust help-video-card for smaller screens if needed */
+  .help-video-card {
+    flex-direction: column;
+    /* Stack video cards vertically */
+    align-items: flex-start;
+    /* Align content to the start when stacked */
+    gap: 15px;
+    /* Adjust gap for vertical stacking */
+  }
+
+  .help-video-card.reverse {
+    flex-direction: column;
+    /* Ensure reverse also stacks vertically */
+  }
+
+  .help-video-thumb {
+    width: 100%;
+    /* Make thumbnail full width when stacked */
+    height: auto;
+    /* Maintain aspect ratio */
+  }
 }

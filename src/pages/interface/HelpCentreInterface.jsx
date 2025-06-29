@@ -1,25 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react'; // Add useContext
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
-import ShareProfile from '../../components/ShareProfile'; // Import ShareProfile
+import ShareProfile from '../../components/ShareProfile';
 import HeroBackground from '../../assets/images/background-hero.png';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
-import { AuthContext } from '../../components/AuthContext'; // Import AuthContext
-import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; // Import useFetchBusinessCard
-import { toast } from 'react-hot-toast'; // Import toast
+import { AuthContext } from '../../components/AuthContext';
+import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
+import { toast } from 'react-hot-toast';
 
 
 export default function HelpCentre() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-  const [showShareModal, setShowShareModal] = useState(false); // Add share modal state
+  const [showShareModal, setShowShareModal] = useState(false);
 
-  const { user: authUser, loading: authLoading } = useContext(AuthContext); // Get auth user
+  const { user: authUser, loading: authLoading } = useContext(AuthContext);
   const userId = authUser?._id;
   const userUsername = authUser?.username;
 
-  // Fetch business card data for this page as well
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
 
 
@@ -56,12 +55,10 @@ export default function HelpCentre() {
     setShowShareModal(false);
   };
 
-  // Define dummy action for Activate Card button if not functional
   const handleActivateCard = () => {
     console.log("Activate Card clicked on Help Centre page");
   };
 
-  // Prepare contact details for VCard
   const contactDetailsForVCard = {
     full_name: businessCard?.full_name || authUser?.name || '',
     job_title: businessCard?.job_title || '',
@@ -99,13 +96,15 @@ export default function HelpCentre() {
       )}
 
       <main className="myprofile-main">
-        <div className="page-wrapper">
+        {/* Apply the content-card class here */}
+        <div className="page-wrapper content-card">
           <PageHeader
             title="Help Centre"
             onActivateCard={handleActivateCard}
             onShareCard={handleShareCard}
           />
 
+          {/* The video cards already have their own styling and shadow, so they should be fine inside .content-card */}
           <div className="help-video-card">
             <img src={HeroBackground} alt="Profile Setup" className="help-video-thumb" />
             <div className="help-video-content">
@@ -131,7 +130,6 @@ export default function HelpCentre() {
         </div>
       </main>
 
-      {/* Render ShareProfile component */}
       <ShareProfile
         isOpen={showShareModal}
         onClose={handleCloseShareModal}
@@ -142,4 +140,4 @@ export default function HelpCentre() {
       />
     </div>
   );
-} 
+}
