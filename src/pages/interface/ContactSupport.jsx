@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react'; // Import useContext
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader'; // Import PageHeader
+import PageHeader from '../../components/PageHeader';
+import ShareProfile from '../../components/ShareProfile'; // Import ShareProfile
 import api from '../../services/api';
-import LogoIcon from '../../assets/icons/Logo-Icon.svg'; // Import LogoIcon
+import LogoIcon from '../../assets/icons/Logo-Icon.svg';
+import { AuthContext } from '../../components/AuthContext'; // Import AuthContext
+import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; // Import useFetchBusinessCard
 
 export default function ContactSupport() {
     const [formData, setFormData] = useState({
@@ -17,6 +20,14 @@ export default function ContactSupport() {
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+    const [showShareModal, setShowShareModal] = useState(false); // Add share modal state
+
+    const { user: authUser, loading: authLoading } = useContext(AuthContext); // Get auth user
+    const userId = authUser?._id;
+    const userUsername = authUser?.username;
+
+    // Fetch business card data for this page as well
+    const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
 
     useEffect(() => {
         const handleResize = () => {
@@ -76,9 +87,31 @@ export default function ContactSupport() {
         }
     };
 
-    // Define dummy action functions for PageHeader if these buttons aren't truly functional on this page
-    const handleActivateCard = () => console.log("Activate Card clicked on Contact Support page");
-    const handleShareCard = () => console.log("Share Card clicked on Contact Support page");
+    const handleShareCard = () => {
+        if (!authUser?.isVerified) {
+            toast.error("Please verify your email to share your card.");
+            return;
+        }
+        setShowShareModal(true);
+    };
+
+    const handleCloseShareModal = () => {
+        setShowShareModal(false);
+    };
+
+    // Prepare contact details for VCard
+    const contactDetailsForVCard = {
+        full_name: businessCard?.full_name || authUser?.name || '',
+        job_title: businessCard?.job_title || '',
+        business_card_name: businessCard?.business_card_name || '',
+        bio: businessCard?.bio || '',
+        contact_email: businessCard?.contact_email || authUser?.email || '',
+        phone_number: businessCard?.phone_number || '',
+        username: userUsername || '',
+    };
+
+    const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
+    const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
     return (
         <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
@@ -104,11 +137,10 @@ export default function ContactSupport() {
 
             <main className="myprofile-main">
                 <div className="page-wrapper">
-                    {/* Replace hardcoded page-header with PageHeader component */}
                     <PageHeader
-                        title="Contact Support" // Title for this page
-                        onActivateCard={handleActivateCard} // Pass action handlers
-                        onShareCard={handleShareCard}     // Pass action handlers
+                        title="Contact Support"
+                        onActivateCard={() => console.log("Activate Card clicked on Contact Support page")} // Dummy or specific action
+                        onShareCard={handleShareCard}
                     />
 
                     <p className="desktop-body" style={{ textAlign: 'left', marginBottom: 20 }}>
@@ -195,6 +227,16 @@ export default function ContactSupport() {
                     </form>
                 </div>
             </main>
+
+            {/* Render ShareProfile component */}
+            <ShareProfile
+                isOpen={showShareModal}
+                onClose={handleCloseShareModal}
+                profileUrl={currentProfileUrl}
+                qrCodeUrl={currentQrCodeUrl}
+                contactDetails={contactDetailsForVCard}
+                username={userUsername || ''}
+            />
         </div>
     );
 }
