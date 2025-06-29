@@ -128,7 +128,8 @@
         color: #bbb;
     }
 
-    &[style*="background-color: rgb(31, 31, 31)"] .mock-about,
+    &[style*="background-color: rgb(31, 31, 31)"] .mock-about-content-wrapper,
+    /* Target the new wrapper */
     &[style*="background-color: rgb(31, 31, 31)"] .mock-service-item,
     &[style*="background-color: rgb(31, 31, 31)"] .mock-review-card {
         background: #333;
@@ -147,6 +148,8 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
+    /* Space between sections like hero, about, work, services, reviews */
 }
 
 .mock-phone>*:not(.mock-phone-scrollable-content) {
@@ -158,10 +161,20 @@
     aspect-ratio: 16 / 9;
     object-fit: cover;
     border-radius: 0.75rem;
-    margin-bottom: 1rem;
+    /* margin-bottom: 1rem; Removed as gap in parent handles it */
     display: block;
     height: auto;
+    min-height: 100px;
+    /* Ensure some height for empty image */
+    background-color: #f0f0f0;
+    /* Fallback background for missing image */
 }
+
+.mock-cover[src=""] {
+    /* Style for genuinely empty src */
+    border: 1px dashed #ccc;
+}
+
 
 .remove-image-button {
     position: absolute;
@@ -194,7 +207,8 @@
     font-size: 1rem;
     font-weight: 600;
     color: #555;
-    margin: 0.5rem 0 1rem 0;
+    margin: 0.5rem 0 0 0;
+    /* Adjusted margin to fit with new gap system */
 }
 
 .mock-button {
@@ -205,29 +219,45 @@
     border: none;
     font-weight: 700;
     font-size: 0.875rem;
-    margin: 1rem 0;
+    margin-top: 1rem;
+    /* Only margin-top now, as gap handles bottom */
     width: 100%;
     box-sizing: border-box;
 }
 
 .mock-section-title {
     font-size: 1rem;
-    margin-top: 1.5rem;
+    margin-top: 0;
+    /* Margin handled by parent gap */
     margin-bottom: 0.75rem;
     font-weight: 600;
     text-align: left;
 }
 
-.mock-about {
+/* --- FIX: New container for the About Me section's background --- */
+.mock-about-section-container {
     background: #f1f1f1;
     border-radius: 1rem;
     padding: 1rem;
     display: flex;
+    flex-direction: column;
+    /* Stack header group and bio vertically */
     gap: 0.75rem;
+    /* Space between avatar/name/title and bio */
     text-align: left;
+    /* Align text within this container */
+}
+
+/* Original mock-about div is now a part of the header group within the section container */
+.mock-about {
+    /* Renamed for clarity, original was called mock-about */
+    display: flex;
+    gap: 0.75rem;
     align-items: flex-start;
+    /* Align avatar and text to top */
     flex-direction: row;
 }
+
 
 .mock-avatar {
     width: 3.5rem;
@@ -236,9 +266,21 @@
     object-fit: cover;
     flex-shrink: 0;
     display: block;
+    min-width: 3.5rem;
+    /* Ensure avatar always has size */
+    min-height: 3.5rem;
+    background-color: #ccc;
+    /* Fallback background */
 }
 
+.mock-avatar[src=""] {
+    /* Style for genuinely empty src */
+    border: 1px dashed #999;
+}
+
+
 .mock-about-text-group {
+    /* This class seems unused or redundant with direct p tags */
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -260,7 +302,8 @@
 .mock-bio-text {
     font-size: 0.9375rem;
     line-height: 1.4;
-    margin-top: 0.75rem;
+    margin-top: 0;
+    /* Margin handled by parent gap */
     text-align: left;
     color: #333;
 }
@@ -273,12 +316,23 @@
 
 .mock-work-gallery img {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    height: 90px;
+    /* Fixed height for consistency in grid */
     object-fit: cover;
     border-radius: 0.5rem;
     display: block;
-    height: auto;
+    min-width: 50px;
+    /* Ensure a minimum size */
+    min-height: 50px;
+    background-color: #f0f0f0;
+    /* Fallback background for missing images */
 }
+
+.mock-work-gallery img[src=""] {
+    /* Style for genuinely empty src */
+    border: 1px dashed #ccc;
+}
+
 
 .mock-services-list {
     display: flex;

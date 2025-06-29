@@ -4,8 +4,10 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
+// --- RE-ADDED IMPORTS FOR FALLBACK IMAGES (REQUIRED IF USED IN SRC) ---
 import ProfileCardImage from "../../assets/images/background-hero.png";
 import UserAvatar from "../../assets/images/People.png";
+// --- END RE-ADDED IMPORTS ---
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
@@ -126,8 +128,8 @@ export default function MyProfile() {
           job_title: businessCard.job_title || '',
           full_name: businessCard.full_name || '',
           bio: businessCard.bio || '',
-          avatar: businessCard.avatar || null,
-          coverPhoto: businessCard.cover_photo || null,
+          avatar: businessCard.avatar || null, // Backend should return URL or null
+          coverPhoto: businessCard.cover_photo || null, // Backend should return URL or null
           workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
           services: (businessCard.services || []),
           reviews: (businessCard.reviews || []),
@@ -135,8 +137,7 @@ export default function MyProfile() {
           phone_number: businessCard.phone_number || '',
         });
 
-        activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
-        setActiveBlobUrls([]);
+        // Reset local file states and removal flags after successful fetch/update
         setCoverPhotoFile(null);
         setAvatarFile(null);
         setWorkImageFiles([]);
@@ -145,9 +146,10 @@ export default function MyProfile() {
 
         // console.log("EFFECT - state after updateState (from fetched data):", JSON.parse(JSON.stringify(useBusinessCardStore.getState().state)));
 
-      } else { // businessCard is null, meaning no card exists for this user
+      } else { // businessCard is null, meaning no card exists for this user yet
         // console.log("MyProfile useEffect: No business card found for user. Resetting state to initial defaults.");
-        resetState();
+        resetState(); // Reset ALL state to initial defaults from businessCardStore.js
+        // Clear local file states and removal flags, as we're starting fresh
         activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
         setActiveBlobUrls([]);
         setCoverPhotoFile(null);
@@ -176,9 +178,9 @@ export default function MyProfile() {
     e.preventDefault();
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      updateState({ coverPhoto: createAndTrackBlobUrl(file) });
-      setCoverPhotoFile(file);
-      setCoverPhotoRemoved(false);
+      updateState({ coverPhoto: createAndTrackBlobUrl(file) }); // Update state with blob URL for preview
+      setCoverPhotoFile(file); // Store the actual File object for upload
+      setCoverPhotoRemoved(false); // No longer marked for removal
     }
   };
 
@@ -186,9 +188,9 @@ export default function MyProfile() {
     e.preventDefault();
     const file = event.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      updateState({ avatar: createAndTrackBlobUrl(file) });
-      setAvatarFile(file);
-      setIsAvatarRemoved(false);
+      updateState({ avatar: createAndTrackBlobUrl(file) }); // Update state with blob URL for preview
+      setAvatarFile(file); // Store the actual File object for upload
+      setIsAvatarRemoved(false); // No longer marked for removal
     }
   };
 
@@ -200,8 +202,8 @@ export default function MyProfile() {
       return;
     }
     const newPreviewItems = newImageFiles.map(file => ({
-      file: file,
-      preview: createAndTrackBlobUrl(file),
+      file: file, // Store the actual File object
+      preview: createAndTrackBlobUrl(file), // Store blob URL for preview
     }));
     updateState({
       workImages: [...state.workImages, ...newPreviewItems],
@@ -214,18 +216,18 @@ export default function MyProfile() {
     const isLocalBlob = state.coverPhoto && state.coverPhoto.startsWith('blob:');
 
     if (!isCurrentlyDefault && !isLocalBlob && state.coverPhoto) {
-      setCoverPhotoRemoved(true);
+      setCoverPhotoRemoved(true); // Flag for backend to remove
     } else {
-      setCoverPhotoRemoved(false);
+      setCoverPhotoRemoved(false); // Not removing a persisted image
     }
 
-    if (isLocalBlob) {
+    if (isLocalBlob) { // Revoke blob URL if it was a local preview
       URL.revokeObjectURL(state.coverPhoto);
       setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
     }
 
-    updateState({ coverPhoto: null });
-    setCoverPhotoFile(null);
+    updateState({ coverPhoto: null }); // Clear preview regardless
+    setCoverPhotoFile(null); // Clear file to upload
   };
 
   const handleRemoveAvatar = () => {
@@ -233,18 +235,18 @@ export default function MyProfile() {
     const isLocalBlob = state.avatar && state.avatar.startsWith('blob:');
 
     if (!isCurrentlyDefault && !isLocalBlob && state.avatar) {
-      setIsAvatarRemoved(true);
+      setIsAvatarRemoved(true); // Only flag for removal if it was a persisted URL
     } else {
-      setIsAvatarRemoved(false);
+      setIsAvatarRemoved(false); // Not removing a persisted image
     }
 
-    if (isLocalBlob) {
+    if (isLocalBlob) { // Revoke blob URL if it was a local preview
       URL.revokeObjectURL(state.avatar);
       setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
     }
 
-    updateState({ avatar: null });
-    setAvatarFile(null);
+    updateState({ avatar: null }); // Clear preview regardless
+    setAvatarFile(null); // Clear file to upload
   };
 
   const handleRemoveWorkImage = (indexToRemove) => {
@@ -596,439 +598,447 @@ export default function MyProfile() {
             )}
 
             <div className="myprofile-content">
-              <div className="myprofile-preview">
-                <div
-                  className="mock-phone"
-                  style={{ fontFamily: state.font, ...themeStyles }}
-                >
-                  <div className="mock-phone-scrollable-content">
-                    {/* Use state.coverPhoto directly now, as it holds the default path or user upload */}
-                    <img
-                      src={state.coverPhoto || ProfileCardImage}
-                      alt="Cover"
-                      className="mock-cover"
-                    />
-                    {/* Show remove button only if it's an uploaded image (blob) or not the initial default cover */}
-                    {(state.coverPhoto && state.coverPhoto.startsWith('blob:')) || (state.coverPhoto && state.coverPhoto !== initialStoreState.coverPhoto) ? (
-                      <button
-                        className="remove-image-button"
-                        onClick={handleRemoveCoverPhoto}
-                        aria-label="Remove cover photo"
-                      >
-                        &times;
-                      </button>
-                    ) : null}
-
-                    <h2 className="mock-title">{state.mainHeading}</h2>
-                    <p className="mock-subtitle">{state.subHeading}</p>
+              <div className="mock-phone">
+                <div className="mock-phone-scrollable-content">
+                  {/* Use state.coverPhoto directly now, as it holds the default path or user upload */}
+                  <img
+                    src={state.coverPhoto} // Direct use of state.coverPhoto
+                    alt="Cover"
+                    className="mock-cover"
+                  />
+                  {/* Show remove button only if it's an uploaded image (blob) or not the initial default cover */}
+                  {(state.coverPhoto && state.coverPhoto.startsWith('blob:')) || (state.coverPhoto && state.coverPhoto !== initialStoreState.coverPhoto) ? (
                     <button
-                      type="button"
-                      style={{
-                        backgroundColor:
-                          state.pageTheme === "dark" ? "white" : "black",
-                        color: state.pageTheme !== "dark" ? "white" : "black",
-                      }}
-                      className="mock-button"
+                      className="remove-image-button"
+                      onClick={handleRemoveCoverPhoto}
+                      aria-label="Remove cover photo"
                     >
-                      Exchange Contact
+                      &times;
                     </button>
-                    {/* --- FIX: New wrapper div for About Me section --- */}
-                    {(state.full_name || state.job_title || state.bio || state.avatar) && (
-                      <div className="mock-about-section-container"> {/* New container for background/padding */}
-                        <p className="mock-section-title">About me</p>
-                        <div className="mock-about">
-                          {state.avatar && (
-                            <img
-                              src={state.avatar || UserAvatar}
-                              alt="Avatar"
-                              className="mock-avatar"
-                            />
-                          )}
-                          {(state.avatar && state.avatar.startsWith('blob:')) || (state.avatar && state.avatar !== initialStoreState.avatar) ? (
-                            <button
-                              className="remove-image-button"
-                              onClick={handleRemoveAvatar}
-                              aria-label="Remove avatar"
-                              style={{ top: '10px', left: '10px' }}
-                            >
-                              &times;
-                            </button>
-                          ) : null}
-                          <div>
-                            <p className="mock-profile-name">{state.full_name}</p>
-                            <p className="mock-profile-role">{state.job_title}</p>
-                          </div>
-                          {state.bio && <p className="mock-bio-text">{state.bio}</p>}
-                        </div>
-                        {/* Bio text is now inside the new container */}
-                      </div>
-                    )}
+                  ) : null}
 
-                    {/* My Work Section (Preview) */}
-                    {(state.workImages && state.workImages.length > 0) && (
-                      <>
-                        <p className="mock-section-title">My Work</p>
-                        <div className="mock-work-gallery">
-                          {(state.workImages || []).map((img, i) => (
-                            <img
-                              key={i}
-                              src={img.preview}
-                              alt={`work-${i}`}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
-                            />
-                          ))}
-                        </div>
-                      </>
-                    )}
-
-                    {/* My Services Section (Preview) */}
-                    {(state.services && state.services.length > 0) && (
-                      <>
-                        <p className="mock-section-title">My Services</p>
-                        <div className="mock-services-list">
-                          {(state.services || []).map((s, i) => (
-                            <div key={i} className="mock-service-item">
-                              <p className="mock-service-name">{s.name}</p>
-                              <span className="mock-service-price">{s.price}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </>
-                    )}
-
-                    {/* Reviews Section (Preview) */}
-                    {(state.reviews && state.reviews.length > 0) && (
-                      <>
-                        <p className="mock-section-title">Reviews</p>
-                        <div className="mock-reviews-list">
-                          {(state.reviews || []).map((r, i) => (
-                            <div key={i} className="mock-review-card">
-                              <div className="mock-star-rating">
-                                {Array(r.rating || 0).fill().map((_, starIdx) => (
-                                  <span key={`filled-${starIdx}`}>★</span>
-                                ))}
-                                {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
-                                  <span key={`empty-${starIdx}`} style={{ color: '#ccc' }}>★</span>
-                                ))}
-                              </div>
-                              <p className="mock-review-text">"{r.text}"</p>
-                              <p className="mock-reviewer-name">{r.name}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* --- EDITOR SECTION (Gated by Subscription) --- */}
-              <div className="myprofile-editor-wrapper" style={{ position: 'relative' }}>
-                {!isSubscribed && (
-                  <div className="subscription-overlay">
-                    <div className="subscription-message">
-                      <h2>Unlock Your Full Profile!</h2>
-                      <p>Subscribe to start your 7-day free trial and unlock all profile editing features.</p>
-                      <button className="start-trial-button" onClick={handleStartSubscription}>
-                        Start Your Free Trial Now!
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: isSubscribed ? 'none' : 'blur(5px)', pointerEvents: isSubscribed ? 'auto' : 'none' }}>
-                  <h2 className="editor-title">Create Your Digital Business Card</h2>
-
-                  <div className="input-block">
-                    <label>Page Theme</label>
-                    <div className="option-row">
-                      <button
-                        type="button"
-                        className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
-                        onClick={() => updateState({ pageTheme: "light" })}
-                      >
-                        Light Mode
-                      </button>
-                      <button
-                        type="button"
-                        className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
-                        onClick={() => updateState({ pageTheme: "dark" })}
-                        style={{ fontFamily: state.font }}
-                      >
-                        Dark Mode
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="input-block">
-                    <label>Font</label>
-                    <div className="option-row">
-                      {["Inter", "Montserrat", "Poppins"].map((font) => (
-                        <button
-                          type="button"
-                          key={font}
-                          className={`font-button ${state.font === font ? "is-active" : ""}`}
-                          onClick={() => updateState({ font })}
-                          style={{ fontFamily: font }}
-                        >
-                          {font}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <hr className="divider" />
-                  <h3 className="editor-subtitle">Hero Section</h3>
-
-                  <div className="input-block">
-                    <label htmlFor="coverPhoto">Cover Photo</label>
-                    <input
-                      ref={fileInputRef}
-                      id="coverPhoto"
-                      type="file"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                    />
-                    <div
-                      className="cover-preview-container"
-                      onClick={() => {
-                        const input = document.createElement('input');
-                        input.type = 'file';
-                        input.accept = 'image/*';
-                        input.onchange = (e) => {
-                          handleImageUpload(e);
-                          document.body.removeChild(input);
-                        };
-                        document.body.appendChild(input);
-                        input.click();
-                      }}
-                    >
-                      <img
-                        src={state.coverPhoto || ProfileCardImage}
-                        alt="Cover"
-                        className="cover-preview"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="input-block">
-                    <label htmlFor="mainHeading">Main Heading</label>
-                    <input
-                      id="mainHeading"
-                      type="text"
-                      value={state.mainHeading}
-                      onChange={(e) => updateState({ mainHeading: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="input-block">
-                    <label htmlFor="subHeading">Subheading</label>
-                    <input
-                      id="subHeading"
-                      type="text"
-                      value={state.subHeading}
-                      onChange={(e) => updateState({ subHeading: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="input-block">
-                    <label htmlFor="jobTitle">Job Title</label>
-                    <input
-                      id="jobTitle"
-                      type="text"
-                      value={state.job_title}
-                      onChange={(e) => updateState({ job_title: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="input-block">
-                    <label htmlFor="avatar">Profile Photo</label>
-                    <input
-                      ref={avatarInputRef}
-                      type="file"
-                      accept="image/*"
-                      id="avatar"
-                      style={{ display: "none" }}
-                    />
-                    <div
-                      className="cover-preview-container"
-                      onClick={() => {
-                        const input = document.createElement('input');
-                        input.type = 'file';
-                        input.accept = 'image/*';
-                        input.onchange = (e) => {
-                          handleAvatarUpload(e);
-                          document.body.removeChild(input);
-                        };
-                        document.body.appendChild(input);
-                        input.click();
-                      }}
-                    >
-                      <img
-                        src={state.avatar || UserAvatar}
-                        alt="Avatar preview"
-                        style={{
-                          width: 80,
-                          height: 80,
-                          borderRadius: "50%",
-                          marginTop: 8,
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="input-block">
-                    <label htmlFor="fullName">Full Name</label>
-                    <input
-                      id="fullName"
-                      type="text"
-                      value={state.full_name}
-                      onChange={(e) => updateState({ full_name: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="input-block">
-                    <label htmlFor="bio">About Me</label>
-                    <textarea
-                      id="bio"
-                      value={state.bio}
-                      onChange={(e) => updateState({ bio: e.target.value })}
-                      rows={4}
-                    />
-                  </div>
-
-                  <div className="input-block">
-                    <label>My Work</label>
-                    <div className="work-preview-row">
-                      {(state.workImages || []).map((img, i) => (
-                        <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px' }}>
-                          <img
-                            src={img.preview}
-                            alt={`work-${i}`}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
-                          />
-                          <button
-                            type="button"
-                            className="remove-image-button"
-                            onClick={() => handleRemoveWorkImage(i)}
-                          >
-                            X
-                          </button>
-                        </div>
-                      ))}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const input = document.createElement('input');
-                          input.type = 'file';
-                          input.accept = 'image/*';
-                          input.multiple = true;
-                          input.onchange = (e) => {
-                            handleAddWorkImage(e);
-                            document.body.removeChild(input);
-                          };
-                          document.body.appendChild(input);
-                          input.click();
-                        }}
-                        style={{ display: "block", marginTop: "10px", padding: "8px 15px", cursor: "pointer" }}
-                      >
-                        Choose files
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="input-block">
-                    <label>My Services</label>
-                    {(state.services || []).map((s, i) => (
-                      <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
-                        <input
-                          type="text"
-                          placeholder={`Service Name ${i + 1}`}
-                          value={s.name}
-                          onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                        />
-                        <input
-                          type="text"
-                          placeholder={`Service Price/Detail ${i + 1}`}
-                          value={s.price}
-                          onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                        />
-                        <button type="button" onClick={() => handleRemoveService(i)} style={{ alignSelf: 'flex-end', padding: '4px 8px', fontSize: '12px' }}>Remove</button>
-                      </div>
-                    ))}
-                    <button type="button" onClick={handleAddService}>
-                      + Add Service
-                    </button>
-                  </div>
-
-                  <div className="input-block">
-                    <label>Reviews</label>
-                    {(state.reviews || []).map((r, i) => (
-                      <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
-                        <input
-                          type="text"
-                          placeholder="Reviewer Name"
-                          value={r.name}
-                          onChange={(e) => handleReviewChange(i, "name", e.target.value)}
-                        />
-                        <textarea
-                          placeholder="Review"
-                          rows={2}
-                          value={r.text}
-                          onChange={(e) => handleReviewChange(i, "text", e.target.value)}
-                        />
-                        <input
-                          type="number"
-                          placeholder="Rating (1-5)"
-                          min="1"
-                          max="5"
-                          value={r.rating}
-                          onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
-                        />
-                        <button type="button" onClick={() => handleRemoveReview(i)} style={{ alignSelf: 'flex-end', padding: '4px 8px', fontSize: '12px' }}>Remove</button>
-                      </div>
-                    ))}
-                    <button type="button" onClick={handleAddReview}>
-                      + Add Review
-                    </button>
-                  </div>
-
-                  <hr className="divider" />
-                  <h3 className="editor-subtitle">Exchange Contact Details</h3>
-
-                  <div className="input-block">
-                    <label htmlFor="contactEmail">Email Address</label>
-                    <input
-                      id="contactEmail"
-                      type="email"
-                      value={state.contact_email}
-                      onChange={(e) => updateState({ contact_email: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="input-block">
-                    <label htmlFor="phoneNumber">Phone Number</label>
-                    <input
-                      id="phoneNumber"
-                      type="tel"
-                      value={state.phone_number}
-                      onChange={(e) => updateState({ phone_number: e.target.value })}
-                    />
-                  </div>
-
+                  <h2 className="mock-title">{state.mainHeading}</h2>
+                  <p className="mock-subtitle">{state.subHeading}</p>
                   <button
-                    type="submit"
-                    className="submit-button"
+                    type="button"
                     style={{
-                      backgroundColor: state.pageTheme === "dark" ? "white" : "black",
+                      backgroundColor:
+                        state.pageTheme === "dark" ? "white" : "black",
                       color: state.pageTheme !== "dark" ? "white" : "black",
                     }}
+                    className="mock-button"
                   >
-                    Save Business Card
+                    Exchange Contact
                   </button>
-                </form>
+                  {/* --- FIX: New wrapper div for About Me section --- */}
+                  {(state.full_name || state.job_title || state.bio || state.avatar) && (
+                    <div className="mock-about-container"> {/* This div will get the gray background */}
+                      <p className="mock-section-title">About me</p> {/* This title is inside the grey box */}
+                      <div className="mock-about-header-group"> {/* This div contains avatar, name, job title */}
+                        {state.avatar && (
+                          <img
+                            src={state.avatar} // Direct use of state.avatar
+                            alt="Avatar"
+                            className="mock-avatar"
+                          />
+                        )}
+                        {(state.avatar && state.avatar.startsWith('blob:')) || (state.avatar && state.avatar !== initialStoreState.avatar) ? (
+                          <button
+                            className="remove-image-button"
+                            onClick={handleRemoveAvatar}
+                            aria-label="Remove avatar"
+                            style={{ top: '10px', left: '10px' }}
+                          >
+                            &times;
+                          </button>
+                        ) : null}
+                        <div>
+                          <p className="mock-profile-name">{state.full_name}</p>
+                          <p className="mock-profile-role">{state.job_title}</p>
+                        </div>
+                      </div>
+                      {/* Bio text is now directly inside mock-about-container */}
+                      {state.bio && <p className="mock-bio-text">{state.bio}</p>}
+                    </div>
+                  )}
+
+                  {/* My Work Section (Preview) */}
+                  {(state.workImages && state.workImages.length > 0) && (
+                    <>
+                      <p className="mock-section-title">My Work</p>
+                      <div className="mock-work-gallery">
+                        {state.workImages.map((img, i) => {
+                          const isInitialDefaultWorkImage = initialStoreState.workImages.some(defaultImg => defaultImg.preview === img.preview);
+                          return (
+                            <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px' }}>
+                              <img
+                                src={img.preview} // Direct use of img.preview
+                                alt={`work-${i}`}
+                                className="mock-work-image-item"
+                              />
+                              {(img.preview && img.preview.startsWith('blob:')) || (!isInitialDefaultWorkImage) ? (
+                                <button
+                                  type="button"
+                                  className="remove-image-button"
+                                  onClick={() => handleRemoveWorkImage(i)}
+                                >
+                                  X
+                                </button>
+                              ) : null}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+
+                  {/* My Services Section (Preview) */}
+                  {(state.services && state.services.length > 0) && (
+                    <>
+                      <p className="mock-section-title">My Services</p>
+                      <div className="mock-services-list">
+                        {state.services.map((s, i) => (
+                          <div key={i} className="mock-service-item">
+                            <p className="mock-service-name">{s.name}</p>
+                            <span className="mock-service-price">{s.price}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Reviews Section (Preview) */}
+                  {(state.reviews && state.reviews.length > 0) && (
+                    <>
+                      <p className="mock-section-title">Reviews</p>
+                      <div className="mock-reviews-list">
+                        {state.reviews.map((r, i) => (
+                          <div key={i} className="mock-review-card">
+                            <div className="mock-star-rating">
+                              {Array(r.rating || 0).fill().map((_, starIdx) => (
+                                <span key={`filled-${starIdx}`}>★</span>
+                              ))}
+                              {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
+                                <span key={`empty-${starIdx}`} style={{ color: '#ccc' }}>★</span>
+                              ))}
+                            </div>
+                            <p className="mock-review-text">"{r.text}"</p>
+                            <p className="mock-reviewer-name">{r.name}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
+            </div>
+
+            {/* --- EDITOR SECTION (Gated by Subscription) --- */}
+            <div className="myprofile-editor-wrapper" style={{ position: 'relative' }}>
+              {!isSubscribed && (
+                <div className="subscription-overlay">
+                  <div className="subscription-message">
+                    <h2>Unlock Your Full Profile!</h2>
+                    <p>Subscribe to start your 7-day free trial and unlock all profile editing features.</p>
+                    <button className="start-trial-button" onClick={handleStartSubscription}>
+                      Start Your Free Trial Now!
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: isSubscribed ? 'none' : 'blur(5px)', pointerEvents: isSubscribed ? 'auto' : 'none' }}>
+                <h2 className="editor-title">Create Your Digital Business Card</h2>
+
+                <div className="input-block">
+                  <label>Page Theme</label>
+                  <div className="option-row">
+                    <button
+                      type="button"
+                      className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
+                      onClick={() => updateState({ pageTheme: "light" })}
+                    >
+                      Light Mode
+                    </button>
+                    <button
+                      type="button"
+                      className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
+                      onClick={() => updateState({ pageTheme: "dark" })}
+                      style={{ fontFamily: state.font }}
+                    >
+                      Dark Mode
+                    </button>
+                  </div>
+                </div>
+
+                <div className="input-block">
+                  <label>Font</label>
+                  <div className="option-row">
+                    {["Inter", "Montserrat", "Poppins"].map((font) => (
+                      <button
+                        type="button"
+                        key={font}
+                        className={`font-button ${state.font === font ? "is-active" : ""}`}
+                        onClick={() => updateState({ font })}
+                        style={{ fontFamily: font }}
+                      >
+                        {font}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <hr className="divider" />
+                <h3 className="editor-subtitle">Hero Section</h3>
+
+                <div className="input-block">
+                  <label htmlFor="coverPhoto">Cover Photo</label>
+                  <input
+                    ref={fileInputRef}
+                    id="coverPhoto"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                  />
+                  <div
+                    className="cover-preview-container"
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = (e) => {
+                        handleImageUpload(e);
+                        document.body.removeChild(input);
+                      };
+                      document.body.appendChild(input);
+                      input.click();
+                    }}
+                  >
+                    <img
+                      src={state.coverPhoto} // Direct use of state.coverPhoto
+                      alt="Cover"
+                      className="cover-preview"
+                    />
+                  </div>
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="mainHeading">Main Heading</label>
+                  <input
+                    id="mainHeading"
+                    type="text"
+                    value={state.mainHeading}
+                    onChange={(e) => updateState({ mainHeading: e.target.value })}
+                  />
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="subHeading">Subheading</label>
+                  <input
+                    id="subHeading"
+                    type="text"
+                    value={state.subHeading}
+                    onChange={(e) => updateState({ subHeading: e.target.value })}
+                  />
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="jobTitle">Job Title</label>
+                  <input
+                    id="jobTitle"
+                    type="text"
+                    value={state.job_title}
+                    onChange={(e) => updateState({ job_title: e.target.value })}
+                  />
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="avatar">Profile Photo</label>
+                  <input
+                    ref={avatarInputRef}
+                    type="file"
+                    accept="image/*"
+                    id="avatar"
+                    style={{ display: "none" }}
+                  />
+                  <div
+                    className="cover-preview-container"
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = (e) => {
+                        handleAvatarUpload(e);
+                        document.body.removeChild(input);
+                      };
+                      document.body.appendChild(input);
+                      input.click();
+                    }}
+                  >
+                    <img
+                      src={state.avatar} // Direct use of state.avatar
+                      alt="Avatar preview"
+                      style={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: "50%",
+                        marginTop: 8,
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="fullName">Full Name</label>
+                  <input
+                    id="fullName"
+                    type="text"
+                    value={state.full_name}
+                    onChange={(e) => updateState({ full_name: e.target.value })}
+                  />
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="bio">About Me</label>
+                  <textarea
+                    id="bio"
+                    value={state.bio}
+                    onChange={(e) => updateState({ bio: e.target.value })}
+                    rows={4}
+                  />
+                </div>
+
+                <div className="input-block">
+                  <label>My Work</label>
+                  <div className="work-preview-row">
+                    {state.workImages.map((img, i) => (
+                      <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px' }}>
+                        <img
+                          src={img.preview} // Direct use of img.preview
+                          alt={`work-${i}`}
+                          className="mock-work-image-item"
+                        />
+                        <button
+                          type="button"
+                          className="remove-image-button"
+                          onClick={() => handleRemoveWorkImage(i)}
+                        >
+                          X
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.multiple = true;
+                        input.onchange = (e) => {
+                          handleAddWorkImage(e);
+                          document.body.removeChild(input);
+                        };
+                        document.body.appendChild(input);
+                        input.click();
+                      }}
+                      style={{ display: "block", marginTop: "10px", padding: "8px 15px", cursor: "pointer" }}
+                    >
+                      Choose files
+                    </button>
+                  </div>
+                </div>
+
+                <div className="input-block">
+                  <label>My Services</label>
+                  {state.services.map((s, i) => (
+                    <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
+                      <input
+                        type="text"
+                        placeholder={`Service Name ${i + 1}`}
+                        value={s.name}
+                        onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                      />
+                      <input
+                        type="text"
+                        placeholder={`Service Price/Detail ${i + 1}`}
+                        value={s.price}
+                        onChange={(e) => handleServiceChange(i, "price", e.target.value)}
+                      />
+                      <button type="button" onClick={() => handleRemoveService(i)} style={{ alignSelf: 'flex-end', padding: '4px 8px', fontSize: '12px' }}>Remove</button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={handleAddService}>
+                    + Add Service
+                  </button>
+                </div>
+
+                <div className="input-block">
+                  <label>Reviews</label>
+                  {state.reviews.map((r, i) => (
+                    <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
+                      <input
+                        type="text"
+                        placeholder="Reviewer Name"
+                        value={r.name}
+                        onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                      />
+                      <textarea
+                        placeholder="Review"
+                        rows={2}
+                        value={r.text}
+                        onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Rating (1-5)"
+                        min="1"
+                        max="5"
+                        value={r.rating}
+                        onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
+                      />
+                      <button type="button" onClick={() => handleRemoveReview(i)} style={{ alignSelf: 'flex-end', padding: '4px 8px', fontSize: '12px' }}>Remove</button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={handleAddReview}>
+                    + Add Review
+                  </button>
+                </div>
+
+                <hr className="divider" />
+                <h3 className="editor-subtitle">Exchange Contact Details</h3>
+
+                <div className="input-block">
+                  <label htmlFor="contactEmail">Email Address</label>
+                  <input
+                    id="contactEmail"
+                    type="email"
+                    value={state.contact_email}
+                    onChange={(e) => updateState({ contact_email: e.target.value })}
+                  />
+                </div>
+
+                <div className="input-block">
+                  <label htmlFor="phoneNumber">Phone Number</label>
+                  <input
+                    id="phoneNumber"
+                    type="tel"
+                    value={state.phone_number}
+                    onChange={(e) => updateState({ phone_number: e.target.value })}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="submit-button"
+                  style={{
+                    backgroundColor: state.pageTheme === "dark" ? "white" : "black",
+                    color: state.pageTheme !== "dark" ? "white" : "black",
+                  }}
+                >
+                  Save Business Card
+                </button>
+              </form>
             </div>
           </>
         )}
@@ -1038,7 +1048,7 @@ export default function MyProfile() {
           profileUrl={currentProfileUrl}
           qrCodeUrl={currentQrCodeUrl}
           contactDetails={contactDetailsForVCard}
-          username={userUsername || ''} // Ensure username is handled if undefined
+          username={userUsername || ''}
         />
       </main>
     </div>
