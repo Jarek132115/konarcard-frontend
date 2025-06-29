@@ -37,7 +37,7 @@
     height: 100vh;
     background-color: var(--secondary-bg);
     overflow: hidden;
-    /* Desktop: no main page scroll */
+    /* Desktop: no body scroll */
     position: relative;
 }
 
@@ -143,7 +143,7 @@
 .mock-phone-scrollable-content {
     flex-grow: 1;
     overflow-y: auto;
-    /* Internal scroll for phone content */
+    /* Internal scroll for phone content on desktop */
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -675,7 +675,7 @@
         margin-left: 0;
         padding-top: 70px;
         overflow-y: auto;
-        /* ENABLE PAGE SCROLL ON MOBILE */
+        /* ENABLE MAIN PAGE SCROLL ON MOBILE */
         color: var(--text-color);
     }
 
@@ -695,7 +695,7 @@
         align-items: center;
         height: auto;
         flex: 0 0 auto;
-        /* Allow height to be driven by children's content, crucial for main scroll */
+        /* Crucial: Allow height to be driven by content on mobile */
     }
 
     .myprofile-content {
@@ -704,7 +704,6 @@
         min-width: unset;
         margin: 0 auto;
         height: auto;
-        /* Height will be determined by inner mock-phone's aspect ratio */
         aspect-ratio: unset;
         flex-shrink: 0;
         flex-grow: 0;
@@ -720,14 +719,14 @@
         color: var(--text-color);
     }
 
-    /* Adjusting Mock Phone's internal scroll for mobile to behave as a single block */
+    /* Important for no internal scroll: allow content to shrink if too large */
     .mock-phone-scrollable-content {
         overflow-y: hidden;
-        /* Remove internal scroll from mock phone on mobile */
+        /* No internal scroll for mock phone on mobile */
         flex-shrink: 1;
         /* Allow content to shrink if needed */
         min-height: 0;
-        /* Important for content to shrink */
+        /* Essential for flex items to shrink their content */
     }
 
     .myprofile-editor-wrapper {
@@ -736,26 +735,30 @@
         min-width: unset;
         height: auto;
         /* Height determined by content */
-        max-height: 70vh;
-        /* Editor max-height on mobile */
-        flex-shrink: 1;
-        /* Allow to shrink if needed */
+        /* max-height: 70vh; REMOVED this restriction for mobile */
+        flex-shrink: 0;
+        /* Prevent it from shrinking more than its content needs */
         flex-grow: 0;
-        /* Prevent it from taking all remaining space */
+        /* Prevent it from growing to fill space */
         aspect-ratio: unset;
+        overflow: hidden;
+        /* Hide overflow at the wrapper level */
     }
 
+    /* Important for no internal scroll: allow content to shrink if too large */
     .myprofile-editor {
         padding: 16px;
         gap: 15px;
         overflow-y: hidden;
         /* REMOVE SCROLLBAR FROM EDITOR ON MOBILE */
-        height: 100%;
-        /* Fill the height of its wrapper */
+        height: auto;
+        /* Height determined by content */
+        background: var(--primary-bg);
+        color: var(--text-color);
         flex-shrink: 1;
         /* Allow content to shrink if needed */
         min-height: 0;
-        /* Important for content to shrink */
+        /* Essential for flex items to shrink their content */
     }
 
     .myprofile-layout.sidebar-active {
