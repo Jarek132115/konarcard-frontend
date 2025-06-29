@@ -649,7 +649,7 @@
         margin-left: 0;
         padding-top: 70px;
         overflow-y: auto;
-        /* Allow main page scroll on mobile */
+        /* ENABLE PAGE SCROLL ON MOBILE */
     }
 
     .myprofile-mobile-header {
@@ -667,12 +667,14 @@
         justify-content: flex-start;
         align-items: center;
         height: auto;
+        /* Let content dictate height */
+        flex: 0 0 auto;
+        /* Crucial: Prevent it from taking remaining space from main on mobile */
     }
 
     .myprofile-content {
         width: 100%;
         max-width: 100%;
-        /* Make it truly full width */
         min-width: unset;
         margin: 0 auto;
         height: auto;
@@ -696,7 +698,8 @@
         max-height: 70vh;
         /* Editor max-height on mobile */
         flex-shrink: 1;
-        flex-grow: 1;
+        flex-grow: 0;
+        /* Important: Prevents it from consuming all remaining space in flex-container */
         aspect-ratio: unset;
     }
 
