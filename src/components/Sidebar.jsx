@@ -1,9 +1,10 @@
-// frontend/src/components/Sidebar.jsx (COMPLETE & FINAL - receives props for responsive behavior)
+// frontend/src/components/Sidebar.jsx
 
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
+import ArrowDown from '../assets/icons/Arrow-Down-Icon.svg'; // Assuming you might use this for dropdowns in sidebar too, but not strictly needed for this request.
 import settingsIcon from '../assets/icons/Settings-Icon.svg';
 import profileIcon from '../assets/icons/Profile-Icon.svg';
 import cardIcon from '../assets/icons/Card-Icon.svg';
@@ -12,7 +13,6 @@ import logoutIcon from '../assets/icons/Logout-Icon.svg';
 import subscriptionIcon from '../assets/icons/Subscription-Icon.svg';
 import homeIcon from '../assets/icons/Home-Icon.svg';
 
-// Sidebar now receives sidebarOpen state and its setter from parent (MyProfile)
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
     const { user, logout } = useContext(AuthContext);
@@ -22,17 +22,24 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
         navigate('/');
     };
 
-    // This function will close the sidebar whenever a navigation link is clicked
     const closeSidebar = () => {
-        setSidebarOpen(false); // Call the setter passed from MyProfile
+        setSidebarOpen(false);
     };
 
     return (
-        // Main container for the sidebar, conditionally applies 'open' class
-        // 'open' class is controlled by parent component's state (MyProfile.jsx)
         <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+            {/* Mobile Header within Sidebar for the 'X' button and logo (when sidebar is open) */}
+            <div className="sidebar-mobile-header-inner">
+                <Link to="/" className="sidebar-logo-link-mobile" onClick={closeSidebar}>
+                    <img src={LogoIcon} alt="Logo" className="sidebar-logo-mobile" />
+                </Link>
+                <div className="close-sidebar-button" onClick={closeSidebar}>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
 
-            {/* Sidebar content wrapper - now flexible inside the sidebar div */}
+            {/* Sidebar content wrapper */}
             <div className="sidebar-content-wrapper">
                 {/* USER INFO */}
                 <div className="my-account-container">
@@ -45,50 +52,54 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                 <hr className="divider" />
 
-                {/* MAIN LINKS */}
-                <div className="main-links-container">
-                    <p className="section-title">MAIN</p>
-                    <Link to="/myprofile" className="sidebar-button" onClick={closeSidebar}>
-                        <img src={profileIcon} alt="profile" className="icon" />
-                        <p className='desktop-body-s'>My Profile</p>
-                    </Link>
-                    <Link to="/nfccards" className="sidebar-button" onClick={closeSidebar}>
-                        <img src={cardIcon} alt="card" className="icon" />
-                        <p className='desktop-body-s'>NFC Cards</p>
-                    </Link>
-                </div>
+                {/* Grouped Top Links */}
+                <div className="top-links-group">
+                    {/* MAIN LINKS */}
+                    <div className="main-links-container">
+                        <p className="section-title">MAIN</p>
+                        <Link to="/myprofile" className="sidebar-button" onClick={closeSidebar}>
+                            <img src={profileIcon} alt="profile" className="icon" />
+                            <p className='desktop-body-s'>My Profile</p>
+                        </Link>
+                        <Link to="/nfccards" className="sidebar-button" onClick={closeSidebar}>
+                            <img src={cardIcon} alt="card" className="icon" />
+                            <p className='desktop-body-s'>NFC Cards</p>
+                        </Link>
+                    </div>
 
-                <hr className="divider" />
+                    <hr className="divider" />
 
-                {/* ACCOUNT LINKS */}
-                <div className="account-links-container">
-                    <p className="section-title">ACCOUNT</p>
-                    <Link to="/profile" className="sidebar-button" onClick={closeSidebar}>
-                        <img src={settingsIcon} alt="account" className="icon" />
-                        <p className='desktop-body-s'>My Account</p>
-                    </Link>
-                    <Link to="/subscription" className="sidebar-button" onClick={closeSidebar}>
-                        <img src={subscriptionIcon} alt="subscription" className="icon" />
-                        <p className='desktop-body-s'>Subscription</p>
-                    </Link>
-                </div>
+                    {/* ACCOUNT LINKS */}
+                    <div className="account-links-container">
+                        <p className="section-title">ACCOUNT</p>
+                        <Link to="/profile" className="sidebar-button" onClick={closeSidebar}>
+                            <img src={settingsIcon} alt="account" className="icon" />
+                            <p className='desktop-body-s'>My Account</p>
+                        </Link>
+                        <Link to="/subscription" className="sidebar-button" onClick={closeSidebar}>
+                            <img src={subscriptionIcon} alt="subscription" className="icon" />
+                            <p className='desktop-body-s'>Subscription</p>
+                        </Link>
+                    </div>
 
-                <hr className="divider" />
+                    <hr className="divider" />
 
-                {/* HELP LINKS */}
-                <div className="help-links-container">
-                    <p className="section-title">HELP</p>
-                    <Link to="/contact-support" className="sidebar-button" onClick={closeSidebar}>
-                        <img src={helpIcon} alt="contact" className="icon" />
-                        <p className='desktop-body-s'>Contact Us</p>
-                    </Link>
-                    <Link to="/helpcentreinterface" className="sidebar-button" onClick={closeSidebar}>
-                        <img src={helpIcon} alt="help centre" className="icon" />
-                        <p className='desktop-body-s'>Help Centre</p>
-                    </Link>
-                </div>
+                    {/* HELP LINKS */}
+                    <div className="help-links-container">
+                        <p className="section-title">HELP</p>
+                        <Link to="/contact-support" className="sidebar-button" onClick={closeSidebar}>
+                            <img src={helpIcon} alt="contact" className="icon" />
+                            <p className='desktop-body-s'>Contact Us</p>
+                        </Link>
+                        <Link to="/helpcentreinterface" className="sidebar-button" onClick={closeSidebar}>
+                            <img src={helpIcon} alt="help centre" className="icon" />
+                            <p className='desktop-body-s'>Help Centre</p>
+                        </Link>
+                    </div>
+                </div> {/* End of top-links-group */}
 
-                {/* FOOTER ACTIONS */}
+
+                {/* FOOTER ACTIONS - pushed to bottom */}
                 <div className="footer-actions">
                     <Link to="/" className="sidebar-button" onClick={closeSidebar}>
                         <img src={homeIcon} alt="home" className="icon" />

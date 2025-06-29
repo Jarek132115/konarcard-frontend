@@ -1,4 +1,4 @@
-// frontend/src/pages/interface/MyProfile.jsx (COMPLETE & FINAL - for responsive sidebar layout)
+// frontend/src/pages/interface/MyProfile.jsx
 
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -20,7 +20,7 @@ import ShareProfile from "../../components/ShareProfile";
 import { AuthContext } from "../../components/AuthContext";
 import api from '../../services/api';
 
-// Icon imports for MyProfile's mobile header (make sure these paths are correct)
+// Icon imports for MyProfile's mobile header
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 export default function MyProfile() {
@@ -472,9 +472,10 @@ export default function MyProfile() {
 
   return (
     // Apply 'sidebar-active' class to myprofile-layout when sidebar is open on mobile
+    // This class helps to prevent scrolling on the main page when mobile sidebar is open
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
       {/* NEW: Mobile Header for MyProfile page (always visible on mobile) */}
-      <div className={`myprofile-mobile-header ${sidebarOpen ? 'active' : ''}`}>
+      <div className="myprofile-mobile-header">
         <div
           className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -486,19 +487,16 @@ export default function MyProfile() {
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
-        {/* You might want a "settings" or "notifications" icon here on mobile */}
-        {/* Add an empty div or actual icons to push the logo/hamburger to the ends */}
-        <div style={{ width: '25px' }}></div> {/* Placeholder to balance content if needed */}
       </div>
 
-      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> {/* Pass state and setter */}
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       {/* Overlay for mobile sidebar. Only render if sidebarOpen is true AND it's a mobile view */}
       {sidebarOpen && isMobile && (
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      <main className="myprofile-main"> {/* No specific class like 'mobile-sidebar-open' needed here, CSS handles it */}
+      <main className="myprofile-main">
         <PageHeader
           title={authUser ? `Good Afternoon ${authUser.name}!` : "My Profile"}
           onActivateCard={handleActivateCard}
