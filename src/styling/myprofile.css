@@ -64,6 +64,8 @@
     align-items: center;
     margin-bottom: 30px;
     flex-shrink: 0;
+    border-bottom: 1px grey solid;
+    padding-bottom: 20px;
 }
 
 .page-title {
