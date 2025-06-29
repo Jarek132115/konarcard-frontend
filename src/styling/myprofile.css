@@ -36,7 +36,8 @@
     display: flex;
     height: 100vh;
     background-color: var(--secondary-bg);
-    overflow: hidden; /* Desktop: no body scroll */
+    overflow: hidden;
+    /* Desktop: no body scroll */
     position: relative;
 }
 
@@ -44,46 +45,17 @@
 .myprofile-main {
     flex: 1;
     font-family: var(--main-font-family);
-    padding: 30px; /* Padding around the content-card */
+    padding: 30px;
     display: flex;
     flex-direction: column;
     min-height: 0;
     overflow-x: hidden;
-    padding-bottom: 20px; /* Still keep bottom padding for overall layout */
+    padding-bottom: 20px;
     margin-left: 280px;
     padding-top: 30px;
     transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
     z-index: 1;
     color: var(--text-color);
-    
-    /* Ensure header stays at top, and content-card can take remaining space */
-    justify-content: flex-start; /* Aligns items to the start of the main axis (vertical) */
-    align-items: center; /* Centers items along the cross axis (horizontal) */
-}
-
-/* New class for the main content card structure on pages */
-/* This is primarily a wrapper for styling and centering page-specific content */
-.content-card {
-    /* DEFAULT STYLES FOR .content-card (for pages like Profile, Subscription, ContactSupport) */
-    background: var(--primary-bg);
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    padding: 24px; /* Internal padding inside the card */
-    
-    width: 100%; /* Default to full width of its parent (.myprofile-main's padding area) */
-    max-width: 600px; /* Max width for desktop/tablet */
-    box-sizing: border-box; /* Include padding in width */
-    justify-content: center;
-    display: flex; /* Make it a flex container */
-    flex-direction: column; /* Stack content vertically inside */
-    gap: 20px; /* Spacing between elements inside the card */
-    
-    flex: 1; /* VERY IMPORTANT: Allows this content area to take up all remaining vertical space */
-    min-height: 0; /* Allows inner content to shrink if needed */
-    overflow-y: auto; /* Allow content inside this card to scroll if it overflows */
-    
-    margin: auto; /* This will absorb available space around the content card to center it vertically */
-                 /* and horizontally (due to align-items: center on myprofile-main) */
 }
 
 .page-header {
@@ -131,7 +103,8 @@
     flex: 1;
     gap: 40px;
     min-height: 0;
-    overflow: hidden; /* Desktop: no flex-container scroll */
+    overflow: hidden;
+    /* Desktop: no flex-container scroll */
     justify-content: space-around;
     align-items: stretch;
 }
@@ -169,7 +142,8 @@
 
 .mock-phone-scrollable-content {
     flex-grow: 1;
-    overflow-y: auto; /* Internal scroll for phone content on desktop */
+    overflow-y: auto;
+    /* Internal scroll for phone content on desktop */
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -407,11 +381,9 @@
 
 .myprofile-editor-wrapper {
     position: relative;
-    flex: 0 1 50%;
     height: 100%;
     max-width: 600px;
     min-width: 350px;
-    display: flex;
     flex-direction: column;
     min-height: 0;
 }
@@ -425,7 +397,8 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    overflow-y: auto; /* Desktop: editor content scrolls */
+    overflow-y: auto;
+    /* Desktop: editor content scrolls */
     box-sizing: border-box;
     width: 100%;
     height: 100%;
