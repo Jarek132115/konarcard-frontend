@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Import useState and useEffect
+import { Link } from 'react-router-dom'; // Import Link for Logo
 import { toast } from 'react-hot-toast';
 import Sidebar from '../../components/Sidebar';
-// CRITICAL FIX: Import the 'api' instance
 import api from '../../services/api';
+import LogoIcon from '../../assets/icons/Logo-Icon.svg'; // Import LogoIcon
 
 export default function ContactSupport() {
     const [formData, setFormData] = useState({
@@ -12,6 +13,34 @@ export default function ContactSupport() {
         message: '',
         agree: false
     });
+
+    // New state for sidebar and mobile responsiveness
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+
+    // Effect for handling window resize to update isMobile state
+    useEffect(() => {
+        const handleResize = () => {
+            const currentIsMobile = window.innerWidth <= 1000;
+            setIsMobile(currentIsMobile);
+            if (!currentIsMobile && sidebarOpen) {
+                setSidebarOpen(false); // Close sidebar if transitioning from mobile to desktop
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [sidebarOpen]); // Re-evaluate when sidebarOpen changes
+
+    // Effect for controlling body scroll when sidebar is open on mobile
+    useEffect(() => {
+        if (sidebarOpen && isMobile) {
+            document.body.classList.add('body-no-scroll');
+        } else {
+            document.body.classList.remove('body-no-scroll');
+        }
+    }, [sidebarOpen, isMobile]); // Re-evaluate when sidebarOpen or isMobile changes
+
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -30,7 +59,6 @@ export default function ContactSupport() {
         }
 
         try {
-            // CRITICAL FIX: Use api.post() instead of fetch to hit deployed backend
             const res = await api.post('/contact', formData);
 
             if (res.data.success) {
@@ -46,18 +74,42 @@ export default function ContactSupport() {
                 toast.error(res.data.error || 'Something went wrong');
             }
         } catch (err) {
-            console.error('Failed to send message:', err.response?.data?.error || err); // Log full error
+            console.error('Failed to send message:', err.response?.data?.error || err);
             toast.error(err.response?.data?.error || 'Failed to send message.');
         }
     };
 
     return (
-        <div className="myprofile-layout">
-            <Sidebar />
+        // Apply myprofile-layout and dynamic sidebar-active class
+        <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
+            {/* MyProfile Mobile Header - Replicated from MyProfile.jsx */}
+            <div className="myprofile-mobile-header">
+                <Link to="/" className="myprofile-logo-link">
+                    <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
+                </Link>
+                <div
+                    className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            {/* Sidebar component, passing state and setter */}
+            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+            {/* Sidebar overlay for mobile */}
+            {sidebarOpen && isMobile && (
+                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
+            )}
+
             <main className="myprofile-main">
                 <div className="page-wrapper">
                     <div className="page-header">
                         <h2 className="page-title">Contact Support</h2>
+                        {/* These buttons are likely not needed on a contact support page, but keeping them as per original */}
                         <div className="page-actions">
                             <button className="header-button black">🖱️ Activate Your Card</button>
                             <button className="header-button white">🔗 Share Your Card</button>

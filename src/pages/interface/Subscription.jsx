@@ -1,17 +1,23 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { Link } from 'react-router-dom'; // Import Link for Logo
 import Sidebar from '../../components/Sidebar';
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
+import LogoIcon from '../../assets/icons/Logo-Icon.svg'; // Import LogoIcon
 
 export default function Subscription() {
   const { user } = useContext(AuthContext);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showCancelConfirm, setShowCancelConfirm] = useState(false); // New state for confirmation step
-  const [cancelCooldown, setCancelCooldown] = useState(0); // New state for countdown
-  const [isCancelling, setIsCancelling] = useState(false); // To disable buttons during process
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelCooldown, setCancelCooldown] = useState(0);
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  // New state for sidebar and mobile responsiveness
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
   useEffect(() => {
     const fetchSubscriptionStatus = async () => {
@@ -33,19 +39,42 @@ export default function Subscription() {
   useEffect(() => {
     let timer;
     if (cancelCooldown > 0 && showCancelConfirm) {
-      setIsCancelling(true); // Disable buttons during countdown
+      setIsCancelling(true);
       timer = setTimeout(() => setCancelCooldown(prev => prev - 1), 1000);
     } else if (cancelCooldown === 0 && showCancelConfirm) {
-      setIsCancelling(false); // Enable confirm button once countdown is 0
+      setIsCancelling(false);
     } else {
-      setIsCancelling(false); // Reset if confirmation is hidden
+      setIsCancelling(false);
     }
     return () => clearTimeout(timer);
   }, [cancelCooldown, showCancelConfirm]);
 
+  // Effect for handling window resize to update isMobile state
+  useEffect(() => {
+    const handleResize = () => {
+      const currentIsMobile = window.innerWidth <= 1000;
+      setIsMobile(currentIsMobile);
+      if (!currentIsMobile && sidebarOpen) {
+        setSidebarOpen(false); // Close sidebar if transitioning from mobile to desktop
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [sidebarOpen]); // Re-evaluate when sidebarOpen changes
+
+  // Effect for controlling body scroll when sidebar is open on mobile
+  useEffect(() => {
+    if (sidebarOpen && isMobile) {
+      document.body.classList.add('body-no-scroll');
+    } else {
+      document.body.classList.remove('body-no-scroll');
+    }
+  }, [sidebarOpen, isMobile]); // Re-evaluate when sidebarOpen or isMobile changes
+
 
   const handleSubscribe = async () => {
-    setIsCancelling(true); // Disable subscribe button during initiation
+    setIsCancelling(true);
     try {
       const res = await api.post('/subscribe', {});
       if (res.data.url) {
@@ -57,47 +86,69 @@ export default function Subscription() {
       console.error('Subscription initiation failed:', err);
       toast.error(err.response?.data?.error || 'Subscription initiation failed. Please try again.');
     } finally {
-      setIsCancelling(false); // Re-enable if there's an immediate error
+      setIsCancelling(false);
     }
   };
 
-  // Step 1: Initiate cancellation confirmation
   const initiateCancelConfirmation = () => {
     setShowCancelConfirm(true);
-    setCancelCooldown(3); // Start 3-second countdown
-    toast('Confirm cancellation in 3 seconds...', { duration: 3000 }); // Optional toast
+    setCancelCooldown(3);
+    toast('Confirm cancellation in 3 seconds...', { duration: 3000 });
   };
 
-  // Step 2: Confirm cancellation after cooldown
   const confirmCancel = async () => {
-    setIsCancelling(true); // Disable buttons during API call
+    setIsCancelling(true);
     try {
       await api.post('/cancel-subscription', {});
       toast.success('Subscription will be cancelled at the end of the current billing period.');
-      setIsSubscribed(false); // Optimistically update UI
-      setShowCancelConfirm(false); // Hide confirmation
-      setCancelCooldown(0); // Reset cooldown
+      setIsSubscribed(false);
+      setShowCancelConfirm(false);
+      setCancelCooldown(0);
     } catch (err) {
       console.error('Failed to cancel subscription:', err);
       toast.error(err.response?.data?.error || 'Failed to cancel subscription. Please try again.');
     } finally {
-      setIsCancelling(false); // Re-enable after API call
+      setIsCancelling(false);
     }
   };
 
   const cancelConfirmationPrompt = () => {
-    setShowCancelConfirm(false); // Hide the prompt
-    setCancelCooldown(0); // Reset cooldown
-    setIsCancelling(false); // Ensure buttons are re-enabled
+    setShowCancelConfirm(false);
+    setCancelCooldown(0);
+    setIsCancelling(false);
   };
 
   return (
-    <div className="myprofile-layout">
-      <Sidebar />
+    // Apply myprofile-layout and dynamic sidebar-active class
+    <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
+      {/* MyProfile Mobile Header - Replicated from MyProfile.jsx */}
+      <div className="myprofile-mobile-header">
+        <Link to="/" className="myprofile-logo-link">
+          <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
+        </Link>
+        <div
+          className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      {/* Sidebar component, passing state and setter */}
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+      {/* Sidebar overlay for mobile */}
+      {sidebarOpen && isMobile && (
+        <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
+      )}
+
       <main className="myprofile-main">
         <div className="page-wrapper">
           <div className="page-header">
             <h2 className="page-title">Subscription</h2>
+            {/* These buttons are likely not needed on a subscription page, but keeping them as per original */}
             <div className="page-actions">
               <button className="header-button black">🖱️ Activate Your Card</button>
               <button className="header-button white">🔗 Share Your Card</button>
@@ -156,8 +207,8 @@ export default function Subscription() {
                               </button>
                               <button
                                 className="secondary-button"
-                                onClick={initiateCancelConfirmation} // First click initiates confirmation
-                                disabled={isCancelling} // Disable if already cancelling/counting down
+                                onClick={initiateCancelConfirmation}
+                                disabled={isCancelling}
                                 style={{
                                   background: '#f3f3f3',
                                   color: '#333',
@@ -168,7 +219,6 @@ export default function Subscription() {
                               </button>
                             </>
                           ) : (
-                            // Confirmation / Countdown UI
                             <div style={{ textAlign: 'center', padding: '15px', border: '1px solid #ffcc00', borderRadius: '8px', background: '#fffbe6' }}>
                               <p style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '10px' }}>
                                 {cancelCooldown > 0 ? `Confirm cancel in ${cancelCooldown}...` : 'Are you sure?'}
@@ -176,9 +226,9 @@ export default function Subscription() {
                               <button
                                 className="primary-button"
                                 onClick={confirmCancel}
-                                disabled={cancelCooldown > 0 || isCancelling} // Disable until countdown is over or if API call is in progress
+                                disabled={cancelCooldown > 0 || isCancelling}
                                 style={{
-                                  backgroundColor: cancelCooldown > 0 || isCancelling ? '#e0e0e0' : '#dc3545', // Red for confirm cancel
+                                  backgroundColor: cancelCooldown > 0 || isCancelling ? '#e0e0e0' : '#dc3545',
                                   cursor: cancelCooldown > 0 || isCancelling ? 'not-allowed' : 'pointer',
                                   color: 'white',
                                   marginRight: '10px'
@@ -188,7 +238,7 @@ export default function Subscription() {
                               </button>
                               <button
                                 className="secondary-button"
-                                onClick={cancelConfirmationPrompt} // Button to hide the prompt
+                                onClick={cancelConfirmationPrompt}
                                 disabled={isCancelling}
                                 style={{
                                   background: '#f3f3f3',

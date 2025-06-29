@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom'; // Import Link for Logo
 import Sidebar from '../../components/Sidebar';
 import { AuthContext } from '../../components/AuthContext';
 import { toast } from 'react-hot-toast';
-// CRITICAL FIX: Import the 'api' instance, not the generic 'axios'
 import api from '../../services/api';
 import greenTick from '../../assets/icons/Green-Tick-Icon.svg';
 import redCross from '../../assets/icons/Red-Cross-Icon.svg';
+import LogoIcon from '../../assets/icons/Logo-Icon.svg'; // Import LogoIcon
 
 export default function Profile() {
   const { user, fetchUser, setUser } = useContext(AuthContext);
   const [updatedName, setUpdatedName] = useState('');
-  // REMOVED: updatedEmail state variable
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -18,12 +18,39 @@ export default function Profile() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleteEnabled, setDeleteEnabled] = useState(false);
 
+  // New state for sidebar and mobile responsiveness
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+
   useEffect(() => {
     if (user) {
       setUpdatedName(user.name || '');
-      // REMOVED: setUpdatedEmail(user.email || '');
     }
   }, [user]);
+
+  // Effect for handling window resize to update isMobile state
+  useEffect(() => {
+    const handleResize = () => {
+      const currentIsMobile = window.innerWidth <= 1000;
+      setIsMobile(currentIsMobile);
+      if (!currentIsMobile && sidebarOpen) {
+        setSidebarOpen(false); // Close sidebar if transitioning from mobile to desktop
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [sidebarOpen]); // Re-evaluate when sidebarOpen changes
+
+  // Effect for controlling body scroll when sidebar is open on mobile
+  useEffect(() => {
+    if (sidebarOpen && isMobile) {
+      document.body.classList.add('body-no-scroll');
+    } else {
+      document.body.classList.remove('body-no-scroll');
+    }
+  }, [sidebarOpen, isMobile]); // Re-evaluate when sidebarOpen or isMobile changes
+
 
   const togglePassword = () => setShowPassword(!showPassword);
   const toggleConfirm = () => setShowConfirm(!showConfirm);
@@ -44,26 +71,24 @@ export default function Profile() {
     }
 
     try {
-      // CRITICAL FIX: Use 'api.put' for update-profile
       const res = await api.put(
-        '/update-profile', // Use relative path, base URL is configured in api.js
+        '/update-profile',
         {
           name: updatedName,
-          // REMOVED: email: updatedEmail, // Don't send email if field is removed
-          password: password || undefined, // Only send password if it's set
+          password: password || undefined,
         }
       );
 
       if (res.data.success) {
         toast.success('Profile updated successfully!');
-        fetchUser(); // Re-fetch user to update AuthContext state with new name
+        fetchUser();
         setPassword('');
         setConfirmPassword('');
       } else {
         toast.error(res.data.error || 'Something went wrong');
       }
     } catch (err) {
-      console.error('Failed to update profile:', err); // Log full error
+      console.error('Failed to update profile:', err);
       toast.error(err.response?.data?.error || 'Failed to update profile');
     }
   };
@@ -71,8 +96,8 @@ export default function Profile() {
   const handleDelete = async () => {
     if (!confirmDelete) {
       setConfirmDelete(true);
-      toast('Click again in 3 seconds to confirm delete...', { duration: 3000 }); // User feedback
-      setTimeout(() => setDeleteEnabled(true), 3000); // Enable delete button after 3 seconds
+      toast('Click again in 3 seconds to confirm delete...', { duration: 3000 });
+      setTimeout(() => setDeleteEnabled(true), 3000);
       return;
     }
 
@@ -82,30 +107,52 @@ export default function Profile() {
     }
 
     try {
-      // CRITICAL FIX: Use 'api.delete' for delete-account
       const res = await api.delete('/delete-account');
 
       if (res.data.success) {
         toast.success('Your account has been deleted');
-        setUser(null); // Clear user from AuthContext
-        // Use navigate for React Router instead of window.location.href
-        window.location.href = '/'; // Redirect to homepage after delete
+        setUser(null);
+        window.location.href = '/';
       } else {
         toast.error(res.data.error || 'Failed to delete account');
       }
     } catch (err) {
-      console.error('Server error deleting account:', err); // Log full error
+      console.error('Server error deleting account:', err);
       toast.error(err.response?.data?.error || 'Server error deleting account');
     }
   };
 
   return (
-    <div className="myprofile-layout">
-      <Sidebar />
+    // Apply myprofile-layout and dynamic sidebar-active class
+    <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
+      {/* MyProfile Mobile Header - Replicated from MyProfile.jsx */}
+      <div className="myprofile-mobile-header">
+        <Link to="/" className="myprofile-logo-link">
+          <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
+        </Link>
+        <div
+          className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      {/* Sidebar component, passing state and setter */}
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+      {/* Sidebar overlay for mobile */}
+      {sidebarOpen && isMobile && (
+        <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
+      )}
+
       <main className="myprofile-main">
         <div className="page-wrapper">
           <div className="page-header">
             <h2 className="page-title">Profile</h2>
+            {/* These buttons are likely not needed on a profile settings page, but keeping them as per original */}
             <div className="page-actions">
               <button className="header-button black">🖱️ Activate Your Card</button>
               <button className="header-button white">🔗 Share Your Card</button>
@@ -119,21 +166,9 @@ export default function Profile() {
                 type="text"
                 value={updatedName}
                 onChange={(e) => setUpdatedName(e.target.value)}
-                autoComplete="name" // Hint for browser to autofill name, if desired
+                autoComplete="name"
               />
             </div>
-
-            {/* REMOVED: Email Input Block */}
-            {/* <div className="profile-input-block">
-              <label>Email</label>
-              <input
-                type="email"
-                value={updatedEmail}
-                onChange={(e) => setUpdatedEmail(e.target.value)}
-                autoComplete="email"
-              />
-            </div>
-            */}
 
             <div className="profile-input-block">
               <label>Change Password</label>
@@ -143,7 +178,7 @@ export default function Profile() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="New password"
-                  autoComplete="new-password" // Prevents autofill of old password
+                  autoComplete="new-password"
                 />
                 <button type="button" onClick={togglePassword}>
                   {showPassword ? 'Hide' : 'Show'}
@@ -155,7 +190,7 @@ export default function Profile() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm new password"
-                  autoComplete="new-password" // Prevents autofill of old password
+                  autoComplete="new-password"
                 />
                 <button type="button" onClick={toggleConfirm}>
                   {showConfirm ? 'Hide' : 'Show'}
@@ -190,8 +225,7 @@ export default function Profile() {
                 className="profile-delete-button"
                 disabled={confirmDelete && !deleteEnabled}
               >
-                {confirmDelete && !deleteEnabled ? `Confirm Delete in ${3 - (Math.floor(Date.now() / 1000) - Math.floor((new Date().getTime() - 3000) / 1000))}s` : 'Delete Your Account'}
-                {/* Updated text for countdown: More accurate seconds calculation */}
+                {confirmDelete && !deleteEnabled ? `Confirm Delete in ${Math.max(0, 3 - Math.floor((Date.now() - (new Date().getTime() - 3000)) / 1000))}s` : 'Delete Your Account'}
               </button>
               <button onClick={handleSave} className="profile-save-button">
                 Save Updates
