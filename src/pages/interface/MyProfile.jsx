@@ -4,10 +4,10 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-// --- RE-ADDED IMPORTS FOR FALLBACK IMAGES ---
-import ProfileCardImage from "../../assets/images/background-hero.png";
-import UserAvatar from "../../assets/images/People.png";
-// --- END RE-ADDED IMPORTS ---
+// --- REMOVED REDUNDANT IMPORTS ---
+// import ProfileCardImage from "../../assets/images/background-hero.png";
+// import UserAvatar from "../../assets/images/People.png";
+// --- END REMOVED IMPORTS ---
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
@@ -58,15 +58,16 @@ export default function MyProfile() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
-  const initialStoreState = useBusinessCardStore.getState().state;
+  const initialStoreState = useBusinessCardStore.getState().state; // This is a static snapshot of initial state
 
   // --- DEBUGGING LOGS START (RUNS ON EVERY RENDER) ---
+  // Keep this one to monitor overall state
   useEffect(() => {
-    console.log("RENDER - Current State:", JSON.parse(JSON.stringify(state))); // Deep copy to prevent mutation issues in console
-    console.log("RENDER - isSubscribed:", isSubscribed);
-    console.log("RENDER - authLoading:", authLoading);
-    console.log("RENDER - isCardLoading (fetching card data):", isCardLoading);
-    console.log("RENDER - businessCard (fetched data):", businessCard);
+    // console.log("RENDER - Current State:", JSON.parse(JSON.stringify(state)));
+    // console.log("RENDER - isSubscribed:", isSubscribed);
+    // console.log("RENDER - authLoading:", authLoading);
+    // console.log("RENDER - isCardLoading (fetching card data):", isCardLoading);
+    // console.log("RENDER - businessCard (fetched data):", businessCard);
   });
   // --- DEBUGGING LOGS END ---
 
@@ -112,60 +113,52 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
+  // This useEffect is the source of the infinite loop
   useEffect(() => {
-    // --- DEBUGGING LOG ---
-    console.log("EFFECT - businessCard useEffect triggered. BusinessCard:", businessCard, "isCardLoading:", isCardLoading);
-    // --- END DEBUGGING LOG ---
+    // console.log("EFFECT - businessCard useEffect triggered. BusinessCard:", businessCard, "isCardLoading:", isCardLoading);
 
-    if (businessCard) {
-      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
-      setActiveBlobUrls([]);
+    // Only proceed if card data is not currently loading and authUser is loaded
+    if (!isCardLoading && authUser) {
+      if (businessCard) {
+        // console.log("EFFECT - Fetched businessCard data. Current state BEFORE updateState:", JSON.parse(JSON.stringify(state)));
 
-      // --- DEBUGGING LOG ---
-      console.log("EFFECT - Fetched businessCard data. Current state BEFORE updateState:", JSON.parse(JSON.stringify(state)));
-      // --- END DEBUGGING LOG ---
+        updateState({
+          businessName: businessCard.business_card_name || '', // Use empty string for defaults if backend sends null
+          pageTheme: businessCard.page_theme || 'light',
+          font: businessCard.style || 'Inter',
+          mainHeading: businessCard.main_heading || '',
+          subHeading: businessCard.sub_heading || '',
+          job_title: businessCard.job_title || '',
+          full_name: businessCard.full_name || '',
+          bio: businessCard.bio || '',
+          avatar: businessCard.avatar || null, // Will be null if backend sends null, so fallback to initial render's state is needed below
+          coverPhoto: businessCard.cover_photo || null, // Same here
+          workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
+          services: (businessCard.services || []),
+          reviews: (businessCard.reviews || []),
+          contact_email: businessCard.contact_email || '',
+          phone_number: businessCard.phone_number || '',
+        });
 
-      updateState({
-        businessName: businessCard.business_card_name || initialStoreState.businessName,
-        pageTheme: businessCard.page_theme || initialStoreState.pageTheme,
-        font: businessCard.style || initialStoreState.font,
-        mainHeading: businessCard.main_heading || initialStoreState.mainHeading,
-        subHeading: businessCard.sub_heading || initialStoreState.subHeading,
-        job_title: businessCard.job_title || initialStoreState.job_title,
-        full_name: businessCard.full_name || initialStoreState.full_name,
-        bio: businessCard.bio || initialStoreState.bio,
-        avatar: businessCard.avatar || initialStoreState.avatar,
-        coverPhoto: businessCard.cover_photo || initialStoreState.coverPhoto,
-        workImages: (businessCard.works && businessCard.works.length > 0)
-          ? businessCard.works.map(url => ({ file: null, preview: url }))
-          : initialStoreState.workImages.map(item => ({ ...item })), // Cloning initial defaults
-        services: (businessCard.services && businessCard.services.length > 0) ? businessCard.services : initialStoreState.services,
-        reviews: (businessCard.reviews && businessCard.reviews.length > 0) ? businessCard.reviews : initialStoreState.reviews,
-        contact_email: businessCard.contact_email || initialStoreState.contact_email,
-        phone_number: businessCard.phone_number || initialStoreState.phone_number,
-      });
-      setCoverPhotoFile(null);
-      setAvatarFile(null);
-      setWorkImageFiles([]);
-      setCoverPhotoRemoved(false);
-      setIsAvatarRemoved(false);
+        setCoverPhotoFile(null);
+        setAvatarFile(null);
+        setWorkImageFiles([]);
+        setCoverPhotoRemoved(false);
+        setIsAvatarRemoved(false);
 
-      // --- DEBUGGING LOG ---
-      console.log("EFFECT - state after updateState (from fetched data):", JSON.parse(JSON.stringify(useBusinessCardStore.getState().state)));
-      // --- END DEBUGGING LOG ---
+        // console.log("EFFECT - state after updateState (from fetched data):", JSON.parse(JSON.stringify(useBusinessCardStore.getState().state)));
 
-    } else if (!isCardLoading && !businessCard) {
-      // --- DEBUGGING LOG ---
-      console.log("EFFECT - No businessCard found and not loading. Resetting state to initial defaults.");
-      // --- END DEBUGGING LOG ---
-      resetState();
-      setCoverPhotoFile(null);
-      setAvatarFile(null);
-      setWorkImageFiles([]);
-      setCoverPhotoRemoved(false);
-      setIsAvatarRemoved(false);
+      } else { // businessCard is null, meaning no card exists for this user
+        // console.log("EFFECT - No businessCard found for user. Resetting state to initial defaults.");
+        resetState(); // Reset to the initial defaults defined in businessCardStore.js
+        setCoverPhotoFile(null);
+        setAvatarFile(null);
+        setWorkImageFiles([]);
+        setCoverPhotoRemoved(false);
+        setIsAvatarRemoved(false);
+      }
     }
-  }, [businessCard, isCardLoading, updateState, resetState, initialStoreState]);
+  }, [businessCard, isCardLoading, updateState, resetState, authUser]); // <-- REMOVED initialStoreState from dependency array. Added authUser.
 
 
   useEffect(() => {
@@ -227,24 +220,27 @@ export default function MyProfile() {
   };
 
   const handleRemoveCoverPhoto = () => {
-    if (initialStoreState.coverPhoto && state.coverPhoto === initialStoreState.coverPhoto) {
-      updateState({ coverPhoto: null });
+    // If the current coverPhoto is one of the initial defaults, set it to empty string/null.
+    // It won't be explicitly removed on backend, but new image would overwrite it.
+    if (state.coverPhoto === initialStoreState.coverPhoto) {
+      updateState({ coverPhoto: null }); // Set to null (or empty string) if it was the default
       setCoverPhotoFile(null);
       setCoverPhotoRemoved(false);
     } else {
+      // It's a user-uploaded image or a previously saved image from backend
       if (state.coverPhoto && state.coverPhoto.startsWith('blob:')) {
         URL.revokeObjectURL(state.coverPhoto);
         setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
       }
       updateState({ coverPhoto: null });
       setCoverPhotoFile(null);
-      setCoverPhotoRemoved(true);
+      setCoverPhotoRemoved(true); // Flag for backend removal
     }
   };
 
   const handleRemoveAvatar = () => {
-    if (initialStoreState.avatar && state.avatar === initialStoreState.avatar) {
-      updateState({ avatar: null });
+    if (state.avatar === initialStoreState.avatar) {
+      updateState({ avatar: null }); // Set to null (or empty string) if it was the default
       setAvatarFile(null);
       setIsAvatarRemoved(false);
     } else {
