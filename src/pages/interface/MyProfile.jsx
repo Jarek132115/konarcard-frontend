@@ -658,9 +658,9 @@ export default function MyProfile() {
                             <p className="mock-profile-name">{state.full_name}</p>
                             <p className="mock-profile-role">{state.job_title}</p>
                           </div>
+                          {state.bio && <p className="mock-bio-text">{state.bio}</p>}
                         </div>
                         {/* Bio text is now inside the new container */}
-                        {state.bio && <p className="mock-bio-text">{state.bio}</p>}
                       </div>
                     )}
 
