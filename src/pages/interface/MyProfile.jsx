@@ -4,9 +4,6 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-// No longer importing these directly as they are now handled by the store's initialState (public paths)
-// import ProfileCardImage from "../../assets/images/background-hero.png";
-// import UserAvatar from "../../assets/images/People.png";
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
@@ -57,7 +54,6 @@ export default function MyProfile() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
-  // Get initial state defaults for comparison
   const initialStoreState = useBusinessCardStore.getState().state;
 
   useEffect(() => {
@@ -110,7 +106,6 @@ export default function MyProfile() {
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
-      // Populate state with fetched data, falling back to current state values (which include initial defaults)
       updateState({
         businessName: businessCard.business_card_name || initialStoreState.businessName,
         pageTheme: businessCard.page_theme || initialStoreState.pageTheme,
@@ -120,11 +115,15 @@ export default function MyProfile() {
         job_title: businessCard.job_title || initialStoreState.job_title,
         full_name: businessCard.full_name || initialStoreState.full_name,
         bio: businessCard.bio || initialStoreState.bio,
-        // For images, if the fetched businessCard.field is null, use the state's default
         avatar: businessCard.avatar || initialStoreState.avatar,
         coverPhoto: businessCard.cover_photo || initialStoreState.coverPhoto,
-        // Convert fetched work URLs into {file: null, preview: url} format, otherwise use initial defaults
-        workImages: (businessCard.works && businessCard.works.length > 0) ? businessCard.works.map(url => ({ file: null, preview: url })) : initialStoreState.workImages,
+        // --- CRITICAL UPDATE FOR WORK IMAGES ---
+        // If businessCard.works has data, map it. Otherwise, use initialStoreState.workImages.
+        // This ensures defaults are loaded when no user-specific work images exist.
+        workImages: (businessCard.works && businessCard.works.length > 0)
+          ? businessCard.works.map(url => ({ file: null, preview: url }))
+          : initialStoreState.workImages.map(item => ({ ...item })), // Clone initial defaults
+        // --- END CRITICAL UPDATE ---
         services: (businessCard.services && businessCard.services.length > 0) ? businessCard.services : initialStoreState.services,
         reviews: (businessCard.reviews && businessCard.reviews.length > 0) ? businessCard.reviews : initialStoreState.reviews,
         contact_email: businessCard.contact_email || initialStoreState.contact_email,
@@ -136,9 +135,7 @@ export default function MyProfile() {
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     } else if (!isCardLoading && !businessCard) {
-      // If no business card is found for the user AND it's not still loading,
-      // explicitly reset to the store's initial defaults.
-      resetState();
+      resetState(); // This applies all initial defaults including images
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
@@ -203,7 +200,7 @@ export default function MyProfile() {
       preview: createAndTrackBlobUrl(file),
     }));
     updateState({
-      workImages: [...(state.workImages || []), ...newPreviewItems],
+      workImages: [...state.workImages, ...newPreviewItems],
     });
     setWorkImageFiles(prevFiles => [...prevFiles, ...newImageFiles]);
   };
@@ -251,14 +248,13 @@ export default function MyProfile() {
       setActiveBlobUrls(prev => prev.filter(url => url !== removedItem.preview));
     }
 
-    // Only mark as removed for backend if it's not a default image
     const newWorkImages = state.workImages.filter((_, index) => index !== indexToRemove);
     updateState({ workImages: newWorkImages });
 
     // If a file was associated (meaning it was uploaded), remove it from workImageFiles
+    // Note: This simple filter assumes indices match, which might not be robust if files are reordered/filtered.
+    // A more robust solution might track IDs for uploaded files.
     setWorkImageFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
-    // You might need a more complex way to track removed IDs for backend if removing non-default existing images
-    // For now, if an image is removed and it's not a default, it will just not be sent in the `works` array.
   };
 
 
@@ -363,11 +359,23 @@ export default function MyProfile() {
       return;
     }
 
-    // Filter out default images from the 'works' array if they haven't been replaced
+    // --- CRITICAL UPDATE FOR SUBMITTING WORK IMAGES ---
     const worksToUpload = state.workImages
-      .filter(item => item.file || !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview))
-      .map(item => item.file ? { file: item.file } : item.preview);
+      .map(item => {
+        if (item.file) {
+          return { file: item.file }; // It's a new upload, send the file
+        } else if (item.preview && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
+          return item.preview; // It's an existing URL from backend, send the URL
+        }
+        return null; // It's a default image and hasn't been replaced/modified, don't send it for upload
+      })
+      .filter(item => item !== null); // Filter out nulls
 
+    // If the worksToUpload array is empty and there were previously images
+    // (meaning user removed all their actual images and only defaults remain),
+    // you might need to send a flag to backend to clear works.
+    // For now, if no actual files/non-default URLs are present, `works` will be an empty array.
+    // The backend should handle an empty `works` array for updates correctly.
 
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
