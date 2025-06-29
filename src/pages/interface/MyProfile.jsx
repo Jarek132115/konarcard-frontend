@@ -1,6 +1,7 @@
 // frontend/src/pages/interface/MyProfile.jsx (COMPLETE & FINAL for responsive sidebar layout)
 
 import React, { useRef, useEffect, useState, useContext } from "react";
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar"; // Updated import to pass props
 import PageHeader from "../../components/PageHeader";
 import ProfileCardImage from "../../assets/images/background-hero.png";
