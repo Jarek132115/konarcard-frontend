@@ -1,7 +1,7 @@
 // frontend/src/pages/interface/MyProfile.jsx
 
 import React, { useRef, useEffect, useState, useContext } from "react";
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import ProfileCardImage from "../../assets/images/background-hero.png";
@@ -12,7 +12,6 @@ import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
 } from "../../hooks/useCreateBiz";
-import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
@@ -20,7 +19,6 @@ import ShareProfile from "../../components/ShareProfile";
 import { AuthContext } from "../../components/AuthContext";
 import api from '../../services/api';
 
-// Icon imports for MyProfile's mobile header
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 export default function MyProfile() {
@@ -30,7 +28,6 @@ export default function MyProfile() {
   const workImageInputRef = useRef(null);
 
   const createBusinessCard = useCreateBusinessCard();
-  const queryClient = useQueryClient();
 
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
   const isSubscribed = authUser?.isSubscribed || false;
@@ -56,16 +53,13 @@ export default function MyProfile() {
 
   const [activeBlobUrls, setActiveBlobUrls] = useState([]);
 
-  const [sidebarOpen, setSidebarOpen] = useState(false); // State for sidebar visibility
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000); // State to track mobile view
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
-
-  // Effect to update isMobile state on window resize
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
       setIsMobile(currentIsMobile);
-      // If we resize from mobile to desktop, ensure sidebar is closed visually
       if (!currentIsMobile && sidebarOpen) {
         setSidebarOpen(false);
       }
@@ -73,16 +67,14 @@ export default function MyProfile() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [sidebarOpen]); // Dependency on sidebarOpen to ensure correct behavior on resize after opening/closing
+  }, [sidebarOpen]);
 
-  // Effect to control body overflow when sidebar is open on mobile
   useEffect(() => {
     if (sidebarOpen && isMobile) {
       document.body.classList.add('body-no-scroll');
     } else {
       document.body.classList.remove('body-no-scroll');
     }
-    // Cleanup function
     return () => {
       document.body.classList.remove('body-no-scroll');
     };
@@ -90,12 +82,9 @@ export default function MyProfile() {
 
 
   useEffect(() => {
-    console.log("MyProfile Component Rendered. AuthUser:", authUser, "AuthLoading:", authLoading, "isSubscribed:", isSubscribed);
-    console.log("MyProfile userId:", userId, "isUserVerified:", isUserVerified);
     if (isCardLoading) console.log("useFetchBusinessCard: Loading business card data...");
     if (isCardError) console.error("useFetchBusinessCard: Error fetching business card:", cardError);
-    if (businessCard) console.log("useFetchBusinessCard: Fetched business card data:", businessCard);
-  }, [authUser, authLoading, userId, isCardLoading, isCardError, cardError, businessCard, isSubscribed]);
+  }, [isCardLoading, isCardError, cardError]);
 
   useEffect(() => {
     let timer;
@@ -143,7 +132,6 @@ export default function MyProfile() {
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
-      console.log('MyProfile useEffect: Zustand store updated from fetched businessCard (after load/save):', businessCard);
     }
   }, [businessCard, updateState]);
 
@@ -162,7 +150,6 @@ export default function MyProfile() {
   const handleImageUpload = (e) => {
     e.preventDefault();
     if (!e.target || !e.target.files || e.target.files.length === 0) {
-      console.error("handleImageUpload: No file selected or files array is empty/null.");
       return;
     }
     const file = e.target.files[0];
@@ -171,15 +158,12 @@ export default function MyProfile() {
       updateState({ coverPhoto: blobUrl });
       setCoverPhotoFile(file);
       setCoverPhotoRemoved(false);
-    } else {
-      console.warn("handleImageUpload: Selected file is not an image or is null.");
     }
   };
 
   const handleAvatarUpload = (event) => {
     event.preventDefault();
     if (!event.target || !event.target.files || event.target.files.length === 0) {
-      console.error("handleAvatarUpload: No file selected or files array is empty/null.");
       return;
     }
     const file = event.target.files[0];
@@ -188,21 +172,17 @@ export default function MyProfile() {
       updateState({ avatar: blobUrl });
       setAvatarFile(file);
       setIsAvatarRemoved(false);
-    } else {
-      console.warn("handleAvatarUpload: Selected file is not an image or is null.");
     }
   };
 
   const handleAddWorkImage = (e) => {
     e.preventDefault();
     if (!e.target || !e.target.files || e.target.files.length === 0) {
-      console.error("handleAddWorkImage: No files selected or files array is empty/null.");
       return;
     }
     const files = Array.from(e.target.files);
     const newImageFiles = files.filter(file => file && file.type.startsWith("image/"));
     if (newImageFiles.length === 0) {
-      console.warn("handleAddWorkImage: No valid image files selected.");
       return;
     }
     const newPreviewItems = newImageFiles.map(file => ({
@@ -301,7 +281,6 @@ export default function MyProfile() {
       }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Could not resend code.');
-      console.error('Resend code error:', err);
     }
   };
 
@@ -327,13 +306,11 @@ export default function MyProfile() {
       }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Verification failed.');
-      console.error('Verification error:', err);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("CLICK! handleSubmit was called.");
     if (authLoading) {
       toast.info("User data is still loading. Please wait a moment.");
       return;
@@ -346,7 +323,6 @@ export default function MyProfile() {
       toast.error("Please verify your email address to save changes.");
       return;
     }
-    // Gating Save Functionality
     if (!isSubscribed) {
       toast.error("Please subscribe to edit your profile.");
       return;
@@ -376,23 +352,12 @@ export default function MyProfile() {
       phone_number: state.phone_number || "",
     });
 
-    console.log('handleSubmit: coverPhotoFile BEFORE FormData:', coverPhotoFile);
-    console.log('handleSubmit: avatarFile BEFORE FormData:', avatarFile);
-    console.log('handleSubmit: workImageFiles (local state) BEFORE FormData:', workImageFiles);
-    console.log("Sending FormData:");
-
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ': ' + (pair[1] instanceof File ? `[File object: ${pair[1].name}, type: ${pair[1].type}]` : pair[1]));
-    }
-
     try {
       const response = await createBusinessCard.mutateAsync(formData);
-      console.log("Save API Response:", response);
       toast.success("Business card saved successfully!");
 
       if (response.data && response.data.data) {
         const fetchedCardData = response.data.data;
-        console.log("Frontend: Response data for updateState:", fetchedCardData);
 
         updateState({
           businessName: fetchedCardData.business_card_name || "",
@@ -414,10 +379,6 @@ export default function MyProfile() {
           contact_email: fetchedCardData.contact_email || "",
           phone_number: fetchedCardData.phone_number || "",
         });
-        console.log('MyProfile useEffect: Zustand store updated directly after save with response data:', fetchedCardData);
-
-      } else {
-        console.error("Frontend: Backend response missing expected 'data' field:", response.data);
       }
 
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
@@ -431,7 +392,6 @@ export default function MyProfile() {
 
     } catch (error) {
       toast.error("Something went wrong while saving. Check console for details.");
-      console.error("Error creating/updating business card (frontend catch):", error.response?.data || error);
     }
   };
 
@@ -465,7 +425,6 @@ export default function MyProfile() {
         toast.error("Failed to start subscription. Please try again.");
       }
     } catch (error) {
-      console.error("Frontend: Error starting subscription:", error.response?.data || error);
       toast.error(error.response?.data?.error || "Failed to start subscription.");
     }
   };
@@ -484,12 +443,8 @@ export default function MyProfile() {
   };
 
   return (
-    // Apply 'sidebar-active' class to myprofile-layout when sidebar is open on mobile
-    // This class helps to prevent scrolling on the main page when mobile sidebar is open
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
-      {/* NEW: Mobile Header for MyProfile page (always visible on mobile) */}
       <div className="myprofile-mobile-header">
-        {/* Hamburger will be on the left */}
         <div
           className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -498,7 +453,6 @@ export default function MyProfile() {
           <span></span>
           <span></span>
         </div>
-        {/* Logo will be on the right */}
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
@@ -506,7 +460,6 @@ export default function MyProfile() {
 
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* Overlay for mobile sidebar. Only render if sidebarOpen is true AND it's a mobile view */}
       {sidebarOpen && isMobile && (
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
@@ -518,7 +471,7 @@ export default function MyProfile() {
           onShareCard={handleShareCard}
         />
 
-        {authLoading || isCardLoading && (
+        {(authLoading || isCardLoading) && (
           <div style={{ padding: '20px', textAlign: 'center', fontSize: '1.2rem', color: '#666' }}>
             Loading profile data...
           </div>
@@ -594,7 +547,6 @@ export default function MyProfile() {
             )}
 
             <div className="myprofile-content">
-              {/* --- PREVIEW SECTION --- */}
               <div className="myprofile-preview">
                 <div
                   className="mock-phone"

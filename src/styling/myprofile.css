@@ -4,141 +4,28 @@
 .myprofile-layout {
     display: flex;
     height: 100vh;
-    /* Fixed height to viewport */
     background-color: #f9f9f9;
     overflow-x: hidden;
-    /* Hide horizontal overflow on the entire layout */
     position: relative;
-    /* Needed for absolute positioning of overlay */
-}
-
-/* Sidebar Styling (already addressed in previous round, but included for completeness) */
-/* Note: The actual .sidebar styles are in sidebar.css */
-
-.my-account-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 16px;
-    gap: 10px;
-}
-
-.profile-pic {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.user-info {
-    flex-grow: 1;
-}
-
-.email {
-    font-size: 12px;
-    color: #888;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.name {
-    font-size: 14px;
-    font-weight: 500;
-    margin: 0;
-}
-
-.settings-icon {
-    width: 20px;
-    height: 20px;
-}
-
-.divider {
-    border: none;
-    border-top: 1px solid #e0e0e0;
-    margin: 12px 0;
-}
-
-.section-title {
-    font-size: 12px;
-    color: #555;
-    margin-bottom: 8px;
-    font-weight: 600;
-    padding-left: 4px;
-}
-
-.sidebar-button {
-    display: flex;
-    align-items: center;
-    padding: 12px 10px;
-    gap: 12px;
-    border-radius: 10px;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    font-size: 14px;
-    box-sizing: border-box;
-    width: 100%;
-}
-
-.sidebar-button:hover {
-    background-color: #e0f2ff;
-    color: #007bff;
-    cursor: pointer;
-}
-
-.sidebar-button.logout-button {
-    margin-top: auto;
-    color: #dc3545;
-}
-
-.sidebar-button.logout-button p {
-    color: #dc3545;
-}
-
-.icon {
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
-    flex-shrink: 0;
-}
-
-.footer-actions {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #e0e0e0;
 }
 
 /* MyProfile Main content area (right side, next to sidebar) */
 .myprofile-main {
     flex: 1;
-    /* Takes up all available width */
     overflow-y: auto;
-    /* This is the primary scrolling container for the right-hand side */
     font-family: sans-serif;
     padding: 30px;
-    /* Space around content */
     display: flex;
     flex-direction: column;
-    /* Stacks header and content vertically */
     min-height: 0;
-    /* Crucial for flex child to allow internal scrolling */
     overflow-x: hidden;
-    /* Prevent horizontal scroll within main content */
     padding-bottom: 20px;
-    /* Add some padding at the bottom of the content section */
 
     /* Desktop positioning to account for fixed sidebar */
     margin-left: 220px;
-    /* Default margin for desktop sidebar width */
-    transition: margin-left 0.3s ease-in-out;
-    /* Smooth transition for sidebar closing/opening */
+    /* This is correct for desktop */
+    transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
     z-index: 1;
-    /* Ensure main content is below mobile sidebar overlay if open */
 }
 
 .page-header {
@@ -147,7 +34,6 @@
     align-items: center;
     margin-bottom: 30px;
     flex-shrink: 0;
-    /* Prevents header from shrinking */
 }
 
 .page-title {
@@ -184,94 +70,52 @@
 /* MyProfile Content (the row containing the preview and editor forms) */
 .myprofile-content {
     display: flex;
-    /* Makes it a flex row */
     gap: 40px;
     justify-content: space-around;
     flex: 1;
-    /* Allows this row to take up all *remaining* vertical space within .myprofile-main */
     min-height: 0;
-    /* CRITICAL: Allows flex items inside to shrink and enables their overflow-y: auto */
     overflow: hidden;
-    /* Prevents this row from having its own scrollbar, children manage. */
     padding-bottom: 20px;
-    /* Add some padding at the bottom of the content section */
 }
 
 /* MyProfile Preview (the mock phone side) */
 .myprofile-preview {
-    /* Set a flex-basis to give it a preferred size, but allow it to shrink/grow */
     flex: 0 1 320px;
-    /* flex-grow:0, flex-shrink:1, flex-basis:320px */
     max-width: 320px;
-    /* Hard cap for the width of this container */
-
     position: relative;
-    /* Keep as relative for potential absolute children */
     box-sizing: border-box;
-
     display: flex;
-    /* Make it a flex container to center the phone */
     flex-direction: column;
-    /* Center vertically */
     align-items: center;
-    /* Center mock-phone horizontally */
     justify-content: center;
-    /* Center mock-phone vertically */
-
     min-height: 0;
-    /* Crucial for nested flex containers to properly calculate height */
     overflow: hidden;
-    /* This container should hide any overflow from the phone frame itself */
     align-self: stretch;
-    /* Make it fill the available height within .myprofile-content */
 }
 
-/* Mock Phone Styling (The only phone div) */
 .mock-phone {
-    /* ULTIMATE ATTEMPT AT SCALING TO FIT CONTAINER: */
-    /* Use explicit percentages for max-width/height, with aspect-ratio */
     width: 100%;
-    /* Will initially try to take 100% of parent's width */
     height: 100%;
-    /* Will initially try to take 100% of parent's height */
     max-width: 100%;
-    /* Restrict width to 100% of parent */
     max-height: 100%;
-    /* Restrict height to 100% of parent */
     aspect-ratio: 9 / 19.5;
-    /* Maintain phone shape. This will make it fit the most constrained dimension. */
-
     background: #fff;
-    /* Phone's background */
     border: 0.625rem solid #ccc;
-    /* Phone's grey border */
     border-radius: 2.5rem;
-    /* Phone's large radius */
     padding: 1.5rem;
-    /* Phone's internal padding */
     text-align: center;
     box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1);
-    /* Phone's own shadow */
-
     box-sizing: border-box;
-    /* Ensures padding and border are *included* in the 100% width/height */
-
     display: flex;
-    /* Makes content inside flow as flex items */
     flex-direction: column;
-    /* Stacks content vertically */
     flex-shrink: 0;
-    /* Prevent the phone frame itself from shrinking its content */
     flex-grow: 0;
-    /* Don't allow it to grow beyond its calculated size */
 
-    /* Dark mode specific styles for mock-phone background and border */
     &[style*="background-color: rgb(31, 31, 31)"] {
         background-color: #1F1F1F !important;
         border-color: #555 !important;
     }
 
-    /* Ensure text within mock-phone adapts to theme */
     &[style*="background-color: rgb(31, 31, 31)"] * {
         color: white;
     }
@@ -294,31 +138,19 @@
     }
 }
 
-/* --- CRITICAL CLASS: For the scrollable content inside the mock-phone --- */
-/* You MUST wrap your content (from mock-cover down to reviews-list) in a div with this class in JSX */
 .mock-phone-scrollable-content {
     flex-grow: 1;
-    /* This inner content wrapper takes up all available vertical space */
     overflow-y: auto;
-    /* THIS IS WHERE THE SCROLLBAR FOR THE CONTENT GOES */
     width: 100%;
-    /* Ensure it spans the full width of the phone's internal area */
     box-sizing: border-box;
-    /* Include padding in calculations */
-
     display: flex;
     flex-direction: column;
-    /* Consider adding padding or gap here if needed for internal content spacing */
 }
 
-/* General rule for direct children of mock-phone that are *not* the scrollable content wrapper */
 .mock-phone>*:not(.mock-phone-scrollable-content) {
     flex-shrink: 0;
-    /* Prevents these elements from shrinking */
 }
 
-
-/* Keep the rest of the mock-specific classes and their styling here for the preview */
 .mock-cover {
     width: 100%;
     aspect-ratio: 16 / 9;
@@ -331,11 +163,8 @@
 
 .remove-image-button {
     position: absolute;
-    /* positioned relative to the mock-phone-scrollable-content if placed inside, or mock-phone directly */
     top: 10px;
-    /* Adjust as needed */
     right: 10px;
-    /* Adjust as needed */
     background: rgba(255, 255, 255, 0.7);
     border: none;
     border-radius: 50%;
@@ -350,9 +179,7 @@
     color: #333;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     z-index: 5;
-    /* Ensure it's above the image */
 }
-
 
 .mock-title {
     font-size: 2rem;
@@ -515,41 +342,28 @@
     margin: 0;
 }
 
-
-/* === Editor specific styling === */
 .myprofile-editor-wrapper {
     position: relative;
     flex: 1;
-    /* Allow it to take available space */
     max-width: min(50%, 600px);
-    /* Use min() to cap max-width better */
     min-width: 350px;
-    /* Ensure it doesn't get too small */
     display: flex;
-    /* Make it a flex container for the editor */
     flex-direction: column;
-    /* Stack children vertically */
     min-height: 0;
-    /* Crucial for flex children that need to scroll */
     align-self: stretch;
-    /* CRITICAL: Ensure it stretches to fill vertical space */
 }
 
 .myprofile-editor {
     flex: 1;
-    /* Allows editor to fill vertical space within its wrapper */
     background: white;
     padding: 24px;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     display: flex;
     flex-direction: column;
-    /* Editor itself is a column */
     gap: 20px;
     overflow-y: auto;
-    /* This should now correctly enable internal scrolling for the form */
     box-sizing: border-box;
-    /* Removed min-height and max-height for better flex behavior */
 }
 
 .editor-title {
@@ -615,7 +429,8 @@
     object-fit: cover;
 }
 
-.divider {
+/* This divider is within the editor form */
+.myprofile-editor .divider {
     margin: 20px 0;
     border: none;
     border-top: 1px solid #eee;
@@ -688,20 +503,13 @@
     width: 100%;
     height: 100%;
     background-color: rgba(255, 255, 255, 0.9);
-    /* White overlay with transparency */
     backdrop-filter: blur(8px);
-    /* Blur effect */
     display: flex;
     justify-content: center;
-    /* Center horizontally */
     align-items: center;
-    /* Center vertically */
     z-index: 10;
-    /* Ensure it's above the form */
     border-radius: 16px;
-    /* Match form border-radius */
     overflow: hidden;
-    /* Hide anything that overflows this overlay */
 }
 
 .subscription-message {
@@ -712,29 +520,22 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     max-width: 400px;
     z-index: 11;
-    /* Ensure message is above overlay */
     display: flex;
-    /* Make it a flex container */
     flex-direction: column;
-    /* Stack children vertically */
     align-items: center;
-    /* Center items horizontally within itself */
     gap: 15px;
-    /* Add some space between text and button */
 }
 
 .subscription-message h2 {
     font-size: 24px;
     color: #333;
     margin-bottom: 0;
-    /* Remove default margin to control spacing with gap */
 }
 
 .subscription-message p {
     font-size: 16px;
     color: #666;
     margin-bottom: 0;
-    /* Remove default margin to control spacing with gap */
 }
 
 .start-trial-button {
@@ -753,7 +554,7 @@
     background-color: #0056b3;
 }
 
-/* --- NEW & MODIFIED: Mobile Header and Overlay for MyProfile Layout --- */
+/* MyProfile Mobile Header - This header is separate from the sidebar itself */
 .myprofile-mobile-header {
     display: none;
     /* Hidden by default on desktop */
@@ -761,20 +562,33 @@
     top: 0;
     left: 0;
     width: 100%;
+    height: 60px;
+    /* Fixed height for the mobile header */
     background-color: white;
-    padding: 15px 20px;
+    padding: 0 20px;
+    /* Adjusted padding */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 900;
     /* Below the sliding sidebar (1000) but above main content (1) */
-    justify-content: space-between;
+    display: flex;
+    /* Always flex on mobile */
     align-items: center;
+    justify-content: space-between;
+    /* Space out hamburger and logo */
+}
+
+.myprofile-logo-link {
+    order: 2;
+    /* Puts logo on the right */
+    margin-left: auto;
+    /* Pushes logo to the far right */
 }
 
 .myprofile-logo-link .myprofile-logo {
     height: 32px;
+    /* Consistent logo size */
 }
 
-/* MyProfile Hamburger Icon Styling (now managed here) */
 .myprofile-hamburger {
     display: none;
     /* Hidden by default on desktop */
@@ -782,7 +596,10 @@
     gap: 5px;
     cursor: pointer;
     padding: 5px;
-    /* Increase clickable area */
+    order: 1;
+    /* Puts hamburger on the left */
+    margin-right: auto;
+    /* Pushes hamburger to the far left */
 }
 
 .myprofile-hamburger span {
@@ -793,7 +610,6 @@
     transition: all 0.3s ease;
 }
 
-/* Hamburger active state (for X animation) */
 .myprofile-hamburger.active span:nth-child(1) {
     transform: rotate(45deg) translate(5px, 5px);
 }
@@ -814,9 +630,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    /* Semi-transparent black */
     z-index: 999;
-    /* Below sidebar (1000), above main content (1) */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
@@ -828,20 +642,13 @@
 }
 
 
-/* --- RESPONSIVE ADJUSTMENTS FOR MYPROFILE LAYOUT --- */
+/* RESPONSIVE ADJUSTMENTS FOR MYPROFILE LAYOUT */
 @media (max-width: 1000px) {
-    /* Hide the desktop sidebar completely - the sidebar.css will handle its own display */
-    /* .sidebar {
-        transform: translateX(-100%);
-        box-shadow: none;
-    } */
-
     .myprofile-main {
         margin-left: 0;
         /* Remove fixed margin-left on mobile */
         padding-top: 80px;
-        /* Account for fixed mobile header */
-        /* No transition on margin-left as sidebar doesn't push it */
+        /* Account for fixed mobile header (60px height + 20px padding) */
     }
 
     .myprofile-mobile-header {
@@ -854,34 +661,24 @@
         /* Show hamburger icon */
     }
 
-    /* Adjust myprofile-content for mobile - stack vertically */
     .myprofile-content {
         flex-direction: column;
-        /* Stack preview and editor vertically */
         gap: 20px;
-        /* Reduce gap for mobile */
         padding-top: 0;
-        /* No extra padding at the top, header already covers it */
     }
 
     .myprofile-preview,
     .myprofile-editor-wrapper {
         max-width: 100%;
-        /* Allow them to take full width */
         min-width: unset;
-        /* Remove min-width constraints */
         width: 100%;
-        /* Take full width */
     }
 
     .myprofile-editor {
         padding: 16px;
-        /* Adjust padding for smaller screens */
         gap: 15px;
-        /* Adjust gap for smaller screens */
     }
 
-    /* Prevent horizontal scroll on the layout when sidebar is open */
     .myprofile-layout.sidebar-active {
         overflow-x: hidden;
     }
@@ -896,12 +693,13 @@
         /* Force hide on desktop */
     }
 
-    /* Ensure desktop sidebar is visible if it was hidden by mobile styles */
-    /* This rule might not be strictly necessary if sidebar.css handles it,
-       but acts as a safeguard. */
+    .myprofile-main {
+        padding-top: 30px;
+        /* Ensure correct padding-top on desktop, unaffected by mobile header */
+    }
+
     .sidebar {
         transform: translateX(0) !important;
-        /* Force show on desktop */
         box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1) !important;
     }
 }
@@ -910,35 +708,25 @@
 @media (max-width: 400px) {
     .myprofile-main {
         padding: 15px;
-        /* Reduce overall padding on very small screens */
         padding-top: 75px;
-        /* Adjust for potentially smaller header on very small screens */
     }
 
     .page-header {
         flex-direction: column;
-        /* Stack header elements on very small screens */
         align-items: flex-start;
         gap: 10px;
-        /* Add gap between stacked header elements */
         margin-bottom: 20px;
-        /* Reduce bottom margin */
     }
 
     .page-actions {
         width: 100%;
-        /* Full width for buttons */
         justify-content: space-between;
-        /* Space out buttons */
     }
 
     .header-button {
         flex: 1;
-        /* Make buttons take equal space */
         padding: 8px 10px;
-        /* Adjust padding */
         font-size: 13px;
-        /* Smaller font size */
     }
 
     .mock-phone {

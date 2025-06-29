@@ -1,36 +1,24 @@
 /* Sidebar.css */
 
-/* DESKTOP SIDEBAR */
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
-    /* Fixed height to viewport, no internal scroll */
     min-width: 220px;
-    /* Minimum width for desktop sidebar */
     width: fit-content;
-    /* Allow width to fit content, up to max-width */
     max-width: 300px;
-    /* Cap max width to prevent excessively wide sidebar */
     background-color: white;
-    /* Or your desired sidebar background */
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    /* Stacks content vertically */
     padding: 20px;
     box-sizing: border-box;
-    /* Include padding in width */
     z-index: 999;
-    /* Ensure it's above other content on desktop */
     transition: transform 0.3s ease-in-out;
-    /* For mobile slide effect */
     overflow: hidden;
-    /* Hide any overflow within the fixed height */
 }
 
-/* Hide the internal mobile header on desktop */
 .sidebar-mobile-header-inner {
     display: none;
 }
@@ -39,23 +27,18 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    /* Take full height of sidebar */
     overflow: hidden;
-    /* Prevent internal scroll for the wrapper */
 }
 
 .my-account-container {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
-    /* Allow it to grow horizontally to contain email */
     flex-shrink: 0;
-    /* Prevent shrinking when space is tight */
 }
 
 .profile-pic {
     width: 38px;
-    /* Adjusted logo size */
     height: 38px;
     border-radius: 50%;
     margin-right: 12px;
@@ -66,7 +49,7 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
-    /* Allow text to shrink and ellipsis to work */
+    flex-grow: 1;
 }
 
 .user-info .email {
@@ -75,13 +58,9 @@
     color: #333;
     margin: 0;
     white-space: nowrap;
-    /* Prevent wrapping */
     overflow: hidden;
-    /* Hide overflow text */
     text-overflow: ellipsis;
-    /* Add ellipsis for overflow text */
     max-width: 100%;
-    /* Ensure it doesn't overflow its parent horizontally */
 }
 
 .user-info .name {
@@ -98,7 +77,6 @@
     border: none;
     border-top: 1px solid #eee;
     margin: 12px 0;
-    /* Reduced margin for tighter packing */
 }
 
 .section-title {
@@ -106,42 +84,31 @@
     font-weight: 700;
     color: #999;
     margin-bottom: 8px;
-    /* Reduced margin for tighter packing */
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-/* Group for Main, Account, Help links */
 .top-links-group {
     flex-grow: 1;
-    /* Allows this group to take up available space, pushing footer down */
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    /* No internal scroll for this group either */
     padding-right: 0;
-    /* No space for scrollbar */
     gap: 4px;
-    /* Smaller gap between sidebar buttons */
 }
 
 .main-links-container,
 .account-links-container,
 .help-links-container {
     margin-bottom: 12px;
-    /* Reduced margin between sections */
     flex-shrink: 0;
-    /* Prevent these sections from shrinking */
 }
-
 
 .sidebar-button {
     display: flex;
     align-items: center;
     padding: 8px 10px;
-    /* Reduced padding for tighter buttons */
     border-radius: 8px;
-    /* margin-bottom is now handled by gap in top-links-group or directly */
     text-decoration: none;
     color: #333;
     transition: background-color 0.2s ease, color 0.2s ease;
@@ -154,17 +121,14 @@
 
 .sidebar-button .icon {
     width: 18px;
-    /* Adjusted icon size */
     height: 18px;
     margin-right: 10px;
-    /* Adjusted margin */
     opacity: 0.7;
 }
 
 .sidebar-button p {
     margin: 0;
     font-size: 14px;
-    /* Adjusted font size */
 }
 
 .sidebar-button:hover {
@@ -187,17 +151,12 @@
 
 .footer-actions {
     padding-top: 12px;
-    /* Reduced padding-top */
     border-top: 1px solid #eee;
     flex-shrink: 0;
-    /* Prevent from shrinking */
     margin-top: auto;
-    /* Push to the bottom */
     display: flex;
-    /* Make it a flex container */
     flex-direction: column;
     gap: 4px;
-    /* Smaller gap between footer buttons */
 }
 
 
@@ -208,78 +167,62 @@
         left: 0;
         top: 0;
         height: 100vh;
-        /* Full height */
         width: 100vw;
-        /* Full width */
         transform: translateX(-100%);
-        /* Start off-screen to the left */
         box-shadow: none;
-        /* Remove shadow to ensure full screen coverage */
         z-index: 1000;
-        /* Ensure it's on top of everything when open */
         overflow: hidden;
-        /* Hide any internal scrolling on the sidebar itself */
         background-color: white;
-        /* Ensure background is white */
         padding: 0;
-        /* Remove padding from sidebar container */
         transition: transform 0.3s ease-in-out;
     }
 
     .sidebar.open {
         transform: translateX(0);
-        /* Slide into view */
     }
 
-    /* Mobile Header inside the opened sidebar (the X and logo) */
     .sidebar-mobile-header-inner {
         display: flex;
         justify-content: space-between;
-        /* Space between logo and X */
         align-items: center;
         padding: 15px 20px;
-        /* Match myprofile-mobile-header padding */
         border-bottom: 1px solid #eee;
         flex-shrink: 0;
-        /* Prevent it from shrinking */
         background-color: white;
         width: 100%;
         box-sizing: border-box;
         order: -1;
-        /* Ensure it's always at the top of the flex column */
     }
 
-    /* Logo on the left inside the mobile sidebar when opened */
     .sidebar-logo-link-mobile {
-        margin-right: auto;
-        /* Pushes the close button to the right */
+        order: 2;
+        /* Moved logo to the right */
+        margin-left: auto;
+        /* Pushes logo to the far right */
         display: flex;
-        /* Ensure it's a flex container for img */
         align-items: center;
     }
 
     .sidebar-logo-link-mobile .sidebar-logo-mobile {
         height: 32px;
-        /* Same size as myprofile-mobile-header logo */
+        margin-right: 0;
     }
 
-    /* Close (X) button styles */
     .close-sidebar-button {
         display: flex;
         flex-direction: column;
         gap: 0;
-        /* No gap for X */
         cursor: pointer;
         padding: 5px;
         position: relative;
         width: 25px;
-        /* Define width for X */
         height: 25px;
-        /* Define height for X */
         align-items: center;
         justify-content: center;
-        margin-left: auto;
-        /* Pushes to the right */
+        order: 1;
+        /* Moved close button to the left */
+        margin-right: auto;
+        /* Pushes close button to the far left */
     }
 
     .close-sidebar-button span {
@@ -289,7 +232,6 @@
         border-radius: 3px;
         transition: all 0.3s ease;
         position: absolute;
-        /* Position spans for X effect */
     }
 
     .close-sidebar-button span:nth-child(1) {
@@ -300,54 +242,41 @@
         transform: rotate(-45deg);
     }
 
-    /* Sidebar content wrapper - now flexible inside the sidebar div */
     .sidebar-content-wrapper {
         padding: 20px;
-        /* Add padding inside for content */
         height: calc(100% - 63px);
-        /* Adjust height to account for header, assuming 63px for header height */
         box-sizing: border-box;
         overflow-y: auto;
-        /* Allow internal content to scroll if it exceeds screen height */
         padding-bottom: 40px;
-        /* Add some padding at the bottom of the scrollable area */
     }
 
-    /* Adjust my-account-container for mobile view */
     .my-account-container {
         padding-bottom: 15px;
-        /* Reduced padding */
-        border-bottom: 1px solid #eee;
+        border-bottom: none;
+        /* Removed border here as per the "only one divider" rule */
         margin-bottom: 15px;
-        /* Reduced margin */
     }
 
     .profile-pic {
         width: 50px;
-        /* Slightly larger profile pic on mobile */
         height: 50px;
     }
 
     .user-info .email {
         font-size: 15px;
-        /* Adjusted font size */
     }
 
     .user-info .name {
         font-size: 13px;
-        /* Adjusted font size */
     }
 
     .sidebar-button {
         padding: 10px 15px;
-        /* Adjusted padding */
         font-size: 15px;
-        /* Adjusted font size */
     }
 
     .sidebar-button .icon {
         width: 20px;
-        /* Adjusted icon size */
         height: 20px;
     }
 
@@ -356,28 +285,30 @@
     }
 
     .divider {
-        margin: 10px 0;
-        /* Further reduced margin for mobile */
+        display: none;
+        /* Hide all dividers by default on mobile */
     }
 
-    .section-title {
-        margin-bottom: 10px;
-        /* Further reduced margin for mobile */
+    .my-account-container+.divider {
+        /* This rule will target the divider immediately after my-account-container */
+        display: block;
+        /* Show this specific divider only */
+        margin: 15px 0;
+        /* Add margin back for this divider */
+    }
+
+    .top-links-group {
+        overflow-y: visible;
+        padding-right: 0;
     }
 
     .main-links-container,
     .account-links-container,
     .help-links-container {
         margin-bottom: 10px;
-        /* Reduced margin between sections on mobile */
     }
 
     .footer-actions {
         padding-top: 15px;
-        /* Adjusted padding for mobile */
     }
-}
-
-.body-no-scroll {
-    overflow: hidden !important;
 }
