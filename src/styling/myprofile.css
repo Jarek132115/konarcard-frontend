@@ -1,16 +1,54 @@
 /* myprofile.css */
 
+/* CSS Variables for theming (Light Mode Defaults) */
+:root {
+    --primary-bg: #FFFFFF;
+    --secondary-bg: #F9F9F9;
+    --text-color: #000000;
+    --subtle-text-color: #555;
+    --card-bg: #F1F1F1;
+    --button-bg: black;
+    --button-text: white;
+    --border-color: #ccc;
+    --input-border: #ccc;
+    --placeholder-bg: #f0f0f0;
+    --page-header-color: #000000;
+    /* For PageHeader title */
+    --main-font-family: 'Inter', sans-serif;
+    /* Default font */
+}
+
+/* Dark Mode Overrides */
+.dark-mode {
+    --primary-bg: #1F1F1F;
+    --secondary-bg: #2C2C2C;
+    --text-color: #FFFFFF;
+    --subtle-text-color: #BBB;
+    --card-bg: #333333;
+    --button-bg: white;
+    --button-text: black;
+    --border-color: #555;
+    --input-border: #666;
+    --placeholder-bg: #444;
+    --page-header-color: #FFFFFF;
+    /* For PageHeader title */
+}
+
+/* General Layout */
 .myprofile-layout {
     display: flex;
     height: 100vh;
-    background-color: #f9f9f9;
+    background-color: var(--secondary-bg);
+    /* Use variable */
     overflow: hidden;
     position: relative;
 }
 
+/* MyProfile Main content area (right side, next to sidebar) */
 .myprofile-main {
     flex: 1;
-    font-family: sans-serif;
+    font-family: var(--main-font-family);
+    /* Use variable */
     padding: 30px;
     display: flex;
     flex-direction: column;
@@ -21,6 +59,8 @@
     padding-top: 30px;
     transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
     z-index: 1;
+    color: var(--text-color);
+    /* Apply base text color */
 }
 
 .page-header {
@@ -35,6 +75,8 @@
     font-size: 24px;
     font-weight: 700;
     margin: 0;
+    color: var(--page-header-color);
+    /* Use variable for page title */
 }
 
 .page-actions {
@@ -59,7 +101,8 @@
 .header-button.white {
     background-color: white;
     color: black;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
+    /* Use variable */
 }
 
 .myprofile-flex-container {
@@ -88,8 +131,10 @@
 .mock-phone {
     width: 100%;
     height: 100%;
-    background: #fff;
-    border: 10px solid #ccc;
+    background: var(--primary-bg);
+    /* Use variable */
+    border: 10px solid var(--border-color);
+    /* Use variable */
     border-radius: 2.5rem;
     padding: 20px;
     text-align: center;
@@ -99,33 +144,14 @@
     flex-direction: column;
     flex-shrink: 0;
     flex-grow: 0;
+    font-family: var(--main-font-family);
+    /* Apply font variable here */
+    color: var(--text-color);
+    /* Apply base text color */
 }
 
-.mock-phone[style*="background-color: rgb(31, 31, 31)"] {
-    background-color: #1F1F1F !important;
-    border-color: #555 !important;
-}
-
-.mock-phone[style*="background-color: rgb(31, 31, 31)"] * {
-    color: white;
-}
-
-.mock-phone[style*="background-color: rgb(31, 31, 31)"] .mock-subtitle,
-.mock-phone[style*="background-color: rgb(31, 31, 31)"] .mock-profile-role,
-.mock-phone[style*="background-color: rgb(31, 31, 31)"] .mock-service-item span {
-    color: #bbb;
-}
-
-.mock-phone[style*="background-color: rgb(31, 31, 31)"] .mock-about-container,
-.mock-phone[style*="background-color: rgb(31, 31, 31)"] .mock-service-item,
-.mock-phone[style*="background-color: rgb(31, 31, 31)"] .mock-review-card {
-    background: #333;
-    color: white;
-}
-
-.mock-phone[style*="background-color: rgb(31, 31, 31)"] .mock-review-card .mock-review-text {
-    color: #ddd;
-}
+/* Remove direct background-color overrides from mock-phone, now handled by CSS variables */
+/* Remove attribute selectors for dark mode, now handled by .dark-mode class */
 
 .mock-phone-scrollable-content {
     flex-grow: 1;
@@ -144,7 +170,8 @@
 .mock-cover,
 .mock-avatar,
 .mock-work-image-item {
-    background-color: #f0f0f0;
+    background-color: var(--placeholder-bg);
+    /* Use variable */
     display: block;
     object-fit: cover;
     background-size: 50%;
@@ -155,7 +182,8 @@
 .mock-cover[src=""],
 .mock-avatar[src=""],
 .mock-work-image-item[src=""] {
-    border: 1px dashed #ccc;
+    border: 1px dashed var(--border-color);
+    /* Use variable */
 }
 
 .mock-cover {
@@ -189,18 +217,23 @@
     font-weight: 700;
     margin: 0;
     line-height: 1.2;
+    color: var(--text-color);
+    /* Use variable */
 }
 
 .mock-subtitle {
     font-size: 1rem;
     font-weight: 600;
-    color: #555;
+    color: var(--subtle-text-color);
+    /* Use variable */
     margin: 0.5rem 0 0 0;
 }
 
 .mock-button {
-    background: black;
-    color: white;
+    background: var(--button-bg);
+    /* Use variable */
+    color: var(--button-text);
+    /* Use variable */
     padding: 0.75rem 1.25rem;
     border-radius: 0.5rem;
     border: none;
@@ -209,6 +242,8 @@
     margin-top: 1rem;
     width: 100%;
     box-sizing: border-box;
+    font-family: var(--main-font-family);
+    /* Apply font variable here */
 }
 
 .mock-section-title {
@@ -217,10 +252,13 @@
     margin-bottom: 0.75rem;
     font-weight: 600;
     text-align: left;
+    color: var(--text-color);
+    /* Use variable */
 }
 
 .mock-about-container {
-    background: #f1f1f1;
+    background: var(--card-bg);
+    /* Use variable */
     border-radius: 1rem;
     padding: 1rem;
     display: flex;
@@ -248,7 +286,8 @@
     border-radius: 50%;
     min-width: 3.5rem;
     min-height: 3.5rem;
-    background-color: #ccc;
+    background-color: var(--border-color);
+    /* Use variable for fallback */
     background-image: url('/Interface-Preview/Profile-Pic.png');
     background-size: cover;
     background-position: center;
@@ -258,12 +297,15 @@
     font-weight: 700;
     margin: 0;
     font-size: 1.125rem;
+    color: var(--text-color);
+    /* Use variable */
 }
 
 .mock-profile-role {
     font-size: 0.9375rem;
     margin: 0;
-    color: #555;
+    color: var(--subtle-text-color);
+    /* Use variable */
     font-weight: normal;
 }
 
@@ -272,7 +314,8 @@
     line-height: 1.4;
     margin-top: 0;
     text-align: left;
-    color: #333;
+    color: var(--text-color);
+    /* Use variable */
 }
 
 .mock-work-gallery {
@@ -288,7 +331,8 @@
     border-radius: 0.5rem;
     min-width: 50px;
     min-height: 50px;
-    background-color: #f0f0f0;
+    background-color: var(--placeholder-bg);
+    /* Use variable */
     background-image: url('/Interface-Preview/Work-Images1.png');
     background-size: 50%;
     background-repeat: no-repeat;
@@ -302,12 +346,15 @@
 }
 
 .mock-service-item {
-    background-color: #f6f6f6;
+    background-color: var(--card-bg);
+    /* Use variable */
     border-radius: 0.75rem;
     padding: 0.75rem 1rem;
     text-align: left;
     display: flex;
     flex-direction: column;
+    color: var(--text-color);
+    /* Use variable */
 }
 
 .mock-service-name {
@@ -319,7 +366,8 @@
 
 .mock-service-price {
     font-size: 0.8125rem;
-    color: #777;
+    color: var(--subtle-text-color);
+    /* Use variable */
     margin: 0;
     line-height: 1.3;
 }
@@ -331,10 +379,13 @@
 }
 
 .mock-review-card {
-    background-color: #f6f6f6;
+    background-color: var(--card-bg);
+    /* Use variable */
     border-radius: 0.75rem;
     padding: 1rem;
     text-align: left;
+    color: var(--text-color);
+    /* Use variable */
 }
 
 .mock-star-rating {
@@ -346,7 +397,8 @@
 
 .mock-review-text {
     font-size: 0.9375rem;
-    color: #333;
+    color: var(--text-color);
+    /* Use variable */
     margin-top: 0;
     margin-bottom: 0.75rem;
     line-height: 1.4;
@@ -355,7 +407,8 @@
 .mock-reviewer-name {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #555;
+    color: var(--subtle-text-color);
+    /* Use variable */
     margin: 0;
 }
 
@@ -372,7 +425,8 @@
 
 .myprofile-editor {
     flex: 1;
-    background: white;
+    background: var(--primary-bg);
+    /* Use variable */
     padding: 24px;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -383,6 +437,8 @@
     box-sizing: border-box;
     width: 100%;
     height: 100%;
+    color: var(--text-color);
+    /* Apply base text color to editor */
 }
 
 .editor-title {
@@ -410,8 +466,25 @@
 .input-block input {
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-border);
+    /* Use variable */
     font-size: 14px;
+    background-color: var(--primary-bg);
+    /* Ensure inputs match theme */
+    color: var(--text-color);
+    /* Ensure input text matches theme */
+}
+
+.input-block textarea {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--input-border);
+    /* Use variable */
+    font-size: 14px;
+    background-color: var(--primary-bg);
+    /* Ensure textareas match theme */
+    color: var(--text-color);
+    /* Ensure textarea text matches theme */
 }
 
 .option-row {
@@ -423,8 +496,12 @@
 .font-button {
     padding: 8px 14px;
     border-radius: 8px;
-    border: 1px solid #ddd;
-    background: #fff;
+    border: 1px solid var(--border-color);
+    /* Use variable */
+    background: var(--primary-bg);
+    /* Use variable */
+    color: var(--text-color);
+    /* Use variable */
     cursor: pointer;
     font-size: 13px;
     font-weight: 500;
@@ -434,6 +511,7 @@
 .theme-button.is-active,
 .font-button.is-active {
     background-color: #007bff;
+    /* Keep active color consistent */
     color: white;
     border-color: #007bff;
 }
@@ -451,7 +529,8 @@
 .myprofile-editor .divider {
     margin: 20px 0;
     border: none;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--border-color);
+    /* Use variable */
 }
 
 .work-preview-row {
@@ -467,23 +546,16 @@
     border-radius: 8px;
 }
 
-.input-block input[type="text"],
-.input-block textarea {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
 .input-block button {
     margin-top: 8px;
     padding: 8px 14px;
     font-size: 13px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
+    border: 1px solid var(--border-color);
+    /* Use variable */
+    background-color: var(--secondary-bg);
+    /* Use variable */
+    color: var(--text-color);
+    /* Use variable */
     cursor: pointer;
     transition: background 0.2s;
 }
@@ -493,7 +565,8 @@
 }
 
 .review-card {
-    background: #f6f6f6;
+    background: var(--card-bg);
+    /* Use variable */
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 10px;
@@ -511,6 +584,10 @@
     font-size: 16px;
     border: none;
     margin-top: auto;
+    background-color: var(--button-bg);
+    /* Use variable */
+    color: var(--button-text);
+    /* Use variable */
 }
 
 .subscription-overlay {
@@ -530,7 +607,8 @@
 }
 
 .subscription-message {
-    background-color: #ffffff;
+    background-color: var(--primary-bg);
+    /* Use variable */
     padding: 30px;
     border-radius: 12px;
     text-align: center;
@@ -545,13 +623,15 @@
 
 .subscription-message h2 {
     font-size: 24px;
-    color: #333;
+    color: var(--text-color);
+    /* Use variable */
     margin-bottom: 0;
 }
 
 .subscription-message p {
     font-size: 16px;
-    color: #666;
+    color: var(--subtle-text-color);
+    /* Use variable */
     margin-bottom: 0;
 }
 
@@ -649,7 +729,8 @@
         margin-left: 0;
         padding-top: 70px;
         overflow-y: auto;
-        /* ENABLE PAGE SCROLL ON MOBILE */
+        color: var(--text-color);
+        /* Ensure text color applies on mobile too */
     }
 
     .myprofile-mobile-header {
@@ -662,14 +743,12 @@
 
     .myprofile-flex-container {
         flex-direction: column;
-        gap: 100px;
+        gap: 20px;
         padding-top: 0;
         justify-content: flex-start;
         align-items: center;
         height: auto;
-        /* Let content dictate height */
         flex: 0 0 auto;
-        /* Crucial: Prevent it from taking remaining space from main on mobile */
     }
 
     .myprofile-content {
@@ -688,6 +767,12 @@
         width: 100%;
         height: auto;
         aspect-ratio: 9 / 17;
+        background: var(--primary-bg);
+        /* Ensure mobile also uses vars */
+        border-color: var(--border-color);
+        /* Ensure mobile also uses vars */
+        color: var(--text-color);
+        /* Ensure mobile also uses vars */
     }
 
     .myprofile-editor-wrapper {
@@ -696,10 +781,8 @@
         min-width: unset;
         height: auto;
         max-height: 70vh;
-        /* Editor max-height on mobile */
         flex-shrink: 1;
         flex-grow: 0;
-        /* Important: Prevents it from consuming all remaining space in flex-container */
         aspect-ratio: unset;
     }
 
@@ -708,6 +791,10 @@
         gap: 15px;
         overflow-y: auto;
         height: 100%;
+        background: var(--primary-bg);
+        /* Ensure mobile also uses vars */
+        color: var(--text-color);
+        /* Ensure mobile also uses vars */
     }
 
     .myprofile-layout.sidebar-active {
@@ -725,7 +812,6 @@
     .myprofile-main {
         padding-top: 30px;
         overflow-y: hidden;
-        /* Prevent main page scroll on desktop */
     }
 
     .sidebar {
@@ -842,16 +928,32 @@
 .input-block input[type=text],
 .input-block textarea {
     padding: 10px;
-    border: 1px solid #ccc !important;
+    border: 1px solid var(--input-border) !important;
     border-radius: 8px;
     font-size: 14px;
     width: 100%;
     box-sizing: border-box;
+    background-color: var(--primary-bg);
+    /* Apply theme to input fields */
+    color: var(--text-color);
+    /* Apply theme to input text */
 }
 
 .input-block input {
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid #ccc !important;
+    border: 1px solid var(--input-border) !important;
     font-size: 14px;
+    background-color: var(--primary-bg);
+    /* Apply theme to input fields */
+    color: var(--text-color);
+    /* Apply theme to input text */
+}
+
+/* Ensure placeholder text also respects dark mode */
+.input-block input::placeholder,
+.input-block textarea::placeholder {
+    color: var(--subtle-text-color);
+    opacity: 0.7;
+    /* Make it slightly lighter for visibility */
 }

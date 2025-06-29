@@ -131,7 +131,6 @@ export default function MyProfile() {
         contact_email: businessCard?.contact_email || '',
         phone_number: businessCard?.phone_number || '',
       });
-
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
@@ -139,7 +138,6 @@ export default function MyProfile() {
       setIsAvatarRemoved(false);
     }
   }, [businessCard, isCardLoading, updateState, resetState, authUser]);
-
 
   useEffect(() => {
     return () => {
@@ -569,7 +567,11 @@ export default function MyProfile() {
 
             <div className="myprofile-flex-container">
               <div className="myprofile-content">
-                <div className="mock-phone">
+                {/* Apply dynamic class for dark mode and dynamic font style */}
+                <div
+                  className={`mock-phone ${state.pageTheme === "dark" ? "dark-mode" : ""}`}
+                  style={{ fontFamily: state.font }}
+                >
                   <div className="mock-phone-scrollable-content">
                     <img
                       src={state.coverPhoto}
