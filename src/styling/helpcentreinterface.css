@@ -135,14 +135,3 @@
     /* Maintain aspect ratio */
   }
 }
-
-/* Remove old redundant specific help-centre styling */
-/* If you have these defined globally, remove them. Otherwise, they might not exist. */
-/* .help-layout, .help-main, .help-title {
-    display: initial;
-    height: initial;
-    padding: initial;
-    flex: initial;
-    overflow-y: initial;
-    margin-bottom: initial;
-} */
