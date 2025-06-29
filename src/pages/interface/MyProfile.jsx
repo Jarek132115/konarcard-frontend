@@ -1,8 +1,8 @@
-// frontend/src/pages/interface/MyProfile.jsx (COMPLETE & FINAL for responsive sidebar layout)
+// frontend/src/pages/interface/MyProfile.jsx (COMPLETE & FINAL - Verified Link import)
 
 import React, { useRef, useEffect, useState, useContext } from "react";
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import Sidebar from "../../components/Sidebar"; // Updated import to pass props
+import { Link, useNavigate, useLocation } from 'react-router-dom'; // <--- ENSURE 'Link' IS HERE
+import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import ProfileCardImage from "../../assets/images/background-hero.png";
 import UserAvatar from "../../assets/images/People.png";
@@ -49,7 +49,7 @@ export default function MyProfile() {
 
   const [coverPhotoFile, setCoverPhotoFile] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
-  const [workImageFiles, setWorkImageFiles] = []; // Changed to empty array for initial state
+  const [workImageFiles, setWorkImageFiles] = useState([]); // Corrected initialization
 
   const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
