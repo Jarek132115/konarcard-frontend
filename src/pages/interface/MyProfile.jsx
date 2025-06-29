@@ -750,9 +750,8 @@ export default function MyProfile() {
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: isSubscribed ? 'none' : 'blur(5px)', pointerEvents: isSubscribed ? 'auto' : 'none' }}>
+                <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: 'none', pointerEvents: 'auto' }}>
                   <h2 className="editor-title">Create Your Digital Business Card</h2>
-
                   <div className="input-block">
                     <label>Page Theme</label>
                     <div className="option-row">
