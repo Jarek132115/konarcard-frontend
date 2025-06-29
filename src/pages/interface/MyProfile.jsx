@@ -4,8 +4,8 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-import ProfileCardImage from "../../assets/images/background-hero.png";
-import UserAvatar from "../../assets/images/People.png";
+import ProfileCardImage from "../../assets/images/background-hero.png"; // Re-import this
+import UserAvatar from "../../assets/images/People.png"; // Re-import this
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
@@ -46,19 +46,27 @@ export default function MyProfile() {
 
   const [coverPhotoFile, setCoverPhotoFile] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
-  const [workImageFiles, setWorkImageFiles] = useState([]); // Array of actual File objects for new work images
+  const [workImageFiles, setWorkImageFiles] = useState([]);
 
-  const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false); // Flag for backend to explicitly remove cover photo
-  const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);   // Flag for backend to explicitly remove avatar
+  const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
+  const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
 
-  const [activeBlobUrls, setActiveBlobUrls] = useState([]); // To keep track of object URLs for cleanup
+  const [activeBlobUrls, setActiveBlobUrls] = useState([]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
   const initialStoreState = useBusinessCardStore.getState().state;
 
-  // Effect to manage body overflow for sidebar
+  useEffect(() => {
+    // console.log("RENDER - Current State:", JSON.parse(JSON.stringify(state)));
+    // console.log("RENDER - isSubscribed:", isSubscribed);
+    // console.log("RENDER - authLoading:", authLoading);
+    // console.log("RENDER - isCardLoading (fetching card data):", isCardLoading);
+    // console.log("RENDER - businessCard (fetched data):", businessCard);
+  });
+
+
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
@@ -80,24 +88,32 @@ export default function MyProfile() {
     };
   }, [sidebarOpen, isMobile]);
 
-  // Cleanup for blob URLs
   useEffect(() => {
-    return () => {
-      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
-    };
-  }, [activeBlobUrls]);
+    // console.log removed as requested in earlier turns
+  }, [isCardLoading, isCardError, cardError]);
 
-
-  // Effect to handle fetched business card data or apply initial defaults
   useEffect(() => {
-    // console.log("MyProfile useEffect (businessCard/loading/authUser): Triggered with businessCard:", businessCard, "isCardLoading:", isCardLoading, "authUser:", authUser);
+    let timer;
+    if (resendCooldown > 0) {
+      timer = setTimeout(() => setResendCooldown(cooldown => cooldown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
 
-    // Only proceed if not currently loading card data AND authUser is loaded
+  useEffect(() => {
+    if (!authLoading && authUser && !isUserVerified && userEmail) {
+      setShowVerificationPrompt(true);
+    } else if (!authLoading && isUserVerified) {
+      setShowVerificationPrompt(false);
+    }
+  }, [authLoading, authUser, isUserVerified, userEmail]);
+
+  useEffect(() => {
+    // console.log("EFFECT - businessCard useEffect triggered. BusinessCard:", businessCard, "isCardLoading:", isCardLoading);
+
     if (!isCardLoading && authUser) {
       if (businessCard) {
-        // console.log("MyProfile useEffect: Business card found. Updating state from fetched data.", businessCard);
-        activeBlobUrls.forEach(url => URL.revokeObjectURL(url)); // Clean up any old blob URLs
-        setActiveBlobUrls([]);
+        // console.log("EFFECT - Fetched businessCard data. Current state BEFORE updateState:", JSON.parse(JSON.stringify(state)));
 
         updateState({
           businessName: businessCard.business_card_name || '',
@@ -108,7 +124,6 @@ export default function MyProfile() {
           job_title: businessCard.job_title || '',
           full_name: businessCard.full_name || '',
           bio: businessCard.bio || '',
-          // Use fetched image URLs directly. If backend returns null, the `src` fallback will handle it.
           avatar: businessCard.avatar || null,
           coverPhoto: businessCard.cover_photo || null,
           workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
@@ -118,17 +133,21 @@ export default function MyProfile() {
           phone_number: businessCard.phone_number || '',
         });
 
-        // Reset local file states and removal flags after successful fetch/update
+        activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+        setActiveBlobUrls([]);
         setCoverPhotoFile(null);
         setAvatarFile(null);
         setWorkImageFiles([]);
         setCoverPhotoRemoved(false);
         setIsAvatarRemoved(false);
 
-      } else { // businessCard is null, meaning no card exists for this user yet
+        // console.log("EFFECT - state after updateState (from fetched data):", JSON.parse(JSON.stringify(useBusinessCardStore.getState().state)));
+
+      } else { // businessCard is null, meaning no card exists for this user
         // console.log("MyProfile useEffect: No business card found for user. Resetting state to initial defaults.");
-        resetState(); // Reset ALL state to initial defaults from businessCardStore.js
-        // Clear local file states and removal flags, as we're starting fresh
+        resetState();
+        activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+        setActiveBlobUrls([]);
         setCoverPhotoFile(null);
         setAvatarFile(null);
         setWorkImageFiles([]);
@@ -136,65 +155,51 @@ export default function MyProfile() {
         setIsAvatarRemoved(false);
       }
     }
-  }, [businessCard, isCardLoading, authUser, updateState, resetState]); // Removed initialStoreState from dependency array as it's a static constant
+  }, [businessCard, isCardLoading, updateState, resetState, authUser]);
 
-
-  // Other useEffects (Verification prompt, resend cooldown)
-  useEffect(() => {
-    if (!authLoading && authUser && !isUserVerified && userEmail) {
-      setShowVerificationPrompt(true);
-    } else if (!authLoading && isUserVerified) {
-      setShowVerificationPrompt(false);
-    }
-  }, [authLoading, authUser, isUserVerified, userEmail]);
 
   useEffect(() => {
-    let timer;
-    if (resendCooldown > 0) {
-      timer = setTimeout(() => setResendCooldown(cooldown => cooldown - 1), 1000);
-    }
-    return () => clearTimeout(timer);
-  }, [resendCooldown]);
+    return () => {
+      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [activeBlobUrls]);
 
-
-  // Helper to create and track blob URLs for local preview
   const createAndTrackBlobUrl = (file) => {
     const blobUrl = URL.createObjectURL(file);
     setActiveBlobUrls(prev => [...prev, blobUrl]);
     return blobUrl;
   };
 
-  // --- Image Upload Handlers ---
   const handleImageUpload = (e) => {
     e.preventDefault();
-    const file = e.target.files?.[0]; // Use optional chaining for safety
+    const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      updateState({ coverPhoto: createAndTrackBlobUrl(file) }); // Update state with blob URL for preview
-      setCoverPhotoFile(file); // Store the actual File object for upload
-      setCoverPhotoRemoved(false); // No longer marked for removal
+      updateState({ coverPhoto: createAndTrackBlobUrl(file) });
+      setCoverPhotoFile(file);
+      setCoverPhotoRemoved(false);
     }
   };
 
   const handleAvatarUpload = (event) => {
-    event.preventDefault();
-    const file = event.target.files?.[0]; // Use optional chaining for safety
+    e.preventDefault();
+    const file = event.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      updateState({ avatar: createAndTrackBlobUrl(file) }); // Update state with blob URL for preview
-      setAvatarFile(file); // Store the actual File object for upload
-      setIsAvatarRemoved(false); // No longer marked for removal
+      updateState({ avatar: createAndTrackBlobUrl(file) });
+      setAvatarFile(file);
+      setIsAvatarRemoved(false);
     }
   };
 
   const handleAddWorkImage = (e) => {
     e.preventDefault();
-    const files = Array.from(e.target.files || []); // Ensure it's an array
+    const files = Array.from(e.target.files || []);
     const newImageFiles = files.filter(file => file && file.type.startsWith("image/"));
     if (newImageFiles.length === 0) {
       return;
     }
     const newPreviewItems = newImageFiles.map(file => ({
-      file: file, // Store the actual File object
-      preview: createAndTrackBlobUrl(file), // Store blob URL for preview
+      file: file,
+      preview: createAndTrackBlobUrl(file),
     }));
     updateState({
       workImages: [...state.workImages, ...newPreviewItems],
@@ -202,51 +207,53 @@ export default function MyProfile() {
     setWorkImageFiles(prevFiles => [...prevFiles, ...newImageFiles]);
   };
 
-  // --- Image Removal Handlers ---
   const handleRemoveCoverPhoto = () => {
-    // Only if currently has a value and it's not a blob (meaning it's from backend or initial default)
-    if (state.coverPhoto && !state.coverPhoto.startsWith('blob:')) {
-      setCoverPhotoRemoved(true); // Flag for backend to remove
+    if (state.coverPhoto === initialStoreState.coverPhoto) {
+      updateState({ coverPhoto: null });
+      setCoverPhotoFile(null);
+      setCoverPhotoRemoved(false);
+    } else {
+      if (state.coverPhoto && state.coverPhoto.startsWith('blob:')) {
+        URL.revokeObjectURL(state.coverPhoto);
+        setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
+      }
+      updateState({ coverPhoto: null });
+      setCoverPhotoFile(null);
+      setCoverPhotoRemoved(true);
     }
-    // If it's a blob URL, revoke it
-    if (state.coverPhoto && state.coverPhoto.startsWith('blob:')) {
-      URL.revokeObjectURL(state.coverPhoto);
-      setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
-    }
-    updateState({ coverPhoto: null }); // Clear preview
-    setCoverPhotoFile(null); // Clear file to upload
   };
 
   const handleRemoveAvatar = () => {
-    if (state.avatar && !state.avatar.startsWith('blob:')) {
-      setIsAvatarRemoved(true); // Flag for backend to remove
+    if (state.avatar === initialStoreState.avatar) {
+      updateState({ avatar: null });
+      setAvatarFile(null);
+      setIsAvatarRemoved(false);
+    } else {
+      if (state.avatar && state.avatar.startsWith('blob:')) {
+        URL.revokeObjectURL(state.avatar);
+        setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
+      }
+      updateState({ avatar: null });
+      setAvatarFile(null);
+      setIsAvatarRemoved(true);
     }
-    if (state.avatar && state.avatar.startsWith('blob:')) {
-      URL.revokeObjectURL(state.avatar);
-      setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
-    }
-    updateState({ avatar: null }); // Clear preview
-    setAvatarFile(null); // Clear file to upload
   };
 
   const handleRemoveWorkImage = (indexToRemove) => {
     const removedItem = state.workImages?.[indexToRemove];
+    const isDefaultImage = initialStoreState.workImages.some(defaultImg => defaultImg.preview === removedItem.preview);
+
     if (removedItem?.preview?.startsWith('blob:')) {
       URL.revokeObjectURL(removedItem.preview);
       setActiveBlobUrls(prev => prev.filter(url => url !== removedItem.preview));
     }
 
-    // Update main state for preview
     const newWorkImages = state.workImages.filter((_, index) => index !== indexToRemove);
     updateState({ workImages: newWorkImages });
 
-    // Update local file state for upload. This assumes `workImageFiles` mirrors `state.workImages`
-    // which can be tricky if they get out of sync. A more robust way might involve tracking original IDs.
     setWorkImageFiles(prevFiles => prevFiles.filter(f => f !== removedItem.file));
   };
 
-
-  // --- Other Handlers ---
   const handleAddService = () => {
     updateState({ services: [...state.services, { name: "", price: "" }] });
   };
@@ -321,8 +328,8 @@ export default function MyProfile() {
       } else {
         toast.success('Email verified successfully!');
         setShowVerificationPrompt(false);
-        refetchAuthUser();
         setVerificationCodeCode('');
+        refetchAuthUser();
       }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Verification failed.');
@@ -351,16 +358,14 @@ export default function MyProfile() {
 
     const worksToUpload = state.workImages
       .map(item => {
-        if (item.file) { // If it's a new file upload
+        if (item.file) {
           return { file: item.file };
+        } else if (item.preview && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
+          return item.preview;
         }
-        // If it's an existing image URL from backend that is NOT one of our initial defaults
-        else if (item.preview && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
-          return item.preview; // Send its URL to keep it
-        }
-        return null; // It's an initial default image and hasn't been replaced/modified, so don't send it
+        return null;
       })
-      .filter(item => item !== null); // Filter out any nulls
+      .filter(item => item !== null);
 
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
@@ -372,8 +377,8 @@ export default function MyProfile() {
       full_name: state.full_name,
       bio: state.bio,
       user: userId,
-      cover_photo: coverPhotoFile, // Pass the actual File object (or null)
-      avatar: avatarFile,         // Pass the actual File object (or null)
+      cover_photo: coverPhotoFile,
+      avatar: avatarFile,
       cover_photo_removed: coverPhotoRemoved,
       avatar_removed: isAvatarRemoved,
       works: worksToUpload,
@@ -387,8 +392,6 @@ export default function MyProfile() {
       const response = await createBusinessCard.mutateAsync(formData);
       toast.success("Business card saved successfully!");
 
-      // After a successful save, the state needs to be updated with the *new S3 URLs*
-      // from the backend's response, NOT the local blob URLs or original defaults.
       if (response.data && response.data.data) {
         const fetchedCardData = response.data.data;
 
@@ -401,11 +404,11 @@ export default function MyProfile() {
           job_title: fetchedCardData.job_title,
           full_name: fetchedCardData.full_name,
           bio: fetchedCardData.bio,
-          avatar: fetchedCardData.avatar, // This will be the S3 URL
-          coverPhoto: fetchedCardData.cover_photo, // This will be the S3 URL
+          avatar: fetchedCardData.avatar,
+          coverPhoto: fetchedCardData.cover_photo,
           workImages: (fetchedCardData.works || []).map((url) => ({
-            file: null, // No longer a local file, it's an S3 URL
-            preview: url, // This will be the S3 URL
+            file: null,
+            preview: url,
           })),
           services: fetchedCardData.services,
           reviews: fetchedCardData.reviews,
@@ -414,11 +417,9 @@ export default function MyProfile() {
         });
       }
 
-      // Clean up any remaining blob URLs as they are no longer needed for preview or upload
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
-      // Reset local file states and removal flags *after* updateState
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
