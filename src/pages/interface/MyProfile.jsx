@@ -75,6 +75,19 @@ export default function MyProfile() {
     return () => window.removeEventListener('resize', handleResize);
   }, [sidebarOpen]); // Dependency on sidebarOpen to ensure correct behavior on resize after opening/closing
 
+  // Effect to control body overflow when sidebar is open on mobile
+  useEffect(() => {
+    if (sidebarOpen && isMobile) {
+      document.body.classList.add('body-no-scroll');
+    } else {
+      document.body.classList.remove('body-no-scroll');
+    }
+    // Cleanup function
+    return () => {
+      document.body.classList.remove('body-no-scroll');
+    };
+  }, [sidebarOpen, isMobile]);
+
 
   useEffect(() => {
     console.log("MyProfile Component Rendered. AuthUser:", authUser, "AuthLoading:", authLoading, "isSubscribed:", isSubscribed);
@@ -476,6 +489,7 @@ export default function MyProfile() {
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
       {/* NEW: Mobile Header for MyProfile page (always visible on mobile) */}
       <div className="myprofile-mobile-header">
+        {/* Hamburger will be on the left */}
         <div
           className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -484,6 +498,7 @@ export default function MyProfile() {
           <span></span>
           <span></span>
         </div>
+        {/* Logo will be on the right */}
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
