@@ -26,6 +26,10 @@ export default function Register() {
     const [verificationStep, setVerificationStep] = useState(false);
     const [code, setCode] = useState('');
     const [cooldown, setCooldown] = useState(0);
+    // New state to control password feedback visibility
+    const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
+    // Ref to manage blur timeout
+    const blurTimeoutRef = React.useRef(null);
 
     useEffect(() => {
         if (cooldown > 0) {
@@ -42,6 +46,21 @@ export default function Register() {
         hasUppercase: /[A-Z]/.test(data.password),
         hasNumber: /\d/.test(data.password),
         passwordsMatch: data.password === data.confirmPassword && data.confirmPassword.length > 0,
+    };
+
+    const handlePasswordFocus = () => {
+        // Clear any pending blur timeout if we are focusing again
+        if (blurTimeoutRef.current) {
+            clearTimeout(blurTimeoutRef.current);
+        }
+        setShowPasswordFeedback(true);
+    };
+
+    const handlePasswordBlur = () => {
+        // Set a timeout to hide feedback, allowing a brief moment to switch between password fields
+        blurTimeoutRef.current = setTimeout(() => {
+            setShowPasswordFeedback(false);
+        }, 100); // 100ms delay
     };
 
     const registerUser = async (e) => {
@@ -170,30 +189,52 @@ export default function Register() {
 
                                 <label htmlFor="password" className="form-label">Password</label>
                                 <div className="password-wrapper">
-                                    <input type={showPassword ? 'text' : 'password'} id="password" name="password" placeholder="Password" value={data.password} onChange={(e) => setData({ ...data, password: e.target.value })} autoComplete="new-password" />
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        id="password"
+                                        name="password"
+                                        placeholder="Password"
+                                        value={data.password}
+                                        onChange={(e) => setData({ ...data, password: e.target.value })}
+                                        autoComplete="new-password"
+                                        onFocus={handlePasswordFocus} // Add onFocus
+                                        onBlur={handlePasswordBlur}   // Add onBlur
+                                    />
                                     <button type="button" onClick={togglePassword}>{showPassword ? 'Hide' : 'Show'}</button>
                                 </div>
 
                                 <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
                                 <div className="password-wrapper">
-                                    <input type={showConfirm ? 'text' : 'password'} id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" value={data.confirmPassword} onChange={(e) => setData({ ...data, confirmPassword: e.target.value })} autoComplete="new-password" />
+                                    <input
+                                        type={showConfirm ? 'text' : 'password'}
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        placeholder="Confirm Password"
+                                        value={data.confirmPassword}
+                                        onChange={(e) => setData({ ...data, confirmPassword: e.target.value })}
+                                        autoComplete="new-password"
+                                        onFocus={handlePasswordFocus} // Add onFocus
+                                        onBlur={handlePasswordBlur}   // Add onBlur
+                                    />
                                     <button type="button" onClick={toggleConfirm}>{showConfirm ? 'Hide' : 'Show'}</button>
                                 </div>
 
-                                <div className="password-feedback">
-                                    <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
-                                        <img src={passwordChecks.minLength ? greenTick : redCross} alt="" className="feedback-icon" /> Minimum 8 characters
-                                    </p>
-                                    <p className={passwordChecks.hasUppercase ? 'valid' : 'invalid'}>
-                                        <img src={passwordChecks.hasUppercase ? greenTick : redCross} alt="" className="feedback-icon" /> One uppercase letter
-                                    </p>
-                                    <p className={passwordChecks.hasNumber ? 'valid' : 'invalid'}>
-                                        <img src={passwordChecks.hasNumber ? greenTick : redCross} alt="" className="feedback-icon" /> One number
-                                    </p>
-                                    <p className={passwordChecks.passwordsMatch ? 'valid' : 'invalid'}>
-                                        <img src={passwordChecks.passwordsMatch ? greenTick : redCross} alt="" className="feedback-icon" /> Passwords match
-                                    </p>
-                                </div>
+                                {showPasswordFeedback && ( // Conditionally render
+                                    <div className="password-feedback">
+                                        <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
+                                            <img src={passwordChecks.minLength ? greenTick : redCross} alt="" className="feedback-icon" /> Minimum 8 characters
+                                        </p>
+                                        <p className={passwordChecks.hasUppercase ? 'valid' : 'invalid'}>
+                                            <img src={passwordChecks.hasUppercase ? greenTick : redCross} alt="" className="feedback-icon" /> One uppercase letter
+                                        </p>
+                                        <p className={passwordChecks.hasNumber ? 'valid' : 'invalid'}>
+                                            <img src={passwordChecks.hasNumber ? greenTick : redCross} alt="" className="feedback-icon" /> One number
+                                        </p>
+                                        <p className={passwordChecks.passwordsMatch ? 'valid' : 'invalid'}>
+                                            <img src={passwordChecks.passwordsMatch ? greenTick : redCross} alt="" className="feedback-icon" /> Passwords match
+                                        </p>
+                                    </div>
+                                )}
 
                                 <label className="terms-label">
                                     <input type="checkbox" className="terms-checkbox konar-checkbox" required />
