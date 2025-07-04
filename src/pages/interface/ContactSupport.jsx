@@ -157,7 +157,7 @@ export default function ContactSupport() {
                     </p>
 
                     {/* Wrapped the form in a div with login-card class for consistent styling */}
-                    <div className="login-card" style={{ margin: '0 auto' }}> {/* Added margin: 0 auto for horizontal centering */}
+                    <div className="login-card">
                         <form className='login-form' onSubmit={handleSubmit}>
                             <label htmlFor="name" className="form-label">Your Name</label> {/* Added label */}
                             <input
