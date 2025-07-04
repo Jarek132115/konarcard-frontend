@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react'; 
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
-import ShareProfile from '../../components/ShareProfile'; 
+import ShareProfile from '../../components/ShareProfile';
 import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
-import { AuthContext } from '../../components/AuthContext'; 
-import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; 
+import { AuthContext } from '../../components/AuthContext';
+import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 
 export default function ContactSupport() {
     const [formData, setFormData] = useState({
@@ -20,9 +20,9 @@ export default function ContactSupport() {
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-    const [showShareModal, setShowShareModal] = useState(false); 
+    const [showShareModal, setShowShareModal] = useState(false);
 
-    const { user: authUser, loading: authLoading } = useContext(AuthContext); 
+    const { user: authUser, loading: authLoading } = useContext(AuthContext);
     const userId = authUser?._id;
     const userUsername = authUser?.username;
 
@@ -156,35 +156,44 @@ export default function ContactSupport() {
                         </span>
                     </p>
 
-                    <form className='contact-form' onSubmit={handleSubmit}>
+                    <form className='login-form' onSubmit={handleSubmit}> {/* Changed form class to login-form */}
+                        <label htmlFor="name" className="form-label">Name</label> {/* Added label */}
                         <div className='contact-input-container'>
                             <input
                                 type='text'
+                                id='name' // Added ID for label association
                                 name='name'
                                 placeholder='Enter your name'
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
+                                className='standard-input' // Added standard-input class
                             />
                         </div>
 
+                        <label htmlFor="email" className="form-label">Email</label> {/* Added label */}
                         <div className='contact-input-container'>
                             <input
                                 type='email'
+                                id='email' // Added ID for label association
                                 name='email'
                                 placeholder='Enter your email'
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
+                                className='standard-input' // Added standard-input class
                             />
                         </div>
 
+                        <label htmlFor="reason" className="form-label">Reason for contact</label> {/* Added label */}
                         <div className='contact-input-container'>
                             <select
+                                id='reason' // Added ID for label association
                                 name='reason'
                                 value={formData.reason}
                                 onChange={handleChange}
                                 required
+                                className='standard-input' // Added standard-input class
                             >
                                 <option value=''>Select a reason</option>
                                 <option value='Card not working'>My card isn’t working</option>
@@ -195,13 +204,17 @@ export default function ContactSupport() {
                             </select>
                         </div>
 
+                        <label htmlFor="message" className="form-label">Your Message</label> {/* Added label */}
                         <div className='contact-input-container-message'>
                             <textarea
+                                id='message' // Added ID for label association
                                 name='message'
                                 placeholder="Enter your message..."
                                 value={formData.message}
                                 onChange={handleChange}
                                 required
+                                className='standard-input' // Added standard-input class
+                                rows="5" // Added rows for better textarea appearance
                             />
                         </div>
 
@@ -209,7 +222,7 @@ export default function ContactSupport() {
                             <input
                                 type='checkbox'
                                 name='agree'
-                                className='terms-checkbox'
+                                className='terms-checkbox konar-checkbox' // Added konar-checkbox for consistent styling
                                 checked={formData.agree}
                                 onChange={handleChange}
                                 required
@@ -219,7 +232,7 @@ export default function ContactSupport() {
                             </span>
                         </label>
 
-                        <button type='submit' className='blue-button desktop-button' style={{ marginTop: 20 }}>
+                        <button type='submit' className='primary-button verify-email-button' style={{ marginTop: 20 }}> {/* Changed to primary-button verify-email-button */}
                             Submit
                         </button>
                     </form>
