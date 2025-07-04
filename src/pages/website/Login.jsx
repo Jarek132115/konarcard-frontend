@@ -127,57 +127,76 @@ export default function Login() {
 
                     {forgotPasswordStep ? (
                         <>
+                            <label htmlFor="resetEmail" className="form-label">Email</label>
                             <input
                                 type="email"
+                                id="resetEmail"
+                                name="resetEmail"
                                 placeholder="Enter your email"
                                 value={emailForReset}
                                 onChange={(e) => setEmailForReset(e.target.value)}
+                                className="standard-input"
+                                autoComplete="off"
                             />
-                            <button onClick={sendResetLink} className="primary-button">
+                            <button onClick={sendResetLink} className="primary-button send-reset-link-button">
                                 Send Reset Link
                             </button>
-                            <button onClick={() => setForgotPasswordStep(false)} className="secondary-button">
+                            <button onClick={() => setForgotPasswordStep(false)} className="secondary-button back-to-login-button">
                                 Back to Login
                             </button>
                         </>
                     ) : !verificationStep ? (
                         <form className="login-form" onSubmit={loginUser}>
+                            <label htmlFor="loginEmail" className="form-label">Email</label>
                             <input
                                 type="email"
+                                id="loginEmail"
+                                name="loginEmail"
                                 placeholder="Email"
                                 value={data.email}
                                 onChange={(e) => setData({ ...data, email: e.target.value })}
+                                className="standard-input"
+                                autoComplete="off"
                             />
+                            <label htmlFor="loginPassword" className="form-label">Password</label>
                             <div className="password-wrapper">
                                 <input
                                     type={showPassword ? 'text' : 'password'}
+                                    id="loginPassword"
+                                    name="loginPassword"
                                     placeholder="Password"
                                     value={data.password}
                                     onChange={(e) => setData({ ...data, password: e.target.value })}
+                                    autoComplete="off"
                                 />
                                 <button type="button" onClick={togglePassword}>
                                     {showPassword ? 'Hide' : 'Show'}
                                 </button>
                             </div>
-                            <button type="submit" className="primary-button">Sign In</button>
+                            <button type="submit" className="primary-button sign-in-button">Sign In</button>
                             <button type="button" className="link-button" onClick={() => setForgotPasswordStep(true)}>
                                 Forgot Password?
                             </button>
                         </form>
                     ) : (
                         <form onSubmit={verifyCode} className="login-form">
-                            <p>Enter the 6-digit code sent to <strong>{data.email}</strong></p>
+                            <p className="verification-instruction">Enter the 6-digit code sent to <strong>{data.email}</strong></p>
+                            <label htmlFor="verificationCode" className="form-label">Verification Code</label>
                             <input
                                 type="text"
+                                id="verificationCode"
+                                name="verificationCode"
                                 placeholder="Enter verification code"
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
+                                className="standard-input"
                                 maxLength={6}
+                                autoComplete="off"
                             />
-                            <button type="submit" className="primary-button">Verify Email</button>
+                            <button type="submit" className="primary-button verify-email-button">Verify Email</button>
                             <button
                                 type="button"
-                                className="secondary-button"
+                                className="secondary-button resend-code-button"
                                 onClick={resendCode}
                                 disabled={cooldown > 0}
                                 style={{ marginTop: '1rem' }}
