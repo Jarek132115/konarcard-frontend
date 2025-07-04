@@ -1,5 +1,50 @@
 /* frontend/src/styling/login.css */
 
+/* --- NEW GLOBAL STYLES TO PREVENT UNWANTED EDITING --- */
+/* Apply to all elements by default */
+* {
+    caret-color: transparent !important;
+    /* Hide caret on non-input elements */
+    -webkit-user-select: none !important;
+    /* Disable text selection for WebKit */
+    -moz-user-select: none !important;
+    /* Disable text selection for Firefox */
+    -ms-user-select: none !important;
+    /* Disable text selection for IE/Edge */
+    user-select: none !important;
+    /* Disable text selection for standard */
+}
+
+/* Re-enable content editing and caret specifically for input fields, textareas, and selects */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+    caret-color: initial !important;
+    /* Ensure caret is visible in inputs */
+    -webkit-user-select: text !important;
+    /* Re-enable text selection for inputs */
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+}
+
+/* Ensure buttons and other interactive elements explicitly don't get a caret or selection */
+button,
+a,
+.close-button,
+.myprofile-hamburger {
+    caret-color: transparent !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+
+
+/* --- EXISTING STYLES BELOW (No changes needed here, they will be applied after the global reset) --- */
+
 .login-wrapper {
     display: flex;
     height: 100vh;
@@ -676,60 +721,4 @@
     .verification-code-container {
         gap: 5px;
     }
-}
-
-/* --- NEW GLOBAL STYLES TO PREVENT UNWANTED EDITING --- */
-/* Disable content editing for most elements by default */
-body,
-div,
-p,
-span,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-a,
-label,
-li,
-ul,
-ol,
-section,
-article,
-header,
-footer,
-main {
-    -webkit-user-modify: read-only;
-    /* For older WebKit browsers, ensures no editing */
-    user-modify: read-only;
-    /* Standard, but less common now */
-    contenteditable: false;
-    /* Explicitly set to false */
-    caret-color: transparent;
-    /* Hide caret on non-input elements */
-}
-
-/* Re-enable content editing specifically for input fields, textareas, and selects */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-textarea,
-select {
-    -webkit-user-modify: read-write !important;
-    /* Re-enable for WebKit */
-    user-modify: read-write !important;
-    /* Re-enable for standard */
-    contenteditable: true !important;
-    /* Re-enable for contenteditable */
-    caret-color: initial !important;
-    /* Ensure caret is visible in inputs */
-}
-
-/* Ensure buttons and other interactive elements don't get a caret */
-button,
-a,
-.close-button,
-.myprofile-hamburger {
-    caret-color: transparent !important;
 }
