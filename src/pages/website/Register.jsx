@@ -159,15 +159,24 @@ export default function Register() {
 
                         {!verificationStep ? (
                             <form onSubmit={registerUser} className="login-form">
-                                <input type="text" placeholder="Name" value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })} />
-                                <input type="text" placeholder="Username" value={data.username} onChange={(e) => setData({ ...data, username: e.target.value })} />
-                                <input type="email" placeholder="Email" value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} />
+                                <label htmlFor="name" className="form-label">Name</label>
+                                <input type="text" id="name" placeholder="Name" value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })} className="standard-input" autoComplete="off" />
+
+                                <label htmlFor="username" className="form-label">Username</label>
+                                <input type="text" id="username" placeholder="Username" value={data.username} onChange={(e) => setData({ ...data, username: e.target.value })} className="standard-input" autoComplete="off" />
+
+                                <label htmlFor="email" className="form-label">Email</label>
+                                <input type="email" id="email" placeholder="Email" value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} className="standard-input" autoComplete="off" />
+
+                                <label htmlFor="password" className="form-label">Password</label>
                                 <div className="password-wrapper">
-                                    <input type={showPassword ? 'text' : 'password'} placeholder="Password" value={data.password} onChange={(e) => setData({ ...data, password: e.target.value })} />
+                                    <input type={showPassword ? 'text' : 'password'} id="password" placeholder="Password" value={data.password} onChange={(e) => setData({ ...data, password: e.target.value })} autoComplete="off" />
                                     <button type="button" onClick={togglePassword}>{showPassword ? 'Hide' : 'Show'}</button>
                                 </div>
+
+                                <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
                                 <div className="password-wrapper">
-                                    <input type={showConfirm ? 'text' : 'password'} placeholder="Confirm Password" value={data.confirmPassword} onChange={(e) => setData({ ...data, confirmPassword: e.target.value })} />
+                                    <input type={showConfirm ? 'text' : 'password'} id="confirmPassword" placeholder="Confirm Password" value={data.confirmPassword} onChange={(e) => setData({ ...data, confirmPassword: e.target.value })} autoComplete="off" />
                                     <button type="button" onClick={toggleConfirm}>{showConfirm ? 'Hide' : 'Show'}</button>
                                 </div>
 
@@ -187,7 +196,7 @@ export default function Register() {
                                 </div>
 
                                 <label className="terms-label">
-                                    <input type="checkbox" className="terms-checkbox" required />
+                                    <input type="checkbox" className="terms-checkbox konar-checkbox" required />
                                     <span className="desktop-body-xs">
                                         I agree to the <a href="/policies">Terms of Service</a> & <a href="/policies">Privacy Policy</a>
                                     </span>
@@ -197,10 +206,11 @@ export default function Register() {
                             </form>
                         ) : (
                             <form onSubmit={verifyCode} className="login-form">
-                                <p>Enter the 6-digit code sent to <strong>{data.email}</strong></p>
-                                <input type="text" placeholder="Enter verification code" value={code} onChange={(e) => setCode(e.target.value)} />
-                                <button type="submit" className="primary-button">Verify Email</button>
-                                <button type="button" className="secondary-button" onClick={resendCode} disabled={cooldown > 0} style={{ marginTop: '1rem' }}>
+                                <p className="verification-instruction">Enter the 6-digit code sent to <strong>{data.email}</strong></p>
+                                <label htmlFor="verificationCode" className="form-label">Verification Code</label>
+                                <input type="text" id="verificationCode" placeholder="Enter verification code" value={code} onChange={(e) => setCode(e.target.value)} className="standard-input" autoComplete="off" />
+                                <button type="submit" className="primary-button verify-email-button">Verify Email</button>
+                                <button type="button" className="secondary-button resend-code-button" onClick={resendCode} disabled={cooldown > 0} style={{ marginTop: '1rem' }}>
                                     {cooldown > 0 ? `Resend in ${cooldown}s` : 'Resend Code'}
                                 </button>
                             </form>

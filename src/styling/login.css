@@ -99,6 +99,8 @@
     font-weight: 500;
     color: #333;
     margin-bottom: 4px;
+    margin-top: 12px;
+    /* Added margin-top for spacing between inputs */
 }
 
 /* Styling for standard form inputs using a dedicated class */
@@ -109,6 +111,7 @@
     font-size: 14px;
     background-color: #eef3ff;
     margin-bottom: 12px;
+    /* Adjusted margin-bottom */
     width: 100%;
     box-sizing: border-box;
     height: 40px;
