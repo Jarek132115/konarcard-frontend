@@ -174,6 +174,7 @@ export default function Login() {
                                 </button>
                             </div>
                             <button type="submit" className="primary-button sign-in-button">Sign In</button>
+                            {/* Reverted Forgot Password link to original position (below Sign In) and centered */}
                             <button type="button" className="link-button" onClick={() => setForgotPasswordStep(true)}>
                                 Forgot Password?
                             </button>

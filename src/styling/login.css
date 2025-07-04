@@ -99,6 +99,8 @@
     font-weight: 500;
     color: #333;
     margin-bottom: 4px;
+    margin-top: 12px;
+    /* Added margin-top for spacing between inputs */
 }
 
 /* Styling for standard form inputs using a dedicated class */
@@ -109,6 +111,7 @@
     font-size: 14px;
     background-color: #eef3ff;
     margin-bottom: 12px;
+    /* Adjusted margin-bottom */
     width: 100%;
     box-sizing: border-box;
     height: 40px;
@@ -403,6 +406,7 @@
     font-weight: 600;
     cursor: pointer;
     text-align: center;
+    /* Reverted to center as per your last clarification */
     padding: 5px 0;
     /* Add some padding for click target */
     margin-top: 5px;
@@ -644,11 +648,17 @@
     }
 
     .login-right {
-        padding-top: 100px;
+        /* Adjusted padding to create 5% side margins for the 90% width card */
+        padding: 100px 5% 40px 5%;
     }
 
     .login-card {
+        width: 90%;
+        /* Set width to 90% */
+        max-width: 90%;
+        /* Ensure it doesn't exceed 90% */
         padding: 20px;
+        /* Keep internal padding */
     }
 
     .verification-code-input {
