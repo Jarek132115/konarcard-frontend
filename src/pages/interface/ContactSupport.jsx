@@ -156,41 +156,41 @@ export default function ContactSupport() {
                         </span>
                     </p>
 
-                    {/* Wrapped the form in a div with login-card class for consistent styling */}
-                    <div className="login-card">
-                        <form className='login-form' onSubmit={handleSubmit}>
-                            <label htmlFor="name" className="form-label">Your Name</label> {/* Added label */}
+                    {/* Wrapped the form in a div with contact-form-wrapper class for consistent styling */}
+                    <div className="contact-form-wrapper">
+                        <form className='contact-form' onSubmit={handleSubmit}>
+                            <label htmlFor="name" className="contact-form-label">Your Name</label>
                             <input
                                 type='text'
-                                id='name' // Added ID for label association
+                                id='name'
                                 name='name'
                                 placeholder='Enter your name'
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
-                                className='standard-input' // Applied standard-input class
+                                className='contact-form-input'
                             />
 
-                            <label htmlFor="email" className="form-label">Your Email</label> {/* Added label */}
+                            <label htmlFor="email" className="contact-form-label">Your Email</label>
                             <input
                                 type='email'
-                                id='email' // Added ID for label association
+                                id='email'
                                 name='email'
                                 placeholder='Enter your email'
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
-                                className='standard-input' // Applied standard-input class
+                                className='contact-form-input'
                             />
 
-                            <label htmlFor="reason" className="form-label">Reason for contact</label> {/* Added label */}
+                            <label htmlFor="reason" className="contact-form-label">Reason for contact</label>
                             <select
-                                id='reason' // Added ID for label association
+                                id='reason'
                                 name='reason'
                                 value={formData.reason}
                                 onChange={handleChange}
                                 required
-                                className='standard-input' // Applied standard-input class
+                                className='contact-form-select'
                             >
                                 <option value=''>Select a reason</option>
                                 <option value='Card not working'>My card isn’t working</option>
@@ -200,24 +200,24 @@ export default function ContactSupport() {
                                 <option value='Other'>Other</option>
                             </select>
 
-                            <label htmlFor="message" className="form-label">Your Message</label> {/* Added label */}
+                            <label htmlFor="message" className="contact-form-label">Your Message</label>
                             <textarea
-                                id='message' // Added ID for label association
+                                id='message'
                                 name='message'
                                 placeholder="Enter your message..."
                                 value={formData.message}
                                 onChange={handleChange}
                                 required
-                                className='standard-input' // Applied standard-input class (will adapt from login.css)
-                                rows="5" // Added rows for better textarea appearance
+                                className='contact-form-textarea'
+                                rows="5"
                             />
 
-                            <label className='terms-label'>
+                            <label className='contact-terms-label'>
                                 <input
                                     type='checkbox'
                                     name='agree'
-                                    className='terms-checkbox konar-checkbox' // Added konar-checkbox for consistent styling
-                                    checked={formData.agree} // Now controlled by state, initialized to true
+                                    className='contact-terms-checkbox'
+                                    checked={formData.agree}
                                     onChange={handleChange}
                                     required
                                 />
@@ -226,7 +226,7 @@ export default function ContactSupport() {
                                 </span>
                             </label>
 
-                            <button type='submit' className='primary-button verify-email-button' style={{ marginTop: 20 }}>
+                            <button type='submit' className='contact-submit-button'>
                                 Submit
                             </button>
                         </form>
