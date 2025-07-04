@@ -173,11 +173,10 @@ export default function Login() {
                                     {showPassword ? 'Hide' : 'Show'}
                                 </button>
                             </div>
-                            {/* Moved Forgot Password link above Sign In button */}
-                            <button type="button" className="link-button forgot-password-link" onClick={() => setForgotPasswordStep(true)}>
+                            <button type="submit" className="primary-button sign-in-button">Sign In</button>
+                            <button type="button" className="link-button" onClick={() => setForgotPasswordStep(true)}>
                                 Forgot Password?
                             </button>
-                            <button type="submit" className="primary-button sign-in-button">Sign In</button>
                         </form>
                     ) : (
                         <form onSubmit={verifyCode} className="login-form">
