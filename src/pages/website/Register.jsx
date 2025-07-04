@@ -181,8 +181,23 @@ export default function Register() {
                                 <label htmlFor="name" className="form-label">Name</label>
                                 <input type="text" id="name" name="name" placeholder="Name" value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })} className="standard-input" autoComplete="off" />
 
-                                <label htmlFor="username" className="form-label">Username</label>
-                                <input type="text" id="username" name="username" placeholder="Username" value={data.username} onChange={(e) => setData({ ...data, username: e.target.value })} className="standard-input" autoComplete="off" />
+                                {/* Updated Username Label and Input Structure */}
+                                <label htmlFor="username" className="form-label">
+                                    Username <span className="text-sm text-gray-500">(this username cannot be changed)</span>
+                                </label>
+                                <div className="username-input-wrapper">
+                                    <span className="url-prefix">https://www.konarcard.com/u/</span>
+                                    <input
+                                        type="text"
+                                        id="username"
+                                        name="username"
+                                        placeholder="yourusername" // Changed placeholder for clarity
+                                        value={data.username}
+                                        onChange={(e) => setData({ ...data, username: e.target.value })}
+                                        autoComplete="off"
+                                    // Removed standard-input class as styling is now on the wrapper and internal input
+                                    />
+                                </div>
 
                                 <label htmlFor="email" className="form-label">Email</label>
                                 <input type="email" id="email" name="email" placeholder="Email" value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} className="standard-input" autoComplete="off" />
@@ -197,8 +212,8 @@ export default function Register() {
                                         value={data.password}
                                         onChange={(e) => setData({ ...data, password: e.target.value })}
                                         autoComplete="new-password"
-                                        onFocus={handlePasswordFocus} // Add onFocus
-                                        onBlur={handlePasswordBlur}   // Add onBlur
+                                        onFocus={handlePasswordFocus}
+                                        onBlur={handlePasswordBlur}
                                     />
                                     <button type="button" onClick={togglePassword}>{showPassword ? 'Hide' : 'Show'}</button>
                                 </div>
@@ -213,13 +228,13 @@ export default function Register() {
                                         value={data.confirmPassword}
                                         onChange={(e) => setData({ ...data, confirmPassword: e.target.value })}
                                         autoComplete="new-password"
-                                        onFocus={handlePasswordFocus} // Add onFocus
-                                        onBlur={handlePasswordBlur}   // Add onBlur
+                                        onFocus={handlePasswordFocus}
+                                        onBlur={handlePasswordBlur}
                                     />
                                     <button type="button" onClick={toggleConfirm}>{showConfirm ? 'Hide' : 'Show'}</button>
                                 </div>
 
-                                {showPasswordFeedback && ( // Conditionally render
+                                {showPasswordFeedback && (
                                     <div className="password-feedback">
                                         <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
                                             <img src={passwordChecks.minLength ? greenTick : redCross} alt="" className="feedback-icon" /> Minimum 8 characters
