@@ -1,38 +1,46 @@
 /* Styling for the new contact form wrapper */
 .contact-form-wrapper {
     max-width: 500px;
+    /* Static width */
     margin: 0 auto;
+    /* Center the form */
     padding: 20px;
-    background-color: none;
+    /* Add some padding around the form to give space from page edges */
+    background-color: transparent;
+    /* Wrapper itself has no background */
     border-radius: 10px;
+    /* Slightly rounded corners for the wrapper area */
     box-sizing: border-box;
+    /* Include padding in the element's total width and height */
 }
 
 @media (max-width: 800px) {
     .contact-form-wrapper {
         max-width: 100%;
         /* Full width on smaller screens */
+        padding: 15px;
+        /* Adjust padding for smaller screens if needed */
     }
 }
 
-/* Styling for the form itself */
+/* Styling for the form itself - this is the container for your fields */
 .contact-form {
     display: flex;
     flex-direction: column;
     gap: 15px;
     /* Space between form elements */
-    background-color: #000;
-    /* Black background for the form container itself, matching the image */
-    padding: 20px;
-    /* Padding inside the form container */
-    border-radius: 8px;
-    /* Rounded corners for the form container */
+    background-color: transparent;
+    /* No background for the form container itself */
+    padding: 0;
+    /* No padding on the form itself, wrapper handles it */
+    border-radius: 0;
+    /* No border-radius on the form itself */
 }
 
 /* Styling for labels */
 .contact-form-label {
     color: #fff;
-    /* White text color for labels */
+    /* White text color for labels as per the image */
     font-size: 14px;
     /* Adjust font size as needed */
     margin-bottom: 5px;
@@ -49,8 +57,8 @@
     /* Full width of its container */
     padding: 12px 15px;
     /* Padding inside the input fields */
-    border: 1px solid #ccc;
-    /* Light grey border */
+    border: none;
+    /* No border for the fields, just background */
     border-radius: 6px;
     /* Rounded corners for input fields */
     background-color: #fff;
@@ -74,8 +82,8 @@
 .contact-form-input:focus,
 .contact-form-select:focus,
 .contact-form-textarea:focus {
-    border-color: #007bff;
-    /* Blue border on focus */
+    border: 1px solid #007bff;
+    /* Add a subtle blue border on focus for better UX */
 }
 
 /* Styling for textarea specifically */
@@ -94,7 +102,7 @@
     gap: 8px;
     /* Space between checkbox and text */
     color: #fff;
-    /* White text for the terms */
+    /* White text for the terms (assuming this remains visible on black background) */
     font-size: 13px;
     /* Smaller font size for terms text */
 }
