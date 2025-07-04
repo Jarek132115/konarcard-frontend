@@ -1,4 +1,4 @@
-/* Styling for the new contact form wrapper */
+/* Styling for the new contact form wrapper (the black block) */
 .contact-form-wrapper {
     max-width: 500px;
     /* Static width */
@@ -7,7 +7,7 @@
     padding: 20px;
     /* Padding inside this black wrapper */
     background-color: #000;
-    /* Black background for the form container itself, matching image_647ce2.png */
+    /* This is the black background of the form block as seen in the image */
     border-radius: 8px;
     /* Rounded corners for the black container */
     box-sizing: border-box;
@@ -34,7 +34,7 @@
     gap: 15px;
     /* Space between form elements */
     background-color: transparent;
-    /* No background for the form element itself, wrapper takes care of it */
+    /* The form element itself doesn't need a background as the wrapper has it */
     padding: 0;
     /* No padding here, wrapper handles it */
 }
@@ -42,7 +42,7 @@
 /* Styling for labels */
 .contact-form-label {
     color: #fff;
-    /* White text color for labels, visible on the black form background */
+    /* **THIS SHOULD BE WHITE** - visible on the black form background */
     font-size: 14px;
     margin-bottom: 5px;
     /* Space between label and input */
@@ -61,13 +61,13 @@
     padding: 12px 15px;
     /* Padding inside the input fields */
     border: none;
-    /* No visible border as per image */
+    /* **NO BORDER** as per image */
     border-radius: 6px;
     /* Rounded corners for input fields */
     background-color: #fff;
-    /* White background for input fields */
+    /* **WHITE BACKGROUND** for input fields as per image */
     color: #000;
-    /* Black text color for input */
+    /* **BLACK TEXT COLOR** for input */
     font-size: 16px;
     outline: none;
     /* Remove default outline */
@@ -78,15 +78,14 @@
 .contact-form-input::placeholder,
 .contact-form-textarea::placeholder {
     color: #888;
-    /* Placeholder text color */
+    /* Placeholder text color (a medium grey is appropriate for black text) */
 }
 
 .contact-form-input:focus,
 .contact-form-select:focus,
 .contact-form-textarea:focus {
-    /* Add a subtle visual cue on focus, like a light shadow or border */
     box-shadow: 0 0 0 2px #007bff;
-    /* Blue outline on focus */
+    /* Blue outline on focus for better UX */
 }
 
 /* Styling for textarea specifically */
@@ -109,13 +108,12 @@
 /* Specific styling for the text within the checkbox label */
 .contact-terms-label .desktop-body-xs {
     color: #fff;
-    /* White text for the privacy policy statement */
+    /* **WHITE TEXT** for the privacy policy statement, visible on the black background */
     font-size: 13px;
     /* Smaller font size for terms text */
     line-height: 1.4;
     /* Improve line spacing */
 }
-
 
 .contact-terms-checkbox {
     /* Base styling for the checkbox */
@@ -125,10 +123,10 @@
     width: 20px;
     height: 20px;
     border: 2px solid #555;
-    /* Darker border */
+    /* Darker border for the checkbox box */
     border-radius: 4px;
     background-color: #222;
-    /* Darker background */
+    /* Darker background for the checkbox box */
     cursor: pointer;
     position: relative;
     flex-shrink: 0;
@@ -159,7 +157,7 @@
 /* Styling for the submit button */
 .contact-submit-button {
     background-color: #007bff;
-    /* Blue background as per image */
+    /* Blue background */
     color: #fff;
     /* White text color */
     padding: 12px 20px;
