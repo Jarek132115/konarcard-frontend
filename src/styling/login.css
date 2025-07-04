@@ -99,8 +99,6 @@
     font-weight: 500;
     color: #333;
     margin-bottom: 4px;
-    margin-top: 12px;
-    /* Added margin-top for spacing between inputs */
 }
 
 /* Styling for standard form inputs using a dedicated class */
