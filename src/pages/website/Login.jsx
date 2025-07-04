@@ -3,6 +3,9 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { AuthContext } from '../../components/AuthContext';
 import backgroundImg from '../../assets/images/background.png';
+// greenTick and redCross are not used in Login.jsx, so they can be removed if not needed elsewhere
+// import greenTick from '../../assets/icons/Green-Tick-Icon.svg';
+// import redCross from '../../assets/icons/Red-Cross-Icon.svg';
 import api from '../../services/api';
 
 export default function Login() {
@@ -94,7 +97,8 @@ export default function Login() {
         }
     };
 
-    const sendResetLink = async () => {
+    const sendResetLink = async (e) => { // Added 'e' parameter to prevent default form submission
+        e.preventDefault(); // Prevent default form submission
         try {
             const res = await api.post('/forgot-password', { email: emailForReset });
             if (res.data.error) {
@@ -113,6 +117,12 @@ export default function Login() {
             <div className="close-button" onClick={() => navigate('/')}>×</div>
             <div className="login-left">
                 <img src={backgroundImg} alt="Login visual" className="login-visual" />
+                {/* Added quote section for consistency with Register page */}
+                <div className="login-quote">
+                    <span className="quote-icon">“</span>
+                    <p className="quote-text">“This has completely changed the way I find work. Clients love it.”</p>
+                    <p className="quote-author">Liam Turner – Electrical Contractor</p>
+                </div>
             </div>
 
             <div className="login-right">
@@ -126,7 +136,7 @@ export default function Login() {
                     </h2>
 
                     {forgotPasswordStep ? (
-                        <>
+                        <form onSubmit={sendResetLink} className="login-form"> {/* Added onSubmit */}
                             <label htmlFor="resetEmail" className="form-label">Email</label>
                             <input
                                 type="email"
@@ -135,16 +145,16 @@ export default function Login() {
                                 placeholder="Enter your email"
                                 value={emailForReset}
                                 onChange={(e) => setEmailForReset(e.target.value)}
-                                className="standard-input"
+                                className="standard-input" // Applied standard-input class
                                 autoComplete="off"
                             />
-                            <button onClick={sendResetLink} className="primary-button send-reset-link-button">
+                            <button type="submit" className="primary-button send-reset-link-button"> {/* Changed to type="submit" */}
                                 Send Reset Link
                             </button>
-                            <button onClick={() => setForgotPasswordStep(false)} className="secondary-button back-to-login-button">
+                            <button type="button" onClick={() => setForgotPasswordStep(false)} className="secondary-button back-to-login-button"> {/* Applied secondary-button and back-to-login-button */}
                                 Back to Login
                             </button>
-                        </>
+                        </form>
                     ) : !verificationStep ? (
                         <form className="login-form" onSubmit={loginUser}>
                             <label htmlFor="loginEmail" className="form-label">Email</label>
@@ -155,7 +165,7 @@ export default function Login() {
                                 placeholder="Email"
                                 value={data.email}
                                 onChange={(e) => setData({ ...data, email: e.target.value })}
-                                className="standard-input"
+                                className="standard-input" // Applied standard-input class
                                 autoComplete="off"
                             />
                             <label htmlFor="loginPassword" className="form-label">Password</label>
@@ -190,14 +200,14 @@ export default function Login() {
                                 placeholder="Enter verification code"
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
-                                className="standard-input"
+                                className="standard-input" // Applied standard-input class
                                 maxLength={6}
                                 autoComplete="off"
                             />
                             <button type="submit" className="primary-button verify-email-button">Verify Email</button>
                             <button
                                 type="button"
-                                className="secondary-button resend-code-button"
+                                className="secondary-button resend-code-button" // Applied secondary-button and resend-code-button
                                 onClick={resendCode}
                                 disabled={cooldown > 0}
                                 style={{ marginTop: '1rem' }}
