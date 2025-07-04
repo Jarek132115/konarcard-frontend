@@ -16,9 +16,9 @@ export default function ResetPassword() {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
-    // New state to control password feedback visibility
+    // New state to control password feedback visibility, initialized to false
     const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
-    // Ref to manage blur timeout
+    // Ref to manage blur timeout for password fields
     const blurTimeoutRef = React.useRef(null);
 
     const togglePassword = () => setShowPassword(!showPassword);
@@ -31,6 +31,7 @@ export default function ResetPassword() {
         passwordsMatch: password === confirmPassword && confirmPassword.length > 0,
     };
 
+    // Handler for when password fields gain focus
     const handlePasswordFocus = () => {
         // Clear any pending blur timeout if we are focusing again
         if (blurTimeoutRef.current) {
@@ -39,6 +40,7 @@ export default function ResetPassword() {
         setShowPasswordFeedback(true);
     };
 
+    // Handler for when password fields lose focus
     const handlePasswordBlur = () => {
         // Set a timeout to hide feedback, allowing a brief moment to switch between password fields
         blurTimeoutRef.current = setTimeout(() => {
@@ -53,11 +55,11 @@ export default function ResetPassword() {
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {
-                toast.success('Password reset link sent!');
+                toast.success('Password reset code sent!'); // Changed message for clarity
                 setStep(2);
             }
         } catch (err) {
-            toast.error('Something went wrong.');
+            toast.error('Something went wrong. Please try again.');
         }
     };
 
@@ -78,17 +80,17 @@ export default function ResetPassword() {
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {
-                toast.success('Password reset successful!');
+                toast.success('Password reset successful! You can now log in.');
                 navigate('/login');
             }
         } catch (err) {
-            toast.error('Could not reset password.');
+            toast.error('Could not reset password. Please check the code and try again.');
         }
     };
 
     return (
         <div className="login-wrapper">
-            {/* Changed Link to a div with onClick for consistent styling and navigation */}
+            {/* Using a div with onClick for the close button to match Register/Login consistent navigation */}
             <div className="close-button" onClick={() => navigate('/')}>×</div>
             <div className="login-left">
                 <img src={backgroundImg} alt="Visual" className="login-visual" />
@@ -104,67 +106,71 @@ export default function ResetPassword() {
 
                     {step === 1 ? (
                         <form onSubmit={requestReset} className="login-form">
-                            <label htmlFor="email" className="form-label">Email</label> {/* Added label */}
+                            <label htmlFor="email" className="form-label">Email</label>
                             <input
                                 type="email"
-                                id="email" // Added ID for label association
+                                id="email"
                                 placeholder="Enter your email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
                                 className="standard-input" // Added standard-input class
+                                autoComplete="email" // Added for better UX
                             />
-                            <button type="submit" className="primary-button send-reset-link-button">Send Reset Code</button> {/* Added specific class */}
-                            <button type="button" className="link-button back-to-login-button" onClick={() => navigate('/login')}>Back to Login</button> {/* Added back to login button */}
+                            <button type="submit" className="primary-button send-reset-link-button">Send Reset Code</button>
+                            <button type="button" className="link-button back-to-login-button" onClick={() => navigate('/login')}>Back to Login</button>
                         </form>
                     ) : (
                         <form onSubmit={resetPassword} className="login-form">
-                            <label htmlFor="code" className="form-label">Verification Code</label> {/* Added label */}
+                            <label htmlFor="code" className="form-label">Verification Code</label>
                             <input
                                 type="text"
-                                id="code" // Added ID for label association
+                                id="code"
                                 placeholder="Enter the code sent to your email"
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
                                 required
                                 className="standard-input" // Added standard-input class
+                                autoComplete="off" // No autocomplete for verification code
                             />
 
-                            <label htmlFor="newPassword" className="form-label">New Password</label> {/* Added label */}
+                            <label htmlFor="newPassword" className="form-label">New Password</label>
                             <div className="password-wrapper">
                                 <input
                                     type={showPassword ? 'text' : 'password'}
-                                    id="newPassword" // Added ID for label association
+                                    id="newPassword"
                                     placeholder="New Password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                    onFocus={handlePasswordFocus} // Add onFocus
-                                    onBlur={handlePasswordBlur}   // Add onBlur
+                                    onFocus={handlePasswordFocus} // Added onFocus
+                                    onBlur={handlePasswordBlur}   // Added onBlur
+                                    autoComplete="new-password" // Added for better UX
                                 />
                                 <button type="button" onClick={togglePassword}>
                                     {showPassword ? 'Hide' : 'Show'}
                                 </button>
                             </div>
 
-                            <label htmlFor="confirmNewPassword" className="form-label">Confirm New Password</label> {/* Added label */}
+                            <label htmlFor="confirmNewPassword" className="form-label">Confirm New Password</label>
                             <div className="password-wrapper">
                                 <input
                                     type={showConfirm ? 'text' : 'password'}
-                                    id="confirmNewPassword" // Added ID for label association
+                                    id="confirmNewPassword"
                                     placeholder="Confirm New Password"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     required
-                                    onFocus={handlePasswordFocus} // Add onFocus
-                                    onBlur={handlePasswordBlur}   // Add onBlur
+                                    onFocus={handlePasswordFocus} // Added onFocus
+                                    onBlur={handlePasswordBlur}   // Added onBlur
+                                    autoComplete="new-password" // Added for better UX
                                 />
                                 <button type="button" onClick={toggleConfirm}>
                                     {showConfirm ? 'Hide' : 'Show'}
                                 </button>
                             </div>
 
-                            {showPasswordFeedback && ( // Conditionally render
+                            {showPasswordFeedback && ( // Conditionally render password feedback
                                 <div className="password-feedback">
                                     <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
                                         <img src={passwordChecks.minLength ? greenTick : redCross} alt="" className="feedback-icon" />
@@ -185,8 +191,8 @@ export default function ResetPassword() {
                                 </div>
                             )}
 
-                            <button type="submit" className="primary-button verify-email-button">Reset Password</button> {/* Changed class for consistency */}
-                            <button type="button" className="link-button back-to-login-button" onClick={() => navigate('/login')}>Back to Login</button> {/* Added back to login button */}
+                            <button type="submit" className="primary-button verify-email-button">Reset Password</button>
+                            <button type="button" className="link-button back-to-login-button" onClick={() => navigate('/login')}>Back to Login</button>
                         </form>
                     )}
                 </div>
