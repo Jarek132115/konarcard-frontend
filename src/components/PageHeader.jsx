@@ -13,8 +13,8 @@ export default function PageHeader({ title, onActivateCard, onShareCard }) {
         <div className="page-header">
             <h1 className="page-title">{title}</h1>
             <div className="page-actions">
-                <button className="header-button white" onClick={onShareCard}>
-                    🔗 Share Your Profile {/* Changed button text here */}
+                <button className="blue-button" onClick={onShareCard}>
+                    Share Your Profile {/* Changed button text here */}
                 </button>
             </div>
         </div>
