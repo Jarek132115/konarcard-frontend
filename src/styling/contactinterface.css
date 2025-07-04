@@ -6,8 +6,8 @@
     /* Center the form */
     padding: 20px;
     /* Add some padding around the form */
-    background-color: #000;
-    /* Black background as per image */
+    background-color: transparent;
+    /* Make the wrapper background transparent, assuming the body has the black background */
     border-radius: 8px;
     /* Slightly rounded corners */
     box-sizing: border-box;
@@ -27,6 +27,12 @@
     flex-direction: column;
     gap: 15px;
     /* Space between form elements */
+    background-color: #000;
+    /* Black background for the form container itself, matching the image */
+    padding: 20px;
+    /* Padding inside the form container */
+    border-radius: 8px;
+    /* Rounded corners for the form container */
 }
 
 /* Styling for labels */
@@ -49,14 +55,14 @@
     /* Full width of its container */
     padding: 12px 15px;
     /* Padding inside the input fields */
-    border: 1px solid #333;
-    /* Darker border color */
+    border: 1px solid #ccc;
+    /* Light grey border */
     border-radius: 6px;
     /* Rounded corners for input fields */
-    background-color: #1a1a1a;
-    /* Dark background for input fields */
-    color: #fff;
-    /* White text color for input */
+    background-color: #fff;
+    /* White background for input fields as per image */
+    color: #000;
+    /* Black text color for input */
     font-size: 16px;
     /* Font size for input text */
     outline: none;
