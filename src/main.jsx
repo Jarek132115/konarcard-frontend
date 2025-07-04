@@ -23,6 +23,7 @@ import './styling/helpcentreinterface.css';
 import './styling/contactus.css';
 import './styling/userpage.css';
 import './styling/shareprofile.css';
+import './styling/contactinterface.css';
 
 import App from './App.jsx';
 
