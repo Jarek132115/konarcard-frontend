@@ -16,6 +16,10 @@ export default function ResetPassword() {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    // New state to control password feedback visibility
+    const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
+    // Ref to manage blur timeout
+    const blurTimeoutRef = React.useRef(null);
 
     const togglePassword = () => setShowPassword(!showPassword);
     const toggleConfirm = () => setShowConfirm(!showConfirm);
@@ -25,6 +29,21 @@ export default function ResetPassword() {
         hasUppercase: /[A-Z]/.test(password),
         hasNumber: /\d/.test(password),
         passwordsMatch: password === confirmPassword && confirmPassword.length > 0,
+    };
+
+    const handlePasswordFocus = () => {
+        // Clear any pending blur timeout if we are focusing again
+        if (blurTimeoutRef.current) {
+            clearTimeout(blurTimeoutRef.current);
+        }
+        setShowPasswordFeedback(true);
+    };
+
+    const handlePasswordBlur = () => {
+        // Set a timeout to hide feedback, allowing a brief moment to switch between password fields
+        blurTimeoutRef.current = setTimeout(() => {
+            setShowPasswordFeedback(false);
+        }, 100); // 100ms delay
     };
 
     const requestReset = async (e) => {
@@ -69,6 +88,7 @@ export default function ResetPassword() {
 
     return (
         <div className="login-wrapper">
+            {/* Changed Link to a div with onClick for consistent styling and navigation */}
             <div className="close-button" onClick={() => navigate('/')}>×</div>
             <div className="login-left">
                 <img src={backgroundImg} alt="Visual" className="login-visual" />
@@ -84,71 +104,89 @@ export default function ResetPassword() {
 
                     {step === 1 ? (
                         <form onSubmit={requestReset} className="login-form">
+                            <label htmlFor="email" className="form-label">Email</label> {/* Added label */}
                             <input
                                 type="email"
+                                id="email" // Added ID for label association
                                 placeholder="Enter your email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
+                                className="standard-input" // Added standard-input class
                             />
-                            <button type="submit" className="primary-button">Send Reset Code</button>
+                            <button type="submit" className="primary-button send-reset-link-button">Send Reset Code</button> {/* Added specific class */}
+                            <button type="button" className="link-button back-to-login-button" onClick={() => navigate('/login')}>Back to Login</button> {/* Added back to login button */}
                         </form>
                     ) : (
                         <form onSubmit={resetPassword} className="login-form">
+                            <label htmlFor="code" className="form-label">Verification Code</label> {/* Added label */}
                             <input
                                 type="text"
+                                id="code" // Added ID for label association
                                 placeholder="Enter the code sent to your email"
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
                                 required
+                                className="standard-input" // Added standard-input class
                             />
 
+                            <label htmlFor="newPassword" className="form-label">New Password</label> {/* Added label */}
                             <div className="password-wrapper">
                                 <input
                                     type={showPassword ? 'text' : 'password'}
+                                    id="newPassword" // Added ID for label association
                                     placeholder="New Password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
+                                    onFocus={handlePasswordFocus} // Add onFocus
+                                    onBlur={handlePasswordBlur}   // Add onBlur
                                 />
                                 <button type="button" onClick={togglePassword}>
                                     {showPassword ? 'Hide' : 'Show'}
                                 </button>
                             </div>
 
+                            <label htmlFor="confirmNewPassword" className="form-label">Confirm New Password</label> {/* Added label */}
                             <div className="password-wrapper">
                                 <input
                                     type={showConfirm ? 'text' : 'password'}
+                                    id="confirmNewPassword" // Added ID for label association
                                     placeholder="Confirm New Password"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     required
+                                    onFocus={handlePasswordFocus} // Add onFocus
+                                    onBlur={handlePasswordBlur}   // Add onBlur
                                 />
                                 <button type="button" onClick={toggleConfirm}>
                                     {showConfirm ? 'Hide' : 'Show'}
                                 </button>
                             </div>
 
-                            <div className="password-feedback">
-                                <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
-                                    <img src={passwordChecks.minLength ? greenTick : redCross} alt="" className="feedback-icon" />
-                                    Minimum 8 characters
-                                </p>
-                                <p className={passwordChecks.hasUppercase ? 'valid' : 'invalid'}>
-                                    <img src={passwordChecks.hasUppercase ? greenTick : redCross} alt="" className="feedback-icon" />
-                                    One uppercase letter
-                                </p>
-                                <p className={passwordChecks.hasNumber ? 'valid' : 'invalid'}>
-                                    <img src={passwordChecks.hasNumber ? greenTick : redCross} alt="" className="feedback-icon" />
-                                    One number
-                                </p>
-                                <p className={passwordChecks.passwordsMatch ? 'valid' : 'invalid'}>
-                                    <img src={passwordChecks.passwordsMatch ? greenTick : redCross} alt="" className="feedback-icon" />
-                                    Passwords match
-                                </p>
-                            </div>
+                            {showPasswordFeedback && ( // Conditionally render
+                                <div className="password-feedback">
+                                    <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
+                                        <img src={passwordChecks.minLength ? greenTick : redCross} alt="" className="feedback-icon" />
+                                        Minimum 8 characters
+                                    </p>
+                                    <p className={passwordChecks.hasUppercase ? 'valid' : 'invalid'}>
+                                        <img src={passwordChecks.hasUppercase ? greenTick : redCross} alt="" className="feedback-icon" />
+                                        One uppercase letter
+                                    </p>
+                                    <p className={passwordChecks.hasNumber ? 'valid' : 'invalid'}>
+                                        <img src={passwordChecks.hasNumber ? greenTick : redCross} alt="" className="feedback-icon" />
+                                        One number
+                                    </p>
+                                    <p className={passwordChecks.passwordsMatch ? 'valid' : 'invalid'}>
+                                        <img src={passwordChecks.passwordsMatch ? greenTick : redCross} alt="" className="feedback-icon" />
+                                        Passwords match
+                                    </p>
+                                </div>
+                            )}
 
-                            <button type="submit" className="primary-button">Reset Password</button>
+                            <button type="submit" className="primary-button verify-email-button">Reset Password</button> {/* Changed class for consistency */}
+                            <button type="button" className="link-button back-to-login-button" onClick={() => navigate('/login')}>Back to Login</button> {/* Added back to login button */}
                         </form>
                     )}
                 </div>
