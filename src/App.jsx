@@ -1,9 +1,9 @@
-import axios from 'axios'; 
+import axios from 'axios';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './components/AuthContext';
-import Home from './pages/website/Home'; 
+import Home from './pages/website/Home';
 import Register from './pages/website/Register';
 import Login from './pages/website/Login';
 import ResetPassword from './pages/website/ResetPassword';
@@ -31,7 +31,7 @@ import SuccessSubscription from './pages/website/SuccessSubscription';
 
 
 axios.defaults.baseURL = 'https://konarcard-backend-331608269918.europe-west1.run.app';
-axios.defaults.withCredentials = true; 
+axios.defaults.withCredentials = true;
 
 function App() {
   const location = useLocation();
@@ -46,7 +46,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/shopnfccards" element={<ShopNFCCards />} />
         <Route path="/shopnfccards/whitecard" element={<WhiteCard />} />
         <Route path="/faq" element={<FAQ />} />
