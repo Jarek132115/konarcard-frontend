@@ -5,13 +5,15 @@
     margin: 0 auto;
     /* Center the form */
     padding: 20px;
-    /* Add some padding around the form to give space from page edges */
-    background-color: transparent;
-    /* Wrapper itself has no background */
-    border-radius: 10px;
-    /* Slightly rounded corners for the wrapper area */
+    /* Padding inside this black wrapper */
+    background-color: #000;
+    /* Black background for the form container itself, matching image_647ce2.png */
+    border-radius: 8px;
+    /* Rounded corners for the black container */
     box-sizing: border-box;
     /* Include padding in the element's total width and height */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Optional: subtle shadow for depth */
 }
 
 @media (max-width: 800px) {
@@ -19,34 +21,35 @@
         max-width: 100%;
         /* Full width on smaller screens */
         padding: 15px;
-        /* Adjust padding for smaller screens if needed */
+        /* Adjust padding for smaller screens */
+        border-radius: 0;
+        /* No border-radius on full width if desired */
     }
 }
 
-/* Styling for the form itself - this is the container for your fields */
+/* Styling for the form itself - this is the flex container for your fields */
 .contact-form {
     display: flex;
     flex-direction: column;
     gap: 15px;
     /* Space between form elements */
     background-color: transparent;
-    /* No background for the form container itself */
+    /* No background for the form element itself, wrapper takes care of it */
     padding: 0;
-    /* No padding on the form itself, wrapper handles it */
-    border-radius: 0;
-    /* No border-radius on the form itself */
+    /* No padding here, wrapper handles it */
 }
 
 /* Styling for labels */
 .contact-form-label {
     color: #fff;
-    /* White text color for labels as per the image */
+    /* White text color for labels, visible on the black form background */
     font-size: 14px;
-    /* Adjust font size as needed */
     margin-bottom: 5px;
     /* Space between label and input */
     display: block;
     /* Ensures label takes its own line */
+    font-weight: 500;
+    /* Slightly bolder for readability if needed */
 }
 
 /* Styling for text inputs and select */
@@ -58,17 +61,16 @@
     padding: 12px 15px;
     /* Padding inside the input fields */
     border: none;
-    /* No border for the fields, just background */
+    /* No visible border as per image */
     border-radius: 6px;
     /* Rounded corners for input fields */
     background-color: #fff;
-    /* White background for input fields as per image */
+    /* White background for input fields */
     color: #000;
     /* Black text color for input */
     font-size: 16px;
-    /* Font size for input text */
     outline: none;
-    /* Remove outline on focus */
+    /* Remove default outline */
     box-sizing: border-box;
     /* Include padding in the element's total width and height */
 }
@@ -82,8 +84,9 @@
 .contact-form-input:focus,
 .contact-form-select:focus,
 .contact-form-textarea:focus {
-    border: 1px solid #007bff;
-    /* Add a subtle blue border on focus for better UX */
+    /* Add a subtle visual cue on focus, like a light shadow or border */
+    box-shadow: 0 0 0 2px #007bff;
+    /* Blue outline on focus */
 }
 
 /* Styling for textarea specifically */
@@ -101,11 +104,18 @@
     /* Align text to the top if it wraps */
     gap: 8px;
     /* Space between checkbox and text */
+}
+
+/* Specific styling for the text within the checkbox label */
+.contact-terms-label .desktop-body-xs {
     color: #fff;
-    /* White text for the terms (assuming this remains visible on black background) */
+    /* White text for the privacy policy statement */
     font-size: 13px;
     /* Smaller font size for terms text */
+    line-height: 1.4;
+    /* Improve line spacing */
 }
+
 
 .contact-terms-checkbox {
     /* Base styling for the checkbox */
@@ -123,6 +133,8 @@
     position: relative;
     flex-shrink: 0;
     /* Prevent checkbox from shrinking */
+    margin-top: 2px;
+    /* Adjust vertical alignment with text */
 }
 
 .contact-terms-checkbox:checked {
@@ -159,6 +171,8 @@
     transition: background-color 0.3s ease;
     margin-top: 20px;
     /* Space above the button */
+    width: 100%;
+    /* Make button full width of the form */
 }
 
 .contact-submit-button:hover {
