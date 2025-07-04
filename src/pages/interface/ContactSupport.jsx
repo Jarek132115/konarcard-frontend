@@ -15,7 +15,7 @@ export default function ContactSupport() {
         email: '',
         reason: '',
         message: '',
-        agree: false
+        agree: true // Changed to true for auto-checked
     });
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -75,7 +75,7 @@ export default function ContactSupport() {
                     email: '',
                     reason: '',
                     message: '',
-                    agree: false
+                    agree: true // Reset to true after submission
                 });
             } else {
                 toast.error(res.data.error || 'Something went wrong');
@@ -156,9 +156,10 @@ export default function ContactSupport() {
                         </span>
                     </p>
 
-                    <form className='login-form' onSubmit={handleSubmit}> {/* Changed form class to login-form */}
-                        <label htmlFor="name" className="form-label">Name</label> {/* Added label */}
-                        <div className='contact-input-container'>
+                    {/* Wrapped the form in a div with login-card class for consistent styling */}
+                    <div className="login-card" style={{ margin: '0 auto' }}> {/* Added margin: 0 auto for horizontal centering */}
+                        <form className='login-form' onSubmit={handleSubmit}>
+                            <label htmlFor="name" className="form-label">Your Name</label> {/* Added label */}
                             <input
                                 type='text'
                                 id='name' // Added ID for label association
@@ -167,12 +168,10 @@ export default function ContactSupport() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
-                                className='standard-input' // Added standard-input class
+                                className='standard-input' // Applied standard-input class
                             />
-                        </div>
 
-                        <label htmlFor="email" className="form-label">Email</label> {/* Added label */}
-                        <div className='contact-input-container'>
+                            <label htmlFor="email" className="form-label">Your Email</label> {/* Added label */}
                             <input
                                 type='email'
                                 id='email' // Added ID for label association
@@ -181,19 +180,17 @@ export default function ContactSupport() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
-                                className='standard-input' // Added standard-input class
+                                className='standard-input' // Applied standard-input class
                             />
-                        </div>
 
-                        <label htmlFor="reason" className="form-label">Reason for contact</label> {/* Added label */}
-                        <div className='contact-input-container'>
+                            <label htmlFor="reason" className="form-label">Reason for contact</label> {/* Added label */}
                             <select
                                 id='reason' // Added ID for label association
                                 name='reason'
                                 value={formData.reason}
                                 onChange={handleChange}
                                 required
-                                className='standard-input' // Added standard-input class
+                                className='standard-input' // Applied standard-input class
                             >
                                 <option value=''>Select a reason</option>
                                 <option value='Card not working'>My card isn’t working</option>
@@ -202,10 +199,8 @@ export default function ContactSupport() {
                                 <option value='Setup help'>Help setting up profile</option>
                                 <option value='Other'>Other</option>
                             </select>
-                        </div>
 
-                        <label htmlFor="message" className="form-label">Your Message</label> {/* Added label */}
-                        <div className='contact-input-container-message'>
+                            <label htmlFor="message" className="form-label">Your Message</label> {/* Added label */}
                             <textarea
                                 id='message' // Added ID for label association
                                 name='message'
@@ -213,29 +208,29 @@ export default function ContactSupport() {
                                 value={formData.message}
                                 onChange={handleChange}
                                 required
-                                className='standard-input' // Added standard-input class
+                                className='standard-input' // Applied standard-input class (will adapt from login.css)
                                 rows="5" // Added rows for better textarea appearance
                             />
-                        </div>
 
-                        <label className='terms-label'>
-                            <input
-                                type='checkbox'
-                                name='agree'
-                                className='terms-checkbox konar-checkbox' // Added konar-checkbox for consistent styling
-                                checked={formData.agree}
-                                onChange={handleChange}
-                                required
-                            />
-                            <span className='desktop-body-xs'>
-                                I understand that Konar will securely hold my data in accordance with their privacy policy.
-                            </span>
-                        </label>
+                            <label className='terms-label'>
+                                <input
+                                    type='checkbox'
+                                    name='agree'
+                                    className='terms-checkbox konar-checkbox' // Added konar-checkbox for consistent styling
+                                    checked={formData.agree} // Now controlled by state, initialized to true
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <span className='desktop-body-xs'>
+                                    I understand that Konar will securely hold my data in accordance with their privacy policy.
+                                </span>
+                            </label>
 
-                        <button type='submit' className='primary-button verify-email-button' style={{ marginTop: 20 }}> {/* Changed to primary-button verify-email-button */}
-                            Submit
-                        </button>
-                    </form>
+                            <button type='submit' className='primary-button verify-email-button' style={{ marginTop: 20 }}>
+                                Submit
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </main>
 
