@@ -99,6 +99,8 @@
     font-weight: 500;
     color: #333;
     margin-bottom: 4px;
+    margin-top: 12px;
+    /* Added margin-top for spacing between inputs */
 }
 
 /* Styling for standard form inputs using a dedicated class */
@@ -403,7 +405,6 @@
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    text-align: center;
     padding: 5px 0;
     /* Add some padding for click target */
     margin-top: 5px;
@@ -415,6 +416,17 @@
     color: #333;
     /* Slightly lighter black on hover */
 }
+
+/* New class for left-aligned forgot password link */
+.forgot-password-link {
+    text-align: left;
+    /* Align to the left */
+    margin-top: -5px;
+    /* Adjust margin to bring it closer to password field */
+    margin-bottom: 15px;
+    /* Space between link and Sign In button */
+}
+
 
 .login-alt-text {
     margin-top: 14px;
