@@ -1,17 +1,11 @@
 /* Styling for the new contact form wrapper */
 .contact-form-wrapper {
     max-width: 500px;
-    /* Static width */
     margin: 0 auto;
-    /* Center the form */
     padding: 20px;
-    /* Add some padding around the form */
-    background-color: transparent;
-    /* Make the wrapper background transparent, assuming the body has the black background */
-    border-radius: 8px;
-    /* Slightly rounded corners */
+    background-color: none;
+    border-radius: 10px;
     box-sizing: border-box;
-    /* Include padding in the element's total width and height */
 }
 
 @media (max-width: 800px) {
