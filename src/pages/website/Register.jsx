@@ -183,7 +183,7 @@ export default function Register() {
 
                                 {/* Updated Username Label and Input Structure */}
                                 <label htmlFor="username" className="form-label">
-                                    Username <span className="text-sm text-gray-500">(this username cannot be changed)</span>
+                                    Username <span className="text-sm text-gray-500">(username cannot be changed)</span>
                                 </label>
                                 <div className="username-input-wrapper">
                                     <span className="url-prefix">www.konarcard.com/u/</span>
