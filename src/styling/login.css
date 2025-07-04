@@ -109,7 +109,6 @@
     font-size: 14px;
     background-color: #eef3ff;
     margin-bottom: 12px;
-    /* Adjusted margin-bottom */
     width: 100%;
     box-sizing: border-box;
     height: 40px;
@@ -267,7 +266,6 @@
 .feedback-icon {
     width: 16px;
     height: 16px;
-    margin-right: 8px;
     flex-shrink: 0;
 }
 
