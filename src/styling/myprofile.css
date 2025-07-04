@@ -721,7 +721,6 @@
 
     /* Important for no internal scroll: allow content to shrink if too large */
     .mock-phone-scrollable-content {
-        overflow-y: hidden;
         /* No internal scroll for mock phone on mobile */
         flex-shrink: 1;
         /* Allow content to shrink if needed */
@@ -749,7 +748,6 @@
     .myprofile-editor {
         padding: 16px;
         gap: 15px;
-        overflow-y: hidden;
         /* REMOVE SCROLLBAR FROM EDITOR ON MOBILE */
         height: auto;
         /* Height determined by content */
@@ -775,7 +773,6 @@
 
     .myprofile-main {
         padding-top: 30px;
-        overflow-y: hidden;
         /* Prevent main page scroll on desktop */
     }
 
