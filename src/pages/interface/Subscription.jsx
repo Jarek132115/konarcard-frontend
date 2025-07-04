@@ -2,16 +2,16 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
-import ShareProfile from '../../components/ShareProfile'; // Import ShareProfile
+import ShareProfile from '../../components/ShareProfile'; 
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
-import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; // Import useFetchBusinessCard
+import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; 
 
 export default function Subscription() {
-  const { user: authUser } = useContext(AuthContext); // Rename user to authUser
+  const { user: authUser } = useContext(AuthContext); 
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -20,12 +20,11 @@ export default function Subscription() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-  const [showShareModal, setShowShareModal] = useState(false); // Add share modal state
+  const [showShareModal, setShowShareModal] = useState(false); 
 
   const userId = authUser?._id;
   const userUsername = authUser?.username;
 
-  // Fetch business card data for this page as well
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
 
 
@@ -291,7 +290,6 @@ export default function Subscription() {
         </div>
       </main>
 
-      {/* Render ShareProfile component */}
       <ShareProfile
         isOpen={showShareModal}
         onClose={handleCloseShareModal}

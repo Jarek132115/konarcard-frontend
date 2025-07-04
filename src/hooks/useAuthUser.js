@@ -5,7 +5,6 @@ export const useAuthUser = () => {
   return useQuery({
     queryKey: ['authUser'],
     queryFn: async () => {
-      // Removed type annotation for 'data'
       const { data } = await api('/profile', {
         method: 'GET',
         credentials: 'include',
@@ -14,7 +13,7 @@ export const useAuthUser = () => {
         throw new Error(data?.error || 'Failed to load user');
       }
 
-      return data; // Return the user data
+      return data; 
     },
   });
 };

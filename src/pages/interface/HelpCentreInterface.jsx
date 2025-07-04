@@ -96,17 +96,13 @@ export default function HelpCentre() {
       )}
 
       <main className="myprofile-main">
-        {/* PageHeader remains a direct child of myprofile-main */}
         <PageHeader
           title="Help Centre"
           onActivateCard={handleActivateCard}
           onShareCard={handleShareCard}
         />
 
-        {/* This new div acts as the main content "card" that contains the video cards */}
-        {/* It gets the max-width and helps center the content */}
-        <div className="page-wrapper content-card"> {/* Renamed from 'page-wrapper' to 'content-card' here too for consistency with the CSS rule you provided */}
-          {/* The video cards are direct children of content-card now */}
+        <div className="page-wrapper content-card">
           <div className="help-video-card">
             <img src={HeroBackground} alt="Profile Setup" className="help-video-thumb" />
             <div className="help-video-content">
@@ -129,7 +125,7 @@ export default function HelpCentre() {
             </div>
             <img src={HeroBackground} alt="Card Activation" className="help-video-thumb" />
           </div>
-        </div> {/* End of content-card */}
+        </div> 
       </main>
 
       <ShareProfile

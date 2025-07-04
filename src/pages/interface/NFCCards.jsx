@@ -1,23 +1,22 @@
-import React, { useState, useEffect, useContext } from 'react'; // Add useContext
+import React, { useState, useEffect, useContext } from 'react'; 
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
-import ShareProfile from '../../components/ShareProfile'; // Import ShareProfile
+import ShareProfile from '../../components/ShareProfile'; 
 import KonarCard from '../../assets/images/KonarCard.png';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
-import { AuthContext } from '../../components/AuthContext'; // Import AuthContext
-import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; // Import useFetchBusinessCard
+import { AuthContext } from '../../components/AuthContext'; 
+import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; 
 
 export default function NFCCards() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-  const [showShareModal, setShowShareModal] = useState(false); // Add share modal state
+  const [showShareModal, setShowShareModal] = useState(false); 
 
-  const { user: authUser, loading: authLoading } = useContext(AuthContext); // Get auth user
+  const { user: authUser, loading: authLoading } = useContext(AuthContext); 
   const userId = authUser?._id;
   const userUsername = authUser?.username;
 
-  // Fetch business card data for this page as well
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
 
   useEffect(() => {
@@ -43,11 +42,10 @@ export default function NFCCards() {
 
   const handleActivateCard = () => {
     console.log("Activate Card clicked on NFC Cards page");
-    // Add actual activation logic here
   };
 
   const handleShareCard = () => {
-    if (!authUser?.isVerified) { // Check if user is verified before sharing
+    if (!authUser?.isVerified) { 
       toast.error("Please verify your email to share your card.");
       return;
     }
@@ -58,14 +56,13 @@ export default function NFCCards() {
     setShowShareModal(false);
   };
 
-  // Prepare contact details for VCard (basic dummy data if not explicitly stored here)
   const contactDetailsForVCard = {
     full_name: authUser?.name || '',
-    job_title: '', // You might need to fetch this or make it dynamic if used
+    job_title: '', 
     business_card_name: businessCard?.business_card_name || '',
-    bio: '', // You might need to fetch this or make it dynamic if used
+    bio: '',
     contact_email: authUser?.email || '',
-    phone_number: '', // You might need to fetch this or make it dynamic if used
+    phone_number: '', 
     username: userUsername || '',
   };
 
@@ -122,7 +119,6 @@ export default function NFCCards() {
         </div>
       </main>
 
-      {/* Render ShareProfile component */}
       <ShareProfile
         isOpen={showShareModal}
         onClose={handleCloseShareModal}

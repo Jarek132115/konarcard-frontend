@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import api from '../services/api'; // <--- CRUCIAL FIX: Changed to DEFAULT IMPORT (no curly braces)
+import api from '../services/api';
 
 export const buildWorksFormData = (data) => {
   const formData = new FormData();
@@ -20,8 +20,6 @@ export const buildWorksFormData = (data) => {
 export const useCreateWorks = () => {
   return useMutation({
     mutationFn: (formData) => {
-      // CRUCIAL FIX: Use api.post() method now that 'api' is an axios instance.
-      // Axios handles FormData automatically, no need to set Content-Type header manually.
       return api.post("/api/works/add_works", formData);
     },
   });

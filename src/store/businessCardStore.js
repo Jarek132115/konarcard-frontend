@@ -4,15 +4,14 @@ const initialState = {
   businessName: "My Digital Business Card",
   pageTheme: "light",
   font: "Inter",
-  coverPhoto: "/Interface-Preview/Cover-Photo1.png", // Confirmed: Cover-Photo1.png
+  coverPhoto: "/Interface-Preview/Cover-Photo1.png", 
   mainHeading: "Your Main Heading Here",
   subHeading: "Your Tagline or Slogan Goes Here",
   job_title: "Your Job Title",
   full_name: "Your Full Name",
   bio: "Welcome! This is your digital business card. Share your story, expertise, and how to connect with you. You can customize all content, colors, and fonts!",
-  avatar: "/Interface-Preview/Profile-Pic.png", // Confirmed: Profile-Pic.png
+  avatar: "/Interface-Preview/Profile-Pic.png", 
   workImages: [
-    // --- ALL WORK IMAGE PATHS CONFIRMED FROM YOUR LATEST SCREENSHOT ---
     { file: null, preview: "/Interface-Preview/Work-Images1.png" },
     { file: null, preview: "/Interface-Preview/Work-Images2.png" },
     { file: null, preview: "/Interface-Preview/Work-Images3.png" },

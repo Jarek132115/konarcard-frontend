@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-// Use useQuery for consistent data fetching
 import { useQuery } from '@tanstack/react-query';
-import api from '../../services/api'; // <--- CRUCIAL FIX: Changed to DEFAULT IMPORT (no curly braces)
+import api from '../../services/api'; 
 
 const UserPage = () => {
     const { username } = useParams();
 
-    // Use React Query to fetch the business card by username
     const { data: businessCard, isLoading, isError, error } = useQuery({
         queryKey: ["public-business-card", username],
         queryFn: async () => {
-            // CRITICAL FIX: Use api.get() method now that 'api' is an axios instance
             const response = await api.get(`/api/business-card/by_username/${username}`);
             console.log("UserPage: Fetched business card data for public profile:", response.data);
             return response.data;
         },
-        enabled: !!username, // Only run the query if username is available
+        enabled: !!username, 
         staleTime: 5 * 60 * 1000,
         cacheTime: 10 * 60 * 1000,
         retry: 1,
@@ -27,7 +24,6 @@ const UserPage = () => {
     if (!businessCard) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><p>No business card found for username "{username}".</p></div>;
 
 
-    // Determine theme styles dynamically based on fetched businessCard data
     const themeStyles = {
         backgroundColor: businessCard.page_theme === "dark" ? "#1F1F1F" : "#FFFFFF",
         color: businessCard.page_theme === "dark" ? "#FFFFFF" : "#000000",

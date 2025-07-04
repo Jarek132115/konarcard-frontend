@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react'; // Import useContext
+import React, { useState, useEffect, useContext } from 'react'; 
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
-import ShareProfile from '../../components/ShareProfile'; // Import ShareProfile
+import ShareProfile from '../../components/ShareProfile'; 
 import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
-import { AuthContext } from '../../components/AuthContext'; // Import AuthContext
-import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; // Import useFetchBusinessCard
+import { AuthContext } from '../../components/AuthContext'; 
+import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; 
 
 export default function ContactSupport() {
     const [formData, setFormData] = useState({
@@ -20,13 +20,12 @@ export default function ContactSupport() {
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-    const [showShareModal, setShowShareModal] = useState(false); // Add share modal state
+    const [showShareModal, setShowShareModal] = useState(false); 
 
-    const { user: authUser, loading: authLoading } = useContext(AuthContext); // Get auth user
+    const { user: authUser, loading: authLoading } = useContext(AuthContext); 
     const userId = authUser?._id;
     const userUsername = authUser?.username;
 
-    // Fetch business card data for this page as well
     const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
 
     useEffect(() => {
@@ -99,7 +98,6 @@ export default function ContactSupport() {
         setShowShareModal(false);
     };
 
-    // Prepare contact details for VCard
     const contactDetailsForVCard = {
         full_name: businessCard?.full_name || authUser?.name || '',
         job_title: businessCard?.job_title || '',
@@ -228,7 +226,6 @@ export default function ContactSupport() {
                 </div>
             </main>
 
-            {/* Render ShareProfile component */}
             <ShareProfile
                 isOpen={showShareModal}
                 onClose={handleCloseShareModal}

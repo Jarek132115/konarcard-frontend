@@ -6,9 +6,6 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    // Function to fetch user profile, now defined directly in AuthProvider
-    // so it can be called reliably when token changes or upon explicit login
     const fetchUser = async () => {
         setLoading(true);
         console.log("AuthContext: fetchUser called.");
@@ -24,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 
         try {
             const response = await api.get('/profile');
-            const fetchedUser = response.data.data; // Backend returns { data: userObject }
+            const fetchedUser = response.data.data; 
 
             console.log("AuthContext: API response for /profile:", response);
             console.log("AuthContext: Fetched user data (after destructuring):", fetchedUser);
@@ -52,8 +49,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // This useEffect will run on mount AND whenever localStorage.getItem('token') changes
-    // (though localStorage changes don't inherently trigger re-renders, a manual call will)
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const token = localStorage.getItem('token');
@@ -61,20 +56,16 @@ export const AuthProvider = ({ children }) => {
             if (token) {
                 fetchUser();
             } else {
-                setUser(null); // Ensure user is null if no token is present
+                setUser(null); 
                 setLoading(false);
                 console.log("AuthContext: No token, setting loading to false and user to null.");
             }
         }
-    }, []); // Removed dependency on fetchUser as it's stable, rely on manual trigger or interceptor
+    }, []); 
 
-    // Modify login to explicitly re-fetch user after setting token
-    const login = (token) => { // Removed userData from parameters, we will fetch it
+    const login = (token) => { 
         if (typeof window !== 'undefined') {
             localStorage.setItem('token', token);
-            // After setting the token, immediately try to fetch the user
-            // This will ensure the AuthContext user state is up-to-date
-            // based on the new token.
             fetchUser();
         }
     };

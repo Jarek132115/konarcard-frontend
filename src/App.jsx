@@ -1,14 +1,11 @@
-// KONAR-NFC-LOCAL/frontend/src/App.jsx
-import axios from 'axios'; // Ensure axios is imported
+import axios from 'axios'; 
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './components/AuthContext';
-// ... all other page/component imports ...
-import Home from './pages/website/Home'; // Example of a page import
+import Home from './pages/website/Home'; 
 import Register from './pages/website/Register';
 import Login from './pages/website/Login';
-// ... (all other page imports as they were)
 import ResetPassword from './pages/website/ResetPassword';
 import ShopNFCCards from './pages/website/ShopNFCCards';
 import WhiteCard from './pages/website/WhiteCard';
@@ -30,13 +27,11 @@ import Profile from './pages/interface/Profile';
 import Subscription from './pages/interface/Subscription';
 import ContactSupport from './pages/interface/ContactSupport';
 import UserPage from './pages/interface/UserPage';
-// NEW IMPORT: Import the SuccessSubscription component
 import SuccessSubscription from './pages/website/SuccessSubscription';
 
 
-// CRITICAL: Set global Axios defaults here
 axios.defaults.baseURL = 'https://konarcard-backend-331608269918.europe-west1.run.app';
-axios.defaults.withCredentials = true; // Essential for sending cookies if you ever switch to cookie-based auth, or for some CORS setups.
+axios.defaults.withCredentials = true; 
 
 function App() {
   const location = useLocation();
@@ -62,7 +57,6 @@ function App() {
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/policies" element={<Policies />} />
         <Route path="/success" element={<Success />} />
-        {/* NEW ROUTE: For SuccessSubscription page */}
         <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
         <Route path="/myprofile" element={<MyProfile />} />
         <Route path="/billing" element={<Billing />} />

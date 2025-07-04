@@ -175,16 +175,13 @@ export default function Profile() {
       )}
 
       <main className="myprofile-main">
-        {/* PageHeader is now a direct child of myprofile-main, outside profile-content-wrapper */}
         <PageHeader
           title="My Account"
           onActivateCard={() => console.log("Activate Card clicked on My Account page")}
           onShareCard={handleShareCard}
-          className="profile-page-header" /* Apply the new class here for border-bottom */
+          className="profile-page-header" 
         />
 
-        {/* This div acts as the main content container for the profile page */}
-        {/* It gets the centering, max-width, and its own background/shadow */}
         <div className="profile-content-wrapper">
           <div className="profile-card-box">
             <div className="profile-input-block">
@@ -258,8 +255,8 @@ export default function Profile() {
                 Save Updates
               </button>
             </div>
-          </div> {/* End of profile-card-box */}
-        </div> {/* End of profile-content-wrapper */}
+          </div> 
+        </div> 
       </main>
 
       <ShareProfile

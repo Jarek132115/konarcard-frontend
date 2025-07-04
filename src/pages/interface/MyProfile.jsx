@@ -1,4 +1,3 @@
-// frontend/src/pages/interface/MyProfile.jsx
 
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
@@ -14,11 +13,9 @@ import {
 } from "../../hooks/useCreateBiz";
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-
 import ShareProfile from "../../components/ShareProfile";
 import { AuthContext } from "../../components/AuthContext";
 import api from '../../services/api';
-
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 export default function MyProfile() {
@@ -26,46 +23,27 @@ export default function MyProfile() {
   const fileInputRef = useRef(null);
   const avatarInputRef = useRef(null);
   const workImageInputRef = useRef(null);
-
   const createBusinessCard = useCreateBusinessCard();
-
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
   const isSubscribed = authUser?.isSubscribed || false;
-
   const userId = authUser?._id;
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
-
   const { data: businessCard, isLoading: isCardLoading, isError: isCardError, error: cardError } = useFetchBusinessCard(userId);
-
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
-
   const [coverPhotoFile, setCoverPhotoFile] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
   const [workImageFiles, setWorkImageFiles] = useState([]);
-
   const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
-
   const [activeBlobUrls, setActiveBlobUrls] = useState([]);
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-
   const initialStoreState = useBusinessCardStore.getState().state;
-
-
-  useEffect(() => {
-    // console.log("RENDER - Current State:", JSON.parse(JSON.stringify(state)));
-    // console.log("RENDER - isSubscribed:", isSubscribed);
-    // console.log("RENDER - authLoading:", authLoading);
-    // console.log("RENDER - isCardLoading (fetching card data):", isCardLoading);
-    // console.log("RENDER - businessCard (fetched data):", businessCard);
-  });
 
 
   useEffect(() => {
@@ -90,7 +68,6 @@ export default function MyProfile() {
   }, [sidebarOpen, isMobile]);
 
   useEffect(() => {
-    // console.log removed as requested in earlier turns
   }, [isCardLoading, isCardError, cardError]);
 
   useEffect(() => {
@@ -567,7 +544,6 @@ export default function MyProfile() {
 
             <div className="myprofile-flex-container">
               <div className="myprofile-content">
-                {/* Apply dynamic class for dark mode and dynamic font style */}
                 <div
                   className={`mock-phone ${state.pageTheme === "dark" ? "dark-mode" : ""}`}
                   style={{ fontFamily: state.font }}
