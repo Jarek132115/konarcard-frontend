@@ -144,7 +144,6 @@
 
 .mock-phone-scrollable-content {
     flex-grow: 1;
-    overflow-y: auto;
     /* Internal scroll for phone content on desktop */
     width: 100%;
     box-sizing: border-box;
@@ -602,8 +601,9 @@
     position: fixed;
     top: 0;
     left: 0;
-    width:90%;
+    width: 100%;
     height: 70px;
+    padding: 0 16px;
     z-index: 900;
     display: flex;
     align-items: center;
