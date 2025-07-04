@@ -1,3 +1,5 @@
+/* frontend/src/styling/login.css */
+
 .login-wrapper {
     display: flex;
     height: 100vh;
@@ -674,4 +676,60 @@
     .verification-code-container {
         gap: 5px;
     }
+}
+
+/* --- NEW GLOBAL STYLES TO PREVENT UNWANTED EDITING --- */
+/* Disable content editing for most elements by default */
+body,
+div,
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a,
+label,
+li,
+ul,
+ol,
+section,
+article,
+header,
+footer,
+main {
+    -webkit-user-modify: read-only;
+    /* For older WebKit browsers, ensures no editing */
+    user-modify: read-only;
+    /* Standard, but less common now */
+    contenteditable: false;
+    /* Explicitly set to false */
+    caret-color: transparent;
+    /* Hide caret on non-input elements */
+}
+
+/* Re-enable content editing specifically for input fields, textareas, and selects */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+    -webkit-user-modify: read-write !important;
+    /* Re-enable for WebKit */
+    user-modify: read-write !important;
+    /* Re-enable for standard */
+    contenteditable: true !important;
+    /* Re-enable for contenteditable */
+    caret-color: initial !important;
+    /* Ensure caret is visible in inputs */
+}
+
+/* Ensure buttons and other interactive elements don't get a caret */
+button,
+a,
+.close-button,
+.myprofile-hamburger {
+    caret-color: transparent !important;
 }
