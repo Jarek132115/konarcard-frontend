@@ -191,7 +191,7 @@ export default function Register() {
                                         type="text"
                                         id="username"
                                         name="username"
-                                        placeholder="yourusername" // Changed placeholder for clarity
+                                        placeholder="username" // Changed placeholder for clarity
                                         value={data.username}
                                         onChange={(e) => setData({ ...data, username: e.target.value })}
                                         autoComplete="off"
