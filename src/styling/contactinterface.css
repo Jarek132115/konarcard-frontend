@@ -1,19 +1,18 @@
-/* Styling for the new contact form wrapper (the black block) */
+/* Styling for the new contact form wrapper */
 .contact-form-wrapper {
     max-width: 500px;
     /* Static width */
     margin: 0 auto;
     /* Center the form */
     padding: 20px;
-    /* Padding inside this black wrapper */
-    background-color: #000;
-    /* This is the black background of the form block as seen in the image */
+    /* Padding around the content inside the form block */
+    background-color: transparent;
+    /* <<--- CRITICAL FIX: Make the form block background transparent */
     border-radius: 8px;
-    /* Rounded corners for the black container */
+    /* Rounded corners for the form area, if desired, even if transparent */
     box-sizing: border-box;
     /* Include padding in the element's total width and height */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    /* Optional: subtle shadow for depth */
+    /* Remove box-shadow if you don't want any shadow on the transparent block */
 }
 
 @media (max-width: 800px) {
@@ -34,15 +33,15 @@
     gap: 15px;
     /* Space between form elements */
     background-color: transparent;
-    /* The form element itself doesn't need a background as the wrapper has it */
+    /* Ensure the form element itself is also transparent */
     padding: 0;
     /* No padding here, wrapper handles it */
 }
 
 /* Styling for labels */
 .contact-form-label {
-    color: #fff;
-    /* **THIS SHOULD BE WHITE** - visible on the black form background */
+    color: #000;
+    /* <<--- CRITICAL FIX: BLACK TEXT COLOR for labels, visible on the light page background */
     font-size: 14px;
     margin-bottom: 5px;
     /* Space between label and input */
@@ -61,13 +60,13 @@
     padding: 12px 15px;
     /* Padding inside the input fields */
     border: none;
-    /* **NO BORDER** as per image */
+    /* NO BORDER as per image */
     border-radius: 6px;
     /* Rounded corners for input fields */
     background-color: #fff;
-    /* **WHITE BACKGROUND** for input fields as per image */
+    /* WHITE BACKGROUND for input fields as per image */
     color: #000;
-    /* **BLACK TEXT COLOR** for input */
+    /* BLACK TEXT COLOR for input */
     font-size: 16px;
     outline: none;
     /* Remove default outline */
@@ -107,8 +106,8 @@
 
 /* Specific styling for the text within the checkbox label */
 .contact-terms-label .desktop-body-xs {
-    color: #fff;
-    /* **WHITE TEXT** for the privacy policy statement, visible on the black background */
+    color: #000;
+    /* <<--- CRITICAL FIX: BLACK TEXT for the privacy policy statement, visible on the light background */
     font-size: 13px;
     /* Smaller font size for terms text */
     line-height: 1.4;
