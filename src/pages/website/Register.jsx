@@ -186,7 +186,7 @@ export default function Register() {
                                     Username <span className="text-sm text-gray-500">(this username cannot be changed)</span>
                                 </label>
                                 <div className="username-input-wrapper">
-                                    <span className="url-prefix">https://www.konarcard.com/u/</span>
+                                    <span className="url-prefix">www.konarcard.com/u/</span>
                                     <input
                                         type="text"
                                         id="username"
