@@ -115,7 +115,6 @@
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
     color: #000;
-    /* Black text for all non-logout links */
 }
 
 .sidebar-button .icon {
@@ -124,6 +123,7 @@
     margin-right: 10px;
     opacity: 1;
     filter: none;
+    /* Default for all icons */
     transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
@@ -143,19 +143,26 @@
     filter: none;
 }
 
-/* Logout button specific styles */
-.logout-button {
+
+.logout-button p {
     color: #e74c3c;
-    /* <<< Changed: Red color for logout text by default */
+}
+
+.logout-button .icon {
+    filter: invert(40%) sepia(80%) saturate(1500%) hue-rotate(340deg) brightness(90%) contrast(100%);
 }
 
 .logout-button:hover {
     background-color: #ffebeb;
+}
+
+.logout-button:hover p {
     color: #c0392b;
     /* Darker red text on hover */
 }
 
 .logout-button:hover .icon {
+    /* Keep the same filter on hover for consistency */
     filter: invert(40%) sepia(80%) saturate(1500%) hue-rotate(340deg) brightness(90%) contrast(100%);
 }
 
