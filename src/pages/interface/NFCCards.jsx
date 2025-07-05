@@ -2,18 +2,17 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
-// Removed ShareProfile import as it's no longer needed on this page
-import PlasticCard from '../../assets/images/KonarCard.png';
+import ShareProfile from '../../components/ShareProfile';
+import PlasticCard from '../../assets/images/KonarCard.png'; // Assuming this is the image for plastic card
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-hot-toast'; // Ensure toast is imported for error messages
 
 export default function NFCCards() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-  // Removed showShareModal state as it's no longer needed
-  // const [showShareModal, setShowShareModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const { user: authUser, loading: authLoading } = useContext(AuthContext);
   const userId = authUser?._id;
@@ -46,24 +45,20 @@ export default function NFCCards() {
     console.log("Activate Card clicked on NFC Cards page");
   };
 
-  // Removed handleShareCard function as it's no longer needed
-  // const handleShareCard = () => {
-  //   if (!authUser?.isVerified) {
-  //     toast.error("Please verify your email to share your card.");
-  //     return;
-  //   }
-  //   setShowShareModal(true);
-  // };
+  const handleShareCard = () => {
+    if (!authUser?.isVerified) {
+      toast.error("Please verify your email to share your card.");
+      return;
+    }
+    setShowShareModal(true);
+  };
 
-  // Removed handleCloseShareModal function as it's no longer needed
-  // const handleCloseShareModal = () => {
-  //   setShowShareModal(false);
-  // };
+  const handleCloseShareModal = () => {
+    setShowShareModal(false);
+  };
 
-  // contactDetailsForVCard and currentProfileUrl/currentQrCodeUrl are now redundant if ShareProfile is removed,
-  // but keeping them just in case they're used elsewhere or for future features.
   const contactDetailsForVCard = {
-    full_name: businessCard?.full_name || authUser?.name || '',
+    full_name: businessCard?.full_name || authUser?.name || '', // Prioritize businessCard data
     job_title: businessCard?.job_title || '',
     business_card_name: businessCard?.business_card_name || '',
     bio: businessCard?.bio || '',
@@ -103,8 +98,7 @@ export default function NFCCards() {
           <PageHeader
             title="Choose Your Perfect Card"
             onActivateCard={handleActivateCard}
-          // Removed onShareCard prop
-          // onShareCard={handleShareCard}
+            onShareCard={handleShareCard}
           />
 
           <p className="nfc-page-subtitle">
@@ -136,6 +130,15 @@ export default function NFCCards() {
           </div>
         </div>
       </main>
+
+      <ShareProfile
+        isOpen={showShareModal}
+        onClose={handleCloseShareModal}
+        profileUrl={currentProfileUrl}
+        qrCodeUrl={currentQrCodeUrl}
+        contactDetails={contactDetailsForVCard}
+        username={userUsername || ''}
+      />
     </div>
   );
 }
