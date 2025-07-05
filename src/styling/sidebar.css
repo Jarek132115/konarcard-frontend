@@ -285,10 +285,6 @@
         height: 50px;
     }
 
-    .user-info .email {
-        /* Mobile specific email size if needed, overrides desktop-body-xs for mobile */
-    }
-
     .user-info .name {
         font-size: 13px;
     }
