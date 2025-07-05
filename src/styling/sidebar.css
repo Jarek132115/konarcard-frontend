@@ -54,9 +54,7 @@
 }
 
 .user-info .email {
-    /* desktop-body-xs class should handle font-size. This ensures color if desktop-body-xs doesn't set it */
     color: #333;
-    /* Dark grey for email text */
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -74,12 +72,10 @@
     max-width: 100%;
 }
 
-/* Adjusted divider margin */
 .divider {
     border: none;
     border-top: 1px solid #eee;
     margin: 10px 0;
-    /* Changed from 12px to 10px */
 }
 
 .section-title {
@@ -113,15 +109,13 @@
     border-radius: 8px;
     text-decoration: none;
     background: none;
-    /* Default transparent background */
     border: none;
     width: 100%;
     text-align: left;
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
-    /* Default text color to be same as active/hovered state */
     color: #000;
-    /* Black text for all non-active, non-hovered links */
+    /* Black text for all non-logout links */
 }
 
 .sidebar-button .icon {
@@ -129,9 +123,7 @@
     height: 18px;
     margin-right: 10px;
     opacity: 1;
-    /* Always full opacity for icons */
     filter: none;
-    /* Always no filter for icons (so they remain black) */
     transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
@@ -143,35 +135,27 @@
 /* Hover state for sidebar buttons */
 .sidebar-button:hover {
     background-color: #f0f0f0;
-    /* Light grey on hover */
     color: #000;
-    /* Keep text black on hover */
 }
 
 .sidebar-button:hover .icon {
     opacity: 1;
-    /* Icon fully visible on hover */
     filter: none;
-    /* Keep icon black on hover */
 }
 
 /* Logout button specific styles */
 .logout-button {
     color: #e74c3c;
-    /* Red color for logout text */
+    /* <<< Changed: Red color for logout text by default */
 }
 
-/* Ensure hover for logout button keeps icon red if it's naturally red */
 .logout-button:hover {
     background-color: #ffebeb;
-    /* Light red background on hover */
     color: #c0392b;
     /* Darker red text on hover */
 }
 
 .logout-button:hover .icon {
-    /* This filter is only for icons that are NOT naturally red but need to be */
-    /* If your logoutIcon.svg is already red, remove this filter. */
     filter: invert(40%) sepia(80%) saturate(1500%) hue-rotate(340deg) brightness(90%) contrast(100%);
 }
 
@@ -187,29 +171,21 @@
 }
 
 
-/* --- STYLES FOR ACTIVE SIDEBAR LINK --- */
+/* STYLES FOR ACTIVE SIDEBAR LINK */
 .sidebar-button.active-sidebar-link {
     background-color: #f0f0f0;
-    /* Light grey background for the active state */
     color: #000;
-    /* Black text color for active link */
     font-weight: 600;
-    /* Make text slightly bolder */
 }
 
 .sidebar-button.active-sidebar-link .icon {
     opacity: 1;
-    /* Ensure icon is fully visible for active state */
     filter: none;
-    /* Keep icon black for active state */
 }
 
-/* Ensure hover state still works correctly over active state */
 .sidebar-button.active-sidebar-link:hover {
     background-color: #e0e0e0;
-    /* Slightly darker grey on hover for active link */
     color: #000;
-    /* Maintain black text color */
 }
 
 
@@ -308,7 +284,11 @@
         width: 50px;
         height: 50px;
     }
-    
+
+    .user-info .email {
+        /* Mobile specific email size if needed, overrides desktop-body-xs for mobile */
+    }
+
     .user-info .name {
         font-size: 13px;
     }
