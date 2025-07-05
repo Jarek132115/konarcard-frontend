@@ -53,14 +53,10 @@
     flex-grow: 1;
 }
 
-/* Adjusted email font size (implicitly by desktop-body-xs or explicitly if desktop-body-xs isn't precise enough) */
 .user-info .email {
-    /* If desktop-body-xs handles it well, these might not be needed, but added for explicit control */
-    /* font-size: 13px; */
-    /* Example: if desktop-body-xs isn't exactly what's needed */
-    /* font-weight: 600; */
+    /* desktop-body-xs class should handle font-size. This ensures color if desktop-body-xs doesn't set it */
     color: #333;
-    /* Assuming desktop-body-xs has this color or we override it */
+    /* Dark grey for email text */
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -83,7 +79,7 @@
     border: none;
     border-top: 1px solid #eee;
     margin: 10px 0;
-    /* <<< Changed from 12px to 10px */
+    /* Changed from 12px to 10px */
 }
 
 .section-title {
@@ -116,24 +112,27 @@
     padding: 8px 10px;
     border-radius: 8px;
     text-decoration: none;
-    color: #333;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    cursor: pointer;
-    border: none;
     background: none;
+    /* Default transparent background */
+    border: none;
     width: 100%;
     text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    /* Default text color to be same as active/hovered state */
+    color: #000;
+    /* Black text for all non-active, non-hovered links */
 }
 
 .sidebar-button .icon {
     width: 18px;
     height: 18px;
     margin-right: 10px;
-    opacity: 0.7;
-    transition: opacity 0.2s ease, filter 0.2s ease;
-    /* Ensure filter transition is smooth */
+    opacity: 1;
+    /* Always full opacity for icons */
     filter: none;
-    /* Default to no filter, so icons are their original color (black) */
+    /* Always no filter for icons (so they remain black) */
+    transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
 .sidebar-button p {
@@ -159,15 +158,20 @@
 /* Logout button specific styles */
 .logout-button {
     color: #e74c3c;
+    /* Red color for logout text */
 }
 
+/* Ensure hover for logout button keeps icon red if it's naturally red */
 .logout-button:hover {
     background-color: #ffebeb;
+    /* Light red background on hover */
     color: #c0392b;
+    /* Darker red text on hover */
 }
 
 .logout-button:hover .icon {
-    /* Adjust filter to make logout icon red on hover, if its default is not red */
+    /* This filter is only for icons that are NOT naturally red but need to be */
+    /* If your logoutIcon.svg is already red, remove this filter. */
     filter: invert(40%) sepia(80%) saturate(1500%) hue-rotate(340deg) brightness(90%) contrast(100%);
 }
 
@@ -183,7 +187,7 @@
 }
 
 
-/* --- NEW STYLES FOR ACTIVE SIDEBAR LINK --- */
+/* --- STYLES FOR ACTIVE SIDEBAR LINK --- */
 .sidebar-button.active-sidebar-link {
     background-color: #f0f0f0;
     /* Light grey background for the active state */
@@ -306,8 +310,8 @@
     }
 
     .user-info .email {
-        font-size: 15px;
-        /* Revert to initial size if desktop-body-xs makes it too small on mobile */
+        /* Mobile specific email size if needed, overrides desktop-body-xs for mobile */
+        /* font-size: 15px; */
     }
 
     .user-info .name {
