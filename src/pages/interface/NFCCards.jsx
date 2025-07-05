@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useContext } from 'react'; 
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
-import ShareProfile from '../../components/ShareProfile'; 
-import KonarCard from '../../assets/images/KonarCard.png';
+import ShareProfile from '../../components/ShareProfile';
+import PlasticCard from '../../assets/images/KonarCard.png'; // Assuming this is the image for plastic card
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
-import { AuthContext } from '../../components/AuthContext'; 
-import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard'; 
+import { AuthContext } from '../../components/AuthContext';
+import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
+import { toast } from 'react-hot-toast'; // Ensure toast is imported for error messages
 
 export default function NFCCards() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-  const [showShareModal, setShowShareModal] = useState(false); 
+  const [showShareModal, setShowShareModal] = useState(false);
 
-  const { user: authUser, loading: authLoading } = useContext(AuthContext); 
+  const { user: authUser, loading: authLoading } = useContext(AuthContext);
   const userId = authUser?._id;
   const userUsername = authUser?.username;
 
@@ -45,7 +46,7 @@ export default function NFCCards() {
   };
 
   const handleShareCard = () => {
-    if (!authUser?.isVerified) { 
+    if (!authUser?.isVerified) {
       toast.error("Please verify your email to share your card.");
       return;
     }
@@ -57,12 +58,12 @@ export default function NFCCards() {
   };
 
   const contactDetailsForVCard = {
-    full_name: authUser?.name || '',
-    job_title: '', 
+    full_name: businessCard?.full_name || authUser?.name || '', // Prioritize businessCard data
+    job_title: businessCard?.job_title || '',
     business_card_name: businessCard?.business_card_name || '',
-    bio: '',
-    contact_email: authUser?.email || '',
-    phone_number: '', 
+    bio: businessCard?.bio || '',
+    contact_email: businessCard?.contact_email || authUser?.email || '',
+    phone_number: businessCard?.phone_number || '',
     username: userUsername || '',
   };
 
@@ -100,20 +101,31 @@ export default function NFCCards() {
             onShareCard={handleShareCard}
           />
 
-          <p className="nfc-subtitle">
+          <p className="nfc-page-subtitle">
             Premium materials. Custom designs. Instantly share your contact details with a single tap.
           </p>
 
-          <div className="section-3-container shop-page-container">
-            <div className="Prouct-Image-Section">
-              <img src={KonarCard} className="Product-Image" alt="Konar Card" />
-              <div className='product-description'>
-                <div className="grey-box desktop-body-xs">1-month subscription included</div>
-                <p className='desktop-h5 text-center'>Konar Card - White Edition</p>
-                <p className='desktop-body text-center'>Engineered to impress. Built to last.</p>
-                <p style={{ fontSize: 18, fontWeight: 600, textAlign: 'center', marginTop: 10, marginBottom: 5 }}>£19.95</p>
-                <Link to="/shopnfccards/whitecard" style={{ display: 'flex', width: 'fit-content', margin: 'auto' }} className="black-button desktop-button margin-top-10">Buy Now</Link>
+          {/* This is the new main container for the NFC Card offer */}
+          <div className="nfc-card-offer-container">
+            <div className="nfc-card-header">
+              <p className='nfc-card-title'>Plastic NFC Card</p>
+              <div className="nfc-card-badge">1-month subscription included</div>
+            </div>
+            <p className='nfc-card-subheader'>Lightweight, Durable, Always Ready</p>
+            <p className='nfc-card-optional-text'>This product is optional, buy one to stand out.</p>
+
+            <img src={PlasticCard} className="nfc-card-image" alt="Plastic NFC Card" />
+
+            <p className='nfc-card-quote-footer'>
+              "For those who want to stand out above those who already stand out!"
+            </p>
+
+            <div className="nfc-card-price-cta-wrapper">
+              <div className='nfc-card-price-display'>
+                <p className='nfc-card-price-value'>£24.95</p>
+                <p className='nfc-card-price-period'>Lifetime Use</p>
               </div>
+              <Link to="/shopnfccards/whitecard" className="nfc-card-buy-button">Buy Now</Link>
             </div>
           </div>
         </div>

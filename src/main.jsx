@@ -24,6 +24,7 @@ import './styling/contactus.css';
 import './styling/userpage.css';
 import './styling/shareprofile.css';
 import './styling/contactinterface.css';
+import './styling/nfccard.css';
 
 import App from './App.jsx';
 

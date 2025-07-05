@@ -1,0 +1,237 @@
+/* --- NFC Card Page Specific Styling --- */
+
+/* Main container for the NFC card offer */
+.nfc-card-offer-container {
+    max-width: 500px;
+    /* Static width as requested */
+    margin: 40px auto;
+    /* Center the card and add vertical space */
+    background-color: #fff;
+    /* White background for the card */
+    border-radius: 12px;
+    /* Rounded corners for the card */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow as seen in image */
+    padding: 30px;
+    /* Internal padding for content */
+    box-sizing: border-box;
+    /* Include padding in the element's total width and height */
+    position: relative;
+    /* Needed if we add absolute positioned elements later, like a badge */
+    display: flex;
+    /* Flex container for its direct children (header, texts, image, footer) */
+    flex-direction: column;
+    /* Stack children vertically */
+    align-items: flex-start;
+    /* Align content to the left inside the card */
+}
+
+@media (max-width: 800px) {
+    .nfc-card-offer-container {
+        max-width: 100%;
+        /* Full width on smaller screens */
+        border-radius: 0;
+        /* Remove border-radius on full width for cleaner look */
+        padding: 20px;
+        /* Slightly less padding on mobile */
+        margin-top: 20px;
+        /* Adjust top margin for mobile */
+    }
+}
+
+/* Header section within the card (title + badge) */
+.nfc-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    /* Take full width of the card container */
+    gap: 10px;
+    /* Space between title and badge */
+    margin-bottom: 5px;
+}
+
+/* Title of the NFC Card (e.g., "Plastic NFC Card") */
+.nfc-card-title {
+    font-size: 24px;
+    /* Larger font size */
+    font-weight: 700;
+    /* Bold */
+    color: #000;
+    /* Black text */
+    margin-bottom: 0;
+    /* Override any default margin */
+}
+
+/* Badge (e.g., "1-MONTH SUBSCRIPTION INCLUDED") */
+.nfc-card-badge {
+    background-color: #007bff;
+    /* Blue background */
+    color: #fff;
+    /* White text */
+    padding: 4px 10px;
+    border-radius: 5px;
+    /* Slightly rounded badge */
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+    /* Prevent text from wrapping */
+    flex-shrink: 0;
+    /* Prevent badge from shrinking */
+}
+
+/* Subheader (e.g., "Lightweight, Durable, Always Ready") */
+.nfc-card-subheader {
+    color: #555;
+    /* Dark grey text */
+    font-size: 15px;
+    /* Adjust font size */
+    margin-bottom: 10px;
+    text-align: left;
+    /* Ensure left alignment */
+}
+
+/* Optional sentence (e.g., "This product is optional, buy one to stand out.") */
+.nfc-card-optional-text {
+    color: #555;
+    /* Dark grey text */
+    font-style: italic;
+    font-size: 14px;
+    margin-bottom: 20px;
+    text-align: left;
+    /* Ensure left alignment */
+    line-height: 1.4;
+}
+
+/* Image of the NFC Card (Konar Card / Plastic Card) */
+.nfc-card-image {
+    width: 100%;
+    /* Full width within its container */
+    max-width: 250px;
+    /* Max width to keep it from being too large */
+    height: auto;
+    /* Maintain aspect ratio */
+    object-fit: contain;
+    /* Ensure the entire image is visible */
+    border-radius: 8px;
+    /* Slightly rounded image corners */
+    margin: 0 auto 20px auto;
+    /* Center the image horizontally, add bottom margin */
+    display: block;
+    /* Ensure margin auto works */
+}
+
+/* Footer quote (e.g., ""For those who want to stand out...") */
+.nfc-card-quote-footer {
+    color: #555;
+    /* Dark grey text */
+    font-style: italic;
+    font-size: 15px;
+    margin-top: 0;
+    /* Adjust as needed based on spacing */
+    margin-bottom: 25px;
+    /* Space before price/CTA */
+    line-height: 1.5;
+    text-align: left;
+    /* Ensure left alignment */
+}
+
+/* Price and CTA button wrapper */
+.nfc-card-price-cta-wrapper {
+    display: flex;
+    flex-direction: column;
+    /* Stack price and button vertically */
+    align-items: flex-start;
+    /* Align price and button to the left */
+    gap: 15px;
+    /* Space between price and button */
+    width: 100%;
+    /* Take full width of the card */
+    margin-top: auto;
+    /* Pushes content to the bottom if card has min-height */
+}
+
+/* Price display (e.g., "£24.95 Lifetime Use") */
+.nfc-card-price-display {
+    display: flex;
+    align-items: baseline;
+    /* Align "£24.95" and "Lifetime Use" correctly */
+    gap: 8px;
+    /* Space between price and text */
+    width: 100%;
+    /* Take full width */
+    justify-content: flex-start;
+    /* Align price info to the left */
+}
+
+/* Price value (e.g., "£24.95") */
+.nfc-card-price-value {
+    font-size: 24px;
+    /* Large, bold price */
+    font-weight: 700;
+    color: #000;
+    /* Black text */
+    margin: 0;
+    /* Remove default margin */
+}
+
+/* Price period/usage (e.g., "Lifetime Use") */
+.nfc-card-price-period {
+    font-size: 14px;
+    color: #666;
+    /* Lighter grey for "Lifetime Use" */
+    margin: 0;
+    /* Remove default margin */
+}
+
+/* Buy Now button */
+.nfc-card-buy-button {
+    width: 100%;
+    /* Full width of the card */
+    padding: 15px 20px;
+    background-color: #000;
+    /* Black background for the button */
+    color: #fff;
+    /* White text */
+    border: none;
+    border-radius: 8px;
+    /* Rounded corners */
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    /* Center the text inside the button */
+    display: block;
+    /* Ensures it takes full width */
+}
+
+.nfc-card-buy-button:hover {
+    background-color: #333;
+    /* Darker grey on hover */
+}
+
+/* --- Ensure consistency with common text/button classes already in your app --- */
+/* (Assuming these are defined elsewhere or will be added to your global styles) */
+/* .desktop-h5 { color: #000; font-size: 20px; font-weight: 600; } */
+/* .desktop-body-s { color: #555; font-size: 15px; } */
+/* .desktop-body-xs { color: #555; font-size: 14px; } */
+/* .light-black { color: #666; } */
+/* You might want to remove redundant 'font-size', 'font-weight', 'color' from above new classes if these utility classes are applied */
+
+/* General page subtitle outside the card */
+.nfc-page-subtitle {
+    text-align: center;
+    color: #333;
+    /* Dark grey */
+    font-size: 16px;
+    margin-bottom: 40px;
+    /* Space below subtitle and above the card */
+}
+
+/* Remove default margins/paddings if not already handled by global reset */
+.nfc-card-offer-container p {
+    margin: 0;
+    padding: 0;
+}
