@@ -129,6 +129,8 @@
     height: 18px;
     margin-right: 10px;
     opacity: 0.7;
+    /* Default icon opacity */
+    transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
 .sidebar-button p {
@@ -136,6 +138,7 @@
     font-size: 14px;
 }
 
+/* Hover state for sidebar buttons */
 .sidebar-button:hover {
     background-color: #f0f0f0;
     color: #0081FF;
@@ -143,16 +146,28 @@
 
 .sidebar-button:hover .icon {
     opacity: 1;
+    filter: invert(30%) sepia(90%) saturate(2000%) hue-rotate(190deg) brightness(100%) contrast(100%);
+    /* Turns icon blue */
 }
 
+/* Logout button specific styles */
 .logout-button {
     color: #e74c3c;
+    /* Red color for logout text */
 }
 
 .logout-button:hover {
     background-color: #ffebeb;
+    /* Light red background on hover */
     color: #c0392b;
+    /* Darker red text on hover */
 }
+
+.logout-button:hover .icon {
+    filter: invert(40%) sepia(80%) saturate(1500%) hue-rotate(340deg) brightness(90%) contrast(100%);
+    /* Adjust filter for red icon on hover */
+}
+
 
 .footer-actions {
     padding-top: 12px;
@@ -162,6 +177,32 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+}
+
+
+/* --- NEW STYLES FOR ACTIVE SIDEBAR LINK --- */
+.sidebar-button.active-sidebar-link {
+    background-color: #e0f0ff;
+    /* A lighter blue background for the active state */
+    color: #0081FF;
+    /* Blue text color for active link */
+    font-weight: 600;
+    /* Make text slightly bolder */
+}
+
+.sidebar-button.active-sidebar-link .icon {
+    opacity: 1;
+    /* Ensure icon is fully visible for active state */
+    filter: invert(30%) sepia(90%) saturate(2000%) hue-rotate(190deg) brightness(100%) contrast(100%);
+    /* Turns icon blue for active state */
+}
+
+/* Ensure hover state still works correctly over active state if desired, or make active state stronger */
+.sidebar-button.active-sidebar-link:hover {
+    background-color: #cce0ff;
+    /* Slightly darker blue on hover for active link */
+    color: #0081FF;
+    /* Maintain blue text color */
 }
 
 

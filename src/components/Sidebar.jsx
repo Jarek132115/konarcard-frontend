@@ -1,7 +1,7 @@
 // frontend/src/components/Sidebar.jsx
 
 import React, { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import settingsIcon from '../assets/icons/Settings-Icon.svg';
@@ -15,6 +15,7 @@ import homeIcon from '../assets/icons/Home-Icon.svg';
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
     const { user, logout } = useContext(AuthContext);
+    const location = useLocation(); // Get current location
 
     const handleLogout = async () => {
         await logout();
@@ -24,6 +25,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const closeSidebar = () => {
         setSidebarOpen(false);
     };
+
+    // Helper function to check if a link is active
+    const isActive = (path) => location.pathname === path;
 
     return (
         <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
@@ -44,7 +48,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             <div className="sidebar-content-wrapper">
                 {/* USER INFO */}
                 <div className="my-account-container">
-                    <img src={LogoIcon} alt="User" className="profile-pic" />
+                    <img src={LogoIcon} alt="User" className="profile-pic" /> {/* Consider replacing LogoIcon with a generic user placeholder or actual user profile picture if available */}
                     <div className="user-info">
                         <p className="email">{user?.email || 'Not logged in'}</p>
                         <p className="name">{user?.name || ''}</p>
@@ -58,11 +62,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     {/* MAIN LINKS */}
                     <div className="main-links-container">
                         <p className="section-title">MAIN</p>
-                        <Link to="/myprofile" className="sidebar-button" onClick={closeSidebar}>
+                        <Link to="/myprofile" className={`sidebar-button ${isActive('/myprofile') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
                             <img src={profileIcon} alt="profile" className="icon" />
                             <p className='desktop-body-s'>My Profile</p>
                         </Link>
-                        <Link to="/nfccards" className="sidebar-button" onClick={closeSidebar}>
+                        <Link to="/nfccards" className={`sidebar-button ${isActive('/nfccards') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
                             <img src={cardIcon} alt="card" className="icon" />
                             <p className='desktop-body-s'>NFC Cards</p>
                         </Link>
@@ -73,11 +77,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     {/* ACCOUNT LINKS */}
                     <div className="account-links-container">
                         <p className="section-title">ACCOUNT</p>
-                        <Link to="/profile" className="sidebar-button" onClick={closeSidebar}>
+                        <Link to="/profile" className={`sidebar-button ${isActive('/profile') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
                             <img src={settingsIcon} alt="account" className="icon" />
                             <p className='desktop-body-s'>My Account</p>
                         </Link>
-                        <Link to="/subscription" className="sidebar-button" onClick={closeSidebar}>
+                        <Link to="/subscription" className={`sidebar-button ${isActive('/subscription') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
                             <img src={subscriptionIcon} alt="subscription" className="icon" />
                             <p className='desktop-body-s'>Subscription</p>
                         </Link>
@@ -88,11 +92,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     {/* HELP LINKS */}
                     <div className="help-links-container">
                         <p className="section-title">HELP</p>
-                        <Link to="/contact-support" className="sidebar-button" onClick={closeSidebar}>
+                        <Link to="/contact-support" className={`sidebar-button ${isActive('/contact-support') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
                             <img src={helpIcon} alt="contact" className="icon" />
                             <p className='desktop-body-s'>Contact Us</p>
                         </Link>
-                        <Link to="/helpcentreinterface" className="sidebar-button" onClick={closeSidebar}>
+                        <Link to="/helpcentreinterface" className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
                             <img src={helpIcon} alt="help centre" className="icon" />
                             <p className='desktop-body-s'>Help Centre</p>
                         </Link>
@@ -101,7 +105,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                 {/* FOOTER ACTIONS - pushed to bottom */}
                 <div className="footer-actions">
-                    <Link to="/" className="sidebar-button" onClick={closeSidebar}>
+                    <Link to="/" className={`sidebar-button ${isActive('/') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
                         <img src={homeIcon} alt="home" className="icon" />
                         <p className='desktop-body-s'>Go to Homepage</p>
                     </Link>
