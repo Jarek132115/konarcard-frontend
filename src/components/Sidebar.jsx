@@ -1,7 +1,7 @@
 // frontend/src/components/Sidebar.jsx
 
 import React, { useContext } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import settingsIcon from '../assets/icons/Settings-Icon.svg';
@@ -15,7 +15,7 @@ import homeIcon from '../assets/icons/Home-Icon.svg';
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
     const { user, logout } = useContext(AuthContext);
-    const location = useLocation(); // Get current location
+    const location = useLocation();
 
     const handleLogout = async () => {
         await logout();
@@ -26,40 +26,32 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
         setSidebarOpen(false);
     };
 
-    // Helper function to check if a link is active
     const isActive = (path) => location.pathname === path;
 
     return (
         <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-            {/* Mobile Header within Sidebar for the 'X' button and logo (when sidebar is open) */}
             <div className="sidebar-mobile-header-inner">
-                {/* Logo on the left */}
                 <Link to="/" className="sidebar-logo-link-mobile" onClick={closeSidebar}>
                     <img src={LogoIcon} alt="Logo" className="sidebar-logo-mobile" />
                 </Link>
-                {/* 'X' close button on the right */}
                 <div className="close-sidebar-button" onClick={closeSidebar}>
                     <span></span>
                     <span></span>
                 </div>
             </div>
 
-            {/* Sidebar content wrapper */}
             <div className="sidebar-content-wrapper">
-                {/* USER INFO */}
                 <div className="my-account-container">
-                    <img src={LogoIcon} alt="User" className="profile-pic" /> {/* Consider replacing LogoIcon with a generic user placeholder or actual user profile picture if available */}
+                    <img src={LogoIcon} alt="User" className="profile-pic" />
                     <div className="user-info">
-                        <p className="email">{user?.email || 'Not logged in'}</p>
+                        <p className="email desktop-body-xs">{user?.email || 'Not logged in'}</p> {/* <<< Changed here */}
                         <p className="name">{user?.name || ''}</p>
                     </div>
                 </div>
 
-                <hr className="divider" />
+                <hr className="divider" /> {/* This is the line to adjust */}
 
-                {/* Grouped Top Links */}
                 <div className="top-links-group">
-                    {/* MAIN LINKS */}
                     <div className="main-links-container">
                         <p className="section-title">MAIN</p>
                         <Link to="/myprofile" className={`sidebar-button ${isActive('/myprofile') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
@@ -74,7 +66,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                     <hr className="divider" />
 
-                    {/* ACCOUNT LINKS */}
                     <div className="account-links-container">
                         <p className="section-title">ACCOUNT</p>
                         <Link to="/profile" className={`sidebar-button ${isActive('/profile') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
@@ -89,7 +80,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                     <hr className="divider" />
 
-                    {/* HELP LINKS */}
                     <div className="help-links-container">
                         <p className="section-title">HELP</p>
                         <Link to="/contact-support" className={`sidebar-button ${isActive('/contact-support') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
@@ -103,7 +93,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     </div>
                 </div>
 
-                {/* FOOTER ACTIONS - pushed to bottom */}
                 <div className="footer-actions">
                     <Link to="/" className={`sidebar-button ${isActive('/') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
                         <img src={homeIcon} alt="home" className="icon" />

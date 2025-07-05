@@ -9,7 +9,6 @@
     min-width: 220px;
     width: fit-content;
     max-width: 300px;
-    /* Max width for desktop to prevent it from getting too wide */
     background-color: white;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -19,10 +18,8 @@
     z-index: 999;
     transition: transform 0.3s ease-in-out;
     overflow: hidden;
-    /* Hide internal scroll for desktop */
 }
 
-/* Hide the internal mobile header on desktop */
 .sidebar-mobile-header-inner {
     display: none;
 }
@@ -32,7 +29,6 @@
     flex-direction: column;
     height: 100%;
     overflow: hidden;
-    /* Desktop sidebar content wrapper should also not scroll internally */
 }
 
 .my-account-container {
@@ -57,10 +53,14 @@
     flex-grow: 1;
 }
 
+/* Adjusted email font size (implicitly by desktop-body-xs or explicitly if desktop-body-xs isn't precise enough) */
 .user-info .email {
-    font-size: 14px;
-    font-weight: 600;
+    /* If desktop-body-xs handles it well, these might not be needed, but added for explicit control */
+    /* font-size: 13px; */
+    /* Example: if desktop-body-xs isn't exactly what's needed */
+    /* font-weight: 600; */
     color: #333;
+    /* Assuming desktop-body-xs has this color or we override it */
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -78,10 +78,12 @@
     max-width: 100%;
 }
 
+/* Adjusted divider margin */
 .divider {
     border: none;
     border-top: 1px solid #eee;
-    margin: 12px 0;
+    margin: 10px 0;
+    /* <<< Changed from 12px to 10px */
 }
 
 .section-title {
@@ -98,7 +100,6 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    /* No internal scroll on desktop for this group */
     gap: 4px;
 }
 
@@ -129,8 +130,10 @@
     height: 18px;
     margin-right: 10px;
     opacity: 0.7;
-    /* Default icon opacity */
     transition: opacity 0.2s ease, filter 0.2s ease;
+    /* Ensure filter transition is smooth */
+    filter: none;
+    /* Default to no filter, so icons are their original color (black) */
 }
 
 .sidebar-button p {
@@ -141,31 +144,31 @@
 /* Hover state for sidebar buttons */
 .sidebar-button:hover {
     background-color: #f0f0f0;
-    color: #0081FF;
+    /* Light grey on hover */
+    color: #000;
+    /* Keep text black on hover */
 }
 
 .sidebar-button:hover .icon {
     opacity: 1;
-    filter: invert(30%) sepia(90%) saturate(2000%) hue-rotate(190deg) brightness(100%) contrast(100%);
-    /* Turns icon blue */
+    /* Icon fully visible on hover */
+    filter: none;
+    /* Keep icon black on hover */
 }
 
 /* Logout button specific styles */
 .logout-button {
     color: #e74c3c;
-    /* Red color for logout text */
 }
 
 .logout-button:hover {
     background-color: #ffebeb;
-    /* Light red background on hover */
     color: #c0392b;
-    /* Darker red text on hover */
 }
 
 .logout-button:hover .icon {
+    /* Adjust filter to make logout icon red on hover, if its default is not red */
     filter: invert(40%) sepia(80%) saturate(1500%) hue-rotate(340deg) brightness(90%) contrast(100%);
-    /* Adjust filter for red icon on hover */
 }
 
 
@@ -182,10 +185,10 @@
 
 /* --- NEW STYLES FOR ACTIVE SIDEBAR LINK --- */
 .sidebar-button.active-sidebar-link {
-    background-color: #e0f0ff;
-    /* A lighter blue background for the active state */
-    color: #0081FF;
-    /* Blue text color for active link */
+    background-color: #f0f0f0;
+    /* Light grey background for the active state */
+    color: #000;
+    /* Black text color for active link */
     font-weight: 600;
     /* Make text slightly bolder */
 }
@@ -193,16 +196,16 @@
 .sidebar-button.active-sidebar-link .icon {
     opacity: 1;
     /* Ensure icon is fully visible for active state */
-    filter: invert(30%) sepia(90%) saturate(2000%) hue-rotate(190deg) brightness(100%) contrast(100%);
-    /* Turns icon blue for active state */
+    filter: none;
+    /* Keep icon black for active state */
 }
 
-/* Ensure hover state still works correctly over active state if desired, or make active state stronger */
+/* Ensure hover state still works correctly over active state */
 .sidebar-button.active-sidebar-link:hover {
-    background-color: #cce0ff;
-    /* Slightly darker blue on hover for active link */
-    color: #0081FF;
-    /* Maintain blue text color */
+    background-color: #e0e0e0;
+    /* Slightly darker grey on hover for active link */
+    color: #000;
+    /* Maintain black text color */
 }
 
 
@@ -212,16 +215,12 @@
         position: fixed;
         top: 0;
         left: 0;
-        /* Ensure it starts from the very left edge */
         width: 100vw;
-        /* Fills the entire viewport width */
         height: 100vh;
         transform: translateX(-100%);
         box-shadow: none;
-        /* No shadow when full width */
         z-index: 1000;
         overflow: hidden;
-        /* Prevent sidebar internal scrolling for full viewport slide */
         background-color: white;
         padding: 0;
         transition: transform 0.3s ease-in-out;
@@ -231,7 +230,6 @@
         transform: translateX(0);
     }
 
-    /* Header for the mobile menu itself (Logo and X inside the opened sidebar) */
     .sidebar-mobile-header-inner {
         display: flex;
         justify-content: space-between;
@@ -244,24 +242,18 @@
         box-sizing: border-box;
     }
 
-    /* Logo on the left inside the open sidebar */
     .sidebar-logo-link-mobile {
         order: 1;
-        /* Logo on the left */
         margin-right: auto;
-        /* Pushes the close button to the right */
         display: flex;
         align-items: center;
     }
 
     .sidebar-logo-link-mobile .sidebar-logo-mobile {
         height: 32px;
-        /* Consistent logo size */
         margin-right: 0;
-        /* Remove any default margin that might push it right */
     }
 
-    /* Close (X) button styles for opened sidebar */
     .close-sidebar-button {
         display: flex;
         flex-direction: column;
@@ -274,9 +266,7 @@
         align-items: center;
         justify-content: center;
         order: 2;
-        /* Close button on the right */
         margin-left: auto;
-        /* Pushes close button to the far right */
     }
 
     .close-sidebar-button span {
@@ -296,22 +286,17 @@
         transform: rotate(-45deg);
     }
 
-    /* Sidebar content wrapper (scrollable area inside the full-screen sidebar) */
     .sidebar-content-wrapper {
         padding: 20px;
         height: calc(100% - 63px);
-        /* Account for header height (15px top/bottom padding + 1px border) */
         box-sizing: border-box;
         overflow-y: auto;
-        /* Allow internal content to scroll if it exceeds screen height */
         padding-bottom: 40px;
-        /* Add space at the bottom */
     }
 
     .my-account-container {
         padding-bottom: 15px;
         border-bottom: none;
-        /* No border here, only via my-account-container + .divider */
         margin-bottom: 15px;
     }
 
@@ -322,6 +307,7 @@
 
     .user-info .email {
         font-size: 15px;
+        /* Revert to initial size if desktop-body-xs makes it too small on mobile */
     }
 
     .user-info .name {
@@ -344,20 +330,15 @@
 
     .divider {
         display: none;
-        /* Hide all other dividers on mobile */
     }
 
     .my-account-container+.divider {
-        /* This targets the divider immediately after my-account-container */
         display: block;
-        /* Make sure this one divider is visible */
         margin: 15px 0;
-        /* Restore its margin */
     }
 
     .top-links-group {
         overflow-y: visible;
-        /* Ensure content here isn't clipped if it naturally fits */
         padding-right: 0;
     }
 
