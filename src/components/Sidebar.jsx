@@ -11,6 +11,7 @@ import helpIcon from '../assets/icons/Help-Icon.svg';
 import logoutIcon from '../assets/icons/Logout-Icon.svg';
 import subscriptionIcon from '../assets/icons/Subscription-Icon.svg';
 import homeIcon from '../assets/icons/Home-Icon.svg';
+import contactIcon from '../assets/icons/Contact-Icon.svg'; // <<< NEW: Import the Contact-Icon.svg
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
@@ -44,12 +45,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 <div className="my-account-container">
                     <img src={LogoIcon} alt="User" className="profile-pic" />
                     <div className="user-info">
-                        <p className="email desktop-body-xs">{user?.email || 'Not logged in'}</p> {/* <<< Changed here */}
+                        <p className="email desktop-body-xs">{user?.email || 'Not logged in'}</p>
                         <p className="name">{user?.name || ''}</p>
                     </div>
                 </div>
 
-                <hr className="divider" /> {/* This is the line to adjust */}
+                <hr className="divider" />
 
                 <div className="top-links-group">
                     <div className="main-links-container">
@@ -83,7 +84,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <div className="help-links-container">
                         <p className="section-title">HELP</p>
                         <Link to="/contact-support" className={`sidebar-button ${isActive('/contact-support') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={helpIcon} alt="contact" className="icon" />
+                            <img src={contactIcon} alt="contact" className="icon" /> {/* <<< CHANGED: Use contactIcon here */}
                             <p className='desktop-body-s'>Contact Us</p>
                         </Link>
                         <Link to="/helpcentreinterface" className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
