@@ -13,7 +13,7 @@ import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 export default function Subscription() {
   const { user: authUser } = useContext(AuthContext);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [loading, setLoading] = useState(true); // Renamed from loadingStatus for clarity with existing state
+  const [loading, setLoading] = useState(true);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelCooldown, setCancelCooldown] = useState(0);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -37,7 +37,7 @@ export default function Subscription() {
         console.error('Error fetching subscription status:', err);
         toast.error('Failed to load subscription status.');
       } finally {
-        setLoading(false); // Use setLoading here
+        setLoading(false);
       }
     };
 
@@ -79,7 +79,7 @@ export default function Subscription() {
   }, [sidebarOpen, isMobile]);
 
   const handleSubscribe = async () => {
-    setIsCancelling(true); // Renamed from isSubmitting
+    setIsCancelling(true);
     try {
       const res = await api.post('/subscribe', {});
       if (res.data.url) {
@@ -91,7 +91,7 @@ export default function Subscription() {
       console.error('Subscription initiation failed:', err);
       toast.error(err.response?.data?.error || 'Subscription initiation failed. Please try again.');
     } finally {
-      setIsCancelling(false); // Use setIsCancelling
+      setIsCancelling(false);
     }
   };
 
@@ -102,7 +102,7 @@ export default function Subscription() {
   };
 
   const confirmCancel = async () => {
-    setIsCancelling(true); // Use setIsCancelling
+    setIsCancelling(true);
     try {
       await api.post('/cancel-subscription', {});
       toast.success('Subscription will be cancelled at the end of the current billing period.');
@@ -113,7 +113,7 @@ export default function Subscription() {
       console.error('Failed to cancel subscription:', err);
       toast.error(err.response?.data?.error || 'Failed to cancel subscription. Please try again.');
     } finally {
-      setIsCancelling(false); // Use setIsCancelling
+      setIsCancelling(false);
     }
   };
 
@@ -178,34 +178,29 @@ export default function Subscription() {
           onShareCard={handleShareCard}
         />
 
-        {/* BEGIN REFACTORED SUBSCRIPTION OFFER SECTION */}
         <div className="section-1-title">
-          <h2 className='desktop-h3 text-center black'>Our Plan</h2> {/* Updated to match screenshot */}
-          <h3 className='desktop-h6 text-center light-black'>Start free for 7 days — only upgrade if it works for you.</h3> {/* Updated to match screenshot */}
+          <h2 className='desktop-h3 text-center black'>Our Plan</h2>
+          <h3 className='desktop-h6 text-center light-black'>Start free for 7 days — only upgrade if it works for you.</h3>
         </div>
 
-        {/* This div replaces the old "subscription-card-wrapper" and adopts new classes */}
         <div className="combined-offer-container" style={{ justifyContent: 'center' }}>
-          <div className="subscription-offer-left"> {/* This acts as the single subscription card */}
+          <div className="subscription-offer-left">
             <div className="subscription-header">
               <p className='desktop-h5 black'>Power Profile</p>
-              {/* Conditional Free Trial badge */}
-              {isSubscribed ? null : ( // Only show free trial badge if not subscribed
+              {isSubscribed ? null : (
                 <div className="free-trial-badge desktop-body-xs">FREE TRIAL</div>
               )}
             </div>
-            <p className='desktop-body-s light-black subscription-subheader'>Win more work with a power profile</p>
+            <p className='desktop-body-s light-black subscription-subheader'>Unlock advanced features to elevate your digital presence.</p>
 
             <div className="subscription-features">
               {[
-                "Upload unlimited photos (Portfolio / Gallery)",
-                "Add multiple social links and websites",
-                "Personalize your landing page URL (yourname.cardsite.com)",
-                "Priority support and setup help",
-                "Premium NFC card design options", // Added this feature from the initial screenshot
-                "CRM Integration.",
-                "Networking Toolkit.",
-                "Automated Follow-Ups.",
+                "Fully customize your digital profile: Profile Picture, Name, Job Title, Cover Photo, Page Headings, and detailed 'About Me' section.",
+                "Upload unlimited work photos & build an impressive portfolio/gallery.",
+                "Feature unlimited services and collect unlimited client reviews.",
+                `Personalize your unique URL: konarcard.com/u/${userUsername || 'yourusername'}`, // Dynamically include username
+                "Seamless CRM Integration & Automated Follow-Ups for efficient networking.",
+                "Priority support, setup assistance, and premium NFC card design options.",
               ].map((text, idx) => (
                 <div className="hero-tick" key={idx}>
                   <img src={TickIcon} className="icon" alt="tick" />
@@ -215,15 +210,14 @@ export default function Subscription() {
             </div>
 
             <p className='desktop-body-s black subscription-description-footer'>
-              "For professionals and businesses ready to make every first impression count."
+              "Designed for professionals and businesses ready to make every first impression count."
             </p>
 
             <div className="subscription-price-cta">
               <div className='price-display'>
-                <p className='desktop-h5 black'>£5.95</p> {/* Updated price to £5.95 */}
-                <p className='desktop-body-s light-black'>Per Month</p> {/* Used desktop-body-s for consistency */}
+                <p className='desktop-h5 black'>£5.95</p>
+                <p className='desktop-body-s light-black'>Per Month</p>
               </div>
-              {/* Conditional rendering for subscribe/cancel button based on subscription status */}
               {loading ? (
                 <button className="desktop-button black-button" disabled>
                   <span className="desktop-button">Loading Plan Status...</span>
@@ -236,10 +230,10 @@ export default function Subscription() {
                         <span className="desktop-button">Plan Active</span>
                       </button>
                       <button
-                        className="desktop-button black-button" // Changed to black-button for consistency
+                        className="desktop-button black-button"
                         onClick={initiateCancelConfirmation}
                         disabled={isCancelling}
-                        style={{ marginTop: '10px' }} // Add some spacing between buttons if needed
+                        style={{ marginTop: '10px' }}
                       >
                         <span className="desktop-button">Cancel Subscription</span>
                       </button>
@@ -263,7 +257,7 @@ export default function Subscription() {
                           className="desktop-button black-button"
                           onClick={cancelConfirmationPrompt}
                           disabled={isCancelling}
-                          style={{ marginTop: '10px' }} // Add some spacing between buttons if needed
+                          style={{ marginTop: '10px' }}
                         >
                           <span className="desktop-button">Go Back</span>
                         </button>
@@ -279,7 +273,6 @@ export default function Subscription() {
             </div>
           </div>
         </div>
-        {/* END REFACTORED SUBSCRIPTION OFFER SECTION */}
       </main>
 
       <ShareProfile
