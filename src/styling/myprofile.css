@@ -9,7 +9,8 @@
     --card-bg: #F1F1F1;
     --button-bg: black;
     --button-text: white;
-    --border-color: #ccc;
+    --border-color: #000000;
+    /* Changed to black for the phone border */
     --input-border: #ccc;
     --placeholder-bg: #f0f0f0;
     --page-header-color: #000000;
@@ -25,7 +26,8 @@
     --card-bg: #333333;
     --button-bg: white;
     --button-text: black;
-    --border-color: #555;
+    --border-color: #FFFFFF;
+    /* Keep white border in dark mode if desired */
     --input-border: #666;
     --placeholder-bg: #444;
     --page-header-color: #FFFFFF;
@@ -64,7 +66,8 @@
     align-items: center;
     margin-bottom: 30px;
     flex-shrink: 0;
-    border-bottom: 1px grey solid;
+    border-bottom: 1px solid black;
+    /* Changed border color to black */
     padding-bottom: 20px;
 }
 
@@ -106,7 +109,6 @@
     gap: 40px;
     min-height: 0;
     overflow: hidden;
-    /* Desktop: no flex-container scroll */
     justify-content: space-around;
     align-items: stretch;
 }
@@ -117,11 +119,15 @@
     justify-content: center;
     align-items: center;
     height: 100%;
-    aspect-ratio: 9 / 17;
+    aspect-ratio: 9 / 16;
+    /* Adjusted aspect ratio to make it less tall (e.g., from 17 to 16) */
     max-width: 320px;
     min-width: 250px;
     position: relative;
     overflow: hidden;
+    /* Add a max-height to explicitly control phone height */
+    max-height: calc(100vh - 200px);
+    /* Adjust this value if needed (100vh - header - page header - margins/paddings) */
 }
 
 .mock-phone {
@@ -129,6 +135,7 @@
     height: 100%;
     background: var(--primary-bg);
     border: 10px solid var(--border-color);
+    /* Uses the updated --border-color variable */
     border-radius: 2.5rem;
     padding: 20px;
     text-align: center;
@@ -382,11 +389,16 @@
 
 .myprofile-editor-wrapper {
     position: relative;
-    height: 100%;
-    max-width: 600px;
+    /* Adjusted max-height for the editor to allow space above */
+    max-height: calc(100vh - 180px);
+    /* Increased subtracted value by approx 20px (from 160px) */
     min-width: 350px;
     flex-direction: column;
     min-height: 0;
+    overflow-y: auto;
+    /* Ensure internal scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* For smoother scrolling on iOS */
 }
 
 .myprofile-editor {
@@ -398,8 +410,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    overflow-y: auto;
-    /* Desktop: editor content scrolls */
+    /* Removed overflow-y: auto here, as it's now on the wrapper */
     box-sizing: border-box;
     width: 100%;
     height: 100%;
@@ -710,7 +721,8 @@
     .mock-phone {
         width: 100%;
         height: auto;
-        aspect-ratio: 9 / 17;
+        aspect-ratio: 9 / 16;
+        /* Adjusted aspect ratio for mobile as well */
         background: var(--primary-bg);
         border-color: var(--border-color);
         color: var(--text-color);
@@ -776,15 +788,6 @@
     .sidebar {
         transform: translateX(0) !important;
         box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1) !important;
-    }
-}
-
-@media (max-width: 1000px) {
-
-    .navbar,
-    .myprofile-mobile-header {
-        height: 70px;
-        padding: 0 16px;
     }
 }
 
