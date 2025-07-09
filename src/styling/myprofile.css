@@ -138,10 +138,7 @@
     justify-content: center;
     align-items: center;
     height: 100%;
-    /* Reverted to original height: 100% */
     aspect-ratio: 9 / 17;
-    /* Reverted to original aspect ratio */
-    max-width: 320px;
     min-width: 250px;
     position: relative;
     overflow: hidden;
