@@ -1,6 +1,5 @@
 /* Sidebar.css */
 
-/* DESKTOP SIDEBAR */
 .sidebar {
     position: fixed;
     top: 0;
@@ -9,7 +8,6 @@
     min-width: 220px;
     width: fit-content;
     max-width: 300px;
-    /* Keep max-width to control how wide it gets with fit-content */
     background-color: white;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -124,7 +122,6 @@
     margin-right: 10px;
     opacity: 1;
     filter: none;
-    /* Default for all icons */
     transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
@@ -133,7 +130,6 @@
     font-size: 14px;
 }
 
-/* Hover state for sidebar buttons */
 .sidebar-button:hover {
     background-color: #f0f0f0;
     color: #000;
@@ -143,7 +139,6 @@
     opacity: 1;
     filter: none;
 }
-
 
 .logout-button p {
     color: #e74c3c;
@@ -159,14 +154,11 @@
 
 .logout-button:hover p {
     color: #c0392b;
-    /* Darker red text on hover */
 }
 
 .logout-button:hover .icon {
-    /* Keep the same filter on hover for consistency */
     filter: invert(40%) sepia(80%) saturate(1500%) hue-rotate(340deg) brightness(90%) contrast(100%);
 }
-
 
 .footer-actions {
     padding-top: 12px;
@@ -178,8 +170,6 @@
     gap: 4px;
 }
 
-
-/* STYLES FOR ACTIVE SIDEBAR LINK */
 .sidebar-button.active-sidebar-link {
     background-color: #f0f0f0;
     color: #000;
@@ -196,23 +186,35 @@
     color: #000;
 }
 
-/* MAIN CONTENT CONTAINER */
 .main-content-container {
-    /* Adjusted to push content next to the sidebar */
     margin-left: 260px;
-    /* This should be slightly more than your sidebar's min-width (220px + 20px padding left + 20px padding right + some buffer) */
     padding: 24px;
     box-sizing: border-box;
     width: calc(100% - 260px);
-    /* Adjust width to account for the margin */
     min-height: 100vh;
     overflow-y: auto;
     flex-grow: 1;
-    /* Still useful if a parent is flex */
+}
+
+.content-card-box {
+    max-width: 600px;
+    width: 100%;
+    margin: 20px auto;
+    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    background-color: white;
+    padding: 24px;
+    box-sizing: border-box;
 }
 
 
-/* MOBILE SIDEBAR */
+.combined-offer-container,
+.profile-content-wrapper {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
 @media (max-width: 1000px) {
     .sidebar {
         position: fixed;
@@ -350,78 +352,9 @@
         padding-top: 15px;
     }
 
-    /* Adjust main content for mobile to allow full width */
     .main-content-container {
         margin-left: 0;
-        /* Remove the margin on mobile */
         width: 100%;
-        /* Take full width on mobile */
-        min-height: auto;
-        /* Revert min-height for mobile */
-    }
-}
-
-/* Add this new class to your CSS file (e.g., Sidebar.css or a global CSS file) */
-.content-card-box {
-    width: 600px;
-    /* Default width */
-    margin: 0 auto;
-    /* Center horizontally */
-    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
-    /* Requested box shadow */
-    border-radius: 10px;
-    /* Assuming rounded corners for the card */
-    background-color: white;
-    /* Ensure background is white for shadow to show */
-    padding: 24px;
-    /* Internal padding for the card content */
-    box-sizing: border-box;
-    /* Include padding in width calculation */
-}
-
-/* Media query for responsiveness */
-@media (max-width: 1000px) {
-    .content-card-box {
-        width: 100%;
-        /* Full width on screens <= 1000px */
-        /* Margin auto will still center it within its parent's padding */
-    }
-}
-
-/* You might need to adjust .combined-offer-container if it's still a flex parent.
-   If it's just a wrapper for a single centered item, its flex properties might not be needed.
-   For now, just ensure it doesn't have conflicting styles. */
-.combined-offer-container {
-    /* If this was display: flex; justify-content: center; before,
-       you can remove justify-content: center if content-card-box handles its own margin: auto.
-       Keep display: flex; if it's still a flex container for other reasons. */
-    display: block;
-    /* Change to block to allow margin: auto on child to work directly */
-    margin-top: 20px;
-    /* Add some space below the PageHeader */
-    margin-bottom: 20px;
-    /* Add some space below the card */
-}
-
-/* Ensure the .main-content-container still has its padding and margin-left */
-.main-content-container {
-    margin-left: 260px;
-    /* This should be slightly more than your sidebar's min-width (220px + 20px padding left + 20px padding right + some buffer) */
-    padding: 24px;
-    box-sizing: border-box;
-    width: calc(100% - 260px);
-    /* Adjust width to account for the margin */
-    min-height: 100vh;
-    overflow-y: auto;
-    flex-grow: 1;
-}
-
-@media (max-width: 1000px) {
-    .main-content-container {
-        margin-left: 0;
-        /* Remove the margin on mobile */
-        width: 100%;
-        /* Take full width on mobile */
         min-height: auto;
     }
 }
