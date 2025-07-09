@@ -33,8 +33,7 @@
     --page-header-color: #FFFFFF;
 }
 
-/* General Layout */
-/* This class is now primarily handled by app-layout in Sidebar.css */
+/* General Layout - These are now largely handled by global app-layout in Sidebar.css */
 .myprofile-layout {
     display: flex;
     height: 100vh;
@@ -43,8 +42,8 @@
     position: relative;
 }
 
-/* MyProfile Main content area (right side, next to sidebar) */
-/* This class is now primarily handled by main-content-container in Sidebar.css */
+/* MyProfile Main content area (right side, next to sidebar) - Now handled by main-content-container in Sidebar.css */
+/* Keeping it here mostly for original styles that might be specific, but global main-content-container will apply */
 .myprofile-main {
     flex: 1;
     font-family: var(--main-font-family);
@@ -107,31 +106,47 @@
     border: 1px solid var(--border-color);
 }
 
+/* MyProfile specific flex container for phone and editor */
 .myprofile-flex-container {
     display: flex;
     flex: 1;
+    /* Allow it to grow and fill available vertical space */
     gap: 40px;
-    /* Reverted to original 40px gap */
+    /* Original 40px gap */
     min-height: 0;
+    /* Allow it to shrink within a flex parent */
     overflow: hidden;
+    /* Hide overflow of children if they escape */
     justify-content: space-around;
+    /* Space items out */
     align-items: stretch;
-    /* Reverted to stretch to allow children to fill height */
+    /* Reverted to stretch to allow children to fill height of tallest */
+    /* Add max-width here if the whole two-column block needs a width constraint */
+    max-width: 1200px;
+    /* Example max-width for the entire two-column block */
+    margin: 0 auto;
+    /* Center the whole flex container */
+    padding-bottom: 20px;
+    /* Add padding to prevent content touching bottom */
 }
 
+/* Mock Phone Container */
 .myprofile-content {
     flex: 0 1 auto;
+    /* Reverted flex properties */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
+    /* Reverted to original height: 100% */
     aspect-ratio: 9 / 17;
     /* Reverted to original aspect ratio */
     max-width: 320px;
     min-width: 250px;
     position: relative;
     overflow: hidden;
-    /* Removed max-height here */
+    /* Keep overflow hidden for mock phone frame */
+    /* Removed max-height here, allowing it to stretch based on flex-container's align-items */
 }
 
 .mock-phone {
@@ -398,12 +413,14 @@
     max-width: 600px;
     min-width: 350px;
     flex-direction: column;
+    /* Needed for internal flex layout */
     min-height: 0;
-    /* Removed max-height and explicit overflow-y from here */
+    /* Allow it to shrink as a flex item */
 }
 
 .myprofile-editor {
     flex: 1;
+    /* Allows it to fill available height in its parent */
     background: var(--primary-bg);
     padding: 24px;
     border-radius: 16px;
@@ -412,12 +429,13 @@
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
-    /* Retained original overflow-y: auto */
-    /* Desktop: editor content scrolls */
+    /* Original: desktop editor content scrolls */
+    -webkit-overflow-scrolling: touch;
+    /* For smoother scrolling on iOS */
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    /* Retained original height: 100% */
+    /* Original: fills its parent's height */
     color: var(--text-color);
 }
 
