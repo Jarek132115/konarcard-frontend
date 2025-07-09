@@ -182,7 +182,7 @@ export default function Profile() {
           className="profile-page-header"
         />
 
-        <div className="profile-content-wrapper">
+        <div className="content-card-box">
           {/* CORRECTED: Added "content-card-box" class here as intended */}
           <div className="profile-card-box content-card-box">
             {/* Display Name Section */}
