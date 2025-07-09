@@ -244,8 +244,7 @@ export default function Subscription() {
                     <>
                       {!showCancelConfirm ? (
                         <>
-                          {/* Use the new button class for consistency if desired, or keep inline styles */}
-                          <button className="subscription-upgrade-button" disabled style={{ backgroundColor: '#ccc', cursor: 'not-allowed' }}>
+                          <button className="blue-button" disabled style={{ backgroundColor: '#ccc', cursor: 'not-allowed' }}>
                             Plan Active
                           </button>
                           <button
