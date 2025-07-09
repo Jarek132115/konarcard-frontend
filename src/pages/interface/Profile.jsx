@@ -183,7 +183,6 @@ export default function Profile() {
         />
 
         <div className="profile-content-wrapper">
-          {/* RENAMED FROM profile-card-box, and now correctly applying content-card-box */}
           <div className="account-settings-card content-card-box">
             {/* Display Name Section */}
             <div className="profile-input-block">
