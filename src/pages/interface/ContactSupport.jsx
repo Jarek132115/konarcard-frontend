@@ -112,7 +112,7 @@ export default function ContactSupport() {
     const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
     return (
-        <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
+        <div className={`app-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
             <div className="myprofile-mobile-header">
                 <Link to="/" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -133,104 +133,105 @@ export default function ContactSupport() {
                 <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
             )}
 
-            <main className="myprofile-main">
-                <div className="page-wrapper">
-                    <PageHeader
-                        title="Contact Support"
-                        onActivateCard={() => console.log("Activate Card clicked on Contact Support page")} // Dummy or specific action
-                        onShareCard={handleShareCard}
-                    />
+            {/* Changed main class to main-content-container */}
+            <main className="main-content-container">
+                {/* Removed the redundant 'page-wrapper' div */}
+                <PageHeader
+                    title="Contact Support"
+                    onActivateCard={() => console.log("Activate Card clicked on Contact Support page")}
+                    onShareCard={handleShareCard}
+                />
 
-                    <p className="desktop-body" style={{ textAlign: 'left', marginBottom: 20 }}>
-                        Want to talk to us right now?{' '}
-                        <span
-                            className="live-chat-link"
-                            style={{ color: '#007bff', textDecoration: 'underline', cursor: 'pointer' }}
-                            onClick={() => {
-                                if (window.tidioChatApi) {
-                                    window.tidioChatApi.open();
-                                }
-                            }}
+                {/* Live chat paragraph with consistent typography */}
+                <p className="desktop-body light-black" style={{ textAlign: 'left', marginBottom: 20 }}>
+                    Want to talk to us right now?{' '}
+                    <span
+                        className="live-chat-link" // Class for live chat link styling
+                        onClick={() => {
+                            if (window.tidioChatApi) {
+                                window.tidioChatApi.open();
+                            }
+                        }}
+                    >
+                        Start a live chat.
+                    </span>
+                </p>
+
+                {/* Applied content-card-box for consistent styling of the form wrapper */}
+                <div className="contact-form-wrapper content-card-box">
+                    <form className='contact-form' onSubmit={handleSubmit}>
+                        <label htmlFor="name" className="contact-form-label desktop-body-s black">Your Name</label>
+                        <input
+                            type='text'
+                            id='name'
+                            name='name'
+                            placeholder='Enter your name'
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                            className='contact-form-input desktop-body' // Applied typography class
+                        />
+
+                        <label htmlFor="email" className="contact-form-label desktop-body-s black">Your Email</label>
+                        <input
+                            type='email'
+                            id='email'
+                            name='email'
+                            placeholder='Enter your email'
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                            className='contact-form-input desktop-body' // Applied typography class
+                        />
+
+                        <label htmlFor="reason" className="contact-form-label desktop-body-s black">Reason for contact</label>
+                        <select
+                            id='reason'
+                            name='reason'
+                            value={formData.reason}
+                            onChange={handleChange}
+                            required
+                            className='contact-form-select desktop-body' // Applied typography class
                         >
-                            Start a live chat.
-                        </span>
-                    </p>
+                            <option value=''>Select a reason</option>
+                            <option value='Card not working'>My card isn’t working</option>
+                            <option value='Card damaged'>My card is damaged</option>
+                            <option value='Profile issue'>I can’t see my profile</option>
+                            <option value='Setup help'>Help setting up profile</option>
+                            <option value='Other'>Other</option>
+                        </select>
 
-                    {/* Wrapped the form in a div with contact-form-wrapper class for consistent styling */}
-                    <div className="contact-form-wrapper">
-                        <form className='contact-form' onSubmit={handleSubmit}>
-                            <label htmlFor="name" className="contact-form-label">Your Name</label>
+                        <label htmlFor="message" className="contact-form-label desktop-body-s black">Your Message</label>
+                        <textarea
+                            id='message'
+                            name='message'
+                            placeholder="Enter your message..."
+                            value={formData.message}
+                            onChange={handleChange}
+                            required
+                            className='contact-form-textarea desktop-body' // Applied typography class
+                            rows="5"
+                        />
+
+                        <label className='contact-terms-label'>
                             <input
-                                type='text'
-                                id='name'
-                                name='name'
-                                placeholder='Enter your name'
-                                value={formData.name}
+                                type='checkbox'
+                                name='agree'
+                                className='contact-terms-checkbox'
+                                checked={formData.agree}
                                 onChange={handleChange}
                                 required
-                                className='contact-form-input'
                             />
+                            <span className='desktop-body-xs'> {/* Applied typography class */}
+                                I understand that Konar will securely hold my data in accordance with their privacy policy.
+                            </span>
+                        </label>
 
-                            <label htmlFor="email" className="contact-form-label">Your Email</label>
-                            <input
-                                type='email'
-                                id='email'
-                                name='email'
-                                placeholder='Enter your email'
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                                className='contact-form-input'
-                            />
-
-                            <label htmlFor="reason" className="contact-form-label">Reason for contact</label>
-                            <select
-                                id='reason'
-                                name='reason'
-                                value={formData.reason}
-                                onChange={handleChange}
-                                required
-                                className='contact-form-select'
-                            >
-                                <option value=''>Select a reason</option>
-                                <option value='Card not working'>My card isn’t working</option>
-                                <option value='Card damaged'>My card is damaged</option>
-                                <option value='Profile issue'>I can’t see my profile</option>
-                                <option value='Setup help'>Help setting up profile</option>
-                                <option value='Other'>Other</option>
-                            </select>
-
-                            <label htmlFor="message" className="contact-form-label">Your Message</label>
-                            <textarea
-                                id='message'
-                                name='message'
-                                placeholder="Enter your message..."
-                                value={formData.message}
-                                onChange={handleChange}
-                                required
-                                className='contact-form-textarea'
-                                rows="5"
-                            />
-
-                            <label className='contact-terms-label'>
-                                <input
-                                    type='checkbox'
-                                    name='agree'
-                                    className='contact-terms-checkbox'
-                                    checked={formData.agree}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <span className='desktop-body-xs'>
-                                    I understand that Konar will securely hold my data in accordance with their privacy policy.
-                                </span>
-                            </label>
-
-                            <button type='submit' className='contact-submit-button'>
-                                Submit
-                            </button>
-                        </form>
-                    </div>
+                        {/* Applied button classes */}
+                        <button type='submit' className='contact-submit-button blue-button desktop-button'>
+                            <span className='desktop-button'>Submit</span>
+                        </button>
+                    </form>
                 </div>
             </main>
 
