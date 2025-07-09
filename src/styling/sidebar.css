@@ -1,20 +1,13 @@
 /* Sidebar.css */
 
-/* No change to global app-layout as it's typically set by page components now */
-/* .app-layout should not have overflow: hidden or max-width that clips the 100vw sidebar */
-
-
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
     min-width: 220px;
-    /* Desktop: Min width */
     width: fit-content;
-    /* Desktop: Adjusts to content */
     max-width: 300px;
-    /* Desktop: Max width */
     background-color: white;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -24,7 +17,6 @@
     z-index: 999;
     transition: transform 0.3s ease-in-out;
     overflow: hidden;
-    /* This overflow is fine for content *inside* the sidebar */
 }
 
 .sidebar-mobile-header-inner {
@@ -303,21 +295,17 @@
         z-index: 1001;
     }
 
-    /* Ensure logo is on the left */
     .myprofile-mobile-header .myprofile-logo-link {
         order: 1;
-        /* Ensure logo is the first item */
         margin-right: auto;
-        /* Push logo to the far left, create space to its right */
         margin-left: 0;
-        /* Ensure no conflicting auto-margin */
     }
 
     .myprofile-logo-link .myprofile-logo {
         height: 32px;
     }
 
-    /* THE HAMBURGER ICON (the 3 lines container) */
+    /* THE HAMBURGER ICON (3 lines, to OPEN the sidebar) */
     .sidebar-menu-toggle {
         display: flex;
         flex-direction: column;
@@ -328,15 +316,13 @@
         z-index: 1002;
         background: transparent;
         order: 2;
-        /* Ensure hamburger is the second item (on the right) */
         margin-left: 0;
-        /* Ensure no conflicting auto-margin */
     }
 
-    /* CRITICAL: HIDE the hamburger icon when the sidebar is OPEN */
-    /* This rule ensures the hamburger (3 lines) disappears when sidebar is active */
+    /* CRITICAL: HIDE the hamburger icon COMPLETELY when the sidebar is OPEN */
     .app-layout.sidebar-active .sidebar-menu-toggle {
         display: none;
+        /* This will hide the hamburger (3 lines) when the sidebar is active/open */
     }
 
     /* THE ACTUAL HAMBURGER LINES (spans inside .sidebar-menu-toggle) */
@@ -350,7 +336,8 @@
         opacity: 1;
     }
 
-    /* Styles for when hamburger is 'active' (sidebar open) - forms an X */
+    /* Styles for when hamburger is 'active' - these become irrelevant if display:none,
+       but kept for robustness if display:none rule is ever changed. */
     .sidebar-menu-toggle.active span:nth-child(1) {
         transform: translateY(8px) rotate(45deg);
     }
@@ -369,14 +356,13 @@
         top: 0;
         left: 0;
         width: 100vw;
-        /* CRITICAL: Make sidebar full viewport width */
+        /* Make sidebar full viewport width */
         height: 100vh;
         /* Cover entire screen height */
         transform: translateX(-100%);
-        /* Hidden by default */
         box-shadow: none;
         z-index: 1003;
-        /* CRITICAL: Higher than myprofile-mobile-header to cover it */
+        /* Higher than myprofile-mobile-header to cover it */
         overflow-y: auto;
         background-color: white;
         padding: 0;
@@ -385,7 +371,6 @@
 
     .sidebar.open {
         transform: translateX(0);
-        /* Slides into view */
     }
 
     /* Header *inside* the mobile sidebar (visible when sidebar slides open) */
@@ -398,23 +383,18 @@
         height: 62px;
         /* CRITICAL: Match outer header height */
         background-color: white;
-        /* Ensure background matches outer header */
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        /* CRITICAL: Match outer header shadow */
         border-bottom: 1px solid #eee;
-        /* Keep bottom border if desired, or remove to match outer */
         flex-shrink: 0;
         width: 100%;
         box-sizing: border-box;
     }
 
-    /* Ensure logo is on the left inside the sidebar header */
     .sidebar-mobile-header-inner .sidebar-logo-link-mobile {
         order: 1;
         margin-right: auto;
         /* Push logo to left, create space */
         margin-left: 0;
-        /* Ensure no conflicting auto-margin */
     }
 
     .sidebar-logo-link-mobile .sidebar-logo-mobile {
@@ -425,7 +405,7 @@
     /* Close button for the sidebar (the X icon inside the sidebar) */
     .close-sidebar-button {
         display: flex;
-        /* Show this button */
+        /* CRITICAL: Make this X button visible */
         flex-direction: column;
         gap: 0;
         cursor: pointer;
@@ -436,9 +416,7 @@
         align-items: center;
         justify-content: center;
         order: 2;
-        /* Ensure close button is on the right */
         margin-left: 0;
-        /* Ensure no conflicting auto-margin */
     }
 
     .close-sidebar-button span {
