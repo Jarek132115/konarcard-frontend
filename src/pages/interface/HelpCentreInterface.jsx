@@ -74,13 +74,13 @@ export default function HelpCentre() {
 
 
   return (
-    <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
+    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}> {/* Changed to app-layout */}
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
         <div
-          className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
+          className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`} 
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <span></span>
@@ -95,37 +95,39 @@ export default function HelpCentre() {
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      <main className="myprofile-main">
+      <main className="main-content-container"> {/* Changed to main-content-container */}
         <PageHeader
           title="Help Centre"
           onActivateCard={handleActivateCard}
           onShareCard={handleShareCard}
         />
 
-        <div className="page-wrapper content-card">
-          <div className="help-video-card">
-            <img src={HeroBackground} alt="Profile Setup" className="help-video-thumb" />
-            <div className="help-video-content">
-              <h2 className="help-video-title">How To Set Up Your Profile</h2>
-              <p className="help-video-desc">
-                Learn how to create your profile, add your details, and save it for instant sharing.
-              </p>
-              <p className="help-video-time">Watch Time: 46 seconds</p>
-              <button className="help-video-button">Watch Now</button>
+        <div className="combined-offer-container"> {/* Added this wrapper */}
+          <div className="content-card-box"> {/* Changed to content-card-box to match structure */}
+            <div className="help-video-card">
+              <img src={HeroBackground} alt="Profile Setup" className="help-video-thumb" />
+              <div className="help-video-content">
+                <h2 className="help-video-title">How To Set Up Your Profile</h2>
+                <p className="help-video-desc">
+                  Learn how to create your profile, add your details, and save it for instant sharing.
+                </p>
+                <p className="help-video-time">Watch Time: 46 seconds</p>
+                <button className="help-video-button">Watch Now</button>
+              </div>
             </div>
-          </div>
 
-          <div className="help-video-card reverse">
-            <div className="help-video-content">
-              <h2 className="help-video-title">How to Activate Your NFC Card</h2>
-              <p className="help-video-desc">
-                Step-by-step activation process to connect your physical card to your digital profile.
-              </p>
-              <p className="help-video-time">Watch Time: 46 seconds</p>
+            <div className="help-video-card reverse">
+              <div className="help-video-content">
+                <h2 className="help-video-title">How to Activate Your NFC Card</h2>
+                <p className="help-video-desc">
+                  Step-by-step activation process to connect your physical card to your digital profile.
+                </p>
+                <p className="help-video-time">Watch Time: 46 seconds</p>
+              </div>
+              <img src={HeroBackground} alt="Card Activation" className="help-video-thumb" />
             </div>
-            <img src={HeroBackground} alt="Card Activation" className="help-video-thumb" />
           </div>
-        </div> 
+        </div>
       </main>
 
       <ShareProfile
