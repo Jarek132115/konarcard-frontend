@@ -27,33 +27,38 @@
     --button-bg: white;
     --button-text: black;
     --border-color: #555;
+    /* Original dark mode border color */
     --input-border: #666;
     --placeholder-bg: #444;
     --page-header-color: #FFFFFF;
 }
 
 /* General Layout */
+/* This class is now primarily handled by app-layout in Sidebar.css */
 .myprofile-layout {
     display: flex;
     height: 100vh;
     background-color: var(--secondary-bg);
     overflow: hidden;
-    /* Desktop: no body scroll */
     position: relative;
 }
 
 /* MyProfile Main content area (right side, next to sidebar) */
+/* This class is now primarily handled by main-content-container in Sidebar.css */
 .myprofile-main {
     flex: 1;
     font-family: var(--main-font-family);
     padding: 30px;
+    /* Original padding */
     display: flex;
     flex-direction: column;
     min-height: 0;
     overflow-x: hidden;
     padding-bottom: 20px;
     margin-left: 250px;
+    /* Original margin-left */
     padding-top: 30px;
+    /* Original padding-top */
     transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
     z-index: 1;
     color: var(--text-color);
@@ -66,7 +71,7 @@
     margin-bottom: 30px;
     flex-shrink: 0;
     border-bottom: 1px grey solid;
-    /* Reverted to grey solid */
+    /* Reverted to original grey solid */
     padding-bottom: 20px;
 }
 
@@ -106,11 +111,12 @@
     display: flex;
     flex: 1;
     gap: 40px;
+    /* Reverted to original 40px gap */
     min-height: 0;
     overflow: hidden;
-    /* Desktop: no flex-container scroll */
     justify-content: space-around;
     align-items: stretch;
+    /* Reverted to stretch to allow children to fill height */
 }
 
 .myprofile-content {
@@ -133,7 +139,7 @@
     height: 100%;
     background: var(--primary-bg);
     border: 10px solid var(--border-color);
-    /* Uses the original --border-color */
+    /* Uses the reverted --border-color */
     border-radius: 2.5rem;
     padding: 20px;
     text-align: center;
@@ -388,10 +394,12 @@
 .myprofile-editor-wrapper {
     position: relative;
     height: 100%;
+    /* Reverted to original height: 100% */
     max-width: 600px;
     min-width: 350px;
     flex-direction: column;
     min-height: 0;
+    /* Removed max-height and explicit overflow-y from here */
 }
 
 .myprofile-editor {
@@ -404,10 +412,12 @@
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
+    /* Retained original overflow-y: auto */
     /* Desktop: editor content scrolls */
     box-sizing: border-box;
     width: 100%;
     height: 100%;
+    /* Retained original height: 100% */
     color: var(--text-color);
 }
 
@@ -601,6 +611,7 @@
     background-color: #0056b3;
 }
 
+/* These mobile header styles will now be largely overridden by Sidebar.css's mobile styles */
 .myprofile-mobile-header {
     display: none;
     position: fixed;
@@ -673,6 +684,8 @@
 }
 
 @media (max-width: 1000px) {
+
+    /* These media queries will interact with Sidebar.css's media queries */
     .myprofile-main {
         margin-left: 0;
         padding-top: 70px;
@@ -716,7 +729,7 @@
         width: 100%;
         height: auto;
         aspect-ratio: 9 / 17;
-        /* Reverted to original aspect ratio for mobile */
+        /* Reverted aspect ratio for mobile */
         background: var(--primary-bg);
         border-color: var(--border-color);
         color: var(--text-color);
