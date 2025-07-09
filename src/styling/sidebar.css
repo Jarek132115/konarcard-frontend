@@ -188,7 +188,9 @@
 
 .main-content-container {
     margin-left: 260px;
-    padding: 24px;
+    /* Adjusted padding to ensure space for box-shadow on all sides */
+    padding: 34px;
+    /* Increased from 24px */
     box-sizing: border-box;
     width: calc(100% - 260px);
     min-height: 100vh;
@@ -207,6 +209,11 @@
     box-sizing: border-box;
 }
 
+.profile-card-box {
+    /* If there are any previous conflicting styles for .profile-card-box,
+       you might need to remove them or ensure .content-card-box (which it shares)
+       is more specific. */
+}
 
 .combined-offer-container,
 .profile-content-wrapper {
@@ -356,5 +363,8 @@
         margin-left: 0;
         width: 100%;
         min-height: auto;
+        /* Corrected: Apply the increased padding for mobile too */
+        padding: 34px;
+        /* Ensure ample space for shadow on smaller screens */
     }
 }
