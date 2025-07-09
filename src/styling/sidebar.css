@@ -207,8 +207,6 @@
     box-sizing: border-box;
 }
 
-.account-settings-card {}
-
 .combined-offer-container,
 .profile-content-wrapper {
     display: block;
@@ -227,7 +225,6 @@
     color: #006edc;
 }
 
-.contact-form-wrapper {}
 
 .contact-form {
     display: flex;
