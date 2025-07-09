@@ -248,7 +248,7 @@ export default function Subscription() {
                             Plan Active
                           </button>
                           <button
-                            className="secondary-button" // Keep existing secondary button or apply new style
+                            className="secondary-button" 
                             onClick={initiateCancelConfirmation}
                             disabled={isCancelling}
                             style={{
