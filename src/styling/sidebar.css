@@ -13,6 +13,7 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
+    /* Sidebar padding */
     box-sizing: border-box;
     z-index: 999;
     transition: transform 0.3s ease-in-out;
@@ -188,7 +189,8 @@
 
 .main-content-container {
     margin-left: 260px;
-    padding: 34px;
+    padding: 20px;
+    /* Adjusted to 20px */
     box-sizing: border-box;
     width: calc(100% - 260px);
     min-height: 100vh;
@@ -199,9 +201,7 @@
 .content-card-box {
     max-width: 600px;
     width: 100%;
-    /* Changed margin to 0 for top/bottom as gap will handle it in flex parent */
     margin: 0 auto;
-    /* Keep auto for horizontal centering when not in a flex container, or if flex-direction is row */
     box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
     border-radius: 10px;
     background-color: white;
@@ -209,18 +209,15 @@
     box-sizing: border-box;
 }
 
+
 .combined-offer-container,
 .profile-content-wrapper {
-    /* Changed display from 'block' to 'flex' for centering */
     display: flex;
     flex-direction: column;
-    /* Stack items vertically */
     align-items: center;
-    /* Center items horizontally */
     margin-top: 20px;
     margin-bottom: 20px;
     gap: 20px;
-    /* Add space between children (the cards) */
 }
 
 
@@ -516,10 +513,11 @@
         margin-left: 0;
         width: 100%;
         min-height: auto;
-        padding-top: calc(34px + 62px);
-        /* Push content down by fixed header height */
-        padding-bottom: 34px;
-        padding-left: 34px;
-        padding-right: 34px;
+        /* Adjust padding for mobile as well */
+        padding-top: calc(20px + 62px);
+        /* Base padding (20px) + mobile header height (62px) */
+        padding-bottom: 20px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
 }
