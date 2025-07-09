@@ -11,7 +11,7 @@ import helpIcon from '../assets/icons/Help-Icon.svg';
 import logoutIcon from '../assets/icons/Logout-Icon.svg';
 import subscriptionIcon from '../assets/icons/Subscription-Icon.svg';
 import homeIcon from '../assets/icons/Home-Icon.svg';
-import contactIcon from '../assets/icons/Contact-Icon.svg'; // <<< NEW: Import the Contact-Icon.svg
+import contactIcon from '../assets/icons/Contact-Icon.svg';
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
@@ -30,14 +30,16 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const isActive = (path) => location.pathname === path;
 
     return (
-        <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}> {/* Outer layout for fixed header + main content */}
+        // The overall app-layout now controls the structure including the fixed mobile header
+        <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
 
             {/* MOBILE HEADER - THIS IS VISIBLE AT ALL TIMES ON MOBILE AND CONTAINS THE HAMBURGER */}
-            <div className="myprofile-mobile-header">
+            {/* This header component needs to be present in your main page components (e.g., Subscription.jsx, Profile.jsx) */}
+            {/* For example, in Subscription.jsx, it would look like: */}
+            {/* <div className="myprofile-mobile-header">
                 <Link to="/" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
                 </Link>
-                {/* CRITICAL FIX: Ensure this class name is correctly used */}
                 <div
                     className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
                     onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -46,14 +48,16 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <span></span>
                     <span></span>
                 </div>
-            </div>
+            </div> */}
 
-            {/* The main sidebar component that slides in */}
+            {/* The sidebar panel itself that slides in from the left */}
             <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                <div className="sidebar-mobile-header-inner"> {/* Header *inside* the sidebar */}
+                {/* This is the header *INSIDE* the mobile sidebar (visible when sidebar is open) */}
+                <div className="sidebar-mobile-header-inner">
                     <Link to="/" className="sidebar-logo-link-mobile" onClick={closeSidebar}>
                         <img src={LogoIcon} alt="Logo" className="sidebar-logo-mobile" />
                     </Link>
+                    {/* This is the CLOSE BUTTON (the X icon) for the sidebar */}
                     <div className="close-sidebar-button" onClick={closeSidebar}>
                         <span></span>
                         <span></span>
