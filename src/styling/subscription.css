@@ -7,15 +7,10 @@
 .myprofile-main {
     flex-grow: 1;
     width: 100%;
-    /* Take full available width */
     max-width: 1040px;
-    /* Max width for content, similar to section-breadcrumbs */
     margin: 0 auto;
-    /* Center the content area */
     padding: 20px;
-    /* Consistent padding on all sides */
     box-sizing: border-box;
-    /* Include padding in element's total width */
     display: flex;
     flex-direction: column;
 }
@@ -29,62 +24,107 @@
 @media (max-width: 1000px) {
     .myprofile-main {
         width: 90%;
-        /* Adjust width for smaller screens for better spacing */
         padding: 15px;
-        /* Slightly less padding on smaller screens */
     }
 }
 
+/* MOBILE HEADER - Now defined here for the main app layout */
 .myprofile-mobile-header {
     display: none;
+    /* Hidden by default on desktop */
 }
 
 @media (max-width: 1000px) {
     .myprofile-layout.sidebar-active {
         overflow: hidden;
+        /* To prevent background scrolling when sidebar is open */
     }
 
+    /* Styles for the fixed header shown on mobile */
     .myprofile-mobile-header {
         display: flex;
+        /* Make it visible on mobile */
+        flex-direction: row;
+        /* Ensure logo and hamburger are in a row */
         justify-content: space-between;
+        /* Space out logo and hamburger */
         align-items: center;
         padding: 15px 20px;
+        height: 62px;
+        /* Fixed height for consistency */
         background-color: #fff;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        position: sticky;
+        position: fixed;
+        /* CRITICAL: Stays fixed at the top */
         top: 0;
-        z-index: 1000;
+        left: 0;
+        width: 100%;
+        box-sizing: border-box;
+        z-index: 1001;
+        /* Ensure it's above main content, but sidebar will be higher */
     }
 
-    .myprofile-logo-link {
-        height: 30px;
+    /* Style for the logo link within the mobile header */
+    .myprofile-mobile-header .myprofile-logo-link {
+        order: 1;
+        /* Ensure logo is the first item */
+        margin-right: auto;
+        /* Push logo to the far left, create space to its right */
+        margin-left: 0;
+        /* Ensure no conflicting auto-margin */
+        height: 32px;
+        /* Set height for consistent logo sizing */
     }
 
-    .myprofile-logo {
+    .myprofile-logo-link .myprofile-logo {
         height: 100%;
         width: auto;
     }
 
+    /* THE HAMBURGER ICON (the 3 lines container) */
+    /* This class is used in your HTML for the main hamburger div */
     .myprofile-hamburger {
-        width: 30px;
-        height: 20px;
         display: flex;
+        /* Make the container visible and stack lines */
         flex-direction: column;
         justify-content: space-between;
+        width: 25px;
+        height: 18px;
+        /* Height to accommodate 3 lines and spacing */
         cursor: pointer;
-        z-index: 1100;
+        z-index: 1002;
+        /* Ensure it's clickable */
+        background: transparent;
+        /* Container itself is transparent */
+        order: 2;
+        /* Ensure hamburger is the second item (on the right) */
+        margin-left: 0;
+        /* Ensure no conflicting auto-margin */
     }
 
+    /* CRITICAL: HIDE this hamburger icon COMPLETELY when the sidebar is OPEN */
+    .myprofile-mobile-header .myprofile-hamburger.active {
+        display: none;
+    }
+
+    /* THE ACTUAL HAMBURGER LINES (spans inside .myprofile-hamburger) */
     .myprofile-hamburger span {
         display: block;
+        /* CRITICAL: Ensure each span is a block to have height */
         width: 100%;
         height: 2px;
-        background-color: #333;
+        /* Defines the thickness of each line */
+        background: black;
+        /* Defines the color of the lines */
+        border-radius: 2px;
         transition: all 0.3s ease;
+        opacity: 1;
+        /* Ensure lines are fully visible */
     }
 
+    /* Styles for when hamburger is 'active' (sidebar open) - These are now technically irrelevant due to display:none */
     .myprofile-hamburger.active span:nth-child(1) {
-        transform: translateY(9px) rotate(45deg);
+        transform: translateY(8px) rotate(45deg);
     }
 
     .myprofile-hamburger.active span:nth-child(2) {
@@ -92,9 +132,10 @@
     }
 
     .myprofile-hamburger.active span:nth-child(3) {
-        transform: translateY(-9px) rotate(-45deg);
+        transform: translateY(-8px) rotate(-45deg);
     }
 
+    /* SIDEBAR OVERLAY (behind the sidebar, fades in) */
     .sidebar-overlay {
         position: fixed;
         top: 0;
@@ -102,12 +143,19 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
-        z-index: 999;
+        z-index: 1002;
+        /* Behind the sidebar, above main content/header */
         display: none;
     }
 
     .sidebar-overlay.active {
         display: block;
+    }
+
+    /* Adjust main content container padding to account for fixed header */
+    .main-content-container {
+        padding-top: calc(34px + 62px);
+        /* 62px is height of myprofile-mobile-header */
     }
 }
 
@@ -116,6 +164,8 @@
 }
 
 /* Subscription Page Specific Styling */
+/* Note: These styles are highly specific to subscription content.
+   If you have a separate file for page-specific styles, these might belong there. */
 .subscription-card-wrapper {
     max-width: 500px;
     width: 100%;
@@ -127,7 +177,6 @@
     box-sizing: border-box;
     position: relative;
     text-align: left;
-    /* Ensure content inside card is left-aligned by default */
 }
 
 @media (max-width: 800px) {
@@ -148,7 +197,6 @@
     border-radius: 20px;
     font-weight: 600;
     transform: translateY(-50%);
-    /* Adjust to sit perfectly above the card's top edge */
     white-space: nowrap;
 }
 
@@ -192,7 +240,6 @@
     gap: 8px;
     margin-bottom: 30px;
     justify-content: center;
-    /* Centering price display within the card */
     width: 100%;
 }
 
@@ -214,7 +261,6 @@
     gap: 10px;
     width: 100%;
     align-items: center;
-    /* Center the button group */
 }
 
 .subscription-button-group .blue-button,
@@ -222,7 +268,6 @@
 .subscription-button-group .blue-button-login {
     width: 100%;
     max-width: 300px;
-    /* A reasonable max-width for buttons within the card */
 }
 
 .subscription-cancel-confirm {
@@ -234,7 +279,6 @@
     width: 100%;
     box-sizing: border-box;
     max-width: 300px;
-    /* Max-width for the confirmation box */
 }
 
 .subscription-cancel-confirm p {
