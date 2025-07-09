@@ -135,7 +135,6 @@ export default function Subscription() {
     setShowShareModal(false);
   };
 
-  // Prepare contact details for VCard
   const contactDetailsForVCard = {
     full_name: businessCard?.full_name || authUser?.name || '',
     job_title: businessCard?.job_title || '',
@@ -173,118 +172,118 @@ export default function Subscription() {
       )}
 
       <main className="myprofile-main">
-        <div className="page-wrapper">
-          <PageHeader
-            title="Subscription"
-            onActivateCard={() => console.log("Activate Card clicked on Subscription page")} // Dummy or specific action
-            onShareCard={handleShareCard}
-          />
+        {/* PageHeader is now a direct child of myprofile-main, consistent with Profile.jsx */}
+        <PageHeader
+          title="Subscription"
+          onActivateCard={() => console.log("Activate Card clicked on Subscription page")}
+          onShareCard={handleShareCard}
+        />
 
-          <p className="desktop-h3 text-center black">Our Plan</p>
-          <p className="desktop-h6 text-center light-black">Start free for 7 days — only upgrade if it works for you.</p>
+        <p className="desktop-h3 text-center black">Our Plan</p>
+        <p className="desktop-h6 text-center light-black">Start free for 7 days — only upgrade if it works for you.</p>
 
-          <div className="subscription-card-wrapper">
-            <div className="subscription-popular-tag desktop-body-xs">Most Popular</div>
+        {/* The subscription card wrapper itself */}
+        <div className="subscription-card-wrapper">
+          <div className="subscription-popular-tag desktop-body-xs">Most Popular</div>
 
-            <div className="subscription-content">
-              <p className="subscription-main-title desktop-h4 black">Power Profile</p>
-              <p className="subscription-subtitle desktop-body-s light-black">Win more work with a power profile</p>
+          <div className="subscription-content">
+            <p className="subscription-main-title desktop-h4 black">Power Profile</p>
+            <p className="subscription-subtitle desktop-body-s light-black">Win more work with a power profile</p>
 
-              <div className="subscription-features-list">
-                <div className="subscription-feature-item">
-                  <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                  <p className="desktop-body-s black">Upload unlimited photos (Portfolio / Gallery)</p>
-                </div>
-                <div className="subscription-feature-item">
-                  <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                  <p className="desktop-body-s black">Add multiple social links and websites</p>
-                </div>
-                <div className="subscription-feature-item">
-                  <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                  <p className="desktop-body-s black">Personalize your landing page URL (yourname.cardsite.com)</p>
-                </div>
-                <div className="subscription-feature-item">
-                  <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                  <p className="desktop-body-s black">Priority support and setup help</p>
-                </div>
-                <div className="subscription-feature-item">
-                  <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                  <p className="desktop-body-s black">Premium NFC card design options</p>
-                </div>
-                <div className="subscription-feature-item">
-                  <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                  <p className="desktop-body-s black">CRM Integration.</p>
-                </div>
-                <div className="subscription-feature-item">
-                  <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                  <p className="desktop-body-s black">Networking Toolkit.</p>
-                </div>
-                <div className="subscription-feature-item">
-                  <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                  <p className="desktop-body-s black">Automated Follow-Ups.</p>
-                </div>
+            <div className="subscription-features-list">
+              <div className="subscription-feature-item">
+                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
+                <p className="desktop-body-s black">Upload unlimited photos (Portfolio / Gallery)</p>
               </div>
-
-              <p className="subscription-quote desktop-body-s black">
-                "For professionals and businesses ready to make every first impression count."
-              </p>
-
-              <div className="subscription-price-display">
-                <p className="subscription-price-value desktop-h4 black">£5.95</p>
-                <p className="subscription-price-period desktop-body-s light-black">Per Month</p>
+              <div className="subscription-feature-item">
+                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
+                <p className="desktop-body-s black">Add multiple social links and websites</p>
               </div>
+              <div className="subscription-feature-item">
+                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
+                <p className="desktop-body-s black">Personalize your landing page URL (yourname.cardsite.com)</p>
+              </div>
+              <div className="subscription-feature-item">
+                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
+                <p className="desktop-body-s black">Priority support and setup help</p>
+              </div>
+              <div className="subscription-feature-item">
+                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
+                <p className="desktop-body-s black">Premium NFC card design options</p>
+              </div>
+              <div className="subscription-feature-item">
+                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
+                <p className="desktop-body-s black">CRM Integration.</p>
+              </div>
+              <div className="subscription-feature-item">
+                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
+                <p className="desktop-body-s black">Networking Toolkit.</p>
+              </div>
+              <div className="subscription-feature-item">
+                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
+                <p className="desktop-body-s black">Automated Follow-Ups.</p>
+              </div>
+            </div>
 
-              {loading ? (
-                <div className="desktop-body-s text-center light-black subscription-loading-message">Loading status...</div>
-              ) : (
-                <div className="subscription-button-group">
-                  {isSubscribed ? (
-                    <>
-                      {!showCancelConfirm ? (
-                        <>
-                          <button className="blue-button desktop-button" disabled>
-                            Plan Active
+            <p className="subscription-quote desktop-body-s black">
+              "For professionals and businesses ready to make every first impression count."
+            </p>
+
+            <div className="subscription-price-display">
+              <p className="subscription-price-value desktop-h4 black">£5.95</p>
+              <p className="subscription-price-period desktop-body-s light-black">Per Month</p>
+            </div>
+
+            {loading ? (
+              <div className="desktop-body-s text-center light-black subscription-loading-message">Loading status...</div>
+            ) : (
+              <div className="subscription-button-group">
+                {isSubscribed ? (
+                  <>
+                    {!showCancelConfirm ? (
+                      <>
+                        <button className="blue-button desktop-button" disabled>
+                          Plan Active
+                        </button>
+                        <button
+                          className="black-button desktop-button"
+                          onClick={initiateCancelConfirmation}
+                          disabled={isCancelling}
+                        >
+                          Cancel Subscription
+                        </button>
+                      </>
+                    ) : (
+                      <div className="subscription-cancel-confirm">
+                        <p className="desktop-body black">
+                          {cancelCooldown > 0 ? `Confirm cancel in ${cancelCooldown}...` : 'Are you sure?'}
+                        </p>
+                        <div className="subscription-cancel-buttons">
+                          <button
+                            className="blue-button-login desktop-button"
+                            onClick={confirmCancel}
+                            disabled={cancelCooldown > 0 || isCancelling}
+                          >
+                            {isCancelling && cancelCooldown === 0 ? 'Cancelling...' : 'Confirm Cancel'}
                           </button>
                           <button
                             className="black-button desktop-button"
-                            onClick={initiateCancelConfirmation}
+                            onClick={cancelConfirmationPrompt}
                             disabled={isCancelling}
                           >
-                            Cancel Subscription
+                            Go Back
                           </button>
-                        </>
-                      ) : (
-                        <div className="subscription-cancel-confirm">
-                          <p className="desktop-body black">
-                            {cancelCooldown > 0 ? `Confirm cancel in ${cancelCooldown}...` : 'Are you sure?'}
-                          </p>
-                          <div className="subscription-cancel-buttons">
-                            <button
-                              className="blue-button-login desktop-button"
-                              onClick={confirmCancel}
-                              disabled={cancelCooldown > 0 || isCancelling}
-                            >
-                              {isCancelling && cancelCooldown === 0 ? 'Cancelling...' : 'Confirm Cancel'}
-                            </button>
-                            <button
-                              className="black-button desktop-button"
-                              onClick={cancelConfirmationPrompt}
-                              disabled={isCancelling}
-                            >
-                              Go Back
-                            </button>
-                          </div>
                         </div>
-                      )}
-                    </>
-                  ) : (
-                    <button className="blue-button desktop-button subscription-cta-button" onClick={handleSubscribe} disabled={isCancelling}>
-                      Upgrade to Power Profile
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <button className="blue-button desktop-button subscription-cta-button" onClick={handleSubscribe} disabled={isCancelling}>
+                    Upgrade to Power Profile
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </main>
