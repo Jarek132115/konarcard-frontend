@@ -7,12 +7,7 @@
     padding: 30px;
     box-sizing: border-box;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* Center content horizontally within the card */
-    text-align: center;
-    /* Center text within the card */
+    /* Removed flex properties here */
 }
 
 @media (max-width: 800px) {
@@ -26,34 +21,41 @@
 
 .subscription-popular-tag {
     position: absolute;
-    top: 20px;
+    top: -15px;
+    /* Adjust to sit slightly above the card */
     right: 20px;
     background-color: #f0f0f0;
     color: #333;
-    padding: 6px 12px;
+    padding: 4px 10px;
+    /* Reduced padding for a more compact tag */
     border-radius: 20px;
     font-weight: 600;
-    /* Utilizes desktop-body-xs for font size/line height */
+    transform: translateX(50%);
+    /* Adjust to center based on its own width */
+    white-space: nowrap;
+    /* Prevent text wrapping */
+    /* Using desktop-body-xs font styling */
 }
 
 .subscription-main-title {
-    /* Utilizes desktop-h4 for font styles */
+    /* Utilizing desktop-h4 for font styles from fonts.css */
     margin-bottom: 5px;
+    text-align: left;
+    /* Ensure left alignment */
 }
 
 .subscription-subtitle {
-    /* Utilizes desktop-body-s for font styles */
+    /* Utilizing desktop-body-s for font styles from fonts.css */
     margin-bottom: 25px;
+    text-align: left;
+    /* Ensure left alignment */
 }
 
 .subscription-features-list {
     margin-bottom: 25px;
     text-align: left;
-    /* Align text within list items to the left */
     width: 100%;
-    /* Ensure the list takes full width for consistent padding */
-    max-width: 300px;
-    /* Constrain width of list for better readability */
+    /* Allows items to fill width */
 }
 
 .subscription-feature-item {
@@ -61,7 +63,7 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 12px;
-    /* Utilizes desktop-body-s for font styles */
+    /* Utilizing desktop-body-s for font styles from fonts.css */
 }
 
 .subscription-tick-icon {
@@ -72,10 +74,12 @@
 
 .subscription-quote {
     font-style: italic;
-    /* Utilizes desktop-body-s for font styles */
+    /* Utilizing desktop-body-s for font styles from fonts.css */
     margin-top: 30px;
     margin-bottom: 25px;
     line-height: 1.5;
+    text-align: center;
+    /* Quote should be centered as per image */
 }
 
 .subscription-price-display {
@@ -83,36 +87,51 @@
     align-items: baseline;
     gap: 8px;
     margin-bottom: 30px;
-    /* Center the price display within the card */
-    justify-content: center;
+    justify-content: left;
+    /* Align to the left, like content */
     width: 100%;
 }
+
+/* New class for the main CTA button on the card, to give it more specific height/font if needed */
+.subscription-cta-button {
+    width: 100%;
+    /* Max-width on the button directly */
+    max-width: 350px;
+    /* Adjust as needed for the button's desired width within the card */
+    margin: 0 auto;
+    /* Center the button */
+}
+
 
 .subscription-button-group {
     display: flex;
     flex-direction: column;
     gap: 10px;
     width: 100%;
-    max-width: 300px;
-    /* Constrain button group width */
+    align-items: center;
+    /* Center the buttons within the card */
 }
 
 .subscription-button-group .blue-button,
-.subscription-button-group .black-button {
+.subscription-button-group .black-button,
+.subscription-button-group .blue-button-login {
     width: 100%;
-    /* Ensure buttons take full width of their container */
+    max-width: 350px;
+    /* Constrain button width */
 }
 
 .subscription-cancel-confirm {
     text-align: center;
     padding: 15px;
     border: 1px solid #ffcc00;
-    /* Use a color from your palette if available, otherwise keep this for warning */
+    /* Keeping as is, assuming no specific yellow in your palette */
     border-radius: 8px;
     background: #fffbe6;
-    /* Use a color from your palette if available, otherwise keep this */
+    /* Keeping as is */
     width: 100%;
     box-sizing: border-box;
+    max-width: 350px;
+    /* Constrain confirm box width */
 }
 
 .subscription-cancel-confirm p {
@@ -122,6 +141,7 @@
 .subscription-cancel-buttons {
     display: flex;
     flex-direction: column;
+    /* Stack buttons vertically on mobile */
     gap: 10px;
     width: 100%;
 }
@@ -131,21 +151,19 @@
     width: 100%;
 }
 
-/* Ensure disabled buttons follow the provided disabled style from your files,
-   or define a consistent disabled state if not explicitly in your initial CSS. */
-.blue-button[disabled] {
-    background-color: #ccc !important;
-    cursor: not-allowed !important;
-    box-shadow: none !important;
-}
-
+.blue-button[disabled],
+.blue-button-login[disabled],
 .black-button[disabled] {
     background-color: #ccc !important;
     cursor: not-allowed !important;
     box-shadow: none !important;
 }
 
-/* My Profile Layout & Mobile Header (Assuming these are from a global stylesheet) */
+.subscription-loading-message {
+    margin-top: 20px;
+}
+
+/* My Profile Layout & Mobile Header (Assuming these are from a global stylesheet and remain unchanged) */
 .myprofile-layout {
     display: flex;
     min-height: 100vh;
@@ -164,7 +182,6 @@
 
 .myprofile-mobile-header {
     display: none;
-    /* Hidden by default on desktop */
 }
 
 @media (max-width: 1000px) {
@@ -186,7 +203,6 @@
 
     .myprofile-logo-link {
         height: 30px;
-        /* Adjust as needed */
     }
 
     .myprofile-logo {
@@ -240,7 +256,6 @@
     }
 }
 
-/* General body no-scroll class */
 .body-no-scroll {
     overflow: hidden;
 }

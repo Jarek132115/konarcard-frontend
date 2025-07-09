@@ -27,6 +27,7 @@ export default function Subscription() {
 
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
 
+
   useEffect(() => {
     const fetchSubscriptionStatus = async () => {
       try {
@@ -148,6 +149,7 @@ export default function Subscription() {
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
+
   return (
     <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
@@ -233,7 +235,7 @@ export default function Subscription() {
               </div>
 
               {loading ? (
-                <div className="desktop-body-s text-center light-black" style={{ marginTop: 20 }}>Loading status...</div>
+                <div className="desktop-body-s text-center light-black subscription-loading-message">Loading status...</div>
               ) : (
                 <div className="subscription-button-group">
                   {isSubscribed ? (
@@ -276,7 +278,7 @@ export default function Subscription() {
                       )}
                     </>
                   ) : (
-                    <button className="blue-button desktop-button" onClick={handleSubscribe} disabled={isCancelling}>
+                    <button className="blue-button desktop-button subscription-cta-button" onClick={handleSubscribe} disabled={isCancelling}>
                       Upgrade to Power Profile
                     </button>
                   )}
