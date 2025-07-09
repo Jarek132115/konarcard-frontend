@@ -178,13 +178,8 @@ export default function Subscription() {
           onShareCard={handleShareCard}
         />
 
-        {/* Removed the "Our Plan" heading and subheading here */}
-
-        {/* The subscription box now uses the new 'content-card-box' class */}
-        {/* The 'combined-offer-container' can remain as a wrapper if needed for other elements,
-            but its centering is now handled by 'content-card-box' */}
-        <div className="combined-offer-container"> {/* Removed inline style here */}
-          <div className="subscription-offer-left content-card-box"> {/* Added content-card-box here */}
+        <div className="combined-offer-container">
+          <div className="subscription-offer-left content-card-box">
             <div className="subscription-header">
               <p className='desktop-h5 black'>Power Profile</p>
               {isSubscribed ? null : (
@@ -195,7 +190,7 @@ export default function Subscription() {
 
             <div className="subscription-features">
               {[
-                "Custom URL, e.g., www.konarcard.com/u/hmplumbing",
+                "Personalized URL: konarcard.com/u/hmplumbing.", // Clarified URL example
                 "Set profile pic, cover photo.",
                 "Custom page headings.",
                 "Explain yourself in 'About Me'.",
