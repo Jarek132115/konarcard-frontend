@@ -88,14 +88,6 @@
     width: 100%;
 }
 
-.subscription-price-value {
-    /* Utilizes desktop-h4 for font styles */
-}
-
-.subscription-price-period {
-    /* Utilizes desktop-body-s for font styles */
-}
-
 .subscription-button-group {
     display: flex;
     flex-direction: column;
