@@ -30,13 +30,14 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const isActive = (path) => location.pathname === path;
 
     return (
-        <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-            {/* THIS IS THE MOBILE HEADER OUTSIDE THE SIDEBAR */}
+        <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}> {/* Outer layout for fixed header + main content */}
+
+            {/* MOBILE HEADER - THIS IS VISIBLE AT ALL TIMES ON MOBILE AND CONTAINS THE HAMBURGER */}
             <div className="myprofile-mobile-header">
                 <Link to="/" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
                 </Link>
-                {/* CRITICAL FIX: Change this class name to 'sidebar-menu-toggle' consistently */}
+                {/* CRITICAL FIX: Ensure this class name is correctly used */}
                 <div
                     className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
                     onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -47,81 +48,84 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 </div>
             </div>
 
-
-            <div className="sidebar-mobile-header-inner">
-                <Link to="/" className="sidebar-logo-link-mobile" onClick={closeSidebar}>
-                    <img src={LogoIcon} alt="Logo" className="sidebar-logo-mobile" />
-                </Link>
-                <div className="close-sidebar-button" onClick={closeSidebar}>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-
-            <div className="sidebar-content-wrapper">
-                <div className="my-account-container">
-                    <img src={LogoIcon} alt="User" className="profile-pic" />
-                    <div className="user-info">
-                        <p className="email desktop-body-xs">{user?.email || 'Not logged in'}</p>
-                        <p className="name">{user?.name || ''}</p>
-                    </div>
-                </div>
-
-                <hr className="divider" />
-
-                <div className="top-links-group">
-                    <div className="main-links-container">
-                        <p className="section-title">MAIN</p>
-                        <Link to="/myprofile" className={`sidebar-button ${isActive('/myprofile') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={profileIcon} alt="profile" className="icon" />
-                            <p className='desktop-body-s'>My Profile</p>
-                        </Link>
-                        <Link to="/nfccards" className={`sidebar-button ${isActive('/nfccards') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={cardIcon} alt="card" className="icon" />
-                            <p className='desktop-body-s'>NFC Cards</p>
-                        </Link>
-                    </div>
-
-                    <hr className="divider" />
-
-                    <div className="account-links-container">
-                        <p className="section-title">ACCOUNT</p>
-                        <Link to="/profile" className={`sidebar-button ${isActive('/profile') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={settingsIcon} alt="account" className="icon" />
-                            <p className='desktop-body-s'>My Account</p>
-                        </Link>
-                        <Link to="/subscription" className={`sidebar-button ${isActive('/subscription') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={subscriptionIcon} alt="subscription" className="icon" />
-                            <p className='desktop-body-s'>Subscription</p>
-                        </Link>
-                    </div>
-
-                    <hr className="divider" />
-
-                    <div className="help-links-container">
-                        <p className="section-title">HELP</p>
-                        <Link to="/contact-support" className={`sidebar-button ${isActive('/contact-support') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={contactIcon} alt="contact" className="icon" />
-                            <p className='desktop-body-s'>Contact Us</p>
-                        </Link>
-                        <Link to="/helpcentreinterface" className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={helpIcon} alt="help centre" className="icon" />
-                            <p className='desktop-body-s'>Help Centre</p>
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="footer-actions">
-                    <Link to="/" className={`sidebar-button ${isActive('/') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                        <img src={homeIcon} alt="home" className="icon" />
-                        <p className='desktop-body-s'>Go to Homepage</p>
+            {/* The main sidebar component that slides in */}
+            <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+                <div className="sidebar-mobile-header-inner"> {/* Header *inside* the sidebar */}
+                    <Link to="/" className="sidebar-logo-link-mobile" onClick={closeSidebar}>
+                        <img src={LogoIcon} alt="Logo" className="sidebar-logo-mobile" />
                     </Link>
-                    <button className="sidebar-button logout-button" onClick={() => { handleLogout(); closeSidebar(); }}>
-                        <img src={logoutIcon} alt="logout" className="icon" />
-                        <p className='desktop-body-s'>Logout Account</p>
-                    </button>
+                    <div className="close-sidebar-button" onClick={closeSidebar}>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div className="sidebar-content-wrapper">
+                    <div className="my-account-container">
+                        <img src={LogoIcon} alt="User" className="profile-pic" />
+                        <div className="user-info">
+                            <p className="email desktop-body-xs">{user?.email || 'Not logged in'}</p>
+                            <p className="name">{user?.name || ''}</p>
+                        </div>
+                    </div>
+
+                    <hr className="divider" />
+
+                    <div className="top-links-group">
+                        <div className="main-links-container">
+                            <p className="section-title">MAIN</p>
+                            <Link to="/myprofile" className={`sidebar-button ${isActive('/myprofile') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
+                                <img src={profileIcon} alt="profile" className="icon" />
+                                <p className='desktop-body-s'>My Profile</p>
+                            </Link>
+                            <Link to="/nfccards" className={`sidebar-button ${isActive('/nfccards') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
+                                <img src={cardIcon} alt="card" className="icon" />
+                                <p className='desktop-body-s'>NFC Cards</p>
+                            </Link>
+                        </div>
+
+                        <hr className="divider" />
+
+                        <div className="account-links-container">
+                            <p className="section-title">ACCOUNT</p>
+                            <Link to="/profile" className={`sidebar-button ${isActive('/profile') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
+                                <img src={settingsIcon} alt="account" className="icon" />
+                                <p className='desktop-body-s'>My Account</p>
+                            </Link>
+                            <Link to="/subscription" className={`sidebar-button ${isActive('/subscription') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
+                                <img src={subscriptionIcon} alt="subscription" className="icon" />
+                                <p className='desktop-body-s'>Subscription</p>
+                            </Link>
+                        </div>
+
+                        <hr className="divider" />
+
+                        <div className="help-links-container">
+                            <p className="section-title">HELP</p>
+                            <Link to="/contact-support" className={`sidebar-button ${isActive('/contact-support') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
+                                <img src={contactIcon} alt="contact" className="icon" />
+                                <p className='desktop-body-s'>Contact Us</p>
+                            </Link>
+                            <Link to="/helpcentreinterface" className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
+                                <img src={helpIcon} alt="help centre" className="icon" />
+                                <p className='desktop-body-s'>Help Centre</p>
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className="footer-actions">
+                        <Link to="/" className={`sidebar-button ${isActive('/') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
+                            <img src={homeIcon} alt="home" className="icon" />
+                            <p className='desktop-body-s'>Go to Homepage</p>
+                        </Link>
+                        <button className="sidebar-button logout-button" onClick={() => { handleLogout(); closeSidebar(); }}>
+                            <img src={logoutIcon} alt="logout" className="icon" />
+                            <p className='desktop-body-s'>Logout Account</p>
+                        </button>
+                    </div>
                 </div>
             </div>
+            {/* The main content area is now a sibling to the sidebar, inside app-layout */}
         </div>
     );
 }
