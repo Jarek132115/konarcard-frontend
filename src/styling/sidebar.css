@@ -9,6 +9,7 @@
     min-width: 220px;
     width: fit-content;
     max-width: 300px;
+    /* Keep max-width to control how wide it gets with fit-content */
     background-color: white;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -197,18 +198,17 @@
 
 /* MAIN CONTENT CONTAINER */
 .main-content-container {
-    margin-left: fit-content;
-    /* This will be overridden by JS calculation or a parent flex container */
+    /* Adjusted to push content next to the sidebar */
+    margin-left: 260px;
+    /* This should be slightly more than your sidebar's min-width (220px + 20px padding left + 20px padding right + some buffer) */
     padding: 24px;
     box-sizing: border-box;
-    width: 100%;
-    /* Default to 100% and let a parent handle the reduction */
+    width: calc(100% - 260px);
+    /* Adjust width to account for the margin */
     min-height: 100vh;
-    /* Ensure it takes at least the full viewport height */
     overflow-y: auto;
-    /* Allow content to scroll if it overflows */
     flex-grow: 1;
-    /* Allows it to take up available space in a flex container */
+    /* Still useful if a parent is flex */
 }
 
 
@@ -353,8 +353,10 @@
     /* Adjust main content for mobile to allow full width */
     .main-content-container {
         margin-left: 0;
+        /* Remove the margin on mobile */
         width: 100%;
+        /* Take full width on mobile */
         min-height: auto;
-        /* Remove min-height on mobile to prevent empty space issues */
+        /* Revert min-height for mobile */
     }
 }
