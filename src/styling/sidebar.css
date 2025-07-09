@@ -202,6 +202,7 @@
     max-width: 600px;
     width: 100%;
     margin: 0 auto;
+    /* Keep auto for horizontal centering when not in a flex container, or if flex-direction is row */
     box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
     border-radius: 10px;
     background-color: white;
@@ -218,6 +219,61 @@
     margin-top: 20px;
     margin-bottom: 20px;
     gap: 20px;
+}
+
+/* Styles for the two-column layout on MyProfile page */
+.myprofile-flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    /* Allows columns to wrap to a single column on smaller screens */
+    justify-content: center;
+    /* Centers the columns horizontally when wrapped */
+    align-items: flex-start;
+    /* Aligns items to the top if they have different heights */
+    gap: 20px;
+    /* Space between the mock phone and the editor */
+    width: 100%;
+    /* Take full available width within its parent */
+    max-width: 1200px;
+    /* Example max-width for the entire two-column block, adjust as needed */
+}
+
+.myprofile-content {
+    /* For the mock phone side */
+    flex: 1;
+    /* Allows it to grow and shrink */
+    min-width: 300px;
+    /* Ensures it doesn't get too small */
+    max-width: 400px;
+    /* Limits its maximum width */
+}
+
+/* Adjusting myprofile-editor-wrapper for height and scrolling */
+.myprofile-editor-wrapper {
+    /* Inherits content-card-box styles (max-width, padding, etc.) */
+    position: relative;
+    /* Already defined */
+    flex: 1;
+    /* Allows it to grow and shrink */
+    min-width: 300px;
+    /* Ensures it doesn't get too small */
+    /*
+     * Calculate max-height:
+     * 100vh (viewport height)
+     * - 62px (approx mobile header height on top) - this applies only to mobile, for desktop it's margin-top on main-content-container
+     * - 20px (main-content-container top padding)
+     * - 20px (PageHeader bottom margin/padding - estimate)
+     * - 20px (combined-offer-container top margin)
+     * - 20px (combined-offer-container bottom margin)
+     * - 20px (gap between elements in combined-offer-container if applied to top/bottom element)
+     * This is a desktop-first approach for calc, mobile calc will override.
+     */
+    max-height: calc(100vh - 160px);
+    /* Adjust this value (e.g., 160px) based on your exact header/padding heights */
+    /* This is an approximation of: 100vh - (PageHeader height + mainContent padding top/bottom + combined-offer-container margins + potential gap) */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* For smoother scrolling on iOS */
 }
 
 
@@ -519,5 +575,12 @@
         padding-bottom: 20px;
         padding-left: 20px;
         padding-right: 20px;
+    }
+
+    .myprofile-editor-wrapper {
+        /* On mobile, adjust max-height to consider the fixed mobile header */
+        /* 100vh - (mobileHeaderHeight + mainContentPaddingTop + mainContentPaddingBottom + combinedOfferContainerMargins + any gap) */
+        max-height: calc(100vh - 62px - 20px - 20px - 20px);
+        /* Approx 100vh - 122px */
     }
 }
