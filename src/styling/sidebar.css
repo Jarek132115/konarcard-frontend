@@ -207,16 +207,12 @@
     box-sizing: border-box;
 }
 
-.account-settings-card {}
-
 .combined-offer-container,
 .profile-content-wrapper {
     display: block;
     margin-top: 20px;
     margin-bottom: 20px;
 }
-
-.contact-form-wrapper {}
 
 .contact-form {
     display: flex;
