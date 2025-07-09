@@ -209,12 +209,6 @@
     box-sizing: border-box;
 }
 
-.profile-card-box {
-    /* If there are any previous conflicting styles for .profile-card-box,
-       you might need to remove them or ensure .content-card-box (which it shares)
-       is more specific. */
-}
-
 .combined-offer-container,
 .profile-content-wrapper {
     display: block;
