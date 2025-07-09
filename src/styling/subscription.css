@@ -1,206 +1,254 @@
-/* Styling for the main subscription card wrapper */
 .subscription-card-wrapper {
     max-width: 500px;
-    /* Static width as requested */
     margin: 40px auto;
-    /* Center the card and add vertical space */
     background-color: #fff;
-    /* White background for the card */
     border-radius: 12px;
-    /* Rounded corners for the card */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow as seen in image */
     padding: 30px;
-    /* Internal padding for content */
     box-sizing: border-box;
-    /* Include padding in the element's total width and height */
     position: relative;
-    /* For positioning the "Most Popular" tag */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center content horizontally within the card */
+    text-align: center;
+    /* Center text within the card */
 }
 
 @media (max-width: 800px) {
     .subscription-card-wrapper {
         max-width: 100%;
-        /* Full width on smaller screens */
         border-radius: 0;
-        /* Remove border-radius on full width for cleaner look */
         padding: 20px;
-        /* Slightly less padding on mobile */
         margin-top: 20px;
-        /* Adjust top margin for mobile */
     }
 }
 
-/* Styling for the "Most Popular" tag */
 .subscription-popular-tag {
     position: absolute;
     top: 20px;
-    /* Adjust position from top */
     right: 20px;
-    /* Adjust position from right */
     background-color: #f0f0f0;
-    /* Light grey background */
     color: #333;
-    /* Dark text */
     padding: 6px 12px;
     border-radius: 20px;
-    /* Very rounded corners for pill shape */
-    font-size: 13px;
     font-weight: 600;
+    /* Utilizes desktop-body-xs for font size/line height */
 }
 
-/* Styling for the main title of the card */
 .subscription-main-title {
-    font-size: 28px;
-    /* Larger font size */
-    font-weight: 700;
-    /* Bold */
-    color: #000;
-    /* Black text */
+    /* Utilizes desktop-h4 for font styles */
     margin-bottom: 5px;
 }
 
-/* Styling for the subtitle under the main title */
 .subscription-subtitle {
-    font-size: 16px;
-    color: #333;
-    /* Dark grey text */
+    /* Utilizes desktop-body-s for font styles */
     margin-bottom: 25px;
 }
 
-/* Styling for the list of features (ul/div containing checkmarks) */
 .subscription-features-list {
     margin-bottom: 25px;
+    text-align: left;
+    /* Align text within list items to the left */
+    width: 100%;
+    /* Ensure the list takes full width for consistent padding */
+    max-width: 300px;
+    /* Constrain width of list for better readability */
 }
 
-/* Styling for each feature item (div with tick icon and text) */
 .subscription-feature-item {
     display: flex;
     align-items: center;
     gap: 10px;
-    /* Space between icon and text */
     margin-bottom: 12px;
-    /* Space between list items */
-    color: #000;
-    /* Black text for features */
-    font-size: 15px;
+    /* Utilizes desktop-body-s for font styles */
 }
 
-/* Styling for the tick icon */
 .subscription-tick-icon {
     width: 20px;
-    /* Size of the tick icon */
     height: 20px;
     flex-shrink: 0;
-    /* Prevent icon from shrinking */
 }
 
-/* Styling for the italicized quote */
 .subscription-quote {
     font-style: italic;
-    color: #000;
-    /* Black text */
-    font-size: 15px;
+    /* Utilizes desktop-body-s for font styles */
     margin-top: 30px;
-    /* Space above the quote */
     margin-bottom: 25px;
     line-height: 1.5;
 }
 
-/* Styling for the price container */
 .subscription-price-display {
     display: flex;
     align-items: baseline;
-    /* Align "£5.95" and "Per Month" correctly */
     gap: 8px;
-    /* Space between price and "Per Month" */
     margin-bottom: 30px;
-    /* Space above the button */
-}
-
-/* Styling for the main price number */
-.subscription-price-value {
-    font-size: 28px;
-    /* Large, bold price */
-    font-weight: 700;
-    color: #000;
-    /* Black text */
-}
-
-/* Styling for the "Per Month" text */
-.subscription-price-period {
-    font-size: 15px;
-    color: #666;
-    /* Lighter grey for "Per Month" */
-}
-
-/* Styling for the upgrade button */
-.subscription-upgrade-button {
+    /* Center the price display within the card */
+    justify-content: center;
     width: 100%;
-    /* Full width of the card */
-    padding: 15px 20px;
-    background-color: #007bff;
-    /* Blue background */
-    color: #fff;
-    /* White text */
-    border: none;
+}
+
+.subscription-price-value {
+    /* Utilizes desktop-h4 for font styles */
+}
+
+.subscription-price-period {
+    /* Utilizes desktop-body-s for font styles */
+}
+
+.subscription-button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 300px;
+    /* Constrain button group width */
+}
+
+.subscription-button-group .blue-button,
+.subscription-button-group .black-button {
+    width: 100%;
+    /* Ensure buttons take full width of their container */
+}
+
+.subscription-cancel-confirm {
+    text-align: center;
+    padding: 15px;
+    border: 1px solid #ffcc00;
+    /* Use a color from your palette if available, otherwise keep this for warning */
     border-radius: 8px;
-    /* Rounded corners */
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    background: #fffbe6;
+    /* Use a color from your palette if available, otherwise keep this */
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.subscription-upgrade-button:hover {
-    background-color: #0056b3;
-    /* Darker blue on hover */
+.subscription-cancel-confirm p {
+    margin-bottom: 15px;
 }
 
-/* --- Existing utility classes that might be used, ensure their colors are compatible --- */
-/* Ensure these global classes are defined elsewhere in your CSS to support subscription-page text */
-.desktop-h3 {
-    color: #000;
-    /* Assuming black text for main headers on the page */
+.subscription-cancel-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
 }
 
-
-
-.desktop-h5 {
-    color: #000;
-    /* For titles that might use this class */
+.subscription-cancel-buttons .blue-button-login,
+.subscription-cancel-buttons .black-button {
+    width: 100%;
 }
 
-.desktop-body-xs {
-    color: #666;
-    /* For smaller body text/disclaimers */
+/* Ensure disabled buttons follow the provided disabled style from your files,
+   or define a consistent disabled state if not explicitly in your initial CSS. */
+.blue-button[disabled] {
+    background-color: #ccc !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
 }
 
-/* Generic button styles if they exist, to ensure they don't override the specific ones */
-.primary-button {
-    background-color: #007bff;
-    color: #fff;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
+.black-button[disabled] {
+    background-color: #ccc !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
 }
 
-.secondary-button {
-    background: #f3f3f3;
-    color: #333;
-    border: 1px solid #ccc;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+/* My Profile Layout & Mobile Header (Assuming these are from a global stylesheet) */
+.myprofile-layout {
+    display: flex;
+    min-height: 100vh;
 }
 
-.secondary-button:hover {
-    background-color: #e0e0e0;
+.myprofile-main {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.page-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.myprofile-mobile-header {
+    display: none;
+    /* Hidden by default on desktop */
+}
+
+@media (max-width: 1000px) {
+    .myprofile-layout.sidebar-active {
+        overflow: hidden;
+    }
+
+    .myprofile-mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .myprofile-logo-link {
+        height: 30px;
+        /* Adjust as needed */
+    }
+
+    .myprofile-logo {
+        height: 100%;
+        width: auto;
+    }
+
+    .myprofile-hamburger {
+        width: 30px;
+        height: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        cursor: pointer;
+        z-index: 1100;
+    }
+
+    .myprofile-hamburger span {
+        display: block;
+        width: 100%;
+        height: 2px;
+        background-color: #333;
+        transition: all 0.3s ease;
+    }
+
+    .myprofile-hamburger.active span:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+
+    .myprofile-hamburger.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .myprofile-hamburger.active span:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+}
+
+/* General body no-scroll class */
+.body-no-scroll {
+    overflow: hidden;
 }
