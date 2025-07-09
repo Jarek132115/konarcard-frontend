@@ -1,14 +1,16 @@
-import React, { useEffect, useState, useContext } from 'react';
+// frontend/src/pages/Subscription.jsx (Apply this structure to Profile.jsx, ContactSupport.jsx etc.)
+
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import Sidebar from '../../components/Sidebar';
+import { toast } from 'react-hot-toast';
+import Sidebar from '../../components/Sidebar'; // Still imports Sidebar
 import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
-import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
-import { toast } from 'react-hot-toast';
-import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
+import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
+import TickIcon from '../../assets/icons/Tick-Icon.svg'; // Make sure this is imported if used
 
 export default function Subscription() {
   const { user: authUser } = useContext(AuthContext);
@@ -26,7 +28,6 @@ export default function Subscription() {
   const userUsername = authUser?.username;
 
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
-
 
   useEffect(() => {
     const fetchSubscriptionStatus = async () => {
@@ -148,15 +149,19 @@ export default function Subscription() {
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
-
   return (
-    <div className={`app-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
+    // app-layout is the main wrapper for the content and sidebar
+    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
+
+      {/* CRITICAL: THIS IS THE MOBILE HEADER THAT IS ALWAYS VISIBLE AND CONTAINS THE HAMBURGER TO OPEN THE SIDEBAR */}
+      {/* This div needs to be included in ALL your page components (e.g., Subscription.jsx, Profile.jsx, ContactSupport.jsx) */}
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
+        {/* This is the hamburger icon that opens the sidebar */}
         <div
-          className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
+          className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <span></span>
@@ -165,12 +170,15 @@ export default function Subscription() {
         </div>
       </div>
 
+      {/* The Sidebar component itself */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
+      {/* Overlay when sidebar is open on mobile */}
       {sidebarOpen && isMobile && (
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
+      {/* Main content area */}
       <main className="main-content-container">
         <PageHeader
           title="Subscription"
@@ -190,7 +198,7 @@ export default function Subscription() {
 
             <div className="subscription-features">
               {[
-                "Personalized URL: konarcard.com/u/hmplumbing.", // Clarified URL example
+                "Personalized URL: konarcard.com/u/hmplumbing.",
                 "Set profile pic, cover photo.",
                 "Custom page headings.",
                 "Explain yourself in 'About Me'.",
