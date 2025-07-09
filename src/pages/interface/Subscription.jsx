@@ -191,19 +191,17 @@ export default function Subscription() {
                 <div className="free-trial-badge desktop-body-xs">FREE TRIAL</div>
               )}
             </div>
-            {/* Updated subtitle for more impact */}
             <p className='desktop-body-s light-black subscription-subheader'>Win more work and *stand out* with a power profile.</p>
 
             <div className="subscription-features">
               {[
-                `Customizable Landing Page at konarcard.com/u/${userUsername || 'yourusername'}`,
-                "Exchange Details in One Click.",
-                "Explain Who You Are with dedicated sections for your Name, Job Title, and 'About Me'.",
-                "Showcase Your Amazing Work with Unlimited Photos/Portfolio.",
-                "Build Social Proof with Unlimited Client Reviews.",
-                "Show Exactly What You Provide: Unlimited Services.",
-                "Secure More Jobs with CRM Integration & Automated Follow-Ups.",
-                "Stand Out with Premium NFC Card Design Options & Priority Support.",
+                "Custom URL, e.g., /u/hmplumbing", // Updated as requested
+                "Set profile pic, cover photo.",
+                "Custom page headings.",
+                "Explain yourself in 'About Me'.",
+                "Show unlimited amazing work photos.",
+                "List unlimited services you provide.",
+                "Build trust: unlimited client reviews."
               ].map((text, idx) => (
                 <div className="hero-tick" key={idx}>
                   <img src={TickIcon} className="icon" alt="tick" />
@@ -212,7 +210,6 @@ export default function Subscription() {
               ))}
             </div>
 
-            {/* Updated quote for stronger conversion */}
             <p className='desktop-body-s black subscription-description-footer'>
               "Unlock your full potential: make every connection count and secure new opportunities."
             </p>
