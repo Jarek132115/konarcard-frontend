@@ -31,13 +31,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     return (
         <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-            {/* The mobile header outside the sidebar - this is always visible */}
-            {/* THIS IS THE PART THAT HOLDS THE HAMBURGER FOR OPENING THE SIDEBAR */}
+            {/* THIS IS THE MOBILE HEADER OUTSIDE THE SIDEBAR */}
             <div className="myprofile-mobile-header">
                 <Link to="/" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
                 </Link>
-                {/* Changed class from "myprofile-hamburger" or "mobile-hamburger-icon" to "sidebar-menu-toggle" */}
+                {/* CRITICAL FIX: Change this class name to 'sidebar-menu-toggle' consistently */}
                 <div
                     className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
                     onClick={() => setSidebarOpen(!sidebarOpen)}

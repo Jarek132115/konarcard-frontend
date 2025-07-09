@@ -297,9 +297,10 @@
         height: 32px;
     }
 
-    /* NEW HAMBURGER ICON (the 3 lines container) */
+    /* SPECIFIC HAMBURGER ICON STYLES FOR MOBILE ONLY */
     .sidebar-menu-toggle {
         display: flex;
+        /* Makes the container visible */
         flex-direction: column;
         justify-content: space-between;
         width: 25px;
@@ -308,9 +309,9 @@
         cursor: pointer;
         z-index: 1002;
         background: transparent;
+        /* Container itself is transparent */
     }
 
-    /* NEW HAMBURGER LINES (the actual spans) */
     .sidebar-menu-toggle span {
         display: block;
         /* CRITICAL: Ensure each span is a block to have height */
