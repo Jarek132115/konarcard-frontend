@@ -207,12 +207,16 @@
     box-sizing: border-box;
 }
 
+.account-settings-card {}
+
 .combined-offer-container,
 .profile-content-wrapper {
     display: block;
     margin-top: 20px;
     margin-bottom: 20px;
 }
+
+.contact-form-wrapper {}
 
 .contact-form {
     display: flex;
@@ -272,6 +276,8 @@
 
 /* --- MOBILE SPECIFIC STYLES --- */
 @media (max-width: 1000px) {
+
+    /* MOBILE HEADER (visible container for hamburger) */
     .myprofile-mobile-header {
         display: flex;
         justify-content: space-between;
@@ -291,39 +297,48 @@
         height: 32px;
     }
 
-    .mobile-hamburger-icon {
+    /* NEW HAMBURGER ICON (the 3 lines container) */
+    .sidebar-menu-toggle {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         width: 25px;
         height: 18px;
+        /* Height to accommodate 3 lines and spacing */
         cursor: pointer;
         z-index: 1002;
         background: transparent;
     }
 
-    .mobile-hamburger-icon span {
+    /* NEW HAMBURGER LINES (the actual spans) */
+    .sidebar-menu-toggle span {
         display: block;
+        /* CRITICAL: Ensure each span is a block to have height */
         width: 100%;
         height: 2px;
+        /* Defines the thickness of each line */
         background: black;
+        /* Defines the color of the lines */
         border-radius: 2px;
         transition: all 0.3s ease;
         opacity: 1;
+        /* Ensure lines are fully visible */
     }
 
-    .mobile-hamburger-icon.active span:nth-child(1) {
+    /* Styles for when hamburger is 'active' (sidebar open) - forms an X */
+    .sidebar-menu-toggle.active span:nth-child(1) {
         transform: translateY(8px) rotate(45deg);
     }
 
-    .mobile-hamburger-icon.active span:nth-child(2) {
+    .sidebar-menu-toggle.active span:nth-child(2) {
         opacity: 0;
     }
 
-    .mobile-hamburger-icon.active span:nth-child(3) {
+    .sidebar-menu-toggle.active span:nth-child(3) {
         transform: translateY(-8px) rotate(-45deg);
     }
 
+    /* MOBILE SIDEBAR */
     .sidebar {
         position: fixed;
         top: 0;
@@ -343,6 +358,7 @@
         transform: translateX(0);
     }
 
+    /* Header *inside* the mobile sidebar (visible when sidebar slides open) */
     .sidebar-mobile-header-inner {
         display: flex;
         justify-content: space-between;
@@ -353,6 +369,13 @@
         background-color: white;
         width: 100%;
         box-sizing: border-box;
+    }
+
+    .sidebar-logo-link-mobile {
+        order: 1;
+        margin-right: auto;
+        display: flex;
+        align-items: center;
     }
 
     .sidebar-logo-link-mobile .sidebar-logo-mobile {

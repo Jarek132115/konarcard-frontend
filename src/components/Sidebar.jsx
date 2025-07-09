@@ -31,6 +31,24 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     return (
         <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+            {/* The mobile header outside the sidebar - this is always visible */}
+            {/* THIS IS THE PART THAT HOLDS THE HAMBURGER FOR OPENING THE SIDEBAR */}
+            <div className="myprofile-mobile-header">
+                <Link to="/" className="myprofile-logo-link">
+                    <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
+                </Link>
+                {/* Changed class from "myprofile-hamburger" or "mobile-hamburger-icon" to "sidebar-menu-toggle" */}
+                <div
+                    className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+
             <div className="sidebar-mobile-header-inner">
                 <Link to="/" className="sidebar-logo-link-mobile" onClick={closeSidebar}>
                     <img src={LogoIcon} alt="Logo" className="sidebar-logo-mobile" />
