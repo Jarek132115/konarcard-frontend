@@ -13,7 +13,7 @@ import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 export default function Subscription() {
   const { user: authUser } = useContext(AuthContext);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Renamed from loadingStatus for clarity with existing state
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelCooldown, setCancelCooldown] = useState(0);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -37,7 +37,7 @@ export default function Subscription() {
         console.error('Error fetching subscription status:', err);
         toast.error('Failed to load subscription status.');
       } finally {
-        setLoading(false);
+        setLoading(false); // Use setLoading here
       }
     };
 
@@ -79,7 +79,7 @@ export default function Subscription() {
   }, [sidebarOpen, isMobile]);
 
   const handleSubscribe = async () => {
-    setIsCancelling(true);
+    setIsCancelling(true); // Renamed from isSubmitting
     try {
       const res = await api.post('/subscribe', {});
       if (res.data.url) {
@@ -91,7 +91,7 @@ export default function Subscription() {
       console.error('Subscription initiation failed:', err);
       toast.error(err.response?.data?.error || 'Subscription initiation failed. Please try again.');
     } finally {
-      setIsCancelling(false);
+      setIsCancelling(false); // Use setIsCancelling
     }
   };
 
@@ -102,7 +102,7 @@ export default function Subscription() {
   };
 
   const confirmCancel = async () => {
-    setIsCancelling(true);
+    setIsCancelling(true); // Use setIsCancelling
     try {
       await api.post('/cancel-subscription', {});
       toast.success('Subscription will be cancelled at the end of the current billing period.');
@@ -113,7 +113,7 @@ export default function Subscription() {
       console.error('Failed to cancel subscription:', err);
       toast.error(err.response?.data?.error || 'Failed to cancel subscription. Please try again.');
     } finally {
-      setIsCancelling(false);
+      setIsCancelling(false); // Use setIsCancelling
     }
   };
 
@@ -172,131 +172,114 @@ export default function Subscription() {
       )}
 
       <main className="main-content-container">
-        {/* PageHeader's title prop is already handled internally by PageHeader component */}
         <PageHeader
           title="Subscription"
           onActivateCard={() => console.log("Activate Card clicked on Subscription page")}
           onShareCard={handleShareCard}
         />
 
-        {/* Applied font classes and color classes */}
-        <p className="desktop-h3 text-center black">Our Plan</p>
-        <p className="desktop-h6 text-center light-black">Start free for 7 days — only upgrade if it works for you.</p>
+        {/* BEGIN REFACTORED SUBSCRIPTION OFFER SECTION */}
+        <div className="section-1-title">
+          <h2 className='desktop-h3 text-center black'>Our Plan</h2> {/* Updated to match screenshot */}
+          <h3 className='desktop-h6 text-center light-black'>Start free for 7 days — only upgrade if it works for you.</h3> {/* Updated to match screenshot */}
+        </div>
 
-        {/* The subscription card wrapper itself */}
-        <div className="subscription-card-wrapper">
-          {/* Applied font class and color class */}
-          <div className="subscription-popular-tag desktop-body-xs white">Most Popular</div>
+        {/* This div replaces the old "subscription-card-wrapper" and adopts new classes */}
+        <div className="combined-offer-container" style={{ justifyContent: 'center' }}>
+          <div className="subscription-offer-left"> {/* This acts as the single subscription card */}
+            <div className="subscription-header">
+              <p className='desktop-h5 black'>Power Profile</p>
+              {/* Conditional Free Trial badge */}
+              {isSubscribed ? null : ( // Only show free trial badge if not subscribed
+                <div className="free-trial-badge desktop-body-xs">FREE TRIAL</div>
+              )}
+            </div>
+            <p className='desktop-body-s light-black subscription-subheader'>Win more work with a power profile</p>
 
-          <div className="subscription-content">
-            {/* Applied font classes and color classes */}
-            <p className="subscription-main-title desktop-h4 black">Power Profile</p>
-            <p className="subscription-subtitle desktop-body-s light-black">Win more work with a power profile</p>
-
-            <div className="subscription-features-list">
-              <div className="subscription-feature-item">
-                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                <p className="desktop-body-s black">Upload unlimited photos (Portfolio / Gallery)</p>
-              </div>
-              <div className="subscription-feature-item">
-                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                <p className="desktop-body-s black">Add multiple social links and websites</p>
-              </div>
-              <div className="subscription-feature-item">
-                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                <p className="desktop-body-s black">Personalize your landing page URL (yourname.cardsite.com)</p>
-              </div>
-              <div className="subscription-feature-item">
-                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                <p className="desktop-body-s black">Priority support and setup help</p>
-              </div>
-              <div className="subscription-feature-item">
-                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                <p className="desktop-body-s black">Premium NFC card design options</p>
-              </div>
-              <div className="subscription-feature-item">
-                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                <p className="desktop-body-s black">CRM Integration.</p>
-              </div>
-              <div className="subscription-feature-item">
-                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                <p className="desktop-body-s black">Networking Toolkit.</p>
-              </div>
-              <div className="subscription-feature-item">
-                <img src={TickIcon} className="subscription-tick-icon" alt="tick" />
-                <p className="desktop-body-s black">Automated Follow-Ups.</p>
-              </div>
+            <div className="subscription-features">
+              {[
+                "Upload unlimited photos (Portfolio / Gallery)",
+                "Add multiple social links and websites",
+                "Personalize your landing page URL (yourname.cardsite.com)",
+                "Priority support and setup help",
+                "Premium NFC card design options", // Added this feature from the initial screenshot
+                "CRM Integration.",
+                "Networking Toolkit.",
+                "Automated Follow-Ups.",
+              ].map((text, idx) => (
+                <div className="hero-tick" key={idx}>
+                  <img src={TickIcon} className="icon" alt="tick" />
+                  <p className="desktop-body-s black">{text}</p>
+                </div>
+              ))}
             </div>
 
-            {/* Applied font classes and color classes */}
-            <p className="subscription-quote desktop-body-s black">
+            <p className='desktop-body-s black subscription-description-footer'>
               "For professionals and businesses ready to make every first impression count."
             </p>
 
-            <div className="subscription-price-display">
-              {/* Applied font classes and color classes */}
-              <p className="subscription-price-value desktop-h4 black">£5.95</p>
-              <p className="subscription-price-period desktop-body-s light-black">Per Month</p>
-            </div>
-
-            {loading ? (
-              <div className="desktop-body-s text-center light-black subscription-loading-message">Loading status...</div>
-            ) : (
-              <div className="subscription-button-group">
-                {isSubscribed ? (
-                  <>
-                    {!showCancelConfirm ? (
-                      <>
-                        {/* Applied button and text classes */}
-                        <button className="blue-button desktop-button" disabled>
-                          <span className="desktop-button">Plan Active</span>
+            <div className="subscription-price-cta">
+              <div className='price-display'>
+                <p className='desktop-h5 black'>£5.95</p> {/* Updated price to £5.95 */}
+                <p className='desktop-body-s light-black'>Per Month</p> {/* Used desktop-body-s for consistency */}
+              </div>
+              {/* Conditional rendering for subscribe/cancel button based on subscription status */}
+              {loading ? (
+                <button className="desktop-button black-button" disabled>
+                  <span className="desktop-button">Loading Plan Status...</span>
+                </button>
+              ) : isSubscribed ? (
+                <>
+                  {!showCancelConfirm ? (
+                    <>
+                      <button className="desktop-button blue-button" disabled>
+                        <span className="desktop-button">Plan Active</span>
+                      </button>
+                      <button
+                        className="desktop-button black-button" // Changed to black-button for consistency
+                        onClick={initiateCancelConfirmation}
+                        disabled={isCancelling}
+                        style={{ marginTop: '10px' }} // Add some spacing between buttons if needed
+                      >
+                        <span className="desktop-button">Cancel Subscription</span>
+                      </button>
+                    </>
+                  ) : (
+                    <div className="subscription-cancel-confirm">
+                      <p className="desktop-body black">
+                        {cancelCooldown > 0 ? `Confirm cancel in ${cancelCooldown}...` : 'Are you sure?'}
+                      </p>
+                      <div className="subscription-cancel-buttons">
+                        <button
+                          className="desktop-button blue-button-login"
+                          onClick={confirmCancel}
+                          disabled={cancelCooldown > 0 || isCancelling}
+                        >
+                          <span className="desktop-button">
+                            {isCancelling && cancelCooldown === 0 ? 'Cancelling...' : 'Confirm Cancel'}
+                          </span>
                         </button>
                         <button
-                          className="black-button desktop-button"
-                          onClick={initiateCancelConfirmation}
+                          className="desktop-button black-button"
+                          onClick={cancelConfirmationPrompt}
                           disabled={isCancelling}
+                          style={{ marginTop: '10px' }} // Add some spacing between buttons if needed
                         >
-                          <span className="desktop-button">Cancel Subscription</span>
+                          <span className="desktop-button">Go Back</span>
                         </button>
-                      </>
-                    ) : (
-                      <div className="subscription-cancel-confirm">
-                        {/* Applied font classes and color classes */}
-                        <p className="desktop-body black">
-                          {cancelCooldown > 0 ? `Confirm cancel in ${cancelCooldown}...` : 'Are you sure?'}
-                        </p>
-                        <div className="subscription-cancel-buttons">
-                          {/* Applied button and text classes */}
-                          <button
-                            className="blue-button-login desktop-button"
-                            onClick={confirmCancel}
-                            disabled={cancelCooldown > 0 || isCancelling}
-                          >
-                            <span className="desktop-button">
-                              {isCancelling && cancelCooldown === 0 ? 'Cancelling...' : 'Confirm Cancel'}
-                            </span>
-                          </button>
-                          <button
-                            className="black-button desktop-button"
-                            onClick={cancelConfirmationPrompt}
-                            disabled={isCancelling}
-                          >
-                            <span className="desktop-button">Go Back</span>
-                          </button>
-                        </div>
                       </div>
-                    )}
-                  </>
-                ) : (
-                  // Applied button and text classes
-                  <button className="blue-button desktop-button subscription-cta-button" onClick={handleSubscribe} disabled={isCancelling}>
-                    <span className="desktop-button">Upgrade to Power Profile</span>
-                  </button>
-                )}
-              </div>
-            )}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <button className="desktop-button black-button" onClick={handleSubscribe} disabled={isCancelling}>
+                  <span className="desktop-button">Upgrade to Power Profile</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
+        {/* END REFACTORED SUBSCRIPTION OFFER SECTION */}
       </main>
 
       <ShareProfile
