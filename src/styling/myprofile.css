@@ -1,6 +1,5 @@
 /* myprofile.css */
 
-/* CSS Variables for theming (Light Mode Defaults) */
 :root {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
@@ -10,14 +9,12 @@
     --button-bg: black;
     --button-text: white;
     --border-color: #ccc;
-    /* Reverted to original grey border */
     --input-border: #ccc;
     --placeholder-bg: #f0f0f0;
     --page-header-color: #000000;
     --main-font-family: 'Inter', sans-serif;
 }
 
-/* Dark Mode Overrides */
 .dark-mode {
     --primary-bg: #1F1F1F;
     --secondary-bg: #2C2C2C;
@@ -27,13 +24,11 @@
     --button-bg: white;
     --button-text: black;
     --border-color: #555;
-    /* Original dark mode border color */
     --input-border: #666;
     --placeholder-bg: #444;
     --page-header-color: #FFFFFF;
 }
 
-/* General Layout - These are now largely handled by global app-layout in Sidebar.css */
 .myprofile-layout {
     display: flex;
     height: 100vh;
@@ -42,22 +37,17 @@
     position: relative;
 }
 
-/* MyProfile Main content area (right side, next to sidebar) - Now handled by main-content-container in Sidebar.css */
-/* Keeping it here mostly for original styles that might be specific, but global main-content-container will apply */
 .myprofile-main {
     flex: 1;
     font-family: var(--main-font-family);
     padding: 30px;
-    /* Original padding */
     display: flex;
     flex-direction: column;
     min-height: 0;
     overflow-x: hidden;
     padding-bottom: 20px;
     margin-left: 250px;
-    /* Original margin-left */
     padding-top: 30px;
-    /* Original padding-top */
     transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
     z-index: 1;
     color: var(--text-color);
@@ -70,7 +60,6 @@
     margin-bottom: 30px;
     flex-shrink: 0;
     border-bottom: 1px grey solid;
-    /* Reverted to original grey solid */
     padding-bottom: 20px;
 }
 
@@ -106,7 +95,6 @@
     border: 1px solid var(--border-color);
 }
 
-/* MyProfile specific flex container for phone and editor */
 .myprofile-flex-container {
     display: flex;
     flex: 1;
@@ -114,26 +102,26 @@
     min-height: 0;
     overflow: hidden;
     justify-content: space-around;
-    align-items: stretch;
+    /* Set to space-around for gap between and at ends */
+    align-items: flex-start;
+    /* Align items to the top to prevent stretching */
     max-width: 1200px;
     margin: 0 auto;
-
+    padding-bottom: 20px;
+    /* To give space before bottom padding */
 }
 
-/* Mock Phone Container */
 .myprofile-content {
     flex: 0 1 auto;
-    /* Reverted flex properties */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
     aspect-ratio: 9 / 17;
+    max-width: 320px;
     min-width: 250px;
     position: relative;
     overflow: hidden;
-    /* Keep overflow hidden for mock phone frame */
-    /* Removed max-height here, allowing it to stretch based on flex-container's align-items */
 }
 
 .mock-phone {
@@ -141,7 +129,6 @@
     height: 100%;
     background: var(--primary-bg);
     border: 10px solid var(--border-color);
-    /* Uses the reverted --border-color */
     border-radius: 2.5rem;
     padding: 20px;
     text-align: center;
@@ -157,7 +144,6 @@
 
 .mock-phone-scrollable-content {
     flex-grow: 1;
-    /* Internal scroll for phone content on desktop */
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -396,18 +382,14 @@
 .myprofile-editor-wrapper {
     position: relative;
     height: 100%;
-    /* Reverted to original height: 100% */
     max-width: 600px;
     min-width: 350px;
     flex-direction: column;
-    /* Needed for internal flex layout */
     min-height: 0;
-    /* Allow it to shrink as a flex item */
 }
 
 .myprofile-editor {
     flex: 1;
-    /* Allows it to fill available height in its parent */
     background: var(--primary-bg);
     padding: 24px;
     border-radius: 16px;
@@ -416,13 +398,10 @@
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
-    /* Original: desktop editor content scrolls */
     -webkit-overflow-scrolling: touch;
-    /* For smoother scrolling on iOS */
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    /* Original: fills its parent's height */
     color: var(--text-color);
 }
 
@@ -690,12 +669,10 @@
 
 @media (max-width: 1000px) {
 
-    /* These media queries will interact with Sidebar.css's media queries */
     .myprofile-main {
         margin-left: 0;
         padding-top: 70px;
         overflow-y: auto;
-        /* ENABLE MAIN PAGE SCROLL ON MOBILE */
         color: var(--text-color);
     }
 
@@ -715,7 +692,6 @@
         align-items: center;
         height: auto;
         flex: 0 0 auto;
-        /* Crucial: Allow height to be driven by content on mobile */
     }
 
     .myprofile-content {
@@ -734,19 +710,14 @@
         width: 100%;
         height: auto;
         aspect-ratio: 9 / 17;
-        /* Reverted aspect ratio for mobile */
         background: var(--primary-bg);
         border-color: var(--border-color);
         color: var(--text-color);
     }
 
-    /* Important for no internal scroll: allow content to shrink if too large */
     .mock-phone-scrollable-content {
-        /* No internal scroll for mock phone on mobile */
         flex-shrink: 1;
-        /* Allow content to shrink if needed */
         min-height: 0;
-        /* Essential for flex items to shrink their content */
     }
 
     .myprofile-editor-wrapper {
@@ -754,30 +725,20 @@
         max-width: 100%;
         min-width: unset;
         height: auto;
-        /* Height determined by content */
-        /* max-height: 70vh; REMOVED this restriction for mobile */
         flex-shrink: 0;
-        /* Prevent it from shrinking more than its content needs */
         flex-grow: 0;
-        /* Prevent it from growing to fill space */
         aspect-ratio: unset;
         overflow: hidden;
-        /* Hide overflow at the wrapper level */
     }
 
-    /* Important for no internal scroll: allow content to shrink if too large */
     .myprofile-editor {
         padding: 16px;
         gap: 15px;
-        /* REMOVE SCROLLBAR FROM EDITOR ON MOBILE */
         height: auto;
-        /* Height determined by content */
         background: var(--primary-bg);
         color: var(--text-color);
         flex-shrink: 1;
-        /* Allow content to shrink if needed */
         min-height: 0;
-        /* Essential for flex items to shrink their content */
     }
 
     .myprofile-layout.sidebar-active {
@@ -794,7 +755,6 @@
 
     .myprofile-main {
         padding-top: 30px;
-        /* Prevent main page scroll on desktop */
     }
 
     .sidebar {
