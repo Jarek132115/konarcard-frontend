@@ -183,9 +183,7 @@ export default function Profile() {
         />
 
         <div className="profile-content-wrapper">
-          {/* Changed class from "profile-card-box content-card-box" to just "content-card-box" */}
-          {/* Reverted to "profile-card-box content-card-box" as per original instruction for class names.
-              The issue of styling conflict needs to be handled in CSS, not by removing original classes from JSX. */}
+          {/* CORRECTED: Added "content-card-box" class here as intended */}
           <div className="profile-card-box content-card-box">
             {/* Display Name Section */}
             <div className="profile-input-block">
