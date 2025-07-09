@@ -21,7 +21,6 @@
 
 .sidebar-mobile-header-inner {
     display: none;
-    /* This is for the header *inside* the mobile sidebar when open */
 }
 
 .sidebar-content-wrapper {
@@ -208,6 +207,10 @@
     box-sizing: border-box;
 }
 
+.account-settings-card {
+    /* No visual styles here as it shares .content-card-box */
+}
+
 .combined-offer-container,
 .profile-content-wrapper {
     display: block;
@@ -244,18 +247,23 @@
         /* Adjust logo size for mobile header */
     }
 
-    /* HAMBURGER ICON */
+    /* HAMBURGER ICON - Ensure lines are visible by default */
     .myprofile-hamburger {
         display: flex;
-        /* Make hamburger visible */
+        /* Must be flex to arrange the spans */
         flex-direction: column;
         justify-content: space-between;
         width: 25px;
         height: 18px;
-        /* Adjust height for 3 lines */
+        /* Sufficient height for 3 lines + gaps */
         cursor: pointer;
         z-index: 1002;
         /* Ensure it's above other elements */
+        /* Explicitly setting background and opacity to ensure visibility */
+        background: transparent;
+        /* Hamburger icon itself is transparent */
+        opacity: 1;
+        /* Ensure it's not transparent */
     }
 
     .myprofile-hamburger span {
@@ -263,9 +271,13 @@
         height: 2px;
         /* Thickness of hamburger lines */
         background: black;
-        /* Color of hamburger lines */
+        /* COLOR OF THE LINES */
         border-radius: 2px;
         transition: all 0.3s ease;
+        display: block;
+        /* Ensure spans are treated as blocks */
+        opacity: 1;
+        /* Ensure lines themselves are not transparent */
     }
 
     /* Styles for when hamburger is 'active' (sidebar open) - forms an X */
@@ -299,7 +311,6 @@
         overflow: hidden;
         background-color: white;
         padding: 0;
-        /* No external padding */
         transition: transform 0.3s ease-in-out;
     }
 
@@ -333,8 +344,6 @@
         margin-right: 0;
     }
 
-    /* The close button is part of sidebar-mobile-header-inner in Sidebar.jsx,
-       but the hamburger itself needs to transform into the 'X' */
     .close-sidebar-button {
         display: flex;
         flex-direction: column;
