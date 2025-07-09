@@ -178,13 +178,13 @@ export default function Subscription() {
           onShareCard={handleShareCard}
         />
 
-        <div className="section-1-title">
-          <h2 className='desktop-h3 text-center black'>Our Plan</h2>
-          <h3 className='desktop-h6 text-center light-black'>Start free for 7 days — only upgrade if it works for you.</h3>
-        </div>
+        {/* Removed the "Our Plan" heading and subheading here */}
 
-        <div className="combined-offer-container" style={{ justifyContent: 'center' }}>
-          <div className="subscription-offer-left">
+        {/* The subscription box now uses the new 'content-card-box' class */}
+        {/* The 'combined-offer-container' can remain as a wrapper if needed for other elements,
+            but its centering is now handled by 'content-card-box' */}
+        <div className="combined-offer-container"> {/* Removed inline style here */}
+          <div className="subscription-offer-left content-card-box"> {/* Added content-card-box here */}
             <div className="subscription-header">
               <p className='desktop-h5 black'>Power Profile</p>
               {isSubscribed ? null : (
@@ -195,7 +195,7 @@ export default function Subscription() {
 
             <div className="subscription-features">
               {[
-                "Custom URL, e.g., /u/hmplumbing", // Updated as requested
+                "Custom URL, e.g., /u/hmplumbing",
                 "Set profile pic, cover photo.",
                 "Custom page headings.",
                 "Explain yourself in 'About Me'.",
