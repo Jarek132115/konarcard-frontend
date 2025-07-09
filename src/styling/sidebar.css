@@ -207,7 +207,6 @@
     box-sizing: border-box;
 }
 
-.account-settings-card {}
 
 .combined-offer-container,
 .profile-content-wrapper {
@@ -216,7 +215,6 @@
     margin-bottom: 20px;
 }
 
-.contact-form-wrapper {}
 
 .contact-form {
     display: flex;

@@ -153,13 +153,13 @@ export default function Profile() {
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
   return (
-    <div className={`app-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
+    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
         <div
-          className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
+          className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <span></span>
@@ -179,11 +179,10 @@ export default function Profile() {
           title="My Account"
           onActivateCard={() => console.log("Activate Card clicked on My Account page")}
           onShareCard={handleShareCard}
-          className="profile-page-header"
         />
 
-        <div className="profile-content-wrapper">
-          <div className="account-settings-card content-card-box">
+        <div className="combined-offer-container"> {/* Added this wrapper */}
+          <div className="account-settings-card content-card-box"> {/* Adjusted class name to match */}
             {/* Display Name Section */}
             <div className="profile-input-block">
               <label className="desktop-body-s black">Display Name</label>

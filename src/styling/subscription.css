@@ -44,8 +44,6 @@
     .myprofile-mobile-header {
         display: flex;
         /* Make it visible on mobile */
-        flex-direction: row;
-        /* Ensure logo and hamburger are in a row */
         justify-content: space-between;
         /* Space out logo and hamburger */
         align-items: center;
@@ -81,9 +79,10 @@
         width: auto;
     }
 
-    /* THE HAMBURGER ICON (the 3 lines container) */
-    /* This class is used in your HTML for the main hamburger div */
-    .myprofile-hamburger {
+    /* THE HAMBURGER ICON (the 3 lines container, renamed to avoid conflicts) */
+    /* This is the hamburger that opens the sidebar, so it's in the main layout file. */
+    .sidebar-menu-toggle {
+        /* Use this class name in your HTML for the hamburger div */
         display: flex;
         /* Make the container visible and stack lines */
         flex-direction: column;
@@ -102,13 +101,13 @@
         /* Ensure no conflicting auto-margin */
     }
 
-    /* CRITICAL: HIDE this hamburger icon COMPLETELY when the sidebar is OPEN */
-    .myprofile-mobile-header .myprofile-hamburger.active {
+    /* HIDE this hamburger icon COMPLETELY when the sidebar is OPEN */
+    .myprofile-mobile-header .sidebar-menu-toggle.active {
         display: none;
     }
 
-    /* THE ACTUAL HAMBURGER LINES (spans inside .myprofile-hamburger) */
-    .myprofile-hamburger span {
+    /* THE ACTUAL HAMBURGER LINES (spans inside .sidebar-menu-toggle) */
+    .sidebar-menu-toggle span {
         display: block;
         /* CRITICAL: Ensure each span is a block to have height */
         width: 100%;
@@ -122,16 +121,17 @@
         /* Ensure lines are fully visible */
     }
 
-    /* Styles for when hamburger is 'active' (sidebar open) - These are now technically irrelevant due to display:none */
-    .myprofile-hamburger.active span:nth-child(1) {
+    /* Styles for when hamburger is 'active' (sidebar open) - forms an X */
+    /* These are technically redundant if display:none, but keeping for robustness */
+    .sidebar-menu-toggle.active span:nth-child(1) {
         transform: translateY(8px) rotate(45deg);
     }
 
-    .myprofile-hamburger.active span:nth-child(2) {
+    .sidebar-menu-toggle.active span:nth-child(2) {
         opacity: 0;
     }
 
-    .myprofile-hamburger.active span:nth-child(3) {
+    .sidebar-menu-toggle.active span:nth-child(3) {
         transform: translateY(-8px) rotate(-45deg);
     }
 
@@ -164,8 +164,6 @@
 }
 
 /* Subscription Page Specific Styling */
-/* Note: These styles are highly specific to subscription content.
-   If you have a separate file for page-specific styles, these might belong there. */
 .subscription-card-wrapper {
     max-width: 500px;
     width: 100%;
