@@ -296,10 +296,11 @@
         /* Ensure it's above other content */
     }
 
-    /* Style for the logo link container within the mobile header */
-    .myprofile-logo-link {
-        margin-right: 20px;
-        /* Provide space between logo and hamburger */
+    /* CRITICAL: Style for the logo link container within the mobile header */
+    .myprofile-mobile-header .myprofile-logo-link {
+        margin-right: auto;
+        /* Push the logo to the left, create space to its right */
+        /* Ensure no conflicting 'order' or 'margin-left: auto' from other rules */
     }
 
     .myprofile-logo-link .myprofile-logo {
@@ -314,6 +315,7 @@
         justify-content: space-between;
         width: 25px;
         height: 18px;
+        /* Height to accommodate 3 lines and spacing */
         cursor: pointer;
         z-index: 1002;
         background: transparent;
