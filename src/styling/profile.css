@@ -41,7 +41,6 @@
     /* Allow this wrapper to take all available vertical space */
     min-height: 0;
     /* Important for flex children to shrink */
-    overflow-y: auto;
     /* Allow content inside this wrapper to scroll */
 
     margin: auto;
