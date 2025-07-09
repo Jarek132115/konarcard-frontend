@@ -153,7 +153,8 @@ export default function Profile() {
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
   return (
-    <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
+    // Changed myprofile-layout to app-layout for consistency with Subscription page
+    <div className={`app-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -174,28 +175,32 @@ export default function Profile() {
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      <main className="myprofile-main">
+      {/* Main content container */}
+      <main className="main-content-container">
         <PageHeader
           title="My Account"
           onActivateCard={() => console.log("Activate Card clicked on My Account page")}
           onShareCard={handleShareCard}
-          className="profile-page-header" 
+          className="profile-page-header"
         />
 
         <div className="profile-content-wrapper">
           <div className="profile-card-box">
+            {/* Display Name Section */}
             <div className="profile-input-block">
-              <label>Display Name</label>
+              <label className="desktop-body-s black">Display Name</label> {/* Applied font and color class */}
               <input
                 type="text"
                 value={updatedName}
                 onChange={(e) => setUpdatedName(e.target.value)}
                 autoComplete="name"
+                className="desktop-body" /* Apply text input styling if needed */
               />
             </div>
 
+            {/* Change Password Section */}
             <div className="profile-input-block">
-              <label>Change Password</label>
+              <label className="desktop-body-s black">Change Password</label> {/* Applied font and color class */}
               <div className="password-wrapper">
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -203,9 +208,10 @@ export default function Profile() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="New password"
                   autoComplete="new-password"
+                  className="desktop-body" /* Apply text input styling if needed */
                 />
-                <button type="button" onClick={togglePassword}>
-                  {showPassword ? 'Hide' : 'Show'}
+                <button type="button" onClick={togglePassword} className="desktop-button black-button"> {/* Applied button and text classes */}
+                  <span className="desktop-button">{showPassword ? 'Hide' : 'Show'}</span>
                 </button>
               </div>
               <div className="password-wrapper">
@@ -215,27 +221,28 @@ export default function Profile() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm new password"
                   autoComplete="new-password"
+                  className="desktop-body" /* Apply text input styling if needed */
                 />
-                <button type="button" onClick={toggleConfirm}>
-                  {showConfirm ? 'Hide' : 'Show'}
+                <button type="button" onClick={toggleConfirm} className="desktop-button black-button"> {/* Applied button and text classes */}
+                  <span className="desktop-button">{showConfirm ? 'Hide' : 'Show'}</span>
                 </button>
               </div>
 
               {(password || confirmPassword) && (
                 <div className="password-feedback">
-                  <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
+                  <p className={`desktop-body-xs ${passwordChecks.minLength ? 'valid' : 'invalid'}`}> {/* Applied font class */}
                     <img src={passwordChecks.minLength ? greenTick : redCross} alt="" className="feedback-icon" />
                     Minimum 8 characters
                   </p>
-                  <p className={passwordChecks.hasUppercase ? 'valid' : 'invalid'}>
+                  <p className={`desktop-body-xs ${passwordChecks.hasUppercase ? 'valid' : 'invalid'}`}> {/* Applied font class */}
                     <img src={passwordChecks.hasUppercase ? greenTick : redCross} alt="" className="feedback-icon" />
                     One uppercase letter
                   </p>
-                  <p className={passwordChecks.hasNumber ? 'valid' : 'invalid'}>
+                  <p className={`desktop-body-xs ${passwordChecks.hasNumber ? 'valid' : 'invalid'}`}> {/* Applied font class */}
                     <img src={passwordChecks.hasNumber ? greenTick : redCross} alt="" className="feedback-icon" />
                     One number
                   </p>
-                  <p className={passwordChecks.passwordsMatch ? 'valid' : 'invalid'}>
+                  <p className={`desktop-body-xs ${passwordChecks.passwordsMatch ? 'valid' : 'invalid'}`}> {/* Applied font class */}
                     <img src={passwordChecks.passwordsMatch ? greenTick : redCross} alt="" className="feedback-icon" />
                     Passwords match
                   </p>
@@ -243,20 +250,28 @@ export default function Profile() {
               )}
             </div>
 
+            {/* Action Buttons */}
             <div className="profile-action-row">
               <button
                 onClick={handleDelete}
-                className="profile-delete-button"
+                className="black-button desktop-button" /* Applied button and text classes */
                 disabled={confirmDelete && !deleteEnabled}
+                style={{
+                  backgroundColor: (confirmDelete && !deleteEnabled) ? '#e0e0e0' : 'black', /* Grey out when disabled */
+                  color: (confirmDelete && !deleteEnabled) ? '#666' : 'white',
+                  cursor: (confirmDelete && !deleteEnabled) ? 'not-allowed' : 'pointer'
+                }}
               >
-                {confirmDelete && !deleteEnabled ? `Confirm Delete in ${Math.max(0, 3 - Math.floor((Date.now() - (new Date().getTime() - 3000)) / 1000))}s` : 'Delete Your Account'}
+                <span className="desktop-button">
+                  {confirmDelete && !deleteEnabled ? `Confirm Delete in ${Math.max(0, Math.ceil((3000 - (Date.now() - (new Date().getTime() - 3000))) / 1000))}s` : 'Delete Your Account'}
+                </span>
               </button>
-              <button onClick={handleSave} className="profile-save-button">
-                Save Updates
+              <button onClick={handleSave} className="blue-button desktop-button"> {/* Applied button and text classes */}
+                <span className="desktop-button">Save Updates</span>
               </button>
             </div>
-          </div> 
-        </div> 
+          </div>
+        </div>
       </main>
 
       <ShareProfile
