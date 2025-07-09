@@ -207,9 +207,7 @@
     box-sizing: border-box;
 }
 
-.account-settings-card {
-    /* No visual styles here as it shares .content-card-box */
-}
+.account-settings-card {}
 
 .combined-offer-container,
 .profile-content-wrapper {
@@ -218,72 +216,134 @@
     margin-bottom: 20px;
 }
 
+.live-chat-link {
+    color: #0081FF;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.live-chat-link:hover {
+    color: #006edc;
+}
+
+.contact-form-wrapper {}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background-color: transparent;
+    padding: 0;
+}
+
+.contact-form-label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+    text-align: left;
+    color: #000;
+}
+
+.contact-form-input,
+.contact-form-select,
+.contact-form-textarea {
+    width: 100%;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #000;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+    transition: box-shadow 0.2s ease;
+}
+
+.contact-form-input::placeholder,
+.contact-form-textarea::placeholder {
+    color: #888;
+}
+
+.contact-form-input:focus,
+.contact-form-select:focus,
+.contact-form-textarea:focus {
+    box-shadow: 0 0 0 2px #0081FF;
+}
+
+.contact-form-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.contact-submit-button {
+    width: 100%;
+    padding: 12px 20px;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
 /* --- MOBILE SPECIFIC STYLES --- */
 @media (max-width: 1000px) {
 
-    /* MOBILE HEADER - Ensure this is always visible on mobile */
+    /* MOBILE HEADER (visible container for hamburger) */
     .myprofile-mobile-header {
         display: flex;
-        /* Make it visible */
+        /* Make it visible on mobile */
         justify-content: space-between;
         align-items: center;
         padding: 15px 20px;
         background-color: white;
-        /* Ensure it has a background */
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        /* Optional: add a subtle shadow */
         position: fixed;
-        /* Keep it at the top when scrolling */
         top: 0;
         left: 0;
         width: 100%;
         box-sizing: border-box;
         z-index: 1001;
-        /* Higher than sidebar overlay */
+        /* Ensure it's above other mobile content */
     }
 
     .myprofile-logo-link .myprofile-logo {
         height: 32px;
-        /* Adjust logo size for mobile header */
     }
 
-    /* HAMBURGER ICON - Ensure lines are visible by default */
+    /* HAMBURGER ICON (the 3 lines itself) */
     .myprofile-hamburger {
         display: flex;
-        /* Must be flex to arrange the spans */
+        /* IMPORTANT: Make the hamburger container visible and flex */
         flex-direction: column;
         justify-content: space-between;
         width: 25px;
         height: 18px;
-        /* Sufficient height for 3 lines + gaps */
+        /* Height to accommodate 3 lines and spacing */
         cursor: pointer;
         z-index: 1002;
-        /* Ensure it's above other elements */
-        /* Explicitly setting background and opacity to ensure visibility */
+        /* Ensure it's clickable */
         background: transparent;
-        /* Hamburger icon itself is transparent */
-        opacity: 1;
-        /* Ensure it's not transparent */
+        /* Hamburger container itself is transparent */
     }
 
+    /* HAMBURGER LINES (the actual spans) */
     .myprofile-hamburger span {
+        display: block;
+        /* Ensure each span is a block */
         width: 100%;
         height: 2px;
-        /* Thickness of hamburger lines */
+        /* Defines the thickness of each line */
         background: black;
-        /* COLOR OF THE LINES */
+        /* Defines the color of the lines */
         border-radius: 2px;
         transition: all 0.3s ease;
-        display: block;
-        /* Ensure spans are treated as blocks */
         opacity: 1;
-        /* Ensure lines themselves are not transparent */
+        /* Ensure lines are fully visible */
     }
 
     /* Styles for when hamburger is 'active' (sidebar open) - forms an X */
     .myprofile-hamburger.active span:nth-child(1) {
         transform: translateY(8px) rotate(45deg);
-        /* Move down and rotate */
     }
 
     .myprofile-hamburger.active span:nth-child(2) {
@@ -293,15 +353,12 @@
 
     .myprofile-hamburger.active span:nth-child(3) {
         transform: translateY(-8px) rotate(-45deg);
-        /* Move up and rotate */
     }
-
 
     /* MOBILE SIDEBAR */
     .sidebar {
         position: fixed;
         top: 0;
-        /* Align to the very top */
         left: 0;
         width: 100vw;
         height: 100vh;
@@ -318,10 +375,9 @@
         transform: translateX(0);
     }
 
-    /* This is the header that appears *inside* the mobile sidebar when it slides open */
+    /* Header *inside* the mobile sidebar (visible when sidebar slides open) */
     .sidebar-mobile-header-inner {
         display: flex;
-        /* Show this when sidebar is open */
         justify-content: space-between;
         align-items: center;
         padding: 15px 20px;
@@ -379,7 +435,6 @@
     .sidebar-content-wrapper {
         padding: 20px;
         height: calc(100% - 63px);
-        /* Account for the height of the inner mobile header */
         box-sizing: border-box;
         overflow-y: auto;
         padding-bottom: 40px;
@@ -443,9 +498,14 @@
         margin-left: 0;
         width: 100%;
         min-height: auto;
-        padding: 34px;
-        /* Add top padding to account for the fixed mobile header */
+        /* Push content down by header height + original padding */
         padding-top: calc(34px + 62px);
         /* 62px is approx height of fixed mobile header */
+        padding-bottom: 34px;
+        /* Maintain bottom padding */
+        padding-left: 34px;
+        /* Maintain left padding */
+        padding-right: 34px;
+        /* Maintain right padding */
     }
 }
