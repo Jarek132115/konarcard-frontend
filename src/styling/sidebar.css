@@ -1,13 +1,20 @@
 /* Sidebar.css */
 
+/* No change to global app-layout as it's typically set by page components now */
+/* .app-layout should not have overflow: hidden or max-width that clips the 100vw sidebar */
+
+
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
     min-width: 220px;
+    /* Desktop: Min width */
     width: fit-content;
+    /* Desktop: Adjusts to content */
     max-width: 300px;
+    /* Desktop: Max width */
     background-color: white;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -17,6 +24,7 @@
     z-index: 999;
     transition: transform 0.3s ease-in-out;
     overflow: hidden;
+    /* This overflow is fine for content *inside* the sidebar */
 }
 
 .sidebar-mobile-header-inner {
@@ -295,7 +303,7 @@
         z-index: 1001;
     }
 
-    /* CRITICAL: Style for the logo link container within the mobile header */
+    /* Ensure logo is on the left */
     .myprofile-mobile-header .myprofile-logo-link {
         order: 1;
         /* Ensure logo is the first item */
@@ -309,15 +317,13 @@
         height: 32px;
     }
 
-    /* THE HAMBURGER ICON (3 lines, to OPEN the sidebar) */
+    /* THE HAMBURGER ICON (the 3 lines container) */
     .sidebar-menu-toggle {
         display: flex;
-        /* Make the container visible and stack lines */
         flex-direction: column;
         justify-content: space-between;
         width: 25px;
         height: 18px;
-        /* Height to accommodate 3 lines and spacing */
         cursor: pointer;
         z-index: 1002;
         background: transparent;
@@ -328,6 +334,7 @@
     }
 
     /* CRITICAL: HIDE the hamburger icon when the sidebar is OPEN */
+    /* This rule ensures the hamburger (3 lines) disappears when sidebar is active */
     .app-layout.sidebar-active .sidebar-menu-toggle {
         display: none;
     }
@@ -344,8 +351,6 @@
     }
 
     /* Styles for when hamburger is 'active' (sidebar open) - forms an X */
-    /* This section is now technically redundant if .sidebar-menu-toggle is hidden when active.
-       However, keeping it ensures robustness if 'display:none' fails for some reason. */
     .sidebar-menu-toggle.active span:nth-child(1) {
         transform: translateY(8px) rotate(45deg);
     }
@@ -357,7 +362,6 @@
     .sidebar-menu-toggle.active span:nth-child(3) {
         transform: translateY(-8px) rotate(-45deg);
     }
-
 
     /* MOBILE SIDEBAR PANEL ITSELF (the part that slides in) */
     .sidebar {
@@ -404,9 +408,9 @@
         box-sizing: border-box;
     }
 
+    /* Ensure logo is on the left inside the sidebar header */
     .sidebar-mobile-header-inner .sidebar-logo-link-mobile {
         order: 1;
-        /* Ensure logo is on the left */
         margin-right: auto;
         /* Push logo to left, create space */
         margin-left: 0;
@@ -457,7 +461,6 @@
     .sidebar-content-wrapper {
         padding: 20px;
         height: calc(100% - 62px);
-        /* Use 62px to account for new fixed inner header height */
         box-sizing: border-box;
         overflow-y: auto;
         padding-bottom: 40px;
