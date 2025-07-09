@@ -113,13 +113,13 @@ export default function ContactSupport() {
     const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
     return (
-        <div className={`app-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
+        <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
             <div className="myprofile-mobile-header">
                 <Link to="/" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
                 </Link>
                 <div
-                    className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
+                    className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
                     onClick={() => setSidebarOpen(!sidebarOpen)}
                 >
                     <span></span>
@@ -141,82 +141,83 @@ export default function ContactSupport() {
                     onShareCard={handleShareCard}
                 />
 
-                <p className="desktop-body light-black" style={{ textAlign: 'left', marginBottom: 20 }}>
-                    Want to talk to us right now?{' '}
-                    <span
-                        className="live-chat-link"
-                        onClick={() => {
-                            if (window.tidioChatApi) {
-                                window.tidioChatApi.open();
-                            }
-                        }}
-                    >
-                        Start a live chat.
-                    </span>
-                </p>
+                <div className="combined-offer-container"> {/* Added this wrapper */}
+                    <div className="content-card-box"> {/* Adjusted this wrapper to match Subscription.jsx */}
+                        <p className="desktop-body light-black" style={{ textAlign: 'left', marginBottom: 20 }}>
+                            Want to talk to us right now?{' '}
+                            <span
+                                className="live-chat-link"
+                                onClick={() => {
+                                    if (window.tidioChatApi) {
+                                        window.tidioChatApi.open();
+                                    }
+                                }}
+                            >
+                                Start a live chat.
+                            </span>
+                        </p>
 
-                {/* The contact form wrapper now solely uses content-card-box for its visual container styles */}
-                <div className="contact-form-wrapper content-card-box">
-                    <form className='contact-form' onSubmit={handleSubmit}>
-                        <label htmlFor="name" className="contact-form-label desktop-body-s black">Your Name</label>
-                        <input
-                            type='text'
-                            id='name'
-                            name='name'
-                            placeholder='Enter your name'
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                            className='contact-form-input desktop-body'
-                        />
+                        <form className='contact-form' onSubmit={handleSubmit}>
+                            <label htmlFor="name" className="contact-form-label desktop-body-s black">Your Name</label>
+                            <input
+                                type='text'
+                                id='name'
+                                name='name'
+                                placeholder='Enter your name'
+                                value={formData.name}
+                                onChange={handleChange}
+                                required
+                                className='contact-form-input desktop-body'
+                            />
 
-                        <label htmlFor="email" className="contact-form-label desktop-body-s black">Your Email</label>
-                        <input
-                            type='email'
-                            id='email'
-                            name='email'
-                            placeholder='Enter your email'
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                            className='contact-form-input desktop-body'
-                        />
+                            <label htmlFor="email" className="contact-form-label desktop-body-s black">Your Email</label>
+                            <input
+                                type='email'
+                                id='email'
+                                name='email'
+                                placeholder='Enter your email'
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                                className='contact-form-input desktop-body'
+                            />
 
-                        <label htmlFor="reason" className="contact-form-label desktop-body-s black">Reason for contact</label>
-                        <select
-                            id='reason'
-                            name='reason'
-                            value={formData.reason}
-                            onChange={handleChange}
-                            required
-                            className='contact-form-select desktop-body'
-                        >
-                            <option value=''>Select a reason</option>
-                            <option value='Card not working'>My card isn’t working</option>
-                            <option value='Card damaged'>My card is damaged</option>
-                            <option value='Profile issue'>I can’t see my profile</option>
-                            <option value='Setup help'>Help setting up profile</option>
-                            <option value='Other'>Other</option>
-                        </select>
+                            <label htmlFor="reason" className="contact-form-label desktop-body-s black">Reason for contact</label>
+                            <select
+                                id='reason'
+                                name='reason'
+                                value={formData.reason}
+                                onChange={handleChange}
+                                required
+                                className='contact-form-select desktop-body'
+                            >
+                                <option value=''>Select a reason</option>
+                                <option value='Card not working'>My card isn’t working</option>
+                                <option value='Card damaged'>My card is damaged</option>
+                                <option value='Profile issue'>I can’t see my profile</option>
+                                <option value='Setup help'>Help setting up profile</option>
+                                <option value='Other'>Other</option>
+                            </select>
 
-                        <label htmlFor="message" className="contact-form-label desktop-body-s black">Your Message</label>
-                        <textarea
-                            id='message'
-                            name='message'
-                            placeholder="Enter your message..."
-                            value={formData.message}
-                            onChange={handleChange}
-                            required
-                            className='contact-form-textarea desktop-body'
-                            rows="3" // Made textarea smaller
-                        />
+                            <label htmlFor="message" className="contact-form-label desktop-body-s black">Your Message</label>
+                            <textarea
+                                id='message'
+                                name='message'
+                                placeholder="Enter your message..."
+                                value={formData.message}
+                                onChange={handleChange}
+                                required
+                                className='contact-form-textarea desktop-body'
+                                rows="3" // Made textarea smaller
+                            />
 
-                        {/* Removed the checkbox and its label entirely */}
+                            {/* Removed the checkbox and its label entirely */}
 
-                        <button type='submit' className='contact-submit-button blue-button desktop-button'>
-                            <span className='desktop-button'>Submit</span>
-                        </button>
-                    </form>
+                            <button type='submit' className='contact-submit-button blue-button desktop-button'>
+                                <span className='desktop-button'>Submit</span>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </main>
 
