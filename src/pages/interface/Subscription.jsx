@@ -150,7 +150,6 @@ export default function Subscription() {
 
 
   return (
-    // We'll change this parent div to a flex container
     <div className={`app-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
@@ -172,23 +171,25 @@ export default function Subscription() {
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      {/* This is the new container for your main page content */}
       <main className="main-content-container">
-        {/* PageHeader is now a direct child of myprofile-main, consistent with Profile.jsx */}
+        {/* PageHeader's title prop is already handled internally by PageHeader component */}
         <PageHeader
           title="Subscription"
           onActivateCard={() => console.log("Activate Card clicked on Subscription page")}
           onShareCard={handleShareCard}
         />
 
+        {/* Applied font classes and color classes */}
         <p className="desktop-h3 text-center black">Our Plan</p>
         <p className="desktop-h6 text-center light-black">Start free for 7 days — only upgrade if it works for you.</p>
 
         {/* The subscription card wrapper itself */}
         <div className="subscription-card-wrapper">
-          <div className="subscription-popular-tag desktop-body-xs">Most Popular</div>
+          {/* Applied font class and color class */}
+          <div className="subscription-popular-tag desktop-body-xs white">Most Popular</div>
 
           <div className="subscription-content">
+            {/* Applied font classes and color classes */}
             <p className="subscription-main-title desktop-h4 black">Power Profile</p>
             <p className="subscription-subtitle desktop-body-s light-black">Win more work with a power profile</p>
 
@@ -227,11 +228,13 @@ export default function Subscription() {
               </div>
             </div>
 
+            {/* Applied font classes and color classes */}
             <p className="subscription-quote desktop-body-s black">
               "For professionals and businesses ready to make every first impression count."
             </p>
 
             <div className="subscription-price-display">
+              {/* Applied font classes and color classes */}
               <p className="subscription-price-value desktop-h4 black">£5.95</p>
               <p className="subscription-price-period desktop-body-s light-black">Per Month</p>
             </div>
@@ -244,44 +247,50 @@ export default function Subscription() {
                   <>
                     {!showCancelConfirm ? (
                       <>
+                        {/* Applied button and text classes */}
                         <button className="blue-button desktop-button" disabled>
-                          Plan Active
+                          <span className="desktop-button">Plan Active</span>
                         </button>
                         <button
                           className="black-button desktop-button"
                           onClick={initiateCancelConfirmation}
                           disabled={isCancelling}
                         >
-                          Cancel Subscription
+                          <span className="desktop-button">Cancel Subscription</span>
                         </button>
                       </>
                     ) : (
                       <div className="subscription-cancel-confirm">
+                        {/* Applied font classes and color classes */}
                         <p className="desktop-body black">
                           {cancelCooldown > 0 ? `Confirm cancel in ${cancelCooldown}...` : 'Are you sure?'}
                         </p>
                         <div className="subscription-cancel-buttons">
+                          {/* Applied button and text classes */}
                           <button
                             className="blue-button-login desktop-button"
                             onClick={confirmCancel}
                             disabled={cancelCooldown > 0 || isCancelling}
                           >
-                            {isCancelling && cancelCooldown === 0 ? 'Cancelling...' : 'Confirm Cancel'}
+                            <span className="desktop-button">
+                              {isCancelling && cancelCooldown === 0 ? 'Cancelling...' : 'Confirm Cancel'}
+                            </span>
                           </button>
                           <button
                             className="black-button desktop-button"
                             onClick={cancelConfirmationPrompt}
                             disabled={isCancelling}
                           >
-                            Go Back
+                            <span className="desktop-button">Go Back</span>
                           </button>
                         </div>
                       </div>
                     )}
                   </>
                 ) : (
+                  // Applied button and text classes
                   <button className="blue-button desktop-button subscription-cta-button" onClick={handleSubscribe} disabled={isCancelling}>
-                    Upgrade to Power Profile
+                    <span className="desktop-button">Upgrade to Power Profile</span>
                   </button>
                 )}
               </div>
