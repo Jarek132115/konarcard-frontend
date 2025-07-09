@@ -195,7 +195,7 @@ export default function Subscription() {
 
             <div className="subscription-features">
               {[
-                "Custom URL, e.g., /u/hmplumbing",
+                "Custom URL, e.g., www.konarcard.com/u/hmplumbing",
                 "Set profile pic, cover photo.",
                 "Custom page headings.",
                 "Explain yourself in 'About Me'.",
