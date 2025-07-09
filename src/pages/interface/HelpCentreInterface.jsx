@@ -129,6 +129,7 @@ export default function HelpCentre() {
         </div>
       </main>
 
+
       <ShareProfile
         isOpen={showShareModal}
         onClose={handleCloseShareModal}
