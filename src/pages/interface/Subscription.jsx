@@ -191,16 +191,19 @@ export default function Subscription() {
                 <div className="free-trial-badge desktop-body-xs">FREE TRIAL</div>
               )}
             </div>
-            <p className='desktop-body-s light-black subscription-subheader'>Unlock advanced features to elevate your digital presence.</p>
+            {/* Updated subtitle for more impact */}
+            <p className='desktop-body-s light-black subscription-subheader'>Win more work and *stand out* with a power profile.</p>
 
             <div className="subscription-features">
               {[
-                "Fully customize your digital profile: Profile Picture, Name, Job Title, Cover Photo, Page Headings, and detailed 'About Me' section.",
-                "Upload unlimited work photos & build an impressive portfolio/gallery.",
-                "Feature unlimited services and collect unlimited client reviews.",
-                `Personalize your unique URL: konarcard.com/u/${userUsername || 'yourusername'}`, // Dynamically include username
-                "Seamless CRM Integration & Automated Follow-Ups for efficient networking.",
-                "Priority support, setup assistance, and premium NFC card design options.",
+                `Customizable Landing Page at konarcard.com/u/${userUsername || 'yourusername'}`,
+                "Exchange Details in One Click.",
+                "Explain Who You Are with dedicated sections for your Name, Job Title, and 'About Me'.",
+                "Showcase Your Amazing Work with Unlimited Photos/Portfolio.",
+                "Build Social Proof with Unlimited Client Reviews.",
+                "Show Exactly What You Provide: Unlimited Services.",
+                "Secure More Jobs with CRM Integration & Automated Follow-Ups.",
+                "Stand Out with Premium NFC Card Design Options & Priority Support.",
               ].map((text, idx) => (
                 <div className="hero-tick" key={idx}>
                   <img src={TickIcon} className="icon" alt="tick" />
@@ -209,8 +212,9 @@ export default function Subscription() {
               ))}
             </div>
 
+            {/* Updated quote for stronger conversion */}
             <p className='desktop-body-s black subscription-description-footer'>
-              "Designed for professionals and businesses ready to make every first impression count."
+              "Unlock your full potential: make every connection count and secure new opportunities."
             </p>
 
             <div className="subscription-price-cta">
