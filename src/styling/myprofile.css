@@ -29,37 +29,46 @@
     --page-header-color: #FFFFFF;
 }
 
-.myprofile-layout {
+/* Base Layout for the entire application */
+.app-layout {
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
+    /* Use min-height to allow content to extend beyond viewport if needed */
     background-color: var(--secondary-bg);
-    overflow: hidden;
     position: relative;
+    overflow: hidden;
+    /* Prevent horizontal scroll from sidebar transition */
 }
 
-.myprofile-main {
+/* Main content area - adjusted for sidebar spacing and vertical flex */
+.main-content-container {
     flex: 1;
+    /* Allows it to take up remaining horizontal space */
     font-family: var(--main-font-family);
     padding: 30px;
+    /* Default padding for desktop */
     display: flex;
     flex-direction: column;
-    min-height: 0;
-    overflow-x: hidden;
-    padding-bottom: 20px;
-    margin-left: 250px;
-    padding-top: 30px;
-    transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
-    z-index: 1;
+    /* Stack children (PageHeader, combined-offer-container) vertically */
+    overflow-y: auto;
+    /* Allow content inside main to scroll */
+    box-sizing: border-box;
+    margin-left: 260px;
+    /* Space for the fixed sidebar on desktop */
     color: var(--text-color);
+    transition: margin-left 0.3s ease-in-out;
+    /* Smooth transition for sidebar open/close */
 }
 
+/* Page Header - remains mostly the same */
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
     flex-shrink: 0;
-    border-bottom: 1px grey solid;
+    border-bottom: 1px solid grey;
+    /* Use solid for consistency */
     padding-bottom: 20px;
 }
 
@@ -95,46 +104,73 @@
     border: 1px solid var(--border-color);
 }
 
-/* FIX 1: Desktop gap and space-around for myprofile-flex-container */
+/* Combined offer container - ensures content inside main is centered and spaced */
+.combined-offer-container {
+    display: flex;
+    flex-direction: column;
+    /* Stack vertically for both desktop and mobile */
+    align-items: center;
+    /* Center horizontally within available space */
+    gap: 20px;
+    /* Space between card boxes/flex container */
+    flex: 1;
+    /* Allow to grow and take available vertical space in main-content-container */
+    min-height: 0;
+    /* Crucial for flex items with internal scrolling */
+}
+
+/* My Profile Flex Container - for the side-by-side layout on desktop */
 .myprofile-flex-container {
     display: flex;
     flex: 1;
-    /* Use a fixed gap between the elements */
+    /* Allows it to take up available vertical space within combined-offer-container */
     gap: 60px;
-    /* Increased gap significantly for "space around" feel */
     min-height: 0;
-    overflow: hidden;
-    /* Center the container overall, and then the gap handles internal spacing */
+    /* Important for flex children to allow internal scrolling */
     justify-content: center;
-    /* Center the two main blocks */
-    align-items: flex-start;
+    align-items: stretch;
+    /* Make children fill available height */
     max-width: 1200px;
+    /* Constrain overall width on large screens */
+    width: 100%;
+    /* Ensure it takes full width up to max-width */
     margin: 0 auto;
-    /* This centers the flex container itself */
+    /* Center the container horizontally */
     padding-bottom: 20px;
+    /* Add some padding at the bottom */
 }
 
+/* Phone Preview Container */
 .myprofile-content {
-    flex: 0 1 auto;
+    /* desktop styles */
+    flex-shrink: 0;
+    /* Prevent shrinking below its content size */
+    flex-grow: 0;
+    /* Prevent growing unnecessarily */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    aspect-ratio: 9 / 17;
-    max-width: 320px;
-    min-width: 250px;
+    /* Height will be implicitly constrained by myprofile-flex-container */
     position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
+    /* For absolute positioning of remove buttons */
+    max-width: 320px;
+    /* Max width for the phone mock */
+    width: 100%;
+    /* Take full width up to max */
+    min-width: 250px;
+    /* Minimum width for readability */
+    height: 100%;
+    /* Make it fill the height of myprofile-flex-container */
 }
 
-/* FIX 2: Black border around the mock-phone preview */
+/* Mock Phone Styles */
 .mock-phone {
     width: 100%;
+    /* Fill parent container */
     height: 100%;
+    /* Fill parent container */
     background: var(--primary-bg);
     border: 10px solid black;
-    /* Changed border to black */
     border-radius: 2.5rem;
     padding: 20px;
     text-align: center;
@@ -142,28 +178,55 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
-    flex-grow: 0;
     font-family: var(--main-font-family);
     color: var(--text-color);
+    overflow: hidden;
+    /* Ensure content doesn't spill out of rounded corners */
 }
 
 .mock-phone-scrollable-content {
     flex-grow: 1;
+    /* Allow this to take all available space */
     width: 100%;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    overflow-y: auto;
+    /* Enable scrolling for phone content */
+    padding-right: 5px;
+    /* Add slight padding for scrollbar if present */
 }
 
-.mock-phone>*:not(.mock-phone-scrollable-content) {
-    flex-shrink: 0;
+/* Hide scrollbar for aesthetics, but allow scrolling */
+.mock-phone-scrollable-content::-webkit-scrollbar {
+    width: 5px;
+    /* Width of the scrollbar */
 }
+
+.mock-phone-scrollable-content::-webkit-scrollbar-track {
+    background: transparent;
+    /* Track color */
+}
+
+.mock-phone-scrollable-content::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    /* Thumb color */
+    border-radius: 10px;
+    /* Rounded corners for the thumb */
+}
+
+.dark-mode .mock-phone-scrollable-content::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
 
 .mock-cover,
-.mock-avatar,
-.mock-work-image-item {
+.avatar-preview,
+/* Changed from mock-avatar for editor */
+.mock-work-image-item,
+.work-image-preview {
+    /* Changed from mock-work-image-item for editor */
     background-color: var(--placeholder-bg);
     display: block;
     object-fit: cover;
@@ -173,10 +236,27 @@
 }
 
 .mock-cover[src=""],
-.mock-avatar[src=""],
-.mock-work-image-item[src=""] {
+.avatar-preview[src=""],
+.work-image-preview[src=""] {
     border: 1px dashed var(--border-color);
+    /* For actual preview, these background images will be overridden by src */
+    background-image: url('../assets/images/background-hero.png');
+    /* Default placeholder */
+    background-size: cover;
 }
+
+.avatar-preview[src=""] {
+    background-image: url('../assets/images/People.png');
+    /* Default placeholder */
+    background-size: cover;
+}
+
+.work-image-preview[src=""] {
+    background-image: url('/Interface-Preview/Work-Images1.png');
+    /* Default placeholder */
+    background-size: cover;
+}
+
 
 .mock-cover {
     width: 100%;
@@ -186,8 +266,6 @@
 
 .remove-image-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
     background: rgba(255, 255, 255, 0.7);
     border: none;
     border-radius: 50%;
@@ -202,6 +280,36 @@
     color: #333;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     z-index: 5;
+}
+
+.cover-photo-remove {
+    top: 10px;
+    right: 10px;
+}
+
+.avatar-remove {
+    top: 10px;
+    /* Adjust as needed relative to its parent container */
+    left: 10px;
+    /* Adjust as needed relative to its parent container */
+}
+
+/* For work images in the mock-phone */
+.mock-work-image-item-wrapper {
+    position: relative;
+    display: inline-block;
+    /* To contain the button */
+    width: 100px;
+    height: 90px;
+}
+
+.mock-work-image-item-wrapper .remove-image-button {
+    top: -5px;
+    /* Adjust to place it correctly on the corner */
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
 }
 
 .mock-title {
@@ -272,7 +380,8 @@
     min-width: 3.5rem;
     min-height: 3.5rem;
     background-color: var(--border-color);
-    background-image: url('/Interface-Preview/Profile-Pic.png');
+    /* Placeholder background */
+    object-fit: cover;
     background-size: cover;
     background-position: center;
 }
@@ -313,10 +422,7 @@
     min-width: 50px;
     min-height: 50px;
     background-color: var(--placeholder-bg);
-    background-image: url('/Interface-Preview/Work-Images1.png');
-    background-size: 50%;
-    background-repeat: no-repeat;
-    background-position: center;
+    object-fit: cover;
 }
 
 .mock-services-list {
@@ -370,6 +476,10 @@
     letter-spacing: 0.1rem;
 }
 
+.mock-star-rating .empty-star {
+    color: #ccc;
+}
+
 .mock-review-text {
     font-size: 0.9375rem;
     color: var(--text-color);
@@ -385,21 +495,23 @@
     margin: 0;
 }
 
+/* Editor Section */
 .myprofile-editor-wrapper {
     position: relative;
-    height: 100%;
     max-width: 600px;
+    width: 100%;
     min-width: 350px;
-    flex-direction: column;
+    flex: 1;
+    /* Allow it to grow and take remaining space in flex-container */
     min-height: 0;
-    flex-grow: 1;
-    /* Allows it to grow to fill space */
-    flex-shrink: 1;
-    /* Allows it to shrink if needed, but min-width will protect */
+    /* Important for scrollable content */
+    display: flex;
+    /* Ensure its child (the form) can be height 100% */
 }
 
 .myprofile-editor {
     flex: 1;
+    /* Take full height of its wrapper */
     background: var(--primary-bg);
     padding: 24px;
     border-radius: 16px;
@@ -408,10 +520,10 @@
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
+    /* Enable scrolling for the editor form */
     -webkit-overflow-scrolling: touch;
     box-sizing: border-box;
     width: 100%;
-    height: 100%;
     color: var(--text-color);
 }
 
@@ -435,24 +547,31 @@
 .input-block label {
     font-size: 14px;
     font-weight: 500;
-}
-
-.input-block input {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid var(--input-border) !important;
-    font-size: 14px;
-    background-color: var(--primary-bg);
     color: var(--text-color);
 }
 
+/* General input/textarea styles - removed !important */
+.input-block input[type="text"],
+.input-block input[type="email"],
+.input-block input[type="tel"],
+.input-block input[type="number"],
 .input-block textarea {
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid var(--input-border) !important;
+    border: 1px solid var(--input-border);
     font-size: 14px;
     background-color: var(--primary-bg);
     color: var(--text-color);
+    width: 100%;
+    /* Ensure full width */
+    box-sizing: border-box;
+    /* Include padding and border in width */
+}
+
+.input-block input::placeholder,
+.input-block textarea::placeholder {
+    color: var(--subtle-text-color);
+    opacity: 0.7;
 }
 
 .option-row {
@@ -480,14 +599,47 @@
     border-color: #007bff;
 }
 
-.cover-preview-container {
+/* Image upload areas in editor */
+.image-upload-area {
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--card-bg);
+    /* Use card-bg for a visually distinct area */
+    border-radius: 8px;
+    overflow: hidden;
+    /* For rounded corners on the image */
+    position: relative;
+    /* For the image itself */
+}
+
+.cover-photo-upload {
+    width: 100%;
+    height: 180px;
+    /* Fixed height for cover upload area */
+}
+
+.avatar-upload {
+    width: 90px;
+    /* Fixed size for avatar upload area */
+    height: 90px;
+    border-radius: 50%;
 }
 
 .cover-preview {
     width: 100%;
-    border-radius: 8px;
+    height: 100%;
     object-fit: cover;
+    border-radius: 8px;
+    /* Should inherit from parent if overflow hidden is set */
+}
+
+.avatar-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 .myprofile-editor .divider {
@@ -502,14 +654,33 @@
     gap: 12px;
 }
 
-.work-preview-row img {
-    width: 100%;
+.work-image-item-wrapper {
+    position: relative;
+    width: 100px;
+    /* Fixed size for preview item */
     height: 90px;
+    display: inline-block;
+    /* Allows grid to arrange them */
+}
+
+.work-image-preview {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     border-radius: 8px;
 }
 
-.input-block button {
+.work-image-item-wrapper .remove-image-button {
+    top: -5px;
+    /* Adjust to place it correctly on the corner */
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+}
+
+.add-work-image-button,
+.add-item-button {
     margin-top: 8px;
     padding: 8px 14px;
     font-size: 13px;
@@ -518,22 +689,49 @@
     color: var(--text-color);
     cursor: pointer;
     transition: background 0.2s;
+    border-radius: 8px;
 }
 
-.input-block button:hover {
+.add-work-image-button:hover,
+.add-item-button:hover {
     background-color: #eee;
 }
 
-.review-card {
+/* Generic editor item card for services and reviews */
+.editor-item-card {
     background: var(--card-bg);
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
 }
 
-.review-card input {
-    margin-bottom: 6px;
+.editor-item-card input,
+.editor-item-card textarea {
+    margin-bottom: 0;
+    /* Reset default margins */
 }
+
+.remove-item-button {
+    align-self: flex-end;
+    padding: 4px 8px;
+    font-size: 12px;
+    border: 1px solid var(--border-color);
+    background-color: var(--secondary-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background 0.2s;
+    border-radius: 8px;
+}
+
+.remove-item-button:hover {
+    background-color: #fdd;
+    color: #c00;
+}
+
 
 .submit-button {
     padding: 12px 20px;
@@ -543,6 +741,7 @@
     font-size: 16px;
     border: none;
     margin-top: auto;
+    /* Push button to the bottom of the flex column */
     background-color: var(--button-bg);
     color: var(--button-text);
 }
@@ -605,193 +804,205 @@
     background-color: #0056b3;
 }
 
-/* These mobile header styles will now be largely overridden by Sidebar.css's mobile styles */
-.myprofile-mobile-header {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
+/* Verification Prompt and Loading/Error States */
+.content-card-box {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    border-radius: 8px;
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    text-align: center;
+    max-width: 600px;
+    /* Keep consistent with editor width */
     width: 100%;
-    height: 70px;
-    padding: 0 16px;
-    z-index: 900;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    box-sizing: border-box;
 }
 
-.myprofile-logo-link {
-    order: 1;
-    margin-right: auto;
+.content-card-box.loading-state {
+    font-size: 1.2rem;
+    color: #666;
 }
 
-.myprofile-logo-link .myprofile-logo {
-    height: 32px;
+.content-card-box.error-state {
+    color: red;
+    border: 1px solid red;
+    background-color: #ffe6e6;
 }
 
-.myprofile-hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
+.content-card-box.error-state p {
+    margin-bottom: 10px;
+}
+
+.content-card-box.error-state button {
+    padding: 8px 15px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    padding: 5px;
-    order: 2;
-    margin-left: auto;
 }
 
-.myprofile-hamburger span {
-    width: 25px;
-    height: 3px;
-    background: black;
-    border-radius: 3px;
-    transition: all 0.3s ease;
+.content-card-box.verification-prompt {
+    background-color: #fffbe6;
+    border: 1px solid #ffe58f;
 }
 
-.myprofile-hamburger.active span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+.content-card-box.verification-prompt p {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: #555;
 }
 
-.myprofile-hamburger.active span:nth-child(2) {
-    opacity: 0;
+.content-card-box.verification-prompt p:first-child {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffcc00;
 }
 
-.myprofile-hamburger.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
+.content-card-box.verification-prompt form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 300px;
+    margin: 0 auto;
 }
 
-.sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+.content-card-box.verification-prompt input[type="text"] {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
 }
 
-.sidebar-overlay.active {
-    opacity: 1;
-    visibility: visible;
+.content-card-box.verification-prompt button[type="submit"] {
+    padding: 10px 15px;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
 }
 
+.content-card-box.verification-prompt button[type="button"] {
+    /* Resend code button */
+    padding: 10px 15px;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.content-card-box.verification-prompt button[type="button"]:disabled {
+    background-color: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+}
+
+
+/* --- MOBILE SPECIFIC STYLES (Max-width 1000px) --- */
 @media (max-width: 1000px) {
 
-    .myprofile-main {
+    /* Main content container on mobile */
+    .main-content-container {
         margin-left: 0;
+        /* No margin for sidebar */
         padding-top: 70px;
-        overflow-y: auto;
-        color: var(--text-color);
+        /* Space for fixed mobile header */
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 20px;
+        height: auto;
+        /* Allow height to be content-driven */
+        overflow-y: visible;
+        /* Let the body/app-layout handle overall scrolling */
     }
 
-    .myprofile-mobile-header {
-        display: flex;
-    }
-
-    .myprofile-hamburger {
-        display: flex;
-    }
-
+    /* Flex container for preview and editor - stack vertically on mobile */
     .myprofile-flex-container {
         flex-direction: column;
         gap: 40px;
-        padding-top: 0;
-        justify-content: flex-start;
+        /* Adjust gap for mobile */
         align-items: center;
+        /* Center content within the column */
         height: auto;
-        flex: 0 0 auto;
-        padding-left: 20px;
-        /* Adjusted padding to match image */
-        padding-right: 20px;
-        /* Adjusted padding to match image */
+        /* Height adapts to content */
+        max-width: 100%;
+        /* No max-width constraint on mobile */
+        padding-bottom: 0;
+        /* Already handled by main-content-container */
     }
 
-    /* FIX 3: Make preview and edit sections full width on mobile */
+    /* Phone preview container on mobile */
     .myprofile-content {
         width: 100%;
-        max-width: 100%;
+        /* Full width */
+        max-width: 320px;
+        /* Still constrain mock phone to typical phone width */
         min-width: unset;
-        margin: 0 auto;
+        /* Remove min-width constraint */
         height: auto;
-        /* Keep aspect ratio for the mock phone, its container will adapt */
-        aspect-ratio: unset;
+        /* Height adapts to mock-phone's aspect ratio */
         flex-shrink: 0;
         flex-grow: 0;
-        overflow: hidden;
+        position: relative;
+        /* Keep for absolute positioned elements */
+        /* Align self for mobile if needed, but align-items: center on parent should do it */
     }
 
+    /* Mock Phone on mobile - ensure it keeps aspect ratio but adapts to width */
     .mock-phone {
         width: 100%;
         height: auto;
+        /* Height adapts to content and aspect ratio */
         aspect-ratio: 9 / 17;
-        /* Keep aspect ratio for the phone itself */
-        background: var(--primary-bg);
-        border-color: var(--border-color);
-        color: var(--text-color);
+        /* Maintain phone aspect ratio */
+        border-color: black;
+        /* Example: ensure border is black if needed */
+        padding: 15px;
+        /* Adjust padding for smaller screens */
+        border-width: 8px;
+        /* Adjust border thickness */
+        border-radius: 2rem;
     }
 
-    .mock-phone-scrollable-content {
-        flex-shrink: 1;
-        min-height: 0;
-    }
-
-    /* FIX 3: Make preview and edit sections full width on mobile */
+    /* Editor wrapper on mobile */
     .myprofile-editor-wrapper {
         width: 100%;
-        max-width: 100%;
+        /* Full width */
+        max-width: 600px;
+        /* Can still constrain max width if desired on mobile */
         min-width: unset;
+        /* Remove min-width constraint */
         height: auto;
+        /* Height adapts to content */
         flex-shrink: 0;
         flex-grow: 0;
-        aspect-ratio: unset;
-        overflow: hidden;
     }
 
+    /* Editor form on mobile */
     .myprofile-editor {
         padding: 16px;
+        /* Adjust padding for smaller screens */
         gap: 15px;
         height: auto;
-        background: var(--primary-bg);
-        color: var(--text-color);
-        flex-shrink: 1;
-        min-height: 0;
+        /* Height adapts to content */
+        overflow-y: visible;
+        /* Let parent scroll */
     }
 
-    .myprofile-layout.sidebar-active {
-        overflow-x: hidden;
-    }
-}
-
-@media (min-width: 1001px) {
-
-    .myprofile-mobile-header,
-    .myprofile-hamburger {
-        display: none !important;
-    }
-
-    .myprofile-main {
-        padding-top: 30px;
-    }
-
-    .sidebar {
-        transform: translateX(0) !important;
-        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1) !important;
-    }
-}
-
-@media (max-width: 1000px) {
-
-    .navbar,
+    /* MyProfile's own mobile header is superseded by Sidebar.css's comprehensive mobile header */
     .myprofile-mobile-header {
-        height: 70px;
-        padding: 0 16px;
+        display: none;
+        /* Hide this duplicate header on mobile as Sidebar.css defines it */
     }
 }
 
 @media (max-width: 400px) {
-    .myprofile-main {
+    .main-content-container {
         padding: 15px;
         padding-top: 70px;
     }
@@ -821,20 +1032,24 @@
     }
 
     .mock-title {
-        font-size: 1.1rem;
+        font-size: 1.8rem;
+        /* Adjusted for readability on smaller phones */
     }
 
     .mock-subtitle {
-        font-size: 0.875rem;
+        font-size: 0.9rem;
+        /* Adjusted */
     }
 
     .mock-button {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
+        /* Adjusted */
         padding: 0.6rem 1rem;
     }
 
     .mock-section-title {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
+        /* Adjusted */
         margin-top: 1rem;
         margin-bottom: 0.5rem;
     }
@@ -845,16 +1060,20 @@
     }
 
     .mock-avatar {
-        width: 2rem;
-        height: 2rem;
+        width: 2.5rem;
+        /* Adjusted */
+        height: 2.5rem;
+        /* Adjusted */
     }
 
     .mock-profile-name {
-        font-size: 0.9rem;
+        font-size: 1rem;
+        /* Adjusted */
     }
 
     .mock-profile-role {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+        /* Adjusted */
     }
 
     .mock-service-item {
@@ -884,31 +1103,4 @@
     .mock-reviewer-name {
         font-size: 0.8rem;
     }
-}
-
-.input-block input[type=text],
-.input-block textarea {
-    padding: 10px;
-    border: 1px solid var(--input-border) !important;
-    border-radius: 8px;
-    font-size: 14px;
-    width: 100%;
-    box-sizing: border-box;
-    background-color: var(--primary-bg);
-    color: var(--text-color);
-}
-
-.input-block input {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid var(--input-border) !important;
-    font-size: 14px;
-    background-color: var(--primary-bg);
-    color: var(--text-color);
-}
-
-.input-block input::placeholder,
-.input-block textarea::placeholder {
-    color: var(--subtle-text-color);
-    opacity: 0.7;
 }

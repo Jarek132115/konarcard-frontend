@@ -2,8 +2,6 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-import ProfileCardImage from "../../assets/images/background-hero.png"; // Consider if still needed, as default comes from store
-import UserAvatar from "../../assets/images/People.png"; // Consider if still needed, as default comes from store
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
@@ -63,13 +61,8 @@ export default function MyProfile() {
       document.body.classList.add('body-no-scroll');
     } else {
       document.body.classList.remove('body-no-scroll');
-    };
+    }
   }, [sidebarOpen, isMobile]);
-
-  useEffect(() => {
-    // This useEffect appears to be empty/redundant if not doing anything specific with these states
-    // Consider removing if no logic is added here.
-  }, [isCardLoading, isCardError, cardError]);
 
   useEffect(() => {
     let timer;
@@ -206,7 +199,6 @@ export default function MyProfile() {
 
   const handleRemoveWorkImage = (indexToRemove) => {
     const removedItem = state.workImages?.[indexToRemove];
-    // const isInitialDefaultWorkImage = initialStoreState.workImages.some(defaultImg => defaultImg.preview === removedItem.preview); // This line seemed unused
 
     if (removedItem?.preview?.startsWith('blob:')) {
       URL.revokeObjectURL(removedItem.preview);
@@ -327,10 +319,6 @@ export default function MyProfile() {
           return { file: item.file };
         }
         else if (item.preview && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
-          // If it's an existing URL not from the initial state, we send it back to keep it.
-          // If it's from the initial state, it means it's already on the server, so no need to send again.
-          // This logic might need refinement based on your backend's update strategy for existing works.
-          // For now, assuming it handles existing URLs vs new files.
           return item.preview;
         }
         return null;
@@ -444,15 +432,11 @@ export default function MyProfile() {
   };
 
   return (
-    // Changed to app-layout
-    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
-      {/* CRITICAL: THIS IS THE MOBILE HEADER THAT IS ALWAYS VISIBLE AND CONTAINS THE HAMBURGER TO OPEN THE SIDEBAR */}
+    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}> {/* Changed from myprofile-layout to app-layout */}
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
-        {/* This is the hamburger icon that opens the sidebar */}
-        {/* Changed to sidebar-menu-toggle */}
         <div
           className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -463,90 +447,59 @@ export default function MyProfile() {
         </div>
       </div>
 
-      {/* The Sidebar component itself */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* Overlay when sidebar is open on mobile */}
       {sidebarOpen && isMobile && (
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      {/* Main content area */}
-      <main className="main-content-container"> {/* Changed to main-content-container */}
+      <main className="main-content-container">
         <PageHeader
           title={authUser ? `Good Afternoon ${authUser.name}!` : "My Profile"}
           onActivateCard={handleActivateCard}
           onShareCard={handleShareCard}
         />
 
-        {/* All main content for the page is now wrapped in combined-offer-container */}
         <div className="combined-offer-container">
           {(authLoading || isCardLoading) && (
-            // Apply content-card-box for consistent styling
-            <div className="content-card-box" style={{ textAlign: 'center', fontSize: '1.2rem', color: '#666' }}>
+            <div className="content-card-box loading-state"> {/* Added loading-state class for specific styling if needed */}
               Loading profile data...
             </div>
           )}
 
           {!authLoading && !authUser && (
-            // Apply content-card-box for consistent styling
-            <div className="content-card-box" style={{ textAlign: 'center', color: 'red', border: '1px solid red', backgroundColor: '#ffe6e6' }}>
-              <p style={{ marginBottom: '10px' }}>User not loaded. Please ensure you are logged in.</p>
-              <button onClick={() => window.location.href = '/login'} style={{ padding: '8px 15px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Go to Login</button>
+            <div className="content-card-box error-state"> {/* Added error-state class */}
+              <p>User not loaded. Please ensure you are logged in.</p>
+              <button onClick={() => window.location.href = '/login'}>Go to Login</button>
             </div>
           )}
 
           {!authLoading && authUser && (
             <>
               {showVerificationPrompt && (
-                // Apply content-card-box for consistent styling
-                <div className="content-card-box" style={{
-                  backgroundColor: '#fffbe6',
-                  border: '1px solid #ffe58f',
-                  textAlign: 'center',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                }}>
-                  <p style={{ fontSize: '18px', fontWeight: '600', marginBottom: '15px', color: '#ffcc00' }}>
-                    <span role="img" aria-label="warning" style={{ marginRight: '10px' }}>⚠️</span>
+                <div className="content-card-box verification-prompt"> {/* Added verification-prompt class */}
+                  <p>
+                    <span role="img" aria-label="warning">⚠️</span>
                     Your email is not verified!
                   </p>
-                  <p style={{ marginBottom: '15px', color: '#555' }}>
+                  <p>
                     Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to your business card.
                   </p>
-                  <form onSubmit={handleVerifyCode} style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '300px', margin: '0 auto' }}>
+                  <form onSubmit={handleVerifyCode}>
                     <input
                       type="text"
                       placeholder="Enter 6-digit code"
                       value={verificationCodeInput}
                       onChange={(e) => setVerificationCodeCode(e.target.value)}
                       maxLength={6}
-                      style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc', fontSize: '16px' }}
                     />
-                    <button type="submit" style={{
-                      padding: '10px 15px',
-                      borderRadius: '8px',
-                      backgroundColor: '#007bff',
-                      color: 'white',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: '16px',
-                      fontWeight: '600'
-                    }}>
+                    <button type="submit">
                       Verify Email
                     </button>
                     <button
                       type="button"
                       onClick={sendVerificationCode}
                       disabled={resendCooldown > 0}
-                      style={{
-                        padding: '10px 15px',
-                        borderRadius: '8px',
-                        backgroundColor: resendCooldown > 0 ? '#e0e0e0' : '#f0f0f0',
-                        color: resendCooldown > 0 ? '#999' : '#333',
-                        border: '1px solid #ccc',
-                        cursor: resendCooldown > 0 ? 'not-allowed' : 'pointer',
-                        fontSize: '14px'
-                      }}
                     >
                       {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
                     </button>
@@ -562,13 +515,13 @@ export default function MyProfile() {
                   >
                     <div className="mock-phone-scrollable-content">
                       <img
-                        src={state.coverPhoto}
+                        src={state.coverPhoto || ''} // Ensure src is never undefined
                         alt="Cover"
                         className="mock-cover"
                       />
                       {(state.coverPhoto && state.coverPhoto.startsWith('blob:')) || (state.coverPhoto && state.coverPhoto !== initialStoreState.coverPhoto) ? (
                         <button
-                          className="remove-image-button"
+                          className="remove-image-button cover-photo-remove" // Added specific class
                           onClick={handleRemoveCoverPhoto}
                           aria-label="Remove cover photo"
                         >
@@ -591,17 +544,16 @@ export default function MyProfile() {
                             <div className="mock-about-header-group">
                               {state.avatar && (
                                 <img
-                                  src={state.avatar}
+                                  src={state.avatar || ''} // Ensure src is never undefined
                                   alt="Avatar"
                                   className="mock-avatar"
                                 />
                               )}
                               {(state.avatar && state.avatar.startsWith('blob:')) || (state.avatar && state.avatar !== initialStoreState.avatar) ? (
                                 <button
-                                  className="remove-image-button"
+                                  className="remove-image-button avatar-remove" // Added specific class
                                   onClick={handleRemoveAvatar}
                                   aria-label="Remove avatar"
-                                  style={{ top: '10px', left: '10px' }}
                                 >
                                   &times;
                                 </button>
@@ -621,21 +573,22 @@ export default function MyProfile() {
                           <p className="mock-section-title">My Work</p>
                           <div className="mock-work-gallery">
                             {state.workImages.map((img, i) => (
-                              <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px' }}>
+                              <div key={i} className="mock-work-image-item-wrapper"> {/* Added wrapper for positioning X */}
                                 <img
-                                  src={img.preview}
+                                  src={img.preview || ''} // Ensure src is never undefined
                                   alt={`work-${i}`}
                                   className="mock-work-image-item"
                                 />
                                 <button
                                   type="button"
-                                  className="remove-image-button"
+                                  className="remove-image-button work-image-remove" // Added specific class
                                   onClick={() => handleRemoveWorkImage(i)}
                                 >
-                                  X
+                                  &times;
                                 </button>
                               </div>
                             ))}
+                            {/* Consolidated file input logic */}
                             <button
                               type="button"
                               onClick={() => {
@@ -650,7 +603,7 @@ export default function MyProfile() {
                                 document.body.appendChild(input);
                                 input.click();
                               }}
-                              style={{ display: "block", marginTop: "10px", padding: "8px 15px", cursor: "pointer" }}
+                              className="add-work-image-button" // Added class
                             >
                               Choose files
                             </button>
@@ -683,7 +636,7 @@ export default function MyProfile() {
                                     <span key={`filled-${starIdx}`}>★</span>
                                   ))}
                                   {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
-                                    <span key={`empty-${starIdx}`} style={{ color: '#ccc' }}>★</span>
+                                    <span key={`empty-${starIdx}`} className="empty-star">★</span>
                                   ))}
                                 </div>
                                 <p className="mock-review-text">"{r.text}"</p>
@@ -697,7 +650,7 @@ export default function MyProfile() {
                   </div>
                 </div>
 
-                <div className="myprofile-editor-wrapper" style={{ position: 'relative' }}>
+                <div className="myprofile-editor-wrapper">
                   {!isSubscribed && (
                     <div className="subscription-overlay">
                       <div className="subscription-message">
@@ -762,7 +715,7 @@ export default function MyProfile() {
                         style={{ display: "none" }}
                       />
                       <div
-                        className="cover-preview-container"
+                        className="image-upload-area cover-photo-upload" // Added classes
                         onClick={() => {
                           const input = document.createElement('input');
                           input.type = 'file';
@@ -776,7 +729,7 @@ export default function MyProfile() {
                         }}
                       >
                         <img
-                          src={state.coverPhoto}
+                          src={state.coverPhoto || ''}
                           alt="Cover"
                           className="cover-preview"
                         />
@@ -823,7 +776,7 @@ export default function MyProfile() {
                         style={{ display: "none" }}
                       />
                       <div
-                        className="cover-preview-container"
+                        className="image-upload-area avatar-upload" // Added classes
                         onClick={() => {
                           const input = document.createElement('input');
                           input.type = 'file';
@@ -837,15 +790,9 @@ export default function MyProfile() {
                         }}
                       >
                         <img
-                          src={state.avatar}
+                          src={state.avatar || ''}
                           alt="Avatar preview"
-                          style={{
-                            width: 80,
-                            height: 80,
-                            borderRadius: "50%",
-                            marginTop: 8,
-                            objectFit: "cover",
-                          }}
+                          className="avatar-preview" // Added class for avatar image
                         />
                       </div>
                     </div>
@@ -874,18 +821,18 @@ export default function MyProfile() {
                       <label>My Work</label>
                       <div className="work-preview-row">
                         {state.workImages.map((img, i) => (
-                          <div key={i} style={{ position: 'relative', display: 'inline-block', width: '100px', height: '90px' }}>
+                          <div key={i} className="work-image-item-wrapper"> {/* Renamed class */}
                             <img
-                              src={img.preview}
+                              src={img.preview || ''}
                               alt={`work-${i}`}
-                              className="mock-work-image-item"
+                              className="work-image-preview"
                             />
                             <button
                               type="button"
-                              className="remove-image-button"
+                              className="remove-image-button work-image-remove" // Added class
                               onClick={() => handleRemoveWorkImage(i)}
                             >
-                              X
+                              &times;
                             </button>
                           </div>
                         ))}
@@ -903,7 +850,7 @@ export default function MyProfile() {
                             document.body.appendChild(input);
                             input.click();
                           }}
-                          style={{ display: "block", marginTop: "10px", padding: "8px 15px", cursor: "pointer" }}
+                          className="add-work-image-button"
                         >
                           Choose files
                         </button>
@@ -913,7 +860,7 @@ export default function MyProfile() {
                     <div className="input-block">
                       <label>My Services</label>
                       {state.services.map((s, i) => (
-                        <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
+                        <div key={i} className="editor-item-card"> {/* Renamed class to be more generic */}
                           <input
                             type="text"
                             placeholder={`Service Name ${i + 1}`}
@@ -926,10 +873,10 @@ export default function MyProfile() {
                             value={s.price}
                             onChange={(e) => handleServiceChange(i, "price", e.target.value)}
                           />
-                          <button type="button" onClick={() => handleRemoveService(i)} style={{ alignSelf: 'flex-end', padding: '4px 8px', fontSize: '12px' }}>Remove</button>
+                          <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
                         </div>
                       ))}
-                      <button type="button" onClick={handleAddService}>
+                      <button type="button" onClick={handleAddService} className="add-item-button">
                         + Add Service
                       </button>
                     </div>
@@ -937,7 +884,7 @@ export default function MyProfile() {
                     <div className="input-block">
                       <label>Reviews</label>
                       {state.reviews.map((r, i) => (
-                        <div key={i} className="review-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
+                        <div key={i} className="editor-item-card"> {/* Renamed class */}
                           <input
                             type="text"
                             placeholder="Reviewer Name"
@@ -958,10 +905,10 @@ export default function MyProfile() {
                             value={r.rating}
                             onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
                           />
-                          <button type="button" onClick={() => handleRemoveReview(i)} style={{ alignSelf: 'flex-end', padding: '4px 8px', fontSize: '12px' }}>Remove</button>
+                          <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
                         </div>
                       ))}
-                      <button type="button" onClick={handleAddReview}>
+                      <button type="button" onClick={handleAddReview} className="add-item-button">
                         + Add Review
                       </button>
                     </div>
@@ -1000,7 +947,7 @@ export default function MyProfile() {
               </div>
             </>
           )}
-        </div> {/* End of combined-offer-container */}
+        </div>
       </main>
 
       <ShareProfile
