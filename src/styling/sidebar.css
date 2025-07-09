@@ -208,10 +208,6 @@
     box-sizing: border-box;
 }
 
-.account-settings-card {
-    /* No visual styles here as it shares .content-card-box */
-}
-
 .combined-offer-container,
 .profile-content-wrapper {
     display: block;
