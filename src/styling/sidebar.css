@@ -277,10 +277,12 @@
 /* --- MOBILE SPECIFIC STYLES --- */
 @media (max-width: 1000px) {
 
-    /* MOBILE HEADER (visible container for logo and hamburger) */
+    /* MOBILE HEADER - ALWAYS VISIBLE ON MOBILE, CONTAINS LOGO AND HAMBURGER */
     .myprofile-mobile-header {
         display: flex;
         /* Make this header visible and use flexbox */
+        flex-direction: row;
+        /* Ensure elements are in a row */
         justify-content: space-between;
         /* CRITICAL: Pushes logo to left, hamburger to right */
         align-items: center;
@@ -298,9 +300,12 @@
 
     /* CRITICAL: Style for the logo link container within the mobile header */
     .myprofile-mobile-header .myprofile-logo-link {
-        margin-right: auto;
-        /* Push the logo to the left, create space to its right */
-        /* Ensure no conflicting 'order' or 'margin-left: auto' from other rules */
+        order: 1;
+        /* Ensure logo is the first item */
+        margin-right: 20px;
+        /* Provide space between logo and hamburger */
+        margin-left: 0;
+        /* Ensure no auto-margin pushes it right */
     }
 
     .myprofile-logo-link .myprofile-logo {
@@ -319,7 +324,10 @@
         cursor: pointer;
         z-index: 1002;
         background: transparent;
-        /* No margin-left: auto here, as justify-content: space-between handles positioning */
+        order: 2;
+        /* Ensure hamburger is the second item (on the right) */
+        margin-left: 0;
+        /* Ensure no auto-margin conflicts */
     }
 
     /* THE ACTUAL HAMBURGER LINES (spans inside .sidebar-menu-toggle) */
