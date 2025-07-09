@@ -72,13 +72,13 @@ export default function NFCCards() {
 
 
   return (
-    <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
+    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}> {/* Changed to app-layout */}
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
         <div
-          className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
+          className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`} 
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <span></span>
@@ -93,26 +93,23 @@ export default function NFCCards() {
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      <main className="myprofile-main">
-        <div className="page-wrapper">
-          <PageHeader
-            title="Choose Your Perfect Card"
-            onActivateCard={handleActivateCard}
-            onShareCard={handleShareCard}
-          />
+      <main className="main-content-container"> {/* Changed to main-content-container */}
+        <PageHeader
+          title="Choose Your Perfect Card"
+          onActivateCard={handleActivateCard}
+          onShareCard={handleShareCard}
+        />
 
-          <p className="nfc-page-subtitle">
-            Premium materials. Custom designs. Instantly share your contact details with a single tap.
-          </p>
-
-          {/* This is the new main container for the NFC Card offer */}
-          <div className="nfc-card-offer-container">
+        {/* This is the new main container for the NFC Card offer, wrapping everything below PageHeader */}
+        <div className="combined-offer-container">
+          <div className="nfc-card-offer-container content-card-box"> {/* Added content-card-box here */}
             <div className="nfc-card-header">
               <p className='nfc-card-title'>Plastic NFC Card</p>
               <div className="nfc-card-badge">1-month subscription included</div>
             </div>
-            <p className='nfc-card-subheader'>Lightweight, Durable, Always Ready</p>
-            <p className='nfc-card-optional-text'>This product is optional, buy one to stand out.</p>
+            {/* Moved subtitle inside the content-card-box */}
+            <p className="nfc-card-subheader">Lightweight, Durable, Always Ready</p>
+            <p className="nfc-card-optional-text">This product is optional, buy one to stand out.</p>
 
             <img src={PlasticCard} className="nfc-card-image" alt="Plastic NFC Card" />
 
