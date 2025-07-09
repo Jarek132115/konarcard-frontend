@@ -84,7 +84,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <div className="help-links-container">
                         <p className="section-title">HELP</p>
                         <Link to="/contact-support" className={`sidebar-button ${isActive('/contact-support') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={contactIcon} alt="contact" className="icon" /> {/* <<< CHANGED: Use contactIcon here */}
+                            <img src={contactIcon} alt="contact" className="icon" />
                             <p className='desktop-body-s'>Contact Us</p>
                         </Link>
                         <Link to="/helpcentreinterface" className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>

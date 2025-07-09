@@ -176,21 +176,19 @@
     font-weight: 600;
 }
 
-.sidebar-button.active-sidebar-link .icon {
-    opacity: 1;
-    filter: none;
-}
-
 .sidebar-button.active-sidebar-link:hover {
     background-color: #e0e0e0;
     color: #000;
 }
 
+.sidebar-button.active-sidebar-link .icon {
+    opacity: 1;
+    filter: none;
+}
+
 .main-content-container {
     margin-left: 260px;
-    /* Adjusted padding to ensure space for box-shadow on all sides */
     padding: 34px;
-    /* Increased from 24px */
     box-sizing: border-box;
     width: calc(100% - 260px);
     min-height: 100vh;
@@ -216,7 +214,118 @@
     margin-bottom: 20px;
 }
 
+.contact-form-wrapper {}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background-color: transparent;
+    padding: 0;
+}
+
+.contact-form-label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+    text-align: left;
+    color: #000;
+}
+
+.contact-form-input,
+.contact-form-select,
+.contact-form-textarea {
+    width: 100%;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #000;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+    transition: box-shadow 0.2s ease;
+}
+
+.contact-form-input::placeholder,
+.contact-form-textarea::placeholder {
+    color: #888;
+}
+
+.contact-form-input:focus,
+.contact-form-select:focus,
+.contact-form-textarea:focus {
+    box-shadow: 0 0 0 2px #0081FF;
+}
+
+.contact-form-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.contact-submit-button {
+    width: 100%;
+    padding: 12px 20px;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+/* --- MOBILE SPECIFIC STYLES --- */
 @media (max-width: 1000px) {
+    .myprofile-mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        box-sizing: border-box;
+        z-index: 1001;
+    }
+
+    .myprofile-logo-link .myprofile-logo {
+        height: 32px;
+    }
+
+    .mobile-hamburger-icon {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 25px;
+        height: 18px;
+        cursor: pointer;
+        z-index: 1002;
+        background: transparent;
+    }
+
+    .mobile-hamburger-icon span {
+        display: block;
+        width: 100%;
+        height: 2px;
+        background: black;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+        opacity: 1;
+    }
+
+    .mobile-hamburger-icon.active span:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .mobile-hamburger-icon.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .mobile-hamburger-icon.active span:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
     .sidebar {
         position: fixed;
         top: 0;
@@ -246,13 +355,6 @@
         background-color: white;
         width: 100%;
         box-sizing: border-box;
-    }
-
-    .sidebar-logo-link-mobile {
-        order: 1;
-        margin-right: auto;
-        display: flex;
-        align-items: center;
     }
 
     .sidebar-logo-link-mobile .sidebar-logo-mobile {
@@ -357,8 +459,9 @@
         margin-left: 0;
         width: 100%;
         min-height: auto;
-        /* Corrected: Apply the increased padding for mobile too */
-        padding: 34px;
-        /* Ensure ample space for shadow on smaller screens */
+        padding-top: calc(34px + 62px);
+        padding-bottom: 34px;
+        padding-left: 34px;
+        padding-right: 34px;
     }
 }
