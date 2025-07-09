@@ -60,8 +60,9 @@ export default function ContactSupport() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.name || !formData.email || !formData.reason || !formData.message || !formData.agree) {
-            toast.error('Please fill in all fields and agree to the privacy policy.');
+        // Removed the 'agree' check from validation as the checkbox is removed
+        if (!formData.name || !formData.email || !formData.reason || !formData.message) {
+            toast.error('Please fill in all required fields.');
             return;
         }
 
@@ -133,20 +134,17 @@ export default function ContactSupport() {
                 <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
             )}
 
-            {/* Changed main class to main-content-container */}
             <main className="main-content-container">
-                {/* Removed the redundant 'page-wrapper' div */}
                 <PageHeader
                     title="Contact Support"
                     onActivateCard={() => console.log("Activate Card clicked on Contact Support page")}
                     onShareCard={handleShareCard}
                 />
 
-                {/* Live chat paragraph with consistent typography */}
                 <p className="desktop-body light-black" style={{ textAlign: 'left', marginBottom: 20 }}>
                     Want to talk to us right now?{' '}
                     <span
-                        className="live-chat-link" // Class for live chat link styling
+                        className="live-chat-link"
                         onClick={() => {
                             if (window.tidioChatApi) {
                                 window.tidioChatApi.open();
@@ -157,7 +155,7 @@ export default function ContactSupport() {
                     </span>
                 </p>
 
-                {/* Applied content-card-box for consistent styling of the form wrapper */}
+                {/* The contact form wrapper now solely uses content-card-box for its visual container styles */}
                 <div className="contact-form-wrapper content-card-box">
                     <form className='contact-form' onSubmit={handleSubmit}>
                         <label htmlFor="name" className="contact-form-label desktop-body-s black">Your Name</label>
@@ -169,7 +167,7 @@ export default function ContactSupport() {
                             value={formData.name}
                             onChange={handleChange}
                             required
-                            className='contact-form-input desktop-body' // Applied typography class
+                            className='contact-form-input desktop-body'
                         />
 
                         <label htmlFor="email" className="contact-form-label desktop-body-s black">Your Email</label>
@@ -181,7 +179,7 @@ export default function ContactSupport() {
                             value={formData.email}
                             onChange={handleChange}
                             required
-                            className='contact-form-input desktop-body' // Applied typography class
+                            className='contact-form-input desktop-body'
                         />
 
                         <label htmlFor="reason" className="contact-form-label desktop-body-s black">Reason for contact</label>
@@ -191,7 +189,7 @@ export default function ContactSupport() {
                             value={formData.reason}
                             onChange={handleChange}
                             required
-                            className='contact-form-select desktop-body' // Applied typography class
+                            className='contact-form-select desktop-body'
                         >
                             <option value=''>Select a reason</option>
                             <option value='Card not working'>My card isn’t working</option>
@@ -209,25 +207,12 @@ export default function ContactSupport() {
                             value={formData.message}
                             onChange={handleChange}
                             required
-                            className='contact-form-textarea desktop-body' // Applied typography class
-                            rows="5"
+                            className='contact-form-textarea desktop-body'
+                            rows="3" // Made textarea smaller
                         />
 
-                        <label className='contact-terms-label'>
-                            <input
-                                type='checkbox'
-                                name='agree'
-                                className='contact-terms-checkbox'
-                                checked={formData.agree}
-                                onChange={handleChange}
-                                required
-                            />
-                            <span className='desktop-body-xs'> {/* Applied typography class */}
-                                I understand that Konar will securely hold my data in accordance with their privacy policy.
-                            </span>
-                        </label>
+                        {/* Removed the checkbox and its label entirely */}
 
-                        {/* Applied button classes */}
                         <button type='submit' className='contact-submit-button blue-button desktop-button'>
                             <span className='desktop-button'>Submit</span>
                         </button>
@@ -245,5 +230,4 @@ export default function ContactSupport() {
             />
         </div>
     );
-    
 }
