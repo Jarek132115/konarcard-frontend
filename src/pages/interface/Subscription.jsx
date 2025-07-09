@@ -1,14 +1,13 @@
-// frontend/src/pages/Subscription.jsx (THIS IS AN EXAMPLE. YOU NEED TO APPLY THIS STRUCTURE TO ALL PAGES LIKE Profile.jsx, ContactSupport.jsx etc.)
-
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
-import Sidebar from '../../components/Sidebar'; // Still imports Sidebar
+import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
-import api from '../../services/api';
-import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
+import api from '../../services/api';
+import { toast } from 'react-hot-toast';
+import TickIcon from '../../assets/icons/Tick-Icon.svg';
+import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 
 export default function Subscription() {
@@ -27,6 +26,7 @@ export default function Subscription() {
   const userUsername = authUser?.username;
 
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
+
 
   useEffect(() => {
     const fetchSubscriptionStatus = async () => {
@@ -148,18 +148,15 @@ export default function Subscription() {
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
-  return (
-    // app-layout is the main wrapper for the content and sidebar
-    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
 
-      {/* CRITICAL: THIS IS THE MOBILE HEADER THAT IS ALWAYS VISIBLE AND CONTAINS THE HAMBURGER TO OPEN THE SIDEBAR */}
+  return (
+    <div className={`app-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
-        {/* This is the hamburger icon that opens the sidebar */}
         <div
-          className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
+          className={`myprofile-hamburger ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <span></span>
@@ -168,15 +165,12 @@ export default function Subscription() {
         </div>
       </div>
 
-      {/* The Sidebar component itself */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* Overlay when sidebar is open on mobile */}
       {sidebarOpen && isMobile && (
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      {/* Main content area */}
       <main className="main-content-container">
         <PageHeader
           title="Subscription"
@@ -196,7 +190,7 @@ export default function Subscription() {
 
             <div className="subscription-features">
               {[
-                "Personalized URL: konarcard.com/u/hmplumbing.",
+                "Personalized URL: konarcard.com/u/hmplumbing.", // Clarified URL example
                 "Set profile pic, cover photo.",
                 "Custom page headings.",
                 "Explain yourself in 'About Me'.",
