@@ -110,24 +110,14 @@
 .myprofile-flex-container {
     display: flex;
     flex: 1;
-    /* Allow it to grow and fill available vertical space */
     gap: 40px;
-    /* Original 40px gap */
     min-height: 0;
-    /* Allow it to shrink within a flex parent */
     overflow: hidden;
-    /* Hide overflow of children if they escape */
     justify-content: space-around;
-    /* Space items out */
     align-items: stretch;
-    /* Reverted to stretch to allow children to fill height of tallest */
-    /* Add max-width here if the whole two-column block needs a width constraint */
     max-width: 1200px;
-    /* Example max-width for the entire two-column block */
     margin: 0 auto;
-    /* Center the whole flex container */
-    padding-bottom: 20px;
-    /* Add padding to prevent content touching bottom */
+
 }
 
 /* Mock Phone Container */
