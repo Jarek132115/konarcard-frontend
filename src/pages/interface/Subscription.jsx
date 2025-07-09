@@ -294,7 +294,7 @@ export default function Subscription() {
                       )}
                     </>
                   ) : (
-                    <button className="subscription-upgrade-button" onClick={handleSubscribe} disabled={isCancelling}>
+                    <button className="blue-button" onClick={handleSubscribe} disabled={isCancelling}>
                       Upgrade to Power Profile
                     </button>
                   )}
