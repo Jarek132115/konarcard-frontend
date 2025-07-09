@@ -195,6 +195,22 @@
     color: #000;
 }
 
+/* MAIN CONTENT CONTAINER */
+.main-content-container {
+    margin-left: fit-content;
+    /* This will be overridden by JS calculation or a parent flex container */
+    padding: 24px;
+    box-sizing: border-box;
+    width: 100%;
+    /* Default to 100% and let a parent handle the reduction */
+    min-height: 100vh;
+    /* Ensure it takes at least the full viewport height */
+    overflow-y: auto;
+    /* Allow content to scroll if it overflows */
+    flex-grow: 1;
+    /* Allows it to take up available space in a flex container */
+}
+
 
 /* MOBILE SIDEBAR */
 @media (max-width: 1000px) {
@@ -332,5 +348,13 @@
 
     .footer-actions {
         padding-top: 15px;
+    }
+
+    /* Adjust main content for mobile to allow full width */
+    .main-content-container {
+        margin-left: 0;
+        width: 100%;
+        min-height: auto;
+        /* Remove min-height on mobile to prevent empty space issues */
     }
 }

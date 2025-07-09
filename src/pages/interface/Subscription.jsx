@@ -150,7 +150,8 @@ export default function Subscription() {
 
 
   return (
-    <div className={`myprofile-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
+    // We'll change this parent div to a flex container
+    <div className={`app-layout ${sidebarOpen && isMobile ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -171,7 +172,8 @@ export default function Subscription() {
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      <main className="myprofile-main">
+      {/* This is the new container for your main page content */}
+      <main className="main-content-container">
         {/* PageHeader is now a direct child of myprofile-main, consistent with Profile.jsx */}
         <PageHeader
           title="Subscription"
