@@ -1,9 +1,7 @@
 /* Sidebar.css */
 
-/* General Desktop Sidebar Styles */
 .sidebar {
     position: fixed;
-    /* Desktop: Fixed to left */
     top: 0;
     left: 0;
     height: 100vh;
@@ -23,7 +21,6 @@
 
 .sidebar-mobile-header-inner {
     display: none;
-    /* This header is only for *inside* the mobile sidebar */
 }
 
 .sidebar-content-wrapper {
@@ -280,29 +277,29 @@
 /* --- MOBILE SPECIFIC STYLES --- */
 @media (max-width: 1000px) {
 
-    /* MOBILE HEADER - ALWAYS VISIBLE ON MOBILE, CONTAINS LOGO AND HAMBURGER */
+    /* MOBILE HEADER (visible container for logo and hamburger) */
     .myprofile-mobile-header {
         display: flex;
-        /* Make this header visible */
+        /* Make this header visible and use flexbox */
         justify-content: space-between;
-        /* Space out logo and hamburger */
+        /* CRITICAL: Pushes logo to left, hamburger to right */
         align-items: center;
         padding: 15px 20px;
         background-color: white;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         position: fixed;
-        /* Keep it at the top when scrolling */
         top: 0;
         left: 0;
         width: 100%;
         box-sizing: border-box;
         z-index: 1001;
-        /* Ensure it's above other content (but sidebar will be higher) */
+        /* Ensure it's above other content */
     }
 
-    .myprofile-mobile-header .myprofile-logo-link {
+    /* Style for the logo link container within the mobile header */
+    .myprofile-logo-link {
         margin-right: 20px;
-        /* Space between logo and hamburger */
+        /* Provide space between logo and hamburger */
     }
 
     .myprofile-logo-link .myprofile-logo {
@@ -310,41 +307,31 @@
         /* Adjust logo size for mobile header */
     }
 
-    /* THE HAMBURGER ICON (3 lines, to OPEN the sidebar) */
+    /* THE HAMBURGER ICON (the 3 lines container) */
     .sidebar-menu-toggle {
-        /* This class is now used in Sidebar.jsx for the main hamburger */
         display: flex;
-        /* Make the container visible and stack lines */
         flex-direction: column;
         justify-content: space-between;
         width: 25px;
         height: 18px;
-        /* Height to accommodate 3 lines and spacing */
         cursor: pointer;
         z-index: 1002;
-        /* Ensure it's clickable */
         background: transparent;
-        /* Container itself is transparent */
-        margin-left: auto;
-        /* Pushes the hamburger to the right */
+        /* No margin-left: auto here, as justify-content: space-between handles positioning */
     }
 
     /* THE ACTUAL HAMBURGER LINES (spans inside .sidebar-menu-toggle) */
     .sidebar-menu-toggle span {
         display: block;
-        /* CRITICAL: Ensure each span is a block to have height */
         width: 100%;
         height: 2px;
-        /* Defines the thickness of each line */
         background: black;
-        /* Defines the color of the lines */
         border-radius: 2px;
         transition: all 0.3s ease;
         opacity: 1;
-        /* Ensure lines are fully visible */
     }
 
-    /* Styles for when the hamburger is 'active' (sidebar open) - forms an X */
+    /* Styles for when hamburger is 'active' (sidebar open) - forms an X */
     .sidebar-menu-toggle.active span:nth-child(1) {
         transform: translateY(8px) rotate(45deg);
     }
@@ -357,24 +344,18 @@
         transform: translateY(-8px) rotate(-45deg);
     }
 
-
     /* MOBILE SIDEBAR PANEL ITSELF (the part that slides in) */
     .sidebar {
         position: fixed;
         top: 0;
-        /* Cover entire screen from top */
         left: 0;
         width: 100vw;
-        /* Cover entire screen width */
         height: 100vh;
-        /* Cover entire screen height */
         transform: translateX(-100%);
-        /* Hidden by default */
         box-shadow: none;
         z-index: 1003;
-        /* CRITICAL: Higher than myprofile-mobile-header to cover it */
+        /* Higher than myprofile-mobile-header to cover it */
         overflow-y: auto;
-        /* Allow scrolling inside sidebar if content overflows */
         background-color: white;
         padding: 0;
         transition: transform 0.3s ease-in-out;
@@ -382,7 +363,6 @@
 
     .sidebar.open {
         transform: translateX(0);
-        /* Slides into view */
     }
 
     /* Header *inside* the mobile sidebar (visible when sidebar slides open) */
@@ -400,7 +380,6 @@
 
     .sidebar-logo-link-mobile {
         order: 1;
-        /* Ensure logo is on the left inside the sidebar header */
         margin-right: auto;
         display: flex;
         align-items: center;
@@ -411,10 +390,9 @@
         margin-right: 0;
     }
 
-    /* CLOSE BUTTON (the X icon) for the sidebar - inside the sidebar */
+    /* Close button for the sidebar (the X icon inside the sidebar) */
     .close-sidebar-button {
         display: flex;
-        /* Show this button */
         flex-direction: column;
         gap: 0;
         cursor: pointer;
@@ -426,7 +404,6 @@
         justify-content: center;
         order: 2;
         margin-left: auto;
-        /* Pushes the close button to the right */
     }
 
     .close-sidebar-button span {
@@ -449,7 +426,6 @@
     .sidebar-content-wrapper {
         padding: 20px;
         height: calc(100% - 63px);
-        /* Account for the height of the inner mobile header */
         box-sizing: border-box;
         overflow-y: auto;
         padding-bottom: 40px;
@@ -508,15 +484,11 @@
         padding-top: 15px;
     }
 
-    /* MAIN CONTENT CONTAINER on Mobile */
-    /* This content area is below the fixed myprofile-mobile-header */
     .main-content-container {
         margin-left: 0;
         width: 100%;
         min-height: auto;
-        /* Padding pushed down by fixed myprofile-mobile-header */
         padding-top: calc(34px + 62px);
-        /* 62px is approx height of fixed mobile header */
         padding-bottom: 34px;
         padding-left: 34px;
         padding-right: 34px;
