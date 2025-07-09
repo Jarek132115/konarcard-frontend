@@ -21,6 +21,7 @@
 
 .sidebar-mobile-header-inner {
     display: none;
+    /* This is for the header *inside* the mobile sidebar when open */
 }
 
 .sidebar-content-wrapper {
@@ -187,10 +188,8 @@
 }
 
 .main-content-container {
-    margin-left: 250px;
-    /* Adjusted padding to ensure space for box-shadow on all sides */
+    margin-left: 260px;
     padding: 34px;
-    /* Increased from 24px */
     box-sizing: border-box;
     width: calc(100% - 260px);
     min-height: 100vh;
@@ -209,6 +208,10 @@
     box-sizing: border-box;
 }
 
+.account-settings-card {
+    /* No visual styles here as it shares .content-card-box */
+}
+
 .combined-offer-container,
 .profile-content-wrapper {
     display: block;
@@ -216,10 +219,81 @@
     margin-bottom: 20px;
 }
 
+/* --- MOBILE SPECIFIC STYLES --- */
 @media (max-width: 1000px) {
+
+    /* MOBILE HEADER - Ensure this is always visible on mobile */
+    .myprofile-mobile-header {
+        display: flex;
+        /* Make it visible */
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background-color: white;
+        /* Ensure it has a background */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        /* Optional: add a subtle shadow */
+        position: fixed;
+        /* Keep it at the top when scrolling */
+        top: 0;
+        left: 0;
+        width: 100%;
+        box-sizing: border-box;
+        z-index: 1001;
+        /* Higher than sidebar overlay */
+    }
+
+    .myprofile-logo-link .myprofile-logo {
+        height: 32px;
+        /* Adjust logo size for mobile header */
+    }
+
+    /* HAMBURGER ICON */
+    .myprofile-hamburger {
+        display: flex;
+        /* Make hamburger visible */
+        flex-direction: column;
+        justify-content: space-between;
+        width: 25px;
+        height: 18px;
+        /* Adjust height for 3 lines */
+        cursor: pointer;
+        z-index: 1002;
+        /* Ensure it's above other elements */
+    }
+
+    .myprofile-hamburger span {
+        width: 100%;
+        height: 2px;
+        /* Thickness of hamburger lines */
+        background: black;
+        /* Color of hamburger lines */
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+
+    /* Styles for when hamburger is 'active' (sidebar open) - forms an X */
+    .myprofile-hamburger.active span:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+        /* Move down and rotate */
+    }
+
+    .myprofile-hamburger.active span:nth-child(2) {
+        opacity: 0;
+        /* Hide middle line */
+    }
+
+    .myprofile-hamburger.active span:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+        /* Move up and rotate */
+    }
+
+
+    /* MOBILE SIDEBAR */
     .sidebar {
         position: fixed;
         top: 0;
+        /* Align to the very top */
         left: 0;
         width: 100vw;
         height: 100vh;
@@ -229,6 +303,7 @@
         overflow: hidden;
         background-color: white;
         padding: 0;
+        /* No external padding */
         transition: transform 0.3s ease-in-out;
     }
 
@@ -236,8 +311,10 @@
         transform: translateX(0);
     }
 
+    /* This is the header that appears *inside* the mobile sidebar when it slides open */
     .sidebar-mobile-header-inner {
         display: flex;
+        /* Show this when sidebar is open */
         justify-content: space-between;
         align-items: center;
         padding: 15px 20px;
@@ -260,6 +337,8 @@
         margin-right: 0;
     }
 
+    /* The close button is part of sidebar-mobile-header-inner in Sidebar.jsx,
+       but the hamburger itself needs to transform into the 'X' */
     .close-sidebar-button {
         display: flex;
         flex-direction: column;
@@ -295,6 +374,7 @@
     .sidebar-content-wrapper {
         padding: 20px;
         height: calc(100% - 63px);
+        /* Account for the height of the inner mobile header */
         box-sizing: border-box;
         overflow-y: auto;
         padding-bottom: 40px;
@@ -353,12 +433,14 @@
         padding-top: 15px;
     }
 
+    /* MAIN CONTENT CONTAINER on Mobile */
     .main-content-container {
         margin-left: 0;
         width: 100%;
         min-height: auto;
-        /* Corrected: Apply the increased padding for mobile too */
         padding: 34px;
-        /* Ensure ample space for shadow on smaller screens */
+        /* Add top padding to account for the fixed mobile header */
+        padding-top: calc(34px + 62px);
+        /* 62px is approx height of fixed mobile header */
     }
 }
