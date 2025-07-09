@@ -95,22 +95,22 @@
     border: 1px solid var(--border-color);
 }
 
+/* FIX 1: Desktop gap and space-around for myprofile-flex-container */
 .myprofile-flex-container {
     display: flex;
     flex: 1;
-    /* Changed gap from 'auto' to a fixed value for better control */
-    gap: 40px;
-    /* Increased gap for desktop */
+    /* Use a fixed gap between the elements */
+    gap: 60px;
+    /* Increased gap significantly for "space around" feel */
     min-height: 0;
     overflow: hidden;
-    /* Use space-between to push items to ends, then control inner spacing with padding */
-    justify-content: space-between;
+    /* Center the container overall, and then the gap handles internal spacing */
+    justify-content: center;
+    /* Center the two main blocks */
     align-items: flex-start;
     max-width: 1200px;
     margin: 0 auto;
-    /* Center the container */
-    padding: 0 20px;
-    /* Add horizontal padding to create space around items */
+    /* This centers the flex container itself */
     padding-bottom: 20px;
 }
 
@@ -125,16 +125,16 @@
     min-width: 250px;
     position: relative;
     overflow: hidden;
-    /* Added flex-shrink to prevent it from shrinking too much on smaller desktop screens */
     flex-shrink: 0;
 }
 
+/* FIX 2: Black border around the mock-phone preview */
 .mock-phone {
     width: 100%;
     height: 100%;
     background: var(--primary-bg);
-    /* Changed border to black */
     border: 10px solid black;
+    /* Changed border to black */
     border-radius: 2.5rem;
     padding: 20px;
     text-align: center;
@@ -392,9 +392,10 @@
     min-width: 350px;
     flex-direction: column;
     min-height: 0;
-    /* Allow it to grow to fill available space but respect max-width */
     flex-grow: 1;
-    flex-shrink: 0;
+    /* Allows it to grow to fill space */
+    flex-shrink: 1;
+    /* Allows it to shrink if needed, but min-width will protect */
 }
 
 .myprofile-editor {
@@ -695,30 +696,27 @@
 
     .myprofile-flex-container {
         flex-direction: column;
-        /* Adjusted gap for mobile to make it less extreme */
         gap: 40px;
-        /* Reduced gap between the two main sections on mobile */
         padding-top: 0;
         justify-content: flex-start;
         align-items: center;
         height: auto;
         flex: 0 0 auto;
-        padding-left: 15px;
-        /* Added padding to the sides on mobile */
-        padding-right: 15px;
-        /* Added padding to the sides on mobile */
+        padding-left: 20px;
+        /* Adjusted padding to match image */
+        padding-right: 20px;
+        /* Adjusted padding to match image */
     }
 
+    /* FIX 3: Make preview and edit sections full width on mobile */
     .myprofile-content {
         width: 100%;
-        /* Make it full width */
         max-width: 100%;
-        /* Ensure it takes full width */
         min-width: unset;
         margin: 0 auto;
         height: auto;
+        /* Keep aspect ratio for the mock phone, its container will adapt */
         aspect-ratio: unset;
-        /* Remove fixed aspect ratio for mobile content fluidity */
         flex-shrink: 0;
         flex-grow: 0;
         overflow: hidden;
@@ -727,11 +725,6 @@
     .mock-phone {
         width: 100%;
         height: auto;
-        /* Set a max-height or min-height for the mock phone on mobile if needed,
-           or keep aspect-ratio for a consistent phone shape.
-           If aspect-ratio is unset in .myprofile-content, you might want to define it here
-           or remove it entirely to allow the content to dictate height.
-           Given the image, I'll keep the aspect ratio on mock-phone for visual consistency. */
         aspect-ratio: 9 / 17;
         /* Keep aspect ratio for the phone itself */
         background: var(--primary-bg);
@@ -744,11 +737,10 @@
         min-height: 0;
     }
 
+    /* FIX 3: Make preview and edit sections full width on mobile */
     .myprofile-editor-wrapper {
         width: 100%;
-        /* Make it full width */
         max-width: 100%;
-        /* Ensure it takes full width */
         min-width: unset;
         height: auto;
         flex-shrink: 0;
