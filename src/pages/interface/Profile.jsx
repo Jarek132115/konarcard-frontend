@@ -182,9 +182,9 @@ export default function Profile() {
           className="profile-page-header"
         />
 
-        <div className="content-card-box">
-          {/* CORRECTED: Added "content-card-box" class here as intended */}
-          <div className="profile-card-box content-card-box">
+        <div className="profile-content-wrapper">
+          {/* RENAMED FROM profile-card-box, and now correctly applying content-card-box */}
+          <div className="account-settings-card content-card-box">
             {/* Display Name Section */}
             <div className="profile-input-block">
               <label className="desktop-body-s black">Display Name</label>
