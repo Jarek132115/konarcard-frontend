@@ -131,18 +131,20 @@
     position: relative;
     height: auto;
     max-height: 100%;
+    /* Keep for desktop, allowing it to stretch to fill if content is small */
     aspect-ratio: 9 / 17;
+    /* Keep aspect ratio for desktop */
 }
 
 /* Mock Phone Styles */
 .mock-phone {
     width: 100%;
     height: 100%;
+    /* Will be overridden on mobile if needed */
     background: var(--primary-bg);
     border: 10px solid black;
     border-radius: 2.5rem;
     padding: 20px;
-    /* Overall padding for the phone content */
     text-align: center;
     box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
@@ -151,6 +153,7 @@
     font-family: var(--main-font-family);
     color: var(--text-color);
     overflow: hidden;
+    /* Will be overridden on mobile */
 }
 
 .mock-phone-scrollable-content {
@@ -160,12 +163,9 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    /* FIX: Set gap to 0. We'll use explicit margins for precise control. */
     padding: 0;
-    /* FIX: Remove padding here as it might add unwanted gaps at top/bottom of content */
     overflow-y: auto;
     padding-right: 5px;
-    /* Keep this for scrollbar spacing */
 }
 
 /* Hide scrollbar for aesthetics, but allow scrolling */
@@ -194,11 +194,8 @@
     display: block;
     object-fit: cover;
     background-size: 50%;
-    /* Only applies if src is empty */
     background-repeat: no-repeat;
-    /* Only applies if src is empty */
     background-position: center;
-    /* Only applies if src is empty */
 }
 
 /* Specific placeholder styling when src is empty */
@@ -207,39 +204,30 @@
 .work-image-preview[src=""] {
     border: 1px dashed var(--border-color);
     background-image: url('../assets/images/background-hero.png');
-    /* Default placeholder */
     background-size: cover;
-    /* Covers the entire placeholder area */
 }
 
 .avatar-preview[src=""] {
     background-image: url('../assets/images/People.png');
-    /* Default placeholder */
     background-size: cover;
 }
 
 .work-image-preview[src=""] {
     background-image: url('/Interface-Preview/Work-Images1.png');
-    /* Default placeholder */
     background-size: cover;
 }
 
 .mock-cover {
     width: 100%;
     aspect-ratio: 4 / 3.25;
-    /* FIX: Set aspect ratio to 4x3.25 */
     border-radius: 0.75rem;
     margin-bottom: 12px;
-    /* FIX: 12px gap below cover photo to main heading */
 }
-
-/* Removed remove-image-button styles here since they are only in editor now */
 
 .mock-title {
     font-size: 2rem;
     font-weight: 700;
     margin: 0;
-    /* Reset default margins */
     line-height: 1.2;
     color: var(--text-color);
 }
@@ -249,9 +237,7 @@
     font-weight: 600;
     color: var(--subtle-text-color);
     margin: 0;
-    /* Reset default margin */
     margin-top: 6px;
-    /* FIX: 6px gap under main heading */
 }
 
 .mock-button {
@@ -263,22 +249,17 @@
     font-weight: 700;
     font-size: 0.875rem;
     margin: 0;
-    /* Reset default margin */
     margin-top: 12px;
-    /* FIX: 12px gap under subheading */
     width: 100%;
     box-sizing: border-box;
     font-family: var(--main-font-family);
     margin-bottom: 36px;
-    /* FIX: 36px gap after button group (before next section title) */
 }
 
 .mock-section-title {
     font-size: 1rem;
     margin: 0;
-    /* Reset default margin */
     margin-bottom: 12px;
-    /* FIX: 12px gap below section title to its content */
     font-weight: 600;
     text-align: left;
     color: var(--text-color);
@@ -291,12 +272,10 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    /* ~12px internal gap */
     text-align: left;
     width: 100%;
     box-sizing: border-box;
     margin-bottom: 36px;
-    /* FIX: 36px gap after about me section (before next section title) */
 }
 
 .mock-about-content-group {
@@ -348,58 +327,42 @@
 
 .mock-work-gallery {
     display: flex;
-    /* FIX: Changed from grid to flex */
     flex-direction: column;
-    /* FIX: Stack items vertically */
     gap: 0.75rem;
-    /* FIX: Gap between work images (approx 12px) */
     width: 100%;
     margin-bottom: 36px;
-    /* FIX: 36px gap after work gallery */
     padding: 0;
-    /* FIX: Remove padding so images go to edge if desired */
     background-color: transparent;
-    /* FIX: Ensure background is transparent */
     border-radius: 0;
-    /* FIX: Remove border-radius here if present */
 }
 
 .mock-work-image-item-wrapper {
     position: relative;
     width: 100%;
-    /* FIX: Make full width */
     height: auto;
-    /* Let aspect ratio control height */
     display: block;
     overflow: hidden;
     border-radius: 0.5rem;
-    /* Apply consistent border-radius to wrapper */
 }
 
 .mock-work-gallery img.mock-work-image-item {
     width: 100%;
     height: auto;
-    /* Let aspect ratio determine height */
     aspect-ratio: 4 / 2.75;
-    /* FIX: Set aspect ratio to 4x2.75 */
     border-radius: 0;
-    /* No individual border-radius on img, applied to wrapper */
     min-width: unset;
     min-height: unset;
     background-color: var(--placeholder-bg);
     object-fit: cover;
 }
 
-
 .mock-services-list,
 .mock-reviews-list {
     display: flex;
     flex-direction: column;
     gap: 0.625rem;
-    /* ~10px internal gap */
     width: 100%;
     margin-bottom: 36px;
-    /* FIX: 36px gap after services/reviews list */
 }
 
 .mock-service-item,
@@ -459,14 +422,12 @@
 .myprofile-editor-wrapper {
     position: relative;
     max-width: 600px;
-    /* Keep for desktop */
     width: 100%;
     min-width: 350px;
     flex: 1;
     min-height: 0;
     display: flex;
     height: 100%;
-    /* Default to 100% height for desktop */
 }
 
 .myprofile-editor {
@@ -484,7 +445,6 @@
     width: 100%;
     color: var(--text-color);
     height: 100%;
-    /* Default to 100% height for desktop */
 }
 
 .editor-title {
@@ -561,7 +521,6 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    /* Allow text and image to stack */
     align-items: center;
     justify-content: center;
     background-color: var(--card-bg);
@@ -569,18 +528,15 @@
     overflow: hidden;
     position: relative;
     border: 1px dashed var(--border-color);
-    /* To make it look like an upload area */
 }
 
 .image-upload-area .upload-text {
     position: absolute;
-    /* Position text over image area */
     color: var(--subtle-text-color);
     font-size: 0.9rem;
     font-weight: 500;
     text-align: center;
     z-index: 2;
-    /* Ensure text is above image */
 }
 
 /* Hide the actual img when src is empty so only background/text shows */
@@ -596,9 +552,7 @@
     height: 100%;
     object-fit: cover;
     z-index: 1;
-    /* Ensure image is behind text if text is also present (though text should disappear if image is there) */
 }
-
 
 .cover-photo-upload {
     width: 100%;
@@ -632,23 +586,17 @@
 }
 
 .work-preview-row {
-    /* FIX: Changed back to a grid for two-column layout */
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    /* Adjust minmax for desired column width */
     gap: 12px;
-    /* Gap between grid items */
 }
 
 /* Ensure individual work image wrappers fit grid */
 .work-image-item-wrapper {
     position: relative;
     width: 100%;
-    /* Fill grid cell */
     height: auto;
-    /* Let aspect ratio control height */
     display: block;
-    /* So it's a grid item */
     overflow: hidden;
     border-radius: 0.5rem;
     border: 1px solid var(--border-color);
@@ -680,11 +628,8 @@
 
 /* Special styling for the "Add Work Image" placeholder in the editor */
 .add-work-image-placeholder {
-    /* It now also behaves as a grid item */
     height: 100px;
-    /* FIX: Set a fixed height that aligns with aspect ratio of other images */
     min-height: 100px;
-    /* Ensure it doesn't collapse too much */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -698,18 +643,14 @@
 
 .add-work-image-placeholder .upload-text {
     position: static;
-    /* Text should be centered normally within its flex container */
     margin-bottom: 0;
     font-size: 14px;
     white-space: nowrap;
-    /* Prevent text wrapping */
 }
 
 .add-work-image-placeholder img {
-    /* Hide the inner img for the placeholder */
     display: none;
 }
-
 
 .myprofile-editor .divider {
     margin: 20px 0;
@@ -719,24 +660,18 @@
 
 .work-preview-row {
     display: grid;
-    /* Changed from flex to grid for editor work images */
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    /* Adjust minmax for desired column width */
     gap: 12px;
-    /* Gap between grid items */
 }
 
 .work-image-item-wrapper {
     position: relative;
     width: 100%;
-    /* Fill grid cell */
     height: auto;
-    /* Let aspect ratio control height */
     display: block;
     overflow: hidden;
     border-radius: 0.5rem;
     border: 1px solid var(--border-color);
-    /* Add a border to individual work image previews */
     box-sizing: border-box;
 }
 
@@ -744,7 +679,6 @@
     width: 100%;
     height: auto;
     aspect-ratio: 4 / 2.75;
-    /* Set aspect ratio for consistency */
     object-fit: cover;
     border-radius: 0;
 }
@@ -764,9 +698,7 @@
     color: white;
 }
 
-
 .add-work-image-button,
-/* This class is now primarily for adding new work image *placeholders* if they are clicked. */
 .add-item-button {
     margin-top: 8px;
     padding: 8px 14px;
@@ -985,9 +917,7 @@
         padding-right: 20px;
         padding-bottom: 20px;
         height: auto;
-        /* Allow height to adjust to content */
         overflow-y: visible;
-        /* Allow scrolling on the body/main container */
     }
 
     /* Flex container for preview and editor - stack vertically on mobile */
@@ -996,14 +926,10 @@
         gap: 40px;
         align-items: center;
         height: auto;
-        /* Height adapts to content */
         max-width: 100%;
-        /* Ensure it takes full width of its parent */
         width: 100%;
-        /* Explicitly set width to 100% */
         padding-bottom: 0;
         margin: 0;
-        /* Remove auto margins that might center it and prevent full width */
     }
 
     /* Phone preview container on mobile */
@@ -1011,9 +937,16 @@
         width: 100%;
         min-width: unset;
         height: auto;
-        flex-shrink: 1;
-        flex-grow: 1;
+        /* Allow content to dictate height */
+        flex-shrink: 0;
+        /* Prevent shrinking below content size */
+        flex-grow: 0;
+        /* Prevent growing to fill empty space */
         position: relative;
+        /* Remove max-height for mobile to allow it to fit content */
+        /* Remove aspect-ratio for mobile, let content define height. If a fixed aspect ratio is still desired
+           for the *phone frame*, it would need more specific styling on .mock-phone directly
+           that doesn't interfere with the *content's* height. For now, this allows content to flow. */
     }
 
     /* Mock Phone on mobile - ensure it keeps aspect ratio but adapts to width */
@@ -1021,33 +954,31 @@
         padding: 1rem;
         border-width: 0.375rem;
         border-radius: 2rem;
+        height: auto;
+        /* Allow phone height to fit content */
+        overflow: visible;
+        /* Allow inner scrolling content to dictate overall height */
     }
 
     /* Editor wrapper on mobile */
     .myprofile-editor-wrapper {
         width: 100%;
-        /* Take full width of .myprofile-flex-container */
         max-width: 100%;
-        /* Crucial: Remove the desktop max-width constraint for mobile */
         min-width: unset;
         height: auto;
-        /* Height adapts to content */
         flex-shrink: 1;
-        /* Allow it to shrink if needed */
         flex-grow: 1;
-        /* Allow it to grow if needed */
     }
 
     /* Editor form on mobile */
     .myprofile-editor {
         padding: 16px;
         padding-bottom: 30px;
-        /* Add 30px padding to the bottom of the editor */
         gap: 15px;
         height: auto;
-        /* Height adapts to content */
+        background: var(--primary-bg);
+        /* Explicitly re-add background */
         overflow-y: visible;
-        /* Content can push the height and scrolling is handled by main-content-container */
     }
 
     /* MyProfile's own mobile header is superseded by Sidebar.css's comprehensive mobile header */
