@@ -261,7 +261,7 @@
     width: 100%;
     box-sizing: border-box;
     font-family: var(--main-font-family);
-    margin-bottom: 24px;
+    margin-bottom: 36px;
     /* FIX: 24px gap after button group */
 }
 
@@ -287,7 +287,7 @@
     text-align: left;
     width: 100%;
     box-sizing: border-box;
-    margin-bottom: 24px;
+    margin-bottom: 36px;
     /* FIX: 24px gap after about me section */
 }
 
@@ -346,7 +346,7 @@
     gap: 0.75rem;
     /* FIX: Gap between work images (approx 12px) */
     width: 100%;
-    margin-bottom: 24px;
+    margin-bottom: 36px;
     /* FIX: 24px gap after work gallery */
 }
 
@@ -381,7 +381,7 @@
     gap: 0.625rem;
     /* ~10px internal gap */
     width: 100%;
-    margin-bottom: 24px;
+    margin-bottom: 36px;
     /* FIX: 24px gap after services/reviews list */
 }
 
