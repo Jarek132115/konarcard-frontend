@@ -464,6 +464,7 @@
     min-height: 0;
     display: flex;
     height: 100%;
+    /* Default to 100% height for desktop */
 }
 
 .myprofile-editor {
@@ -480,6 +481,8 @@
     box-sizing: border-box;
     width: 100%;
     color: var(--text-color);
+    height: 100%;
+    /* Default to 100% height for desktop */
 }
 
 .editor-title {
@@ -979,8 +982,11 @@
         padding-left: 20px;
         padding-right: 20px;
         padding-bottom: 20px;
+        /* Keep consistent padding from previous */
         height: auto;
+        /* Allow height to adjust to content */
         overflow-y: visible;
+        /* Allow scrolling on the body/main container */
     }
 
     /* Flex container for preview and editor - stack vertically on mobile */
@@ -989,16 +995,21 @@
         gap: 40px;
         align-items: center;
         height: auto;
+        /* Height adapts to content */
         max-width: 100%;
+        /* Take full width */
         padding-bottom: 0;
+        /* Remove bottom padding here, apply to editor if needed */
     }
 
     /* Phone preview container on mobile */
     .myprofile-content {
         width: 100%;
         max-width: 320px;
+        /* Still constrain the phone width for better mobile preview */
         min-width: unset;
         height: auto;
+        /* Height adapts to content */
         flex-shrink: 0;
         flex-grow: 0;
         position: relative;
@@ -1014,9 +1025,12 @@
     /* Editor wrapper on mobile */
     .myprofile-editor-wrapper {
         width: 100%;
+        /* Full width of its parent */
         max-width: 600px;
+        /* Still respect max-width for larger mobile screens if needed */
         min-width: unset;
         height: auto;
+        /* Height adapts to content */
         flex-shrink: 0;
         flex-grow: 0;
     }
@@ -1024,9 +1038,13 @@
     /* Editor form on mobile */
     .myprofile-editor {
         padding: 16px;
+        padding-bottom: 30px;
+        /* Add 30px padding to the bottom of the editor */
         gap: 15px;
         height: auto;
+        /* Height adapts to content */
         overflow-y: visible;
+        /* Content can push the height and scrolling is handled by main-content-container */
     }
 
     /* MyProfile's own mobile header is superseded by Sidebar.css's comprehensive mobile header */
