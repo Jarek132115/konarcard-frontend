@@ -163,9 +163,9 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    /* FIX: Set a large gap for major visual sections */
-    gap: 36px;
-    /* This will be the 36px margin from section end to next section title */
+    /* We will control gaps more granularly now */
+    gap: 0;
+    /* FIX: Remove default gap here, control with specific margins */
     overflow-y: auto;
     padding-right: 5px;
 }
@@ -223,21 +223,18 @@
     aspect-ratio: 4 / 3.25;
     /* FIX: Set aspect ratio to 4x3.25 */
     border-radius: 0.75rem;
-    /* Removed margin-bottom here, as gap will handle space to next element */
+    margin-bottom: 24px;
+    /* FIX: Explicit 24px gap after cover photo */
 }
+
+/* Removed remove-image-button styles here since they are only in editor now */
 
 .mock-title {
     font-size: 2rem;
     font-weight: 700;
     margin: 0;
-    /* Reset default margins */
-    /* FIX: Smaller gap below cover photo */
-    /* If mock-cover has margin-bottom: 24px, then mock-title needs negative margin-top to pull up */
-    /* Or, if mock-phone-scrollable-content gap is 24px, then mock-title should have 0 margin-top. */
-    /* Let's make mock-title a separate flex item to benefit from 24px gap on top of it. */
-    /* This makes it 24px from cover, then we add its own margin bottom */
-    margin-bottom: 6px;
-    /* Space between title and subtitle */
+    margin-top: -12px;
+    /* FIX: Pull up to compensate for cover margin-bottom, fine-tune spacing to 12px from image */
     line-height: 1.2;
     color: var(--text-color);
 }
@@ -247,10 +244,8 @@
     font-weight: 600;
     color: var(--subtle-text-color);
     margin: 0;
-    /* Reset default margin */
-    /* margin-top will be handled by previous element's margin-bottom */
-    margin-bottom: 12px;
-    /* Space between subtitle and button */
+    margin-top: 6px;
+    /* FIX: 6px gap under main heading */
 }
 
 .mock-button {
@@ -261,47 +256,41 @@
     border: none;
     font-weight: 700;
     font-size: 0.875rem;
-    margin: 0;
-    /* Reset default margin */
+    margin-top: 12px;
+    /* FIX: 12px gap under subheading */
     width: 100%;
     box-sizing: border-box;
     font-family: var(--main-font-family);
-    /* margin-top will be handled by previous element's margin-bottom */
+    margin-bottom: 24px;
+    /* FIX: 24px gap after button group */
 }
 
 .mock-section-title {
     font-size: 1rem;
-    margin: 0;
-    /* Reset default margin, as parent gap now controls major spacing */
+    margin-top: 0;
+    /* Handled by previous element's margin-bottom or parent gap */
     margin-bottom: 12px;
-    /* FIX: 12px gap below section title to its content */
+    /* FIX: 12px gap below section title to content */
     font-weight: 600;
     text-align: left;
     color: var(--text-color);
 }
 
-.mock-about-container,
-.mock-work-gallery,
-.mock-services-list,
-.mock-reviews-list {
-    /* These are the main content blocks that follow a section title */
+.mock-about-container {
     background: var(--card-bg);
-    /* Only applies to about/service/review containers */
     border-radius: 1rem;
     padding: 1rem;
-    /* Adjust as needed */
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    /* ~12px internal gap for content within the section box */
+    /* ~12px internal gap */
     text-align: left;
     width: 100%;
     box-sizing: border-box;
-    margin: 0;
-    /* Reset default margins as parent gap handles primary spacing */
+    margin-bottom: 24px;
+    /* FIX: 24px gap after about me section */
 }
 
-/* Individual adjustments for internal elements if needed within sections */
 .mock-about-content-group {
     display: flex;
     flex-direction: column;
@@ -351,29 +340,25 @@
 
 .mock-work-gallery {
     display: flex;
-    /* Changed from grid to flex */
+    /* FIX: Changed from grid to flex */
     flex-direction: column;
-    /* Stack items vertically */
+    /* FIX: Stack items vertically */
     gap: 0.75rem;
-    /* Gap between work images (approx 12px) */
+    /* FIX: Gap between work images (approx 12px) */
     width: 100%;
-    /* No margin-bottom here, as parent gap will handle space to next section */
-    padding: 0;
-    /* FIX: Remove padding to allow image to fill to edges if desired, or keep if padding for section overall is required. Assuming no padding for full-bleed images. */
-    background-color: transparent;
-    /* FIX: Ensure background is transparent if images are meant to fill. */
+    margin-bottom: 24px;
+    /* FIX: 24px gap after work gallery */
 }
 
 .mock-work-image-item-wrapper {
     position: relative;
     width: 100%;
-    /* Make full width */
+    /* FIX: Make full width */
     height: auto;
     /* Let aspect ratio control height */
     display: block;
     overflow: hidden;
     border-radius: 0.5rem;
-    /* Apply here for consistency */
 }
 
 .mock-work-gallery img.mock-work-image-item {
@@ -386,18 +371,74 @@
     min-width: unset;
     min-height: unset;
     background-color: var(--placeholder-bg);
-    /* FIX: This might be the "grey" if image isn't filling. */
     object-fit: cover;
-    /* This should make it fill. */
 }
 
-/* IMPORTANT: If the grey is still showing, it's likely the placeholder image itself has the grey bar,
-   or the image src is empty and the background-size: cover on the placeholder doesn't stretch 100%
-   of the image, only the background. If the src is truly empty and you don't want any grey, you'd need
-   to set the placeholder background to the `mock-work-image-item-wrapper` and perhaps make `mock-work-image-item` background-color transparent. */
+.mock-services-list,
+.mock-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    /* ~10px internal gap */
+    width: 100%;
+    margin-bottom: 24px;
+    /* FIX: 24px gap after services/reviews list */
+}
 
+.mock-service-item,
+.mock-review-card {
+    background-color: var(--card-bg);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-color);
+    width: 100%;
+    box-sizing: border-box;
+}
 
-/* Editor Section styles (remain unchanged from previous version) */
+.mock-service-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.mock-service-price {
+    font-size: 0.8125rem;
+    color: var(--subtle-text-color);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.mock-star-rating {
+    color: gold;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1rem;
+}
+
+.mock-star-rating .empty-star {
+    color: #ccc;
+}
+
+.mock-review-text {
+    font-size: 0.9375rem;
+    color: var(--text-color);
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.mock-reviewer-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--subtle-text-color);
+    margin: 0;
+}
+
+/* Editor Section */
 .myprofile-editor-wrapper {
     position: relative;
     max-width: 600px;
@@ -448,6 +489,7 @@
     color: var(--text-color);
 }
 
+/* General input/textarea styles */
 .input-block input[type="text"],
 .input-block input[type="email"],
 .input-block input[type="tel"],
@@ -494,6 +536,7 @@
     border-color: #007bff;
 }
 
+/* Image upload areas in editor */
 .image-upload-area {
     cursor: pointer;
     display: flex;
