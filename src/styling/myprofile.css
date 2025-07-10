@@ -33,9 +33,11 @@
 .app-layout {
     display: flex;
     height: 100vh;
+    /* Full viewport height on desktop */
     background-color: var(--secondary-bg);
     position: relative;
     overflow: hidden;
+    /* Hide overflow on desktop */
 }
 
 /* Main content area - adjusted for sidebar spacing and vertical flex */
@@ -46,6 +48,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    /* Full height of parent on desktop */
     box-sizing: border-box;
     margin-left: 260px;
     color: var(--text-color);
@@ -104,6 +107,7 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    /* Handles scrolling for the entire main content area on desktop */
     box-sizing: border-box;
 }
 
@@ -111,6 +115,7 @@
 .myprofile-flex-container {
     display: flex;
     height: 100%;
+    /* Full height of parent on desktop */
     gap: 60px;
     min-height: 0;
     justify-content: center;
@@ -121,7 +126,7 @@
     margin: 0 auto;
 }
 
-/* Phone Preview Container */
+/* Phone Preview Container (desktop styles) */
 .myprofile-content {
     flex-shrink: 0;
     flex-grow: 0;
@@ -130,17 +135,18 @@
     align-items: center;
     position: relative;
     height: auto;
+    /* Height adapts to content */
     max-height: 100%;
-    /* Keep for desktop, allowing it to stretch to fill if content is small */
+    /* Constrain to parent height on desktop */
     aspect-ratio: 9 / 17;
-    /* Keep aspect ratio for desktop */
+    /* Maintain aspect ratio on desktop */
 }
 
-/* Mock Phone Styles */
+/* Mock Phone Styles (desktop styles) */
 .mock-phone {
     width: 100%;
     height: 100%;
-    /* Will be overridden on mobile if needed */
+    /* Takes full height of .myprofile-content on desktop */
     background: var(--primary-bg);
     border: 10px solid black;
     border-radius: 2.5rem;
@@ -153,7 +159,7 @@
     font-family: var(--main-font-family);
     color: var(--text-color);
     overflow: hidden;
-    /* Will be overridden on mobile */
+    /* Hide overflow for the phone frame on desktop */
 }
 
 .mock-phone-scrollable-content {
@@ -165,6 +171,7 @@
     gap: 0;
     padding: 0;
     overflow-y: auto;
+    /* Internal scrolling for phone content */
     padding-right: 5px;
 }
 
@@ -418,7 +425,7 @@
     margin: 0;
 }
 
-/* Editor Section */
+/* Editor Section (desktop styles) */
 .myprofile-editor-wrapper {
     position: relative;
     max-width: 600px;
@@ -909,6 +916,14 @@
 /* --- MOBILE SPECIFIC STYLES (Max-width 1000px) --- */
 @media (max-width: 1000px) {
 
+    /* Crucial: Allow the entire app layout to naturally expand its height */
+    .app-layout {
+        height: auto;
+        /* IMPORTANT: Allow height to be determined by content */
+        overflow-y: visible;
+        /* IMPORTANT: Allow page to scroll naturally */
+    }
+
     /* Main content container on mobile */
     .main-content-container {
         margin-left: 0;
@@ -917,7 +932,9 @@
         padding-right: 20px;
         padding-bottom: 20px;
         height: auto;
+        /* IMPORTANT: Allow height to adjust to content */
         overflow-y: visible;
+        /* Ensure no internal scrolling here; let body/app-layout handle it */
     }
 
     /* Flex container for preview and editor - stack vertically on mobile */
@@ -926,6 +943,7 @@
         gap: 40px;
         align-items: center;
         height: auto;
+        /* IMPORTANT: Height adapts to content */
         max-width: 100%;
         width: 100%;
         padding-bottom: 0;
@@ -935,18 +953,20 @@
     /* Phone preview container on mobile */
     .myprofile-content {
         width: 100%;
+        max-width: 320px;
+        /* Still constrain the phone width for better mobile preview */
         min-width: unset;
         height: auto;
-        /* Allow content to dictate height */
+        /* IMPORTANT: Allow content to dictate height */
         flex-shrink: 0;
         /* Prevent shrinking below content size */
         flex-grow: 0;
         /* Prevent growing to fill empty space */
         position: relative;
-        /* Remove max-height for mobile to allow it to fit content */
-        /* Remove aspect-ratio for mobile, let content define height. If a fixed aspect ratio is still desired
-           for the *phone frame*, it would need more specific styling on .mock-phone directly
-           that doesn't interfere with the *content's* height. For now, this allows content to flow. */
+        aspect-ratio: unset;
+        /* IMPORTANT: Remove aspect-ratio for mobile, let content define height */
+        max-height: unset;
+        /* IMPORTANT: Remove max-height constraint */
     }
 
     /* Mock Phone on mobile - ensure it keeps aspect ratio but adapts to width */
@@ -955,9 +975,10 @@
         border-width: 0.375rem;
         border-radius: 2rem;
         height: auto;
-        /* Allow phone height to fit content */
+        /* IMPORTANT: Allow phone height to fit content */
         overflow: visible;
-        /* Allow inner scrolling content to dictate overall height */
+        /* IMPORTANT: Allow inner scrollable content to dictate overall height of the mock phone */
+        /* The internal .mock-phone-scrollable-content will still handle its own overflow-y: auto */
     }
 
     /* Editor wrapper on mobile */
@@ -974,11 +995,14 @@
     .myprofile-editor {
         padding: 16px;
         padding-bottom: 30px;
+        /* Add 30px padding to the bottom of the editor */
         gap: 15px;
         height: auto;
+        /* IMPORTANT: Height adapts to content */
         background: var(--primary-bg);
-        /* Explicitly re-add background */
+        /* FIX: Explicitly re-add background */
         overflow-y: visible;
+        /* Content can push the height and scrolling is handled by app-layout */
     }
 
     /* MyProfile's own mobile header is superseded by Sidebar.css's comprehensive mobile header */
