@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // Import useLocation
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore from "../../store/businessCardStore";
@@ -41,6 +41,31 @@ export default function MyProfile() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
   const initialStoreState = useBusinessCardStore.getState().state;
+
+  const location = useLocation(); // NEW: Import and use useLocation hook
+
+  // NEW useEffect to check for subscription success on page load/return
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const paymentSuccess = queryParams.get('payment_success');
+
+    if (paymentSuccess === 'true' && !isSubscribed && !authLoading) {
+      // If we returned from a successful payment AND user is not yet marked subscribed
+      // AND auth data has loaded, then refetch user data.
+      console.log("Payment success detected in URL, refetching user data...");
+      refetchAuthUser();
+      // Optional: Clear the query parameter to prevent repeated refetches on refresh
+      // This is more complex if you rely on react-router-dom history.push/replace
+      // For a quick fix, this might be sufficient.
+      // window.history.replaceState({}, document.title, location.pathname);
+    } else if (!authLoading && authUser && !isSubscribed) {
+      // This is the fallback check we added last time:
+      // If user exists, auth data loaded, but still not subscribed, try fetching once.
+      // Could also be debounced to prevent excessive calls.
+      console.log("User not subscribed on load, attempting to refetch user data...");
+      refetchAuthUser();
+    }
+  }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser]);
 
 
   useEffect(() => {
@@ -407,6 +432,12 @@ export default function MyProfile() {
 
   const handleStartSubscription = async () => {
     try {
+      // Assuming your backend's /subscribe endpoint sets up a Stripe Checkout Session
+      // and Stripe redirects back to your frontend.
+      // For this to work, ensure your Stripe webhook or redirect URL logic
+      // makes sure the user's 'isSubscribed' status is updated in your DB.
+      // The Stripe success URL should ideally point back to THIS page,
+      // possibly with a query parameter like "?payment_success=true"
       const response = await api.post('/subscribe', {});
       if (response.data && response.data.url) {
         window.location.href = response.data.url;
@@ -432,7 +463,7 @@ export default function MyProfile() {
   };
 
   return (
-    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}> {/* Changed from myprofile-layout to app-layout */}
+    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -462,13 +493,13 @@ export default function MyProfile() {
 
         <div className="combined-offer-container">
           {(authLoading || isCardLoading) && (
-            <div className="content-card-box loading-state"> {/* Added loading-state class for specific styling if needed */}
+            <div className="content-card-box loading-state">
               Loading profile data...
             </div>
           )}
 
           {!authLoading && !authUser && (
-            <div className="content-card-box error-state"> {/* Added error-state class */}
+            <div className="content-card-box error-state">
               <p>User not loaded. Please ensure you are logged in.</p>
               <button onClick={() => window.location.href = '/login'}>Go to Login</button>
             </div>
@@ -477,7 +508,7 @@ export default function MyProfile() {
           {!authLoading && authUser && (
             <>
               {showVerificationPrompt && (
-                <div className="content-card-box verification-prompt"> {/* Added verification-prompt class */}
+                <div className="content-card-box verification-prompt">
                   <p>
                     <span role="img" aria-label="warning">⚠️</span>
                     Your email is not verified!
@@ -515,13 +546,13 @@ export default function MyProfile() {
                   >
                     <div className="mock-phone-scrollable-content">
                       <img
-                        src={state.coverPhoto || ''} // Ensure src is never undefined
+                        src={state.coverPhoto || ''}
                         alt="Cover"
                         className="mock-cover"
                       />
                       {(state.coverPhoto && state.coverPhoto.startsWith('blob:')) || (state.coverPhoto && state.coverPhoto !== initialStoreState.coverPhoto) ? (
                         <button
-                          className="remove-image-button cover-photo-remove" // Added specific class
+                          className="remove-image-button cover-photo-remove"
                           onClick={handleRemoveCoverPhoto}
                           aria-label="Remove cover photo"
                         >
@@ -544,14 +575,14 @@ export default function MyProfile() {
                             <div className="mock-about-header-group">
                               {state.avatar && (
                                 <img
-                                  src={state.avatar || ''} // Ensure src is never undefined
+                                  src={state.avatar || ''}
                                   alt="Avatar"
                                   className="mock-avatar"
                                 />
                               )}
                               {(state.avatar && state.avatar.startsWith('blob:')) || (state.avatar && state.avatar !== initialStoreState.avatar) ? (
                                 <button
-                                  className="remove-image-button avatar-remove" // Added specific class
+                                  className="remove-image-button avatar-remove"
                                   onClick={handleRemoveAvatar}
                                   aria-label="Remove avatar"
                                 >
@@ -573,22 +604,21 @@ export default function MyProfile() {
                           <p className="mock-section-title">My Work</p>
                           <div className="mock-work-gallery">
                             {state.workImages.map((img, i) => (
-                              <div key={i} className="mock-work-image-item-wrapper"> {/* Added wrapper for positioning X */}
+                              <div key={i} className="mock-work-image-item-wrapper">
                                 <img
-                                  src={img.preview || ''} // Ensure src is never undefined
+                                  src={img.preview || ''}
                                   alt={`work-${i}`}
                                   className="mock-work-image-item"
                                 />
                                 <button
                                   type="button"
-                                  className="remove-image-button work-image-remove" // Added specific class
+                                  className="remove-image-button work-image-remove"
                                   onClick={() => handleRemoveWorkImage(i)}
                                 >
                                   &times;
                                 </button>
                               </div>
                             ))}
-                            {/* Consolidated file input logic */}
                             <button
                               type="button"
                               onClick={() => {
@@ -603,7 +633,7 @@ export default function MyProfile() {
                                 document.body.appendChild(input);
                                 input.click();
                               }}
-                              className="add-work-image-button" // Added class
+                              className="add-work-image-button"
                             >
                               Choose files
                             </button>
@@ -715,7 +745,7 @@ export default function MyProfile() {
                         style={{ display: "none" }}
                       />
                       <div
-                        className="image-upload-area cover-photo-upload" // Added classes
+                        className="image-upload-area cover-photo-upload"
                         onClick={() => {
                           const input = document.createElement('input');
                           input.type = 'file';
@@ -776,7 +806,7 @@ export default function MyProfile() {
                         style={{ display: "none" }}
                       />
                       <div
-                        className="image-upload-area avatar-upload" // Added classes
+                        className="image-upload-area avatar-upload"
                         onClick={() => {
                           const input = document.createElement('input');
                           input.type = 'file';
@@ -792,7 +822,7 @@ export default function MyProfile() {
                         <img
                           src={state.avatar || ''}
                           alt="Avatar preview"
-                          className="avatar-preview" // Added class for avatar image
+                          className="avatar-preview"
                         />
                       </div>
                     </div>
@@ -821,7 +851,7 @@ export default function MyProfile() {
                       <label>My Work</label>
                       <div className="work-preview-row">
                         {state.workImages.map((img, i) => (
-                          <div key={i} className="work-image-item-wrapper"> {/* Renamed class */}
+                          <div key={i} className="work-image-item-wrapper">
                             <img
                               src={img.preview || ''}
                               alt={`work-${i}`}
@@ -829,7 +859,7 @@ export default function MyProfile() {
                             />
                             <button
                               type="button"
-                              className="remove-image-button work-image-remove" // Added class
+                              className="remove-image-button work-image-remove"
                               onClick={() => handleRemoveWorkImage(i)}
                             >
                               &times;
@@ -860,7 +890,7 @@ export default function MyProfile() {
                     <div className="input-block">
                       <label>My Services</label>
                       {state.services.map((s, i) => (
-                        <div key={i} className="editor-item-card"> {/* Renamed class to be more generic */}
+                        <div key={i} className="editor-item-card">
                           <input
                             type="text"
                             placeholder={`Service Name ${i + 1}`}
@@ -884,7 +914,7 @@ export default function MyProfile() {
                     <div className="input-block">
                       <label>Reviews</label>
                       {state.reviews.map((r, i) => (
-                        <div key={i} className="editor-item-card"> {/* Renamed class */}
+                        <div key={i} className="editor-item-card">
                           <input
                             type="text"
                             placeholder="Reviewer Name"
