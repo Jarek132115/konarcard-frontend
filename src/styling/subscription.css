@@ -152,11 +152,6 @@
         display: block;
     }
 
-    /* Adjust main content container padding to account for fixed header */
-    .main-content-container {
-        padding-top: calc(34px + 62px);
-        /* 62px is height of myprofile-mobile-header */
-    }
 }
 
 .body-no-scroll {

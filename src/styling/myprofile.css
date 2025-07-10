@@ -937,9 +937,7 @@
         padding-right: 20px;
         padding-bottom: 20px;
         height: auto;
-        /* IMPORTANT: Allow height to adjust to content */
         overflow-y: visible;
-        /* Ensure no internal scrolling here; let body/app-layout handle it */
     }
 
     /* Flex container for preview and editor - stack vertically on mobile */
