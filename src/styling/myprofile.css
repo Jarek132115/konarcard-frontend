@@ -116,6 +116,7 @@
     justify-content: center;
     align-items: flex-start;
     max-width: 1200px;
+    /* Keep max-width for desktop */
     width: 100%;
     margin: 0 auto;
 }
@@ -458,6 +459,7 @@
 .myprofile-editor-wrapper {
     position: relative;
     max-width: 600px;
+    /* Keep for desktop */
     width: 100%;
     min-width: 350px;
     flex: 1;
@@ -982,7 +984,6 @@
         padding-left: 20px;
         padding-right: 20px;
         padding-bottom: 20px;
-        /* Keep consistent padding from previous */
         height: auto;
         /* Allow height to adjust to content */
         overflow-y: visible;
@@ -997,21 +998,27 @@
         height: auto;
         /* Height adapts to content */
         max-width: 100%;
-        /* Take full width */
+        /* Ensure it takes full width of its parent */
+        width: 100%;
+        /* Explicitly set width to 100% */
         padding-bottom: 0;
-        /* Remove bottom padding here, apply to editor if needed */
+        margin: 0;
+        /* Remove auto margins that might center it and prevent full width */
     }
 
     /* Phone preview container on mobile */
     .myprofile-content {
         width: 100%;
+        /* Take full width of .myprofile-flex-container */
         max-width: 320px;
         /* Still constrain the phone width for better mobile preview */
         min-width: unset;
         height: auto;
         /* Height adapts to content */
-        flex-shrink: 0;
-        flex-grow: 0;
+        flex-shrink: 1;
+        /* Allow it to shrink if needed */
+        flex-grow: 1;
+        /* Allow it to grow if needed */
         position: relative;
     }
 
@@ -1025,14 +1032,16 @@
     /* Editor wrapper on mobile */
     .myprofile-editor-wrapper {
         width: 100%;
-        /* Full width of its parent */
-        max-width: 600px;
-        /* Still respect max-width for larger mobile screens if needed */
+        /* Take full width of .myprofile-flex-container */
+        max-width: 100%;
+        /* Crucial: Remove the desktop max-width constraint for mobile */
         min-width: unset;
         height: auto;
         /* Height adapts to content */
-        flex-shrink: 0;
-        flex-grow: 0;
+        flex-shrink: 1;
+        /* Allow it to shrink if needed */
+        flex-grow: 1;
+        /* Allow it to grow if needed */
     }
 
     /* Editor form on mobile */
