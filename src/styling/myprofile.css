@@ -124,6 +124,11 @@
     /* Keep max-width for desktop */
     width: 100%;
     margin: 0 auto;
+    /* IMPORTANT: Add padding to this container to provide space for shadows */
+    padding: 20px;
+    /* Adjust this value if shadows are still clipped, e.g., 30px */
+    box-sizing: border-box;
+    /* Ensure padding is included in the element's total size */
 }
 
 /* Phone Preview Container (desktop styles) */
@@ -153,6 +158,7 @@
     padding: 20px;
     text-align: center;
     box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1);
+    /* This is the shadow you want to see */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -948,11 +954,16 @@
         width: 100%;
         padding-bottom: 0;
         margin: 0;
+        /* Re-evaluate padding on mobile to accommodate shadows around the phone and editor */
+        padding: 20px;
+        /* Consistent padding for shadows on mobile */
+        box-sizing: border-box;
     }
 
     /* Phone preview container on mobile */
     .myprofile-content {
         width: 100%;
+        max-width: 320px;
         /* Still constrain the phone width for better mobile preview */
         min-width: unset;
         height: auto;
@@ -1002,6 +1013,7 @@
         /* FIX: Explicitly re-add background */
         overflow-y: visible;
         /* Content can push the height and scrolling is handled by app-layout */
+        /* Its own box-shadow needs space, which is now provided by .myprofile-flex-container padding */
     }
 
     /* MyProfile's own mobile header is superseded by Sidebar.css's comprehensive mobile header */
