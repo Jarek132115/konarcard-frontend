@@ -163,11 +163,13 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    /* FIX: Set a consistent gap for direct children of the scrollable content */
+    /* FIX: Set gap to 0. We'll use explicit margins for precise control. */
     gap: 0;
-    /* Temporarily set to 0, elements will use explicit margins */
+    padding: 0;
+    /* FIX: Remove padding here as it might add unwanted gaps at top/bottom of content */
     overflow-y: auto;
     padding-right: 5px;
+    /* Keep this for scrollbar spacing */
 }
 
 /* Hide scrollbar for aesthetics, but allow scrolling */
@@ -208,7 +210,6 @@
 .avatar-preview[src=""],
 .work-image-preview[src=""] {
     border: 1px dashed var(--border-color);
-    /* For actual preview, these background images will be overridden by src */
     background-image: url('../assets/images/background-hero.png');
     /* Default placeholder */
     background-size: cover;
@@ -233,7 +234,7 @@
     /* FIX: Set aspect ratio to 4x3.25 */
     border-radius: 0.75rem;
     margin-bottom: 12px;
-    /* FIX: 12px gap below cover photo */
+    /* FIX: 12px gap below cover photo to main heading */
 }
 
 /* Removed remove-image-button styles here since they are only in editor now */
@@ -377,12 +378,10 @@
     overflow: hidden;
     border-radius: 0.5rem;
     /* Apply consistent border-radius to wrapper */
-    /* Remove any explicit height/width here that might conflict with aspect-ratio */
 }
 
 .mock-work-gallery img.mock-work-image-item {
     width: 100%;
-    /* Fill wrapper */
     height: auto;
     /* Let aspect ratio determine height */
     aspect-ratio: 4 / 2.75;
@@ -393,12 +392,7 @@
     min-height: unset;
     background-color: var(--placeholder-bg);
     object-fit: cover;
-    /* This should make it fill. */
 }
-
-/* IMPORTANT: If the grey is still showing for empty work images, it means the placeholder image itself has the grey bar,
-   or the 'src' attribute is truly empty and the `background-size: cover` on the `background-image` for the placeholder
-   doesn't hide the entire grey area of the placeholder asset. If so, you'd need to replace the placeholder images. */
 
 
 .mock-services-list,
