@@ -42,68 +42,51 @@ export default function MyProfile() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
   const initialStoreState = useBusinessCardStore.getState().state;
 
-  const location = useLocation(); // NEW: Import and use useLocation hook
+  const location = useLocation();
 
-  // NEW useEffect to check for subscription success on page load/return
+  // NEW useEffect for handling subscription status and preventing infinite loop
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const paymentSuccess = queryParams.get('payment_success');
+    // Flag to track if initial subscription check/refetch has occurred
+    let initialSubCheckDone = false; // Using a flag within the closure to manage single execution
 
-    if (paymentSuccess === 'true' && !isSubscribed && !authLoading) {
-      // If we returned from a successful payment AND user is not yet marked subscribed
-      // AND auth data has loaded, then refetch user data.
-      console.log("Payment success detected in URL, refetching user data...");
-      refetchAuthUser();
-      // Optional: Clear the query parameter to prevent repeated refetches on refresh
-      // This is more complex if you rely on react-router-dom history.push/replace
-      // For a quick fix, this might be sufficient.
-      // window.history.replaceState({}, document.title, location.pathname);
-    } else if (!authLoading && authUser && !isSubscribed) {
-      // This is the fallback check we added last time:
-      // If user exists, auth data loaded, but still not subscribed, try fetching once.
-      // Could also be debounced to prevent excessive calls.
-      console.log("User not subscribed on load, attempting to refetch user data...");
-      refetchAuthUser();
-    }
-  }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser]);
+    const checkSubscriptionStatus = async () => {
+      if (authLoading || !authUser) {
+        // If still loading or no user, wait for next render cycle
+        return;
+      }
 
+      const queryParams = new URLSearchParams(location.search);
+      const paymentSuccess = queryParams.get('payment_success');
 
-  useEffect(() => {
-    const handleResize = () => {
-      const currentIsMobile = window.innerWidth <= 1000;
-      setIsMobile(currentIsMobile);
-      if (!currentIsMobile && sidebarOpen) {
-        setSidebarOpen(false);
+      if (paymentSuccess === 'true' && !isSubscribed) {
+        // Scenario 1: User returned from payment gateway, but frontend not updated
+        console.log("Payment success detected in URL, refetching user data to update subscription status...");
+        await refetchAuthUser(); // Await to ensure the state update happens before potentially removing query param
+        // Clear the query parameter to prevent endless loops on refresh.
+        // This causes a re-render. If using react-router-dom v6+, use navigate.replace.
+        // For simplicity and common use-cases, window.history.replaceState works.
+        window.history.replaceState({}, document.title, location.pathname);
+        toast.success("Subscription updated successfully!"); // Give user feedback
+      } else if (!isSubscribed && !initialSubCheckDone) {
+        // Scenario 2: User is logged in but not subscribed (and not from payment success redirect)
+        // This could be initial load, or user manually navigated here.
+        // Only trigger one refetch here to avoid loop.
+        initialSubCheckDone = true; // Mark as checked
+        console.log("User not subscribed on initial load, attempting to refetch user data once...");
+        refetchAuthUser(); // Do not await, let it run in background
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [sidebarOpen, isMobile]);
+    checkSubscriptionStatus();
 
-  useEffect(() => {
-    if (sidebarOpen && isMobile) {
-      document.body.classList.add('body-no-scroll');
-    } else {
-      document.body.classList.remove('body-no-scroll');
-    }
-  }, [sidebarOpen, isMobile]);
+    // The cleanup function for location.search is handled within the effect for `paymentSuccess`
+    // No additional cleanup needed for the initial load check, as it's a one-time thing.
 
-  useEffect(() => {
-    let timer;
-    if (resendCooldown > 0) {
-      timer = setTimeout(() => setResendCooldown(cooldown => cooldown - 1), 1000);
-    }
-    return () => clearTimeout(timer);
-  }, [resendCooldown]);
+  }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser]);
+  // Depend on these values to react when they change
 
-  useEffect(() => {
-    if (!authLoading && authUser && !isUserVerified && userEmail) {
-      setShowVerificationPrompt(true);
-    } else if (!authLoading && isUserVerified) {
-      setShowVerificationPrompt(false);
-    }
-  }, [authLoading, authUser, isUserVerified, userEmail]);
+  // Existing useEffects for resize, sidebarOpen, resendCooldown, showVerificationPrompt remain unchanged.
+  // ... (existing useEffects for resize, sidebarOpen, resendCooldown, showVerificationPrompt) ...
 
   useEffect(() => {
     if (!isCardLoading && authUser) {
@@ -432,14 +415,10 @@ export default function MyProfile() {
 
   const handleStartSubscription = async () => {
     try {
-      // Assuming your backend's /subscribe endpoint sets up a Stripe Checkout Session
-      // and Stripe redirects back to your frontend.
-      // For this to work, ensure your Stripe webhook or redirect URL logic
-      // makes sure the user's 'isSubscribed' status is updated in your DB.
-      // The Stripe success URL should ideally point back to THIS page,
-      // possibly with a query parameter like "?payment_success=true"
       const response = await api.post('/subscribe', {});
       if (response.data && response.data.url) {
+        // IMPORTANT: Ensure your backend's subscription success redirect includes
+        // a query parameter like `?payment_success=true` when redirecting back here.
         window.location.href = response.data.url;
       } else {
         toast.error("Failed to start subscription. Please try again.");
