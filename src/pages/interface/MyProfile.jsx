@@ -126,7 +126,7 @@ export default function MyProfile() {
           font: businessCard.style,
           mainHeading: businessCard.main_heading,
           subHeading: businessCard.sub_heading,
-          job_title: businessCard.job_title, // Keep original data field for saving
+          job_title: businessCard.job_title,
           full_name: businessCard.full_name,
           bio: businessCard.bio,
           avatar: businessCard.avatar,
@@ -474,11 +474,13 @@ export default function MyProfile() {
 
   // Helper to get image src for editor image previews (blob for new upload, URL for saved, empty for truly empty)
   const getEditorImageSrc = (imageState) => {
+    // Return imageState directly. If it's null, the img tag's src="" will trigger display: none in CSS.
     return imageState || '';
   };
 
   // Helper to determine if an image upload area should show "Add Image" text
   const showAddImageText = (imageState) => {
+    // Show text if imageState is null/empty string (no image)
     return !imageState;
   };
 
@@ -571,12 +573,13 @@ export default function MyProfile() {
                     style={{ fontFamily: state.font }}
                   >
                     <div className="mock-phone-scrollable-content">
-                      {/* Hero Section */}
                       <img
                         src={state.coverPhoto || previewPlaceholders.coverPhoto}
                         alt="Cover"
                         className="mock-cover"
                       />
+                      {/* Removed delete button from preview section */}
+
                       <h2 className="mock-title">{getPreviewText(state.mainHeading, previewPlaceholders.mainHeading)}</h2>
                       <p className="mock-subtitle">{getPreviewText(state.subHeading, previewPlaceholders.subHeading)}</p>
                       <button
@@ -585,86 +588,83 @@ export default function MyProfile() {
                       >
                         Exchange Contact
                       </button>
-
-                      {/* About Me Section */}
-                      <hr className="mock-section-divider" /> {/* Divider */}
-                      <div className="mock-about-container">
-                        <p className="mock-section-title">About me</p>
-                        <div className="mock-about-content-group">
-                          <div className="mock-about-header-group">
-                            <img
-                              src={state.avatar || previewPlaceholders.avatar}
-                              alt="Avatar"
-                              className="mock-avatar"
-                            />
-                            <div>
-                              <p className="mock-profile-name">{getPreviewText(state.full_name, previewPlaceholders.full_name)}</p>
-                              <p className="mock-profile-role">{getPreviewText(state.job_title, previewPlaceholders.job_title)}</p> {/* Displays as "Job Title" data, but we'll style to look like "Trade Title" */}
-                            </div>
-                          </div>
-                          <p className="mock-bio-text">{getPreviewText(state.bio, previewPlaceholders.bio)}</p>
-                        </div>
-                      </div>
-
-                      {/* My Work Section */}
-                      <hr className="mock-section-divider" /> {/* Divider */}
-                      <p className="mock-section-title">My Work</p> {/* Section Title for My Work */}
-                      <div className="mock-work-gallery">
-                        {state.workImages.map((img, i) => (
-                          <div key={i} className="mock-work-image-item-wrapper">
-                            <img
-                              src={img.preview || previewPlaceholders.workImages[0]?.preview || ''}
-                              alt={`work-${i}`}
-                              className="mock-work-image-item"
-                            />
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* My Services Section */}
-                      <hr className="mock-section-divider" /> {/* Divider */}
-                      <p className="mock-section-title">My Services</p> {/* Section Title for My Services */}
-                      <div className="mock-services-list">
-                        {state.services.map((s, i) => (
-                          <div key={i} className="mock-service-item">
-                            <p className="mock-service-name">{getPreviewText(s.name, previewPlaceholders.services[i]?.name || '')}</p>
-                            <span className="mock-service-price">{getPreviewText(s.price, previewPlaceholders.services[i]?.price || '')}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Reviews Section */}
-                      <hr className="mock-section-divider" /> {/* Divider */}
-                      <p className="mock-section-title">Reviews</p> {/* Section Title for Reviews */}
-                      <div className="mock-reviews-list">
-                        {state.reviews.map((r, i) => (
-                          <div key={i} className="mock-review-card">
-                            <div className="mock-star-rating">
-                              {Array(r.rating || 0).fill().map((_, starIdx) => (
-                                <span key={`filled-${starIdx}`}>★</span>
-                              ))}
-                              {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
-                                <span key={`empty-${starIdx}`} className="empty-star">★</span>
-                              ))}
-                            </div>
-                            <p className="mock-review-text">"{getPreviewText(r.text, previewPlaceholders.reviews[i]?.text || '')}"</p>
-                            <p className="mock-reviewer-name">{getPreviewText(r.name, previewPlaceholders.reviews[i]?.name || '')}</p>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Contact Details Section */}
-                      {(state.contact_email || state.phone_number) && ( // Only show if contact details are present
+                      {(state.full_name || state.job_title || state.bio || state.avatar) && (
                         <>
-                          <hr className="mock-section-divider" /> {/* Divider */}
-                          <p className="mock-section-title">Exchange Contact Details</p> {/* Section Title for Contact Details */}
-                          <div className="mock-contact-details-container">
-                            {state.contact_email && <p className="mock-contact-item">Email: {state.contact_email}</p>}
-                            {state.phone_number && <p className="mock-contact-item">Phone: {state.phone_number}</p>}
+                          <p className="mock-section-title">About me</p>
+                          <div className="mock-about-container">
+                            <div className="mock-about-content-group">
+                              <div className="mock-about-header-group">
+                                <img
+                                  src={state.avatar || previewPlaceholders.avatar}
+                                  alt="Avatar"
+                                  className="mock-avatar"
+                                />
+                                {/* Removed delete button from preview section */}
+                                <div>
+                                  <p className="mock-profile-name">{getPreviewText(state.full_name, previewPlaceholders.full_name)}</p>
+                                  <p className="mock-profile-role">{getPreviewText(state.job_title, previewPlaceholders.job_title)}</p>
+                                </div>
+                              </div>
+                              <p className="mock-bio-text">{getPreviewText(state.bio, previewPlaceholders.bio)}</p>
+                            </div>
                           </div>
                         </>
                       )}
 
+                      {(state.workImages && state.workImages.length > 0) && (
+                        <>
+                          <p className="mock-section-title">My Work</p>
+                          <div className="mock-work-gallery">
+                            {state.workImages.map((img, i) => (
+                              <div key={i} className="mock-work-image-item-wrapper">
+                                <img
+                                  src={img.preview || previewPlaceholders.workImages[0]?.preview || ''}
+                                  alt={`work-${i}`}
+                                  className="mock-work-image-item"
+                                />
+                                {/* Removed delete button from preview section */}
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
+
+                      {(state.services && state.services.length > 0) && (
+                        <>
+                          <p className="mock-section-title">My Services</p>
+                          <div className="mock-services-list">
+                            {state.services.map((s, i) => (
+                              <div key={i} className="mock-service-item">
+                                <p className="mock-service-name">{getPreviewText(s.name, previewPlaceholders.services[i]?.name || '')}</p>
+                                <span className="mock-service-price">{getPreviewText(s.price, previewPlaceholders.services[i]?.price || '')}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
+
+                      {(state.reviews && state.reviews.length > 0) && (
+                        <>
+                          <p className="mock-section-title">Reviews</p>
+                          <div className="mock-reviews-list">
+                            {state.reviews.map((r, i) => (
+                              <div key={i} className="mock-review-card">
+                                <div className="mock-star-rating">
+                                  {/* Use conditional rendering for stars */}
+                                  {Array(r.rating || 0).fill().map((_, starIdx) => (
+                                    <span key={`filled-${starIdx}`}>★</span>
+                                  ))}
+                                  {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
+                                    <span key={`empty-${starIdx}`} className="empty-star">★</span>
+                                  ))}
+                                </div>
+                                <p className="mock-review-text">"{getPreviewText(r.text, previewPlaceholders.reviews[i]?.text || '')}"</p>
+                                <p className="mock-reviewer-name">{getPreviewText(r.name, previewPlaceholders.reviews[i]?.name || '')}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -754,15 +754,6 @@ export default function MyProfile() {
                           alt="Cover"
                           className="cover-preview"
                         />
-                        {getEditorImageSrc(state.coverPhoto) && ( // Only show if an image is present
-                          <button
-                            className="remove-image-button editor-remove-button"
-                            onClick={handleRemoveCoverPhoto}
-                            aria-label="Remove cover photo"
-                          >
-                            &times;
-                          </button>
-                        )}
                       </div>
                     </div>
 
@@ -789,7 +780,7 @@ export default function MyProfile() {
                     </div>
 
                     <div className="input-block">
-                      <label htmlFor="jobTitle">Trade Title</label> {/* FIX: Changed label text */}
+                      <label htmlFor="jobTitle">Job Title</label>
                       <input
                         id="jobTitle"
                         type="text"
@@ -828,15 +819,6 @@ export default function MyProfile() {
                           alt="Avatar preview"
                           className="avatar-preview"
                         />
-                        {getEditorImageSrc(state.avatar) && ( // Only show if an image is present
-                          <button
-                            className="remove-image-button editor-remove-button" // Apply consistent class
-                            onClick={handleRemoveAvatar}
-                            aria-label="Remove avatar"
-                          >
-                            &times;
-                          </button>
-                        )}
                       </div>
                     </div>
 
@@ -862,10 +844,8 @@ export default function MyProfile() {
                       />
                     </div>
 
-                    <hr className="editor-section-divider" /> {/* FIX: Editor Divider */}
-                    <h3 className="editor-subtitle">My Work</h3> {/* FIX: Editor Section Title */}
                     <div className="input-block">
-                      <label>Work Images</label> {/* Changed label */}
+                      <label>My Work</label>
                       <div className="work-preview-row">
                         {state.workImages.map((img, i) => (
                           <div key={i} className="work-image-item-wrapper">
@@ -876,7 +856,7 @@ export default function MyProfile() {
                             />
                             <button
                               type="button"
-                              className="remove-image-button editor-remove-button" // Apply consistent class
+                              className="remove-image-button work-image-remove"
                               onClick={() => handleRemoveWorkImage(i)}
                             >
                               &times;
@@ -905,10 +885,8 @@ export default function MyProfile() {
                       </div>
                     </div>
 
-                    <hr className="editor-section-divider" /> {/* FIX: Editor Divider */}
-                    <h3 className="editor-subtitle">My Services</h3> {/* FIX: Editor Section Title */}
                     <div className="input-block">
-                      <label>Services</label> {/* Changed label */}
+                      <label>My Services</label>
                       {state.services.map((s, i) => (
                         <div key={i} className="editor-item-card">
                           <input
@@ -931,10 +909,8 @@ export default function MyProfile() {
                       </button>
                     </div>
 
-                    <hr className="editor-section-divider" /> {/* FIX: Editor Divider */}
-                    <h3 className="editor-subtitle">Reviews</h3> {/* FIX: Editor Section Title */}
                     <div className="input-block">
-                      <label>Client Reviews</label> {/* Changed label */}
+                      <label>Reviews</label>
                       {state.reviews.map((r, i) => (
                         <div key={i} className="editor-item-card">
                           <input
@@ -965,8 +941,9 @@ export default function MyProfile() {
                       </button>
                     </div>
 
-                    <hr className="editor-section-divider" /> {/* FIX: Editor Divider */}
-                    <h3 className="editor-subtitle">Exchange Contact Details</h3> {/* FIX: Editor Section Title */}
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">Exchange Contact Details</h3>
+
                     <div className="input-block">
                       <label htmlFor="contactEmail">Email Address</label>
                       <input

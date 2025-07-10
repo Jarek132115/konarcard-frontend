@@ -129,6 +129,10 @@
     justify-content: center;
     align-items: center;
     position: relative;
+    max-width: 320px;
+    width: 100%;
+    min-width: 250px;
+
     height: auto;
     max-height: 100%;
     aspect-ratio: 9 / 17;
@@ -141,8 +145,7 @@
     background: var(--primary-bg);
     border: 10px solid black;
     border-radius: 2.5rem;
-    padding: 20px;
-    /* Overall padding for the phone content */
+    padding: 20px; /* Overall padding for the phone content */
     text-align: center;
     box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
@@ -159,29 +162,23 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 0;
-    /* FIX: Set gap to 0. Use explicit margins below. */
-    padding: 0;
-    /* FIX: Remove padding here as it might add unwanted gaps at top/bottom of content */
+    gap: 0; /* FIX: Set gap to 0. We'll use explicit margins for precise control. */
+    padding: 0; /* FIX: Remove padding here as it might add unwanted gaps at top/bottom of content */
     overflow-y: auto;
-    padding-right: 5px;
-    /* Keep this for scrollbar spacing */
+    padding-right: 5px; /* Keep this for scrollbar spacing */
 }
 
 /* Hide scrollbar for aesthetics, but allow scrolling */
 .mock-phone-scrollable-content::-webkit-scrollbar {
     width: 5px;
 }
-
 .mock-phone-scrollable-content::-webkit-scrollbar-track {
     background: transparent;
 }
-
 .mock-phone-scrollable-content::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
 }
-
 .dark-mode .mock-phone-scrollable-content::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.2);
 }
@@ -193,12 +190,9 @@
     background-color: var(--placeholder-bg);
     display: block;
     object-fit: cover;
-    background-size: 50%;
-    /* Only applies if src is empty */
-    background-repeat: no-repeat;
-    /* Only applies if src is empty */
-    background-position: center;
-    /* Only applies if src is empty */
+    background-size: 50%; /* Only applies if src is empty */
+    background-repeat: no-repeat; /* Only applies if src is empty */
+    background-position: center; /* Only applies if src is empty */
 }
 
 /* Specific placeholder styling when src is empty */
@@ -206,47 +200,61 @@
 .avatar-preview[src=""],
 .work-image-preview[src=""] {
     border: 1px dashed var(--border-color);
-    background-image: url('../assets/images/background-hero.png');
-    /* Default placeholder */
-    background-size: cover;
-    /* Covers the entire placeholder area */
+    background-image: url('../assets/images/background-hero.png'); /* Default placeholder */
+    background-size: cover; /* Covers the entire placeholder area */
 }
 
 .avatar-preview[src=""] {
-    background-image: url('../assets/images/People.png');
-    /* Default placeholder */
+    background-image: url('../assets/images/People.png'); /* Default placeholder */
     background-size: cover;
 }
-
 .work-image-preview[src=""] {
-    background-image: url('/Interface-Preview/Work-Images1.png');
-    /* Default placeholder */
+    background-image: url('/Interface-Preview/Work-Images1.png'); /* Default placeholder */
     background-size: cover;
 }
 
 /* --- PREVIEW SECTION STYLING --- */
 
-/* Basic spacing for direct children in mock-phone-scrollable-content */
-/* Apply margin-bottom to each block to create consistent 36px gaps between them */
-.mock-phone-scrollable-content>*:not(:last-child) {
-    margin-bottom: 36px;
-    /* FIX: Default 36px gap for sections */
+/* New unified container for each major section in the preview */
+.mock-section-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Ensure it takes full width */
+    box-sizing: border-box;
+    /* Margin for consistent gap AFTER each section, except the last one which is handled by scrollable-content padding */
+    margin-bottom: 36px; /* FIX: Consistent 36px gap after each full section block */
+}
+/* Ensure no bottom margin on the last section-container */
+.mock-phone-scrollable-content > .mock-section-container:last-of-type {
+    margin-bottom: 0;
 }
 
-/* Specific overrides for elements within their block */
+
+/* Horizontal divider line between sections in preview */
+.mock-section-divider {
+    border: none;
+    border-top: 1px solid var(--border-color); /* Grey line */
+    margin: 36px 0; /* FIX: 36px gap for the divider itself */
+    width: 100%; /* Ensure it spans full width */
+    flex-shrink: 0; /* Prevent divider from shrinking */
+}
+/* Ensure first divider doesn't have top margin if it's the very first element after hero */
+.mock-phone-scrollable-content > .mock-section-divider:first-of-type {
+    margin-top: 0;
+}
+
+
 .mock-cover {
     width: 100%;
-    aspect-ratio: 4 / 3.25;
+    aspect-ratio: 4 / 3.25; /* FIX: Set aspect ratio to 4x3.25 */
     border-radius: 0.75rem;
-    margin-bottom: 12px;
-    /* FIX: 12px gap below cover photo to main heading */
+    margin-bottom: 12px; /* FIX: 12px gap below cover photo to main heading */
 }
 
 .mock-title {
     font-size: 2rem;
     font-weight: 700;
-    margin: 0;
-    /* Reset default margins */
+    margin: 0; /* Reset default margins */
     line-height: 1.2;
     color: var(--text-color);
 }
@@ -255,12 +263,9 @@
     font-size: 1rem;
     font-weight: 600;
     color: var(--subtle-text-color);
-    margin: 0;
-    /* Reset default margin */
-    margin-top: 6px;
-    /* FIX: 6px gap under main heading */
-    margin-bottom: 12px;
-    /* FIX: 12px gap under subheading to button */
+    margin: 0; /* Reset default margin */
+    margin-top: 6px; /* FIX: 6px gap under main heading */
+    margin-bottom: 12px; /* FIX: 12px gap under subheading to button */
 }
 
 .mock-button {
@@ -271,34 +276,17 @@
     border: none;
     font-weight: 700;
     font-size: 0.875rem;
-    margin: 0;
-    /* Reset default margin */
-    margin-top: 12px;
-    /* FIX: 12px gap under subheading */
+    margin: 0; /* Reset default margin */
     width: 100%;
     box-sizing: border-box;
     font-family: var(--main-font-family);
-    /* No margin-bottom here, as the parent general rule will handle it. */
+    /* No margin-bottom here, as the parent mock-section-container handles it. */
 }
-
-/* Horizontal divider line between sections in preview */
-.mock-section-divider {
-    border: none;
-    border-top: 1px solid var(--border-color);
-    /* Grey line */
-    margin: 0;
-    /* Handled by parent's margin-bottom rule */
-    width: 100%;
-    flex-shrink: 0;
-}
-
 
 .mock-section-title {
     font-size: 1rem;
-    margin: 0;
-    /* Reset default margin */
-    margin-bottom: 12px;
-    /* FIX: 12px gap below section title to its content */
+    margin: 0; /* Reset default margin */
+    margin-bottom: 12px; /* FIX: 12px gap below section title to its content */
     font-weight: 600;
     text-align: left;
     color: var(--text-color);
@@ -310,12 +298,11 @@
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    /* ~12px internal gap */
+    gap: 0.75rem; /* ~12px internal gap */
     text-align: left;
     width: 100%;
     box-sizing: border-box;
-    /* No margin-bottom here, as the parent general rule will handle it. */
+    /* No margin-bottom here, as the parent mock-section-container handles it. */
 }
 
 .mock-about-content-group {
@@ -326,12 +313,9 @@
 
 .mock-about-header-group {
     display: flex;
-    flex-direction: row;
-    /* Ensure row layout */
-    align-items: flex-start;
-    /* Align items to top */
-    gap: 0.75rem;
-    /* Space between avatar and text */
+    flex-direction: row; /* FIX: Ensure row layout */
+    align-items: flex-start; /* Align items to top */
+    gap: 0.75rem; /* Space between avatar and text */
 }
 
 .mock-avatar {
@@ -369,29 +353,24 @@
 }
 
 .mock-work-gallery {
-    display: grid;
-    /* FIX: Grid layout for 2 side-by-side */
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    /* Use auto-fill to allow 1 or 2 columns */
-    gap: 0.75rem;
-    /* FIX: Gap between work images (approx 12px) */
+    display: grid; /* FIX: Changed back to grid for 2-column layout */
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); /* Auto-fill with min 130px wide, 1fr if less */
+    gap: 0.75rem; /* FIX: Gap between work images (approx 12px) */
     width: 100%;
     padding: 0;
     background-color: transparent;
     border-radius: 0;
-    /* No margin-bottom here, as the parent general rule will handle it. */
+    /* No margin-bottom here, as the parent mock-section-container handles it. */
 }
 
 .mock-work-image-item-wrapper {
     position: relative;
     width: 100%;
-    /* Fill grid cell */
     height: auto;
     display: block;
     overflow: hidden;
     border-radius: 0.5rem;
-    border: 1px solid var(--border-color);
-    /* Add a border to individual work image previews */
+    border: 1px solid var(--border-color); /* Add a border to individual work image previews */
     box-sizing: border-box;
 }
 
@@ -413,13 +392,11 @@
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    /* Small internal gap */
+    gap: 0.5rem; /* Small internal gap */
     text-align: left;
     width: 100%;
     box-sizing: border-box;
 }
-
 .mock-contact-details-container .mock-contact-item {
     font-size: 0.9375rem;
     color: var(--text-color);
@@ -434,7 +411,7 @@
     flex-direction: column;
     gap: 0.625rem;
     width: 100%;
-    /* No margin-bottom here, as the parent general rule will handle it. */
+    /* No margin-bottom here, as the parent mock-section-container handles it. */
 }
 
 .mock-service-item,
@@ -524,23 +501,9 @@
 }
 
 .editor-subtitle {
-    /* Used for section titles in editor */
     font-size: 16px;
     font-weight: 600;
     margin-top: 10px;
-    /* Default margin, adjust as needed with dividers */
-    margin-bottom: 12px;
-    /* Consistent gap below title to input block */
-}
-
-.editor-section-divider {
-    /* FIX: New class for editor HR dividers */
-    border: none;
-    border-top: 1px solid var(--border-color);
-    /* Grey line */
-    margin: 36px 0;
-    /* FIX: Consistent 36px gap before and after divider */
-    width: 100%;
 }
 
 .input-block {
@@ -605,27 +568,23 @@
 .image-upload-area {
     cursor: pointer;
     display: flex;
-    flex-direction: column;
-    /* Allow text and image to stack */
+    flex-direction: column; /* Allow text and image to stack */
     align-items: center;
     justify-content: center;
     background-color: var(--card-bg);
     border-radius: 8px;
     overflow: hidden;
     position: relative;
-    border: 1px dashed var(--border-color);
-    /* To make it look like an upload area */
+    border: 1px dashed var(--border-color); /* To make it look like an upload area */
 }
 
 .image-upload-area .upload-text {
-    position: absolute;
-    /* Position text over image area */
+    position: absolute; /* Position text over image area */
     color: var(--subtle-text-color);
     font-size: 0.9rem;
     font-weight: 500;
     text-align: center;
-    z-index: 2;
-    /* Ensure text is above image */
+    z-index: 2; /* Ensure text is above image */
 }
 
 /* Hide the actual img when src is empty so only background/text shows */
@@ -640,8 +599,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: 1;
-    /* Ensure image is behind text if text is also present (though text should disappear if image is there) */
+    z-index: 1; /* Ensure image is behind text if text is also present (though text should disappear if image is there) */
 }
 
 
@@ -670,21 +628,16 @@
     border-radius: 50%;
 }
 
-/* FIX: Editor Image Remove Button Styling (Common to all editor X buttons) */
-.remove-image-button.editor-remove-button {
+/* New: Editor Image Remove Button Styling */
+.remove-image-button.editor-image-remove {
     position: absolute;
-    top: 8px;
-    /* Consistent top positioning */
-    right: 8px;
-    /* Consistent right positioning */
-    background-color: #dc3545;
-    /* Red background */
-    color: white;
-    /* White X */
+    top: 8px; /* FIX: Position top-right */
+    right: 8px; /* FIX: Position top-right */
+    background-color: #dc3545; /* Red background */
+    color: white; /* White X */
     border: none;
     border-radius: 50%;
     width: 28px;
-    /* Slightly larger for easier click */
     height: 28px;
     display: flex;
     align-items: center;
@@ -692,22 +645,90 @@
     cursor: pointer;
     font-size: 18px;
     font-weight: bold;
-    line-height: 1;
-    /* Align 'x' properly */
+    line-height: 1; /* Align 'x' properly */
     padding: 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    z-index: 3;
-    /* Ensure it's above image and text */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 3; /* Ensure it's above image and text */
 }
 
-.remove-image-button.editor-remove-button:hover {
-    background-color: #c82333;
-    /* Darker red on hover */
+.remove-image-button.editor-image-remove:hover {
+    background-color: #c82333; /* Darker red on hover */
 }
 
 
 .myprofile-editor .divider {
-    /* Existing generic divider, can keep or replace with editor-section-divider */
+    margin: 20px 0;
+    border: none;
+    border-top: 1px solid var(--border-color);
+}
+
+.work-preview-row {
+    display: grid; /* Changed from flex to grid for editor work images */
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); /* Adjust minmax for desired column width */
+    gap: 12px; /* Gap between grid items */
+}
+
+/* Ensure individual work image wrappers fit grid */
+.work-image-item-wrapper {
+    position: relative;
+    width: 100%; /* Fill grid cell */
+    height: auto; /* Let aspect ratio control height */
+    display: block; /* So it's a grid item */
+    overflow: hidden;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color); /* Add a border to individual work image previews */
+    box-sizing: border-box;
+}
+
+.work-image-preview {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 2.75; /* Set aspect ratio for consistency */
+    object-fit: cover;
+    border-radius: 0;
+}
+
+.work-image-item-wrapper .remove-image-button {
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #555;
+}
+
+.work-image-item-wrapper .remove-image-button:hover {
+    background: red;
+    color: white;
+}
+
+/* Special styling for the "Add Work Image" placeholder in the editor */
+.add-work-image-placeholder {
+    height: 100px; /* FIX: Set a fixed height that aligns with aspect ratio of other images */
+    min-height: 100px; /* Ensure it doesn't collapse too much */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    background-color: var(--placeholder-bg);
+    box-sizing: border-box;
+    cursor: pointer;
+}
+.add-work-image-placeholder .upload-text {
+    position: static;
+    margin-bottom: 0;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.add-work-image-placeholder img {
+    display: none; 
+}
+
+
+.myprofile-editor .divider {
     margin: 20px 0;
     border: none;
     border-top: 1px solid var(--border-color);
@@ -715,25 +736,18 @@
 
 .work-preview-row {
     display: grid;
-    /* For two-column layout */
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    /* Auto-fill with min 130px wide, 1fr if less */
     gap: 12px;
-    /* Gap between grid items */
 }
 
 .work-image-item-wrapper {
     position: relative;
     width: 100%;
-    /* Fill grid cell */
     height: auto;
-    /* Let aspect ratio control height */
     display: block;
-    /* So it's a grid item */
     overflow: hidden;
     border-radius: 0.5rem;
     border: 1px solid var(--border-color);
-    /* Add a border to individual work image previews */
     box-sizing: border-box;
 }
 
@@ -745,64 +759,325 @@
     border-radius: 0;
 }
 
+.work-image-item-wrapper .remove-image-button {
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #555;
+}
+.work-image-item-wrapper .remove-image-button:hover {
+    background: red;
+    color: white;
+}
 
 
-/* Special styling for the "Add Work Image" placeholder in the editor */
-.add-work-image-placeholder {
-    /* It now also behaves as a grid item */
-    height: 100px;
-    min-height: 100px;
+.add-work-image-button,
+.add-item-button {
+    margin-top: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    border: 1px solid var(--border-color);
+    background-color: var(--secondary-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background 0.2s;
+    border-radius: 8px;
+}
+
+.add-work-image-button:hover,
+.add-item-button:hover {
+    background-color: #eee;
+}
+
+.editor-item-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: column;
+    gap: 6px;
+    position: relative;
+}
+
+.editor-item-card input,
+.editor-item-card textarea {
+    margin-bottom: 0;
+}
+
+.remove-item-button {
+    align-self: flex-end;
+    padding: 4px 8px;
+    font-size: 12px;
+    border: 1px solid var(--border-color);
+    background-color: var(--secondary-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background 0.2s;
+    border-radius: 8px;
+}
+
+.remove-item-button:hover {
+    background-color: #fdd;
+    color: #c00;
+}
+
+.submit-button {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 16px;
+    border: none;
+    margin-top: auto;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+}
+
+.subscription-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px dashed var(--border-color);
+    z-index: 10;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.subscription-message {
+    background-color: var(--primary-bg);
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    z-index: 11;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.subscription-message h2 {
+    font-size: 24px;
+    color: var(--text-color);
+    margin-bottom: 0;
+}
+
+.subscription-message p {
+    font-size: 16px;
+    color: var(--subtle-text-color);
+    margin-bottom: 0;
+}
+
+.start-trial-button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 25px;
+    border: none;
     border-radius: 8px;
-    background-color: var(--placeholder-bg);
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.start-trial-button:hover {
+    background-color: #0056b3;
+}
+
+/* Verification Prompt and Loading/Error States */
+.content-card-box {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    border-radius: 8px;
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
     box-sizing: border-box;
+}
+
+.content-card-box.loading-state {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.content-card-box.error-state {
+    color: red;
+    border: 1px solid red;
+    background-color: #ffe6e6;
+}
+
+.content-card-box.error-state p {
+    margin-bottom: 10px;
+}
+
+.content-card-box.error-state button {
+    padding: 8px 15px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
 }
 
-.add-work-image-placeholder .upload-text {
-    position: static;
-    margin-bottom: 0;
-    font-size: 14px;
-    white-space: nowrap;
+.content-card-box.verification-prompt {
+    background-color: #fffbe6;
+    border: 1px solid #ffe58f;
 }
 
-.add-work-image-placeholder img {
-    display: none;
+.content-card-box.verification-prompt p {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: #555;
 }
 
+.content-card-box.verification-prompt p:first-child {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffcc00;
+}
 
-/* ... (rest of the CSS unchanged) ... */
+.content-card-box.verification-prompt form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.content-card-box.verification-prompt input[type="text"] {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.content-card-box.verification-prompt button[type="submit"] {
+    padding: 10px 15px;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.content-card-box.verification-prompt button[type="button"]:disabled {
+    background-color: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+}
+
 
 /* --- MOBILE SPECIFIC STYLES (Max-width 1000px) --- */
 @media (max-width: 1000px) {
-    /* ... (mobile styles, ensure consistency with new structural elements) ... */
 
-    /* Adjust mock-phone-scrollable-content gap for mobile if different */
-    .mock-phone-scrollable-content {
-        gap: 20px;
-        /* Example: smaller gap for mobile preview sections */
+    /* Main content container on mobile */
+    .main-content-container {
+        margin-left: 0;
+        padding-top: 70px;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 20px;
+        height: auto;
+        overflow-y: visible;
     }
 
-    /* Adjust editor-section-divider margins for mobile */
-    .editor-section-divider {
-        margin: 20px 0;
-        /* Example: smaller gap for mobile editor sections */
+    /* Flex container for preview and editor - stack vertically on mobile */
+    .myprofile-flex-container {
+        flex-direction: column;
+        gap: 40px;
+        align-items: center;
+        height: auto;
+        max-width: 100%;
+        padding-bottom: 0;
     }
 
-    /* Adjust work image grid for mobile if only one column desired */
-    .work-preview-row {
-        grid-template-columns: 1fr;
-        /* Force single column on mobile if desired */
+    /* Phone preview container on mobile */
+    .myprofile-content {
+        width: 100%;
+        max-width: 320px;
+        min-width: unset;
+        height: auto;
+        flex-shrink: 0;
+        flex-grow: 0;
+        position: relative;
+    }
+
+    /* Mock Phone on mobile - ensure it keeps aspect ratio but adapts to width */
+    .mock-phone {
+        padding: 1rem;
+        border-width: 0.375rem;
+        border-radius: 2rem;
+    }
+
+    /* Editor wrapper on mobile */
+    .myprofile-editor-wrapper {
+        width: 100%;
+        max-width: 600px;
+        min-width: unset;
+        height: auto;
+        flex-shrink: 0;
+        flex-grow: 0;
+    }
+
+    /* Editor form on mobile */
+    .myprofile-editor {
+        padding: 16px;
+        gap: 15px;
+        height: auto;
+        overflow-y: visible;
+    }
+
+    /* MyProfile's own mobile header is superseded by Sidebar.css's comprehensive mobile header */
+    .myprofile-mobile-header {
+        display: none;
     }
 }
 
 @media (max-width: 400px) {
+    .main-content-container {
+        padding: 15px;
+        padding-top: 70px;
+    }
 
-    /* ... (even smaller mobile adjustments) ... */
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .page-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .header-button {
+        flex: 1;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .mock-phone {
+        padding: 1rem;
+        border-width: 0.375rem;
+        border-radius: 2rem;
+    }
+
     .mock-title {
         font-size: 1.8rem;
     }
@@ -818,11 +1093,13 @@
 
     .mock-section-title {
         font-size: 0.9rem;
+        margin-top: 1rem;
         margin-bottom: 0.5rem;
     }
 
     .mock-about-container {
         padding: 0.6rem;
+        gap: 0.6rem;
     }
 
     .mock-avatar {
@@ -838,9 +1115,20 @@
         font-size: 0.8rem;
     }
 
-    .mock-service-item,
-    .mock-review-card {
+    .mock-service-item {
         padding: 0.6rem 0.8rem;
+    }
+
+    .mock-service-name {
+        font-size: 0.875rem;
+    }
+
+    .mock-service-price {
+        font-size: 0.75rem;
+    }
+
+    .mock-review-card {
+        padding: 0.8rem;
     }
 
     .mock-star-rating {
