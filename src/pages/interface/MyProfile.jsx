@@ -1,10 +1,8 @@
-// frontend/src/pages/interface/MyProfile.jsx
-
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
+import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore"; // Ensure previewPlaceholders is imported
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
   useCreateBusinessCard,
@@ -24,7 +22,7 @@ export default function MyProfile() {
   const workImageInputRef = useRef(null);
   const createBusinessCard = useCreateBusinessCard();
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
-  const isSubscribed = authUser?.isSubscribed || false;
+  const isSubscribed = authUser?.isSubscribed || false; // Important for conditional logic
   const userId = authUser?._id;
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
@@ -41,7 +39,7 @@ export default function MyProfile() {
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
   const [activeBlobUrls, setActiveBlobUrls] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000); // This state will drive the conditional rendering
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
   const initialStoreState = useBusinessCardStore.getState().state;
 
@@ -482,16 +480,23 @@ export default function MyProfile() {
     return !imageState;
   };
 
-  // Helper to get preview text for mock phone display (uses initial template if field is empty)
+  // ********************************************************************************
+  // REVISED HELPER FUNCTIONS FOR PREVIEW SECTION CONTENT
+  // These will now strictly show placeholders if !isSubscribed, otherwise user data.
+  // ********************************************************************************
+
+  // Helper to get preview text for mock phone display
   const getPreviewText = (fieldValue, placeholderText) => {
-    // Use placeholder only if the field is empty AND it's a new card (no businessCard data loaded yet)
-    return (businessCard && businessCard.hasOwnProperty(fieldValue) ? fieldValue : (fieldValue || placeholderText));
+    // If subscribed, show the actual field value (or empty if user cleared it).
+    // If NOT subscribed, ALWAYS show the specific placeholder text for that field.
+    return isSubscribed ? (fieldValue || '') : placeholderText;
   };
 
-  // Helper to get preview image for mock phone display (uses initial template if field is empty)
+  // Helper to get preview image for mock phone display
   const getPreviewImageSrc = (imageState, placeholderPath) => {
-    // Use placeholder image only if imageState is empty AND it's a new card (no businessCard data loaded yet)
-    return (businessCard ? imageState : (imageState || placeholderPath));
+    // If subscribed, show the actual image state (or empty if user removed it).
+    // If NOT subscribed, ALWAYS show the specific placeholder image.
+    return isSubscribed ? (imageState || '') : placeholderPath;
   };
 
 
@@ -592,12 +597,14 @@ export default function MyProfile() {
                     style={{ fontFamily: state.font }}
                   >
                     <div className="mock-phone-scrollable-content">
+                      {/* Cover Photo */}
                       <img
                         src={getPreviewImageSrc(state.coverPhoto, previewPlaceholders.coverPhoto)}
                         alt="Cover"
                         className="mock-cover"
                       />
 
+                      {/* Main and Sub Heading */}
                       <h2 className="mock-title">{getPreviewText(state.mainHeading, previewPlaceholders.mainHeading)}</h2>
                       <p className="mock-subtitle">{getPreviewText(state.subHeading, previewPlaceholders.subHeading)}</p>
                       <button
@@ -607,8 +614,8 @@ export default function MyProfile() {
                         Exchange Contact
                       </button>
 
-                      {/* About Me Section - Conditional display based on user data, or if new card (show placeholders) */}
-                      {(state.full_name || state.job_title || state.bio || state.avatar || !businessCard) && (
+                      {/* About Me Section - Always show section in preview if there's user data or if NOT SUBSCRIBED (with placeholders) */}
+                      {(isSubscribed && (state.full_name || state.job_title || state.bio || state.avatar)) || !isSubscribed ? (
                         <>
                           <p className="mock-section-title">About me</p>
                           <div className="mock-about-container">
@@ -628,14 +635,15 @@ export default function MyProfile() {
                             </div>
                           </div>
                         </>
-                      )}
+                      ) : null}
 
-                      {/* My Work Section - Conditional display based on user data, or if new card (show placeholders) */}
-                      {(state.workImages && state.workImages.length > 0) || !businessCard ? (
+                      {/* My Work Section - Always show section in preview if there's user data or if NOT SUBSCRIBED (with placeholders) */}
+                      {(isSubscribed && (state.workImages && state.workImages.length > 0)) || !isSubscribed ? (
                         <>
                           <p className="mock-section-title">My Work</p>
                           <div className="mock-work-gallery">
-                            {(state.workImages && state.workImages.length > 0) ? (
+                            {(isSubscribed && state.workImages && state.workImages.length > 0) ? (
+                              // Show user's actual work images if subscribed AND they exist
                               state.workImages.map((img, i) => (
                                 <div key={i} className="mock-work-image-item-wrapper">
                                   <img
@@ -645,7 +653,8 @@ export default function MyProfile() {
                                   />
                                 </div>
                               ))
-                            ) : ( // Show placeholder work images if no user images AND new card
+                            ) : ( // Otherwise, show placeholder work images (if not subscribed, or subscribed but no user images)
+                              // For placeholders, ensure valid index for previewPlaceholders.workImages
                               previewPlaceholders.workImages.map((img, i) => (
                                 <div key={i} className="mock-work-image-item-wrapper">
                                   <img
@@ -661,19 +670,21 @@ export default function MyProfile() {
                       ) : null}
 
 
-                      {/* My Services Section - Conditional display based on user data, or if new card (show placeholders) */}
-                      {(state.services && state.services.length > 0) || !businessCard ? (
+                      {/* My Services Section - Always show section in preview if there's user data or if NOT SUBSCRIBED (with placeholders) */}
+                      {(isSubscribed && (state.services && state.services.length > 0)) || !isSubscribed ? (
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="mock-services-list">
-                            {(state.services && state.services.length > 0) ? (
+                            {(isSubscribed && state.services && state.services.length > 0) ? (
+                              // Show user's actual services if subscribed AND they exist
                               state.services.map((s, i) => (
                                 <div key={i} className="mock-service-item">
                                   <p className="mock-service-name">{getPreviewText(s.name, previewPlaceholders.services[i]?.name || '')}</p>
                                   <span className="mock-service-price">{getPreviewText(s.price, previewPlaceholders.services[i]?.price || '')}</span>
                                 </div>
                               ))
-                            ) : ( // Show placeholder services if no user services AND new card
+                            ) : ( // Otherwise, show placeholder services (if not subscribed, or subscribed but no user services)
+                              // For placeholders, ensure valid index for previewPlaceholders.services
                               previewPlaceholders.services.map((s, i) => (
                                 <div key={i} className="mock-service-item">
                                   <p className="mock-service-name">{s.name}</p>
@@ -685,12 +696,13 @@ export default function MyProfile() {
                         </>
                       ) : null}
 
-                      {/* Reviews Section - Conditional display based on user data, or if new card (show placeholders) */}
-                      {(state.reviews && state.reviews.length > 0) || !businessCard ? (
+                      {/* Reviews Section - Always show section in preview if there's user data or if NOT SUBSCRIBED (with placeholders) */}
+                      {(isSubscribed && (state.reviews && state.reviews.length > 0)) || !isSubscribed ? (
                         <>
                           <p className="mock-section-title">Reviews</p>
                           <div className="mock-reviews-list">
-                            {(state.reviews && state.reviews.length > 0) ? (
+                            {(isSubscribed && state.reviews && state.reviews.length > 0) ? (
+                              // Show user's actual reviews if subscribed AND they exist
                               state.reviews.map((r, i) => (
                                 <div key={i} className="mock-review-card">
                                   <div className="mock-star-rating">
@@ -705,7 +717,8 @@ export default function MyProfile() {
                                   <p className="mock-reviewer-name">{getPreviewText(r.name, previewPlaceholders.reviews[i]?.name || '')}</p>
                                 </div>
                               ))
-                            ) : ( // Show placeholder reviews if no user reviews AND new card
+                            ) : ( // Otherwise, show placeholder reviews (if not subscribed, or subscribed but no user reviews)
+                              // For placeholders, ensure valid index for previewPlaceholders.reviews
                               previewPlaceholders.reviews.map((r, i) => (
                                 <div key={i} className="mock-review-card">
                                   <div className="mock-star-rating">
