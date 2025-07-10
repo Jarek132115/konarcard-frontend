@@ -36,7 +36,9 @@
     max-width: 480px;
     /* Slightly wider modal */
     max-height: 90vh;
+    /* Keep this, but optimize internal content */
     overflow-y: auto;
+    /* Keep scrolling for content */
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -292,15 +294,80 @@ body.dark-mode .qr-code-image-container {
 
 /* --- Responsive Adjustments --- */
 @media (max-width: 400px) {
+    .share-modal-overlay {
+        /* On very small screens, reduce padding to allow more modal height */
+        padding: 0.75rem;
+    }
+
     .share-modal-content {
         padding: 1.5rem;
+        /* Reduced padding for more content space */
+        gap: 1.5rem;
+        /* Reduced gap between sections */
+        max-height: 95vh;
+        /* Allow it to take up more of the screen height if needed */
+        /* Ensure that the modal can truly scroll if its content is too tall */
+    }
+
+    .share-modal-close-button {
+        top: 0.75rem;
+        /* Move close button closer to the corner */
+        right: 0.75rem;
+        font-size: 1.5rem;
+        /* Slightly smaller close button */
+    }
+
+    .share-modal-title {
+        font-size: 1.3rem;
+        /* Slightly smaller title */
+        margin-bottom: 0.5rem;
+        /* Reduced margin below title */
+    }
+
+    .share-link-input {
+        padding: 0.7rem 1rem;
+        /* Smaller padding for input */
+        font-size: 0.9rem;
+        /* Smaller font size for input */
+    }
+
+    .share-action-buttons {
+        flex-direction: column;
+        /* Stack buttons vertically on small screens */
+        gap: 0.6rem;
+        /* Smaller gap between stacked buttons */
     }
 
     .share-button-primary,
     .share-button-secondary {
         min-width: unset;
-        /* Remove min-width to allow full stacking */
         width: 100%;
         /* Force full width on very small screens */
+        padding: 0.75rem 1rem;
+        /* Smaller padding for buttons */
+        font-size: 0.9rem;
+        /* Smaller font size for buttons */
+        gap: 0.4rem;
+        /* Smaller gap between text and icon */
+    }
+
+    .qr-code-section {
+        padding-top: 1rem;
+        /* Reduced padding top for QR section */
+        gap: 0.75rem;
+        /* Reduced gap within QR section */
+    }
+
+    .qr-code-image-container {
+        padding: 0.5rem;
+        /* Smaller padding around QR code */
+        margin-bottom: 0.75rem;
+        /* Smaller margin below QR image */
+    }
+
+    .share-qr-code-image {
+        width: 150px;
+        /* Slightly smaller QR code image */
+        height: 150px;
     }
 }
