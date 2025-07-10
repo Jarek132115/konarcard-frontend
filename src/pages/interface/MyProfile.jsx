@@ -112,17 +112,14 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // FIX: Modified this useEffect to handle initial empty vs. saved data in a distinct way
   useEffect(() => {
     if (!isCardLoading && authUser && !hasLoadedInitialCardData) {
-      setHasLoadedInitialCardData(true); // Ensure this runs only once per user's card load
+      setHasLoadedInitialCardData(true);
 
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
       if (businessCard) {
-        // If a businessCard exists, update the store state with fetched data.
-        // Fallback to initialStoreState for any null/empty fields fetched from DB.
         updateState({
           businessName: businessCard.business_card_name || initialStoreState.businessName,
           pageTheme: businessCard.page_theme || initialStoreState.pageTheme,
@@ -142,10 +139,7 @@ export default function MyProfile() {
         });
         console.log("MyProfile: Updated store state with fetched business card data for existing user.");
       } else {
-        // If businessCard is null (new user, no card saved yet),
-        // reset store state to its initial (template/placeholder) values.
-        // The editor fields will then show as blank based on their conditional `value` prop.
-        resetState(); // Resetting here ensures preview shows placeholders
+        resetState();
         console.log("MyProfile: No business card found, resetting store state to initial placeholders for new user.");
       }
 
@@ -361,14 +355,12 @@ export default function MyProfile() {
       return;
     }
 
-    // Determine which work images to upload (new files) and which to keep (existing URLs)
     const worksToUpload = state.workImages
       .map(item => {
-        if (item.file) { // New file from local selection
+        if (item.file) {
           return { file: item.file };
         }
-        // Existing URL that was previously saved (not a blob from current session and not from initial template)
-        else if (item.preview && !item.preview.startsWith('blob:') && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
+        else if (item.preview && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
           return item.preview;
         }
         return null;
@@ -385,11 +377,11 @@ export default function MyProfile() {
       full_name: state.full_name,
       bio: state.bio,
       user: userId,
-      cover_photo: coverPhotoFile, // New file
-      avatar: avatarFile,         // New file
+      cover_photo: coverPhotoFile,
+      avatar: avatarFile,
       cover_photo_removed: coverPhotoRemoved,
       avatar_removed: isAvatarRemoved,
-      works: worksToUpload, // Array of new files + existing URLs
+      works: worksToUpload,
       services: state.services,
       reviews: state.reviews,
       contact_email: state.contact_email,
@@ -403,7 +395,6 @@ export default function MyProfile() {
       if (response.data && response.data.data) {
         const fetchedCardData = response.data.data;
 
-        // After successful save, update the state with the newly saved data from backend
         updateState({
           businessName: fetchedCardData.business_card_name,
           pageTheme: fetchedCardData.page_theme,
@@ -426,11 +417,9 @@ export default function MyProfile() {
         });
       }
 
-      // Clear any temporary blob URLs after save as they are no longer needed
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
-      // Reset file input states
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
@@ -500,6 +489,7 @@ export default function MyProfile() {
 
   // Helper to determine if an image upload area should show "Add Image" text
   const showAddImageText = (imageState) => {
+    // Show text if NO businessCard (new user) OR if businessCard exists but imageState is empty/null (image removed or never set)
     return !businessCard || !imageState;
   };
 
@@ -764,10 +754,9 @@ export default function MyProfile() {
                           input.click();
                         }}
                       >
-                        {/* If no image, show "Add Cover Photo" text */}
                         {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
                         <img
-                          src={getEditorImageSrc(state.coverPhoto)} 
+                          src={getEditorImageSrc(state.coverPhoto)}
                           alt="Cover"
                           className="cover-preview"
                         />
@@ -781,7 +770,7 @@ export default function MyProfile() {
                         type="text"
                         value={getEditorValue(state.mainHeading)}
                         onChange={(e) => updateState({ mainHeading: e.target.value })}
-                        placeholder={initialStoreState.mainHeading} 
+                        placeholder={initialStoreState.mainHeading}
                       />
                     </div>
 
@@ -790,7 +779,7 @@ export default function MyProfile() {
                       <input
                         id="subHeading"
                         type="text"
-                        value={getEditorValue(state.subHeading)} 
+                        value={getEditorValue(state.subHeading)}
                         onChange={(e) => updateState({ subHeading: e.target.value })}
                         placeholder={initialStoreState.subHeading}
                       />
@@ -801,7 +790,7 @@ export default function MyProfile() {
                       <input
                         id="jobTitle"
                         type="text"
-                        value={getEditorValue(state.job_title)} 
+                        value={getEditorValue(state.job_title)}
                         onChange={(e) => updateState({ job_title: e.target.value })}
                         placeholder={initialStoreState.job_title}
                       />
@@ -830,7 +819,6 @@ export default function MyProfile() {
                           input.click();
                         }}
                       >
-                        {/* If no image, show "Add Profile Photo" text */}
                         {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
                         <img
                           src={getEditorImageSrc(state.avatar)}
@@ -845,7 +833,7 @@ export default function MyProfile() {
                       <input
                         id="fullName"
                         type="text"
-                        value={getEditorValue(state.full_name)} 
+                        value={getEditorValue(state.full_name)}
                         onChange={(e) => updateState({ full_name: e.target.value })}
                         placeholder={initialStoreState.full_name}
                       />
@@ -865,7 +853,8 @@ export default function MyProfile() {
                     <div className="input-block">
                       <label>My Work</label>
                       <div className="work-preview-row">
-                        {state.workImages.map((img, i) => (
+                        {/* FIX: Conditionally render saved work images only if businessCard exists */}
+                        {businessCard && state.workImages.map((img, i) => ( // Only map if businessCard is present
                           <div key={i} className="work-image-item-wrapper">
                             <img
                               src={img.preview || ''}
@@ -882,9 +871,8 @@ export default function MyProfile() {
                             </button>
                           </div>
                         ))}
-                        {/* Removed the "Choose files" button from here. Work images are added by clicking the new placeholder/image. */}
-                        {/* Display "Add Work Image" if there are no work images or if placeholder is showing */}
-                        {(state.workImages.length === 0 || !businessCard) && ( // Show if no images or new user
+                        {/* FIX: Display "Add Work Image" placeholder if no businessCard exists OR if businessCard exists but state.workImages is empty (meaning all were removed by user) */}
+                        {(!businessCard || (businessCard && state.workImages.length === 0)) && (
                           <div
                             className="image-upload-area add-work-image-placeholder"
                             onClick={() => {

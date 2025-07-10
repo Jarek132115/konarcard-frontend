@@ -348,9 +348,9 @@
 
 .mock-work-gallery {
     display: flex;
-    /* Changed from grid to flex */
+    /* FIX: Changed from grid to flex */
     flex-direction: column;
-    /* Stack items vertically */
+    /* FIX: Stack items vertically */
     gap: 0.75rem;
     /* FIX: Gap between work images (approx 12px) */
     width: 100%;
@@ -570,6 +570,7 @@
 
 .image-upload-area .upload-text {
     position: absolute;
+    /* Position text over image area */
     color: var(--subtle-text-color);
     font-size: 0.9rem;
     font-weight: 500;
@@ -606,6 +607,76 @@
     border-radius: 50%;
 }
 
+.cover-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.avatar-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.myprofile-editor .divider {
+    margin: 20px 0;
+    border: none;
+    border-top: 1px solid var(--border-color);
+}
+
+.work-preview-row {
+    display: flex;
+    /* Changed from grid to flex for editor work images */
+    flex-direction: column;
+    /* Stack images vertically */
+    gap: 12px;
+    /* Gap between work image items */
+}
+
+.work-image-item-wrapper {
+    position: relative;
+    width: 100%;
+    /* Full width in editor */
+    height: auto;
+    /* Allow aspect ratio to control height */
+    display: block;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    /* Add a border to individual work image previews */
+    box-sizing: border-box;
+    /* Include padding/border in width */
+}
+
+.work-image-preview {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 2.75;
+    /* Set aspect ratio for consistency */
+    object-fit: cover;
+    border-radius: 0;
+}
+
+.work-image-item-wrapper .remove-image-button {
+    top: 5px;
+    /* Adjust positioning */
+    right: 5px;
+    width: 24px;
+    /* Slightly larger for easier click */
+    height: 24px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #555;
+}
+
+.work-image-item-wrapper .remove-image-button:hover {
+    background: red;
+    color: white;
+}
+
 /* Special styling for work image upload area when empty */
 .add-work-image-placeholder {
     width: 100%;
@@ -614,6 +685,8 @@
     /* Adjust height as needed for the placeholder */
     display: flex;
     /* Ensure flex properties apply */
+    flex-direction: column;
+    /* Allow text and image to stack */
     justify-content: center;
     align-items: center;
     border: 1px dashed var(--border-color);
@@ -621,11 +694,13 @@
     background-color: var(--placeholder-bg);
     margin-top: 12px;
     /* Small gap if images above exist */
+    box-sizing: border-box;
 }
 
 .add-work-image-placeholder .upload-text {
     position: static;
-    /* Text should be centered normally */
+    /* Text should be centered normally within its flex container */
+    margin-bottom: 0;
 }
 
 
@@ -932,12 +1007,8 @@
 
     /* Mock Phone on mobile - ensure it keeps aspect ratio but adapts to width */
     .mock-phone {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 9 / 17;
-        border-color: black;
-        padding: 15px;
-        border-width: 8px;
+        padding: 1rem;
+        border-width: 0.375rem;
         border-radius: 2rem;
     }
 
