@@ -5,15 +5,15 @@ import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore from "../../store/businessCardStore";
-import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard"; // Corrected import
+import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
-} from "../../hooks/useCreateBiz"; // Corrected import
+} from "../../hooks/useCreateBiz";
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import ShareProfile from "../../components/ShareProfile";
-import { AuthContext } from '../../components/AuthContext'; // Corrected import
+import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
@@ -112,14 +112,17 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
+  // FIX: Modified this useEffect to handle initial empty vs. saved data in a distinct way
   useEffect(() => {
     if (!isCardLoading && authUser && !hasLoadedInitialCardData) {
-      setHasLoadedInitialCardData(true);
+      setHasLoadedInitialCardData(true); // Ensure this runs only once per user's card load
 
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
       if (businessCard) {
+        // If a businessCard exists, update the store state with fetched data.
+        // Fallback to initialStoreState for any null/empty fields fetched from DB.
         updateState({
           businessName: businessCard.business_card_name || initialStoreState.businessName,
           pageTheme: businessCard.page_theme || initialStoreState.pageTheme,
@@ -137,10 +140,13 @@ export default function MyProfile() {
           contact_email: businessCard.contact_email || initialStoreState.contact_email,
           phone_number: businessCard.phone_number || initialStoreState.phone_number,
         });
-        console.log("MyProfile: Updated state with fetched business card data.");
+        console.log("MyProfile: Updated store state with fetched business card data for existing user.");
       } else {
-        resetState();
-        console.log("MyProfile: No business card found, resetting state to initial placeholders (once).");
+        // If businessCard is null (new user, no card saved yet),
+        // reset store state to its initial (template/placeholder) values.
+        // The editor fields will then show as blank based on their conditional `value` prop.
+        resetState(); // Resetting here ensures preview shows placeholders
+        console.log("MyProfile: No business card found, resetting store state to initial placeholders for new user.");
       }
 
       setCoverPhotoFile(null);
@@ -355,12 +361,14 @@ export default function MyProfile() {
       return;
     }
 
+    // Determine which work images to upload (new files) and which to keep (existing URLs)
     const worksToUpload = state.workImages
       .map(item => {
-        if (item.file) {
+        if (item.file) { // New file from local selection
           return { file: item.file };
         }
-        else if (item.preview && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
+        // Existing URL that was previously saved (not a blob from current session and not from initial template)
+        else if (item.preview && !item.preview.startsWith('blob:') && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
           return item.preview;
         }
         return null;
@@ -377,11 +385,11 @@ export default function MyProfile() {
       full_name: state.full_name,
       bio: state.bio,
       user: userId,
-      cover_photo: coverPhotoFile,
-      avatar: avatarFile,
+      cover_photo: coverPhotoFile, // New file
+      avatar: avatarFile,         // New file
       cover_photo_removed: coverPhotoRemoved,
       avatar_removed: isAvatarRemoved,
-      works: worksToUpload,
+      works: worksToUpload, // Array of new files + existing URLs
       services: state.services,
       reviews: state.reviews,
       contact_email: state.contact_email,
@@ -395,6 +403,7 @@ export default function MyProfile() {
       if (response.data && response.data.data) {
         const fetchedCardData = response.data.data;
 
+        // After successful save, update the state with the newly saved data from backend
         updateState({
           businessName: fetchedCardData.business_card_name,
           pageTheme: fetchedCardData.page_theme,
@@ -417,9 +426,11 @@ export default function MyProfile() {
         });
       }
 
+      // Clear any temporary blob URLs after save as they are no longer needed
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
+      // Reset file input states
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
@@ -472,6 +483,26 @@ export default function MyProfile() {
     phone_number: state.phone_number || '',
     username: userUsername || '',
   };
+
+  // Helper to determine if the editor input should show actual data or be blank
+  const getEditorValue = (fieldValue) => {
+    // If businessCard exists, show the actual value (even if it's currently null/empty string for that field).
+    // If businessCard is null (new user), show an empty string in the editor input.
+    return businessCard ? (fieldValue || '') : '';
+  };
+
+  // Helper to determine the image source for editor upload areas
+  const getEditorImageSrc = (imageState) => {
+    // If businessCard exists AND imageState has a value, use it.
+    // Otherwise, show an empty string so the placeholder background image/text is visible.
+    return businessCard && imageState ? imageState : '';
+  };
+
+  // Helper to determine if an image upload area should show "Add Image" text
+  const showAddImageText = (imageState) => {
+    return !businessCard || !imageState;
+  };
+
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -550,6 +581,7 @@ export default function MyProfile() {
               )}
 
               <div className="myprofile-flex-container">
+                {/* Mock Phone Preview Section */}
                 <div className="myprofile-content">
                   <div
                     className={`mock-phone ${state.pageTheme === "dark" ? "dark-mode" : ""}`}
@@ -573,7 +605,6 @@ export default function MyProfile() {
                       </button>
                       {(state.full_name || state.job_title || state.bio || state.avatar) && (
                         <>
-                          {/* FIX: Section title is outside the content container */}
                           <p className="mock-section-title">About me</p>
                           <div className="mock-about-container">
                             <div className="mock-about-content-group">
@@ -585,7 +616,7 @@ export default function MyProfile() {
                                     className="mock-avatar"
                                   />
                                 )}
-                                {/* Removed delete button from preview section as per instructions */}
+                                {/* Removed delete button from preview section */}
                                 <div>
                                   <p className="mock-profile-name">{state.full_name}</p>
                                   <p className="mock-profile-role">{state.job_title}</p>
@@ -599,7 +630,6 @@ export default function MyProfile() {
 
                       {(state.workImages && state.workImages.length > 0) && (
                         <>
-                          {/* FIX: Section title is outside the content container */}
                           <p className="mock-section-title">My Work</p>
                           <div className="mock-work-gallery">
                             {state.workImages.map((img, i) => (
@@ -609,17 +639,15 @@ export default function MyProfile() {
                                   alt={`work-${i}`}
                                   className="mock-work-image-item"
                                 />
-                                {/* Removed delete button from preview section as per instructions */}
+                                {/* Removed delete button from preview section */}
                               </div>
                             ))}
-                            {/* The "Choose files" button remains only in the editor */}
                           </div>
                         </>
                       )}
 
                       {(state.services && state.services.length > 0) && (
                         <>
-                          {/* FIX: Section title is outside the content container */}
                           <p className="mock-section-title">My Services</p>
                           <div className="mock-services-list">
                             {state.services.map((s, i) => (
@@ -634,7 +662,6 @@ export default function MyProfile() {
 
                       {(state.reviews && state.reviews.length > 0) && (
                         <>
-                          {/* FIX: Section title is outside the content container */}
                           <p className="mock-section-title">Reviews</p>
                           <div className="mock-reviews-list">
                             {state.reviews.map((r, i) => (
@@ -658,6 +685,7 @@ export default function MyProfile() {
                   </div>
                 </div>
 
+                {/* Editor Section */}
                 <div className="myprofile-editor-wrapper">
                   {!isSubscribed && (
                     <div className="subscription-overlay">
@@ -736,8 +764,10 @@ export default function MyProfile() {
                           input.click();
                         }}
                       >
+                        {/* If no image, show "Add Cover Photo" text */}
+                        {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
                         <img
-                          src={state.coverPhoto || ''}
+                          src={getEditorImageSrc(state.coverPhoto)} 
                           alt="Cover"
                           className="cover-preview"
                         />
@@ -749,8 +779,9 @@ export default function MyProfile() {
                       <input
                         id="mainHeading"
                         type="text"
-                        value={state.mainHeading}
+                        value={getEditorValue(state.mainHeading)}
                         onChange={(e) => updateState({ mainHeading: e.target.value })}
+                        placeholder={initialStoreState.mainHeading} 
                       />
                     </div>
 
@@ -759,8 +790,9 @@ export default function MyProfile() {
                       <input
                         id="subHeading"
                         type="text"
-                        value={state.subHeading}
+                        value={getEditorValue(state.subHeading)} 
                         onChange={(e) => updateState({ subHeading: e.target.value })}
+                        placeholder={initialStoreState.subHeading}
                       />
                     </div>
 
@@ -769,8 +801,9 @@ export default function MyProfile() {
                       <input
                         id="jobTitle"
                         type="text"
-                        value={state.job_title}
+                        value={getEditorValue(state.job_title)} 
                         onChange={(e) => updateState({ job_title: e.target.value })}
+                        placeholder={initialStoreState.job_title}
                       />
                     </div>
 
@@ -797,8 +830,10 @@ export default function MyProfile() {
                           input.click();
                         }}
                       >
+                        {/* If no image, show "Add Profile Photo" text */}
+                        {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
                         <img
-                          src={state.avatar || ''}
+                          src={getEditorImageSrc(state.avatar)}
                           alt="Avatar preview"
                           className="avatar-preview"
                         />
@@ -810,8 +845,9 @@ export default function MyProfile() {
                       <input
                         id="fullName"
                         type="text"
-                        value={state.full_name}
+                        value={getEditorValue(state.full_name)} 
                         onChange={(e) => updateState({ full_name: e.target.value })}
+                        placeholder={initialStoreState.full_name}
                       />
                     </div>
 
@@ -819,9 +855,10 @@ export default function MyProfile() {
                       <label htmlFor="bio">About Me</label>
                       <textarea
                         id="bio"
-                        value={state.bio}
+                        value={getEditorValue(state.bio)}
                         onChange={(e) => updateState({ bio: e.target.value })}
                         rows={4}
+                        placeholder={initialStoreState.bio}
                       />
                     </div>
 
@@ -835,7 +872,7 @@ export default function MyProfile() {
                               alt={`work-${i}`}
                               className="work-image-preview"
                             />
-                            {/* Only show remove button in editor section */}
+                            {/* This remove button is correct here in the editor */}
                             <button
                               type="button"
                               className="remove-image-button work-image-remove"
@@ -845,24 +882,28 @@ export default function MyProfile() {
                             </button>
                           </div>
                         ))}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const input = document.createElement('input');
-                            input.type = 'file';
-                            input.accept = 'image/*';
-                            input.multiple = true;
-                            input.onchange = (e) => {
-                              handleAddWorkImage(e);
-                              document.body.removeChild(input);
-                            };
-                            document.body.appendChild(input);
-                            input.click();
-                          }}
-                          className="add-work-image-button"
-                        >
-                          Choose files
-                        </button>
+                        {/* Removed the "Choose files" button from here. Work images are added by clicking the new placeholder/image. */}
+                        {/* Display "Add Work Image" if there are no work images or if placeholder is showing */}
+                        {(state.workImages.length === 0 || !businessCard) && ( // Show if no images or new user
+                          <div
+                            className="image-upload-area add-work-image-placeholder"
+                            onClick={() => {
+                              const input = document.createElement('input');
+                              input.type = 'file';
+                              input.accept = 'image/*';
+                              input.multiple = true; // Unlimited work images
+                              input.onchange = (e) => {
+                                handleAddWorkImage(e);
+                                document.body.removeChild(input);
+                              };
+                              document.body.appendChild(input);
+                              input.click();
+                            }}
+                          >
+                            <span className="upload-text">Add Work Image</span>
+                            <img src="" alt="Add Work" className="work-image-preview" /> {/* Empty src to show background */}
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -872,14 +913,14 @@ export default function MyProfile() {
                         <div key={i} className="editor-item-card">
                           <input
                             type="text"
-                            placeholder={`Service Name ${i + 1}`}
-                            value={s.name}
+                            placeholder={initialStoreState.services[0]?.name || "Service Name"}
+                            value={getEditorValue(s.name)}
                             onChange={(e) => handleServiceChange(i, "name", e.target.value)}
                           />
                           <input
                             type="text"
-                            placeholder={`Service Price/Detail ${i + 1}`}
-                            value={s.price}
+                            placeholder={initialStoreState.services[0]?.price || "Service Price/Detail"}
+                            value={getEditorValue(s.price)}
                             onChange={(e) => handleServiceChange(i, "price", e.target.value)}
                           />
                           <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
@@ -896,22 +937,22 @@ export default function MyProfile() {
                         <div key={i} className="editor-item-card">
                           <input
                             type="text"
-                            placeholder="Reviewer Name"
-                            value={r.name}
+                            placeholder={initialStoreState.reviews[0]?.name || "Reviewer Name"}
+                            value={getEditorValue(r.name)}
                             onChange={(e) => handleReviewChange(i, "name", e.target.value)}
                           />
                           <textarea
-                            placeholder="Review"
+                            placeholder={initialStoreState.reviews[0]?.text || "Review text"}
                             rows={2}
-                            value={r.text}
+                            value={getEditorValue(r.text)}
                             onChange={(e) => handleReviewChange(i, "text", e.target.value)}
                           />
                           <input
                             type="number"
-                            placeholder="Rating (1-5)"
+                            placeholder={initialStoreState.reviews[0]?.rating?.toString() || "Rating (1-5)"}
                             min="1"
                             max="5"
-                            value={r.rating}
+                            value={getEditorValue(r.rating)}
                             onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
                           />
                           <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
@@ -930,8 +971,9 @@ export default function MyProfile() {
                       <input
                         id="contactEmail"
                         type="email"
-                        value={state.contact_email}
+                        value={getEditorValue(state.contact_email)}
                         onChange={(e) => updateState({ contact_email: e.target.value })}
+                        placeholder={initialStoreState.contact_email}
                       />
                     </div>
 
@@ -940,8 +982,9 @@ export default function MyProfile() {
                       <input
                         id="phoneNumber"
                         type="tel"
-                        value={state.phone_number}
+                        value={getEditorValue(state.phone_number)}
                         onChange={(e) => updateState({ phone_number: e.target.value })}
+                        placeholder={initialStoreState.phone_number}
                       />
                     </div>
 

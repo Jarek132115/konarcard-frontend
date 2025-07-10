@@ -129,10 +129,6 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    max-width: 320px;
-    width: 100%;
-    min-width: 250px;
-
     height: auto;
     max-height: 100%;
     aspect-ratio: 9 / 17;
@@ -163,8 +159,8 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    /* FIX: Set gap to 0. We'll use explicit margins for precise control. */
     gap: 0;
+    /* FIX: Set gap to 0. We'll use explicit margins for precise control. */
     padding: 0;
     /* FIX: Remove padding here as it might add unwanted gaps at top/bottom of content */
     overflow-y: auto;
@@ -352,9 +348,9 @@
 
 .mock-work-gallery {
     display: flex;
-    /* FIX: Changed from grid to flex */
+    /* Changed from grid to flex */
     flex-direction: column;
-    /* FIX: Stack items vertically */
+    /* Stack items vertically */
     gap: 0.75rem;
     /* FIX: Gap between work images (approx 12px) */
     width: 100%;
@@ -525,6 +521,7 @@
     box-sizing: border-box;
 }
 
+/* Specific placeholder styles for editor inputs */
 .input-block input::placeholder,
 .input-block textarea::placeholder {
     color: var(--subtle-text-color);
@@ -559,13 +556,44 @@
 .image-upload-area {
     cursor: pointer;
     display: flex;
+    flex-direction: column;
+    /* Allow text and image to stack */
     align-items: center;
     justify-content: center;
     background-color: var(--card-bg);
     border-radius: 8px;
     overflow: hidden;
     position: relative;
+    border: 1px dashed var(--border-color);
+    /* To make it look like an upload area */
 }
+
+.image-upload-area .upload-text {
+    position: absolute;
+    color: var(--subtle-text-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    z-index: 2;
+    /* Ensure text is above image */
+}
+
+/* Hide the actual img when src is empty so only background/text shows */
+.image-upload-area img[src=""],
+.image-upload-area img:not([src]) {
+    display: none;
+}
+
+/* Only show the actual image when src is present */
+.image-upload-area img:not([src=""]):not(:not([src])) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    /* Ensure image is behind text if text is also present (though text should disappear if image is there) */
+}
+
 
 .cover-photo-upload {
     width: 100%;
@@ -578,19 +606,28 @@
     border-radius: 50%;
 }
 
-.cover-preview {
+/* Special styling for work image upload area when empty */
+.add-work-image-placeholder {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    /* For editor's single "add work image" area */
+    height: 120px;
+    /* Adjust height as needed for the placeholder */
+    display: flex;
+    /* Ensure flex properties apply */
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed var(--border-color);
     border-radius: 8px;
+    background-color: var(--placeholder-bg);
+    margin-top: 12px;
+    /* Small gap if images above exist */
 }
 
-.avatar-preview {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
+.add-work-image-placeholder .upload-text {
+    position: static;
+    /* Text should be centered normally */
 }
+
 
 .myprofile-editor .divider {
     margin: 20px 0;
@@ -599,34 +636,58 @@
 }
 
 .work-preview-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    display: flex;
+    /* Changed from grid to flex for editor work images */
+    flex-direction: column;
+    /* Stack images vertically */
     gap: 12px;
+    /* Gap between work image items */
 }
 
 .work-image-item-wrapper {
     position: relative;
-    width: 100px;
-    height: 90px;
-    display: inline-block;
+    width: 100%;
+    /* Full width in editor */
+    height: auto;
+    /* Allow aspect ratio to control height */
+    display: block;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    /* Add a border to individual work image previews */
+    box-sizing: border-box;
+    /* Include padding/border in width */
 }
 
 .work-image-preview {
     width: 100%;
-    height: 100%;
+    height: auto;
+    aspect-ratio: 4 / 2.75;
+    /* Set aspect ratio for consistency */
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 0;
 }
 
 .work-image-item-wrapper .remove-image-button {
-    top: -5px;
-    right: -5px;
-    width: 20px;
-    height: 20px;
-    font-size: 14px;
+    top: 5px;
+    /* Adjust positioning */
+    right: 5px;
+    width: 24px;
+    /* Slightly larger for easier click */
+    height: 24px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #555;
 }
 
+.work-image-item-wrapper .remove-image-button:hover {
+    background: red;
+    color: white;
+}
+
+
 .add-work-image-button,
+/* This class is now primarily for adding new work image *placeholders* if they are clicked. */
 .add-item-button {
     margin-top: 8px;
     padding: 8px 14px;
