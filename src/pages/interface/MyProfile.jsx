@@ -469,14 +469,12 @@ export default function MyProfile() {
 
   // Helper to get value for editor text inputs (empty for new users, data for existing)
   const getEditorValue = (fieldValue) => {
-    // If businessCard exists, show the actual value (even if it's currently null/empty string for that field).
-    // If businessCard is null (new user), show an empty string in the editor input.
     return businessCard ? (fieldValue || '') : '';
   };
 
   // Helper to get image src for editor image previews (blob for new upload, URL for saved, empty for truly empty)
   const getEditorImageSrc = (imageState) => {
-    // Prioritize current temporary blob URL if set, otherwise saved URL. If neither, return empty.
+    // If imageState exists (either a blob URL or a saved URL), return it. Otherwise, return empty string.
     return imageState || '';
   };
 
@@ -652,6 +650,7 @@ export default function MyProfile() {
                             {state.reviews.map((r, i) => (
                               <div key={i} className="mock-review-card">
                                 <div className="mock-star-rating">
+                                  {/* Use conditional rendering for stars */}
                                   {Array(r.rating || 0).fill().map((_, starIdx) => (
                                     <span key={`filled-${starIdx}`}>★</span>
                                   ))}
@@ -848,7 +847,7 @@ export default function MyProfile() {
                     <div className="input-block">
                       <label>My Work</label>
                       <div className="work-preview-row">
-                        {/* FIX: Only map work images if state.workImages has items */}
+                        {/* Only map work images if state.workImages has items */}
                         {state.workImages.map((img, i) => (
                           <div key={i} className="work-image-item-wrapper">
                             <img
@@ -865,15 +864,15 @@ export default function MyProfile() {
                             </button>
                           </div>
                         ))}
-                        {/* FIX: Display "Add Work Image" placeholder if there are currently no work images */}
-                        {(state.workImages.length === 0) && ( // Show this placeholder only if workImages is empty
+                        {/* Display "Add Work Image" placeholder if there are currently no work images */}
+                        {(state.workImages.length === 0) && (
                           <div
                             className="image-upload-area add-work-image-placeholder"
                             onClick={() => {
                               const input = document.createElement('input');
                               input.type = 'file';
                               input.accept = 'image/*';
-                              input.multiple = true; // Unlimited work images
+                              input.multiple = true;
                               input.onchange = (e) => {
                                 handleAddWorkImage(e);
                                 document.body.removeChild(input);
