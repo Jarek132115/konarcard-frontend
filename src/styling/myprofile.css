@@ -628,44 +628,41 @@
 }
 
 .work-preview-row {
-    display: flex;
-    /* Changed from grid to flex for editor work images */
-    flex-direction: column;
-    /* Stack images vertically */
+    /* FIX: Changed back to a grid for two-column layout */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    /* Adjust minmax for desired column width */
     gap: 12px;
-    /* Gap between work image items */
+    /* Gap between grid items */
 }
 
+/* Ensure individual work image wrappers fit grid */
 .work-image-item-wrapper {
     position: relative;
     width: 100%;
-    /* Full width in editor */
+    /* Fill grid cell */
     height: auto;
-    /* Allow aspect ratio to control height */
+    /* Let aspect ratio control height */
     display: block;
+    /* So it's a grid item */
     overflow: hidden;
     border-radius: 0.5rem;
     border: 1px solid var(--border-color);
-    /* Add a border to individual work image previews */
     box-sizing: border-box;
-    /* Include padding/border in width */
 }
 
 .work-image-preview {
     width: 100%;
     height: auto;
     aspect-ratio: 4 / 2.75;
-    /* Set aspect ratio for consistency */
     object-fit: cover;
     border-radius: 0;
 }
 
 .work-image-item-wrapper .remove-image-button {
     top: 5px;
-    /* Adjust positioning */
     right: 5px;
     width: 24px;
-    /* Slightly larger for easier click */
     height: 24px;
     font-size: 16px;
     background: rgba(255, 255, 255, 0.8);
@@ -677,30 +674,36 @@
     color: white;
 }
 
-/* Special styling for work image upload area when empty */
+/* Special styling for the "Add Work Image" placeholder in the editor */
 .add-work-image-placeholder {
-    width: 100%;
-    /* For editor's single "add work image" area */
-    height: 120px;
-    /* Adjust height as needed for the placeholder */
+    /* It now also behaves as a grid item */
+    height: 100px;
+    /* FIX: Set a fixed height that aligns with aspect ratio of other images */
+    min-height: 100px;
+    /* Ensure it doesn't collapse too much */
     display: flex;
-    /* Ensure flex properties apply */
     flex-direction: column;
-    /* Allow text and image to stack */
     justify-content: center;
     align-items: center;
     border: 1px dashed var(--border-color);
     border-radius: 8px;
     background-color: var(--placeholder-bg);
-    margin-top: 12px;
-    /* Small gap if images above exist */
     box-sizing: border-box;
+    cursor: pointer;
 }
 
 .add-work-image-placeholder .upload-text {
     position: static;
     /* Text should be centered normally within its flex container */
     margin-bottom: 0;
+    font-size: 14px;
+    white-space: nowrap;
+    /* Prevent text wrapping */
+}
+
+.add-work-image-placeholder img {
+    /* Hide the inner img for the placeholder */
+    display: none;
 }
 
 
@@ -711,27 +714,26 @@
 }
 
 .work-preview-row {
-    display: flex;
-    /* Changed from grid to flex for editor work images */
-    flex-direction: column;
-    /* Stack images vertically */
+    display: grid;
+    /* Changed from flex to grid for editor work images */
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    /* Adjust minmax for desired column width */
     gap: 12px;
-    /* Gap between work image items */
+    /* Gap between grid items */
 }
 
 .work-image-item-wrapper {
     position: relative;
     width: 100%;
-    /* Full width in editor */
+    /* Fill grid cell */
     height: auto;
-    /* Allow aspect ratio to control height */
+    /* Let aspect ratio control height */
     display: block;
     overflow: hidden;
     border-radius: 0.5rem;
     border: 1px solid var(--border-color);
     /* Add a border to individual work image previews */
     box-sizing: border-box;
-    /* Include padding/border in width */
 }
 
 .work-image-preview {
@@ -745,10 +747,8 @@
 
 .work-image-item-wrapper .remove-image-button {
     top: 5px;
-    /* Adjust positioning */
     right: 5px;
     width: 24px;
-    /* Slightly larger for easier click */
     height: 24px;
     font-size: 16px;
     background: rgba(255, 255, 255, 0.8);
