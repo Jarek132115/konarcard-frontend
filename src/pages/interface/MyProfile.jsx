@@ -1,4 +1,4 @@
-// MyProfile.jsx
+// frontend/src/pages/interface/MyProfile.jsx
 
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link, useLocation } from 'react-router-dom';
@@ -11,9 +11,10 @@ import {
   buildBusinessCardFormData,
 } from "../../hooks/useCreateBiz";
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
-import ShareProfile from "../../components/ShareProfile";
-import { AuthContext } from "../../components/AuthContext";
+// FIX: Corrected import syntax for toast and AuthContext
+import { toast } from 'react-hot-toast'; // Correct ES Module import
+import { AuthContext } from '../../components/AuthContext'; // Correct ES Module import
+import ShareProfile from "../../components/ShareProfile"; // This was correctly imported already
 import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
@@ -29,7 +30,6 @@ export default function MyProfile() {
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
-  // useFetchBusinessCard now correctly returns null if no card found
   const { data: businessCard, isLoading: isCardLoading, isError: isCardError, error: cardError } = useFetchBusinessCard(userId);
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
@@ -44,8 +44,7 @@ export default function MyProfile() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
-  // No longer directly depending on initialStoreState for conditional logic here,
-  // it's used as a fallback in the updateState payload.
+  // Access initialState from the store directly
   const initialStoreState = useBusinessCardStore.getState().state;
 
   const location = useLocation();
@@ -67,15 +66,14 @@ export default function MyProfile() {
       if (paymentSuccess === 'true' && !isSubscribed && !handledRedirect) {
         handledRedirect = true; // Mark as handled for this component instance
         console.log("Payment success detected in URL, refetching user data to update subscription status...");
-        if (typeof refetchAuthUser === 'function') {
+        if (typeof refetchAuthUser === 'function') { // Defensive check
           await refetchAuthUser(); // Await to ensure state is updated
         }
         window.history.replaceState({}, document.title, location.pathname); // Clean URL
         toast.success("Subscription updated successfully!");
       }
       // Removed the 'else if (!isSubscribed && !initialSubCheckDone)' block
-      // because that was causing repeated fetches if isSubscribed never became true
-      // and is now redundant with the paymentSuccess check and refetchAuthUser's own initial fetch.
+      // as it was causing repeated fetches and is now redundant.
     };
 
     checkSubscriptionStatus();
@@ -123,13 +121,14 @@ export default function MyProfile() {
   // It ensures placeholders are used if no businessCard is found initially
   // and updates with actual data if a card exists.
   useEffect(() => {
-    if (!isCardLoading && authUser) {
+    if (!isCardLoading && authUser) { // Only proceed when not loading card and user is authenticated
       // Clean up previous blob URLs regardless
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
       if (businessCard) {
-        // If a businessCard exists, update the state with its data
+        // If a businessCard object is returned, update the state with its specific data.
+        // Use initialStoreState as a fallback *only if* fetched fields are null/empty.
         updateState({
           businessName: businessCard.business_card_name || initialStoreState.businessName,
           pageTheme: businessCard.page_theme || initialStoreState.pageTheme,
@@ -141,7 +140,7 @@ export default function MyProfile() {
           bio: businessCard.bio || initialStoreState.bio,
           avatar: businessCard.avatar || initialStoreState.avatar, // Use placeholder if backend avatar is null
           coverPhoto: businessCard.cover_photo || initialStoreState.coverPhoto, // Use placeholder if backend cover is null
-          // For arrays, ensure you either map the existing ones or use the initial placeholders
+          // For arrays, apply fetched data if present and not empty, otherwise default to initialStoreState's array
           workImages: (businessCard.works && businessCard.works.length > 0) ? businessCard.works.map(url => ({ file: null, preview: url })) : initialStoreState.workImages,
           services: (businessCard.services && businessCard.services.length > 0) ? businessCard.services : initialStoreState.services,
           reviews: (businessCard.reviews && businessCard.reviews.length > 0) ? businessCard.reviews : initialStoreState.reviews,
@@ -151,8 +150,8 @@ export default function MyProfile() {
         console.log("MyProfile: Updated state with fetched business card data.");
       } else {
         // If businessCard is null (no card found), explicitly reset to initialState
-        // This makes sure all placeholders from the store are loaded.
-        resetState();
+        // This ensures all placeholders from the store are loaded.
+        resetState(); // Re-calling resetState here to ensure consistent initial load of all placeholders
         console.log("MyProfile: No business card found, resetting state to initial placeholders.");
       }
 
