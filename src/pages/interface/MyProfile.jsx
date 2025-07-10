@@ -1,8 +1,10 @@
+// frontend/src/pages/interface/MyProfile.jsx
+
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore"; // Ensure previewPlaceholders is imported
+import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
   useCreateBusinessCard,
@@ -39,7 +41,7 @@ export default function MyProfile() {
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
   const [activeBlobUrls, setActiveBlobUrls] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000); // This state will drive the conditional rendering
 
   const initialStoreState = useBusinessCardStore.getState().state;
 
@@ -466,14 +468,11 @@ export default function MyProfile() {
   };
 
   // Helper to get value for editor text inputs (empty for new users, data for existing)
-  // This helper now simply returns the state value. The placeholder text will be handled
-  // by the `placeholder` attribute in the input/textarea, NOT by this helper.
   const getEditorValue = (fieldValue) => {
-    return fieldValue || ''; // Ensure it's an empty string if null/undefined
+    return fieldValue || '';
   };
 
   // Helper to get image src for editor image previews (blob for new upload, URL for saved, empty for truly empty)
-  // This ensures the img src is literally empty if no image is present, triggering CSS placeholder.
   const getEditorImageSrc = (imageState) => {
     return imageState || '';
   };
@@ -484,15 +483,15 @@ export default function MyProfile() {
   };
 
   // Helper to get preview text for mock phone display (uses initial template if field is empty)
-  // This is the key helper that will use previewPlaceholders.
   const getPreviewText = (fieldValue, placeholderText) => {
-    return fieldValue || placeholderText;
+    // Use placeholder only if the field is empty AND it's a new card (no businessCard data loaded yet)
+    return (businessCard && businessCard.hasOwnProperty(fieldValue) ? fieldValue : (fieldValue || placeholderText));
   };
 
   // Helper to get preview image for mock phone display (uses initial template if field is empty)
-  // This is the key helper that will use previewPlaceholders for images.
   const getPreviewImageSrc = (imageState, placeholderPath) => {
-    return imageState || placeholderPath;
+    // Use placeholder image only if imageState is empty AND it's a new card (no businessCard data loaded yet)
+    return (businessCard ? imageState : (imageState || placeholderPath));
   };
 
 
@@ -572,8 +571,21 @@ export default function MyProfile() {
                 </div>
               )}
 
+              {/* CONDITIONAL RENDERING FOR MOBILE SUBSCRIPTION OVERLAY - RENDERED ABOVE FLEX CONTAINER */}
+              {!isSubscribed && isMobile && (
+                <div className="subscription-overlay-mobile">
+                  <div className="subscription-message">
+                    <h2>Unlock Your Full Profile!</h2>
+                    <p>Subscribe to start your 7-day free trial and unlock all profile editing features.</p>
+                    <button className="start-trial-button" onClick={handleStartSubscription}>
+                      Start Your Free Trial Now!
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <div className="myprofile-flex-container">
-                {/* Mock Phone Preview Section - This now uses getPreviewText and getPreviewImageSrc */}
+                {/* Mock Phone Preview Section */}
                 <div className="myprofile-content">
                   <div
                     className={`mock-phone ${state.pageTheme === "dark" ? "dark-mode" : ""}`}
@@ -594,7 +606,9 @@ export default function MyProfile() {
                       >
                         Exchange Contact
                       </button>
-                      {(state.full_name || state.job_title || state.bio || state.avatar) && ( // Show "About me" section if any field has content
+
+                      {/* About Me Section - Conditional display based on user data, or if new card (show placeholders) */}
+                      {(state.full_name || state.job_title || state.bio || state.avatar || !businessCard) && (
                         <>
                           <p className="mock-section-title">About me</p>
                           <div className="mock-about-container">
@@ -616,112 +630,100 @@ export default function MyProfile() {
                         </>
                       )}
 
-                      {(state.workImages && state.workImages.length > 0) && ( // Show "My Work" section if there are any work images
+                      {/* My Work Section - Conditional display based on user data, or if new card (show placeholders) */}
+                      {(state.workImages && state.workImages.length > 0) || !businessCard ? (
                         <>
                           <p className="mock-section-title">My Work</p>
                           <div className="mock-work-gallery">
-                            {state.workImages.map((img, i) => (
-                              <div key={i} className="mock-work-image-item-wrapper">
-                                <img
-                                  src={getPreviewImageSrc(img.preview, previewPlaceholders.workImages[0]?.preview)}
-                                  alt={`work-${i}`}
-                                  className="mock-work-image-item"
-                                />
-                              </div>
-                            ))}
+                            {(state.workImages && state.workImages.length > 0) ? (
+                              state.workImages.map((img, i) => (
+                                <div key={i} className="mock-work-image-item-wrapper">
+                                  <img
+                                    src={getPreviewImageSrc(img.preview, previewPlaceholders.workImages[i]?.preview)}
+                                    alt={`work-${i}`}
+                                    className="mock-work-image-item"
+                                  />
+                                </div>
+                              ))
+                            ) : ( // Show placeholder work images if no user images AND new card
+                              previewPlaceholders.workImages.map((img, i) => (
+                                <div key={i} className="mock-work-image-item-wrapper">
+                                  <img
+                                    src={img.preview}
+                                    alt={`work-${i}`}
+                                    className="mock-work-image-item"
+                                  />
+                                </div>
+                              ))
+                            )}
                           </div>
                         </>
-                      )}
-                      {/* If no work images, show placeholder ones in preview */}
-                      {(!state.workImages || state.workImages.length === 0) && (
-                        <>
-                          <p className="mock-section-title">My Work</p>
-                          <div className="mock-work-gallery">
-                            {previewPlaceholders.workImages.map((img, i) => (
-                              <div key={i} className="mock-work-image-item-wrapper">
-                                <img
-                                  src={img.preview}
-                                  alt={`work-${i}`}
-                                  className="mock-work-image-item"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </>
-                      )}
+                      ) : null}
 
 
-                      {(state.services && state.services.length > 0) && ( // Show "My Services" if there are any services
+                      {/* My Services Section - Conditional display based on user data, or if new card (show placeholders) */}
+                      {(state.services && state.services.length > 0) || !businessCard ? (
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="mock-services-list">
-                            {state.services.map((s, i) => (
-                              <div key={i} className="mock-service-item">
-                                <p className="mock-service-name">{getPreviewText(s.name, previewPlaceholders.services[i]?.name || '')}</p>
-                                <span className="mock-service-price">{getPreviewText(s.price, previewPlaceholders.services[i]?.price || '')}</span>
-                              </div>
-                            ))}
+                            {(state.services && state.services.length > 0) ? (
+                              state.services.map((s, i) => (
+                                <div key={i} className="mock-service-item">
+                                  <p className="mock-service-name">{getPreviewText(s.name, previewPlaceholders.services[i]?.name || '')}</p>
+                                  <span className="mock-service-price">{getPreviewText(s.price, previewPlaceholders.services[i]?.price || '')}</span>
+                                </div>
+                              ))
+                            ) : ( // Show placeholder services if no user services AND new card
+                              previewPlaceholders.services.map((s, i) => (
+                                <div key={i} className="mock-service-item">
+                                  <p className="mock-service-name">{s.name}</p>
+                                  <span className="mock-service-price">{s.price}</span>
+                                </div>
+                              ))
+                            )}
                           </div>
                         </>
-                      )}
-                      {/* If no services, show placeholder ones in preview */}
-                      {(!state.services || state.services.length === 0) && (
-                        <>
-                          <p className="mock-section-title">My Services</p>
-                          <div className="mock-services-list">
-                            {previewPlaceholders.services.map((s, i) => (
-                              <div key={i} className="mock-service-item">
-                                <p className="mock-service-name">{s.name}</p>
-                                <span className="mock-service-price">{s.price}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </>
-                      )}
+                      ) : null}
 
-                      {(state.reviews && state.reviews.length > 0) && ( // Show "Reviews" if there are any reviews
+                      {/* Reviews Section - Conditional display based on user data, or if new card (show placeholders) */}
+                      {(state.reviews && state.reviews.length > 0) || !businessCard ? (
                         <>
                           <p className="mock-section-title">Reviews</p>
                           <div className="mock-reviews-list">
-                            {state.reviews.map((r, i) => (
-                              <div key={i} className="mock-review-card">
-                                <div className="mock-star-rating">
-                                  {Array(r.rating || 0).fill().map((_, starIdx) => (
-                                    <span key={`filled-${starIdx}`}>★</span>
-                                  ))}
-                                  {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
-                                    <span key={`empty-${starIdx}`} className="empty-star">★</span>
-                                  ))}
+                            {(state.reviews && state.reviews.length > 0) ? (
+                              state.reviews.map((r, i) => (
+                                <div key={i} className="mock-review-card">
+                                  <div className="mock-star-rating">
+                                    {Array(r.rating || 0).fill().map((_, starIdx) => (
+                                      <span key={`filled-${starIdx}`}>★</span>
+                                    ))}
+                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
+                                      <span key={`empty-${starIdx}`} className="empty-star">★</span>
+                                    ))}
+                                  </div>
+                                  <p className="mock-review-text">"{getPreviewText(r.text, previewPlaceholders.reviews[i]?.text || '')}"</p>
+                                  <p className="mock-reviewer-name">{getPreviewText(r.name, previewPlaceholders.reviews[i]?.name || '')}</p>
                                 </div>
-                                <p className="mock-review-text">"{getPreviewText(r.text, previewPlaceholders.reviews[i]?.text || '')}"</p>
-                                <p className="mock-reviewer-name">{getPreviewText(r.name, previewPlaceholders.reviews[i]?.name || '')}</p>
-                              </div>
-                            ))}
+                              ))
+                            ) : ( // Show placeholder reviews if no user reviews AND new card
+                              previewPlaceholders.reviews.map((r, i) => (
+                                <div key={i} className="mock-review-card">
+                                  <div className="mock-star-rating">
+                                    {Array(r.rating || 0).fill().map((_, starIdx) => (
+                                      <span key={`filled-${starIdx}`}>★</span>
+                                    ))}
+                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
+                                      <span key={`empty-${starIdx}`} className="empty-star">★</span>
+                                    ))}
+                                  </div>
+                                  <p className="mock-review-text">"{r.text}"</p>
+                                  <p className="mock-reviewer-name">{r.name}</p>
+                                </div>
+                              ))
+                            )}
                           </div>
                         </>
-                      )}
-                      {/* If no reviews, show placeholder ones in preview */}
-                      {(!state.reviews || state.reviews.length === 0) && (
-                        <>
-                          <p className="mock-section-title">Reviews</p>
-                          <div className="mock-reviews-list">
-                            {previewPlaceholders.reviews.map((r, i) => (
-                              <div key={i} className="mock-review-card">
-                                <div className="mock-star-rating">
-                                  {Array(r.rating || 0).fill().map((_, starIdx) => (
-                                    <span key={`filled-${starIdx}`}>★</span>
-                                  ))}
-                                  {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
-                                    <span key={`empty-${starIdx}`} className="empty-star">★</span>
-                                  ))}
-                                </div>
-                                <p className="mock-review-text">"{r.text}"</p>
-                                <p className="mock-reviewer-name">{r.name}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </>
-                      )}
+                      ) : null}
 
                     </div>
                   </div>
@@ -729,7 +731,7 @@ export default function MyProfile() {
 
                 {/* Editor Section */}
                 <div className="myprofile-editor-wrapper">
-                  {!isSubscribed && (
+                  {!isSubscribed && !isMobile && ( // Only show desktop overlay if not subscribed AND NOT mobile
                     <div className="subscription-overlay">
                       <div className="subscription-message">
                         <h2>Unlock Your Full Profile!</h2>
@@ -832,7 +834,7 @@ export default function MyProfile() {
                         type="text"
                         value={getEditorValue(state.mainHeading)}
                         onChange={(e) => updateState({ mainHeading: e.target.value })}
-                        placeholder={previewPlaceholders.mainHeading} 
+                        placeholder={previewPlaceholders.mainHeading}
                       />
                     </div>
 
@@ -843,7 +845,7 @@ export default function MyProfile() {
                         type="text"
                         value={getEditorValue(state.subHeading)}
                         onChange={(e) => updateState({ subHeading: e.target.value })}
-                        placeholder={previewPlaceholders.subHeading} 
+                        placeholder={previewPlaceholders.subHeading}
                       />
                     </div>
 
@@ -910,7 +912,7 @@ export default function MyProfile() {
                         type="text"
                         value={getEditorValue(state.job_title)}
                         onChange={(e) => updateState({ job_title: e.target.value })}
-                        placeholder={previewPlaceholders.job_title} 
+                        placeholder={previewPlaceholders.job_title}
                       />
                     </div>
 
@@ -921,7 +923,7 @@ export default function MyProfile() {
                         value={getEditorValue(state.bio)}
                         onChange={(e) => updateState({ bio: e.target.value })}
                         rows={4}
-                        placeholder={previewPlaceholders.bio} 
+                        placeholder={previewPlaceholders.bio}
                       />
                     </div>
 
@@ -1043,7 +1045,7 @@ export default function MyProfile() {
                         type="email"
                         value={getEditorValue(state.contact_email)}
                         onChange={(e) => updateState({ contact_email: e.target.value })}
-                        placeholder={previewPlaceholders.contact_email} 
+                        placeholder={previewPlaceholders.contact_email}
                       />
                     </div>
 
@@ -1054,7 +1056,7 @@ export default function MyProfile() {
                         type="tel"
                         value={getEditorValue(state.phone_number)}
                         onChange={(e) => updateState({ phone_number: e.target.value })}
-                        placeholder={previewPlaceholders.phone_number} 
+                        placeholder={previewPlaceholders.phone_number}
                       />
                     </div>
 

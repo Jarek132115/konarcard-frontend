@@ -1,3 +1,5 @@
+/* myprofile.css */
+
 :root {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
@@ -591,7 +593,6 @@
     border-radius: 0;
 }
 
-/* Specific styling for the 'X' remove button on images */
 .remove-image-button {
     position: absolute;
     top: 5px;
@@ -686,7 +687,6 @@
     padding: 4px 8px;
     font-size: 12px;
     border: 1px solid transparent;
-    /* Changed border to transparent */
     background-color: #dc3545;
     /* Red background */
     color: white;
@@ -716,6 +716,7 @@
     color: var(--button-text);
 }
 
+/* Desktop subscription overlay (positioned absolutely over editor) */
 .subscription-overlay {
     position: absolute;
     top: 0;
@@ -732,6 +733,7 @@
     overflow: hidden;
 }
 
+/* Common subscription message styling (used by both desktop and mobile overlays) */
 .subscription-message {
     background-color: var(--primary-bg);
     padding: 30px;
@@ -739,11 +741,16 @@
     text-align: center;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     max-width: 400px;
+    width: 100%;
+    /* Ensures it respects max-width but stretches if smaller */
+    box-sizing: border-box;
     z-index: 11;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
+    margin: 0 auto;
+    /* Centers the message horizontally within its parent */
 }
 
 .subscription-message h2 {
@@ -774,6 +781,18 @@
     background-color: #0056b3;
 }
 
+/* Mobile-specific subscription overlay (appears in document flow) */
+.subscription-overlay-mobile {
+    display: none;
+    /* Hidden by default, only shown in mobile media query */
+    width: 100%;
+    margin-bottom: 20px;
+    /* Space below the message */
+    box-sizing: border-box;
+    /* No absolute positioning here; it flows with content */
+}
+
+/* Verification Prompt and Loading/Error States */
 .content-card-box {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     padding: 20px;
@@ -860,6 +879,7 @@
 }
 
 
+/* --- MOBILE SPECIFIC STYLES (Max-width 1000px) --- */
 @media (max-width: 1000px) {
 
     .app-layout {
@@ -876,6 +896,26 @@
         height: auto;
         overflow-y: visible;
     }
+
+    /* Hide the desktop overlay when on mobile */
+    .myprofile-editor-wrapper .subscription-overlay {
+        display: none;
+    }
+
+    /* Show the mobile overlay */
+    .subscription-overlay-mobile {
+        display: block;
+        /* Make it visible */
+        padding: 0 20px;
+        /* Match main content padding */
+    }
+
+    /* Adjust the message inside the mobile overlay if needed, though common styles should largely work */
+    .subscription-overlay-mobile .subscription-message {
+        padding: 20px;
+        /* Slightly reduced padding for mobile compact feel */
+    }
+
 
     .myprofile-flex-container {
         flex-direction: column;
@@ -935,6 +975,29 @@
     .main-content-container {
         padding: 15px;
         padding-top: 70px;
+    }
+
+    /* Adjust mobile overlay padding for very small screens */
+    .subscription-overlay-mobile {
+        padding: 0 15px;
+    }
+
+    .subscription-overlay-mobile .subscription-message {
+        padding: 15px;
+        gap: 10px;
+    }
+
+    .subscription-message h2 {
+        font-size: 20px;
+    }
+
+    .subscription-message p {
+        font-size: 14px;
+    }
+
+    .start-trial-button {
+        padding: 10px 20px;
+        font-size: 16px;
     }
 
     .page-header {
