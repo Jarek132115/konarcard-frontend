@@ -17,25 +17,36 @@ export default function SuccessSubscription() {
 
             if (sessionId) {
                 try {
-                    // FIX: Changed the API endpoint to include '/api' as per backend routing.
                     const response = await api.post('/api/stripe/confirm-subscription', { sessionId });
 
                     if (response.data.success) {
                         toast.success('Subscription successfully activated!');
                         console.log('Frontend: Subscription confirmed by backend.');
-                        await refetchAuthUser();
-                        console.log('Frontend: AuthUser refetched after subscription success.');
 
+                        // FIX: Add a type check before calling refetchAuthUser
+                        if (typeof refetchAuthUser === 'function') {
+                            await refetchAuthUser();
+                            console.log('Frontend: AuthUser refetched after subscription success.');
+                        } else {
+                            console.warn('Frontend: refetchAuthUser is not a function. Cannot immediately update AuthContext. Page will refresh or navigate to MyProfile.');
+                            // Fallback: If refetchAuthUser isn't ready, a simple reload will get fresh data
+                            // window.location.reload(); // Uncomment if you prefer an immediate full page refresh
+                        }
+
+                        // Redirect after a short delay (this ensures the MyProfile page will fetch the updated status)
                         setTimeout(() => {
                             navigate('/myprofile', { replace: true });
-                        }, 3000);
+                        }, 3000); // Redirect after 3 seconds
+
                     } else {
+                        // This else block handles if response.data.success is FALSE
                         toast.error(response.data.error || 'Failed to confirm subscription.');
                         console.error('Frontend: Backend reported error confirming subscription:', response.data.error);
                     }
                 } catch (error) {
+                    // This catch block handles network errors or TypeErrors from await refetchAuthUser()
                     toast.error('Error confirming subscription. Please contact support.');
-                    console.error('Frontend: API call error during subscription confirmation:', error);
+                    console.error('Frontend: API call or subsequent action error during subscription confirmation:', error);
                 }
             } else {
                 toast('No session ID found, please check your subscription status in My Account.');
@@ -44,7 +55,7 @@ export default function SuccessSubscription() {
         };
 
         confirmSubscription();
-    }, [location.search, navigate, refetchAuthUser]);
+    }, [location.search, navigate, refetchAuthUser]); // Dependencies for useEffect
 
     return (
         <>
