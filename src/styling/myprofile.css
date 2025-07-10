@@ -115,20 +115,14 @@
 .myprofile-flex-container {
     display: flex;
     height: 100%;
-    /* Full height of parent on desktop */
     gap: 60px;
     min-height: 0;
     justify-content: center;
     align-items: flex-start;
     max-width: 1200px;
-    /* Keep max-width for desktop */
     width: 100%;
     margin: 0 auto;
-    /* IMPORTANT: Add padding to this container to provide space for shadows */
-    padding: 20px;
-    /* Adjust this value if shadows are still clipped, e.g., 30px */
     box-sizing: border-box;
-    /* Ensure padding is included in the element's total size */
 }
 
 /* Phone Preview Container (desktop styles) */
@@ -155,7 +149,6 @@
     background: var(--primary-bg);
     border: 10px solid black;
     border-radius: 2.5rem;
-    padding: 20px;
     text-align: center;
     box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1);
     /* This is the shadow you want to see */
@@ -963,20 +956,13 @@
     /* Phone preview container on mobile */
     .myprofile-content {
         width: 100%;
-        max-width: 320px;
-        /* Still constrain the phone width for better mobile preview */
         min-width: unset;
         height: auto;
-        /* IMPORTANT: Allow content to dictate height */
         flex-shrink: 0;
-        /* Prevent shrinking below content size */
         flex-grow: 0;
-        /* Prevent growing to fill empty space */
         position: relative;
         aspect-ratio: unset;
-        /* IMPORTANT: Remove aspect-ratio for mobile, let content define height */
         max-height: unset;
-        /* IMPORTANT: Remove max-height constraint */
     }
 
     /* Mock Phone on mobile - ensure it keeps aspect ratio but adapts to width */
