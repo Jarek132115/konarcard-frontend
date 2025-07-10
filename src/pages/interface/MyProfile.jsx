@@ -5,16 +5,17 @@ import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore from "../../store/businessCardStore";
+// FIX: Corrected import syntax for hooks
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
 } from "../../hooks/useCreateBiz";
 import axios from 'axios';
-// FIX: Corrected import syntax for toast and AuthContext
-import { toast } from 'react-hot-toast'; // Correct ES Module import
-import { AuthContext } from '../../components/AuthContext'; // Correct ES Module import
-import ShareProfile from "../../components/ShareProfile"; // This was correctly imported already
+import { toast } from 'react-hot-toast';
+import ShareProfile from "../../components/ShareProfile";
+// FIX: Corrected import syntax for AuthContext
+import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
@@ -30,7 +31,7 @@ export default function MyProfile() {
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
-  const { data: businessCard, isLoading: isCardLoading, isError: isCardError, error: cardError } = useFetchBusinessCard(userId);
+  const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId); // Removed isError, error as they are not used in this specific logic
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -48,6 +49,9 @@ export default function MyProfile() {
   const initialStoreState = useBusinessCardStore.getState().state;
 
   const location = useLocation();
+
+  // NEW LOCAL STATE: This flag will ensure our businessCard loading logic runs only ONCE.
+  const [hasLoadedInitialCardData, setHasLoadedInitialCardData] = useState(false);
 
   // useEffect for handling subscription status and preventing infinite loop
   useEffect(() => {
@@ -121,8 +125,11 @@ export default function MyProfile() {
   // It ensures placeholders are used if no businessCard is found initially
   // and updates with actual data if a card exists.
   useEffect(() => {
-    if (!isCardLoading && authUser) { // Only proceed when not loading card and user is authenticated
-      // Clean up previous blob URLs regardless
+    // This effect should run after initial card data fetch is complete AND
+    // if it hasn't loaded initial card data yet for this user.
+    if (!isCardLoading && authUser && !hasLoadedInitialCardData) {
+      setHasLoadedInitialCardData(true); // Mark as true so this block doesn't re-run for initial load
+
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
@@ -149,10 +156,10 @@ export default function MyProfile() {
         });
         console.log("MyProfile: Updated state with fetched business card data.");
       } else {
-        // If businessCard is null (no card found), explicitly reset to initialState
-        // This ensures all placeholders from the store are loaded.
-        resetState(); // Re-calling resetState here to ensure consistent initial load of all placeholders
-        console.log("MyProfile: No business card found, resetting state to initial placeholders.");
+        // If businessCard is null (no card found), explicitly reset to initialState.
+        // This will happen only once due to `hasLoadedInitialCardData` flag, preventing infinite loop.
+        resetState();
+        console.log("MyProfile: No business card found, resetting state to initial placeholders (once).");
       }
 
       // Reset temporary file states after processing fetched/initial data
@@ -162,8 +169,7 @@ export default function MyProfile() {
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     }
-    // No explicit 'else' for !authUser or isCardLoading, they will be handled by loading/error messages in JSX
-  }, [businessCard, isCardLoading, authUser, updateState, resetState, initialStoreState, activeBlobUrls]);
+  }, [businessCard, isCardLoading, authUser, updateState, resetState, initialStoreState, activeBlobUrls, hasLoadedInitialCardData]);
 
 
   useEffect(() => {
