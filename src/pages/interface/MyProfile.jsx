@@ -1,5 +1,6 @@
+// MyProfile.jsx
 import React, { useRef, useEffect, useState, useContext } from "react";
-import { Link, useLocation } from 'react-router-dom'; // Import useLocation
+import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore from "../../store/businessCardStore";
@@ -40,18 +41,18 @@ export default function MyProfile() {
   const [activeBlobUrls, setActiveBlobUrls] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+
+  // FIX: Access initialState from the store directly
   const initialStoreState = useBusinessCardStore.getState().state;
 
   const location = useLocation();
 
-  // NEW useEffect for handling subscription status and preventing infinite loop
+  // useEffect for handling subscription status and preventing infinite loop
   useEffect(() => {
-    // Flag to track if initial subscription check/refetch has occurred
     let initialSubCheckDone = false; // Using a flag within the closure to manage single execution
 
     const checkSubscriptionStatus = async () => {
       if (authLoading || !authUser) {
-        // If still loading or no user, wait for next render cycle
         return;
       }
 
@@ -59,64 +60,103 @@ export default function MyProfile() {
       const paymentSuccess = queryParams.get('payment_success');
 
       if (paymentSuccess === 'true' && !isSubscribed) {
-        // Scenario 1: User returned from payment gateway, but frontend not updated
         console.log("Payment success detected in URL, refetching user data to update subscription status...");
-        await refetchAuthUser(); // Await to ensure the state update happens before potentially removing query param
-        // Clear the query parameter to prevent endless loops on refresh.
-        // This causes a re-render. If using react-router-dom v6+, use navigate.replace.
-        // For simplicity and common use-cases, window.history.replaceState works.
-        window.history.replaceState({}, document.title, location.pathname);
-        toast.success("Subscription updated successfully!"); // Give user feedback
+        if (typeof refetchAuthUser === 'function') { // Defensive check
+          await refetchAuthUser();
+          window.history.replaceState({}, document.title, location.pathname); // Clear param after processing
+        }
+        toast.success("Subscription updated successfully!");
       } else if (!isSubscribed && !initialSubCheckDone) {
-        // Scenario 2: User is logged in but not subscribed (and not from payment success redirect)
-        // This could be initial load, or user manually navigated here.
-        // Only trigger one refetch here to avoid loop.
-        initialSubCheckDone = true; // Mark as checked
+        initialSubCheckDone = true;
         console.log("User not subscribed on initial load, attempting to refetch user data once...");
-        refetchAuthUser(); // Do not await, let it run in background
+        if (typeof refetchAuthUser === 'function') { // Defensive check
+          refetchAuthUser();
+        }
       }
     };
 
     checkSubscriptionStatus();
 
-    // The cleanup function for location.search is handled within the effect for `paymentSuccess`
-    // No additional cleanup needed for the initial load check, as it's a one-time thing.
-
   }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser]);
-  // Depend on these values to react when they change
 
-  // Existing useEffects for resize, sidebarOpen, resendCooldown, showVerificationPrompt remain unchanged.
-  // ... (existing useEffects for resize, sidebarOpen, resendCooldown, showVerificationPrompt) ...
 
+  useEffect(() => {
+    const handleResize = () => {
+      const currentIsMobile = window.innerWidth <= 1000;
+      setIsMobile(currentIsMobile);
+      if (!currentIsMobile && sidebarOpen) {
+        setSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [sidebarOpen, isMobile]);
+
+  useEffect(() => {
+    if (sidebarOpen && isMobile) {
+      document.body.classList.add('body-no-scroll');
+    } else {
+      document.body.classList.remove('body-no-scroll');
+    }
+  }, [sidebarOpen, isMobile]);
+
+  useEffect(() => {
+    let timer;
+    if (resendCooldown > 0) {
+      timer = setTimeout(() => setResendCooldown(cooldown => cooldown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
+
+  useEffect(() => {
+    if (!authLoading && authUser && !isUserVerified && userEmail) {
+      setShowVerificationPrompt(true);
+    } else if (!authLoading && isUserVerified) {
+      setShowVerificationPrompt(false);
+    }
+  }, [authLoading, authUser, isUserVerified, userEmail]);
+
+  // FIX: Modified this useEffect to use initialState if no businessCard is found
   useEffect(() => {
     if (!isCardLoading && authUser) {
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
-      updateState({
-        businessName: businessCard?.business_card_name || '',
-        pageTheme: businessCard?.page_theme || 'light',
-        font: businessCard?.style || 'Inter',
-        mainHeading: businessCard?.main_heading || '',
-        subHeading: businessCard?.sub_heading || '',
-        job_title: businessCard?.job_title || '',
-        full_name: businessCard?.full_name || '',
-        bio: businessCard?.bio || '',
-        avatar: businessCard?.avatar || null,
-        coverPhoto: businessCard?.cover_photo || null,
-        workImages: (businessCard?.works || []).map(url => ({ file: null, preview: url })),
-        services: (businessCard?.services || []),
-        reviews: (businessCard?.reviews || []),
-        contact_email: businessCard?.contact_email || '',
-        phone_number: businessCard?.phone_number || '',
-      });
+      // If a business card exists, use its data
+      if (businessCard) {
+        updateState({
+          businessName: businessCard.business_card_name || initialStoreState.businessName,
+          pageTheme: businessCard.page_theme || initialStoreState.pageTheme,
+          font: businessCard.style || initialStoreState.font,
+          mainHeading: businessCard.main_heading || initialStoreState.mainHeading,
+          subHeading: businessCard.sub_heading || initialStoreState.subHeading,
+          job_title: businessCard.job_title || initialStoreState.job_title,
+          full_name: businessCard.full_name || initialStoreState.full_name,
+          bio: businessCard.bio || initialStoreState.bio,
+          avatar: businessCard.avatar || initialStoreState.avatar, // Use placeholder if backend avatar is null
+          coverPhoto: businessCard.cover_photo || initialStoreState.coverPhoto, // Use placeholder if backend cover is null
+          // For arrays, if backend returns null/undefined, use an empty array or initial state's default
+          workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })).length > 0 ? (businessCard.works || []).map(url => ({ file: null, preview: url })) : initialStoreState.workImages,
+          services: (businessCard.services || []).length > 0 ? (businessCard.services || []) : initialStoreState.services,
+          reviews: (businessCard.reviews || []).length > 0 ? (businessCard.reviews || []) : initialStoreState.reviews,
+          contact_email: businessCard.contact_email || initialStoreState.contact_email,
+          phone_number: businessCard.phone_number || initialStoreState.phone_number,
+        });
+      } else {
+        // If no businessCard (it's null), reset the state to its initial/default values
+        // This ensures placeholders are displayed
+        resetState();
+      }
+
+      // Reset temporary file states after fetching/loading (important for subsequent saves)
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     }
-  }, [businessCard, isCardLoading, updateState, resetState, authUser]);
+  }, [businessCard, isCardLoading, updateState, resetState, authUser, initialStoreState, activeBlobUrls]); // Added initialStoreState to dependencies
 
   useEffect(() => {
     return () => {
@@ -417,8 +457,6 @@ export default function MyProfile() {
     try {
       const response = await api.post('/subscribe', {});
       if (response.data && response.data.url) {
-        // IMPORTANT: Ensure your backend's subscription success redirect includes
-        // a query parameter like `?payment_success=true` when redirecting back here.
         window.location.href = response.data.url;
       } else {
         toast.error("Failed to start subscription. Please try again.");
