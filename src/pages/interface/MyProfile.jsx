@@ -474,13 +474,13 @@ export default function MyProfile() {
 
   // Helper to get image src for editor image previews (blob for new upload, URL for saved, empty for truly empty)
   const getEditorImageSrc = (imageState) => {
-    // If imageState exists (either a blob URL or a saved URL), return it. Otherwise, return empty string.
+    // Return imageState directly. If it's null, the img tag's src="" will trigger display: none in CSS.
     return imageState || '';
   };
 
   // Helper to determine if an image upload area should show "Add Image" text
   const showAddImageText = (imageState) => {
-    // Show text if imageState is null/empty string (no image, either not set or removed)
+    // Show text if imageState is null/empty string (no image)
     return !imageState;
   };
 
@@ -847,11 +847,10 @@ export default function MyProfile() {
                     <div className="input-block">
                       <label>My Work</label>
                       <div className="work-preview-row">
-                        {/* Only map work images if state.workImages has items */}
                         {state.workImages.map((img, i) => (
                           <div key={i} className="work-image-item-wrapper">
                             <img
-                              src={img.preview || ''} 
+                              src={getEditorImageSrc(img.preview)} 
                               alt={`work-${i}`}
                               className="work-image-preview"
                             />
@@ -864,27 +863,25 @@ export default function MyProfile() {
                             </button>
                           </div>
                         ))}
-                        {/* Display "Add Work Image" placeholder if there are currently no work images */}
-                        {(state.workImages.length === 0) && (
-                          <div
-                            className="image-upload-area add-work-image-placeholder"
-                            onClick={() => {
-                              const input = document.createElement('input');
-                              input.type = 'file';
-                              input.accept = 'image/*';
-                              input.multiple = true;
-                              input.onchange = (e) => {
-                                handleAddWorkImage(e);
-                                document.body.removeChild(input);
-                              };
-                              document.body.appendChild(input);
-                              input.click();
-                            }}
-                          >
-                            <span className="upload-text">Add Work Image</span>
-                            <img src="" alt="Add Work" className="work-image-preview" />
-                          </div>
-                        )}
+                        {/* Always display "Add Work Image" placeholder to allow adding more */}
+                        <div
+                          className="image-upload-area add-work-image-placeholder"
+                          onClick={() => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.multiple = true; // Unlimited work images
+                            input.onchange = (e) => {
+                              handleAddWorkImage(e);
+                              document.body.removeChild(input);
+                            };
+                            document.body.appendChild(input);
+                            input.click();
+                          }}
+                        >
+                          <span className="upload-text">Add Work Image</span>
+                          <img src="" alt="Add Work" className="work-image-preview" />
+                        </div>
                       </div>
                     </div>
 
