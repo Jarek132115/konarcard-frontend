@@ -442,7 +442,7 @@
     background: var(--primary-bg);
     padding: 24px;
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -953,7 +953,6 @@
     /* Phone preview container on mobile */
     .myprofile-content {
         width: 100%;
-        max-width: 320px;
         /* Still constrain the phone width for better mobile preview */
         min-width: unset;
         height: auto;
