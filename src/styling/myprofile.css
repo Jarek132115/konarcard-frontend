@@ -1111,3 +1111,9 @@
         font-size: 0.8rem;
     }
 }
+
+@media (max-width: 599px) {
+    .page-title {
+        display: none;
+    }
+}
