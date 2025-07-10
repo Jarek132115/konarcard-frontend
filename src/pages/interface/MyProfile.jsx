@@ -518,7 +518,7 @@ export default function MyProfile() {
           onShareCard={handleShareCard}
         />
 
-        <div className="combined-offer-container">
+        <div className="myprofile-main-content"> {/* Renamed class */}
           {(authLoading || isCardLoading) && (
             <div className="content-card-box loading-state">
               Loading profile data...
