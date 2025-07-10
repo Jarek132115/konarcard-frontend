@@ -518,7 +518,7 @@ export default function MyProfile() {
           onShareCard={handleShareCard}
         />
 
-        <div className="myprofile-main-content"> {/* Renamed class */}
+        <div className="myprofile-main-content">
           {(authLoading || isCardLoading) && (
             <div className="content-card-box loading-state">
               Loading profile data...
@@ -722,6 +722,7 @@ export default function MyProfile() {
                       </div>
                     </div>
 
+                    {/* Hero Section */}
                     <hr className="divider" />
                     <h3 className="editor-subtitle">Hero Section</h3>
 
@@ -779,16 +780,9 @@ export default function MyProfile() {
                       />
                     </div>
 
-                    <div className="input-block">
-                      <label htmlFor="jobTitle">Job Title</label>
-                      <input
-                        id="jobTitle"
-                        type="text"
-                        value={getEditorValue(state.job_title)}
-                        onChange={(e) => updateState({ job_title: e.target.value })}
-                        placeholder={previewPlaceholders.job_title}
-                      />
-                    </div>
+                    {/* About Me Section */}
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">About Me Section</h3>
 
                     <div className="input-block">
                       <label htmlFor="avatar">Profile Photo</label>
@@ -834,7 +828,18 @@ export default function MyProfile() {
                     </div>
 
                     <div className="input-block">
-                      <label htmlFor="bio">About Me</label>
+                      <label htmlFor="jobTitle">Job Title</label>
+                      <input
+                        id="jobTitle"
+                        type="text"
+                        value={getEditorValue(state.job_title)}
+                        onChange={(e) => updateState({ job_title: e.target.value })}
+                        placeholder={previewPlaceholders.job_title}
+                      />
+                    </div>
+
+                    <div className="input-block">
+                      <label htmlFor="bio">About Me Description</label>
                       <textarea
                         id="bio"
                         value={getEditorValue(state.bio)}
@@ -844,8 +849,12 @@ export default function MyProfile() {
                       />
                     </div>
 
+                    {/* My Work Section */}
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">My Work Section</h3>
+
                     <div className="input-block">
-                      <label>My Work</label>
+                      <label>Work Images</label>
                       <div className="work-preview-row">
                         {state.workImages.map((img, i) => (
                           <div key={i} className="work-image-item-wrapper">
@@ -885,8 +894,11 @@ export default function MyProfile() {
                       </div>
                     </div>
 
+                    {/* My Services Section */}
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">My Services Section</h3>
                     <div className="input-block">
-                      <label>My Services</label>
+                      <label>Services</label>
                       {state.services.map((s, i) => (
                         <div key={i} className="editor-item-card">
                           <input
@@ -909,6 +921,9 @@ export default function MyProfile() {
                       </button>
                     </div>
 
+                    {/* Reviews Section */}
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">Reviews Section</h3>
                     <div className="input-block">
                       <label>Reviews</label>
                       {state.reviews.map((r, i) => (
@@ -941,6 +956,7 @@ export default function MyProfile() {
                       </button>
                     </div>
 
+                    {/* Contact Details Section */}
                     <hr className="divider" />
                     <h3 className="editor-subtitle">Exchange Contact Details</h3>
 
