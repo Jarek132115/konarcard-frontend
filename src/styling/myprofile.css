@@ -1009,16 +1009,10 @@
     /* Phone preview container on mobile */
     .myprofile-content {
         width: 100%;
-        /* Take full width of .myprofile-flex-container */
-        max-width: 320px;
-        /* Still constrain the phone width for better mobile preview */
         min-width: unset;
         height: auto;
-        /* Height adapts to content */
         flex-shrink: 1;
-        /* Allow it to shrink if needed */
         flex-grow: 1;
-        /* Allow it to grow if needed */
         position: relative;
     }
 
