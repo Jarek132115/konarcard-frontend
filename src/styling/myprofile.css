@@ -163,9 +163,9 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    /* We will control gaps more granularly now */
+    /* FIX: Set a consistent gap for direct children of the scrollable content */
     gap: 0;
-    /* FIX: Remove default gap here, control with specific margins */
+    /* Temporarily set to 0, elements will use explicit margins */
     overflow-y: auto;
     padding-right: 5px;
 }
@@ -196,25 +196,34 @@
     display: block;
     object-fit: cover;
     background-size: 50%;
+    /* Only applies if src is empty */
     background-repeat: no-repeat;
+    /* Only applies if src is empty */
     background-position: center;
+    /* Only applies if src is empty */
 }
 
+/* Specific placeholder styling when src is empty */
 .mock-cover[src=""],
 .avatar-preview[src=""],
 .work-image-preview[src=""] {
     border: 1px dashed var(--border-color);
+    /* For actual preview, these background images will be overridden by src */
     background-image: url('../assets/images/background-hero.png');
+    /* Default placeholder */
     background-size: cover;
+    /* Covers the entire placeholder area */
 }
 
 .avatar-preview[src=""] {
     background-image: url('../assets/images/People.png');
+    /* Default placeholder */
     background-size: cover;
 }
 
 .work-image-preview[src=""] {
     background-image: url('/Interface-Preview/Work-Images1.png');
+    /* Default placeholder */
     background-size: cover;
 }
 
@@ -223,8 +232,8 @@
     aspect-ratio: 4 / 3.25;
     /* FIX: Set aspect ratio to 4x3.25 */
     border-radius: 0.75rem;
-    margin-bottom: 24px;
-    /* FIX: Explicit 24px gap after cover photo */
+    margin-bottom: 12px;
+    /* FIX: 12px gap below cover photo */
 }
 
 /* Removed remove-image-button styles here since they are only in editor now */
@@ -233,8 +242,7 @@
     font-size: 2rem;
     font-weight: 700;
     margin: 0;
-    margin-top: -12px;
-    /* FIX: Pull up to compensate for cover margin-bottom, fine-tune spacing to 12px from image */
+    /* Reset default margins */
     line-height: 1.2;
     color: var(--text-color);
 }
@@ -244,6 +252,7 @@
     font-weight: 600;
     color: var(--subtle-text-color);
     margin: 0;
+    /* Reset default margin */
     margin-top: 6px;
     /* FIX: 6px gap under main heading */
 }
@@ -256,21 +265,23 @@
     border: none;
     font-weight: 700;
     font-size: 0.875rem;
+    margin: 0;
+    /* Reset default margin */
     margin-top: 12px;
     /* FIX: 12px gap under subheading */
     width: 100%;
     box-sizing: border-box;
     font-family: var(--main-font-family);
     margin-bottom: 36px;
-    /* FIX: 24px gap after button group */
+    /* FIX: 36px gap after button group (before next section title) */
 }
 
 .mock-section-title {
     font-size: 1rem;
-    margin-top: 0;
-    /* Handled by previous element's margin-bottom or parent gap */
+    margin: 0;
+    /* Reset default margin */
     margin-bottom: 12px;
-    /* FIX: 12px gap below section title to content */
+    /* FIX: 12px gap below section title to its content */
     font-weight: 600;
     text-align: left;
     color: var(--text-color);
@@ -288,7 +299,7 @@
     width: 100%;
     box-sizing: border-box;
     margin-bottom: 36px;
-    /* FIX: 24px gap after about me section */
+    /* FIX: 36px gap after about me section (before next section title) */
 }
 
 .mock-about-content-group {
@@ -347,7 +358,13 @@
     /* FIX: Gap between work images (approx 12px) */
     width: 100%;
     margin-bottom: 36px;
-    /* FIX: 24px gap after work gallery */
+    /* FIX: 36px gap after work gallery */
+    padding: 0;
+    /* FIX: Remove padding so images go to edge if desired */
+    background-color: transparent;
+    /* FIX: Ensure background is transparent */
+    border-radius: 0;
+    /* FIX: Remove border-radius here if present */
 }
 
 .mock-work-image-item-wrapper {
@@ -359,20 +376,30 @@
     display: block;
     overflow: hidden;
     border-radius: 0.5rem;
+    /* Apply consistent border-radius to wrapper */
+    /* Remove any explicit height/width here that might conflict with aspect-ratio */
 }
 
 .mock-work-gallery img.mock-work-image-item {
     width: 100%;
+    /* Fill wrapper */
     height: auto;
     /* Let aspect ratio determine height */
     aspect-ratio: 4 / 2.75;
     /* FIX: Set aspect ratio to 4x2.75 */
     border-radius: 0;
+    /* No individual border-radius on img, applied to wrapper */
     min-width: unset;
     min-height: unset;
     background-color: var(--placeholder-bg);
     object-fit: cover;
+    /* This should make it fill. */
 }
+
+/* IMPORTANT: If the grey is still showing for empty work images, it means the placeholder image itself has the grey bar,
+   or the 'src' attribute is truly empty and the `background-size: cover` on the `background-image` for the placeholder
+   doesn't hide the entire grey area of the placeholder asset. If so, you'd need to replace the placeholder images. */
+
 
 .mock-services-list,
 .mock-reviews-list {
@@ -382,7 +409,7 @@
     /* ~10px internal gap */
     width: 100%;
     margin-bottom: 36px;
-    /* FIX: 24px gap after services/reviews list */
+    /* FIX: 36px gap after services/reviews list */
 }
 
 .mock-service-item,
@@ -489,7 +516,6 @@
     color: var(--text-color);
 }
 
-/* General input/textarea styles */
 .input-block input[type="text"],
 .input-block input[type="email"],
 .input-block input[type="tel"],
@@ -536,7 +562,6 @@
     border-color: #007bff;
 }
 
-/* Image upload areas in editor */
 .image-upload-area {
     cursor: pointer;
     display: flex;
