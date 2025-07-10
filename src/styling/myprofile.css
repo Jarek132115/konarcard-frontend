@@ -32,8 +32,8 @@
 /* Base Layout for the entire application */
 .app-layout {
     display: flex;
-    min-height: 100vh;
-    /* Use min-height to allow content to extend beyond viewport if needed */
+    height: 100vh;
+    /* Set explicit height to 100vh to ensure no vertical scroll on body */
     background-color: var(--secondary-bg);
     position: relative;
     overflow: hidden;
@@ -50,14 +50,15 @@
     display: flex;
     flex-direction: column;
     /* Stack children (PageHeader, combined-offer-container) vertically */
-    overflow-y: auto;
-    /* Allow content inside main to scroll */
+    height: 100%;
+    /* Important: Make main fill the height of app-layout */
     box-sizing: border-box;
     margin-left: 260px;
     /* Space for the fixed sidebar on desktop */
     color: var(--text-color);
     transition: margin-left 0.3s ease-in-out;
     /* Smooth transition for sidebar open/close */
+    /* Remove overflow-y: auto from here, it will be on a deeper container */
 }
 
 /* Page Header - remains mostly the same */
@@ -66,7 +67,9 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    /* Space below header */
     flex-shrink: 0;
+    /* Prevents header from shrinking */
     border-bottom: 1px solid grey;
     /* Use solid for consistency */
     padding-bottom: 20px;
@@ -114,9 +117,15 @@
     gap: 20px;
     /* Space between card boxes/flex container */
     flex: 1;
-    /* Allow to grow and take available vertical space in main-content-container */
+    /* Allows to grow and take available vertical space in main-content-container */
     min-height: 0;
     /* Crucial for flex items with internal scrolling */
+    overflow-y: auto;
+    /* IMPORTANT: This container will now handle the main content scroll */
+    padding-bottom: 20px;
+    /* Add some padding at the bottom of the scroll area */
+    box-sizing: border-box;
+    /* Include padding in height calculation */
 }
 
 /* My Profile Flex Container - for the side-by-side layout on desktop */
@@ -136,13 +145,11 @@
     /* Ensure it takes full width up to max-width */
     margin: 0 auto;
     /* Center the container horizontally */
-    padding-bottom: 20px;
-    /* Add some padding at the bottom */
+    /* Removed padding-bottom here as it's now on combined-offer-container */
 }
 
 /* Phone Preview Container */
 .myprofile-content {
-    /* desktop styles */
     flex-shrink: 0;
     /* Prevent shrinking below its content size */
     flex-grow: 0;
@@ -150,7 +157,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Height will be implicitly constrained by myprofile-flex-container */
     position: relative;
     /* For absolute positioning of remove buttons */
     max-width: 320px;
@@ -161,6 +167,9 @@
     /* Minimum width for readability */
     height: 100%;
     /* Make it fill the height of myprofile-flex-container */
+    /* Added min-height with aspect-ratio fallback for very short screens */
+    min-height: calc(100vw * 17 / 9 * (320 / 1000));
+    /* Estimate min height based on max-width and aspect ratio */
 }
 
 /* Mock Phone Styles */
@@ -169,6 +178,8 @@
     /* Fill parent container */
     height: 100%;
     /* Fill parent container */
+    aspect-ratio: 9 / 17;
+    /* Explicitly set aspect ratio here */
     background: var(--primary-bg);
     border: 10px solid black;
     border-radius: 2.5rem;
@@ -220,13 +231,10 @@
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-
 .mock-cover,
 .avatar-preview,
-/* Changed from mock-avatar for editor */
 .mock-work-image-item,
 .work-image-preview {
-    /* Changed from mock-work-image-item for editor */
     background-color: var(--placeholder-bg);
     display: block;
     object-fit: cover;
@@ -239,7 +247,6 @@
 .avatar-preview[src=""],
 .work-image-preview[src=""] {
     border: 1px dashed var(--border-color);
-    /* For actual preview, these background images will be overridden by src */
     background-image: url('../assets/images/background-hero.png');
     /* Default placeholder */
     background-size: cover;
@@ -256,7 +263,6 @@
     /* Default placeholder */
     background-size: cover;
 }
-
 
 .mock-cover {
     width: 100%;
@@ -731,7 +737,6 @@
     background-color: #fdd;
     color: #c00;
 }
-
 
 .submit-button {
     padding: 12px 20px;
