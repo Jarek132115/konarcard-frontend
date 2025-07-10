@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-import useBusinessCardStore from "../../store/businessCardStore";
+import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
   useCreateBusinessCard,
@@ -121,26 +121,26 @@ export default function MyProfile() {
 
       if (businessCard) {
         updateState({
-          businessName: businessCard.business_card_name || initialStoreState.businessName,
-          pageTheme: businessCard.page_theme || initialStoreState.pageTheme,
-          font: businessCard.style || initialStoreState.font,
-          mainHeading: businessCard.main_heading || initialStoreState.mainHeading,
-          subHeading: businessCard.sub_heading || initialStoreState.subHeading,
-          job_title: businessCard.job_title || initialStoreState.job_title,
-          full_name: businessCard.full_name || initialStoreState.full_name,
-          bio: businessCard.bio || initialStoreState.bio,
-          avatar: businessCard.avatar || initialStoreState.avatar,
-          coverPhoto: businessCard.cover_photo || initialStoreState.coverPhoto,
-          workImages: (businessCard.works && businessCard.works.length > 0) ? businessCard.works.map(url => ({ file: null, preview: url })) : initialStoreState.workImages,
-          services: (businessCard.services && businessCard.services.length > 0) ? businessCard.services : initialStoreState.services,
-          reviews: (businessCard.reviews && businessCard.reviews.length > 0) ? businessCard.reviews : initialStoreState.reviews,
-          contact_email: businessCard.contact_email || initialStoreState.contact_email,
-          phone_number: businessCard.phone_number || initialStoreState.phone_number,
+          businessName: businessCard.business_card_name,
+          pageTheme: businessCard.page_theme,
+          font: businessCard.style,
+          mainHeading: businessCard.main_heading,
+          subHeading: businessCard.sub_heading,
+          job_title: businessCard.job_title,
+          full_name: businessCard.full_name,
+          bio: businessCard.bio,
+          avatar: businessCard.avatar,
+          coverPhoto: businessCard.cover_photo,
+          workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
+          services: businessCard.services || [],
+          reviews: businessCard.reviews || [],
+          contact_email: businessCard.contact_email,
+          phone_number: businessCard.phone_number,
         });
         console.log("MyProfile: Updated store state with fetched business card data for existing user.");
       } else {
         resetState();
-        console.log("MyProfile: No business card found, resetting store state to initial placeholders for new user.");
+        console.log("MyProfile: No business card found, resetting store state to empty for new user.");
       }
 
       setCoverPhotoFile(null);
@@ -149,7 +149,7 @@ export default function MyProfile() {
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     }
-  }, [businessCard, isCardLoading, authUser, updateState, resetState, initialStoreState, activeBlobUrls, hasLoadedInitialCardData]);
+  }, [businessCard, isCardLoading, authUser, updateState, resetState, activeBlobUrls, hasLoadedInitialCardData]);
 
 
   useEffect(() => {
@@ -202,10 +202,8 @@ export default function MyProfile() {
   };
 
   const handleRemoveCoverPhoto = () => {
-    const isCurrentlyDefault = state.coverPhoto === initialStoreState.coverPhoto;
     const isLocalBlob = state.coverPhoto && state.coverPhoto.startsWith('blob:');
-
-    if (!isCurrentlyDefault && !isLocalBlob && state.coverPhoto) {
+    if (!isLocalBlob && state.coverPhoto) {
       setCoverPhotoRemoved(true);
     } else {
       setCoverPhotoRemoved(false);
@@ -215,16 +213,13 @@ export default function MyProfile() {
       URL.revokeObjectURL(state.coverPhoto);
       setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
     }
-
     updateState({ coverPhoto: null });
     setCoverPhotoFile(null);
   };
 
   const handleRemoveAvatar = () => {
-    const isCurrentlyDefault = state.avatar === initialStoreState.avatar;
     const isLocalBlob = state.avatar && state.avatar.startsWith('blob:');
-
-    if (!isCurrentlyDefault && !isLocalBlob && state.avatar) {
+    if (!isLocalBlob && state.avatar) {
       setIsAvatarRemoved(true);
     } else {
       setIsAvatarRemoved(false);
@@ -234,7 +229,6 @@ export default function MyProfile() {
       URL.revokeObjectURL(state.avatar);
       setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
     }
-
     updateState({ avatar: null });
     setAvatarFile(null);
   };
@@ -360,7 +354,7 @@ export default function MyProfile() {
         if (item.file) {
           return { file: item.file };
         }
-        else if (item.preview && !initialStoreState.workImages.some(defaultImg => defaultImg.preview === item.preview)) {
+        else if (item.preview && !item.preview.startsWith('blob:')) {
           return item.preview;
         }
         return null;
@@ -473,26 +467,29 @@ export default function MyProfile() {
     username: userUsername || '',
   };
 
-  // Helper to determine if the editor input should show actual data or be blank
+  // Helper to get value for editor text inputs (empty for new users, data for existing)
   const getEditorValue = (fieldValue) => {
     // If businessCard exists, show the actual value (even if it's currently null/empty string for that field).
     // If businessCard is null (new user), show an empty string in the editor input.
     return businessCard ? (fieldValue || '') : '';
   };
 
-  // Helper to determine the image source for editor upload areas
+  // Helper to get image src for editor image previews (blob for new upload, URL for saved, empty for truly empty)
   const getEditorImageSrc = (imageState) => {
-    // If businessCard exists AND imageState has a value, use it.
-    // Otherwise, show an empty string so the placeholder background image/text is visible.
-    return businessCard && imageState ? imageState : '';
+    // Prioritize current temporary blob URL if set, otherwise saved URL. If neither, return empty.
+    return imageState || '';
   };
 
   // Helper to determine if an image upload area should show "Add Image" text
   const showAddImageText = (imageState) => {
-    // Show text if NO businessCard (new user) OR if businessCard exists but imageState is empty/null (image removed or never set)
-    return !businessCard || !imageState;
+    // Show text if imageState is null/empty string (no image, either not set or removed)
+    return !imageState;
   };
 
+  // Helper to get preview text for mock phone display (uses initial template if field is empty)
+  const getPreviewText = (fieldValue, placeholderText) => {
+    return fieldValue || placeholderText;
+  };
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -579,14 +576,14 @@ export default function MyProfile() {
                   >
                     <div className="mock-phone-scrollable-content">
                       <img
-                        src={state.coverPhoto || ''}
+                        src={state.coverPhoto || previewPlaceholders.coverPhoto}
                         alt="Cover"
                         className="mock-cover"
                       />
-                      {/* Removed delete button from preview section as per instructions */}
+                      {/* Removed delete button from preview section */}
 
-                      <h2 className="mock-title">{state.mainHeading}</h2>
-                      <p className="mock-subtitle">{state.subHeading}</p>
+                      <h2 className="mock-title">{getPreviewText(state.mainHeading, previewPlaceholders.mainHeading)}</h2>
+                      <p className="mock-subtitle">{getPreviewText(state.subHeading, previewPlaceholders.subHeading)}</p>
                       <button
                         type="button"
                         className="mock-button"
@@ -599,20 +596,18 @@ export default function MyProfile() {
                           <div className="mock-about-container">
                             <div className="mock-about-content-group">
                               <div className="mock-about-header-group">
-                                {state.avatar && (
-                                  <img
-                                    src={state.avatar || ''}
-                                    alt="Avatar"
-                                    className="mock-avatar"
-                                  />
-                                )}
+                                <img
+                                  src={state.avatar || previewPlaceholders.avatar}
+                                  alt="Avatar"
+                                  className="mock-avatar"
+                                />
                                 {/* Removed delete button from preview section */}
                                 <div>
-                                  <p className="mock-profile-name">{state.full_name}</p>
-                                  <p className="mock-profile-role">{state.job_title}</p>
+                                  <p className="mock-profile-name">{getPreviewText(state.full_name, previewPlaceholders.full_name)}</p>
+                                  <p className="mock-profile-role">{getPreviewText(state.job_title, previewPlaceholders.job_title)}</p>
                                 </div>
                               </div>
-                              {state.bio && <p className="mock-bio-text">{state.bio}</p>}
+                              <p className="mock-bio-text">{getPreviewText(state.bio, previewPlaceholders.bio)}</p>
                             </div>
                           </div>
                         </>
@@ -625,7 +620,7 @@ export default function MyProfile() {
                             {state.workImages.map((img, i) => (
                               <div key={i} className="mock-work-image-item-wrapper">
                                 <img
-                                  src={img.preview || ''}
+                                  src={img.preview || previewPlaceholders.workImages[0]?.preview || ''}
                                   alt={`work-${i}`}
                                   className="mock-work-image-item"
                                 />
@@ -642,8 +637,8 @@ export default function MyProfile() {
                           <div className="mock-services-list">
                             {state.services.map((s, i) => (
                               <div key={i} className="mock-service-item">
-                                <p className="mock-service-name">{s.name}</p>
-                                <span className="mock-service-price">{s.price}</span>
+                                <p className="mock-service-name">{getPreviewText(s.name, previewPlaceholders.services[i]?.name || '')}</p>
+                                <span className="mock-service-price">{getPreviewText(s.price, previewPlaceholders.services[i]?.price || '')}</span>
                               </div>
                             ))}
                           </div>
@@ -664,8 +659,8 @@ export default function MyProfile() {
                                     <span key={`empty-${starIdx}`} className="empty-star">★</span>
                                   ))}
                                 </div>
-                                <p className="mock-review-text">"{r.text}"</p>
-                                <p className="mock-reviewer-name">{r.name}</p>
+                                <p className="mock-review-text">"{getPreviewText(r.text, previewPlaceholders.reviews[i]?.text || '')}"</p>
+                                <p className="mock-reviewer-name">{getPreviewText(r.name, previewPlaceholders.reviews[i]?.name || '')}</p>
                               </div>
                             ))}
                           </div>
@@ -770,7 +765,7 @@ export default function MyProfile() {
                         type="text"
                         value={getEditorValue(state.mainHeading)}
                         onChange={(e) => updateState({ mainHeading: e.target.value })}
-                        placeholder={initialStoreState.mainHeading}
+                        placeholder={previewPlaceholders.mainHeading}
                       />
                     </div>
 
@@ -781,7 +776,7 @@ export default function MyProfile() {
                         type="text"
                         value={getEditorValue(state.subHeading)}
                         onChange={(e) => updateState({ subHeading: e.target.value })}
-                        placeholder={initialStoreState.subHeading}
+                        placeholder={previewPlaceholders.subHeading}
                       />
                     </div>
 
@@ -792,7 +787,7 @@ export default function MyProfile() {
                         type="text"
                         value={getEditorValue(state.job_title)}
                         onChange={(e) => updateState({ job_title: e.target.value })}
-                        placeholder={initialStoreState.job_title}
+                        placeholder={previewPlaceholders.job_title}
                       />
                     </div>
 
@@ -835,7 +830,7 @@ export default function MyProfile() {
                         type="text"
                         value={getEditorValue(state.full_name)}
                         onChange={(e) => updateState({ full_name: e.target.value })}
-                        placeholder={initialStoreState.full_name}
+                        placeholder={previewPlaceholders.full_name}
                       />
                     </div>
 
@@ -846,22 +841,21 @@ export default function MyProfile() {
                         value={getEditorValue(state.bio)}
                         onChange={(e) => updateState({ bio: e.target.value })}
                         rows={4}
-                        placeholder={initialStoreState.bio}
+                        placeholder={previewPlaceholders.bio}
                       />
                     </div>
 
                     <div className="input-block">
                       <label>My Work</label>
                       <div className="work-preview-row">
-                        {/* FIX: Conditionally render saved work images only if businessCard exists */}
-                        {businessCard && state.workImages.map((img, i) => ( // Only map if businessCard is present
+                        {/* FIX: Only map work images if state.workImages has items */}
+                        {state.workImages.map((img, i) => (
                           <div key={i} className="work-image-item-wrapper">
                             <img
-                              src={img.preview || ''}
+                              src={img.preview || ''} 
                               alt={`work-${i}`}
                               className="work-image-preview"
                             />
-                            {/* This remove button is correct here in the editor */}
                             <button
                               type="button"
                               className="remove-image-button work-image-remove"
@@ -871,8 +865,8 @@ export default function MyProfile() {
                             </button>
                           </div>
                         ))}
-                        {/* FIX: Display "Add Work Image" placeholder if no businessCard exists OR if businessCard exists but state.workImages is empty (meaning all were removed by user) */}
-                        {(!businessCard || (businessCard && state.workImages.length === 0)) && (
+                        {/* FIX: Display "Add Work Image" placeholder if there are currently no work images */}
+                        {(state.workImages.length === 0) && ( // Show this placeholder only if workImages is empty
                           <div
                             className="image-upload-area add-work-image-placeholder"
                             onClick={() => {
@@ -889,7 +883,7 @@ export default function MyProfile() {
                             }}
                           >
                             <span className="upload-text">Add Work Image</span>
-                            <img src="" alt="Add Work" className="work-image-preview" /> {/* Empty src to show background */}
+                            <img src="" alt="Add Work" className="work-image-preview" />
                           </div>
                         )}
                       </div>
@@ -901,13 +895,13 @@ export default function MyProfile() {
                         <div key={i} className="editor-item-card">
                           <input
                             type="text"
-                            placeholder={initialStoreState.services[0]?.name || "Service Name"}
+                            placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
                             value={getEditorValue(s.name)}
                             onChange={(e) => handleServiceChange(i, "name", e.target.value)}
                           />
                           <input
                             type="text"
-                            placeholder={initialStoreState.services[0]?.price || "Service Price/Detail"}
+                            placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
                             value={getEditorValue(s.price)}
                             onChange={(e) => handleServiceChange(i, "price", e.target.value)}
                           />
@@ -925,19 +919,19 @@ export default function MyProfile() {
                         <div key={i} className="editor-item-card">
                           <input
                             type="text"
-                            placeholder={initialStoreState.reviews[0]?.name || "Reviewer Name"}
+                            placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
                             value={getEditorValue(r.name)}
                             onChange={(e) => handleReviewChange(i, "name", e.target.value)}
                           />
                           <textarea
-                            placeholder={initialStoreState.reviews[0]?.text || "Review text"}
+                            placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
                             rows={2}
                             value={getEditorValue(r.text)}
                             onChange={(e) => handleReviewChange(i, "text", e.target.value)}
                           />
                           <input
                             type="number"
-                            placeholder={initialStoreState.reviews[0]?.rating?.toString() || "Rating (1-5)"}
+                            placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
                             min="1"
                             max="5"
                             value={getEditorValue(r.rating)}
@@ -961,7 +955,7 @@ export default function MyProfile() {
                         type="email"
                         value={getEditorValue(state.contact_email)}
                         onChange={(e) => updateState({ contact_email: e.target.value })}
-                        placeholder={initialStoreState.contact_email}
+                        placeholder={previewPlaceholders.contact_email}
                       />
                     </div>
 
@@ -972,7 +966,7 @@ export default function MyProfile() {
                         type="tel"
                         value={getEditorValue(state.phone_number)}
                         onChange={(e) => updateState({ phone_number: e.target.value })}
-                        placeholder={initialStoreState.phone_number}
+                        placeholder={previewPlaceholders.phone_number}
                       />
                     </div>
 
