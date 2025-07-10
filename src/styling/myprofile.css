@@ -591,6 +591,7 @@
     border-radius: 0;
 }
 
+/* Specific styling for the 'X' remove button on images */
 .remove-image-button {
     position: absolute;
     top: 5px;
@@ -603,9 +604,11 @@
     color: white;
     /* White 'X' */
     border-radius: 50%;
+    /* Circular shape */
     cursor: pointer;
     border: none;
     z-index: 10;
+    /* Ensure it's above the image */
     display: flex;
     /* For centering the 'X' */
     justify-content: center;
@@ -677,22 +680,27 @@
     margin-bottom: 0;
 }
 
+/* Styling for the "Remove" button inside service/review cards */
 .remove-item-button {
     align-self: flex-end;
     padding: 4px 8px;
     font-size: 12px;
-    border: 1px solid var(--border-color);
+    border: 1px solid transparent;
+    /* Changed border to transparent */
     background-color: #dc3545;
-    /* Red background for "Remove" buttons */
+    /* Red background */
     color: white;
+    /* White text */
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background-color 0.2s, border-color 0.2s;
     border-radius: 8px;
 }
 
 .remove-item-button:hover {
     background-color: #c82333;
     /* Darker red on hover */
+    border-color: #bd2130;
+    /* Slightly darker red border on hover */
     color: white;
 }
 
@@ -851,7 +859,9 @@
     cursor: not-allowed;
 }
 
+
 @media (max-width: 1000px) {
+
     .app-layout {
         height: auto;
         overflow-y: visible;
