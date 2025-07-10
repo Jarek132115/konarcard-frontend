@@ -33,33 +33,23 @@
 .app-layout {
     display: flex;
     height: 100vh;
-    /* Set explicit height to 100vh to ensure no vertical scroll on body/html */
     background-color: var(--secondary-bg);
     position: relative;
     overflow: hidden;
-    /* Prevents horizontal scroll from sidebar transition */
 }
 
 /* Main content area - adjusted for sidebar spacing and vertical flex */
 .main-content-container {
     flex: 1;
-    /* Allows it to take up remaining horizontal space */
     font-family: var(--main-font-family);
     padding: 30px;
-    /* Default padding for desktop */
     display: flex;
     flex-direction: column;
-    /* Stack children (PageHeader, combined-offer-container) vertically */
     height: 100%;
-    /* Important: Make main fill the height of app-layout */
     box-sizing: border-box;
-    /* Include padding in height calculation */
     margin-left: 260px;
-    /* Space for the fixed sidebar on desktop */
     color: var(--text-color);
     transition: margin-left 0.3s ease-in-out;
-    /* Smooth transition for sidebar open/close */
-    /* Removed overflow-y: auto from here; scrolling managed by .combined-offer-container */
 }
 
 /* Page Header - remains mostly the same */
@@ -68,9 +58,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
-    /* Space below header */
     flex-shrink: 0;
-    /* Prevents header from shrinking */
     border-bottom: 1px solid grey;
     padding-bottom: 20px;
 }
@@ -111,78 +99,54 @@
 .combined-offer-container {
     display: flex;
     flex-direction: column;
-    /* Stack vertically for both desktop and mobile */
     align-items: center;
-    /* Center horizontally within available space */
     gap: 20px;
-    /* Space between card boxes/flex container */
     flex: 1;
-    /* Allows to grow and take available vertical space in main-content-container */
     min-height: 0;
-    /* Crucial for flex items with internal scrolling */
     overflow-y: auto;
-    /* IMPORTANT: This container will now handle the main content scroll */
     padding-bottom: 20px;
-    /* Add some padding at the bottom of the scroll area */
     box-sizing: border-box;
-    /* Include padding in height calculation */
 }
 
 /* My Profile Flex Container - for the side-by-side layout on desktop */
 .myprofile-flex-container {
     display: flex;
     height: 100%;
-    /* Ensures it calculates height correctly based on its available space */
     gap: 60px;
     min-height: 0;
-    /* Important for flex children to allow internal scrolling */
     justify-content: center;
     align-items: flex-start;
-    /* IMPORTANT: Changed from stretch to flex-start for aspect ratio control */
     max-width: 1200px;
-    /* Constrain overall width on large screens */
     width: 100%;
-    /* Ensure it takes full width up to max-width */
     margin: 0 auto;
-    /* Center the container horizontally */
 }
 
 /* Phone Preview Container */
 .myprofile-content {
     flex-shrink: 0;
-    /* Prevents shrinking below its content size */
     flex-grow: 0;
-    /* Prevents growing unnecessarily */
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    /* For absolute positioning of remove buttons */
     max-width: 320px;
-    /* Max width for the phone mock */
     width: 100%;
-    /* Take full width up to max */
     min-width: 250px;
-    /* Minimum width for readability */
 
     height: auto;
-    /* Allow height to be determined by aspect-ratio and max-height */
     max-height: 100%;
-    /* Constrain to the height available in myprofile-flex-container */
     aspect-ratio: 9 / 17;
-    /* Set the desired phone aspect ratio here */
 }
 
 /* Mock Phone Styles */
 .mock-phone {
     width: 100%;
-    /* Fill parent container (.myprofile-content) */
     height: 100%;
-    /* Fill parent container (.myprofile-content) */
     background: var(--primary-bg);
     border: 10px solid black;
     border-radius: 2.5rem;
     padding: 20px;
+    /* Overall padding for the phone content */
     text-align: center;
     box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
@@ -191,40 +155,33 @@
     font-family: var(--main-font-family);
     color: var(--text-color);
     overflow: hidden;
-    /* Ensure content doesn't spill out of rounded corners */
 }
 
 .mock-phone-scrollable-content {
     flex-grow: 1;
-    /* Allow this to take all available space */
     width: 100%;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    /* FIX: Set gap to 24px for major sections */
+    /* We will control gaps more granularly now */
+    gap: 0;
+    /* FIX: Remove default gap here, control with specific margins */
     overflow-y: auto;
-    /* Enable scrolling for phone content */
     padding-right: 5px;
-    /* Add slight padding for scrollbar if present */
 }
 
 /* Hide scrollbar for aesthetics, but allow scrolling */
 .mock-phone-scrollable-content::-webkit-scrollbar {
     width: 5px;
-    /* Width of the scrollbar */
 }
 
 .mock-phone-scrollable-content::-webkit-scrollbar-track {
     background: transparent;
-    /* Track color */
 }
 
 .mock-phone-scrollable-content::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.2);
-    /* Thumb color */
     border-radius: 10px;
-    /* Rounded corners for the thumb */
 }
 
 .dark-mode .mock-phone-scrollable-content::-webkit-scrollbar-thumb {
@@ -248,19 +205,16 @@
 .work-image-preview[src=""] {
     border: 1px dashed var(--border-color);
     background-image: url('../assets/images/background-hero.png');
-    /* Default placeholder */
     background-size: cover;
 }
 
 .avatar-preview[src=""] {
     background-image: url('../assets/images/People.png');
-    /* Default placeholder */
     background-size: cover;
 }
 
 .work-image-preview[src=""] {
     background-image: url('/Interface-Preview/Work-Images1.png');
-    /* Default placeholder */
     background-size: cover;
 }
 
@@ -269,39 +223,18 @@
     aspect-ratio: 4 / 3.25;
     /* FIX: Set aspect ratio to 4x3.25 */
     border-radius: 0.75rem;
+    margin-bottom: 24px;
+    /* FIX: Explicit 24px gap after cover photo */
 }
 
-/* Remove image buttons are now only in the editor, no need for preview-specific positioning */
-.remove-image-button {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.7);
-    border: none;
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    z-index: 5;
-}
-
-/* Example: Specific positioning for editor's remove buttons if needed */
-/* .cover-photo-remove { top: 10px; right: 10px; } */
-/* .avatar-remove { top: 10px; left: 10px; } */
-
+/* Removed remove-image-button styles here since they are only in editor now */
 
 .mock-title {
     font-size: 2rem;
     font-weight: 700;
     margin: 0;
-    /* Reset default margin */
-    margin-top: 12px;
-    /* FIX: 12px gap under cover photo */
+    margin-top: -12px;
+    /* FIX: Pull up to compensate for cover margin-bottom, fine-tune spacing to 12px from image */
     line-height: 1.2;
     color: var(--text-color);
 }
@@ -311,7 +244,6 @@
     font-weight: 600;
     color: var(--subtle-text-color);
     margin: 0;
-    /* Reset default margin */
     margin-top: 6px;
     /* FIX: 6px gap under main heading */
 }
@@ -329,12 +261,14 @@
     width: 100%;
     box-sizing: border-box;
     font-family: var(--main-font-family);
+    margin-bottom: 24px;
+    /* FIX: 24px gap after button group */
 }
 
 .mock-section-title {
     font-size: 1rem;
     margin-top: 0;
-    /* Handled by parent gap */
+    /* Handled by previous element's margin-bottom or parent gap */
     margin-bottom: 12px;
     /* FIX: 12px gap below section title to content */
     font-weight: 600;
@@ -352,8 +286,9 @@
     /* ~12px internal gap */
     text-align: left;
     width: 100%;
-    /* Ensure it takes full width in mock-phone-scrollable-content */
     box-sizing: border-box;
+    margin-bottom: 24px;
+    /* FIX: 24px gap after about me section */
 }
 
 .mock-about-content-group {
@@ -376,7 +311,6 @@
     min-width: 3.5rem;
     min-height: 3.5rem;
     background-color: var(--border-color);
-    /* Placeholder background */
     object-fit: cover;
     background-size: cover;
     background-position: center;
@@ -412,7 +346,8 @@
     gap: 0.75rem;
     /* FIX: Gap between work images (approx 12px) */
     width: 100%;
-    /* Ensure it takes full width */
+    margin-bottom: 24px;
+    /* FIX: 24px gap after work gallery */
 }
 
 .mock-work-image-item-wrapper {
@@ -422,44 +357,36 @@
     height: auto;
     /* Let aspect ratio control height */
     display: block;
-    /* Ensure it takes its own row */
     overflow: hidden;
-    /* For rounded corners */
     border-radius: 0.5rem;
-    /* Apply here for consistency */
 }
 
 .mock-work-gallery img.mock-work-image-item {
     width: 100%;
-    /* Fill wrapper */
     height: auto;
     /* Let aspect ratio determine height */
     aspect-ratio: 4 / 2.75;
     /* FIX: Set aspect ratio to 4x2.75 */
     border-radius: 0;
-    /* No individual border-radius here, applied to wrapper */
     min-width: unset;
-    /* Remove min-width */
     min-height: unset;
-    /* Remove min-height */
     background-color: var(--placeholder-bg);
     object-fit: cover;
 }
 
 .mock-services-list,
 .mock-reviews-list {
-    /* Combined these as they have similar structure */
     display: flex;
     flex-direction: column;
     gap: 0.625rem;
     /* ~10px internal gap */
     width: 100%;
-    /* Ensure they take full width */
+    margin-bottom: 24px;
+    /* FIX: 24px gap after services/reviews list */
 }
 
 .mock-service-item,
 .mock-review-card {
-    /* Combined these as they have similar structure */
     background-color: var(--card-bg);
     border-radius: 0.75rem;
     padding: 0.75rem 1rem;
@@ -468,9 +395,7 @@
     flex-direction: column;
     color: var(--text-color);
     width: 100%;
-    /* Ensure they take full width */
     box-sizing: border-box;
-    /* Include padding in width */
 }
 
 .mock-service-name {
@@ -520,18 +445,13 @@
     width: 100%;
     min-width: 350px;
     flex: 1;
-    /* Allows it to grow and take remaining space in flex-container */
     min-height: 0;
-    /* Important for scrollable content */
     display: flex;
-    /* Ensure its child (the form) can be height 100% */
     height: 100%;
-    /* IMPORTANT: Ensures it respects parent's height */
 }
 
 .myprofile-editor {
     flex: 1;
-    /* Take full height of its wrapper */
     background: var(--primary-bg);
     padding: 24px;
     border-radius: 16px;
@@ -540,7 +460,6 @@
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
-    /* Enable scrolling for the editor form */
     -webkit-overflow-scrolling: touch;
     box-sizing: border-box;
     width: 100%;
@@ -583,9 +502,7 @@
     background-color: var(--primary-bg);
     color: var(--text-color);
     width: 100%;
-    /* Ensure full width */
     box-sizing: border-box;
-    /* Include padding and border in width */
 }
 
 .input-block input::placeholder,
@@ -634,7 +551,6 @@
 .cover-photo-upload {
     width: 100%;
     height: 180px;
-    /* Fixed height for cover upload area */
 }
 
 .avatar-upload {
@@ -665,7 +581,6 @@
 
 .work-preview-row {
     display: grid;
-    /* Keep grid for editor's row layout */
     grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
     gap: 12px;
 }
@@ -891,17 +806,6 @@
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
-}
-
-.content-card-box.verification-prompt button[type="button"] {
-    /* Resend code button */
-    padding: 10px 15px;
-    border-radius: 8px;
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ccc;
-    cursor: pointer;
-    font-size: 14px;
 }
 
 .content-card-box.verification-prompt button[type="button"]:disabled {
