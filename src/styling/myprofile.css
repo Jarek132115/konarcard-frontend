@@ -33,11 +33,11 @@
 .app-layout {
     display: flex;
     height: 100vh;
-    /* Set explicit height to 100vh to ensure no vertical scroll on body */
+    /* Set explicit height to 100vh to ensure no vertical scroll on body/html */
     background-color: var(--secondary-bg);
     position: relative;
     overflow: hidden;
-    /* Prevent horizontal scroll from sidebar transition */
+    /* Prevents horizontal scroll from sidebar transition */
 }
 
 /* Main content area - adjusted for sidebar spacing and vertical flex */
@@ -53,12 +53,13 @@
     height: 100%;
     /* Important: Make main fill the height of app-layout */
     box-sizing: border-box;
+    /* Include padding in height calculation */
     margin-left: 260px;
     /* Space for the fixed sidebar on desktop */
     color: var(--text-color);
     transition: margin-left 0.3s ease-in-out;
     /* Smooth transition for sidebar open/close */
-    /* Remove overflow-y: auto from here, it will be on a deeper container */
+    /* Removed overflow-y: auto from here; scrolling managed by .combined-offer-container */
 }
 
 /* Page Header - remains mostly the same */
@@ -71,7 +72,6 @@
     flex-shrink: 0;
     /* Prevents header from shrinking */
     border-bottom: 1px solid grey;
-    /* Use solid for consistency */
     padding-bottom: 20px;
 }
 
@@ -131,14 +131,14 @@
 /* My Profile Flex Container - for the side-by-side layout on desktop */
 .myprofile-flex-container {
     display: flex;
-    flex: 1;
-    /* Allows it to take up available vertical space within combined-offer-container */
+    height: 100%;
+    /* NEW: Ensures it calculates height correctly based on its available space */
     gap: 60px;
     min-height: 0;
     /* Important for flex children to allow internal scrolling */
     justify-content: center;
-    align-items: stretch;
-    /* Make children fill available height */
+    align-items: flex-start;
+    /* IMPORTANT: Changed from stretch to flex-start for aspect ratio control */
     max-width: 1200px;
     /* Constrain overall width on large screens */
     width: 100%;
@@ -151,9 +151,9 @@
 /* Phone Preview Container */
 .myprofile-content {
     flex-shrink: 0;
-    /* Prevent shrinking below its content size */
+    /* Prevents shrinking below its content size */
     flex-grow: 0;
-    /* Prevent growing unnecessarily */
+    /* Prevents growing unnecessarily */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -165,21 +165,24 @@
     /* Take full width up to max */
     min-width: 250px;
     /* Minimum width for readability */
-    height: 100%;
-    /* Make it fill the height of myprofile-flex-container */
-    /* Added min-height with aspect-ratio fallback for very short screens */
-    min-height: calc(100vw * 17 / 9 * (320 / 1000));
-    /* Estimate min height based on max-width and aspect ratio */
+
+    /* NEW/CHANGED: Control height via aspect-ratio directly on this container */
+    height: auto;
+    /* Allow height to be determined by aspect-ratio and max-height */
+    max-height: 100%;
+    /* Constrain to the height available in myprofile-flex-container */
+    aspect-ratio: 9 / 17;
+    /* Set the desired phone aspect ratio here */
+    /* The phone's actual height will be limited by max-height: 100% and its aspect-ratio */
 }
 
 /* Mock Phone Styles */
 .mock-phone {
     width: 100%;
-    /* Fill parent container */
+    /* Fill parent container (.myprofile-content) */
     height: 100%;
-    /* Fill parent container */
-    aspect-ratio: 9 / 17;
-    /* Explicitly set aspect ratio here */
+    /* Fill parent container (.myprofile-content) */
+    /* REMOVED: aspect-ratio: 9 / 17; -- moved to .myprofile-content */
     background: var(--primary-bg);
     border: 10px solid black;
     border-radius: 2.5rem;
@@ -233,8 +236,10 @@
 
 .mock-cover,
 .avatar-preview,
+/* Changed from mock-avatar for editor */
 .mock-work-image-item,
 .work-image-preview {
+    /* Changed from mock-work-image-item for editor */
     background-color: var(--placeholder-bg);
     display: block;
     object-fit: cover;
@@ -247,6 +252,7 @@
 .avatar-preview[src=""],
 .work-image-preview[src=""] {
     border: 1px dashed var(--border-color);
+    /* For actual preview, these background images will be overridden by src */
     background-image: url('../assets/images/background-hero.png');
     /* Default placeholder */
     background-size: cover;
@@ -508,11 +514,13 @@
     width: 100%;
     min-width: 350px;
     flex: 1;
-    /* Allow it to grow and take remaining space in flex-container */
+    /* Allows it to grow and take remaining space in flex-container */
     min-height: 0;
     /* Important for scrollable content */
     display: flex;
     /* Ensure its child (the form) can be height 100% */
+    height: 100%;
+    /* IMPORTANT: Ensures it respects parent's height */
 }
 
 .myprofile-editor {
