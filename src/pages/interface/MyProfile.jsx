@@ -5,17 +5,15 @@ import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore from "../../store/businessCardStore";
-// FIX: Corrected import syntax for hooks
-import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
+import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard"; // Corrected import
 import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
-} from "../../hooks/useCreateBiz";
+} from "../../hooks/useCreateBiz"; // Corrected import
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import ShareProfile from "../../components/ShareProfile";
-// FIX: Corrected import syntax for AuthContext
-import { AuthContext } from '../../components/AuthContext';
+import { AuthContext } from '../../components/AuthContext'; // Corrected import
 import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
@@ -31,7 +29,7 @@ export default function MyProfile() {
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
-  const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId); // Removed isError, error as they are not used in this specific logic
+  const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -45,39 +43,32 @@ export default function MyProfile() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
-  // Access initialState from the store directly
   const initialStoreState = useBusinessCardStore.getState().state;
 
   const location = useLocation();
 
-  // NEW LOCAL STATE: This flag will ensure our businessCard loading logic runs only ONCE.
   const [hasLoadedInitialCardData, setHasLoadedInitialCardData] = useState(false);
 
-  // useEffect for handling subscription status and preventing infinite loop
   useEffect(() => {
-    // Flag to ensure this effect runs only once on initial load (unless dependencies change)
-    // and correctly handles payment_success redirect.
     let handledRedirect = false;
 
     const checkSubscriptionStatus = async () => {
       if (authLoading || !authUser) {
-        return; // Wait until auth data is loaded
+        return;
       }
 
       const queryParams = new URLSearchParams(location.search);
       const paymentSuccess = queryParams.get('payment_success');
 
       if (paymentSuccess === 'true' && !isSubscribed && !handledRedirect) {
-        handledRedirect = true; // Mark as handled for this component instance
+        handledRedirect = true;
         console.log("Payment success detected in URL, refetching user data to update subscription status...");
-        if (typeof refetchAuthUser === 'function') { // Defensive check
-          await refetchAuthUser(); // Await to ensure state is updated
+        if (typeof refetchAuthUser === 'function') {
+          await refetchAuthUser();
         }
-        window.history.replaceState({}, document.title, location.pathname); // Clean URL
+        window.history.replaceState({}, document.title, location.pathname);
         toast.success("Subscription updated successfully!");
       }
-      // Removed the 'else if (!isSubscribed && !initialSubCheckDone)' block
-      // as it was causing repeated fetches and is now redundant.
     };
 
     checkSubscriptionStatus();
@@ -121,21 +112,14 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // FIX: This useEffect now intelligently updates the state
-  // It ensures placeholders are used if no businessCard is found initially
-  // and updates with actual data if a card exists.
   useEffect(() => {
-    // This effect should run after initial card data fetch is complete AND
-    // if it hasn't loaded initial card data yet for this user.
     if (!isCardLoading && authUser && !hasLoadedInitialCardData) {
-      setHasLoadedInitialCardData(true); // Mark as true so this block doesn't re-run for initial load
+      setHasLoadedInitialCardData(true);
 
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
       if (businessCard) {
-        // If a businessCard object is returned, update the state with its specific data.
-        // Use initialStoreState as a fallback *only if* fetched fields are null/empty.
         updateState({
           businessName: businessCard.business_card_name || initialStoreState.businessName,
           pageTheme: businessCard.page_theme || initialStoreState.pageTheme,
@@ -145,9 +129,8 @@ export default function MyProfile() {
           job_title: businessCard.job_title || initialStoreState.job_title,
           full_name: businessCard.full_name || initialStoreState.full_name,
           bio: businessCard.bio || initialStoreState.bio,
-          avatar: businessCard.avatar || initialStoreState.avatar, // Use placeholder if backend avatar is null
-          coverPhoto: businessCard.cover_photo || initialStoreState.coverPhoto, // Use placeholder if backend cover is null
-          // For arrays, apply fetched data if present and not empty, otherwise default to initialStoreState's array
+          avatar: businessCard.avatar || initialStoreState.avatar,
+          coverPhoto: businessCard.cover_photo || initialStoreState.coverPhoto,
           workImages: (businessCard.works && businessCard.works.length > 0) ? businessCard.works.map(url => ({ file: null, preview: url })) : initialStoreState.workImages,
           services: (businessCard.services && businessCard.services.length > 0) ? businessCard.services : initialStoreState.services,
           reviews: (businessCard.reviews && businessCard.reviews.length > 0) ? businessCard.reviews : initialStoreState.reviews,
@@ -156,13 +139,10 @@ export default function MyProfile() {
         });
         console.log("MyProfile: Updated state with fetched business card data.");
       } else {
-        // If businessCard is null (no card found), explicitly reset to initialState.
-        // This will happen only once due to `hasLoadedInitialCardData` flag, preventing infinite loop.
         resetState();
         console.log("MyProfile: No business card found, resetting state to initial placeholders (once).");
       }
 
-      // Reset temporary file states after processing fetched/initial data
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
@@ -581,15 +561,7 @@ export default function MyProfile() {
                         alt="Cover"
                         className="mock-cover"
                       />
-                      {(state.coverPhoto && state.coverPhoto.startsWith('blob:')) || (state.coverPhoto && state.coverPhoto !== initialStoreState.coverPhoto) ? (
-                        <button
-                          className="remove-image-button cover-photo-remove"
-                          onClick={handleRemoveCoverPhoto}
-                          aria-label="Remove cover photo"
-                        >
-                          &times;
-                        </button>
-                      ) : null}
+                      {/* Removed delete button from preview section as per instructions */}
 
                       <h2 className="mock-title">{state.mainHeading}</h2>
                       <p className="mock-subtitle">{state.subHeading}</p>
@@ -600,38 +572,34 @@ export default function MyProfile() {
                         Exchange Contact
                       </button>
                       {(state.full_name || state.job_title || state.bio || state.avatar) && (
-                        <div className="mock-about-container">
+                        <>
+                          {/* FIX: Section title is outside the content container */}
                           <p className="mock-section-title">About me</p>
-                          <div className="mock-about-content-group">
-                            <div className="mock-about-header-group">
-                              {state.avatar && (
-                                <img
-                                  src={state.avatar || ''}
-                                  alt="Avatar"
-                                  className="mock-avatar"
-                                />
-                              )}
-                              {(state.avatar && state.avatar.startsWith('blob:')) || (state.avatar && state.avatar !== initialStoreState.avatar) ? (
-                                <button
-                                  className="remove-image-button avatar-remove"
-                                  onClick={handleRemoveAvatar}
-                                  aria-label="Remove avatar"
-                                >
-                                  &times;
-                                </button>
-                              ) : null}
-                              <div>
-                                <p className="mock-profile-name">{state.full_name}</p>
-                                <p className="mock-profile-role">{state.job_title}</p>
+                          <div className="mock-about-container">
+                            <div className="mock-about-content-group">
+                              <div className="mock-about-header-group">
+                                {state.avatar && (
+                                  <img
+                                    src={state.avatar || ''}
+                                    alt="Avatar"
+                                    className="mock-avatar"
+                                  />
+                                )}
+                                {/* Removed delete button from preview section as per instructions */}
+                                <div>
+                                  <p className="mock-profile-name">{state.full_name}</p>
+                                  <p className="mock-profile-role">{state.job_title}</p>
+                                </div>
                               </div>
+                              {state.bio && <p className="mock-bio-text">{state.bio}</p>}
                             </div>
-                            {state.bio && <p className="mock-bio-text">{state.bio}</p>}
                           </div>
-                        </div>
+                        </>
                       )}
 
                       {(state.workImages && state.workImages.length > 0) && (
                         <>
+                          {/* FIX: Section title is outside the content container */}
                           <p className="mock-section-title">My Work</p>
                           <div className="mock-work-gallery">
                             {state.workImages.map((img, i) => (
@@ -641,39 +609,17 @@ export default function MyProfile() {
                                   alt={`work-${i}`}
                                   className="mock-work-image-item"
                                 />
-                                <button
-                                  type="button"
-                                  className="remove-image-button work-image-remove"
-                                  onClick={() => handleRemoveWorkImage(i)}
-                                >
-                                  &times;
-                                </button>
+                                {/* Removed delete button from preview section as per instructions */}
                               </div>
                             ))}
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const input = document.createElement('input');
-                                input.type = 'file';
-                                input.accept = 'image/*';
-                                input.multiple = true;
-                                input.onchange = (e) => {
-                                  handleAddWorkImage(e);
-                                  document.body.removeChild(input);
-                                };
-                                document.body.appendChild(input);
-                                input.click();
-                              }}
-                              className="add-work-image-button"
-                            >
-                              Choose files
-                            </button>
+                            {/* The "Choose files" button remains only in the editor */}
                           </div>
                         </>
                       )}
 
                       {(state.services && state.services.length > 0) && (
                         <>
+                          {/* FIX: Section title is outside the content container */}
                           <p className="mock-section-title">My Services</p>
                           <div className="mock-services-list">
                             {state.services.map((s, i) => (
@@ -688,6 +634,7 @@ export default function MyProfile() {
 
                       {(state.reviews && state.reviews.length > 0) && (
                         <>
+                          {/* FIX: Section title is outside the content container */}
                           <p className="mock-section-title">Reviews</p>
                           <div className="mock-reviews-list">
                             {state.reviews.map((r, i) => (
@@ -888,6 +835,7 @@ export default function MyProfile() {
                               alt={`work-${i}`}
                               className="work-image-preview"
                             />
+                            {/* Only show remove button in editor section */}
                             <button
                               type="button"
                               className="remove-image-button work-image-remove"
