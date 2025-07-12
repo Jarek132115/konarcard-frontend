@@ -488,7 +488,8 @@ export default function Home() {
                 <p className='desktop-h5'>£24.95</p>
                 <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
               </div>
-              <Link to="/shopnfccards/whitecard" className="desktop-button blue-button">Buy Now</Link>
+              {/* This is the line that needs the class added */}
+              <Link to="/shopnfccards/whitecard" className="desktop-button combined-section-button blue-button">Buy Now</Link>
             </div>
           </div>
         </div>
