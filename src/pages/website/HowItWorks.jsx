@@ -85,7 +85,7 @@ export default function HowItWorks() {
                         </div>
 
                         <div className="section-1-cta">
-                            <Link to="/login" className="black-button desktop-button margin-top-10">Get Started Free</Link>
+                            <Link to="/login" className="blue-button desktop-button margin-top-10">Get Started Free</Link>
                         </div>
                     </div>
                 </div>
@@ -174,7 +174,7 @@ export default function HowItWorks() {
 
                 <div className="cta-center-text" style={{ marginTop: 60, display: 'flex', justifyContent: 'center' }}>
                     <p className="desktop-h6">Takes 5 minutes. No tech stuff needed.</p>
-                    <Link to="/shopnfccards" className="black-button desktop-button">Get Started</Link>
+                    <Link to="/shopnfccards" className="blue-button desktop-button">Get Started</Link>
                 </div>
             </div>
 
