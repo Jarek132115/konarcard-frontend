@@ -25,6 +25,10 @@
     overflow: hidden;
 }
 
+.success-box p {
+    margin-bottom: 5px;
+}
+
 .success-buttons {
     display: flex;
     flex-direction: column;
