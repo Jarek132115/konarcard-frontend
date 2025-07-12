@@ -1,5 +1,3 @@
-// frontend/src/components/Sidebar.jsx
-
 import React, { useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
@@ -38,6 +36,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 <div className="close-sidebar-button" onClick={closeSidebar}>
                     <span></span>
                     <span></span>
+                    <span></span> {/* Added this third span */}
                 </div>
             </div>
 

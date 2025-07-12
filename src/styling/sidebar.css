@@ -1,6 +1,3 @@
-/* Sidebar.css */
-
-/* Desktop Sidebar */
 .sidebar {
     position: fixed;
     top: 0;
@@ -8,22 +5,18 @@
     height: 100vh;
     min-width: 220px;
     width: fit-content;
-    /* Adjusts to content, but respects min/max */
     max-width: 300px;
     background-color: white;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     padding: 20px;
-    /* Sidebar padding */
     box-sizing: border-box;
     z-index: 999;
     transition: transform 0.3s ease-in-out;
     overflow: hidden;
-    /* For rounded corners, and internal content should scroll */
 }
 
-/* Hide mobile header elements on desktop */
 .sidebar-mobile-header-inner {
     display: none;
 }
@@ -33,36 +26,27 @@
     flex-direction: column;
     height: 100%;
     overflow-y: auto;
-    /* Allow sidebar content to scroll independently */
     padding-right: 5px;
-    /* Space for potential scrollbar */
 }
 
-/* Hide scrollbar for aesthetics, but allow scrolling */
 .sidebar-content-wrapper::-webkit-scrollbar {
     width: 5px;
-    /* Width of the scrollbar */
 }
 
 .sidebar-content-wrapper::-webkit-scrollbar-track {
     background: transparent;
-    /* Track color */
 }
 
 .sidebar-content-wrapper::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.2);
-    /* Thumb color */
     border-radius: 10px;
-    /* Rounded corners for the thumb */
 }
-
 
 .my-account-container {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
     flex-shrink: 0;
-    /* Prevents this section from shrinking */
 }
 
 .profile-pic {
@@ -72,14 +56,12 @@
     margin-right: 12px;
     object-fit: cover;
     background-color: #eee;
-    /* Placeholder background */
 }
 
 .user-info {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    /* Allows text-overflow ellipsis to work */
     flex-grow: 1;
 }
 
@@ -119,18 +101,15 @@
 
 .top-links-group {
     flex-grow: 1;
-    /* Allows this section to push footer down */
     display: flex;
     flex-direction: column;
     gap: 4px;
-    /* Consistent gap between links */
 }
 
 .main-links-container,
 .account-links-container,
 .help-links-container {
     margin-bottom: 12px;
-    /* Space between link groups */
     flex-shrink: 0;
 }
 
@@ -198,7 +177,6 @@
     border-top: 1px solid #eee;
     flex-shrink: 0;
     margin-top: auto;
-    /* Push footer to the bottom */
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -220,23 +198,18 @@
     filter: none;
 }
 
-/* Global mobile header (Always visible on mobile, contains logo and hamburger) */
 .myprofile-mobile-header {
     display: none;
-    /* Hidden by default on desktop */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 62px;
-    /* Standard mobile header height */
     padding: 15px 20px;
     background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1001;
-    /* Higher than sidebar */
     display: flex;
-    /* Make visible on mobile */
     align-items: center;
     justify-content: space-between;
     box-sizing: border-box;
@@ -250,7 +223,6 @@
     height: 32px;
 }
 
-/* Hamburger menu toggle (to OPEN sidebar) */
 .sidebar-menu-toggle {
     display: flex;
     flex-direction: column;
@@ -262,7 +234,6 @@
     background: transparent;
 }
 
-/* Hide hamburger when sidebar is active/open */
 .app-layout.sidebar-active .sidebar-menu-toggle {
     display: none;
 }
@@ -277,7 +248,6 @@
     opacity: 1;
 }
 
-/* Sidebar overlay for mobile */
 .sidebar-overlay {
     position: fixed;
     top: 0;
@@ -286,7 +256,6 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
-    /* Same as sidebar, or slightly lower if needed */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
@@ -297,43 +266,29 @@
     visibility: visible;
 }
 
-
-/* --- MOBILE SPECIFIC STYLES (Max-width 1000px) --- */
 @media (max-width: 1000px) {
 
-    /* Mobile sidebar panel itself (the part that slides in) */
     .sidebar {
         position: fixed;
-        /* Keep fixed */
         top: 0;
         left: 0;
         width: 100vw;
-        /* Full width of viewport */
         height: 100vh;
-        /* Full height of viewport */
         transform: translateX(-100%);
-        /* Initially off-screen */
         box-shadow: none;
-        /* No shadow when open (or can be light) */
         z-index: 1003;
-        /* Higher z-index to overlay content */
         overflow-y: auto;
-        /* Allow sidebar content to scroll if needed */
         background-color: white;
         padding: 0;
-        /* Reset padding for mobile, use inner container padding */
         transition: transform 0.3s ease-in-out;
     }
 
     .sidebar.open {
         transform: translateX(0);
-        /* Slide in */
     }
 
-    /* Header *inside* the mobile sidebar (visible when sidebar slides open) */
     .sidebar-mobile-header-inner {
         display: flex;
-        /* Make visible on mobile */
         justify-content: space-between;
         align-items: center;
         padding: 15px 20px;
@@ -356,10 +311,8 @@
         margin-right: 0;
     }
 
-    /* Close button for the sidebar (the X icon inside the sidebar) */
     .close-sidebar-button {
         display: flex;
-        /* Make visible on mobile */
         flex-direction: column;
         gap: 0;
         cursor: pointer;
@@ -392,11 +345,9 @@
         transform: rotate(-45deg);
     }
 
-    /* Adjust content padding inside sidebar for mobile */
     .sidebar-content-wrapper {
         padding: 20px;
         height: calc(100% - 62px);
-        /* Full height minus mobile header */
         box-sizing: border-box;
         overflow-y: auto;
         padding-bottom: 40px;
@@ -433,10 +384,8 @@
 
     .divider {
         display: none;
-        /* Hide default dividers on mobile */
     }
 
-    /* Make sure the divider after account info is visible */
     .my-account-container+.divider {
         display: block;
         margin: 15px 0;
@@ -444,7 +393,6 @@
 
     .top-links-group {
         overflow-y: visible;
-        /* Let parent scroll if needed */
         padding-right: 0;
     }
 
