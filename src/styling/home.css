@@ -934,8 +934,7 @@ body {
 /* Responsive adjustments for the new combined section */
 @media (max-width: 1000px) {
     .combined-offer-section.section {
-        max-width: 80%;
-        padding: 0 20px;
+        max-width: 90%;
     }
 
     .combined-offer-container {
@@ -979,7 +978,7 @@ body {
 @media (max-width: 600px) {
     .combined-offer-section.section {
         max-width: 90%;
-        padding: 0 20px;
+        padding: 0 10px;
     }
 
     .subscription-offer-left,
