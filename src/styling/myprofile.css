@@ -933,7 +933,7 @@
 
     .main-content-container {
         margin-left: 0;
-        padding-top: 70px;
+        padding-top: 80px;
         padding-left: 20px;
         padding-right: 20px;
         padding-bottom: 20px;
@@ -1047,7 +1047,7 @@
 @media (max-width: 400px) {
     .main-content-container {
         padding: 15px;
-        padding-top: 70px;
+        padding-top: 80px;
     }
 
     /* Adjust mobile overlay padding for very small screens */
