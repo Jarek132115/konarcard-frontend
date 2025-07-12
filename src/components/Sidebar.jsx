@@ -13,6 +13,7 @@ import contactIcon from '../assets/icons/Contact-Icon.svg';
 import homeInterface from '../assets/icons/Home-Interface.svg';
 import cardInterface from '../assets/icons/Card-Interface.svg';
 import settingsInterface from '../assets/icons/Settings-Interface.svg';
+import subscriptionInterface from '../assets/icons/Subscription-Interface.svg';
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
@@ -76,7 +77,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <p className='desktop-body-s'>My Account</p>
                         </Link>
                         <Link to="/subscription" className={`sidebar-button ${isActive('/subscription') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={subscriptionIcon} alt="subscription" className="icon" />
+                            <img src={subscriptionInterface} alt="subscription" className="icon" />
                             <p className='desktop-body-s'>Subscription</p>
                         </Link>
                     </div>
