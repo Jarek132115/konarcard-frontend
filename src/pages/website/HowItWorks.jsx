@@ -19,6 +19,7 @@ import NoApp from '../../assets/icons/NoApp-Icon.svg'
 import ProfilePencil from '../../assets/icons/ProfilePencil-Icon.svg'
 import ToolBoxIcon from '../../assets/icons/ToolBox-Icon.svg'
 import UpdateIcon from '../../assets/icons/Update-Icon.svg'
+import Section1Image from '../../assets/images/Section-1-Image.png';
 
 
 export default function HowItWorks() {
@@ -36,7 +37,7 @@ export default function HowItWorks() {
 
                 <div style={{ gap: 40 }} className="section-1-content">
                     <div className="section-1-left">
-                        <img src={AllCards} className="" />
+                        <img src={Section1Image} className="" />
                     </div>
 
                     <div className="section-1-right">
