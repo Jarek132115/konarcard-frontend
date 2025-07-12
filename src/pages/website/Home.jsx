@@ -452,7 +452,7 @@ export default function Home() {
                   Loading Plan Status...
                 </button>
               ) : isSubscribed ? (
-                <button className="desktop-button combined-section-button" disabled
+                <button className="desktop-button combined-section-button blue-button" disabled
                   style={{
                     backgroundColor: '#e0e0e0',
                     cursor: 'not-allowed',
@@ -462,7 +462,7 @@ export default function Home() {
                   Plan Active
                 </button>
               ) : (
-                <button className="desktop-button combined-section-button" onClick={handleSubscribe}>
+                <button className="desktop-button combined-section-button blue-button" onClick={handleSubscribe}>
                   Upgrade to Power Profile
                 </button>
               )}
