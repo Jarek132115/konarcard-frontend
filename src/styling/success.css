@@ -30,3 +30,7 @@
     flex-direction: column;
     gap: 10px;
 }
+
+.success-buttons link {
+    width: 100%;
+}
