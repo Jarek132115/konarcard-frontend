@@ -1133,14 +1133,3 @@ body {
     }
 }
 
-/* FOOTER STYLES - Added extra top padding */
-footer {
-    padding-top: 100px;
-}
-
-/* My addition from last time, causing issues */
-/* @media (max-width: 1000px) {
-    .combined-offer-container h2, .combined-offer-container h3 {
-        text-align: left !important;
-    }
-} */
