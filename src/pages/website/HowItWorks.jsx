@@ -3,19 +3,11 @@ import { Link } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import Footer from '../../components/Footer'
-import AllCards from '../../assets/images/All-Cards.png'
-import BoltIcon from '../../assets/icons/Bolt-Icon.svg'
 import QRCode from '../../assets/icons/QR-Code-Icon.svg'
 import NFCIcon from '../../assets/icons/NFC-Icon.svg'
-import TapIcon from '../../assets/icons/Tap-Icon.svg'
-import SaveIcon from '../../assets/icons/Save-Icon.svg'
 import HowItWorks1 from '../../assets/images/HowItWorks-1.png'
 import HowItWorks2 from '../../assets/images/HowItWorks-2.png'
 import HowItWorks3 from '../../assets/images/HowItWorks-3.png'
-import ProfileIcon from '../../assets/icons/Profile-Icon.svg'
-import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'
-import PhoneIcon from '../../assets/icons/Phone-Icon.svg'
-import NoApp from '../../assets/icons/NoApp-Icon.svg'
 import ProfilePencil from '../../assets/icons/ProfilePencil-Icon.svg'
 import ToolBoxIcon from '../../assets/icons/ToolBox-Icon.svg'
 import UpdateIcon from '../../assets/icons/Update-Icon.svg'
@@ -82,10 +74,6 @@ export default function HowItWorks() {
                                 <p className="desktop-h6">Share It Fast</p>
                                 <p className="desktop-body-xs">Tap a phone, scan a code, or send a link. Your page works anywhere — no apps needed.</p>
                             </div>
-                        </div>
-
-                        <div className="section-1-cta">
-                            <Link to="/login" className="blue-button desktop-button margin-top-10">Get Started Free</Link>
                         </div>
                     </div>
                 </div>
