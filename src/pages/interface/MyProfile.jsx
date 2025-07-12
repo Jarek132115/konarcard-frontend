@@ -592,157 +592,154 @@ export default function MyProfile() {
               <div className="myprofile-flex-container">
                 {/* Mock Phone Preview Section */}
                 <div className="myprofile-content">
-                  {/* NEW WRAPPER FOR MOCK PHONE */}
-                  <div className="mock-phone-wrapper">
-                    <div
-                      className={`mock-phone ${state.pageTheme === "dark" ? "dark-mode" : ""}`}
-                      style={{ fontFamily: state.font }}
-                    >
-                      <div className="mock-phone-scrollable-content">
-                        {/* Cover Photo */}
-                        <img
-                          src={getPreviewImageSrc(state.coverPhoto, previewPlaceholders.coverPhoto)}
-                          alt="Cover"
-                          className="mock-cover"
-                        />
+                  <div
+                    className={`mock-phone ${state.pageTheme === "dark" ? "dark-mode" : ""}`}
+                    style={{ fontFamily: state.font }}
+                  >
+                    <div className="mock-phone-scrollable-content">
+                      {/* Cover Photo */}
+                      <img
+                        src={getPreviewImageSrc(state.coverPhoto, previewPlaceholders.coverPhoto)}
+                        alt="Cover"
+                        className="mock-cover"
+                      />
 
-                        {/* Main and Sub Heading */}
-                        <h2 className="mock-title">{getPreviewText(state.mainHeading, previewPlaceholders.mainHeading)}</h2>
-                        <p className="mock-subtitle">{getPreviewText(state.subHeading, previewPlaceholders.subHeading)}</p>
-                        <button
-                          type="button"
-                          className="mock-button"
-                        >
-                          Exchange Contact
-                        </button>
+                      {/* Main and Sub Heading */}
+                      <h2 className="mock-title">{getPreviewText(state.mainHeading, previewPlaceholders.mainHeading)}</h2>
+                      <p className="mock-subtitle">{getPreviewText(state.subHeading, previewPlaceholders.subHeading)}</p>
+                      <button
+                        type="button"
+                        className="mock-button"
+                      >
+                        Exchange Contact
+                      </button>
 
-                        {/* About Me Section - Always show section in preview if there's user data or if NOT SUBSCRIBED (with placeholders) */}
-                        {(isSubscribed && (state.full_name || state.job_title || state.bio || state.avatar)) || !isSubscribed ? (
-                          <>
-                            <p className="mock-section-title">About me</p>
-                            <div className="mock-about-container">
-                              <div className="mock-about-content-group">
-                                <div className="mock-about-header-group">
-                                  <img
-                                    src={getPreviewImageSrc(state.avatar, previewPlaceholders.avatar)}
-                                    alt="Avatar"
-                                    className="mock-avatar"
-                                  />
-                                  <div>
-                                    <p className="mock-profile-name">{getPreviewText(state.full_name, previewPlaceholders.full_name)}</p>
-                                    <p className="mock-profile-role">{getPreviewText(state.job_title, previewPlaceholders.job_title)}</p>
-                                  </div>
+                      {/* About Me Section - Always show section in preview if there's user data or if NOT SUBSCRIBED (with placeholders) */}
+                      {(isSubscribed && (state.full_name || state.job_title || state.bio || state.avatar)) || !isSubscribed ? (
+                        <>
+                          <p className="mock-section-title">About me</p>
+                          <div className="mock-about-container">
+                            <div className="mock-about-content-group">
+                              <div className="mock-about-header-group">
+                                <img
+                                  src={getPreviewImageSrc(state.avatar, previewPlaceholders.avatar)}
+                                  alt="Avatar"
+                                  className="mock-avatar"
+                                />
+                                <div>
+                                  <p className="mock-profile-name">{getPreviewText(state.full_name, previewPlaceholders.full_name)}</p>
+                                  <p className="mock-profile-role">{getPreviewText(state.job_title, previewPlaceholders.job_title)}</p>
                                 </div>
-                                <p className="mock-bio-text">{getPreviewText(state.bio, previewPlaceholders.bio)}</p>
                               </div>
+                              <p className="mock-bio-text">{getPreviewText(state.bio, previewPlaceholders.bio)}</p>
                             </div>
-                          </>
-                        ) : null}
+                          </div>
+                        </>
+                      ) : null}
 
-                        {/* My Work Section - Always show section in preview if there's user data or if NOT SUBSCRIBED (with placeholders) */}
-                        {(isSubscribed && (state.workImages && state.workImages.length > 0)) || !isSubscribed ? (
-                          <>
-                            <p className="mock-section-title">My Work</p>
-                            <div className="mock-work-gallery">
-                              {(isSubscribed && state.workImages && state.workImages.length > 0) ? (
-                                // Show user's actual work images if subscribed AND they exist
-                                state.workImages.map((img, i) => (
-                                  <div key={i} className="mock-work-image-item-wrapper">
-                                    <img
-                                      src={getPreviewImageSrc(img.preview, previewPlaceholders.workImages[i]?.preview)}
-                                      alt={`work-${i}`}
-                                      className="mock-work-image-item"
-                                    />
-                                  </div>
-                                ))
-                              ) : ( // Otherwise, show placeholder work images (if not subscribed, or subscribed but no user images)
-                                // For placeholders, ensure valid index for previewPlaceholders.workImages
-                                previewPlaceholders.workImages.map((img, i) => (
-                                  <div key={i} className="mock-work-image-item-wrapper">
-                                    <img
-                                      src={img.preview}
-                                      alt={`work-${i}`}
-                                      className="mock-work-image-item"
-                                    />
-                                  </div>
-                                ))
-                              )}
-                            </div>
-                          </>
-                        ) : null}
+                      {/* My Work Section - Always show section in preview if there's user data or if NOT SUBSCRIBED (with placeholders) */}
+                      {(isSubscribed && (state.workImages && state.workImages.length > 0)) || !isSubscribed ? (
+                        <>
+                          <p className="mock-section-title">My Work</p>
+                          <div className="mock-work-gallery">
+                            {(isSubscribed && state.workImages && state.workImages.length > 0) ? (
+                              // Show user's actual work images if subscribed AND they exist
+                              state.workImages.map((img, i) => (
+                                <div key={i} className="mock-work-image-item-wrapper">
+                                  <img
+                                    src={getPreviewImageSrc(img.preview, previewPlaceholders.workImages[i]?.preview)}
+                                    alt={`work-${i}`}
+                                    className="mock-work-image-item"
+                                  />
+                                </div>
+                              ))
+                            ) : ( // Otherwise, show placeholder work images (if not subscribed, or subscribed but no user images)
+                              // For placeholders, ensure valid index for previewPlaceholders.workImages
+                              previewPlaceholders.workImages.map((img, i) => (
+                                <div key={i} className="mock-work-image-item-wrapper">
+                                  <img
+                                    src={img.preview}
+                                    alt={`work-${i}`}
+                                    className="mock-work-image-item"
+                                  />
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </>
+                      ) : null}
 
 
-                        {/* My Services Section - Always show section in preview if there's user data or if NOT SUBSCRIBED (with placeholders) */}
-                        {(isSubscribed && (state.services && state.services.length > 0)) || !isSubscribed ? (
-                          <>
-                            <p className="mock-section-title">My Services</p>
-                            <div className="mock-services-list">
-                              {(isSubscribed && state.services && state.services.length > 0) ? (
-                                // Show user's actual services if subscribed AND they exist
-                                state.services.map((s, i) => (
-                                  <div key={i} className="mock-service-item">
-                                    <p className="mock-service-name">{getPreviewText(s.name, previewPlaceholders.services[i]?.name || '')}</p>
-                                    <span className="mock-service-price">{getPreviewText(s.price, previewPlaceholders.services[i]?.price || '')}</span>
-                                  </div>
-                                ))
-                              ) : ( // Otherwise, show placeholder services (if not subscribed, or subscribed but no user services)
-                                // For placeholders, ensure valid index for previewPlaceholders.services
-                                previewPlaceholders.services.map((s, i) => (
-                                  <div key={i} className="mock-service-item">
-                                    <p className="mock-service-name">{s.name}</p>
-                                    <span className="mock-service-price">{s.price}</span>
-                                  </div>
-                                ))
-                              )}
-                            </div>
-                          </>
-                        ) : null}
+                      {/* My Services Section - Always show section in preview if there's user data or if NOT SUBSCRIBED (with placeholders) */}
+                      {(isSubscribed && (state.services && state.services.length > 0)) || !isSubscribed ? (
+                        <>
+                          <p className="mock-section-title">My Services</p>
+                          <div className="mock-services-list">
+                            {(isSubscribed && state.services && state.services.length > 0) ? (
+                              // Show user's actual services if subscribed AND they exist
+                              state.services.map((s, i) => (
+                                <div key={i} className="mock-service-item">
+                                  <p className="mock-service-name">{getPreviewText(s.name, previewPlaceholders.services[i]?.name || '')}</p>
+                                  <span className="mock-service-price">{getPreviewText(s.price, previewPlaceholders.services[i]?.price || '')}</span>
+                                </div>
+                              ))
+                            ) : ( // Otherwise, show placeholder services (if not subscribed, or subscribed but no user services)
+                              // For placeholders, ensure valid index for previewPlaceholders.services
+                              previewPlaceholders.services.map((s, i) => (
+                                <div key={i} className="mock-service-item">
+                                  <p className="mock-service-name">{s.name}</p>
+                                  <span className="mock-service-price">{s.price}</span>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </>
+                      ) : null}
 
-                        {/* Reviews Section - Always show section in preview if there's user data or if NOT SUBSCRIBED (with placeholders) */}
-                        {(isSubscribed && (state.reviews && state.reviews.length > 0)) || !isSubscribed ? (
-                          <>
-                            <p className="mock-section-title">Reviews</p>
-                            <div className="mock-reviews-list">
-                              {(isSubscribed && state.reviews && state.reviews.length > 0) ? (
-                                // Show user's actual reviews if subscribed AND they exist
-                                state.reviews.map((r, i) => (
-                                  <div key={i} className="mock-review-card">
-                                    <div className="mock-star-rating">
-                                      {Array(r.rating || 0).fill().map((_, starIdx) => (
-                                        <span key={`filled-${starIdx}`}>★</span>
-                                      ))}
-                                      {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
-                                        <span key={`empty-${starIdx}`} className="empty-star">★</span>
-                                      ))}
-                                    </div>
-                                    <p className="mock-review-text">"{getPreviewText(r.text, previewPlaceholders.reviews[i]?.text || '')}"</p>
-                                    <p className="mock-reviewer-name">{getPreviewText(r.name, previewPlaceholders.reviews[i]?.name || '')}</p>
+                      {/* Reviews Section - Always show section in preview if there's user data or if NOT SUBSCRIBED (with placeholders) */}
+                      {(isSubscribed && (state.reviews && state.reviews.length > 0)) || !isSubscribed ? (
+                        <>
+                          <p className="mock-section-title">Reviews</p>
+                          <div className="mock-reviews-list">
+                            {(isSubscribed && state.reviews && state.reviews.length > 0) ? (
+                              // Show user's actual reviews if subscribed AND they exist
+                              state.reviews.map((r, i) => (
+                                <div key={i} className="mock-review-card">
+                                  <div className="mock-star-rating">
+                                    {Array(r.rating || 0).fill().map((_, starIdx) => (
+                                      <span key={`filled-${starIdx}`}>★</span>
+                                    ))}
+                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
+                                      <span key={`empty-${starIdx}`} className="empty-star">★</span>
+                                    ))}
                                   </div>
-                                ))
-                              ) : ( // Otherwise, show placeholder reviews (if not subscribed, or subscribed but no user reviews)
-                                // For placeholders, ensure valid index for previewPlaceholders.reviews
-                                previewPlaceholders.reviews.map((r, i) => (
-                                  <div key={i} className="mock-review-card">
-                                    <div className="mock-star-rating">
-                                      {Array(r.rating || 0).fill().map((_, starIdx) => (
-                                        <span key={`filled-${starIdx}`}>★</span>
-                                      ))}
-                                      {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
-                                        <span key={`empty-${starIdx}`} className="empty-star">★</span>
-                                      ))}
-                                    </div>
-                                    <p className="mock-review-text">"{r.text}"</p>
-                                    <p className="mock-reviewer-name">{r.name}</p>
+                                  <p className="mock-review-text">"{getPreviewText(r.text, previewPlaceholders.reviews[i]?.text || '')}"</p>
+                                  <p className="mock-reviewer-name">{getPreviewText(r.name, previewPlaceholders.reviews[i]?.name || '')}</p>
+                                </div>
+                              ))
+                            ) : ( // Otherwise, show placeholder reviews (if not subscribed, or subscribed but no user reviews)
+                              // For placeholders, ensure valid index for previewPlaceholders.reviews
+                              previewPlaceholders.reviews.map((r, i) => (
+                                <div key={i} className="mock-review-card">
+                                  <div className="mock-star-rating">
+                                    {Array(r.rating || 0).fill().map((_, starIdx) => (
+                                      <span key={`filled-${starIdx}`}>★</span>
+                                    ))}
+                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
+                                      <span key={`empty-${starIdx}`} className="empty-star">★</span>
+                                    ))}
                                   </div>
-                                ))
-                              )}
-                            </div>
-                          </>
-                        ) : null}
+                                  <p className="mock-review-text">"{r.text}"</p>
+                                  <p className="mock-reviewer-name">{r.name}</p>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </>
+                      ) : null}
 
-                      </div>
                     </div>
-                  </div> {/* END mock-phone-wrapper */}
+                  </div>
                 </div>
 
                 {/* Editor Section */}
@@ -758,333 +755,331 @@ export default function MyProfile() {
                       </div>
                     </div>
                   )}
-                  {/* NEW WRAPPER FOR EDITOR CONTENT */}
-                  <div className="editor-content-wrapper" style={{ filter: isSubscribed ? 'none' : 'blur(5px)', pointerEvents: isSubscribed ? 'auto' : 'none' }}>
-                    <form onSubmit={handleSubmit} className="myprofile-editor">
-                      <h2 className="editor-title">Create Your Digital Business Card</h2>
 
-                      <div className="input-block">
-                        <label>Page Theme</label>
-                        <div className="option-row">
-                          <button
-                            type="button"
-                            className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
-                            onClick={() => updateState({ pageTheme: "light" })}
-                          >
-                            Light Mode
-                          </button>
-                          <button
-                            type="button"
-                            className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
-                            onClick={() => updateState({ pageTheme: "dark" })}
-                          >
-                            Dark Mode
-                          </button>
-                        </div>
-                      </div>
+                  <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: isSubscribed ? 'none' : 'blur(5px)', pointerEvents: isSubscribed ? 'auto' : 'none' }}>
+                    <h2 className="editor-title">Create Your Digital Business Card</h2>
 
-                      <div className="input-block">
-                        <label>Font</label>
-                        <div className="option-row">
-                          {["Inter", "Montserrat", "Poppins"].map((font) => (
-                            <button
-                              type="button"
-                              key={font}
-                              className={`font-button ${state.font === font ? "is-active" : ""}`}
-                              onClick={() => updateState({ font })}
-                            >
-                              {font}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Hero Section */}
-                      <hr className="divider" />
-                      <h3 className="editor-subtitle">Hero Section</h3>
-
-                      <div className="input-block">
-                        <label htmlFor="coverPhoto">Cover Photo</label>
-                        <input
-                          ref={fileInputRef}
-                          id="coverPhoto"
-                          type="file"
-                          accept="image/*"
-                          style={{ display: "none" }}
-                        />
-                        <div
-                          className="image-upload-area cover-photo-upload"
-                          onClick={() => {
-                            const input = document.createElement('input');
-                            input.type = 'file';
-                            input.accept = 'image/*';
-                            input.onchange = (e) => {
-                              handleImageUpload(e);
-                              document.body.removeChild(input);
-                            };
-                            document.body.appendChild(input);
-                            input.click();
-                          }}
+                    <div className="input-block">
+                      <label>Page Theme</label>
+                      <div className="option-row">
+                        <button
+                          type="button"
+                          className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
+                          onClick={() => updateState({ pageTheme: "light" })}
                         >
-                          {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
-                          <img
-                            src={getEditorImageSrc(state.coverPhoto)}
-                            alt="Cover"
-                            className="cover-preview"
-                          />
-                          {state.coverPhoto && (
-                            <button
-                              type="button"
-                              className="remove-image-button"
-                              onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}
-                            >
-                              &times;
-                            </button>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="input-block">
-                        <label htmlFor="mainHeading">Main Heading</label>
-                        <input
-                          id="mainHeading"
-                          type="text"
-                          value={getEditorValue(state.mainHeading)}
-                          onChange={(e) => updateState({ mainHeading: e.target.value })}
-                          placeholder={previewPlaceholders.mainHeading}
-                        />
-                      </div>
-
-                      <div className="input-block">
-                        <label htmlFor="subHeading">Subheading</label>
-                        <input
-                          id="subHeading"
-                          type="text"
-                          value={getEditorValue(state.subHeading)}
-                          onChange={(e) => updateState({ subHeading: e.target.value })}
-                          placeholder={previewPlaceholders.subHeading}
-                        />
-                      </div>
-
-                      {/* About Me Section */}
-                      <hr className="divider" />
-                      <h3 className="editor-subtitle">About Me Section</h3>
-
-                      <div className="input-block">
-                        <label htmlFor="avatar">Profile Photo</label>
-                        <input
-                          ref={avatarInputRef}
-                          type="file"
-                          accept="image/*"
-                          id="avatar"
-                          style={{ display: "none" }}
-                        />
-                        <div
-                          className="image-upload-area avatar-upload"
-                          onClick={() => {
-                            const input = document.createElement('input');
-                            input.type = 'file';
-                            input.accept = 'image/*';
-                            input.onchange = (e) => {
-                              handleAvatarUpload(e);
-                              document.body.removeChild(input);
-                            };
-                            document.body.appendChild(input);
-                            input.click();
-                          }}
+                          Light Mode
+                        </button>
+                        <button
+                          type="button"
+                          className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
+                          onClick={() => updateState({ pageTheme: "dark" })}
                         >
-                          {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
-                          <img
-                            src={getEditorImageSrc(state.avatar)}
-                            alt="Avatar preview"
-                            className="avatar-preview"
-                          />
-                          {state.avatar && (
-                            <button
-                              type="button"
-                              className="remove-image-button"
-                              onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}
-                            >
-                              &times;
-                            </button>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="input-block">
-                        <label htmlFor="fullName">Full Name</label>
-                        <input
-                          id="fullName"
-                          type="text"
-                          value={getEditorValue(state.full_name)}
-                          onChange={(e) => updateState({ full_name: e.target.value })}
-                          placeholder={previewPlaceholders.full_name}
-                        />
-                      </div>
-
-                      <div className="input-block">
-                        <label htmlFor="jobTitle">Job Title</label>
-                        <input
-                          id="jobTitle"
-                          type="text"
-                          value={getEditorValue(state.job_title)}
-                          onChange={(e) => updateState({ job_title: e.target.value })}
-                          placeholder={previewPlaceholders.job_title}
-                        />
-                      </div>
-
-                      <div className="input-block">
-                        <label htmlFor="bio">About Me Description</label>
-                        <textarea
-                          id="bio"
-                          value={getEditorValue(state.bio)}
-                          onChange={(e) => updateState({ bio: e.target.value })}
-                          rows={4}
-                          placeholder={previewPlaceholders.bio}
-                        />
-                      </div>
-
-                      {/* My Work Section */}
-                      <hr className="divider" />
-                      <h3 className="editor-subtitle">My Work Section</h3>
-
-                      <div className="input-block">
-                        <label>Work Images</label>
-                        <div className="work-preview-row">
-                          {state.workImages.map((img, i) => (
-                            <div key={i} className="work-image-item-wrapper">
-                              <img
-                                src={getEditorImageSrc(img.preview)}
-                                alt={`work-${i}`}
-                                className="work-image-preview"
-                              />
-                              <button
-                                type="button"
-                                className="remove-image-button"
-                                onClick={() => handleRemoveWorkImage(i)}
-                              >
-                                &times;
-                              </button>
-                            </div>
-                          ))}
-                          {/* Always display "Add Work Image" placeholder to allow adding more */}
-                          <div
-                            className="image-upload-area add-work-image-placeholder"
-                            onClick={() => {
-                              const input = document.createElement('input');
-                              input.type = 'file';
-                              input.accept = 'image/*';
-                              input.multiple = true; // Unlimited work images
-                              input.onchange = (e) => {
-                                handleAddWorkImage(e);
-                                document.body.removeChild(input);
-                              };
-                              document.body.appendChild(input);
-                              input.click();
-                            }}
-                          >
-                            <span className="upload-text">Add Work Image</span>
-                            <img src="" alt="Add Work" className="work-image-preview" />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* My Services Section */}
-                      <hr className="divider" />
-                      <h3 className="editor-subtitle">My Services Section</h3>
-                      <div className="input-block">
-                        <label>Services</label>
-                        {state.services.map((s, i) => (
-                          <div key={i} className="editor-item-card">
-                            <input
-                              type="text"
-                              placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
-                              value={getEditorValue(s.name)}
-                              onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                            />
-                            <input
-                              type="text"
-                              placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
-                              value={getEditorValue(s.price)}
-                              onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                            />
-                            <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
-                          </div>
-                        ))}
-                        <button type="button" onClick={handleAddService} className="add-item-button">
-                          + Add Service
+                          Dark Mode
                         </button>
                       </div>
+                    </div>
 
-                      {/* Reviews Section */}
-                      <hr className="divider" />
-                      <h3 className="editor-subtitle">Reviews Section</h3>
-                      <div className="input-block">
-                        <label>Reviews</label>
-                        {state.reviews.map((r, i) => (
-                          <div key={i} className="editor-item-card">
-                            <input
-                              type="text"
-                              placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
-                              value={getEditorValue(r.name)}
-                              onChange={(e) => handleReviewChange(i, "name", e.target.value)}
-                            />
-                            <textarea
-                              placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
-                              rows={2}
-                              value={getEditorValue(r.text)}
-                              onChange={(e) => handleReviewChange(i, "text", e.target.value)}
-                            />
-                            <input
-                              type="number"
-                              placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
-                              min="1"
-                              max="5"
-                              value={getEditorValue(r.rating)}
-                              onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
-                            />
-                            <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
-                          </div>
+                    <div className="input-block">
+                      <label>Font</label>
+                      <div className="option-row">
+                        {["Inter", "Montserrat", "Poppins"].map((font) => (
+                          <button
+                            type="button"
+                            key={font}
+                            className={`font-button ${state.font === font ? "is-active" : ""}`}
+                            onClick={() => updateState({ font })}
+                          >
+                            {font}
+                          </button>
                         ))}
-                        <button type="button" onClick={handleAddReview} className="add-item-button">
-                          + Add Review
-                        </button>
                       </div>
+                    </div>
 
-                      {/* Contact Details Section */}
-                      <hr className="divider" />
-                      <h3 className="editor-subtitle">Exchange Contact Details</h3>
+                    {/* Hero Section */}
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">Hero Section</h3>
 
-                      <div className="input-block">
-                        <label htmlFor="contactEmail">Email Address</label>
-                        <input
-                          id="contactEmail"
-                          type="email"
-                          value={getEditorValue(state.contact_email)}
-                          onChange={(e) => updateState({ contact_email: e.target.value })}
-                          placeholder={previewPlaceholders.contact_email}
-                        />
-                      </div>
-
-                      <div className="input-block">
-                        <label htmlFor="phoneNumber">Phone Number</label>
-                        <input
-                          id="phoneNumber"
-                          type="tel"
-                          value={getEditorValue(state.phone_number)}
-                          onChange={(e) => updateState({ phone_number: e.target.value })}
-                          placeholder={previewPlaceholders.phone_number}
-                        />
-                      </div>
-
-                      <button
-                        type="submit"
-                        className="submit-button"
+                    <div className="input-block">
+                      <label htmlFor="coverPhoto">Cover Photo</label>
+                      <input
+                        ref={fileInputRef}
+                        id="coverPhoto"
+                        type="file"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                      />
+                      <div
+                        className="image-upload-area cover-photo-upload"
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = (e) => {
+                            handleImageUpload(e);
+                            document.body.removeChild(input);
+                          };
+                          document.body.appendChild(input);
+                          input.click();
+                        }}
                       >
-                        Save Business Card
+                        {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
+                        <img
+                          src={getEditorImageSrc(state.coverPhoto)}
+                          alt="Cover"
+                          className="cover-preview"
+                        />
+                        {state.coverPhoto && (
+                          <button
+                            type="button"
+                            className="remove-image-button"
+                            onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}
+                          >
+                            &times;
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="input-block">
+                      <label htmlFor="mainHeading">Main Heading</label>
+                      <input
+                        id="mainHeading"
+                        type="text"
+                        value={getEditorValue(state.mainHeading)}
+                        onChange={(e) => updateState({ mainHeading: e.target.value })}
+                        placeholder={previewPlaceholders.mainHeading}
+                      />
+                    </div>
+
+                    <div className="input-block">
+                      <label htmlFor="subHeading">Subheading</label>
+                      <input
+                        id="subHeading"
+                        type="text"
+                        value={getEditorValue(state.subHeading)}
+                        onChange={(e) => updateState({ subHeading: e.target.value })}
+                        placeholder={previewPlaceholders.subHeading}
+                      />
+                    </div>
+
+                    {/* About Me Section */}
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">About Me Section</h3>
+
+                    <div className="input-block">
+                      <label htmlFor="avatar">Profile Photo</label>
+                      <input
+                        ref={avatarInputRef}
+                        type="file"
+                        accept="image/*"
+                        id="avatar"
+                        style={{ display: "none" }}
+                      />
+                      <div
+                        className="image-upload-area avatar-upload"
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = (e) => {
+                            handleAvatarUpload(e);
+                            document.body.removeChild(input);
+                          };
+                          document.body.appendChild(input);
+                          input.click();
+                        }}
+                      >
+                        {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
+                        <img
+                          src={getEditorImageSrc(state.avatar)}
+                          alt="Avatar preview"
+                          className="avatar-preview"
+                        />
+                        {state.avatar && (
+                          <button
+                            type="button"
+                            className="remove-image-button"
+                            onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}
+                          >
+                            &times;
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="input-block">
+                      <label htmlFor="fullName">Full Name</label>
+                      <input
+                        id="fullName"
+                        type="text"
+                        value={getEditorValue(state.full_name)}
+                        onChange={(e) => updateState({ full_name: e.target.value })}
+                        placeholder={previewPlaceholders.full_name}
+                      />
+                    </div>
+
+                    <div className="input-block">
+                      <label htmlFor="jobTitle">Job Title</label>
+                      <input
+                        id="jobTitle"
+                        type="text"
+                        value={getEditorValue(state.job_title)}
+                        onChange={(e) => updateState({ job_title: e.target.value })}
+                        placeholder={previewPlaceholders.job_title}
+                      />
+                    </div>
+
+                    <div className="input-block">
+                      <label htmlFor="bio">About Me Description</label>
+                      <textarea
+                        id="bio"
+                        value={getEditorValue(state.bio)}
+                        onChange={(e) => updateState({ bio: e.target.value })}
+                        rows={4}
+                        placeholder={previewPlaceholders.bio}
+                      />
+                    </div>
+
+                    {/* My Work Section */}
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">My Work Section</h3>
+
+                    <div className="input-block">
+                      <label>Work Images</label>
+                      <div className="work-preview-row">
+                        {state.workImages.map((img, i) => (
+                          <div key={i} className="work-image-item-wrapper">
+                            <img
+                              src={getEditorImageSrc(img.preview)}
+                              alt={`work-${i}`}
+                              className="work-image-preview"
+                            />
+                            <button
+                              type="button"
+                              className="remove-image-button"
+                              onClick={() => handleRemoveWorkImage(i)}
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        ))}
+                        {/* Always display "Add Work Image" placeholder to allow adding more */}
+                        <div
+                          className="image-upload-area add-work-image-placeholder"
+                          onClick={() => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.multiple = true; // Unlimited work images
+                            input.onchange = (e) => {
+                              handleAddWorkImage(e);
+                              document.body.removeChild(input);
+                            };
+                            document.body.appendChild(input);
+                            input.click();
+                          }}
+                        >
+                          <span className="upload-text">Add Work Image</span>
+                          <img src="" alt="Add Work" className="work-image-preview" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* My Services Section */}
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">My Services Section</h3>
+                    <div className="input-block">
+                      <label>Services</label>
+                      {state.services.map((s, i) => (
+                        <div key={i} className="editor-item-card">
+                          <input
+                            type="text"
+                            placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
+                            value={getEditorValue(s.name)}
+                            onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                          />
+                          <input
+                            type="text"
+                            placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
+                            value={getEditorValue(s.price)}
+                            onChange={(e) => handleServiceChange(i, "price", e.target.value)}
+                          />
+                          <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
+                        </div>
+                      ))}
+                      <button type="button" onClick={handleAddService} className="add-item-button">
+                        + Add Service
                       </button>
-                    </form>
-                  </div> {/* END editor-content-wrapper */}
+                    </div>
+
+                    {/* Reviews Section */}
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">Reviews Section</h3>
+                    <div className="input-block">
+                      <label>Reviews</label>
+                      {state.reviews.map((r, i) => (
+                        <div key={i} className="editor-item-card">
+                          <input
+                            type="text"
+                            placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
+                            value={getEditorValue(r.name)}
+                            onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                          />
+                          <textarea
+                            placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
+                            rows={2}
+                            value={getEditorValue(r.text)}
+                            onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                          />
+                          <input
+                            type="number"
+                            placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
+                            min="1"
+                            max="5"
+                            value={getEditorValue(r.rating)}
+                            onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
+                          />
+                          <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
+                        </div>
+                      ))}
+                      <button type="button" onClick={handleAddReview} className="add-item-button">
+                        + Add Review
+                      </button>
+                    </div>
+
+                    {/* Contact Details Section */}
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">Exchange Contact Details</h3>
+
+                    <div className="input-block">
+                      <label htmlFor="contactEmail">Email Address</label>
+                      <input
+                        id="contactEmail"
+                        type="email"
+                        value={getEditorValue(state.contact_email)}
+                        onChange={(e) => updateState({ contact_email: e.target.value })}
+                        placeholder={previewPlaceholders.contact_email}
+                      />
+                    </div>
+
+                    <div className="input-block">
+                      <label htmlFor="phoneNumber">Phone Number</label>
+                      <input
+                        id="phoneNumber"
+                        type="tel"
+                        value={getEditorValue(state.phone_number)}
+                        onChange={(e) => updateState({ phone_number: e.target.value })}
+                        placeholder={previewPlaceholders.phone_number}
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="submit-button"
+                    >
+                      Save Business Card
+                    </button>
+                  </form>
                 </div>
               </div>
             </>
