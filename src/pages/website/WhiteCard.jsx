@@ -33,7 +33,6 @@ export default function WhiteCard() {
     ProductImage2,
     ProductImage3,
     ProductImage4,
-    ProductImage5
   ];
 
   const handleBuyNow = async () => {
