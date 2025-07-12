@@ -169,7 +169,7 @@ export default function HowItWorks() {
                     </div>
                 </div>
 
-                <div className="cta-center-text" style={{ marginTop: 60, display: 'flex', justifyContent: 'center' }}>
+                <div className="cta-center-text" style={{ marginTop: 30, display: 'flex', justifyContent: 'center' }}>
                     <p className="desktop-h6">Takes 5 minutes. No tech stuff needed.</p>
                     <Link to="/shopnfccards" className="blue-button desktop-button">Get Started</Link>
                 </div>
