@@ -181,7 +181,7 @@ export default function WhatIsNFC() {
 
         <div className="cta-center-text" style={{ marginTop: 60, display: 'flex', justifyContent: 'center' }}>
           <p className="desktop-h6">Ready to upgrade your business card?</p>
-          <Link to="/shopnfccards" className="black-button desktop-button">Get My Card Now</Link>
+          <Link to="/shopnfccards" className="blue-button desktop-button">Get My Card Now</Link>
         </div>
       </div>
 
