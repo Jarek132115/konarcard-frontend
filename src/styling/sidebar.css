@@ -288,9 +288,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 15px 20px;
-        background-color: white;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
         border-bottom: 1px solid #eee;
         flex-shrink: 0;
         width: 100%;
