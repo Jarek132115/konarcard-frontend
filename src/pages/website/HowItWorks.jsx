@@ -21,8 +21,6 @@ import ToolBoxIcon from '../../assets/icons/ToolBox-Icon.svg'
 import UpdateIcon from '../../assets/icons/Update-Icon.svg'
 
 
-
-
 export default function HowItWorks() {
     return (
         <>
@@ -36,7 +34,7 @@ export default function HowItWorks() {
                     <h3 className="desktop-h6 text-center">Share your contact details, show your best jobs, and earn trust — all in one simple link.</h3>
                 </div>
 
-                <div className="section-1-content">
+                <div style={{ gap: 40 }} className="section-1-content">
                     <div className="section-1-left">
                         <img src={AllCards} className="" />
                     </div>
@@ -140,9 +138,6 @@ export default function HowItWorks() {
             </div>
 
 
-
-
-
             <div className="section">
                 <div className="section-1-title">
                     <h2 className="desktop-h3 text-center">Why Tradies Love Their Digital Page</h2>
@@ -176,12 +171,11 @@ export default function HowItWorks() {
                     </div>
                 </div>
 
-                <div className="cta-center-text">
+                <div className="cta-center-text" style={{ marginTop: 60, display: 'flex', justifyContent: 'center' }}>
                     <p className="desktop-h6">Takes 5 minutes. No tech stuff needed.</p>
                     <Link to="/shopnfccards" className="black-button desktop-button">Get Started</Link>
                 </div>
             </div>
-
 
             <Footer />
         </>
