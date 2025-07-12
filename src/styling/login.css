@@ -351,9 +351,8 @@ a,
 }
 
 .login-title {
-    /* Removed font-size, font-weight, margin-bottom as desktop-h4 will handle it */
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 2px;
     /* Adjusted margin to accommodate new paragraph */
 }
 
