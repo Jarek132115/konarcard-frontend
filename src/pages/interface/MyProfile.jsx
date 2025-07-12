@@ -582,7 +582,7 @@ export default function MyProfile() {
                   <div className="subscription-message">
                     <p className="desktop-h3">Unlock Your Full Profile!</p>
                     <p className="desktop-h6">Subscribe to start your 7-day free trial and unlock all profile editing features.</p>
-                    <button className="start-trial-button" onClick={handleStartSubscription}>
+                    <button className="blue-button" onClick={handleStartSubscription}>
                       Start Your Free Trial Now!
                     </button>
                   </div>
@@ -749,7 +749,7 @@ export default function MyProfile() {
                       <div className="subscription-message">
                         <p className="desktop-h3">Unlock Your Full Profile!</p>
                         <p className="desktop-h6">Subscribe to start your 7-day free trial and unlock all profile editing features.</p>
-                        <button className="start-trial-button" onClick={handleStartSubscription}>
+                        <button className="blue-button" onClick={handleStartSubscription}>
                           Start Your Free Trial Now!
                         </button>
                       </div>
