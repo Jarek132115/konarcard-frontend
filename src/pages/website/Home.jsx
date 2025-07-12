@@ -213,7 +213,7 @@ export default function Home() {
               </div>
 
               <div className="section-1-cta">
-                <Link to="/register" className="black-button desktop-button margin-top-10">Get Started Free</Link>
+                <Link to="/register" className="blue-button desktop-button margin-top-10">Get Started Free</Link>
               </div>
             </div>
           </div>
@@ -279,7 +279,7 @@ export default function Home() {
             </div>
 
             <div className="section-1-cta">
-              <Link to="/register" className="black-button desktop-button margin-top-10">Get Started Free</Link>
+              <Link to="/register" className="blue-button desktop-button margin-top-10">Get Started Free</Link>
             </div>
           </div>
         </div>
@@ -345,7 +345,7 @@ export default function Home() {
               </div>
 
               <div className="section-1-cta">
-                <Link to="/register" className="black-button desktop-button margin-top-10">Get Started Free</Link>
+                <Link to="/register" className="blue-button desktop-button margin-top-10">Get Started Free</Link>
               </div>
             </div>
           </div>
@@ -588,7 +588,7 @@ export default function Home() {
 
           <div className='cta-center-text review-cta'>
             <p className='desktop-h6'>Check out more reviews</p>
-            <Link to="/reviews" className="black-button desktop-button">Reviews</Link>
+            <Link to="/reviews" className="blue-button desktop-button">Reviews</Link>
           </div>
         </div>
       </div>
@@ -699,7 +699,7 @@ export default function Home() {
         </div>
         <div className="faq-cta">
           <p className='desktop-h6'>Got more questions?</p>
-          <Link to="/faq" className="black-button desktop-button">Frequently Asked Questions</Link>
+          <Link to="/faq" className="blue-button desktop-button">Frequently Asked Questions</Link>
         </div>
 
       </div>
