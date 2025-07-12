@@ -10,6 +10,7 @@ import logoutIcon from '../assets/icons/Logout-Icon.svg';
 import subscriptionIcon from '../assets/icons/Subscription-Icon.svg';
 import homeIcon from '../assets/icons/Home-Icon.svg';
 import contactIcon from '../assets/icons/Contact-Icon.svg';
+import homeInterface from '../assets/icons/Home-Interface.svg';
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
@@ -55,7 +56,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <div className="main-links-container">
                         <p className="section-title">MAIN</p>
                         <Link to="/myprofile" className={`sidebar-button ${isActive('/myprofile') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={profileIcon} alt="profile" className="icon" />
+                            <img src={homeInterface} alt="profile" className="icon" />
                             <p className='desktop-body-s'>My Profile</p>
                         </Link>
                         <Link to="/nfccards" className={`sidebar-button ${isActive('/nfccards') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
