@@ -14,6 +14,7 @@ import homeInterface from '../assets/icons/Home-Interface.svg';
 import cardInterface from '../assets/icons/Card-Interface.svg';
 import settingsInterface from '../assets/icons/Settings-Interface.svg';
 import subscriptionInterface from '../assets/icons/Subscription-Interface.svg';
+import contactInterface from '../assets/icons/Contact-Interface.svg';
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
@@ -87,7 +88,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <div className="help-links-container">
                         <p className="section-title">HELP</p>
                         <Link to="/contact-support" className={`sidebar-button ${isActive('/contact-support') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={contactIcon} alt="contact" className="icon" />
+                            <img src={contactInterface} alt="contact" className="icon" />
                             <p className='desktop-body-s'>Contact Us</p>
                         </Link>
                         <Link to="/helpcentreinterface" className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
