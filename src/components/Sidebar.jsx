@@ -11,6 +11,7 @@ import subscriptionIcon from '../assets/icons/Subscription-Icon.svg';
 import homeIcon from '../assets/icons/Home-Icon.svg';
 import contactIcon from '../assets/icons/Contact-Icon.svg';
 import homeInterface from '../assets/icons/Home-Interface.svg';
+import cardInterface from '../assets/icons/Card-Interface.svg';
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
@@ -60,8 +61,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <p className='desktop-body-s'>My Profile</p>
                         </Link>
                         <Link to="/nfccards" className={`sidebar-button ${isActive('/nfccards') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={cardIcon} alt="card" className="icon" />
-                            <p className='desktop-body-s'>NFC Cards</p>
+                            <img src={cardInterface} alt="card" className="icon" />
+                            <p className='desktop-body-s'>Buy A Card</p>
                         </Link>
                     </div>
 
