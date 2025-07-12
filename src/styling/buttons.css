@@ -157,7 +157,9 @@
     width: 90%;
     margin: 0 auto;
   }
+}
 
+@media (max-width: 800px) {
   .breadcrumb-nav {
     padding: 0 20px;
   }
