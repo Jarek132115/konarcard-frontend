@@ -72,7 +72,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <div className="account-links-container">
                         <p className="section-title">ACCOUNT</p>
                         <Link to="/profile" className={`sidebar-button ${isActive('/profile') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={settingsIcon} alt="account" className="icon" />
+                            <img src={settingsInterface} alt="account" className="icon" />
                             <p className='desktop-body-s'>My Account</p>
                         </Link>
                         <Link to="/subscription" className={`sidebar-button ${isActive('/subscription') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
