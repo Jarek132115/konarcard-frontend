@@ -580,7 +580,7 @@ export default function MyProfile() {
               {!isSubscribed && isMobile && (
                 <div className="subscription-overlay-mobile">
                   <div className="subscription-message">
-                    <p className="desktop-h3">Unlock Your Full Profile!</p>
+                    <p className="desktop-h4">Unlock Your Full Profile!</p>
                     <p className="desktop-h6">Subscribe to start your 7-day free trial and unlock all profile editing features.</p>
                     <button className="blue-button" onClick={handleStartSubscription}>
                       Start Your Free Trial Now!
@@ -747,7 +747,7 @@ export default function MyProfile() {
                   {!isSubscribed && !isMobile && ( // Only show desktop overlay if not subscribed AND NOT mobile
                     <div className="subscription-overlay">
                       <div className="subscription-message">
-                        <p className="desktop-h3">Unlock Your Full Profile!</p>
+                        <p className="desktop-h4">Unlock Your Full Profile!</p>
                         <p className="desktop-h6">Subscribe to start your 7-day free trial and unlock all profile editing features.</p>
                         <button className="blue-button" onClick={handleStartSubscription}>
                           Start Your Free Trial Now!
