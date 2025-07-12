@@ -955,7 +955,7 @@ body {
         max-height: 250px;
         width: 100%;
         height: auto;
-        object-fit: contain;
+        object-fit: cover;
         border-radius: 12px;
         margin-bottom: 20px;
         display: block;
