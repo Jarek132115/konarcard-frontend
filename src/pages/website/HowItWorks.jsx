@@ -103,7 +103,6 @@ export default function HowItWorks() {
                 <div className="how-it-works-container">
                     <div className="white-card-column">
                         <div className="how-it-works-info">
-                            <img src={TapIcon} className="icon-40" />
                             <p className="desktop-h5">Build Your Page</p>
                             <p className="desktop-body">
                                 Add your name, photos, services, and prices — no tech stuff needed.
@@ -115,7 +114,6 @@ export default function HowItWorks() {
                     <div className="how-it-works-right">
                         <div className="white-card">
                             <div className="how-it-works-info">
-                                <img src={ProfileIcon} className="icon-40" />
                                 <p className="desktop-h5">Share It Instantly</p>
                                 <p className="desktop-body">
                                     Tap, scan, or send a link. Your full page opens in seconds.
@@ -126,7 +124,6 @@ export default function HowItWorks() {
 
                         <div className="white-card">
                             <div className="how-it-works-info">
-                                <img src={SaveIcon} className="icon-40" />
                                 <p className="desktop-h5">Win More Work</p>
                                 <p className="desktop-body">
                                     Look pro, earn trust, and get booked faster with real reviews and a clean profile.
