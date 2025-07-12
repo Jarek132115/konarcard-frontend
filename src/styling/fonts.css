@@ -174,25 +174,27 @@ body {
 /* Significant adjustments for mobile phones to ensure optimal readability and hierarchy. */
 @media (max-width: 600px) {
   .desktop-h1 {
-    font-size: 40px;
-    /* Strong impact even on small screens */
-    line-height: 48px;
+    font-size: 44px;
+    /* Increased for better visibility */
+    line-height: 52px;
   }
 
   .desktop-h2 {
-    font-size: 32px;
-    line-height: 40px;
+    font-size: 36px;
+    /* Increased */
+    line-height: 44px;
   }
 
   .desktop-h3 {
-    font-size: 26px;
-    line-height: 34px;
+    font-size: 30px;
+    /* Increased */
+    line-height: 38px;
   }
 
   .desktop-h4 {
-    font-size: 22px;
-    /* Crucial: ensures h4 is significantly larger than body text */
-    line-height: 30px;
+    font-size: 24px;
+    /* Increased to ensure clear hierarchy */
+    line-height: 32px;
   }
 
   .desktop-h5 {
@@ -201,25 +203,28 @@ body {
   }
 
   .desktop-h6 {
-    font-size: 16px;
-    /* Maintains heading distinction, aligns with desktop body */
-    line-height: 24px;
+    font-size: 18px;
+    /* Increased, now matches desktop body for strong visual presence */
+    line-height: 26px;
   }
 
   .desktop-body {
-    font-size: 16px;
-    /* Keep body text at a comfortable reading size */
-    line-height: 24px;
+    font-size: 14px;
+    /* Changed to 14px as requested */
+    line-height: 22px;
+    /* Adjusted line-height for 14px body text */
   }
 
   .desktop-body-s {
-    font-size: 14px;
+    font-size: 13px;
+    /* Slightly smaller than body for secondary text */
     line-height: 20px;
   }
 
   .desktop-body-xs {
-    font-size: 12px;
-    line-height: 18px;
+    font-size: 11px;
+    /* Smallest text, but still legible */
+    line-height: 16px;
   }
 
   .desktop-button {
