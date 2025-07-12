@@ -5,7 +5,7 @@ export default function Success() {
   return (
     <div className="success-page">
       <div className="success-box">
-        <p className='desktop-h4'>Payment Successful!</p>
+        <h1>Payment Successful!</h1>
         <p className='desktop-body'>Thank you for your order. Your smart card is on its way.</p>
 
         <div className="success-buttons">
