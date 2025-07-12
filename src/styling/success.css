@@ -1,4 +1,3 @@
-
 .success-page-wrapper,
 .success-page {
     display: flex;
@@ -15,9 +14,9 @@
 .success-box {
     background: #ffffff;
     padding: 40px;
-    border-radius: 12px;
+    border-radius: 10px;
     text-align: center;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     max-width: 550px;
     width: 100%;
     border: 1px solid #e0e0e0;
