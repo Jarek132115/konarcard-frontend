@@ -28,6 +28,7 @@ export default function WhiteCard() {
 
   // Array of thumbnail images
   const thumbnails = [
+    ProductCover,
     ProductImage1,
     ProductImage2,
     ProductImage3,

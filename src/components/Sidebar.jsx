@@ -30,14 +30,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const isActive = (path) => location.pathname === path;
 
     return (
-        // The sidebar panel itself that slides in from the left
         <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-            {/* This is the header *INSIDE* the mobile sidebar (visible when sidebar is open) */}
             <div className="sidebar-mobile-header-inner">
                 <Link to="/" className="sidebar-logo-link-mobile" onClick={closeSidebar}>
                     <img src={LogoIcon} alt="Logo" className="sidebar-logo-mobile" />
                 </Link>
-                {/* This is the CLOSE BUTTON (the X icon) for the sidebar */}
                 <div className="close-sidebar-button" onClick={closeSidebar}>
                     <span></span>
                     <span></span>
