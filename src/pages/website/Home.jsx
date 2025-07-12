@@ -1,10 +1,7 @@
-// frontend/src/pages/website/Home.jsx (MODIFIED for CSS alignment)
-
-import React, { useContext } from 'react'; // Removed useEffect, useState
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-// Remove if not used: import SubscribeButton from '../../components/SubscribeButton';
 
 import BackgroundHero from '../../assets/images/background-hero.png';
 import Section1Image from '../../assets/images/Section-1-Image.png';
@@ -92,7 +89,6 @@ export default function Home() {
     <>
       <Navbar />
 
-      {/* HERO */}
       <div className="home-hero">
         <img src={BackgroundHero} alt="Hero Background" className="hero-image" />
         <div className="hero-container">
@@ -116,7 +112,6 @@ export default function Home() {
               <Link to="/howitworks" className="cta-black-button desktop-button">See How It Works</Link>
             </div>
 
-            {/* 2-Row Tick Layout */}
             <div className="hero-tick-wrap">
               <div className="hero-tick-row">
                 <div className="hero-tick">
@@ -142,7 +137,6 @@ export default function Home() {
           </div>
 
           <div className="hero-right">
-            {/* Using <video> tag with WebM and MP4 fallback */}
             <video
               className="hero-video-element"
               autoPlay
@@ -162,10 +156,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* HERO */}
 
 
-      {/* SECTION 1 - NOW HAS BACKGROUND */}
       <div className="full-width-bg-container section-bg-grey first-section-after-hero">
         <div className="section">
           <div className="section-1-title">
@@ -219,10 +211,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* SECTION 1 */}
 
 
-      {/* SECTION 2 - NO BACKGROUND */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Set It Up In Minutes</h2>
@@ -284,10 +274,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* SECTION 2 */}
 
 
-      {/* SECTION 3 - NOW HAS BACKGROUND */}
       <div className="full-width-bg-container section-bg-grey">
         <div className="section">
           <div className="section-1-title">
@@ -351,10 +339,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* SECTION 3 */}
 
 
-      {/* SECTION 4 - NO BACKGROUND */}
       <div className="section">
         <div className="section-1-title">
           <h2 className='desktop-h3 text-center'>One Profile. Shared in Seconds.</h2>
@@ -388,9 +374,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* SECTION 4 */}
 
-      {/* SECTION 7 (moved to be after Section 4 and before Section 5) - NOW HAS BACKGROUND */}
       <div className="full-width-bg-container section-bg-grey">
         <div className="section">
           <div className="section-1-title">
@@ -400,44 +384,36 @@ export default function Home() {
             </h3>
           </div>
 
-          {/* Main container for the image collage - flex-direction: row on desktop */}
-          <div className="people-showcase-container-flex"> {/* NEW: Main flex container for the section */}
+          <div className="people-showcase-container-flex">
 
-            {/* Left Column: Single large image (40% width) */}
-            <div className="people-showcase-left-col"> {/* NEW: Left column wrapper */}
+            <div className="people-showcase-left-col">
               <img src={People} className="people-showcase-img" alt="Tradesman holding Konar Card" />
             </div>
 
-            {/* Right Column: Contains top row (2 images) and bottom single image (60% width, flex-direction: column) */}
-            <div className="people-showcase-right-col"> {/* NEW: Right column wrapper */}
-              {/* Top Row in Right Column: Two images side-by-side (flex-direction: row) */}
-              <div className="people-showcase-top-row-flex"> {/* NEW: Top row flex container */}
-                <div className="people-showcase-box"> {/* Image 1 in top row */}
+            <div className="people-showcase-right-col">
+              <div className="people-showcase-top-row-flex">
+                <div className="people-showcase-box">
                   <img src={People} className="people-showcase-img" alt="Tradesman showing Konar Card" />
                 </div>
-                <div className="people-showcase-box"> {/* Image 2 in top row */}
+                <div className="people-showcase-box">
                   <img src={People} className="people-showcase-img" alt="Woman holding Konar Card" />
                 </div>
               </div>
 
-              {/* Bottom Single Image in Right Column */}
-              <div className="people-showcase-bottom-single"> {/* NEW: Bottom single image wrapper */}
+              <div className="people-showcase-bottom-single">
                 <img src={People} className="people-showcase-img" alt="Group of tradesmen holding Konar Cards" />
               </div>
             </div>
           </div>
         </div>
       </div>
-      {/* SECTION 7 */}
 
-      {/* NEW COMBINED SECTION (formerly SECTION 5 & SECTION 6) - NO BACKGROUND */}
       <div className="section combined-offer-section">
         <div className="section-1-title">
           <h2 className='desktop-h3 text-center'>Our Plan & Cards</h2>
           <h3 className='desktop-h6 text-center'>Choose what's right for your business.</h3>
         </div>
         <div className="combined-offer-container">
-          {/* Left Column: Subscription Offer */}
           <div className="subscription-offer-left">
             <div className="subscription-header">
               <p className='desktop-h5'>Power Profile</p>
@@ -471,7 +447,6 @@ export default function Home() {
                 <p className='desktop-h5'>£7.95</p>
                 <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
               </div>
-              {/* Conditional rendering for subscribe button based on subscription status */}
               {loadingStatus ? (
                 <button className="desktop-button blue-button" disabled>
                   Loading Plan Status...
@@ -479,7 +454,7 @@ export default function Home() {
               ) : isSubscribed ? (
                 <button className="desktop-button combined-section-button" disabled
                   style={{
-                    backgroundColor: '#e0e0e0', // Greyed out
+                    backgroundColor: '#e0e0e0',
                     cursor: 'not-allowed',
                     color: '#666',
                     border: '1px solid #ccc'
@@ -494,7 +469,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Column: Card Offer */}
           <div className="card-offer-right">
             <div className="product-header">
               <p className='desktop-h5'>Plastic NFC Card</p>
@@ -519,10 +493,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* END NEW COMBINED SECTION */}
 
 
-      {/* SECTION 8 - NOW HAS BACKGROUND (follows the no-background combined section) */}
       <div className="full-width-bg-container section-bg-grey">
         <div className="section">
           <div className="section-1-title">
@@ -592,10 +564,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* SECTION 8 */}
 
 
-      {/* SECTION 9 - NO BACKGROUND */}
       <div className="section">
         <div className="section-1-title">
           <h2 className='desktop-h3 text-center'>Frequently Asked Questions</h2>
@@ -703,8 +673,6 @@ export default function Home() {
         </div>
 
       </div>
-      {/* SECTION 9 */}
-
 
       <Footer />
     </>
