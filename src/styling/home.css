@@ -628,7 +628,6 @@ body {
         /* Remove flex basis */
         width: 100%;
         /* Take full width */
-        max-width: 500px;
         /* Limit max width for readability on larger tablets */
         height: auto;
         /* Allow height to be dynamic */
