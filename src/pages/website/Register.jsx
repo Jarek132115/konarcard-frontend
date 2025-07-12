@@ -281,7 +281,7 @@ export default function Register() {
                                     </span>
                                 </label>
 
-                                <button type="submit" className="primary-button">Register</button>
+                                <button type="submit" className="primary-button sign-in-button">Register</button>
                             </form>
                         ) : (
                             <form onSubmit={verifyCode} className="login-form">
