@@ -941,6 +941,7 @@
         padding-bottom: 20px;
         height: auto;
         overflow-y: visible;
+        margin: auto;
     }
 
     /* Hide the desktop overlay when on mobile */
