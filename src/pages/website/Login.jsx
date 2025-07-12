@@ -3,9 +3,6 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { AuthContext } from '../../components/AuthContext';
 import backgroundImg from '../../assets/images/background.png';
-// greenTick and redCross are not used in Login.jsx, so they can be removed if not needed elsewhere
-// import greenTick from '../../assets/icons/Green-Tick-Icon.svg';
-// import redCross from '../../assets/icons/Red-Cross-Icon.svg';
 import api from '../../services/api';
 
 export default function Login() {
@@ -47,7 +44,7 @@ export default function Login() {
                 }
             } else {
                 toast.success('Login successful!');
-                // FIX: Only pass the token to AuthContext.login
+                // Only pass the token to AuthContext.login
                 login(res.data.token);
                 navigate(from);
             }
@@ -71,7 +68,7 @@ export default function Login() {
                 if (loginRes.data.error) {
                     toast.error(loginRes.data.error);
                 } else {
-                    // FIX: Only pass the token to AuthContext.login
+                    // Only pass the token to AuthContext.login
                     login(loginRes.data.token);
                     navigate(from);
                 }
@@ -97,7 +94,7 @@ export default function Login() {
         }
     };
 
-    const sendResetLink = async (e) => { // Added 'e' parameter to prevent default form submission
+    const sendResetLink = async (e) => {
         e.preventDefault(); // Prevent default form submission
         try {
             const res = await api.post('/forgot-password', { email: emailForReset });
@@ -127,7 +124,7 @@ export default function Login() {
 
             <div className="login-right">
                 <div className="login-card">
-                    <h2 className="login-title">
+                    <h2 className={`login-title ${!verificationStep && !forgotPasswordStep ? 'desktop-h4' : ''}`}>
                         {verificationStep
                             ? 'Verify Your Email'
                             : forgotPasswordStep
@@ -135,8 +132,14 @@ export default function Login() {
                                 : 'Welcome back!'}
                     </h2>
 
+                    {!verificationStep && !forgotPasswordStep && (
+                        <p className="desktop-body-text text-center" style={{ marginBottom: '24px' }}>
+                            Please enter your details to sign in
+                        </p>
+                    )}
+
                     {forgotPasswordStep ? (
-                        <form onSubmit={sendResetLink} className="login-form"> {/* Added onSubmit */}
+                        <form onSubmit={sendResetLink} className="login-form">
                             <label htmlFor="resetEmail" className="form-label">Email</label>
                             <input
                                 type="email"
@@ -145,13 +148,13 @@ export default function Login() {
                                 placeholder="Enter your email"
                                 value={emailForReset}
                                 onChange={(e) => setEmailForReset(e.target.value)}
-                                className="standard-input" // Applied standard-input class
+                                className="standard-input"
                                 autoComplete="off"
                             />
-                            <button type="submit" className="primary-button send-reset-link-button"> {/* Changed to type="submit" */}
+                            <button type="submit" className="primary-button send-reset-link-button">
                                 Send Reset Link
                             </button>
-                            <button type="button" onClick={() => setForgotPasswordStep(false)} className="secondary-button back-to-login-button"> {/* Applied secondary-button and back-to-login-button */}
+                            <button type="button" onClick={() => setForgotPasswordStep(false)} className="secondary-button back-to-login-button">
                                 Back to Login
                             </button>
                         </form>
@@ -165,7 +168,7 @@ export default function Login() {
                                 placeholder="Email"
                                 value={data.email}
                                 onChange={(e) => setData({ ...data, email: e.target.value })}
-                                className="standard-input" // Applied standard-input class
+                                className="standard-input"
                                 autoComplete="off"
                             />
                             <label htmlFor="loginPassword" className="form-label">Password</label>
@@ -184,7 +187,6 @@ export default function Login() {
                                 </button>
                             </div>
                             <button type="submit" className="primary-button sign-in-button">Sign In</button>
-                            {/* Reverted Forgot Password link to original position (below Sign In) and centered */}
                             <button type="button" className="link-button" onClick={() => setForgotPasswordStep(true)}>
                                 Forgot Password?
                             </button>
@@ -200,14 +202,14 @@ export default function Login() {
                                 placeholder="Enter verification code"
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
-                                className="standard-input" // Applied standard-input class
+                                className="standard-input"
                                 maxLength={6}
                                 autoComplete="off"
                             />
                             <button type="submit" className="primary-button verify-email-button">Verify Email</button>
                             <button
                                 type="button"
-                                className="secondary-button resend-code-button" // Applied secondary-button and resend-code-button
+                                className="secondary-button resend-code-button"
                                 onClick={resendCode}
                                 disabled={cooldown > 0}
                                 style={{ marginTop: '1rem' }}

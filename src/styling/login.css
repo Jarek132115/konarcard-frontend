@@ -351,10 +351,10 @@ a,
 }
 
 .login-title {
-    font-size: 24px;
-    font-weight: 600;
+    /* Removed font-size, font-weight, margin-bottom as desktop-h4 will handle it */
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
+    /* Adjusted margin to accommodate new paragraph */
 }
 
 .login-form {
