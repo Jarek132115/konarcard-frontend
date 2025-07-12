@@ -10,7 +10,7 @@ export default function Success() {
 
         <div className="success-buttons">
           <Link to="/" className="black-button desktop-button" style={{ width: '100%' }}>Go to Home</Link>
-          <Link to="/myprofile" className="blue-button desktop-button" style={{ width: '100%' }}>Go to Dashboard</Link>
+          <Link to="/myprofile" className="blue-button desktop-button" style={{ width: '100%' }}>Go to Your Dashboard</Link>
         </div>
       </div>
     </div>
