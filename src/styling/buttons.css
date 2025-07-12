@@ -157,4 +157,8 @@
     width: 90%;
     margin: 0 auto;
   }
+
+  .breadcrumb-nav {
+    padding: 0 20px;
+  }
 }
