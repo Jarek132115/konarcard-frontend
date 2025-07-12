@@ -19,7 +19,7 @@ export default function Footer() {
                         <p className='desktop-body-s' style={{ width: 280, marginBottom: 10 }}>Join our newsletter to stay up to date on features and updates.</p>
                         <div className='subscribe-button'>
                             <p>Email</p>
-                            <Link to="/login" className="black-button-1 desktop-button">Subscribe</Link>
+                            <Link to="/" className="black-button-1 desktop-button">Subscribe</Link>
                         </div>
                     </div>
                     <div className="footer-info-right">
