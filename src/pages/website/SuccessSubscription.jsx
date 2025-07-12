@@ -5,7 +5,7 @@ export default function SuccessSubscription() {
     return (
         <div className="success-page">
             <div className="success-box">
-                <p className='desktop-h3'>Your subscription is now active!</p>
+                <p className='desktop-h3'>Your Subscription is Now Active!</p>
                 <p className='desktop-body'>You can now enjoy all Power Profile features.</p>
 
                 <div className="success-buttons">
