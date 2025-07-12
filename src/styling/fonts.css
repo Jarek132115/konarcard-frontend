@@ -1,7 +1,20 @@
+/*
+ * Typography Styles for a Modern Web Experience
+ *
+ * This stylesheet defines a responsive font scale using "Inter" font,
+ * ensuring clear hierarchy and readability across desktop, tablet, and mobile devices.
+ *
+ * Font sizes and line heights are carefully adjusted at each breakpoint
+ * to provide optimal user experience and maintain visual balance.
+ */
+
 html,
 body {
   font-family: 'Inter', sans-serif;
   background-color: #FAFAFA;
+  /* Ensure smooth font rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .cta-center-text {
@@ -14,12 +27,16 @@ body {
   gap: 5px;
 }
 
-/* Typography Base – Desktop (default) */
+/* --- Typography Base – Desktop (Default Styles) --- */
+/* These styles apply to screens larger than 1000px and serve as the base. */
+
 .desktop-h1 {
   font-size: 64px;
   font-weight: bold;
   line-height: 72px;
+  /* Optimal line height for large headings */
   letter-spacing: -1px;
+  /* Tighter spacing for large text */
 }
 
 .desktop-h2 {
@@ -32,6 +49,7 @@ body {
 .desktop-h3 {
   font-size: 36px;
   font-weight: 600;
+  /* Semi-bold for strong emphasis */
   line-height: 44px;
   letter-spacing: -0.25px;
 }
@@ -60,7 +78,9 @@ body {
 .desktop-body {
   font-size: 16px;
   font-weight: 400;
+  /* Regular weight for body text */
   line-height: 26px;
+  /* Generous line height for readability */
   letter-spacing: 0;
 }
 
@@ -69,6 +89,7 @@ body {
   font-weight: 400;
   line-height: 22px;
   letter-spacing: 0.25px;
+  /* Slightly increased for smaller text */
 }
 
 .desktop-body-xs {
@@ -76,38 +97,46 @@ body {
   font-weight: 400;
   line-height: 18px;
   letter-spacing: 0.4px;
+  /* More spacing for very small text */
 }
 
 .desktop-button {
   font-size: 14px;
   font-weight: 600;
   line-height: normal;
+  /* Buttons usually don't need specific line-height */
   letter-spacing: 0;
+  text-transform: uppercase;
+  /* Common for button text */
 }
 
 .text-center {
   text-align: center;
 }
 
+/* --- Tablet Responsiveness (max-width: 1000px) --- */
+/* Adjustments for tablet devices to maintain hierarchy and readability. */
 @media (max-width: 1000px) {
   .desktop-h1 {
-    font-size: 48px;
-    line-height: 56px;
+    font-size: 56px;
+    /* Slightly reduced from desktop */
+    line-height: 64px;
   }
 
   .desktop-h2 {
-    font-size: 36px;
-    line-height: 44px;
+    font-size: 40px;
+    line-height: 48px;
   }
 
   .desktop-h3 {
-    font-size: 30px;
-    line-height: 38px;
+    font-size: 32px;
+    line-height: 40px;
   }
 
   .desktop-h4 {
-    font-size: 24px;
-    line-height: 32px;
+    font-size: 26px;
+    /* Ensures it's clearly a heading, larger than body */
+    line-height: 34px;
   }
 
   .desktop-h5 {
@@ -116,8 +145,9 @@ body {
   }
 
   .desktop-h6 {
-    font-size: 16px;
-    line-height: 24px;
+    font-size: 18px;
+    /* Still distinct from body text */
+    line-height: 26px;
   }
 
   .desktop-body {
@@ -140,40 +170,46 @@ body {
   }
 }
 
+/* --- Mobile Responsiveness (max-width: 600px) --- */
+/* Significant adjustments for mobile phones to ensure optimal readability and hierarchy. */
 @media (max-width: 600px) {
   .desktop-h1 {
+    font-size: 40px;
+    /* Strong impact even on small screens */
+    line-height: 48px;
+  }
+
+  .desktop-h2 {
     font-size: 32px;
     line-height: 40px;
   }
 
-  .desktop-h2 {
-    font-size: 28px;
-    line-height: 36px;
-  }
-
   .desktop-h3 {
-    font-size: 22px;
-    line-height: 30px;
+    font-size: 26px;
+    line-height: 34px;
   }
 
   .desktop-h4 {
-    font-size: 18px;
-    line-height: 26px;
+    font-size: 22px;
+    /* Crucial: ensures h4 is significantly larger than body text */
+    line-height: 30px;
   }
 
   .desktop-h5 {
-    font-size: 18px;
-    line-height: 26px;
+    font-size: 20px;
+    line-height: 28px;
   }
 
   .desktop-h6 {
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 16px;
+    /* Maintains heading distinction, aligns with desktop body */
+    line-height: 24px;
   }
 
   .desktop-body {
     font-size: 16px;
-    line-height: 22px;
+    /* Keep body text at a comfortable reading size */
+    line-height: 24px;
   }
 
   .desktop-body-s {
@@ -191,7 +227,7 @@ body {
   }
 }
 
-/* Colours */
+/* --- Color Utility Classes --- */
 .white {
   color: white;
 }
@@ -212,11 +248,7 @@ body {
   color: #0081FF;
 }
 
-/* Colours */
-
-
-
-/* BREADCRUMBS */
+/* --- BREADCRUMBS --- */
 .breadcrumb-nav {
   font-size: 14px;
   display: flex;
