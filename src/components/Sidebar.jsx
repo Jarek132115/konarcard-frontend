@@ -12,6 +12,7 @@ import homeIcon from '../assets/icons/Home-Icon.svg';
 import contactIcon from '../assets/icons/Contact-Icon.svg';
 import homeInterface from '../assets/icons/Home-Interface.svg';
 import cardInterface from '../assets/icons/Card-Interface.svg';
+import settingsInterface from '../assets/icons/Settings-Interface.svg';
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
