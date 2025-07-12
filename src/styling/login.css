@@ -707,7 +707,7 @@ a,
         /* Set width to 90% */
         max-width: 90%;
         /* Ensure it doesn't exceed 90% */
-        padding: 00px;
+        padding: 20px;
         /* Keep internal padding */
     }
 
