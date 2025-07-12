@@ -741,7 +741,6 @@
     text-align: center;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     width: 100%;
-    /* Ensures it respects max-width but stretches if smaller */
     box-sizing: border-box;
     z-index: 11;
     display: flex;
@@ -749,19 +748,6 @@
     align-items: center;
     gap: 15px;
     margin: 0 auto;
-    /* Centers the message horizontally within its parent */
-}
-
-.subscription-message h2 {
-    font-size: 24px;
-    color: var(--text-color);
-    margin-bottom: 0;
-}
-
-.subscription-message p {
-    font-size: 16px;
-    color: var(--subtle-text-color);
-    margin-bottom: 0;
 }
 
 .start-trial-button {
