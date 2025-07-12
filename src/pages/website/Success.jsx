@@ -9,8 +9,8 @@ export default function Success() {
         <p>Thank you for your order. Your smart card is on its way.</p>
 
         <div className="success-buttons">
-          <Link to="/" className="success-btn">Go to Home</Link>
-          <Link to="/myprofile" className="success-btn outline">Go to Dashboard</Link>
+          <Link to="/" className="black-button desktop-button">Go to Home</Link>
+          <Link to="/myprofile" className="blue-button desktop-button">Go to Dashboard</Link>
         </div>
       </div>
     </div>
