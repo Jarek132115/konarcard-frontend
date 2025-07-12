@@ -1,17 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default function SuccessSubscription() {
+export default function Success() {
   return (
     <div className="success-page">
       <div className="success-box">
-        <p className='desktop-h3'>Congratulations!</p>
-        <p className='desktop-body'>Your subscription is now active.</p>
-        <p className='desktop-body'>You can now enjoy all Power Profile features!</p>
+        <p className='desktop-h3'>Payment Successful!</p>
+        <p className='desktop-body'>Thank you for your order. Your smart card is on its way.</p>
 
         <div className="success-buttons">
-          <Link to="/" className="black-button desktop-button" style={{ width: '100%' }}>Go to Homepage</Link>
-          <Link to="/myprofile" className="blue-button desktop-button" style={{ width: '100%' }}>Go to Your Dashboard</Link>
+          <Link to="/" className="black-button desktop-button" style={{ width: '100%' }}>Go to Home</Link>
+          <Link to="/myprofile" className="blue-button desktop-button" style={{ width: '100%' }}>Go to Dashboard</Link>
         </div>
       </div>
     </div>

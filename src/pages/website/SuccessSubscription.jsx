@@ -1,21 +1,19 @@
-import React from 'react'; 
-import { Link } from 'react-router-dom'; 
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function SuccessSubscription() {
     return (
-        <>
-            <div className="success-page-wrapper">
-                <div className="success-box subscription-success-box">
-                    <h1>Congratulations!</h1>
-                    <p>Your subscription is being activated.</p>
-                    <p>You'll be redirected shortly, or you can go to your dashboard.</p>
+        <div className="success-page">
+            <div className="success-box">
+                <p className='desktop-h3'>Congratulations!</p>
+                <p className='desktop-body'>Your subscription is now active.</p>
+                <p className='desktop-body'>You can now enjoy all Power Profile features!</p>
 
-                    <div className="success-buttons">
-                        <Link to="/" className="success-btn" style={{ width: '100%' }}>Go to Homepage</Link>
-                        <Link to="/myprofile" className="success-btn outline" style={{ width: '100%' }}>Go to Your Dashboard</Link>
-                    </div>
+                <div className="success-buttons">
+                    <Link to="/" className="black-button desktop-button" style={{ width: '100%' }}>Go to Homepage</Link>
+                    <Link to="/myprofile" className="blue-button desktop-button" style={{ width: '100%' }}>Go to Your Dashboard</Link>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
