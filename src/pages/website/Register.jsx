@@ -1,16 +1,13 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { AuthContext } from '../../components/AuthContext';
-import backgroundImg from '../../assets/images/background.png';
-import greenTick from '../../assets/icons/Green-Tick-Icon.svg';
-import redCross from '../../assets/icons/Red-Cross-Icon.svg';
 
 export default function Register() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { setUser } = useContext(AuthContext);
+    // Removed useContext(AuthContext) as it cannot be resolved here.
+    // const { setUser } = useContext(AuthContext);
     const from = location.state?.from || '/';
 
     const [data, setData] = useState({
@@ -29,7 +26,7 @@ export default function Register() {
     // New state to control password feedback visibility
     const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
     // Ref to manage blur timeout
-    const blurTimeoutRef = React.useRef(null);
+    const blurTimeoutRef = useRef(null);
 
     useEffect(() => {
         if (cooldown > 0) {
@@ -78,6 +75,8 @@ export default function Register() {
 
         try {
             console.log('Sending registration request...');
+            // Note: axios.post will need to be configured with a base URL
+            // or you'll need to provide full URLs for your API endpoints.
             const res = await axios.post('/register', {
                 name: data.name,
                 email: data.email,
@@ -136,7 +135,7 @@ export default function Register() {
                 if (loginRes.data.error) {
                     toast.error(loginRes.data.error);
                 } else {
-                    setUser(loginRes.data);
+                    // setUser(loginRes.data); // Removed setUser call
                     navigate(from);
                 }
             }
@@ -159,12 +158,29 @@ export default function Register() {
         }
     };
 
+    // Inline SVG for Green Tick
+    const GreenTickIcon = () => (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feedback-icon">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+    );
+
+    // Inline SVG for Red Cross
+    const RedCrossIcon = () => (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feedback-icon">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    );
+
     return (
         <>
-            <Link to="/" className="close-button">×</Link>
+            {/* The close button is now inside the login-wrapper for consistent positioning */}
             <div className="login-wrapper">
+                <Link to="/" className="close-button">×</Link>
                 <div className="login-left">
-                    <img src={backgroundImg} alt="Visual" className="login-visual" />
+                    {/* Replaced local image import with a placeholder URL */}
+                    <img src="https://placehold.co/600x400/E0E0E0/333333?text=Background+Image" alt="Visual" className="login-visual" />
                     <div className="login-quote">
                         <span className="quote-icon">“</span>
                         <p className="quote-text">“This has completely changed the way I find work. Clients love it.”</p>
@@ -174,7 +190,15 @@ export default function Register() {
 
                 <div className="login-right">
                     <div className="login-card">
-                        <h2 className="login-title">{verificationStep ? 'Verify Your Email' : 'Create Your Account'}</h2>
+                        <h2 className={`login-title ${!verificationStep ? 'desktop-h4' : ''}`}>
+                            {verificationStep ? 'Verify Your Email' : 'Create Your Account'}
+                        </h2>
+
+                        {!verificationStep && (
+                            <p className="desktop-body-text text-center" style={{ marginBottom: '24px' }}>
+                                Please enter your details to create an account
+                            </p>
+                        )}
 
                         {!verificationStep ? (
                             <form onSubmit={registerUser} className="login-form">
@@ -195,7 +219,6 @@ export default function Register() {
                                         value={data.username}
                                         onChange={(e) => setData({ ...data, username: e.target.value })}
                                         autoComplete="off"
-                                    // Removed standard-input class as styling is now on the wrapper and internal input
                                     />
                                 </div>
 
@@ -237,16 +260,16 @@ export default function Register() {
                                 {showPasswordFeedback && (
                                     <div className="password-feedback">
                                         <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
-                                            <img src={passwordChecks.minLength ? greenTick : redCross} alt="" className="feedback-icon" /> Minimum 8 characters
+                                            {passwordChecks.minLength ? <GreenTickIcon /> : <RedCrossIcon />} Minimum 8 characters
                                         </p>
                                         <p className={passwordChecks.hasUppercase ? 'valid' : 'invalid'}>
-                                            <img src={passwordChecks.hasUppercase ? greenTick : redCross} alt="" className="feedback-icon" /> One uppercase letter
+                                            {passwordChecks.hasUppercase ? <GreenTickIcon /> : <RedCrossIcon />} One uppercase letter
                                         </p>
                                         <p className={passwordChecks.hasNumber ? 'valid' : 'invalid'}>
-                                            <img src={passwordChecks.hasNumber ? greenTick : redCross} alt="" className="feedback-icon" /> One number
+                                            {passwordChecks.hasNumber ? <GreenTickIcon /> : <RedCrossIcon />} One number
                                         </p>
                                         <p className={passwordChecks.passwordsMatch ? 'valid' : 'invalid'}>
-                                            <img src={passwordChecks.passwordsMatch ? greenTick : redCross} alt="" className="feedback-icon" /> Passwords match
+                                            {passwordChecks.passwordsMatch ? <GreenTickIcon /> : <RedCrossIcon />} Passwords match
                                         </p>
                                     </div>
                                 )}
