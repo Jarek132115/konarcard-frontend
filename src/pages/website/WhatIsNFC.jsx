@@ -110,7 +110,6 @@ export default function WhatIsNFC() {
         <div className="how-it-works-container">
           <div className="white-card-column">
             <div className="how-it-works-info">
-              <img src={TapIcon} className="icon-40" />
               <p className="desktop-h5">Tap the Card</p>
               <p className="desktop-body">
                 Hold the card near most phones — it works without any app.
@@ -122,7 +121,6 @@ export default function WhatIsNFC() {
           <div className="how-it-works-right">
             <div className="white-card">
               <div className="how-it-works-info">
-                <img src={ProfileIcon} className="icon-40" />
                 <p className="desktop-h5">Your Page Pops Up</p>
                 <p className="desktop-body">
                   They see your name, photo, services, and how to reach you.
@@ -133,7 +131,6 @@ export default function WhatIsNFC() {
 
             <div className="white-card">
               <div className="how-it-works-info">
-                <img src={SaveIcon} className="icon-40" />
                 <p className="desktop-h5">They Save Your Info</p>
                 <p className="desktop-body">
                   One tap saves your number, email, or connects to your socials.
