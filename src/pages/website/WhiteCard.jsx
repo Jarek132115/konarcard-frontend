@@ -5,14 +5,35 @@ import Breadcrumbs from '../../components/Breadcrumbs';
 import Footer from '../../components/Footer';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
-import { toast } from 'react-hot-toast'; // Import toast
+import { toast } from 'react-hot-toast';
+
+// Import the new product images
+import ProductCover from '../../assets/images/Product-Cover.png';
+import ProductImage1 from '../../assets/images/Product-Image-1.png';
+import ProductImage2 from '../../assets/images/Product-Image-2.png';
+import ProductImage3 from '../../assets/images/Product-Image-3.png';
+import ProductImage4 from '../../assets/images/Product-Image-4.png';
+import ProductImage5 from '../../assets/images/Product-Image-5.png';
+
 
 // IMPORTANT: REPLACE 'pk_live_YOUR_PUBLISHABLE_KEY_HERE' with your actual LIVE Stripe Publishable Key
 const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8');
 
 export default function WhiteCard() {
   const [quantity, setQuantity] = useState(1);
+  // State to manage the currently displayed main image
+  const [mainImage, setMainImage] = useState(ProductCover);
+
   const pricePerCard = 19.95; // This is the displayed price, actual price comes from Stripe Price ID
+
+  // Array of thumbnail images
+  const thumbnails = [
+    ProductImage1,
+    ProductImage2,
+    ProductImage3,
+    ProductImage4,
+    ProductImage5
+  ];
 
   const handleBuyNow = async () => {
     const stripe = await stripePromise;
@@ -50,10 +71,18 @@ export default function WhiteCard() {
 
       <div className="section-product">
         <div className="product-preview">
-          <img src="https://yourcdn.com/images/WoodenCard.png" alt="Main Card" className="main-card" />
+          {/* Main product image, dynamically set */}
+          <img src={mainImage} alt="Main Product Card" className="main-card" />
           <div className="thumbnail-row">
-            {[...Array(5)].map((_, i) => (
-              <img key={i} src="https://yourcdn.com/images/WoodenCard.png" alt={`Thumbnail ${i + 1}`} className="thumbnail" />
+            {/* Map through the thumbnails array to display them */}
+            {thumbnails.map((thumb, index) => (
+              <img
+                key={index}
+                src={thumb}
+                alt={`Product Thumbnail ${index + 1}`}
+                className="thumbnail"
+                onClick={() => setMainImage(thumb)} // Change main image on thumbnail click
+              />
             ))}
           </div>
         </div>
