@@ -690,10 +690,18 @@
     background-color: #dc3545;
     /* Red background */
     color: white;
-    /* White text */
+    /* White 'X' */
+    border-radius: 50%;
+    /* Circular shape */
     cursor: pointer;
-    transition: background-color 0.2s, border-color 0.2s;
-    border-radius: 8px;
+    border: none;
+    z-index: 10;
+    /* Ensure it's above the image */
+    display: flex;
+    /* For centering the 'X' */
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s ease;
 }
 
 .remove-item-button:hover {
@@ -948,6 +956,41 @@
     }
 }
 
+/* New media query for under 600px */
+@media (max-width: 599px) {
+    .page-title {
+        display: none;
+        /* This correctly hides the page title */
+    }
+
+    .page-actions {
+        width: 100%;
+        /* Make the container for buttons full width */
+        justify-content: center;
+        /* Center buttons if there's only one */
+        gap: 0;
+        /* Remove gap if buttons are meant to be full width individually */
+    }
+
+    .page-actions .header-button {
+        flex: 1;
+        /* Make each button take full available width */
+        max-width: 100%;
+        /* Ensure button doesn't exceed its container */
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* If you only want the "Share Profile" button to be full width,
+       and not the "Activate Card" button, you would need to give
+       the "Share Profile" button a specific class name in PageHeader.jsx.
+       Assuming 'header-button' is shared by both, this will make both full width.
+       If only 'Share Profile' should be full width, and 'Activate Card' should remain
+       its default size or be hidden, you'd need more specific styling.
+       For now, this will make all buttons within .page-actions full width. */
+}
+
+
 @media (max-width: 400px) {
     .main-content-container {
         padding: 15px;
@@ -969,23 +1012,20 @@
         font-size: 14px;
     }
 
-    .page-header {
+    /* No changes needed here, as the .page-actions and .header-button
+       rules in the @media (max-width: 599px) block already handle full width */
+    /* .page-actions {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
         margin-bottom: 20px;
-    }
+    } */
 
-    .page-actions {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .header-button {
+    /* .header-button {
         flex: 1;
         padding: 8px 10px;
         font-size: 13px;
-    }
+    } */
 
     .mock-phone {
         padding: 1rem;
@@ -1056,11 +1096,5 @@
 
     .mock-reviewer-name {
         font-size: 0.8rem;
-    }
-}
-
-@media (max-width: 599px) {
-    .page-title {
-        display: none;
     }
 }
