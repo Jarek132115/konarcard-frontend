@@ -16,6 +16,8 @@ import settingsInterface from '../assets/icons/Settings-Interface.svg';
 import subscriptionInterface from '../assets/icons/Subscription-Interface.svg';
 import contactInterface from '../assets/icons/Contact-Interface.svg';
 import helpInterface from '../assets/icons/Help-Interface.svg';
+import logoutInterface from '../assets/icons/Logout-Interface.svg';
+
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
@@ -101,11 +103,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                 <div className="footer-actions">
                     <Link to="/" className={`sidebar-button ${isActive('/') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                        <img src={homeIcon} alt="home" className="icon" />
+                        <img src={homeInterface} alt="home" className="icon" />
                         <p className='desktop-body-s'>Go to Homepage</p>
                     </Link>
                     <button className="sidebar-button logout-button" onClick={() => { handleLogout(); closeSidebar(); }}>
-                        <img src={logoutIcon} alt="logout" className="icon" />
+                        <img src={logoutInterface} alt="logout" className="icon" />
                         <p className='desktop-body-s'>Logout Account</p>
                     </button>
                 </div>
