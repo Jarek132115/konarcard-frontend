@@ -10,7 +10,6 @@
 .navbar-container {
   max-width: 1140px;
   margin: 0 auto;
-  padding: 0 16px;
   align-items: center;
 }
 
@@ -130,7 +129,6 @@
   display: none;
   justify-content: space-between;
   align-items: center;
-  padding: 0 10px;
 }
 
 .hamburger {
