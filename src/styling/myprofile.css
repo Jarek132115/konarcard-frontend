@@ -891,7 +891,6 @@
     .subscription-overlay-mobile {
         display: block;
         /* Make it visible */
-        padding: 0 20px;
         /* Match main content padding */
     }
 
