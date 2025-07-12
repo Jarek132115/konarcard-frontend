@@ -43,23 +43,16 @@
     /* Styles for the fixed header shown on mobile */
     .myprofile-mobile-header {
         display: flex;
-        /* Make it visible on mobile */
         justify-content: space-between;
-        /* Space out logo and hamburger */
         align-items: center;
         padding: 15px 20px;
         height: 62px;
-        /* Fixed height for consistency */
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         position: fixed;
-        /* CRITICAL: Stays fixed at the top */
         top: 0;
         left: 0;
         width: 100%;
         box-sizing: border-box;
         z-index: 1001;
-        /* Ensure it's above main content, but sidebar will be higher */
     }
 
     /* Style for the logo link within the mobile header */
