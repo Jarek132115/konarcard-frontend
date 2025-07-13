@@ -192,17 +192,12 @@
     /* Space above buttons */
 }
 
+/* Removed specific styling from profile-action-button to let black-button/blue-button define it */
 .profile-action-button {
     width: 100%;
     /* Full width for buttons */
-    padding: 12px 20px;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    border: none;
-    text-align: center;
+    /* Removed: padding, border-radius, font-size, font-weight, transition, border, text-align */
 }
 
 /* Dark mode adjustments */
@@ -328,8 +323,8 @@ body.dark-mode .profile-reset-password-inline-btn:hover {
         gap: 10px;
     }
 
+    /* Removed specific mobile styling from profile-action-button */
     .profile-action-button {
-        padding: 10px 15px;
-        font-size: 15px;
+        /* Removed: padding, font-size */
     }
 }
