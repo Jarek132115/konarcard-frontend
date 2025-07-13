@@ -220,21 +220,23 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Password Section - Now with Reset Password Button */}
+            {/* Password Section - Now with Reset Password Button inside input-like group */}
             <div className="profile-setting-block">
               <label className="profile-label desktop-body-s black">Password</label>
-              <input
-                type="password"
-                value="********" // Display masked password
-                readOnly // Make it non-editable
-                className="profile-input-field profile-display-field desktop-body"
-              />
-              <button
-                onClick={handleResetPassword}
-                className="blue-button profile-reset-password-button desktop-button"
-              >
-                <span className="desktop-button">Reset Password</span>
-              </button>
+              <div className="profile-password-display-group"> {/* New wrapper for input and button */}
+                <input
+                  type="password"
+                  value="********" // Display masked password
+                  readOnly // Make it non-editable
+                  className="profile-input-field profile-display-field desktop-body"
+                />
+                <button
+                  onClick={handleResetPassword}
+                  className="black-button profile-reset-password-inline-btn desktop-button"
+                >
+                  <span className="desktop-button">Reset</span>
+                </button>
+              </div>
             </div>
 
             {/* Action Buttons */}
@@ -271,4 +273,4 @@ export default function Profile() {
       />
     </div>
   );
-}
+} 

@@ -122,24 +122,62 @@
     /* Make username slightly bolder */
 }
 
-/* Styling for the Reset Password button */
-.profile-reset-password-button {
+/* New: Wrapper for password display input and inline button */
+.profile-password-display-group {
+    display: flex;
+    align-items: center;
     width: 100%;
-    /* Full width */
-    padding: 12px 20px;
+    background-color: #e9ecef;
+    /* Match display field background */
     border-radius: 6px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    border: none;
-    text-align: center;
-    margin-top: 5px;
-    /* Small margin from the password display field */
+    padding: 0 0 0 15px;
+    /* Padding only on left, button handles right */
+    box-sizing: border-box;
 }
 
-/* Removed old password input group and feedback styles */
-/* .profile-password-input-group, .profile-password-toggle-btn, .profile-password-feedback, .profile-feedback-icon, .profile-valid, .profile-invalid are removed */
+.profile-password-display-group .profile-input-field {
+    flex-grow: 1;
+    /* Input takes all available space */
+    background-color: transparent;
+    /* Transparent background */
+    border: none;
+    /* No border */
+    padding: 12px 0;
+    /* Vertical padding, no horizontal */
+    color: #555;
+    /* Match display field text color */
+    cursor: default;
+}
+
+/* New: Inline Reset Password button */
+.profile-reset-password-inline-btn {
+    flex-shrink: 0;
+    /* Prevent button from shrinking */
+    padding: 12px 15px;
+    /* Match input padding for height */
+    border-radius: 0 6px 6px 0;
+    /* Rounded only on right side */
+    font-size: 14px;
+    /* Adjust font size for button */
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    background-color: black;
+    /* Default black button style */
+    color: white;
+    border: none;
+    height: 100%;
+    /* Make button fill height of its parent group */
+    display: flex;
+    /* Use flex to center text */
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-reset-password-inline-btn:hover {
+    background-color: #333;
+    /* Darker black on hover */
+}
 
 
 /* Action buttons group (Save and Delete) */
@@ -214,13 +252,25 @@ body.dark-mode .profile-url-display-group .profile-input-field {
     /* Ensure username text is light in dark mode */
 }
 
-body.dark-mode .profile-reset-password-button {
-    background-color: #007bff;
-    color: white;
+/* Dark mode for new inline reset button */
+body.dark-mode .profile-password-display-group {
+    background-color: #444;
+    /* Match display field background */
 }
 
-body.dark-mode .profile-reset-password-button:hover {
-    background-color: #0056b3;
+body.dark-mode .profile-password-display-group .profile-input-field {
+    color: #bbb;
+    /* Lighter text for non-editable in dark mode */
+}
+
+body.dark-mode .profile-reset-password-inline-btn {
+    background-color: #555;
+    /* Darker background for button in dark mode */
+    color: #eee;
+}
+
+body.dark-mode .profile-reset-password-inline-btn:hover {
+    background-color: #666;
 }
 
 /* Responsive adjustments for smaller screens */
@@ -257,9 +307,21 @@ body.dark-mode .profile-reset-password-button:hover {
         font-size: 15px;
     }
 
-    .profile-reset-password-button {
-        padding: 10px 15px;
-        font-size: 15px;
+    /* Mobile adjustments for inline reset button */
+    .profile-password-display-group {
+        padding: 0 0 0 12px;
+        /* Adjust padding for mobile */
+    }
+
+    .profile-password-display-group .profile-input-field {
+        padding: 10px 0;
+        /* Adjust padding for mobile */
+    }
+
+    .profile-reset-password-inline-btn {
+        padding: 10px 12px;
+        /* Adjust padding for mobile */
+        font-size: 13px;
     }
 
     .profile-action-buttons-group {
