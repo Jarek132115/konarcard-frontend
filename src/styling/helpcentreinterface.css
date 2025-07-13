@@ -1,3 +1,31 @@
+/* Ensure the overall app layout takes full viewport height and manages its own overflow */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  /* Make the app layout take the full viewport height */
+  overflow: hidden;
+  /* Prevent overall app-layout from scrolling, let children manage */
+  flex-direction: row;
+  /* Default desktop layout for app-layout */
+}
+
+/* Main content area that should scroll */
+.main-content-container {
+  flex-grow: 1;
+  /* Allows it to take up all available horizontal space */
+  display: flex;
+  flex-direction: column;
+  /* Stack its children (PageHeader, help-videos-page-wrapper) vertically */
+  overflow-y: auto;
+  /* THIS IS KEY: Enables vertical scrolling within this container */
+  height: 100%;
+  /* Ensures it has a defined height (100% of its parent's height) for overflow to work */
+  padding: 20px;
+  /* Padding around the entire main content area */
+  box-sizing: border-box;
+}
+
+
 /* Wrapper for the entire help videos content to enable centering */
 .help-videos-page-wrapper {
   display: flex;
@@ -6,11 +34,10 @@
   /* Center the grid horizontally */
   justify-content: flex-start;
   /* Align to start, let content push down */
-  /* Removed min-height here to allow parent to control overflow */
-  height: 100%;
-  /* Take full height of its flex parent */
-  padding: 20px;
-  /* Padding around the entire grid */
+  height: auto;
+  /* Allow content to define height, but parent is scrollable */
+  padding: 0;
+  /* Remove padding here as main-content-container handles it */
   box-sizing: border-box;
   width: 100%;
   margin-bottom: 40px;
@@ -148,14 +175,29 @@ body.dark-mode .video-button.black-button:hover {
 }
 
 /* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
 
   /* This media query now applies to all mobile sizes */
-  .help-videos-page-wrapper {
+  /* Adjust app-layout and main-content-container for mobile */
+  .app-layout {
+    flex-direction: column;
+    /* Stack sidebar and main content vertically on mobile */
+  }
+
+  .main-content-container {
+    height: calc(100% - 62px);
+    /* Subtract mobile header height */
+    margin-top: 62px;
+    /* Push content down below the fixed header */
     padding: 15px;
+    /* Adjust padding for mobile */
+  }
+
+  .help-videos-page-wrapper {
+    padding: 0;
+    /* Remove padding here, main-content-container handles it */
     gap: 20px;
     /* Smaller gap between items on mobile */
-    /* Removed min-height here too */
   }
 
   .help-videos-grid {
@@ -210,5 +252,26 @@ body.dark-mode .video-button.black-button:hover {
     /* Limit button width if desired */
     font-size: 13px;
     padding: 8px 12px;
+  }
+}
+
+/* Smaller mobile screens (e.g., max-width 400px) */
+@media (max-width: 400px) {
+  .main-content-container {
+    padding: 10px;
+    /* Even less padding on very small screens */
+  }
+
+  .help-video-item {
+    padding: 15px;
+    /* Smaller padding for video cards */
+  }
+
+  .video-title {
+    font-size: 18px;
+  }
+
+  .video-desc {
+    font-size: 13px;
   }
 }
