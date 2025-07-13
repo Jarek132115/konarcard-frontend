@@ -8,14 +8,34 @@
     max-width: 300px;
     background-color: white;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-    display: flex;
     flex-direction: column;
+    /* Keep flex-direction */
     padding: 20px;
     box-sizing: border-box;
     z-index: 999;
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    /* Add visibility to transition */
+
+    /* --- IMPORTANT DESKTOP HIDING --- */
+    display: none;
+    /* Hide by default on desktop */
+    visibility: hidden;
+    /* Ensure it's not interactive */
+    transform: translateX(-100%);
+    /* Start off-screen */
+    /* --- END IMPORTANT DESKTOP HIDING --- */
+
     overflow: hidden;
 }
+
+/* This rule will make the sidebar visible when 'open' is applied, but only on mobile due to media query */
+.sidebar.open {
+    transform: translateX(0);
+    visibility: visible;
+    display: flex;
+    /* Ensure it's flex when open */
+}
+
 
 .sidebar-mobile-header-inner {
     display: none;
@@ -240,7 +260,6 @@
     display: block;
     width: 100%;
     height: 3px;
-    /* This is the thickness */
     background: black;
     border-radius: 2px;
     transition: all 0.3s ease;
@@ -268,22 +287,31 @@
 @media (max-width: 1000px) {
 
     .sidebar {
+        /* On mobile, override desktop hiding */
+        display: flex;
+        /* Make it visible on mobile */
+        transform: translateX(-100%);
+        /* Still starts off-screen for slide-in effect */
+        visibility: hidden;
+        /* Hidden until 'open' class is applied */
+
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        transform: translateX(-100%);
         box-shadow: none;
         z-index: 1003;
         overflow-y: auto;
         background-color: white;
         padding: 0;
-        transition: transform 0.3s ease-in-out;
+        transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
     }
 
     .sidebar.open {
         transform: translateX(0);
+        visibility: visible;
+        /* Make visible when open */
     }
 
     .sidebar-mobile-header-inner {
