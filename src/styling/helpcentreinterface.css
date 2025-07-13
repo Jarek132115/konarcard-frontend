@@ -1,141 +1,154 @@
-/* helpcentreinterface.css */
-
-/* Define the new .content-card styling for this page's main content wrapper */
-/* This now acts more as a layout container than a visual card itself */
-.content-card {
-  background: transparent;
-  justify-content: center;
-  /* Changed to transparent - no background for this wrapper */
-  border-radius: 0;
-  /* Remove border-radius */
-  box-shadow: none;
-  /* Remove box-shadow */
-  padding: 0;
-  /* Remove padding if not needed, let children define their padding */
-  width: 100%;
-  /* Default to full width of its parent */
-  max-width: 600px;
-  /* Set max width for content inside main area */
-  box-sizing: border-box;
+/* Wrapper for the entire help content to enable centering */
+.help-page-wrapper {
   display: flex;
-  /* Make it a flex container */
   flex-direction: column;
-  /* Stack content vertically inside */
-  gap: 20px;
-  /* Spacing between elements inside the card */
-  min-height: 0;
-  overflow-y: auto;
-  /* Allow content inside this logical card to scroll if it overflows */
-  margin: 0 auto 20px auto;
-  /* Center it horizontally, add bottom margin */
-}
-
-
-/* Original help-video-card styles - these are the individual cards */
-.help-video-card {
-  display: flex;
-  background: white;
-  /* Keep white background for individual cards */
-  padding: 24px;
-  /* Keep original padding for individual cards */
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  gap: 24px;
   align-items: center;
-  margin: 0;
-  /* Reset margins; gap on parent .content-card will handle spacing */
-  width: 100%;
-  /* Fill the width of its parent (.content-card) */
+  /* Center cards horizontally */
+  gap: 40px;
+  /* Space between each help section card */
+  padding: 20px;
+  /* Padding around the entire group of cards */
   box-sizing: border-box;
-  flex-shrink: 0;
-  /* Prevent individual cards from shrinking their content too much */
+  width: 100%;
+  margin-bottom: 100px;
+  /* Matches the original margin-bottom on blog-container */
 }
 
-.help-video-card.reverse {
+/* Styling for each individual help section card */
+.help-section-card {
+  background: #ffffff;
+  padding: 30px;
+  /* Internal padding for the card */
+  border-radius: 20px;
+  /* 20px border as requested */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  /* Shadow similar to other sections */
+  max-width: 800px;
+  /* Allowing a bit wider for the two-column layout */
+  width: 100%;
+  /* Ensure it takes full width up to max-width */
+  border: 1px solid #e0e0e0;
+  /* Border as requested */
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  /* Align items vertically in the center */
+  gap: 30px;
+  /* Space between image and text content */
+}
+
+/* Rule for reversed layout */
+.help-section-card-reversed {
   flex-direction: row-reverse;
+  /* Reverse order for image and text */
 }
 
-.help-video-thumb {
-  width: 300px;
+/* Styling for the image within the help section card */
+.help-section-image {
+  width: 40%;
+  /* Image takes 40% of the card width */
   height: auto;
   border-radius: 12px;
+  /* Slightly rounded corners for the image */
   object-fit: cover;
+  flex-shrink: 0;
+  /* Prevent image from shrinking */
 }
 
-.help-video-content {
+/* Styling for the text details section */
+.help-section-details {
+  flex-grow: 1;
+  /* Details section takes remaining space */
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  flex: 1;
+  justify-content: space-between;
+  /* Pushes button to the bottom if content is short */
+  height: 100%;
+  /* Ensure it takes full height of its flex parent */
 }
 
-.help-video-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.help-video-desc {
-  font-size: 14px;
-  color: #444;
-}
-
-.help-video-time {
-  font-size: 13px;
-  color: #777;
-}
-
-.help-video-button {
-  width: fit-content;
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 16px;
+/* Styling for the "Read more" button */
+.help-section-cta-button {
+  margin-top: 15px;
+  /* Space above the button */
+  align-self: flex-start;
+  /* Align button to the start of the details column */
+  padding: 10px 20px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background 0.2s;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.help-video-button:hover {
-  background: #0066dd;
+/* Dark mode adjustments */
+body.dark-mode .help-section-card {
+  background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+  color: #e0e0e0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-color: #3a3a3a;
 }
 
-/* Responsive adjustments */
-@media (max-width: 800px) {
-  .content-card {
-    max-width: 100%;
-    /* Go full width below 800px */
-    padding: 0;
-    /* No padding on content-card itself, rely on inner elements */
-    margin: 0 auto 20px auto;
-    /* Still center */
-  }
+body.dark-mode .help-section-card p {
+  color: #e0e0e0;
+}
 
-  .help-video-card {
-    flex-direction: column;
-    /* Always stack content on mobile */
-    align-items: flex-start;
-    /* Align text to left when stacked */
-    gap: 15px;
-    /* Adjust gap for vertical stacking */
+body.dark-mode .help-section-card p[style*="font-style: italic"] {
+  color: #bbb;
+  /* Darker grey for italic text */
+}
+
+body.dark-mode .help-section-cta-button.black-button {
+  background-color: #333;
+  color: white;
+}
+
+body.dark-mode .help-section-cta-button.black-button:hover {
+  background-color: #555;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .help-page-wrapper {
     padding: 15px;
-    /* Adjust padding for mobile cards */
-    margin-bottom: 20px;
-    /* Add margin between stacked cards if needed */
+    gap: 25px;
   }
 
-  .help-video-card.reverse {
+  .help-section-card,
+  .help-section-card-reversed {
     flex-direction: column;
-    /* Ensure reverse also stacks vertically */
+    /* Stack image and text vertically on mobile */
+    padding: 25px;
+    gap: 20px;
+    text-align: center;
+    /* Center text when stacked */
   }
 
-  .help-video-thumb {
+  .help-section-image {
     width: 100%;
-    /* Make thumbnail full width when stacked */
-    height: auto;
-    /* Maintain aspect ratio */
+    /* Image takes full width on mobile */
+    max-width: 300px;
+    /* Limit image size for very tall images */
+    margin: 0 auto;
+    /* Center image */
+  }
+
+  .help-section-details {
+    align-items: center;
+    /* Center text content vertically */
+  }
+
+  .help-section-cta-button {
+    align-self: center;
+    /* Center button when stacked */
+    width: 100%;
+    /* Make button full width on mobile */
+    max-width: 200px;
+    /* Limit button width if desired */
+  }
+
+  .help-section-card p {
+    text-align: center;
+    /* Ensure all text is centered on mobile */
   }
 }
