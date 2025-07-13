@@ -4,10 +4,11 @@
   flex-direction: column;
   align-items: center;
   /* Center the grid horizontally */
-  justify-content: center;
-  /* Center the grid vertically (if content is short) */
-  min-height: calc(100vh - 120px);
-  /* Adjust based on your header/footer height */
+  justify-content: flex-start;
+  /* Align to start, let content push down */
+  /* Removed min-height here to allow parent to control overflow */
+  height: 100%;
+  /* Take full height of its flex parent */
   padding: 20px;
   /* Padding around the entire grid */
   box-sizing: border-box;
@@ -147,7 +148,6 @@ body.dark-mode .video-button.black-button:hover {
 }
 
 /* Responsive adjustments for smaller screens */
-/* Removed the @media (min-width: 769px) rule as it's now always 1 column */
 @media (max-width: 768px) {
 
   /* This media query now applies to all mobile sizes */
@@ -155,10 +155,10 @@ body.dark-mode .video-button.black-button:hover {
     padding: 15px;
     gap: 20px;
     /* Smaller gap between items on mobile */
+    /* Removed min-height here too */
   }
 
   .help-videos-grid {
-    /* No change needed here, already 1fr */
     gap: 20px;
   }
 
