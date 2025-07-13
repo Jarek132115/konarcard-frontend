@@ -203,7 +203,6 @@ body.dark-mode .blue-button.share-button-custom:hover {
     /* Set to 20px as requested */
     flex-shrink: 0;
     /* Prevent icon from shrinking */
-    margin-right: 8px;
     /* Added margin to separate icon from text */
 }
 
@@ -299,7 +298,6 @@ body.dark-mode .qr-code-image-container {
         height: 16px;
         /* Adjust icon size for smaller screens if 20px is too big */
         width: 16px;
-        margin-right: 6px;
         /* Adjust margin for smaller screens */
     }
 
