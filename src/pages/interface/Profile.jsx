@@ -251,7 +251,7 @@ export default function Profile() {
                   cursor: (confirmDelete && !deleteEnabled) ? 'not-allowed' : 'pointer'
                 }}
               >
-                <span className="desktop-button">
+                <span className="desktop-button black-button">
                   {confirmDelete && !deleteEnabled ? `Confirm Delete in ${Math.max(0, Math.ceil((3000 - (Date.now() - (new Date().getTime() - 3000))) / 1000))}s` : 'Delete Your Account'}
                 </span>
               </button>
