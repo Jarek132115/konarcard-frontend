@@ -4,16 +4,18 @@ import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import settingsIcon from '../assets/icons/Settings-Icon.svg';
 import profileIcon from '../assets/icons/Profile-Icon.svg';
-import cardIcon from '../assets/icons/Card-Icon.svg';
+import cardIcon from '../assets/icons/Card-Icon.svg'; // Keep if used for general card imagery, but not for nav link
 import helpIcon from '../assets/icons/Help-Icon.svg';
 import logoutIcon from '../assets/icons/Logout-Icon.svg';
-import subscriptionIcon from '../assets/icons/Subscription-Icon.svg';
-import homeIcon from '../assets/icons/Home-Icon.svg';
+import subscriptionIcon from '../assets/icons/Subscription-Icon.svg'; // Keep if used for general subscription imagery
+import homeIcon from '../assets/icons/Home-Icon.svg'; // Keep if used for general home imagery
 import contactIcon from '../assets/icons/Contact-Icon.svg';
+
+// Interface icons for clarity in the sidebar
 import homeInterface from '../assets/icons/Home-Interface.svg';
-import cardInterface from '../assets/icons/Card-Interface.svg';
+import cardInterface from '../assets/icons/Card-Interface.svg'; // Using this for Products & Plans
 import settingsInterface from '../assets/icons/Settings-Interface.svg';
-import subscriptionInterface from '../assets/icons/Subscription-Interface.svg';
+import subscriptionInterface from '../assets/icons/Subscription-Interface.svg'; // Not directly used for nav link now
 import contactInterface from '../assets/icons/Contact-Interface.svg';
 import helpInterface from '../assets/icons/Help-Interface.svg';
 import logoutInterface from '../assets/icons/Logout-Interface.svg';
@@ -44,7 +46,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 <div className="close-sidebar-button" onClick={closeSidebar}>
                     <span></span>
                     <span></span>
-                    <span></span> {/* Added this third span */}
+                    <span></span>
                 </div>
             </div>
 
@@ -66,10 +68,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <img src={homeInterface} alt="profile" className="icon" />
                             <p className='desktop-body-s'>My Profile</p>
                         </Link>
-                        <Link to="/nfccards" className={`sidebar-button ${isActive('/nfccards') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={cardInterface} alt="card" className="icon" />
-                            <p className='desktop-body-s'>Buy A Card</p>
-                        </Link>
+                        {/* Removed: <Link to="/nfccards" ...>Buy A Card</Link> */}
                     </div>
 
                     <hr className="divider" />
@@ -80,10 +79,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <img src={settingsInterface} alt="account" className="icon" />
                             <p className='desktop-body-s'>My Account</p>
                         </Link>
-                        <Link to="/subscription" className={`sidebar-button ${isActive('/subscription') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={subscriptionInterface} alt="subscription" className="icon" />
-                            <p className='desktop-body-s'>Subscription</p>
+                        {/* NEW: Products & Plans Link */}
+                        <Link to="/products-and-plans" className={`sidebar-button ${isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
+                            <img src={cardInterface} alt="products and plans" className="icon" />
+                            <p className='desktop-body-s'>Products & Plans</p>
                         </Link>
+                        {/* Removed: <Link to="/subscription" ...>Subscription</Link> */}
                     </div>
 
                     <hr className="divider" />
