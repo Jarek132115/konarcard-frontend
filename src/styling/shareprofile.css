@@ -61,25 +61,27 @@ body.dark-mode .share-link-input {
     border-color: #555;
 }
 
-body.dark-mode .share-button-primary {
-    background-color: #007bff;
+/* Removed specific dark mode styles for primary/secondary as we're using global button classes */
+body.dark-mode .black-button.share-button-custom {
+    background-color: #333;
+    /* Dark mode black button */
     color: white;
 }
 
-body.dark-mode .share-button-primary:hover {
+body.dark-mode .black-button.share-button-custom:hover {
+    background-color: #555;
+}
+
+body.dark-mode .blue-button.share-button-custom {
+    background-color: #007bff;
+    /* Dark mode blue button */
+    color: white;
+}
+
+body.dark-mode .blue-button.share-button-custom:hover {
     background-color: #0056b3;
 }
 
-body.dark-mode .share-button-secondary {
-    background-color: #555;
-    color: #eee;
-    border-color: #666;
-}
-
-body.dark-mode .share-button-secondary:hover {
-    background-color: #666;
-    border-color: #777;
-}
 
 .share-modal-close-button {
     position: absolute;
@@ -145,8 +147,9 @@ body.dark-mode .share-button-secondary:hover {
     justify-content: center;
 }
 
-.share-button-primary,
-.share-button-secondary {
+/* Base styling for the custom share buttons, using existing global button classes */
+.black-button.share-button-custom,
+.blue-button.share-button-custom {
     flex: 1;
     min-width: 150px;
     padding: 14px 24px;
@@ -162,32 +165,34 @@ body.dark-mode .share-button-secondary:hover {
     transition: all 0.25s ease;
     text-decoration: none;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.share-button-primary {
-    background-color: #007bff;
     color: white;
+    /* Ensure text is white for both black and blue buttons */
 }
 
-.share-button-primary:hover {
+/* Ensure icons are white for these specific buttons */
+.black-button.share-button-custom .share-button-icon,
+.blue-button.share-button-custom .share-button-icon {
+    filter: invert(100%);
+    /* Makes the SVG icon white */
+}
+
+
+/* Specific hover effects for the custom share buttons */
+.black-button.share-button-custom:hover {
+    background-color: #333;
+    /* Darker black on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.blue-button.share-button-custom:hover {
     background-color: #0056b3;
+    /* Darker blue on hover */
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.share-button-secondary {
-    background-color: #e9ecef;
-    color: #333;
-    border: 1px solid #dee2e6;
-}
 
-.share-button-secondary:hover {
-    background-color: #dae0e5;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* New class for the icons inside the share buttons */
 .share-button-icon {
     height: 12px;
     /* Set to 12px as requested */
@@ -263,10 +268,22 @@ body.dark-mode .qr-code-image-container {
     }
 
     .share-button-primary,
+    /* Keep these for general styling if needed, but specific overrides below */
     .share-button-secondary {
         padding: 11px 13px;
         font-size: 14px;
         gap: 5px;
+    }
+
+    /* Specific mobile overrides for the new custom buttons */
+    .black-button.share-button-custom,
+    .blue-button.share-button-custom {
+        padding: 11px 13px;
+        /* Apply mobile padding */
+        font-size: 14px;
+        /* Apply mobile font size */
+        gap: 5px;
+        /* Apply mobile gap */
     }
 
     .qr-code-section {
