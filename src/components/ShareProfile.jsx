@@ -125,11 +125,11 @@ export default function ShareProfile({
                     <div className="share-action-buttons">
                         <a href={profileUrl} target="_blank" rel="noopener noreferrer" className="share-button-primary">
                             Visit Profile
-                            <img src={VisitProfileIcon} alt="Visit Profile" className="h-5 w-5" />
+                            <img src={VisitProfileIcon} alt="Visit Profile" className="share-button-icon" />
                         </a>
                         <button onClick={() => copyToClipboard(profileUrl, 'Profile link copied!')} className="share-button-secondary">
                             Copy Link
-                            <img src={CopyLinkIcon} alt="Copy Link" className="h-5 w-5" />
+                            <img src={CopyLinkIcon} alt="Copy Link" className="share-button-icon" />
                         </button>
                     </div>
                 </div>
@@ -143,11 +143,11 @@ export default function ShareProfile({
                         <div className="share-action-buttons">
                             <a href={qrCodeUrl} download={`${username || 'konarcard'}-qrcode.png`} className="share-button-secondary">
                                 Download QR Code
-                                <img src={DownloadQRIcon} alt="Download QR Code" className="h-5 w-5" />
+                                <img src={DownloadQRIcon} alt="Download QR Code" className="share-button-icon" />
                             </a>
                             <button onClick={generateAndDownloadVCard} className="share-button-primary share-button-vcard">
                                 Save to Phone Contacts
-                                <img src={SaveContactIcon} alt="Save Contact" className="h-5 w-5" />
+                                <img src={SaveContactIcon} alt="Save Contact" className="share-button-icon" />
                             </button>
                         </div>
                     </div>
