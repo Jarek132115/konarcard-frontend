@@ -1,160 +1,146 @@
-/* Styling for the new contact form wrapper */
-.contact-form-wrapper {
-    max-width: 600px;
-    /* Static width */
-    margin: 0 auto;
-    /* Center the form */
-    padding: 20px;
-    /* Padding around the content inside the form block */
-    background-color: transparent;
-    /* <<--- CRITICAL FIX: Make the form block background transparent */
-    border-radius: 8px;
-    /* Rounded corners for the form area, if desired, even if transparent */
-    box-sizing: border-box;
-    /* Include padding in the element's total width and height */
-    /* Remove box-shadow if you don't want any shadow on the transparent block */
-}
-
-@media (max-width: 800px) {
-    .contact-form-wrapper {
-        max-width: 100%;
-        /* Full width on smaller screens */
-        padding: 15px;
-        /* Adjust padding for smaller screens */
-        border-radius: 0;
-        /* No border-radius on full width if desired */
-    }
-}
-
-/* Styling for the form itself - this is the flex container for your fields */
-.contact-form {
+/* New wrapper for the entire page content to enable centering */
+.contact-page-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    /* Center horizontally */
+    justify-content: center;
+    /* Center vertically */
+    min-height: calc(100vh - 120px);
+    /* Adjust based on your header/footer height if any */
+    padding: 20px;
+    /* Padding around the content card */
+    box-sizing: border-box;
+}
+
+/* The actual card box that holds the form */
+.contact-card-content {
+    background: #ffffff;
+    padding: 40px;
+    /* Internal padding */
+    border-radius: 20px;
+    /* 20px border as requested */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    /* Shadow similar to modals */
+    max-width: 550px;
+    /* Max width between 500-600px, chose 550px */
+    width: 100%;
+    /* Ensure it takes full width up to max-width */
+    border: 1px solid #e0e0e0;
+    /* Border as requested */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Align text and form elements to the left within the card */
+}
+
+/* Specific styling for the intro text */
+.contact-intro-text {
+    text-align: left;
+    /* Ensure text aligns left within the card */
+    margin-bottom: 20px;
+}
+
+/* Styling for the live chat link */
+.support-live-chat-link {
+    color: #007bff;
+    /* Blue color for the link */
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+/* Styling for the form itself */
+.support-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
     /* Space between form elements */
-    background-color: transparent;
-    /* Ensure the form element itself is also transparent */
-    padding: 0;
-    /* No padding here, wrapper handles it */
+    width: 100%;
+    /* Form takes full width of its parent card */
 }
 
 /* Styling for labels */
-.contact-form-label {
+.support-label {
     color: #000;
-    /* <<--- CRITICAL FIX: BLACK TEXT COLOR for labels, visible on the light page background */
     font-size: 14px;
     margin-bottom: 5px;
-    /* Space between label and input */
     display: block;
-    /* Ensures label takes its own line */
     font-weight: 500;
-    /* Slightly bolder for readability if needed */
 }
 
-/* Styling for text inputs and select */
-.contact-form-input,
-.contact-form-select,
-.contact-form-textarea {
+/* Styling for text inputs, select, and textarea */
+.support-input,
+.support-select,
+.support-textarea {
     width: 100%;
-    /* Full width of its container */
     padding: 12px 15px;
-    /* Padding inside the input fields */
     border: none;
-    /* NO BORDER as per image */
+    /* No border */
     border-radius: 6px;
-    /* Rounded corners for input fields */
-    background-color: #fff;
-    /* WHITE BACKGROUND for input fields as per image */
+    background-color: #f8f8f8;
+    /* Light grey background for inputs */
     color: #000;
-    /* BLACK TEXT COLOR for input */
     font-size: 16px;
     outline: none;
-    /* Remove default outline */
     box-sizing: border-box;
-    /* Include padding in the element's total width and height */
 }
 
-.contact-form-input::placeholder,
-.contact-form-textarea::placeholder {
+.support-input::placeholder,
+.support-textarea::placeholder {
     color: #888;
-    /* Placeholder text color (a medium grey is appropriate for black text) */
 }
 
-.contact-form-input:focus,
-.contact-form-select:focus,
-.contact-form-textarea:focus {
+.support-input:focus,
+.support-select:focus,
+.support-textarea:focus {
     box-shadow: 0 0 0 2px #007bff;
-    /* Blue outline on focus for better UX */
 }
 
 /* Styling for textarea specifically */
-.contact-form-textarea {
+.support-textarea {
     resize: vertical;
     min-height: 100px;
 }
 
-/* Styling for the checkbox and its label */
-.contact-terms-label {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-}
-
-.contact-terms-checkbox {
-    /* Base styling for the  */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #555;
-    border-radius: 4px;
-    background-color: #222;
-    cursor: pointer;
-    position: relative;
-    flex-shrink: 0;
-
-}
-
-.contact-terms-checkbox:checked {
-    background-color: #007bff;
-    /* Blue background when checked */
-    border-color: #007bff;
-    /* Blue border when checked */
-}
-
-.contact-terms-checkbox:checked::after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 6px;
-    width: 6px;
-    height: 10px;
-    border: solid #fff;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-}
-
 /* Styling for the submit button */
-.contact-submit-button {
-    background-color: #007bff;
-    /* Blue background */
-    color: #fff;
-    /* White text color */
-    padding: 12px 20px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
+.support-submit-button {
     margin-top: 20px;
-    /* Space above the button */
     width: 100%;
     /* Make button full width of the form */
 }
 
-.contact-submit-button:hover {
-    background-color: #0056b3;
-    /* Darker blue on hover */
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+    .contact-page-wrapper {
+        padding: 15px;
+        /* Less padding on smaller screens */
+        min-height: calc(100vh - 100px);
+        /* Adjust min-height for smaller viewports */
+    }
+
+    .contact-card-content {
+        padding: 25px;
+        /* Smaller internal padding on mobile */
+        border-radius: 12px;
+        /* Slightly less rounded corners on mobile */
+    }
+
+    .support-form {
+        gap: 10px;
+        /* Smaller gap between fields on mobile */
+    }
+
+    .support-input,
+    .support-select,
+    .support-textarea {
+        padding: 10px 12px;
+        /* Smaller padding for inputs on mobile */
+        font-size: 15px;
+    }
+
+    .support-label {
+        font-size: 13px;
+    }
 }

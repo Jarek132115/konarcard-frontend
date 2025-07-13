@@ -141,12 +141,13 @@ export default function ContactSupport() {
                     onShareCard={handleShareCard}
                 />
 
-                <div className="combined-offer-container"> {/* Added this wrapper */}
-                    <div className="content-card-box"> {/* Adjusted this wrapper to match Subscription.jsx */}
-                        <p className="desktop-body light-black" style={{ textAlign: 'left', marginBottom: 20 }}>
+                {/* New wrapper for the centered content card */}
+                <div className="contact-page-wrapper">
+                    <div className="contact-card-content">
+                        <p className="desktop-body light-black contact-intro-text">
                             Want to talk to us right now?{' '}
                             <span
-                                className="live-chat-link"
+                                className="support-live-chat-link"
                                 onClick={() => {
                                     if (window.tidioChatApi) {
                                         window.tidioChatApi.open();
@@ -157,8 +158,8 @@ export default function ContactSupport() {
                             </span>
                         </p>
 
-                        <form className='contact-form' onSubmit={handleSubmit}>
-                            <label htmlFor="name" className="contact-form-label desktop-body-s black">Your Name</label>
+                        <form className='support-form' onSubmit={handleSubmit}>
+                            <label htmlFor="name" className="support-label desktop-body-s black">Your Name</label>
                             <input
                                 type='text'
                                 id='name'
@@ -167,10 +168,10 @@ export default function ContactSupport() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
-                                className='contact-form-input desktop-body'
+                                className='support-input desktop-body'
                             />
 
-                            <label htmlFor="email" className="contact-form-label desktop-body-s black">Your Email</label>
+                            <label htmlFor="email" className="support-label desktop-body-s black">Your Email</label>
                             <input
                                 type='email'
                                 id='email'
@@ -179,17 +180,17 @@ export default function ContactSupport() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
-                                className='contact-form-input desktop-body'
+                                className='support-input desktop-body'
                             />
 
-                            <label htmlFor="reason" className="contact-form-label desktop-body-s black">Reason for contact</label>
+                            <label htmlFor="reason" className="support-label desktop-body-s black">Reason for contact</label>
                             <select
                                 id='reason'
                                 name='reason'
                                 value={formData.reason}
                                 onChange={handleChange}
                                 required
-                                className='contact-form-select desktop-body'
+                                className='support-select desktop-body'
                             >
                                 <option value=''>Select a reason</option>
                                 <option value='Card not working'>My card isn’t working</option>
@@ -199,7 +200,7 @@ export default function ContactSupport() {
                                 <option value='Other'>Other</option>
                             </select>
 
-                            <label htmlFor="message" className="contact-form-label desktop-body-s black">Your Message</label>
+                            <label htmlFor="message" className="support-label desktop-body-s black">Your Message</label>
                             <textarea
                                 id='message'
                                 name='message'
@@ -207,13 +208,11 @@ export default function ContactSupport() {
                                 value={formData.message}
                                 onChange={handleChange}
                                 required
-                                className='contact-form-textarea desktop-body'
-                                rows="3" // Made textarea smaller
+                                className='support-textarea desktop-body'
+                                rows="3"
                             />
 
-                            {/* Removed the checkbox and its label entirely */}
-
-                            <button type='submit' className='contact-submit-button blue-button desktop-button'>
+                            <button type='submit' className='support-submit-button blue-button desktop-button'>
                                 <span className='desktop-button'>Submit</span>
                             </button>
                         </form>
