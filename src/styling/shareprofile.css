@@ -23,6 +23,7 @@
     position: relative;
     width: 100%;
     max-width: 480px;
+    /* Modal max-width */
     max-height: 90vh;
     overflow-y: auto;
     display: flex;
@@ -158,6 +159,7 @@ body.dark-mode .blue-button.share-button-custom:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Keep content centered horizontally within button */
     gap: 10px;
     font-size: 16px;
     font-weight: 600;
@@ -196,8 +198,55 @@ body.dark-mode .blue-button.share-button-custom:hover {
 
 .share-button-icon {
     height: 20px;
+    /* Set to 20px as requested */
     width: 20px;
+    /* Set to 20px as requested */
     flex-shrink: 0;
+    /* Prevent icon from shrinking */
+    margin-right: 8px;
+    /* Added margin to separate icon from text */
+}
+
+.qr-code-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Centers the qr-code-image-container */
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid #f0f0f0;
+}
+
+body.dark-mode .qr-code-section {
+    border-top-color: #3a3a3a;
+}
+
+.qr-code-image-container {
+    padding: 12px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+    /* Calculate max-width based on 40% of modal's max-width (480px) + 2*padding */
+    max-width: 216px;
+    /* (0.40 * 480px) + (2 * 12px padding) = 192px + 24px = 216px */
+    box-sizing: border-box;
+    /* Ensure padding is included in max-width */
+}
+
+body.dark-mode .qr-code-image-container {
+    background-color: #eee;
+}
+
+.share-qr-code-image {
+    width: 100%;
+    /* Fill the controlled container width */
+    height: auto;
+    /* Maintain aspect ratio */
+    display: block;
+    /* Ensure it behaves as a block */
+    object-fit: contain;
+    /* Max-width/height are now controlled by .qr-code-image-container's max-width */
 }
 
 @media (max-width: 400px) {
@@ -250,6 +299,7 @@ body.dark-mode .blue-button.share-button-custom:hover {
         height: 16px;
         /* Adjust icon size for smaller screens if 20px is too big */
         width: 16px;
+        margin-right: 6px;
         /* Adjust margin for smaller screens */
     }
 
@@ -260,11 +310,11 @@ body.dark-mode .blue-button.share-button-custom:hover {
 
     .qr-code-image-container {
         padding: 6px;
-        margin-bottom: 10px;
+        max-width: 160px;
     }
 
     .share-qr-code-image {
-        width: 130px;
-        height: 130px;
+        width: 100%;
+        height: auto;
     }
 }
