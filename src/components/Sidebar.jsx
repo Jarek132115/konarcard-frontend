@@ -80,7 +80,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <p className='desktop-body-s'>My Account</p>
                         </Link>
                         {/* NEW: Products & Plans Link */}
-                        <Link to="/products-and-plans" className={`sidebar-button ${isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
+                        <Link to="/subscription" className={`sidebar-button ${isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
                             <img src={cardInterface} alt="products and plans" className="icon" />
                             <p className='desktop-body-s'>Products & Plans</p>
                         </Link>
