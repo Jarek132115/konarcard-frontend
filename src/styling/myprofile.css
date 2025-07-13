@@ -35,25 +35,23 @@
     background-color: var(--secondary-bg);
     position: relative;
     overflow: hidden;
+    /* This needs to be evaluated. If shadows extend beyond the entire app-layout, this will clip them. */
 }
 
 .main-content-container {
     flex: 1;
     font-family: var(--main-font-family);
     padding: 30px;
-    /* Default desktop padding */
     display: flex;
     flex-direction: column;
     height: 100%;
     box-sizing: border-box;
     margin-left: 260px;
-    /* Space for sidebar on desktop */
     color: var(--text-color);
     transition: margin-left 0.3s ease-in-out;
-    overflow-y: auto;
-    /* This enables scrolling for the main content area */
-    overflow-x: hidden;
-    /* Prevent horizontal scroll */
+    /* Ensure no hidden overflow here that would cut content or shadows from children */
+    overflow: visible;
+    /* Changed from potentially hidden, if it was */
 }
 
 .page-header {
@@ -64,8 +62,9 @@
     flex-shrink: 0;
     border-bottom: 1px solid grey;
     padding-bottom: 20px;
+    /* Add some margin to ensure buttons' shadows are not cut off by content above/below */
     margin-bottom: 40px;
-    /* Desktop default: not sticky */
+    /* Increased margin to give space for button shadows below */
 }
 
 .page-title {
@@ -87,7 +86,9 @@
     cursor: pointer;
     font-size: 14px;
     border: none;
+    /* Add box-shadow to buttons if they have them, and ensure no overflow on their parent */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Example shadow, adjust as needed */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -108,19 +109,20 @@
     align-items: center;
     gap: 20px;
     flex: 1;
-    /* Allow it to grow */
     min-height: 0;
-    /* Important for flex items with overflow */
-    overflow-y: visible;
-    /* Let the parent main-content-container handle scroll */
+    overflow-y: auto;
+    /* This can stay as content scrolls */
     box-sizing: border-box;
+    /* Ensure this container allows its children's shadows to be visible */
     overflow-x: visible;
+    /* Important for horizontal shadows */
     padding-bottom: 50px;
+    /* Add padding to account for shadows on bottom elements */
 }
 
 .myprofile-flex-container {
     display: flex;
-    /* Removed height: 100%; as it conflicts with content pushing it */
+    height: 100%;
     gap: 60px;
     min-height: 0;
     justify-content: center;
@@ -130,8 +132,7 @@
     margin: 0 auto;
     box-sizing: border-box;
     overflow: visible;
-    padding-top: 0;
-    /* No padding-top here */
+    /* Ensure shadows on children are not clipped */
 }
 
 .myprofile-content {
@@ -145,16 +146,21 @@
     max-height: 100%;
     aspect-ratio: 9 / 17;
     overflow: visible;
+    /* Ensure no clipping here */
 }
 
+/* NEW: Wrapper for mock-phone to hold shadow */
 .mock-phone-wrapper {
     width: 100%;
     height: 100%;
     position: relative;
     box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.2);
+    /* Moved shadow here */
     border-radius: 2.5rem;
+    /* Match phone border-radius for shadow */
     box-sizing: border-box;
     overflow: visible;
+    /* Crucial: make sure wrapper doesn't clip its own shadow */
 }
 
 .mock-phone {
@@ -165,12 +171,14 @@
     border-radius: 2.5rem;
     padding: 20px;
     text-align: center;
+    /* box-shadow removed from here */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     font-family: var(--main-font-family);
     color: var(--text-color);
     overflow: hidden;
+    /* Keep overflow hidden on the inner phone for screen effect */
 }
 
 .mock-phone-scrollable-content {
@@ -292,6 +300,7 @@
     box-sizing: border-box;
     margin-bottom: 36px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    /* Added shadow for card-like elements */
 }
 
 .mock-about-content-group {
@@ -362,6 +371,7 @@
     border: 1px solid var(--border-color);
     box-sizing: border-box;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    /* Added shadow for work images */
 }
 
 .mock-work-gallery img.mock-work-image-item {
@@ -396,6 +406,7 @@
     width: 100%;
     box-sizing: border-box;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    /* Added shadow for service/review cards */
 }
 
 .mock-service-name {
@@ -448,15 +459,20 @@
     display: flex;
     height: 100%;
     overflow: visible;
+    /* Ensure this wrapper does not clip content */
 }
 
+/* NEW: Wrapper for editor content to hold blur and shadow */
 .editor-content-wrapper {
     flex: 1;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* Moved shadow here */
     overflow: hidden;
+    /* Keep hidden on wrapper so blur applies to its bounds cleanly */
     height: 100%;
     display: flex;
+    /* Helps ensure its child form stretches */
     flex-direction: column;
 }
 
@@ -466,16 +482,19 @@
     background: var(--primary-bg);
     padding: 24px;
     border-radius: 16px;
+    /* box-shadow removed from here */
     display: flex;
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
+    /* Keep scroll for content within the editor */
     -webkit-overflow-scrolling: touch;
     box-sizing: border-box;
     width: 100%;
     color: var(--text-color);
     height: 100%;
     overflow-x: visible;
+    /* Ensure content inside doesn't clip horizontal shadows if any */
 }
 
 .editor-title {
@@ -515,6 +534,7 @@
     width: 100%;
     box-sizing: border-box;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    /* Added subtle shadow to inputs */
 }
 
 .input-block input::placeholder,
@@ -540,6 +560,7 @@
     font-weight: 500;
     transition: background-color 0.2s, color 0.2s, border-color 0.2s;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    /* Added subtle shadow to buttons */
 }
 
 .theme-button.is-active,
@@ -558,9 +579,11 @@
     background-color: var(--card-bg);
     border-radius: 8px;
     overflow: hidden;
+    /* Keep hidden on image upload area itself to clip content outside the border-radius */
     position: relative;
     border: 1px dashed var(--border-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    /* Added shadow to image upload areas */
 }
 
 .image-upload-area .upload-text {
@@ -628,10 +651,12 @@
     height: auto;
     display: block;
     overflow: hidden;
+    /* Keep overflow hidden here as it holds the image within its border-radius */
     border-radius: 0.5rem;
     border: 1px solid var(--border-color);
     box-sizing: border-box;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    /* Added shadow for work image items */
 }
 
 .work-image-preview {
@@ -640,10 +665,6 @@
     aspect-ratio: 4 / 2.75;
     object-fit: cover;
     border-radius: 0;
-    min-width: unset;
-    min-height: unset;
-    background-color: var(--placeholder-bg);
-    object-fit: cover;
 }
 
 .remove-image-button {
@@ -654,20 +675,27 @@
     height: 24px;
     font-size: 16px;
     background-color: #dc3545;
+    /* Red background */
     color: white;
+    /* White 'X' */
     border-radius: 50%;
+    /* Circular shape */
     cursor: pointer;
     border: none;
     z-index: 10;
+    /* Ensure it's above the image */
     display: flex;
+    /* For centering the 'X' */
     justify-content: center;
     align-items: center;
     transition: background-color 0.2s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* Added shadow to remove buttons */
 }
 
 .remove-image-button:hover {
     background-color: #c82333;
+    /* Darker red on hover */
 }
 
 .add-work-image-placeholder {
@@ -683,6 +711,7 @@
     box-sizing: border-box;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    /* Added shadow to placeholder */
 }
 
 .add-work-image-placeholder .upload-text {
@@ -708,6 +737,7 @@
     transition: background 0.2s;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    /* Added subtle shadow */
 }
 
 .add-work-image-button:hover,
@@ -725,6 +755,7 @@
     gap: 6px;
     position: relative;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    /* Added shadow for editor cards */
 }
 
 .editor-item-card input,
@@ -732,28 +763,29 @@
     margin-bottom: 0;
 }
 
+/* Styling for the "Remove" button inside service/review cards */
 .remove-item-button {
     align-self: flex-end;
     padding: 4px 8px;
     font-size: 12px;
     border: 1px solid transparent;
     background-color: #dc3545;
+    /* Red background */
     color: white;
+    /* White 'X' */
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.2s, border-color 0.2s;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* Added subtle shadow */
 }
 
 .remove-item-button:hover {
     background-color: #c82333;
-}
-
-.add-work-image-placeholder {
-    background-image: url('/Interface-Preview/Work-Images1.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    /* Darker red on hover */
+    border-color: #bd2130;
+    /* Slightly darker red border on hover */
+    color: white;
 }
 
 .submit-button {
@@ -767,8 +799,10 @@
     background-color: var(--button-bg);
     color: var(--button-text);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* Added shadow to submit button */
 }
 
+/* Desktop subscription overlay (positioned absolutely over editor) */
 .subscription-overlay {
     position: absolute;
     top: 0;
@@ -783,15 +817,19 @@
     z-index: 10;
     border-radius: 16px;
     overflow: hidden;
+    /* Keep hidden here as it's an overlay and should clip its own content */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    /* Added shadow to the overlay itself */
 }
 
+/* Common subscription message styling (used by both desktop and mobile overlays) */
 .subscription-message {
     background-color: var(--primary-bg);
     padding: 30px;
     border-radius: 12px;
     text-align: center;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    /* This shadow should be visible as it's not hidden by its parent */
     width: 100%;
     box-sizing: border-box;
     z-index: 11;
@@ -801,6 +839,7 @@
     gap: 15px;
     margin: 0 auto;
     overflow: visible;
+    /* Ensure its own shadow isn't clipped by itself */
 }
 
 .start-trial-button {
@@ -814,22 +853,29 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Added shadow to trial button */
 }
 
 .start-trial-button:hover {
     background-color: #0056b3;
 }
 
+/* Mobile-specific subscription overlay (appears in document flow) */
 .subscription-overlay-mobile {
     display: none;
+    /* Hidden by default, only shown in mobile media query */
     width: 100%;
     margin-bottom: 20px;
+    /* Space below the message */
     box-sizing: border-box;
     overflow: visible;
+    /* Ensure its content's shadows are not clipped */
 }
 
+/* Verification Prompt and Loading/Error States */
 .content-card-box {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    /* This shadow should now be fully visible */
     padding: 20px;
     border-radius: 8px;
     background-color: var(--primary-bg);
@@ -839,6 +885,7 @@
     width: 100%;
     box-sizing: border-box;
     overflow: visible;
+    /* Ensure no clipping if content inside exceeds bounds */
 }
 
 .content-card-box.loading-state {
@@ -864,6 +911,7 @@
     border-radius: 5px;
     cursor: pointer;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* Added subtle shadow */
 }
 
 .content-card-box.verification-prompt {
@@ -897,6 +945,7 @@
     border: 1px solid #ccc;
     font-size: 16px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    /* Added subtle shadow */
 }
 
 .content-card-box.verification-prompt button[type="submit"] {
@@ -909,6 +958,7 @@
     font-size: 16px;
     font-weight: 600;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Added shadow */
 }
 
 .content-card-box.verification-prompt button[type="button"]:disabled {
@@ -922,71 +972,45 @@
 @media (max-width: 1000px) {
 
     .app-layout {
-        height: 100vh;
-        /* Ensure full height on mobile */
-        overflow: hidden;
-        /* Prevent body scroll */
+        height: auto;
+        overflow-y: visible;
     }
 
     .main-content-container {
         margin-left: 0;
-        /* No sidebar margin on mobile */
-        width: 100%;
-        max-width: 100%;
-        padding: 0 15px 20px 15px;
-        /* Adjust padding for mobile, remove top padding */
-        padding-top: 0;
-        /* Remove padding-top here */
-        height: 100%;
-        /* Take full height of app-layout */
-        overflow-y: auto;
-        /* Enable scrolling for main content */
-        margin: 0;
-        /* Remove auto margins */
-        box-sizing: border-box;
-        position: relative;
-        /* For sticky PageHeader */
-    }
-
-    .page-header {
-        position: sticky;
-        /* Make PageHeader sticky */
-        top: 0;
-        /* Stick to the top of its container */
-        background-color: var(--secondary-bg);
-        /* Ensure background when sticky */
-        z-index: 2;
-        /* Ensure it's above scrolling content */
-        padding: 20px 0;
-        /* Add padding inside the header */
-        margin-bottom: 20px;
-        /* Space below header */
-        width: 100%;
-        /* Ensure it spans full width */
-        box-sizing: border-box;
-        /* Include padding in width */
-        border-bottom: 1px solid grey;
-        /* Keep border */
-    }
-
-    /* Adjust the myprofile-flex-container to start below the sticky header */
-    .myprofile-flex-container {
-        padding-top: 0;
-        /* No padding-top here */
-        margin-top: 0;
-        /* No margin-top here */
-        flex-direction: column;
-        /* Stack vertically */
-        align-items: center;
-        /* Center items */
-        gap: 40px;
+        width: 90%;
+        max-width: 90%;
+        padding-top: 80px;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 20px;
         height: auto;
-        /* Allow content to define height */
+        overflow-y: visible;
+        margin: auto;
+    }
+
+    /* Hide the desktop overlay when on mobile */
+    .myprofile-editor-wrapper .subscription-overlay {
+        display: none;
+    }
+
+    /* Show the mobile overlay */
+    .subscription-overlay-mobile {
+        display: block;
+        /* Make it visible */
+        /* Match main content padding */
+    }
+
+    .myprofile-flex-container {
+        flex-direction: column;
+        gap: 40px;
+        align-items: center;
+        height: auto;
         max-width: 100%;
         width: 100%;
         padding-bottom: 0;
+        margin: 0;
         box-sizing: border-box;
-        overflow: visible;
     }
 
     .myprofile-content {
@@ -1003,10 +1027,14 @@
     /* Ensure mock-phone-wrapper behaves correctly on smaller screens */
     .mock-phone-wrapper {
         width: 100%;
+        /* Take full width of its parent */
         max-width: 350px;
+        /* Constrain its max-width for phone like appearance */
         aspect-ratio: 9 / 17;
+        /* Maintain aspect ratio */
         height: auto;
         margin-bottom: 20px;
+        /* Adjust spacing */
     }
 
     .mock-phone {
@@ -1015,6 +1043,7 @@
         border-radius: 2rem;
         height: auto;
         overflow: visible;
+        /* This might have been `overflow: hidden` earlier, adjusting for consistency */
     }
 
     .myprofile-editor-wrapper {
@@ -1031,6 +1060,7 @@
         width: 100%;
         height: auto;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        /* Ensure shadow is still there */
     }
 
     .myprofile-editor {
@@ -1040,29 +1070,11 @@
         height: auto;
         background: var(--primary-bg);
         overflow-y: visible;
+        /* Can be auto if internal content still needs scroll */
     }
 
     .myprofile-mobile-header {
-        display: flex;
-        /* Show the mobile header on mobile */
-        position: fixed;
-        /* Make it fixed */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 62px;
-        /* Define its height */
-        background-color: var(--secondary-bg);
-        /* Use theme background */
-        z-index: 1001;
-        /* High z-index to be on top */
-        padding: 15px 20px;
-        /* Adjust padding */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        /* Add shadow */
-        align-items: center;
-        justify-content: space-between;
-        box-sizing: border-box;
+        display: none;
     }
 }
 
@@ -1070,32 +1082,41 @@
 @media (max-width: 599px) {
     .page-title {
         display: none;
+        /* Hides the page title */
     }
 
     .page-actions {
         flex-direction: column;
+        /* Stack buttons vertically */
         width: 100%;
+        /* Ensure the container takes full width */
         gap: 10px;
+        /* Space between stacked buttons */
     }
 
     .page-actions .header-button {
         flex: none;
+        /* Reset flex-grow to prevent unwanted stretching */
         width: 100%;
+        /* Make each button take full width */
         text-align: center;
+        /* Center text within the button */
         padding: 12px 18px;
+        /* Adjust padding for full width button */
         font-size: 16px;
+        /* Slightly larger font for prominence */
     }
 }
 
 @media (max-width: 400px) {
     .main-content-container {
-        padding-left: 10px;
-        padding-right: 10px;
-        /* padding-top is handled by 1000px breakpoint */
+        padding: 15px;
+        padding-top: 80px;
     }
 
+    /* Adjust mobile overlay padding for very small screens */
     .subscription-overlay-mobile {
-        padding: 0 10px;
+        padding: 0 15px;
     }
 
     .subscription-overlay-mobile .subscription-message {
@@ -1107,6 +1128,9 @@
         padding: 10px 20px;
         font-size: 14px;
     }
+
+    /* No need to re-declare .page-actions and .header-button here
+       as the 599px breakpoint handles the full width requirement */
 
     .mock-phone {
         padding: 1rem;
