@@ -175,4 +175,4 @@ ShareProfile.propTypes = {
         phone_number: PropTypes.string,
     }).isRequired,
     username: PropTypes.string,
-};  
+};

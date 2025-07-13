@@ -61,7 +61,6 @@ body.dark-mode .share-link-input {
     border-color: #555;
 }
 
-/* Removed specific dark mode styles for primary/secondary as we're using global button classes */
 body.dark-mode .black-button.share-button-custom {
     background-color: #333;
     /* Dark mode black button */
@@ -167,6 +166,8 @@ body.dark-mode .blue-button.share-button-custom:hover {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     color: white;
     /* Ensure text is white for both black and blue buttons */
+    width: 100%;
+    /* Make buttons full width */
 }
 
 /* Ensure icons are white for these specific buttons */
@@ -284,6 +285,8 @@ body.dark-mode .qr-code-image-container {
         /* Apply mobile font size */
         gap: 5px;
         /* Apply mobile gap */
+        width: 100%;
+        /* Ensure full width on mobile */
     }
 
     .qr-code-section {
