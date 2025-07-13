@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Footer from '../../components/Footer';
-import BackgroundHero from '../../assets/images/background-hero.png'; // Example image for hero
-// Import placeholder icons for help items
+// BackgroundHero is not used in the main content card layout, but kept if used elsewhere on the page
+import BackgroundHero from '../../assets/images/background-hero.png';
+// Import placeholder icons for help items (ensure these paths are correct in your project)
 import QuestionIcon from '../../assets/icons/Help-Icon.svg'; // Using Help-Icon as a generic question icon
 import InfoIcon from '../../assets/icons/Info-Icon.svg'; // Assuming you have an Info-Icon or similar
 
@@ -22,10 +23,11 @@ export default function HelpCentre() {
           <h3 className='desktop-h6 text-center'>Here to help you set up, share, and make the most of your smart card. Browse guides, FAQs, and tips below.</h3>
         </div>
 
-        {/* New main wrapper for the centered content card */}
+        {/* This is the new main wrapper for the centered content card */}
         <div className="help-page-wrapper">
-          <div className="help-main-card"> {/* This is the single large card container */}
-            {/* Grid container for the two-column help sections */}
+          {/* This is the single large card container with border and shadow */}
+          <div className="help-main-card">
+            {/* This is the grid container for the two-column help sections */}
             <div className="help-items-grid">
               {/* Individual Help Item 1 */}
               <div className="help-item">
