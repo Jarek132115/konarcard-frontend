@@ -1,0 +1,299 @@
+/* New wrapper for the entire page content to enable centering */
+.subscription-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center horizontally */
+    justify-content: center;
+    /* Center vertically */
+    min-height: calc(100vh - 120px);
+    /* Adjust based on your header/footer height if any */
+    padding: 20px;
+    /* Padding around the content card */
+    box-sizing: border-box;
+}
+
+/* The actual card box that holds the subscription details */
+.subscription-card-content {
+    background: #ffffff;
+    padding: 40px;
+    /* Internal padding */
+    border-radius: 20px;
+    /* 20px border as requested */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    /* Shadow similar to modals */
+    max-width: 550px;
+    /* Max width between 500-600px, chose 550px */
+    width: 100%;
+    /* Ensure it takes full width up to max-width */
+    border: 1px solid #e0e0e0;
+    /* Border as requested */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Align text and elements to the left within the card */
+    gap: 20px;
+    /* Space between main sections like header, features, cta */
+}
+
+/* Header section within the card */
+.sub-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    /* Space before subheader text */
+}
+
+/* Free trial badge styling */
+.sub-free-trial-badge {
+    background-color: #28a745;
+    /* Green badge */
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Subheader text */
+.sub-subheader {
+    margin-bottom: 15px;
+    /* Space before features */
+}
+
+/* Features list container */
+.sub-features {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* Space between individual feature items */
+    width: 100%;
+    margin-bottom: 20px;
+    /* Space before footer description */
+}
+
+/* Individual feature item */
+.sub-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Space between icon and text */
+}
+
+.sub-feature-icon {
+    width: 18px;
+    /* Size of the tick icon */
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* Footer description text */
+.sub-description-footer {
+    font-style: italic;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px;
+    /* Space before price/CTA */
+}
+
+/* Price and CTA section */
+.sub-price-cta {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    /* Space between price display and buttons, or between buttons */
+    align-items: center;
+}
+
+.sub-price-display {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 10px;
+    /* Space before the first button */
+}
+
+.sub-price-display p:first-child {
+    font-size: 28px;
+    /* Larger price font */
+    font-weight: 700;
+}
+
+.sub-price-display p:last-child {
+    font-size: 16px;
+    color: #555;
+}
+
+/* Action buttons (Upgrade, Plan Active, Cancel, Confirm, Go Back) */
+.sub-action-button {
+    width: 100%;
+    /* Full width for buttons */
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border: none;
+    text-align: center;
+    display: block;
+    /* Ensure it takes full width when alone */
+}
+
+/* Specific styling for the cancel confirmation prompt */
+.sub-cancel-confirm {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.sub-cancel-confirm p {
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.sub-cancel-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+/* Dark mode adjustments */
+body.dark-mode .subscription-card-content {
+    background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+    color: #e0e0e0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border-color: #3a3a3a;
+}
+
+body.dark-mode .sub-header p {
+    color: #f0f0f0;
+}
+
+body.dark-mode .sub-subheader {
+    color: #bbb;
+}
+
+body.dark-mode .sub-feature-item p {
+    color: #e0e0e0;
+}
+
+body.dark-mode .sub-feature-icon {
+    filter: invert(100%);
+    /* Make tick icon white in dark mode */
+}
+
+body.dark-mode .sub-description-footer {
+    color: #e0e0e0;
+}
+
+body.dark-mode .sub-price-display p {
+    color: #f0f0f0;
+}
+
+body.dark-mode .sub-price-display p:last-child {
+    color: #aaa;
+}
+
+body.dark-mode .sub-action-button.black-button {
+    background-color: #333;
+    color: white;
+}
+
+body.dark-mode .sub-action-button.black-button:hover {
+    background-color: #555;
+}
+
+body.dark-mode .sub-action-button.blue-button {
+    background-color: #007bff;
+    color: white;
+}
+
+body.dark-mode .sub-action-button.blue-button:hover {
+    background-color: #0056b3;
+}
+
+body.dark-mode .sub-cancel-confirm p {
+    color: #e0e0e0;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+    .subscription-page-wrapper {
+        padding: 15px;
+        min-height: calc(100vh - 100px);
+    }
+
+    .subscription-card-content {
+        padding: 25px;
+        border-radius: 12px;
+        gap: 15px;
+    }
+
+    .sub-header {
+        margin-bottom: 0;
+    }
+
+    .sub-subheader {
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    .sub-free-trial-badge {
+        padding: 3px 6px;
+        font-size: 10px;
+    }
+
+    .sub-features {
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .sub-feature-item p {
+        font-size: 13px;
+    }
+
+    .sub-feature-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .sub-description-footer {
+        font-size: 13px;
+        margin-bottom: 15px;
+    }
+
+    .sub-price-display {
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
+    .sub-price-display p:first-child {
+        font-size: 24px;
+    }
+
+    .sub-price-display p:last-child {
+        font-size: 14px;
+    }
+
+    .sub-action-button {
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+
+    .sub-cancel-confirm p {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .sub-cancel-buttons {
+        gap: 8px;
+    }
+}

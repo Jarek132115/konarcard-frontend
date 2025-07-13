@@ -1,9 +1,7 @@
-// frontend/src/pages/Subscription.jsx (Apply this structure to Profile.jsx, ContactSupport.jsx etc.)
-
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import Sidebar from '../../components/Sidebar'; // Still imports Sidebar
+import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
 import api from '../../services/api';
@@ -150,16 +148,12 @@ export default function Subscription() {
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
   return (
-    // app-layout is the main wrapper for the content and sidebar
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
 
-      {/* CRITICAL: THIS IS THE MOBILE HEADER THAT IS ALWAYS VISIBLE AND CONTAINS THE HAMBURGER TO OPEN THE SIDEBAR */}
-      {/* This div needs to be included in ALL your page components (e.g., Subscription.jsx, Profile.jsx, ContactSupport.jsx) */}
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
-        {/* This is the hamburger icon that opens the sidebar */}
         <div
           className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -170,15 +164,12 @@ export default function Subscription() {
         </div>
       </div>
 
-      {/* The Sidebar component itself */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* Overlay when sidebar is open on mobile */}
       {sidebarOpen && isMobile && (
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      {/* Main content area */}
       <main className="main-content-container">
         <PageHeader
           title="Subscription"
@@ -186,17 +177,18 @@ export default function Subscription() {
           onShareCard={handleShareCard}
         />
 
-        <div className="combined-offer-container">
-          <div className="subscription-offer-left content-card-box">
-            <div className="subscription-header">
+        {/* New wrapper for the centered content card */}
+        <div className="subscription-page-wrapper">
+          <div className="subscription-card-content">
+            <div className="sub-header">
               <p className='desktop-h5 black'>Power Profile</p>
               {isSubscribed ? null : (
-                <div className="free-trial-badge desktop-body-xs">FREE TRIAL</div>
+                <div className="sub-free-trial-badge desktop-body-xs">FREE TRIAL</div>
               )}
             </div>
-            <p className='desktop-body-s light-black subscription-subheader'>Win more work and *stand out* with a power profile.</p>
+            <p className='desktop-body-s light-black sub-subheader'>Win more work and *stand out* with a power profile.</p>
 
-            <div className="subscription-features">
+            <div className="sub-features">
               {[
                 "Personalized URL: konarcard.com/u/hmplumbing.",
                 "Set profile pic, cover photo.",
@@ -206,50 +198,49 @@ export default function Subscription() {
                 "List unlimited services you provide.",
                 "Build trust: unlimited client reviews."
               ].map((text, idx) => (
-                <div className="hero-tick" key={idx}>
-                  <img src={TickIcon} className="icon" alt="tick" />
+                <div className="sub-feature-item" key={idx}>
+                  <img src={TickIcon} className="sub-feature-icon" alt="tick" />
                   <p className="desktop-body-s black">{text}</p>
                 </div>
               ))}
             </div>
 
-            <p className='desktop-body-s black subscription-description-footer'>
+            <p className='desktop-body-s black sub-description-footer'>
               "Unlock your full potential: make every connection count and secure new opportunities."
             </p>
 
-            <div className="subscription-price-cta">
-              <div className='price-display'>
+            <div className="sub-price-cta">
+              <div className='sub-price-display'>
                 <p className='desktop-h5 black'>£5.95</p>
                 <p className='desktop-body-s light-black'>Per Month</p>
               </div>
               {loading ? (
-                <button className="desktop-button black-button" disabled>
+                <button className="desktop-button black-button sub-action-button" disabled>
                   <span className="desktop-button">Loading Plan Status...</span>
                 </button>
               ) : isSubscribed ? (
                 <>
                   {!showCancelConfirm ? (
                     <>
-                      <button className="desktop-button blue-button" disabled>
+                      <button className="desktop-button blue-button sub-action-button" disabled>
                         <span className="desktop-button">Plan Active</span>
                       </button>
                       <button
-                        className="desktop-button black-button"
+                        className="desktop-button black-button sub-action-button"
                         onClick={initiateCancelConfirmation}
                         disabled={isCancelling}
-                        style={{ marginTop: '10px' }}
                       >
                         <span className="desktop-button">Cancel Subscription</span>
                       </button>
                     </>
                   ) : (
-                    <div className="subscription-cancel-confirm">
+                    <div className="sub-cancel-confirm">
                       <p className="desktop-body black">
                         {cancelCooldown > 0 ? `Confirm cancel in ${cancelCooldown}...` : 'Are you sure?'}
                       </p>
-                      <div className="subscription-cancel-buttons">
+                      <div className="sub-cancel-buttons">
                         <button
-                          className="desktop-button blue-button-login"
+                          className="desktop-button blue-button sub-action-button"
                           onClick={confirmCancel}
                           disabled={cancelCooldown > 0 || isCancelling}
                         >
@@ -258,10 +249,9 @@ export default function Subscription() {
                           </span>
                         </button>
                         <button
-                          className="desktop-button black-button"
+                          className="desktop-button black-button sub-action-button"
                           onClick={cancelConfirmationPrompt}
                           disabled={isCancelling}
-                          style={{ marginTop: '10px' }}
                         >
                           <span className="desktop-button">Go Back</span>
                         </button>
@@ -270,7 +260,7 @@ export default function Subscription() {
                   )}
                 </>
               ) : (
-                <button className="desktop-button black-button" onClick={handleSubscribe} disabled={isCancelling}>
+                <button className="desktop-button black-button sub-action-button" onClick={handleSubscribe} disabled={isCancelling}>
                   <span className="desktop-button">Upgrade to Power Profile</span>
                 </button>
               )}

@@ -212,7 +212,7 @@ export default function ContactSupport() {
                                 rows="3"
                             />
 
-                            <button type='submit' className='support-submit-button blue-button desktop-button'>
+                            <button type='submit' className=' blue-button desktop-button'>
                                 <span className='desktop-button'>Submit</span>
                             </button>
                         </form>
