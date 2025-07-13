@@ -255,8 +255,8 @@ body.dark-mode .qr-code-image-container {
     }
 
     .share-modal-content {
-        padding: 16px;
-        gap: 16px;
+        padding: 30px;
+        gap: 10px;
         max-height: calc(100vh - 20px);
     }
 
