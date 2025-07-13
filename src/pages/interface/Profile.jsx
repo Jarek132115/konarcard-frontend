@@ -245,13 +245,9 @@ export default function Profile() {
                 onClick={handleDelete}
                 className="black-button profile-action-button"
                 disabled={confirmDelete && !deleteEnabled}
-                style={{
-                  backgroundColor: (confirmDelete && !deleteEnabled) ? '#e0e0e0' : 'black',
-                  color: (confirmDelete && !deleteEnabled) ? '#666' : 'white',
-                  cursor: (confirmDelete && !deleteEnabled) ? 'not-allowed' : 'pointer'
-                }}
+              // Removed inline style for background, color, cursor
               >
-                <span className="desktop-button black-button">
+                <span className="desktop-button">
                   {confirmDelete && !deleteEnabled ? `Confirm Delete in ${Math.max(0, Math.ceil((3000 - (Date.now() - (new Date().getTime() - 3000))) / 1000))}s` : 'Delete Your Account'}
                 </span>
               </button>
@@ -273,4 +269,4 @@ export default function Profile() {
       />
     </div>
   );
-} 
+}
