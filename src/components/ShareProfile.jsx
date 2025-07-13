@@ -2,6 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import PropTypes from 'prop-types'; // Keep PropTypes for good practice
 
+// Import the new SVG icons
+import CopyLinkIcon from '../../assets/icons/CopyLink-Icon.svg';
+import VisitProfileIcon from '../../assets/icons/VisitProfile-Icon.svg';
+import DownloadQRIcon from '../../assets/icons/DownloadQR-Icon.svg';
+import SaveContactIcon from '../../assets/icons/SaveContact-Icon.svg';
+
 /**
  * ShareProfile modal component for displaying sharing options.
  * @param {object} props - The component props.
@@ -119,15 +125,11 @@ export default function ShareProfile({
                     <div className="share-action-buttons">
                         <a href={profileUrl} target="_blank" rel="noopener noreferrer" className="share-button-primary">
                             Visit Profile
-                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
+                            <img src={VisitProfileIcon} alt="Visit Profile" className="h-5 w-5" />
                         </a>
                         <button onClick={() => copyToClipboard(profileUrl, 'Profile link copied!')} className="share-button-secondary">
                             Copy Link
-                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1.5M9 3v2m6-2v2m.24 10.43l2.872-2.871M16 17l.01.01M16 11l.01.01M10 11l.01.01M10 17l.01.01m-3.792-5.792h.01M14 14l.01.01m-.01 0a2 2 0 100-4h-4a2 2 0 100 4h4z" />
-                            </svg>
+                            <img src={CopyLinkIcon} alt="Copy Link" className="h-5 w-5" />
                         </button>
                     </div>
                 </div>
@@ -138,18 +140,14 @@ export default function ShareProfile({
                         <div className="qr-code-image-container">
                             <img src={qrCodeUrl} alt="Profile QR Code" className="share-qr-code-image" />
                         </div>
-                        <div className="share-action-buttons"> {/* Re-using this class for layout */}
+                        <div className="share-action-buttons">
                             <a href={qrCodeUrl} download={`${username || 'konarcard'}-qrcode.png`} className="share-button-secondary">
                                 Download QR Code
-                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
+                                <img src={DownloadQRIcon} alt="Download QR Code" className="h-5 w-5" />
                             </a>
                             <button onClick={generateAndDownloadVCard} className="share-button-primary share-button-vcard">
                                 Save to Phone Contacts
-                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                                </svg>
+                                <img src={SaveContactIcon} alt="Save Contact" className="h-5 w-5" />
                             </button>
                         </div>
                     </div>
