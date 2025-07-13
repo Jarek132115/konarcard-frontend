@@ -6,18 +6,14 @@ import ShareProfile from '../../components/ShareProfile';
 import { AuthContext } from '../../components/AuthContext';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
-import greenTick from '../../assets/icons/Green-Tick-Icon.svg';
-import redCross from '../../assets/icons/Red-Cross-Icon.svg';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 
 export default function Profile() {
   const { user: authUser, fetchUser, setUser } = useContext(AuthContext);
   const [updatedName, setUpdatedName] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  // Removed password, confirmPassword, showPassword, showConfirm states
+
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleteEnabled, setDeleteEnabled] = useState(false);
 
@@ -57,38 +53,23 @@ export default function Profile() {
     }
   }, [sidebarOpen, isMobile]);
 
-  const togglePassword = () => setShowPassword(!showPassword);
-  const toggleConfirm = () => setShowConfirm(!showConfirm);
-
-  const passwordChecks = {
-    minLength: password.length >= 8,
-    hasUppercase: /[A-Z]/.test(password),
-    hasNumber: /\d/.test(password),
-    passwordsMatch: password === confirmPassword && confirmPassword.length > 0,
-  };
+  // Removed togglePassword and toggleConfirm functions
+  // Removed passwordChecks object
 
   const handleSave = async () => {
-    if (password || confirmPassword) {
-      if (!Object.values(passwordChecks).every(Boolean)) {
-        toast.error('Please meet all password requirements.');
-        return;
-      }
-    }
-
     try {
       const res = await api.put(
         '/update-profile',
         {
           name: updatedName,
-          password: password || undefined,
+          // Removed password from payload
         }
       );
 
       if (res.data.success) {
         toast.success('Profile updated successfully!');
         fetchUser();
-        setPassword('');
-        setConfirmPassword('');
+        // Removed password and confirmPassword state resets
       } else {
         toast.error(res.data.error || 'Something went wrong');
       }
@@ -124,6 +105,25 @@ export default function Profile() {
     } catch (err) {
       console.error('Server error deleting account:', err);
       toast.error(err.response?.data?.error || 'Server error deleting account');
+    }
+  };
+
+  // New function to handle password reset
+  const handleResetPassword = async () => {
+    if (!authUser?.email) {
+      toast.error("Your email is not available to send a reset link.");
+      return;
+    }
+    try {
+      const res = await api.post('/forgot-password', { email: authUser.email });
+      if (res.data.error) {
+        toast.error(res.data.error);
+      } else {
+        toast.success('Password reset link sent to your email!');
+      }
+    } catch (err) {
+      console.error('Failed to send reset link:', err.message || err);
+      toast.error(err.message || 'Failed to send reset link');
     }
   };
 
@@ -181,7 +181,6 @@ export default function Profile() {
           onShareCard={handleShareCard}
         />
 
-        {/* New wrapper for the centered content card */}
         <div className="profile-page-wrapper">
           <div className="profile-settings-card">
             {/* Display Name Section */}
@@ -196,56 +195,46 @@ export default function Profile() {
               />
             </div>
 
-            {/* Change Password Section */}
+            {/* Email Address - Non-editable */}
             <div className="profile-setting-block">
-              <label className="profile-label desktop-body-s black">Change Password</label>
-              <div className="profile-password-input-group">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="New password"
-                  autoComplete="new-password"
-                  className="profile-input-field desktop-body"
-                />
-                <button type="button" onClick={togglePassword} className="black-button profile-password-toggle-btn">
-                  <span className="desktop-button">{showPassword ? 'Hide' : 'Show'}</span>
-                </button>
-              </div>
-              <div className="profile-password-input-group">
-                <input
-                  type={showConfirm ? 'text' : 'password'}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm new password"
-                  autoComplete="new-password"
-                  className="profile-input-field desktop-body"
-                />
-                <button type="button" onClick={toggleConfirm} className="black-button profile-password-toggle-btn">
-                  <span className="desktop-button">{showConfirm ? 'Hide' : 'Show'}</span>
-                </button>
-              </div>
+              <label className="profile-label desktop-body-s black">Email Address</label>
+              <input
+                type="email"
+                value={authUser?.email || ''}
+                readOnly // Make it non-editable
+                className="profile-input-field profile-display-field desktop-body"
+              />
+            </div>
 
-              {(password || confirmPassword) && (
-                <div className="profile-password-feedback">
-                  <p className={`desktop-body-xs ${passwordChecks.minLength ? 'profile-valid' : 'profile-invalid'}`}>
-                    <img src={passwordChecks.minLength ? greenTick : redCross} alt="" className="profile-feedback-icon" />
-                    Minimum 8 characters
-                  </p>
-                  <p className={`desktop-body-xs ${passwordChecks.hasUppercase ? 'profile-valid' : 'profile-invalid'}`}>
-                    <img src={passwordChecks.hasUppercase ? greenTick : redCross} alt="" className="profile-feedback-icon" />
-                    One uppercase letter
-                  </p>
-                  <p className={`desktop-body-xs ${passwordChecks.hasNumber ? 'profile-valid' : 'profile-invalid'}`}>
-                    <img src={passwordChecks.hasNumber ? greenTick : redCross} alt="" className="profile-feedback-icon" />
-                    One number
-                  </p>
-                  <p className={`desktop-body-xs ${passwordChecks.passwordsMatch ? 'profile-valid' : 'profile-invalid'}`}>
-                    <img src={passwordChecks.passwordsMatch ? greenTick : redCross} alt="" className="profile-feedback-icon" />
-                    Passwords match
-                  </p>
-                </div>
-              )}
+            {/* Landing Page URL (Username) - Non-editable */}
+            <div className="profile-setting-block">
+              <label className="profile-label desktop-body-s black">Landing Page URL</label>
+              <div className="profile-url-display-group">
+                <span className="profile-url-prefix desktop-body">www.konarcard.com/u/</span>
+                <input
+                  type="text"
+                  value={userUsername || ''}
+                  readOnly // Make it non-editable
+                  className="profile-input-field profile-display-field desktop-body"
+                />
+              </div>
+            </div>
+
+            {/* Password Section - Now with Reset Password Button */}
+            <div className="profile-setting-block">
+              <label className="profile-label desktop-body-s black">Password</label>
+              <input
+                type="password"
+                value="********" // Display masked password
+                readOnly // Make it non-editable
+                className="profile-input-field profile-display-field desktop-body"
+              />
+              <button
+                onClick={handleResetPassword}
+                className="blue-button profile-reset-password-button desktop-button"
+              >
+                <span className="desktop-button">Reset Password</span>
+              </button>
             </div>
 
             {/* Action Buttons */}

@@ -54,7 +54,7 @@
     display: block;
 }
 
-/* Styling for text inputs and select */
+/* Styling for editable text inputs */
 .profile-input-field {
     width: 100%;
     padding: 12px 15px;
@@ -75,70 +75,72 @@
     box-shadow: 0 0 0 2px #007bff;
 }
 
-/* Password input group with show/hide button */
-.profile-password-input-group {
-    display: flex;
-    gap: 10px;
-    /* Space between input and button */
-    width: 100%;
+/* Styling for non-editable display fields (email, masked password) */
+.profile-display-field {
+    background-color: #e9ecef;
+    /* Slightly darker background for non-editable fields */
+    color: #555;
+    /* Greyer text to indicate non-editable */
+    cursor: default;
+    /* Indicate it's not clickable/editable */
 }
 
-.profile-password-input-group input {
-    flex-grow: 1;
-    /* Input takes available space */
-}
-
-.profile-password-toggle-btn {
-    flex-shrink: 0;
-    /* Prevent button from shrinking */
-    padding: 12px 15px;
-    /* Match input padding for height */
-    border-radius: 6px;
-    font-size: 14px;
-    /* Adjust font size for button */
-    font-weight: 600;
-    background-color: black;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.profile-password-toggle-btn:hover {
-    background-color: #333;
-}
-
-/* Password feedback messages */
-.profile-password-feedback {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 100%;
-}
-
-.profile-password-feedback p {
+/* Styling for the URL display group */
+.profile-url-display-group {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin: 0;
-    font-size: 12px;
+    width: 100%;
+    background-color: #e9ecef;
+    /* Match display field background */
+    border-radius: 6px;
+    padding: 12px 15px;
+    /* Match input padding */
+    box-sizing: border-box;
 }
 
-.profile-feedback-icon {
-    width: 14px;
-    height: 14px;
-    flex-shrink: 0;
+.profile-url-prefix {
+    color: #555;
+    /* Match display field text color */
+    white-space: nowrap;
+    /* Prevent wrapping */
+    margin-right: 4px;
+    /* Space between prefix and username */
+    font-size: 16px;
+    /* Ensure font size consistency */
 }
 
-.profile-password-feedback .profile-valid {
-    color: #28a745;
-    /* Green for valid */
+.profile-url-display-group .profile-input-field {
+    background-color: transparent;
+    /* Make input background transparent within the group */
+    border: none;
+    /* Remove border from input within the group */
+    padding: 0;
+    /* Remove internal padding from input within the group */
+    color: #000;
+    /* Ensure username text is black */
+    font-weight: 500;
+    /* Make username slightly bolder */
 }
 
-.profile-password-feedback .profile-invalid {
-    color: #dc3545;
-    /* Red for invalid */
+/* Styling for the Reset Password button */
+.profile-reset-password-button {
+    width: 100%;
+    /* Full width */
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border: none;
+    text-align: center;
+    margin-top: 5px;
+    /* Small margin from the password display field */
 }
+
+/* Removed old password input group and feedback styles */
+/* .profile-password-input-group, .profile-password-toggle-btn, .profile-password-feedback, .profile-feedback-icon, .profile-valid, .profile-invalid are removed */
+
 
 /* Action buttons group (Save and Delete) */
 .profile-action-buttons-group {
@@ -191,23 +193,34 @@ body.dark-mode .profile-input-field:focus {
     box-shadow: 0 0 0 2px #0056b3;
 }
 
-body.dark-mode .profile-password-toggle-btn {
-    background-color: #555;
+body.dark-mode .profile-display-field {
+    background-color: #444;
+    /* Darker background for non-editable in dark mode */
+    color: #bbb;
+    /* Lighter text for non-editable in dark mode */
+}
+
+body.dark-mode .profile-url-display-group {
+    background-color: #444;
+    /* Match display field background */
+}
+
+body.dark-mode .profile-url-prefix {
+    color: #bbb;
+}
+
+body.dark-mode .profile-url-display-group .profile-input-field {
     color: #eee;
+    /* Ensure username text is light in dark mode */
 }
 
-body.dark-mode .profile-password-toggle-btn:hover {
-    background-color: #666;
+body.dark-mode .profile-reset-password-button {
+    background-color: #007bff;
+    color: white;
 }
 
-body.dark-mode .profile-password-feedback .profile-valid {
-    color: #4CAF50;
-    /* Darker green for dark mode */
-}
-
-body.dark-mode .profile-password-feedback .profile-invalid {
-    color: #FF5252;
-    /* Darker red for dark mode */
+body.dark-mode .profile-reset-password-button:hover {
+    background-color: #0056b3;
 }
 
 /* Responsive adjustments for smaller screens */
@@ -236,22 +249,17 @@ body.dark-mode .profile-password-feedback .profile-invalid {
         font-size: 13px;
     }
 
-    .profile-password-input-group {
-        gap: 8px;
-    }
-
-    .profile-password-toggle-btn {
+    .profile-url-display-group {
         padding: 10px 12px;
-        font-size: 13px;
     }
 
-    .profile-password-feedback p {
-        font-size: 11px;
+    .profile-url-prefix {
+        font-size: 15px;
     }
 
-    .profile-feedback-icon {
-        width: 12px;
-        height: 12px;
+    .profile-reset-password-button {
+        padding: 10px 15px;
+        font-size: 15px;
     }
 
     .profile-action-buttons-group {
