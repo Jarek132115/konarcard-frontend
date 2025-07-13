@@ -1,141 +1,163 @@
-/* New wrapper for the entire page content to enable centering */
-.subscription-page-wrapper {
+/* Wrapper for the entire Products & Plans page content to enable centering */
+.products-plans-page-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Center horizontally */
+    /* Center the main card horizontally */
     justify-content: center;
-    /* Center vertically */
+    /* Center the main card vertically (if content is short) */
     min-height: calc(100vh - 120px);
-    /* Adjust based on your header/footer height if any */
+    /* Adjust based on your header/footer height */
     padding: 20px;
-    /* Padding around the content card */
+    /* Padding around the main content card */
     box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 40px;
+    /* Space before footer */
 }
 
-/* The actual card box that holds the subscription details */
-.subscription-card-content {
-    background: #ffffff;
-    padding: 40px;
-    /* Internal padding */
-    border-radius: 20px;
-    /* 20px border as requested */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    /* Shadow similar to modals */
-    max-width: 550px;
-    /* Max width between 500-600px, chose 550px */
+/* The container that holds the two columns (Subscription and Card Offer) */
+.products-plans-card-container {
+    display: flex;
+    gap: 20px;
+    /* Space between the two columns */
     width: 100%;
-    /* Ensure it takes full width up to max-width */
-    border: 1px solid #e0e0e0;
-    /* Border as requested */
-    box-sizing: border-box;
+    max-width: 1000px;
+    /* Adjust max-width as needed for the two-column layout */
+    align-items: stretch;
+    /* Ensure columns stretch to equal height */
+}
+
+/* Base styling for both subscription and card offer columns */
+.products-plans-subscription-column,
+.products-plans-card-column {
+    flex: 1;
+    /* Each column takes equal space */
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    /* Align text and elements to the left within the card */
-    gap: 20px;
-    /* Space between main sections like header, features, cta */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    /* Shadow */
+    border-radius: 20px;
+    /* Rounded corners */
+    border: 1px solid #e0e0e0;
+    /* Border */
+    background-color: white;
+    color: black;
+    padding: 30px;
+    /* Internal padding */
+    box-sizing: border-box;
+    text-align: left;
+    min-height: 500px;
+    /* Ensure a minimum height for visual consistency */
 }
 
-/* Header section within the card */
-.sub-header {
-    width: 100%;
+/* Header section within each column */
+.products-plans-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 10px;
     margin-bottom: 5px;
-    /* Space before subheader text */
+    width: 100%;
 }
 
-/* Free trial badge styling */
-.sub-free-trial-badge {
-    background-color: #28a745;
-    /* Green badge */
+.products-plans-title {
+    color: black;
+    margin-bottom: 0;
+}
+
+/* Badge styling (Free Trial, 1-month subscription included) */
+.products-plans-badge {
+    background-color: #007bff;
+    /* Blue color for badges */
     color: white;
     padding: 4px 8px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 11px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.products-plans-product-badge {
+    background-color: #28a745;
+    /* Green for product-specific badge */
 }
 
 /* Subheader text */
-.sub-subheader {
-    margin-bottom: 15px;
-    /* Space before features */
+.products-plans-subheader {
+    color: #555;
+    margin-bottom: 20px;
 }
 
 /* Features list container */
-.sub-features {
+.products-plans-features {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    /* Space between individual feature items */
-    width: 100%;
-    margin-bottom: 20px;
-    /* Space before footer description */
+    gap: 12px;
+    margin-bottom: 30px;
+    padding-left: 0;
 }
 
 /* Individual feature item */
-.sub-feature-item {
+.products-plans-feature-item {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    /* Space between icon and text */
+    align-items: flex-start;
+    gap: 5px;
+    flex-shrink: 0;
+    color: black;
+    text-align: left;
 }
 
-.sub-feature-icon {
-    width: 18px;
+.products-plans-feature-icon {
+    width: 20px;
     /* Size of the tick icon */
-    height: 18px;
+    height: 20px;
     flex-shrink: 0;
 }
 
 /* Footer description text */
-.sub-description-footer {
+.products-plans-footer-text {
+    color: #555;
     font-style: italic;
-    text-align: center;
-    width: 100%;
-    margin-bottom: 20px;
-    /* Space before price/CTA */
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: left;
+    /* Ensure text aligns left within the column */
 }
 
 /* Price and CTA section */
-.sub-price-cta {
-    width: 100%;
+.products-plans-price-cta {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 15px;
-    /* Space between price display and buttons, or between buttons */
-    align-items: center;
+    width: 100%;
+    margin-top: auto;
+    /* Pushes content to the bottom of the column */
 }
 
-.sub-price-display {
+.products-plans-price-display {
     display: flex;
     align-items: baseline;
-    gap: 8px;
-    margin-bottom: 10px;
-    /* Space before the first button */
+    gap: 5px;
 }
 
-.sub-price-display p:first-child {
-    font-size: 28px;
-    /* Larger price font */
-    font-weight: 700;
+.products-plans-price-display p {
+    color: black;
+    margin: 0;
 }
 
-.sub-price-display p:last-child {
-    font-size: 16px;
+.products-plans-price-display .light-black {
     color: #555;
 }
 
-/* Action buttons (Upgrade, Plan Active, Cancel, Confirm, Go Back) */
-.sub-action-button {
+/* Action buttons (Upgrade, Buy Now, Cancel, Confirm, Go Back) */
+.products-plans-action-button {
     width: 100%;
-    /* Full width for buttons */
-    padding: 12px 20px;
-    border-radius: 6px;
+    /* Full width for buttons within their column */
+    padding: 12px 24px;
+    border-radius: 8px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
@@ -146,154 +168,178 @@
     /* Ensure it takes full width when alone */
 }
 
-/* Specific styling for the cancel confirmation prompt */
-.sub-cancel-confirm {
+/* Product image specific styles */
+.products-plans-product-image {
+    width: 100%;
+    flex-grow: 1;
+    /* Allow image to grow and fill space */
+    height: auto;
+    object-fit: contain;
+    /* Use contain to ensure full image is visible */
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-height: 250px;
+    /* Limit max height for the image */
+}
+
+/* Optional text for product */
+.products-plans-optional-text {
+    color: #555;
+    font-style: italic;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+/* Cancellation confirmation prompt */
+.products-plans-cancel-confirm {
     width: 100%;
     text-align: center;
     margin-top: 10px;
 }
 
-.sub-cancel-confirm p {
+.products-plans-cancel-confirm p {
     margin-bottom: 15px;
     font-weight: 500;
 }
 
-.sub-cancel-buttons {
+.products-plans-cancel-buttons {
     display: flex;
     flex-direction: column;
     gap: 10px;
     width: 100%;
 }
 
+
 /* Dark mode adjustments */
-body.dark-mode .subscription-card-content {
+body.dark-mode .products-plans-subscription-column,
+body.dark-mode .products-plans-card-column {
     background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
     color: #e0e0e0;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     border-color: #3a3a3a;
 }
 
-body.dark-mode .sub-header p {
+body.dark-mode .products-plans-title {
     color: #f0f0f0;
 }
 
-body.dark-mode .sub-subheader {
+body.dark-mode .products-plans-badge {
+    background-color: #0056b3;
+}
+
+body.dark-mode .products-plans-product-badge {
+    background-color: #4CAF50;
+}
+
+body.dark-mode .products-plans-subheader,
+body.dark-mode .products-plans-footer-text,
+body.dark-mode .products-plans-optional-text {
     color: #bbb;
 }
 
-body.dark-mode .sub-feature-item p {
+body.dark-mode .products-plans-feature-item p {
     color: #e0e0e0;
 }
 
-body.dark-mode .sub-feature-icon {
+body.dark-mode .products-plans-feature-icon {
     filter: invert(100%);
-    /* Make tick icon white in dark mode */
 }
 
-body.dark-mode .sub-description-footer {
-    color: #e0e0e0;
-}
-
-body.dark-mode .sub-price-display p {
+body.dark-mode .products-plans-price-display p {
     color: #f0f0f0;
 }
 
-body.dark-mode .sub-price-display p:last-child {
+body.dark-mode .products-plans-price-display .light-black {
     color: #aaa;
 }
 
-body.dark-mode .sub-action-button.black-button {
+body.dark-mode .products-plans-action-button.black-button {
     background-color: #333;
     color: white;
 }
 
-body.dark-mode .sub-action-button.black-button:hover {
+body.dark-mode .products-plans-action-button.black-button:hover {
     background-color: #555;
 }
 
-body.dark-mode .sub-action-button.blue-button {
+body.dark-mode .products-plans-action-button.blue-button {
     background-color: #007bff;
     color: white;
 }
 
-body.dark-mode .sub-action-button.blue-button:hover {
+body.dark-mode .products-plans-action-button.blue-button:hover {
     background-color: #0056b3;
 }
 
-body.dark-mode .sub-cancel-confirm p {
+body.dark-mode .products-plans-cancel-confirm p {
     color: #e0e0e0;
 }
 
-/* Responsive adjustments for smaller screens */
-@media (max-width: 600px) {
-    .subscription-page-wrapper {
-        padding: 15px;
-        min-height: calc(100vh - 100px);
+/* Responsive adjustments */
+@media (max-width: 1000px) {
+    .products-plans-card-container {
+        flex-direction: column;
+        /* Stack columns vertically on smaller screens */
+        gap: 30px;
+        /* Adjust gap when stacked */
     }
 
-    .subscription-card-content {
+    .products-plans-subscription-column,
+    .products-plans-card-column {
+        min-height: auto;
+        /* Allow height to be dynamic */
         padding: 25px;
-        border-radius: 12px;
-        gap: 15px;
+        /* Adjust padding for mobile */
     }
 
-    .sub-header {
-        margin-bottom: 0;
+    .products-plans-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
     }
 
-    .sub-subheader {
-        font-size: 13px;
-        margin-bottom: 10px;
-    }
-
-    .sub-free-trial-badge {
-        padding: 3px 6px;
-        font-size: 10px;
-    }
-
-    .sub-features {
-        gap: 8px;
-        margin-bottom: 15px;
-    }
-
-    .sub-feature-item p {
+    .products-plans-subheader {
         font-size: 13px;
     }
 
-    .sub-feature-icon {
-        width: 16px;
-        height: 16px;
+    .products-plans-badge {
+        font-size: 11px;
     }
 
-    .sub-description-footer {
+    .products-plans-product-image {
+        max-height: 200px;
+        /* Adjust image height for mobile */
+    }
+
+    .products-plans-footer-text,
+    .products-plans-optional-text {
         font-size: 13px;
-        margin-bottom: 15px;
     }
 
-    .sub-price-display {
-        gap: 6px;
-        margin-bottom: 8px;
-    }
-
-    .sub-price-display p:first-child {
+    .products-plans-price-display p:first-child {
         font-size: 24px;
     }
 
-    .sub-price-display p:last-child {
+    .products-plans-price-display p:last-child {
         font-size: 14px;
     }
 
-    .sub-action-button {
-        padding: 10px 15px;
+    .products-plans-action-button {
         font-size: 15px;
+        padding: 10px 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .products-plans-page-wrapper {
+        padding: 15px;
     }
 
-    .sub-cancel-confirm p {
-        font-size: 14px;
-        margin-bottom: 10px;
-    }
-
-    .sub-cancel-buttons {
-        gap: 8px;
+    .products-plans-subscription-column,
+    .products-plans-card-column {
+        padding: 20px;
     }
 }
