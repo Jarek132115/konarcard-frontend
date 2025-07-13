@@ -5,11 +5,7 @@
     align-items: center;
     /* Center horizontally */
     justify-content: center;
-    /* Center vertically */
-    min-height: calc(100vh - 120px);
-    /* Adjust based on your header/footer height if any */
     padding: 20px;
-    /* Padding around the content card */
     box-sizing: border-box;
 }
 
