@@ -196,16 +196,10 @@ body.dark-mode .blue-button.share-button-custom:hover {
 
 .share-button-icon {
     height: 20px;
-    /* Changed from 12px to 20px */
     width: 20px;
-    /* Changed from 12px to 20px */
     flex-shrink: 0;
-    /* Prevent icon from shrinking */
-    margin-right: 8px;
-    /* Added margin to separate icon from text */
 }
 
-/* Adjust gap for buttons on mobile if needed, though current gap might be fine */
 @media (max-width: 400px) {
     .share-modal-overlay {
         padding: 8px;
@@ -256,7 +250,6 @@ body.dark-mode .blue-button.share-button-custom:hover {
         height: 16px;
         /* Adjust icon size for smaller screens if 20px is too big */
         width: 16px;
-        margin-right: 6px;
         /* Adjust margin for smaller screens */
     }
 
