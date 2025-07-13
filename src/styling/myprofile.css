@@ -41,16 +41,19 @@
     flex: 1;
     font-family: var(--main-font-family);
     padding: 30px;
+    /* Default desktop padding */
     display: flex;
     flex-direction: column;
     height: 100%;
     box-sizing: border-box;
     margin-left: 260px;
+    /* Space for sidebar on desktop */
     color: var(--text-color);
     transition: margin-left 0.3s ease-in-out;
     overflow-y: auto;
     /* This enables scrolling for the main content area */
-    overflow-x: visible;
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
 }
 
 .page-header {
@@ -62,7 +65,7 @@
     border-bottom: 1px solid grey;
     padding-bottom: 20px;
     margin-bottom: 40px;
-    /* For desktop, keep it as is, not sticky */
+    /* Desktop default: not sticky */
 }
 
 .page-title {
@@ -105,7 +108,9 @@
     align-items: center;
     gap: 20px;
     flex: 1;
+    /* Allow it to grow */
     min-height: 0;
+    /* Important for flex items with overflow */
     overflow-y: visible;
     /* Let the parent main-content-container handle scroll */
     box-sizing: border-box;
@@ -115,19 +120,18 @@
 
 .myprofile-flex-container {
     display: flex;
-    height: 100%;
-    /* Take full height of main-content-container */
+    /* Removed height: 100%; as it conflicts with content pushing it */
     gap: 60px;
     min-height: 0;
     justify-content: center;
     align-items: flex-start;
-    /* Keep align-items: flex-start for desktop */
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
     overflow: visible;
-    /* Removed padding-top here, it will be handled by main-content-container on mobile */
+    padding-top: 0;
+    /* No padding-top here */
 }
 
 .myprofile-content {
@@ -634,6 +638,7 @@
     width: 100%;
     height: auto;
     aspect-ratio: 4 / 2.75;
+    object-fit: cover;
     border-radius: 0;
     min-width: unset;
     min-height: unset;
@@ -917,28 +922,30 @@
 @media (max-width: 1000px) {
 
     .app-layout {
-        height: auto;
-        overflow-y: visible;
+        height: 100vh;
+        /* Ensure full height on mobile */
+        overflow: hidden;
+        /* Prevent body scroll */
     }
 
     .main-content-container {
-        /* Removed margin-left as sidebar is hidden on mobile */
         margin-left: 0;
+        /* No sidebar margin on mobile */
         width: 100%;
         max-width: 100%;
-        /* Adjusted padding-top to account for the fixed mobile header */
-        padding-top: 62px;
-        /* Height of myprofile-mobile-header */
-        padding-left: 15px;
-        padding-right: 15px;
-        padding-bottom: 20px;
-        height: calc(100vh - 62px);
-        /* Fill remaining viewport height below header */
+        padding: 0 15px 20px 15px;
+        /* Adjust padding for mobile, remove top padding */
+        padding-top: 0;
+        /* Remove padding-top here */
+        height: 100%;
+        /* Take full height of app-layout */
         overflow-y: auto;
         /* Enable scrolling for main content */
-        margin: 0 auto;
+        margin: 0;
+        /* Remove auto margins */
+        box-sizing: border-box;
         position: relative;
-        /* Needed for sticky PageHeader */
+        /* For sticky PageHeader */
     }
 
     .page-header {
@@ -950,45 +957,36 @@
         /* Ensure background when sticky */
         z-index: 2;
         /* Ensure it's above scrolling content */
-        padding-top: 20px;
-        /* Add padding to push title down from top edge */
-        padding-bottom: 15px;
-        /* Adjust padding below header */
+        padding: 20px 0;
+        /* Add padding inside the header */
         margin-bottom: 20px;
-        /* Adjust margin below header */
+        /* Space below header */
         width: 100%;
         /* Ensure it spans full width */
         box-sizing: border-box;
         /* Include padding in width */
+        border-bottom: 1px solid grey;
+        /* Keep border */
     }
 
-    /* Hide the desktop overlay when on mobile */
-    .myprofile-editor-wrapper .subscription-overlay {
-        display: none;
-    }
-
-    /* Show the mobile overlay */
-    .subscription-overlay-mobile {
-        display: block;
-        padding: 0 15px;
-        margin-bottom: 20px;
-        box-sizing: border-box;
-        overflow: visible;
-    }
-
+    /* Adjust the myprofile-flex-container to start below the sticky header */
     .myprofile-flex-container {
+        padding-top: 0;
+        /* No padding-top here */
+        margin-top: 0;
+        /* No margin-top here */
         flex-direction: column;
-        gap: 40px;
+        /* Stack vertically */
         align-items: center;
+        /* Center items */
+        gap: 40px;
         height: auto;
+        /* Allow content to define height */
         max-width: 100%;
         width: 100%;
         padding-bottom: 0;
-        margin: 0;
         box-sizing: border-box;
         overflow: visible;
-        padding-top: 0;
-        /* No padding-top here, main-content-container handles it */
     }
 
     .myprofile-content {
@@ -1054,8 +1052,8 @@
         width: 100%;
         height: 62px;
         /* Define its height */
-        background-color: white;
-        /* Ensure it has a background */
+        background-color: var(--secondary-bg);
+        /* Use theme background */
         z-index: 1001;
         /* High z-index to be on top */
         padding: 15px 20px;
@@ -1092,14 +1090,12 @@
 @media (max-width: 400px) {
     .main-content-container {
         padding-left: 10px;
-        /* Slightly less padding on very small screens */
         padding-right: 10px;
-        /* padding-top is already handled by 1000px breakpoint */
+        /* padding-top is handled by 1000px breakpoint */
     }
 
     .subscription-overlay-mobile {
         padding: 0 10px;
-        /* Adjust padding for very small screens */
     }
 
     .subscription-overlay-mobile .subscription-message {
