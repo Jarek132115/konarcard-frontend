@@ -3,77 +3,100 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Center cards horizontally */
-  gap: 40px;
-  /* Space between each help section card */
+  /* Center the main card horizontally */
+  justify-content: center;
+  /* Center the main card vertically (if content is short) */
+  min-height: calc(100vh - 120px);
+  /* Adjust based on your header/footer height */
   padding: 20px;
-  /* Padding around the entire group of cards */
+  /* Padding around the main content card */
   box-sizing: border-box;
   width: 100%;
   margin-bottom: 100px;
-  /* Matches the original margin-bottom on blog-container */
+  /* Space before footer */
 }
 
-/* Styling for each individual help section card */
-.help-section-card {
+/* The single large card container for all help items */
+.help-main-card {
   background: #ffffff;
-  padding: 30px;
-  /* Internal padding for the card */
+  padding: 40px;
+  /* Internal padding for the main card */
   border-radius: 20px;
   /* 20px border as requested */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  /* Shadow similar to other sections */
-  max-width: 800px;
-  /* Allowing a bit wider for the two-column layout */
+  /* Shadow */
+  max-width: 550px;
+  /* Max width between 500-600px, chose 550px */
   width: 100%;
   /* Ensure it takes full width up to max-width */
   border: 1px solid #e0e0e0;
-  /* Border as requested */
+  /* Border */
   box-sizing: border-box;
   display: flex;
+  flex-direction: column;
+  /* Content inside stacks vertically */
   align-items: center;
-  /* Align items vertically in the center */
-  gap: 30px;
-  /* Space between image and text content */
+  /* Center grid if it doesn't fill width */
 }
 
-/* Rule for reversed layout */
-.help-section-card-reversed {
-  flex-direction: row-reverse;
-  /* Reverse order for image and text */
+/* Grid container for the individual help items */
+.help-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  /* Two columns, responsive */
+  gap: 20px;
+  /* Space between grid items */
+  width: 100%;
+  /* Take full width of parent card */
 }
 
-/* Styling for the image within the help section card */
-.help-section-image {
-  width: 40%;
-  /* Image takes 40% of the card width */
-  height: auto;
-  border-radius: 12px;
-  /* Slightly rounded corners for the image */
-  object-fit: cover;
-  flex-shrink: 0;
-  /* Prevent image from shrinking */
-}
-
-/* Styling for the text details section */
-.help-section-details {
-  flex-grow: 1;
-  /* Details section takes remaining space */
+/* Styling for each individual help item within the grid */
+.help-item {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  /* Pushes button to the bottom if content is short */
-  height: 100%;
-  /* Ensure it takes full height of its flex parent */
+  align-items: center;
+  /* Center content within each item */
+  text-align: center;
+  padding: 20px;
+  background-color: #f8f8f8;
+  /* Light background for items */
+  border-radius: 12px;
+  border: 1px solid #eee;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Styling for the "Read more" button */
-.help-section-cta-button {
-  margin-top: 15px;
-  /* Space above the button */
-  align-self: flex-start;
-  /* Align button to the start of the details column */
-  padding: 10px 20px;
+.help-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.help-item-icon {
+  width: 40px;
+  /* Size for the icon */
+  height: 40px;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+}
+
+.help-item-title {
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.help-item-description {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+  /* Space before the link */
+  flex-grow: 1;
+  /* Allows description to push link down */
+}
+
+.help-item-link {
+  width: 100%;
+  /* Make link button full width of its item */
+  padding: 10px 15px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -82,73 +105,75 @@
 }
 
 /* Dark mode adjustments */
-body.dark-mode .help-section-card {
+body.dark-mode .help-main-card {
   background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
   color: #e0e0e0;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   border-color: #3a3a3a;
 }
 
-body.dark-mode .help-section-card p {
-  color: #e0e0e0;
+body.dark-mode .help-item {
+  background-color: #3a3a3a;
+  border-color: #555;
 }
 
-body.dark-mode .help-section-card p[style*="font-style: italic"] {
+body.dark-mode .help-item:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .help-item-icon {
+  filter: invert(100%);
+  /* Make icons white in dark mode */
+}
+
+body.dark-mode .help-item-title {
+  color: #f0f0f0;
+}
+
+body.dark-mode .help-item-description {
   color: #bbb;
-  /* Darker grey for italic text */
-}
-
-body.dark-mode .help-section-cta-button.black-button {
-  background-color: #333;
-  color: white;
-}
-
-body.dark-mode .help-section-cta-button.black-button:hover {
-  background-color: #555;
 }
 
 /* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   .help-page-wrapper {
     padding: 15px;
-    gap: 25px;
+    gap: 30px;
   }
 
-  .help-section-card,
-  .help-section-card-reversed {
-    flex-direction: column;
-    /* Stack image and text vertically on mobile */
+  .help-main-card {
     padding: 25px;
-    gap: 20px;
-    text-align: center;
-    /* Center text when stacked */
+    border-radius: 12px;
   }
 
-  .help-section-image {
-    width: 100%;
-    /* Image takes full width on mobile */
-    max-width: 300px;
-    /* Limit image size for very tall images */
-    margin: 0 auto;
-    /* Center image */
+  .help-items-grid {
+    grid-template-columns: 1fr;
+    /* Single column on mobile */
+    gap: 15px;
   }
 
-  .help-section-details {
-    align-items: center;
-    /* Center text content vertically */
+  .help-item {
+    padding: 15px;
   }
 
-  .help-section-cta-button {
-    align-self: center;
-    /* Center button when stacked */
-    width: 100%;
-    /* Make button full width on mobile */
-    max-width: 200px;
-    /* Limit button width if desired */
+  .help-item-icon {
+    width: 35px;
+    height: 35px;
+    margin-bottom: 10px;
   }
 
-  .help-section-card p {
-    text-align: center;
-    /* Ensure all text is centered on mobile */
+  .help-item-title {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .help-item-description {
+    font-size: 13px;
+    margin-bottom: 15px;
+  }
+
+  .help-item-link {
+    font-size: 13px;
+    padding: 8px 12px;
   }
 }
