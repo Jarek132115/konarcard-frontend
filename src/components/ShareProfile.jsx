@@ -123,15 +123,15 @@ export default function ShareProfile({
                         <input type="text" readOnly value={profileUrl} ref={profileLinkRef} className="share-link-input" />
                     </div>
                     <div className="share-action-buttons">
-                        {/* Reordered: Copy Link (black-button) first */}
+                        {/* Reordered: Copy Link (black-button) first, icon on left */}
                         <button onClick={() => copyToClipboard(profileUrl, 'Profile link copied!')} className="black-button share-button-custom">
-                            Copy Link
                             <img src={CopyLinkIcon} alt="Copy Link" className="share-button-icon" />
+                            Copy Link
                         </button>
-                        {/* Reordered: Visit Profile (blue-button) second */}
+                        {/* Reordered: Visit Profile (blue-button) second, icon on left */}
                         <a href={profileUrl} target="_blank" rel="noopener noreferrer" className="blue-button share-button-custom">
-                            Visit Profile
                             <img src={VisitProfileIcon} alt="Visit Profile" className="share-button-icon" />
+                            Visit Profile
                         </a>
                     </div>
                 </div>
@@ -143,15 +143,15 @@ export default function ShareProfile({
                             <img src={qrCodeUrl} alt="Profile QR Code" className="share-qr-code-image" />
                         </div>
                         <div className="share-action-buttons">
-                            {/* Reordered: Download QR Code (black-button) first */}
+                            {/* Reordered: Download QR Code (black-button) first, icon on left */}
                             <a href={qrCodeUrl} download={`${username || 'konarcard'}-qrcode.png`} className="black-button share-button-custom">
-                                Download QR Code
                                 <img src={DownloadQRIcon} alt="Download QR Code" className="share-button-icon" />
+                                Download QR Code
                             </a>
-                            {/* Reordered: Save to Phone Contacts (blue-button) second */}
+                            {/* Reordered: Save to Phone Contacts (blue-button) second, icon on left */}
                             <button onClick={generateAndDownloadVCard} className="blue-button share-button-custom share-button-vcard">
-                                Save to Phone Contacts
                                 <img src={SaveContactIcon} alt="Save Contact" className="share-button-icon" />
+                                Save to Phone Contacts
                             </button>
                         </div>
                     </div>

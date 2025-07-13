@@ -195,46 +195,17 @@ body.dark-mode .blue-button.share-button-custom:hover {
 
 
 .share-button-icon {
-    height: 12px;
-    /* Set to 12px as requested */
-    width: 12px;
-    /* Set to 12px as requested */
+    height: 20px;
+    /* Changed from 12px to 20px */
+    width: 20px;
+    /* Changed from 12px to 20px */
     flex-shrink: 0;
     /* Prevent icon from shrinking */
+    margin-right: 8px;
+    /* Added margin to separate icon from text */
 }
 
-.qr-code-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding-top: 24px;
-    border-top: 1px solid #f0f0f0;
-}
-
-body.dark-mode .qr-code-section {
-    border-top-color: #3a3a3a;
-}
-
-.qr-code-image-container {
-    padding: 12px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 16px;
-}
-
-body.dark-mode .qr-code-image-container {
-    background-color: #eee;
-}
-
-.share-qr-code-image {
-    width: 180px;
-    height: 180px;
-    display: block;
-    object-fit: contain;
-}
-
+/* Adjust gap for buttons on mobile if needed, though current gap might be fine */
 @media (max-width: 400px) {
     .share-modal-overlay {
         padding: 8px;
@@ -268,14 +239,6 @@ body.dark-mode .qr-code-image-container {
         gap: 8px;
     }
 
-    .share-button-primary,
-    /* Keep these for general styling if needed, but specific overrides below */
-    .share-button-secondary {
-        padding: 11px 13px;
-        font-size: 14px;
-        gap: 5px;
-    }
-
     /* Specific mobile overrides for the new custom buttons */
     .black-button.share-button-custom,
     .blue-button.share-button-custom {
@@ -287,6 +250,14 @@ body.dark-mode .qr-code-image-container {
         /* Apply mobile gap */
         width: 100%;
         /* Ensure full width on mobile */
+    }
+
+    .share-button-icon {
+        height: 16px;
+        /* Adjust icon size for smaller screens if 20px is too big */
+        width: 16px;
+        margin-right: 6px;
+        /* Adjust margin for smaller screens */
     }
 
     .qr-code-section {
