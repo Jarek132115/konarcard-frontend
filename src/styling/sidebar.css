@@ -8,37 +8,30 @@
     max-width: 300px;
     background-color: white;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    /* Always flex on desktop */
     flex-direction: column;
-    /* Keep flex-direction */
     padding: 20px;
     box-sizing: border-box;
     z-index: 999;
     transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
-    /* Add visibility to transition */
-
-    /* --- IMPORTANT DESKTOP HIDING --- */
-    display: none;
-    /* Hide by default on desktop */
-    visibility: hidden;
-    /* Ensure it's not interactive */
-    transform: translateX(-100%);
-    /* Start off-screen */
-    /* --- END IMPORTANT DESKTOP HIDING --- */
-
     overflow: hidden;
+    /* No transform or visibility: hidden here for desktop */
 }
 
-/* This rule will make the sidebar visible when 'open' is applied, but only on mobile due to media query */
+/* This rule is for the mobile state of the sidebar, applied within media query */
+/* It's here for clarity but its primary effect is within the media query */
 .sidebar.open {
     transform: translateX(0);
     visibility: visible;
     display: flex;
-    /* Ensure it's flex when open */
+    /* Ensure it's flex when open on mobile */
 }
 
 
 .sidebar-mobile-header-inner {
     display: none;
+    /* Always hidden on desktop */
 }
 
 .sidebar-content-wrapper {
@@ -220,13 +213,13 @@
 
 .myprofile-mobile-header {
     display: none;
+    /* Hidden by default on desktop */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     padding: 20px;
     z-index: 1001;
-    display: flex;
     align-items: center;
     justify-content: space-between;
     box-sizing: border-box;
@@ -287,21 +280,23 @@
 @media (max-width: 1000px) {
 
     .sidebar {
-        /* On mobile, override desktop hiding */
+        /* Mobile specific overrides */
         display: flex;
         /* Make it visible on mobile */
         transform: translateX(-100%);
-        /* Still starts off-screen for slide-in effect */
+        /* Start off-screen for slide-in effect */
         visibility: hidden;
         /* Hidden until 'open' class is applied */
 
         position: fixed;
+        /* Keep fixed for mobile slide-out */
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
         box-shadow: none;
         z-index: 1003;
+        /* Higher z-index for mobile sidebar to cover content */
         overflow-y: auto;
         background-color: white;
         padding: 0;
@@ -311,11 +306,12 @@
     .sidebar.open {
         transform: translateX(0);
         visibility: visible;
-        /* Make visible when open */
+        /* Make visible when open on mobile */
     }
 
     .sidebar-mobile-header-inner {
         display: flex;
+        /* Show this header on mobile */
         justify-content: space-between;
         align-items: center;
         padding: 20px;
@@ -432,8 +428,13 @@
         padding-top: 15px;
     }
 
-    /* Show the sidebar menu toggle on mobile */
+    .myprofile-mobile-header {
+        display: flex;
+        /* Show on mobile */
+    }
+
     .sidebar-menu-toggle {
         display: flex;
+        /* Show on mobile */
     }
 }
