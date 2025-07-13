@@ -322,9 +322,4 @@ body.dark-mode .profile-reset-password-inline-btn:hover {
     .profile-action-buttons-group {
         gap: 10px;
     }
-
-    /* Removed specific mobile styling from profile-action-button */
-    .profile-action-button {
-        /* Removed: padding, font-size */
-    }
 }
