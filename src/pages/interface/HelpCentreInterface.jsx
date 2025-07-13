@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
-import HeroBackground from '../../assets/images/background-hero.png';
+import HeroBackground from '../../assets/images/background-hero.png'; // Example image for video thumbnails
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
@@ -102,31 +102,63 @@ export default function HelpCentre() {
           onShareCard={handleShareCard}
         />
 
-        <div className="combined-offer-container">
-          {/* Removed content-card-box from this div */}
-          <div className="help-video-card content-card-box"> {/* Added content-card-box here */}
-            <img src={HeroBackground} alt="Profile Setup" className="help-video-thumb" />
-            <div className="help-video-content">
-              <h2 className="help-video-title">How To Set Up Your Profile</h2>
-              <p className="help-video-desc">
-                Learn how to create your profile, add your details, and save it for instant sharing.
-              </p>
-              <p className="help-video-time">Watch Time: 46 seconds</p>
-              <button className="help-video-button">Watch Now</button>
+        {/* New wrapper for the centered content card */}
+        <div className="help-videos-page-wrapper">
+          {/* Grid container for the video cards */}
+          <div className="help-videos-grid">
+            {/* First Video Card */}
+            <div className="help-video-item">
+              <img src={HeroBackground} alt="Profile Setup Thumbnail" className="video-thumb" />
+              <div className="video-content">
+                <h2 className="video-title">How To Set Up Your Profile</h2>
+                <p className="video-desc">
+                  Learn how to create your profile, add your details, and save it for instant sharing.
+                </p>
+                <p className="video-time">Watch Time: 46 seconds</p>
+                <button className="video-button black-button desktop-button">Watch Now</button>
+              </div>
             </div>
-          </div>
 
-          <div className="help-video-card reverse content-card-box"> {/* Added content-card-box here */}
-            <div className="help-video-content">
-              <h2 className="help-video-title">How to Activate Your NFC Card</h2>
-              <p className="help-video-desc">
-                Step-by-step activation process to connect your physical card to your digital profile.
-              </p>
-              <p className="help-video-time">Watch Time: 46 seconds</p>
+            {/* Second Video Card (reversed layout) */}
+            <div className="help-video-item video-item-reversed">
+              <div className="video-content">
+                <h2 className="video-title">How to Activate Your NFC Card</h2>
+                <p className="video-desc">
+                  Step-by-step activation process to connect your physical card to your digital profile.
+                </p>
+                <p className="video-time">Watch Time: 46 seconds</p>
+                <button className="video-button black-button desktop-button">Watch Now</button>
+              </div>
+              <img src={HeroBackground} alt="Card Activation Thumbnail" className="video-thumb" />
             </div>
-            <img src={HeroBackground} alt="Card Activation" className="help-video-thumb" />
-          </div>
-        </div>
+
+            {/* Add more video items here if needed */}
+            <div className="help-video-item">
+              <img src={HeroBackground} alt="Sharing Tips Thumbnail" className="video-thumb" />
+              <div className="video-content">
+                <h2 className="video-title">Tips for Sharing Your Profile</h2>
+                <p className="video-desc">
+                  Maximize your reach by learning the best ways to share your digital business card.
+                </p>
+                <p className="video-time">Watch Time: 1 minute 15 seconds</p>
+                <button className="video-button black-button desktop-button">Watch Now</button>
+              </div>
+            </div>
+
+            <div className="help-video-item video-item-reversed">
+              <div className="video-content">
+                <h2 className="video-title">Troubleshooting Common Issues</h2>
+                <p className="video-desc">
+                  Quick solutions for frequently encountered problems with your KonarCard.
+                </p>
+                <p className="video-time">Watch Time: 2 minutes</p>
+                <button className="video-button black-button desktop-button">Watch Now</button>
+              </div>
+              <img src={HeroBackground} alt="Troubleshooting Thumbnail" className="video-thumb" />
+            </div>
+
+          </div> {/* End help-videos-grid */}
+        </div> {/* End help-videos-page-wrapper */}
       </main>
 
 

@@ -1,13 +1,10 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import Navbar from '../../components/Navbar';
-import Breadcrumbs from '../../components/Breadcrumbs';
-import Footer from '../../components/Footer';
-// BackgroundHero is not used in the main content card layout, but kept if used elsewhere on the page
-import BackgroundHero from '../../assets/images/background-hero.png';
-// Import placeholder icons for help items (ensure these paths are correct in your project)
-import QuestionIcon from '../../assets/icons/Help-Icon.svg'; // Using Help-Icon as a generic question icon
-import InfoIcon from '../../assets/icons/Info-Icon.svg'; // Assuming you have an Info-Icon or similar
+import React from 'react'
+import { Link } from 'react-router-dom'
+import Navbar from '../../components/Navbar'
+import Breadcrumbs from '../../components/Breadcrumbs'
+import Footer from '../../components/Footer'
+import BackgroundHero from '../../assets/images/background-hero.png'
+
 
 
 export default function HelpCentre() {
@@ -22,66 +19,30 @@ export default function HelpCentre() {
           <h2 className='desktop-h1 text-center'>Welcome to the NFC Help Centre</h2>
           <h3 className='desktop-h6 text-center'>Here to help you set up, share, and make the most of your smart card. Browse guides, FAQs, and tips below.</h3>
         </div>
+        <div style={{ marginBottom: 100 }} className="blog-container">
+          <img src={BackgroundHero} alt="Hero" className="" />
+          <div className="blog-info">
+            <div>
+              <p className='desktop-h5'>Why NFC Business Cards Are the Future</p>
+              <p style={{ fontStyle: 'italic', color: '#333' }} className='desktop-body'>Published April 19, 2025 • 3 min read</p>
+              <p style={{ marginBottom: 20 }} className='desktop-body'>Explore how NFC technology is changing the way professionals connect, share, and grow relationships faster than ever. Learn why businesses, freelancers, and creators are making the switch to digital networking tools.</p>
+            </div>
+            <Link to="/login" className="black-button desktop-button">Read more</Link>
+          </div>
+        </div>
+        <div style={{ flexDirection: 'reverse-column' }} className="blog-container">
+          <img src={BackgroundHero} alt="Hero" className="" />
+          <div className="blog-info">
+            <div>
+              <p className='desktop-h5'>Why NFC Business Cards Are the Future</p>
+              <p style={{ fontStyle: 'italic', color: '#333' }} className='desktop-body'>Published April 19, 2025 • 3 min read</p>
+              <p style={{ marginBottom: 20 }} className='desktop-body'>Explore how NFC technology is changing the way professionals connect, share, and grow relationships faster than ever. Learn why businesses, freelancers, and creators are making the switch to digital networking tools.</p>
+            </div>
+            <Link to="/login" className="black-button desktop-button">Read more</Link>
+          </div>
+        </div>
 
-        {/* This is the new main wrapper for the centered content card */}
-        <div className="help-page-wrapper">
-          {/* This is the single large card container with border and shadow */}
-          <div className="help-main-card">
-            {/* This is the grid container for the two-column help sections */}
-            <div className="help-items-grid">
-              {/* Individual Help Item 1 */}
-              <div className="help-item">
-                <img src={QuestionIcon} alt="Question Icon" className="help-item-icon" />
-                <p className='desktop-h6 help-item-title'>Getting Started</p>
-                <p className='desktop-body-s help-item-description'>Learn how to set up your profile and activate your card.</p>
-                <Link to="/help/getting-started" className="help-item-link black-button desktop-button">Read Guide</Link>
-              </div>
-
-              {/* Individual Help Item 2 */}
-              <div className="help-item">
-                <img src={InfoIcon} alt="Info Icon" className="help-item-icon" />
-                <p className='desktop-h6 help-item-title'>Troubleshooting</p>
-                <p className='desktop-body-s help-item-description'>Find solutions to common issues with your card or profile.</p>
-                <Link to="/help/troubleshooting" className="help-item-link black-button desktop-button">Get Help</Link>
-              </div>
-
-              {/* Individual Help Item 3 */}
-              <div className="help-item">
-                <img src={QuestionIcon} alt="Question Icon" className="help-item-icon" />
-                <p className='desktop-h6 help-item-title'>Account Management</p>
-                <p className='desktop-body-s help-item-description'>Manage your subscription, personal details, and security settings.</p>
-                <Link to="/help/account-management" className="help-item-link black-button desktop-button">Manage Account</Link>
-              </div>
-
-              {/* Individual Help Item 4 */}
-              <div className="help-item">
-                <img src={InfoIcon} alt="Info Icon" className="help-item-icon" />
-                <p className='desktop-h6 help-item-title'>Sharing Your Profile</p>
-                <p className='desktop-body-s help-item-description'>Tips and tricks for effectively sharing your digital business card.</p>
-                <Link to="/help/sharing-profile" className="help-item-link black-button desktop-button">Learn More</Link>
-              </div>
-
-              {/* Individual Help Item 5 */}
-              <div className="help-item">
-                <img src={QuestionIcon} alt="Question Icon" className="help-item-icon" />
-                <p className='desktop-h6 help-item-title'>FAQs</p>
-                <p className='desktop-body-s help-item-description'>Browse frequently asked questions for quick answers.</p>
-                <Link to="/faq" className="help-item-link black-button desktop-button">View FAQs</Link>
-              </div>
-
-              {/* Individual Help Item 6 */}
-              <div className="help-item">
-                <img src={InfoIcon} alt="Info Icon" className="help-item-icon" />
-                <p className='desktop-h6 help-item-title'>Contact Us</p>
-                <p className='desktop-body-s help-item-description'>Still need help? Get in touch with our support team directly.</p>
-                <Link to="/contact-support" className="help-item-link black-button desktop-button">Contact Support</Link>
-              </div>
-
-            </div> {/* End help-items-grid */}
-          </div> {/* End help-main-card */}
-        </div> {/* End help-page-wrapper */}
-
-      </div> {/* End section */}
+      </div>
       <Footer />
     </>
   )
