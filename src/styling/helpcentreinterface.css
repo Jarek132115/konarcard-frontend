@@ -52,7 +52,7 @@
   gap: 30px;
   /* Space between each video item */
   width: 100%;
-  max-width: 800px;
+  max-width: 550px;
   /* Max width for the grid itself, still allowing items to be wide */
 }
 
