@@ -13,10 +13,7 @@ import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import PlasticCard from '../../assets/images/PlasticCard.png';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg'; // For mobile header
 
-// Import the new CSS file for this page
-import '../../styling/ProductsAndPlans.css';
 
-// IMPORTANT: REPLACE 'pk_live_YOUR_PUBLISHABLE_KEY_HERE' with your actual LIVE Stripe Publishable Key
 import { loadStripe } from '@stripe/stripe-js';
 const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8');
 
