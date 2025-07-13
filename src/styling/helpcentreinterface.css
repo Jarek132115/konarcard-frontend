@@ -20,12 +20,12 @@
 .help-videos-grid {
   display: grid;
   grid-template-columns: 1fr;
-  /* Start with single column on smaller screens */
+  /* ALWAYS a single column */
   gap: 30px;
   /* Space between each video item */
   width: 100%;
   max-width: 800px;
-  /* Max width for the grid itself */
+  /* Max width for the grid itself, still allowing items to be wide */
 }
 
 /* Styling for each individual video item (card) */
@@ -147,14 +147,10 @@ body.dark-mode .video-button.black-button:hover {
 }
 
 /* Responsive adjustments for smaller screens */
-@media (min-width: 769px) {
-  .help-videos-grid {
-    grid-template-columns: repeat(2, 1fr);
-    /* Two columns on larger screens */
-  }
-}
-
+/* Removed the @media (min-width: 769px) rule as it's now always 1 column */
 @media (max-width: 768px) {
+
+  /* This media query now applies to all mobile sizes */
   .help-videos-page-wrapper {
     padding: 15px;
     gap: 20px;
@@ -162,8 +158,7 @@ body.dark-mode .video-button.black-button:hover {
   }
 
   .help-videos-grid {
-    grid-template-columns: 1fr;
-    /* Single column on mobile */
+    /* No change needed here, already 1fr */
     gap: 20px;
   }
 
