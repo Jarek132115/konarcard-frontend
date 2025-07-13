@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { toast } from 'react-hot-toast';
-import PropTypes from 'prop-types'; // Keep PropTypes for good practice
+import PropTypes from 'prop-types';
 
 // Import the new SVG icons
-import CopyLinkIcon from '../../assets/icons/CopyLink-Icon.svg';
-import VisitProfileIcon from '../../assets/icons/VisitProfile-Icon.svg';
-import DownloadQRIcon from '../../assets/icons/DownloadQR-Icon.svg';
-import SaveContactIcon from '../../assets/icons/SaveContact-Icon.svg';
+import CopyLinkIcon from '../assets/icons/CopyLink-Icon.svg';
+import VisitProfileIcon from '../assets/icons/VisitProfile-Icon.svg';
+import DownloadQRIcon from '../assets/icons/DownloadQR-Icon.svg';
+import SaveContactIcon from '../assets/icons/SaveContact-Icon.svg';
 
 /**
  * ShareProfile modal component for displaying sharing options.
