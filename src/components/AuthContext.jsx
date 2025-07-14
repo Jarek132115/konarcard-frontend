@@ -6,6 +6,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+
     const fetchUser = async () => {
         setLoading(true);
         console.log("AuthContext: fetchUser called.");
@@ -21,16 +22,17 @@ export const AuthProvider = ({ children }) => {
 
         try {
             const response = await api.get('/profile');
-            const fetchedUser = response.data.data; 
+            // Backend /profile returns { data: userObject }, so response.data.data is correct
+            const fetchedUser = response.data.data;
 
             console.log("AuthContext: API response for /profile:", response);
             console.log("AuthContext: Fetched user data (after destructuring):", fetchedUser);
 
             if (response.status === 200 && fetchedUser) {
                 setUser(fetchedUser);
-                console.log("AuthContext: User fetched successfully and set.");
+                console.log("AuthContext: User fetched successfully and set from /profile.");
             } else {
-                console.error("AuthContext: Invalid user data or status, clearing token and user.");
+                console.error("AuthContext: Invalid user data or status from /profile, clearing token and user.");
                 setUser(null);
                 if (typeof window !== 'undefined') {
                     localStorage.removeItem('token');
@@ -38,17 +40,21 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (err) {
             console.error("AuthContext fetchUser failed in catch block:", err);
-            setUser(null);
-            if (typeof window !== 'undefined') {
-                localStorage.removeItem('token');
-                console.log("AuthContext: Error during fetch, clearing token and user.");
+            // If the error is 401 Unauthorized, clear token
+            if (err.response && err.response.status === 401) {
+                console.warn("AuthContext: 401 Unauthorized during profile fetch, token likely invalid/expired. Clearing token.");
+                if (typeof window !== 'undefined') {
+                    localStorage.removeItem('token');
+                }
             }
+            setUser(null);
         } finally {
             setLoading(false);
             console.log("AuthContext: fetchUser finished, loading set to false.");
         }
     };
 
+    // Initial fetch on component mount
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const token = localStorage.getItem('token');
@@ -56,17 +62,20 @@ export const AuthProvider = ({ children }) => {
             if (token) {
                 fetchUser();
             } else {
-                setUser(null); 
+                setUser(null);
                 setLoading(false);
                 console.log("AuthContext: No token, setting loading to false and user to null.");
             }
         }
-    }, []); 
+    }, []); // Empty dependency array means this runs once on mount
 
-    const login = (token) => { 
+    // Modified login function to accept and immediately set the user object
+    const login = (token, userData) => { // <-- Added userData parameter
         if (typeof window !== 'undefined') {
             localStorage.setItem('token', token);
-            fetchUser();
+            setUser(userData); // <-- Immediately set user data
+            setLoading(false); // Assume loaded if login succeeded
+            console.log("AuthContext: User logged in and set immediately.");
         }
     };
 
@@ -77,7 +86,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         console.log("AuthContext: User logged out and token cleared.");
         try {
-            await api.post('/logout');
+            await api.post('/logout'); // Inform backend about logout
         } catch (err) {
             console.error("Error calling backend logout:", err);
         }
@@ -86,7 +95,7 @@ export const AuthProvider = ({ children }) => {
     const contextValue = {
         user,
         setUser,
-        fetchUser, 
+        fetchUser,
         login,
         logout,
         loading
