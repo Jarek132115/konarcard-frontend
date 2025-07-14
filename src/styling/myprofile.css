@@ -966,7 +966,8 @@
         padding: 0 20px;
         padding-top: calc(60px + 20px);
         height: auto !important;
-        overflow: visible;
+        overflow-y: auto;
+        overflow-x: visible;
         margin: auto;
         margin-top: 80px;
     }
