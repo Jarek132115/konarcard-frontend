@@ -527,11 +527,11 @@ export default function MyProfile() {
 
       <main className="main-content-container">
         <PageHeader
-          title={"My Profile"} 
+          title={"My Profile"}
           onActivateCard={handleActivateCard}
           onShareCard={handleShareCard}
           isMobile={isMobile}
-          isSmallMobile={isSmallMobile} 
+          isSmallMobile={isSmallMobile}
         />
 
         <div className="myprofile-main-content">
@@ -586,7 +586,7 @@ export default function MyProfile() {
                 <div className="subscription-overlay-mobile">
                   <div className="subscription-message">
                     <p className="desktop-h4">Unlock Your Full Profile!</p>
-                    <p className="desktop-body">Subscribe to start your 7-day free trial and unlock all profile editing features.</p>
+                    <p className="desktop-body">Subscribe for a 7-day free trial and unlock all features.</p>
                     <button className="blue-button desktop-button" onClick={handleStartSubscription}>
                       Start Your Free Trial Now!
                     </button>
