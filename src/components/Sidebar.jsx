@@ -1,23 +1,24 @@
-import React, { useContext, useEffect } from 'react'; // Import useEffect
+import React, { useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
-import settingsIcon from '../assets/icons/Settings-Icon.svg'; // Retain if used, otherwise remove unused imports
-import profileIcon from '../assets/icons/Profile-Icon.svg'; // Retain if used
-import cardIcon from '../assets/icons/Card-Icon.svg'; // Keep if used for general card imagery, but not for nav link
-import helpIcon from '../assets/icons/Help-Icon.svg'; // Retain if used
-import logoutIcon from '../assets/icons/Logout-Icon.svg'; // Retain if used
-import subscriptionIcon from '../assets/icons/Subscription-Icon.svg'; // Keep if used for general subscription imagery
-import homeIcon from '../assets/icons/Home-Icon.svg'; // Keep if used for general home imagery
-import contactIcon from '../assets/icons/Contact-Icon.svg'; // Retain if used
+// Removed specific icons that are no longer used for sidebar links, to clean up imports
+// import settingsIcon from '../assets/icons/Settings-Icon.svg';
+// import profileIcon from '../assets/icons/Profile-Icon.svg';
+// import cardIcon from '../assets/icons/Card-Icon.svg';
+// import helpIcon from '../assets/icons/Help-Icon.svg';
+// import logoutIcon from '../assets/icons/Logout-Icon.svg';
+// import subscriptionIcon from '../assets/icons/Subscription-Icon.svg';
+// import homeIcon from '../assets/icons/Home-Icon.svg';
+// import contactIcon from '../assets/icons/Contact-Icon.svg';
 
-// Interface icons for clarity in the sidebar
+// Interface icons for clarity in the sidebar (only keep those still used for actual links)
 import homeInterface from '../assets/icons/Home-Interface.svg';
 import cardInterface from '../assets/icons/Card-Interface.svg'; // Using this for Products & Plans
 import settingsInterface from '../assets/icons/Settings-Interface.svg';
-import subscriptionInterface from '../assets/icons/Subscription-Interface.svg'; // Not directly used for nav link now
+// import subscriptionInterface from '../assets/icons/Subscription-Interface.svg'; // No longer used for a direct link
 import contactInterface from '../assets/icons/Contact-Interface.svg';
-import helpInterface from '../assets/icons/Help-Interface.svg';
+// import helpInterface from '../assets/icons/Help-Interface.svg'; // No longer used for direct link
 import logoutInterface from '../assets/icons/Logout-Interface.svg';
 
 
@@ -26,12 +27,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const { user, logout } = useContext(AuthContext);
     const location = useLocation();
 
-    // --- ADD THIS useEffect FOR DEBUGGING ---
+    // Debugging logs from previous conversation (can be removed once confirmed working)
     useEffect(() => {
         console.log("Sidebar: AuthContext user object:", user);
         console.log("Sidebar: User Name:", user?.name);
         console.log("Sidebar: User Email:", user?.email);
-    }, [user]); // Re-run when the user object changes
+    }, [user]);
 
     const handleLogout = async () => {
         await logout();
@@ -59,12 +60,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
             <div className="sidebar-content-wrapper">
                 <div className="my-account-container">
-                    {/* Assuming you want a user's avatar/profile picture here, not the logo.
-                        If user has no avatar, fall back to a default or keep LogoIcon if it's intentional. */}
                     <img src={user?.avatar || LogoIcon} alt="User" className="profile-pic" />
                     <div className="user-info">
                         <p className="email desktop-body-xs">{user?.email || 'Not logged in'}</p>
-                        <p className="name">{user?.name || ''}</p> {/* This line should display the name */}
+                        <p className="name">{user?.name || ''}</p>
                     </div>
                 </div>
 
@@ -101,10 +100,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <img src={contactInterface} alt="contact" className="icon" />
                             <p className='desktop-body-s'>Contact Us</p>
                         </Link>
-                        <Link to="/helpcentreinterface" className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
+                        {/* REMOVED: Help Centre Link */}
+                        {/* <Link to="/helpcentreinterface" className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
                             <img src={helpInterface} alt="help centre" className="icon" />
                             <p className='desktop-body-s'>Help Centre</p>
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
 
