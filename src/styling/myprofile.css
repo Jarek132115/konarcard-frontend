@@ -190,7 +190,7 @@
     height: 100%;
     background: var(--primary-bg);
     border: 10px solid black;
-    border-radius: 2.5rem;
+    border-radius: 30px;
     padding: 20px;
     text-align: center;
     box-sizing: border-box;
@@ -1073,9 +1073,9 @@
     }
 
     .mock-phone {
-        padding: 1rem;
+        padding: 20px;
         border-width: 0.375rem;
-        border-radius: 2rem;
+        border-radius: 20px;
         height: auto !important;
         /* Allow the phone screen to expand based on scrollable content */
         overflow: visible !important;
@@ -1192,9 +1192,9 @@
     }
 
     .mock-phone {
-        padding: 1rem;
+        padding: 10px;
         border-width: 0.375rem;
-        border-radius: 2rem;
+        border-radius: 10px;
     }
 
     .mock-title {
