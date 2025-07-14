@@ -1,15 +1,15 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react'; // Import useEffect
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
-import settingsIcon from '../assets/icons/Settings-Icon.svg';
-import profileIcon from '../assets/icons/Profile-Icon.svg';
+import settingsIcon from '../assets/icons/Settings-Icon.svg'; // Retain if used, otherwise remove unused imports
+import profileIcon from '../assets/icons/Profile-Icon.svg'; // Retain if used
 import cardIcon from '../assets/icons/Card-Icon.svg'; // Keep if used for general card imagery, but not for nav link
-import helpIcon from '../assets/icons/Help-Icon.svg';
-import logoutIcon from '../assets/icons/Logout-Icon.svg';
+import helpIcon from '../assets/icons/Help-Icon.svg'; // Retain if used
+import logoutIcon from '../assets/icons/Logout-Icon.svg'; // Retain if used
 import subscriptionIcon from '../assets/icons/Subscription-Icon.svg'; // Keep if used for general subscription imagery
 import homeIcon from '../assets/icons/Home-Icon.svg'; // Keep if used for general home imagery
-import contactIcon from '../assets/icons/Contact-Icon.svg';
+import contactIcon from '../assets/icons/Contact-Icon.svg'; // Retain if used
 
 // Interface icons for clarity in the sidebar
 import homeInterface from '../assets/icons/Home-Interface.svg';
@@ -25,6 +25,13 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
     const { user, logout } = useContext(AuthContext);
     const location = useLocation();
+
+    // --- ADD THIS useEffect FOR DEBUGGING ---
+    useEffect(() => {
+        console.log("Sidebar: AuthContext user object:", user);
+        console.log("Sidebar: User Name:", user?.name);
+        console.log("Sidebar: User Email:", user?.email);
+    }, [user]); // Re-run when the user object changes
 
     const handleLogout = async () => {
         await logout();
@@ -52,10 +59,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
             <div className="sidebar-content-wrapper">
                 <div className="my-account-container">
-                    <img src={LogoIcon} alt="User" className="profile-pic" />
+                    {/* Assuming you want a user's avatar/profile picture here, not the logo.
+                        If user has no avatar, fall back to a default or keep LogoIcon if it's intentional. */}
+                    <img src={user?.avatar || LogoIcon} alt="User" className="profile-pic" />
                     <div className="user-info">
                         <p className="email desktop-body-xs">{user?.email || 'Not logged in'}</p>
-                        <p className="name">{user?.name || ''}</p>
+                        <p className="name">{user?.name || ''}</p> {/* This line should display the name */}
                     </div>
                 </div>
 
@@ -68,7 +77,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <img src={homeInterface} alt="profile" className="icon" />
                             <p className='desktop-body-s'>My Profile</p>
                         </Link>
-                        {/* Removed: <Link to="/nfccards" ...>Buy A Card</Link> */}
                     </div>
 
                     <hr className="divider" />
@@ -79,12 +87,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <img src={settingsInterface} alt="account" className="icon" />
                             <p className='desktop-body-s'>My Account</p>
                         </Link>
-                        {/* NEW: Products & Plans Link */}
                         <Link to="/subscription" className={`sidebar-button ${isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
                             <img src={cardInterface} alt="products and plans" className="icon" />
                             <p className='desktop-body-s'>Products & Plans</p>
                         </Link>
-                        {/* Removed: <Link to="/subscription" ...>Subscription</Link> */}
                     </div>
 
                     <hr className="divider" />
