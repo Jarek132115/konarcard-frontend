@@ -389,22 +389,19 @@ export default function MyProfile() {
       const response = await createBusinessCard.mutateAsync(formData); // Capture the response
       toast.success("Business card saved successfully!");
 
-      // Invalidate the businessCard query to force a re-fetch of the latest data
-      queryClient.invalidateQueries(['businessCard', userId]);
-
       // Revoke any old blob URLs
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
-      // Reset local file states immediately after handling blob URLs
+      // Clear local file states immediately after handling blob URLs
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
 
-      // --- CRITICAL FIX: Re-populate Zustand state with the data from the successful save response ---
-      // This ensures the editor inputs are immediately filled with the newly saved data.
+      // --- CRITICAL FIX: Populate Zustand state with the data from the successful save response ---
+      // This ensures the editor inputs and preview are immediately filled with the newly saved data.
       if (response.data && response.data.data) {
         const fetchedCardData = response.data.data;
         updateState({
@@ -418,7 +415,6 @@ export default function MyProfile() {
           bio: fetchedCardData.bio || '',
           avatar: fetchedCardData.avatar || null,
           coverPhoto: fetchedCardData.cover_photo || null,
-          // Map existing works from URL to {file: null, preview: URL} format for editor
           workImages: (fetchedCardData.works || []).map(url => ({ file: null, preview: url })),
           services: (fetchedCardData.services || []),
           reviews: (fetchedCardData.reviews || []),
@@ -431,6 +427,10 @@ export default function MyProfile() {
         resetState();
         console.log("MyProfile: No data returned after save, resetting editor state to empty.");
       }
+
+      // Invalidate the businessCard query to force a re-fetch of the latest data eventually.
+      // This ensures future fetches get the freshest data and helps keep React Query's cache in sync.
+      queryClient.invalidateQueries(['businessCard', userId]);
 
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
