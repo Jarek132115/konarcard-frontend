@@ -958,7 +958,6 @@
         left: 0;
         right: 0;
         height: fit-content;
-        background-color: var(--primary-bg);
         padding: 0 20px;
         z-index: 100;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
