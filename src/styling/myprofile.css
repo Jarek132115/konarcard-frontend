@@ -1012,14 +1012,12 @@
     /* Subscription Overlay on mobile */
     .subscription-overlay-mobile {
         display: block;
-        margin: 20px auto;
-        padding: 0 20px;
+        padding: 0 ;
         box-sizing: border-box;
     }
 
     .subscription-overlay-mobile .subscription-message {
         width: 100%;
-        max-width: 400px;
     }
 
     .myprofile-flex-container {
