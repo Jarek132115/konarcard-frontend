@@ -1128,7 +1128,7 @@
         /* Ensure the editor itself expands */
         background: var(--primary-bg);
         overflow-y: visible !important;
-        /* Let content push parent's height */
+        margin-bottom: 40px;
     }
 }
 
