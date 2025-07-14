@@ -765,7 +765,6 @@
         width: 100%;
         max-width: 350px;
         /* Keep max-width for the phone frame */
-        /* height: auto;  Already set globally. No need to re-set here unless to override. */
         /* CRITICAL: Remove aspect-ratio from here on mobile, let content dictate height */
         aspect-ratio: unset !important;
         /* REMOVED FOR MOBILE */
@@ -797,11 +796,11 @@
         /* CRITICAL: Allows the phone to stretch based on its content length */
     }
 
-
     /* Editor Section - FIXING 0 HEIGHT ISSUE HERE */
     .myprofile-editor-wrapper {
         width: 100%;
         max-width: 100%;
+        /* Ensure it can take full width */
         min-width: unset;
         height: auto !important;
         /* CRITICAL: Ensure this expands to fit content */
