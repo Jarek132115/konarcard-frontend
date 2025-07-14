@@ -586,8 +586,8 @@ export default function MyProfile() {
                 <div className="subscription-overlay-mobile">
                   <div className="subscription-message">
                     <p className="desktop-h4">Unlock Your Full Profile!</p>
-                    <p className="desktop-h6">Subscribe to start your 7-day free trial and unlock all profile editing features.</p>
-                    <button className="blue-button" onClick={handleStartSubscription}>
+                    <p className="desktop-body">Subscribe to start your 7-day free trial and unlock all profile editing features.</p>
+                    <button className="blue-button desktop-button" onClick={handleStartSubscription}>
                       Start Your Free Trial Now!
                     </button>
                   </div>
