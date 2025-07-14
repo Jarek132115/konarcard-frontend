@@ -139,7 +139,6 @@
     /* Important for flex items */
     box-sizing: border-box;
     overflow-x: visible;
-    padding-bottom: 50px;
     /* Space at bottom for desktop */
 }
 
@@ -972,6 +971,10 @@
         overflow-y: auto;
         margin: auto;
         margin-top: 80px;
+    }
+
+    .myprofile-main-content {
+        padding-bottom: 50px;
     }
 
     .page-header {
