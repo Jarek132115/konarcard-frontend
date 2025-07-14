@@ -40,6 +40,7 @@ export default function MyProfile() {
   const [activeBlobUrls, setActiveBlobUrls] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600); // NEW STATE FOR < 600px
 
   const initialStoreState = useBusinessCardStore.getState().state;
 
@@ -76,7 +77,9 @@ export default function MyProfile() {
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
+      const currentIsSmallMobile = window.innerWidth <= 600; // Update small mobile state
       setIsMobile(currentIsMobile);
+      setIsSmallMobile(currentIsSmallMobile); // Set small mobile state
       if (!currentIsMobile && sidebarOpen) {
         setSidebarOpen(false);
       }
@@ -84,7 +87,7 @@ export default function MyProfile() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [sidebarOpen, isMobile]);
+  }, [sidebarOpen, isMobile, isSmallMobile]); // Add isSmallMobile to dependencies
 
   useEffect(() => {
     if (sidebarOpen && isMobile) {
@@ -524,10 +527,11 @@ export default function MyProfile() {
 
       <main className="main-content-container">
         <PageHeader
-          title={"My Profile"}
+          title={"My Profile"} 
           onActivateCard={handleActivateCard}
           onShareCard={handleShareCard}
-          isMobile={isMobile} 
+          isMobile={isMobile}
+          isSmallMobile={isSmallMobile} 
         />
 
         <div className="myprofile-main-content">
