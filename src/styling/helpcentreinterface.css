@@ -184,15 +184,6 @@ body.dark-mode .video-button.black-button:hover {
     /* Stack sidebar and main content vertically on mobile */
   }
 
-  .main-content-container {
-    height: calc(100% - 62px);
-    /* Subtract mobile header height */
-    margin-top: 62px;
-    /* Push content down below the fixed header */
-    padding: 15px;
-    /* Adjust padding for mobile */
-  }
-
   .help-videos-page-wrapper {
     padding: 0;
     /* Remove padding here, main-content-container handles it */

@@ -966,27 +966,16 @@
 
     .main-content-container {
         margin-left: 0;
-        /* Remove desktop margin */
         width: 100%;
-        /* Take full width */
         max-width: 100%;
-        /* Ensure no max-width restriction */
         padding: 20px;
-        /* Adjust overall padding for mobile */
         padding-top: calc(60px + 20px);
-        /* Space for fixed mobile header (60px) + desired gap (20px) */
         height: auto !important;
-        /* CRITICAL: Allow height to adjust to content dynamically */
         min-height: calc(100vh - 60px);
-        /* Ensure it takes at least the viewport height minus fixed header */
         overflow-y: auto;
-        /* Let it scroll */
         margin: 0;
-        /* Remove auto margin */
     }
 
-    /* PageHeader - Ensure it's visible on mobile and remains row layout */
-    /* Removed .myprofile-page-header-mobile specific class, now global .page-header and .page-title-mobile-shrink handle it */
     .page-header {
         display: flex !important;
         justify-content: space-between !important;
