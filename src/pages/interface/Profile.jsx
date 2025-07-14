@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader';
+import PageHeader from '../../components/PageHeader'; // Import PageHeader
 import ShareProfile from '../../components/ShareProfile';
 import { AuthContext } from '../../components/AuthContext';
 import { toast } from 'react-hot-toast';
@@ -12,13 +12,13 @@ import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 export default function Profile() {
   const { user: authUser, fetchUser, setUser } = useContext(AuthContext);
   const [updatedName, setUpdatedName] = useState('');
-  // Removed password, confirmPassword, showPassword, showConfirm states
 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleteEnabled, setDeleteEnabled] = useState(false);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000); // State for mobile responsiveness
+  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600); // State for small mobile screens
   const [showShareModal, setShowShareModal] = useState(false);
 
   const userId = authUser?._id;
@@ -35,7 +35,9 @@ export default function Profile() {
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
+      const currentIsSmallMobile = window.innerWidth <= 600; // Update small mobile state
       setIsMobile(currentIsMobile);
+      setIsSmallMobile(currentIsSmallMobile); // Set small mobile state
       if (!currentIsMobile && sidebarOpen) {
         setSidebarOpen(false);
       }
@@ -43,7 +45,7 @@ export default function Profile() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [sidebarOpen]);
+  }, [sidebarOpen]); // isMobile and isSmallMobile are set within the handler, no need to be dependencies here
 
   useEffect(() => {
     if (sidebarOpen && isMobile) {
@@ -53,23 +55,18 @@ export default function Profile() {
     }
   }, [sidebarOpen, isMobile]);
 
-  // Removed togglePassword and toggleConfirm functions
-  // Removed passwordChecks object
-
   const handleSave = async () => {
     try {
       const res = await api.put(
         '/update-profile',
         {
           name: updatedName,
-          // Removed password from payload
         }
       );
 
       if (res.data.success) {
         toast.success('Profile updated successfully!');
         fetchUser();
-        // Removed password and confirmPassword state resets
       } else {
         toast.error(res.data.error || 'Something went wrong');
       }
@@ -108,7 +105,6 @@ export default function Profile() {
     }
   };
 
-  // New function to handle password reset
   const handleResetPassword = async () => {
     if (!authUser?.email) {
       toast.error("Your email is not available to send a reset link.");
@@ -175,10 +171,14 @@ export default function Profile() {
       )}
 
       <main className="main-content-container">
+        {/* PageHeader component added here */}
         <PageHeader
-          title="My Account"
-          onActivateCard={() => console.log("Activate Card clicked on My Account page")}
-          onShareCard={handleShareCard}
+          title="My Account" // Custom title for this page
+          // Pass a dummy function for onActivateCard as it's not applicable here
+          onActivateCard={() => console.log("Activate Card button clicked on My Account page (functionality not implemented here)")}
+          onShareCard={handleShareCard} // Use existing handleShareCard
+          isMobile={isMobile} // Pass responsiveness props
+          isSmallMobile={isSmallMobile} // Pass responsiveness props
         />
 
         <div className="profile-page-wrapper">
@@ -245,7 +245,6 @@ export default function Profile() {
                 onClick={handleDelete}
                 className="black-button profile-action-button"
                 disabled={confirmDelete && !deleteEnabled}
-              // Removed inline style for background, color, cursor
               >
                 <span className="desktop-button">
                   {confirmDelete && !deleteEnabled ? `Confirm Delete in ${Math.max(0, Math.ceil((3000 - (Date.now() - (new Date().getTime() - 3000))) / 1000))}s` : 'Delete Your Account'}
