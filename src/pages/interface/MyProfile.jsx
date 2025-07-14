@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
-import { useQueryClient } from "@tanstack/react-query"; // Import useQueryClient
+import { useQueryClient } from "@tanstack/react-query";
 import {
   useFetchBusinessCard,
 } from "../../hooks/useFetchBusinessCard";
@@ -24,7 +24,7 @@ export default function MyProfile() {
   const avatarInputRef = useRef(null);
   const workImageInputRef = useRef(null);
   const createBusinessCard = useCreateBusinessCard();
-  const queryClient = useQueryClient(); // Initialize QueryClient
+  const queryClient = useQueryClient();
 
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
   const isSubscribed = authUser?.isSubscribed || false;
@@ -386,7 +386,7 @@ export default function MyProfile() {
     });
 
     try {
-      const response = await createBusinessCard.mutateAsync(formData); // Capture the response
+      const response = await createBusinessCard.mutateAsync(formData);
       toast.success("Business card saved successfully!");
 
       // Revoke any old blob URLs
@@ -430,6 +430,7 @@ export default function MyProfile() {
 
       // Invalidate the businessCard query to force a re-fetch of the latest data eventually.
       // This ensures future fetches get the freshest data and helps keep React Query's cache in sync.
+      // Although we're updating state directly now, this is still good practice for general data consistency.
       queryClient.invalidateQueries(['businessCard', userId]);
 
     } catch (error) {
@@ -702,7 +703,7 @@ export default function MyProfile() {
                                   ? state.workImages
                                   : (businessCard?.works || []).map(url => ({ preview: url })).concat(previewPlaceholders.workImages.slice(0, Math.max(0, 3 - (businessCard?.works || []).length)))
                                 )
-                            ).slice(0, 3).map((item, i) => (
+                            ).map((item, i) => (
                               <div key={i} className="mock-work-image-item-wrapper">
                                 <img
                                   src={item.preview || item}
@@ -727,7 +728,7 @@ export default function MyProfile() {
                                   ? state.services
                                   : (businessCard?.services || []).concat(previewPlaceholders.services.slice(0, Math.max(0, 3 - (businessCard?.services || []).length)))
                                 )
-                            ).slice(0, 3).map((s, i) => (
+                            ).map((s, i) => (
                               <div key={i} className="mock-service-item">
                                 <p className="mock-service-name">
                                   {
@@ -760,7 +761,7 @@ export default function MyProfile() {
                                   ? state.reviews
                                   : (businessCard?.reviews || []).concat(previewPlaceholders.reviews.slice(0, Math.max(0, 3 - (businessCard?.reviews || []).length)))
                                 )
-                            ).slice(0, 3).map((r, i) => (
+                            ).map((r, i) => (
                               <div key={i} className="mock-review-card">
                                 <div className="mock-star-rating">
                                   {Array(r.rating || 0).fill().map((_, starIdx) => (
