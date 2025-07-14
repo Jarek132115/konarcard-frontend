@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
-import PageHeader from "../../components/PageHeader"; // Keep this import
-import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore"; // Ensure previewPlaceholders is imported
+import PageHeader from "../../components/PageHeader";
+import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
   useCreateBusinessCard,
@@ -22,7 +22,7 @@ export default function MyProfile() {
   const workImageInputRef = useRef(null);
   const createBusinessCard = useCreateBusinessCard();
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
-  const isSubscribed = authUser?.isSubscribed || false; // Important for conditional logic
+  const isSubscribed = authUser?.isSubscribed || false;
   const userId = authUser?._id;
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
@@ -39,7 +39,7 @@ export default function MyProfile() {
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
   const [activeBlobUrls, setActiveBlobUrls] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000); // Correctly checks for mobile
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
   const initialStoreState = useBusinessCardStore.getState().state;
 
@@ -84,7 +84,7 @@ export default function MyProfile() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [sidebarOpen, isMobile]); // isMobile added to dependency array
+  }, [sidebarOpen, isMobile]);
 
   useEffect(() => {
     if (sidebarOpen && isMobile) {
@@ -527,7 +527,7 @@ export default function MyProfile() {
           title={authUser ? `Good Afternoon ${authUser.name}!` : "My Profile"}
           onActivateCard={handleActivateCard}
           onShareCard={handleShareCard}
-          className={isMobile ? 'myprofile-page-header-mobile' : ''} 
+          className={isMobile ? 'myprofile-page-header-mobile' : ''}
         />
 
         <div className="myprofile-main-content">
@@ -592,7 +592,7 @@ export default function MyProfile() {
 
               <div className="myprofile-flex-container">
                 {/* Mock Phone Preview Section */}
-                <div className="myprofile-content">
+                <div className={`myprofile-content ${isMobile ? 'myprofile-mock-phone-mobile-container' : ''}`}> {/* ADDED UNIQUE CLASS HERE */}
                   <div
                     className={`mock-phone ${state.pageTheme === "dark" ? "dark-mode" : ""}`}
                     style={{ fontFamily: state.font }}

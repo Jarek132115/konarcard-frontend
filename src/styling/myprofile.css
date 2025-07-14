@@ -32,10 +32,11 @@
 .app-layout {
     display: flex;
     height: 100vh;
+    /* Full viewport height on desktop */
     background-color: var(--secondary-bg);
     position: relative;
     overflow: hidden;
-    /* Desktop: prevent scroll on app-layout */
+    /* Desktop: prevent scroll on app-layout, main-content-container handles it */
 }
 
 .main-content-container {
@@ -116,6 +117,7 @@
     box-sizing: border-box;
     overflow-x: visible;
     padding-bottom: 50px;
+    /* Space at bottom for desktop */
 }
 
 .myprofile-flex-container {
@@ -156,6 +158,7 @@
     border-radius: 2.5rem;
     box-sizing: border-box;
     overflow: visible;
+    /* Allows phone notches/speaker cutouts if any */
 }
 
 .mock-phone {
@@ -184,6 +187,7 @@
     gap: 0;
     padding: 0;
     overflow-y: auto;
+    /* This handles the internal scrolling of the preview */
     padding-right: 5px;
     /* Space for scrollbar */
 }
@@ -205,7 +209,7 @@
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Image placeholders and previews */
+/* Image placeholders and previews (no changes here needed) */
 .mock-cover,
 .avatar-preview,
 .mock-work-image-item,
@@ -223,19 +227,16 @@
 .work-image-preview[src=""] {
     border: 1px dashed var(--border-color);
     background-image: url('../assets/images/background-hero.png');
-    /* Ensure paths are correct */
     background-size: cover;
 }
 
 .avatar-preview[src=""] {
     background-image: url('../assets/images/People.png');
-    /* Ensure paths are correct */
     background-size: cover;
 }
 
 .work-image-preview[src=""] {
     background-image: url('/Interface-Preview/Work-Images1.png');
-    /* Ensure paths are correct */
     background-size: cover;
 }
 
@@ -448,8 +449,10 @@
 .myprofile-editor-wrapper {
     position: relative;
     max-width: 600px;
+    /* Desktop max-width */
     width: 100%;
     min-width: 350px;
+    /* Desktop min-width */
     flex: 1;
     min-height: 0;
     display: flex;
@@ -476,11 +479,13 @@
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
+    /* Editor has its own scroll for desktop */
     -webkit-overflow-scrolling: touch;
     box-sizing: border-box;
     width: 100%;
     color: var(--text-color);
     height: 100%;
+    /* Desktop height */
     overflow-x: visible;
 }
 
@@ -819,14 +824,12 @@
 
 .subscription-overlay-mobile {
     display: none;
-    /* Hidden by default, shown in mobile media query */
     width: 100%;
     margin-bottom: 20px;
     box-sizing: border-box;
     overflow: visible;
 }
 
-/* Verification Prompt and Loading/Error States */
 .content-card-box {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     padding: 20px;
@@ -922,9 +925,9 @@
 
     .app-layout {
         height: auto;
-        /* Allow app-layout to grow vertically */
+        /* Allow app-layout to grow vertically based on content */
         overflow-y: visible;
-        /* Allow content to scroll if it overflows the entire layout */
+        /* Allow general page scroll */
         flex-direction: column;
     }
 
@@ -954,121 +957,127 @@
         padding: 20px;
         /* Adjust overall padding for mobile */
         padding-top: calc(60px + 20px);
-        /* Adjust padding-top to account for fixed mobile header (60px) + desired gap (20px) */
-        height: auto;
-        /* CRITICAL: Allow height to adjust to content */
+        /* Space for fixed mobile header (60px) + desired gap (20px) */
+        height: auto !important;
+        /* CRITICAL: Allow height to adjust to content dynamically */
         min-height: calc(100vh - 60px);
-        /* Ensure it takes at least the viewport height minus fixed header, allows scroll if content > viewport */
+        /* Ensure it takes at least the viewport height minus fixed header */
         overflow-y: auto;
         /* Let it scroll */
         margin: 0;
         /* Remove auto margin */
     }
 
-    /* PageHeader - Target specifically for mobile. It should now be pushed down by main-content-container's padding-top */
-    .page-header {
+    /* PageHeader - Target specifically for mobile using the unique class */
+    .myprofile-page-header-mobile {
         display: flex !important;
         /* Force display to flex, overriding any other rules */
-        /* Remove explicit margin-top or padding-top here as it's handled by parent main-content-container's padding-top */
-        margin-top: 0;
+        margin-top: 0 !important;
         /* Ensure no residual margin pushes it further down */
-        padding-top: 0;
+        padding-top: 0 !important;
         /* Ensure no residual padding on PageHeader itself */
-        margin-bottom: 20px;
+        margin-bottom: 20px !important;
         /* Adjusted spacing for mobile */
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color) !important;
         /* Keep the border */
-        padding-bottom: 15px;
+        padding-bottom: 15px !important;
         /* Adjusted padding below border */
-        width: 100%;
+        width: 100% !important;
         /* Ensure it takes full width within its container */
-        box-sizing: border-box;
+        box-sizing: border-box !important;
         /* Include padding and border in the element's total width and height */
     }
 
-    /* Hide the desktop overlay when on mobile */
-    .myprofile-editor-wrapper .subscription-overlay {
-        display: none;
+    /* General .page-header rules might still apply for elements inside the PageHeader component,
+       but the outer display and positioning are handled by .myprofile-page-header-mobile */
+    .page-header {
+        /* On mobile, only specific overrides for .page-header itself might be needed,
+           but generally .myprofile-page-header-mobile should handle layout */
     }
 
-    /* Show the mobile overlay */
+    /* Subscription Overlay on mobile (no changes needed here) */
     .subscription-overlay-mobile {
         display: block;
         margin: 20px auto;
-        /* Center with some top/bottom margin */
         padding: 0 20px;
-        /* Match main content padding */
         box-sizing: border-box;
     }
 
     .subscription-overlay-mobile .subscription-message {
         width: 100%;
-        /* Make message take full width of its container */
         max-width: 400px;
-        /* Limit width for better readability */
     }
 
     .myprofile-flex-container {
         flex-direction: column;
         gap: 40px;
         align-items: center;
-        /* Center items in column layout */
         height: auto;
         /* Allow height to adjust to content */
         max-width: 100%;
-        /* Take full width */
         width: 100%;
-        /* Take full width */
         padding-bottom: 0;
         margin: 0;
         box-sizing: border-box;
     }
 
-    .myprofile-content {
+    /* Mock Phone Container - target with unique class for mobile-specific height */
+    .myprofile-mock-phone-mobile-container {
         width: 100%;
         /* Take full width of its container */
         min-width: unset;
         height: auto;
-        /* Height adapts to content */
+        /* Allow height to adapt to content */
         flex-shrink: 0;
         flex-grow: 0;
         position: relative;
         aspect-ratio: unset;
-        /* Remove aspect ratio constraint for this wrapper on mobile */
+        /* Remove aspect ratio on this container (the parent of the phone frame) */
         max-height: unset;
     }
 
     .mock-phone-wrapper {
         width: 100%;
         max-width: 350px;
-        /* Keep a max-width for the phone itself */
-        aspect-ratio: 9 / 17;
-        /* Maintain phone aspect ratio */
-        height: auto;
-        /* Allow height to adapt based on aspect ratio and width */
+        /* Keep max-width for the phone frame */
+        /* CRITICAL: Remove aspect-ratio from here on mobile, let content dictate height */
+        /* aspect-ratio: 9 / 17; */
+        /* REMOVED FOR MOBILE */
+        height: fit-content;
+        /* Allow phone frame height to fit its content */
         margin-bottom: 20px;
-        /* Add margin to separate from editor */
         margin-top: 0;
-        /* Reset any unwanted top margin */
+        /* Ensure its inner content determines its height */
+        display: flex;
+        /* Make it a flex container so mock-phone can fill it */
+        flex-direction: column;
     }
 
     .mock-phone {
         padding: 1rem;
         border-width: 0.375rem;
         border-radius: 2rem;
-        height: 100%;
-        /* Fill the wrapper's height */
-        overflow: hidden;
-        /* Keep hidden on the inner phone for screen effect */
+        height: auto;
+        /* Allow the phone screen to expand based on scrollable content */
+        overflow: visible;
+        /* CRITICAL: Allow the entire phone content to render, the inner scrollable div handles scrolling */
     }
 
+    .mock-phone-scrollable-content {
+        height: auto;
+        /* Allow content to dictate height */
+        overflow-y: visible;
+        /* Let the content determine height of mock-phone */
+        /* If you still want scrollbar inside phone, use 'auto' here, but then the phone itself won't grow */
+        /* Given the goal is "height being as high as the content inside of it", we need this to be visible */
+    }
+
+    /* Editor Section (no changes needed here, it seems to work correctly) */
     .myprofile-editor-wrapper {
         width: 100%;
-        /* Take full width */
         max-width: 100%;
         min-width: unset;
         height: auto;
-        /* Height adapts to content */
         flex-shrink: 1;
         flex-grow: 1;
     }
@@ -1076,7 +1085,6 @@
     .editor-content-wrapper {
         width: 100%;
         height: auto;
-        /* Height adapts to content */
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
@@ -1085,14 +1093,13 @@
         padding-bottom: 30px;
         gap: 15px;
         height: auto;
-        /* Height adapts to content */
         background: var(--primary-bg);
         overflow-y: visible;
         /* Let parent container handle scroll */
     }
 }
 
-/* Share profile button goes full width when under 600px */
+/* Share profile button goes full width when under 600px (no changes needed) */
 @media (max-width: 599px) {
     .page-actions {
         flex-direction: column;
@@ -1109,25 +1116,22 @@
     }
 }
 
+/* Very small screens (no changes needed) */
 @media (max-width: 400px) {
     .main-content-container {
         padding: 15px;
         padding-top: calc(50px + 15px);
-        /* Adjusted for smaller header + gap */
     }
 
     .myprofile-mobile-header {
         height: 50px;
-        /* Slightly smaller header for very small screens */
         padding: 0 15px;
     }
 
     .myprofile-logo {
         height: 25px;
-        /* Adjust logo size for smaller header */
     }
 
-    /* Adjust mobile overlay padding for very small screens */
     .subscription-overlay-mobile {
         padding: 0 15px;
     }
