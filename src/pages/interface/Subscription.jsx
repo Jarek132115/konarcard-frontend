@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader';
+import PageHeader from '../../components/PageHeader'; // Import PageHeader
 import ShareProfile from '../../components/ShareProfile';
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
@@ -30,7 +30,8 @@ export default function Subscription() {
   const [isCancelling, setIsCancelling] = useState(false);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000); // State for mobile responsiveness
+  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600); // State for small mobile screens
   const [showShareModal, setShowShareModal] = useState(false);
 
   const userId = authUser?._id;
@@ -78,7 +79,9 @@ export default function Subscription() {
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
+      const currentIsSmallMobile = window.innerWidth <= 600; // Added for isSmallMobile
       setIsMobile(currentIsMobile);
+      setIsSmallMobile(currentIsSmallMobile); // Set small mobile state
       if (!currentIsMobile && sidebarOpen) {
         setSidebarOpen(false);
       }
@@ -240,10 +243,13 @@ export default function Subscription() {
       )}
 
       <main className="main-content-container">
+        {/* PageHeader component added here */}
         <PageHeader
-          title="Products & Plans"
-          onActivateCard={() => console.log("Activate Card clicked on Products & Plans page")}
-          onShareCard={handleShareCard}
+          title="Products & Plans" // Custom title for this page
+          onActivateCard={() => console.log("Activate Card clicked on Products & Plans page (functionality not implemented here)")}
+          onShareCard={handleShareCard} // Use existing handleShareCard
+          isMobile={isMobile} // Pass responsiveness props
+          isSmallMobile={isSmallMobile} // Pass responsiveness props
         />
 
         {/* Main wrapper for the combined content, similar to other pages */}
