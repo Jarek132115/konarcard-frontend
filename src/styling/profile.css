@@ -12,7 +12,7 @@
 /* The actual card box that holds the form */
 .profile-settings-card {
     background: #ffffff;
-    padding: 30px;
+    padding: 20px;
     /* Internal padding */
     border-radius: 20px;
     /* 20px border as requested */
@@ -273,7 +273,7 @@ body.dark-mode .profile-reset-password-inline-btn:hover {
     }
 
     .profile-settings-card {
-        padding: 25px;
+        padding: 20px;
         border-radius: 12px;
         gap: 15px;
     }
