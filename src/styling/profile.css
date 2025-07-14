@@ -179,8 +179,8 @@
 /* Action buttons group (Save and Delete) */
 .profile-action-buttons-group {
     display: flex;
-    flex-direction: row;
-    /* DEFAULT TO ROW for Desktop and Tablet */
+    flex-direction: column;
+    /* ALWAYS COLUMN (STACKED) */
     gap: 10px;
     /* Space between buttons */
     width: 100%;
@@ -191,13 +191,9 @@
 /* Removed specific styling from profile-action-button to let black-button/blue-button define it */
 .profile-action-button {
     width: 100%;
-    /* Full width for buttons within the flex container */
+    /* Full width for buttons */
     cursor: pointer;
-    flex-grow: 1;
-    /* Allow buttons to grow to fill space evenly in a row */
-    flex-basis: 0;
-    /* Base size before growing, allowing them to shrink */
-    /* Add specific padding/font size if not already defined by blue-button/black-button */
+    /* No flex-grow, flex-basis as they are not relevant in column layout for equal width */
 }
 
 
@@ -290,6 +286,8 @@ body.dark-mode .profile-reset-password-inline-btn:hover {
         white-space: nowrap;
         /* Prevent text wrapping */
     }
+
+    /* Action buttons group (Save and Delete) - No change needed here, it inherits default column layout */
 }
 
 
@@ -339,13 +337,5 @@ body.dark-mode .profile-reset-password-inline-btn:hover {
 
     /* The .profile-reset-password-inline-btn rules from @media(max-width: 1000px) still apply here */
 
-    /* --- FIXES FOR ACTION BUTTONS (DELETE/SAVE) LAYOUT --- */
-    .profile-action-buttons-group {
-        flex-direction: column;
-        /* Stack buttons vertically on small mobile */
-        gap: 10px;
-        /* Space between stacked buttons */
-    }
-
-    /* --- END FIXES FOR ACTION BUTTONS --- */
+    /* The .profile-action-buttons-group already defaults to column, so no override here. */
 }
