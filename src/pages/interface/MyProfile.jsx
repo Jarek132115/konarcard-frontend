@@ -28,6 +28,7 @@ export default function MyProfile() {
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
+  // businessCard contains the *saved* data fetched from the backend
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
@@ -122,6 +123,7 @@ export default function MyProfile() {
       setActiveBlobUrls([]);
 
       if (isSubscribed && businessCard) {
+        // For subscribed users, populate editor with SAVED data
         updateState({
           businessName: businessCard.business_card_name || '',
           pageTheme: businessCard.page_theme || 'light',
@@ -141,6 +143,8 @@ export default function MyProfile() {
         });
         console.log("MyProfile: Populated editor state with fetched business card data for subscribed user.");
       } else {
+        // For unsubscribed users, or subscribed users with no saved card yet,
+        // the editor fields should start empty.
         resetState();
         console.log("MyProfile: User not subscribed or no saved business card found. Editor state reset to empty.");
       }
@@ -464,66 +468,28 @@ export default function MyProfile() {
     return !imageState;
   };
 
-  // ********************************************************************************
-  // REVISED HELPER FUNCTIONS FOR PREVIEW SECTION CONTENT
-  // These will now handle the live preview logic correctly.
-  // ********************************************************************************
-
-  // Helper to get preview text for mock phone display
-  const getPreviewText = (fieldFromState, fieldFromBusinessCard, placeholderText) => {
-    // If NOT subscribed, ALWAYS show the specific placeholder text for that field.
-    if (!isSubscribed) {
-      return placeholderText;
-    }
-    // If subscribed, prioritize current editor state (for live changes),
-    // then fetched business card value (saved data), then empty string.
-    return fieldFromState || fieldFromBusinessCard || '';
-  };
-
-  // Helper to get preview image for mock phone display
-  const getPreviewImageSrc = (imageFromState, imageFromBusinessCard, placeholderPath) => {
-    // If NOT subscribed, ALWAYS show the specific placeholder image.
-    if (!isSubscribed) {
-      return placeholderPath;
-    }
-    // If subscribed, prioritize current editor state (for live changes/new blobs),
-    // then fetched business card image (saved data), then empty string.
-    return imageFromState || imageFromBusinessCard || '';
-  };
-
-  // Helper to get the list of work images, services, or reviews for the preview
-  // based on subscription status and live edits.
-  const getPreviewList = (listFromState, listFromBusinessCard, placeholderList) => {
-    if (!isSubscribed) {
-      return placeholderList; // Always return placeholders if unsubscribed
-    }
-    // If subscribed, prioritize live editor changes. If editor list is empty,
-    // then use saved data. If both are empty, return an empty array.
-    // This makes the preview show live edits, and only after saving/resetting
-    // would it fall back to saved data.
-    return (listFromState && listFromState.length > 0) ? listFromState : (listFromBusinessCard || []);
-  };
 
   // Console logs for debugging the preview theme and font
   useEffect(() => {
-    console.log("--- Preview Debug Info ---");
+    console.log("--- Preview Debug Info (Render) ---");
     console.log("isSubscribed:", isSubscribed);
     console.log("businessCard (saved data):", businessCard);
     console.log("state (live editor data):", state);
     console.log("previewPlaceholders:", previewPlaceholders);
 
-    const currentTheme = isSubscribed
-      ? (state.pageTheme || businessCard?.page_theme || 'light') // If subscribed, state -> saved -> default
-      : previewPlaceholders.pageTheme; // If unsubscribed, placeholder
+    // This determines the actual theme/font being used for the mock phone.
+    const effectiveTheme = isSubscribed
+      ? (state.pageTheme || businessCard?.page_theme || previewPlaceholders.pageTheme)
+      : previewPlaceholders.pageTheme;
 
-    const currentFont = isSubscribed
-      ? (state.font || businessCard?.style || 'Inter') // If subscribed, state -> saved -> default
-      : previewPlaceholders.font; // If unsubscribed, placeholder
+    const effectiveFont = isSubscribed
+      ? (state.font || businessCard?.style || previewPlaceholders.font)
+      : previewPlaceholders.font;
 
-    console.log("Preview Calculated Theme:", currentTheme);
-    console.log("Preview Calculated Font:", currentFont);
-    console.log("------------------------");
-  }, [isSubscribed, businessCard, state, previewPlaceholders]);
+    console.log("Preview Effective Theme:", effectiveTheme);
+    console.log("Preview Effective Font:", effectiveFont);
+    console.log("-----------------------------------");
+  }, [isSubscribed, businessCard, state.pageTheme, state.font, previewPlaceholders]);
 
 
   return (
@@ -621,27 +587,54 @@ export default function MyProfile() {
                 {/* Mock Phone Preview Section */}
                 <div className={`myprofile-content ${isMobile ? 'myprofile-mock-phone-mobile-container' : ''}`}>
                   <div
-                    className={`mock-phone ${isSubscribed
-                        ? (state.pageTheme === "dark" ? "dark-mode" : "") // If subscribed, use live state
-                        : (previewPlaceholders.pageTheme === "dark" ? "dark-mode" : "") // If unsubscribed, use placeholder
+                    className={`mock-phone ${
+                      // Determine theme for mock-phone
+                      // If unsubscribed, always use placeholder theme
+                      // If subscribed, use live state theme, fallback to saved theme, then to placeholder theme
+                      !isSubscribed
+                        ? (previewPlaceholders.pageTheme === "dark" ? "dark-mode" : "")
+                        : ((state.pageTheme || businessCard?.page_theme || previewPlaceholders.pageTheme) === "dark" ? "dark-mode" : "")
                       }`}
                     style={{
-                      fontFamily: isSubscribed
-                        ? (state.font || businessCard?.style || previewPlaceholders.font) // Subscribed: live, then saved, then placeholder fallback
-                        : previewPlaceholders.font // Unsubscribed: always placeholder font
+                      fontFamily: !isSubscribed
+                        ? previewPlaceholders.font // If unsubscribed, always use placeholder font
+                        : (state.font || businessCard?.style || previewPlaceholders.font) // Subscribed: live, then saved, then placeholder
                     }}
                   >
                     <div className="mock-phone-scrollable-content">
                       {/* Cover Photo */}
                       <img
-                        src={getPreviewImageSrc(state.coverPhoto, businessCard?.cover_photo, previewPlaceholders.coverPhoto)}
+                        src={
+                          // If unsubscribed, use placeholder
+                          // If subscribed: live state OR saved data OR placeholder
+                          !isSubscribed
+                            ? previewPlaceholders.coverPhoto
+                            : (state.coverPhoto || businessCard?.cover_photo || previewPlaceholders.coverPhoto)
+                        }
                         alt="Cover"
                         className="mock-cover"
                       />
 
-                      {/* Main and Sub Heading */}
-                      <h2 className="mock-title">{getPreviewText(state.mainHeading, businessCard?.main_heading, previewPlaceholders.mainHeading)}</h2>
-                      <p className="mock-subtitle">{getPreviewText(state.subHeading, businessCard?.sub_heading, previewPlaceholders.subHeading)}</p>
+                      {/* Main Heading */}
+                      <h2 className="mock-title">
+                        {
+                          // If unsubscribed, use placeholder
+                          // If subscribed: live state OR saved data OR placeholder
+                          !isSubscribed
+                            ? previewPlaceholders.mainHeading
+                            : (state.mainHeading || businessCard?.main_heading || previewPlaceholders.mainHeading)
+                        }
+                      </h2>
+                      {/* Sub Heading */}
+                      <p className="mock-subtitle">
+                        {
+                          // If unsubscribed, use placeholder
+                          // If subscribed: live state OR saved data OR placeholder
+                          !isSubscribed
+                            ? previewPlaceholders.subHeading
+                            : (state.subHeading || businessCard?.sub_heading || previewPlaceholders.subHeading)
+                        }
+                      </p>
                       <button
                         type="button"
                         className="mock-button"
@@ -650,40 +643,82 @@ export default function MyProfile() {
                       </button>
 
                       {/* About Me Section - Always render if unsubscribed (for placeholders)
-                                                or if subscribed and has any data (live OR saved) */}
-                      {!isSubscribed || (isSubscribed && (state.full_name || state.job_title || state.bio || state.avatar ||
-                        businessCard?.full_name || businessCard?.job_title || businessCard?.bio || businessCard?.avatar)) ? (
+                                                or if subscribed and has any data (live OR saved OR placeholder) */}
+                      {!isSubscribed || (isSubscribed && (
+                        state.full_name || state.job_title || state.bio || state.avatar ||
+                        businessCard?.full_name || businessCard?.job_title || businessCard?.bio || businessCard?.avatar ||
+                        previewPlaceholders.full_name || previewPlaceholders.job_title || previewPlaceholders.bio || previewPlaceholders.avatar
+                      )) ? (
                         <>
                           <p className="mock-section-title">About me</p>
                           <div className="mock-about-container">
                             <div className="mock-about-content-group">
                               <div className="mock-about-header-group">
                                 <img
-                                  src={getPreviewImageSrc(state.avatar, businessCard?.avatar, previewPlaceholders.avatar)}
+                                  src={
+                                    // If unsubscribed, use placeholder
+                                    // If subscribed: live state OR saved data OR placeholder
+                                    !isSubscribed
+                                      ? previewPlaceholders.avatar
+                                      : (state.avatar || businessCard?.avatar || previewPlaceholders.avatar)
+                                  }
                                   alt="Avatar"
                                   className="mock-avatar"
                                 />
                                 <div>
-                                  <p className="mock-profile-name">{getPreviewText(state.full_name, businessCard?.full_name, previewPlaceholders.full_name)}</p>
-                                  <p className="mock-profile-role">{getPreviewText(state.job_title, businessCard?.job_title, previewPlaceholders.job_title)}</p>
+                                  <p className="mock-profile-name">
+                                    {
+                                      // If unsubscribed, use placeholder
+                                      // If subscribed: live state OR saved data OR placeholder
+                                      !isSubscribed
+                                        ? previewPlaceholders.full_name
+                                        : (state.full_name || businessCard?.full_name || previewPlaceholders.full_name)
+                                    }
+                                  </p>
+                                  <p className="mock-profile-role">
+                                    {
+                                      // If unsubscribed, use placeholder
+                                      // If subscribed: live state OR saved data OR placeholder
+                                      !isSubscribed
+                                        ? previewPlaceholders.job_title
+                                        : (state.job_title || businessCard?.job_title || previewPlaceholders.job_title)
+                                    }
+                                  </p>
                                 </div>
                               </div>
-                              <p className="mock-bio-text">{getPreviewText(state.bio, businessCard?.bio, previewPlaceholders.bio)}</p>
+                              <p className="mock-bio-text">
+                                {
+                                  // If unsubscribed, use placeholder
+                                  // If subscribed: live state OR saved data OR placeholder
+                                  !isSubscribed
+                                    ? previewPlaceholders.bio
+                                    : (state.bio || businessCard?.bio || previewPlaceholders.bio)
+                                }
+                              </p>
                             </div>
                           </div>
                         </>
                       ) : null}
 
                       {/* My Work Section - Always render if unsubscribed (for placeholders)
-                                                or if subscribed and has any data (live OR saved) */}
-                      {!isSubscribed || (isSubscribed && (state.workImages.length > 0 || (businessCard?.works && businessCard.works.length > 0))) ? (
+                                                or if subscribed and has any data (live OR saved OR placeholder) */}
+                      {!isSubscribed || (isSubscribed && (state.workImages.length > 0 || (businessCard?.works && businessCard.works.length > 0) || previewPlaceholders.workImages.length > 0)) ? (
                         <>
                           <p className="mock-section-title">My Work</p>
                           <div className="mock-work-gallery">
-                            {getPreviewList(state.workImages, businessCard?.works, previewPlaceholders.workImages).map((item, i) => (
+                            {(
+                              // If unsubscribed, use placeholder images
+                              !isSubscribed
+                                ? previewPlaceholders.workImages
+                                // If subscribed, use live edits, then saved, then placeholder
+                                : (state.workImages.length > 0
+                                  ? state.workImages
+                                  : (businessCard?.works || []).map(url => ({ preview: url })).concat(previewPlaceholders.workImages.slice(0, Math.max(0, 3 - (businessCard?.works || []).length)))
+                                )
+                            ).slice(0, 3).map((item, i) => ( // Show max 3 work images for preview
                               <div key={i} className="mock-work-image-item-wrapper">
                                 <img
-                                  src={item.preview || item} // item can be a {file, preview} object or a direct URL
+                                  src={item.preview || item} // item can be {preview: url} or direct url string
                                   alt={`work-${i}`}
                                   className="mock-work-image-item"
                                 />
@@ -695,16 +730,36 @@ export default function MyProfile() {
 
 
                       {/* My Services Section - Always render if unsubscribed (for placeholders)
-                                                or if subscribed and has any data (live OR saved) */}
-                      {!isSubscribed || (isSubscribed && (state.services.length > 0 || (businessCard?.services && businessCard.services.length > 0))) ? (
+                                                or if subscribed and has any data (live OR saved OR placeholder) */}
+                      {!isSubscribed || (isSubscribed && (state.services.length > 0 || (businessCard?.services && businessCard.services.length > 0) || previewPlaceholders.services.length > 0)) ? (
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="mock-services-list">
-                            {getPreviewList(state.services, businessCard?.services, previewPlaceholders.services).map((s, i) => (
+                            {(
+                              // If unsubscribed, use placeholder services
+                              !isSubscribed
+                                ? previewPlaceholders.services
+                                // If subscribed, use live edits, then saved, then placeholder
+                                : (state.services.length > 0
+                                  ? state.services
+                                  : (businessCard?.services || []).concat(previewPlaceholders.services.slice(0, Math.max(0, 3 - (businessCard?.services || []).length)))
+                                )
+                            ).slice(0, 3).map((s, i) => ( // Show max 3 services for preview
                               <div key={i} className="mock-service-item">
-                                {/* For live updates, s.name/s.price come from state. For placeholders, from placeholderList */}
-                                <p className="mock-service-name">{getPreviewText(s.name, null, s.name)}</p>
-                                <span className="mock-service-price">{getPreviewText(s.price, null, s.price)}</span>
+                                <p className="mock-service-name">
+                                  {
+                                    !isSubscribed
+                                      ? s.name // For placeholder, s.name is already the placeholder text
+                                      : (s.name || '')
+                                  }
+                                </p>
+                                <span className="mock-service-price">
+                                  {
+                                    !isSubscribed
+                                      ? s.price // For placeholder, s.price is already the placeholder text
+                                      : (s.price || '')
+                                  }
+                                </span>
                               </div>
                             ))}
                           </div>
@@ -712,12 +767,21 @@ export default function MyProfile() {
                       ) : null}
 
                       {/* Reviews Section - Always render if unsubscribed (for placeholders)
-                                                or if subscribed and has any data (live OR saved) */}
-                      {!isSubscribed || (isSubscribed && (state.reviews.length > 0 || (businessCard?.reviews && businessCard.reviews.length > 0))) ? (
+                                                or if subscribed and has any data (live OR saved OR placeholder) */}
+                      {!isSubscribed || (isSubscribed && (state.reviews.length > 0 || (businessCard?.reviews && businessCard.reviews.length > 0) || previewPlaceholders.reviews.length > 0)) ? (
                         <>
                           <p className="mock-section-title">Reviews</p>
                           <div className="mock-reviews-list">
-                            {getPreviewList(state.reviews, businessCard?.reviews, previewPlaceholders.reviews).map((r, i) => (
+                            {(
+                              // If unsubscribed, use placeholder reviews
+                              !isSubscribed
+                                ? previewPlaceholders.reviews
+                                // If subscribed, use live edits, then saved, then placeholder
+                                : (state.reviews.length > 0
+                                  ? state.reviews
+                                  : (businessCard?.reviews || []).concat(previewPlaceholders.reviews.slice(0, Math.max(0, 3 - (businessCard?.reviews || []).length)))
+                                )
+                            ).slice(0, 3).map((r, i) => ( // Show max 3 reviews for preview
                               <div key={i} className="mock-review-card">
                                 <div className="mock-star-rating">
                                   {Array(r.rating || 0).fill().map((_, starIdx) => (
@@ -727,9 +791,19 @@ export default function MyProfile() {
                                     <span key={`empty-${starIdx}`} className="empty-star">★</span>
                                   ))}
                                 </div>
-                                {/* For live updates, r.text/r.name come from state. For placeholders, from placeholderList */}
-                                <p className="mock-review-text">"{getPreviewText(r.text, null, r.text)}"</p>
-                                <p className="mock-reviewer-name">{getPreviewText(r.name, null, r.name)}</p>
+                                <p className="mock-review-text">
+                                  {`"${!isSubscribed
+                                      ? r.text // For placeholder, r.text is already the placeholder text
+                                      : (r.text || '')
+                                    }"`}
+                                </p>
+                                <p className="mock-reviewer-name">
+                                  {
+                                    !isSubscribed
+                                      ? r.name // For placeholder, r.name is already the placeholder text
+                                      : (r.name || '')
+                                  }
+                                </p>
                               </div>
                             ))}
                           </div>
@@ -1096,5 +1170,4 @@ export default function MyProfile() {
       />
     </div>
   );
-  
 }
