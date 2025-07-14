@@ -280,25 +280,17 @@
 @media (max-width: 1000px) {
 
     .sidebar {
-        /* Mobile specific overrides */
         display: flex;
-        /* Make it visible on mobile */
         transform: translateX(-100%);
-        /* Start off-screen for slide-in effect */
         visibility: hidden;
-        /* Hidden until 'open' class is applied */
-
         position: fixed;
-        /* Keep fixed for mobile slide-out */
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
         box-shadow: none;
         z-index: 1003;
-        /* Higher z-index for mobile sidebar to cover content */
         overflow-y: auto;
-        background-color: white;
         padding: 0;
         transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
     }
