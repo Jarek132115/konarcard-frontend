@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-// Ensure previewPlaceholders is imported correctly here
 import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
@@ -28,7 +27,6 @@ export default function MyProfile() {
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
-  // businessCard contains the *saved* data fetched from the backend
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
@@ -113,8 +111,6 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-
-  // --- MODIFIED EFFECT FOR INITIAL CARD DATA LOADING AND EDITOR STATE MANAGEMENT ---
   useEffect(() => {
     if (!isCardLoading && authUser && !hasLoadedInitialCardData) {
       setHasLoadedInitialCardData(true);
@@ -123,7 +119,6 @@ export default function MyProfile() {
       setActiveBlobUrls([]);
 
       if (isSubscribed && businessCard) {
-        // For subscribed users, populate editor with SAVED data
         updateState({
           businessName: businessCard.business_card_name || '',
           pageTheme: businessCard.page_theme || 'light',
@@ -143,8 +138,6 @@ export default function MyProfile() {
         });
         console.log("MyProfile: Populated editor state with fetched business card data for subscribed user.");
       } else {
-        // For unsubscribed users, or subscribed users with no saved card yet,
-        // the editor fields should start empty.
         resetState();
         console.log("MyProfile: User not subscribed or no saved business card found. Editor state reset to empty.");
       }
@@ -156,7 +149,6 @@ export default function MyProfile() {
       setIsAvatarRemoved(false);
     }
   }, [businessCard, isCardLoading, authUser, isSubscribed, updateState, resetState, activeBlobUrls, hasLoadedInitialCardData]);
-
 
   useEffect(() => {
     return () => {
@@ -453,23 +445,18 @@ export default function MyProfile() {
     username: userUsername || '',
   };
 
-  // Helper to get value for editor text inputs (always based on current `state` for editing)
   const getEditorValue = (fieldValue) => {
     return fieldValue || '';
   };
 
-  // Helper to get image src for editor image previews (based on current `state` for editing)
   const getEditorImageSrc = (imageState) => {
     return imageState || '';
   };
 
-  // Helper to determine if an image upload area should show "Add Image" text
   const showAddImageText = (imageState) => {
     return !imageState;
   };
 
-
-  // Console logs for debugging the preview theme and font
   useEffect(() => {
     console.log("--- Preview Debug Info (Render) ---");
     console.log("isSubscribed:", isSubscribed);
@@ -477,7 +464,6 @@ export default function MyProfile() {
     console.log("state (live editor data):", state);
     console.log("previewPlaceholders:", previewPlaceholders);
 
-    // This determines the actual theme/font being used for the mock phone.
     const effectiveTheme = isSubscribed
       ? (state.pageTheme || businessCard?.page_theme || previewPlaceholders.pageTheme)
       : previewPlaceholders.pageTheme;
@@ -524,13 +510,6 @@ export default function MyProfile() {
         />
 
         <div className="myprofile-main-content">
-          {/* REMOVED LOADING RECTANGLE */}
-          {/* {(authLoading || isCardLoading) && (
-                        <div className="content-card-box loading-state">
-                            Loading profile data...
-                        </div>
-                    )} */}
-
           {!authLoading && !authUser && (
             <div className="content-card-box error-state">
               <p>User not loaded. Please ensure you are logged in.</p>
@@ -571,7 +550,6 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {/* CONDITIONAL RENDERING FOR MOBILE SUBSCRIPTION OVERLAY */}
               {!isSubscribed && isMobile && (
                 <div className="subscription-overlay-mobile">
                   <div className="subscription-message">
@@ -585,30 +563,21 @@ export default function MyProfile() {
               )}
 
               <div className="myprofile-flex-container">
-                {/* Mock Phone Preview Section */}
                 <div className={`myprofile-content ${isMobile ? 'myprofile-mock-phone-mobile-container' : ''}`}>
                   <div
-                    className={`mock-phone ${
-                      // Determine theme for mock-phone
-                      // If unsubscribed, always use placeholder theme
-                      // If subscribed, use live state theme, fallback to saved theme, then to placeholder theme
-                      // The logic here is now fully correct based on the requirement
-                      (isSubscribed && (state.pageTheme === "dark" || (state.pageTheme === "" && businessCard?.page_theme === "dark"))) ||
+                    className={`mock-phone ${(isSubscribed && (state.pageTheme === "dark" || (state.pageTheme === "" && businessCard?.page_theme === "dark"))) ||
                         (!isSubscribed && previewPlaceholders.pageTheme === "dark")
                         ? "dark-mode" : ""
                       }`}
                     style={{
                       fontFamily: !isSubscribed
-                        ? previewPlaceholders.font // If unsubscribed, always use placeholder font
-                        : (state.font || businessCard?.style || previewPlaceholders.font) // Subscribed: live, then saved, then placeholder
+                        ? previewPlaceholders.font
+                        : (state.font || businessCard?.style || previewPlaceholders.font)
                     }}
                   >
                     <div className="mock-phone-scrollable-content">
-                      {/* Cover Photo */}
                       <img
                         src={
-                          // If unsubscribed, use placeholder
-                          // If subscribed: live state OR saved data OR placeholder
                           !isSubscribed
                             ? previewPlaceholders.coverPhoto
                             : (state.coverPhoto || businessCard?.cover_photo || previewPlaceholders.coverPhoto)
@@ -617,21 +586,15 @@ export default function MyProfile() {
                         className="mock-cover"
                       />
 
-                      {/* Main Heading */}
                       <h2 className="mock-title">
                         {
-                          // If unsubscribed, use placeholder
-                          // If subscribed: live state OR saved data OR placeholder
                           !isSubscribed
                             ? previewPlaceholders.mainHeading
                             : (state.mainHeading || businessCard?.main_heading || previewPlaceholders.mainHeading)
                         }
                       </h2>
-                      {/* Sub Heading */}
                       <p className="mock-subtitle">
                         {
-                          // If unsubscribed, use placeholder
-                          // If subscribed: live state OR saved data OR placeholder
                           !isSubscribed
                             ? previewPlaceholders.subHeading
                             : (state.subHeading || businessCard?.sub_heading || previewPlaceholders.subHeading)
@@ -644,8 +607,6 @@ export default function MyProfile() {
                         Exchange Contact
                       </button>
 
-                      {/* About Me Section - Always render if unsubscribed (for placeholders)
-                                                or if subscribed and has any data (live OR saved OR placeholder) */}
                       {!isSubscribed || (isSubscribed && (
                         state.full_name || state.job_title || state.bio || state.avatar ||
                         businessCard?.full_name || businessCard?.job_title || businessCard?.bio || businessCard?.avatar ||
@@ -658,8 +619,6 @@ export default function MyProfile() {
                               <div className="mock-about-header-group">
                                 <img
                                   src={
-                                    // If unsubscribed, use placeholder
-                                    // If subscribed: live state OR saved data OR placeholder
                                     !isSubscribed
                                       ? previewPlaceholders.avatar
                                       : (state.avatar || businessCard?.avatar || previewPlaceholders.avatar)
@@ -670,8 +629,6 @@ export default function MyProfile() {
                                 <div>
                                   <p className="mock-profile-name">
                                     {
-                                      // If unsubscribed, use placeholder
-                                      // If subscribed: live state OR saved data OR placeholder
                                       !isSubscribed
                                         ? previewPlaceholders.full_name
                                         : (state.full_name || businessCard?.full_name || previewPlaceholders.full_name)
@@ -679,8 +636,6 @@ export default function MyProfile() {
                                   </p>
                                   <p className="mock-profile-role">
                                     {
-                                      // If unsubscribed, use placeholder
-                                      // If subscribed: live state OR saved data OR placeholder
                                       !isSubscribed
                                         ? previewPlaceholders.job_title
                                         : (state.job_title || businessCard?.job_title || previewPlaceholders.job_title)
@@ -690,8 +645,6 @@ export default function MyProfile() {
                               </div>
                               <p className="mock-bio-text">
                                 {
-                                  // If unsubscribed, use placeholder
-                                  // If subscribed: live state OR saved data OR placeholder
                                   !isSubscribed
                                     ? previewPlaceholders.bio
                                     : (state.bio || businessCard?.bio || previewPlaceholders.bio)
@@ -702,25 +655,21 @@ export default function MyProfile() {
                         </>
                       ) : null}
 
-                      {/* My Work Section - Always render if unsubscribed (for placeholders)
-                                                or if subscribed and has any data (live OR saved OR placeholder) */}
                       {!isSubscribed || (isSubscribed && (state.workImages.length > 0 || (businessCard?.works && businessCard.works.length > 0) || previewPlaceholders.workImages.length > 0)) ? (
                         <>
                           <p className="mock-section-title">My Work</p>
                           <div className="mock-work-gallery">
                             {(
-                              // If unsubscribed, use placeholder images
                               !isSubscribed
                                 ? previewPlaceholders.workImages
-                                // If subscribed, use live edits, then saved, then placeholder
                                 : (state.workImages.length > 0
                                   ? state.workImages
                                   : (businessCard?.works || []).map(url => ({ preview: url })).concat(previewPlaceholders.workImages.slice(0, Math.max(0, 3 - (businessCard?.works || []).length)))
                                 )
-                            ).slice(0, 3).map((item, i) => ( // Show max 3 work images for preview
+                            ).slice(0, 3).map((item, i) => (
                               <div key={i} className="mock-work-image-item-wrapper">
                                 <img
-                                  src={item.preview || item} // item can be {preview: url} or direct url string
+                                  src={item.preview || item}
                                   alt={`work-${i}`}
                                   className="mock-work-image-item"
                                 />
@@ -731,34 +680,30 @@ export default function MyProfile() {
                       ) : null}
 
 
-                      {/* My Services Section - Always render if unsubscribed (for placeholders)
-                                                or if subscribed and has any data (live OR saved OR placeholder) */}
                       {!isSubscribed || (isSubscribed && (state.services.length > 0 || (businessCard?.services && businessCard.services.length > 0) || previewPlaceholders.services.length > 0)) ? (
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="mock-services-list">
                             {(
-                              // If unsubscribed, use placeholder services
                               !isSubscribed
                                 ? previewPlaceholders.services
-                                // If subscribed, use live edits, then saved, then placeholder
                                 : (state.services.length > 0
                                   ? state.services
                                   : (businessCard?.services || []).concat(previewPlaceholders.services.slice(0, Math.max(0, 3 - (businessCard?.services || []).length)))
                                 )
-                            ).slice(0, 3).map((s, i) => ( // Show max 3 services for preview
+                            ).slice(0, 3).map((s, i) => (
                               <div key={i} className="mock-service-item">
                                 <p className="mock-service-name">
                                   {
                                     !isSubscribed
-                                      ? s.name // For placeholder, s.name is already the placeholder text
+                                      ? s.name
                                       : (s.name || '')
                                   }
                                 </p>
                                 <span className="mock-service-price">
                                   {
                                     !isSubscribed
-                                      ? s.price // For placeholder, s.price is already the placeholder text
+                                      ? s.price
                                       : (s.price || '')
                                   }
                                 </span>
@@ -768,22 +713,18 @@ export default function MyProfile() {
                         </>
                       ) : null}
 
-                      {/* Reviews Section - Always render if unsubscribed (for placeholders)
-                                                or if subscribed and has any data (live OR saved OR placeholder) */}
                       {!isSubscribed || (isSubscribed && (state.reviews.length > 0 || (businessCard?.reviews && businessCard.reviews.length > 0) || previewPlaceholders.reviews.length > 0)) ? (
                         <>
                           <p className="mock-section-title">Reviews</p>
                           <div className="mock-reviews-list">
                             {(
-                              // If unsubscribed, use placeholder reviews
                               !isSubscribed
                                 ? previewPlaceholders.reviews
-                                // If subscribed, use live edits, then saved, then placeholder
                                 : (state.reviews.length > 0
                                   ? state.reviews
                                   : (businessCard?.reviews || []).concat(previewPlaceholders.reviews.slice(0, Math.max(0, 3 - (businessCard?.reviews || []).length)))
                                 )
-                            ).slice(0, 3).map((r, i) => ( // Show max 3 reviews for preview
+                            ).slice(0, 3).map((r, i) => (
                               <div key={i} className="mock-review-card">
                                 <div className="mock-star-rating">
                                   {Array(r.rating || 0).fill().map((_, starIdx) => (
@@ -795,14 +736,14 @@ export default function MyProfile() {
                                 </div>
                                 <p className="mock-review-text">
                                   {`"${!isSubscribed
-                                      ? r.text // For placeholder, r.text is already the placeholder text
+                                      ? r.text
                                       : (r.text || '')
                                     }"`}
                                 </p>
                                 <p className="mock-reviewer-name">
                                   {
                                     !isSubscribed
-                                      ? r.name // For placeholder, r.name is already the placeholder text
+                                      ? r.name
                                       : (r.name || '')
                                   }
                                 </p>
@@ -814,11 +755,10 @@ export default function MyProfile() {
 
                     </div>
                   </div>
-                </div> {/* Closes myprofile-content */}
+                </div>
 
-                {/* Editor Section */}
                 <div className="myprofile-editor-wrapper">
-                  {!isSubscribed && !isMobile && ( // Only show desktop overlay if not subscribed AND NOT mobile
+                  {!isSubscribed && !isMobile && (
                     <div className="subscription-overlay">
                       <div className="subscription-message">
                         <p className="desktop-h4">Unlock Your Full Profile!</p>
@@ -830,7 +770,6 @@ export default function MyProfile() {
                     </div>
                   )}
 
-                  {/* Editor form itself, blurred and disabled if not subscribed */}
                   <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: isSubscribed ? 'none' : 'blur(5px)', pointerEvents: isSubscribed ? 'auto' : 'none' }}>
                     <h2 className="editor-title">Create Your Digital Business Card</h2>
 
@@ -870,7 +809,6 @@ export default function MyProfile() {
                       </div>
                     </div>
 
-                    {/* Hero Section */}
                     <hr className="divider" />
                     <h3 className="editor-subtitle">Hero Section</h3>
 
@@ -937,7 +875,6 @@ export default function MyProfile() {
                       />
                     </div>
 
-                    {/* About Me Section */}
                     <hr className="divider" />
                     <h3 className="editor-subtitle">About Me Section</h3>
 
@@ -1015,7 +952,6 @@ export default function MyProfile() {
                       />
                     </div>
 
-                    {/* My Work Section */}
                     <hr className="divider" />
                     <h3 className="editor-subtitle">My Work Section</h3>
 
@@ -1038,14 +974,13 @@ export default function MyProfile() {
                             </button>
                           </div>
                         ))}
-                        {/* Always display "Add Work Image" placeholder to allow adding more */}
                         <div
                           className="image-upload-area add-work-image-placeholder"
                           onClick={() => {
                             const input = document.createElement('input');
                             input.type = 'file';
                             input.accept = 'image/*';
-                            input.multiple = true; // Unlimited work images
+                            input.multiple = true;
                             input.onchange = (e) => {
                               handleAddWorkImage(e);
                               document.body.removeChild(input);
@@ -1060,7 +995,6 @@ export default function MyProfile() {
                       </div>
                     </div>
 
-                    {/* My Services Section */}
                     <hr className="divider" />
                     <h3 className="editor-subtitle">My Services Section</h3>
                     <div className="input-block">
@@ -1087,7 +1021,6 @@ export default function MyProfile() {
                       </button>
                     </div>
 
-                    {/* Reviews Section */}
                     <hr className="divider" />
                     <h3 className="editor-subtitle">Reviews Section</h3>
                     <div className="input-block">
@@ -1122,7 +1055,6 @@ export default function MyProfile() {
                       </button>
                     </div>
 
-                    {/* Contact Details Section */}
                     <hr className="divider" />
                     <h3 className="editor-subtitle">Exchange Contact Details</h3>
 
