@@ -989,25 +989,17 @@
     /* Removed .myprofile-page-header-mobile specific class, now global .page-header and .page-title-mobile-shrink handle it */
     .page-header {
         display: flex !important;
-        /* Force display to flex, overriding any other rules */
         justify-content: space-between !important;
-        /* Keep space-between */
         align-items: center !important;
-        /* Keep center alignment */
         margin-top: 0 !important;
-        /* Ensure no residual margin pushes it further down */
         padding-top: 0 !important;
-        /* Ensure no residual padding on PageHeader itself */
+        padding-left: 10px;
+        padding-right: 10px;
         margin-bottom: 20px !important;
-        /* Adjusted spacing for mobile */
         border-bottom: 1px solid var(--border-color) !important;
-        /* Keep the border */
         padding-bottom: 15px !important;
-        /* Adjusted padding below border */
         width: 100% !important;
-        /* Ensure it takes full width within its container */
         box-sizing: border-box !important;
-        /* Include padding and border in the element's total width and height */
     }
 
     /* Shrink page-title on mobile */
