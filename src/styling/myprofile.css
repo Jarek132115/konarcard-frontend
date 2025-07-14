@@ -1011,7 +1011,6 @@
         box-sizing: border-box;
     }
 
-    /* Mock Phone Container - target with unique class for mobile-specific height */
     .myprofile-mock-phone-mobile-container {
         width: 100%;
         /* Take full width of its container */
