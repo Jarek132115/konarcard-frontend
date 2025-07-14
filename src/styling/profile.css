@@ -267,7 +267,7 @@ body.dark-mode .profile-reset-password-inline-btn:hover {
 /* Responsive adjustments for smaller screens */
 @media (max-width: 600px) {
     .profile-page-wrapper {
-        padding: 15px;
+        padding: 0px;
         min-height: calc(100vh - 100px);
         justify-content: normal;
     }
