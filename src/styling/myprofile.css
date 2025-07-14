@@ -1186,10 +1186,6 @@
         height: 25px;
     }
 
-    .subscription-overlay-mobile {
-        padding: 0 15px;
-    }
-
     .subscription-overlay-mobile .subscription-message {
         padding: 15px;
         gap: 10px;
