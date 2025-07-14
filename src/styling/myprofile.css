@@ -53,7 +53,7 @@
     color: var(--text-color);
     transition: margin-left 0.3s ease-in-out;
     overflow-y: auto;
-    overflow: visible;
+    overflow-x: visible;
 }
 
 /* Page Header - Desktop styles (and base for mobile) */
