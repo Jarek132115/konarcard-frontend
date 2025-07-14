@@ -121,12 +121,6 @@ export default function MyProfile() {
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
-      // If the user is subscribed AND they have existing businessCard data,
-      // populate the `state` (Zustand store, which drives the EDITOR) with the fetched data.
-      // This is for when a subscribed user revisits the page and wants to edit their *existing* profile.
-      // Otherwise (not subscribed, OR subscribed but no saved card yet):
-      // Reset the `state` (Zustand store) to its initial empty form. The editor fields will be blank.
-      // The PREVIEW will then show placeholders (if not subscribed) or empty saved data (if subscribed but no saves yet).
       if (isSubscribed && businessCard) {
         updateState({
           businessName: businessCard.business_card_name || '',
@@ -658,6 +652,7 @@ export default function MyProfile() {
                                 </div>
                               ))
                             ) : ( // If subscribed, show user's actual work images (from businessCard)
+                              // Ensure businessCard.works is an array before mapping
                               (businessCard.works || []).map((url, i) => (
                                 <div key={i} className="mock-work-image-item-wrapper">
                                   <img
@@ -688,6 +683,7 @@ export default function MyProfile() {
                                 </div>
                               ))
                             ) : ( // If subscribed, show user's actual services (from businessCard)
+                              // Ensure businessCard.services is an array before mapping
                               (businessCard.services || []).map((s, i) => (
                                 <div key={i} className="mock-service-item">
                                   <p className="mock-service-name">{s.name}</p>
@@ -722,6 +718,7 @@ export default function MyProfile() {
                                 </div>
                               ))
                             ) : ( // If subscribed, show user's actual reviews (from businessCard)
+                              // Ensure businessCard.reviews is an array before mapping
                               (businessCard.reviews || []).map((r, i) => (
                                 <div key={i} className="mock-review-card">
                                   <div className="mock-star-rating">
