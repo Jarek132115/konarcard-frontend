@@ -111,6 +111,9 @@
     align-items: center;
     gap: 20px;
     flex: 1;
+    /* Allows it to grow and shrink on desktop too */
+    min-height: 0;
+    /* Important for flex items */
     box-sizing: border-box;
     overflow-x: visible;
     padding-bottom: 50px;
@@ -122,6 +125,7 @@
     height: 100%;
     /* Desktop: Fill remaining space */
     gap: 60px;
+    min-height: 0;
     justify-content: center;
     align-items: flex-start;
     /* Desktop alignment */
@@ -142,6 +146,7 @@
     height: auto;
     max-height: 100%;
     aspect-ratio: 9 / 17;
+    /* Maintain aspect ratio on desktop */
     overflow: visible;
 }
 
