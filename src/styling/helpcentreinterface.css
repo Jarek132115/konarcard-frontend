@@ -3,7 +3,7 @@
   display: flex;
   height: 100vh;
   /* Make the app layout take the full viewport height */
-  overflow: hidden;
+  overflow: auto;
   /* Prevent overall app-layout from scrolling, let children manage */
   flex-direction: row;
   /* Default desktop layout for app-layout */
