@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader';
+import PageHeader from '../../components/PageHeader'; // Import PageHeader
 import ShareProfile from '../../components/ShareProfile';
 import HeroBackground from '../../assets/images/background-hero.png'; // Example image for video thumbnails
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
@@ -13,6 +13,7 @@ import { toast } from 'react-hot-toast';
 export default function HelpCentre() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600); // State for small mobile screens
   const [showShareModal, setShowShareModal] = useState(false);
 
   const { user: authUser, loading: authLoading } = useContext(AuthContext);
@@ -25,7 +26,9 @@ export default function HelpCentre() {
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
+      const currentIsSmallMobile = window.innerWidth <= 600; // Added for isSmallMobile
       setIsMobile(currentIsMobile);
+      setIsSmallMobile(currentIsSmallMobile); // Set small mobile state
       if (!currentIsMobile && sidebarOpen) {
         setSidebarOpen(false);
       }
@@ -96,10 +99,13 @@ export default function HelpCentre() {
       )}
 
       <main className="main-content-container">
+        {/* PageHeader component added here */}
         <PageHeader
-          title="Help Centre"
-          onActivateCard={handleActivateCard}
-          onShareCard={handleShareCard}
+          title="Help Centre" // Custom title for this page
+          onActivateCard={handleActivateCard} // Use existing handleActivateCard
+          onShareCard={handleShareCard} // Use existing handleShareCard
+          isMobile={isMobile} // Pass responsiveness props
+          isSmallMobile={isSmallMobile} // Pass responsiveness props
         />
 
         {/* New wrapper for the centered content card */}
