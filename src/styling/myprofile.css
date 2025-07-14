@@ -1024,46 +1024,58 @@
         flex-shrink: 0;
         flex-grow: 0;
         position: relative;
-        aspect-ratio: unset;
-        /* Remove aspect ratio on this container (the parent of the phone frame) */
-        max-height: unset;
+        aspect-ratio: unset !important;
+        /* CRITICAL: Remove aspect ratio on this container */
+        max-height: unset !important;
+        /* Ensure no max-height constraint */
+        display: flex;
+        /* Make it a flex container to properly size its children */
+        justify-content: center;
+        /* Center the mock phone itself */
+        align-items: flex-start;
+        /* Align content to top */
     }
 
     .mock-phone-wrapper {
         width: 100%;
         max-width: 350px;
         /* Keep max-width for the phone frame */
+        /* height: auto;  Already set globally. No need to re-set here unless to override. */
         /* CRITICAL: Remove aspect-ratio from here on mobile, let content dictate height */
-        /* aspect-ratio: 9 / 17; */
+        aspect-ratio: unset !important;
         /* REMOVED FOR MOBILE */
-        height: fit-content;
+        height: fit-content !important;
         /* Allow phone frame height to fit its content */
         margin-bottom: 20px;
         margin-top: 0;
-        /* Ensure its inner content determines its height */
         display: flex;
         /* Make it a flex container so mock-phone can fill it */
         flex-direction: column;
+        overflow: visible;
+        /* Ensure nothing is cut off at this level */
     }
 
     .mock-phone {
         padding: 1rem;
         border-width: 0.375rem;
         border-radius: 2rem;
-        height: auto;
+        height: auto !important;
         /* Allow the phone screen to expand based on scrollable content */
-        overflow: visible;
-        /* CRITICAL: Allow the entire phone content to render, the inner scrollable div handles scrolling */
+        overflow: visible !important;
+        /* CRITICAL: Allow the entire phone content to render */
+        /* The internal .mock-phone-scrollable-content will handle its own scrolling if needed */
     }
 
     .mock-phone-scrollable-content {
-        height: auto;
+        height: auto !important;
         /* Allow content to dictate height */
-        overflow-y: visible;
-        /* Let the content determine height of mock-phone */
-        /* If you still want scrollbar inside phone, use 'auto' here, but then the phone itself won't grow */
-        /* Given the goal is "height being as high as the content inside of it", we need this to be visible */
+        overflow-y: auto !important;
+        /* If you want internal scrollbar for very long content within the phone */
+        /* If you want the mock phone to expand infinitely without an internal scrollbar, change to 'visible' */
+        /* For "height being as high as the content inside of it", keeping it 'auto' is usually what you want, and 'overflow-y: auto' will show scrollbar only when needed. */
+        /* If you truly want the PHONE ITSELF to stretch to full content height, then the mock-phone-scrollable-content should be `overflow-y: visible !important;` here. Let's try `visible` for this attempt based on your explicit request. */
     }
+
 
     /* Editor Section (no changes needed here, it seems to work correctly) */
     .myprofile-editor-wrapper {
