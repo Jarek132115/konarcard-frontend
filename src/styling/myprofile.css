@@ -964,15 +964,14 @@
     }
 
     .main-content-container {
-        margin-left: 0;
-        width: 100%;
-        max-width: 100%;
-        padding: 20px;
+        width: 90%;
+        max-width: 90%;
+        padding: 0 20px;
         padding-top: calc(60px + 20px);
         height: auto !important;
         min-height: calc(100vh - 60px);
         overflow-y: auto;
-        margin: 0;
+        margin: auto;
         margin-top: 80px;
     }
 
