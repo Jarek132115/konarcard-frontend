@@ -98,7 +98,7 @@
     cursor: pointer;
     font-size: 14px;
     border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -178,7 +178,7 @@
     width: 100%;
     height: 100%;
     position: relative;
-    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-radius: 2.5rem;
     box-sizing: border-box;
     overflow: visible;
@@ -323,7 +323,7 @@
     width: 100%;
     box-sizing: border-box;
     margin-bottom: 36px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .mock-about-content-group {
@@ -393,7 +393,7 @@
     border-radius: 0.5rem;
     border: 1px solid var(--border-color);
     box-sizing: border-box;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .mock-work-gallery img.mock-work-image-item {
@@ -427,7 +427,7 @@
     color: var(--text-color);
     width: 100%;
     box-sizing: border-box;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .mock-service-name {
@@ -544,7 +544,7 @@
     color: var(--text-color);
     width: 100%;
     box-sizing: border-box;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .input-block input::placeholder,
@@ -569,7 +569,7 @@
     font-size: 13px;
     font-weight: 500;
     transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .theme-button.is-active,
@@ -590,7 +590,7 @@
     overflow: hidden;
     position: relative;
     border: 1px dashed var(--border-color);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .image-upload-area .upload-text {
@@ -661,7 +661,7 @@
     border-radius: 0.5rem;
     border: 1px solid var(--border-color);
     box-sizing: border-box;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .work-image-preview {
@@ -689,7 +689,7 @@
     justify-content: center;
     align-items: center;
     transition: background-color 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .remove-image-button:hover {
@@ -708,7 +708,7 @@
     background-color: var(--placeholder-bg);
     box-sizing: border-box;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .add-work-image-placeholder .upload-text {
@@ -733,7 +733,7 @@
     cursor: pointer;
     transition: background 0.2s;
     border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .add-work-image-button:hover,
@@ -750,7 +750,7 @@
     flex-direction: column;
     gap: 6px;
     position: relative;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .editor-item-card input,
@@ -768,7 +768,7 @@
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.2s, border-color 0.2s;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .remove-item-button:hover {
@@ -785,7 +785,7 @@
     margin-top: auto;
     background-color: var(--button-bg);
     color: var(--button-text);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .subscription-overlay {
@@ -802,7 +802,7 @@
     z-index: 10;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .subscription-message {
@@ -810,7 +810,7 @@
     padding: 30px;
     border-radius: 10px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 100%;
     box-sizing: border-box;
     z-index: 11;
@@ -832,7 +832,7 @@
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .start-trial-button:hover {
@@ -848,7 +848,7 @@
 }
 
 .content-card-box {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 20px;
     border-radius: 8px;
     background-color: var(--primary-bg);
@@ -882,7 +882,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .content-card-box.verification-prompt {
@@ -915,7 +915,7 @@
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .content-card-box.verification-prompt button[type="submit"] {
@@ -927,7 +927,7 @@
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .content-card-box.verification-prompt button[type="button"]:disabled {
@@ -961,7 +961,7 @@
         background-color: var(--primary-bg);
         padding: 0 20px;
         z-index: 100;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .main-content-container {
@@ -1012,7 +1012,7 @@
     /* Subscription Overlay on mobile */
     .subscription-overlay-mobile {
         display: block;
-        padding: 0 ;
+        padding: 0;
         box-sizing: border-box;
     }
 
