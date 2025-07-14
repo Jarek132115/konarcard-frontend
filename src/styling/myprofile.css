@@ -988,13 +988,6 @@
         /* Include padding and border in the element's total width and height */
     }
 
-    /* General .page-header rules might still apply for elements inside the PageHeader component,
-       but the outer display and positioning are handled by .myprofile-page-header-mobile */
-    .page-header {
-        /* On mobile, only specific overrides for .page-header itself might be needed,
-           but generally .myprofile-page-header-mobile should handle layout */
-    }
-
     /* Subscription Overlay on mobile (no changes needed here) */
     .subscription-overlay-mobile {
         display: block;
