@@ -49,8 +49,10 @@
     /* Desktop sidebar offset */
     color: var(--text-color);
     transition: margin-left 0.3s ease-in-out;
-    overflow: auto;
+    overflow-y: auto;
     /* Changed to auto to ensure content scrolls within the main container */
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
 }
 
 /* Page Header - Desktop styles */
@@ -63,6 +65,8 @@
     border-bottom: 1px solid grey;
     padding-bottom: 20px;
     margin-bottom: 40px;
+    /* Desktop-specific display */
+    display: flex;
 }
 
 .page-title {
@@ -105,8 +109,8 @@
     align-items: center;
     gap: 20px;
     flex: 1;
+    /* Allows it to grow and shrink */
     min-height: 0;
-    /* overflow-y: auto; -- Removed as main-content-container handles overflow */
     box-sizing: border-box;
     overflow-x: visible;
     padding-bottom: 50px;
@@ -115,10 +119,12 @@
 .myprofile-flex-container {
     display: flex;
     height: 100%;
+    /* Keep for desktop */
     gap: 60px;
     min-height: 0;
     justify-content: center;
     align-items: flex-start;
+    /* Keep flex-start for desktop alignment */
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
@@ -136,6 +142,7 @@
     height: auto;
     max-height: 100%;
     aspect-ratio: 9 / 17;
+    /* Maintain aspect ratio on desktop */
     overflow: visible;
 }
 
@@ -991,10 +998,16 @@
         /* Remove auto margin */
     }
 
-    /* Hide the desktop PageHeader component when mobile header is active */
+    /* Keep the PageHeader visible, but adjust its margin-top */
     .page-header {
-        display: none;
+        display: flex;
+        /* Ensure it's visible */
+        margin-top: 0;
+        /* No extra top margin as main-content-container has padding */
+        padding-top: 0;
+        /* Adjust if needed, but main-content-container's padding-top should be enough */
     }
+
 
     /* Hide the desktop overlay when on mobile */
     .myprofile-editor-wrapper .subscription-overlay {
@@ -1022,9 +1035,13 @@
         flex-direction: column;
         gap: 40px;
         align-items: center;
+        /* Center items in column layout */
         height: auto;
+        /* Allow height to adjust to content */
         max-width: 100%;
+        /* Take full width */
         width: 100%;
+        /* Take full width */
         padding-bottom: 0;
         margin: 0;
         box-sizing: border-box;
@@ -1032,37 +1049,48 @@
 
     .myprofile-content {
         width: 100%;
+        /* Take full width of its container */
         min-width: unset;
         height: auto;
+        /* Height adapts to content */
         flex-shrink: 0;
         flex-grow: 0;
         position: relative;
         aspect-ratio: unset;
+        /* Remove aspect ratio constraint for this wrapper on mobile */
         max-height: unset;
     }
 
     .mock-phone-wrapper {
         width: 100%;
         max-width: 350px;
+        /* Keep a max-width for the phone itself */
         aspect-ratio: 9 / 17;
         height: auto;
         margin-bottom: 20px;
+        /* Add margin to separate from editor */
+        /* Ensure it's not cut off by setting correct margins/paddings on its parent */
+        margin-top: 0;
+        /* Reset any unwanted top margin */
     }
 
     .mock-phone {
         padding: 1rem;
         border-width: 0.375rem;
         border-radius: 2rem;
-        height: auto;
+        height: 100%;
+        /* Fill the wrapper's height */
         overflow: hidden;
         /* Keep hidden on the inner phone for screen effect */
     }
 
     .myprofile-editor-wrapper {
         width: 100%;
+        /* Take full width */
         max-width: 100%;
         min-width: unset;
         height: auto;
+        /* Height adapts to content */
         flex-shrink: 1;
         flex-grow: 1;
     }
@@ -1070,6 +1098,7 @@
     .editor-content-wrapper {
         width: 100%;
         height: auto;
+        /* Height adapts to content */
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
@@ -1078,28 +1107,24 @@
         padding-bottom: 30px;
         gap: 15px;
         height: auto;
+        /* Height adapts to content */
         background: var(--primary-bg);
         overflow-y: visible;
+        /* Let parent container handle scroll */
     }
 }
 
 /* Page title disappears and share profile button goes full width when under 600px */
+/* This media query specifically targets .page-actions for full width on smaller mobile,
+   assuming .page-header is generally visible due to changes above. */
 @media (max-width: 599px) {
-    /* The .page-title and .page-actions from desktop PageHeader are already hidden by the 1000px breakpoint */
-    /* This section is primarily for styling the buttons within the *mobile header* or if you re-introduce PageHeader for smaller mobile screens differently */
-
-    /* If you intend to show the PageHeader content on mobile (e.g., share button), you need to re-enable it.
-       For now, assuming the mobile header component handles the logo and menu, and PageHeader content is hidden. */
-
     .page-actions {
-        /* This rule will only apply if .page-header is not display: none */
         flex-direction: column;
         width: 100%;
         gap: 10px;
     }
 
     .page-actions .header-button {
-        /* This rule will only apply if .page-header is not display: none */
         flex: none;
         width: 100%;
         text-align: center;
