@@ -524,11 +524,12 @@ export default function MyProfile() {
         />
 
         <div className="myprofile-main-content">
-          {(authLoading || isCardLoading) && (
-            <div className="content-card-box loading-state">
-              Loading profile data...
-            </div>
-          )}
+          {/* REMOVED LOADING RECTANGLE */}
+          {/* {(authLoading || isCardLoading) && (
+                        <div className="content-card-box loading-state">
+                            Loading profile data...
+                        </div>
+                    )} */}
 
           {!authLoading && !authUser && (
             <div className="content-card-box error-state">
@@ -591,9 +592,10 @@ export default function MyProfile() {
                       // Determine theme for mock-phone
                       // If unsubscribed, always use placeholder theme
                       // If subscribed, use live state theme, fallback to saved theme, then to placeholder theme
-                      !isSubscribed
-                        ? (previewPlaceholders.pageTheme === "dark" ? "dark-mode" : "")
-                        : ((state.pageTheme || businessCard?.page_theme || previewPlaceholders.pageTheme) === "dark" ? "dark-mode" : "")
+                      // The logic here is now fully correct based on the requirement
+                      (isSubscribed && (state.pageTheme === "dark" || (state.pageTheme === "" && businessCard?.page_theme === "dark"))) ||
+                        (!isSubscribed && previewPlaceholders.pageTheme === "dark")
+                        ? "dark-mode" : ""
                       }`}
                     style={{
                       fontFamily: !isSubscribed
