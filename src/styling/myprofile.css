@@ -1182,6 +1182,7 @@
     }
 
     .subscription-overlay-mobile .subscription-message {
+        padding: 20px;
         gap: 10px;
     }
 
