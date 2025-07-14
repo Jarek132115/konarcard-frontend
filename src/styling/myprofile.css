@@ -35,6 +35,7 @@
     background-color: var(--secondary-bg);
     position: relative;
     overflow: hidden;
+    /* Desktop: prevent scroll on app-layout */
 }
 
 .main-content-container {
@@ -44,13 +45,14 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    /* Desktop: Take remaining height */
     box-sizing: border-box;
     margin-left: 260px;
     /* Desktop sidebar offset */
     color: var(--text-color);
     transition: margin-left 0.3s ease-in-out;
     overflow-y: auto;
-    /* Ensure content scrolls within the main container */
+    /* Desktop: Scroll only main content */
     overflow-x: hidden;
     /* Prevent horizontal scroll */
 }
@@ -58,6 +60,7 @@
 /* Page Header - Desktop styles */
 .page-header {
     display: flex;
+    /* Keep display flex for desktop */
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
@@ -65,7 +68,6 @@
     border-bottom: 1px solid grey;
     padding-bottom: 20px;
     margin-bottom: 40px;
-    /* Desktop-specific display */
 }
 
 .page-title {
@@ -108,8 +110,9 @@
     align-items: center;
     gap: 20px;
     flex: 1;
-    /* Allows it to grow and shrink */
+    /* Allows it to grow and shrink on desktop too */
     min-height: 0;
+    /* Important for flex items */
     box-sizing: border-box;
     overflow-x: visible;
     padding-bottom: 50px;
@@ -118,12 +121,12 @@
 .myprofile-flex-container {
     display: flex;
     height: 100%;
-    /* Keep for desktop */
+    /* Desktop: Fill remaining space */
     gap: 60px;
     min-height: 0;
     justify-content: center;
     align-items: flex-start;
-    /* Keep flex-start for desktop alignment */
+    /* Desktop alignment */
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
@@ -169,6 +172,7 @@
     font-family: var(--main-font-family);
     color: var(--text-color);
     overflow: hidden;
+    /* Keeps inner content within the phone frame */
 }
 
 .mock-phone-scrollable-content {
@@ -181,6 +185,7 @@
     padding: 0;
     overflow-y: auto;
     padding-right: 5px;
+    /* Space for scrollbar */
 }
 
 .mock-phone-scrollable-content::-webkit-scrollbar {
@@ -200,6 +205,7 @@
     background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Image placeholders and previews */
 .mock-cover,
 .avatar-preview,
 .mock-work-image-item,
@@ -217,16 +223,19 @@
 .work-image-preview[src=""] {
     border: 1px dashed var(--border-color);
     background-image: url('../assets/images/background-hero.png');
+    /* Ensure paths are correct */
     background-size: cover;
 }
 
 .avatar-preview[src=""] {
     background-image: url('../assets/images/People.png');
+    /* Ensure paths are correct */
     background-size: cover;
 }
 
 .work-image-preview[src=""] {
     background-image: url('/Interface-Preview/Work-Images1.png');
+    /* Ensure paths are correct */
     background-size: cover;
 }
 
@@ -810,6 +819,7 @@
 
 .subscription-overlay-mobile {
     display: none;
+    /* Hidden by default, shown in mobile media query */
     width: 100%;
     margin-bottom: 20px;
     box-sizing: border-box;
@@ -912,9 +922,10 @@
 
     .app-layout {
         height: auto;
+        /* Allow app-layout to grow vertically */
         overflow-y: visible;
+        /* Allow content to scroll if it overflows the entire layout */
         flex-direction: column;
-        /* Stack sidebar and main content */
     }
 
     /* Mobile Header - Always visible on mobile */
@@ -933,44 +944,6 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    .myprofile-logo-link {
-        display: flex;
-        align-items: center;
-    }
-
-    .myprofile-logo {
-        height: 30px;
-    }
-
-    .sidebar-menu-toggle {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        width: 25px;
-        height: 20px;
-        cursor: pointer;
-    }
-
-    .sidebar-menu-toggle span {
-        display: block;
-        width: 100%;
-        height: 2px;
-        background-color: var(--text-color);
-        transition: all 0.3s ease-in-out;
-    }
-
-    .sidebar-menu-toggle.active span:nth-child(1) {
-        transform: translateY(9px) rotate(45deg);
-    }
-
-    .sidebar-menu-toggle.active span:nth-child(2) {
-        opacity: 0;
-    }
-
-    .sidebar-menu-toggle.active span:nth-child(3) {
-        transform: translateY(-9px) rotate(-45deg);
-    }
-
     .main-content-container {
         margin-left: 0;
         /* Remove desktop margin */
@@ -980,26 +953,27 @@
         /* Ensure no max-width restriction */
         padding: 20px;
         /* Adjust overall padding for mobile */
-        padding-top: 80px;
-        /* Add padding-top to push content below the fixed header (60px header + 20px spacing) */
+        padding-top: calc(60px + 20px);
+        /* Adjust padding-top to account for fixed mobile header (60px) + desired gap (20px) */
         height: auto;
-        /* Allow height to adjust to content */
+        /* CRITICAL: Allow height to adjust to content */
         min-height: calc(100vh - 60px);
-        /* Ensure it takes at least the viewport height minus fixed header */
+        /* Ensure it takes at least the viewport height minus fixed header, allows scroll if content > viewport */
         overflow-y: auto;
         /* Let it scroll */
         margin: 0;
         /* Remove auto margin */
     }
 
-    /* PageHeader - Ensure it's visible on mobile and positioned correctly */
+    /* PageHeader - Target specifically for mobile. It should now be pushed down by main-content-container's padding-top */
     .page-header {
         display: flex !important;
         /* Force display to flex, overriding any other rules */
+        /* Remove explicit margin-top or padding-top here as it's handled by parent main-content-container's padding-top */
         margin-top: 0;
-        /* No extra top margin here, handled by main-content-container padding-top */
+        /* Ensure no residual margin pushes it further down */
         padding-top: 0;
-        /* Reset if previously set for desktop */
+        /* Ensure no residual padding on PageHeader itself */
         margin-bottom: 20px;
         /* Adjusted spacing for mobile */
         border-bottom: 1px solid var(--border-color);
@@ -1011,7 +985,6 @@
         box-sizing: border-box;
         /* Include padding and border in the element's total width and height */
     }
-
 
     /* Hide the desktop overlay when on mobile */
     .myprofile-editor-wrapper .subscription-overlay {
@@ -1070,7 +1043,9 @@
         max-width: 350px;
         /* Keep a max-width for the phone itself */
         aspect-ratio: 9 / 17;
+        /* Maintain phone aspect ratio */
         height: auto;
+        /* Allow height to adapt based on aspect ratio and width */
         margin-bottom: 20px;
         /* Add margin to separate from editor */
         margin-top: 0;
@@ -1137,8 +1112,8 @@
 @media (max-width: 400px) {
     .main-content-container {
         padding: 15px;
-        padding-top: 80px;
-        /* Keep this to account for the fixed header */
+        padding-top: calc(50px + 15px);
+        /* Adjusted for smaller header + gap */
     }
 
     .myprofile-mobile-header {
