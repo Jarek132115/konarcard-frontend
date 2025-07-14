@@ -142,7 +142,6 @@
     height: auto;
     max-height: 100%;
     aspect-ratio: 9 / 17;
-    /* Maintain aspect ratio on desktop */
     overflow: visible;
 }
 
