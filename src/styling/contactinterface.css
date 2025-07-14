@@ -115,6 +115,7 @@
     .contact-page-wrapper {
         padding: 0px;
         min-height: calc(100vh - 100px);
+        justify-content: normal;
     }
 }
 
