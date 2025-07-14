@@ -58,10 +58,10 @@
     /* Prevent horizontal scroll */
 }
 
-/* Page Header - Desktop styles */
+/* Page Header - Desktop styles (and base for mobile) */
 .page-header {
     display: flex;
-    /* Keep display flex for desktop */
+    /* Always keep flex for row layout */
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
@@ -76,11 +76,19 @@
     font-weight: 700;
     margin: 0;
     color: var(--page-header-color);
+    white-space: nowrap;
+    /* Prevent title from wrapping on desktop */
+    flex-shrink: 1;
+    /* Allow title to shrink if needed to fit */
+    min-width: 0;
+    /* Allow text to be squeezed */
 }
 
 .page-actions {
     display: flex;
     gap: 12px;
+    flex-shrink: 0;
+    /* Prevent buttons from shrinking */
 }
 
 .header-button {
@@ -92,6 +100,11 @@
     border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.header-button.blue-button {
+    background-color: #007bff;
+    color: white;
 }
 
 .header-button.black {
@@ -133,6 +146,8 @@
     margin: 0 auto;
     box-sizing: border-box;
     overflow: visible;
+    justify-content: center;
+    /* Added back for desktop to center mock phone/editor */
 }
 
 .myprofile-content {
@@ -448,8 +463,10 @@
 .myprofile-editor-wrapper {
     position: relative;
     max-width: 600px;
+    /* Desktop max-width */
     width: 100%;
     min-width: 350px;
+    /* Desktop min-width */
     flex: 1;
     display: flex;
     height: 100%;
@@ -750,8 +767,6 @@
 
 .remove-item-button:hover {
     background-color: #c82333;
-    border-color: #bd2130;
-    color: white;
 }
 
 .submit-button {
@@ -964,10 +979,14 @@
         /* Remove auto margin */
     }
 
-    /* PageHeader - Target specifically for mobile using the unique class */
-    .myprofile-page-header-mobile {
+    /* PageHeader - Ensure it's visible on mobile and remains row layout */
+    .page-header {
         display: flex !important;
         /* Force display to flex, overriding any other rules */
+        justify-content: space-between !important;
+        /* Keep space-between */
+        align-items: center !important;
+        /* Keep center alignment */
         margin-top: 0 !important;
         /* Ensure no residual margin pushes it further down */
         padding-top: 0 !important;
@@ -982,6 +1001,22 @@
         /* Ensure it takes full width within its container */
         box-sizing: border-box !important;
         /* Include padding and border in the element's total width and height */
+    }
+
+    /* New: Shrink page-title on mobile */
+    .page-title.page-title-mobile-shrink {
+        font-size: clamp(18px, 5vw, 24px) !important;
+        /* Responsive font size */
+        white-space: nowrap;
+        /* Prevent title from wrapping */
+        overflow: hidden;
+        /* Hide overflow if it still goes beyond */
+        text-overflow: ellipsis;
+        /* Add ellipsis if text is cut off */
+        flex-shrink: 1;
+        /* Allow title to shrink as much as needed */
+        min-width: 0;
+        /* Important for flex-shrink to work */
     }
 
     /* Subscription Overlay on mobile */
@@ -1001,15 +1036,19 @@
         flex-direction: column;
         gap: 40px;
         align-items: center;
-        height: fit-content;
+        height: auto !important;
         max-width: 100%;
         width: 100%;
         padding-bottom: 0;
         margin: 0;
         box-sizing: border-box;
         justify-content: normal;
+        /* Fixed from previous conversation */
+        overflow: visible;
+        /* Ensure content isn't cut off by this container */
     }
 
+    /* Mock Phone Container - target with unique class for mobile-specific height */
     .myprofile-mock-phone-mobile-container {
         width: 100%;
         /* Take full width of its container */
@@ -1067,11 +1106,18 @@
         /* CRITICAL: Allows the phone to stretch based on its content length */
     }
 
+    /* FIX: Remove aspect-ratio from mock-cover on mobile */
+    .mock-cover {
+        aspect-ratio: unset !important;
+        height: auto !important;
+    }
+
     /* Editor Section - FIXING 0 HEIGHT ISSUE HERE */
     .myprofile-editor-wrapper {
         width: 100%;
         max-width: 100%;
-        height: fit-content !important;
+        min-width: unset;
+        height: auto !important;
         /* CRITICAL: Ensure this expands to fit content */
         flex-shrink: 1;
         flex-grow: 1;
@@ -1082,7 +1128,7 @@
 
     .editor-content-wrapper {
         width: 100%;
-        height: fit-content !important;
+        height: auto !important;
         /* Ensure this also expands */
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         display: flex;
@@ -1103,10 +1149,11 @@
     }
 }
 
-/* Share profile button goes full width when under 600px (no changes needed) */
+/* Share profile button goes full width when under 600px */
 @media (max-width: 599px) {
     .page-actions {
         flex-direction: column;
+        /* Keep buttons stacked for very small screens */
         width: 100%;
         gap: 10px;
     }
@@ -1120,7 +1167,7 @@
     }
 }
 
-/* Very small screens (no changes needed) */
+/* Very small screens (max-width 400px) - specific font size adjustments if needed */
 @media (max-width: 400px) {
     .main-content-container {
         padding: 15px;

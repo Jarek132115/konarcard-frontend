@@ -1,5 +1,3 @@
-// MyProfile.jsx remains unchanged from the previous iteration.
-// (It includes the `myprofile-page-header-mobile` and `myprofile-mock-phone-mobile-container` classes)
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
@@ -526,10 +524,10 @@ export default function MyProfile() {
 
       <main className="main-content-container">
         <PageHeader
-          title={authUser ? `Good Afternoon ${authUser.name}!` : "My Profile"}
+          title={"My Profile"}
           onActivateCard={handleActivateCard}
           onShareCard={handleShareCard}
-          className={isMobile ? 'myprofile-page-header-mobile' : ''}
+          isMobile={isMobile} 
         />
 
         <div className="myprofile-main-content">
