@@ -111,13 +111,17 @@
     /* Make button full width of the form */
 }
 
+@media (max-width: 1000px) {
+    .contact-page-wrapper {
+        padding: 0px;
+        min-height: calc(100vh - 100px);
+    }
+}
+
 /* Responsive adjustments for smaller screens */
 @media (max-width: 600px) {
     .contact-page-wrapper {
-        padding: 15px;
-        /* Less padding on smaller screens */
         min-height: calc(100vh - 100px);
-        /* Adjust min-height for smaller viewports */
     }
 
     .contact-card-content {
