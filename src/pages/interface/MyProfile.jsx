@@ -523,7 +523,6 @@ export default function MyProfile() {
       )}
 
       <main className="main-content-container">
-        {/* PageHeader is now always rendered, CSS will handle visibility based on screen size */}
         <PageHeader
           title={authUser ? `Good Afternoon ${authUser.name}!` : "My Profile"}
           onActivateCard={handleActivateCard}
