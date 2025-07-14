@@ -331,12 +331,13 @@ body.dark-mode .products-plans-cancel-confirm p {
         font-size: 15px;
         padding: 10px 20px;
     }
+
+    .products-plans-page-wrapper {
+        padding: 0px;
+    }
 }
 
 @media (max-width: 600px) {
-    .products-plans-page-wrapper {
-        padding: 15px;
-    }
 
     .products-plans-subscription-column,
     .products-plans-card-column {
