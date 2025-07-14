@@ -248,7 +248,7 @@ body.dark-mode .qr-code-image-container {
     /* Max-width/height are now controlled by .qr-code-image-container's max-width */
 }
 
-@media (max-width: 400px) {
+@media (max-width: 500px) {
     .share-modal-overlay {
         padding: 0 6%;
     }
