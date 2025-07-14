@@ -2,17 +2,6 @@ import React, { useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
-// Removed specific icons that are no longer used for sidebar links, to clean up imports
-// import settingsIcon from '../assets/icons/Settings-Icon.svg';
-// import profileIcon from '../assets/icons/Profile-Icon.svg';
-// import cardIcon from '../assets/icons/Card-Icon.svg';
-// import helpIcon from '../assets/icons/Help-Icon.svg';
-// import logoutIcon from '../assets/icons/Logout-Icon.svg';
-// import subscriptionIcon from '../assets/icons/Subscription-Icon.svg';
-// import homeIcon from '../assets/icons/Home-Icon.svg';
-// import contactIcon from '../assets/icons/Contact-Icon.svg';
-
-// Interface icons for clarity in the sidebar (only keep those still used for actual links)
 import homeInterface from '../assets/icons/Home-Interface.svg';
 import cardInterface from '../assets/icons/Card-Interface.svg'; // Using this for Products & Plans
 import settingsInterface from '../assets/icons/Settings-Interface.svg';
