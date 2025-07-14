@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader'; // Import PageHeader
-import ShareProfile from '../../components/ShareProfile';
-import HeroBackground from '../../assets/images/background-hero.png'; // Example image for video thumbnails
+import PageHeader from '../../components/PageHeader';
+import ShareProfile from '../../components/ShareProfile'; // Still imported as it's a global component
+import HeroBackground from '../../assets/images/background-hero.png'; // Example image for article thumbnails
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
@@ -13,8 +13,8 @@ import { toast } from 'react-hot-toast';
 export default function HelpCentre() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600); // State for small mobile screens
-  const [showShareModal, setShowShareModal] = useState(false);
+  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
+  const [showShareModal, setShowShareModal] = useState(false); // This state still controls the ShareProfile modal
 
   const { user: authUser, loading: authLoading } = useContext(AuthContext);
   const userId = authUser?._id;
@@ -26,9 +26,9 @@ export default function HelpCentre() {
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
-      const currentIsSmallMobile = window.innerWidth <= 600; // Added for isSmallMobile
+      const currentIsSmallMobile = window.innerWidth <= 600;
       setIsMobile(currentIsMobile);
-      setIsSmallMobile(currentIsSmallMobile); // Set small mobile state
+      setIsSmallMobile(currentIsSmallMobile);
       if (!currentIsMobile && sidebarOpen) {
         setSidebarOpen(false);
       }
@@ -46,6 +46,7 @@ export default function HelpCentre() {
     }
   }, [sidebarOpen, isMobile]);
 
+  // This handleShareCard is for the ShareProfile MODAL (which is still globally available)
   const handleShareCard = () => {
     if (!authUser?.isVerified) {
       toast.error("Please verify your email to share your card.");
@@ -59,7 +60,16 @@ export default function HelpCentre() {
   };
 
   const handleActivateCard = () => {
-    console.log("Activate Card clicked on Help Centre page");
+    console.log("Activate Card clicked on Help Centre page (functionality not implemented here)");
+    toast.info("Activate Card functionality is not available on this page.");
+  };
+
+  // NEW FUNCTION: handleGetHelp for the specific Help Centre "Share" button
+  const handleGetHelp = () => {
+    // Replace with your actual step-by-step guide URL or a hosted markdown page
+    const helpGuideUrl = "https://your-website.com/help-guide-on-fixing-issues";
+    window.open(helpGuideUrl, '_blank', 'noopener,noreferrer');
+    toast.success("Opening step-by-step guide!");
   };
 
   const contactDetailsForVCard = {
@@ -99,20 +109,17 @@ export default function HelpCentre() {
       )}
 
       <main className="main-content-container">
-        {/* PageHeader component added here */}
         <PageHeader
           title="Help Centre" // Custom title for this page
-          onActivateCard={handleActivateCard} // Use existing handleActivateCard
-          onShareCard={handleShareCard} // Use existing handleShareCard
-          isMobile={isMobile} // Pass responsiveness props
-          isSmallMobile={isSmallMobile} // Pass responsiveness props
+          onActivateCard={handleActivateCard} // Use the specific handleActivateCard for this page
+          onShareCard={handleGetHelp} // Use the NEW handleGetHelp function for the "Share" button here
+          isMobile={isMobile}
+          isSmallMobile={isSmallMobile}
         />
 
-        {/* New wrapper for the centered content card */}
         <div className="help-videos-page-wrapper">
-          {/* Grid container for the video cards */}
           <div className="help-videos-grid">
-            {/* First Video Card */}
+            {/* First Help Article/Card */}
             <div className="help-video-item">
               <img src={HeroBackground} alt="Profile Setup Thumbnail" className="video-thumb" />
               <div className="video-content">
@@ -120,47 +127,22 @@ export default function HelpCentre() {
                 <p className="video-desc">
                   Learn how to create your profile, add your details, and save it for instant sharing.
                 </p>
-                <p className="video-time">Watch Time: 46 seconds</p>
-                <button className="video-button black-button desktop-button">Watch Now</button>
+                <p className="video-time">Read Time: 46 seconds</p> {/* Changed from Watch Time */}
+                <button className="video-button black-button desktop-button">Get Help</button> {/* Changed button text */}
               </div>
             </div>
 
-            {/* Second Video Card (reversed layout) */}
+            {/* Second Help Article/Card (reversed layout) */}
             <div className="help-video-item video-item-reversed">
               <div className="video-content">
                 <h2 className="video-title">How to Activate Your NFC Card</h2>
                 <p className="video-desc">
                   Step-by-step activation process to connect your physical card to your digital profile.
                 </p>
-                <p className="video-time">Watch Time: 46 seconds</p>
-                <button className="video-button black-button desktop-button">Watch Now</button>
+                <p className="video-time">Read Time: 46 seconds</p> {/* Changed from Watch Time */}
+                <button className="video-button black-button desktop-button">Get Help</button> {/* Changed button text */}
               </div>
               <img src={HeroBackground} alt="Card Activation Thumbnail" className="video-thumb" />
-            </div>
-
-            {/* Add more video items here if needed */}
-            <div className="help-video-item">
-              <img src={HeroBackground} alt="Sharing Tips Thumbnail" className="video-thumb" />
-              <div className="video-content">
-                <h2 className="video-title">Tips for Sharing Your Profile</h2>
-                <p className="video-desc">
-                  Maximize your reach by learning the best ways to share your digital business card.
-                </p>
-                <p className="video-time">Watch Time: 1 minute 15 seconds</p>
-                <button className="video-button black-button desktop-button">Watch Now</button>
-              </div>
-            </div>
-
-            <div className="help-video-item video-item-reversed">
-              <div className="video-content">
-                <h2 className="video-title">Troubleshooting Common Issues</h2>
-                <p className="video-desc">
-                  Quick solutions for frequently encountered problems with your KonarCard.
-                </p>
-                <p className="video-time">Watch Time: 2 minutes</p>
-                <button className="video-button black-button desktop-button">Watch Now</button>
-              </div>
-              <img src={HeroBackground} alt="Troubleshooting Thumbnail" className="video-thumb" />
             </div>
 
           </div> {/* End help-videos-grid */}
