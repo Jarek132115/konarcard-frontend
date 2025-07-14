@@ -55,7 +55,7 @@
 .support-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 5px;
     /* Space between form elements */
     width: 100%;
     /* Form takes full width of its parent card */
