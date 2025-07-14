@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
+// Ensure previewPlaceholders is imported correctly here
 import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import {
@@ -27,7 +28,6 @@ export default function MyProfile() {
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
-  // businessCard contains the *saved* data fetched from the backend
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
@@ -114,27 +114,18 @@ export default function MyProfile() {
 
 
   // --- MODIFIED EFFECT FOR INITIAL CARD DATA LOADING AND EDITOR STATE MANAGEMENT ---
-  // This effect runs only once when the component mounts and user/card data is ready.
   useEffect(() => {
     if (!isCardLoading && authUser && !hasLoadedInitialCardData) {
       setHasLoadedInitialCardData(true);
 
-      // Revoke any existing blob URLs to prevent memory leaks from previous renders/uploads
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
-      // Logic:
-      // 1. If subscribed AND there's saved businessCard data:
-      //    Populate the `state` (Zustand store, which drives the EDITOR) with the fetched data.
-      //    This is for when a subscribed user revisits the page and wants to edit their *existing* profile.
-      // 2. Otherwise (not subscribed, OR subscribed but no saved card yet):
-      //    Reset the `state` (Zustand store) to its initial empty form. The editor fields will be blank.
-      //    The PREVIEW will then show placeholders (if not subscribed) or empty saved data (if subscribed but no saves yet).
       if (isSubscribed && businessCard) {
         updateState({
           businessName: businessCard.business_card_name || '',
-          pageTheme: businessCard.page_theme || 'light', // Fallback for theme if not set
-          font: businessCard.style || 'Inter', // Fallback for font if not set
+          pageTheme: businessCard.page_theme || 'light',
+          font: businessCard.style || 'Inter',
           mainHeading: businessCard.main_heading || '',
           subHeading: businessCard.sub_heading || '',
           job_title: businessCard.job_title || '',
@@ -142,7 +133,6 @@ export default function MyProfile() {
           bio: businessCard.bio || '',
           avatar: businessCard.avatar || null,
           coverPhoto: businessCard.cover_photo || null,
-          // Map existing works from URL to {file: null, preview: URL} format for editor
           workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
           services: (businessCard.services || []),
           reviews: (businessCard.reviews || []),
@@ -151,14 +141,10 @@ export default function MyProfile() {
         });
         console.log("MyProfile: Populated editor state with fetched business card data for subscribed user.");
       } else {
-        // For unsubscribed users or subscribed users who haven't saved a card yet,
-        // the editor fields should be empty.
         resetState();
         console.log("MyProfile: User not subscribed or no saved business card found. Editor state reset to empty.");
       }
 
-      // Reset file input states regardless of subscription/saved data.
-      // These manage temporary files for *new* uploads, not the displayed image URLs.
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
@@ -168,21 +154,18 @@ export default function MyProfile() {
   }, [businessCard, isCardLoading, authUser, isSubscribed, updateState, resetState, activeBlobUrls, hasLoadedInitialCardData]);
 
 
-  // Effect to clean up blob URLs when component unmounts
   useEffect(() => {
     return () => {
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
     };
   }, [activeBlobUrls]);
 
-  // Helper to create and track blob URLs for local image previews
   const createAndTrackBlobUrl = (file) => {
     const blobUrl = URL.createObjectURL(file);
     setActiveBlobUrls(prev => [...prev, blobUrl]);
     return blobUrl;
   };
 
-  // Handlers for image uploads (cover, avatar, work images)
   const handleImageUpload = (e) => {
     e.preventDefault();
     const file = e.target.files?.[0];
@@ -220,13 +203,12 @@ export default function MyProfile() {
     setWorkImageFiles(prevFiles => [...prevFiles, ...newImageFiles]);
   };
 
-  // Handlers for removing images (cover, avatar, work images)
   const handleRemoveCoverPhoto = () => {
     const isLocalBlob = state.coverPhoto && state.coverPhoto.startsWith('blob:');
     if (!isLocalBlob && state.coverPhoto) {
-      setCoverPhotoRemoved(true); // Mark for removal from backend
+      setCoverPhotoRemoved(true);
     } else {
-      setCoverPhotoRemoved(false); // If it's a new local upload, just clear
+      setCoverPhotoRemoved(false);
     }
 
     if (isLocalBlob) {
@@ -240,7 +222,7 @@ export default function MyProfile() {
   const handleRemoveAvatar = () => {
     const isLocalBlob = state.avatar && state.avatar.startsWith('blob:');
     if (!isLocalBlob && state.avatar) {
-      setIsAvatarRemoved(true); // Mark for removal from backend
+      setIsAvatarRemoved(true);
     } else {
       setIsAvatarRemoved(false);
     }
@@ -264,11 +246,9 @@ export default function MyProfile() {
     const newWorkImages = state.workImages.filter((_, index) => index !== indexToRemove);
     updateState({ workImages: newWorkImages });
 
-    // Remove the corresponding file from workImageFiles if it was a new upload
     setWorkImageFiles(prevFiles => prevFiles.filter(f => f !== removedItem.file));
   };
 
-  // Handlers for services
   const handleAddService = () => {
     updateState({ services: [...state.services, { name: "", price: "" }] });
   };
@@ -285,7 +265,6 @@ export default function MyProfile() {
     });
   };
 
-  // Handlers for reviews
   const handleAddReview = () => {
     updateState({
       reviews: [...state.reviews, { name: "", text: "", rating: 5 }],
@@ -309,7 +288,6 @@ export default function MyProfile() {
     });
   };
 
-  // Handlers for email verification
   const sendVerificationCode = async () => {
     if (!userEmail) {
       toast.error("Email not found. Please log in again.");
@@ -346,18 +324,16 @@ export default function MyProfile() {
         toast.success('Email verified successfully!');
         setShowVerificationPrompt(false);
         setVerificationCodeCode('');
-        refetchAuthUser(); // Refetch user to update isUserVerified status
+        refetchAuthUser();
       }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Verification failed.');
     }
   };
 
-  // Handle form submission to save business card data
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Pre-submission checks
     if (authLoading) {
       toast.info("User data is still loading. Please wait a moment.");
       return;
@@ -375,19 +351,18 @@ export default function MyProfile() {
       return;
     }
 
-    // Prepare work images for FormData: files for new uploads, URLs for existing
     const worksToUpload = state.workImages
       .map(item => {
         if (item.file) {
-          return { file: item.file }; // New file to upload
-        } else if (item.preview && !item.preview.startsWith('blob:')) {
-          return item.preview; // Existing URL to keep
+          return { file: item.file };
         }
-        return null; // Removed or invalid item
+        else if (item.preview && !item.preview.startsWith('blob:')) {
+          return item.preview;
+        }
+        return null;
       })
-      .filter(item => item !== null); // Filter out nulls
+      .filter(item => item !== null);
 
-    // Build FormData for API call
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
@@ -410,32 +385,24 @@ export default function MyProfile() {
     });
 
     try {
-      // Execute the mutation (API call to create/update business card)
       await createBusinessCard.mutateAsync(formData);
       toast.success("Business card saved successfully!");
 
-      // Clear any temporary blob URLs that were created during editing
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
-      // Reset local file states (these manage new uploads, not existing images)
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
 
-      // --- CRITICAL: Reset the editor's store state to empty after successful save ---
-      // This clears the input fields, ready for new edits.
-      // The `useFetchBusinessCard` hook (part of React Query/TanStack Query) should automatically
-      // refetch or invalidate its cache after a successful mutation, which will then cause
-      // the `businessCard` data to update, and thus the PREVIEW will show the newly saved data.
       resetState();
       console.log("MyProfile: Successfully saved business card, resetting editor state.");
 
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
-      console.error("Error saving business card:", error); // Detailed console error
+      console.error("Error saving business card:", error);
     }
   };
 
@@ -528,7 +495,7 @@ export default function MyProfile() {
   // based on subscription status and live edits.
   const getPreviewList = (listFromState, listFromBusinessCard, placeholderList) => {
     if (!isSubscribed) {
-      return placeholderList;
+      return placeholderList; // Always return placeholders if unsubscribed
     }
     // If subscribed, prioritize live editor changes. If editor list is empty,
     // then use saved data. If both are empty, return an empty array.
@@ -536,6 +503,27 @@ export default function MyProfile() {
     // would it fall back to saved data.
     return (listFromState && listFromState.length > 0) ? listFromState : (listFromBusinessCard || []);
   };
+
+  // Console logs for debugging the preview theme and font
+  useEffect(() => {
+    console.log("--- Preview Debug Info ---");
+    console.log("isSubscribed:", isSubscribed);
+    console.log("businessCard (saved data):", businessCard);
+    console.log("state (live editor data):", state);
+    console.log("previewPlaceholders:", previewPlaceholders);
+
+    const currentTheme = isSubscribed
+      ? (state.pageTheme || businessCard?.page_theme || 'light') // If subscribed, state -> saved -> default
+      : previewPlaceholders.pageTheme; // If unsubscribed, placeholder
+
+    const currentFont = isSubscribed
+      ? (state.font || businessCard?.style || 'Inter') // If subscribed, state -> saved -> default
+      : previewPlaceholders.font; // If unsubscribed, placeholder
+
+    console.log("Preview Calculated Theme:", currentTheme);
+    console.log("Preview Calculated Font:", currentFont);
+    console.log("------------------------");
+  }, [isSubscribed, businessCard, state, previewPlaceholders]);
 
 
   return (
@@ -633,16 +621,14 @@ export default function MyProfile() {
                 {/* Mock Phone Preview Section */}
                 <div className={`myprofile-content ${isMobile ? 'myprofile-mock-phone-mobile-container' : ''}`}>
                   <div
-                    className={`mock-phone ${
-                      // Theme: prioritize state (live) if subscribed, else saved, else placeholder
-                      isSubscribed
-                        ? (state.pageTheme === "dark" ? "dark-mode" : "")
-                        : (previewPlaceholders.pageTheme === "dark" ? "dark-mode" : "")
+                    className={`mock-phone ${isSubscribed
+                        ? (state.pageTheme === "dark" ? "dark-mode" : "") // If subscribed, use live state
+                        : (previewPlaceholders.pageTheme === "dark" ? "dark-mode" : "") // If unsubscribed, use placeholder
                       }`}
                     style={{
                       fontFamily: isSubscribed
-                        ? (state.font || businessCard?.style || previewPlaceholders.font)
-                        : previewPlaceholders.font
+                        ? (state.font || businessCard?.style || previewPlaceholders.font) // Subscribed: live, then saved, then placeholder fallback
+                        : previewPlaceholders.font // Unsubscribed: always placeholder font
                     }}
                   >
                     <div className="mock-phone-scrollable-content">
@@ -664,7 +650,7 @@ export default function MyProfile() {
                       </button>
 
                       {/* About Me Section - Always render if unsubscribed (for placeholders)
-                                                or if subscribed and has any data (live or saved) */}
+                                                or if subscribed and has any data (live OR saved) */}
                       {!isSubscribed || (isSubscribed && (state.full_name || state.job_title || state.bio || state.avatar ||
                         businessCard?.full_name || businessCard?.job_title || businessCard?.bio || businessCard?.avatar)) ? (
                         <>
@@ -689,7 +675,7 @@ export default function MyProfile() {
                       ) : null}
 
                       {/* My Work Section - Always render if unsubscribed (for placeholders)
-                                                or if subscribed and has any data (live or saved) */}
+                                                or if subscribed and has any data (live OR saved) */}
                       {!isSubscribed || (isSubscribed && (state.workImages.length > 0 || (businessCard?.works && businessCard.works.length > 0))) ? (
                         <>
                           <p className="mock-section-title">My Work</p>
@@ -709,14 +695,15 @@ export default function MyProfile() {
 
 
                       {/* My Services Section - Always render if unsubscribed (for placeholders)
-                                                or if subscribed and has any data (live or saved) */}
+                                                or if subscribed and has any data (live OR saved) */}
                       {!isSubscribed || (isSubscribed && (state.services.length > 0 || (businessCard?.services && businessCard.services.length > 0))) ? (
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="mock-services-list">
                             {getPreviewList(state.services, businessCard?.services, previewPlaceholders.services).map((s, i) => (
                               <div key={i} className="mock-service-item">
-                                <p className="mock-service-name">{getPreviewText(s.name, null, s.name)}</p> {/* s.name is the placeholder here */}
+                                {/* For live updates, s.name/s.price come from state. For placeholders, from placeholderList */}
+                                <p className="mock-service-name">{getPreviewText(s.name, null, s.name)}</p>
                                 <span className="mock-service-price">{getPreviewText(s.price, null, s.price)}</span>
                               </div>
                             ))}
@@ -725,7 +712,7 @@ export default function MyProfile() {
                       ) : null}
 
                       {/* Reviews Section - Always render if unsubscribed (for placeholders)
-                                                or if subscribed and has any data (live or saved) */}
+                                                or if subscribed and has any data (live OR saved) */}
                       {!isSubscribed || (isSubscribed && (state.reviews.length > 0 || (businessCard?.reviews && businessCard.reviews.length > 0))) ? (
                         <>
                           <p className="mock-section-title">Reviews</p>
@@ -740,6 +727,7 @@ export default function MyProfile() {
                                     <span key={`empty-${starIdx}`} className="empty-star">★</span>
                                   ))}
                                 </div>
+                                {/* For live updates, r.text/r.name come from state. For placeholders, from placeholderList */}
                                 <p className="mock-review-text">"{getPreviewText(r.text, null, r.text)}"</p>
                                 <p className="mock-reviewer-name">{getPreviewText(r.name, null, r.name)}</p>
                               </div>
