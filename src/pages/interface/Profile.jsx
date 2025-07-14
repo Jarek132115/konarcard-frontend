@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader'; // Import PageHeader
+import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
 import { AuthContext } from '../../components/AuthContext';
 import { toast } from 'react-hot-toast';
@@ -11,33 +11,37 @@ import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 
 export default function Profile() {
   const { user: authUser, fetchUser, setUser } = useContext(AuthContext);
-  const [updatedName, setUpdatedName] = useState('');
+  const [updatedName, setUpdatedName] = useState(''); // This is for the registered user's name
 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleteEnabled, setDeleteEnabled] = useState(false);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000); // State for mobile responsiveness
-  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600); // State for small mobile screens
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
   const [showShareModal, setShowShareModal] = useState(false);
 
   const userId = authUser?._id;
   const userUsername = authUser?.username;
 
+  // This fetches the BUSINESS CARD data, not the AUTH USER data
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
 
+  // Effect to initialize the 'Display Name' input with the authenticated user's registered name
   useEffect(() => {
     if (authUser) {
       setUpdatedName(authUser.name || '');
+      // CONSOLE LOG FOR DEBUGGING: Check if authUser.name is truly available here
+      console.log("Profile.jsx useEffect: authUser.name =", authUser.name);
     }
   }, [authUser]);
 
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
-      const currentIsSmallMobile = window.innerWidth <= 600; // Update small mobile state
+      const currentIsSmallMobile = window.innerWidth <= 600;
       setIsMobile(currentIsMobile);
-      setIsSmallMobile(currentIsSmallMobile); // Set small mobile state
+      setIsSmallMobile(currentIsSmallMobile);
       if (!currentIsMobile && sidebarOpen) {
         setSidebarOpen(false);
       }
@@ -45,7 +49,7 @@ export default function Profile() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [sidebarOpen]); // isMobile and isSmallMobile are set within the handler, no need to be dependencies here
+  }, [sidebarOpen]);
 
   useEffect(() => {
     if (sidebarOpen && isMobile) {
@@ -57,15 +61,17 @@ export default function Profile() {
 
   const handleSave = async () => {
     try {
+      // This API call updates the 'name' field on the User model
       const res = await api.put(
         '/update-profile',
         {
-          name: updatedName,
+          name: updatedName, // Send the updated registered name
         }
       );
 
       if (res.data.success) {
         toast.success('Profile updated successfully!');
+        // Re-fetch the authenticated user data to update AuthContext
         fetchUser();
       } else {
         toast.error(res.data.error || 'Something went wrong');
@@ -135,11 +141,14 @@ export default function Profile() {
     setShowShareModal(false);
   };
 
+  // This object should primarily reflect the BusinessCard details for sharing
+  // It should NOT fall back to authUser.name for full_name if you want strict separation.
   const contactDetailsForVCard = {
-    full_name: businessCard?.full_name || authUser?.name || '',
+    full_name: businessCard?.full_name || '', // Use only businessCard's full_name
     job_title: businessCard?.job_title || '',
     business_card_name: businessCard?.business_card_name || '',
     bio: businessCard?.bio || '',
+    // Keep contact_email fallback to authUser.email as it's a contact detail
     contact_email: businessCard?.contact_email || authUser?.email || '',
     phone_number: businessCard?.phone_number || '',
     username: userUsername || '',
@@ -171,14 +180,12 @@ export default function Profile() {
       )}
 
       <main className="main-content-container">
-        {/* PageHeader component added here */}
         <PageHeader
-          title="My Account" // Custom title for this page
-          // Pass a dummy function for onActivateCard as it's not applicable here
+          title="My Account"
           onActivateCard={() => console.log("Activate Card button clicked on My Account page (functionality not implemented here)")}
-          onShareCard={handleShareCard} // Use existing handleShareCard
-          isMobile={isMobile} // Pass responsiveness props
-          isSmallMobile={isSmallMobile} // Pass responsiveness props
+          onShareCard={handleShareCard}
+          isMobile={isMobile}
+          isSmallMobile={isSmallMobile}
         />
 
         <div className="profile-page-wrapper">
@@ -188,7 +195,7 @@ export default function Profile() {
               <label className="profile-label desktop-body-s black">Display Name</label>
               <input
                 type="text"
-                value={updatedName}
+                value={updatedName} // This comes from authUser.name via useEffect
                 onChange={(e) => setUpdatedName(e.target.value)}
                 autoComplete="name"
                 className="profile-input-field desktop-body"
@@ -200,8 +207,8 @@ export default function Profile() {
               <label className="profile-label desktop-body-s black">Email Address</label>
               <input
                 type="email"
-                value={authUser?.email || ''}
-                readOnly // Make it non-editable
+                value={authUser?.email || ''} // Directly from authUser
+                readOnly
                 className="profile-input-field profile-display-field desktop-body"
               />
             </div>
@@ -213,8 +220,8 @@ export default function Profile() {
                 <span className="profile-url-prefix desktop-body">www.konarcard.com/u/</span>
                 <input
                   type="text"
-                  value={userUsername || ''}
-                  readOnly // Make it non-editable
+                  value={userUsername || ''} // Directly from authUser
+                  readOnly
                   className="profile-input-field profile-display-field desktop-body"
                 />
               </div>
@@ -223,11 +230,11 @@ export default function Profile() {
             {/* Password Section - Now with Reset Password Button inside input-like group */}
             <div className="profile-setting-block">
               <label className="profile-label desktop-body-s black">Password</label>
-              <div className="profile-password-display-group"> {/* New wrapper for input and button */}
+              <div className="profile-password-display-group">
                 <input
                   type="password"
                   value="********" // Display masked password
-                  readOnly // Make it non-editable
+                  readOnly
                   className="profile-input-field profile-display-field desktop-body"
                 />
                 <button
