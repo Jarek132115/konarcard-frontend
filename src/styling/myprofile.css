@@ -1003,8 +1003,7 @@
         flex-direction: column;
         gap: 40px;
         align-items: center;
-        height: auto;
-        /* Allow height to adjust to content */
+        height: fit-content;
         max-width: 100%;
         width: 100%;
         padding-bottom: 0;
