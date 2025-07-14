@@ -389,11 +389,9 @@ export default function MyProfile() {
       const response = await createBusinessCard.mutateAsync(formData);
       toast.success("Business card saved successfully!");
 
-      // Revoke any old blob URLs
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
-      // Clear local file states immediately after handling blob URLs
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
