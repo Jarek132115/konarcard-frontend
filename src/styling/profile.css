@@ -313,6 +313,23 @@ body.dark-mode .profile-reset-password-inline-btn:hover {
     .profile-reset-password-inline-btn {
         padding: 10px 12px;
         font-size: 13px;
+        /* --- ADD/MODIFY THESE LINES --- */
+        min-width: 60px;
+        /* Give it a minimum width to prevent it from becoming too small */
+        width: auto;
+        /* Allow width to be determined by content and padding, up to a point */
+        box-sizing: border-box;
+        /* Ensure padding is included in width calculation */
+        /* Make sure flex-shrink: 0 is still there if needed to prevent shrinking below content */
+        /* You might also consider max-width if it still grows too large */
+        flex-basis: auto;
+        /* Allow content to dictate initial size */
+    }
+
+    /* If the button text is still wrapping or looks weird, you might also add: */
+    .profile-reset-password-inline-btn span.desktop-button {
+        white-space: nowrap;
+        /* Prevent "Reset" from wrapping */
     }
 
     .profile-action-buttons-group {
