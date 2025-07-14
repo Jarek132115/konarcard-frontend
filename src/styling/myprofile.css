@@ -449,10 +449,8 @@
 .myprofile-editor-wrapper {
     position: relative;
     max-width: 600px;
-    /* Desktop max-width */
     width: 100%;
     min-width: 350px;
-    /* Desktop min-width */
     flex: 1;
     min-height: 0;
     display: flex;
@@ -1076,8 +1074,7 @@
     .myprofile-editor-wrapper {
         width: 100%;
         max-width: 100%;
-        min-width: unset;
-        height: auto !important;
+        height: fit-content !important;
         /* CRITICAL: Ensure this expands to fit content */
         flex-shrink: 1;
         flex-grow: 1;
@@ -1088,7 +1085,7 @@
 
     .editor-content-wrapper {
         width: 100%;
-        height: auto !important;
+        height: fit-content !important;
         /* Ensure this also expands */
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         display: flex;
