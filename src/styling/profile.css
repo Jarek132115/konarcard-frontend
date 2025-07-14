@@ -269,6 +269,7 @@ body.dark-mode .profile-reset-password-inline-btn:hover {
     .profile-page-wrapper {
         padding: 15px;
         min-height: calc(100vh - 100px);
+        justify-content: normal;
     }
 
     .profile-settings-card {
