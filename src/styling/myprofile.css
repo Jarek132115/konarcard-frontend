@@ -52,7 +52,6 @@
     /* Desktop sidebar offset */
     color: var(--text-color);
     transition: margin-left 0.3s ease-in-out;
-    overflow-y: auto;
     overflow-x: visible;
 }
 
@@ -966,7 +965,6 @@
         padding: 0 20px;
         padding-top: 100px;
         height: auto !important;
-        overflow-y: auto;
         overflow-x: visible;
         margin: auto;
     }
