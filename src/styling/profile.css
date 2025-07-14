@@ -270,10 +270,28 @@ body.dark-mode .profile-reset-password-inline-btn:hover {
 }
 
 /* Responsive adjustments for screens <= 1000px (Desktop breakpoint) */
+/* This media query covers both tablet and mobile as a general "smaller screen" rule */
 @media (max-width: 1000px) {
-    /* No specific changes here for the buttons yet, they inherit from default */
-    /* The main-content-container, sidebar, etc. are handled by global mobile styles */
+
+    /* Fix for Reset button size on Tablet and Mobile */
+    .profile-reset-password-inline-btn {
+        padding: 10px 12px;
+        font-size: 13px;
+        min-width: 60px;
+        /* Still provide a minimum */
+        width: auto;
+        /* Allow it to shrink to fit text + padding */
+        flex-grow: 0;
+        /* Prevent it from taking extra space */
+        flex-shrink: 0;
+        /* Ensure it doesn't shrink unnecessarily */
+        box-sizing: border-box;
+        /* Important for consistent sizing */
+        white-space: nowrap;
+        /* Prevent text wrapping */
+    }
 }
+
 
 /* Responsive adjustments for smaller screens (mobile breakpoint <= 600px) */
 @media (max-width: 600px) {
@@ -319,37 +337,9 @@ body.dark-mode .profile-reset-password-inline-btn:hover {
         padding: 10px 0;
     }
 
-    /* --- FIXES FOR RESET BUTTON ON TABLET/MOBILE (<=1000px) --- */
-    /* Applied to max-width: 1000px to cover tablet as well as smaller phones */
-    /* If you have another breakpoint between 600px and 1000px, you might refine this. */
-    @media (max-width: 1000px) {
-
-        /* This media query applies to tablet and mobile */
-        .profile-reset-password-inline-btn {
-            padding: 10px 12px;
-            /* Adjusted padding for smaller screens */
-            font-size: 13px;
-            /* Smaller font size */
-            min-width: 60px;
-            /* Ensures it doesn't get too small */
-            width: auto;
-            /* Let content dictate width more */
-            flex-grow: 0;
-            /* Prevent it from consuming all available space */
-            flex-shrink: 0;
-            /* Ensure it doesn't shrink unnecessarily */
-            box-sizing: border-box;
-            /* Reiterate for safety */
-            white-space: nowrap;
-            /* Prevent "Reset" from wrapping */
-        }
-    }
-
-    /* --- END FIXES FOR RESET BUTTON --- */
-
+    /* The .profile-reset-password-inline-btn rules from @media(max-width: 1000px) still apply here */
 
     /* --- FIXES FOR ACTION BUTTONS (DELETE/SAVE) LAYOUT --- */
-    /* This section specifically targets screens <= 600px for column layout */
     .profile-action-buttons-group {
         flex-direction: column;
         /* Stack buttons vertically on small mobile */
