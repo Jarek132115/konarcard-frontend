@@ -50,7 +50,7 @@
     color: var(--text-color);
     transition: margin-left 0.3s ease-in-out;
     overflow-y: auto;
-    /* Changed to auto to ensure content scrolls within the main container */
+    /* Ensure content scrolls within the main container */
     overflow-x: hidden;
     /* Prevent horizontal scroll */
 }
@@ -66,7 +66,6 @@
     padding-bottom: 20px;
     margin-bottom: 40px;
     /* Desktop-specific display */
-    display: flex;
 }
 
 .page-title {
@@ -918,26 +917,20 @@
         /* Stack sidebar and main content */
     }
 
-    /* Mobile Header */
+    /* Mobile Header - Always visible on mobile */
     .myprofile-mobile-header {
         display: flex;
-        /* Make sure it's visible on mobile */
         justify-content: space-between;
         align-items: center;
         position: fixed;
-        /* Fixed position for header */
         top: 0;
         left: 0;
         right: 0;
         height: 60px;
-        /* Define a fixed height for the header */
         background-color: var(--primary-bg);
-        /* Use primary background for header */
         padding: 0 20px;
         z-index: 100;
-        /* Ensure it's on top */
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        /* Optional: add shadow */
     }
 
     .myprofile-logo-link {
@@ -947,12 +940,10 @@
 
     .myprofile-logo {
         height: 30px;
-        /* Adjust logo size */
     }
 
     .sidebar-menu-toggle {
         display: flex;
-        /* Ensure it's visible */
         flex-direction: column;
         justify-content: space-around;
         width: 25px;
@@ -990,22 +981,35 @@
         padding: 20px;
         /* Adjust overall padding for mobile */
         padding-top: 80px;
-        /* Add padding-top to push content below the fixed header */
+        /* Add padding-top to push content below the fixed header (60px header + 20px spacing) */
         height: auto;
-        overflow-y: visible;
+        /* Allow height to adjust to content */
+        min-height: calc(100vh - 60px);
+        /* Ensure it takes at least the viewport height minus fixed header */
+        overflow-y: auto;
         /* Let it scroll */
         margin: 0;
         /* Remove auto margin */
     }
 
-    /* Keep the PageHeader visible, but adjust its margin-top */
+    /* PageHeader - Ensure it's visible on mobile and positioned correctly */
     .page-header {
-        display: flex;
-        /* Ensure it's visible */
+        display: flex !important;
+        /* Force display to flex, overriding any other rules */
         margin-top: 0;
-        /* No extra top margin as main-content-container has padding */
+        /* No extra top margin here, handled by main-content-container padding-top */
         padding-top: 0;
-        /* Adjust if needed, but main-content-container's padding-top should be enough */
+        /* Reset if previously set for desktop */
+        margin-bottom: 20px;
+        /* Adjusted spacing for mobile */
+        border-bottom: 1px solid var(--border-color);
+        /* Keep the border */
+        padding-bottom: 15px;
+        /* Adjusted padding below border */
+        width: 100%;
+        /* Ensure it takes full width within its container */
+        box-sizing: border-box;
+        /* Include padding and border in the element's total width and height */
     }
 
 
@@ -1069,7 +1073,6 @@
         height: auto;
         margin-bottom: 20px;
         /* Add margin to separate from editor */
-        /* Ensure it's not cut off by setting correct margins/paddings on its parent */
         margin-top: 0;
         /* Reset any unwanted top margin */
     }
@@ -1114,9 +1117,7 @@
     }
 }
 
-/* Page title disappears and share profile button goes full width when under 600px */
-/* This media query specifically targets .page-actions for full width on smaller mobile,
-   assuming .page-header is generally visible due to changes above. */
+/* Share profile button goes full width when under 600px */
 @media (max-width: 599px) {
     .page-actions {
         flex-direction: column;
@@ -1150,7 +1151,6 @@
         height: 25px;
         /* Adjust logo size for smaller header */
     }
-
 
     /* Adjust mobile overlay padding for very small screens */
     .subscription-overlay-mobile {
