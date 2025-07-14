@@ -131,7 +131,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 5px;
+    gap: 10px;
     width: 100%;
     margin-top: auto;
     /* Pushes content to the bottom of the column */
