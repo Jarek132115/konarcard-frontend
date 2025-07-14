@@ -16,7 +16,7 @@ export default function PageHeader({ title, onActivateCard, onShareCard, isMobil
                 {title}
             </h1>
             <div className="page-actions">
-                <button className="blue-button" onClick={onShareCard}>
+                <button className="blue-button desktop-button" onClick={onShareCard}>
                     {isSmallMobile ? (
                         <img src={ShareProfileIcon} alt="Share" className="share-icon" />
                     ) : (
