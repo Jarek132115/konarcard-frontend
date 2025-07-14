@@ -174,7 +174,7 @@
     flex-grow: 1;
     /* Allow image to grow and fill space */
     height: auto;
-    object-fit: contain;
+    object-fit: cover;
     /* Use contain to ensure full image is visible */
     border-radius: 12px;
     margin-bottom: 20px;
