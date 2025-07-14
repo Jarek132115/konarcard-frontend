@@ -3,7 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
-import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
+// Import useQueryClient from react-query or @tanstack/react-query
+import { useQueryClient } from "@tanstack/react-query"; // Assuming you use TanStack Query/React Query
+import {
+  useFetchBusinessCard,
+  // You might also expose invalidate here if your hook structure supports it
+} from "../../hooks/useFetchBusinessCard";
 import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
@@ -20,13 +25,16 @@ export default function MyProfile() {
   const fileInputRef = useRef(null);
   const avatarInputRef = useRef(null);
   const workImageInputRef = useRef(null);
-  const createBusinessCard = useCreateBusinessCard();
+  const createBusinessCard = useCreateBusinessCard(); // This is your useMutation hook
+  const queryClient = useQueryClient(); // Initialize QueryClient
+
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
   const isSubscribed = authUser?.isSubscribed || false;
   const userId = authUser?._id;
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
+  // useFetchBusinessCard query has a specific query key, usually ['businessCard', userId]
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
@@ -294,7 +302,7 @@ export default function MyProfile() {
       if (res.data.error) {
         toast.error(res.data.error);
       } else {
-        toast.success('Verification code sent to your email!');
+        toast.success('Verification code sent!');
         setResendCooldown(30);
       }
     } catch (err) {
@@ -383,6 +391,9 @@ export default function MyProfile() {
     try {
       await createBusinessCard.mutateAsync(formData);
       toast.success("Business card saved successfully!");
+
+      // Invalidate the businessCard query to force a re-fetch of the latest data
+      queryClient.invalidateQueries(['businessCard', userId]); // Using the query key for useFetchBusinessCard
 
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
