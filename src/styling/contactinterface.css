@@ -16,7 +16,7 @@
 /* The actual card box that holds the form */
 .contact-card-content {
     background: #ffffff;
-    padding: 40px;
+    padding: 30px;
     /* Internal padding */
     border-radius: 20px;
     /* 20px border as requested */
@@ -121,7 +121,7 @@
     }
 
     .contact-card-content {
-        padding: 25px;
+        padding: 20px;
         /* Smaller internal padding on mobile */
         border-radius: 12px;
         /* Slightly less rounded corners on mobile */
