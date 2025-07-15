@@ -2,28 +2,11 @@ import React, { useEffect, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import PropTypes from 'prop-types';
 
-// Import the new SVG icons
 import CopyLinkIcon from '../assets/icons/CopyLink-Icon.svg';
 import VisitProfileIcon from '../assets/icons/VisitProfile-Icon.svg';
 import DownloadQRIcon from '../assets/icons/DownloadQR-Icon.svg';
 import SaveContactIcon from '../assets/icons/SaveContact-Icon.svg';
 
-/**
- * ShareProfile modal component for displaying sharing options.
- * @param {object} props - The component props.
- * @param {boolean} props.isOpen - Whether the modal is open.
- * @param {function} props.onClose - Function to call to close the modal.
- * @param {string} props.profileUrl - The user's unique public profile URL.
- * @param {string} props.qrCodeUrl - The URL of the user's QR code image.
- * @param {object} props.contactDetails - Object containing contact fields for vCard.
- * @param {string} props.contactDetails.full_name - User's full name.
- * @param {string} props.contactDetails.job_title - User's job title.
- * @param {string} props.contactDetails.business_card_name - User's business name.
- * @param {string} props.contactDetails.bio - User's bio.
- * @param {string} props.contactDetails.contact_email - User's contact email.
- * @param {string} props.contactDetails.phone_number - User's phone number.
- * @param {string} props.username - User's username (for dynamic URL and vCard filename).
- */
 export default function ShareProfile({
     isOpen,
     onClose,
@@ -34,7 +17,6 @@ export default function ShareProfile({
 }) {
     const profileLinkRef = useRef(null);
 
-    // Close modal on escape key press
     useEffect(() => {
         const handleEscape = (event) => {
             if (event.key === 'Escape') {
@@ -51,7 +33,6 @@ export default function ShareProfile({
 
     if (!isOpen) return null;
 
-    // --- Helper function to copy text to clipboard ---
     const copyToClipboard = (text, message) => {
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text)
@@ -61,7 +42,6 @@ export default function ShareProfile({
                     toast.error('Failed to copy. Please try manually.');
                 });
         } else {
-            // Fallback for older browsers (less common now)
             const textArea = document.createElement("textarea");
             textArea.value = text;
             document.body.appendChild(textArea);
@@ -78,7 +58,6 @@ export default function ShareProfile({
         }
     };
 
-    // --- vCard generation for "Save to Phone Contacts" ---
     const generateAndDownloadVCard = () => {
         const { full_name, job_title, business_card_name, bio, contact_email, phone_number } = contactDetails;
         const userProfileUrl = profileUrl || (username ? `${window.location.origin}/u/${username}` : '');
@@ -123,12 +102,10 @@ export default function ShareProfile({
                         <input type="text" readOnly value={profileUrl} ref={profileLinkRef} className="share-link-input" />
                     </div>
                     <div className="share-action-buttons">
-                        {/* Reordered: Copy Link (black-button) first, icon on left */}
                         <button onClick={() => copyToClipboard(profileUrl, 'Profile link copied!')} className="black-button share-button-custom">
                             <img src={CopyLinkIcon} alt="Copy Link" className="share-button-icon" />
                             Copy Link
                         </button>
-                        {/* Reordered: Visit Profile (blue-button) second, icon on left */}
                         <a href={profileUrl} target="_blank" rel="noopener noreferrer" className="blue-button share-button-custom">
                             <img src={VisitProfileIcon} alt="Visit Profile" className="share-button-icon" />
                             Visit Profile
@@ -143,12 +120,10 @@ export default function ShareProfile({
                             <img src={qrCodeUrl} alt="Profile QR Code" className="share-qr-code-image" />
                         </div>
                         <div className="share-action-buttons">
-                            {/* Reordered: Download QR Code (black-button) first, icon on left */}
                             <a href={qrCodeUrl} download={`${username || 'konarcard'}-qrcode.png`} className="black-button share-button-custom">
                                 <img src={DownloadQRIcon} alt="Download QR Code" className="share-button-icon" />
                                 Download QR Code
                             </a>
-                            {/* Reordered: Save to Phone Contacts (blue-button) second, icon on left */}
                             <button onClick={generateAndDownloadVCard} className="blue-button share-button-custom share-button-vcard">
                                 <img src={SaveContactIcon} alt="Save Contact" className="share-button-icon" />
                                 Save to Phone Contacts

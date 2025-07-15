@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
-import PlasticCard from '../../assets/images/KonarCard.png'; // Assuming this is the image for plastic card
+import PlasticCard from '../../assets/images/KonarCard.png';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
-import { toast } from 'react-hot-toast'; // Ensure toast is imported for error messages
+import { toast } from 'react-hot-toast';
 
 export default function NFCCards() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -58,7 +58,7 @@ export default function NFCCards() {
   };
 
   const contactDetailsForVCard = {
-    full_name: businessCard?.full_name || authUser?.name || '', // Prioritize businessCard data
+    full_name: businessCard?.full_name || authUser?.name || '',
     job_title: businessCard?.job_title || '',
     business_card_name: businessCard?.business_card_name || '',
     bio: businessCard?.bio || '',
@@ -72,13 +72,13 @@ export default function NFCCards() {
 
 
   return (
-    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}> {/* Changed to app-layout */}
+    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
         <Link to="/" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
         <div
-          className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`} 
+          className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <span></span>
@@ -93,21 +93,19 @@ export default function NFCCards() {
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      <main className="main-content-container"> {/* Changed to main-content-container */}
+      <main className="main-content-container">
         <PageHeader
           title="Choose Your Perfect Card"
           onActivateCard={handleActivateCard}
           onShareCard={handleShareCard}
         />
 
-        {/* This is the new main container for the NFC Card offer, wrapping everything below PageHeader */}
         <div className="combined-offer-container">
-          <div className="nfc-card-offer-container content-card-box"> {/* Added content-card-box here */}
+          <div className="nfc-card-offer-container content-card-box">
             <div className="nfc-card-header">
               <p className='nfc-card-title'>Plastic NFC Card</p>
               <div className="nfc-card-badge">1-month subscription included</div>
             </div>
-            {/* Moved subtitle inside the content-card-box */}
             <p className="nfc-card-subheader">Lightweight, Durable, Always Ready</p>
             <p className="nfc-card-optional-text">This product is optional, buy one to stand out.</p>
 

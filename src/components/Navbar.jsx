@@ -1,29 +1,25 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { AuthContext } from './AuthContext'; // Import AuthContext from correct path
+import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import ArrowDown from '../assets/icons/Arrow-Down-Icon.svg';
 
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  // CORRECTED: Destructure 'logout' function from AuthContext
-  const { user, loading, logout } = useContext(AuthContext); // Use the logout function provided by AuthContext
+  const { user, loading, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = async () => {
-    // Use the logout function from AuthContext.
-    // It handles clearing the token and making the backend call via the 'api' utility.
     await logout();
-    navigate('/'); // Navigate to homepage after successful logout
+    navigate('/');
   };
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
 
-        {/* MOBILE HEADER */}
         <div className="navbar-mobile-header">
           <Link to="/" className="logo-link">
             <img src={LogoIcon} alt="Logo" className="logo" />
@@ -38,7 +34,6 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* MOBILE MENU */}
         <div className={`mobile-menu ${mobileOpen ? 'open' : ''}`}>
           {mobileOpen && (
             <>
@@ -66,7 +61,6 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* DESKTOP NAV */}
         <div className="navbar-desktop">
           <div className="navbar-left">
             <Link to="/" className="logo-link">

@@ -3,13 +3,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Center horizontally */
     justify-content: center;
-    /* Center vertically */
     min-height: calc(100vh - 120px);
-    /* Adjust based on your header/footer height if any */
     padding: 20px;
-    /* Padding around the content card */
     box-sizing: border-box;
 }
 
@@ -17,35 +13,26 @@
 .contact-card-content {
     background: #ffffff;
     padding: 30px;
-    /* Internal padding */
     border-radius: 20px;
-    /* 20px border as requested */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    /* Shadow similar to modals */
     max-width: 550px;
-    /* Max width between 500-600px, chose 550px */
     width: 100%;
-    /* Ensure it takes full width up to max-width */
     border: 1px solid #e0e0e0;
-    /* Border as requested */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    /* Align text and form elements to the left within the card */
 }
 
 /* Specific styling for the intro text */
 .contact-intro-text {
     text-align: left;
-    /* Ensure text aligns left within the card */
     margin-bottom: 20px;
 }
 
 /* Styling for the live chat link */
 .support-live-chat-link {
     color: #007bff;
-    /* Blue color for the link */
     cursor: pointer;
     text-decoration: underline;
     font-weight: 500;
@@ -56,9 +43,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-    /* Space between form elements */
     width: 100%;
-    /* Form takes full width of its parent card */
 }
 
 /* Styling for labels */
@@ -77,10 +62,8 @@
     width: 100%;
     padding: 12px 15px;
     border: none;
-    /* No border */
     border-radius: 6px;
     background-color: #f8f8f8;
-    /* Light grey background for inputs */
     color: #000;
     font-size: 16px;
     outline: none;
@@ -108,7 +91,6 @@
 .support-submit-button {
     margin-top: 20px;
     width: 100%;
-    /* Make button full width of the form */
 }
 
 @media (max-width: 1000px) {
@@ -127,21 +109,17 @@
 
     .contact-card-content {
         padding: 20px;
-        /* Smaller internal padding on mobile */
         border-radius: 12px;
-        /* Slightly less rounded corners on mobile */
     }
 
     .support-form {
         gap: 10px;
-        /* Smaller gap between fields on mobile */
     }
 
     .support-input,
     .support-select,
     .support-textarea {
         padding: 10px 12px;
-        /* Smaller padding for inputs on mobile */
         font-size: 15px;
     }
 

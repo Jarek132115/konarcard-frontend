@@ -9,7 +9,7 @@ export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from || '/myprofile';
-    const { login } = useContext(AuthContext); // Destructure login from AuthContext
+    const { login } = useContext(AuthContext);
 
     const [data, setData] = useState({ email: '', password: '' });
     const [code, setCode] = useState('');
@@ -44,8 +44,7 @@ export default function Login() {
                 }
             } else {
                 toast.success('Login successful!');
-                // Pass both token AND user data to AuthContext.login
-                login(res.data.token, res.data.user); // <--- FIXED LINE
+                login(res.data.token, res.data.user);
                 navigate(from);
             }
         } catch (err) {
@@ -68,8 +67,7 @@ export default function Login() {
                 if (loginRes.data.error) {
                     toast.error(loginRes.data.error);
                 } else {
-                    // Pass both token AND user data to AuthContext.login
-                    login(loginRes.data.token, loginRes.data.user); // <--- FIXED LINE
+                    login(loginRes.data.token, loginRes.data.user);
                     navigate(from);
                 }
             }

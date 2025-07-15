@@ -2,16 +2,15 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader'; // Import PageHeader
+import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 import api from '../../services/api';
 
-// Import assets used in this section
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import PlasticCard from '../../assets/images/PlasticCard.png';
-import LogoIcon from '../../assets/icons/Logo-Icon.svg'; // For mobile header
+import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 
 import { loadStripe } from '@stripe/stripe-js';
@@ -30,8 +29,8 @@ export default function Subscription() {
   const [isCancelling, setIsCancelling] = useState(false);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000); // State for mobile responsiveness
-  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600); // State for small mobile screens
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
   const [showShareModal, setShowShareModal] = useState(false);
 
   const userId = authUser?._id;
@@ -39,7 +38,6 @@ export default function Subscription() {
 
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
 
-  // Fetch subscription status on component mount
   useEffect(() => {
     const fetchSubscriptionStatus = async () => {
       if (!authUser) {
@@ -60,7 +58,6 @@ export default function Subscription() {
   }, [authUser]);
 
 
-  // Cooldown timer for subscription cancellation
   useEffect(() => {
     let timer;
     if (cancelCooldown > 0 && showCancelConfirm) {
@@ -75,13 +72,12 @@ export default function Subscription() {
   }, [cancelCooldown, showCancelConfirm]);
 
 
-  // Handle sidebar and mobile responsiveness
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
-      const currentIsSmallMobile = window.innerWidth <= 600; // Added for isSmallMobile
+      const currentIsSmallMobile = window.innerWidth <= 600;
       setIsMobile(currentIsMobile);
-      setIsSmallMobile(currentIsSmallMobile); // Set small mobile state
+      setIsSmallMobile(currentIsSmallMobile);
       if (!currentIsMobile && sidebarOpen) {
         setSidebarOpen(false);
       }
@@ -100,7 +96,6 @@ export default function Subscription() {
   }, [sidebarOpen, isMobile]);
 
 
-  // Handle subscription
   const handleSubscribe = async () => {
     if (!authUser) {
       navigate('/login', {
@@ -117,7 +112,7 @@ export default function Subscription() {
       return;
     }
 
-    setIsCancelling(true); // Use isCancelling for general loading state for buttons
+    setIsCancelling(true);
     try {
       const res = await api.post('/subscribe', {
         returnUrl: window.location.origin + '/SuccessSubscription',
@@ -135,10 +130,9 @@ export default function Subscription() {
     }
   };
 
-  // Handle card purchase
   const handleBuyCard = async () => {
     const stripe = await stripePromise;
-    const quantity = 1; // Assuming 1 card purchase for this button
+    const quantity = 1;
 
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/checkout/create-checkout-session`, {
       method: 'POST',
@@ -163,7 +157,6 @@ export default function Subscription() {
   };
 
 
-  // Subscription cancellation logic
   const initiateCancelConfirmation = () => {
     setShowCancelConfirm(true);
     setCancelCooldown(3);
@@ -193,7 +186,6 @@ export default function Subscription() {
   };
 
 
-  // Share Profile Modal handlers
   const handleShareCard = () => {
     if (!authUser?.isVerified) {
       toast.error("Please verify your email to share your card.");
@@ -243,20 +235,17 @@ export default function Subscription() {
       )}
 
       <main className="main-content-container">
-        {/* PageHeader component added here */}
         <PageHeader
-          title="Products & Plans" // Custom title for this page
+          title="Products & Plans"
           onActivateCard={() => console.log("Activate Card clicked on Products & Plans page (functionality not implemented here)")}
-          onShareCard={handleShareCard} // Use existing handleShareCard
-          isMobile={isMobile} // Pass responsiveness props
-          isSmallMobile={isSmallMobile} // Pass responsiveness props
+          onShareCard={handleShareCard}
+          isMobile={isMobile}
+          isSmallMobile={isSmallMobile}
         />
 
-        {/* Main wrapper for the combined content, similar to other pages */}
         <div className="products-plans-page-wrapper">
-          <div className="products-plans-card-container"> {/* This holds the two columns */}
+          <div className="products-plans-card-container">
 
-            {/* Left Column: Power Profile Subscription */}
             <div className="products-plans-subscription-column">
               <div className="products-plans-header">
                 <p className='desktop-h5 products-plans-title'>Power Profile</p>
@@ -264,7 +253,7 @@ export default function Subscription() {
                   <div className="products-plans-badge desktop-body-xs">FREE TRIAL</div>
                 )}
               </div>
-              <p className='desktop-body-s products-plans-subheader'>Win more work and *stand out* with a power profile.</p>
+              <p className='desktop-body-s products-plans-subheader'>Win more work and **stand out** with a power profile.</p>
 
               <div className="products-plans-features">
                 {[
@@ -345,7 +334,6 @@ export default function Subscription() {
               </div>
             </div>
 
-            {/* Right Column: Plastic NFC Card */}
             <div className="products-plans-card-column">
               <div className="products-plans-header">
                 <p className='desktop-h5 products-plans-title'>Plastic NFC Card</p>

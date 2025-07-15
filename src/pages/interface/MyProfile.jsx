@@ -595,8 +595,8 @@ export default function MyProfile() {
                 <div className={`myprofile-content ${isMobile ? 'myprofile-mock-phone-mobile-container' : ''}`}>
                   <div
                     className={`mock-phone ${(isSubscribed && (state.pageTheme === "dark" || (state.pageTheme === "" && businessCard?.page_theme === "dark"))) ||
-                        (!isSubscribed && previewPlaceholders.pageTheme === "dark")
-                        ? "dark-mode" : ""
+                      (!isSubscribed && previewPlaceholders.pageTheme === "dark")
+                      ? "dark-mode" : ""
                       }`}
                     style={{
                       fontFamily: !isSubscribed
@@ -782,8 +782,6 @@ export default function MyProfile() {
                         </>
                       ) : null}
 
-                      {/* NEW: Contact Details Section for Preview */}
-                      {/* Renders if unsubscribed (for placeholders) OR subscribed and has contact data */}
                       {!isSubscribed || (isSubscribed && (
                         state.contact_email || state.phone_number ||
                         businessCard?.contact_email || businessCard?.phone_number ||

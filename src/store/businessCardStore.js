@@ -3,24 +3,20 @@
 import { create } from "zustand";
 
 const initialState = {
-  // Theme and Font can still have defaults as they are selected options
-  businessName: "", // FIX: Set to empty for editable field, preview will use placeholder
+  businessName: "",
   pageTheme: "light",
   font: "Inter",
 
-  // FIX: Set image paths to null for a truly "empty" initial state for the editor
   coverPhoto: null,
   avatar: null,
-  workImages: [], // FIX: Start with an empty array for work images
+  workImages: [],
 
-  // FIX: Set text fields to empty strings for a truly "empty" initial state for the editor
   mainHeading: "",
   subHeading: "",
   job_title: "",
   full_name: "",
   bio: "",
 
-  // FIX: Services and Reviews should start empty arrays to match the "empty editor" requirement
   services: [],
   reviews: [],
 
@@ -34,23 +30,20 @@ const useBusinessCardStore = create((set) => ({
     set((store) => ({
       state: { ...store.state, ...newState },
     })),
-  resetState: () => set({ state: initialState }), // resetState now sets to these empty fields
+  resetState: () => set({ state: initialState }),
 }));
 
 export default useBusinessCardStore;
 
-// FIX: Export previewPlaceholders so it can be imported by MyProfile.jsx
-// This object holds the visual template data specifically for the preview section.
 export const previewPlaceholders = {
-  businessName: "My Digital Business Card", // Placeholder for preview title
-  coverPhoto: "/Interface-Preview/Cover-Photo1.png", // Placeholder image path
-  avatar: "/Interface-Preview/Profile-Pic.png", // Placeholder image path
-  workImages: [ // Placeholder work images
+  businessName: "My Digital Business Card",
+  coverPhoto: "/Interface-Preview/Cover-Photo1.png",
+  avatar: "/Interface-Preview/Profile-Pic.png",
+  workImages: [
     { file: null, preview: "/Interface-Preview/Work-Images1.png" },
     { file: null, preview: "/Interface-Preview/Work-Images2.png" },
     { file: null, preview: "/Interface-Preview/Work-Images3.png" },
   ],
-  // Text placeholders
   mainHeading: "Your Main Heading Here",
   subHeading: "Your Tagline or Slogan Goes Here",
   job_title: "Your Job Title",

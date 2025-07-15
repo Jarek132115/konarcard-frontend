@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader'; // Import PageHeader
+import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
 import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
@@ -15,12 +15,12 @@ export default function ContactSupport() {
         email: '',
         reason: '',
         message: '',
-        agree: true // Changed to true for auto-checked
+        agree: true
     });
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000); // State for mobile responsiveness
-    const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600); // State for small mobile screens
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+    const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
     const [showShareModal, setShowShareModal] = useState(false);
 
     const { user: authUser, loading: authLoading } = useContext(AuthContext);
@@ -32,9 +32,9 @@ export default function ContactSupport() {
     useEffect(() => {
         const handleResize = () => {
             const currentIsMobile = window.innerWidth <= 1000;
-            const currentIsSmallMobile = window.innerWidth <= 600; // Added for isSmallMobile
+            const currentIsSmallMobile = window.innerWidth <= 600;
             setIsMobile(currentIsMobile);
-            setIsSmallMobile(currentIsSmallMobile); // Set small mobile state
+            setIsSmallMobile(currentIsSmallMobile);
             if (!currentIsMobile && sidebarOpen) {
                 setSidebarOpen(false);
             }
@@ -78,7 +78,7 @@ export default function ContactSupport() {
                     email: '',
                     reason: '',
                     message: '',
-                    agree: true // Reset to true after submission
+                    agree: true
                 });
             } else {
                 toast.error(res.data.error || 'Something went wrong');
@@ -137,16 +137,14 @@ export default function ContactSupport() {
             )}
 
             <main className="main-content-container">
-                {/* PageHeader component added here */}
                 <PageHeader
-                    title="Contact Support" // Custom title for this page
+                    title="Contact Support"
                     onActivateCard={() => console.log("Activate Card clicked on Contact Support page (functionality not implemented here)")}
-                    onShareCard={handleShareCard} // Use existing handleShareCard
-                    isMobile={isMobile} // Pass responsiveness props
-                    isSmallMobile={isSmallMobile} // Pass responsiveness props
+                    onShareCard={handleShareCard}
+                    isMobile={isMobile}
+                    isSmallMobile={isSmallMobile}
                 />
 
-                {/* New wrapper for the centered content card */}
                 <div className="contact-page-wrapper">
                     <div className="contact-card-content">
                         <p className="desktop-body light-black contact-intro-text">

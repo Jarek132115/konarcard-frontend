@@ -5,7 +5,6 @@ import LogoIcon from '../assets/icons/Logo-Icon.svg'
 import CopyrightIcon from '../assets/icons/Copyright-Icon.svg'
 
 
-
 export default function Footer() {
     return (
         <footer>

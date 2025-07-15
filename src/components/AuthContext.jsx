@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }) => {
 
         try {
             const response = await api.get('/profile');
-            // Backend /profile returns { data: userObject }, so response.data.data is correct
             const fetchedUser = response.data.data;
 
             console.log("AuthContext: API response for /profile:", response);
@@ -40,7 +39,6 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (err) {
             console.error("AuthContext fetchUser failed in catch block:", err);
-            // If the error is 401 Unauthorized, clear token
             if (err.response && err.response.status === 401) {
                 console.warn("AuthContext: 401 Unauthorized during profile fetch, token likely invalid/expired. Clearing token.");
                 if (typeof window !== 'undefined') {
@@ -54,7 +52,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Initial fetch on component mount
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const token = localStorage.getItem('token');
@@ -67,14 +64,13 @@ export const AuthProvider = ({ children }) => {
                 console.log("AuthContext: No token, setting loading to false and user to null.");
             }
         }
-    }, []); // Empty dependency array means this runs once on mount
+    }, []);
 
-    // Modified login function to accept and immediately set the user object
-    const login = (token, userData) => { // <-- Added userData parameter
+    const login = (token, userData) => {
         if (typeof window !== 'undefined') {
             localStorage.setItem('token', token);
-            setUser(userData); // <-- Immediately set user data
-            setLoading(false); // Assume loaded if login succeeded
+            setUser(userData);
+            setLoading(false);
             console.log("AuthContext: User logged in and set immediately.");
         }
     };
@@ -86,7 +82,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         console.log("AuthContext: User logged out and token cleared.");
         try {
-            await api.post('/logout'); // Inform backend about logout
+            await api.post('/logout');
         } catch (err) {
             console.error("Error calling backend logout:", err);
         }

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // Import useParams
-import axios from 'axios'; // Assuming 'api' is configured to be axios instance
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import backgroundImg from '../../assets/images/background.png';
 import greenTick from '../../assets/icons/Green-Tick-Icon.svg';
@@ -8,10 +8,7 @@ import redCross from '../../assets/icons/Red-Cross-Icon.svg';
 
 export default function ResetPassword() {
     const navigate = useNavigate();
-    const { token } = useParams(); // Extract token from URL
-    // Remove email and code states as they are not directly used when arriving via reset link
-    // const [email, setEmail] = useState('');
-    // const [code, setCode] = useState('');
+    const { token } = useParams();
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -19,15 +16,6 @@ export default function ResetPassword() {
     const [showConfirm, setShowConfirm] = useState(false);
     const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
     const blurTimeoutRef = React.useRef(null);
-
-    // No cooldown needed here as it's for verification code resend, not password reset
-    // useEffect(() => {
-    //     let timer;
-    //     if (cooldown > 0) {
-    //         timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
-    //     }
-    //     return () => clearTimeout(timer);
-    // }, [cooldown]);
 
     const togglePassword = () => setShowPassword(!showPassword);
     const toggleConfirm = () => setShowConfirm(!showConfirm);
@@ -52,9 +40,6 @@ export default function ResetPassword() {
         }, 100);
     };
 
-    // This function is no longer needed in this component, as the user arrives directly with a token
-    // const requestReset = async (e) => { /* ... */ };
-
     const resetPassword = async (e) => {
         e.preventDefault();
         if (!Object.values(passwordChecks).every(Boolean)) {
@@ -62,15 +47,14 @@ export default function ResetPassword() {
             return;
         }
 
-        if (!token) { // Ensure token exists from URL
+        if (!token) {
             toast.error('Invalid reset link. Token missing.');
             return;
         }
 
         try {
-            // Send the token from URL params and newPassword in the body
             const res = await axios.post(`/reset-password/${token}`, {
-                password: password, // Changed from newPassword to password to match backend
+                password: password,
             });
 
             if (res.data.error) {
@@ -85,11 +69,10 @@ export default function ResetPassword() {
         }
     };
 
-    // Effect to check for token on component mount
     useEffect(() => {
         if (!token) {
             toast.error('Invalid or missing password reset token.');
-            navigate('/login'); // Redirect to login if no token is present
+            navigate('/login');
         }
     }, [token, navigate]);
 
@@ -107,24 +90,8 @@ export default function ResetPassword() {
             </div>
             <div className="login-right">
                 <div className="login-card">
-                    {/* Title always "Reset Your Password" as this component is for the final step */}
                     <h2 className="login-title">Reset Your Password</h2>
-
-                    {/* Only show the password reset form */}
                     <form onSubmit={resetPassword} className="login-form">
-                        {/* Removed email and code inputs, as they are not part of this flow */}
-                        {/* <label htmlFor="code" className="form-label">Verification Code</label>
-                        <input
-                            type="text"
-                            id="code"
-                            placeholder="Enter the code sent to your email"
-                            value={code}
-                            onChange={(e) => setCode(e.target.value)}
-                            required
-                            className="standard-input"
-                            autoComplete="off"
-                        /> */}
-
                         <label htmlFor="newPassword" className="form-label">New Password</label>
                         <div className="password-wrapper">
                             <input

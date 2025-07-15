@@ -1,95 +1,62 @@
-/* Ensure the overall app layout takes full viewport height and manages its own overflow */
 .app-layout {
   display: flex;
   height: 100vh;
-  /* Make the app layout take the full viewport height */
   overflow: auto;
-  /* Prevent overall app-layout from scrolling, let children manage */
   flex-direction: row;
-  /* Default desktop layout for app-layout */
 }
 
-
-
-/* Wrapper for the entire help videos content to enable centering */
 .help-videos-page-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Center the grid horizontally */
   justify-content: flex-start;
-  /* Align to start, let content push down */
   height: auto;
-  /* Allow content to define height, but parent is scrollable */
   padding: 0;
   box-sizing: border-box;
   width: 100%;
   margin-bottom: 40px;
-  /* Space before footer */
 }
 
-/* Grid container for the individual video items */
 .help-videos-grid {
   display: grid;
   grid-template-columns: 1fr;
-  /* ALWAYS a single column */
   gap: 30px;
-  /* Space between each video item */
   width: 100%;
   max-width: 550px;
-  /* Max width for the grid itself, still allowing items to be wide */
 }
 
-/* Styling for each individual video item (card) */
 .help-video-item {
   background: #ffffff;
   padding: 25px;
-  /* Internal padding for the video card */
   border-radius: 20px;
-  /* Rounded corners */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  /* Shadow */
   border: 1px solid #e0e0e0;
-  /* Border */
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  /* Align items vertically in the center */
   gap: 25px;
-  /* Space between thumbnail and content */
   flex-direction: row;
-  /* Default layout: thumbnail on left, content on right */
 }
 
-/* Rule for reversed video item layout */
 .help-video-item.video-item-reversed {
   flex-direction: row-reverse;
-  /* Reverse order for thumbnail and content */
 }
 
-/* Styling for the video thumbnail image */
 .video-thumb {
   width: 40%;
-  /* Thumbnail takes 40% of the item width */
   height: auto;
   border-radius: 12px;
   object-fit: cover;
   flex-shrink: 0;
-  /* Prevent thumbnail from shrinking */
 }
 
-/* Styling for the video content section */
 .video-content {
   flex-grow: 1;
-  /* Content section takes remaining space */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* Pushes button to the bottom if content is short */
   height: 100%;
-  /* Ensure it takes full height of its flex parent */
   text-align: left;
-  /* Default text alignment */
 }
 
 .video-title {
@@ -111,12 +78,10 @@
   color: #777;
   font-style: italic;
   margin-bottom: 20px;
-  /* Space before the button */
 }
 
 .video-button {
   align-self: flex-start;
-  /* Align button to the start of the content column */
   padding: 10px 20px;
   border-radius: 8px;
   font-size: 14px;
@@ -124,12 +89,9 @@
   text-decoration: none;
   transition: background-color 0.2s ease, color 0.2s ease;
   width: auto;
-  /* Allow button to size to its content */
   min-width: 120px;
-  /* Ensure a minimum width */
 }
 
-/* Dark mode adjustments */
 body.dark-mode .help-video-item {
   background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
   color: #e0e0e0;
@@ -158,19 +120,14 @@ body.dark-mode .video-button.black-button:hover {
   background-color: #555;
 }
 
-/* Responsive adjustments for smaller screens */
 @media (max-width: 1000px) {
-
-  /* This media query now applies to all mobile sizes */
   .app-layout {
     flex-direction: column;
-    /* Stack sidebar and main content vertically on mobile */
   }
 
   .help-videos-page-wrapper {
     padding: 0;
     gap: 20px;
-    /* Smaller gap between items on mobile */
   }
 
   .help-videos-grid {
@@ -180,25 +137,19 @@ body.dark-mode .video-button.black-button:hover {
   .help-video-item,
   .help-video-item.video-item-reversed {
     flex-direction: column;
-    /* Stack thumbnail and content vertically on mobile */
     padding: 20px;
     gap: 15px;
     text-align: center;
-    /* Center text when stacked */
   }
 
   .video-thumb {
     width: 100%;
-    /* Thumbnail takes full width on mobile */
     max-width: 300px;
-    /* Limit image size for very tall images */
     margin: 0 auto;
-    /* Center image */
   }
 
   .video-content {
     align-items: center;
-    /* Center text content vertically */
   }
 
   .video-title {
@@ -218,26 +169,20 @@ body.dark-mode .video-button.black-button:hover {
 
   .video-button {
     align-self: center;
-    /* Center button when stacked */
     width: 100%;
-    /* Make button full width on mobile */
     max-width: 180px;
-    /* Limit button width if desired */
     font-size: 13px;
     padding: 8px 12px;
   }
 }
 
-/* Smaller mobile screens (e.g., max-width 400px) */
 @media (max-width: 400px) {
   .main-content-container {
     padding: 10px;
-    /* Even less padding on very small screens */
   }
 
   .help-video-item {
     padding: 15px;
-    /* Smaller padding for video cards */
   }
 
   .video-title {

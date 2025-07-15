@@ -3,11 +3,9 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import homeInterface from '../assets/icons/Home-Interface.svg';
-import cardInterface from '../assets/icons/Card-Interface.svg'; // Using this for Products & Plans
+import cardInterface from '../assets/icons/Card-Interface.svg';
 import settingsInterface from '../assets/icons/Settings-Interface.svg';
-// import subscriptionInterface from '../assets/icons/Subscription-Interface.svg'; // No longer used for a direct link
 import contactInterface from '../assets/icons/Contact-Interface.svg';
-// import helpInterface from '../assets/icons/Help-Interface.svg'; // No longer used for direct link
 import logoutInterface from '../assets/icons/Logout-Interface.svg';
 
 
@@ -16,7 +14,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const { user, logout } = useContext(AuthContext);
     const location = useLocation();
 
-    // Debugging logs from previous conversation (can be removed once confirmed working)
     useEffect(() => {
         console.log("Sidebar: AuthContext user object:", user);
         console.log("Sidebar: User Name:", user?.name);
@@ -89,11 +86,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <img src={contactInterface} alt="contact" className="icon" />
                             <p className='desktop-body-s'>Contact Us</p>
                         </Link>
-                        {/* REMOVED: Help Centre Link */}
-                        {/* <Link to="/helpcentreinterface" className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
-                            <img src={helpInterface} alt="help centre" className="icon" />
-                            <p className='desktop-body-s'>Help Centre</p>
-                        </Link> */}
                     </div>
                 </div>
 

@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
-import ShareProfile from '../../components/ShareProfile'; // Still imported as it's a global component
-import HeroBackground from '../../assets/images/background-hero.png'; // Example image for article thumbnails
+import ShareProfile from '../../components/ShareProfile';
+import HeroBackground from '../../assets/images/background-hero.png';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
@@ -14,7 +14,7 @@ export default function HelpCentre() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
-  const [showShareModal, setShowShareModal] = useState(false); // This state still controls the ShareProfile modal
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const { user: authUser, loading: authLoading } = useContext(AuthContext);
   const userId = authUser?._id;
@@ -46,7 +46,6 @@ export default function HelpCentre() {
     }
   }, [sidebarOpen, isMobile]);
 
-  // This handleShareCard is for the ShareProfile MODAL (which is still globally available)
   const handleShareCard = () => {
     if (!authUser?.isVerified) {
       toast.error("Please verify your email to share your card.");
@@ -64,9 +63,7 @@ export default function HelpCentre() {
     toast.info("Activate Card functionality is not available on this page.");
   };
 
-  // NEW FUNCTION: handleGetHelp for the specific Help Centre "Share" button
   const handleGetHelp = () => {
-    // Replace with your actual step-by-step guide URL or a hosted markdown page
     const helpGuideUrl = "https://your-website.com/help-guide-on-fixing-issues";
     window.open(helpGuideUrl, '_blank', 'noopener,noreferrer');
     toast.success("Opening step-by-step guide!");
@@ -110,16 +107,15 @@ export default function HelpCentre() {
 
       <main className="main-content-container">
         <PageHeader
-          title="Help Centre" // Custom title for this page
-          onActivateCard={handleActivateCard} // Use the specific handleActivateCard for this page
-          onShareCard={handleGetHelp} // Use the NEW handleGetHelp function for the "Share" button here
+          title="Help Centre"
+          onActivateCard={handleActivateCard}
+          onShareCard={handleGetHelp}
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}
         />
 
         <div className="help-videos-page-wrapper">
           <div className="help-videos-grid">
-            {/* First Help Article/Card */}
             <div className="help-video-item">
               <img src={HeroBackground} alt="Profile Setup Thumbnail" className="video-thumb" />
               <div className="video-content">
@@ -127,26 +123,25 @@ export default function HelpCentre() {
                 <p className="video-desc">
                   Learn how to create your profile, add your details, and save it for instant sharing.
                 </p>
-                <p className="video-time">Read Time: 46 seconds</p> {/* Changed from Watch Time */}
-                <button className="video-button black-button desktop-button">Get Help</button> {/* Changed button text */}
+                <p className="video-time">Read Time: 46 seconds</p>
+                <button className="video-button black-button desktop-button">Get Help</button>
               </div>
             </div>
 
-            {/* Second Help Article/Card (reversed layout) */}
             <div className="help-video-item video-item-reversed">
               <div className="video-content">
                 <h2 className="video-title">How to Activate Your NFC Card</h2>
                 <p className="video-desc">
                   Step-by-step activation process to connect your physical card to your digital profile.
                 </p>
-                <p className="video-time">Read Time: 46 seconds</p> {/* Changed from Watch Time */}
-                <button className="video-button black-button desktop-button">Get Help</button> {/* Changed button text */}
+                <p className="video-time">Read Time: 46 seconds</p>
+                <button className="video-button black-button desktop-button">Get Help</button>
               </div>
               <img src={HeroBackground} alt="Card Activation Thumbnail" className="video-thumb" />
             </div>
 
-          </div> {/* End help-videos-grid */}
-        </div> {/* End help-videos-page-wrapper */}
+          </div>
+        </div>
       </main>
 
 

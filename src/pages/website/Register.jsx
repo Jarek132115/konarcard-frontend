@@ -6,8 +6,6 @@ import { toast } from 'react-hot-toast';
 export default function Register() {
     const navigate = useNavigate();
     const location = useLocation();
-    // Removed useContext(AuthContext) as it cannot be resolved here.
-    // const { setUser } = useContext(AuthContext);
     const from = location.state?.from || '/';
 
     const [data, setData] = useState({
@@ -23,9 +21,7 @@ export default function Register() {
     const [verificationStep, setVerificationStep] = useState(false);
     const [code, setCode] = useState('');
     const [cooldown, setCooldown] = useState(0);
-    // New state to control password feedback visibility
     const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
-    // Ref to manage blur timeout
     const blurTimeoutRef = useRef(null);
 
     useEffect(() => {
@@ -46,7 +42,6 @@ export default function Register() {
     };
 
     const handlePasswordFocus = () => {
-        // Clear any pending blur timeout if we are focusing again
         if (blurTimeoutRef.current) {
             clearTimeout(blurTimeoutRef.current);
         }
@@ -54,10 +49,9 @@ export default function Register() {
     };
 
     const handlePasswordBlur = () => {
-        // Set a timeout to hide feedback, allowing a brief moment to switch between password fields
         blurTimeoutRef.current = setTimeout(() => {
             setShowPasswordFeedback(false);
-        }, 100); // 100ms delay
+        }, 100);
     };
 
     const registerUser = async (e) => {
@@ -75,8 +69,6 @@ export default function Register() {
 
         try {
             console.log('Sending registration request...');
-            // Note: axios.post will need to be configured with a base URL
-            // or you'll need to provide full URLs for your API endpoints.
             const res = await axios.post('/register', {
                 name: data.name,
                 email: data.email,
@@ -100,16 +92,15 @@ export default function Register() {
             }
         } catch (err) {
             console.error('Registration request failed (caught by frontend):', err);
-            // Check err.response for more details if it's an HTTP error
             if (err.response) {
                 console.error('Error response data:', err.response.data);
                 console.error('Error response status:', err.response.status);
                 toast.error(err.response.data.error || 'Registration failed');
             } else if (err.request) {
-                console.error('Error request:', err.request); // The request was made but no response was received
+                console.error('Error request:', err.request);
                 toast.error('No response from server. Check network.');
             } else {
-                console.error('Error message:', err.message); // Something else happened in setting up the request
+                console.error('Error message:', err.message);
                 toast.error('Registration failed');
             }
         }
@@ -135,7 +126,6 @@ export default function Register() {
                 if (loginRes.data.error) {
                     toast.error(loginRes.data.error);
                 } else {
-                    // setUser(loginRes.data); // Removed setUser call
                     navigate(from);
                 }
             }
@@ -158,14 +148,12 @@ export default function Register() {
         }
     };
 
-    // Inline SVG for Green Tick
     const GreenTickIcon = () => (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feedback-icon">
             <polyline points="20 6 9 17 4 12"></polyline>
         </svg>
     );
 
-    // Inline SVG for Red Cross
     const RedCrossIcon = () => (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feedback-icon">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -175,11 +163,9 @@ export default function Register() {
 
     return (
         <>
-            {/* The close button is now inside the login-wrapper for consistent positioning */}
             <div className="login-wrapper">
                 <Link to="/" className="close-button">×</Link>
                 <div className="login-left">
-                    {/* Replaced local image import with a placeholder URL */}
                     <img src="https://placehold.co/600x400/E0E0E0/333333?text=Background+Image" alt="Visual" className="login-visual" />
                     <div className="login-quote">
                         <span className="quote-icon">“</span>
@@ -205,7 +191,6 @@ export default function Register() {
                                 <label htmlFor="name" className="form-label">Name</label>
                                 <input type="text" id="name" name="name" placeholder="Name" value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })} className="standard-input" autoComplete="off" />
 
-                                {/* Updated Username Label and Input Structure */}
                                 <label htmlFor="username" className="form-label">
                                     Username <span className="text-sm text-gray-500">(username cannot be changed)</span>
                                 </label>
@@ -215,7 +200,7 @@ export default function Register() {
                                         type="text"
                                         id="username"
                                         name="username"
-                                        placeholder="username" // Changed placeholder for clarity
+                                        placeholder="username"
                                         value={data.username}
                                         onChange={(e) => setData({ ...data, username: e.target.value })}
                                         autoComplete="off"
