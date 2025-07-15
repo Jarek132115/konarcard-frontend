@@ -34,7 +34,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     return (
         <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
             <div className="sidebar-mobile-header-inner">
-                <Link to="/" className="sidebar-logo-link-mobile" onClick={closeSidebar}>
+                <Link to="/myprofile" className="sidebar-logo-link-mobile" onClick={closeSidebar}>
                     <img src={LogoIcon} alt="Logo" className="sidebar-logo-mobile" />
                 </Link>
                 <div className="close-sidebar-button" onClick={closeSidebar}>
