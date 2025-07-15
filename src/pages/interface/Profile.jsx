@@ -152,7 +152,7 @@ export default function Profile() {
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
-        <Link to="/" className="myprofile-logo-link">
+        <Link to="/myprofile" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
         </Link>
         <div
