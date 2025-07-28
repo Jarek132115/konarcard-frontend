@@ -84,7 +84,6 @@ export default function ContactSupport() {
                 toast.error(res.data.error || 'Something went wrong');
             }
         } catch (err) {
-            console.error('Failed to send message:', err.response?.data?.error || err);
             toast.error(err.response?.data?.error || 'Failed to send message.');
         }
     };
@@ -139,7 +138,7 @@ export default function ContactSupport() {
             <main className="main-content-container">
                 <PageHeader
                     title="Contact Support"
-                    onActivateCard={() => console.log("Activate Card clicked on Contact Support page (functionality not implemented here)")}
+                    onActivateCard={() => { /* Functionality not implemented here */ }}
                     onShareCard={handleShareCard}
                     isMobile={isMobile}
                     isSmallMobile={isSmallMobile}

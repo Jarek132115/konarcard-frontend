@@ -42,7 +42,8 @@ export default function NFCCards() {
   }, [sidebarOpen, isMobile]);
 
   const handleActivateCard = () => {
-    console.log("Activate Card clicked on NFC Cards page");
+    // Functionality for "Activate Card" is not defined here.
+    // Add toast or other user feedback if needed for production.
   };
 
   const handleShareCard = () => {
@@ -69,7 +70,6 @@ export default function NFCCards() {
 
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
-
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>

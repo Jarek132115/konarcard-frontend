@@ -68,7 +68,6 @@ export default function Register() {
         }
 
         try {
-            console.log('Sending registration request...');
             const res = await axios.post('/register', {
                 name: data.name,
                 email: data.email,
@@ -77,30 +76,19 @@ export default function Register() {
                 confirmPassword: data.confirmPassword,
             });
 
-            console.log('Registration response received:', res);
-            console.log('Response data:', res.data);
-            console.log('Response status:', res.status);
-
             if (res.data.error) {
                 toast.error(res.data.error);
-                console.log('Backend sent an explicit error:', res.data.error);
             } else {
                 toast.success('Verification code sent!');
                 setVerificationStep(true);
                 setCooldown(30);
-                console.log('Frontend logic: Switched to verification step.');
             }
         } catch (err) {
-            console.error('Registration request failed (caught by frontend):', err);
             if (err.response) {
-                console.error('Error response data:', err.response.data);
-                console.error('Error response status:', err.response.status);
                 toast.error(err.response.data.error || 'Registration failed');
             } else if (err.request) {
-                console.error('Error request:', err.request);
                 toast.error('No response from server. Check network.');
             } else {
-                console.error('Error message:', err.message);
                 toast.error('Registration failed');
             }
         }

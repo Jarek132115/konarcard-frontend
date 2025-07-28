@@ -48,7 +48,6 @@ export default function Login() {
                 navigate(from);
             }
         } catch (err) {
-            console.error('Login failed:', err.message || err);
             toast.error(err.message || 'Login failed');
         }
     };
@@ -72,7 +71,6 @@ export default function Login() {
                 }
             }
         } catch (err) {
-            console.error('Verification failed:', err.message || err);
             toast.error(err.message || 'Verification failed');
         }
     };
@@ -87,7 +85,6 @@ export default function Login() {
                 setCooldown(30);
             }
         } catch (err) {
-            console.error('Could not resend code:', err.message || err);
             toast.error(err.message || 'Could not resend code');
         }
     };
@@ -102,7 +99,6 @@ export default function Login() {
                 toast.success('Reset link sent to your email');
             }
         } catch (err) {
-            console.error('Failed to send reset link:', err.message || err);
             toast.error(err.message || 'Failed to send reset link');
         }
     };

@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { toast } from 'react-hot-toast'; // Ensure toast is imported if used in interceptors
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL, 
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
@@ -11,7 +12,6 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log("api.js Interceptor: Request config before sending:", config);
     return config;
   },
   (error) => {
@@ -21,12 +21,10 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
-    console.log("api.js Interceptor: Response received:", response);
     return response;
   },
   (error) => {
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      console.error("API Response Error (Interceptor): Unauthorized or Forbidden. Clearing token from localStorage.");
       localStorage.removeItem('token');
       toast.error("Session expired or unauthorized. Please log in again.");
     }

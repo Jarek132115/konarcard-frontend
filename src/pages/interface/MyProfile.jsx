@@ -64,7 +64,6 @@ export default function MyProfile() {
 
       if (paymentSuccess === 'true' && !isSubscribed && !handledRedirect) {
         handledRedirect = true;
-        console.log("Payment success detected in URL, refetching user data to update subscription status...");
         if (typeof refetchAuthUser === 'function') {
           await refetchAuthUser();
         }
@@ -141,10 +140,8 @@ export default function MyProfile() {
           contact_email: businessCard.contact_email || '',
           phone_number: businessCard.phone_number || '',
         });
-        console.log("MyProfile: Populated editor state with fetched business card data for subscribed user.");
       } else {
         resetState();
-        console.log("MyProfile: User not subscribed or no saved business card found. Editor state reset to empty.");
       }
 
       setCoverPhotoFile(null);
@@ -417,17 +414,14 @@ export default function MyProfile() {
           contact_email: fetchedCardData.contact_email || '',
           phone_number: fetchedCardData.phone_number || '',
         });
-        console.log("MyProfile: Editor state re-populated immediately after save with saved data.");
       } else {
         resetState();
-        console.log("MyProfile: No data returned after save, resetting editor state to empty.");
       }
 
       queryClient.invalidateQueries(['businessCard', userId]);
 
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
-      console.error("Error saving business card:", error);
     }
   };
 
@@ -457,7 +451,6 @@ export default function MyProfile() {
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "Failed to start subscription.");
-      console.error("Error starting subscription:", error);
     }
   };
 
@@ -485,27 +478,6 @@ export default function MyProfile() {
   const showAddImageText = (imageState) => {
     return !imageState;
   };
-
-  useEffect(() => {
-    console.log("--- Preview Debug Info (Render) ---");
-    console.log("isSubscribed:", isSubscribed);
-    console.log("businessCard (saved data):", businessCard);
-    console.log("state (live editor data):", state);
-    console.log("previewPlaceholders:", previewPlaceholders);
-
-    const effectiveTheme = isSubscribed
-      ? (state.pageTheme || businessCard?.page_theme || previewPlaceholders.pageTheme)
-      : previewPlaceholders.pageTheme;
-
-    const effectiveFont = isSubscribed
-      ? (state.font || businessCard?.style || previewPlaceholders.font)
-      : previewPlaceholders.font;
-
-    console.log("Preview Effective Theme:", effectiveTheme);
-    console.log("Preview Effective Font:", effectiveFont);
-    console.log("-----------------------------------");
-  }, [isSubscribed, businessCard, state.pageTheme, state.font, previewPlaceholders]);
-
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>

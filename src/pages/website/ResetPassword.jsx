@@ -64,7 +64,6 @@ export default function ResetPassword() {
                 navigate('/login');
             }
         } catch (err) {
-            console.error('Could not reset password:', err.response?.data?.error || err.message || err);
             toast.error(err.response?.data?.error || 'Could not reset password. Please check the link and try again.');
         }
     };

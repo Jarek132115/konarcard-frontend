@@ -48,7 +48,6 @@ export default function Subscription() {
         const res = await api.get('/subscription-status');
         setIsSubscribed(res.data.active);
       } catch (err) {
-        console.error('Error fetching subscription status:', err);
         toast.error('Failed to load subscription status.');
       } finally {
         setLoadingSubscriptionStatus(false);
@@ -123,7 +122,6 @@ export default function Subscription() {
         toast.error('Failed to get Stripe checkout URL.');
       }
     } catch (err) {
-      console.error('Subscription initiation failed:', err);
       toast.error(err.response?.data?.error || 'Subscription initiation failed. Please try again.');
     } finally {
       setIsCancelling(false);
@@ -172,7 +170,6 @@ export default function Subscription() {
       setShowCancelConfirm(false);
       setCancelCooldown(0);
     } catch (err) {
-      console.error('Failed to cancel subscription:', err);
       toast.error(err.response?.data?.error || 'Failed to cancel subscription. Please try again.');
     } finally {
       setIsCancelling(false);
@@ -237,7 +234,7 @@ export default function Subscription() {
       <main className="main-content-container">
         <PageHeader
           title="Products & Plans"
-          onActivateCard={() => console.log("Activate Card clicked on Products & Plans page (functionality not implemented here)")}
+          onActivateCard={() => { /* Functionality not implemented here */ }}
           onShareCard={handleShareCard}
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}

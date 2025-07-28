@@ -29,7 +29,6 @@ export default function Profile() {
   useEffect(() => {
     if (authUser) {
       setUpdatedName(authUser.name || '');
-      console.log("Profile.jsx useEffect: authUser.name =", authUser.name);
     }
   }, [authUser]);
 
@@ -72,7 +71,6 @@ export default function Profile() {
         toast.error(res.data.error || 'Something went wrong');
       }
     } catch (err) {
-      console.error('Failed to update profile:', err);
       toast.error(err.response?.data?.error || 'Failed to update profile');
     }
   };
@@ -101,7 +99,6 @@ export default function Profile() {
         toast.error(res.data.error || 'Failed to delete account');
       }
     } catch (err) {
-      console.error('Server error deleting account:', err);
       toast.error(err.response?.data?.error || 'Server error deleting account');
     }
   };
@@ -119,7 +116,6 @@ export default function Profile() {
         toast.success('Password reset link sent to your email!');
       }
     } catch (err) {
-      console.error('Failed to send reset link:', err.message || err);
       toast.error(err.message || 'Failed to send reset link');
     }
   };
@@ -174,7 +170,7 @@ export default function Profile() {
       <main className="main-content-container">
         <PageHeader
           title="My Account"
-          onActivateCard={() => console.log("Activate Card button clicked on My Account page (functionality not implemented here)")}
+          onActivateCard={() => { /* Functionality not implemented here */ }}
           onShareCard={handleShareCard}
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}

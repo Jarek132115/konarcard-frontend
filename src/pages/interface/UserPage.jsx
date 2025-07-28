@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from '@tanstack/react-query';
-import api from '../../services/api'; 
+import api from '../../services/api';
 
 const UserPage = () => {
     const { username } = useParams();
@@ -10,10 +10,9 @@ const UserPage = () => {
         queryKey: ["public-business-card", username],
         queryFn: async () => {
             const response = await api.get(`/api/business-card/by_username/${username}`);
-            console.log("UserPage: Fetched business card data for public profile:", response.data);
             return response.data;
         },
-        enabled: !!username, 
+        enabled: !!username,
         staleTime: 5 * 60 * 1000,
         cacheTime: 10 * 60 * 1000,
         retry: 1,
