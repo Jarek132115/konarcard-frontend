@@ -64,7 +64,6 @@ export default function ContactUs() {
         toast.error(data.error || 'Something went wrong');
       }
     } catch (err) {
-      console.error(err);
       toast.error('Failed to send message.');
     }
   };
@@ -165,6 +164,8 @@ export default function ContactUs() {
           </button>
         </form>
       </div>
+
+      ---
 
       <div className="section">
         <div className="section-1-title">
