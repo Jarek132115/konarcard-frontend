@@ -76,11 +76,9 @@ export default function Home() {
       if (url) {
         window.location.href = url;
       } else {
-        console.error('Could not start subscription: No URL received');
         toast.error('Could not start subscription. Please try again.');
       }
     } catch (err) {
-      console.error('Subscription initiation failed:', err);
       toast.error(err.response?.data?.error || 'Subscription failed. Please try again.');
     }
   };
@@ -157,6 +155,7 @@ export default function Home() {
         </div>
       </div>
 
+      ---
 
       <div className="full-width-bg-container section-bg-grey first-section-after-hero">
         <div className="section">
@@ -212,6 +211,7 @@ export default function Home() {
         </div>
       </div>
 
+      ---
 
       <div className="section">
         <div className="section-1-title">
@@ -275,6 +275,7 @@ export default function Home() {
         </div>
       </div>
 
+      ---
 
       <div className="full-width-bg-container section-bg-grey">
         <div className="section">
@@ -340,6 +341,7 @@ export default function Home() {
         </div>
       </div>
 
+      ---
 
       <div className="section">
         <div className="section-1-title">
@@ -375,6 +377,8 @@ export default function Home() {
         </div>
       </div>
 
+      ---
+
       <div className="full-width-bg-container section-bg-grey">
         <div className="section">
           <div className="section-1-title">
@@ -407,6 +411,8 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      ---
 
       <div className="section combined-offer-section">
         <div className="section-1-title">
@@ -494,6 +500,7 @@ export default function Home() {
         </div>
       </div>
 
+      ---
 
       <div className="full-width-bg-container section-bg-grey">
         <div className="section">
@@ -565,6 +572,7 @@ export default function Home() {
         </div>
       </div>
 
+      ---
 
       <div className="section">
         <div className="section-1-title">
