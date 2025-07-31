@@ -1,4 +1,3 @@
-// frontend/src/store/businessCardStore.js
 
 import { create } from "zustand";
 

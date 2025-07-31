@@ -69,7 +69,6 @@ export const AuthProvider = ({ children }) => {
         try {
             await api.post('/logout');
         } catch (err) {
-            // Error calling backend logout can be ignored or handled silently in production
         }
     };
 
