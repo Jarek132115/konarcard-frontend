@@ -44,7 +44,14 @@ export default function ContactUs() {
     }
 
     try {
-      const res = await fetch('http://localhost:8000/api/contact', {
+      // **UPDATED: Using an environment variable for the API URL**
+      const apiUrl = process.env.REACT_APP_API_URL;
+      if (!apiUrl) {
+        toast.error('API URL is not configured.');
+        return;
+      }
+
+      const res = await fetch(`${apiUrl}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
