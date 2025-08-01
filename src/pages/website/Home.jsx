@@ -168,16 +168,16 @@ export default function Home() {
             </div>
 
             <div className="section-1-right">
-              <p className="desktop-h5">More Than a Business Card</p>
-              <p className="desktop-body">This isn’t just a contact card — it’s your own page that shows off what you do, how to reach you, and why people should hire you.</p>
+              <p className="desktop-h5">Stand Out with a Professional Digital Profile</p>
+              <p className="desktop-body">We've built a landing page specifically for tradespeople. It's a single, professional page that showcases your skills, services, and best work.</p>
 
               <div className="section-list">
                 <div className="icon-white">
                   <img src={BoltIcon} className="icon" />
                 </div>
                 <div className="section-list-info">
-                  <p className="desktop-h6">Ready in 5 Minutes</p>
-                  <p className="desktop-body-xs">Pick your style, write a few lines, and you’re good to go.</p>
+                  <p className="desktop-h6">Ready in Minutes</p>
+                  <p className="desktop-body-xs">Quickly build your profile with a few clicks.</p>
                 </div>
               </div>
 
@@ -186,8 +186,8 @@ export default function Home() {
                   <img src={CustomizationIcon} className="icon" />
                 </div>
                 <div className="section-list-info">
-                  <p className="desktop-h6">Make It Yours</p>
-                  <p className="desktop-body-xs">Add your photo, your logo, and whatever makes your work stand out.</p>
+                  <p className="desktop-h6">Showcase Your Best Work</p>
+                  <p className="desktop-body-xs">Add photos, customer reviews, and a list of your services.</p>
                 </div>
               </div>
 
@@ -196,8 +196,8 @@ export default function Home() {
                   <img src={FormCustomizationIcon} className="icon" />
                 </div>
                 <div className="section-list-info">
-                  <p className="desktop-h6">Easy to Update</p>
-                  <p className="desktop-body-xs">Need to change something? Do it anytime, fast and easy.</p>
+                  <p className="desktop-h6">Control Your Brand</p>
+                  <p className="desktop-body-xs">Easily update your details, images, and contact info anytime.</p>
                 </div>
               </div>
 
@@ -212,8 +212,8 @@ export default function Home() {
 
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Set It Up In Minutes</h2>
-          <h3 className="desktop-h6 text-center">The quickest way to show off your work and get more jobs.</h3>
+          <h2 className="desktop-h3 text-center">Your Digital Profile Meets the Real World.</h2>
+          <h3 className="desktop-h6 text-center">The NFC card is your key. The digital profile is your pitch.</h3>
         </div>
 
         <div className="section-1-content">
@@ -222,16 +222,16 @@ export default function Home() {
           </div>
 
           <div className="section-1-right">
-            <p className="desktop-h5">Show people what you do best.</p>
-            <p className="desktop-body">Build a simple, powerful page that makes you look professional and ready for work.</p>
+            <p className="desktop-h5">Tap, Scan, and Share</p>
+            <p className="desktop-body">Simply tap your NFC card or show your QR code to instantly share your profile.</p>
 
             <div className="section-list">
               <div className="icon-white">
                 <img src={IDCardIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className="desktop-h6">Add Your Info</p>
-                <p className="desktop-body-xs">Your name, trade, photo, and a few quick details — done.</p>
+                <p className="desktop-h6">No App? No Problem</p>
+                <p className="desktop-body-xs">Clients don't need an app. Your page opens instantly on any smartphone.</p>
               </div>
             </div>
 
@@ -240,18 +240,8 @@ export default function Home() {
                 <img src={ImagesIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className="desktop-h6">Show Your Work</p>
-                <p className="desktop-body-xs">Upload photos, list your services, and add reviews if you have them.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={UpdateIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Keep It Fresh</p>
-                <p className="desktop-body-xs">Change prices, update photos, or tweak your details anytime you need.</p>
+                <p className="desktop-h6">Effortless Updates</p>
+                <p className="desktop-body-xs">Any changes you make to your profile update in real-time, no need for new cards.</p>
               </div>
             </div>
 
