@@ -20,7 +20,7 @@
     .home-hero {
         position: relative;
         width: 100vw;
-        height: 90vh;
+        height: 100vh;
         overflow: hidden;
         margin-bottom: 100px;
         display: flex;
