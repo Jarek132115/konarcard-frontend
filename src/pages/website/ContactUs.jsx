@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Footer from '../../components/Footer';
+import api from '../../services/api'; // <--- ADDED: Import the API service
 
 import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
 import NFCIcon from '../../assets/icons/NFC-Icon.svg';
@@ -38,27 +39,18 @@ export default function ContactUs() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // The `agree` checkbox is no longer required in your working example,
+    // but the original code had it. I'll keep the validation here just in case.
     if (!formData.name || !formData.email || !formData.reason || !formData.message || !formData.agree) {
       toast.error('Please fill in all fields and agree to the privacy policy.');
       return;
     }
 
     try {
-      // **UPDATED: Using an environment variable for the API URL**
-      const apiUrl = process.env.REACT_APP_API_URL;
-      if (!apiUrl) {
-        toast.error('API URL is not configured.');
-        return;
-      }
+      // **UPDATED: Use the imported `api` service for the POST request**
+      const res = await api.post('/contact', formData);
 
-      const res = await fetch(`${apiUrl}/api/contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await res.json();
-      if (data.success) {
+      if (res.data.success) {
         toast.success('Message sent!');
         setFormData({
           name: '',
@@ -68,10 +60,10 @@ export default function ContactUs() {
           agree: false
         });
       } else {
-        toast.error(data.error || 'Something went wrong');
+        toast.error(res.data.error || 'Something went wrong');
       }
     } catch (err) {
-      toast.error('Failed to send message.');
+      toast.error(err.response?.data?.error || 'Failed to send message.');
     }
   };
 
@@ -192,7 +184,7 @@ export default function ContactUs() {
             <div className="section-list"><div className=" icon-white"><img src={BoxIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>What happens if I lose my NFC card?</p><p className='desktop-body-xs'>Your page still works without the card. You can always reorder one if you want to keep tapping.</p></div></div>
             <div className="section-list"><div className=" icon-white"><img src={HatIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>Who is this for exactly?</p><p className='desktop-body-xs'>Any tradesperson who wants to get noticed, win more work, and look professional online.</p></div></div>
             <div className="section-list"><div className=" icon-white"><img src={PalletteIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>Can I customise the design and layout?</p><p className='desktop-body-xs'>Yes. Pick fonts, colours, and layouts to match your brand and make it yours.</p></div></div>
-            <div className="section-list"><div className=" icon-white"><img src={LockIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>Is my personal data safe on here?</p><p className='desktop-body-xs'>Absolutely. You control everything shown, and your data is hosted securely at all times.</p></div></div>
+            <div className="section-list"><div className=" icon-white"><img src={LockIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-body-xs'>Is my personal data safe on here?</p><p className='desktop-body-xs'>Absolutely. You control everything shown, and your data is hosted securely at all times.</p></div></div>
           </div>
         </div>
         <div style={{ marginTop: 40, display: 'flex', justifyContent: 'center' }}>
