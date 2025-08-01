@@ -36,6 +36,7 @@
         left: 0;
         object-fit: cover;
         z-index: 1;
+        display: none;
     }
 
     .hero-container {
