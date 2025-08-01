@@ -91,10 +91,9 @@ export default function Home() {
         <img src={BackgroundHero} alt="Hero Background" className="hero-image" />
         <div className="hero-container">
           <div className="hero-left">
-            <h1 className="desktop-h1 hero-heading">Look More Professional. Win More Work!</h1>
+            <h1 className="desktop-h1 hero-heading">Your Business, On a Card. Get More Work.</h1>
             <p style={{ maxWidth: 340 }} className="desktop-h6 hero-subtitle">
-              Tap your card. Share your profile. Stand out from every other tradie.
-            </p>
+              One tap connects clients to your portfolio, reviews, and contact details.</p>
             <div className="hero-social-proof">
               <div className="hero-avatars">
                 <img src={Profile1} alt="User 1" className="avatar" />
