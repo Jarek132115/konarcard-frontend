@@ -222,12 +222,22 @@ export default function Home() {
           </div>
 
           <div className="section-1-right">
-            <p className="desktop-h5">Tap, Scan, and Share</p>
-            <p className="desktop-body">Simply tap your NFC card or show your QR code to instantly share your profile.</p>
+            <p className="desktop-h5">Show people what you do best.</p>
+            <p className="desktop-body">Build a simple, powerful page that makes you look professional and ready for work.</p>
 
             <div className="section-list">
               <div className="icon-white">
                 <img src={IDCardIcon} className="icon" />
+              </div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Tap, Scan, and Share</p>
+                <p className="desktop-body-xs">Simply tap your NFC card or show your QR code to instantly share your profile.</p>
+              </div>
+            </div>
+
+            <div className="section-list">
+              <div className="icon-white">
+                <img src={ImagesIcon} className="icon" />
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">No App? No Problem</p>
@@ -237,21 +247,11 @@ export default function Home() {
 
             <div className="section-list">
               <div className="icon-white">
-                <img src={ImagesIcon} className="icon" />
+                <img src={UpdateIcon} className="icon" />
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">Effortless Updates</p>
                 <p className="desktop-body-xs">Any changes you make to your profile update in real-time, no need for new cards.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={NFCIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Share It Fast</p>
-                <p className="desktop-body-xs">Tap your card, scan your code, or send your link — no app needed.</p>
               </div>
             </div>
 
