@@ -155,7 +155,6 @@ export default function Home() {
         </div>
       </div>
 
-      ---
 
       <div className="full-width-bg-container section-bg-grey first-section-after-hero">
         <div className="section">
@@ -211,7 +210,6 @@ export default function Home() {
         </div>
       </div>
 
-      ---
 
       <div className="section">
         <div className="section-1-title">
@@ -275,7 +273,6 @@ export default function Home() {
         </div>
       </div>
 
-      ---
 
       <div className="full-width-bg-container section-bg-grey">
         <div className="section">
@@ -341,7 +338,6 @@ export default function Home() {
         </div>
       </div>
 
-      ---
 
       <div className="section">
         <div className="section-1-title">
@@ -377,7 +373,6 @@ export default function Home() {
         </div>
       </div>
 
-      ---
 
       <div className="full-width-bg-container section-bg-grey">
         <div className="section">
@@ -412,7 +407,6 @@ export default function Home() {
         </div>
       </div>
 
-      ---
 
       <div className="section combined-offer-section">
         <div className="section-1-title">
@@ -500,7 +494,6 @@ export default function Home() {
         </div>
       </div>
 
-      ---
 
       <div className="full-width-bg-container section-bg-grey">
         <div className="section">
@@ -572,7 +565,6 @@ export default function Home() {
         </div>
       </div>
 
-      ---
 
       <div className="section">
         <div className="section-1-title">
