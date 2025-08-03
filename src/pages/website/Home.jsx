@@ -91,6 +91,9 @@ export default function Home() {
         <img src={BackgroundHero} alt="Hero Background" className="hero-image" />
         <div className="hero-container">
           <div className="hero-left">
+            <h1 className="desktop-h1 hero-heading">Your Business, On a Card. Get More Work.</h1>
+            <p style={{ maxWidth: 340 }} className="desktop-h6 hero-subtitle">
+              One tap connects clients to your work, reviews, and contact details.</p>
             <div className="hero-social-proof">
               <div className="hero-avatars">
                 <img src={Profile1} alt="User 1" className="avatar" />
@@ -101,9 +104,6 @@ export default function Home() {
               </div>
               <p className="hero-rating">Trusted by 1,000+ tradies</p>
             </div>
-            <h1 className="desktop-h1 hero-heading">Your Business, On a Card. Get More Work.</h1>
-            <p style={{ maxWidth: 340 }} className="desktop-h6 hero-subtitle">
-              One tap connects clients to your work, reviews, and contact details.</p>
             <div className="hero-cta">
               <Link to="/register" className="cta-blue-button desktop-button">Get Started Free</Link>
               <Link to="/howitworks" className="cta-black-button desktop-button">See How It Works</Link>
