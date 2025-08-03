@@ -37,6 +37,8 @@ import Profile3 from '../../assets/images/Profile3.png';
 import Profile4 from '../../assets/images/Profile4.png';
 import Profile5 from '../../assets/images/Profile5.png';
 import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
+import QRCode from '../../assets/images/QR-Code.jpg';
+
 
 import { AuthContext } from '../../components/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -349,7 +351,7 @@ export default function Home() {
           </div>
           <div className="section-3-container">
             <div className="section-3-1x1-image-info">
-              <img src={Section3_Image3} className="" />
+              <img src={QRCode} className="" />
               <p className='desktop-h5 text-center'>QR Code</p>
               <p className='desktop-body text-center'>Scan to open your full profile</p>
             </div>
