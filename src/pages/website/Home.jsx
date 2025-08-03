@@ -36,6 +36,7 @@ import Profile2 from '../../assets/images/Profile2.png';
 import Profile3 from '../../assets/images/Profile3.png';
 import Profile4 from '../../assets/images/Profile4.png';
 import Profile5 from '../../assets/images/Profile5.png';
+import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 
 import { AuthContext } from '../../components/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -336,7 +337,7 @@ export default function Home() {
         <div className="section-3-container-flex">
           <div className="section-3-container">
             <div className="section-3-1x1-image-info">
-              <img src={Section3_Image1} className="" />
+              <img src={NFCBusinessCard} className="" />
               <p className='desktop-h5 text-center'>NFC Business Card</p>
               <p className='desktop-body text-center'>Tap to share your details fast</p>
             </div>
