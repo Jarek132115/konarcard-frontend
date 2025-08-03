@@ -95,7 +95,7 @@ export default function Home() {
         <div className="hero-container">
           <div className="hero-left">
             <h1 className="desktop-h1 hero-heading">Stand Out. Get Noticed. Grow Your Business.</h1>
-            <p style={{ maxWidth: 340 }} className="desktop-h6 hero-subtitle">
+            <p style={{ maxWidth: 380 }} className="desktop-h6 hero-subtitle">
               Create a sleek digital profile that showcases your work and gets you hired.</p>
             <div className="hero-social-proof">
               <div className="hero-avatars">
