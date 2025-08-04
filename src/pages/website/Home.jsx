@@ -116,21 +116,21 @@ export default function Home() {
               <div className="hero-tick-row">
                 <div className="hero-tick">
                   <img src={TickIcon} className="icon" />
-                  <p>No app required — tap & share instantly</p>
+                  <p>Custom Digital Profile</p>
                 </div>
                 <div className="hero-tick">
                   <img src={TickIcon} className="icon" />
-                  <p>Built for tradesmen</p>
+                  <p>Share in Seconds</p>
                 </div>
               </div>
               <div className="hero-tick-row">
                 <div className="hero-tick">
                   <img src={TickIcon} className="icon" />
-                  <p>Fully customizable digital profile</p>
+                  <p>Made for Tradespeople</p>
                 </div>
                 <div className="hero-tick">
                   <img src={TickIcon} className="icon" />
-                  <p>Works with iPhone & Android</p>
+                  <p>Updates Instantly</p>
                 </div>
               </div>
             </div>
