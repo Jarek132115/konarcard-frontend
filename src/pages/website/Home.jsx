@@ -161,8 +161,8 @@ export default function Home() {
       <div className="full-width-bg-container section-bg-grey first-section-after-hero">
         <div className="section">
           <div className="section-1-title">
-            <h2 className="desktop-h3 text-center">Your Digital Profile. Your New Business Card.</h2>
-            <h3 className="desktop-h6 text-center">This isn't just a card; it's a powerful tool to impress clients and close more jobs.</h3>
+            <h2 className="desktop-h3 text-center">Your Professional Page. Built for Your Trade.</h2>
+            <h3 className="desktop-h6 text-center">Showcase your skills, earn trust, and win more work all from one powerful page.</h3>
           </div>
 
           <div className="section-1-content">
