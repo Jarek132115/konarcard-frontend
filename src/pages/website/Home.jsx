@@ -213,59 +213,6 @@ export default function Home() {
       </div>
 
 
-      <div className="section">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Your Digital Profile Meets the Real World.</h2>
-          <h3 className="desktop-h6 text-center">The NFC card is your key. The digital profile is your pitch.</h3>
-        </div>
-
-        <div className="section-1-content">
-          <div className="section-1-left">
-            <img src={EditProfile} className="" />
-          </div>
-
-          <div className="section-1-right">
-            <p className="desktop-h5">Show people what you do best.</p>
-            <p className="desktop-body">Build a simple, powerful page that makes you look professional and ready for work.</p>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={IDCardIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Tap, Scan, and Share</p>
-                <p className="desktop-body-xs">Simply tap your NFC card or show your QR code to instantly share your profile.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={ImagesIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">No App? No Problem</p>
-                <p className="desktop-body-xs">Clients don't need an app. Your page opens instantly on any smartphone.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={UpdateIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Effortless Updates</p>
-                <p className="desktop-body-xs">Any changes you make to your profile update in real-time, no need for new cards.</p>
-              </div>
-            </div>
-
-            <div className="section-1-cta">
-              <Link to="/register" className="blue-button desktop-button margin-top-10">Get Started Free</Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
       <div className="full-width-bg-container section-bg-grey">
         <div className="section">
           <div className="section-1-title">
@@ -331,35 +278,36 @@ export default function Home() {
       </div>
 
 
-      <div className="section">
-        <div className="section-1-title">
-          <h2 className='desktop-h3 text-center'>One Profile. Shared in Seconds.</h2>
-          <h3 className='desktop-h6 text-center'>Tap it. Scan it. Link it. Your trade page goes anywhere</h3>
-        </div>
-        <div className="section-3-container-flex">
-          <div className="section-3-container">
-            <div className="section-3-1x1-image-info">
-              <img src={NFCBusinessCard} className="" />
-              <p className='desktop-h5 text-center'>NFC Business Card</p>
-              <p className='desktop-body text-center'>Tap to share your details fast</p>
-            </div>
-            <div className="section-3-1x1-image-info">
-              <img src={Section3_Image2} className="" />
-              <p className='desktop-h5 text-center'>Share Via Message</p>
-              <p className='desktop-body text-center'>WhatsApp, SMS, Messenger & more</p>
-            </div>
+      <div className="full-width-bg-container section-bg-grey">
+        <div className="section">
+          <div className="section-1-title">
+            <h2 className='desktop-h3 text-center'>One Profile. Shared in Seconds.</h2>
+            <h3 className='desktop-h6 text-center'>Tap it. Scan it. Link it. Your trade page goes anywhere</h3>
           </div>
-          <div className="section-3-container">
-            <div className="section-3-1x1-image-info">
-              <img src={QRCode} className="" />
-              <p className='desktop-h5 text-center'>QR Code</p>
-              <p className='desktop-body text-center'>Scan to open your full profile</p>
+          <div className="section-3-container-flex">
+            <div className="section-3-container">
+              <div className="section-3-1x1-image-info">
+                <img src={NFCBusinessCard} className="" />
+                <p className='desktop-h5 text-center'>NFC Business Card</p>
+                <p className='desktop-body text-center'>Tap to share your details fast</p>
+              </div>
+              <div className="section-3-1x1-image-info">
+                <img src={Section3_Image2} className="" />
+                <p className='desktop-h5 text-center'>Share Via Message</p>
+                <p className='desktop-body text-center'>WhatsApp, SMS, Messenger & more</p>
+              </div>
             </div>
+            <div className="section-3-container">
+              <div className="section-3-1x1-image-info">
+                <img src={QRCode} className="" />
+                <p className='desktop-h5 text-center'>QR Code</p>
+              </div>
 
-            <div className="section-3-1x1-image-info">
-              <img src={Section3_Image4} className="" />
-              <p className='desktop-h5 text-center'>Link in Bio</p>
-              <p className='desktop-body text-center'>One link for everything you offer</p>
+              <div className="section-3-1x1-image-info">
+                <img src={Section3_Image4} className="" />
+                <p className='desktop-h5 text-center'>Link in Bio</p>
+                <p className='desktop-body text-center'>One link for everything you offer</p>
+              </div>
             </div>
           </div>
         </div>
@@ -371,7 +319,7 @@ export default function Home() {
           <div className="section-1-title">
             <h2 className="desktop-h3 text-center">Tradesmen Use It. Clients Love It.</h2>
             <h3 className="desktop-h6 text-center">
-              See how real workers use their card and profile every day.
+              Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
             </h3>
           </div>
 
@@ -490,8 +438,129 @@ export default function Home() {
       <div className="full-width-bg-container section-bg-grey">
         <div className="section">
           <div className="section-1-title">
-            <h2 className='desktop-h3 text-center'>The #1 Tool Tradies Are Talking About</h2>
-            <h3 className='desktop-h6 text-center'>
+            <h2 className="desktop-h3 text-center">Tradesmen Use It. Clients Love It.</h2>
+            <h3 className="desktop-h6 text-center">
+              Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
+            </h3>
+          </div>
+
+          <div className="people-showcase-container-flex">
+
+            <div className="people-showcase-left-col">
+              <img src={People} className="people-showcase-img" alt="Tradesman holding Konar Card" />
+            </div>
+
+            <div className="people-showcase-right-col">
+              <div className="people-showcase-top-row-flex">
+                <div className="people-showcase-box">
+                  <img src={People} className="people-showcase-img" alt="Tradesman showing Konar Card" />
+                </div>
+                <div className="people-showcase-box">
+                  <img src={People} className="people-showcase-img" alt="Woman holding Konar Card" />
+                </div>
+              </div>
+
+              <div className="people-showcase-bottom-single">
+                <img src={People} className="people-showcase-img" alt="Group of tradesmen holding Konar Cards" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div className="section combined-offer-section">
+        <div className="section-1-title">
+          <h2 className='desktop-h3 text-center'>Our Plan & Cards</h2>
+          <h3 className='desktop-h6 text-center'>Choose what's right for your business.</h3>
+        </div>
+        <div className="combined-offer-container">
+          <div className="subscription-offer-left">
+            <div className="subscription-header">
+              <p className='desktop-h5'>Power Profile</p>
+              <div className="free-trial-badge">Free Trial</div>
+            </div>
+            <p className='desktop-body-s subscription-subheader'>Win more work with a power profile</p>
+
+            <div className="subscription-features">
+              {[
+                "Upload unlimited photos (Portfolio / Gallery)",
+                "Add multiple social links and websites",
+                "Personalize your landing page URL (yourname.cardsite.com)",
+                "Priority support and setup help",
+                "CRM Integration.",
+                "Networking Toolkit.",
+                "Automated Follow-Ups.",
+              ].map((text, idx) => (
+                <div className="hero-tick" key={idx}>
+                  <img src={TickIcon} className="icon" />
+                  <p>{text}</p>
+                </div>
+              ))}
+            </div>
+
+            <p className='desktop-body-s subscription-description-footer'>
+              "For professionals and businesses ready to make every first impression count."
+            </p>
+
+            <div className="subscription-price-cta">
+              <div className='price-display'>
+                <p className='desktop-h5'>£7.95</p>
+                <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
+              </div>
+              {loadingStatus ? (
+                <button className="desktop-button blue-button" disabled>
+                  Loading Plan Status...
+                </button>
+              ) : isSubscribed ? (
+                <button className="desktop-button combined-section-button blue-button" disabled
+                  style={{
+                    backgroundColor: '#e0e0e0',
+                    cursor: 'not-allowed',
+                    color: '#666',
+                    border: '1px solid #ccc'
+                  }}>
+                  Plan Active
+                </button>
+              ) : (
+                <button className="desktop-button combined-section-button blue-button" onClick={handleSubscribe}>
+                  Upgrade to Power Profile
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="card-offer-right">
+            <div className="product-header">
+              <p className='desktop-h5'>Plastic NFC Card</p>
+              <div className="free-trial-badge product-header-badge">1-month subscription included</div>
+            </div>
+            <p className='desktop-body-s product-subheader'>Lightweight, Durable, Always Ready</p>
+            <p className='desktop-body-xs product-optional-sentence'>This product is optional, buy one to stand out.</p>
+
+            <img src={PlasticCard} className="product-image" />
+
+            <p className='desktop-body-s subscription-description-footer'>
+              "For those who want to stand out above those who already stand out!"
+            </p>
+
+            <div className="product-price-cta">
+              <div className='price-display'>
+                <p className='desktop-h5'>£24.95</p>
+                <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
+              </div>
+              <Link to="/shopnfccards/whitecard" className="desktop-button combined-section-button blue-button">Buy Now</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div className="full-width-bg-container section-bg-grey">
+        <div className="section">
+          <div className="section-1-title">
+            <h2 className="desktop-h3 text-center">The #1 Tool Tradies Are Talking About</h2>
+            <h3 className="desktop-h6 text-center">
               Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
             </h3>
           </div>
