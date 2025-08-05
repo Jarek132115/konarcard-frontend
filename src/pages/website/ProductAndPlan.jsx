@@ -140,26 +140,26 @@ export default function Home() {
                 </div>
             </div>
 
-            {/* ORIGINAL FEATURES SECTION - KEPT AS IS */}
+            {/* REVISED FEATURES SECTION */}
             <div className="section">
                 <div className="section-1-title">
                     <h2 className='desktop-h3 text-center'>Your Work. Your Card. Built to Impress.</h2>
-                    <h3 className='desktop-h6 text-center'>Choose a smart, tough card that shows off your trade and makes sharing easy.</h3>
+                    <h3 className='desktop-h6 text-center'>Get a smart, tough Konar Card that instantly connects clients to your professional digital profile.</h3>
                 </div>
                 <div style={{ gap: 40 }} className="section-1-content">
                     <div className="section-1-left">
                         <img src={NFCBusinessCard} className="" />
                     </div>
                     <div className="section-1-right">
-                        <p className='desktop-h5'>Why Tradies Choose Konar Cards</p>
-                        <p className='desktop-body'>Smart, durable, and built to help you share your business in seconds.</p>
+                        <p className='desktop-h5'>Why Tradies Choose Our Card</p>
+                        <p className='desktop-body'>It's more than a piece of plastic. It's a powerful tool that makes you stand out and win work.</p>
                         <div className="section-list">
                             <div className=" icon-white">
                                 <img src={PremiumMaterials} className="icon" />
                             </div>
                             <div className="section-list-info">
                                 <p className='desktop-h6'>Built to Last</p>
-                                <p className='desktop-body-xs'>Made from a durable, high-quality material that stands up to the demands of any job site.</p>
+                                <p className='desktop-body-xs'>A durable, high-quality material that stands up to the demands of any job site.</p>
                             </div>
                         </div>
                         <div className="section-list">
@@ -167,17 +167,17 @@ export default function Home() {
                                 <img src={NFCIcon} className="icon" />
                             </div>
                             <div className="section-list-info">
-                                <p className='desktop-h6'>Tap and Share</p>
-                                <p className='desktop-body-xs'>There's a smart chip inside — tap it on most phones and your profile pops up.</p>
+                                <p className='desktop-h6'>Instant Tap & Share</p>
+                                <p className='desktop-body-xs'>A simple tap on a client’s phone instantly shares your work and contact details. No app needed.</p>
                             </div>
                         </div>
                         <div className="section-list">
                             <div className=" icon-white">
-                                <img src={QRCode} className="icon" />
+                                <img src={PalletteIcon} className="icon" />
                             </div>
                             <div className="section-list-info">
-                                <p className='desktop-h6'>QR Code Backup</p>
-                                <p className='desktop-body-xs'>No NFC? No problem. Every card comes with a scannable code too.</p>
+                                <p className='desktop-h6'>Stand Out from the Rest</p>
+                                <p className='desktop-body-xs'>A modern, professional card that sets you apart from the competition.</p>
                             </div>
                         </div>
                     </div>
