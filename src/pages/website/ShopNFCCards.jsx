@@ -14,6 +14,7 @@ import PhoneIcon from '../../assets/icons/Phone-Icon.svg'
 import NoApp from '../../assets/icons/NoApp-Icon.svg'
 import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 import ProductCover from '../../assets/images/Product-Cover.png';
+import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 
 
 export default function Home() {
