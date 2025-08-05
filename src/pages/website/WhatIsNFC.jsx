@@ -31,7 +31,7 @@ export default function WhatIsNFC() {
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(ProductCover);
 
-  const pricePerCard = 19.95;
+  const pricePerCard = 24.95;
 
   const thumbnails = [
     ProductCover,
