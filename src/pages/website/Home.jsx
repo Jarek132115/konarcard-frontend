@@ -38,6 +38,8 @@ import Profile4 from '../../assets/images/Profile4.png';
 import Profile5 from '../../assets/images/Profile5.png';
 import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 import QRCode from '../../assets/images/QR-Code.jpg';
+import ScanQRCode from '../../assets/images/ScanQR-Code.jpg';
+import LinkInBio from '../../assets/images/LinkInBio.jpg';
 
 
 import { AuthContext } from '../../components/AuthContext';
@@ -344,7 +346,7 @@ export default function Home() {
               <p className='desktop-body text-center'>Tap to share your details fast</p>
             </div>
             <div className="section-3-1x1-image-info">
-              <img src={Section3_Image2} className="" />
+              <img src={ScanQRCode} className="" />
               <p className='desktop-h5 text-center'>Share Via Message</p>
               <p className='desktop-body text-center'>WhatsApp, SMS, Messenger & more</p>
             </div>
@@ -357,7 +359,7 @@ export default function Home() {
             </div>
 
             <div className="section-3-1x1-image-info">
-              <img src={Section3_Image4} className="" />
+              <img src={LinkInBio} className="" />
               <p className='desktop-h5 text-center'>Link in Bio</p>
               <p className='desktop-body text-center'>One link for everything you offer</p>
             </div>
