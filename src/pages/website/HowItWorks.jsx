@@ -113,6 +113,11 @@ export default function SubscriptionPage() {
                         </div>
                     </div>
 
+                    <div className="review-rating">
+                        <img style={{ width: 80 }} src={ReviewStars} alt="Stars" />
+                        <p>(22)</p>
+                    </div>
+
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px', }}>
                         <p style={{ fontSize: 20, fontWeight: 600 }}>
                             £{newPrice.toFixed(2)}
