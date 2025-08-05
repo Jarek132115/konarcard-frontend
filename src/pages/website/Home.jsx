@@ -290,8 +290,8 @@ export default function Home() {
                   <img src={IDCardIcon} className="icon" />
                 </div>
                 <div className="section-list-info">
-                  <p className="desktop-h6">Stand Out Fast</p>
-                  <p className="desktop-body-xs">Look sharp and professional — not like everyone else.</p>
+                  <p className="desktop-h6">Build Instant Trust</p>
+                  <p className="desktop-body-xs">A polished digital page makes you look professional and reliable to every new client.</p>
                 </div>
               </div>
 
@@ -300,8 +300,8 @@ export default function Home() {
                   <img src={ImagesIcon} className="icon" />
                 </div>
                 <div className="section-list-info">
-                  <p className="desktop-h6">Easy to Share</p>
-                  <p className="desktop-body-xs">Tap your card or send a link. No printing, no hassle.</p>
+                  <p className="desktop-h6">Saves You Money</p>
+                  <p className="desktop-body-xs">Stop wasting money on reprinting paper cards and expensive websites. This is a one-time investment.</p>
                 </div>
               </div>
 
@@ -310,8 +310,8 @@ export default function Home() {
                   <img src={UpdateIcon} className="icon" />
                 </div>
                 <div className="section-list-info">
-                  <p className="desktop-h6">Show Your Work</p>
-                  <p className="desktop-body-xs">Add photos, reviews, and services to impress new clients.</p>
+                  <p className="desktop-h6">Stand Out from the Rest</p>
+                  <p className="desktop-body-xs">Impress clients with a modern, professional digital page that sets you apart from the competition.</p>
                 </div>
               </div>
 
@@ -320,8 +320,8 @@ export default function Home() {
                   <img src={NFCIcon} className="icon" />
                 </div>
                 <div className="section-list-info">
-                  <p className="desktop-h6">Look Legit</p>
-                  <p className="desktop-body-xs">Your own page makes you look real and reliable — not just a name and number.</p>
+                  <p className="desktop-h6">Never Miss a Lead</p>
+                  <p className="desktop-body-xs">Share your profile instantly with a simple tap, scan, or link, so you can capture every new client on the spot.</p>
                 </div>
               </div>
 
