@@ -45,7 +45,7 @@ export default function Home() {
                     </div>
 
                     <div className="option-group">
-                        <Link to="/shopnfccards/whitecard" className="black-button" style={{ marginTop: 20 }}>
+                        <Link to="/shopnfccards/whitecard" className="black-button desktop-button" style={{ marginTop: 20 }}>
                             Buy Now
                         </Link>
                     </div>
