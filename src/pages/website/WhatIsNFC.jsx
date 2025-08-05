@@ -124,7 +124,7 @@ export default function WhatIsNFC() {
         </div>
       </div>
 
-      {/* What is NFC section from the original file */}
+      {/* What is NFC section - REVISED */}
       <div style={{ marginTop: 40 }} className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">What’s an Konar Business Card?</h2>
@@ -138,15 +138,15 @@ export default function WhatIsNFC() {
 
           <div className="section-1-right">
             <p className="desktop-h5">Why Our Cards Are Better</p>
-            <p className="desktop-body">Tough, smart, and made to match your business.</p>
+            <p className="desktop-body">The durable, smart card that's always ready to impress.</p>
 
             <div className="section-list">
               <div className="icon-white">
                 <img src={PremiumMaterials} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className="desktop-h6">Built to Last</p>
-                <p className="desktop-body-xs">Choose plastic, wood, or metal — strong and professional.</p>
+                <p className="desktop-h6">Durable and Professional</p>
+                <p className="desktop-body-xs">Made from high-quality, long-lasting plastic that stands up to daily use.</p>
               </div>
             </div>
 
@@ -156,17 +156,7 @@ export default function WhatIsNFC() {
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">Tap to Share</p>
-                <p className="desktop-body-xs">Just tap your card on most phones — your profile pops up.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={PalletteIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Your Look, Your Style</p>
-                <p className="desktop-body-xs">Pick your colors, upload your logo — make it your own.</p>
+                <p className="desktop-body-xs">Instantly share your full profile with a simple tap on a phone—no apps or setup needed.</p>
               </div>
             </div>
 
@@ -176,17 +166,7 @@ export default function WhatIsNFC() {
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">QR Code Backup</p>
-                <p className="desktop-body-xs">Also scannable — works even if NFC isn’t.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={PhoneIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Works on Any Phone</p>
-                <p className="desktop-body-xs">Compatible with iPhones and Androids — no setup needed.</p>
+                <p className="desktop-body-xs">A scannable code on the back ensures your profile is always accessible, even without NFC.</p>
               </div>
             </div>
           </div>
