@@ -1,24 +1,67 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import Navbar from '../../components/Navbar'
-import Breadcrumbs from '../../components/Breadcrumbs'
-import Footer from '../../components/Footer'
-import KonarCard from '../../assets/images/KonarCard.png'
-import KonarCardCustom from '../../assets/images/KonarCardCustom.png'
-import AllCards from '../../assets/images/All-Cards.png'
-import PremiumMaterials from '../../assets/icons/Premium-Materials-Icon.svg'
-import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'
-import QRCode from '../../assets/icons/QR-Code-Icon.svg'
-import NFCIcon from '../../assets/icons/NFC-Icon.svg'
-import PhoneIcon from '../../assets/icons/Phone-Icon.svg'
-import NoApp from '../../assets/icons/NoApp-Icon.svg'
+import React, { useContext } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import Navbar from '../../components/Navbar';
+import Breadcrumbs from '../../components/Breadcrumbs';
+import Footer from '../../components/Footer';
+import KonarCard from '../../assets/images/KonarCard.png';
+import KonarCardCustom from '../../assets/images/KonarCardCustom.png';
+import AllCards from '../../assets/images/All-Cards.png';
+import PremiumMaterials from '../../assets/icons/Premium-Materials-Icon.svg';
+import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
+import QRCode from '../../assets/icons/QR-Code-Icon.svg';
+import NFCIcon from '../../assets/icons/NFC-Icon.svg';
+import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
+import NoApp from '../../assets/icons/NoApp-Icon.svg';
 import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 import ProductCover from '../../assets/images/Product-Cover.png';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import PlasticCard from '../../assets/images/PlasticCard.png';
+import { AuthContext } from '../../components/AuthContext';
+import api from '../../services/api';
+import { toast } from 'react-hot-toast';
 
 export default function Home() {
+    const { user, loading: authLoading } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const isSubscribed = user ? user.isSubscribed : false;
+    const loadingStatus = authLoading;
+
+    const handleSubscribe = async () => {
+        if (!user) {
+            navigate('/login', {
+                state: {
+                    from: location.pathname,
+                    checkoutType: 'subscription',
+                },
+            });
+            return;
+        }
+
+        if (isSubscribed) {
+            toast.info('You are already subscribed to the Power Profile.');
+            return;
+        }
+
+        try {
+            const res = await api.post('/subscribe', {
+                returnUrl: window.location.origin + '/SuccessSubscription',
+            });
+
+            const { url } = res.data;
+
+            if (url) {
+                window.location.href = url;
+            } else {
+                toast.error('Could not start subscription. Please try again.');
+            }
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Subscription failed. Please try again.');
+        }
+    };
+
     return (
         <>
             <Navbar />
@@ -91,7 +134,7 @@ export default function Home() {
                                 <p className='desktop-h5'>£24.95</p>
                                 <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
                             </div>
-                            <Link to="/productandplan/whitecard" className="desktop-button combined-section-button blue-button">Buy Now</Link>
+                            <Link to="/shopnfccards/whitecard" className="desktop-button combined-section-button blue-button">Buy Now</Link>
                         </div>
                     </div>
                 </div>
@@ -143,5 +186,5 @@ export default function Home() {
 
             <Footer />
         </>
-    )
+    );
 }
