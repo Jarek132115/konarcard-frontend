@@ -31,17 +31,16 @@ export default function ProductAndPlan() {
                             <p className='desktop-h5'>Power Profile</p>
                             <div className="free-trial-badge">14 Day Free Trial</div>
                         </div>
-                        <p className='desktop-body-s subscription-subheader'>Win more work with a power profile</p>
+                        <p className='desktop-body-s subscription-subheader'>Create a stunning, professional profile in minutes. No coding needed.</p>
 
                         <div className="subscription-features">
                             {[
-                                "Upload unlimited photos (Portfolio / Gallery)",
-                                "Add multiple social links and websites",
-                                "Personalize your landing page URL (yourname.cardsite.com)",
-                                "Priority support and setup help",
-                                "CRM Integration.",
-                                "Networking Toolkit.",
-                                "Automated Follow-Ups.",
+                                "Create and update your profile anytime, instantly",
+                                "Showcase your work with a professional portfolio",
+                                "Customize your design with colors and fonts",
+                                "Collect and display client reviews to build trust",
+                                "Share all your contact and social media links",
+                                "Get a personalized web address (yourname.cardsite.com)",
                             ].map((text, idx) => (
                                 <div className="hero-tick" key={idx}>
                                     <img src={TickIcon} className="icon" />
@@ -51,7 +50,7 @@ export default function ProductAndPlan() {
                         </div>
 
                         <p className='desktop-body-s subscription-description-footer'>
-                            "For professionals and businesses ready to make every first impression count."
+                            "The perfect tool for tradesmen to make an unforgettable first impression and get new clients."
                         </p>
 
                         <div className="subscription-price-cta">
