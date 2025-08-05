@@ -58,6 +58,10 @@
     margin-top: 10px;
 }
 
+.bold-tick {
+    font-weight: bold;
+}
+
 .color-options {
     display: flex;
     gap: 12px;
