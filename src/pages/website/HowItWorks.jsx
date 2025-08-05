@@ -27,13 +27,11 @@ export default function SubscriptionPage() {
     const isSubscribed = user ? user.isSubscribed : false;
     const loadingStatus = authLoading;
 
-    // Function to calculate the free trial end date
     const getFreeTrialEndDate = () => {
         const today = new Date();
         const endDate = new Date(today);
         endDate.setDate(today.getDate() + 14);
 
-        // Format the date for display, e.g., "August 19, 2025"
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return endDate.toLocaleDateString('en-GB', options);
     };
@@ -86,12 +84,10 @@ export default function SubscriptionPage() {
                 </div>
                 <div className="product-options">
                     <p className="desktop-h5">Power Profile</p>
-                    {/* REMOVED: <div className="free-trial-badge">14 Day Free Trial</div> */}
                     <p className="desktop-body">
                         Upgrade your digital profile with all the tools you need to look professional and win more work.
                     </p>
 
-                    {/* NEW: DYNAMIC FREE TRIAL END DATE */}
                     <div className="hero-tick">
                         <img src={DeliveryIcon} className="icon" alt="Free Trial" />
                         <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>{freeTrialText}</p>
