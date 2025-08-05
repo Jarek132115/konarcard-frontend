@@ -120,7 +120,7 @@ export default function SubscriptionPage() {
                         <p style={{ fontSize: 16, color: '#666', textDecoration: 'line-through' }}>
                             £{oldPrice.toFixed(2)}
                         </p>
-                        <p style={{ fontSize: 18, color: '#666' }}>
+                        <p style={{ fontSize: 16, color: '#666' }}>
                             per month
                         </p>
                     </div>
