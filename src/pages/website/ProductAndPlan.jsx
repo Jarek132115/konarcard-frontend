@@ -35,7 +35,6 @@ export default function ProductAndPlan() {
 
                         <div className="subscription-features">
                             {[
-                                "Personalize your web address",
                                 "Choose your own font",
                                 "Select Light or Dark mode",
                                 "Craft your 'About Me' section",
