@@ -396,88 +396,143 @@ export default function Home() {
 
       <div className="section combined-offer-section">
         <div className="section-1-title">
-          <h2 className='desktop-h3 text-center'>Our Plan & Cards</h2>
-          <h3 className='desktop-h6 text-center'>Choose what's right for your business.</h3>
+          <h2 className='desktop-h2 text-center'>The #1 Tool Tradies Are Talking About</h2>
+          <h3 className='desktop-h6 text-center'>
+            Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
+          </h3>
         </div>
-        <div className="combined-offer-container">
-          <div className="subscription-offer-left">
-            <div className="subscription-header">
-              <p className='desktop-h5'>Power Profile</p>
-              <div className="free-trial-badge">14 Day Free Trial</div>
-            </div>
-            <p className='desktop-body-s subscription-subheader'>Win more work with a power profile</p>
-
-            <div className="subscription-features">
-              {[
-                "Update anytime, instantly",
-                "Choose your own font",
-                "Select Light or Dark mode",
-                "Craft your 'About Me' section",
-                "Showcase your work portfolio",
-                "Display client reviews",
-                "List your services",
-                "Set your pricing",
-              ].map((text, idx) => (
-                <div className="hero-tick" key={idx}>
-                  <img src={TickIcon} className="icon" />
-                  <p>{text}</p>
+        <div className="review-container-box">
+          <div className="review-container">
+            <div className="review-pair">
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
                 </div>
-              ))}
-            </div>
-
-            <p className='desktop-body-s subscription-description-footer'>
-              "For professionals and businesses ready to make every first impression count."
-            </p>
-
-            <div className="subscription-price-cta">
-              <div className='price-display'>
-                <p className='desktop-h5'>£7.95</p>
-                <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
               </div>
-              {loadingStatus ? (
-                <button className="desktop-button black-button" disabled>
-                  Loading Plan Status...
-                </button>
-              ) : isSubscribed ? (
-                <button className="desktop-button combined-section-button blue-button" disabled
-                  style={{
-                    backgroundColor: '#e0e0e0',
-                    cursor: 'not-allowed',
-                    color: '#666',
-                    border: '1px solid #ccc'
-                  }}>
-                  Plan Active
-                </button>
-              ) : (
-                <button className="desktop-button combined-section-button black-button" onClick={handleSubscribe}>
-                  View Subscription Details
-                </button>
-              )}
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="review-pair">
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
+              </div>
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div className="card-offer-right">
-            <div className="product-header">
-              <p className='desktop-h5'>Plastic NFC Card</p>
-              <div className="free-trial-badge product-header-badge">Best-Seller</div>
-            </div>
-            <p className='desktop-body-s product-subheader'>Lightweight, Durable, Always Ready</p>
-            <p className='desktop-body-xs product-optional-sentence'>This product is optional, buy one to stand out.</p>
-
-            <img src={PlasticCard} className="product-image" />
-
-            <p className='desktop-body-s subscription-description-footer'>
-              "For those who want to stand out above those who already stand out!"
-            </p>
-
-            <div className="product-price-cta">
-              <div className='price-display'>
-                <p className='desktop-h5'>£24.95</p>
-                <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
+          <div className="review-container">
+            <div className="review-pair">
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
               </div>
-              <Link to="/whatisnfc" className="desktop-button combined-section-button black-button">
-                View Card Details
-              </Link>
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="review-pair">
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
+              </div>
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="full-width-bg-container section-bg-grey">
+        <div className="section">
+          <div className="section-1-title">
+            <h2 className="desktop-h3 text-center">Tradesmen Use It. Clients Love It.</h2>
+            <h3 className="desktop-h6 text-center">
+              Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
+            </h3>
+          </div>
+
+          <div className="people-showcase-container-flex">
+
+            <div className="people-showcase-left-col">
+              <img src={People} className="people-showcase-img" alt="Tradesman holding Konar Card" />
+            </div>
+
+            <div className="people-showcase-right-col">
+              <div className="people-showcase-top-row-flex">
+                <div className="people-showcase-box">
+                  <img src={People} className="people-showcase-img" alt="Tradesman showing Konar Card" />
+                </div>
+                <div className="people-showcase-box">
+                  <img src={People} className="people-showcase-img" alt="Woman holding Konar Card" />
+                </div>
+              </div>
+
+              <div className="people-showcase-bottom-single">
+                <img src={People} className="people-showcase-img" alt="Group of tradesmen holding Konar Cards" />
+              </div>
             </div>
           </div>
         </div>
