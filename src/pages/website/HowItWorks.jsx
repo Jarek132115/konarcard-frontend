@@ -65,10 +65,8 @@ export default function SubscriptionPage() {
                 <Breadcrumbs />
             </div>
 
-            {/* NEW CONVERSION SECTION FOR SUBSCRIPTION */}
             <div className="section-product">
                 <div className="product-preview">
-                    {/* Placeholder for an image or visual of the Power Profile in action */}
                     <img src={Section1Image} alt="Power Profile in action" className="main-card" />
                 </div>
                 <div className="product-options">
