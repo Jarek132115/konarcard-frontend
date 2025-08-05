@@ -100,7 +100,7 @@ export default function WhatIsNFC() {
           {/* MOVED AND DUPLICATED ICONS - REVISED */}
           <div className="hero-tick">
             <img src={DeliveryIcon} className="icon" alt="Delivery" />
-            <p style={{ fontSize: 14 }}>Order Before 3pm for Next Day Delivery</p>
+            <p style={{ fontSize: 14, fontWeight: Bold, }}>Order Before 3pm for Next Day Delivery</p>
           </div>
           <div className="hero-tick">
             <img src={DeliveryIcon} className="icon" alt="Warranty" />
