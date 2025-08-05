@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import backgroundImg from '../../assets/images/background.png';
 
 export default function Register() {
     const navigate = useNavigate();
