@@ -17,6 +17,7 @@ import ProfileIcon from '../../assets/icons/Profile-Icon.svg'
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg'
 import NoApp from '../../assets/icons/NoApp-Icon.svg'
+import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 
 
 
@@ -36,7 +37,7 @@ export default function WhatIsNFC() {
 
         <div style={{ gap: 40 }} className="section-1-content">
           <div className="section-1-left">
-            <img src={AllCards} className="" />
+            <img src={NFCBusinessCard} className="" />
           </div>
 
           <div className="section-1-right">
