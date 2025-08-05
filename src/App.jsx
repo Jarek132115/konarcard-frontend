@@ -7,7 +7,7 @@ import Home from './pages/website/Home';
 import Register from './pages/website/Register';
 import Login from './pages/website/Login';
 import ResetPassword from './pages/website/ResetPassword';
-import ShopNFCCards from './pages/website/ShopNFCCards';
+import ProductAndPlan from './pages/website/ProductAndPlan';
 import WhiteCard from './pages/website/WhiteCard';
 import HowItWorks from './pages/website/HowItWorks';
 import FAQ from './pages/website/FAQ';
@@ -47,8 +47,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/shopnfccards" element={<ShopNFCCards />} />
-        <Route path="/shopnfccards/whitecard" element={<WhiteCard />} />
+        <Route path="/productandplan" element={<ProductAndPlan />} />
+        <Route path="/productandplan/whitecard" element={<WhiteCard />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/whatisnfc" element={<WhatIsNFC />} />
