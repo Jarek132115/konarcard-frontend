@@ -32,6 +32,7 @@ export default function WhatIsNFC() {
   const [mainImage, setMainImage] = useState(ProductCover);
 
   const pricePerCard = 24.95;
+  const originalPricePerCard = 29.95;
 
   const thumbnails = [
     ProductCover,
@@ -95,9 +96,16 @@ export default function WhatIsNFC() {
           <p className="desktop-body">
             The smart, durable card that instantly shows your profile — help customers see your work, your services, and how to contact you in seconds.
           </p>
-          <p style={{ fontSize: 18, fontWeight: 600, marginTop: 10, marginBottom: 20 }}>
-            £{(pricePerCard * quantity).toFixed(2)}
-          </p>
+
+          {/* REVISED PRICE SECTION WITH DISCOUNT */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: 10, marginBottom: 20 }}>
+            <p style={{ fontSize: 24, fontWeight: 600 }}>
+              £{(pricePerCard * quantity).toFixed(2)}
+            </p>
+            <p style={{ fontSize: 18, color: '#666', textDecoration: 'line-through' }}>
+              £{(originalPricePerCard * quantity).toFixed(2)}
+            </p>
+          </div>
 
           <div className="review-rating">
             <img style={{ width: 120 }} src={ReviewStars} alt="Stars" />
