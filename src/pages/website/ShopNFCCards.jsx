@@ -63,7 +63,7 @@ export default function
                             </div>
                             <div className="section-list-info">
                                 <p className='desktop-h6'>Built to Last</p>
-                                <p className='desktop-body-xs'>Plastic, wood, or metal — strong, clean, and made to handle job site life.</p>
+                                <p className='desktop-body-xs'>Made from a durable, high-quality material that stands up to the demands of any job site.</p>
                             </div>
                         </div>
                         <div className="section-list">
@@ -77,29 +77,11 @@ export default function
                         </div>
                         <div className="section-list">
                             <div className=" icon-white">
-                                <img src={PalletteIcon} className="icon" />
-                            </div>
-                            <div className="section-list-info">
-                                <p className='desktop-h6'>Your Style, Your Logo</p>
-                                <p className='desktop-body-xs'>Pick your colors, upload your logo, and match it to your business.</p>
-                            </div>
-                        </div>
-                        <div className="section-list">
-                            <div className=" icon-white">
                                 <img src={QRCode} className="icon" />
                             </div>
                             <div className="section-list-info">
                                 <p className='desktop-h6'>QR Code Backup</p>
                                 <p className='desktop-body-xs'>No NFC? No problem. Every card comes with a scannable code too.</p>
-                            </div>
-                        </div>
-                        <div className="section-list">
-                            <div className=" icon-white">
-                                <img src={PhoneIcon} className="icon" />
-                            </div>
-                            <div className="section-list-info">
-                                <p className='desktop-h6'>Works on All Phones</p>
-                                <p className='desktop-body-xs'>iPhone or Android — your card works on both, no apps needed.</p>
                             </div>
                         </div>
                     </div>
