@@ -435,7 +435,7 @@ export default function Home() {
                 <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
               </div>
               {loadingStatus ? (
-                <button className="desktop-button blue-button" disabled>
+                <button className="desktop-button black-button" disabled>
                   Loading Plan Status...
                 </button>
               ) : isSubscribed ? (
@@ -449,7 +449,7 @@ export default function Home() {
                   Plan Active
                 </button>
               ) : (
-                <button className="desktop-button combined-section-button blue-button" onClick={handleSubscribe}>
+                <button className="desktop-button combined-section-button black-button" onClick={handleSubscribe}>
                   View Subscription Details
                 </button>
               )}
@@ -475,7 +475,7 @@ export default function Home() {
                 <p className='desktop-h5'>£24.95</p>
                 <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
               </div>
-              <Link to="/whatisnfc" className="desktop-button combined-section-button blue-button">
+              <Link to="/whatisnfc" className="desktop-button combined-section-button black-button">
                 View Card Details
               </Link>
             </div>
