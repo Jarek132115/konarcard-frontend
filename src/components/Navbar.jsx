@@ -67,7 +67,7 @@ export default function Navbar() {
               <img src={LogoIcon} alt="Logo" className="logo" />
             </Link>
             <ul className="nav-links">
-              <li><Link to="/shopnfccards">Shop NFC Cards</Link></li>
+              <li><Link to="/productandplan">Shop NFC Cards</Link></li>
               <li
                 className="dropdown"
                 onMouseEnter={() => setDropdownOpen(true)}
