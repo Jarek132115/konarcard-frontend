@@ -189,6 +189,11 @@
     overflow: hidden;
 }
 
+.hero-tick-box {
+    display: flex;
+    gap: 5px;
+}
+
 .white-card-column-image {
     height: 250px;
     width: 100%;
