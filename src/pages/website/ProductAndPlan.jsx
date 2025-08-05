@@ -35,13 +35,15 @@ export default function ProductAndPlan() {
 
                         <div className="subscription-features">
                             {[
-                                "Customize your design with fonts and Light/Dark mode",
-                                "Craft a compelling 'About Me' section",
-                                "Showcase your best projects in a stunning portfolio",
-                                "Build trust by displaying your customer reviews",
-                                "Clearly list your services and pricing",
-                                "Update all your information whenever you need to",
-                                "Get a personalized URL (yourname.cardsite.com)",
+                                "Personalize your web address",
+                                "Choose your own font",
+                                "Select Light or Dark mode",
+                                "Craft your 'About Me' section",
+                                "Showcase your work portfolio",
+                                "Display client reviews",
+                                "List your services",
+                                "Set your pricing",
+                                "Update anytime, instantly",
                             ].map((text, idx) => (
                                 <div className="hero-tick" key={idx}>
                                     <img src={TickIcon} className="icon" />
