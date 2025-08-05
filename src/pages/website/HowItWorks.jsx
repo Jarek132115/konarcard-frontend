@@ -208,45 +208,6 @@ export default function SubscriptionPage() {
             </div>
 
 
-            <div className="section">
-                <div className="section-1-title">
-                    <h2 className="desktop-h3 text-center">Why Tradies Love Their Digital Page</h2>
-                    <h3 className="desktop-h6 text-center">Show off your business with one tap.</h3>
-                </div>
-
-                <div className="section-3-container-flex">
-                    <div className="section-3-container">
-                        <div className="section-3-1x1-image-info">
-                            <img src={QRCode} className="" />
-                            <p className="desktop-h5 text-center">Your Info, Together</p>
-                            <p className="desktop-body text-center">Services, reviews, prices — all easy to see.</p>
-                        </div>
-                        <div className="section-3-1x1-image-info">
-                            <img src={QRCode} className="" />
-                            <p className="desktop-h5 text-center">Look Like a Pro</p>
-                            <p className="desktop-body text-center">Your page makes you look sharp and trusted.</p>
-                        </div>
-                    </div>
-                    <div className="section-3-container">
-                        <div className="section-3-1x1-image-info">
-                            <img src={QRCode} className="" />
-                            <p className="desktop-h5 text-center">Build Trust Fast</p>
-                            <p className="desktop-body text-center">Show real reviews from happy customers.</p>
-                        </div>
-                        <div className="section-3-1x1-image-info">
-                            <img src={QRCode} className="" />
-                            <p className="desktop-h5 text-center">Easy to Update</p>
-                            <p className="desktop-body text-center">Change prices or services any time.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="cta-center-text" style={{ marginTop: 30, display: 'flex', justifyContent: 'center' }}>
-                    <p className="desktop-h6">Takes 5 minutes. No tech stuff needed.</p>
-                    <button onClick={handleSubscribe} className="blue-button desktop-button">Upgrade My Profile</button>
-                </div>
-            </div>
-
             <Footer />
         </>
     );
