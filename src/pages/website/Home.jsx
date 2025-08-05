@@ -227,7 +227,7 @@ export default function Home() {
           </div>
 
           <div className="section-1-right">
-            <p className="desktop-h5">Show people what you do best.</p>
+            <p className="desktop-h5">Share Your Profile in Seconds.</p>
             <p className="desktop-body">Build a simple, powerful page that makes you look professional and ready for work.</p>
 
             <div className="section-list">
