@@ -16,35 +16,42 @@ import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 import ProductCover from '../../assets/images/Product-Cover.png';
 
 
-
-
-export default function
-    () {
+export default function Home() {
     return (
         <>
             <Navbar />
             <div className="section-breadcrumbs">
                 <Breadcrumbs />
             </div>
-            <div className="section">
-                <div className="section-1-title">
-                    <h2 className='desktop-h1 text-center'>Get Your Konar Card</h2>
-                    <h3 className='desktop-h6 text-center'>Your smart digital business card. Durable, affordable, and ready to win you work.</h3>
+
+            {/* Main Product Section - RESTRUCTURED */}
+            <div className="section-product">
+                <div className="product-preview">
+                    <img src={ProductCover} alt="Main Product Card" className="main-card" />
                 </div>
-                <div className="section-3-container shop-page-container">
-                    <div className="Prouct-Image-Section">
-                        <img src={ProductCover} className="Product-Image" />
-                        <div className='product-description'>
-                            <div className="grey-box desktop-body-xs">1-month subscription included</div>
-                            <p className='desktop-h5 text-center'>Konar Card - White Edition</p>
-                            <p className='desktop-body text-center'>Engineered to impress. Built to last.</p>
-                            <p style={{ fontSize: 18, fontWeight: 600, textAlign: 'center', marginTop: 10, marginBottom: 5 }}>£19.95</p>
-                            <Link to="/shopnfccards/whitecard" style={{ display: 'flex', width: 'fit-content', margin: 'auto' }} className="black-button desktop-button margin-top-10">Buy Now</Link>
-                        </div>
+                <div className="product-options">
+                    <p className="desktop-h5">Konar Card - White Edition</p>
+                    <p className="desktop-body">
+                        The smart, durable card that instantly shows your profile — help customers see your work, your services, and how to contact you in seconds.
+                    </p>
+                    <p style={{ fontSize: 18, fontWeight: 600, marginTop: 10, marginBottom: 20 }}>
+                        £19.95
+                    </p>
+
+                    <div className="review-rating">
+                        <img style={{ width: 120 }} src={ReviewStars} alt="Stars" />
+                        <p>(22)</p>
+                    </div>
+
+                    <div className="option-group">
+                        <Link to="/shopnfccards/whitecard" className="black-button" style={{ marginTop: 20 }}>
+                            Buy Now
+                        </Link>
                     </div>
                 </div>
             </div>
 
+            {/* Features Section - KEPT AS IS */}
             <div className="section">
                 <div className="section-1-title">
                     <h2 className='desktop-h3 text-center'>Your Work. Your Card. Built to Impress.</h2>
