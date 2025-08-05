@@ -752,7 +752,6 @@
 
     .hero-tick {
         display: flex;
-        align-items: flex-start;
         gap: 5px;
         flex-shrink: 0;
         color: black;
