@@ -22,6 +22,7 @@ import HowItWorks2 from '../../assets/images/HowItWorks-2.png';
 import HowItWorks3 from '../../assets/images/HowItWorks-3.png';
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg'
+import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg'
 import WhatIsKonar from '../../assets/images/WhatIsKonar.jpg';
 
 
@@ -134,7 +135,7 @@ export default function WhatIsNFC() {
               </div>
             </div>
             <div className="hero-tick">
-              <img src={DeliveryIcon} className="icon" alt="Warranty" />
+              <img src={WarrantyIcon} className="icon" alt="Warranty" />
               <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>12 Month Warranty</p>
             </div>
           </div>
