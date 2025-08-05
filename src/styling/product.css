@@ -148,7 +148,8 @@
 @media (max-width: 1000px) {
     .section-product {
         flex-direction: column;
-        width: 80%;
+        width: 90%;
+        padding: 0 10px;
     }
 
     .product-preview {
