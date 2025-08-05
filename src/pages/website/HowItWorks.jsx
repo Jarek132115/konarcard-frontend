@@ -113,7 +113,7 @@ export default function SubscriptionPage() {
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', }}>
                         <p style={{ fontSize: 20, fontWeight: 600 }}>
                             £{newPrice.toFixed(2)}
                         </p>
