@@ -8,7 +8,6 @@ import Register from './pages/website/Register';
 import Login from './pages/website/Login';
 import ResetPassword from './pages/website/ResetPassword';
 import ProductAndPlan from './pages/website/ProductAndPlan';
-import WhiteCard from './pages/website/WhiteCard';
 import HowItWorks from './pages/website/HowItWorks';
 import FAQ from './pages/website/FAQ';
 import HelpCentre from './pages/website/HelpCentre';
