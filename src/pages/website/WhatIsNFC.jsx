@@ -241,43 +241,6 @@ export default function WhatIsNFC() {
         </div>
       </div>
 
-      {/* Why Tradies Love It section from the original file */}
-      <div className="section">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Why Tradesmen Love It</h2>
-          <h3 className="desktop-h6 text-center">No paper. No hassle. Just tap and get hired.</h3>
-        </div>
-
-        <div className="section-3-container-flex">
-          <div className="section-3-container">
-            <div className="section-3-1x1-image-info">
-              <img src={QRCodeIcon} className="" />
-              <p className="desktop-h5 text-center">Look Like a Pro</p>
-              <p className="desktop-body text-center">Modern, reliable, and ready to impress.</p>
-            </div>
-
-            <div className="section-3-1x1-image-info">
-              <img src={QRCodeIcon} className="" />
-              <p className="desktop-h5 text-center">One Smart Card</p>
-              <p className="desktop-body text-center">No reprints. No stacks. Just tap and go.</p>
-            </div>
-          </div>
-
-          <div className="section-3-container">
-            <div className="section-3-1x1-image-info">
-              <img src={QRCodeIcon} className="" />
-              <p className="desktop-h5 text-center">Share Info in Seconds</p>
-              <p className="desktop-body text-center">Tap once — your page pops up fast.</p>
-            </div>
-
-            <div className="section-3-1x1-image-info">
-              <img src={QRCodeIcon} className="" />
-              <p className="desktop-h5 text-center">No Apps Needed</p>
-              <p className="desktop-body text-center">Works on most phones right out the box.</p>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <Footer />
     </>
