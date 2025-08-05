@@ -150,7 +150,7 @@ export default function WhatIsNFC() {
           </div>
 
           <div className="review-rating">
-            <img style={{ width: 120 }} src={ReviewStars} alt="Stars" />
+            <img style={{ width: 100 }} src={ReviewStars} alt="Stars" />
             <p>(22)</p>
           </div>
 
