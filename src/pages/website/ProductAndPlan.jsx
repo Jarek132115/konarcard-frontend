@@ -3,17 +3,11 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Footer from '../../components/Footer';
-import KonarCard from '../../assets/images/KonarCard.png';
-import KonarCardCustom from '../../assets/images/KonarCardCustom.png';
-import AllCards from '../../assets/images/All-Cards.png';
 import PremiumMaterials from '../../assets/icons/Premium-Materials-Icon.svg';
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
 import QRCode from '../../assets/icons/QR-Code-Icon.svg';
 import NFCIcon from '../../assets/icons/NFC-Icon.svg';
-import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
-import NoApp from '../../assets/icons/NoApp-Icon.svg';
 import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
-import ProductCover from '../../assets/images/Product-Cover.png';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import PlasticCard from '../../assets/images/PlasticCard.png';
@@ -69,10 +63,9 @@ export default function Home() {
                 <Breadcrumbs />
             </div>
 
-            {/* NEW SECTION: Combined Plan and Cards from Homepage */}
             <div className="section combined-offer-section">
                 <div className="section-1-title">
-                    <h2 className='desktop-h2 text-center'>Our Product & Plan</h2>
+                    <h2 className='desktop-h2 text-center'>Our Plans & Cards</h2>
                     <h3 className='desktop-h6 text-center'>Choose what's right for your business.</h3>
                 </div>
                 <div className="combined-offer-container">
@@ -140,26 +133,25 @@ export default function Home() {
                 </div>
             </div>
 
-            {/* REVISED FEATURES SECTION */}
             <div className="section">
                 <div className="section-1-title">
                     <h2 className='desktop-h3 text-center'>Your Work. Your Card. Built to Impress.</h2>
-                    <h3 className='desktop-h6 text-center'>Get a smart, tough Konar Card that instantly connects clients to your professional digital profile.</h3>
+                    <h3 className='desktop-h6 text-center'>Your digital page and smart card—a powerful combo built to impress and win you work.</h3>
                 </div>
                 <div style={{ gap: 40 }} className="section-1-content">
                     <div className="section-1-left">
                         <img src={NFCBusinessCard} className="" />
                     </div>
                     <div className="section-1-right">
-                        <p className='desktop-h5'>Why Tradies Choose Our Card</p>
-                        <p className='desktop-body'>It's more than a piece of plastic. It's a powerful tool that makes you stand out and win work.</p>
+                        <p className='desktop-h5'>Why Tradies Choose Konar</p>
+                        <p className='desktop-body'>It's a powerful tool that combines your digital portfolio with a smart physical card to get you noticed.</p>
                         <div className="section-list">
                             <div className=" icon-white">
                                 <img src={PremiumMaterials} className="icon" />
                             </div>
                             <div className="section-list-info">
-                                <p className='desktop-h6'>Built to Last</p>
-                                <p className='desktop-body-xs'>A durable, high-quality material that stands up to the demands of any job site.</p>
+                                <p className='desktop-h6'>Look Professional & Legit</p>
+                                <p className='desktop-body-xs'>Present a professional online profile and hand out a sleek, modern card that sets you apart from the competition.</p>
                             </div>
                         </div>
                         <div className="section-list">
@@ -167,8 +159,8 @@ export default function Home() {
                                 <img src={NFCIcon} className="icon" />
                             </div>
                             <div className="section-list-info">
-                                <p className='desktop-h6'>Instant Tap & Share</p>
-                                <p className='desktop-body-xs'>A simple tap on a client’s phone instantly shares your work and contact details. No app needed.</p>
+                                <p className='desktop-h6'>Showcase Your Best Work</p>
+                                <p className='desktop-body-xs'>Easily upload a portfolio of your past jobs and display customer reviews to build instant trust with new clients.</p>
                             </div>
                         </div>
                         <div className="section-list">
@@ -176,8 +168,8 @@ export default function Home() {
                                 <img src={PalletteIcon} className="icon" />
                             </div>
                             <div className="section-list-info">
-                                <p className='desktop-h6'>Stand Out from the Rest</p>
-                                <p className='desktop-body-xs'>A modern, professional card that sets you apart from the competition.</p>
+                                <p className='desktop-h6'>Share in Seconds</p>
+                                <p className='desktop-body-xs'>Instantly share your full profile with a simple tap of your card or a QR scan. Always be ready to connect with new leads.</p>
                             </div>
                         </div>
                     </div>
