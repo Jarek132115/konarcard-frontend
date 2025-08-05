@@ -29,7 +29,7 @@ export default function
             <div className="section">
                 <div className="section-1-title">
                     <h2 className='desktop-h1 text-center'>Get Your Konar Card</h2>
-                    <h3 className='desktop-h6 text-center'>Your smart digital business card. Durable, customizable, and ready to win you work.</h3>
+                    <h3 className='desktop-h6 text-center'>Your smart digital business card. Durable, affordable, and ready to win you work.</h3>
                 </div>
                 <div className="section-3-container shop-page-container">
                     <div className="Prouct-Image-Section">
