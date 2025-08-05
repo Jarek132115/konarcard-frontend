@@ -1,26 +1,112 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import Navbar from '../../components/Navbar'
-import Breadcrumbs from '../../components/Breadcrumbs'
-import Footer from '../../components/Footer'
-import QRCode from '../../assets/icons/QR-Code-Icon.svg'
-import NFCIcon from '../../assets/icons/NFC-Icon.svg'
-import HowItWorks1 from '../../assets/images/HowItWorks-1.png'
-import HowItWorks2 from '../../assets/images/HowItWorks-2.png'
-import HowItWorks3 from '../../assets/images/HowItWorks-3.png'
-import ProfilePencil from '../../assets/icons/ProfilePencil-Icon.svg'
-import ToolBoxIcon from '../../assets/icons/ToolBox-Icon.svg'
-import UpdateIcon from '../../assets/icons/Update-Icon.svg'
+import React, { useContext } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import Navbar from '../../components/Navbar';
+import Breadcrumbs from '../../components/Breadcrumbs';
+import Footer from '../../components/Footer';
+import QRCode from '../../assets/icons/QR-Code-Icon.svg';
+import NFCIcon from '../../assets/icons/NFC-Icon.svg';
+import HowItWorks1 from '../../assets/images/HowItWorks-1.png';
+import HowItWorks2 from '../../assets/images/HowItWorks-2.png';
+import HowItWorks3 from '../../assets/images/HowItWorks-3.png';
+import ProfilePencil from '../../assets/icons/ProfilePencil-Icon.svg';
+import ToolBoxIcon from '../../assets/icons/ToolBox-Icon.svg';
+import UpdateIcon from '../../assets/icons/Update-Icon.svg';
 import Section1Image from '../../assets/images/Section-1-Image.png';
+import TickIcon from '../../assets/icons/Tick-Icon.svg';
+import { AuthContext } from '../../components/AuthContext';
+import api from '../../services/api';
+import { toast } from 'react-hot-toast';
 
+export default function SubscriptionPage() {
+    const { user, loading: authLoading } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
 
-export default function HowItWorks() {
+    const isSubscribed = user ? user.isSubscribed : false;
+    const loadingStatus = authLoading;
+
+    const handleSubscribe = async () => {
+        if (!user) {
+            navigate('/login', {
+                state: {
+                    from: location.pathname,
+                    checkoutType: 'subscription',
+                },
+            });
+            return;
+        }
+
+        if (isSubscribed) {
+            toast.info('You are already subscribed to the Power Profile.');
+            return;
+        }
+
+        try {
+            const res = await api.post('/subscribe', {
+                returnUrl: window.location.origin + '/SuccessSubscription',
+            });
+
+            const { url } = res.data;
+
+            if (url) {
+                window.location.href = url;
+            } else {
+                toast.error('Could not start subscription. Please try again.');
+            }
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Subscription failed. Please try again.');
+        }
+    };
+
     return (
         <>
             <Navbar />
             <div style={{ marginTop: 20 }} className="section-breadcrumbs">
                 <Breadcrumbs />
             </div>
+
+            {/* NEW CONVERSION SECTION FOR SUBSCRIPTION */}
+            <div className="section-product">
+                <div className="product-preview">
+                    {/* Placeholder for an image or visual of the Power Profile in action */}
+                    <img src={Section1Image} alt="Power Profile in action" className="main-card" />
+                </div>
+                <div className="product-options">
+                    <p className="desktop-h5">Power Profile</p>
+                    <div className="free-trial-badge">14 Day Free Trial</div>
+                    <p className="desktop-body">
+                        Upgrade your digital profile with all the tools you need to look professional and win more work.
+                    </p>
+                    <p style={{ fontSize: 18, fontWeight: 600, marginTop: 10, marginBottom: 20 }}>
+                        £7.95 per month
+                    </p>
+
+                    <div className="subscription-features">
+                        {[
+                            "Upload unlimited photos (Portfolio / Gallery)",
+                            "Add multiple social links and websites",
+                            "Personalize your landing page URL (yourname.cardsite.com)",
+                            "Priority support and setup help",
+                            "CRM Integration.",
+                            "Networking Toolkit.",
+                            "Automated Follow-Ups.",
+                        ].map((text, idx) => (
+                            <div className="hero-tick" key={idx}>
+                                <img src={TickIcon} className="icon" />
+                                <p>{text}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="option-group">
+                        <button onClick={handleSubscribe} className="black-button desktop-button" style={{ marginTop: 20 }}>
+                            Upgrade to Power Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Original "How It Works" content remains below as educational content */}
             <div style={{ marginTop: 40 }} className="section">
                 <div className="section-1-title">
                     <h2 className="desktop-h1 text-center">Your Digital Page to Win Work</h2>
@@ -159,11 +245,11 @@ export default function HowItWorks() {
 
                 <div className="cta-center-text" style={{ marginTop: 30, display: 'flex', justifyContent: 'center' }}>
                     <p className="desktop-h6">Takes 5 minutes. No tech stuff needed.</p>
-                    <Link to="/shopnfccards" className="blue-button desktop-button">Get Started</Link>
+                    <button onClick={handleSubscribe} className="blue-button desktop-button">Upgrade My Profile</button>
                 </div>
             </div>
 
             <Footer />
         </>
-    )
+    );
 }
