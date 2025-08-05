@@ -2,10 +2,10 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const breadcrumbLabels = {
-  '/shopnfccards': 'Shop NFC Cards',
-  '/shopnfccards/plasticnfccard': 'Plastic NFC Card',
-  '/shopnfccards/woodennfccard': 'Wooden NFC Card',
-  '/shopnfccards/metalnfccard': 'Metal NFC Card',
+  '/productandplan': 'Shop NFC Cards',
+  '/productandplan/plasticnfccard': 'Plastic NFC Card',
+  '/productandplan/woodennfccard': 'Wooden NFC Card',
+  '/productandplan/metalnfccard': 'Metal NFC Card',
   '/blog': 'Blog',
   '/whatisnfc': 'What Is NFC',
   '/howitworks': 'How It Works',
