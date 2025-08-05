@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
@@ -42,11 +42,10 @@ import ScanQRCode from '../../assets/images/ScanQR-Code.jpg';
 import LinkInBio from '../../assets/images/LinkInBio.jpg';
 import SMSSend from '../../assets/images/SMSSend.jpg';
 
-
 import { AuthContext } from '../../components/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
+
 
 export default function Home() {
   const { user, loading: authLoading } = useContext(AuthContext);
@@ -89,6 +88,7 @@ export default function Home() {
     }
   };
 
+
   return (
     <>
       <Navbar />
@@ -111,7 +111,8 @@ export default function Home() {
               <p className="hero-rating">Trusted by 1,000+ tradies</p>
             </div>
             <div className="hero-cta">
-              <Link to="/register" className="cta-blue-button desktop-button">Create Your Account</Link>
+              {/* REVISED: This CTA now links to the main pricing page to present all options. */}
+              <Link to="/productandplan" className="cta-blue-button desktop-button">View Plans & Cards</Link>
               <Link to="/howitworks" className="cta-black-button desktop-button">See How It Works</Link>
             </div>
 
@@ -457,7 +458,7 @@ export default function Home() {
           <div className="card-offer-right">
             <div className="product-header">
               <p className='desktop-h5'>Plastic NFC Card</p>
-              <div className="free-trial-badge product-header-badge">1-month subscription included</div>
+              <div className="free-trial-badge product-header-badge">Best-Seller</div>
             </div>
             <p className='desktop-body-s product-subheader'>Lightweight, Durable, Always Ready</p>
             <p className='desktop-body-xs product-optional-sentence'>This product is optional, buy one to stand out.</p>
@@ -473,79 +474,10 @@ export default function Home() {
                 <p className='desktop-h5'>£24.95</p>
                 <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
               </div>
-              <Link to="/shopnfccards/whitecard" className="desktop-button combined-section-button blue-button">View Card Details</Link>
+              <Link to="/whatisnfc" className="desktop-button combined-section-button blue-button">
+                View Card Details
+              </Link>
             </div>
-          </div>
-        </div>
-      </div>
-
-
-      <div className="full-width-bg-container section-bg-grey">
-        <div className="section">
-          <div className="section-1-title">
-            <h2 className="desktop-h3 text-center">The #1 Tool Tradies Are Talking About</h2>
-            <h3 className="desktop-h6 text-center">
-              Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
-            </h3>
-          </div>
-
-          <div className="review-container">
-            <div className="review-pair">
-              <div className="review-div">
-                <img className='stars' src={ReviewStars} />
-                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
-                <div className="review-div-person">
-                  <img src={ReviewPerson} />
-                  <div className="review-person-name">
-                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
-                    <p className='desktop-body-s'>Mark B</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="review-div">
-                <img className='stars' src={ReviewStars} />
-                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
-                <div className="review-div-person">
-                  <img src={ReviewPerson} />
-                  <div className="review-person-name">
-                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
-                    <p className='desktop-body-s'>Mark B</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="review-pair">
-              <div className="review-div">
-                <img className='stars' src={ReviewStars} />
-                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
-                <div className="review-div-person">
-                  <img src={ReviewPerson} />
-                  <div className="review-person-name">
-                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
-                    <p className='desktop-body-s'>Mark B</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="review-div">
-                <img className='stars' src={ReviewStars} />
-                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
-                <div className="review-div-person">
-                  <img src={ReviewPerson} />
-                  <div className="review-person-name">
-                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
-                    <p className='desktop-body-s'>Mark B</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className='cta-center-text review-cta'>
-            <p className='desktop-h6'>Check out more reviews</p>
-            <Link to="/reviews" className="blue-button desktop-button">Reviews</Link>
           </div>
         </div>
       </div>
@@ -656,7 +588,6 @@ export default function Home() {
           <p className='desktop-h6'>Got more questions?</p>
           <Link to="/faq" className="blue-button desktop-button">Frequently Asked Questions</Link>
         </div>
-
       </div>
 
       <Footer />
