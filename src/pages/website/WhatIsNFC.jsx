@@ -23,9 +23,7 @@ import HowItWorks3 from '../../assets/images/HowItWorks-3.png';
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg'
 import WhatIsKonar from '../../assets/images/WhatIsKonar.jpg';
-import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg'; // Assuming you have an icon for this
-import DurableIcon from '../../assets/icons/Durable-Icon.svg'; // Assuming you have an icon for this
-import QualityIcon from '../../assets/icons/Quality-Icon.svg'; // Assuming you have an icon for this
+
 
 
 const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8');
