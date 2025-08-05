@@ -170,7 +170,7 @@ export default function WhatIsNFC() {
       </div>
 
       {/* What is NFC section - REVISED */}
-      <div style={{ marginTop: 40 }} className="section">
+      <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">What’s an Konar Business Card?</h2>
           <h3 className="desktop-h6 text-center">It’s a smart card you tap on a phone to share your details — no apps needed.</h3>
