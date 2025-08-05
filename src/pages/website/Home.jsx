@@ -287,16 +287,6 @@ export default function Home() {
 
               <div className="section-list">
                 <div className="icon-white">
-                  <img src={IDCardIcon} className="icon" />
-                </div>
-                <div className="section-list-info">
-                  <p className="desktop-h6">Build Instant Trust</p>
-                  <p className="desktop-body-xs">A polished digital page makes you look professional and reliable to every new client.</p>
-                </div>
-              </div>
-
-              <div className="section-list">
-                <div className="icon-white">
                   <img src={ImagesIcon} className="icon" />
                 </div>
                 <div className="section-list-info">
