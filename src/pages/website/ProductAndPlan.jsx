@@ -66,7 +66,7 @@ export default function Home() {
                                 <p className='desktop-h5'>£7.95</p>
                                 <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
                             </div>
-                            <button className="desktop-button combined-section-button blue-button">
+                            <button className="desktop-button combined-section-button blue-button" onClick={handleSubscribe}>
                                 Upgrade to Power Profile
                             </button>
                         </div>
