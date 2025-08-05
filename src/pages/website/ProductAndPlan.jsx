@@ -60,7 +60,7 @@ export default function ProductAndPlan() {
                                 <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
                             </div>
                             <Link to="/howitworks" className="desktop-button combined-section-button blue-button">
-                                Start Your 14-Day Free Trial
+                                View Subscription Details
                             </Link>
                         </div>
                     </div>
