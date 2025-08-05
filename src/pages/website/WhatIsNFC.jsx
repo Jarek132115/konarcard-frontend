@@ -131,7 +131,7 @@ export default function WhatIsNFC() {
       {/* What is NFC section from the original file */}
       <div style={{ marginTop: 40 }} className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h1 text-center">What’s an NFC Business Card?</h2>
+          <h2 className="desktop-h3 text-center">What’s an NFC Business Card?</h2>
           <h3 className="desktop-h6 text-center">It’s a smart card you tap on a phone to share your details — no apps needed.</h3>
         </div>
 
