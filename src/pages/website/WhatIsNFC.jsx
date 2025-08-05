@@ -67,6 +67,31 @@ export default function WhatIsNFC() {
     }
   };
 
+  // Function to get dynamic delivery dates
+  const getDeliveryDates = () => {
+    const today = new Date();
+    const deliveryStart = new Date(today);
+    // Add one day for next day delivery
+    deliveryStart.setDate(today.getDate() + 1);
+
+    const deliveryEnd = new Date(today);
+    // Add two days for the end of the delivery window
+    deliveryEnd.setDate(today.getDate() + 2);
+
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    const startDay = deliveryStart.getDate();
+    const endDay = deliveryEnd.getDate();
+    const month = monthNames[deliveryStart.getMonth()];
+
+    return `Receive by ${startDay}-${endDay} ${month}`;
+  };
+
+  const deliveryDateText = getDeliveryDates();
+
   return (
     <>
       <Navbar />
@@ -98,9 +123,15 @@ export default function WhatIsNFC() {
           </p>
 
           <div className="hero-tick-box">
+            {/* DYNAMIC DELIVERY DATE - REVISED */}
             <div className="hero-tick">
               <img src={DeliveryIcon} className="icon" alt="Delivery" />
-              <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>Order Before 3pm for Next Day Delivery</p>
+              <div>
+                <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>Delivery 1-2 Days</p>
+                <p className='desktop-body-xs' style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
+                  {deliveryDateText}
+                </p>
+              </div>
             </div>
             <div className="hero-tick">
               <img src={DeliveryIcon} className="icon" alt="Warranty" />
@@ -125,8 +156,6 @@ export default function WhatIsNFC() {
               £{(originalPricePerCard * quantity).toFixed(2)}
             </p>
           </div>
-
-
 
           <div className="option-group">
             <p className="desktop-body-xs">Quantity:</p>
