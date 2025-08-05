@@ -15,18 +15,13 @@ import ProductImage3 from '../../assets/images/Product-Image-3.png';
 import ProductImage4 from '../../assets/images/Product-Image-4.png';
 import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 import PremiumMaterials from '../../assets/icons/Premium-Materials-Icon.svg';
-import CustomizableDesign from '../../assets/icons/Customizable-Design-Icon.svg';
 import QRCodeIcon from '../../assets/icons/QR-Code-Icon.svg';
 import NFCIcon from '../../assets/icons/NFC-Icon.svg';
-import TapIcon from '../../assets/icons/Tap-Icon.svg';
-import SaveIcon from '../../assets/icons/Save-Icon.svg';
 import HowItWorks1 from '../../assets/images/HowItWorks-1.png';
 import HowItWorks2 from '../../assets/images/HowItWorks-2.png';
 import HowItWorks3 from '../../assets/images/HowItWorks-3.png';
-import ProfileIcon from '../../assets/icons/Profile-Icon.svg';
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg'
-import NoApp from '../../assets/icons/NoApp-Icon.svg'
 import WhatIsKonar from '../../assets/images/WhatIsKonar.jpg';
 
 
