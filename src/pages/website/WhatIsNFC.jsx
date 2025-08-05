@@ -117,7 +117,7 @@ export default function WhatIsNFC() {
             <p>(22)</p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: 10, marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', }}>
             <p style={{ fontSize: 24, fontWeight: 600 }}>
               £{(pricePerCard * quantity).toFixed(2)}
             </p>
