@@ -23,37 +23,11 @@ export default function Home() {
     const isSubscribed = user ? user.isSubscribed : false;
     const loadingStatus = authLoading;
 
+    // This function will now navigate to the subscription info page instead of Stripe.
     const handleSubscribe = async () => {
-        if (!user) {
-            navigate('/login', {
-                state: {
-                    from: location.pathname,
-                    checkoutType: 'subscription',
-                },
-            });
-            return;
-        }
-
-        if (isSubscribed) {
-            toast.info('You are already subscribed to the Power Profile.');
-            return;
-        }
-
-        try {
-            const res = await api.post('/subscribe', {
-                returnUrl: window.location.origin + '/SuccessSubscription',
-            });
-
-            const { url } = res.data;
-
-            if (url) {
-                window.location.href = url;
-            } else {
-                toast.error('Could not start subscription. Please try again.');
-            }
-        } catch (err) {
-            toast.error(err.response?.data?.error || 'Subscription failed. Please try again.');
-        }
+        navigate('/subscription-info', { // Assuming you have a route for this page
+            state: { from: location.pathname }
+        });
     };
 
     return (
