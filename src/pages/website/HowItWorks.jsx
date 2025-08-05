@@ -114,10 +114,10 @@ export default function SubscriptionPage() {
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', }}>
-                        <p style={{ fontSize: 24, fontWeight: 600 }}>
+                        <p style={{ fontSize: 20, fontWeight: 600 }}>
                             £{newPrice.toFixed(2)}
                         </p>
-                        <p style={{ fontSize: 18, color: '#666', textDecoration: 'line-through' }}>
+                        <p style={{ fontSize: 16, color: '#666', textDecoration: 'line-through' }}>
                             £{oldPrice.toFixed(2)}
                         </p>
                         <p style={{ fontSize: 18, color: '#666' }}>
