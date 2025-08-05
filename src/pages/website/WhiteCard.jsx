@@ -7,7 +7,6 @@ import Footer from '../../components/Footer';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
 import { toast } from 'react-hot-toast';
-
 import ProductCover from '../../assets/images/Product-Cover.png';
 import ProductImage1 from '../../assets/images/Product-Image-1.png';
 import ProductImage2 from '../../assets/images/Product-Image-2.png';

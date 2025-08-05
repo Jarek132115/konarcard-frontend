@@ -13,6 +13,7 @@ import NFCIcon from '../../assets/icons/NFC-Icon.svg'
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg'
 import NoApp from '../../assets/icons/NoApp-Icon.svg'
 import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
+import ProductCover from '../../assets/images/Product-Cover.png';
 
 
 
@@ -32,7 +33,7 @@ export default function
                 </div>
                 <div className="section-3-container shop-page-container">
                     <div className="Prouct-Image-Section">
-                        <img src={KonarCard} className="Product-Image" />
+                        <img src={ProductCover} className="Product-Image" />
                         <div className='product-description'>
                             <div className="grey-box desktop-body-xs">1-month subscription included</div>
                             <p className='desktop-h5 text-center'>Konar Card - White Edition</p>
