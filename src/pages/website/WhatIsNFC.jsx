@@ -23,6 +23,9 @@ import HowItWorks3 from '../../assets/images/HowItWorks-3.png';
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg'
 import WhatIsKonar from '../../assets/images/WhatIsKonar.jpg';
+import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg'; // Assuming you have an icon for this
+import DurableIcon from '../../assets/icons/Durable-Icon.svg'; // Assuming you have an icon for this
+import QualityIcon from '../../assets/icons/Quality-Icon.svg'; // Assuming you have an icon for this
 
 
 const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8');
@@ -107,6 +110,26 @@ export default function WhatIsNFC() {
           <div className="hero-tick">
             <img src={DeliveryIcon} className="icon" alt="Delivery" />
             <p style={{ fontSize: 14 }}>Order Before 3pm for Next Day Delivery</p>
+          </div>
+
+          {/* NEW: Product Badges Section */}
+          <div className="product-badges-wrapper">
+            <div className="product-badge">
+              <img src={WarrantyIcon} alt="Warranty Icon" className="badge-icon" />
+              <p>12-Month Warranty</p>
+            </div>
+            <div className="product-badge">
+              <img src={DurableIcon} alt="Durable Icon" className="badge-icon" />
+              <p>Durable Material</p>
+            </div>
+            <div className="product-badge">
+              <img src={QualityIcon} alt="Quality Icon" className="badge-icon" />
+              <p>High Quality</p>
+            </div>
+            <div className="product-badge">
+              <img src={NFCIcon} alt="NFC Icon" className="badge-icon" />
+              <p>Tap to Share</p>
+            </div>
           </div>
 
           <div className="option-group">
@@ -236,7 +259,6 @@ export default function WhatIsNFC() {
           </div>
         </div>
       </div>
-
 
       <Footer />
     </>
