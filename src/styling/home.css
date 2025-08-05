@@ -494,6 +494,7 @@
     .section-3-container-flex {
         display: flex;
         justify-content: space-between;
+        gap: 20px;
     }
 
     .section-3-1x1-image-info img {
@@ -1135,4 +1136,3 @@
             flex-direction: column;
         }
     }
-
