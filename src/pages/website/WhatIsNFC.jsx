@@ -136,8 +136,18 @@ export default function WhatIsNFC() {
             </div>
             <div className="hero-tick">
               <img src={WarrantyIcon} className="icon" alt="Warranty" />
-              <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>12 Month Warranty</p>
+              <div>
+                <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>12 Month Warranty</p>
+                <p className='desktop-body-xs' style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
+                  Damaged? Free replacement!
+                </p>
+              </div>
             </div>
+          </div>
+
+          <div className="review-rating">
+            <img style={{ width: 80 }} src={ReviewStars} alt="Stars" />
+            <p>(22)</p>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', }}>
@@ -147,11 +157,6 @@ export default function WhatIsNFC() {
             <p style={{ fontSize: 18, color: '#666', textDecoration: 'line-through' }}>
               £{(originalPricePerCard * quantity).toFixed(2)}
             </p>
-          </div>
-
-          <div className="review-rating">
-            <img style={{ width: 80 }} src={ReviewStars} alt="Stars" />
-            <p>(22)</p>
           </div>
 
           <div className="option-group">
