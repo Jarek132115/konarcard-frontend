@@ -150,6 +150,7 @@
         flex-direction: column;
         width: 90%;
         padding: 0 10px;
+        margin-bottom: 100px;
     }
 
     .product-preview {
