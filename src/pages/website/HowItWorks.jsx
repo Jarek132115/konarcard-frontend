@@ -109,7 +109,7 @@ export default function SubscriptionPage() {
             {/* Original "How It Works" content remains below as educational content */}
             <div style={{ marginTop: 40 }} className="section">
                 <div className="section-1-title">
-                    <h2 className="desktop-h1 text-center">Your Digital Page to Win Work</h2>
+                    <h2 className="desktop-h3 text-center">Your Digital Page to Win Work</h2>
                     <h3 className="desktop-h6 text-center">Share your contact details, show your best jobs, and earn trust — all in one simple link.</h3>
                 </div>
 
