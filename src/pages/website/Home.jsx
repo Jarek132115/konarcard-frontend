@@ -409,13 +409,14 @@ export default function Home() {
 
             <div className="subscription-features">
               {[
-                "Upload unlimited photos (Portfolio / Gallery)",
-                "Add multiple social links and websites",
-                "Personalize your landing page URL (yourname.cardsite.com)",
-                "Priority support and setup help",
-                "CRM Integration.",
-                "Networking Toolkit.",
-                "Automated Follow-Ups.",
+                "Choose your own font",
+                "Select Light or Dark mode",
+                "Craft your 'About Me' section",
+                "Showcase your work portfolio",
+                "Display client reviews",
+                "List your services",
+                "Set your pricing",
+                "Update anytime, instantly",
               ].map((text, idx) => (
                 <div className="hero-tick" key={idx}>
                   <img src={TickIcon} className="icon" />
