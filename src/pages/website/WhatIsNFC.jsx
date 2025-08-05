@@ -137,10 +137,6 @@ export default function WhatIsNFC() {
               <img src={DeliveryIcon} className="icon" alt="Warranty" />
               <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>12 Month Warranty</p>
             </div>
-            <div className="hero-tick">
-              <img src={DeliveryIcon} className="icon" alt="Placeholder" />
-              <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>Placeholder Text</p>
-            </div>
           </div>
 
           <div className="review-rating">
