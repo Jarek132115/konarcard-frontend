@@ -35,6 +35,7 @@ export default function ProductAndPlan() {
 
                         <div className="subscription-features">
                             {[
+                                "Update anytime, instantly",
                                 "Choose your own font",
                                 "Select Light or Dark mode",
                                 "Craft your 'About Me' section",
@@ -42,7 +43,6 @@ export default function ProductAndPlan() {
                                 "Display client reviews",
                                 "List your services",
                                 "Set your pricing",
-                                "Update anytime, instantly",
                             ].map((text, idx) => (
                                 <div className="hero-tick" key={idx}>
                                     <img src={TickIcon} className="icon" />
