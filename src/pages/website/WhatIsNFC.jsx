@@ -112,6 +112,11 @@ export default function WhatIsNFC() {
             </div>
           </div>
 
+          <div className="review-rating">
+            <img style={{ width: 120 }} src={ReviewStars} alt="Stars" />
+            <p>(22)</p>
+          </div>
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: 10, marginBottom: 20 }}>
             <p style={{ fontSize: 24, fontWeight: 600 }}>
               £{(pricePerCard * quantity).toFixed(2)}
@@ -121,10 +126,7 @@ export default function WhatIsNFC() {
             </p>
           </div>
 
-          <div className="review-rating">
-            <img style={{ width: 120 }} src={ReviewStars} alt="Stars" />
-            <p>(22)</p>
-          </div>
+
 
           <div className="option-group">
             <p className="desktop-body-xs">Quantity:</p>
