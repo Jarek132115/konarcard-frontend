@@ -97,18 +97,19 @@ export default function WhatIsNFC() {
             The smart, durable card that instantly shows your profile, work, services, and how to contact you in seconds.
           </p>
 
-          {/* MOVED AND DUPLICATED ICONS - REVISED */}
-          <div className="hero-tick">
-            <img src={DeliveryIcon} className="icon" alt="Delivery" />
-            <p style={{ fontSize: 14, fontWeight: Bold, }}>Order Before 3pm for Next Day Delivery</p>
-          </div>
-          <div className="hero-tick">
-            <img src={DeliveryIcon} className="icon" alt="Warranty" />
-            <p style={{ fontSize: 14 }}>12 Month Warranty</p>
-          </div>
-          <div className="hero-tick">
-            <img src={DeliveryIcon} className="icon" alt="Placeholder" />
-            <p style={{ fontSize: 14 }}>Placeholder Text</p>
+          <div className="hero-tick-box">
+            <div className="hero-tick">
+              <img src={DeliveryIcon} className="icon" alt="Delivery" />
+              <p style={{ fontSize: 14, fontWeight: Bold, }}>Order Before 3pm for Next Day Delivery</p>
+            </div>
+            <div className="hero-tick">
+              <img src={DeliveryIcon} className="icon" alt="Warranty" />
+              <p style={{ fontSize: 14 }}>12 Month Warranty</p>
+            </div>
+            <div className="hero-tick">
+              <img src={DeliveryIcon} className="icon" alt="Placeholder" />
+              <p style={{ fontSize: 14 }}>Placeholder Text</p>
+            </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: 10, marginBottom: 20 }}>
