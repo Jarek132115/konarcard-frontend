@@ -40,6 +40,7 @@ import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 import QRCode from '../../assets/images/QR-Code.jpg';
 import ScanQRCode from '../../assets/images/ScanQR-Code.jpg';
 import LinkInBio from '../../assets/images/LinkInBio.jpg';
+import SMSSend from '../../assets/images/SMSSend.jpg';
 
 
 import { AuthContext } from '../../components/AuthContext';
@@ -346,7 +347,7 @@ export default function Home() {
               <p className='desktop-body text-center'>Tap to share your details fast</p>
             </div>
             <div className="section-3-1x1-image-info">
-              <img src={ScanQRCode} className="" />
+              <img src={SMSSend} className="" />
               <p className='desktop-h5 text-center'>Share Via Message</p>
               <p className='desktop-body text-center'>WhatsApp, SMS, Messenger & more</p>
             </div>
