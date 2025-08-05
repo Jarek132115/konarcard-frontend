@@ -16,8 +16,8 @@ import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
-import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg'; // Reusing this icon for the free trial visual
-import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg'; // Adding this icon to match the product page's tickbox section
+import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
+import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg';
 
 export default function SubscriptionPage() {
     const { user, loading: authLoading } = useContext(AuthContext);
@@ -27,7 +27,6 @@ export default function SubscriptionPage() {
     const isSubscribed = user ? user.isSubscribed : false;
     const loadingStatus = authLoading;
 
-    // Define pricing variables to make them easy to update
     const newPrice = 7.95;
     const oldPrice = 12.95;
 
@@ -92,7 +91,6 @@ export default function SubscriptionPage() {
                         Upgrade your digital profile with all the tools you need to look professional and win more work.
                     </p>
 
-                    {/* REPLACED DELIVERY DATE SECTION WITH FREE TRIAL SECTION, STYLED TO MATCH THE PRODUCT PAGE */}
                     <div className="hero-tick-box">
                         <div className="hero-tick">
                             <img src={DeliveryIcon} className="icon" alt="Free Trial" />
@@ -103,14 +101,18 @@ export default function SubscriptionPage() {
                                 </p>
                             </div>
                         </div>
-                        {/* ADDED A SECOND "TICK" TO MATCH THE LAYOUT OF THE ORIGINAL PRODUCT PAGE */}
                         <div className="hero-tick">
                             <img src={WarrantyIcon} className="icon" alt="Warranty" />
-                            <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>Cancel Anytime</p>
+                            <div>
+                                <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>Cancel Anytime</p>
+                                {/* ADDED NEW LINE HERE */}
+                                <p className='desktop-body-xs' style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
+                                    No long-term contracts.
+                                </p>
+                            </div>
                         </div>
                     </div>
 
-                    {/* RE-STYLED PRICING TO MATCH THE "PRICE REDUCTION" LOOK OF THE ORIGINAL PRODUCT PAGE */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', }}>
                         <p style={{ fontSize: 24, fontWeight: 600 }}>
                             £{newPrice.toFixed(2)}
@@ -131,9 +133,6 @@ export default function SubscriptionPage() {
                 </div>
             </div>
 
-            {/* REMOVED THE SUBSCRIPTION FEATURES SECTION as requested */}
-
-            {/* Original "Your Digital Page to Win Work" content remains */}
             <div style={{ marginTop: 40 }} className="section">
                 <div className="section-1-title">
                     <h2 className="desktop-h3 text-center">Your Digital Page to Win Work</h2>
