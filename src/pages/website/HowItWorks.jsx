@@ -18,6 +18,7 @@ import api from '../../services/api';
 import { toast } from 'react-hot-toast';
 import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
 import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg';
+import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 
 export default function SubscriptionPage() {
     const { user, loading: authLoading } = useContext(AuthContext);
