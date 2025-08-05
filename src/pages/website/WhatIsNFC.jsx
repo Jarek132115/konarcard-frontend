@@ -94,10 +94,23 @@ export default function WhatIsNFC() {
         <div className="product-options">
           <p className="desktop-h5">Konar Card - White Edition</p>
           <p className="desktop-body">
-            The smart, durable card that instantly shows your profile — help customers see your work, your services, and how to contact you in seconds.
+            The smart, durable card that instantly shows your profile, work, services, and how to contact you in seconds.
           </p>
 
-          {/* REVISED PRICE SECTION WITH DISCOUNT */}
+          {/* MOVED AND DUPLICATED ICONS - REVISED */}
+          <div className="hero-tick">
+            <img src={DeliveryIcon} className="icon" alt="Delivery" />
+            <p style={{ fontSize: 14 }}>Order Before 3pm for Next Day Delivery</p>
+          </div>
+          <div className="hero-tick">
+            <img src={DeliveryIcon} className="icon" alt="Warranty" />
+            <p style={{ fontSize: 14 }}>12 Month Warranty</p>
+          </div>
+          <div className="hero-tick">
+            <img src={DeliveryIcon} className="icon" alt="Placeholder" />
+            <p style={{ fontSize: 14 }}>Placeholder Text</p>
+          </div>
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: 10, marginBottom: 20 }}>
             <p style={{ fontSize: 24, fontWeight: 600 }}>
               £{(pricePerCard * quantity).toFixed(2)}
@@ -110,11 +123,6 @@ export default function WhatIsNFC() {
           <div className="review-rating">
             <img style={{ width: 120 }} src={ReviewStars} alt="Stars" />
             <p>(22)</p>
-          </div>
-
-          <div className="hero-tick">
-            <img src={DeliveryIcon} className="icon" alt="Delivery" />
-            <p style={{ fontSize: 14 }}>Order Before 3pm for Next Day Delivery</p>
           </div>
 
           <div className="option-group">
