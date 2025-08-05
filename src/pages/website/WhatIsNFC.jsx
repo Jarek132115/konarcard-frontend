@@ -162,7 +162,7 @@ export default function WhatIsNFC() {
               <button className="qty-btn" onClick={() => setQuantity(q => q + 1)}>+</button>
             </div>
 
-            <button onClick={handleBuyNow} className="black-button desktop-button" style={{ marginTop: 20 }}>
+            <button onClick={handleBuyNow} className="black-button desktop-button">
               Buy Now
             </button>
           </div>

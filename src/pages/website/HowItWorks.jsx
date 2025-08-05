@@ -124,7 +124,7 @@ export default function SubscriptionPage() {
                     </div>
 
                     <div className="option-group">
-                        <button onClick={handleSubscribe} className="black-button desktop-button" style={{ marginTop: 20 }}>
+                        <button onClick={handleSubscribe} className="black-button desktop-button">
                             Upgrade to Power Profile
                         </button>
                     </div>
