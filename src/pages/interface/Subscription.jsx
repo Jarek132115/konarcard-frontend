@@ -247,7 +247,7 @@ export default function Subscription() {
               <div className="products-plans-header">
                 <p className='desktop-h5 products-plans-title'>Power Profile</p>
                 {isSubscribed ? null : (
-                  <div className="products-plans-badge desktop-body-xs">FREE TRIAL</div>
+                  <div className="products-plans-badge desktop-body-xs">14 Day Free Trial</div>
                 )}
               </div>
               <p className='desktop-body-s products-plans-subheader'>Win more work and **stand out** with a power profile.</p>

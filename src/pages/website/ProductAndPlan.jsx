@@ -79,7 +79,7 @@ export default function Home() {
                     <div className="subscription-offer-left">
                         <div className="subscription-header">
                             <p className='desktop-h5'>Power Profile</p>
-                            <div className="free-trial-badge">Free Trial</div>
+                            <div className="free-trial-badge">14 Day Free Trial</div>
                         </div>
                         <p className='desktop-body-s subscription-subheader'>Win more work with a power profile</p>
 
