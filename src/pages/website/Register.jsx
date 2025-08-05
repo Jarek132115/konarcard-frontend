@@ -154,7 +154,7 @@ export default function Register() {
             <div className="login-wrapper">
                 <Link to="/" className="close-button">×</Link>
                 <div className="login-left">
-                    <img src="https://placehold.co/600x400/E0E0E0/333333?text=Background+Image" alt="Visual" className="login-visual" />
+                    <img src={backgroundImg} alt="Login visual" className="login-visual" />
                     <div className="login-quote">
                         <span className="quote-icon">“</span>
                         <p className="quote-text">“This has completely changed the way I find work. Clients love it.”</p>
