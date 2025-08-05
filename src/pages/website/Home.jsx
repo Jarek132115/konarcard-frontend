@@ -111,7 +111,7 @@ export default function Home() {
               <p className="hero-rating">Trusted by 1,000+ tradies</p>
             </div>
             <div className="hero-cta">
-              <Link to="/register" className="cta-blue-button desktop-button">Create Your Profile Now</Link>
+              <Link to="/register" className="cta-blue-button desktop-button">Create Your Account</Link>
               <Link to="/howitworks" className="cta-black-button desktop-button">See How It Works</Link>
             </div>
 
