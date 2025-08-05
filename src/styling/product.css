@@ -196,7 +196,7 @@
 .hero-tick-box {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 10px;
     margin: 10px 0;
 }
 
