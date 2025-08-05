@@ -60,7 +60,7 @@ export default function ProductAndPlan() {
                                 <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
                             </div>
                             <Link to="/howitworks" className="desktop-button combined-section-button blue-button">
-                                Upgrade to Power Profile
+                                Start Your 14-Day Free Trial
                             </Link>
                         </div>
                     </div>
@@ -84,7 +84,9 @@ export default function ProductAndPlan() {
                                 <p className='desktop-h5'>£24.95</p>
                                 <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
                             </div>
-                            <Link to="/whatisnfc" className="desktop-button combined-section-button blue-button">Buy Now</Link>
+                            <Link to="/whatisnfc" className="desktop-button combined-section-button blue-button">
+                                View Card Details
+                            </Link>
                         </div>
                     </div>
                 </div>
