@@ -353,7 +353,7 @@ export default function Home() {
           </div>
           <div className="section-3-container">
             <div className="section-3-1x1-image-info">
-              <img src={QRCode} className="" />
+              <img src={ScanQRCode} className="" />
               <p className='desktop-h5 text-center'>QR Code</p>
               <p className='desktop-body text-center'>Scan to open your full profile</p>
             </div>
