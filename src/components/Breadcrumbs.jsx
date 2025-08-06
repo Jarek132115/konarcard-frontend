@@ -8,10 +8,8 @@ const breadcrumbLabels = {
   '/productandplan/metalnfccard': 'Metal NFC Card',
   // UPDATED BREADCRUMB LABEL for the Konar Card details page
   '/productandplan/konarcard': 'Konar Card White Edition',
-  // UPDATED BREADCRUMB LABEL for the How It Works page when accessed via Product & Plan
-  '/productandplan/howitworks': 'Konar Power Profile Details', // This reflects the purpose of the link from Product & Plan
-  // UPDATED BREADCRUMB LABEL for the direct subscription page path
-  '/subscription': 'Konar Power Profile Subscription',
+  // UPDATED BREADCRUMB LABEL for the Konar Power Profile Subscription page
+  '/productandplan/konarsubscription': 'Konar Power Profile Subscription',
 
   '/blog': 'Blog',
   '/whatisnfc': 'What Is NFC', // Keeping this if it's still a valid standalone path
@@ -21,6 +19,8 @@ const breadcrumbLabels = {
   '/faq': 'FAQs',
   '/helpcentre': 'Help Centre',
   '/policies': 'Policies',
+  // If you also have a direct /subscription route that renders KonarSubscription
+  '/subscription': 'Konar Power Profile Subscription',
 };
 
 export default function Breadcrumbs() {

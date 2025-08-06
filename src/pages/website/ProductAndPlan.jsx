@@ -60,8 +60,8 @@ export default function ProductAndPlan() {
                                 <p className='desktop-h5'>£7.95</p>
                                 <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
                             </div>
-                            {/* LINK TO THE HOW IT WORKS PAGE FOR SUBSCRIPTION DETAILS */}
-                            <Link to="/productandplan/howitworks" className="desktop-button combined-section-button black-button">
+                            {/* CORRECTED LINK: Now points to the nested KonarSubscription page */}
+                            <Link to="/productandplan/konarsubscription" className="desktop-button combined-section-button black-button">
                                 View Subscription Details
                             </Link>
                         </div>
@@ -86,7 +86,7 @@ export default function ProductAndPlan() {
                                 <p className='desktop-h5'>£24.95</p>
                                 <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
                             </div>
-                            {/* LINK TO THE NEW KONARCARD PAGE */}
+                            {/* CORRECTED LINK: Now points to the nested KonarCard page */}
                             <Link to="/productandplan/konarcard" className="desktop-button combined-section-button black-button">
                                 View Card Details
                             </Link>

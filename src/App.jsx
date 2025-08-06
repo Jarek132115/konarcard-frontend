@@ -8,12 +8,12 @@ import Register from './pages/website/Register';
 import Login from './pages/website/Login';
 import ResetPassword from './pages/website/ResetPassword';
 import ProductAndPlan from './pages/website/ProductAndPlan';
+import HowItWorks from './pages/website/HowItWorks';
 import FAQ from './pages/website/FAQ';
 import HelpCentre from './pages/website/HelpCentre';
 import Reviews from './pages/website/Reviews';
 import KonarCard from './pages/website/KonarCard';
-// CORRECTED IMPORT PATH: KonarSubscription is in 'pages/website'
-import KonarSubscription from './pages/website/KonarSubscription';
+import KonarSubscription from './pages/website/KonarSubscription'; // Corrected import path
 import ContactUs from './pages/website/ContactUs';
 import Policies from './pages/website/Policies';
 import Success from './pages/website/Success';
@@ -47,20 +47,15 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/productandplan" element={<ProductAndPlan />} />
+
+        {/* CORRECTED NESTED ROUTES: Direct links to KonarCard and KonarSubscription */}
         <Route path="/productandplan/konarcard" element={<KonarCard />} />
-        {/*
-          IMPORTANT: The link from ProductAndPlan for subscription details goes to /productandplan/howitworks.
-          If you intend for /subscription to be a standalone page for KonarSubscription, keep this route.
-          If KonarSubscription should ONLY be accessed via a nested path from ProductAndPlan,
-          you might want to change this path to something like "/productandplan/konarsubscription"
-          and then update the link in ProductAndPlan.jsx accordingly.
-          For now, keeping it as a direct route for KonarSubscription.
-        */}
-        <Route path="/subscription" element={<KonarSubscription />} />
+        <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
 
-
-        {/* Keeping old /whatisnfc route for now. If you want to remove it, delete this line. */}
-        <Route path="/whatisnfc" element={<KonarCard />} />
+        {/* Keeping existing top-level routes for flexibility if needed */}
+        <Route path="/whatisnfc" element={<KonarCard />} /> {/* Old path, now rendering KonarCard */}
+        <Route path="/subscription" element={<KonarSubscription />} /> {/* Old path, now rendering KonarSubscription */}
+        <Route path="/howitworks" element={<HowItWorks />} /> {/* Keeping as a standalone page */}
 
 
         <Route path="/faq" element={<FAQ />} />
