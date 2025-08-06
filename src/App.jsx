@@ -12,7 +12,8 @@ import FAQ from './pages/website/FAQ';
 import HelpCentre from './pages/website/HelpCentre';
 import Reviews from './pages/website/Reviews';
 import KonarCard from './pages/website/KonarCard';
-import KonarCard from './pages/website/KonarSubscription';
+// CORRECTED IMPORT PATH: KonarSubscription is in 'pages/website'
+import KonarSubscription from './pages/website/KonarSubscription';
 import ContactUs from './pages/website/ContactUs';
 import Policies from './pages/website/Policies';
 import Success from './pages/website/Success';
@@ -47,8 +48,21 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/productandplan" element={<ProductAndPlan />} />
         <Route path="/productandplan/konarcard" element={<KonarCard />} />
-        <Route path="/whatisnfc" element={<KonarCard />} />
+        {/*
+          IMPORTANT: The link from ProductAndPlan for subscription details goes to /productandplan/howitworks.
+          If you intend for /subscription to be a standalone page for KonarSubscription, keep this route.
+          If KonarSubscription should ONLY be accessed via a nested path from ProductAndPlan,
+          you might want to change this path to something like "/productandplan/konarsubscription"
+          and then update the link in ProductAndPlan.jsx accordingly.
+          For now, keeping it as a direct route for KonarSubscription.
+        */}
         <Route path="/subscription" element={<KonarSubscription />} />
+
+
+        {/* Keeping old /whatisnfc route for now. If you want to remove it, delete this line. */}
+        <Route path="/whatisnfc" element={<KonarCard />} />
+
+
         <Route path="/faq" element={<FAQ />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/helpcentre" element={<HelpCentre />} />
