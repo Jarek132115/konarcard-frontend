@@ -8,7 +8,7 @@ import Register from './pages/website/Register';
 import Login from './pages/website/Login';
 import ResetPassword from './pages/website/ResetPassword';
 import ProductAndPlan from './pages/website/ProductAndPlan';
-import HowItWorks from './pages/website/HowItWorks';
+import HowItWorks from './pages/website/HowItWorks'; // Make sure this import is correct
 import FAQ from './pages/website/FAQ';
 import HelpCentre from './pages/website/HelpCentre';
 import Reviews from './pages/website/Reviews';
@@ -48,13 +48,19 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/productandplan" element={<ProductAndPlan />} />
 
-        {/* DEFINING THE NESTED ROUTES HERE */}
+        {/* Nested routes for Product & Plan */}
         <Route path="/productandplan/whatisnfc" element={<WhatIsNFC />} />
-        <Route path="/productandplan/subscription" element={<Subscription />} />
+        {/* NEW NESTED ROUTE FOR HOW IT WORKS */}
+        <Route path="/productandplan/howitworks" element={<HowItWorks />} />
+
+        {/* Keeping original top-level routes for flexibility, if needed */}
+        <Route path="/howitworks" element={<HowItWorks />} />
+        <Route path="/whatisnfc" element={<WhatIsNFC />} />
+        <Route path="/subscription" element={<Subscription />} /> {/* This remains a top-level route for the actual subscription page if needed */}
+
 
         <Route path="/faq" element={<FAQ />} />
         <Route path="/reviews" element={<Reviews />} />
-        <Route path="/howitworks" element={<HowItWorks />} />
         <Route path="/helpcentre" element={<HelpCentre />} />
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/policies" element={<Policies />} />

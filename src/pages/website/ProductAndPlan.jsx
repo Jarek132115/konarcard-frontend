@@ -60,8 +60,8 @@ export default function ProductAndPlan() {
                                 <p className='desktop-h5'>£7.95</p>
                                 <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
                             </div>
-                            {/* UPDATED LINK TO POINT TO THE NESTED SUBSCRIPTION PATH */}
-                            <Link to="/productandplan/subscription" className="desktop-button combined-section-button black-button">
+                            {/* CORRECTED LINK: Now points to /productandplan/howitworks */}
+                            <Link to="/productandplan/howitworks" className="desktop-button combined-section-button black-button">
                                 View Subscription Details
                             </Link>
                         </div>
@@ -86,7 +86,6 @@ export default function ProductAndPlan() {
                                 <p className='desktop-h5'>£24.95</p>
                                 <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
                             </div>
-                            {/* UPDATED LINK TO POINT TO THE NESTED WHATISNFC PATH */}
                             <Link to="/productandplan/whatisnfc" className="desktop-button combined-section-button black-button">
                                 View Card Details
                             </Link>
