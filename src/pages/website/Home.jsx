@@ -503,6 +503,10 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className="faq-cta">
+          <p className='desktop-h6'>Got more questions?</p>
+          <Link to="/faq" className="blue-button desktop-button">Frequently Asked Questions</Link>
+        </div>
       </div>
 
       <div className="full-width-bg-container section-bg-grey">
