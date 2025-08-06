@@ -2,10 +2,12 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const breadcrumbLabels = {
-  '/productandplan': 'Shop NFC Cards',
+  // Changed this line to 'Products & Plans'
+  '/productandplan': 'Products & Plans',
   '/productandplan/plasticnfccard': 'Plastic NFC Card',
   '/productandplan/woodennfccard': 'Wooden NFC Card',
   '/productandplan/metalnfccard': 'Metal NFC Card',
+  '/productandplan/subscription': 'Power Profile', // Added this in the previous turn, keeping it here.
   '/blog': 'Blog',
   '/whatisnfc': 'What Is NFC',
   '/howitworks': 'How It Works',
