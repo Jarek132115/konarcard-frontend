@@ -49,18 +49,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/productandplan" element={<ProductAndPlan />} />
-
-        {/* UPDATED ROUTES: Using new component names and paths */}
         <Route path="/productandplan/konarcard" element={<KonarCard />} />
-        <Route path="/productandplan/howitworks" element={<HowItWorks />} /> {/* This is for the subscription details link */}
-
-        {/* Keeping original top-level routes for flexibility, if needed */}
-        {/* If you want to completely remove the old /whatisnfc and /subscription routes, you can delete these lines */}
-        <Route path="/whatisnfc" element={<KonarCard />} /> {/* Old path, now rendering KonarCard */}
-        <Route path="/subscription" element={<KonarSubscription />} /> {/* Old path, now rendering KonarSubscription */}
-        <Route path="/howitworks" element={<HowItWorks />} />
-
-
+        <Route path="/whatisnfc" element={<KonarCard />} />
+        <Route path="/subscription" element={<KonarSubscription />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/helpcentre" element={<HelpCentre />} />
