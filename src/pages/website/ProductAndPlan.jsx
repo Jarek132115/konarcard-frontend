@@ -60,7 +60,7 @@ export default function ProductAndPlan() {
                                 <p className='desktop-h5'>£7.95</p>
                                 <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
                             </div>
-                            {/* UPDATED LINK: Now points to the nested howitworks path */}
+                            {/* LINK TO THE HOW IT WORKS PAGE FOR SUBSCRIPTION DETAILS */}
                             <Link to="/productandplan/howitworks" className="desktop-button combined-section-button black-button">
                                 View Subscription Details
                             </Link>
@@ -86,7 +86,7 @@ export default function ProductAndPlan() {
                                 <p className='desktop-h5'>£24.95</p>
                                 <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
                             </div>
-                            {/* UPDATED LINK: Now points to the nested konarcard path */}
+                            {/* LINK TO THE NEW KONARCARD PAGE */}
                             <Link to="/productandplan/konarcard" className="desktop-button combined-section-button black-button">
                                 View Card Details
                             </Link>
