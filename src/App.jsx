@@ -47,11 +47,13 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/productandplan" element={<ProductAndPlan />} />
+
+        {/* DEFINING THE NESTED ROUTES HERE */}
         <Route path="/productandplan/whatisnfc" element={<WhatIsNFC />} />
         <Route path="/productandplan/subscription" element={<Subscription />} />
+
         <Route path="/faq" element={<FAQ />} />
         <Route path="/reviews" element={<Reviews />} />
-        <Route path="/whatisnfc" element={<WhatIsNFC />} />
         <Route path="/howitworks" element={<HowItWorks />} />
         <Route path="/helpcentre" element={<HelpCentre />} />
         <Route path="/contactus" element={<ContactUs />} />
@@ -64,7 +66,6 @@ function App() {
         <Route path="/nfccards" element={<NFCCards />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/subscription" element={<Subscription />} />
         <Route path="/contact-support" element={<ContactSupport />} />
         <Route path="/u/:username" element={<UserPage />} />
       </Routes>
