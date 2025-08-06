@@ -8,7 +8,6 @@ import Register from './pages/website/Register';
 import Login from './pages/website/Login';
 import ResetPassword from './pages/website/ResetPassword';
 import ProductAndPlan from './pages/website/ProductAndPlan';
-import HowItWorks from './pages/website/HowItWorks'; // Ensure this import path is correct and the file exists with this casing
 import FAQ from './pages/website/FAQ';
 import HelpCentre from './pages/website/HelpCentre';
 import Reviews from './pages/website/Reviews';
@@ -47,16 +46,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/productandplan" element={<ProductAndPlan />} />
-
-        {/* Nested routes for Product & Plan */}
         <Route path="/productandplan/konarcard" element={<KonarCard />} />
         <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
-
-
-        {/* Keeping existing top-level routes for flexibility if needed */}
         <Route path="/whatisnfc" element={<KonarCard />} />
         <Route path="/subscription" element={<KonarSubscription />} />
-        <Route path="/howitworks" element={<HowItWorks />} />
 
 
         <Route path="/faq" element={<FAQ />} />
