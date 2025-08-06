@@ -47,6 +47,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/productandplan" element={<ProductAndPlan />} />
+        <Route path="/productandplan/whatisnfc" element={<WhatIsNFC />} />
+        <Route path="/productandplan/subscription" element={<Subscription />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/whatisnfc" element={<WhatIsNFC />} />
