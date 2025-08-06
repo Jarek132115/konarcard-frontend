@@ -8,11 +8,9 @@ import Register from './pages/website/Register';
 import Login from './pages/website/Login';
 import ResetPassword from './pages/website/ResetPassword';
 import ProductAndPlan from './pages/website/ProductAndPlan';
-import HowItWorks from './pages/website/HowItWorks';
 import FAQ from './pages/website/FAQ';
 import HelpCentre from './pages/website/HelpCentre';
 import Reviews from './pages/website/Reviews';
-// UPDATED IMPORT: Renamed to KonarCard
 import KonarCard from './pages/website/KonarCard';
 import ContactUs from './pages/website/ContactUs';
 import Policies from './pages/website/Policies';
@@ -24,7 +22,6 @@ import HelpCentreInterface from './pages/interface/HelpCentreInterface';
 import NFCCards from './pages/interface/NFCCards';
 import Notifications from './pages/interface/Notifications';
 import Profile from './pages/interface/Profile';
-// UPDATED IMPORT: Renamed to KonarSubscription
 import KonarSubscription from './pages/interface/KonarSubscription';
 import ContactSupport from './pages/interface/ContactSupport';
 import UserPage from './pages/interface/UserPage';
