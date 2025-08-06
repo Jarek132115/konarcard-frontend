@@ -28,7 +28,8 @@ import WhatIsKonar from '../../assets/images/WhatIsKonar.jpg';
 
 const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8');
 
-export default function WhatIsNFC() {
+// RENAMED COMPONENT
+export default function KonarCard() {
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(ProductCover);
 
@@ -118,13 +119,12 @@ export default function WhatIsNFC() {
         </div>
 
         <div className="product-options">
-          <p className="desktop-h5">Konar Card - White Edition</p>
+          <p className="desktop-h5">Konar Card - White Edition</p> {/* This is the content title */}
           <p className="desktop-body">
             The smart, durable card that instantly shows your profile, work, services, and how to contact you in seconds.
           </p>
 
           <div className="hero-tick-box">
-            {/* DYNAMIC DELIVERY DATE - REVISED */}
             <div className="hero-tick">
               <img src={DeliveryIcon} className="icon" alt="Delivery" />
               <div>
@@ -151,10 +151,10 @@ export default function WhatIsNFC() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', }}>
-            <p style={{ fontSize: 20, fontWeight: 600 }}>
+            <p style={{ fontSize: 24, fontWeight: 600 }}>
               £{(pricePerCard * quantity).toFixed(2)}
             </p>
-            <p style={{ fontSize: 16, color: '#666', textDecoration: 'line-through' }}>
+            <p style={{ fontSize: 18, color: '#666', textDecoration: 'line-through' }}>
               £{(originalPricePerCard * quantity).toFixed(2)}
             </p>
           </div>
@@ -177,7 +177,7 @@ export default function WhatIsNFC() {
       {/* What is NFC section - REVISED */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">What’s an Konar Business Card?</h2>
+          <h2 className="desktop-h3 text-center">Your Konar Business Card Explained</h2>
           <h3 className="desktop-h6 text-center">It’s a smart card you tap on a phone to share your details — no apps needed.</h3>
         </div>
 

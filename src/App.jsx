@@ -8,11 +8,12 @@ import Register from './pages/website/Register';
 import Login from './pages/website/Login';
 import ResetPassword from './pages/website/ResetPassword';
 import ProductAndPlan from './pages/website/ProductAndPlan';
-import HowItWorks from './pages/website/HowItWorks'; // Make sure this import is correct
+import HowItWorks from './pages/website/HowItWorks';
 import FAQ from './pages/website/FAQ';
 import HelpCentre from './pages/website/HelpCentre';
 import Reviews from './pages/website/Reviews';
-import WhatIsNFC from './pages/website/WhatIsNFC';
+// UPDATED IMPORT: Renamed to KonarCard
+import KonarCard from './pages/website/KonarCard';
 import ContactUs from './pages/website/ContactUs';
 import Policies from './pages/website/Policies';
 import Success from './pages/website/Success';
@@ -23,7 +24,8 @@ import HelpCentreInterface from './pages/interface/HelpCentreInterface';
 import NFCCards from './pages/interface/NFCCards';
 import Notifications from './pages/interface/Notifications';
 import Profile from './pages/interface/Profile';
-import Subscription from './pages/interface/Subscription';
+// UPDATED IMPORT: Renamed to KonarSubscription
+import KonarSubscription from './pages/interface/KonarSubscription';
 import ContactSupport from './pages/interface/ContactSupport';
 import UserPage from './pages/interface/UserPage';
 import SuccessSubscription from './pages/website/SuccessSubscription';
@@ -48,15 +50,15 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/productandplan" element={<ProductAndPlan />} />
 
-        {/* Nested routes for Product & Plan */}
-        <Route path="/productandplan/whatisnfc" element={<WhatIsNFC />} />
-        {/* NEW NESTED ROUTE FOR HOW IT WORKS */}
-        <Route path="/productandplan/howitworks" element={<HowItWorks />} />
+        {/* UPDATED ROUTES: Using new component names and paths */}
+        <Route path="/productandplan/konarcard" element={<KonarCard />} />
+        <Route path="/productandplan/howitworks" element={<HowItWorks />} /> {/* This is for the subscription details link */}
 
         {/* Keeping original top-level routes for flexibility, if needed */}
+        {/* If you want to completely remove the old /whatisnfc and /subscription routes, you can delete these lines */}
+        <Route path="/whatisnfc" element={<KonarCard />} /> {/* Old path, now rendering KonarCard */}
+        <Route path="/subscription" element={<KonarSubscription />} /> {/* Old path, now rendering KonarSubscription */}
         <Route path="/howitworks" element={<HowItWorks />} />
-        <Route path="/whatisnfc" element={<WhatIsNFC />} />
-        <Route path="/subscription" element={<Subscription />} /> {/* This remains a top-level route for the actual subscription page if needed */}
 
 
         <Route path="/faq" element={<FAQ />} />

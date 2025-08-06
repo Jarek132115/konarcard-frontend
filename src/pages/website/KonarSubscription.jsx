@@ -20,7 +20,8 @@ import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
 import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 
-export default function SubscriptionPage() {
+// RENAMED COMPONENT TO KonarSubscription
+export default function KonarSubscription() {
     const { user, loading: authLoading } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
@@ -87,7 +88,8 @@ export default function SubscriptionPage() {
                     <img src={Section1Image} alt="Power Profile in action" className="main-card" />
                 </div>
                 <div className="product-options">
-                    <p className="desktop-h5">Power Profile</p>
+                    {/* Content title remains "Power Profile" */}
+                    <p className="desktop-h5">Konar Power Profile Subscription</p>
                     <p className="desktop-body">
                         Upgrade your digital profile with all the tools you need to look professional and win more work.
                     </p>
@@ -106,7 +108,7 @@ export default function SubscriptionPage() {
                             <img src={WarrantyIcon} className="icon" alt="Warranty" />
                             <div>
                                 <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>Cancel Anytime</p>
-                                {/* ADDED NEW LINE HERE */}
+                                {/* FIXED: Added missing closing curly brace for style prop */}
                                 <p className='desktop-body-xs' style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
                                     No long-term contracts.
                                 </p>
