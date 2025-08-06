@@ -396,7 +396,7 @@ export default function Home() {
 
       <div className="section combined-offer-section">
         <div className="section-1-title">
-          <h2 className='desktop-h2 text-center'>The #1 Tool Tradies Are Talking About</h2>
+          <h2 className='desktop-h3 text-center'>The #1 Tool Tradies Are Talking About</h2>
           <h3 className='desktop-h6 text-center'>
             Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
           </h3>
