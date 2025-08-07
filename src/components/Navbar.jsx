@@ -51,7 +51,7 @@ export default function Navbar() {
                 ) : (
                   <>
                     <Link to="/myprofile" className="btn login-btn" onClick={() => setMobileOpen(false)}>Dashboard</Link>
-                    <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="btn signup-btn">Logout</button>
+                    <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="btn logout-btn">Logout</button>
                   </>
                 ))}
               </div>
@@ -80,7 +80,7 @@ export default function Navbar() {
             ) : (
               <>
                 <Link to="/myprofile" className="btn login-btn">Dashboard</Link>
-                <button onClick={handleLogout} className="btn signup-btn">Logout</button>
+                <button onClick={handleLogout} className="btn logout-btn">Logout</button>
               </>
             ))}
           </div>

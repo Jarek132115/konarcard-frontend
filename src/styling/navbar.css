@@ -48,7 +48,7 @@
   font-weight: 600;
 }
 
-/* ✅ Consistent buttons */
+/* AUTH BUTTONS */
 .auth-links {
   display: flex;
   gap: 12px;
@@ -58,33 +58,51 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 20px;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
   font-weight: 600;
   font-size: 14px;
   line-height: 1;
   text-decoration: none;
-  transition: all 0.3s ease;
-  color: white;
+  transition: all 0.2s ease;
   text-align: center;
   cursor: pointer;
   border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+  transform: scale(0.98);
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .login-btn {
-  background: #0081FF;
-}
-
-.signup-btn {
-  background: black;
+  background-color: #0081FF;
+  color: white;
 }
 
 .login-btn:hover {
-  background: #0066cc;
+  background-color: #006edc;
+}
+
+.signup-btn {
+  background-color: white;
+  color: #0081FF;
+  border: 2px solid #0081FF;
 }
 
 .signup-btn:hover {
-  background: #333;
+  background-color: #f0f8ff;
+}
+
+.logout-btn {
+  background-color: white;
+  color: #FF0000;
+  border: 2px solid #FF0000;
+}
+
+.logout-btn:hover {
+  background-color: #fff0f0;
 }
 
 /* MOBILE NAVBAR */
