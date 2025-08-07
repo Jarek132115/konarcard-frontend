@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
@@ -25,6 +25,7 @@ export default function MyProfile() {
   const workImageInputRef = useRef(null);
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
   const isSubscribed = authUser?.isSubscribed || false;
@@ -51,6 +52,9 @@ export default function MyProfile() {
 
   const [hasLoadedInitialCardData, setHasLoadedInitialCardData] = useState(false);
 
+  // Track trial period
+  const [daysRemaining, setDaysRemaining] = useState(null);
+
   useEffect(() => {
     let handledRedirect = false;
 
@@ -74,6 +78,17 @@ export default function MyProfile() {
 
     checkSubscriptionStatus();
 
+    if (authUser && authUser.trialExpiresAt) {
+      const trialExpirationDate = new Date(authUser.trialExpiresAt);
+      const now = new Date();
+      const timeRemaining = trialExpirationDate.getTime() - now.getTime();
+      if (timeRemaining > 0) {
+        const calculatedDays = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
+        setDaysRemaining(calculatedDays);
+      } else {
+        setDaysRemaining(0);
+      }
+    }
   }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser]);
 
   useEffect(() => {
@@ -342,10 +357,6 @@ export default function MyProfile() {
     }
     if (!isUserVerified) {
       toast.error("Please verify your email address to save changes.");
-      return;
-    }
-    if (!isSubscribed) {
-      toast.error("Please subscribe to edit your profile.");
       return;
     }
 
@@ -681,7 +692,8 @@ export default function MyProfile() {
                       ) : null}
 
 
-                      {!isSubscribed || (isSubscribed && (state.services.length > 0 || (businessCard?.services && businessCard.services.length > 0) || previewPlaceholders.services.length > 0)) ? (
+                      {!isSubscribed || (isSubscribed && (
+                        state.services.length > 0 || (businessCard?.services && businessCard.services.length > 0) || previewPlaceholders.services.length > 0)) ? (
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="mock-services-list">
@@ -723,7 +735,7 @@ export default function MyProfile() {
                                 ? previewPlaceholders.reviews
                                 : (state.reviews.length > 0
                                   ? state.reviews
-                                  : (businessCard?.reviews || []).concat(previewPlaceholders.reviews.slice(0, Math.max(0, 3 - (businessCard?.reviews || []).length)))
+                                  : (businessCard?.reviews || []).concat(previewPlaceholders.reviews.slice(0, Math.max(0, 5 - (businessCard?.reviews || []).length)))
                                 )
                             ).map((r, i) => (
                               <div key={i} className="mock-review-card">
@@ -796,7 +808,7 @@ export default function MyProfile() {
                     <div className="subscription-overlay">
                       <div className="subscription-message">
                         <p className="desktop-h4">Unlock Your Full Profile!</p>
-                        <p className="desktop-h6">Subscribe to start your 14-day free trial and unlock all profile editing features.</p>
+                        <p className="desktop-h6">Subscribe for a 7-day free trial and unlock all features.</p>
                         <button className="blue-button" onClick={handleStartSubscription}>
                           Start Your 14 Day Free Trial Now!
                         </button>
@@ -1071,7 +1083,7 @@ export default function MyProfile() {
                             placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
                             rows={2}
                             value={getEditorValue(r.text)}
-                            onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                            onChange={(e) => updateState({ reviews: updated })}
                           />
                           <input
                             type="number"
@@ -1118,7 +1130,8 @@ export default function MyProfile() {
                       type="submit"
                       className="black-button desktop-button"
                     >
-                      Publish Now                    </button>
+                      Publish Now
+                    </button>
                   </form>
                 </div>
               </div>
