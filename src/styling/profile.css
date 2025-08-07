@@ -1,7 +1,7 @@
 /* New wrapper for the entire page content to enable centering */
 .profile-page-wrapper {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     /* Center horizontally */
     justify-content: center;
