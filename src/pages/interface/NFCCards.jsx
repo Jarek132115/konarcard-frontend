@@ -69,7 +69,7 @@ export default function NFCCards() {
         />
 
         <div className="combined-offer-container">
-          <div className="subscription-offer-left content-card-box contact-card-content">
+          <div className="subscription-offer-left contact-card-content">
             <div className="subscription-header">
               <p className='desktop-h5'>Power Profile</p>
               <div className="free-trial-badge">14 Day Free Trial</div>
@@ -109,26 +109,28 @@ export default function NFCCards() {
             </div>
           </div>
 
-          <div className="nfc-card-offer-container content-card-box contact-card-content">
-            <div className="nfc-card-header">
-              <p className='nfc-card-title'>Plastic NFC Card</p>
-              <div className="nfc-card-badge">1-month subscription included</div>
+          <div className="card-offer-right contact-card-content">
+            <div className="product-header">
+              <p className='desktop-h5'>Plastic NFC Card</p>
+              <div className="free-trial-badge product-header-badge">12 Month Warranty</div>
             </div>
-            <p className="nfc-card-subheader">Lightweight, Durable, Always Ready</p>
-            <p className="nfc-card-optional-text">This product is optional, buy one to stand out.</p>
+            <p className='desktop-body-s product-subheader'>Lightweight, Durable, Always Ready</p>
+            <p className='desktop-body-xs product-optional-sentence'>This product is optional, buy one to stand out.</p>
 
-            <img src={PlasticCard} className="nfc-card-image" alt="Plastic NFC Card" />
+            <img src={PlasticCard} className="product-image" />
 
-            <p className='nfc-card-quote-footer'>
+            <p className='desktop-body-s subscription-description-footer'>
               "For those who want to stand out above those who already stand out!"
             </p>
 
-            <div className="nfc-card-price-cta-wrapper">
-              <div className='nfc-card-price-display'>
-                <p className='nfc-card-price-value'>£24.95</p>
-                <p className='nfc-card-price-period'>Lifetime Use</p>
+            <div className="product-price-cta">
+              <div className='price-display'>
+                <p className='desktop-h5'>£24.95</p>
+                <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
               </div>
-              <Link to="/shopnfccards/whitecard" className="nfc-card-buy-button">Buy Now</Link>
+              <Link to="/productandplan/konarcard" className="desktop-button combined-section-button black-button">
+                View Card Details
+              </Link>
             </div>
           </div>
         </div>
