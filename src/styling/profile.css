@@ -13,6 +13,7 @@
 @media (max-width: 1000px) {
     .profile-page-wrapper {
         flex-direction: column;
+        margin-bottom: 40px;
     }
 }
 
