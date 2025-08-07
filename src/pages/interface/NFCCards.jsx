@@ -78,11 +78,18 @@ export default function NFCCards() {
     }
   };
 
-  const handleCancelSubscription = () => {
-    // Logic for cancelling subscription will go here
-    // e.g., calling an API endpoint
-    console.log("Cancel subscription button clicked");
-    toast.info("Cancel subscription feature is coming soon.");
+  const handleCancelSubscription = async () => {
+    try {
+      const res = await api.post('/cancel-subscription');
+      if (res.data.success) {
+        toast.success(res.data.message);
+        // You may want to refresh user data or update local state here
+      } else {
+        toast.error(res.data.error);
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to cancel subscription.');
+    }
   };
 
   return (
