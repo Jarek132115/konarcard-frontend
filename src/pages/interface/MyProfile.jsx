@@ -1129,6 +1129,7 @@ export default function MyProfile() {
                     <button
                       type="submit"
                       className="black-button desktop-button"
+                      style={{flex: 1}}
                     >
                       Publish Now
                     </button>
