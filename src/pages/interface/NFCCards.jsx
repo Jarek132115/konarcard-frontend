@@ -215,8 +215,7 @@ export default function NFCCards() {
                 <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
               </div>
               <Link to="/productandplan/konarcard" className="desktop-button combined-section-button black-button">
-                View Card Details
-              </Link>
+                Buy Now              </Link>
             </div>
           </div>
         </div>
