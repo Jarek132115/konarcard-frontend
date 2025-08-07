@@ -13,8 +13,8 @@ export default function Profile() {
   const { user: authUser, fetchUser, setUser } = useContext(AuthContext);
   const [updatedName, setUpdatedName] = useState('');
 
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  const [deleteEnabled, setDeleteEnabled] = useState(false);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+  const [deleteCountdown, setDeleteCountdown] = useState(3);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
@@ -55,6 +55,17 @@ export default function Profile() {
     }
   }, [sidebarOpen, isMobile]);
 
+  useEffect(() => {
+    if (isConfirmingDelete) {
+      if (deleteCountdown > 0) {
+        const timer = setTimeout(() => {
+          setDeleteCountdown(deleteCountdown - 1);
+        }, 1000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isConfirmingDelete, deleteCountdown]);
+
   const handleSave = async () => {
     try {
       const res = await api.put(
@@ -76,30 +87,28 @@ export default function Profile() {
   };
 
   const handleDelete = async () => {
-    if (!confirmDelete) {
-      setConfirmDelete(true);
-      toast('Click again in 3 seconds to confirm delete...', { duration: 3000 });
-      setTimeout(() => setDeleteEnabled(true), 3000);
+    if (!isConfirmingDelete) {
+      setIsConfirmingDelete(true);
       return;
     }
 
-    if (!deleteEnabled) {
-      toast.error('Please wait for the confirmation period to end.');
-      return;
-    }
+    if (deleteCountdown === 0) {
+      try {
+        const res = await api.delete('/delete-account');
 
-    try {
-      const res = await api.delete('/delete-account');
-
-      if (res.data.success) {
-        toast.success('Your account has been deleted');
-        setUser(null);
-        window.location.href = '/';
-      } else {
-        toast.error(res.data.error || 'Failed to delete account');
+        if (res.data.success) {
+          toast.success('Your account has been deleted');
+          setUser(null);
+          window.location.href = '/';
+        } else {
+          toast.error(res.data.error || 'Failed to delete account');
+        }
+      } catch (err) {
+        toast.error(err.response?.data?.error || 'Server error deleting account');
+      } finally {
+        setIsConfirmingDelete(false);
+        setDeleteCountdown(3);
       }
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Server error deleting account');
     }
   };
 
@@ -234,10 +243,10 @@ export default function Profile() {
               <button
                 onClick={handleDelete}
                 className="black-button profile-action-button"
-                disabled={confirmDelete && !deleteEnabled}
+                disabled={isConfirmingDelete && deleteCountdown > 0}
               >
                 <span className="desktop-button">
-                  {confirmDelete && !deleteEnabled ? `Confirm Delete in ${Math.max(0, Math.ceil((3000 - (Date.now() - (new Date().getTime() - 3000))) / 1000))}s` : 'Delete Your Account'}
+                  {isConfirmingDelete ? (deleteCountdown > 0 ? `Delete in ${deleteCountdown}...` : 'Confirm Delete') : 'Delete Your Account'}
                 </span>
               </button>
               <button onClick={handleSave} className="blue-button profile-action-button">
