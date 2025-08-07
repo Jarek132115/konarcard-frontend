@@ -116,7 +116,7 @@ export default function ShareProfile({
                         <input type="text" readOnly value={profileUrl} ref={profileLinkRef} className="share-link-input" />
                     </div>
                     <div className="share-action-buttons">
-                        <button onClick={() => copyToClipboard(profileUrl, 'Profile link copied!')} className="black-button share-button-custom">
+                        <button onClick={() => copyToClipboard(profileUrl, 'Profile link copied!')} className="blue-button share-button-custom">
                             <img src={CopyLinkIcon} alt="Copy Link" className="share-button-icon" />
                             Copy Link
                         </button>
@@ -134,7 +134,7 @@ export default function ShareProfile({
                             <img src={qrCodeImage} alt="Profile QR Code" className="share-qr-code-image" />
                         </div>
                         <div className="share-action-buttons">
-                            <a href={qrCodeImage} download={`${username || 'konarcard'}-qrcode.png`} className="white-button share-button-custom">
+                            <a href={qrCodeImage} download={`${username || 'konarcard'}-qrcode.png`} className="blue-button share-button-custom">
                                 <img src={DownloadQRIcon} alt="Download QR Code" className="share-button-icon" />
                                 Download QR Code
                             </a>

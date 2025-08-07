@@ -62,26 +62,14 @@ body.dark-mode .share-link-input {
     border-color: #555;
 }
 
-body.dark-mode .black-button.share-button-custom {
-    background-color: #333;
-    /* Dark mode black button */
-    color: white;
-}
-
-body.dark-mode .black-button.share-button-custom:hover {
-    background-color: #555;
-}
-
 body.dark-mode .blue-button.share-button-custom {
     background-color: #007bff;
-    /* Dark mode blue button */
     color: white;
 }
 
 body.dark-mode .blue-button.share-button-custom:hover {
     background-color: #0056b3;
 }
-
 
 .share-modal-close-button {
     position: absolute;
@@ -147,8 +135,6 @@ body.dark-mode .blue-button.share-button-custom:hover {
     justify-content: center;
 }
 
-/* Base styling for the custom share buttons, using existing global button classes */
-.black-button.share-button-custom,
 .blue-button.share-button-custom {
     flex: 1;
     min-width: 150px;
@@ -159,7 +145,6 @@ body.dark-mode .blue-button.share-button-custom:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Keep content centered horizontally within button */
     gap: 10px;
     font-size: 16px;
     font-weight: 600;
@@ -167,50 +152,30 @@ body.dark-mode .blue-button.share-button-custom:hover {
     text-decoration: none;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     color: white;
-    /* Ensure text is white for both black and blue buttons */
     width: 100%;
-    /* Make buttons full width */
-}
-
-/* Ensure icons are white for these specific buttons */
-.black-button.share-button-custom .share-button-icon,
-.blue-button.share-button-custom .share-button-icon {
-    filter: invert(100%);
-    /* Makes the SVG icon white */
-}
-
-
-/* Specific hover effects for the custom share buttons */
-.black-button.share-button-custom:hover {
-    background-color: #333;
-    /* Darker black on hover */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background-color: #007bff;
 }
 
 .blue-button.share-button-custom:hover {
     background-color: #0056b3;
-    /* Darker blue on hover */
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
+.blue-button.share-button-custom .share-button-icon {
+    filter: invert(100%);
+}
 
 .share-button-icon {
     height: 20px;
-    /* Set to 20px as requested */
     width: 20px;
-    /* Set to 20px as requested */
     flex-shrink: 0;
-    /* Prevent icon from shrinking */
-    /* Added margin to separate icon from text */
 }
 
 .qr-code-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Centers the qr-code-image-container */
     gap: 16px;
     padding-top: 24px;
     border-top: 1px solid #f0f0f0;
@@ -226,11 +191,8 @@ body.dark-mode .qr-code-section {
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 16px;
-    /* Calculate max-width based on 40% of modal's max-width (480px) + 2*padding */
     max-width: 216px;
-    /* (0.40 * 480px) + (2 * 12px padding) = 192px + 24px = 216px */
     box-sizing: border-box;
-    /* Ensure padding is included in max-width */
 }
 
 body.dark-mode .qr-code-image-container {
@@ -239,13 +201,9 @@ body.dark-mode .qr-code-image-container {
 
 .share-qr-code-image {
     width: 100%;
-    /* Fill the controlled container width */
     height: auto;
-    /* Maintain aspect ratio */
     display: block;
-    /* Ensure it behaves as a block */
     object-fit: contain;
-    /* Max-width/height are now controlled by .qr-code-image-container's max-width */
 }
 
 @media (max-width: 500px) {
@@ -281,24 +239,17 @@ body.dark-mode .qr-code-image-container {
         gap: 8px;
     }
 
-    /* Specific mobile overrides for the new custom buttons */
-    .black-button.share-button-custom,
     .blue-button.share-button-custom {
         padding: 11px 13px;
-        /* Apply mobile padding */
         font-size: 14px;
-        /* Apply mobile font size */
         gap: 5px;
-        /* Apply mobile gap */
         width: 100%;
-        /* Ensure full width on mobile */
     }
 
     .share-button-icon {
         height: 16px;
-        /* Adjust icon size for smaller screens if 20px is too big */
         width: 16px;
-        /* Adjust margin for smaller screens */
+        flex-shrink: 0;
     }
 
     .qr-code-section {
@@ -315,34 +266,4 @@ body.dark-mode .qr-code-image-container {
         width: 100%;
         height: auto;
     }
-}
-
-/* New styling for a white button */
-.white-button.share-button-custom {
-    background-color: #ffffff;
-    color: #222222;
-    /* Dark text for a white background */
-}
-
-.white-button.share-button-custom:hover {
-    background-color: #f0f0f0;
-    /* Light gray on hover */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Ensure icons are black on the white button */
-.white-button.share-button-custom .share-button-icon {
-    filter: none;
-    /* Reset the filter to show the icon's original color */
-}
-
-/* Dark mode specific styles for the white button */
-body.dark-mode .white-button.share-button-custom {
-    background-color: #f0f0f0;
-    color: #222222;
-}
-
-body.dark-mode .white-button.share-button-custom:hover {
-    background-color: #e0e0e0;
 }
