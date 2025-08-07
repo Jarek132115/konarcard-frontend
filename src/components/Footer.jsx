@@ -23,10 +23,9 @@ export default function Footer() {
                     </div>
                     <div className="footer-info-right">
                         <div className="footer-column">
-                            <p className='footer-link'>NFC</p>
-                            <Link to="/shopnfccards" ><p style={{ color: '#333', marginBottom: 5 }} className='desktop-body-s footer-page-link'>Shop NFC Cards</p></Link>
-                            <Link to="/howitworks" ><p style={{ color: '#333', marginBottom: 5 }} className='desktop-body-s footer-page-link'>How It Works</p></Link>
-                            <Link to="/whatisnfc" ><p style={{ color: '#333', marginBottom: 5 }} className='desktop-body-s footer-page-link'>What Is NFC</p></Link>
+                            <p className='footer-link'>Product & Plan</p>
+                            <Link to="/konar-card" ><p style={{ color: '#333', marginBottom: 5 }} className='desktop-body-s footer-page-link'>Konar Card</p></Link>
+                            <Link to="/konar-subscription" ><p style={{ color: '#333', marginBottom: 5 }} className='desktop-body-s footer-page-link'>Konar Subscription</p></Link>
                             <Link to="/reviews" ><p style={{ color: '#333', marginBottom: 5 }} className='desktop-body-s footer-page-link'>Reviews</p></Link>
                         </div>
                         <div className="footer-column">
