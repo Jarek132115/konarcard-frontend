@@ -186,9 +186,17 @@
 
 .mobile-menu .auth-links .btn {
   width: 50%;
-  color: white;
   text-align: center;
 }
+
+.mobile-menu .auth-links .login-btn {
+  color: white;
+}
+
+.mobile-menu .auth-links .logout-btn {
+  color: #FF0000;
+}
+
 
 /* Responsive */
 @media (max-width: 1200px) {
