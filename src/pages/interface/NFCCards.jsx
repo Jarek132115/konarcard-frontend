@@ -13,6 +13,8 @@ import api from '../../services/api';
 export default function NFCCards() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+  const [isConfirmingCancel, setIsConfirmingCancel] = useState(false);
+  const [cancelCountdown, setCancelCountdown] = useState(3);
 
   const { user: authUser, loading: authLoading } = useContext(AuthContext);
   const userId = authUser?._id;
@@ -44,6 +46,17 @@ export default function NFCCards() {
       document.body.classList.remove('body-no-scroll');
     }
   }, [sidebarOpen, isMobile]);
+
+  useEffect(() => {
+    if (isConfirmingCancel) {
+      if (cancelCountdown > 0) {
+        const timer = setTimeout(() => {
+          setCancelCountdown(cancelCountdown - 1);
+        }, 1000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isConfirmingCancel, cancelCountdown]);
 
   const handleSubscribe = async () => {
     if (!authUser) {
@@ -79,16 +92,26 @@ export default function NFCCards() {
   };
 
   const handleCancelSubscription = async () => {
-    try {
-      const res = await api.post('/cancel-subscription');
-      if (res.data.success) {
-        toast.success(res.data.message);
-        // You may want to refresh user data or update local state here
-      } else {
-        toast.error(res.data.error);
+    if (!isConfirmingCancel) {
+      setIsConfirmingCancel(true);
+      return;
+    }
+
+    // This part runs only after the user clicks the button a second time
+    if (cancelCountdown === 0) {
+      try {
+        const res = await api.post('/cancel-subscription');
+        if (res.data.success) {
+          toast.success(res.data.message);
+        } else {
+          toast.error(res.data.error);
+        }
+      } catch (err) {
+        toast.error(err.response?.data?.error || 'Failed to cancel subscription.');
+      } finally {
+        setIsConfirmingCancel(false);
+        setCancelCountdown(3);
       }
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to cancel subscription.');
     }
   };
 
@@ -160,8 +183,8 @@ export default function NFCCards() {
                   <button className="desktop-button combined-section-button black-button">
                     Plan Active
                   </button>
-                  <button onClick={handleCancelSubscription} className="desktop-button combined-section-button red-button">
-                    Cancel Subscription
+                  <button onClick={handleCancelSubscription} className={`desktop-button combined-section-button red-button ${isConfirmingCancel ? 'confirm-cancel' : ''}`}>
+                    {isConfirmingCancel ? (cancelCountdown > 0 ? `Cancel in ${cancelCountdown}...` : 'Confirm Cancel') : 'Cancel Subscription'}
                   </button>
                 </div>
               ) : (
