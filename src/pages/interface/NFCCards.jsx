@@ -68,7 +68,7 @@ export default function NFCCards() {
           subtitle="Choose what's right for your business."
         />
 
-        <div className="combined-offer-container">
+        <div className="profile-page-wrapper">
           <div className="subscription-offer-left contact-card-content">
             <div className="subscription-header">
               <p className='desktop-h5'>Power Profile</p>
