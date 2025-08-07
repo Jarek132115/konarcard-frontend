@@ -9,12 +9,15 @@ import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
+import ShareProfile from '../../components/ShareProfile';
 
 export default function NFCCards() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
   const [isConfirmingCancel, setIsConfirmingCancel] = useState(false);
   const [cancelCountdown, setCancelCountdown] = useState(3);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const { user: authUser, loading: authLoading } = useContext(AuthContext);
   const userId = authUser?._id;
@@ -22,14 +25,12 @@ export default function NFCCards() {
 
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isSubscribed = authUser ? authUser.isSubscribed : false;
-
   useEffect(() => {
     const handleResize = () => {
       const currentIsMobile = window.innerWidth <= 1000;
+      const currentIsSmallMobile = window.innerWidth <= 600;
       setIsMobile(currentIsMobile);
+      setIsSmallMobile(currentIsSmallMobile);
       if (!currentIsMobile && sidebarOpen) {
         setSidebarOpen(false);
       }
@@ -97,7 +98,6 @@ export default function NFCCards() {
       return;
     }
 
-    // This part runs only after the user clicks the button a second time
     if (cancelCountdown === 0) {
       try {
         const res = await api.post('/cancel-subscription');
@@ -114,6 +114,31 @@ export default function NFCCards() {
       }
     }
   };
+
+  const handleShareCard = () => {
+    if (!authUser?.isVerified) {
+      toast.error("Please verify your email to share your card.");
+      return;
+    }
+    setShowShareModal(true);
+  };
+
+  const handleCloseShareModal = () => {
+    setShowShareModal(false);
+  };
+
+  const contactDetailsForVCard = {
+    full_name: businessCard?.full_name || authUser?.name || '',
+    job_title: businessCard?.job_title || '',
+    business_card_name: businessCard?.business_card_name || '',
+    bio: businessCard?.bio || '',
+    contact_email: businessCard?.contact_email || authUser?.email || '',
+    phone_number: businessCard?.phone_number || '',
+    username: userUsername || '',
+  };
+
+  const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
+  const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -140,7 +165,10 @@ export default function NFCCards() {
       <main className="main-content-container">
         <PageHeader
           title="Our Plans & Cards"
-          subtitle="Choose what's right for your business."
+          onActivateCard={() => { /* Functionality not implemented here */ }}
+          onShareCard={handleShareCard}
+          isMobile={isMobile}
+          isSmallMobile={isSmallMobile}
         />
 
         <div className="profile-page-wrapper">
@@ -215,11 +243,21 @@ export default function NFCCards() {
                 <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
               </div>
               <Link to="/productandplan/konarcard" className="desktop-button combined-section-button black-button">
-                Buy Now              </Link>
+                View Card Details
+              </Link>
             </div>
           </div>
         </div>
       </main>
+
+      <ShareProfile
+        isOpen={showShareModal}
+        onClose={handleCloseShareModal}
+        profileUrl={currentProfileUrl}
+        qrCodeUrl={currentQrCodeUrl}
+        contactDetails={contactDetailsForVCard}
+        username={userUsername || ''}
+      />
     </div>
   );
 }
