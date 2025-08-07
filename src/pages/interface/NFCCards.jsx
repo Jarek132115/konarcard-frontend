@@ -41,100 +41,98 @@ export default function NFCCards() {
   }, [sidebarOpen, isMobile]);
 
   return (
-    <div className="contact-card-content">
-      <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
-        <div className="myprofile-mobile-header">
-          <Link to="/myprofile" className="myprofile-logo-link">
-            <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
-          </Link>
-          <div
-            className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            <span></span>
-            <span></span>
-            <span></span>
+    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
+      <div className="myprofile-mobile-header">
+        <Link to="/myprofile" className="myprofile-logo-link">
+          <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
+        </Link>
+        <div
+          className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+      {sidebarOpen && isMobile && (
+        <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
+      )}
+
+      <main className="main-content-container">
+        <PageHeader
+          title="Our Plans & Cards"
+          subtitle="Choose what's right for your business."
+        />
+
+        <div className="combined-offer-container">
+          <div className="subscription-offer-left content-card-box contact-card-content">
+            <div className="subscription-header">
+              <p className='desktop-h5'>Power Profile</p>
+              <div className="free-trial-badge">14 Day Free Trial</div>
+            </div>
+            <p className='desktop-body-s subscription-subheader'>Create a stunning, professional profile in minutes. No coding needed.</p>
+
+            <div className="subscription-features">
+              {[
+                "Update anytime, instantly",
+                "Choose your own font",
+                "Select Light or Dark mode",
+                "Craft your 'About Me' section",
+                "Showcase your work portfolio",
+                "Display client reviews",
+                "List your services",
+                "Set your pricing",
+              ].map((text, idx) => (
+                <div className="hero-tick" key={idx}>
+                  <img src={TickIcon} className="icon" />
+                  <p>{text}</p>
+                </div>
+              ))}
+            </div>
+
+            <p className='desktop-body-s subscription-description-footer'>
+              "The perfect tool for tradesmen to make an unforgettable first impression and get new clients."
+            </p>
+
+            <div className="subscription-price-cta">
+              <div className='price-display'>
+                <p className='desktop-h5'>£7.95</p>
+                <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
+              </div>
+              <Link to="/productandplan/konarsubscription" className="desktop-button combined-section-button black-button">
+                View Subscription Details
+              </Link>
+            </div>
+          </div>
+
+          <div className="nfc-card-offer-container content-card-box contact-card-content">
+            <div className="nfc-card-header">
+              <p className='nfc-card-title'>Plastic NFC Card</p>
+              <div className="nfc-card-badge">1-month subscription included</div>
+            </div>
+            <p className="nfc-card-subheader">Lightweight, Durable, Always Ready</p>
+            <p className="nfc-card-optional-text">This product is optional, buy one to stand out.</p>
+
+            <img src={PlasticCard} className="nfc-card-image" alt="Plastic NFC Card" />
+
+            <p className='nfc-card-quote-footer'>
+              "For those who want to stand out above those who already stand out!"
+            </p>
+
+            <div className="nfc-card-price-cta-wrapper">
+              <div className='nfc-card-price-display'>
+                <p className='nfc-card-price-value'>£24.95</p>
+                <p className='nfc-card-price-period'>Lifetime Use</p>
+              </div>
+              <Link to="/shopnfccards/whitecard" className="nfc-card-buy-button">Buy Now</Link>
+            </div>
           </div>
         </div>
-
-        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-        {sidebarOpen && isMobile && (
-          <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
-        )}
-
-        <main className="main-content-container">
-          <PageHeader
-            title="Our Plans & Cards"
-            subtitle="Choose what's right for your business."
-          />
-
-          <div className="combined-offer-container">
-            <div className="subscription-offer-left content-card-box">
-              <div className="subscription-header">
-                <p className='desktop-h5'>Power Profile</p>
-                <div className="free-trial-badge">14 Day Free Trial</div>
-              </div>
-              <p className='desktop-body-s subscription-subheader'>Create a stunning, professional profile in minutes. No coding needed.</p>
-
-              <div className="subscription-features">
-                {[
-                  "Update anytime, instantly",
-                  "Choose your own font",
-                  "Select Light or Dark mode",
-                  "Craft your 'About Me' section",
-                  "Showcase your work portfolio",
-                  "Display client reviews",
-                  "List your services",
-                  "Set your pricing",
-                ].map((text, idx) => (
-                  <div className="hero-tick" key={idx}>
-                    <img src={TickIcon} className="icon" />
-                    <p>{text}</p>
-                  </div>
-                ))}
-              </div>
-
-              <p className='desktop-body-s subscription-description-footer'>
-                "The perfect tool for tradesmen to make an unforgettable first impression and get new clients."
-              </p>
-
-              <div className="subscription-price-cta">
-                <div className='price-display'>
-                  <p className='desktop-h5'>£7.95</p>
-                  <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
-                </div>
-                <Link to="/productandplan/konarsubscription" className="desktop-button combined-section-button black-button">
-                  View Subscription Details
-                </Link>
-              </div>
-            </div>
-
-            <div className="nfc-card-offer-container content-card-box">
-              <div className="nfc-card-header">
-                <p className='nfc-card-title'>Plastic NFC Card</p>
-                <div className="nfc-card-badge">1-month subscription included</div>
-              </div>
-              <p className="nfc-card-subheader">Lightweight, Durable, Always Ready</p>
-              <p className="nfc-card-optional-text">This product is optional, buy one to stand out.</p>
-
-              <img src={PlasticCard} className="nfc-card-image" alt="Plastic NFC Card" />
-
-              <p className='nfc-card-quote-footer'>
-                "For those who want to stand out above those who already stand out!"
-              </p>
-
-              <div className="nfc-card-price-cta-wrapper">
-                <div className='nfc-card-price-display'>
-                  <p className='nfc-card-price-value'>£24.95</p>
-                  <p className='nfc-card-price-period'>Lifetime Use</p>
-                </div>
-                <Link to="/shopnfccards/whitecard" className="nfc-card-buy-button">Buy Now</Link>
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
+      </main>
     </div>
   );
 }
