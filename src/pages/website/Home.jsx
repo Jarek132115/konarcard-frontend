@@ -509,7 +509,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="full-width-bg-container section-bg-grey">
+      <div style={{marginBottom: 40}} className="full-width-bg-container section-bg-grey">
         <div className="section">
           <div className="section-1-title">
             <h2 className='desktop-h3 text-center'>Frequently Asked Questions</h2>
