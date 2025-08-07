@@ -70,7 +70,7 @@ export default function ProductAndPlan() {
                     <div className="card-offer-right">
                         <div className="product-header">
                             <p className='desktop-h5'>Plastic NFC Card</p>
-                            <div className="free-trial-badge product-header-badge">Best-Seller</div>
+                            <div className="free-trial-badge product-header-badge">12 Month Warranty</div>
                         </div>
                         <p className='desktop-body-s product-subheader'>Lightweight, Durable, Always Ready</p>
                         <p className='desktop-body-xs product-optional-sentence'>This product is optional, buy one to stand out.</p>
