@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import PropTypes from 'prop-types';
+import QRCode from 'qrcode';
 
 import CopyLinkIcon from '../assets/icons/CopyLink-Icon.svg';
 import VisitProfileIcon from '../assets/icons/VisitProfile-Icon.svg';
@@ -11,11 +12,11 @@ export default function ShareProfile({
     isOpen,
     onClose,
     profileUrl,
-    qrCodeUrl,
     contactDetails,
     username
 }) {
     const profileLinkRef = useRef(null);
+    const [qrCodeImage, setQrCodeImage] = useState('');
 
     useEffect(() => {
         const handleEscape = (event) => {
@@ -30,6 +31,19 @@ export default function ShareProfile({
             document.removeEventListener('keydown', handleEscape);
         };
     }, [isOpen, onClose]);
+
+    useEffect(() => {
+        if (profileUrl) {
+            QRCode.toDataURL(profileUrl, { errorCorrectionLevel: 'H' })
+                .then(url => {
+                    setQrCodeImage(url);
+                })
+                .catch(err => {
+                    console.error(err);
+                    toast.error('Failed to generate QR code.');
+                });
+        }
+    }, [profileUrl]);
 
     if (!isOpen) return null;
 
@@ -113,14 +127,14 @@ export default function ShareProfile({
                     </div>
                 </div>
 
-                {qrCodeUrl && (
+                {qrCodeImage && (
                     <div className="qr-code-section">
                         <h3 className="share-modal-title">Scan QR Code</h3>
                         <div className="qr-code-image-container">
-                            <img src={qrCodeUrl} alt="Profile QR Code" className="share-qr-code-image" />
+                            <img src={qrCodeImage} alt="Profile QR Code" className="share-qr-code-image" />
                         </div>
                         <div className="share-action-buttons">
-                            <a href={qrCodeUrl} download={`${username || 'konarcard'}-qrcode.png`} className="black-button share-button-custom">
+                            <a href={qrCodeImage} download={`${username || 'konarcard'}-qrcode.png`} className="black-button share-button-custom">
                                 <img src={DownloadQRIcon} alt="Download QR Code" className="share-button-icon" />
                                 Download QR Code
                             </a>
@@ -140,7 +154,6 @@ ShareProfile.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     profileUrl: PropTypes.string.isRequired,
-    qrCodeUrl: PropTypes.string,
     contactDetails: PropTypes.shape({
         full_name: PropTypes.string,
         job_title: PropTypes.string,

@@ -152,7 +152,6 @@ export default function Profile() {
   };
 
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
-  const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -261,7 +260,6 @@ export default function Profile() {
         isOpen={showShareModal}
         onClose={handleCloseShareModal}
         profileUrl={currentProfileUrl}
-        qrCodeUrl={currentQrCodeUrl}
         contactDetails={contactDetailsForVCard}
         username={userUsername || ''}
       />
