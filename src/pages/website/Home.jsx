@@ -512,32 +512,110 @@ export default function Home() {
       </div>
 
       <div className="full-width-bg-container section-bg-grey">
-        <div className="section">
-          <div className="section-1-title">
-            <h2 className="desktop-h3 text-center">Tradesmen Use It. Clients Love It.</h2>
-            <h3 className="desktop-h6 text-center">
-              Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
-            </h3>
-          </div>
-
-          <div className="people-showcase-container-flex">
-
-            <div className="people-showcase-left-col">
-              <img src={People} className="people-showcase-img" alt="Tradesman holding Konar Card" />
-            </div>
-
-            <div className="people-showcase-right-col">
-              <div className="people-showcase-top-row-flex">
-                <div className="people-showcase-box">
-                  <img src={People} className="people-showcase-img" alt="Tradesman showing Konar Card" />
-                </div>
-                <div className="people-showcase-box">
-                  <img src={People} className="people-showcase-img" alt="Woman holding Konar Card" />
+        <div className="section-1-title">
+          <h2 className='desktop-h2 text-center'>The #1 Tool Tradies Are Talking About</h2>
+          <h3 className='desktop-h6 text-center'>
+            Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
+          </h3>
+        </div>
+        <div className="review-container-box">
+          <div className="review-container">
+            <div className="review-pair">
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
                 </div>
               </div>
-
-              <div className="people-showcase-bottom-single">
-                <img src={People} className="people-showcase-img" alt="Group of tradesmen holding Konar Cards" />
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="review-pair">
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
+              </div>
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="review-container">
+            <div className="review-pair">
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
+              </div>
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="review-pair">
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
+              </div>
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
