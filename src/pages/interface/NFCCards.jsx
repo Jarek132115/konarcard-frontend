@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
 import PlasticCard from '../../assets/images/KonarCard.png';
@@ -8,6 +8,7 @@ import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import { toast } from 'react-hot-toast';
+import api from '../../services/api';
 
 export default function NFCCards() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -18,6 +19,10 @@ export default function NFCCards() {
   const userUsername = authUser?.username;
 
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isSubscribed = authUser ? authUser.isSubscribed : false;
 
   useEffect(() => {
     const handleResize = () => {
@@ -39,6 +44,39 @@ export default function NFCCards() {
       document.body.classList.remove('body-no-scroll');
     }
   }, [sidebarOpen, isMobile]);
+
+  const handleSubscribe = async () => {
+    if (!authUser) {
+      navigate('/login', {
+        state: {
+          from: location.pathname,
+          checkoutType: 'subscription',
+        },
+      });
+      return;
+    }
+
+    if (isSubscribed) {
+      toast.info('You are already subscribed to the Power Profile.');
+      return;
+    }
+
+    try {
+      const res = await api.post('/subscribe', {
+        returnUrl: window.location.origin + '/SuccessSubscription',
+      });
+
+      const { url } = res.data;
+
+      if (url) {
+        window.location.href = url;
+      } else {
+        toast.error('Could not start subscription. Please try again.');
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Subscription failed. Please try again.');
+    }
+  };
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -103,9 +141,15 @@ export default function NFCCards() {
                 <p className='desktop-h5'>£7.95</p>
                 <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
               </div>
-              <Link to="/productandplan/konarsubscription" className="desktop-button combined-section-button black-button">
-                View Subscription Details
-              </Link>
+              {isSubscribed ? (
+                <Link to="/productandplan/konarsubscription" className="desktop-button combined-section-button black-button">
+                  Plan Active
+                </Link>
+              ) : (
+                <button onClick={handleSubscribe} className="desktop-button combined-section-button black-button">
+                  Subscribe Now
+                </button>
+              )}
             </div>
           </div>
 
