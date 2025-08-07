@@ -1118,8 +1118,7 @@ export default function MyProfile() {
                       type="submit"
                       className="submit-button"
                     >
-                      Save Business Card
-                    </button>
+Publish Now                    </button>
                   </form>
                 </div>
               </div>
