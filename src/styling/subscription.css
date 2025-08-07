@@ -16,7 +16,7 @@
     /* Space before footer */
 }
 
-.active-plans-buttons {
+.active-plan-buttons {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
