@@ -18,8 +18,9 @@
 
 .active-plan-buttons {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    width: 100%;
+    flex-direction: column;
+    gap: 20px;
 }
 
 /* The container that holds the two columns (Subscription and Card Offer) */
