@@ -2,17 +2,16 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
-import ShareProfile from '../../components/ShareProfile';
 import PlasticCard from '../../assets/images/KonarCard.png';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
+import TickIcon from '../../assets/icons/Tick-Icon.svg'; // New import for the tick icon
 import { toast } from 'react-hot-toast';
 
 export default function NFCCards() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-  const [showShareModal, setShowShareModal] = useState(false);
 
   const { user: authUser, loading: authLoading } = useContext(AuthContext);
   const userId = authUser?._id;
@@ -41,36 +40,6 @@ export default function NFCCards() {
     }
   }, [sidebarOpen, isMobile]);
 
-  const handleActivateCard = () => {
-    // Functionality for "Activate Card" is not defined here.
-    // Add toast or other user feedback if needed for production.
-  };
-
-  const handleShareCard = () => {
-    if (!authUser?.isVerified) {
-      toast.error("Please verify your email to share your card.");
-      return;
-    }
-    setShowShareModal(true);
-  };
-
-  const handleCloseShareModal = () => {
-    setShowShareModal(false);
-  };
-
-  const contactDetailsForVCard = {
-    full_name: businessCard?.full_name || authUser?.name || '',
-    job_title: businessCard?.job_title || '',
-    business_card_name: businessCard?.business_card_name || '',
-    bio: businessCard?.bio || '',
-    contact_email: businessCard?.contact_email || authUser?.email || '',
-    phone_number: businessCard?.phone_number || '',
-    username: userUsername || '',
-  };
-
-  const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
-  const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
-
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
@@ -95,12 +64,51 @@ export default function NFCCards() {
 
       <main className="main-content-container">
         <PageHeader
-          title="Choose Your Perfect Card"
-          onActivateCard={handleActivateCard}
-          onShareCard={handleShareCard}
+          title="Our Plans & Cards"
+          subtitle="Choose what's right for your business."
         />
 
         <div className="combined-offer-container">
+          <div className="subscription-offer-left content-card-box">
+            <div className="subscription-header">
+              <p className='desktop-h5'>Power Profile</p>
+              <div className="free-trial-badge">14 Day Free Trial</div>
+            </div>
+            <p className='desktop-body-s subscription-subheader'>Create a stunning, professional profile in minutes. No coding needed.</p>
+
+            <div className="subscription-features">
+              {[
+                "Update anytime, instantly",
+                "Choose your own font",
+                "Select Light or Dark mode",
+                "Craft your 'About Me' section",
+                "Showcase your work portfolio",
+                "Display client reviews",
+                "List your services",
+                "Set your pricing",
+              ].map((text, idx) => (
+                <div className="hero-tick" key={idx}>
+                  <img src={TickIcon} className="icon" />
+                  <p>{text}</p>
+                </div>
+              ))}
+            </div>
+
+            <p className='desktop-body-s subscription-description-footer'>
+              "The perfect tool for tradesmen to make an unforgettable first impression and get new clients."
+            </p>
+
+            <div className="subscription-price-cta">
+              <div className='price-display'>
+                <p className='desktop-h5'>£7.95</p>
+                <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
+              </div>
+              <Link to="/productandplan/konarsubscription" className="desktop-button combined-section-button black-button">
+                View Subscription Details
+              </Link>
+            </div>
+          </div>
+
           <div className="nfc-card-offer-container content-card-box">
             <div className="nfc-card-header">
               <p className='nfc-card-title'>Plastic NFC Card</p>
@@ -125,15 +133,6 @@ export default function NFCCards() {
           </div>
         </div>
       </main>
-
-      <ShareProfile
-        isOpen={showShareModal}
-        onClose={handleCloseShareModal}
-        profileUrl={currentProfileUrl}
-        qrCodeUrl={currentQrCodeUrl}
-        contactDetails={contactDetailsForVCard}
-        username={userUsername || ''}
-      />
     </div>
   );
 }
