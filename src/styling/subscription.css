@@ -20,7 +20,7 @@
     display: flex;
     width: 100%;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
 }
 
 /* The container that holds the two columns (Subscription and Card Offer) */
