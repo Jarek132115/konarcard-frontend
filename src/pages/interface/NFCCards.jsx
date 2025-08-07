@@ -57,7 +57,7 @@ export default function NFCCards() {
     }
 
     if (isSubscribed) {
-      toast.info('You are already subscribed to the Power Profile.');
+      toast.error('You are already subscribed to the Power Profile.');
       return;
     }
 
