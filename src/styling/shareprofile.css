@@ -316,3 +316,33 @@ body.dark-mode .qr-code-image-container {
         height: auto;
     }
 }
+
+/* New styling for a white button */
+.white-button.share-button-custom {
+    background-color: #ffffff;
+    color: #222222;
+    /* Dark text for a white background */
+}
+
+.white-button.share-button-custom:hover {
+    background-color: #f0f0f0;
+    /* Light gray on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Ensure icons are black on the white button */
+.white-button.share-button-custom .share-button-icon {
+    filter: none;
+    /* Reset the filter to show the icon's original color */
+}
+
+/* Dark mode specific styles for the white button */
+body.dark-mode .white-button.share-button-custom {
+    background-color: #f0f0f0;
+    color: #222222;
+}
+
+body.dark-mode .white-button.share-button-custom:hover {
+    background-color: #e0e0e0;
+}
