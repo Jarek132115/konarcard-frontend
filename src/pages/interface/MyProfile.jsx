@@ -1116,7 +1116,7 @@ export default function MyProfile() {
 
                     <button
                       type="submit"
-                      className="black-button"
+                      className="black-button desktop-button"
                     >
                       Publish Now                    </button>
                   </form>
