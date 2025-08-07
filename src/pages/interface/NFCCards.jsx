@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
+import ShareProfile from '../../components/ShareProfile';
 import PlasticCard from '../../assets/images/KonarCard.png';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
@@ -9,7 +10,6 @@ import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
-import ShareProfile from '../../components/ShareProfile';
 
 export default function NFCCards() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,6 +24,10 @@ export default function NFCCards() {
   const userUsername = authUser?.username;
 
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isSubscribed = authUser ? authUser.isSubscribed : false;
 
   useEffect(() => {
     const handleResize = () => {
