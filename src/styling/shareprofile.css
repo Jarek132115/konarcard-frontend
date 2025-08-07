@@ -114,7 +114,7 @@ body.dark-mode .blue-button.share-button-custom:hover {
 
 .share-link-input {
     width: 100%;
-    padding: 14px 20px;
+    padding: 10px 20px;
     border: 1px solid #e0e0e0;
     border-radius: 10px;
     font-size: 16px;
@@ -138,7 +138,7 @@ body.dark-mode .blue-button.share-button-custom:hover {
 .blue-button.share-button-custom {
     flex: 1;
     min-width: 150px;
-    padding: 14px 24px;
+    padding: 10px 20px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
