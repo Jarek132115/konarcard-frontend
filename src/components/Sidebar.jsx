@@ -72,7 +72,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <img src={settingsInterface} alt="account" className="icon" />
                             <p className='desktop-body-s'>My Account</p>
                         </Link>
-                        <Link to="/subscription" className={`sidebar-button ${isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
+                        {/* CORRECTED LINK: Changed to link to NFCCards.jsx page */}
+                        <Link to="/nfccards" className={`sidebar-button ${isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription') ? 'active-sidebar-link' : ''}`} onClick={closeSidebar}>
                             <img src={cardInterface} alt="products and plans" className="icon" />
                             <p className='desktop-body-s'>Products & Plans</p>
                         </Link>
