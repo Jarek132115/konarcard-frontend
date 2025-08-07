@@ -114,7 +114,7 @@ export default function Home() {
               {/* REVISED: This CTA now links to the main pricing page to present all options. */}
               <Link to="/productandplan" className="cta-blue-button desktop-button">View Plans & Cards</Link>
               <Link to="/productandplan/konarsubscription" className="cta-black-button desktop-button">
-                View Subscription Details
+                See How It Works
               </Link>
             </div>
 
