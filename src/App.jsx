@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './components/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute'; // Import ProtectedRoute
 import Home from './pages/website/Home';
 import Register from './pages/website/Register';
 import Login from './pages/website/Login';
@@ -12,7 +13,7 @@ import FAQ from './pages/website/FAQ';
 import HelpCentre from './pages/website/HelpCentre';
 import Reviews from './pages/website/Reviews';
 import KonarCard from './pages/website/KonarCard';
-import KonarSubscription from './pages/website/KonarSubscription'; // Confirmed this import path is correct based on your screenshot
+import KonarSubscription from './pages/website/KonarSubscription';
 import ContactUs from './pages/website/ContactUs';
 import Policies from './pages/website/Policies';
 import Success from './pages/website/Success';
@@ -26,7 +27,6 @@ import Profile from './pages/interface/Profile';
 import ContactSupport from './pages/interface/ContactSupport';
 import UserPage from './pages/interface/UserPage';
 import SuccessSubscription from './pages/website/SuccessSubscription';
-
 
 axios.defaults.baseURL = 'https://konarcard-backend-331608269918.europe-west1.run.app';
 axios.defaults.withCredentials = true;
@@ -50,8 +50,6 @@ function App() {
         <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
         <Route path="/whatisnfc" element={<KonarCard />} />
         <Route path="/subscription" element={<KonarSubscription />} />
-
-
         <Route path="/faq" element={<FAQ />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/helpcentre" element={<HelpCentre />} />
@@ -59,13 +57,17 @@ function App() {
         <Route path="/policies" element={<Policies />} />
         <Route path="/success" element={<Success />} />
         <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
-        <Route path="/myprofile" element={<MyProfile />} />
-        <Route path="/billing" element={<Billing />} />
-        <Route path="/helpcentreinterface" element={<HelpCentreInterface />} />
-        <Route path="/nfccards" element={<NFCCards />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/contact-support" element={<ContactSupport />} />
+
+        {/* Protected Routes */}
+        <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
+        <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+        <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
+        <Route path="/nfccards" element={<ProtectedRoute><NFCCards /></ProtectedRoute>} />
+        <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
+
+        {/* Public User Page */}
         <Route path="/u/:username" element={<UserPage />} />
       </Routes>
       {!isUserPage && (
