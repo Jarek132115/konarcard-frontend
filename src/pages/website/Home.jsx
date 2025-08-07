@@ -111,9 +111,10 @@ export default function Home() {
               <p className="hero-rating">Trusted by 1,000+ tradies</p>
             </div>
             <div className="hero-cta">
-              {/* REVISED: This CTA now links to the main pricing page to present all options. */}
               <Link to="/productandplan" className="cta-blue-button desktop-button">View Plans & Cards</Link>
-              <Link to="/howitworks" className="cta-black-button desktop-button">See How It Works</Link>
+              <Link to="/productandplan/konarsubscription" className="desktop-button combined-section-button black-button">
+                See How It Works
+              </Link>
             </div>
 
             <div className="hero-tick-wrap">
