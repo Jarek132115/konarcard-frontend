@@ -78,6 +78,13 @@ export default function NFCCards() {
     }
   };
 
+  const handleCancelSubscription = () => {
+    // Logic for cancelling subscription will go here
+    // e.g., calling an API endpoint
+    console.log("Cancel subscription button clicked");
+    toast.info("Cancel subscription feature is coming soon.");
+  };
+
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
@@ -142,9 +149,14 @@ export default function NFCCards() {
                 <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
               </div>
               {isSubscribed ? (
-                <Link to="/productandplan/konarsubscription" className="desktop-button combined-section-button black-button">
-                  Plan Active
-                </Link>
+                <div className="active-plan-buttons">
+                  <button className="desktop-button combined-section-button black-button">
+                    Plan Active
+                  </button>
+                  <button onClick={handleCancelSubscription} className="desktop-button combined-section-button red-button">
+                    Cancel Subscription
+                  </button>
+                </div>
               ) : (
                 <button onClick={handleSubscribe} className="desktop-button combined-section-button black-button">
                   Subscribe Now
@@ -173,7 +185,7 @@ export default function NFCCards() {
                 <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
               </div>
               <Link to="/productandplan/konarcard" className="desktop-button combined-section-button black-button">
-                Buy Now
+                View Card Details
               </Link>
             </div>
           </div>
