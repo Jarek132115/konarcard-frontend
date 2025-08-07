@@ -395,228 +395,227 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="full-width-bg-container section-bg-grey">
-        <div className="section">
-          <div className="section-1-title">
-            <h2 className='desktop-h2 text-center'>The #1 Tool Tradies Are Talking About</h2>
-            <h3 className='desktop-h6 text-center'>
-              Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
-            </h3>
-          </div>
-          <div className="review-container-box">
-            <div className="review-container">
-              <div className="review-pair">
-                <div className="review-div">
-                  <img className='stars' src={ReviewStars} />
-                  <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
-                  <div className="review-div-person">
-                    <img src={ReviewPerson} />
-                    <div className="review-person-name">
-                      <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
-                      <p className='desktop-body-s'>Mark B</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="review-div">
-                  <img className='stars' src={ReviewStars} />
-                  <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
-                  <div className="review-div-person">
-                    <img src={ReviewPerson} />
-                    <div className="review-person-name">
-                      <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
-                      <p className='desktop-body-s'>Mark B</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="review-pair">
-                <div className="review-div">
-                  <img className='stars' src={ReviewStars} />
-                  <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
-                  <div className="review-div-person">
-                    <img src={ReviewPerson} />
-                    <div className="review-person-name">
-                      <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
-                      <p className='desktop-body-s'>Mark B</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="review-div">
-                  <img className='stars' src={ReviewStars} />
-                  <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
-                  <div className="review-div-person">
-                    <img src={ReviewPerson} />
-                    <div className="review-person-name">
-                      <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
-                      <p className='desktop-body-s'>Mark B</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="review-container">
-              <div className="review-pair">
-                <div className="review-div">
-                  <img className='stars' src={ReviewStars} />
-                  <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
-                  <div className="review-div-person">
-                    <img src={ReviewPerson} />
-                    <div className="review-person-name">
-                      <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
-                      <p className='desktop-body-s'>Mark B</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="review-div">
-                  <img className='stars' src={ReviewStars} />
-                  <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
-                  <div className="review-div-person">
-                    <img src={ReviewPerson} />
-                    <div className="review-person-name">
-                      <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
-                      <p className='desktop-body-s'>Mark B</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="review-pair">
-                <div className="review-div">
-                  <img className='stars' src={ReviewStars} />
-                  <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
-                  <div className="review-div-person">
-                    <img src={ReviewPerson} />
-                    <div className="review-person-name">
-                      <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
-                      <p className='desktop-body-s'>Mark B</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="review-div">
-                  <img className='stars' src={ReviewStars} />
-                  <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
-                  <div className="review-div-person">
-                    <img src={ReviewPerson} />
-                    <div className="review-person-name">
-                      <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
-                      <p className='desktop-body-s'>Mark B</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="faq-cta">
-            <p className='desktop-h6'>Read More Reviews</p>
-            <Link to="/reviews" className="black-button desktop-button">Reviews</Link>
-          </div>
-        </div>
-      </div>
-
-
       <div className="section">
         <div className="section-1-title">
-          <h2 className='desktop-h3 text-center'>Frequently Asked Questions</h2>
-          <h3 className='desktop-h6 text-center'>For any other questions feel free to contact us at any time</h3>
+          <h2 className='desktop-h2 text-center'>The #1 Tool Tradies Are Talking About</h2>
+          <h3 className='desktop-h6 text-center'>
+            Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
+          </h3>
         </div>
-        <div className="faq-container">
-          <div className="faq-column">
-            <div className="section-list">
-              <div className=" icon-white">
-                <img src={IDCardIcon} className="icon" />
+        <div className="review-container-box">
+          <div className="review-container">
+            <div className="review-pair">
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
               </div>
-              <div className="section-list-info">
-                <p className='desktop-h6'>What is a Konar digital profile?</p>
-                <p className='desktop-body-s'>It’s your own landing page showing your trade, services, photos, and contact details — all online.</p>
-              </div>
-            </div>
-            <div className="section-list">
-              <div className=" icon-white">
-                <img src={NFCIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className='desktop-h6'>Do I need an NFC card to use it?</p>
-                <p className='desktop-body-s'>No. You can use and share your digital profile without ever buying a physical card.</p>
-              </div>
-            </div>
-            <div className="section-list">
-              <div className=" icon-white">
-                <img src={PhoneIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className='desktop-h6'>How do people view my profile?</p>
-                <p className='desktop-body-s'>Share via link, QR code, or NFC tap — works instantly on most phones.</p>
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="section-list">
-              <div className=" icon-white">
-                <img src={SetupIcon} className="icon" />
+            <div className="review-pair">
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
               </div>
-              <div className="section-list-info">
-                <p className='desktop-h6'>How do I set up my page?</p>
-                <p className='desktop-body-s'>Just fill in your trade, upload photos, list services — done in under five minutes.</p>
-              </div>
-            </div>
-            <div className="section-list">
-              <div className=" icon-white">
-                <img src={PencilIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className='desktop-h6'>Can I update my page anytime?</p>
-                <p className='desktop-body-s'>Yes. Log in from any device to update info, images, services, or pricing instantly.</p>
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div className="faq-column">
-            <div className="section-list">
-              <div className=" icon-white">
-                <img src={WalletIcon} className="icon" />
+          <div className="review-container">
+            <div className="review-pair">
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
               </div>
-              <div className="section-list-info">
-                <p className='desktop-h6'>What does it cost to use?</p>
-                <p className='desktop-body-s'>We offer a free plan. Premium features unlock with our £5.95/month Power Profile subscription.</p>
-              </div>
-            </div>
-            <div className="section-list">
-              <div className=" icon-white">
-                <img src={BoxIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className='desktop-h6'>What happens if I lose my NFC card?</p>
-                <p className='desktop-body-s'>Your page still works without the card. You can always reorder one if you want to keep tapping.</p>
-              </div>
-            </div>
-            <div className="section-list">
-              <div className=" icon-white">
-                <img src={HatIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className='desktop-h6'>Who is this for exactly?</p>
-                <p className='desktop-body-s'>Any tradesperson who wants to get noticed, win more work, and look professional online.</p>
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="section-list">
-              <div className=" icon-white">
-                <img src={PalletteIcon} className="icon" />
+            <div className="review-pair">
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
               </div>
-              <div className="section-list-info">
-                <p className='desktop-h6'>Can I customise the design and layout?</p>
-                <p className='desktop-body-s'>Yes. Pick fonts, colours, and layouts to match your brand and make it yours.</p>
-              </div>
-            </div>
-            <div className="section-list">
-              <div className=" icon-white">
-                <img src={LockIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className='desktop-h6'>Is my personal data safe on here?</p>
-                <p className='desktop-body-s'>Absolutely. You control everything shown, and your data is hosted securely at all times.</p>
+              <div className="review-div">
+                <img className='stars' src={ReviewStars} />
+                <p className='desktop-body-s text-center'>“Since using this, I’m actually getting replies. Clients say it’s slick and they’ve even referred me to others.”</p>
+                <div className="review-div-person">
+                  <img src={ReviewPerson} />
+                  <div className="review-person-name">
+                    <p className='desktop-body-xs' style={{ color: '#333' }}>Plumber</p>
+                    <p className='desktop-body-s'>Mark B</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div className="faq-cta">
-          <p className='desktop-h6'>Got more questions?</p>
-          <Link to="/faq" className="black-button desktop-button">Frequently Asked Questions</Link>
+          <p className='desktop-h6'>Read More Reviews</p>
+          <Link to="/reviews" className="black-button desktop-button">Reviews</Link>
+        </div>
+      </div>
+
+      <div className="full-width-bg-container section-bg-grey">
+        <div className="section">
+          <div className="section-1-title">
+            <h2 className='desktop-h3 text-center'>Frequently Asked Questions</h2>
+            <h3 className='desktop-h6 text-center'>For any other questions feel free to contact us at any time</h3>
+          </div>
+          <div className="faq-container">
+            <div className="faq-column">
+              <div className="section-list">
+                <div className=" icon-white">
+                  <img src={IDCardIcon} className="icon" />
+                </div>
+                <div className="section-list-info">
+                  <p className='desktop-h6'>What is a Konar digital profile?</p>
+                  <p className='desktop-body-s'>It’s your own landing page showing your trade, services, photos, and contact details — all online.</p>
+                </div>
+              </div>
+              <div className="section-list">
+                <div className=" icon-white">
+                  <img src={NFCIcon} className="icon" />
+                </div>
+                <div className="section-list-info">
+                  <p className='desktop-h6'>Do I need an NFC card to use it?</p>
+                  <p className='desktop-body-s'>No. You can use and share your digital profile without ever buying a physical card.</p>
+                </div>
+              </div>
+              <div className="section-list">
+                <div className=" icon-white">
+                  <img src={PhoneIcon} className="icon" />
+                </div>
+                <div className="section-list-info">
+                  <p className='desktop-h6'>How do people view my profile?</p>
+                  <p className='desktop-body-s'>Share via link, QR code, or NFC tap — works instantly on most phones.</p>
+                </div>
+              </div>
+              <div className="section-list">
+                <div className=" icon-white">
+                  <img src={SetupIcon} className="icon" />
+                </div>
+                <div className="section-list-info">
+                  <p className='desktop-h6'>How do I set up my page?</p>
+                  <p className='desktop-body-s'>Just fill in your trade, upload photos, list services — done in under five minutes.</p>
+                </div>
+              </div>
+              <div className="section-list">
+                <div className=" icon-white">
+                  <img src={PencilIcon} className="icon" />
+                </div>
+                <div className="section-list-info">
+                  <p className='desktop-h6'>Can I update my page anytime?</p>
+                  <p className='desktop-body-s'>Yes. Log in from any device to update info, images, services, or pricing instantly.</p>
+                </div>
+              </div>
+            </div>
+            <div className="faq-column">
+              <div className="section-list">
+                <div className=" icon-white">
+                  <img src={WalletIcon} className="icon" />
+                </div>
+                <div className="section-list-info">
+                  <p className='desktop-h6'>What does it cost to use?</p>
+                  <p className='desktop-body-s'>We offer a free plan. Premium features unlock with our £5.95/month Power Profile subscription.</p>
+                </div>
+              </div>
+              <div className="section-list">
+                <div className=" icon-white">
+                  <img src={BoxIcon} className="icon" />
+                </div>
+                <div className="section-list-info">
+                  <p className='desktop-h6'>What happens if I lose my NFC card?</p>
+                  <p className='desktop-body-s'>Your page still works without the card. You can always reorder one if you want to keep tapping.</p>
+                </div>
+              </div>
+              <div className="section-list">
+                <div className=" icon-white">
+                  <img src={HatIcon} className="icon" />
+                </div>
+                <div className="section-list-info">
+                  <p className='desktop-h6'>Who is this for exactly?</p>
+                  <p className='desktop-body-s'>Any tradesperson who wants to get noticed, win more work, and look professional online.</p>
+                </div>
+              </div>
+              <div className="section-list">
+                <div className=" icon-white">
+                  <img src={PalletteIcon} className="icon" />
+                </div>
+                <div className="section-list-info">
+                  <p className='desktop-h6'>Can I customise the design and layout?</p>
+                  <p className='desktop-body-s'>Yes. Pick fonts, colours, and layouts to match your brand and make it yours.</p>
+                </div>
+              </div>
+              <div className="section-list">
+                <div className=" icon-white">
+                  <img src={LockIcon} className="icon" />
+                </div>
+                <div className="section-list-info">
+                  <p className='desktop-h6'>Is my personal data safe on here?</p>
+                  <p className='desktop-body-s'>Absolutely. You control everything shown, and your data is hosted securely at all times.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="faq-cta">
+            <p className='desktop-h6'>Got more questions?</p>
+            <Link to="/faq" className="black-button desktop-button">Frequently Asked Questions</Link>
+          </div>
         </div>
       </div>
 
