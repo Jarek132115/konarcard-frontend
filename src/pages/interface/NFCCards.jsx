@@ -7,10 +7,6 @@ import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
-import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
-import PremiumMaterials from '../../assets/icons/Premium-Materials-Icon.svg';
-import NFCIcon from '../../assets/icons/NFC-Icon.svg';
-import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
 import { toast } from 'react-hot-toast';
 
 export default function NFCCards() {
@@ -134,49 +130,6 @@ export default function NFCCards() {
                   <p className='nfc-card-price-period'>Lifetime Use</p>
                 </div>
                 <Link to="/shopnfccards/whitecard" className="nfc-card-buy-button">Buy Now</Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="section">
-            <div className="section-1-title">
-              <h2 className='desktop-h3 text-center'>Your Work. Your Card. Built to Impress.</h2>
-              <h3 className='desktop-h6 text-center'>Your digital page and smart card—a powerful combo built to impress and win you work.</h3>
-            </div>
-            <div style={{ gap: 40 }} className="section-1-content">
-              <div className="section-1-left">
-                <img src={NFCBusinessCard} className="" />
-              </div>
-              <div className="section-1-right">
-                <p className='desktop-h5'>Why Tradies Choose Konar</p>
-                <p className='desktop-body'>It's a powerful tool that combines your digital portfolio with a smart physical card to get you noticed.</p>
-                <div className="section-list">
-                  <div className=" icon-white">
-                    <img src={PremiumMaterials} className="icon" />
-                  </div>
-                  <div className="section-list-info">
-                    <p className='desktop-h6'>Look Professional & Legit</p>
-                    <p className='desktop-body-xs'>Present a professional online profile and hand out a sleek, modern card that sets you apart from the competition.</p>
-                  </div>
-                </div>
-                <div className="section-list">
-                  <div className=" icon-white">
-                    <img src={NFCIcon} className="icon" />
-                  </div>
-                  <div className="section-list-info">
-                    <p className='desktop-h6'>Showcase Your Best Work</p>
-                    <p className='desktop-body-xs'>Easily upload a portfolio of your past jobs and display customer reviews to build instant trust with new clients.</p>
-                  </div>
-                </div>
-                <div className="section-list">
-                  <div className=" icon-white">
-                    <img src={PalletteIcon} className="icon" />
-                  </div>
-                  <div className="section-list-info">
-                    <p className='desktop-h6'>Share in Seconds</p>
-                    <p className='desktop-body-xs'>Instantly share your full profile with a simple tap of your card or a QR scan. Always be ready to connect with new leads.</p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
