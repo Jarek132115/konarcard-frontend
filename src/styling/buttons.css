@@ -1,116 +1,124 @@
 /* Buttons */
 .blue-button-login {
-    background-color: #0081FF;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
+  background-color: #0081FF;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
 }
 
 .blue-button-login:hover {
-    background-color: #006edc;
-    box-shadow: 0px 4px 12px rgba(0, 129, 255, 0.3);
-    cursor: pointer;
+  background-color: #006edc;
+  box-shadow: 0px 4px 12px rgba(0, 129, 255, 0.3);
+  cursor: pointer;
 }
 
 .blue-button {
-    background-color: #0081FF;
-    padding: 10px 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    color: white;
+  background-color: #0081FF;
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: white;
 }
 
 .blue-button:hover {
-    background-color: #006edc;
-    box-shadow: 0px 4px 12px rgba(0, 129, 255, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
+  background-color: #006edc;
+  box-shadow: 0px 4px 12px rgba(0, 129, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .black-button {
-    background-color: black;
-    padding: 10px 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    color: white;
-    width: fit-content;
+  /* Updated styles for the new button design */
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: #0081FF;
+  width: fit-content;
+  border: 2px solid #0081FF;
 }
 
 .black-button:hover {
-    background-color: #333;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: all 0.3s ease;
+  background-color: #f0f8ff;
+  /* A lighter blue on hover for a subtle effect */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .cta-blue-button {
-    background-color: #0081FF;
-    padding: 10px 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    color: white;
+  background-color: #0081FF;
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: white;
 }
 
 .cta-blue-button:hover {
-    background-color: #006edc;
-    box-shadow: 0px 4px 12px rgba(0, 129, 255, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
+  background-color: #006edc;
+  box-shadow: 0px 4px 12px rgba(0, 129, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .cta-black-button {
-    background-color: black;
-    padding: 10px 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    color: white;
+  /* Updated styles for the new button design */
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: #0081FF;
+  border: 2px solid #0081FF;
 }
 
 .cta-black-button:hover {
-    background-color: #333;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: all 0.3s ease;
+  background-color: #f0f8ff;
+  /* A lighter blue on hover for a subtle effect */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .black-button-subscribe {
-    background-color: black;
-    padding: 10px 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    color: white;
-    width: fit-content;
+  /* Updated styles for the new button design */
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: #0081FF;
+  width: fit-content;
+  border: 2px solid #0081FF;
 }
 
 
 @media (max-width: 1000px) {
-    .cta-center-text {
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 5px;
-        margin-top: 20px;
-        box-sizing: border-box;
-    }
+  .cta-center-text {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+    margin-top: 20px;
+    box-sizing: border-box;
+  }
 
-    .cta-center-text .desktop-button {
-        width: 100%;
-        text-align: center;
-    }
+  .cta-center-text .desktop-button {
+    width: 100%;
+    text-align: center;
+  }
 
-    .black-button {
-        min-width: 100%;
-        display: flex;
-        text-align: center;
-        justify-content: center;
-    }
+  .black-button {
+    min-width: 100%;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
 
-    .blue-button {
-        min-width: 100%;
-        display: flex;
-        text-align: center;
-        justify-content: center;
-    }
+  .blue-button {
+    min-width: 100%;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
 }
 
 
