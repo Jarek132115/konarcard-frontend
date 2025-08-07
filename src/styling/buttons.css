@@ -4,6 +4,7 @@
   color: white;
   padding: 10px 20px;
   border-radius: 10px;
+  transition: all 0.2s ease;
 }
 
 .blue-button-login:hover {
@@ -12,23 +13,34 @@
   cursor: pointer;
 }
 
+.blue-button-login:active {
+  background-color: #006edc;
+  transform: scale(0.98);
+  box-shadow: 0px 2px 8px rgba(0, 129, 255, 0.5);
+}
+
 .blue-button {
   background-color: #0081FF;
   padding: 10px 20px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   color: white;
+  transition: all 0.2s ease;
 }
 
 .blue-button:hover {
   background-color: #006edc;
   box-shadow: 0px 4px 12px rgba(0, 129, 255, 0.3);
   cursor: pointer;
-  transition: all 0.3s ease;
+}
+
+.blue-button:active {
+  background-color: #006edc;
+  transform: scale(0.98);
+  box-shadow: 0px 2px 8px rgba(0, 129, 255, 0.5);
 }
 
 .black-button {
-  /* Updated styles for the new button design */
   background-color: white;
   padding: 10px 20px;
   border-radius: 10px;
@@ -36,14 +48,19 @@
   color: #0081FF;
   width: fit-content;
   border: 2px solid #0081FF;
+  transition: all 0.2s ease;
 }
 
 .black-button:hover {
   background-color: #f0f8ff;
-  /* A lighter blue on hover for a subtle effect */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: all 0.3s ease;
+}
+
+.black-button:active {
+  background-color: #e0f0ff;
+  transform: scale(0.98);
+  box-shadow: 0px 2px 8px rgba(0, 129, 255, 0.5);
 }
 
 .cta-blue-button {
@@ -52,35 +69,44 @@
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   color: white;
+  transition: all 0.2s ease;
 }
 
 .cta-blue-button:hover {
   background-color: #006edc;
   box-shadow: 0px 4px 12px rgba(0, 129, 255, 0.3);
   cursor: pointer;
-  transition: all 0.3s ease;
+}
+
+.cta-blue-button:active {
+  background-color: #006edc;
+  transform: scale(0.98);
+  box-shadow: 0px 2px 8px rgba(0, 129, 255, 0.5);
 }
 
 .cta-black-button {
-  /* Updated styles for the new button design */
   background-color: white;
   padding: 10px 20px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   color: #0081FF;
   border: 2px solid #0081FF;
+  transition: all 0.2s ease;
 }
 
 .cta-black-button:hover {
   background-color: #f0f8ff;
-  /* A lighter blue on hover for a subtle effect */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: all 0.3s ease;
+}
+
+.cta-black-button:active {
+  background-color: #e0f0ff;
+  transform: scale(0.98);
+  box-shadow: 0px 2px 8px rgba(0, 129, 255, 0.5);
 }
 
 .black-button-subscribe {
-  /* Updated styles for the new button design */
   background-color: white;
   padding: 10px 20px;
   border-radius: 10px;
@@ -88,8 +114,14 @@
   color: #0081FF;
   width: fit-content;
   border: 2px solid #0081FF;
+  transition: all 0.2s ease;
 }
 
+.black-button-subscribe:active {
+  background-color: #e0f0ff;
+  transform: scale(0.98);
+  box-shadow: 0px 2px 8px rgba(0, 129, 255, 0.5);
+}
 
 @media (max-width: 1000px) {
   .cta-center-text {
@@ -120,8 +152,6 @@
     justify-content: center;
   }
 }
-
-
 
 /* --- BREADCRUMBS --- */
 .breadcrumb-nav {
