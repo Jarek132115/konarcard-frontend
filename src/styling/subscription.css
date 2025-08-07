@@ -16,6 +16,12 @@
     /* Space before footer */
 }
 
+.active-plans-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 /* The container that holds the two columns (Subscription and Card Offer) */
 .products-plans-card-container {
     display: flex;
