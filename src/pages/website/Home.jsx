@@ -579,111 +579,109 @@ export default function Home() {
         </div>
       </div>
 
-      <div style={{ paddingBottom: 40 }} className="full-width-bg-container section-bg-grey">
-        <div className="section">
-          <div className="section-1-title">
-            <h2 className='desktop-h3 text-center'>Frequently Asked Questions</h2>
-            <h3 className='desktop-h6 text-center'>For any other questions feel free to contact us at any time</h3>
-          </div>
-          <div className="faq-container">
-            <div className="faq-column">
-              <div className="section-list">
-                <div className=" icon-white">
-                  <img src={IDCardIcon} className="icon" />
-                </div>
-                <div className="section-list-info">
-                  <p className='desktop-h6'>What is a Konar digital profile?</p>
-                  <p className='desktop-body-s'>It’s your own landing page showing your trade, services, photos, and contact details — all online.</p>
-                </div>
+      <div className="section">
+        <div className="section-1-title">
+          <h2 className='desktop-h3 text-center'>Frequently Asked Questions</h2>
+          <h3 className='desktop-h6 text-center'>For any other questions feel free to contact us at any time</h3>
+        </div>
+        <div className="faq-container">
+          <div className="faq-column">
+            <div className="section-list">
+              <div className=" icon-white">
+                <img src={IDCardIcon} className="icon" />
               </div>
-              <div className="section-list">
-                <div className=" icon-white">
-                  <img src={NFCIcon} className="icon" />
-                </div>
-                <div className="section-list-info">
-                  <p className='desktop-h6'>Do I need an NFC card to use it?</p>
-                  <p className='desktop-body-s'>No. You can use and share your digital profile without ever buying a physical card.</p>
-                </div>
-              </div>
-              <div className="section-list">
-                <div className=" icon-white">
-                  <img src={PhoneIcon} className="icon" />
-                </div>
-                <div className="section-list-info">
-                  <p className='desktop-h6'>How do people view my profile?</p>
-                  <p className='desktop-body-s'>Share via link, QR code, or NFC tap — works instantly on most phones.</p>
-                </div>
-              </div>
-              <div className="section-list">
-                <div className=" icon-white">
-                  <img src={SetupIcon} className="icon" />
-                </div>
-                <div className="section-list-info">
-                  <p className='desktop-h6'>How do I set up my page?</p>
-                  <p className='desktop-body-s'>Just fill in your trade, upload photos, list services — done in under five minutes.</p>
-                </div>
-              </div>
-              <div className="section-list">
-                <div className=" icon-white">
-                  <img src={PencilIcon} className="icon" />
-                </div>
-                <div className="section-list-info">
-                  <p className='desktop-h6'>Can I update my page anytime?</p>
-                  <p className='desktop-body-s'>Yes. Log in from any device to update info, images, services, or pricing instantly.</p>
-                </div>
+              <div className="section-list-info">
+                <p className='desktop-h6'>What is a Konar digital profile?</p>
+                <p className='desktop-body-s'>It’s your own landing page showing your trade, services, photos, and contact details — all online.</p>
               </div>
             </div>
-            <div className="faq-column">
-              <div className="section-list">
-                <div className=" icon-white">
-                  <img src={WalletIcon} className="icon" />
-                </div>
-                <div className="section-list-info">
-                  <p className='desktop-h6'>What does it cost to use?</p>
-                  <p className='desktop-body-s'>We offer a free plan. Premium features unlock with our £5.95/month Power Profile subscription.</p>
-                </div>
+            <div className="section-list">
+              <div className=" icon-white">
+                <img src={NFCIcon} className="icon" />
               </div>
-              <div className="section-list">
-                <div className=" icon-white">
-                  <img src={BoxIcon} className="icon" />
-                </div>
-                <div className="section-list-info">
-                  <p className='desktop-h6'>What happens if I lose my NFC card?</p>
-                  <p className='desktop-body-s'>Your page still works without the card. You can always reorder one if you want to keep tapping.</p>
-                </div>
+              <div className="section-list-info">
+                <p className='desktop-h6'>Do I need an NFC card to use it?</p>
+                <p className='desktop-body-s'>No. You can use and share your digital profile without ever buying a physical card.</p>
               </div>
-              <div className="section-list">
-                <div className=" icon-white">
-                  <img src={HatIcon} className="icon" />
-                </div>
-                <div className="section-list-info">
-                  <p className='desktop-h6'>Who is this for exactly?</p>
-                  <p className='desktop-body-s'>Any tradesperson who wants to get noticed, win more work, and look professional online.</p>
-                </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white">
+                <img src={PhoneIcon} className="icon" />
               </div>
-              <div className="section-list">
-                <div className=" icon-white">
-                  <img src={PalletteIcon} className="icon" />
-                </div>
-                <div className="section-list-info">
-                  <p className='desktop-h6'>Can I customise the design and layout?</p>
-                  <p className='desktop-body-s'>Yes. Pick fonts, colours, and layouts to match your brand and make it yours.</p>
-                </div>
+              <div className="section-list-info">
+                <p className='desktop-h6'>How do people view my profile?</p>
+                <p className='desktop-body-s'>Share via link, QR code, or NFC tap — works instantly on most phones.</p>
               </div>
-              <div className="section-list">
-                <div className=" icon-white">
-                  <img src={LockIcon} className="icon" />
-                </div>
-                <div className="section-list-info">
-                  <p className='desktop-h6'>Is my personal data safe on here?</p>
-                  <p className='desktop-body-s'>Absolutely. You control everything shown, and your data is hosted securely at all times.</p>
-                </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white">
+                <img src={SetupIcon} className="icon" />
+              </div>
+              <div className="section-list-info">
+                <p className='desktop-h6'>How do I set up my page?</p>
+                <p className='desktop-body-s'>Just fill in your trade, upload photos, list services — done in under five minutes.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white">
+                <img src={PencilIcon} className="icon" />
+              </div>
+              <div className="section-list-info">
+                <p className='desktop-h6'>Can I update my page anytime?</p>
+                <p className='desktop-body-s'>Yes. Log in from any device to update info, images, services, or pricing instantly.</p>
               </div>
             </div>
           </div>
-          <div className="faq-cta">
-            <Link to="/faq" className="black-button desktop-button">Got more questions?</Link>
+          <div className="faq-column">
+            <div className="section-list">
+              <div className=" icon-white">
+                <img src={WalletIcon} className="icon" />
+              </div>
+              <div className="section-list-info">
+                <p className='desktop-h6'>What does it cost to use?</p>
+                <p className='desktop-body-s'>We offer a free plan. Premium features unlock with our £5.95/month Power Profile subscription.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white">
+                <img src={BoxIcon} className="icon" />
+              </div>
+              <div className="section-list-info">
+                <p className='desktop-h6'>What happens if I lose my NFC card?</p>
+                <p className='desktop-body-s'>Your page still works without the card. You can always reorder one if you want to keep tapping.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white">
+                <img src={HatIcon} className="icon" />
+              </div>
+              <div className="section-list-info">
+                <p className='desktop-h6'>Who is this for exactly?</p>
+                <p className='desktop-body-s'>Any tradesperson who wants to get noticed, win more work, and look professional online.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white">
+                <img src={PalletteIcon} className="icon" />
+              </div>
+              <div className="section-list-info">
+                <p className='desktop-h6'>Can I customise the design and layout?</p>
+                <p className='desktop-body-s'>Yes. Pick fonts, colours, and layouts to match your brand and make it yours.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white">
+                <img src={LockIcon} className="icon" />
+              </div>
+              <div className="section-list-info">
+                <p className='desktop-h6'>Is my personal data safe on here?</p>
+                <p className='desktop-body-s'>Absolutely. You control everything shown, and your data is hosted securely at all times.</p>
+              </div>
+            </div>
           </div>
+        </div>
+        <div className="faq-cta">
+          <Link to="/faq" className="black-button desktop-button">Got more questions?</Link>
         </div>
       </div>
 
