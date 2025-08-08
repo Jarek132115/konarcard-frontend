@@ -6,8 +6,6 @@ import useBusinessCardStore, { previewPlaceholders } from "../../store/businessC
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useFetchBusinessCard,
-} from "../../hooks/useFetchBusinessCard";
-import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
 } from "../../hooks/useCreateBiz";
@@ -500,8 +498,9 @@ export default function MyProfile() {
 
   const shouldBlurEditor = !isSubscribed && hasTrialEnded;
 
-  const useLivePreview = isSubscribed || isTrialActive;
-  const previewData = useLivePreview ? state : previewPlaceholders;
+  // FIX: The preview should always use the local state (`state`)
+  // The placeholders act as a fallback if the state is empty.
+  const previewData = state;
   const isDarkMode = previewData.pageTheme === "dark";
 
   return (
@@ -602,7 +601,7 @@ export default function MyProfile() {
                   <div
                     className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
                     style={{
-                      fontFamily: previewData.font
+                      fontFamily: previewData.font || previewPlaceholders.font
                     }}
                   >
                     <div className="mock-phone-scrollable-content">
