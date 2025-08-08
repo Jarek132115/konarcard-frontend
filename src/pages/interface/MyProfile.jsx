@@ -51,7 +51,6 @@ export default function MyProfile() {
 
   const location = useLocation();
 
-  // NEW: state for the trial countdown
   const [countdown, setCountdown] = useState(null);
 
   const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
@@ -78,7 +77,6 @@ export default function MyProfile() {
 
     checkSubscriptionStatus();
 
-    // NEW: Countdown logic
     let timer;
     if (isTrialActive) {
       timer = setInterval(() => {
@@ -366,7 +364,6 @@ export default function MyProfile() {
     }
   };
 
-  // UPDATED: Added new logic to handleSubmit
   const handleSubmit = async (e, fromTrialStart = false) => {
     e.preventDefault();
 
@@ -383,14 +380,14 @@ export default function MyProfile() {
       return;
     }
 
-    // NEW: Block saving if trial has not started yet.
-    if (!isSubscribed && !isTrialActive && !fromTrialStart) {
-      toast.error("Please start your free trial to publish your changes.");
+    if (!isSubscribed && hasTrialEnded && !fromTrialStart) {
+      toast.error("Your free trial has expired. Please subscribe to save changes.");
       return;
     }
 
-    if (!isSubscribed && hasTrialEnded && !fromTrialStart) {
-      toast.error("Your free trial has expired. Please subscribe to save changes.");
+    // The save is handled by the `handleStartTrialAndSave` function
+    if (!isSubscribed && !isTrialActive && !fromTrialStart) {
+      toast.error("Please start your trial to publish your changes.");
       return;
     }
 
@@ -429,7 +426,6 @@ export default function MyProfile() {
 
     try {
       await createBusinessCard.mutateAsync(formData);
-      // UPDATED: Changed the toast success message
       toast.success("Your page is Published!");
 
       queryClient.invalidateQueries(['businessCard', userId]);
@@ -1083,6 +1079,7 @@ export default function MyProfile() {
                     <button
                       type="submit"
                       className="black-button desktop-button"
+                      disabled={!isSubscribed && !isTrialActive}
                       style={{ flex: 1 }}
                     >
                       Publish Now
