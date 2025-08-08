@@ -8,7 +8,6 @@ import backgroundImg from '../../assets/images/background.png';
 export default function Register() {
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from || '/';
     const { login } = useContext(AuthContext);
 
     const [data, setData] = useState({
@@ -110,7 +109,8 @@ export default function Register() {
             } else {
                 toast.success('Email verified! Logging you in...');
                 login(res.data.token, res.data.user);
-                navigate(from);
+                // Redirect to /myprofile after successful registration and verification
+                navigate('/myprofile');
             }
         } catch (err) {
             toast.error('Verification failed');
@@ -265,7 +265,7 @@ export default function Register() {
 
                         {!verificationStep && (
                             <p className="login-alt-text">
-                                Already have an account? <Link to="/login" state={{ from }}>Login</Link>
+                                Already have an account? <Link to="/login">Login</Link>
                             </p>
                         )}
                     </div>
