@@ -135,7 +135,7 @@ export default function KonarSubscription() {
 
                     <div className="option-group">
                         <button onClick={handleSubscribe} className="blue-button desktop-button">
-                            Upgrade to Power Profile
+                            Start Your Free 14-Day Trial.
                         </button>
                     </div>
                 </div>
