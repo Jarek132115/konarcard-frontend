@@ -6,8 +6,6 @@ import useBusinessCardStore, { previewPlaceholders } from "../../store/businessC
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useFetchBusinessCard,
-} from "../../hooks/useFetchBusinessCard";
-import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
 } from "../../hooks/useCreateBiz";
@@ -57,12 +55,7 @@ export default function MyProfile() {
   const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
   const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
 
-  useEffect(() => {
-    if (!authLoading && authUser) {
-      refetchAuthUser();
-      refetchBusinessCard();
-    }
-  }, []);
+  // REMOVED THE CAUSING USEEFFECT. The application now relies on auth context updates.
 
   useEffect(() => {
     let handledRedirect = false;
@@ -399,8 +392,24 @@ export default function MyProfile() {
   const handleSubmit = async (e, fromTrialStart = false) => {
     e.preventDefault();
 
-    // This function is now only for saving and should not contain the pre-publish checks
-    // It's called by `handlePublishClick` or `handleStartTrialAndSave`
+    if (!isUserVerified) {
+      toast.error("Please verify your email address to save changes.");
+      return;
+    }
+
+    if (!isSubscribed && hasTrialEnded && !fromTrialStart) {
+      toast.error("Your free trial has expired. Please subscribe to save changes.");
+      return;
+    }
+
+    if (!hasProfileChanges()) {
+      if (isSubscribed || isTrialActive) {
+        toast.error("You haven't made any changes.");
+      } else {
+        toast.error("Please start your trial to publish your changes.");
+      }
+      return;
+    }
 
     const worksToUpload = state.workImages
       .map(item => {
@@ -454,22 +463,6 @@ export default function MyProfile() {
       toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
     }
   };
-
-  const handlePublishClick = async (e) => {
-    e.preventDefault();
-
-    if (!isSubscribed && !isTrialActive) {
-      toast.error("Please start your free trial to publish your changes.");
-      return;
-    }
-
-    if (!hasProfileChanges()) {
-      toast.error("You haven't made any changes.");
-      return;
-    }
-
-    await handleSubmit(e);
-  }
 
   const handleActivateCard = () => {
     toast.info("Activate Card functionality to be defined!");
