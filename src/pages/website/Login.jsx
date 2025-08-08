@@ -1,7 +1,7 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { AuthContext } from '../../components/AuthContext';
+import { useAuth } from '../../context/authContext';
 import backgroundImg from '../../assets/images/background.png';
 import api from '../../services/api';
 
@@ -9,7 +9,7 @@ export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from || '/myprofile';
-    const { login } = useContext(AuthContext);
+    const { setAuth } = useAuth();
 
     const [data, setData] = useState({ email: '', password: '' });
     const [code, setCode] = useState('');
@@ -44,7 +44,7 @@ export default function Login() {
                 }
             } else {
                 toast.success('Login successful!');
-                login(res.data.token, res.data.user);
+                setAuth({ token: res.data.token, user: res.data.user });
                 navigate(from);
             }
         } catch (err) {
@@ -61,14 +61,9 @@ export default function Login() {
                 toast.error(res.data.error);
             } else {
                 toast.success('Email verified! Logging you in...');
-                const loginRes = await api.post('/login', data);
-
-                if (loginRes.data.error) {
-                    toast.error(loginRes.data.error);
-                } else {
-                    login(loginRes.data.token, loginRes.data.user);
-                    navigate(from);
-                }
+                // Direct login after verification is successful, no need for a second API call
+                setAuth({ token: res.data.token, user: res.data.user });
+                navigate(from);
             }
         } catch (err) {
             toast.error(err.message || 'Verification failed');
