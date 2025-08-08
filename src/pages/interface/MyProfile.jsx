@@ -57,7 +57,12 @@ export default function MyProfile() {
   const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
   const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
 
-  // REMOVED THE CAUSING USEEFFECT. The application now relies on auth context updates.
+  useEffect(() => {
+    if (!authLoading && authUser) {
+      refetchAuthUser();
+      refetchBusinessCard();
+    }
+  }, [authLoading, authUser]);
 
   useEffect(() => {
     let handledRedirect = false;
@@ -94,8 +99,7 @@ export default function MyProfile() {
         } else {
           clearInterval(timer);
           setCountdown("00:00");
-          // NEW: We no longer call refetchAuthUser here to prevent the infinite loop.
-          // The UI will update when a user navigates or manually triggers a fetch.
+          refetchAuthUser();
         }
       }, 1000);
     } else {
@@ -361,7 +365,7 @@ export default function MyProfile() {
       if (trialResponse.data.success) {
         toast.success(trialResponse.data.message);
         await refetchAuthUser();
-        await handleSubmit(e, true);
+        await handlePublish(e, true);
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "Failed to start trial.");
@@ -395,7 +399,6 @@ export default function MyProfile() {
   const handleSubmit = async (e, fromTrialStart = false) => {
     e.preventDefault();
 
-    // New check for subscribed users with no changes
     if (!isSubscribed && !isTrialActive && !fromTrialStart) {
       toast.error("Please start your free trial to publish your changes.");
       return;
@@ -476,7 +479,6 @@ export default function MyProfile() {
       return;
     }
 
-    // Final logic to submit the form if checks pass
     const worksToUpload = state.workImages
       .map(item => {
         if (item.file) {
