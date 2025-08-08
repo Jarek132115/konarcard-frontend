@@ -6,8 +6,6 @@ import useBusinessCardStore, { previewPlaceholders } from "../../store/businessC
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useFetchBusinessCard,
-} from "../../hooks/useFetchBusinessCard";
-import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
 } from "../../hooks/useCreateBiz";
@@ -389,8 +387,7 @@ export default function MyProfile() {
     return isStateDifferent;
   };
 
-  // REFACTORED: New `handlePublishClick` function
-  const handlePublishClick = async (e) => {
+  const handleSubmit = async (e, fromTrialStart = false) => {
     e.preventDefault();
 
     if (authLoading) {
@@ -406,27 +403,10 @@ export default function MyProfile() {
       return;
     }
 
-    // NEW: Unsubscribed user check
-    if (!isSubscribed && !isTrialActive) {
-      toast.error("Please start your free trial to publish your changes.");
+    if (!isSubscribed && hasTrialEnded && !fromTrialStart) {
+      toast.error("Your free trial has expired. Please subscribe to save changes.");
       return;
     }
-
-    // NEW: No changes check
-    if (!hasProfileChanges()) {
-      toast.error("You must edit your profile before publishing.");
-      return;
-    }
-
-    // Proceed to save if all checks pass
-    await handleSubmit(e);
-  };
-
-  const handleSubmit = async (e, fromTrialStart = false) => {
-    e.preventDefault();
-
-    // This function is now only for saving and should not contain the pre-publish checks
-    // It's called by `handlePublishClick` or `handleStartTrialAndSave`
 
     const worksToUpload = state.workImages
       .map(item => {
@@ -461,6 +441,12 @@ export default function MyProfile() {
       phone_number: state.phone_number,
     });
 
+    // Final check before sending to the backend
+    if (!hasProfileChanges()) {
+      toast.error("You haven't made any changes.");
+      return;
+    }
+
     try {
       await createBusinessCard.mutateAsync(formData);
       toast.success("Your page is Published!");
@@ -480,6 +466,18 @@ export default function MyProfile() {
       toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
     }
   };
+
+  // NEW: Logic for handling the Publish click and toasts
+  const handlePublishClick = async (e) => {
+    if (!isSubscribed && !isTrialActive) {
+      e.preventDefault();
+      toast.error("Please start your free trial to publish your changes.");
+      return;
+    }
+
+    // If not early return, proceed with form submission
+    await handleSubmit(e);
+  }
 
   const handleActivateCard = () => {
     toast.info("Activate Card functionality to be defined!");
@@ -1137,7 +1135,7 @@ export default function MyProfile() {
                       <button
                         type="submit"
                         className="black-button desktop-button"
-                        title={(!isSubscribed && !isTrialActive) ? "Please start your free trial to publish your changes." : ""}
+                        onClick={handlePublishClick}
                       >
                         Publish Now
                       </button>
