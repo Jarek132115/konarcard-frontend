@@ -53,6 +53,9 @@ export default function MyProfile() {
   const [hasLoadedInitialCardData, setHasLoadedInitialCardData] = useState(false);
   const [daysRemaining, setDaysRemaining] = useState(null);
 
+  const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
+  const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
+
   useEffect(() => {
     let handledRedirect = false;
     const checkSubscriptionStatus = async () => {
@@ -129,11 +132,10 @@ export default function MyProfile() {
   useEffect(() => {
     if (!isCardLoading && authUser && !hasLoadedInitialCardData) {
       setHasLoadedInitialCardData(true);
-
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
-      if (isSubscribed && businessCard) {
+      if ((isSubscribed || isTrialActive) && businessCard) {
         updateState({
           businessName: businessCard.business_card_name || '',
           pageTheme: businessCard.page_theme || 'light',
@@ -161,7 +163,7 @@ export default function MyProfile() {
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     }
-  }, [businessCard, isCardLoading, authUser, isSubscribed, updateState, resetState, activeBlobUrls, hasLoadedInitialCardData]);
+  }, [businessCard, isCardLoading, authUser, isSubscribed, isTrialActive, updateState, resetState, activeBlobUrls, hasLoadedInitialCardData]);
 
   useEffect(() => {
     return () => {
@@ -355,8 +357,8 @@ export default function MyProfile() {
       toast.error("Please verify your email address to save changes.");
       return;
     }
-    if (!isSubscribed) {
-      toast.error("Please subscribe to edit your profile.");
+    if (!isSubscribed && !isTrialActive) {
+      toast.error("Please start your free trial to edit your profile.");
       return;
     }
 
@@ -562,15 +564,15 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {!isSubscribed && isMobile && (
-                <div className="subscription-overlay-mobile">
-                  <div className="subscription-message">
-                    <p className="desktop-h4">Unlock Your Profile!</p>
-                    <p className="desktop-body">Subscribe for a 7-day free trial and unlock all features.</p>
-                    <button className="blue-button desktop-button" onClick={handleStartSubscription}>
-                      Start Your 14 Day Free Trial Now!
-                    </button>
-                  </div>
+              {!isSubscribed && daysRemaining > 0 && (
+                <div className="trial-countdown-banner">
+                  <p>Your free trial ends in {daysRemaining} days. <Link to="/subscription">Subscribe now!</Link></p>
+                </div>
+              )}
+
+              {!isSubscribed && daysRemaining === 0 && (
+                <div className="trial-ended-banner">
+                  <p>Your free trial has ended. <Link to="/subscription">Subscribe now</Link> to prevent your profile from being deleted.</p>
                 </div>
               )}
 
@@ -964,176 +966,175 @@ export default function MyProfile() {
                           </button>
                         )}
                       </div>
-                    </div>
+                      <div className="input-block">
+                        <label htmlFor="fullName">Full Name</label>
+                        <input
+                          id="fullName"
+                          type="text"
+                          value={getEditorValue(state.full_name)}
+                          onChange={(e) => updateState({ full_name: e.target.value })}
+                          placeholder={previewPlaceholders.full_name}
+                        />
+                      </div>
 
-                    <div className="input-block">
-                      <label htmlFor="fullName">Full Name</label>
-                      <input
-                        id="fullName"
-                        type="text"
-                        value={getEditorValue(state.full_name)}
-                        onChange={(e) => updateState({ full_name: e.target.value })}
-                        placeholder={previewPlaceholders.full_name}
-                      />
-                    </div>
+                      <div className="input-block">
+                        <label htmlFor="jobTitle">Job Title</label>
+                        <input
+                          id="jobTitle"
+                          type="text"
+                          value={getEditorValue(state.job_title)}
+                          onChange={(e) => updateState({ job_title: e.target.value })}
+                          placeholder={previewPlaceholders.job_title}
+                        />
+                      </div>
 
-                    <div className="input-block">
-                      <label htmlFor="jobTitle">Job Title</label>
-                      <input
-                        id="jobTitle"
-                        type="text"
-                        value={getEditorValue(state.job_title)}
-                        onChange={(e) => updateState({ job_title: e.target.value })}
-                        placeholder={previewPlaceholders.job_title}
-                      />
-                    </div>
+                      <div className="input-block">
+                        <label htmlFor="bio">About Me Description</label>
+                        <textarea
+                          id="bio"
+                          value={getEditorValue(state.bio)}
+                          onChange={(e) => updateState({ bio: e.target.value })}
+                          rows={4}
+                          placeholder={previewPlaceholders.bio}
+                        />
+                      </div>
 
-                    <div className="input-block">
-                      <label htmlFor="bio">About Me Description</label>
-                      <textarea
-                        id="bio"
-                        value={getEditorValue(state.bio)}
-                        onChange={(e) => updateState({ bio: e.target.value })}
-                        rows={4}
-                        placeholder={previewPlaceholders.bio}
-                      />
-                    </div>
+                      <hr className="divider" />
+                      <h3 className="editor-subtitle">My Work Section</h3>
 
-                    <hr className="divider" />
-                    <h3 className="editor-subtitle">My Work Section</h3>
-
-                    <div className="input-block">
-                      <label>Work Images</label>
-                      <div className="work-preview-row">
-                        {state.workImages.map((img, i) => (
-                          <div key={i} className="work-image-item-wrapper">
-                            <img
-                              src={getEditorImageSrc(img.preview)}
-                              alt={`work-${i}`}
-                              className="work-image-preview"
-                            />
-                            <button
-                              type="button"
-                              className="remove-image-button"
-                              onClick={() => handleRemoveWorkImage(i)}
-                            >
-                              &times;
-                            </button>
+                      <div className="input-block">
+                        <label>Work Images</label>
+                        <div className="work-preview-row">
+                          {state.workImages.map((img, i) => (
+                            <div key={i} className="work-image-item-wrapper">
+                              <img
+                                src={getEditorImageSrc(img.preview)}
+                                alt={`work-${i}`}
+                                className="work-image-preview"
+                              />
+                              <button
+                                type="button"
+                                className="remove-image-button"
+                                onClick={() => handleRemoveWorkImage(i)}
+                              >
+                                &times;
+                              </button>
+                            </div>
+                          ))}
+                          <div
+                            className="image-upload-area add-work-image-placeholder"
+                            onClick={() => {
+                              const input = document.createElement('input');
+                              input.type = 'file';
+                              input.accept = 'image/*';
+                              input.multiple = true;
+                              input.onchange = (e) => {
+                                handleAddWorkImage(e);
+                                document.body.removeChild(input);
+                              };
+                              document.body.appendChild(input);
+                              input.click();
+                            }}
+                          >
+                            <span className="upload-text">Add Work Image</span>
+                            <img src="" alt="Add Work" className="work-image-preview" />
                           </div>
-                        ))}
-                        <div
-                          className="image-upload-area add-work-image-placeholder"
-                          onClick={() => {
-                            const input = document.createElement('input');
-                            input.type = 'file';
-                            input.accept = 'image/*';
-                            input.multiple = true;
-                            input.onchange = (e) => {
-                              handleAddWorkImage(e);
-                              document.body.removeChild(input);
-                            };
-                            document.body.appendChild(input);
-                            input.click();
-                          }}
-                        >
-                          <span className="upload-text">Add Work Image</span>
-                          <img src="" alt="Add Work" className="work-image-preview" />
                         </div>
                       </div>
-                    </div>
 
-                    <hr className="divider" />
-                    <h3 className="editor-subtitle">My Services Section</h3>
-                    <div className="input-block">
-                      <label>Services</label>
-                      {state.services.map((s, i) => (
-                        <div key={i} className="editor-item-card">
-                          <input
-                            type="text"
-                            placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
-                            value={getEditorValue(s.name)}
-                            onChange={(e) => updateState({ services: updated })}
-                          />
-                          <input
-                            type="text"
-                            placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
-                            value={getEditorValue(s.price)}
-                            onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                          />
-                          <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
-                        </div>
-                      ))}
-                      <button type="button" onClick={handleAddService} className="add-item-button">
-                        + Add Service
+                      <hr className="divider" />
+                      <h3 className="editor-subtitle">My Services Section</h3>
+                      <div className="input-block">
+                        <label>Services</label>
+                        {state.services.map((s, i) => (
+                          <div key={i} className="editor-item-card">
+                            <input
+                              type="text"
+                              placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
+                              value={getEditorValue(s.name)}
+                              onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                            />
+                            <input
+                              type="text"
+                              placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
+                              value={getEditorValue(s.price)}
+                              onChange={(e) => handleServiceChange(i, "price", e.target.value)}
+                            />
+                            <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
+                          </div>
+                        ))}
+                        <button type="button" onClick={handleAddService} className="add-item-button">
+                          + Add Service
+                        </button>
+                      </div>
+
+                      <hr className="divider" />
+                      <h3 className="editor-subtitle">Reviews Section</h3>
+                      <div className="input-block">
+                        <label>Reviews</label>
+                        {state.reviews.map((r, i) => (
+                          <div key={i} className="editor-item-card">
+                            <input
+                              type="text"
+                              placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
+                              value={getEditorValue(r.name)}
+                              onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                            />
+                            <textarea
+                              placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
+                              rows={2}
+                              value={getEditorValue(r.text)}
+                              onChange={(e) => updateState({ reviews: updated })}
+                            />
+                            <input
+                              type="number"
+                              placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
+                              min="1"
+                              max="5"
+                              value={getEditorValue(r.rating)}
+                              onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
+                            />
+                            <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
+                          </div>
+                        ))}
+                        <button type="button" onClick={handleAddReview} className="add-item-button">
+                          + Add Review
+                        </button>
+                      </div>
+
+                      <hr className="divider" />
+                      <h3 className="editor-subtitle">Exchange Contact Details</h3>
+
+                      <div className="input-block">
+                        <label htmlFor="contactEmail">Email Address</label>
+                        <input
+                          id="contactEmail"
+                          type="email"
+                          value={getEditorValue(state.contact_email)}
+                          onChange={(e) => updateState({ contact_email: e.target.value })}
+                          placeholder={previewPlaceholders.contact_email}
+                        />
+                      </div>
+
+                      <div className="input-block">
+                        <label htmlFor="phoneNumber">Phone Number</label>
+                        <input
+                          id="phoneNumber"
+                          type="tel"
+                          value={getEditorValue(state.phone_number)}
+                          onChange={(e) => updateState({ phone_number: e.target.value })}
+                          placeholder={previewPlaceholders.phone_number}
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="black-button desktop-button"
+                        style={{ flex: 1 }}
+                      >
+                        Publish Now
                       </button>
                     </div>
-
-                    <hr className="divider" />
-                    <h3 className="editor-subtitle">Reviews Section</h3>
-                    <div className="input-block">
-                      <label>Reviews</label>
-                      {state.reviews.map((r, i) => (
-                        <div key={i} className="editor-item-card">
-                          <input
-                            type="text"
-                            placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
-                            value={getEditorValue(r.name)}
-                            onChange={(e) => handleReviewChange(i, "name", e.target.value)}
-                          />
-                          <textarea
-                            placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
-                            rows={2}
-                            value={getEditorValue(r.text)}
-                            onChange={(e) => updateState({ reviews: updated })}
-                          />
-                          <input
-                            type="number"
-                            placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
-                            min="1"
-                            max="5"
-                            value={getEditorValue(r.rating)}
-                            onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
-                          />
-                          <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
-                        </div>
-                      ))}
-                      <button type="button" onClick={handleAddReview} className="add-item-button">
-                        + Add Review
-                      </button>
-                    </div>
-
-                    <hr className="divider" />
-                    <h3 className="editor-subtitle">Exchange Contact Details</h3>
-
-                    <div className="input-block">
-                      <label htmlFor="contactEmail">Email Address</label>
-                      <input
-                        id="contactEmail"
-                        type="email"
-                        value={getEditorValue(state.contact_email)}
-                        onChange={(e) => updateState({ contact_email: e.target.value })}
-                        placeholder={previewPlaceholders.contact_email}
-                      />
-                    </div>
-
-                    <div className="input-block">
-                      <label htmlFor="phoneNumber">Phone Number</label>
-                      <input
-                        id="phoneNumber"
-                        type="tel"
-                        value={getEditorValue(state.phone_number)}
-                        onChange={(e) => updateState({ phone_number: e.target.value })}
-                        placeholder={previewPlaceholders.phone_number}
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="black-button desktop-button"
-                      style={{ flex: 1 }}
-                    >
-                      Publish Now
-                    </button>
                   </form>
                 </div>
               </div>
