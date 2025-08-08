@@ -61,8 +61,14 @@ export default function Login() {
                 toast.error(res.data.error);
             } else {
                 toast.success('Email verified! Logging you in...');
-                login(res.data.token, res.data.user);
-                navigate(from);
+                const loginRes = await api.post('/login', data);
+
+                if (loginRes.data.error) {
+                    toast.error(loginRes.data.error);
+                } else {
+                    login(loginRes.data.token, loginRes.data.user);
+                    navigate(from);
+                }
             }
         } catch (err) {
             toast.error(err.message || 'Verification failed');
