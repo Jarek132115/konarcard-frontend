@@ -34,7 +34,6 @@ export default function MyProfile() {
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
   const { data: businessCard, isLoading: isCardLoading, refetch: refetchBusinessCard } = useFetchBusinessCard(userId);
-  // Removed showVerificationPrompt state and useEffect
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -62,7 +61,7 @@ export default function MyProfile() {
       refetchAuthUser();
       refetchBusinessCard();
     }
-  }, [authLoading, authUser]); // Added authLoading to dependencies.
+  }, [authLoading, authUser]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -74,34 +73,10 @@ export default function MyProfile() {
       }
       window.history.replaceState({}, document.title, location.pathname);
       toast.success("Subscription updated successfully!");
+      // ADD THIS LINE
+      queryClient.invalidateQueries({ queryKey: ["public-business-card", userUsername] });
     }
-  }, [location.search, isSubscribed, refetchAuthUser]); // Removed authLoading and authUser to make this effect more specific.
-
-  // Refactored the trial countdown logic to its own useEffect
-  useEffect(() => {
-    let timer;
-    if (isTrialActive) {
-      timer = setInterval(() => {
-        const trialExpirationDate = new Date(authUser.trialExpires);
-        const now = new Date();
-        const timeRemaining = trialExpirationDate.getTime() - now.getTime();
-
-        if (timeRemaining > 0) {
-          const minutes = Math.floor(timeRemaining / (1000 * 60));
-          const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-          setCountdown(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
-        } else {
-          clearInterval(timer);
-          setCountdown("00:00");
-          refetchAuthUser(); // Refetch here to update the trial status
-        }
-      }, 1000);
-    } else {
-      setCountdown(null);
-    }
-
-    return () => clearInterval(timer);
-  }, [isTrialActive, authUser]); // Made dependencies more specific to this task.
+  }, [location.search, isSubscribed, refetchAuthUser, userUsername, queryClient]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -134,7 +109,6 @@ export default function MyProfile() {
     return () => clearTimeout(timer);
   }, [resendCooldown]);
 
-  // Removed the useEffect for showVerificationPrompt and instead derive it directly.
   const showVerificationPrompt = !authLoading && authUser && !isUserVerified && userEmail;
 
   useEffect(() => {
@@ -334,10 +308,6 @@ export default function MyProfile() {
         toast.error(res.data.error);
       } else {
         toast.success('Email verified successfully!');
-        // We no longer need to setShowVerificationPrompt to false,
-        // because the refetchAuthUser will update the user's data
-        // and cause the showVerificationPrompt variable to become false
-        // on the next render.
         setVerificationCodeCode('');
         refetchAuthUser();
       }
