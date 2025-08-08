@@ -62,7 +62,7 @@ export default function MyProfile() {
       refetchAuthUser();
       refetchBusinessCard();
     }
-  }, [authLoading, authUser, refetchAuthUser, refetchBusinessCard]);
+  }, []);
 
 
   useEffect(() => {
