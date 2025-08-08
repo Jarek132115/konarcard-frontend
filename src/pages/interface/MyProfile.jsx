@@ -51,18 +51,14 @@ export default function MyProfile() {
   const location = useLocation();
 
   const [hasLoadedInitialCardData, setHasLoadedInitialCardData] = useState(false);
-
-  // Track trial period
   const [daysRemaining, setDaysRemaining] = useState(null);
 
   useEffect(() => {
     let handledRedirect = false;
-
     const checkSubscriptionStatus = async () => {
       if (authLoading || !authUser) {
         return;
       }
-
       const queryParams = new URLSearchParams(location.search);
       const paymentSuccess = queryParams.get('payment_success');
 
@@ -78,8 +74,8 @@ export default function MyProfile() {
 
     checkSubscriptionStatus();
 
-    if (authUser && authUser.trialExpiresAt) {
-      const trialExpirationDate = new Date(authUser.trialExpiresAt);
+    if (authUser?.trialExpires) {
+      const trialExpirationDate = new Date(authUser.trialExpires);
       const now = new Date();
       const timeRemaining = trialExpirationDate.getTime() - now.getTime();
       if (timeRemaining > 0) {
@@ -357,6 +353,10 @@ export default function MyProfile() {
     }
     if (!isUserVerified) {
       toast.error("Please verify your email address to save changes.");
+      return;
+    }
+    if (!isSubscribed) {
+      toast.error("Please subscribe to edit your profile.");
       return;
     }
 
@@ -726,7 +726,8 @@ export default function MyProfile() {
                         </>
                       ) : null}
 
-                      {!isSubscribed || (isSubscribed && (state.reviews.length > 0 || (businessCard?.reviews && businessCard.reviews.length > 0) || previewPlaceholders.reviews.length > 0)) ? (
+                      {!isSubscribed || (isSubscribed && (
+                        state.reviews.length > 0 || (businessCard?.reviews && businessCard.reviews.length > 0) || previewPlaceholders.reviews.length > 0)) ? (
                         <>
                           <p className="mock-section-title">Reviews</p>
                           <div className="mock-reviews-list">
@@ -1051,7 +1052,7 @@ export default function MyProfile() {
                             type="text"
                             placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
                             value={getEditorValue(s.name)}
-                            onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                            onChange={(e) => updateState({ services: updated })}
                           />
                           <input
                             type="text"
@@ -1129,7 +1130,7 @@ export default function MyProfile() {
                     <button
                       type="submit"
                       className="black-button desktop-button"
-                      style={{flex: 1}}
+                      style={{ flex: 1 }}
                     >
                       Publish Now
                     </button>
