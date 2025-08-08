@@ -22,8 +22,11 @@ const UserPage = () => {
     if (isError) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><p className="error-message">Error: {error?.message || "Could not load user profile."}</p></div>;
     if (!businessCard) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><p>No business card found for username "{username}".</p></div>;
 
-    // NEW: Check for subscription status here
-    if (!businessCard.isSubscribed) {
+    // Corrected logic: Check if a subscription is active OR if a trial is active
+    const isTrialActive = businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
+    const isProfileActive = businessCard.isSubscribed || isTrialActive;
+
+    if (!isProfileActive) {
         return (
             <div className="user-landing-page" style={{ textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#f0f0f0", color: "#333", padding: "20px", fontFamily: "Arial, sans-serif" }}>
                 <div style={{ maxWidth: "600px", margin: "auto", padding: "40px", border: "1px solid #ddd", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0,0,0,0.1)" }}>
