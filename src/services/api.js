@@ -26,7 +26,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
       localStorage.removeItem('token');
-      toast.error("Session expired or unauthorized. Please log in again.");
+      toast.error("You have been logged out!");
     }
     return Promise.reject(error);
   }
