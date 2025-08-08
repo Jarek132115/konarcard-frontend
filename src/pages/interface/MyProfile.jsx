@@ -57,7 +57,12 @@ export default function MyProfile() {
   const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
   const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
 
-  // REMOVED THE CAUSING USEEFFECT. The application now relies on auth context updates.
+  useEffect(() => {
+    if (!authLoading && authUser) {
+      refetchAuthUser();
+      refetchBusinessCard();
+    }
+  }, []);
 
   useEffect(() => {
     let handledRedirect = false;
@@ -394,22 +399,14 @@ export default function MyProfile() {
   const handleSubmit = async (e, fromTrialStart = false) => {
     e.preventDefault();
 
-    if (!isUserVerified) {
-      toast.error("Please verify your email address to save changes.");
+    // New check for subscribed users with no changes
+    if (!isSubscribed && !isTrialActive && !fromTrialStart) {
+      toast.error("Please start your free trial to publish your changes.");
       return;
     }
 
-    if (!isSubscribed && hasTrialEnded && !fromTrialStart) {
-      toast.error("Your free trial has expired. Please subscribe to save changes.");
-      return;
-    }
-
-    if (!hasProfileChanges()) {
-      if (isSubscribed || isTrialActive) {
-        toast.error("You haven't made any changes.");
-      } else {
-        toast.error("Please start your trial to publish your changes.");
-      }
+    if (!hasProfileChanges() && !fromTrialStart) {
+      toast.error("You haven't made any changes.");
       return;
     }
 
