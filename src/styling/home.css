@@ -374,7 +374,7 @@
         height: fit-content;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 0px;
     }
 
     @media (max-width: 1200px) {
