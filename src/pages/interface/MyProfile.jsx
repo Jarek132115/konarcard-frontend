@@ -6,8 +6,6 @@ import useBusinessCardStore, { previewPlaceholders } from "../../store/businessC
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useFetchBusinessCard,
-} from "../../hooks/useFetchBusinessCard";
-import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
 } from "../../hooks/useCreateBiz";
@@ -33,7 +31,7 @@ export default function MyProfile() {
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
-  const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
+  const { data: businessCard, isLoading: isCardLoading, refetch: refetchBusinessCard } = useFetchBusinessCard(userId);
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -56,6 +54,15 @@ export default function MyProfile() {
 
   const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
   const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
+
+  // NEW: Force a refetch on every page load to ensure data is fresh
+  useEffect(() => {
+    if (!authLoading && authUser) {
+      refetchAuthUser();
+      refetchBusinessCard();
+    }
+  }, [authLoading, authUser, refetchAuthUser, refetchBusinessCard]);
+
 
   useEffect(() => {
     let handledRedirect = false;
@@ -410,6 +417,16 @@ export default function MyProfile() {
       return;
     }
 
+    if (!isSubscribed && !isTrialActive && !fromTrialStart) {
+      toast.error("Please start your trial to publish your changes.");
+      return;
+    }
+
+    if (!hasProfileChanges()) {
+      toast.error("You haven't made any changes.");
+      return;
+    }
+
     const worksToUpload = state.workImages
       .map(item => {
         if (item.file) {
@@ -443,12 +460,6 @@ export default function MyProfile() {
       phone_number: state.phone_number,
     });
 
-    // Final check before sending to the backend
-    if (!hasProfileChanges()) {
-      toast.error("You haven't made any changes.");
-      return;
-    }
-
     try {
       await createBusinessCard.mutateAsync(formData);
       toast.success("Your page is Published!");
@@ -468,18 +479,6 @@ export default function MyProfile() {
       toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
     }
   };
-
-  // NEW: Logic for handling the Publish click and toasts
-  const handlePublishClick = async (e) => {
-    if (!isSubscribed && !isTrialActive) {
-      e.preventDefault();
-      toast.error("Please start your free trial to publish your changes.");
-      return;
-    }
-
-    // If not early return, proceed with form submission
-    await handleSubmit(e);
-  }
 
   const handleActivateCard = () => {
     toast.info("Activate Card functionality to be defined!");
@@ -817,7 +816,7 @@ export default function MyProfile() {
                     </div>
                   )}
 
-                  <form onSubmit={handlePublishClick} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
+                  <form onSubmit={e => e.preventDefault()} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
                     <h2 className="editor-title">Create Your Digital Business Card</h2>
 
                     <div className="input-block">
@@ -1135,7 +1134,7 @@ export default function MyProfile() {
                         Reset Page
                       </button>
                       <button
-                        type="submit"
+                        type="button" // Use type="button" to prevent form submission
                         className="black-button desktop-button"
                         onClick={handlePublishClick}
                       >
