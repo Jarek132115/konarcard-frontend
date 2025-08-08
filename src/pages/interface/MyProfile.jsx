@@ -6,8 +6,6 @@ import useBusinessCardStore, { previewPlaceholders } from "../../store/businessC
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useFetchBusinessCard,
-} from "../../hooks/useFetchBusinessCard";
-import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
 } from "../../hooks/useCreateBiz";
@@ -385,7 +383,6 @@ export default function MyProfile() {
       return;
     }
 
-    // The save is handled by the `handleStartTrialAndSave` function
     if (!isSubscribed && !isTrialActive && !fromTrialStart) {
       toast.error("Please start your trial to publish your changes.");
       return;
