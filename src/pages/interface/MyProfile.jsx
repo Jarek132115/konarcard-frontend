@@ -396,16 +396,35 @@ export default function MyProfile() {
     return isStateDifferent;
   };
 
-  const handleSubmit = async (e, fromTrialStart = false) => {
+  // Final handleSubmit, renamed to handlePublish
+  const handlePublish = async (e, fromTrialStart = false) => {
     e.preventDefault();
 
-    // New check for subscribed users with no changes
+    if (authLoading) {
+      toast.info("User data is still loading. Please wait a moment.");
+      return;
+    }
+    if (!userId) {
+      toast.error("User not logged in or loaded. Please log in again to save changes.");
+      return;
+    }
+    if (!isUserVerified) {
+      toast.error("Please verify your email address to save changes.");
+      return;
+    }
+
+    if (!isSubscribed && hasTrialEnded && !fromTrialStart) {
+      toast.error("Your free trial has expired. Please subscribe to save changes.");
+      return;
+    }
+
+    // This check is now the start of the publishing flow
     if (!isSubscribed && !isTrialActive && !fromTrialStart) {
       toast.error("Please start your free trial to publish your changes.");
       return;
     }
 
-    if (!hasProfileChanges() && !fromTrialStart) {
+    if (!hasProfileChanges()) {
       toast.error("You haven't made any changes.");
       return;
     }
