@@ -52,7 +52,8 @@ export default function MyProfile() {
   const location = useLocation();
 
   const [hasLoadedInitialCardData, setHasLoadedInitialCardData] = useState(false);
-  const [daysRemaining, setDaysRemaining] = useState(null);
+  // NEW: state for the trial countdown
+  const [countdown, setCountdown] = useState(null);
 
   const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
   const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
@@ -78,18 +79,31 @@ export default function MyProfile() {
 
     checkSubscriptionStatus();
 
-    if (authUser?.trialExpires) {
-      const trialExpirationDate = new Date(authUser.trialExpires);
-      const now = new Date();
-      const timeRemaining = trialExpirationDate.getTime() - now.getTime();
-      if (timeRemaining > 0) {
-        const calculatedDays = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
-        setDaysRemaining(calculatedDays);
-      } else {
-        setDaysRemaining(0);
-      }
+    // NEW: Countdown logic
+    let timer;
+    if (isTrialActive) {
+      timer = setInterval(() => {
+        const trialExpirationDate = new Date(authUser.trialExpires);
+        const now = new Date();
+        const timeRemaining = trialExpirationDate.getTime() - now.getTime();
+
+        if (timeRemaining > 0) {
+          const minutes = Math.floor(timeRemaining / (1000 * 60));
+          const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+          setCountdown(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+        } else {
+          clearInterval(timer);
+          setCountdown("00:00");
+          // Force a re-render to update the UI after the trial ends
+          refetchAuthUser();
+        }
+      }, 1000);
+    } else {
+      setCountdown(null);
     }
-  }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser]);
+
+    return () => clearInterval(timer);
+  }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser, isTrialActive]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -136,7 +150,6 @@ export default function MyProfile() {
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
-      // A user can now access their editor if they are subscribed OR if their trial is active
       if ((isSubscribed || isTrialActive) && businessCard) {
         updateState({
           businessName: businessCard.business_card_name || '',
@@ -156,7 +169,6 @@ export default function MyProfile() {
           phone_number: businessCard.phone_number || '',
         });
       } else {
-        // If not subscribed and no trial, reset to placeholders
         resetState();
       }
 
@@ -345,7 +357,6 @@ export default function MyProfile() {
     }
   };
 
-  // New function to start the trial and save the profile
   const handleStartTrialAndSave = async (e) => {
     if (!userId) {
       toast.error("User not loaded. Please log in again.");
@@ -353,13 +364,10 @@ export default function MyProfile() {
     }
 
     try {
-      // First, start the trial
       const trialResponse = await api.post('/start-trial');
       if (trialResponse.data.success) {
         toast.success(trialResponse.data.message);
-        // Immediately refetch user to update state with trialExpires date
         await refetchAuthUser();
-        // Then, save the profile
         await handleSubmit(e, true);
       }
     } catch (error) {
@@ -382,9 +390,10 @@ export default function MyProfile() {
       toast.error("Please verify your email address to save changes.");
       return;
     }
-    // This is the new logic to check if a user is subscribed, or if they have a trial active.
-    if (!isSubscribed && !isTrialActive && !fromTrialStart) {
-      toast.error("Please start your free trial to edit your profile.");
+
+    // UPDATED LOGIC: Block saving if trial has ended and user is not subscribed
+    if (!isSubscribed && hasTrialEnded && !fromTrialStart) {
+      toast.error("Your free trial has expired. Please subscribe to save changes.");
       return;
     }
 
@@ -518,6 +527,8 @@ export default function MyProfile() {
     return !imageState;
   };
 
+  const shouldBlurEditor = !isSubscribed && hasTrialEnded;
+
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
@@ -590,7 +601,6 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {/* NEW: Trial Status Banners */}
               {!isSubscribed && !isTrialActive && (
                 <div className="trial-not-started-banner">
                   <p>Publish your own live website in minutes for 14 days free.</p>
@@ -600,13 +610,14 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {isTrialActive && (
+              {/* UPDATED: Trial countdown banner shows minutes and seconds */}
+              {isTrialActive && countdown !== null && (
                 <div className="trial-countdown-banner">
-                  <p>Your free trial ends in {daysRemaining} days. <Link to="/subscription">Subscribe now!</Link></p>
+                  <p>Your free trial ends in {countdown}. <Link to="/subscription">Subscribe now!</Link></p>
                 </div>
               )}
 
-              {hasTrialEnded && (
+              {hasTrialEnded && !isSubscribed && (
                 <div className="trial-ended-banner">
                   <p>Your free trial has ended. <Link to="/subscription">Subscribe now</Link> to prevent your profile from being deleted.</p>
                 </div>
@@ -843,9 +854,20 @@ export default function MyProfile() {
                 </div>
 
                 <div className="myprofile-editor-wrapper">
-                  {/* OLD Paywall logic has been removed. Editor is now always available. */}
+                  {/* NEW: Conditional blur overlay after trial ends */}
+                  {shouldBlurEditor && (
+                    <div className="subscription-overlay">
+                      <div className="subscription-message">
+                        <p className="desktop-h4">Subscription Required</p>
+                        <p className="desktop-h6">Your free trial has ended. Please subscribe to continue editing your profile.</p>
+                        <button className="blue-button" onClick={handleStartSubscription}>
+                          Go to Subscription
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
-                  <form onSubmit={handleSubmit} className="myprofile-editor">
+                  <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
                     <h2 className="editor-title">Create Your Digital Business Card</h2>
 
                     <div className="input-block">
