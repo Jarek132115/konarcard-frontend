@@ -932,6 +932,10 @@
     cursor: not-allowed;
 }
 
+.trial-not-started-banner {
+    width: 100%;
+}
+
 
 /* --- MOBILE SPECIFIC STYLES (Max-width 1000px) --- */
 @media (max-width: 1000px) {
