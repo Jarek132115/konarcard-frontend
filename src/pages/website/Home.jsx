@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-
+import NewBackground from '../../assets/images/New-Background.jpg';
 import BackgroundHero from '../../assets/images/background-hero.png';
 import Section1Image from '../../assets/images/Section-1-Image.png';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
@@ -94,7 +94,7 @@ export default function Home() {
       <Navbar />
 
       <div className="home-hero">
-        <img src={BackgroundHero} alt="Hero Background" className="hero-image" />
+        <img src={NewBackground} alt="Hero Background" className="hero-image" />
         <div className="hero-container">
           <div className="hero-left">
             <h1 className="desktop-h1 hero-heading">Stand Out. Get Noticed. Grow Your Business.</h1>
