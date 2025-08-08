@@ -8,7 +8,6 @@ import api from '../../services/api';
 export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from || '/myprofile';
     const { login } = useContext(AuthContext);
 
     const [data, setData] = useState({ email: '', password: '' });
@@ -45,7 +44,8 @@ export default function Login() {
             } else {
                 toast.success('Login successful!');
                 login(res.data.token, res.data.user);
-                navigate(from);
+                // Explicitly navigate to /myprofile after successful login
+                navigate('/myprofile');
             }
         } catch (err) {
             toast.error(err.message || 'Login failed');
@@ -67,7 +67,8 @@ export default function Login() {
                     toast.error(loginRes.data.error);
                 } else {
                     login(loginRes.data.token, loginRes.data.user);
-                    navigate(from);
+                    // Explicitly navigate to /myprofile after successful verification
+                    navigate('/myprofile');
                 }
             }
         } catch (err) {
