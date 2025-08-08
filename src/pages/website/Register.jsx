@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { useAuth } from '../context/authContext';
 import backgroundImg from '../../assets/images/background.png';
 
 export default function Register() {
     const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from || '/';
+    const { setAuth } = useAuth();
 
     const [data, setData] = useState({
         name: '',
@@ -107,16 +107,11 @@ export default function Register() {
                 toast.error(res.data.error);
             } else {
                 toast.success('Email verified! Logging you in...');
-                const loginRes = await axios.post('/login', {
-                    email: data.email,
-                    password: data.password,
+                setAuth({
+                    user: res.data.user,
+                    token: res.data.token
                 });
-
-                if (loginRes.data.error) {
-                    toast.error(loginRes.data.error);
-                } else {
-                    navigate(from);
-                }
+                navigate('/myprofile');
             }
         } catch (err) {
             toast.error('Verification failed');
@@ -271,7 +266,7 @@ export default function Register() {
 
                         {!verificationStep && (
                             <p className="login-alt-text">
-                                Already have an account? <Link to="/login" state={{ from }}>Login</Link>
+                                Already have an account? <Link to="/login">Login</Link>
                             </p>
                         )}
                     </div>
