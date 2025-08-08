@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api';
@@ -10,6 +10,7 @@ const UserPage = () => {
         queryKey: ["public-business-card", username],
         queryFn: async () => {
             const response = await api.get(`/api/business-card/by_username/${username}`);
+            // Assuming your backend sends the full business card object
             return response.data;
         },
         enabled: !!username,
@@ -18,21 +19,48 @@ const UserPage = () => {
         retry: 1,
     });
 
-    if (isLoading) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><p>Loading business card...</p></div>;
-    if (isError) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><p className="error-message">Error: {error?.message || "Could not load user profile."}</p></div>;
-    if (!businessCard) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><p>No business card found for username "{username}".</p></div>;
+    if (isLoading) {
+        return (
+            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+                <p>Loading business card...</p>
+            </div>
+        );
+    }
 
-    // Corrected logic: Check if a subscription is active OR if a trial is active
-    const isTrialActive = businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
-    const isProfileActive = businessCard.isSubscribed || isTrialActive;
+    if (isError) {
+        console.error("Error fetching business card:", error);
+        return (
+            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+                <p className="error-message">Error: {error?.message || "Could not load user profile."}</p>
+            </div>
+        );
+    }
+
+    if (!businessCard) {
+        return (
+            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+                <p>No business card found for username "{username}".</p>
+            </div>
+        );
+    }
+
+    // Check if the profile is active
+    const hasActiveSubscription = businessCard.user.isSubscribed;
+    const isTrialPeriodActive = businessCard.user.trialExpires && new Date(businessCard.user.trialExpires) > new Date();
+
+    const isProfileActive = hasActiveSubscription || isTrialPeriodActive;
 
     if (!isProfileActive) {
+        console.log("Profile is not active. isSubscribed:", hasActiveSubscription, "isTrialActive:", isTrialPeriodActive);
         return (
             <div className="user-landing-page" style={{ textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#f0f0f0", color: "#333", padding: "20px", fontFamily: "Arial, sans-serif" }}>
                 <div style={{ maxWidth: "600px", margin: "auto", padding: "40px", border: "1px solid #ddd", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0,0,0,0.1)" }}>
                     <h2 style={{ fontSize: "2rem", marginBottom: "20px" }}>Profile Unavailable</h2>
                     <p style={{ fontSize: "1.2rem", lineHeight: "1.6" }}>
-                        Please contact **@{username}** to find out more. The owner's public profile is not currently active.
+                        This public profile is not currently active. The free trial may have expired or a subscription is needed.
+                    </p>
+                    <p style={{ fontSize: "1.1rem", marginTop: "20px" }}>
+                        Please contact **@{username}** directly for more information.
                     </p>
                 </div>
             </div>
