@@ -47,6 +47,7 @@ export default function MyProfile() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
+  const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
 
   const location = useLocation();
 
@@ -135,6 +136,7 @@ export default function MyProfile() {
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
+      // A user can now access their editor if they are subscribed OR if their trial is active
       if ((isSubscribed || isTrialActive) && businessCard) {
         updateState({
           businessName: businessCard.business_card_name || '',
@@ -154,6 +156,7 @@ export default function MyProfile() {
           phone_number: businessCard.phone_number || '',
         });
       } else {
+        // If not subscribed and no trial, reset to placeholders
         resetState();
       }
 
@@ -342,7 +345,29 @@ export default function MyProfile() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  // New function to start the trial and save the profile
+  const handleStartTrialAndSave = async (e) => {
+    if (!userId) {
+      toast.error("User not loaded. Please log in again.");
+      return;
+    }
+
+    try {
+      // First, start the trial
+      const trialResponse = await api.post('/start-trial');
+      if (trialResponse.data.success) {
+        toast.success(trialResponse.data.message);
+        // Immediately refetch user to update state with trialExpires date
+        await refetchAuthUser();
+        // Then, save the profile
+        await handleSubmit(e, true);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Failed to start trial.");
+    }
+  };
+
+  const handleSubmit = async (e, fromTrialStart = false) => {
     e.preventDefault();
 
     if (authLoading) {
@@ -357,7 +382,8 @@ export default function MyProfile() {
       toast.error("Please verify your email address to save changes.");
       return;
     }
-    if (!isSubscribed && !isTrialActive) {
+    // This is the new logic to check if a user is subscribed, or if they have a trial active.
+    if (!isSubscribed && !isTrialActive && !fromTrialStart) {
       toast.error("Please start your free trial to edit your profile.");
       return;
     }
@@ -564,13 +590,23 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {!isSubscribed && daysRemaining > 0 && (
+              {/* NEW: Trial Status Banners */}
+              {!isSubscribed && !isTrialActive && (
+                <div className="trial-not-started-banner">
+                  <p>Publish your own live website in minutes for 14 days free.</p>
+                  <button className="blue-button" onClick={handleStartTrialAndSave}>
+                    Get Started
+                  </button>
+                </div>
+              )}
+
+              {isTrialActive && (
                 <div className="trial-countdown-banner">
                   <p>Your free trial ends in {daysRemaining} days. <Link to="/subscription">Subscribe now!</Link></p>
                 </div>
               )}
 
-              {!isSubscribed && daysRemaining === 0 && (
+              {hasTrialEnded && (
                 <div className="trial-ended-banner">
                   <p>Your free trial has ended. <Link to="/subscription">Subscribe now</Link> to prevent your profile from being deleted.</p>
                 </div>
@@ -807,19 +843,9 @@ export default function MyProfile() {
                 </div>
 
                 <div className="myprofile-editor-wrapper">
-                  {!isSubscribed && !isMobile && (
-                    <div className="subscription-overlay">
-                      <div className="subscription-message">
-                        <p className="desktop-h4">Unlock Your Full Profile!</p>
-                        <p className="desktop-h6">Subscribe for a 7-day free trial and unlock all features.</p>
-                        <button className="blue-button" onClick={handleStartSubscription}>
-                          Start Your 14 Day Free Trial Now!
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  {/* OLD Paywall logic has been removed. Editor is now always available. */}
 
-                  <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: isSubscribed ? 'none' : 'blur(5px)', pointerEvents: isSubscribed ? 'auto' : 'none' }}>
+                  <form onSubmit={handleSubmit} className="myprofile-editor">
                     <h2 className="editor-title">Create Your Digital Business Card</h2>
 
                     <div className="input-block">
@@ -998,143 +1024,143 @@ export default function MyProfile() {
                           placeholder={previewPlaceholders.bio}
                         />
                       </div>
+                    </div>
 
-                      <hr className="divider" />
-                      <h3 className="editor-subtitle">My Work Section</h3>
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">My Work Section</h3>
 
-                      <div className="input-block">
-                        <label>Work Images</label>
-                        <div className="work-preview-row">
-                          {state.workImages.map((img, i) => (
-                            <div key={i} className="work-image-item-wrapper">
-                              <img
-                                src={getEditorImageSrc(img.preview)}
-                                alt={`work-${i}`}
-                                className="work-image-preview"
-                              />
-                              <button
-                                type="button"
-                                className="remove-image-button"
-                                onClick={() => handleRemoveWorkImage(i)}
-                              >
-                                &times;
-                              </button>
-                            </div>
-                          ))}
-                          <div
-                            className="image-upload-area add-work-image-placeholder"
-                            onClick={() => {
-                              const input = document.createElement('input');
-                              input.type = 'file';
-                              input.accept = 'image/*';
-                              input.multiple = true;
-                              input.onchange = (e) => {
-                                handleAddWorkImage(e);
-                                document.body.removeChild(input);
-                              };
-                              document.body.appendChild(input);
-                              input.click();
-                            }}
-                          >
-                            <span className="upload-text">Add Work Image</span>
-                            <img src="" alt="Add Work" className="work-image-preview" />
+                    <div className="input-block">
+                      <label>Work Images</label>
+                      <div className="work-preview-row">
+                        {state.workImages.map((img, i) => (
+                          <div key={i} className="work-image-item-wrapper">
+                            <img
+                              src={getEditorImageSrc(img.preview)}
+                              alt={`work-${i}`}
+                              className="work-image-preview"
+                            />
+                            <button
+                              type="button"
+                              className="remove-image-button"
+                              onClick={() => handleRemoveWorkImage(i)}
+                            >
+                              &times;
+                            </button>
                           </div>
+                        ))}
+                        <div
+                          className="image-upload-area add-work-image-placeholder"
+                          onClick={() => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.multiple = true;
+                            input.onchange = (e) => {
+                              handleAddWorkImage(e);
+                              document.body.removeChild(input);
+                            };
+                            document.body.appendChild(input);
+                            input.click();
+                          }}
+                        >
+                          <span className="upload-text">Add Work Image</span>
+                          <img src="" alt="Add Work" className="work-image-preview" />
                         </div>
                       </div>
+                    </div>
 
-                      <hr className="divider" />
-                      <h3 className="editor-subtitle">My Services Section</h3>
-                      <div className="input-block">
-                        <label>Services</label>
-                        {state.services.map((s, i) => (
-                          <div key={i} className="editor-item-card">
-                            <input
-                              type="text"
-                              placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
-                              value={getEditorValue(s.name)}
-                              onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                            />
-                            <input
-                              type="text"
-                              placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
-                              value={getEditorValue(s.price)}
-                              onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                            />
-                            <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
-                          </div>
-                        ))}
-                        <button type="button" onClick={handleAddService} className="add-item-button">
-                          + Add Service
-                        </button>
-                      </div>
-
-                      <hr className="divider" />
-                      <h3 className="editor-subtitle">Reviews Section</h3>
-                      <div className="input-block">
-                        <label>Reviews</label>
-                        {state.reviews.map((r, i) => (
-                          <div key={i} className="editor-item-card">
-                            <input
-                              type="text"
-                              placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
-                              value={getEditorValue(r.name)}
-                              onChange={(e) => handleReviewChange(i, "name", e.target.value)}
-                            />
-                            <textarea
-                              placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
-                              rows={2}
-                              value={getEditorValue(r.text)}
-                              onChange={(e) => updateState({ reviews: updated })}
-                            />
-                            <input
-                              type="number"
-                              placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
-                              min="1"
-                              max="5"
-                              value={getEditorValue(r.rating)}
-                              onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
-                            />
-                            <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
-                          </div>
-                        ))}
-                        <button type="button" onClick={handleAddReview} className="add-item-button">
-                          + Add Review
-                        </button>
-                      </div>
-
-                      <hr className="divider" />
-                      <h3 className="editor-subtitle">Exchange Contact Details</h3>
-
-                      <div className="input-block">
-                        <label htmlFor="contactEmail">Email Address</label>
-                        <input
-                          id="contactEmail"
-                          type="email"
-                          value={getEditorValue(state.contact_email)}
-                          onChange={(e) => updateState({ contact_email: e.target.value })}
-                          placeholder={previewPlaceholders.contact_email}
-                        />
-                      </div>
-
-                      <div className="input-block">
-                        <label htmlFor="phoneNumber">Phone Number</label>
-                        <input
-                          id="phoneNumber"
-                          type="tel"
-                          value={getEditorValue(state.phone_number)}
-                          onChange={(e) => updateState({ phone_number: e.target.value })}
-                          placeholder={previewPlaceholders.phone_number}
-                        />
-                      </div>
-
-                      <button
-                        type="submit"
-                        className="black-button desktop-button"
-                        style={{ flex: 1 }}
-                      >
-                        Publish Now
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">My Services Section</h3>
+                    <div className="input-block">
+                      <label>Services</label>
+                      {state.services.map((s, i) => (
+                        <div key={i} className="editor-item-card">
+                          <input
+                            type="text"
+                            placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
+                            value={getEditorValue(s.name)}
+                            onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                          />
+                          <input
+                            type="text"
+                            placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
+                            value={getEditorValue(s.price)}
+                            onChange={(e) => handleServiceChange(i, "price", e.target.value)}
+                          />
+                          <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
+                        </div>
+                      ))}
+                      <button type="button" onClick={handleAddService} className="add-item-button">
+                        + Add Service
                       </button>
                     </div>
+
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">Reviews Section</h3>
+                    <div className="input-block">
+                      <label>Reviews</label>
+                      {state.reviews.map((r, i) => (
+                        <div key={i} className="editor-item-card">
+                          <input
+                            type="text"
+                            placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
+                            value={getEditorValue(r.name)}
+                            onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                          />
+                          <textarea
+                            placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
+                            rows={2}
+                            value={getEditorValue(r.text)}
+                            onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                          />
+                          <input
+                            type="number"
+                            placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
+                            min="1"
+                            max="5"
+                            value={getEditorValue(r.rating)}
+                            onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
+                          />
+                          <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
+                        </div>
+                      ))}
+                      <button type="button" onClick={handleAddReview} className="add-item-button">
+                        + Add Review
+                      </button>
+                    </div>
+
+                    <hr className="divider" />
+                    <h3 className="editor-subtitle">Exchange Contact Details</h3>
+
+                    <div className="input-block">
+                      <label htmlFor="contactEmail">Email Address</label>
+                      <input
+                        id="contactEmail"
+                        type="email"
+                        value={getEditorValue(state.contact_email)}
+                        onChange={(e) => updateState({ contact_email: e.target.value })}
+                        placeholder={previewPlaceholders.contact_email}
+                      />
+                    </div>
+
+                    <div className="input-block">
+                      <label htmlFor="phoneNumber">Phone Number</label>
+                      <input
+                        id="phoneNumber"
+                        type="tel"
+                        value={getEditorValue(state.phone_number)}
+                        onChange={(e) => updateState({ phone_number: e.target.value })}
+                        placeholder={previewPlaceholders.phone_number}
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="black-button desktop-button"
+                      style={{ flex: 1 }}
+                    >
+                      Publish Now
+                    </button>
                   </form>
                 </div>
               </div>
