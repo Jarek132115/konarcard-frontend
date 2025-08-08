@@ -51,7 +51,6 @@ export default function MyProfile() {
 
   const location = useLocation();
 
-  const [hasLoadedInitialCardData, setHasLoadedInitialCardData] = useState(false);
   // NEW: state for the trial countdown
   const [countdown, setCountdown] = useState(null);
 
@@ -94,7 +93,6 @@ export default function MyProfile() {
         } else {
           clearInterval(timer);
           setCountdown("00:00");
-          // Force a re-render to update the UI after the trial ends
           refetchAuthUser();
         }
       }, 1000);
@@ -144,41 +142,37 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
+  // NEW: Use a single useEffect to handle initial data load and subsequent updates
   useEffect(() => {
-    if (!isCardLoading && authUser && !hasLoadedInitialCardData) {
-      setHasLoadedInitialCardData(true);
-      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
-      setActiveBlobUrls([]);
-
-      if ((isSubscribed || isTrialActive) && businessCard) {
-        updateState({
-          businessName: businessCard.business_card_name || '',
-          pageTheme: businessCard.page_theme || 'light',
-          font: businessCard.style || 'Inter',
-          mainHeading: businessCard.main_heading || '',
-          subHeading: businessCard.sub_heading || '',
-          job_title: businessCard.job_title || '',
-          full_name: businessCard.full_name || '',
-          bio: businessCard.bio || '',
-          avatar: businessCard.avatar || null,
-          coverPhoto: businessCard.cover_photo || null,
-          workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
-          services: (businessCard.services || []),
-          reviews: (businessCard.reviews || []),
-          contact_email: businessCard.contact_email || '',
-          phone_number: businessCard.phone_number || '',
-        });
-      } else {
-        resetState();
-      }
-
+    if (!isCardLoading && businessCard) {
+      updateState({
+        businessName: businessCard.business_card_name || '',
+        pageTheme: businessCard.page_theme || 'light',
+        font: businessCard.style || 'Inter',
+        mainHeading: businessCard.main_heading || '',
+        subHeading: businessCard.sub_heading || '',
+        job_title: businessCard.job_title || '',
+        full_name: businessCard.full_name || '',
+        bio: businessCard.bio || '',
+        avatar: businessCard.avatar || null,
+        coverPhoto: businessCard.cover_photo || null,
+        workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
+        services: (businessCard.services || []),
+        reviews: (businessCard.reviews || []),
+        contact_email: businessCard.contact_email || '',
+        phone_number: businessCard.phone_number || '',
+      });
+      // Clear any local file state that might be left over
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
+    } else if (!isCardLoading && !businessCard) {
+      // If no card exists or user is not in a trial/subscribed, use placeholders
+      resetState();
     }
-  }, [businessCard, isCardLoading, authUser, isSubscribed, isTrialActive, updateState, resetState, activeBlobUrls, hasLoadedInitialCardData]);
+  }, [businessCard, isCardLoading, updateState, resetState]);
 
   useEffect(() => {
     return () => {
@@ -391,7 +385,6 @@ export default function MyProfile() {
       return;
     }
 
-    // UPDATED LOGIC: Block saving if trial has ended and user is not subscribed
     if (!isSubscribed && hasTrialEnded && !fromTrialStart) {
       toast.error("Your free trial has expired. Please subscribe to save changes.");
       return;
@@ -431,42 +424,22 @@ export default function MyProfile() {
     });
 
     try {
-      const response = await createBusinessCard.mutateAsync(formData);
+      await createBusinessCard.mutateAsync(formData);
       toast.success("Business card saved successfully!");
 
-      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
-      setActiveBlobUrls([]);
+      // NEW: Invalidate the cache to trigger a data refresh instead of a full page reload
+      queryClient.invalidateQueries(['businessCard', userId]);
 
+      // Clear local file state after a successful upload/save
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
 
-      if (response.data && response.data.data) {
-        const fetchedCardData = response.data.data;
-        updateState({
-          businessName: fetchedCardData.business_card_name || '',
-          pageTheme: fetchedCardData.page_theme || 'light',
-          font: fetchedCardData.style || 'Inter',
-          mainHeading: fetchedCardData.main_heading || '',
-          subHeading: fetchedCardData.sub_heading || '',
-          job_title: fetchedCardData.job_title || '',
-          full_name: fetchedCardData.full_name || '',
-          bio: fetchedCardData.bio || '',
-          avatar: fetchedCardData.avatar || null,
-          coverPhoto: fetchedCardData.cover_photo || null,
-          workImages: (fetchedCardData.works || []).map(url => ({ file: null, preview: url })),
-          services: (fetchedCardData.services || []),
-          reviews: (fetchedCardData.reviews || []),
-          contact_email: fetchedCardData.contact_email || '',
-          phone_number: fetchedCardData.phone_number || '',
-        });
-      } else {
-        resetState();
-      }
-
-      queryClient.invalidateQueries(['businessCard', userId]);
+      // Clean up old blob URLs if any were created
+      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+      setActiveBlobUrls([]);
 
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
@@ -515,12 +488,13 @@ export default function MyProfile() {
     username: userUsername || '',
   };
 
-  const getEditorValue = (fieldValue) => {
-    return fieldValue || '';
+  // Refactored to get value from live state first, then fallback to placeholders
+  const getEditorValue = (fieldValue, placeholderValue) => {
+    return fieldValue || placeholderValue || '';
   };
 
-  const getEditorImageSrc = (imageState) => {
-    return imageState || '';
+  const getEditorImageSrc = (imageState, placeholderImage) => {
+    return imageState || placeholderImage || '';
   };
 
   const showAddImageText = (imageState) => {
@@ -528,6 +502,10 @@ export default function MyProfile() {
   };
 
   const shouldBlurEditor = !isSubscribed && hasTrialEnded;
+
+  const useLivePreview = isSubscribed || isTrialActive;
+  const previewData = useLivePreview ? state : previewPlaceholders;
+  const isDarkMode = previewData.pageTheme === "dark";
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -610,7 +588,6 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {/* UPDATED: Trial countdown banner shows minutes and seconds */}
               {isTrialActive && countdown !== null && (
                 <div className="trial-countdown-banner">
                   <p>Your free trial ends in {countdown}. <Link to="/subscription">Subscribe now!</Link></p>
@@ -626,40 +603,25 @@ export default function MyProfile() {
               <div className="myprofile-flex-container">
                 <div className={`myprofile-content ${isMobile ? 'myprofile-mock-phone-mobile-container' : ''}`}>
                   <div
-                    className={`mock-phone ${(isSubscribed || isTrialActive) && (state.pageTheme === "dark" || (state.pageTheme === "" && businessCard?.page_theme === "dark")) ||
-                      (!isSubscribed && !isTrialActive && previewPlaceholders.pageTheme === "dark")
-                      ? "dark-mode" : ""
-                      }`}
+                    className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
                     style={{
-                      fontFamily: (!isSubscribed && !isTrialActive)
-                        ? previewPlaceholders.font
-                        : (state.font || businessCard?.style || previewPlaceholders.font)
+                      fontFamily: previewData.font
                     }}
                   >
                     <div className="mock-phone-scrollable-content">
                       <img
                         src={
-                          (!isSubscribed && !isTrialActive)
-                            ? previewPlaceholders.coverPhoto
-                            : (state.coverPhoto || businessCard?.cover_photo || previewPlaceholders.coverPhoto)
+                          previewData.coverPhoto || previewPlaceholders.coverPhoto
                         }
                         alt="Cover"
                         className="mock-cover"
                       />
 
                       <h2 className="mock-title">
-                        {
-                          (!isSubscribed && !isTrialActive)
-                            ? previewPlaceholders.mainHeading
-                            : (state.mainHeading || businessCard?.main_heading || previewPlaceholders.mainHeading)
-                        }
+                        {previewData.mainHeading || previewPlaceholders.mainHeading}
                       </h2>
                       <p className="mock-subtitle">
-                        {
-                          (!isSubscribed && !isTrialActive)
-                            ? previewPlaceholders.subHeading
-                            : (state.subHeading || businessCard?.sub_heading || previewPlaceholders.subHeading)
-                        }
+                        {previewData.subHeading || previewPlaceholders.subHeading}
                       </p>
                       <button
                         type="button"
@@ -668,65 +630,45 @@ export default function MyProfile() {
                         Exchange Contact
                       </button>
 
-                      {((!isSubscribed && !isTrialActive) || (isSubscribed || isTrialActive) && (
-                        state.full_name || state.job_title || state.bio || state.avatar ||
-                        businessCard?.full_name || businessCard?.job_title || businessCard?.bio || businessCard?.avatar ||
+                      {(previewData.full_name || previewData.job_title || previewData.bio || previewData.avatar ||
                         previewPlaceholders.full_name || previewPlaceholders.job_title || previewPlaceholders.bio || previewPlaceholders.avatar
-                      )) ? (
-                        <>
-                          <p className="mock-section-title">About me</p>
-                          <div className="mock-about-container">
-                            <div className="mock-about-content-group">
-                              <div className="mock-about-header-group">
-                                <img
-                                  src={
-                                    (!isSubscribed && !isTrialActive)
-                                      ? previewPlaceholders.avatar
-                                      : (state.avatar || businessCard?.avatar || previewPlaceholders.avatar)
-                                  }
-                                  alt="Avatar"
-                                  className="mock-avatar"
-                                />
-                                <div>
-                                  <p className="mock-profile-name">
-                                    {
-                                      (!isSubscribed && !isTrialActive)
-                                        ? previewPlaceholders.full_name
-                                        : (state.full_name || businessCard?.full_name || previewPlaceholders.full_name)
+                      ) && (
+                          <>
+                            <p className="mock-section-title">About me</p>
+                            <div className="mock-about-container">
+                              <div className="mock-about-content-group">
+                                <div className="mock-about-header-group">
+                                  <img
+                                    src={
+                                      previewData.avatar || previewPlaceholders.avatar
                                     }
-                                  </p>
-                                  <p className="mock-profile-role">
-                                    {
-                                      (!isSubscribed && !isTrialActive)
-                                        ? previewPlaceholders.job_title
-                                        : (state.job_title || businessCard?.job_title || previewPlaceholders.job_title)
-                                    }
-                                  </p>
+                                    alt="Avatar"
+                                    className="mock-avatar"
+                                  />
+                                  <div>
+                                    <p className="mock-profile-name">
+                                      {previewData.full_name || previewPlaceholders.full_name}
+                                    </p>
+                                    <p className="mock-profile-role">
+                                      {previewData.job_title || previewPlaceholders.job_title}
+                                    </p>
+                                  </div>
                                 </div>
+                                <p className="mock-bio-text">
+                                  {previewData.bio || previewPlaceholders.bio}
+                                </p>
                               </div>
-                              <p className="mock-bio-text">
-                                {
-                                  (!isSubscribed && !isTrialActive)
-                                    ? previewPlaceholders.bio
-                                    : (state.bio || businessCard?.bio || previewPlaceholders.bio)
-                                }
-                              </p>
                             </div>
-                          </div>
-                        </>
-                      ) : null}
+                          </>
+                        )}
 
-                      {((!isSubscribed && !isTrialActive) || (isSubscribed || isTrialActive) && (state.workImages.length > 0 || (businessCard?.works && businessCard.works.length > 0) || previewPlaceholders.workImages.length > 0)) ? (
+                      {(previewData.workImages.length > 0 || previewPlaceholders.workImages.length > 0) && (
                         <>
                           <p className="mock-section-title">My Work</p>
                           <div className="mock-work-gallery">
-                            {(
-                              (!isSubscribed && !isTrialActive)
-                                ? previewPlaceholders.workImages
-                                : (state.workImages.length > 0
-                                  ? state.workImages
-                                  : (businessCard?.works || []).map(url => ({ preview: url })).concat(previewPlaceholders.workImages.slice(0, Math.max(0, 3 - (businessCard?.works || []).length)))
-                                )
+                            {(previewData.workImages.length > 0
+                              ? previewData.workImages
+                              : previewPlaceholders.workImages
                             ).map((item, i) => (
                               <div key={i} className="mock-work-image-item-wrapper">
                                 <img
@@ -738,55 +680,36 @@ export default function MyProfile() {
                             ))}
                           </div>
                         </>
-                      ) : null}
+                      )}
 
-
-                      {((!isSubscribed && !isTrialActive) || (isSubscribed || isTrialActive) && (
-                        state.services.length > 0 || (businessCard?.services && businessCard.services.length > 0) || previewPlaceholders.services.length > 0)) ? (
+                      {(previewData.services.length > 0 || previewPlaceholders.services.length > 0) && (
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="mock-services-list">
-                            {(
-                              (!isSubscribed && !isTrialActive)
-                                ? previewPlaceholders.services
-                                : (state.services.length > 0
-                                  ? state.services
-                                  : (businessCard?.services || []).concat(previewPlaceholders.services.slice(0, Math.max(0, 3 - (businessCard?.services || []).length)))
-                                )
+                            {(previewData.services.length > 0
+                              ? previewData.services
+                              : previewPlaceholders.services
                             ).map((s, i) => (
                               <div key={i} className="mock-service-item">
                                 <p className="mock-service-name">
-                                  {
-                                    (!isSubscribed && !isTrialActive)
-                                      ? s.name
-                                      : (s.name || '')
-                                  }
+                                  {s.name}
                                 </p>
                                 <span className="mock-service-price">
-                                  {
-                                    (!isSubscribed && !isTrialActive)
-                                      ? s.price
-                                      : (s.price || '')
-                                  }
+                                  {s.price}
                                 </span>
                               </div>
                             ))}
                           </div>
                         </>
-                      ) : null}
+                      )}
 
-                      {((!isSubscribed && !isTrialActive) || (isSubscribed || isTrialActive) && (
-                        state.reviews.length > 0 || (businessCard?.reviews && businessCard.reviews.length > 0) || previewPlaceholders.reviews.length > 0)) ? (
+                      {(previewData.reviews.length > 0 || previewPlaceholders.reviews.length > 0) && (
                         <>
                           <p className="mock-section-title">Reviews</p>
                           <div className="mock-reviews-list">
-                            {(
-                              (!isSubscribed && !isTrialActive)
-                                ? previewPlaceholders.reviews
-                                : (state.reviews.length > 0
-                                  ? state.reviews
-                                  : (businessCard?.reviews || []).concat(previewPlaceholders.reviews.slice(0, Math.max(0, 5 - (businessCard?.reviews || []).length)))
-                                )
+                            {(previewData.reviews.length > 0
+                              ? previewData.reviews
+                              : previewPlaceholders.reviews
                             ).map((r, i) => (
                               <div key={i} className="mock-review-card">
                                 <div className="mock-star-rating">
@@ -798,63 +721,43 @@ export default function MyProfile() {
                                   ))}
                                 </div>
                                 <p className="mock-review-text">
-                                  {`"${(!isSubscribed && !isTrialActive)
-                                    ? r.text
-                                    : (r.text || '')
-                                    }"`}
+                                  {`"${r.text}"`}
                                 </p>
                                 <p className="mock-reviewer-name">
-                                  {
-                                    (!isSubscribed && !isTrialActive)
-                                      ? r.name
-                                      : (r.name || '')
-                                  }
+                                  {r.name}
                                 </p>
                               </div>
                             ))}
                           </div>
                         </>
-                      ) : null}
+                      )}
 
-                      {((!isSubscribed && !isTrialActive) || (isSubscribed || isTrialActive) && (
-                        state.contact_email || state.phone_number ||
-                        businessCard?.contact_email || businessCard?.phone_number ||
+                      {(previewData.contact_email || previewData.phone_number ||
                         previewPlaceholders.contact_email || previewPlaceholders.phone_number
-                      )) ? (
-                        <>
-                          <p className="mock-section-title">Contact Details</p>
-                          <div className="mock-contact-details">
-                            <div className="mock-contact-item">
-                              <p className="mock-contact-label">Email:</p>
-                              <p className="mock-contact-value">
-                                {
-                                  (!isSubscribed && !isTrialActive)
-                                    ? previewPlaceholders.contact_email
-                                    : (state.contact_email || businessCard?.contact_email || previewPlaceholders.contact_email)
-                                }
-                              </p>
+                      ) && (
+                          <>
+                            <p className="mock-section-title">Contact Details</p>
+                            <div className="mock-contact-details">
+                              <div className="mock-contact-item">
+                                <p className="mock-contact-label">Email:</p>
+                                <p className="mock-contact-value">
+                                  {previewData.contact_email || previewPlaceholders.contact_email}
+                                </p>
+                              </div>
+                              <div className="mock-contact-item">
+                                <p className="mock-contact-label">Phone:</p>
+                                <p className="mock-contact-value">
+                                  {previewData.phone_number || previewPlaceholders.phone_number}
+                                </p>
+                              </div>
                             </div>
-                            <div className="mock-contact-item">
-                              <p className="mock-contact-label">Phone:</p>
-                              <p className="mock-contact-value">
-                                {
-                                  (!isSubscribed && !isTrialActive)
-                                    ? previewPlaceholders.phone_number
-                                    : (state.phone_number || businessCard?.phone_number || previewPlaceholders.phone_number)
-                                }
-                              </p>
-                            </div>
-                          </div>
-                        </>
-                      ) : null}
-
-
+                          </>
+                        )}
                     </div>
                   </div>
                 </div>
 
                 <div className="myprofile-editor-wrapper">
-                  {/* NEW: Conditional blur overlay after trial ends */}
                   {shouldBlurEditor && (
                     <div className="subscription-overlay">
                       <div className="subscription-message">
@@ -955,7 +858,7 @@ export default function MyProfile() {
                       <input
                         id="mainHeading"
                         type="text"
-                        value={getEditorValue(state.mainHeading)}
+                        value={getEditorValue(state.mainHeading, previewPlaceholders.mainHeading)}
                         onChange={(e) => updateState({ mainHeading: e.target.value })}
                         placeholder={previewPlaceholders.mainHeading}
                       />
@@ -966,7 +869,7 @@ export default function MyProfile() {
                       <input
                         id="subHeading"
                         type="text"
-                        value={getEditorValue(state.subHeading)}
+                        value={getEditorValue(state.subHeading, previewPlaceholders.subHeading)}
                         onChange={(e) => updateState({ subHeading: e.target.value })}
                         placeholder={previewPlaceholders.subHeading}
                       />
@@ -1000,7 +903,7 @@ export default function MyProfile() {
                       >
                         {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
                         <img
-                          src={getEditorImageSrc(state.avatar)}
+                          src={getEditorImageSrc(state.avatar, previewPlaceholders.avatar)}
                           alt="Avatar preview"
                           className="avatar-preview"
                         />
@@ -1019,7 +922,7 @@ export default function MyProfile() {
                         <input
                           id="fullName"
                           type="text"
-                          value={getEditorValue(state.full_name)}
+                          value={getEditorValue(state.full_name, previewPlaceholders.full_name)}
                           onChange={(e) => updateState({ full_name: e.target.value })}
                           placeholder={previewPlaceholders.full_name}
                         />
@@ -1030,7 +933,7 @@ export default function MyProfile() {
                         <input
                           id="jobTitle"
                           type="text"
-                          value={getEditorValue(state.job_title)}
+                          value={getEditorValue(state.job_title, previewPlaceholders.job_title)}
                           onChange={(e) => updateState({ job_title: e.target.value })}
                           placeholder={previewPlaceholders.job_title}
                         />
@@ -1040,7 +943,7 @@ export default function MyProfile() {
                         <label htmlFor="bio">About Me Description</label>
                         <textarea
                           id="bio"
-                          value={getEditorValue(state.bio)}
+                          value={getEditorValue(state.bio, previewPlaceholders.bio)}
                           onChange={(e) => updateState({ bio: e.target.value })}
                           rows={4}
                           placeholder={previewPlaceholders.bio}
@@ -1057,7 +960,7 @@ export default function MyProfile() {
                         {state.workImages.map((img, i) => (
                           <div key={i} className="work-image-item-wrapper">
                             <img
-                              src={getEditorImageSrc(img.preview)}
+                              src={getEditorImageSrc(img.preview, previewPlaceholders.workImages?.[i]?.preview)}
                               alt={`work-${i}`}
                               className="work-image-preview"
                             />
@@ -1100,13 +1003,13 @@ export default function MyProfile() {
                           <input
                             type="text"
                             placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
-                            value={getEditorValue(s.name)}
+                            value={getEditorValue(s.name, previewPlaceholders.services[0]?.name)}
                             onChange={(e) => handleServiceChange(i, "name", e.target.value)}
                           />
                           <input
                             type="text"
                             placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
-                            value={getEditorValue(s.price)}
+                            value={getEditorValue(s.price, previewPlaceholders.services[0]?.price)}
                             onChange={(e) => handleServiceChange(i, "price", e.target.value)}
                           />
                           <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
@@ -1126,13 +1029,13 @@ export default function MyProfile() {
                           <input
                             type="text"
                             placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
-                            value={getEditorValue(r.name)}
+                            value={getEditorValue(r.name, previewPlaceholders.reviews[0]?.name)}
                             onChange={(e) => handleReviewChange(i, "name", e.target.value)}
                           />
                           <textarea
                             placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
                             rows={2}
-                            value={getEditorValue(r.text)}
+                            value={getEditorValue(r.text, previewPlaceholders.reviews[0]?.text)}
                             onChange={(e) => handleReviewChange(i, "text", e.target.value)}
                           />
                           <input
@@ -1140,7 +1043,7 @@ export default function MyProfile() {
                             placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
                             min="1"
                             max="5"
-                            value={getEditorValue(r.rating)}
+                            value={getEditorValue(r.rating, previewPlaceholders.reviews[0]?.rating)}
                             onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
                           />
                           <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
@@ -1159,7 +1062,7 @@ export default function MyProfile() {
                       <input
                         id="contactEmail"
                         type="email"
-                        value={getEditorValue(state.contact_email)}
+                        value={getEditorValue(state.contact_email, previewPlaceholders.contact_email)}
                         onChange={(e) => updateState({ contact_email: e.target.value })}
                         placeholder={previewPlaceholders.contact_email}
                       />
@@ -1170,7 +1073,7 @@ export default function MyProfile() {
                       <input
                         id="phoneNumber"
                         type="tel"
-                        value={getEditorValue(state.phone_number)}
+                        value={getEditorValue(state.phone_number, previewPlaceholders.phone_number)}
                         onChange={(e) => updateState({ phone_number: e.target.value })}
                         placeholder={previewPlaceholders.phone_number}
                       />
