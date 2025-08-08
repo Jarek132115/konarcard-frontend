@@ -20,7 +20,6 @@ import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
 import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 
-// RENAMED COMPONENT TO KonarSubscription
 export default function KonarSubscription() {
     const { user, loading: authLoading } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -31,6 +30,23 @@ export default function KonarSubscription() {
 
     const newPrice = 7.95;
     const oldPrice = 12.95;
+
+    // Logic for button text and state
+    let buttonText = "Start Your Free 14-Day Trial";
+    let buttonDisabled = false;
+
+    if (loadingStatus) {
+        buttonText = "Loading...";
+        buttonDisabled = true;
+    } else if (user) {
+        if (isSubscribed) {
+            buttonText = "Subscribed";
+            buttonDisabled = true;
+        } else {
+            buttonText = "Subscribe Now";
+            buttonDisabled = false;
+        }
+    }
 
     const getFreeTrialEndDate = () => {
         const today = new Date();
@@ -88,7 +104,6 @@ export default function KonarSubscription() {
                     <img src={Section1Image} alt="Power Profile in action" className="main-card" />
                 </div>
                 <div className="product-options">
-                    {/* Content title remains "Power Profile" */}
                     <p className="desktop-h5">Konar Power Profile Subscription</p>
                     <p className="desktop-body">
                         Upgrade your digital profile with all the tools you need to look professional and win more work.
@@ -108,7 +123,6 @@ export default function KonarSubscription() {
                             <img src={WarrantyIcon} className="icon" alt="Warranty" />
                             <div>
                                 <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>Cancel Anytime</p>
-                                {/* FIXED: Added missing closing curly brace for style prop */}
                                 <p className='desktop-body-xs' style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
                                     No long-term contracts.
                                 </p>
@@ -134,8 +148,8 @@ export default function KonarSubscription() {
                     </div>
 
                     <div className="option-group">
-                        <button onClick={handleSubscribe} className="blue-button desktop-button">
-                            Start Your Free 14-Day Trial.
+                        <button onClick={handleSubscribe} className="blue-button desktop-button" disabled={buttonDisabled}>
+                            {buttonText}
                         </button>
                     </div>
                 </div>
