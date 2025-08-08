@@ -1081,6 +1081,7 @@ export default function MyProfile() {
                       type="submit"
                       className="black-button desktop-button"
                       disabled={!isSubscribed && !isTrialActive}
+                      title={(!isSubscribed && !isTrialActive) ? "Please start your free trial to publish your changes." : ""}
                       style={{ flex: 1 }}
                     >
                       Publish Now
