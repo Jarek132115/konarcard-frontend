@@ -22,6 +22,19 @@ const UserPage = () => {
     if (isError) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><p className="error-message">Error: {error?.message || "Could not load user profile."}</p></div>;
     if (!businessCard) return <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><p>No business card found for username "{username}".</p></div>;
 
+    // NEW: Check for subscription status here
+    if (!businessCard.isSubscribed) {
+        return (
+            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#f0f0f0", color: "#333", padding: "20px", fontFamily: "Arial, sans-serif" }}>
+                <div style={{ maxWidth: "600px", margin: "auto", padding: "40px", border: "1px solid #ddd", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0,0,0,0.1)" }}>
+                    <h2 style={{ fontSize: "2rem", marginBottom: "20px" }}>Profile Unavailable</h2>
+                    <p style={{ fontSize: "1.2rem", lineHeight: "1.6" }}>
+                        Please contact **@{username}** to find out more. The owner's public profile is not currently active.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     const themeStyles = {
         backgroundColor: businessCard.page_theme === "dark" ? "#1F1F1F" : "#FFFFFF",
@@ -137,6 +150,7 @@ const UserPage = () => {
                                 key={i}
                                 src={url}
                                 alt={`work-${i}`}
+                                className="landing-work-image"
                             />
                         ))}
                     </div>
@@ -177,6 +191,23 @@ const UserPage = () => {
                                 <p className="landing-reviewer-name">{r.name}</p>
                             </div>
                         ))}
+                    </div>
+                </>
+            )}
+
+            {/* Contact Details Section */}
+            {(businessCard.contact_email || businessCard.phone_number) && (
+                <>
+                    <p className="landing-section-title">Contact Details</p>
+                    <div className="landing-contact-details">
+                        <div className="landing-contact-item">
+                            <p className="landing-contact-label">Email:</p>
+                            <p className="landing-contact-value">{businessCard.contact_email}</p>
+                        </div>
+                        <div className="landing-contact-item">
+                            <p className="landing-contact-label">Phone:</p>
+                            <p className="landing-contact-value">{businessCard.phone_number}</p>
+                        </div>
                     </div>
                 </>
             )}
