@@ -6,8 +6,6 @@ import useBusinessCardStore, { previewPlaceholders } from "../../store/businessC
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useFetchBusinessCard,
-} from "../../hooks/useFetchBusinessCard";
-import {
   useCreateBusinessCard,
   buildBusinessCardFormData,
 } from "../../hooks/useCreateBiz";
@@ -48,6 +46,7 @@ export default function MyProfile() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const location = useLocation();
 
@@ -364,6 +363,31 @@ export default function MyProfile() {
     }
   };
 
+  // NEW: Check if any profile changes have been made
+  const hasProfileChanges = () => {
+    if (coverPhotoFile || avatarFile || workImageFiles.length > 0 || coverPhotoRemoved || isAvatarRemoved) {
+      return true;
+    }
+
+    const originalCard = businessCard || {};
+    const isStateDifferent = (
+      state.businessName !== (originalCard.business_card_name || '') ||
+      state.pageTheme !== (originalCard.page_theme || 'light') ||
+      state.font !== (originalCard.style || 'Inter') ||
+      state.mainHeading !== (originalCard.main_heading || '') ||
+      state.subHeading !== (originalCard.sub_heading || '') ||
+      state.job_title !== (originalCard.job_title || '') ||
+      state.full_name !== (originalCard.full_name || '') ||
+      state.bio !== (originalCard.bio || '') ||
+      state.contact_email !== (originalCard.contact_email || '') ||
+      state.phone_number !== (originalCard.phone_number || '') ||
+      state.services.length !== (originalCard.services?.length || 0) ||
+      state.reviews.length !== (originalCard.reviews?.length || 0) ||
+      state.workImages.length !== (originalCard.works?.length || 0)
+    );
+    return isStateDifferent;
+  };
+
   const handleSubmit = async (e, fromTrialStart = false) => {
     e.preventDefault();
 
@@ -385,8 +409,17 @@ export default function MyProfile() {
       return;
     }
 
-    if (!isSubscribed && !isTrialActive && !fromTrialStart) {
+    // NEW: Check if a trial has started AND if any changes have been made
+    const canPublish = isSubscribed || isTrialActive;
+    const changesExist = hasProfileChanges();
+
+    if (!canPublish) {
       toast.error("Please start your trial to publish your changes.");
+      return;
+    }
+
+    if (!changesExist) {
+      toast.error("You must edit your profile before publishing.");
       return;
     }
 
@@ -469,6 +502,21 @@ export default function MyProfile() {
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "Failed to start subscription.");
+    }
+  };
+
+  // NEW: Function to handle the reset page logic
+  const handleResetPage = () => {
+    if (window.confirm("Are you sure you want to reset all your changes? This cannot be undone.")) {
+      resetState();
+      setCoverPhotoFile(null);
+      setAvatarFile(null);
+      setWorkImageFiles([]);
+      setCoverPhotoRemoved(false);
+      setIsAvatarRemoved(false);
+      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+      setActiveBlobUrls([]);
+      toast.success("Your page has been reset to default.");
     }
   };
 
@@ -1074,15 +1122,23 @@ export default function MyProfile() {
                       />
                     </div>
 
-                    <button
-                      type="submit"
-                      className="black-button desktop-button"
-                      disabled={!isSubscribed && !isTrialActive}
-                      title={(!isSubscribed && !isTrialActive) ? "Please start your free trial to publish your changes." : ""}
-                      style={{ flex: 1 }}
-                    >
-                      Publish Now
-                    </button>
+                    <div className="button-group">
+                      <button
+                        type="button"
+                        onClick={handleResetPage}
+                        className="ghost-button"
+                      >
+                        Reset Page
+                      </button>
+                      <button
+                        type="submit"
+                        className="black-button desktop-button"
+                        disabled={!isSubscribed && !isTrialActive}
+                        title={(!isSubscribed && !isTrialActive) ? "Please start your free trial to publish your changes." : ""}
+                      >
+                        Publish Now
+                      </button>
+                    </div>
                   </form>
                 </div>
               </div>
