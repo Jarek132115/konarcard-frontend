@@ -365,7 +365,7 @@ export default function MyProfile() {
       if (trialResponse.data.success) {
         toast.success(trialResponse.data.message);
         await refetchAuthUser();
-        await handleSubmit(e, true);
+        await handlePublish(e, true);
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "Failed to start trial.");
@@ -398,7 +398,7 @@ export default function MyProfile() {
 
   // NEW: Final handleSubmit, renamed to handlePublish to avoid confusion with form events.
   const handlePublish = async (e, fromTrialStart = false) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
 
     if (authLoading) {
       toast.info("User data is still loading. Please wait a moment.");
