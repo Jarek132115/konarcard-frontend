@@ -4,13 +4,8 @@ import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  useFetchBusinessCard,
-} from "../../hooks/useFetchBusinessCard";
-import {
-  useCreateBusinessCard,
-  buildBusinessCardFormData,
-} from "../../hooks/useCreateBiz";
+import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
+import { useCreateBusinessCard, buildBusinessCardFormData } from "../../hooks/useCreateBiz";
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import ShareProfile from "../../components/ShareProfile";
@@ -58,13 +53,6 @@ export default function MyProfile() {
   const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
 
   useEffect(() => {
-    if (!authLoading && authUser) {
-      refetchAuthUser();
-      refetchBusinessCard();
-    }
-  }, [authLoading, authUser]);
-
-  useEffect(() => {
     let handledRedirect = false;
     const checkSubscriptionStatus = async () => {
       if (authLoading || !authUser) {
@@ -99,7 +87,6 @@ export default function MyProfile() {
         } else {
           clearInterval(timer);
           setCountdown("00:00");
-          refetchAuthUser();
         }
       }, 1000);
     } else {
@@ -365,7 +352,7 @@ export default function MyProfile() {
       if (trialResponse.data.success) {
         toast.success(trialResponse.data.message);
         await refetchAuthUser();
-        await handlePublish(e, true);
+        await handleSubmit(e, true);
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "Failed to start trial.");
@@ -417,8 +404,7 @@ export default function MyProfile() {
       .map(item => {
         if (item.file) {
           return { file: item.file };
-        }
-        else if (item.preview && !item.preview.startsWith('blob:')) {
+        } else if (item.preview && !item.preview.startsWith('blob:')) {
           return item.preview;
         }
         return null;
@@ -461,71 +447,6 @@ export default function MyProfile() {
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
-    } catch (error) {
-      toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
-    }
-  };
-
-  const handlePublishClick = async (e) => {
-    e.preventDefault();
-
-    if (!isSubscribed && !isTrialActive) {
-      toast.error("Please start your free trial to publish your changes.");
-      return;
-    }
-
-    if (!hasProfileChanges()) {
-      toast.error("You haven't made any changes.");
-      return;
-    }
-
-    const worksToUpload = state.workImages
-      .map(item => {
-        if (item.file) {
-          return { file: item.file };
-        }
-        else if (item.preview && !item.preview.startsWith('blob:')) {
-          return item.preview;
-        }
-        return null;
-      })
-      .filter(item => item !== null);
-
-    const formData = buildBusinessCardFormData({
-      business_card_name: state.businessName,
-      page_theme: state.pageTheme,
-      font: state.font,
-      main_heading: state.mainHeading,
-      sub_heading: state.subHeading,
-      job_title: state.job_title,
-      full_name: state.full_name,
-      bio: state.bio,
-      user: userId,
-      cover_photo: coverPhotoFile,
-      avatar: avatarFile,
-      cover_photo_removed: coverPhotoRemoved,
-      avatar_removed: isAvatarRemoved,
-      works: worksToUpload,
-      services: state.services.filter(s => s.name || s.price),
-      reviews: state.reviews.filter(r => r.name || r.text),
-      contact_email: state.contact_email,
-      phone_number: state.phone_number,
-    });
-
-    try {
-      await createBusinessCard.mutateAsync(formData);
-      toast.success("Your page is Published!");
-
-      queryClient.invalidateQueries(['businessCard', userId]);
-
-      setCoverPhotoFile(null);
-      setAvatarFile(null);
-      setWorkImageFiles([]);
-      setCoverPhotoRemoved(false);
-      setIsAvatarRemoved(false);
-
-      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
-      setActiveBlobUrls([]);
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
     }
@@ -867,7 +788,7 @@ export default function MyProfile() {
                     </div>
                   )}
 
-                  <form onSubmit={e => e.preventDefault()} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
+                  <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
                     <h2 className="editor-title">Create Your Digital Business Card</h2>
 
                     <div className="input-block">
