@@ -211,7 +211,7 @@ export default function Home() {
               </div>
 
               <div className="section-1-cta">
-                <Link to="/register" className="black-button desktop-button margin-top-10">Create Your Account</Link>
+                <Link to="/register" className="black-button desktop-button margin-top-10">Start Your Free 14-Day Trial</Link>
               </div>
             </div>
           </div>
@@ -265,7 +265,7 @@ export default function Home() {
             </div>
 
             <div className="section-1-cta">
-              <Link to="/register" className="black-button desktop-button margin-top-10">Create Your Account</Link>
+              <Link to="/register" className="black-button desktop-button margin-top-10">Start Your Free 14-Day Trial</Link>
             </div>
           </div>
         </div>
@@ -316,7 +316,7 @@ export default function Home() {
               </div>
 
               <div className="section-1-cta">
-                <Link to="/register" className="black-button desktop-button margin-top-10">Create Your Account</Link>
+                <Link to="/register" className="black-button desktop-button margin-top-10">Start Your Free 14-Day Trial</Link>
               </div>
             </div>
           </div>
