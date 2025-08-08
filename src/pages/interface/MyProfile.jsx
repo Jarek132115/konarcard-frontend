@@ -396,7 +396,7 @@ export default function MyProfile() {
     return isStateDifferent;
   };
 
-  // Final handleSubmit, renamed to handlePublish
+  // NEW: Final handleSubmit, renamed to handlePublish to avoid confusion with form events.
   const handlePublish = async (e, fromTrialStart = false) => {
     e.preventDefault();
 
@@ -410,11 +410,6 @@ export default function MyProfile() {
     }
     if (!isUserVerified) {
       toast.error("Please verify your email address to save changes.");
-      return;
-    }
-
-    if (!isSubscribed && hasTrialEnded && !fromTrialStart) {
-      toast.error("Your free trial has expired. Please subscribe to save changes.");
       return;
     }
 
