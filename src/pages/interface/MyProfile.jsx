@@ -34,7 +34,7 @@ export default function MyProfile() {
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
   const { data: businessCard, isLoading: isCardLoading, refetch: refetchBusinessCard } = useFetchBusinessCard(userId);
-  const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
+  // Removed showVerificationPrompt state and useEffect
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -62,29 +62,23 @@ export default function MyProfile() {
       refetchAuthUser();
       refetchBusinessCard();
     }
-  }, []);
+  }, [authLoading, authUser]); // Added authLoading to dependencies.
 
   useEffect(() => {
-    let handledRedirect = false;
-    const checkSubscriptionStatus = async () => {
-      if (authLoading || !authUser) {
-        return;
+    const queryParams = new URLSearchParams(location.search);
+    const paymentSuccess = queryParams.get('payment_success');
+
+    if (paymentSuccess === 'true' && !isSubscribed) {
+      if (typeof refetchAuthUser === 'function') {
+        refetchAuthUser();
       }
-      const queryParams = new URLSearchParams(location.search);
-      const paymentSuccess = queryParams.get('payment_success');
+      window.history.replaceState({}, document.title, location.pathname);
+      toast.success("Subscription updated successfully!");
+    }
+  }, [location.search, isSubscribed, refetchAuthUser]); // Removed authLoading and authUser to make this effect more specific.
 
-      if (paymentSuccess === 'true' && !isSubscribed && !handledRedirect) {
-        handledRedirect = true;
-        if (typeof refetchAuthUser === 'function') {
-          await refetchAuthUser();
-        }
-        window.history.replaceState({}, document.title, location.pathname);
-        toast.success("Subscription updated successfully!");
-      }
-    };
-
-    checkSubscriptionStatus();
-
+  // Refactored the trial countdown logic to its own useEffect
+  useEffect(() => {
     let timer;
     if (isTrialActive) {
       timer = setInterval(() => {
@@ -99,7 +93,7 @@ export default function MyProfile() {
         } else {
           clearInterval(timer);
           setCountdown("00:00");
-          refetchAuthUser();
+          refetchAuthUser(); // Refetch here to update the trial status
         }
       }, 1000);
     } else {
@@ -107,7 +101,7 @@ export default function MyProfile() {
     }
 
     return () => clearInterval(timer);
-  }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser, isTrialActive]);
+  }, [isTrialActive, authUser]); // Made dependencies more specific to this task.
 
   useEffect(() => {
     const handleResize = () => {
@@ -140,13 +134,8 @@ export default function MyProfile() {
     return () => clearTimeout(timer);
   }, [resendCooldown]);
 
-  useEffect(() => {
-    if (!authLoading && authUser && !isUserVerified && userEmail) {
-      setShowVerificationPrompt(true);
-    } else if (!authLoading && isUserVerified) {
-      setShowVerificationPrompt(false);
-    }
-  }, [authLoading, authUser, isUserVerified, userEmail]);
+  // Removed the useEffect for showVerificationPrompt and instead derive it directly.
+  const showVerificationPrompt = !authLoading && authUser && !isUserVerified && userEmail;
 
   useEffect(() => {
     if (!isCardLoading && businessCard) {
@@ -345,7 +334,10 @@ export default function MyProfile() {
         toast.error(res.data.error);
       } else {
         toast.success('Email verified successfully!');
-        setShowVerificationPrompt(false);
+        // We no longer need to setShowVerificationPrompt to false,
+        // because the refetchAuthUser will update the user's data
+        // and cause the showVerificationPrompt variable to become false
+        // on the next render.
         setVerificationCodeCode('');
         refetchAuthUser();
       }
@@ -396,7 +388,6 @@ export default function MyProfile() {
     return isStateDifferent;
   };
 
-  // NEW: Final handleSubmit, renamed to handlePublish to avoid confusion with form events.
   const handlePublish = async (e, fromTrialStart = false) => {
     if (e) e.preventDefault();
 
@@ -413,7 +404,6 @@ export default function MyProfile() {
       return;
     }
 
-    // This check is now the start of the publishing flow
     if (!isSubscribed && !isTrialActive && !fromTrialStart) {
       toast.error("Please start your free trial to publish your changes.");
       return;
