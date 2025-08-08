@@ -363,7 +363,6 @@ export default function MyProfile() {
     }
   };
 
-  // NEW: Check if any profile changes have been made
   const hasProfileChanges = () => {
     if (coverPhotoFile || avatarFile || workImageFiles.length > 0 || coverPhotoRemoved || isAvatarRemoved) {
       return true;
@@ -388,7 +387,8 @@ export default function MyProfile() {
     return isStateDifferent;
   };
 
-  const handleSubmit = async (e, fromTrialStart = false) => {
+  // REFACTORED: New `handlePublishClick` function
+  const handlePublishClick = async (e) => {
     e.preventDefault();
 
     if (authLoading) {
@@ -404,24 +404,27 @@ export default function MyProfile() {
       return;
     }
 
-    if (!isSubscribed && hasTrialEnded && !fromTrialStart) {
-      toast.error("Your free trial has expired. Please subscribe to save changes.");
+    // NEW: Unsubscribed user check
+    if (!isSubscribed && !isTrialActive) {
+      toast.error("Please start your free trial to publish your changes.");
       return;
     }
 
-    // NEW: Check if a trial has started AND if any changes have been made
-    const canPublish = isSubscribed || isTrialActive;
-    const changesExist = hasProfileChanges();
-
-    if (!canPublish) {
-      toast.error("Please start your trial to publish your changes.");
-      return;
-    }
-
-    if (!changesExist) {
+    // NEW: No changes check
+    if (!hasProfileChanges()) {
       toast.error("You must edit your profile before publishing.");
       return;
     }
+
+    // Proceed to save if all checks pass
+    await handleSubmit(e);
+  };
+
+  const handleSubmit = async (e, fromTrialStart = false) => {
+    e.preventDefault();
+
+    // This function is now only for saving and should not contain the pre-publish checks
+    // It's called by `handlePublishClick` or `handleStartTrialAndSave`
 
     const worksToUpload = state.workImages
       .map(item => {
@@ -505,7 +508,6 @@ export default function MyProfile() {
     }
   };
 
-  // NEW: Function to handle the reset page logic
   const handleResetPage = () => {
     if (window.confirm("Are you sure you want to reset all your changes? This cannot be undone.")) {
       resetState();
@@ -813,7 +815,7 @@ export default function MyProfile() {
                     </div>
                   )}
 
-                  <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
+                  <form onSubmit={handlePublishClick} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
                     <h2 className="editor-title">Create Your Digital Business Card</h2>
 
                     <div className="input-block">
@@ -1133,7 +1135,6 @@ export default function MyProfile() {
                       <button
                         type="submit"
                         className="black-button desktop-button"
-                        disabled={!isSubscribed && !isTrialActive}
                         title={(!isSubscribed && !isTrialActive) ? "Please start your free trial to publish your changes." : ""}
                       >
                         Publish Now
