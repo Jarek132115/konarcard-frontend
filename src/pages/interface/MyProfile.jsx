@@ -142,7 +142,6 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // NEW: Use a single useEffect to handle initial data load and subsequent updates
   useEffect(() => {
     if (!isCardLoading && businessCard) {
       updateState({
@@ -162,14 +161,12 @@ export default function MyProfile() {
         contact_email: businessCard.contact_email || '',
         phone_number: businessCard.phone_number || '',
       });
-      // Clear any local file state that might be left over
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     } else if (!isCardLoading && !businessCard) {
-      // If no card exists or user is not in a trial/subscribed, use placeholders
       resetState();
     }
   }, [businessCard, isCardLoading, updateState, resetState]);
@@ -369,6 +366,7 @@ export default function MyProfile() {
     }
   };
 
+  // UPDATED: Added new logic to handleSubmit
   const handleSubmit = async (e, fromTrialStart = false) => {
     e.preventDefault();
 
@@ -382,6 +380,12 @@ export default function MyProfile() {
     }
     if (!isUserVerified) {
       toast.error("Please verify your email address to save changes.");
+      return;
+    }
+
+    // NEW: Block saving if trial has not started yet.
+    if (!isSubscribed && !isTrialActive && !fromTrialStart) {
+      toast.error("Please start your free trial to publish your changes.");
       return;
     }
 
@@ -425,19 +429,17 @@ export default function MyProfile() {
 
     try {
       await createBusinessCard.mutateAsync(formData);
-      toast.success("Business card saved successfully!");
+      // UPDATED: Changed the toast success message
+      toast.success("Your page is Published!");
 
-      // NEW: Invalidate the cache to trigger a data refresh instead of a full page reload
       queryClient.invalidateQueries(['businessCard', userId]);
 
-      // Clear local file state after a successful upload/save
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
 
-      // Clean up old blob URLs if any were created
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
@@ -488,7 +490,6 @@ export default function MyProfile() {
     username: userUsername || '',
   };
 
-  // Refactored to get value from live state first, then fallback to placeholders
   const getEditorValue = (fieldValue, placeholderValue) => {
     return fieldValue || placeholderValue || '';
   };
