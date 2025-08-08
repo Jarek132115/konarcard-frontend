@@ -813,7 +813,7 @@ export default function MyProfile() {
                     </div>
                   )}
 
-                  <form onSubmit={handlePublishClick} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
+                  <form onSubmit={handlePublish} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
                     <h2 className="editor-title">Create Your Digital Business Card</h2>
 
                     <div className="input-block">
