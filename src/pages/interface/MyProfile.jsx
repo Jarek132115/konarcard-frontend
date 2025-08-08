@@ -48,6 +48,7 @@ export default function MyProfile() {
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const isStateInitialized = useRef(false); // New ref to prevent re-initialization
 
   const location = useLocation();
 
@@ -73,8 +74,10 @@ export default function MyProfile() {
       }
       window.history.replaceState({}, document.title, location.pathname);
       toast.success("Subscription updated successfully!");
-      // ADD THIS LINE
-      queryClient.invalidateQueries({ queryKey: ["public-business-card", userUsername] });
+
+      if (userUsername) {
+        queryClient.invalidateQueries({ queryKey: ["public-business-card", userUsername] });
+      }
     }
   }, [location.search, isSubscribed, refetchAuthUser, userUsername, queryClient]);
 
@@ -112,6 +115,11 @@ export default function MyProfile() {
   const showVerificationPrompt = !authLoading && authUser && !isUserVerified && userEmail;
 
   useEffect(() => {
+    // FIX: Only initialize state once to prevent re-render loop
+    if (isStateInitialized.current) {
+      return;
+    }
+
     if (!isCardLoading && businessCard) {
       updateState({
         businessName: businessCard.business_card_name || '',
@@ -135,8 +143,10 @@ export default function MyProfile() {
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
+      isStateInitialized.current = true; // Mark as initialized
     } else if (!isCardLoading && !businessCard) {
       resetState();
+      isStateInitialized.current = true; // Also mark as initialized when no card exists
     }
   }, [businessCard, isCardLoading, updateState, resetState]);
 
