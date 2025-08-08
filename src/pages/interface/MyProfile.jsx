@@ -57,6 +57,8 @@ export default function MyProfile() {
   const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
   const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
 
+  // REMOVED THE CAUSING USEEFFECT. The application now relies on auth context updates.
+
   useEffect(() => {
     let handledRedirect = false;
     const checkSubscriptionStatus = async () => {
@@ -92,7 +94,8 @@ export default function MyProfile() {
         } else {
           clearInterval(timer);
           setCountdown("00:00");
-          refetchAuthUser();
+          // NEW: We no longer call refetchAuthUser here to prevent the infinite loop.
+          // The UI will update when a user navigates or manually triggers a fetch.
         }
       }, 1000);
     } else {
@@ -358,7 +361,7 @@ export default function MyProfile() {
       if (trialResponse.data.success) {
         toast.success(trialResponse.data.message);
         await refetchAuthUser();
-        await handlePublish(e, true);
+        await handleSubmit(e, true);
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "Failed to start trial.");
@@ -389,35 +392,21 @@ export default function MyProfile() {
     return isStateDifferent;
   };
 
-  // NEW: The corrected and consolidated publish function
-  const handlePublish = async (e, fromTrialStart = false) => {
+  const handleSubmit = async (e, fromTrialStart = false) => {
     e.preventDefault();
 
-    if (authLoading) {
-      toast.info("User data is still loading. Please wait a moment.");
-      return;
-    }
-    if (!userId) {
-      toast.error("User not logged in or loaded. Please log in again to save changes.");
-      return;
-    }
-    if (!isUserVerified) {
-      toast.error("Please verify your email address to save changes.");
-      return;
-    }
-
-    if (!isSubscribed && hasTrialEnded && !fromTrialStart) {
-      toast.error("Your free trial has expired. Please subscribe to save changes.");
-      return;
-    }
-
+    // New check for subscribed users with no changes
     if (!isSubscribed && !isTrialActive && !fromTrialStart) {
       toast.error("Please start your free trial to publish your changes.");
       return;
     }
 
-    if (!hasProfileChanges() && !fromTrialStart) {
-      toast.error("You haven't made any changes.");
+    if (!hasProfileChanges()) {
+      if (isSubscribed || isTrialActive) {
+        toast.error("You haven't made any changes.");
+      } else {
+        toast.error("Please start your trial to publish your changes.");
+      }
       return;
     }
 
@@ -469,6 +458,72 @@ export default function MyProfile() {
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
+    }
+  };
+
+  const handlePublishClick = async (e) => {
+    e.preventDefault();
+
+    if (!isSubscribed && !isTrialActive) {
+      toast.error("Please start your free trial to publish your changes.");
+      return;
+    }
+
+    if (!hasProfileChanges()) {
+      toast.error("You haven't made any changes.");
+      return;
+    }
+
+    // Final logic to submit the form if checks pass
+    const worksToUpload = state.workImages
+      .map(item => {
+        if (item.file) {
+          return { file: item.file };
+        }
+        else if (item.preview && !item.preview.startsWith('blob:')) {
+          return item.preview;
+        }
+        return null;
+      })
+      .filter(item => item !== null);
+
+    const formData = buildBusinessCardFormData({
+      business_card_name: state.businessName,
+      page_theme: state.pageTheme,
+      font: state.font,
+      main_heading: state.mainHeading,
+      sub_heading: state.subHeading,
+      job_title: state.job_title,
+      full_name: state.full_name,
+      bio: state.bio,
+      user: userId,
+      cover_photo: coverPhotoFile,
+      avatar: avatarFile,
+      cover_photo_removed: coverPhotoRemoved,
+      avatar_removed: isAvatarRemoved,
+      works: worksToUpload,
+      services: state.services.filter(s => s.name || s.price),
+      reviews: state.reviews.filter(r => r.name || r.text),
+      contact_email: state.contact_email,
+      phone_number: state.phone_number,
+    });
+
+    try {
+      await createBusinessCard.mutateAsync(formData);
+      toast.success("Your page is Published!");
+
+      queryClient.invalidateQueries(['businessCard', userId]);
+
+      setCoverPhotoFile(null);
+      setAvatarFile(null);
+      setWorkImageFiles([]);
+      setCoverPhotoRemoved(false);
+      setIsAvatarRemoved(false);
+
+      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+      setActiveBlobUrls([]);
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
     }
@@ -810,7 +865,7 @@ export default function MyProfile() {
                     </div>
                   )}
 
-                  <form onSubmit={handlePublishClick} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
+                  <form onSubmit={e => e.preventDefault()} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
                     <h2 className="editor-title">Create Your Digital Business Card</h2>
 
                     <div className="input-block">
@@ -843,14 +898,14 @@ export default function MyProfile() {
                             className={`font-button ${state.font === font ? "is-active" : ""}`}
                             onClick={() => updateState({ font })}
                           >
-                            font
+                            {font}
                           </button>
                         ))}
                       </div>
                     </div>
 
                     <hr className="divider" />
-                    <h3 className="editor-subtitle">Hero Section</h3>
+                    <h3 className="editor-subtitle">About Me Section</h3>
 
                     <div className="input-block">
                       <label htmlFor="coverPhoto">Cover Photo</label>
