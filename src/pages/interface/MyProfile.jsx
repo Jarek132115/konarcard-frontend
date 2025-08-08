@@ -626,12 +626,12 @@ export default function MyProfile() {
               <div className="myprofile-flex-container">
                 <div className={`myprofile-content ${isMobile ? 'myprofile-mock-phone-mobile-container' : ''}`}>
                   <div
-                    className={`mock-phone ${(isSubscribed && (state.pageTheme === "dark" || (state.pageTheme === "" && businessCard?.page_theme === "dark"))) ||
-                      (!isSubscribed && previewPlaceholders.pageTheme === "dark")
+                    className={`mock-phone ${(isSubscribed || isTrialActive) && (state.pageTheme === "dark" || (state.pageTheme === "" && businessCard?.page_theme === "dark")) ||
+                      (!isSubscribed && !isTrialActive && previewPlaceholders.pageTheme === "dark")
                       ? "dark-mode" : ""
                       }`}
                     style={{
-                      fontFamily: !isSubscribed
+                      fontFamily: (!isSubscribed && !isTrialActive)
                         ? previewPlaceholders.font
                         : (state.font || businessCard?.style || previewPlaceholders.font)
                     }}
@@ -639,7 +639,7 @@ export default function MyProfile() {
                     <div className="mock-phone-scrollable-content">
                       <img
                         src={
-                          !isSubscribed
+                          (!isSubscribed && !isTrialActive)
                             ? previewPlaceholders.coverPhoto
                             : (state.coverPhoto || businessCard?.cover_photo || previewPlaceholders.coverPhoto)
                         }
@@ -649,14 +649,14 @@ export default function MyProfile() {
 
                       <h2 className="mock-title">
                         {
-                          !isSubscribed
+                          (!isSubscribed && !isTrialActive)
                             ? previewPlaceholders.mainHeading
                             : (state.mainHeading || businessCard?.main_heading || previewPlaceholders.mainHeading)
                         }
                       </h2>
                       <p className="mock-subtitle">
                         {
-                          !isSubscribed
+                          (!isSubscribed && !isTrialActive)
                             ? previewPlaceholders.subHeading
                             : (state.subHeading || businessCard?.sub_heading || previewPlaceholders.subHeading)
                         }
@@ -668,7 +668,7 @@ export default function MyProfile() {
                         Exchange Contact
                       </button>
 
-                      {!isSubscribed || (isSubscribed && (
+                      {((!isSubscribed && !isTrialActive) || (isSubscribed || isTrialActive) && (
                         state.full_name || state.job_title || state.bio || state.avatar ||
                         businessCard?.full_name || businessCard?.job_title || businessCard?.bio || businessCard?.avatar ||
                         previewPlaceholders.full_name || previewPlaceholders.job_title || previewPlaceholders.bio || previewPlaceholders.avatar
@@ -680,7 +680,7 @@ export default function MyProfile() {
                               <div className="mock-about-header-group">
                                 <img
                                   src={
-                                    !isSubscribed
+                                    (!isSubscribed && !isTrialActive)
                                       ? previewPlaceholders.avatar
                                       : (state.avatar || businessCard?.avatar || previewPlaceholders.avatar)
                                   }
@@ -690,14 +690,14 @@ export default function MyProfile() {
                                 <div>
                                   <p className="mock-profile-name">
                                     {
-                                      !isSubscribed
+                                      (!isSubscribed && !isTrialActive)
                                         ? previewPlaceholders.full_name
                                         : (state.full_name || businessCard?.full_name || previewPlaceholders.full_name)
                                     }
                                   </p>
                                   <p className="mock-profile-role">
                                     {
-                                      !isSubscribed
+                                      (!isSubscribed && !isTrialActive)
                                         ? previewPlaceholders.job_title
                                         : (state.job_title || businessCard?.job_title || previewPlaceholders.job_title)
                                     }
@@ -706,7 +706,7 @@ export default function MyProfile() {
                               </div>
                               <p className="mock-bio-text">
                                 {
-                                  !isSubscribed
+                                  (!isSubscribed && !isTrialActive)
                                     ? previewPlaceholders.bio
                                     : (state.bio || businessCard?.bio || previewPlaceholders.bio)
                                 }
@@ -716,12 +716,12 @@ export default function MyProfile() {
                         </>
                       ) : null}
 
-                      {!isSubscribed || (isSubscribed && (state.workImages.length > 0 || (businessCard?.works && businessCard.works.length > 0) || previewPlaceholders.workImages.length > 0)) ? (
+                      {((!isSubscribed && !isTrialActive) || (isSubscribed || isTrialActive) && (state.workImages.length > 0 || (businessCard?.works && businessCard.works.length > 0) || previewPlaceholders.workImages.length > 0)) ? (
                         <>
                           <p className="mock-section-title">My Work</p>
                           <div className="mock-work-gallery">
                             {(
-                              !isSubscribed
+                              (!isSubscribed && !isTrialActive)
                                 ? previewPlaceholders.workImages
                                 : (state.workImages.length > 0
                                   ? state.workImages
@@ -741,13 +741,13 @@ export default function MyProfile() {
                       ) : null}
 
 
-                      {!isSubscribed || (isSubscribed && (
+                      {((!isSubscribed && !isTrialActive) || (isSubscribed || isTrialActive) && (
                         state.services.length > 0 || (businessCard?.services && businessCard.services.length > 0) || previewPlaceholders.services.length > 0)) ? (
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="mock-services-list">
                             {(
-                              !isSubscribed
+                              (!isSubscribed && !isTrialActive)
                                 ? previewPlaceholders.services
                                 : (state.services.length > 0
                                   ? state.services
@@ -757,14 +757,14 @@ export default function MyProfile() {
                               <div key={i} className="mock-service-item">
                                 <p className="mock-service-name">
                                   {
-                                    !isSubscribed
+                                    (!isSubscribed && !isTrialActive)
                                       ? s.name
                                       : (s.name || '')
                                   }
                                 </p>
                                 <span className="mock-service-price">
                                   {
-                                    !isSubscribed
+                                    (!isSubscribed && !isTrialActive)
                                       ? s.price
                                       : (s.price || '')
                                   }
@@ -775,13 +775,13 @@ export default function MyProfile() {
                         </>
                       ) : null}
 
-                      {!isSubscribed || (isSubscribed && (
+                      {((!isSubscribed && !isTrialActive) || (isSubscribed || isTrialActive) && (
                         state.reviews.length > 0 || (businessCard?.reviews && businessCard.reviews.length > 0) || previewPlaceholders.reviews.length > 0)) ? (
                         <>
                           <p className="mock-section-title">Reviews</p>
                           <div className="mock-reviews-list">
                             {(
-                              !isSubscribed
+                              (!isSubscribed && !isTrialActive)
                                 ? previewPlaceholders.reviews
                                 : (state.reviews.length > 0
                                   ? state.reviews
@@ -798,14 +798,14 @@ export default function MyProfile() {
                                   ))}
                                 </div>
                                 <p className="mock-review-text">
-                                  {`"${!isSubscribed
+                                  {`"${(!isSubscribed && !isTrialActive)
                                     ? r.text
                                     : (r.text || '')
                                     }"`}
                                 </p>
                                 <p className="mock-reviewer-name">
                                   {
-                                    !isSubscribed
+                                    (!isSubscribed && !isTrialActive)
                                       ? r.name
                                       : (r.name || '')
                                   }
@@ -816,7 +816,7 @@ export default function MyProfile() {
                         </>
                       ) : null}
 
-                      {!isSubscribed || (isSubscribed && (
+                      {((!isSubscribed && !isTrialActive) || (isSubscribed || isTrialActive) && (
                         state.contact_email || state.phone_number ||
                         businessCard?.contact_email || businessCard?.phone_number ||
                         previewPlaceholders.contact_email || previewPlaceholders.phone_number
@@ -828,7 +828,7 @@ export default function MyProfile() {
                               <p className="mock-contact-label">Email:</p>
                               <p className="mock-contact-value">
                                 {
-                                  !isSubscribed
+                                  (!isSubscribed && !isTrialActive)
                                     ? previewPlaceholders.contact_email
                                     : (state.contact_email || businessCard?.contact_email || previewPlaceholders.contact_email)
                                 }
@@ -838,7 +838,7 @@ export default function MyProfile() {
                               <p className="mock-contact-label">Phone:</p>
                               <p className="mock-contact-value">
                                 {
-                                  !isSubscribed
+                                  (!isSubscribed && !isTrialActive)
                                     ? previewPlaceholders.phone_number
                                     : (state.phone_number || businessCard?.phone_number || previewPlaceholders.phone_number)
                                 }
