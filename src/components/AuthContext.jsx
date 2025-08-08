@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import api from '../services/api';
+import { toast } from 'react-hot-toast';
 
 export const AuthContext = createContext();
 
@@ -61,15 +62,12 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const logout = async () => {
+    const logout = () => {
         if (typeof window !== 'undefined') {
             localStorage.removeItem('token');
         }
         setUser(null);
-        try {
-            await api.post('/logout');
-        } catch (err) {
-        }
+        toast.success('You have been logged out!');
     };
 
     const contextValue = {

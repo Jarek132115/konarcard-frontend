@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { toast } from 'react-hot-toast'; 
+import { toast } from 'react-hot-toast';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -24,9 +24,11 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+    // Check if the error is from a deliberate logout
+    const isLoggingOut = error.config.headers.isLoggingOut;
+    if (!isLoggingOut && error.response && (error.response.status === 401 || error.response.status === 403)) {
       localStorage.removeItem('token');
-      toast.error("You have been logged out!");
+      toast.error("Session expired or unauthorized. Please log in again.");
     }
     return Promise.reject(error);
   }
