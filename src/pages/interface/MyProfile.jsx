@@ -589,20 +589,49 @@ export default function MyProfile() {
     }
   };
 
-  // Preview Logic: Use placeholders only if there is no saved data yet.
-  // Otherwise, always use the live state data.
-  const previewDataSource = hasSavedData ? state : previewPlaceholders;
+  // --- START: CORRECTED PREVIEW LOGIC & IMAGE SWAP ---
 
-  // --- START: NEW IMAGE SWAP LOGIC ---
-  const hasWorkImages = state.workImages.length > 0;
-  const coverPhotoForPreview = hasWorkImages ? state.workImages[0].preview : (hasSavedData ? state.coverPhoto : previewPlaceholders.coverPhoto);
-  const firstWorkImageForPreview = state.coverPhoto;
+  // This checks if we should show placeholders at all
+  const shouldShowPlaceholders = !hasSavedData;
 
-  // Prepare the list of work images, swapping the first one if necessary
-  const workImagesForPreview = hasSavedData
-    ? (hasWorkImages ? [firstWorkImageForPreview, ...state.workImages.slice(1)] : [])
-    : previewPlaceholders.workImages;
-  // --- END: NEW IMAGE SWAP LOGIC ---
+  // Determine preview text source based on whether a user has saved data or not
+  const previewMainHeading = state.mainHeading || (shouldShowPlaceholders ? previewPlaceholders.main_heading : '');
+  const previewSubHeading = state.subHeading || (shouldShowPlaceholders ? previewPlaceholders.sub_heading : '');
+  const previewFullName = state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : '');
+  const previewJobTitle = state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : '');
+  const previewBio = state.bio || (shouldShowPlaceholders ? previewPlaceholders.bio : '');
+  const previewEmail = state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : '');
+  const previewPhone = state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : '');
+
+  // Image Swap Logic
+  let previewCoverPhotoSrc = '';
+  let previewAvatarSrc = '';
+  let previewWorkImages = [];
+
+  if (shouldShowPlaceholders) {
+    // Before first save, show all template placeholders
+    previewCoverPhotoSrc = previewPlaceholders.coverPhoto;
+    previewAvatarSrc = previewPlaceholders.avatar;
+    previewWorkImages = previewPlaceholders.workImages;
+  } else {
+    // After first save, check for a user-uploaded cover photo
+    // and swap it with the first work image if both exist.
+
+    // Use the first work image for the cover photo if it exists, otherwise use the saved cover photo.
+    previewCoverPhotoSrc = state.workImages.length > 0 ? state.workImages[0].preview : state.coverPhoto;
+
+    // Use the saved cover photo for the first work image if it exists.
+    // The rest of the work images stay the same.
+    if (state.coverPhoto && state.workImages.length > 0) {
+      previewWorkImages = [{ preview: state.coverPhoto }, ...state.workImages.slice(1)];
+    } else {
+      previewWorkImages = state.workImages;
+    }
+
+    // The avatar and other images are not part of the swap, so they use the saved data directly.
+    previewAvatarSrc = state.avatar;
+  }
+  // --- END: CORRECTED PREVIEW LOGIC & IMAGE SWAP ---
 
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
@@ -618,8 +647,9 @@ export default function MyProfile() {
     username: userUsername || '',
   };
 
-  const getEditorValue = (fieldValue, placeholderValue) => {
-    return fieldValue || placeholderValue || '';
+  const getEditorImageSrc = (imageState, placeholderImage) => {
+    // The editor should only show placeholders if the user has no saved data yet.
+    return imageState || (shouldShowPlaceholders ? placeholderImage : '');
   };
 
   const showAddImageText = (imageState) => {
@@ -734,16 +764,16 @@ export default function MyProfile() {
                       {showMainSection && (
                         <>
                           <img
-                            src={coverPhotoForPreview}
+                            src={previewCoverPhotoSrc}
                             alt="Cover"
                             className="mock-cover"
                           />
 
                           <h2 className="mock-title">
-                            {state.mainHeading || previewDataSource.main_heading}
+                            {previewMainHeading}
                           </h2>
                           <p className="mock-subtitle">
-                            {state.subHeading || previewDataSource.sub_heading}
+                            {previewSubHeading}
                           </p>
                           <button
                             type="button"
@@ -754,37 +784,35 @@ export default function MyProfile() {
                         </>
                       )}
 
-                      {showAboutMeSection && (state.full_name || state.job_title || state.bio || state.avatar ||
-                        (!hasSavedData && (previewPlaceholders.full_name || previewPlaceholders.job_title || previewPlaceholders.bio || previewPlaceholders.avatar))
-                      ) && (
-                          <>
-                            <p className="mock-section-title">About me</p>
-                            <div className={`mock-about-container ${aboutMeLayout}`}>
-                              <div className="mock-about-content-group">
-                                <div className="mock-about-header-group">
-                                  <img
-                                    src={hasSavedData ? (state.avatar || previewPlaceholders.avatar) : previewPlaceholders.avatar}
-                                    alt="Avatar"
-                                    className="mock-avatar"
-                                  />
-                                  <div>
-                                    <p className="mock-profile-name">
-                                      {state.full_name || previewDataSource.full_name}
-                                    </p>
-                                    <p className="mock-profile-role">
-                                      {state.job_title || previewDataSource.job_title}
-                                    </p>
-                                  </div>
+                      {showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
+                        <>
+                          <p className="mock-section-title">About me</p>
+                          <div className={`mock-about-container ${aboutMeLayout}`}>
+                            <div className="mock-about-content-group">
+                              <div className="mock-about-header-group">
+                                <img
+                                  src={previewAvatarSrc}
+                                  alt="Avatar"
+                                  className="mock-avatar"
+                                />
+                                <div>
+                                  <p className="mock-profile-name">
+                                    {previewFullName}
+                                  </p>
+                                  <p className="mock-profile-role">
+                                    {previewJobTitle}
+                                  </p>
                                 </div>
-                                <p className="mock-bio-text">
-                                  {state.bio || previewDataSource.bio}
-                                </p>
                               </div>
+                              <p className="mock-bio-text">
+                                {previewBio}
+                              </p>
                             </div>
-                          </>
-                        )}
+                          </div>
+                        </>
+                      )}
 
-                      {showWorkSection && (state.workImages.length > 0 || !hasSavedData) && (
+                      {showWorkSection && (previewWorkImages.length > 0) && (
                         <>
                           <p className="mock-section-title">My Work</p>
                           <div className="work-preview-row-container">
@@ -807,7 +835,7 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
-                              {workImagesForPreview.map((item, i) => (
+                              {previewWorkImages.map((item, i) => (
                                 <div key={i} className="mock-work-image-item-wrapper">
                                   <img
                                     src={item.preview || item}
@@ -844,9 +872,9 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
-                              {(hasSavedData
-                                ? state.services
-                                : previewPlaceholders.services
+                              {(shouldShowPlaceholders
+                                ? previewPlaceholders.services
+                                : state.services
                               ).map((s, i) => (
                                 <div key={i} className="mock-service-item">
                                   <p className="mock-service-name">
@@ -885,9 +913,9 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
-                              {(hasSavedData
-                                ? state.reviews
-                                : previewPlaceholders.reviews
+                              {(shouldShowPlaceholders
+                                ? previewPlaceholders.reviews
+                                : state.reviews
                               ).map((r, i) => (
                                 <div key={i} className="mock-review-card">
                                   <div className="mock-star-rating">
@@ -912,27 +940,25 @@ export default function MyProfile() {
                         </>
                       )}
 
-                      {showContactSection && (state.contact_email || state.phone_number ||
-                        (!hasSavedData && (previewPlaceholders.contact_email || previewPlaceholders.phone_number)))
-                        && (
-                          <>
-                            <p className="mock-section-title">Contact Details</p>
-                            <div className="mock-contact-details">
-                              <div className="mock-contact-item">
-                                <p className="mock-contact-label">Email:</p>
-                                <p className="mock-contact-value">
-                                  {state.contact_email || previewDataSource.contact_email}
-                                </p>
-                              </div>
-                              <div className="mock-contact-item">
-                                <p className="mock-contact-label">Phone:</p>
-                                <p className="mock-contact-value">
-                                  {state.phone_number || previewDataSource.phone_number}
-                                </p>
-                              </div>
+                      {showContactSection && (previewEmail || previewPhone) && (
+                        <>
+                          <p className="mock-section-title">Contact Details</p>
+                          <div className="mock-contact-details">
+                            <div className="mock-contact-item">
+                              <p className="mock-contact-label">Email:</p>
+                              <p className="mock-contact-value">
+                                {previewEmail}
+                              </p>
                             </div>
-                          </>
-                        )}
+                            <div className="mock-contact-item">
+                              <p className="mock-contact-label">Phone:</p>
+                              <p className="mock-contact-value">
+                                {previewPhone}
+                              </p>
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1015,7 +1041,7 @@ export default function MyProfile() {
                           >
                             {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
                             <img
-                              src={state.coverPhoto || ''}
+                              src={getEditorImageSrc(state.coverPhoto, previewPlaceholders.coverPhoto)}
                               alt="Cover"
                               className="cover-preview"
                             />
