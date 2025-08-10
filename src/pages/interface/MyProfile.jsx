@@ -57,7 +57,8 @@ export default function MyProfile() {
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
-  const [showThemeVariants, setShowThemeVariants] = useState(false);
+  // FIX: No more theme variants
+  // const [showThemeVariants, setShowThemeVariants] = useState(false);
   // FIX: New state for services and reviews display modes
   const [servicesDisplayMode, setServicesDisplayMode] = useState('list');
   const [reviewsDisplayMode, setReviewsDisplayMode] = useState('list');
@@ -143,7 +144,6 @@ export default function MyProfile() {
       updateState({
         businessName: businessCard.business_card_name || '',
         pageTheme: businessCard.page_theme || 'light',
-        pageThemeVariant: businessCard.page_theme_variant || 'subtle-light',
         font: businessCard.style || 'Inter',
         mainHeading: businessCard.main_heading || '',
         subHeading: businessCard.sub_heading || '',
@@ -168,14 +168,12 @@ export default function MyProfile() {
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
-      setShowThemeVariants(true);
     } else if (!isCardLoading && !businessCard) {
       resetState();
       setServicesDisplayMode('list');
       setReviewsDisplayMode('list');
       // FIX: Reset new layout to default
       setAboutMeLayout('side-by-side');
-      setShowThemeVariants(false);
     }
   }, [businessCard, isCardLoading, updateState, resetState]);
 
@@ -383,7 +381,6 @@ export default function MyProfile() {
     const isStateDifferent = (
       state.businessName !== (originalCard.business_card_name || '') ||
       state.pageTheme !== (originalCard.page_theme || 'light') ||
-      state.pageThemeVariant !== (originalCard.page_theme_variant || 'subtle-light') ||
       state.font !== (originalCard.style || 'Inter') ||
       state.mainHeading !== (originalCard.main_heading || '') ||
       state.subHeading !== (originalCard.sub_heading || '') ||
@@ -435,7 +432,6 @@ export default function MyProfile() {
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
-      page_theme_variant: state.pageThemeVariant,
       font: state.font,
       main_heading: state.mainHeading,
       sub_heading: state.subHeading,
@@ -514,7 +510,6 @@ export default function MyProfile() {
         updateState({
           businessName: businessCard.business_card_name || '',
           pageTheme: businessCard.page_theme || 'light',
-          pageThemeVariant: businessCard.page_theme_variant || 'subtle-light',
           font: businessCard.style || 'Inter',
           mainHeading: businessCard.main_heading || '',
           subHeading: businessCard.sub_heading || '',
@@ -705,7 +700,7 @@ export default function MyProfile() {
               <div className="myprofile-flex-container">
                 <div className={`myprofile-content ${isMobile ? 'myprofile-mock-phone-mobile-container' : ''}`}>
                   <div
-                    className={`mock-phone ${isDarkMode ? "dark-mode" : ""} ${previewData.pageThemeVariant}`}
+                    className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
                     style={{
                       fontFamily: previewData.font || previewPlaceholders.font
                     }}
@@ -945,54 +940,18 @@ export default function MyProfile() {
                         <button
                           type="button"
                           className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
-                          onClick={() => updateState({ pageTheme: "light", pageThemeVariant: "subtle-light" })}
+                          onClick={() => updateState({ pageTheme: "light" })}
                         >
                           Light Mode
                         </button>
                         <button
                           type="button"
                           className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
-                          onClick={() => updateState({ pageTheme: "dark", pageThemeVariant: "subtle-dark" })}
+                          onClick={() => updateState({ pageTheme: "dark" })}
                         >
                           Dark Mode
                         </button>
                       </div>
-                      {state.pageTheme === 'light' && (
-                        <div className="option-row mt-3">
-                          <button
-                            type="button"
-                            className={`theme-button ${state.pageThemeVariant === "subtle-light" ? "is-active" : ""}`}
-                            onClick={() => updateState({ pageThemeVariant: "subtle-light" })}
-                          >
-                            Subtle White
-                          </button>
-                          <button
-                            type="button"
-                            className={`theme-button ${state.pageThemeVariant === "pure-light" ? "is-active" : ""}`}
-                            onClick={() => updateState({ pageThemeVariant: "pure-light" })}
-                          >
-                            Pure White
-                          </button>
-                        </div>
-                      )}
-                      {state.pageTheme === 'dark' && (
-                        <div className="option-row mt-3">
-                          <button
-                            type="button"
-                            className={`theme-button ${state.pageThemeVariant === "subtle-dark" ? "is-active" : ""}`}
-                            onClick={() => updateState({ pageThemeVariant: "subtle-dark" })}
-                          >
-                            Subtle Black
-                          </button>
-                          <button
-                            type="button"
-                            className={`theme-button ${state.pageThemeVariant === "pure-dark" ? "is-active" : ""}`}
-                            onClick={() => updateState({ pageThemeVariant: "pure-dark" })}
-                          >
-                            Pure Black
-                          </button>
-                        </div>
-                      )}
                     </div>
 
                     <div className="input-block">
