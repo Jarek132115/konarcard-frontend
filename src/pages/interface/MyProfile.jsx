@@ -505,14 +505,17 @@ export default function MyProfile() {
     }
   };
 
+  // FIX: This function has been updated to scroll by the exact width of one image item.
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
-      // FIX: Scroll by a percentage of the container's width for responsiveness
-      const scrollAmount = direction === 'left' ? -carouselRef.current.offsetWidth * 0.8 : carouselRef.current.offsetWidth * 0.8;
-      carouselRef.current.scrollBy({
-        left: scrollAmount,
-        behavior: 'smooth'
-      });
+      const firstImage = carouselRef.current.querySelector('.mock-work-image-item-wrapper');
+      if (firstImage) {
+        const scrollAmount = firstImage.offsetWidth;
+        carouselRef.current.scrollBy({
+          left: direction === 'left' ? -scrollAmount : scrollAmount,
+          behavior: 'smooth'
+        });
+      }
     }
   };
 
