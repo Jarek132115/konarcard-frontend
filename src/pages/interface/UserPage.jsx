@@ -29,8 +29,16 @@ const UserPage = () => {
     if (isError) {
         console.error("Error fetching business card:", error);
         return (
-            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
-                <p className="error-message">Error: {error?.message || "Could not load user profile."}</p>
+            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#f0f0f0", color: "#333", padding: "20px", fontFamily: "Arial, sans-serif" }}>
+                <div style={{ maxWidth: "600px", margin: "auto", padding: "40px", border: "1px solid #ddd", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0,0,0,0.1)" }}>
+                    <h2 style={{ fontSize: "2rem", marginBottom: "20px" }}>Profile Unavailable</h2>
+                    <p style={{ fontSize: "1.2rem", lineHeight: "1.6" }}>
+                        This public profile is not currently active. The free trial may have expired or a subscription is needed.
+                    </p>
+                    <p style={{ fontSize: "1.1rem", marginTop: "20px" }}>
+                        Please contact **@{username}** directly for more information.
+                    </p>
+                </div>
             </div>
         );
     }
@@ -43,7 +51,6 @@ const UserPage = () => {
         );
     }
 
-    // Corrected logic: Check for subscription and trial status directly on the businessCard object
     const hasActiveSubscription = businessCard.isSubscribed;
     const isTrialPeriodActive = businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
     const isProfileActive = hasActiveSubscription || isTrialPeriodActive;
@@ -133,7 +140,7 @@ const UserPage = () => {
             <h2 className="landing-main-heading">{businessCard.main_heading}</h2>
             <p className="landing-sub-heading">{businessCard.sub_heading}</p>
 
-            {/* Exchange Contact Button - Now with onClick handler */}
+            {/* Exchange Contact Button */}
             <button
                 type="button"
                 onClick={handleExchangeContact}
@@ -151,7 +158,8 @@ const UserPage = () => {
             {(businessCard.full_name || businessCard.job_title || businessCard.bio || businessCard.avatar) && (
                 <>
                     <p className="landing-section-title">About me</p>
-                    <div className="landing-about-section">
+                    {/* Conditional rendering for aboutMeLayout */}
+                    <div className={`landing-about-section ${businessCard.about_me_layout}`}>
                         {businessCard.avatar && (
                             <img
                                 src={businessCard.avatar}
@@ -159,7 +167,7 @@ const UserPage = () => {
                                 className="landing-avatar"
                             />
                         )}
-                        <div>
+                        <div className="landing-about-content-group">
                             <p className="landing-profile-name">{businessCard.full_name}</p>
                             <p className="landing-profile-role">{businessCard.job_title}</p>
                         </div>
@@ -172,7 +180,8 @@ const UserPage = () => {
             {businessCard.works?.length > 0 && (
                 <>
                     <p className="landing-section-title">My Work</p>
-                    <div className="landing-work-gallery">
+                    {/* Conditional rendering for work_display_mode */}
+                    <div className={`landing-work-gallery ${businessCard.work_display_mode}`}>
                         {businessCard.works.map((url, i) => (
                             <img
                                 key={i}
@@ -189,7 +198,8 @@ const UserPage = () => {
             {businessCard.services?.length > 0 && (
                 <>
                     <p className="landing-section-title">My Services</p>
-                    <div className="landing-services-list">
+                    {/* Conditional rendering for services_display_mode */}
+                    <div className={`landing-services-list ${businessCard.services_display_mode}`}>
                         {businessCard.services.map((s, i) => (
                             <div key={i} className="landing-service-item">
                                 <p className="landing-service-name">{s.name}</p>
@@ -204,7 +214,8 @@ const UserPage = () => {
             {businessCard.reviews?.length > 0 && (
                 <>
                     <p className="landing-section-title">Reviews</p>
-                    <div className="landing-reviews-list">
+                    {/* Conditional rendering for reviews_display_mode */}
+                    <div className={`landing-reviews-list ${businessCard.reviews_display_mode}`}>
                         {businessCard.reviews.map((r, i) => (
                             <div key={i} className="landing-review-card">
                                 <div className="landing-star-rating">

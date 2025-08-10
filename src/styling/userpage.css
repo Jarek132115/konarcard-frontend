@@ -1,5 +1,3 @@
-userpage.css
-
 /* Main container for the public landing page */
 .user-landing-page {
     width: 100%;
@@ -26,7 +24,6 @@ userpage.css
 }
 
 /* Dark mode specific styles for the landing page background and text */
-/* This will target the main container when its style attribute indicates dark mode */
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] {
     background-color: #1F1F1F !important;
     /* Ensure dark background */
@@ -158,10 +155,7 @@ userpage.css
     padding: 1rem;
     /* 16px */
     display: flex;
-    gap: 1rem;
-    /* 16px gap */
     text-align: left;
-    align-items: center;
     width: 100%;
     /* Fill container width */
     max-width: 800px;
@@ -169,6 +163,34 @@ userpage.css
     box-sizing: border-box;
 }
 
+/* NEW: About Me layout options */
+.landing-about-section.side-by-side {
+    align-items: center;
+    gap: 1rem;
+}
+
+.landing-about-section.stacked {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* NEW: Adjustments for stacked layout */
+.landing-about-section.stacked .landing-about-content-group {
+    text-align: center;
+}
+
+.landing-about-section.stacked .landing-avatar {
+    margin-bottom: 1rem;
+}
+
+.landing-about-section.stacked .landing-profile-name,
+.landing-about-section.stacked .landing-profile-role {
+    text-align: center;
+}
+
+
+/* Avatar image within the about section */
 .landing-avatar {
     width: 3rem;
     /* 48px */
@@ -219,6 +241,27 @@ userpage.css
     /* Limit max width */
 }
 
+/* NEW: Work display modes */
+.landing-work-gallery.grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.landing-work-gallery.carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+}
+
+.landing-work-gallery.carousel img {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    width: 80%;
+    max-width: 300px;
+}
+
+
 .landing-work-gallery img {
     width: 100%;
     /* Image fills the single column */
@@ -240,6 +283,22 @@ userpage.css
     max-width: 800px;
     /* Limit max width */
 }
+
+/* NEW: Service display modes */
+.landing-services-list.carousel {
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+}
+
+.landing-services-list.carousel .landing-service-item {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    width: 80%;
+    max-width: 300px;
+}
+
 
 .landing-service-item {
     background-color: #f6f6f6;
@@ -278,6 +337,21 @@ userpage.css
     width: 100%;
     max-width: 800px;
     /* Limit max width */
+}
+
+/* NEW: Reviews display modes */
+.landing-reviews-list.carousel {
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+}
+
+.landing-reviews-list.carousel .landing-review-card {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    width: 80%;
+    max-width: 300px;
 }
 
 .landing-review-card {

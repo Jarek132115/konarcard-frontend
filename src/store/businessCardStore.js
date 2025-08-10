@@ -9,8 +9,7 @@ const initialState = {
   coverPhoto: null,
   avatar: null,
   workImages: [],
-  // FIX: Added the new state for work display mode
-  workDisplayMode: "list",
+  workDisplayMode: "list", // Already added
 
   mainHeading: "",
   subHeading: "",
@@ -19,7 +18,10 @@ const initialState = {
   bio: "",
 
   services: [],
+  servicesDisplayMode: "list", // New
   reviews: [],
+  reviewsDisplayMode: "list", // New
+  aboutMeLayout: "side-by-side", // New
 
   contact_email: "",
   phone_number: "",
@@ -47,8 +49,10 @@ export const previewPlaceholders = {
     { file: null, preview: "/Interface-Preview/Work-Images2.png" },
     { file: null, preview: "/Interface-Preview/Work-Images3.png" },
   ],
-  // FIX: Added the new placeholder for work display mode
   workDisplayMode: "list",
+  servicesDisplayMode: "list", // New
+  reviewsDisplayMode: "list", // New
+  aboutMeLayout: "side-by-side", // New
   mainHeading: "Your Main Heading Here",
   subHeading: "Your Tagline or Slogan Goes Here",
   job_title: "Your Job Title",
