@@ -47,8 +47,10 @@ export default function MyProfile() {
 
   const location = useLocation();
 
-  const [countdown, setCountdown] = useState(null);
+  // --- FIX: Removed local countdown state as it's no longer used.
+  // const [countdown, setCountdown] = useState(null);
 
+  // --- FIX: Use isSubscribed and the new trialExpires field from backend for display logic
   const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
   const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
 
@@ -73,29 +75,29 @@ export default function MyProfile() {
 
     checkSubscriptionStatus();
 
-    let timer;
-    if (isTrialActive) {
-      timer = setInterval(() => {
-        // --- FIX: Use authUser.trialExpires to calculate the countdown dynamically.
-        const trialExpirationDate = new Date(authUser.trialExpires);
-        const now = new Date();
-        const timeRemaining = trialExpirationDate.getTime() - now.getTime();
+    // --- FIX: Removed countdown timer logic as backend no longer manages a short trial.
+    // let timer;
+    // if (isTrialActive) {
+    //     timer = setInterval(() => {
+    //         const trialExpirationDate = new Date(authUser.trialExpires);
+    //         const now = new Date();
+    //         const timeRemaining = trialExpirationDate.getTime() - now.getTime();
 
-        if (timeRemaining > 0) {
-          const minutes = Math.floor(timeRemaining / (1000 * 60));
-          const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-          setCountdown(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
-        } else {
-          clearInterval(timer);
-          setCountdown("00:00");
-          refetchAuthUser(); // Refetch to get the latest status after trial ends
-        }
-      }, 1000);
-    } else {
-      setCountdown(null);
-    }
+    //         if (timeRemaining > 0) {
+    //             const minutes = Math.floor(timeRemaining / (1000 * 60));
+    //             const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+    //             setCountdown(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+    //         } else {
+    //             clearInterval(timer);
+    //             setCountdown("00:00");
+    //             refetchAuthUser();
+    //         }
+    //     }, 1000);
+    // } else {
+    //     setCountdown(null);
+    // }
 
-    return () => clearInterval(timer);
+    // return () => clearInterval(timer);
   }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser, isTrialActive]);
 
   useEffect(() => {
@@ -352,8 +354,8 @@ export default function MyProfile() {
     try {
       const trialResponse = await api.post('/start-trial');
       if (trialResponse.data.success) {
-        // --- FIX: This message now correctly says 5 minutes
-        toast.success("5-minute free trial started successfully!");
+        // --- FIX: This message now correctly says 14 days
+        toast.success("14-day free trial started successfully!");
         await refetchAuthUser();
         await handleSubmit(e, true);
       }
@@ -604,16 +606,16 @@ export default function MyProfile() {
               {!isSubscribed && !isTrialActive && (
                 <div className="trial-not-started-banner">
                   {/* --- FIX: Updated banner text to reflect the actual trial duration --- */}
-                  <p>Publish your own live website in minutes for 5 minutes free.</p>
+                  <p>Publish your own live website in minutes for 14 days free.</p>
                   <button className="blue-button" onClick={handleStartTrialAndSave}>
                     Get Started
                   </button>
                 </div>
               )}
 
-              {isTrialActive && countdown !== null && (
+              {isTrialActive && (
                 <div className="trial-countdown-banner">
-                  <p>Your free trial ends in {countdown}. <Link to="/subscription">Subscribe now!</Link></p>
+                  <p>Your free trial ends on {new Date(authUser.trialExpires).toLocaleDateString()}. <Link to="/subscription">Subscribe now!</Link></p>
                 </div>
               )}
 
