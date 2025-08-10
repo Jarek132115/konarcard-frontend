@@ -593,6 +593,17 @@ export default function MyProfile() {
   // Otherwise, always use the live state data.
   const previewDataSource = hasSavedData ? state : previewPlaceholders;
 
+  // --- START: NEW IMAGE SWAP LOGIC ---
+  const hasWorkImages = state.workImages.length > 0;
+  const coverPhotoForPreview = hasWorkImages ? state.workImages[0].preview : (hasSavedData ? state.coverPhoto : previewPlaceholders.coverPhoto);
+  const firstWorkImageForPreview = state.coverPhoto;
+
+  // Prepare the list of work images, swapping the first one if necessary
+  const workImagesForPreview = hasSavedData
+    ? (hasWorkImages ? [firstWorkImageForPreview, ...state.workImages.slice(1)] : [])
+    : previewPlaceholders.workImages;
+  // --- END: NEW IMAGE SWAP LOGIC ---
+
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
@@ -609,10 +620,6 @@ export default function MyProfile() {
 
   const getEditorValue = (fieldValue, placeholderValue) => {
     return fieldValue || placeholderValue || '';
-  };
-
-  const getEditorImageSrc = (imageState, placeholderImage) => {
-    return imageState || placeholderImage || '';
   };
 
   const showAddImageText = (imageState) => {
@@ -727,7 +734,7 @@ export default function MyProfile() {
                       {showMainSection && (
                         <>
                           <img
-                            src={hasSavedData ? (state.coverPhoto || previewPlaceholders.coverPhoto) : previewPlaceholders.coverPhoto}
+                            src={coverPhotoForPreview}
                             alt="Cover"
                             className="mock-cover"
                           />
@@ -800,10 +807,7 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
-                              {(hasSavedData
-                                ? state.workImages
-                                : previewPlaceholders.workImages
-                              ).map((item, i) => (
+                              {workImagesForPreview.map((item, i) => (
                                 <div key={i} className="mock-work-image-item-wrapper">
                                   <img
                                     src={item.preview || item}
