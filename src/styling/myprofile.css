@@ -191,7 +191,9 @@
 
 .mock-phone {
     width: 100%;
+    max-width: 350px;
     height: 100%;
+    aspect-ratio: 9 / 17;
     background: var(--primary-bg);
     border: 10px solid black;
     border-radius: 30px;
@@ -203,6 +205,7 @@
     font-family: var(--main-font-family);
     color: var(--text-color);
     overflow: hidden;
+    position: relative;
 }
 
 .mock-phone-scrollable-content {
@@ -269,6 +272,20 @@
     aspect-ratio: 4 / 3.25;
     border-radius: 0.75rem;
     margin-bottom: 12px;
+}
+
+.mock-title,
+.mock-subtitle,
+.mock-profile-name,
+.mock-profile-role,
+.mock-service-name,
+.mock-service-price,
+.mock-review-text,
+.mock-reviewer-name,
+.mock-contact-value {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .mock-title {
@@ -402,7 +419,6 @@
 .mock-reviews-list.carousel {
     display: flex;
     flex-direction: row;
-    /* FIX: Remove gap on the container to prevent awkward spacing on mobile. */
     gap: 0;
     overflow-x: auto;
     overflow-y: hidden;
@@ -418,25 +434,20 @@
     display: none;
 }
 
-/* FIX: Carousel item styling for work images, services, and reviews */
 .mock-work-gallery.carousel .mock-work-image-item-wrapper,
 .mock-services-list.carousel .mock-service-item,
 .mock-reviews-list.carousel .mock-review-card {
     flex-shrink: 0;
     flex-grow: 0;
-    /* FIX: Each item takes up the full width of the container. */
     flex-basis: 100%;
     max-width: 100%;
-    /* FIX: Align to the start to make sure the full item is in view, with no overlap. */
     scroll-snap-align: start;
     height: auto;
     display: block;
     box-sizing: border-box;
-    /* FIX: Re-add the gap as a margin to the items themselves for spacing between cards. */
     margin-right: 12px;
 }
 
-/* Specific styling for carousel wrappers */
 .mock-work-gallery.carousel .mock-work-image-item-wrapper {
     overflow: hidden;
     border-radius: 0.5rem;
@@ -1166,6 +1177,8 @@
         border-radius: 20px;
         height: auto !important;
         overflow: visible !important;
+        max-width: 100%;
+        /* Ensure it doesn't get wider than its container on mobile */
     }
 
     .mock-cover {
@@ -1205,7 +1218,6 @@
 }
 
 @media (max-width: 600px) {
-
     .page-actions .header-button {
         padding: 10px 15px;
         width: auto;
@@ -1356,7 +1368,6 @@
 .mock-reviews-list.carousel {
     display: flex;
     flex-direction: row;
-    /* FIX: Remove gap on the container to prevent awkward spacing on mobile. */
     gap: 0;
     overflow-x: auto;
     overflow-y: hidden;
@@ -1372,25 +1383,20 @@
     display: none;
 }
 
-/* FIX: Carousel item styling for work images, services, and reviews */
 .mock-work-gallery.carousel .mock-work-image-item-wrapper,
 .mock-services-list.carousel .mock-service-item,
 .mock-reviews-list.carousel .mock-review-card {
     flex-shrink: 0;
     flex-grow: 0;
-    /* FIX: Each item takes up the full width of the container. */
     flex-basis: 100%;
     max-width: 100%;
-    /* FIX: Align to the start to make sure the full item is in view, with no overlap. */
     scroll-snap-align: start;
     height: auto;
     display: block;
     box-sizing: border-box;
-    /* FIX: Re-add the gap as a margin to the items themselves for spacing between cards. */
     margin-right: 12px;
 }
 
-/* Specific styling for carousel wrappers */
 .mock-work-gallery.carousel .mock-work-image-item-wrapper {
     overflow: hidden;
     border-radius: 0.5rem;
@@ -1567,7 +1573,6 @@
 .mock-about-container.stacked .mock-bio-text {
     text-align: center;
 }
-
 
 .mock-contact-details {
     display: flex;
