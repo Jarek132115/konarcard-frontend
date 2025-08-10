@@ -127,38 +127,37 @@ const UserPage = () => {
 
     return (
         <div className="user-landing-page" style={themeStyles}>
-            {/* Cover Photo */}
-            {businessCard.cover_photo && (
-                <img
-                    src={businessCard.cover_photo}
-                    alt="Cover"
-                    className="landing-cover-photo"
-                />
+            {/* Main Section */}
+            {businessCard.show_main_section && (
+                <>
+                    {businessCard.cover_photo && (
+                        <img
+                            src={businessCard.cover_photo}
+                            alt="Cover"
+                            className="landing-cover-photo"
+                        />
+                    )}
+                    <h2 className="landing-main-heading">{businessCard.main_heading}</h2>
+                    <p className="landing-sub-heading">{businessCard.sub_heading}</p>
+                    <button
+                        type="button"
+                        onClick={handleExchangeContact}
+                        style={{
+                            backgroundColor:
+                                businessCard.page_theme === "dark" ? "white" : "black",
+                            color: businessCard.page_theme !== "dark" ? "white" : "black",
+                        }}
+                        className="landing-action-button"
+                    >
+                        Exchange Contact
+                    </button>
+                </>
             )}
 
-            {/* Main Heading & Subheading */}
-            <h2 className="landing-main-heading">{businessCard.main_heading}</h2>
-            <p className="landing-sub-heading">{businessCard.sub_heading}</p>
-
-            {/* Exchange Contact Button */}
-            <button
-                type="button"
-                onClick={handleExchangeContact}
-                style={{
-                    backgroundColor:
-                        businessCard.page_theme === "dark" ? "white" : "black",
-                    color: businessCard.page_theme !== "dark" ? "white" : "black",
-                }}
-                className="landing-action-button"
-            >
-                Exchange Contact
-            </button>
-
             {/* About Me Section */}
-            {(businessCard.full_name || businessCard.job_title || businessCard.bio || businessCard.avatar) && (
+            {businessCard.show_about_me_section && (businessCard.full_name || businessCard.job_title || businessCard.bio || businessCard.avatar) && (
                 <>
                     <p className="landing-section-title">About me</p>
-                    {/* Conditional rendering for aboutMeLayout */}
                     <div className={`landing-about-section ${businessCard.about_me_layout}`}>
                         {businessCard.avatar && (
                             <img
@@ -177,10 +176,9 @@ const UserPage = () => {
             )}
 
             {/* My Work Section */}
-            {businessCard.works?.length > 0 && (
+            {businessCard.show_work_section && businessCard.works?.length > 0 && (
                 <>
                     <p className="landing-section-title">My Work</p>
-                    {/* Conditional rendering for work_display_mode */}
                     <div className={`landing-work-gallery ${businessCard.work_display_mode}`}>
                         {businessCard.works.map((url, i) => (
                             <img
@@ -195,10 +193,9 @@ const UserPage = () => {
             )}
 
             {/* My Services Section */}
-            {businessCard.services?.length > 0 && (
+            {businessCard.show_services_section && businessCard.services?.length > 0 && (
                 <>
                     <p className="landing-section-title">My Services</p>
-                    {/* Conditional rendering for services_display_mode */}
                     <div className={`landing-services-list ${businessCard.services_display_mode}`}>
                         {businessCard.services.map((s, i) => (
                             <div key={i} className="landing-service-item">
@@ -211,10 +208,9 @@ const UserPage = () => {
             )}
 
             {/* Reviews Section */}
-            {businessCard.reviews?.length > 0 && (
+            {businessCard.show_reviews_section && businessCard.reviews?.length > 0 && (
                 <>
                     <p className="landing-section-title">Reviews</p>
-                    {/* Conditional rendering for reviews_display_mode */}
                     <div className={`landing-reviews-list ${businessCard.reviews_display_mode}`}>
                         {businessCard.reviews.map((r, i) => (
                             <div key={i} className="landing-review-card">
@@ -235,7 +231,7 @@ const UserPage = () => {
             )}
 
             {/* Contact Details Section */}
-            {(businessCard.contact_email || businessCard.phone_number) && (
+            {businessCard.show_contact_section && (businessCard.contact_email || businessCard.phone_number) && (
                 <>
                     <p className="landing-section-title">Contact Details</p>
                     <div className="landing-contact-details">
