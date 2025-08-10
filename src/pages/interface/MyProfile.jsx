@@ -76,6 +76,7 @@ export default function MyProfile() {
     let timer;
     if (isTrialActive) {
       timer = setInterval(() => {
+        // --- FIX: Use authUser.trialExpires to calculate the countdown dynamically.
         const trialExpirationDate = new Date(authUser.trialExpires);
         const now = new Date();
         const timeRemaining = trialExpirationDate.getTime() - now.getTime();
@@ -87,6 +88,7 @@ export default function MyProfile() {
         } else {
           clearInterval(timer);
           setCountdown("00:00");
+          refetchAuthUser(); // Refetch to get the latest status after trial ends
         }
       }, 1000);
     } else {
@@ -350,8 +352,9 @@ export default function MyProfile() {
     try {
       const trialResponse = await api.post('/start-trial');
       if (trialResponse.data.success) {
-        toast.success(trialResponse.data.message);
-        await refetchAuthUser(); // We wait for this to complete
+        // --- FIX: This message now correctly says 5 minutes
+        toast.success("5-minute free trial started successfully!");
+        await refetchAuthUser();
         await handleSubmit(e, true);
       }
     } catch (error) {
@@ -600,7 +603,8 @@ export default function MyProfile() {
 
               {!isSubscribed && !isTrialActive && (
                 <div className="trial-not-started-banner">
-                  <p>Publish your own live website in minutes for 14 days free.</p>
+                  {/* --- FIX: Updated banner text to reflect the actual trial duration --- */}
+                  <p>Publish your own live website in minutes for 5 minutes free.</p>
                   <button className="blue-button" onClick={handleStartTrialAndSave}>
                     Get Started
                   </button>
