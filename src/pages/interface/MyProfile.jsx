@@ -17,23 +17,16 @@ export default function MyProfile() {
   const { state, updateState, resetState } = useBusinessCardStore();
   const fileInputRef = useRef(null);
   const avatarInputRef = useRef(null);
-  const workImageInputRef = useRef(null); // This ref will be used for the file input
+  const workImageInputRef = useRef(null);
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  // FIX: Ref for the editor carousel container
   const workCarouselRef = useRef(null);
-  // FIX: Ref for the preview mock-phone carousel container
   const previewWorkCarouselRef = useRef(null);
-  // FIX: Ref for the editor services carousel container
   const servicesCarouselRef = useRef(null);
-  // FIX: Ref for the preview mock-phone services carousel container
   const previewServicesCarouselRef = useRef(null);
-  // FIX: Ref for the editor reviews carousel container
   const reviewsCarouselRef = useRef(null);
-  // FIX: Ref for the preview mock-phone reviews carousel container
   const previewReviewsCarouselRef = useRef(null);
-
 
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
   const isSubscribed = authUser?.isSubscribed || false;
@@ -57,12 +50,11 @@ export default function MyProfile() {
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
-  // FIX: No more theme variants
-  // const [showThemeVariants, setShowThemeVariants] = useState(false);
-  // FIX: New state for services and reviews display modes
+
+  // State for services and reviews display modes
   const [servicesDisplayMode, setServicesDisplayMode] = useState('list');
   const [reviewsDisplayMode, setReviewsDisplayMode] = useState('list');
-  // FIX: New state for about me layout
+  // State for about me layout
   const [aboutMeLayout, setAboutMeLayout] = useState('side-by-side');
 
   // New state variables for section visibility
@@ -139,48 +131,54 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // FIX: Add the new state initializations from businessCard data
+  // FIX: This is the critical useEffect hook. We need to handle state updates carefully.
   useEffect(() => {
     if (!isCardLoading && businessCard) {
+      // Only update the state with fetched values that are not null or undefined,
+      // but don't reset the entire state for a better editing experience.
       updateState({
-        businessName: businessCard.business_card_name || '',
-        pageTheme: businessCard.page_theme || 'light',
-        font: businessCard.style || 'Inter',
-        mainHeading: businessCard.main_heading || '',
-        subHeading: businessCard.sub_heading || '',
-        job_title: businessCard.job_title || '',
-        full_name: businessCard.full_name || '',
-        bio: businessCard.bio || '',
-        avatar: businessCard.avatar || null,
-        coverPhoto: businessCard.cover_photo || null,
+        businessName: businessCard.business_card_name || state.businessName,
+        pageTheme: businessCard.page_theme || state.pageTheme,
+        font: businessCard.style || state.font,
+        mainHeading: businessCard.main_heading || state.mainHeading,
+        subHeading: businessCard.sub_heading || state.subHeading,
+        job_title: businessCard.job_title || state.job_title,
+        full_name: businessCard.full_name || state.full_name,
+        bio: businessCard.bio || state.bio,
+        avatar: businessCard.avatar || state.avatar,
+        coverPhoto: businessCard.cover_photo || state.coverPhoto,
+        // Handle workImages to merge new files with existing ones
         workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
-        services: (businessCard.services || []),
-        reviews: (businessCard.reviews || []),
-        contact_email: businessCard.contact_email || '',
-        phone_number: businessCard.phone_number || '',
-        workDisplayMode: businessCard.work_display_mode || 'list',
+        services: businessCard.services || state.services,
+        reviews: businessCard.reviews || state.reviews,
+        contact_email: businessCard.contact_email || state.contact_email,
+        phone_number: businessCard.phone_number || state.phone_number,
+        workDisplayMode: businessCard.work_display_mode || state.workDisplayMode,
       });
-      setServicesDisplayMode(businessCard.services_display_mode || 'list');
-      setReviewsDisplayMode(businessCard.reviews_display_mode || 'list');
-      setAboutMeLayout(businessCard.about_me_layout || 'side-by-side');
-      // NEW: Initialize section visibility states from the fetched data
-      setShowMainSection(businessCard.show_main_section === false ? false : true);
-      setShowAboutMeSection(businessCard.show_about_me_section === false ? false : true);
-      setShowWorkSection(businessCard.show_work_section === false ? false : true);
-      setShowServicesSection(businessCard.show_services_section === false ? false : true);
-      setShowReviewsSection(businessCard.show_reviews_section === false ? false : true);
-      setShowContactSection(businessCard.show_contact_section === false ? false : true);
+      // Update display modes and layouts from fetched data
+      setServicesDisplayMode(businessCard.services_display_mode || servicesDisplayMode);
+      setReviewsDisplayMode(businessCard.reviews_display_mode || reviewsDisplayMode);
+      setAboutMeLayout(businessCard.about_me_layout || aboutMeLayout);
+
+      // Correctly set section visibility, defaulting to true if not saved
+      setShowMainSection(businessCard.show_main_section !== false);
+      setShowAboutMeSection(businessCard.show_about_me_section !== false);
+      setShowWorkSection(businessCard.show_work_section !== false);
+      setShowServicesSection(businessCard.show_services_section !== false);
+      setShowReviewsSection(businessCard.show_reviews_section !== false);
+      setShowContactSection(businessCard.show_contact_section !== false);
+
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     } else if (!isCardLoading && !businessCard) {
+      // For new users, reset to the initial state and show all sections by default
       resetState();
       setServicesDisplayMode('list');
       setReviewsDisplayMode('list');
       setAboutMeLayout('side-by-side');
-      // NEW: Reset visibility states to default (true) if no card exists
       setShowMainSection(true);
       setShowAboutMeSection(true);
       setShowWorkSection(true);
@@ -189,6 +187,7 @@ export default function MyProfile() {
       setShowContactSection(true);
     }
   }, [businessCard, isCardLoading, updateState, resetState]);
+
 
   useEffect(() => {
     return () => {
@@ -222,7 +221,6 @@ export default function MyProfile() {
     }
   };
 
-  // FIX: Consolidated image upload to handle multiple files
   const handleAddWorkImage = (e) => {
     e.preventDefault();
     const files = Array.from(e.target.files || []);
@@ -409,7 +407,6 @@ export default function MyProfile() {
       state.workDisplayMode !== (originalCard.work_display_mode || 'list') ||
       servicesDisplayMode !== (originalCard.services_display_mode || 'list') ||
       reviewsDisplayMode !== (originalCard.reviews_display_mode || 'list') ||
-      // FIX: Check for changes in the aboutMeLayout state
       aboutMeLayout !== (originalCard.about_me_layout || 'side-by-side')
     );
     return isStateDifferent;
@@ -465,22 +462,25 @@ export default function MyProfile() {
       work_display_mode: state.workDisplayMode,
       services_display_mode: servicesDisplayMode,
       reviews_display_mode: reviewsDisplayMode,
-      // FIX: Add new layout mode to form data
       about_me_layout: aboutMeLayout,
+      // Pass the visibility states with the form data
+      show_main_section: showMainSection,
+      show_about_me_section: showAboutMeSection,
+      show_work_section: showWorkSection,
+      show_services_section: showServicesSection,
+      show_reviews_section: showReviewsSection,
+      show_contact_section: showContactSection,
     });
 
     try {
       await createBusinessCard.mutateAsync(formData);
       toast.success("Your page is Published!");
-
       queryClient.invalidateQueries(['businessCard', userId]);
-
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
-
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
 
@@ -541,10 +541,22 @@ export default function MyProfile() {
         });
         setServicesDisplayMode(businessCard.services_display_mode || 'list');
         setReviewsDisplayMode(businessCard.reviews_display_mode || 'list');
-        // FIX: Reset new layout to last published
         setAboutMeLayout(businessCard.about_me_layout || 'side-by-side');
+        // Reset visibility states to the last published version
+        setShowMainSection(businessCard.show_main_section !== false);
+        setShowAboutMeSection(businessCard.show_about_me_section !== false);
+        setShowWorkSection(businessCard.show_work_section !== false);
+        setShowServicesSection(businessCard.show_services_section !== false);
+        setShowReviewsSection(businessCard.show_reviews_section !== false);
+        setShowContactSection(businessCard.show_contact_section !== false);
       } else {
         resetState();
+        setShowMainSection(true);
+        setShowAboutMeSection(true);
+        setShowWorkSection(true);
+        setShowServicesSection(true);
+        setShowReviewsSection(true);
+        setShowContactSection(true);
       }
 
       setCoverPhotoFile(null);
@@ -558,7 +570,6 @@ export default function MyProfile() {
     }
   };
 
-  // FIX: This function has been updated to scroll by the exact width of one item and to loop
   const scrollCarousel = (ref, direction) => {
     if (ref.current) {
       const carousel = ref.current;
@@ -587,6 +598,10 @@ export default function MyProfile() {
     }
   };
 
+  // Correctly choose whether to use placeholder or real data for preview
+  const hasSavedData = !!businessCard;
+  const previewDataSource = hasSavedData ? businessCard : previewPlaceholders;
+
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
@@ -614,9 +629,7 @@ export default function MyProfile() {
   };
 
   const shouldBlurEditor = !isSubscribed && hasTrialEnded;
-
-  const previewData = state;
-  const isDarkMode = previewData.pageTheme === "dark";
+  const isDarkMode = state.pageTheme === "dark";
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -716,25 +729,23 @@ export default function MyProfile() {
                   <div
                     className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
                     style={{
-                      fontFamily: previewData.font || previewPlaceholders.font
+                      fontFamily: state.font || previewPlaceholders.font
                     }}
                   >
                     <div className="mock-phone-scrollable-content">
                       {showMainSection && (
                         <>
                           <img
-                            src={
-                              previewData.coverPhoto || previewPlaceholders.coverPhoto
-                            }
+                            src={state.coverPhoto || previewDataSource.cover_photo}
                             alt="Cover"
                             className="mock-cover"
                           />
 
                           <h2 className="mock-title">
-                            {previewData.mainHeading || previewPlaceholders.mainHeading}
+                            {state.mainHeading || previewDataSource.main_heading}
                           </h2>
                           <p className="mock-subtitle">
-                            {previewData.subHeading || previewPlaceholders.subHeading}
+                            {state.subHeading || previewDataSource.sub_heading}
                           </p>
                           <button
                             type="button"
@@ -745,7 +756,7 @@ export default function MyProfile() {
                         </>
                       )}
 
-                      {showAboutMeSection && (previewData.full_name || previewData.job_title || previewData.bio || previewData.avatar ||
+                      {showAboutMeSection && (state.full_name || state.job_title || state.bio || state.avatar ||
                         previewPlaceholders.full_name || previewPlaceholders.job_title || previewPlaceholders.bio || previewPlaceholders.avatar
                       ) && (
                           <>
@@ -754,30 +765,28 @@ export default function MyProfile() {
                               <div className="mock-about-content-group">
                                 <div className="mock-about-header-group">
                                   <img
-                                    src={
-                                      previewData.avatar || previewPlaceholders.avatar
-                                    }
+                                    src={state.avatar || previewDataSource.avatar}
                                     alt="Avatar"
                                     className="mock-avatar"
                                   />
                                   <div>
                                     <p className="mock-profile-name">
-                                      {previewData.full_name || previewPlaceholders.full_name}
+                                      {state.full_name || previewDataSource.full_name}
                                     </p>
                                     <p className="mock-profile-role">
-                                      {previewData.job_title || previewPlaceholders.job_title}
+                                      {state.job_title || previewDataSource.job_title}
                                     </p>
                                   </div>
                                 </div>
                                 <p className="mock-bio-text">
-                                  {previewData.bio || previewPlaceholders.bio}
+                                  {state.bio || previewDataSource.bio}
                                 </p>
                               </div>
                             </div>
                           </>
                         )}
 
-                      {showWorkSection && (previewData.workImages.length > 0 || previewPlaceholders.workImages.length > 0) && (
+                      {showWorkSection && (state.workImages.length > 0 || previewPlaceholders.workImages.length > 0) && (
                         <>
                           <p className="mock-section-title">My Work</p>
                           <div className="work-preview-row-container">
@@ -800,8 +809,8 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
-                              {(previewData.workImages.length > 0
-                                ? previewData.workImages
+                              {(state.workImages.length > 0
+                                ? state.workImages
                                 : previewPlaceholders.workImages
                               ).map((item, i) => (
                                 <div key={i} className="mock-work-image-item-wrapper">
@@ -817,7 +826,7 @@ export default function MyProfile() {
                         </>
                       )}
 
-                      {showServicesSection && (previewData.services.length > 0 || previewPlaceholders.services.length > 0) && (
+                      {showServicesSection && (state.services.length > 0 || previewPlaceholders.services.length > 0) && (
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="work-preview-row-container">
@@ -840,8 +849,8 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
-                              {(previewData.services.length > 0
-                                ? previewData.services
+                              {(state.services.length > 0
+                                ? state.services
                                 : previewPlaceholders.services
                               ).map((s, i) => (
                                 <div key={i} className="mock-service-item">
@@ -858,7 +867,7 @@ export default function MyProfile() {
                         </>
                       )}
 
-                      {showReviewsSection && (previewData.reviews.length > 0 || previewPlaceholders.reviews.length > 0) && (
+                      {showReviewsSection && (state.reviews.length > 0 || previewPlaceholders.reviews.length > 0) && (
                         <>
                           <p className="mock-section-title">Reviews</p>
                           <div className="work-preview-row-container">
@@ -881,8 +890,8 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
-                              {(previewData.reviews.length > 0
-                                ? previewData.reviews
+                              {(state.reviews.length > 0
+                                ? state.reviews
                                 : previewPlaceholders.reviews
                               ).map((r, i) => (
                                 <div key={i} className="mock-review-card">
@@ -908,7 +917,7 @@ export default function MyProfile() {
                         </>
                       )}
 
-                      {showContactSection && (previewData.contact_email || previewData.phone_number ||
+                      {showContactSection && (state.contact_email || state.phone_number ||
                         previewPlaceholders.contact_email || previewPlaceholders.phone_number
                       ) && (
                           <>
@@ -917,13 +926,13 @@ export default function MyProfile() {
                               <div className="mock-contact-item">
                                 <p className="mock-contact-label">Email:</p>
                                 <p className="mock-contact-value">
-                                  {previewData.contact_email || previewPlaceholders.contact_email}
+                                  {state.contact_email || previewDataSource.contact_email}
                                 </p>
                               </div>
                               <div className="mock-contact-item">
                                 <p className="mock-contact-label">Phone:</p>
                                 <p className="mock-contact-value">
-                                  {previewData.phone_number || previewPlaceholders.phone_number}
+                                  {state.phone_number || previewDataSource.phone_number}
                                 </p>
                               </div>
                             </div>
@@ -1002,16 +1011,16 @@ export default function MyProfile() {
                             id="coverPhoto"
                             type="file"
                             accept="image/*"
-                            onChange={handleImageUpload} // FIX: Add onChange here
+                            onChange={handleImageUpload}
                             style={{ display: "none" }}
                           />
                           <div
                             className="image-upload-area cover-photo-upload"
-                            onClick={() => fileInputRef.current.click()} // FIX: Use the ref
+                            onClick={() => fileInputRef.current.click()}
                           >
                             {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
                             <img
-                              src={getEditorImageSrc(state.coverPhoto)}
+                              src={getEditorImageSrc(state.coverPhoto, previewPlaceholders.coverPhoto)}
                               alt="Cover"
                               className="cover-preview"
                             />
@@ -1087,12 +1096,12 @@ export default function MyProfile() {
                             id="avatar"
                             type="file"
                             accept="image/*"
-                            onChange={handleAvatarUpload} // FIX: Add onChange here
+                            onChange={handleAvatarUpload}
                             style={{ display: "none" }}
                           />
                           <div
                             className="image-upload-area avatar-upload"
-                            onClick={() => avatarInputRef.current.click()} // FIX: Use the ref
+                            onClick={() => avatarInputRef.current.click()}
                           >
                             {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
                             <img
@@ -1184,7 +1193,6 @@ export default function MyProfile() {
 
                         <div className="input-block">
                           <label>Work Images</label>
-                          {/* FIX: Add the new editor-list class here */}
                           <div className="editor-work-image-grid">
                             {(state.workImages.length > 0
                               ? state.workImages
@@ -1256,7 +1264,6 @@ export default function MyProfile() {
                         </div>
                         <div className="input-block">
                           <label>Services</label>
-                          {/* FIX: Add the new editor-list class here */}
                           <div className="editor-service-list">
                             {state.services.map((s, i) => (
                               <div key={i} className="editor-item-card mock-service-item-wrapper">
@@ -1313,7 +1320,6 @@ export default function MyProfile() {
                         </div>
                         <div className="input-block">
                           <label>Reviews</label>
-                          {/* FIX: Add the new editor-list class here */}
                           <div className="editor-reviews-list">
                             {state.reviews.map((r, i) => (
                               <div key={i} className="editor-item-card mock-review-card-wrapper">
