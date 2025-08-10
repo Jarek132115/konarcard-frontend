@@ -72,6 +72,20 @@ const UserPage = () => {
         );
     }
 
+    // Set a default value if the saved value is not present in the database yet
+    const aboutMeLayout = businessCard.about_me_layout || 'side-by-side';
+    const workDisplayMode = businessCard.work_display_mode || 'list';
+    const servicesDisplayMode = businessCard.services_display_mode || 'list';
+    const reviewsDisplayMode = businessCard.reviews_display_mode || 'list';
+
+    // Set section visibility based on saved data, defaulting to true if not present
+    const showMainSection = businessCard.show_main_section !== false;
+    const showAboutMeSection = businessCard.show_about_me_section !== false;
+    const showWorkSection = businessCard.show_work_section !== false;
+    const showServicesSection = businessCard.show_services_section !== false;
+    const showReviewsSection = businessCard.show_reviews_section !== false;
+    const showContactSection = businessCard.show_contact_section !== false;
+
     const themeStyles = {
         backgroundColor: businessCard.page_theme === "dark" ? "#1F1F1F" : "#FFFFFF",
         color: businessCard.page_theme === "dark" ? "#FFFFFF" : "#000000",
@@ -128,7 +142,7 @@ const UserPage = () => {
     return (
         <div className="user-landing-page" style={themeStyles}>
             {/* Main Section */}
-            {businessCard.show_main_section && (
+            {showMainSection && (
                 <>
                     {businessCard.cover_photo && (
                         <img
@@ -155,10 +169,10 @@ const UserPage = () => {
             )}
 
             {/* About Me Section */}
-            {businessCard.show_about_me_section && (businessCard.full_name || businessCard.job_title || businessCard.bio || businessCard.avatar) && (
+            {showAboutMeSection && (businessCard.full_name || businessCard.job_title || businessCard.bio || businessCard.avatar) && (
                 <>
                     <p className="landing-section-title">About me</p>
-                    <div className={`landing-about-section ${businessCard.about_me_layout}`}>
+                    <div className={`landing-about-section ${aboutMeLayout}`}>
                         {businessCard.avatar && (
                             <img
                                 src={businessCard.avatar}
@@ -176,10 +190,10 @@ const UserPage = () => {
             )}
 
             {/* My Work Section */}
-            {businessCard.show_work_section && businessCard.works?.length > 0 && (
+            {showWorkSection && businessCard.works?.length > 0 && (
                 <>
                     <p className="landing-section-title">My Work</p>
-                    <div className={`landing-work-gallery ${businessCard.work_display_mode}`}>
+                    <div className={`landing-work-gallery ${workDisplayMode}`}>
                         {businessCard.works.map((url, i) => (
                             <img
                                 key={i}
@@ -193,10 +207,10 @@ const UserPage = () => {
             )}
 
             {/* My Services Section */}
-            {businessCard.show_services_section && businessCard.services?.length > 0 && (
+            {showServicesSection && businessCard.services?.length > 0 && (
                 <>
                     <p className="landing-section-title">My Services</p>
-                    <div className={`landing-services-list ${businessCard.services_display_mode}`}>
+                    <div className={`landing-services-list ${servicesDisplayMode}`}>
                         {businessCard.services.map((s, i) => (
                             <div key={i} className="landing-service-item">
                                 <p className="landing-service-name">{s.name}</p>
@@ -208,10 +222,10 @@ const UserPage = () => {
             )}
 
             {/* Reviews Section */}
-            {businessCard.show_reviews_section && businessCard.reviews?.length > 0 && (
+            {showReviewsSection && businessCard.reviews?.length > 0 && (
                 <>
                     <p className="landing-section-title">Reviews</p>
-                    <div className={`landing-reviews-list ${businessCard.reviews_display_mode}`}>
+                    <div className={`landing-reviews-list ${reviewsDisplayMode}`}>
                         {businessCard.reviews.map((r, i) => (
                             <div key={i} className="landing-review-card">
                                 <div className="landing-star-rating">
@@ -231,7 +245,7 @@ const UserPage = () => {
             )}
 
             {/* Contact Details Section */}
-            {businessCard.show_contact_section && (businessCard.contact_email || businessCard.phone_number) && (
+            {showContactSection && (businessCard.contact_email || businessCard.phone_number) && (
                 <>
                     <p className="landing-section-title">Contact Details</p>
                     <div className="landing-contact-details">
