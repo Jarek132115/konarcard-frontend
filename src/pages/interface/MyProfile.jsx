@@ -44,6 +44,8 @@ export default function MyProfile() {
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  // FIX: New state to control visibility of theme variants
+  const [showThemeVariants, setShowThemeVariants] = useState(false);
 
   const location = useLocation();
 
@@ -116,6 +118,8 @@ export default function MyProfile() {
       updateState({
         businessName: businessCard.business_card_name || '',
         pageTheme: businessCard.page_theme || 'light',
+        // FIX: Update state with the new theme variant
+        pageThemeVariant: businessCard.page_theme_variant || 'subtle-light',
         font: businessCard.style || 'Inter',
         mainHeading: businessCard.main_heading || '',
         subHeading: businessCard.sub_heading || '',
@@ -135,8 +139,12 @@ export default function MyProfile() {
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
+      // FIX: Set theme variants to be shown if a card exists
+      setShowThemeVariants(true);
     } else if (!isCardLoading && !businessCard) {
       resetState();
+      // FIX: Hide theme variants if no card data
+      setShowThemeVariants(false);
     }
   }, [businessCard, isCardLoading, updateState, resetState]);
 
@@ -345,6 +353,8 @@ export default function MyProfile() {
     const isStateDifferent = (
       state.businessName !== (originalCard.business_card_name || '') ||
       state.pageTheme !== (originalCard.page_theme || 'light') ||
+      // FIX: Check for changes in the new theme variant field
+      state.pageThemeVariant !== (originalCard.page_theme_variant || 'subtle-light') ||
       state.font !== (originalCard.style || 'Inter') ||
       state.mainHeading !== (originalCard.main_heading || '') ||
       state.subHeading !== (originalCard.sub_heading || '') ||
@@ -391,6 +401,8 @@ export default function MyProfile() {
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
+      // FIX: Add the new theme variant to the formData
+      page_theme_variant: state.pageThemeVariant,
       font: state.font,
       main_heading: state.mainHeading,
       sub_heading: state.subHeading,
@@ -458,9 +470,34 @@ export default function MyProfile() {
     }
   };
 
+  // FIX: Resetting the state to the original, not a fixed default
   const handleResetPage = () => {
     if (window.confirm("Are you sure you want to reset all your changes? This cannot be undone.")) {
-      resetState();
+      if (businessCard) {
+        // Reset to the last saved business card state
+        updateState({
+          businessName: businessCard.business_card_name || '',
+          pageTheme: businessCard.page_theme || 'light',
+          pageThemeVariant: businessCard.page_theme_variant || 'subtle-light',
+          font: businessCard.style || 'Inter',
+          mainHeading: businessCard.main_heading || '',
+          subHeading: businessCard.sub_heading || '',
+          job_title: businessCard.job_title || '',
+          full_name: businessCard.full_name || '',
+          bio: businessCard.bio || '',
+          avatar: businessCard.avatar || null,
+          coverPhoto: businessCard.cover_photo || null,
+          workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
+          services: (businessCard.services || []),
+          reviews: (businessCard.reviews || []),
+          contact_email: businessCard.contact_email || '',
+          phone_number: businessCard.phone_number || '',
+        });
+      } else {
+        // Reset to the initial default state if no card exists
+        resetState();
+      }
+
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
@@ -468,7 +505,7 @@ export default function MyProfile() {
       setIsAvatarRemoved(false);
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
-      toast.success("Your page has been reset to default.");
+      toast.success("Your page has been reset to the last published version.");
     }
   };
 
@@ -501,6 +538,7 @@ export default function MyProfile() {
   const shouldBlurEditor = !isSubscribed && hasTrialEnded;
 
   const previewData = state;
+  // FIX: Use the theme variant for the dark mode class
   const isDarkMode = previewData.pageTheme === "dark";
 
   return (
@@ -600,7 +638,8 @@ export default function MyProfile() {
               <div className="myprofile-flex-container">
                 <div className={`myprofile-content ${isMobile ? 'myprofile-mock-phone-mobile-container' : ''}`}>
                   <div
-                    className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
+                    // FIX: Pass both theme and variant class names
+                    className={`mock-phone ${isDarkMode ? "dark-mode" : ""} ${previewData.pageThemeVariant}`}
                     style={{
                       fontFamily: previewData.font || previewPlaceholders.font
                     }}
@@ -776,18 +815,55 @@ export default function MyProfile() {
                         <button
                           type="button"
                           className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
-                          onClick={() => updateState({ pageTheme: "light" })}
+                          onClick={() => updateState({ pageTheme: "light", pageThemeVariant: "subtle-light" })}
                         >
                           Light Mode
                         </button>
                         <button
                           type="button"
                           className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
-                          onClick={() => updateState({ pageTheme: "dark" })}
+                          onClick={() => updateState({ pageTheme: "dark", pageThemeVariant: "subtle-dark" })}
                         >
                           Dark Mode
                         </button>
                       </div>
+                      {/* FIX: Conditionally render the theme variant buttons */}
+                      {state.pageTheme === 'light' && (
+                        <div className="option-row mt-3">
+                          <button
+                            type="button"
+                            className={`theme-button ${state.pageThemeVariant === "subtle-light" ? "is-active" : ""}`}
+                            onClick={() => updateState({ pageThemeVariant: "subtle-light" })}
+                          >
+                            Subtle White
+                          </button>
+                          <button
+                            type="button"
+                            className={`theme-button ${state.pageThemeVariant === "pure-light" ? "is-active" : ""}`}
+                            onClick={() => updateState({ pageThemeVariant: "pure-light" })}
+                          >
+                            Pure White
+                          </button>
+                        </div>
+                      )}
+                      {state.pageTheme === 'dark' && (
+                        <div className="option-row mt-3">
+                          <button
+                            type="button"
+                            className={`theme-button ${state.pageThemeVariant === "subtle-dark" ? "is-active" : ""}`}
+                            onClick={() => updateState({ pageThemeVariant: "subtle-dark" })}
+                          >
+                            Subtle Black
+                          </button>
+                          <button
+                            type="button"
+                            className={`theme-button ${state.pageThemeVariant === "pure-dark" ? "is-active" : ""}`}
+                            onClick={() => updateState({ pageThemeVariant: "pure-dark" })}
+                          >
+                            Pure Black
+                          </button>
+                        </div>
+                      )}
                     </div>
 
                     <div className="input-block">

@@ -15,6 +15,21 @@
     --main-font-family: 'Inter', sans-serif;
 }
 
+/* FIX: Define color variables for light theme variants */
+.light-mode.pure-light {
+    --primary-bg: #FFFFFF;
+    --secondary-bg: #F9F9F9;
+    --card-bg: #F1F1F1;
+    --input-border: #ccc;
+}
+
+.light-mode.subtle-light {
+    --primary-bg: #F9F9F9;
+    --secondary-bg: #F1F1F1;
+    --card-bg: #FFFFFF;
+    --input-border: #e0e0e0;
+}
+
 .dark-mode {
     --primary-bg: #1F1F1F;
     --secondary-bg: #2C2C2C;
@@ -27,6 +42,21 @@
     --input-border: #666;
     --placeholder-bg: #444;
     --page-header-color: #FFFFFF;
+}
+
+/* FIX: Define color variables for dark theme variants */
+.dark-mode.pure-dark {
+    --primary-bg: #000000;
+    --secondary-bg: #1F1F1F;
+    --card-bg: #2C2C2C;
+    --input-border: #333;
+}
+
+.dark-mode.subtle-dark {
+    --primary-bg: #1F1F1F;
+    --secondary-bg: #2C2C2C;
+    --card-bg: #333333;
+    --input-border: #666;
 }
 
 .app-layout {
@@ -936,7 +966,6 @@
     width: 100%;
 }
 
-
 /* --- MOBILE SPECIFIC STYLES (Max-width 1000px) --- */
 @media (max-width: 1000px) {
 
@@ -1084,13 +1113,6 @@
         /* Allow the phone screen to expand based on scrollable content */
         overflow: visible !important;
         /* CRITICAL: Allow the entire phone content to render */
-    }
-
-    .mock-phone-scrollable-content {
-        height: auto !important;
-        /* Allow content to dictate height */
-        overflow-y: visible !important;
-        /* CRITICAL: Allows the phone to stretch based on its content length */
     }
 
     /* FIX: Remove aspect-ratio from mock-cover on mobile */
@@ -1265,4 +1287,9 @@
     .mock-reviewer-name {
         font-size: 0.8rem;
     }
+}
+
+/* FIX: Added margin-top to the new option-row in the editor for spacing */
+.option-row.mt-3 {
+    margin-top: 10px;
 }

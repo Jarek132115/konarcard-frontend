@@ -1,9 +1,10 @@
-
 import { create } from "zustand";
 
 const initialState = {
   businessName: "",
   pageTheme: "light",
+  // FIX: Added the new theme variant state
+  pageThemeVariant: "subtle-light",
   font: "Inter",
 
   coverPhoto: null,
@@ -36,6 +37,9 @@ export default useBusinessCardStore;
 
 export const previewPlaceholders = {
   businessName: "My Digital Business Card",
+  pageTheme: "light",
+  // FIX: Added the new theme variant placeholder
+  pageThemeVariant: "subtle-light",
   coverPhoto: "/Interface-Preview/Cover-Photo1.png",
   avatar: "/Interface-Preview/Profile-Pic.png",
   workImages: [
