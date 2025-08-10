@@ -399,6 +399,12 @@
     color: var(--text-color);
 }
 
+/* FIX: New parent container for carousel to properly position buttons */
+.work-preview-row-container {
+    position: relative;
+    width: 100%;
+}
+
 /* FIX: Base styles for work gallery */
 .mock-work-gallery {
     display: flex;
@@ -411,18 +417,10 @@
     border-radius: 0;
 }
 
-/* FIX: New parent container for carousel to properly position buttons */
-.carousel-container {
-    position: relative;
-    /* Crucial for positioning the buttons inside it */
-    width: 100%;
-    /* Take up full width */
-}
-
 /* FIX: Grid layout */
 .mock-work-gallery.grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
 
@@ -430,30 +428,20 @@
 .mock-work-gallery.carousel {
     display: flex;
     gap: 12px;
+    /* overflow is handled by the parent container */
     overflow-x: auto;
+    overflow-y: hidden;
     padding-bottom: 15px;
     -webkit-overflow-scrolling: touch;
-    justify-content: flex-start;
+    align-items: stretch;
+    /* Align items to stretch vertically */
     flex-wrap: nowrap;
-    /* FIX: The parent container is now the only one with this overflow */
-    overflow: unset;
 }
 
-/* Hide scrollbar for carousel on webkit browsers */
 .mock-work-gallery.carousel::-webkit-scrollbar {
     display: none;
 }
 
-/* Ensure work items in carousel and grid have a fixed width to prevent stretching */
-.mock-work-gallery.carousel .mock-work-image-item-wrapper {
-    flex: 0 0 80%;
-    /* FIX: A fixed percentage to show partial next item */
-    max-width: 80%;
-    /* To handle small mobile screens better */
-    height: auto;
-}
-
-/* Individual work item wrapper styles */
 .mock-work-image-item-wrapper {
     position: relative;
     width: 100%;
@@ -466,6 +454,26 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* FIX: Ensure work items in carousel and grid have consistent sizing */
+.mock-work-gallery.list .mock-work-image-item-wrapper {
+    width: 100%;
+}
+
+.mock-work-gallery.grid .mock-work-image-item-wrapper {
+    width: 100%;
+    aspect-ratio: 4 / 2.75;
+}
+
+.mock-work-gallery.carousel .mock-work-image-item-wrapper {
+    flex: 0 0 80%;
+    /* Show one main image and a bit of the next */
+    height: auto;
+    max-width: 80%;
+    scroll-snap-align: start;
+    /* Snap to the start of the item */
+}
+
+/* Individual image styling */
 .mock-work-gallery img.mock-work-image-item {
     width: 100%;
     height: auto;
@@ -1288,11 +1296,9 @@
 }
 
 /* FIX: New parent container for carousel to properly position buttons */
-.carousel-container {
+.work-preview-row-container {
     position: relative;
-    /* Crucial for positioning the buttons inside it */
     width: 100%;
-    /* Take up full width */
 }
 
 /* FIX: New carousel navigation button styling */
@@ -1337,14 +1343,13 @@
 /* FIX: Refined grid layout for max 2 columns */
 .mock-work-gallery.grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
 
-@media (min-width: 601px) {
+@media (max-width: 600px) {
     .mock-work-gallery.grid {
-        grid-template-columns: repeat(2, 1fr);
-        /* 2 columns on larger screens */
+        grid-template-columns: 1fr;
     }
 }
 
@@ -1355,20 +1360,32 @@
     overflow-x: auto;
     padding-bottom: 15px;
     -webkit-overflow-scrolling: touch;
-    justify-content: flex-start;
+    align-items: stretch;
+    /* Align items to stretch vertically */
     flex-wrap: nowrap;
     position: relative;
     /* This makes sure the container is sized and overflow is handled properly */
     overflow-y: hidden;
+    scroll-snap-type: x mandatory;
 }
 
 .mock-work-gallery.carousel .mock-work-image-item-wrapper {
     flex: 0 0 80%;
+    /* Show one main image and a bit of the next */
     max-width: 80%;
     height: auto;
+    scroll-snap-align: start;
+    /* Snap to the start of the item */
 }
 
-.mock-work-image-item {
-    height: 100%;
+/* Individual image styling */
+.mock-work-gallery img.mock-work-image-item {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 2.75;
+    border-radius: 0;
+    min-width: unset;
+    min-height: unset;
+    background-color: var(--placeholder-bg);
     object-fit: cover;
 }

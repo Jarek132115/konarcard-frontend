@@ -21,6 +21,7 @@ export default function MyProfile() {
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  // FIX: Ref for the carousel container
   const carouselRef = useRef(null);
 
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
@@ -704,7 +705,6 @@ export default function MyProfile() {
                       {(previewData.workImages.length > 0 || previewPlaceholders.workImages.length > 0) && (
                         <>
                           <p className="mock-section-title">My Work</p>
-                          {/* FIX: The carousel buttons need a parent container with position: relative */}
                           <div className="carousel-container">
                             {state.workDisplayMode === 'carousel' && (
                               <div className="carousel-nav-buttons">
@@ -713,14 +713,14 @@ export default function MyProfile() {
                                   className="carousel-nav-button left-arrow"
                                   onClick={() => scrollCarousel('left')}
                                 >
-                                  &#9664; {/* Left arrow character */}
+                                  &#9664;
                                 </button>
                                 <button
                                   type="button"
                                   className="carousel-nav-button right-arrow"
                                   onClick={() => scrollCarousel('right')}
                                 >
-                                  &#9654; {/* Right arrow character */}
+                                  &#9654;
                                 </button>
                               </div>
                             )}
@@ -1078,6 +1078,7 @@ export default function MyProfile() {
 
                     <div className="input-block">
                       <label>Work Images</label>
+                      {/* FIX: Moved carousel buttons inside a new container */}
                       <div className="work-preview-row-container">
                         {state.workDisplayMode === 'carousel' && (
                           <div className="carousel-nav-buttons">
@@ -1086,14 +1087,14 @@ export default function MyProfile() {
                               className="carousel-nav-button left-arrow"
                               onClick={() => scrollCarousel('left')}
                             >
-                              &#9664; {/* Left arrow character */}
+                              &#9664;
                             </button>
                             <button
                               type="button"
                               className="carousel-nav-button right-arrow"
                               onClick={() => scrollCarousel('right')}
                             >
-                              &#9654; {/* Right arrow character */}
+                              &#9654;
                             </button>
                           </div>
                         )}
