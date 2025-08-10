@@ -64,6 +64,14 @@ export default function MyProfile() {
   // FIX: New state for about me layout
   const [aboutMeLayout, setAboutMeLayout] = useState('side-by-side');
 
+  // NEW: State variables for section visibility toggles
+  const [showMainSection, setShowMainSection] = useState(true);
+  const [showAboutMeSection, setShowAboutMeSection] = useState(true);
+  const [showMyWorkSection, setShowMyWorkSection] = useState(true);
+  const [showMyServicesSection, setShowMyServicesSection] = useState(true);
+  const [showReviewsSection, setShowReviewsSection] = useState(true);
+  const [showContactDetails, setShowContactDetails] = useState(true);
+
   const location = useLocation();
 
   const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
@@ -703,20 +711,26 @@ export default function MyProfile() {
                     }}
                   >
                     <div className="mock-phone-scrollable-content">
-                      <img
-                        src={
-                          previewData.coverPhoto || previewPlaceholders.coverPhoto
-                        }
-                        alt="Cover"
-                        className="mock-cover"
-                      />
 
-                      <h2 className="mock-title">
-                        {previewData.mainHeading || previewPlaceholders.mainHeading}
-                      </h2>
-                      <p className="mock-subtitle">
-                        {previewData.subHeading || previewPlaceholders.subHeading}
-                      </p>
+                      {/* Preview: Main Section */}
+                      {showMainSection && (
+                        <React.Fragment>
+                          <img
+                            src={previewData.coverPhoto || previewPlaceholders.coverPhoto}
+                            alt="Cover"
+                            className="mock-cover"
+                          />
+
+                          <h2 className="mock-title">
+                            {previewData.mainHeading || previewPlaceholders.mainHeading}
+                          </h2>
+                          <p className="mock-subtitle">
+                            {previewData.subHeading || previewPlaceholders.subHeading}
+                          </p>
+                        </React.Fragment>
+                      )}
+
+                      {/* This button is always visible as requested */}
                       <button
                         type="button"
                         className="mock-button"
@@ -724,18 +738,16 @@ export default function MyProfile() {
                         Exchange Contact
                       </button>
 
-                      {(previewData.full_name || previewData.job_title || previewData.bio || previewData.avatar ||
-                        previewPlaceholders.full_name || previewPlaceholders.job_title || previewPlaceholders.bio || previewPlaceholders.avatar
-                      ) && (
-                          <>
+                      {/* Preview: About Me Section */}
+                      {showAboutMeSection && (previewData.full_name || previewData.job_title || previewData.bio || previewData.avatar ||
+                        previewPlaceholders.full_name || previewPlaceholders.job_title || previewPlaceholders.bio || previewPlaceholders.avatar) && (
+                          <React.Fragment>
                             <p className="mock-section-title">About me</p>
                             <div className={`mock-about-container ${aboutMeLayout}`}>
                               <div className="mock-about-content-group">
                                 <div className="mock-about-header-group">
                                   <img
-                                    src={
-                                      previewData.avatar || previewPlaceholders.avatar
-                                    }
+                                    src={previewData.avatar || previewPlaceholders.avatar}
                                     alt="Avatar"
                                     className="mock-avatar"
                                   />
@@ -753,11 +765,12 @@ export default function MyProfile() {
                                 </p>
                               </div>
                             </div>
-                          </>
+                          </React.Fragment>
                         )}
 
-                      {(previewData.workImages.length > 0 || previewPlaceholders.workImages.length > 0) && (
-                        <>
+                      {/* Preview: My Work Section */}
+                      {showMyWorkSection && (previewData.workImages.length > 0 || previewPlaceholders.workImages.length > 0) && (
+                        <React.Fragment>
                           <p className="mock-section-title">My Work</p>
                           <div className="work-preview-row-container">
                             {state.workDisplayMode === 'carousel' && (
@@ -793,11 +806,12 @@ export default function MyProfile() {
                               ))}
                             </div>
                           </div>
-                        </>
+                        </React.Fragment>
                       )}
 
-                      {(previewData.services.length > 0 || previewPlaceholders.services.length > 0) && (
-                        <>
+                      {/* Preview: My Services Section */}
+                      {showMyServicesSection && (previewData.services.length > 0 || previewPlaceholders.services.length > 0) && (
+                        <React.Fragment>
                           <p className="mock-section-title">My Services</p>
                           <div className="work-preview-row-container">
                             {servicesDisplayMode === 'carousel' && (
@@ -834,11 +848,12 @@ export default function MyProfile() {
                               ))}
                             </div>
                           </div>
-                        </>
+                        </React.Fragment>
                       )}
 
-                      {(previewData.reviews.length > 0 || previewPlaceholders.reviews.length > 0) && (
-                        <>
+                      {/* Preview: Reviews Section */}
+                      {showReviewsSection && (previewData.reviews.length > 0 || previewPlaceholders.reviews.length > 0) && (
+                        <React.Fragment>
                           <p className="mock-section-title">Reviews</p>
                           <div className="work-preview-row-container">
                             {reviewsDisplayMode === 'carousel' && (
@@ -883,13 +898,13 @@ export default function MyProfile() {
                               ))}
                             </div>
                           </div>
-                        </>
+                        </React.Fragment>
                       )}
 
-                      {(previewData.contact_email || previewData.phone_number ||
-                        previewPlaceholders.contact_email || previewPlaceholders.phone_number
-                      ) && (
-                          <>
+                      {/* Preview: Contact Details Section */}
+                      {showContactDetails && (previewData.contact_email || previewData.phone_number ||
+                        previewPlaceholders.contact_email || previewPlaceholders.phone_number) && (
+                          <React.Fragment>
                             <p className="mock-section-title">Contact Details</p>
                             <div className="mock-contact-details">
                               <div className="mock-contact-item">
@@ -905,520 +920,567 @@ export default function MyProfile() {
                                 </p>
                               </div>
                             </div>
-                          </>
+                          </React.Fragment>
                         )}
                     </div>
                   </div>
-                </div>
 
-                <div className="myprofile-editor-wrapper">
-                  {shouldBlurEditor && (
-                    <div className="subscription-overlay">
-                      <div className="subscription-message">
-                        <p className="desktop-h4">Subscription Required</p>
-                        <p className="desktop-h6">Your free trial has ended. Please subscribe to continue editing your profile.</p>
-                        <button className="blue-button" onClick={handleStartSubscription}>
-                          Go to Subscription
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
-                    <h2 className="editor-title">Create Your Digital Business Card</h2>
-
-                    <div className="input-block">
-                      <label>Page Theme</label>
-                      <div className="option-row">
-                        <button
-                          type="button"
-                          className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
-                          onClick={() => updateState({ pageTheme: "light", pageThemeVariant: "subtle-light" })}
-                        >
-                          Light Mode
-                        </button>
-                        <button
-                          type="button"
-                          className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
-                          onClick={() => updateState({ pageTheme: "dark", pageThemeVariant: "subtle-dark" })}
-                        >
-                          Dark Mode
-                        </button>
-                      </div>
-                      {state.pageTheme === 'light' && (
-                        <div className="option-row mt-3">
-                          <button
-                            type="button"
-                            className={`theme-button ${state.pageThemeVariant === "subtle-light" ? "is-active" : ""}`}
-                            onClick={() => updateState({ pageThemeVariant: "subtle-light" })}
-                          >
-                            Subtle White
-                          </button>
-                          <button
-                            type="button"
-                            className={`theme-button ${state.pageThemeVariant === "pure-light" ? "is-active" : ""}`}
-                            onClick={() => updateState({ pageThemeVariant: "pure-light" })}
-                          >
-                            Pure White
+                  <div className="myprofile-editor-wrapper">
+                    {shouldBlurEditor && (
+                      <div className="subscription-overlay">
+                        <div className="subscription-message">
+                          <p className="desktop-h4">Subscription Required</p>
+                          <p className="desktop-h6">Your free trial has ended. Please subscribe to continue editing your profile.</p>
+                          <button className="blue-button" onClick={handleStartSubscription}>
+                            Go to Subscription
                           </button>
                         </div>
-                      )}
-                      {state.pageTheme === 'dark' && (
-                        <div className="option-row mt-3">
+                      </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
+                      <h2 className="editor-title">Create Your Digital Business Card</h2>
+
+                      <div className="input-block">
+                        <label>Page Theme</label>
+                        <div className="option-row">
                           <button
                             type="button"
-                            className={`theme-button ${state.pageThemeVariant === "subtle-dark" ? "is-active" : ""}`}
-                            onClick={() => updateState({ pageThemeVariant: "subtle-dark" })}
+                            className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
+                            onClick={() => updateState({ pageTheme: "light", pageThemeVariant: "subtle-light" })}
                           >
-                            Subtle Black
+                            Light Mode
                           </button>
                           <button
                             type="button"
-                            className={`theme-button ${state.pageThemeVariant === "pure-dark" ? "is-active" : ""}`}
-                            onClick={() => updateState({ pageThemeVariant: "pure-dark" })}
+                            className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
+                            onClick={() => updateState({ pageTheme: "dark", pageThemeVariant: "subtle-dark" })}
                           >
-                            Pure Black
+                            Dark Mode
                           </button>
                         </div>
-                      )}
-                    </div>
-
-                    <div className="input-block">
-                      <label>Font</label>
-                      <div className="option-row">
-                        {["Inter", "Montserrat", "Poppins"].map((font) => (
-                          <button
-                            type="button"
-                            key={font}
-                            className={`font-button ${state.font === font ? "is-active" : ""}`}
-                            onClick={() => updateState({ font })}
-                          >
-                            {font}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <hr className="divider" />
-                    <h3 className="editor-subtitle">Main Section</h3>
-                    <div className="input-block">
-                      <label htmlFor="coverPhoto">Cover Photo</label>
-                      <input
-                        ref={fileInputRef}
-                        id="coverPhoto"
-                        type="file"
-                        accept="image/*"
-                        style={{ display: "none" }}
-                      />
-                      <div
-                        className="image-upload-area cover-photo-upload"
-                        onClick={() => {
-                          const input = document.createElement('input');
-                          input.type = 'file';
-                          input.accept = 'image/*';
-                          input.onchange = (e) => {
-                            handleImageUpload(e);
-                            document.body.removeChild(input);
-                          };
-                          document.body.appendChild(input);
-                          input.click();
-                        }}
-                      >
-                        {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
-                        <img
-                          src={getEditorImageSrc(state.coverPhoto)}
-                          alt="Cover"
-                          className="cover-preview"
-                        />
-                        {state.coverPhoto && (
-                          <button
-                            type="button"
-                            className="remove-image-button"
-                            onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}
-                          >
-                            &times;
-                          </button>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="input-block">
-                      <label htmlFor="mainHeading">Main Heading</label>
-                      <input
-                        id="mainHeading"
-                        type="text"
-                        value={state.mainHeading || ''}
-                        onChange={(e) => updateState({ mainHeading: e.target.value })}
-                        placeholder={previewPlaceholders.mainHeading}
-                      />
-                    </div>
-
-                    <div className="input-block">
-                      <label htmlFor="subHeading">Subheading</label>
-                      <input
-                        id="subHeading"
-                        type="text"
-                        value={state.subHeading || ''}
-                        onChange={(e) => updateState({ subHeading: e.target.value })}
-                        placeholder={previewPlaceholders.subHeading}
-                      />
-                    </div>
-
-                    <hr className="divider" />
-                    <h3 className="editor-subtitle">About Me Section</h3>
-                    <div className="input-block">
-                      <label>Display Layout</label>
-                      <div className="option-row">
-                        <button
-                          type="button"
-                          className={`display-button ${aboutMeLayout === 'side-by-side' ? 'is-active' : ''}`}
-                          onClick={() => setAboutMeLayout('side-by-side')}
-                        >
-                          Side by Side
-                        </button>
-                        <button
-                          type="button"
-                          className={`display-button ${aboutMeLayout === 'stacked' ? 'is-active' : ''}`}
-                          onClick={() => setAboutMeLayout('stacked')}
-                        >
-                          Stacked
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="input-block">
-                      <label htmlFor="avatar">Profile Photo</label>
-                      <input
-                        ref={avatarInputRef}
-                        id="avatar"
-                        type="file"
-                        accept="image/*"
-                        style={{ display: "none" }}
-                      />
-                      <div
-                        className="image-upload-area avatar-upload"
-                        onClick={() => {
-                          const input = document.createElement('input');
-                          input.type = 'file';
-                          input.accept = 'image/*';
-                          input.onchange = (e) => {
-                            handleAvatarUpload(e);
-                            document.body.removeChild(input);
-                          };
-                          document.body.appendChild(input);
-                          input.click();
-                        }}
-                      >
-                        {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
-                        <img
-                          src={getEditorImageSrc(state.avatar, previewPlaceholders.avatar)}
-                          alt="Avatar preview"
-                          className="avatar-preview"
-                        />
-                        {state.avatar && (
-                          <button
-                            type="button"
-                            className="remove-image-button"
-                            onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}
-                          >
-                            &times;
-                          </button>
-                        )}
-                      </div>
-                      <div className="input-block">
-                        <label htmlFor="fullName">Full Name</label>
-                        <input
-                          id="fullName"
-                          type="text"
-                          value={state.full_name || ''}
-                          onChange={(e) => updateState({ full_name: e.target.value })}
-                          placeholder={previewPlaceholders.full_name}
-                        />
-                      </div>
-
-                      <div className="input-block">
-                        <label htmlFor="jobTitle">Job Title</label>
-                        <input
-                          id="jobTitle"
-                          type="text"
-                          value={state.job_title || ''}
-                          onChange={(e) => updateState({ job_title: e.target.value })}
-                          placeholder={previewPlaceholders.job_title}
-                        />
-                      </div>
-
-                      <div className="input-block">
-                        <label htmlFor="bio">About Me Description</label>
-                        <textarea
-                          id="bio"
-                          value={state.bio || ''}
-                          onChange={(e) => updateState({ bio: e.target.value })}
-                          rows={4}
-                          placeholder={previewPlaceholders.bio}
-                        />
-                      </div>
-                    </div>
-
-                    <hr className="divider" />
-                    <h3 className="editor-subtitle">My Work Section</h3>
-                    <div className="input-block">
-                      <label>Display Layout</label>
-                      <div className="option-row">
-                        <button
-                          type="button"
-                          className={`display-button ${state.workDisplayMode === 'list' ? 'is-active' : ''}`}
-                          onClick={() => updateState({ workDisplayMode: 'list' })}
-                        >
-                          List
-                        </button>
-                        <button
-                          type="button"
-                          className={`display-button ${state.workDisplayMode === 'grid' ? 'is-active' : ''}`}
-                          onClick={() => updateState({ workDisplayMode: 'grid' })}
-                        >
-                          Grid
-                        </button>
-                        <button
-                          type="button"
-                          className={`display-button ${state.workDisplayMode === 'carousel' ? 'is-active' : ''}`}
-                          onClick={() => updateState({ workDisplayMode: 'carousel' })}
-                        >
-                          Carousel
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="input-block">
-                      <label>Work Images</label>
-                      <div className="work-preview-row-container">
-                        {state.workDisplayMode === 'carousel' && (
-                          <div className="carousel-nav-buttons">
+                        {state.pageTheme === 'light' && (
+                          <div className="option-row mt-3">
                             <button
                               type="button"
-                              className="carousel-nav-button left-arrow"
-                              onClick={() => scrollCarousel(workCarouselRef, 'left')}
+                              className={`theme-button ${state.pageThemeVariant === "subtle-light" ? "is-active" : ""}`}
+                              onClick={() => updateState({ pageThemeVariant: "subtle-light" })}
                             >
-                              &#9664;
+                              Subtle White
                             </button>
                             <button
                               type="button"
-                              className="carousel-nav-button right-arrow"
-                              onClick={() => scrollCarousel(workCarouselRef, 'right')}
+                              className={`theme-button ${state.pageThemeVariant === "pure-light" ? "is-active" : ""}`}
+                              onClick={() => updateState({ pageThemeVariant: "pure-light" })}
                             >
-                              &#9654;
+                              Pure White
                             </button>
                           </div>
                         )}
-                        <div ref={workCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
-                          {(previewData.workImages.length > 0
-                            ? previewData.workImages
-                            : previewPlaceholders.workImages
-                          ).map((item, i) => (
-                            <div key={i} className="mock-work-image-item-wrapper">
+                        {state.pageTheme === 'dark' && (
+                          <div className="option-row mt-3">
+                            <button
+                              type="button"
+                              className={`theme-button ${state.pageThemeVariant === "subtle-dark" ? "is-active" : ""}`}
+                              onClick={() => updateState({ pageThemeVariant: "subtle-dark" })}
+                            >
+                              Subtle Black
+                            </button>
+                            <button
+                              type="button"
+                              className={`theme-button ${state.pageThemeVariant === "pure-dark" ? "is-active" : ""}`}
+                              onClick={() => updateState({ pageThemeVariant: "pure-dark" })}
+                            >
+                              Pure Black
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="input-block">
+                        <label>Font</label>
+                        <div className="option-row">
+                          {["Inter", "Montserrat", "Poppins"].map((font) => (
+                            <button
+                              type="button"
+                              key={font}
+                              className={`font-button ${state.font === font ? "is-active" : ""}`}
+                              onClick={() => updateState({ font })}
+                            >
+                              {font}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <hr className="divider" />
+                      <div className="editor-section-header">
+                        <h3 className="editor-subtitle">Main Section</h3>
+                        <button type="button" className="toggle-section-button" onClick={() => setShowMainSection(!showMainSection)}>
+                          {showMainSection ? 'Hide' : 'Show'}
+                        </button>
+                      </div>
+                      {showMainSection && (
+                        <React.Fragment>
+                          <div className="input-block">
+                            <label htmlFor="coverPhoto">Cover Photo</label>
+                            <input
+                              ref={fileInputRef}
+                              id="coverPhoto"
+                              type="file"
+                              accept="image/*"
+                              style={{ display: "none" }}
+                            />
+                            <div
+                              className="image-upload-area cover-photo-upload"
+                              onClick={() => {
+                                const input = document.createElement('input');
+                                input.type = 'file';
+                                input.accept = 'image/*';
+                                input.onchange = (e) => {
+                                  handleImageUpload(e);
+                                  document.body.removeChild(input);
+                                };
+                                document.body.appendChild(input);
+                                input.click();
+                              }}
+                            >
+                              {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
                               <img
-                                src={item.preview || item}
-                                alt={`work-${i}`}
-                                className="mock-work-image-item"
+                                src={getEditorImageSrc(state.coverPhoto)}
+                                alt="Cover"
+                                className="cover-preview"
                               />
+                              {state.coverPhoto && (
+                                <button
+                                  type="button"
+                                  className="remove-image-button"
+                                  onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}
+                                >
+                                  &times;
+                                </button>
+                              )}
                             </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                          </div>
 
-                    <hr className="divider" />
-                    <h3 className="editor-subtitle">My Services Section</h3>
-                    {/* FIX: New display mode controls for Services */}
-                    <div className="input-block">
-                      <label>Display Layout</label>
-                      <div className="option-row">
-                        <button
-                          type="button"
-                          className={`display-button ${servicesDisplayMode === 'list' ? 'is-active' : ''}`}
-                          onClick={() => setServicesDisplayMode('list')}
-                        >
-                          List
-                        </button>
-                        <button
-                          type="button"
-                          className={`display-button ${servicesDisplayMode === 'carousel' ? 'is-active' : ''}`}
-                          onClick={() => setServicesDisplayMode('carousel')}
-                        >
-                          Carousel
+                          <div className="input-block">
+                            <label htmlFor="mainHeading">Main Heading</label>
+                            <input
+                              id="mainHeading"
+                              type="text"
+                              value={state.mainHeading || ''}
+                              onChange={(e) => updateState({ mainHeading: e.target.value })}
+                              placeholder={previewPlaceholders.mainHeading}
+                            />
+                          </div>
+
+                          <div className="input-block">
+                            <label htmlFor="subHeading">Subheading</label>
+                            <input
+                              id="subHeading"
+                              type="text"
+                              value={state.subHeading || ''}
+                              onChange={(e) => updateState({ subHeading: e.target.value })}
+                              placeholder={previewPlaceholders.subHeading}
+                            />
+                          </div>
+                        </React.Fragment>
+                      )}
+
+                      <hr className="divider" />
+                      <div className="editor-section-header">
+                        <h3 className="editor-subtitle">About Me Section</h3>
+                        <button type="button" className="toggle-section-button" onClick={() => setShowAboutMeSection(!showAboutMeSection)}>
+                          {showAboutMeSection ? 'Hide' : 'Show'}
                         </button>
                       </div>
-                    </div>
-                    <div className="input-block">
-                      <label>Services</label>
-                      {/* FIX: New carousel container for Services */}
-                      <div className="work-preview-row-container">
-                        {servicesDisplayMode === 'carousel' && (
-                          <div className="carousel-nav-buttons">
-                            <button
-                              type="button"
-                              className="carousel-nav-button left-arrow"
-                              onClick={() => scrollCarousel(servicesCarouselRef, 'left')}
+                      {showAboutMeSection && (
+                        <React.Fragment>
+                          <div className="input-block">
+                            <label>Display Layout</label>
+                            <div className="option-row">
+                              <button
+                                type="button"
+                                className={`display-button ${aboutMeLayout === 'side-by-side' ? 'is-active' : ''}`}
+                                onClick={() => setAboutMeLayout('side-by-side')}
+                              >
+                                Side by Side
+                              </button>
+                              <button
+                                type="button"
+                                className={`display-button ${aboutMeLayout === 'stacked' ? 'is-active' : ''}`}
+                                onClick={() => setAboutMeLayout('stacked')}
+                              >
+                                Stacked
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="input-block">
+                            <label htmlFor="avatar">Profile Photo</label>
+                            <input
+                              ref={avatarInputRef}
+                              id="avatar"
+                              type="file"
+                              accept="image/*"
+                              style={{ display: "none" }}
+                            />
+                            <div
+                              className="image-upload-area avatar-upload"
+                              onClick={() => {
+                                const input = document.createElement('input');
+                                input.type = 'file';
+                                input.accept = 'image/*';
+                                input.onchange = (e) => {
+                                  handleAvatarUpload(e);
+                                  document.body.removeChild(input);
+                                };
+                                document.body.appendChild(input);
+                                input.click();
+                              }}
                             >
-                              &#9664;
-                            </button>
-                            <button
-                              type="button"
-                              className="carousel-nav-button right-arrow"
-                              onClick={() => scrollCarousel(servicesCarouselRef, 'right')}
-                            >
-                              &#9654;
+                              {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
+                              <img
+                                src={getEditorImageSrc(state.avatar, previewPlaceholders.avatar)}
+                                alt="Avatar preview"
+                                className="avatar-preview"
+                              />
+                              {state.avatar && (
+                                <button
+                                  type="button"
+                                  className="remove-image-button"
+                                  onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}
+                                >
+                                  &times;
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                          <div className="input-block">
+                            <label htmlFor="fullName">Full Name</label>
+                            <input
+                              id="fullName"
+                              type="text"
+                              value={state.full_name || ''}
+                              onChange={(e) => updateState({ full_name: e.target.value })}
+                              placeholder={previewPlaceholders.full_name}
+                            />
+                          </div>
+
+                          <div className="input-block">
+                            <label htmlFor="jobTitle">Job Title</label>
+                            <input
+                              id="jobTitle"
+                              type="text"
+                              value={state.job_title || ''}
+                              onChange={(e) => updateState({ job_title: e.target.value })}
+                              placeholder={previewPlaceholders.job_title}
+                            />
+                          </div>
+
+                          <div className="input-block">
+                            <label htmlFor="bio">About Me Description</label>
+                            <textarea
+                              id="bio"
+                              value={state.bio || ''}
+                              onChange={(e) => updateState({ bio: e.target.value })}
+                              rows={4}
+                              placeholder={previewPlaceholders.bio}
+                            />
+                          </div>
+                        </React.Fragment>
+                      )}
+                      <hr className="divider" />
+                      <div className="editor-section-header">
+                        <h3 className="editor-subtitle">My Work Section</h3>
+                        <button type="button" className="toggle-section-button" onClick={() => setShowMyWorkSection(!showMyWorkSection)}>
+                          {showMyWorkSection ? 'Hide' : 'Show'}
+                        </button>
+                      </div>
+                      {showMyWorkSection && (
+                        <React.Fragment>
+                          <div className="input-block">
+                            <label>Display Layout</label>
+                            <div className="option-row">
+                              <button
+                                type="button"
+                                className={`display-button ${state.workDisplayMode === 'list' ? 'is-active' : ''}`}
+                                onClick={() => updateState({ workDisplayMode: 'list' })}
+                              >
+                                List
+                              </button>
+                              <button
+                                type="button"
+                                className={`display-button ${state.workDisplayMode === 'grid' ? 'is-active' : ''}`}
+                                onClick={() => updateState({ workDisplayMode: 'grid' })}
+                              >
+                                Grid
+                              </button>
+                              <button
+                                type="button"
+                                className={`display-button ${state.workDisplayMode === 'carousel' ? 'is-active' : ''}`}
+                                onClick={() => updateState({ workDisplayMode: 'carousel' })}
+                              >
+                                Carousel
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="input-block">
+                            <label>Work Images</label>
+                            <div className="work-preview-row-container">
+                              {state.workDisplayMode === 'carousel' && (
+                                <div className="carousel-nav-buttons">
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(workCarouselRef, 'left')}
+                                  >
+                                    &#9664;
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(workCarouselRef, 'right')}
+                                  >
+                                    &#9654;
+                                  </button>
+                                </div>
+                              )}
+                              <div ref={workCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
+                                {(previewData.workImages.length > 0
+                                  ? previewData.workImages
+                                  : previewPlaceholders.workImages
+                                ).map((item, i) => (
+                                  <div key={i} className="mock-work-image-item-wrapper">
+                                    <img
+                                      src={item.preview || item}
+                                      alt={`work-${i}`}
+                                      className="mock-work-image-item"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            <button type="button" onClick={handleAddWorkImage} className="add-item-button">
+                              + Add Work Image
                             </button>
                           </div>
-                        )}
-                        <div ref={servicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
-                          {(state.services.length > 0
-                            ? state.services
-                            : previewPlaceholders.services
-                          ).map((s, i) => (
-                            <div key={i} className="editor-item-card mock-service-item-wrapper">
-                              <input
-                                type="text"
-                                placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
-                                value={s.name || ''}
-                                onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                              />
-                              <input
-                                type="text"
-                                placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
-                                value={s.price || ''}
-                                onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                              />
-                              <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
+                        </React.Fragment>
+                      )}
+                      <hr className="divider" />
+                      <div className="editor-section-header">
+                        <h3 className="editor-subtitle">My Services Section</h3>
+                        <button type="button" className="toggle-section-button" onClick={() => setShowMyServicesSection(!showMyServicesSection)}>
+                          {showMyServicesSection ? 'Hide' : 'Show'}
+                        </button>
+                      </div>
+                      {showMyServicesSection && (
+                        <React.Fragment>
+                          <div className="input-block">
+                            <label>Display Layout</label>
+                            <div className="option-row">
+                              <button
+                                type="button"
+                                className={`display-button ${servicesDisplayMode === 'list' ? 'is-active' : ''}`}
+                                onClick={() => setServicesDisplayMode('list')}
+                              >
+                                List
+                              </button>
+                              <button
+                                type="button"
+                                className={`display-button ${servicesDisplayMode === 'carousel' ? 'is-active' : ''}`}
+                                onClick={() => setServicesDisplayMode('carousel')}
+                              >
+                                Carousel
+                              </button>
                             </div>
-                          ))}
-                        </div>
-                      </div>
-                      <button type="button" onClick={handleAddService} className="add-item-button">
-                        + Add Service
-                      </button>
-                    </div>
-
-                    <hr className="divider" />
-                    <h3 className="editor-subtitle">Reviews Section</h3>
-                    {/* FIX: New display mode controls for Reviews */}
-                    <div className="input-block">
-                      <label>Display Layout</label>
-                      <div className="option-row">
-                        <button
-                          type="button"
-                          className={`display-button ${reviewsDisplayMode === 'list' ? 'is-active' : ''}`}
-                          onClick={() => setReviewsDisplayMode('list')}
-                        >
-                          List
-                        </button>
-                        <button
-                          type="button"
-                          className={`display-button ${reviewsDisplayMode === 'carousel' ? 'is-active' : ''}`}
-                          onClick={() => setReviewsDisplayMode('carousel')}
-                        >
-                          Carousel
-                        </button>
-                      </div>
-                    </div>
-                    <div className="input-block">
-                      <label>Reviews</label>
-                      {/* FIX: New carousel container for Reviews */}
-                      <div className="work-preview-row-container">
-                        {reviewsDisplayMode === 'carousel' && (
-                          <div className="carousel-nav-buttons">
-                            <button
-                              type="button"
-                              className="carousel-nav-button left-arrow"
-                              onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
-                            >
-                              &#9664;
-                            </button>
-                            <button
-                              type="button"
-                              className="carousel-nav-button right-arrow"
-                              onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
-                            >
-                              &#9654;
+                          </div>
+                          <div className="input-block">
+                            <label>Services</label>
+                            <div className="work-preview-row-container">
+                              {servicesDisplayMode === 'carousel' && (
+                                <div className="carousel-nav-buttons">
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(servicesCarouselRef, 'left')}
+                                  >
+                                    &#9664;
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(servicesCarouselRef, 'right')}
+                                  >
+                                    &#9654;
+                                  </button>
+                                </div>
+                              )}
+                              <div ref={servicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
+                                {(state.services.length > 0
+                                  ? state.services
+                                  : previewPlaceholders.services
+                                ).map((s, i) => (
+                                  <div key={i} className="editor-item-card mock-service-item-wrapper">
+                                    <input
+                                      type="text"
+                                      placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
+                                      value={s.name || ''}
+                                      onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                                    />
+                                    <input
+                                      type="text"
+                                      placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
+                                      value={s.price || ''}
+                                      onChange={(e) => handleServiceChange(i, "price", e.target.value)}
+                                    />
+                                    <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            <button type="button" onClick={handleAddService} className="add-item-button">
+                              + Add Service
                             </button>
                           </div>
-                        )}
-                        <div ref={reviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
-                          {(state.reviews.length > 0
-                            ? state.reviews
-                            : previewPlaceholders.reviews
-                          ).map((r, i) => (
-                            <div key={i} className="editor-item-card mock-review-card-wrapper">
-                              <input
-                                type="text"
-                                placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
-                                value={r.name || ''}
-                                onChange={(e) => handleReviewChange(i, "name", e.target.value)}
-                              />
-                              <textarea
-                                placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
-                                rows={2}
-                                value={r.text || ''}
-                                onChange={(e) => handleReviewChange(i, "text", e.target.value)}
-                              />
-                              <input
-                                type="number"
-                                placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
-                                min="1"
-                                max="5"
-                                value={r.rating || ''}
-                                onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
-                              />
-                              <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
-                            </div>
-                          ))}
-                        </div>
+                        </React.Fragment>
+                      )}
+                      <hr className="divider" />
+                      <div className="editor-section-header">
+                        <h3 className="editor-subtitle">Reviews Section</h3>
+                        <button type="button" className="toggle-section-button" onClick={() => setShowReviewsSection(!showReviewsSection)}>
+                          {showReviewsSection ? 'Hide' : 'Show'}
+                        </button>
                       </div>
-                      <button type="button" onClick={handleAddReview} className="add-item-button">
-                        + Add Review
-                      </button>
-                    </div>
+                      {showReviewsSection && (
+                        <React.Fragment>
+                          <div className="input-block">
+                            <label>Display Layout</label>
+                            <div className="option-row">
+                              <button
+                                type="button"
+                                className={`display-button ${reviewsDisplayMode === 'list' ? 'is-active' : ''}`}
+                                onClick={() => setReviewsDisplayMode('list')}
+                              >
+                                List
+                              </button>
+                              <button
+                                type="button"
+                                className={`display-button ${reviewsDisplayMode === 'carousel' ? 'is-active' : ''}`}
+                                onClick={() => setReviewsDisplayMode('carousel')}
+                              >
+                                Carousel
+                              </button>
+                            </div>
+                          </div>
+                          <div className="input-block">
+                            <label>Reviews</label>
+                            <div className="work-preview-row-container">
+                              {reviewsDisplayMode === 'carousel' && (
+                                <div className="carousel-nav-buttons">
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
+                                  >
+                                    &#9664;
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
+                                  >
+                                    &#9654;
+                                  </button>
+                                </div>
+                              )}
+                              <div ref={reviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
+                                {(state.reviews.length > 0
+                                  ? state.reviews
+                                  : previewPlaceholders.reviews
+                                ).map((r, i) => (
+                                  <div key={i} className="editor-item-card mock-review-card-wrapper">
+                                    <input
+                                      type="text"
+                                      placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
+                                      value={r.name || ''}
+                                      onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                                    />
+                                    <textarea
+                                      placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
+                                      rows={2}
+                                      value={r.text || ''}
+                                      onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                                    />
+                                    <input
+                                      type="number"
+                                      placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
+                                      min="1"
+                                      max="5"
+                                      value={r.rating || ''}
+                                      onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
+                                    />
+                                    <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            <button type="button" onClick={handleAddReview} className="add-item-button">
+                              + Add Review
+                            </button>
+                          </div>
+                        </React.Fragment>
+                      )}
+                      <hr className="divider" />
+                      <div className="editor-section-header">
+                        <h3 className="editor-subtitle">Exchange Contact Details</h3>
+                        <button type="button" className="toggle-section-button" onClick={() => setShowContactDetails(!showContactDetails)}>
+                          {showContactDetails ? 'Hide' : 'Show'}
+                        </button>
+                      </div>
+                      {showContactDetails && (
+                        <React.Fragment>
+                          <div className="input-block">
+                            <label htmlFor="contactEmail">Email Address</label>
+                            <input
+                              id="contactEmail"
+                              type="email"
+                              value={state.contact_email || ''}
+                              onChange={(e) => updateState({ contact_email: e.target.value })}
+                              placeholder={previewPlaceholders.contact_email}
+                            />
+                          </div>
 
-                    <hr className="divider" />
-                    <h3 className="editor-subtitle">Exchange Contact Details</h3>
-
-                    <div className="input-block">
-                      <label htmlFor="contactEmail">Email Address</label>
-                      <input
-                        id="contactEmail"
-                        type="email"
-                        value={state.contact_email || ''}
-                        onChange={(e) => updateState({ contact_email: e.target.value })}
-                        placeholder={previewPlaceholders.contact_email}
-                      />
-                    </div>
-
-                    <div className="input-block">
-                      <label htmlFor="phoneNumber">Phone Number</label>
-                      <input
-                        id="phoneNumber"
-                        type="tel"
-                        value={state.phone_number || ''}
-                        onChange={(e) => updateState({ phone_number: e.target.value })}
-                        placeholder={previewPlaceholders.phone_number}
-                      />
-                    </div>
-
-                    <div className="button-group">
-                      <button
-                        type="button"
-                        onClick={handleResetPage}
-                        className="ghost-button"
-                      >
-                        Reset Page
-                      </button>
-                      <button
-                        type="submit"
-                        className="black-button desktop-button"
-                      >
-                        Publish Now
-                      </button>
-                    </div>
-                  </form>
+                          <div className="input-block">
+                            <label htmlFor="phoneNumber">Phone Number</label>
+                            <input
+                              id="phoneNumber"
+                              type="tel"
+                              value={state.phone_number || ''}
+                              onChange={(e) => updateState({ phone_number: e.target.value })}
+                              placeholder={previewPlaceholders.phone_number}
+                            />
+                          </div>
+                        </React.Fragment>
+                      )}
+                      <div className="button-group">
+                        <button
+                          type="button"
+                          onClick={handleResetPage}
+                          className="ghost-button"
+                        >
+                          Reset Page
+                        </button>
+                        <button
+                          type="submit"
+                          className="black-button desktop-button"
+                        >
+                          Publish Now
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
               </div>
             </>
