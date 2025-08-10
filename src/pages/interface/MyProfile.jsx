@@ -47,10 +47,6 @@ export default function MyProfile() {
 
   const location = useLocation();
 
-  // --- FIX: Removed local countdown state as it's no longer used.
-  // const [countdown, setCountdown] = useState(null);
-
-  // --- FIX: Use isSubscribed and the new trialExpires field from backend for display logic
   const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
   const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
 
@@ -74,31 +70,7 @@ export default function MyProfile() {
     };
 
     checkSubscriptionStatus();
-
-    // --- FIX: Removed countdown timer logic as backend no longer manages a short trial.
-    // let timer;
-    // if (isTrialActive) {
-    //     timer = setInterval(() => {
-    //         const trialExpirationDate = new Date(authUser.trialExpires);
-    //         const now = new Date();
-    //         const timeRemaining = trialExpirationDate.getTime() - now.getTime();
-
-    //         if (timeRemaining > 0) {
-    //             const minutes = Math.floor(timeRemaining / (1000 * 60));
-    //             const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-    //             setCountdown(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
-    //         } else {
-    //             clearInterval(timer);
-    //             setCountdown("00:00");
-    //             refetchAuthUser();
-    //         }
-    //     }, 1000);
-    // } else {
-    //     setCountdown(null);
-    // }
-
-    // return () => clearInterval(timer);
-  }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser, isTrialActive]);
+  }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser]);
 
   useEffect(() => {
     const handleResize = () => {
