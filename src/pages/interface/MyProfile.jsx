@@ -1000,26 +1000,7 @@ export default function MyProfile() {
                     </div>
 
                     <hr className="divider" />
-                    <h3 className="editor-subtitle">About Me Section</h3>
-                    <div className="input-block">
-                      <label>Display Layout</label>
-                      <div className="option-row">
-                        <button
-                          type="button"
-                          className={`display-button ${aboutMeLayout === 'side-by-side' ? 'is-active' : ''}`}
-                          onClick={() => setAboutMeLayout('side-by-side')}
-                        >
-                          Side by Side
-                        </button>
-                        <button
-                          type="button"
-                          className={`display-button ${aboutMeLayout === 'stacked' ? 'is-active' : ''}`}
-                          onClick={() => setAboutMeLayout('stacked')}
-                        >
-                          Stacked
-                        </button>
-                      </div>
-                    </div>
+                    <h3 className="editor-subtitle">Main Section</h3>
                     <div className="input-block">
                       <label htmlFor="coverPhoto">Cover Photo</label>
                       <input
@@ -1085,6 +1066,25 @@ export default function MyProfile() {
 
                     <hr className="divider" />
                     <h3 className="editor-subtitle">About Me Section</h3>
+                    <div className="input-block">
+                      <label>Display Layout</label>
+                      <div className="option-row">
+                        <button
+                          type="button"
+                          className={`display-button ${aboutMeLayout === 'side-by-side' ? 'is-active' : ''}`}
+                          onClick={() => setAboutMeLayout('side-by-side')}
+                        >
+                          Side by Side
+                        </button>
+                        <button
+                          type="button"
+                          className={`display-button ${aboutMeLayout === 'stacked' ? 'is-active' : ''}`}
+                          onClick={() => setAboutMeLayout('stacked')}
+                        >
+                          Stacked
+                        </button>
+                      </div>
+                    </div>
 
                     <div className="input-block">
                       <label htmlFor="avatar">Profile Photo</label>
