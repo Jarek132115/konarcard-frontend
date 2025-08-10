@@ -539,19 +539,19 @@ export default function MyProfile() {
       const carousel = ref.current;
       const currentScroll = carousel.scrollLeft;
       const maxScroll = carousel.scrollWidth - carousel.offsetWidth;
-      const itemWidth = carousel.offsetWidth; // Use container width for a full-item scroll
+      const itemWidth = carousel.offsetWidth;
 
       let newScrollPosition;
 
       if (direction === 'left') {
         newScrollPosition = currentScroll - itemWidth;
         if (newScrollPosition < 0) {
-          newScrollPosition = maxScroll; // Loop to the end
+          newScrollPosition = maxScroll;
         }
       } else {
         newScrollPosition = currentScroll + itemWidth;
-        if (newScrollPosition > maxScroll) {
-          newScrollPosition = 0; // Loop back to the start
+        if (newScrollPosition >= maxScroll) { // Use >= to catch floating point issues
+          newScrollPosition = 0;
         }
       }
 
