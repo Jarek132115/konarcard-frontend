@@ -399,6 +399,7 @@
     color: var(--text-color);
 }
 
+/* FIX: Base styles for work gallery */
 .mock-work-gallery {
     display: flex;
     flex-direction: column;
@@ -410,6 +411,44 @@
     border-radius: 0;
 }
 
+/* FIX: Grid layout */
+.mock-work-gallery.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+}
+
+/* FIX: Carousel layout */
+.mock-work-gallery.carousel {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    /* Allows horizontal scrolling */
+    padding-bottom: 15px;
+    /* Prevents scrollbar from overlapping content */
+    -webkit-overflow-scrolling: touch;
+    /* Smoother scrolling on iOS */
+    justify-content: flex-start;
+    /* Aligns items to the start */
+    flex-wrap: nowrap;
+    /* Crucial for carousel to work */
+}
+
+/* Hide scrollbar for carousel on webkit browsers */
+.mock-work-gallery.carousel::-webkit-scrollbar {
+    display: none;
+}
+
+/* Ensure work items in carousel and grid have a fixed width to prevent stretching */
+.mock-work-gallery.carousel .mock-work-image-item-wrapper {
+    flex: 0 0 auto;
+    width: 200px;
+    /* Fixed width for carousel items */
+    max-width: 80%;
+    /* To handle small mobile screens better */
+}
+
+/* Individual work item wrapper styles */
 .mock-work-image-item-wrapper {
     position: relative;
     width: 100%;
@@ -585,6 +624,8 @@
     gap: 10px;
 }
 
+/* FIX: New button style for display options */
+.display-button,
 .theme-button,
 .font-button {
     padding: 8px 14px;
@@ -599,6 +640,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.display-button.is-active,
 .theme-button.is-active,
 .font-button.is-active {
     background-color: #007bff;
@@ -695,8 +737,11 @@
     width: 100%;
     height: auto;
     aspect-ratio: 4 / 2.75;
-    object-fit: cover;
     border-radius: 0;
+    min-width: unset;
+    min-height: unset;
+    background-color: var(--placeholder-bg);
+    object-fit: cover;
 }
 
 .remove-image-button {
@@ -901,16 +946,6 @@
     margin-bottom: 10px;
 }
 
-.content-card-box.error-state button {
-    padding: 8px 15px;
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
 .content-card-box.verification-prompt {
     background-color: #fffbe6;
     border: 1px solid #ffe58f;
@@ -971,13 +1006,10 @@
 
     .app-layout {
         height: auto;
-        /* Allow app-layout to grow vertically based on content */
         overflow-y: visible;
-        /* Allow general page scroll */
         flex-direction: column;
     }
 
-    /* Mobile Header - Always visible on mobile */
     .myprofile-mobile-header {
         display: flex;
         justify-content: space-between;
@@ -1020,24 +1052,16 @@
         box-sizing: border-box !important;
     }
 
-    /* Shrink page-title on mobile */
     .page-title.page-title-mobile-shrink {
         font-size: clamp(18px, 5vw, 24px) !important;
-        /* Responsive font size */
         white-space: nowrap;
-        /* Prevent title from wrapping */
         overflow: hidden;
-        /* Hide overflow if it still goes beyond */
         text-overflow: ellipsis;
-        /* Add ellipsis if text is cut off */
         flex-shrink: 1;
-        /* Allow title to shrink as much as needed */
         min-width: 0;
-        /* Important for flex-shrink to work */
     }
 
 
-    /* Subscription Overlay on mobile */
     .subscription-overlay-mobile {
         display: block;
         padding: 0;
@@ -1059,50 +1083,33 @@
         margin: 0;
         box-sizing: border-box;
         justify-content: normal;
-        /* Fixed from previous conversation */
         overflow: visible;
-        /* Ensure content isn't cut off by this container */
     }
 
-    /* Mock Phone Container - target with unique class for mobile-specific height */
     .myprofile-mock-phone-mobile-container {
         width: 100%;
-        /* Take full width of its container */
         min-width: unset;
         height: auto !important;
-        /* Allow height to adapt to content */
         flex-shrink: 0;
         flex-grow: 0;
         position: relative;
         aspect-ratio: unset !important;
-        /* CRITICAL: Remove aspect ratio on this container */
         max-height: unset !important;
-        /* Ensure no max-height constraint */
         display: flex;
-        /* Make it a flex container to properly size its children */
         justify-content: center;
-        /* Center the mock phone itself */
         align-items: flex-start;
-        /* Align content to top */
     }
 
     .mock-phone-wrapper {
         width: 100%;
         max-width: 350px;
-        /* Keep max-width for the phone frame */
-        /* height: auto;  Already set globally. No need to re-set here unless to override. */
-        /* CRITICAL: Remove aspect-ratio from here on mobile, let content dictate height */
         aspect-ratio: unset !important;
-        /* REMOVED FOR MOBILE */
         height: fit-content !important;
-        /* Allow phone frame height to fit its content */
         margin-bottom: 20px;
         margin-top: 0;
         display: flex;
-        /* Make it a flex container so mock-phone can fill it */
         flex-direction: column;
         overflow: visible;
-        /* Ensure nothing is cut off at this level */
     }
 
     .mock-phone {
@@ -1110,40 +1117,32 @@
         border-width: 0.375rem;
         border-radius: 20px;
         height: auto !important;
-        /* Allow the phone screen to expand based on scrollable content */
         overflow: visible !important;
-        /* CRITICAL: Allow the entire phone content to render */
     }
 
-    /* FIX: Remove aspect-ratio from mock-cover on mobile */
     .mock-cover {
         aspect-ratio: unset !important;
         height: auto !important;
     }
 
-    /* Editor Section - FIXING 0 HEIGHT ISSUE HERE */
     .myprofile-editor-wrapper {
         width: 100%;
         max-width: 100%;
         min-width: unset;
         height: auto !important;
-        /* CRITICAL: Ensure this expands to fit content */
         flex-shrink: 1;
         flex-grow: 1;
         display: flex;
-        /* Ensure it's a flex container for its child editor */
         flex-direction: column;
     }
 
     .editor-content-wrapper {
         width: 100%;
         height: auto !important;
-        /* Ensure this also expands */
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         display: flex;
         flex-direction: column;
         overflow: visible;
-        /* Let content push outer div height */
     }
 
     .myprofile-editor {
@@ -1151,7 +1150,6 @@
         padding-bottom: 30px;
         gap: 15px;
         height: auto !important;
-        /* Ensure the editor itself expands */
         background: var(--primary-bg);
         overflow-y: visible !important;
         margin-bottom: 40px;
@@ -1161,32 +1159,23 @@
 /* --- SMALLER MOBILE SPECIFIC STYLES (Max-width 600px) --- */
 @media (max-width: 600px) {
 
-    /* Share button goes from text to icon */
     .page-actions .header-button {
         padding: 10px 15px;
-        /* Adjust padding for icon-only button */
         width: auto;
-        /* Allow button to shrink to icon size */
         font-size: 0;
-        /* Hide text by setting font-size to 0 */
         display: flex;
-        /* Ensure flex for centering icon */
         justify-content: center;
         align-items: center;
     }
 
     .page-actions .header-button .share-icon {
         height: 20px;
-        /* Adjust icon size for better visibility on small screens */
         width: auto;
         filter: brightness(0) invert(1);
-        /* Ensure icon is white */
     }
 
-    /* Ensure text inside button is hidden but not the icon */
     .page-actions .header-button span {
         display: none;
-        /* Hide any potential span text if present */
     }
 }
 
@@ -1289,7 +1278,6 @@
     }
 }
 
-/* FIX: Added margin-top to the new option-row in the editor for spacing */
 .option-row.mt-3 {
     margin-top: 10px;
 }

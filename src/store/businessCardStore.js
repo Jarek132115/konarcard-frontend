@@ -3,13 +3,14 @@ import { create } from "zustand";
 const initialState = {
   businessName: "",
   pageTheme: "light",
-  // FIX: Added the new theme variant state
   pageThemeVariant: "subtle-light",
   font: "Inter",
 
   coverPhoto: null,
   avatar: null,
   workImages: [],
+  // FIX: Added the new state for work display mode
+  workDisplayMode: "list",
 
   mainHeading: "",
   subHeading: "",
@@ -38,7 +39,6 @@ export default useBusinessCardStore;
 export const previewPlaceholders = {
   businessName: "My Digital Business Card",
   pageTheme: "light",
-  // FIX: Added the new theme variant placeholder
   pageThemeVariant: "subtle-light",
   coverPhoto: "/Interface-Preview/Cover-Photo1.png",
   avatar: "/Interface-Preview/Profile-Pic.png",
@@ -47,6 +47,8 @@ export const previewPlaceholders = {
     { file: null, preview: "/Interface-Preview/Work-Images2.png" },
     { file: null, preview: "/Interface-Preview/Work-Images3.png" },
   ],
+  // FIX: Added the new placeholder for work display mode
+  workDisplayMode: "list",
   mainHeading: "Your Main Heading Here",
   subHeading: "Your Tagline or Slogan Goes Here",
   job_title: "Your Job Title",

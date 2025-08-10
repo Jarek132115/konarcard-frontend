@@ -44,7 +44,6 @@ export default function MyProfile() {
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
-  // FIX: New state to control visibility of theme variants
   const [showThemeVariants, setShowThemeVariants] = useState(false);
 
   const location = useLocation();
@@ -118,7 +117,6 @@ export default function MyProfile() {
       updateState({
         businessName: businessCard.business_card_name || '',
         pageTheme: businessCard.page_theme || 'light',
-        // FIX: Update state with the new theme variant
         pageThemeVariant: businessCard.page_theme_variant || 'subtle-light',
         font: businessCard.style || 'Inter',
         mainHeading: businessCard.main_heading || '',
@@ -133,19 +131,17 @@ export default function MyProfile() {
         reviews: (businessCard.reviews || []),
         contact_email: businessCard.contact_email || '',
         phone_number: businessCard.phone_number || '',
+        // FIX: Added to load the saved work display mode
+        workDisplayMode: businessCard.work_display_mode || 'list',
       });
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
-      // FIX: Set theme variants to be shown if a card exists
       setShowThemeVariants(true);
     } else if (!isCardLoading && !businessCard) {
-      // FIX: This resetState is good, it clears all saved data from the state,
-      // leaving the editor inputs blank. The preview will still show placeholders.
       resetState();
-      // FIX: Hide theme variants if no card data
       setShowThemeVariants(false);
     }
   }, [businessCard, isCardLoading, updateState, resetState]);
@@ -336,7 +332,6 @@ export default function MyProfile() {
     try {
       const trialResponse = await api.post('/start-trial');
       if (trialResponse.data.success) {
-        // --- FIX: This message now correctly says 14 days
         toast.success("14-day free trial started successfully!");
         await refetchAuthUser();
         await handleSubmit(e, true);
@@ -355,7 +350,6 @@ export default function MyProfile() {
     const isStateDifferent = (
       state.businessName !== (originalCard.business_card_name || '') ||
       state.pageTheme !== (originalCard.page_theme || 'light') ||
-      // FIX: Check for changes in the new theme variant field
       state.pageThemeVariant !== (originalCard.page_theme_variant || 'subtle-light') ||
       state.font !== (originalCard.style || 'Inter') ||
       state.mainHeading !== (originalCard.main_heading || '') ||
@@ -367,7 +361,9 @@ export default function MyProfile() {
       state.phone_number !== (originalCard.phone_number || '') ||
       state.services.length !== (originalCard.services?.length || 0) ||
       state.reviews.length !== (originalCard.reviews?.length || 0) ||
-      state.workImages.length !== (originalCard.works?.length || 0)
+      state.workImages.length !== (originalCard.works?.length || 0) ||
+      // FIX: Check for changes in the new display mode field
+      state.workDisplayMode !== (originalCard.work_display_mode || 'list')
     );
     return isStateDifferent;
   };
@@ -403,7 +399,6 @@ export default function MyProfile() {
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
-      // FIX: Add the new theme variant to the formData
       page_theme_variant: state.pageThemeVariant,
       font: state.font,
       main_heading: state.mainHeading,
@@ -421,6 +416,8 @@ export default function MyProfile() {
       reviews: state.reviews.filter(r => r.name || r.text),
       contact_email: state.contact_email,
       phone_number: state.phone_number,
+      // FIX: Add the work display mode to the formData
+      work_display_mode: state.workDisplayMode,
     });
 
     try {
@@ -472,11 +469,9 @@ export default function MyProfile() {
     }
   };
 
-  // FIX: Resetting the state to the original, not a fixed default
   const handleResetPage = () => {
     if (window.confirm("Are you sure you want to reset all your changes? This cannot be undone.")) {
       if (businessCard) {
-        // Reset to the last saved business card state
         updateState({
           businessName: businessCard.business_card_name || '',
           pageTheme: businessCard.page_theme || 'light',
@@ -494,9 +489,9 @@ export default function MyProfile() {
           reviews: (businessCard.reviews || []),
           contact_email: businessCard.contact_email || '',
           phone_number: businessCard.phone_number || '',
+          workDisplayMode: businessCard.work_display_mode || 'list',
         });
       } else {
-        // Reset to the initial default state if no card exists
         resetState();
       }
 
@@ -526,8 +521,6 @@ export default function MyProfile() {
   };
 
   const getEditorValue = (fieldValue, placeholderValue) => {
-    // FIX: This function is now only used for placeholders in the preview.
-    // Editor inputs will display an empty string if there's no saved data.
     return fieldValue || placeholderValue || '';
   };
 
@@ -542,7 +535,6 @@ export default function MyProfile() {
   const shouldBlurEditor = !isSubscribed && hasTrialEnded;
 
   const previewData = state;
-  // FIX: Use the theme variant for the dark mode class
   const isDarkMode = previewData.pageTheme === "dark";
 
   return (
@@ -619,7 +611,6 @@ export default function MyProfile() {
 
               {!isSubscribed && !isTrialActive && (
                 <div className="trial-not-started-banner">
-                  {/* --- FIX: Updated banner text to reflect the actual trial duration --- */}
                   <p>Publish your own live website in minutes for 14 days free.</p>
                   <button className="blue-button" onClick={handleStartTrialAndSave}>
                     Get Started
@@ -642,7 +633,6 @@ export default function MyProfile() {
               <div className="myprofile-flex-container">
                 <div className={`myprofile-content ${isMobile ? 'myprofile-mock-phone-mobile-container' : ''}`}>
                   <div
-                    // FIX: Pass both theme and variant class names
                     className={`mock-phone ${isDarkMode ? "dark-mode" : ""} ${previewData.pageThemeVariant}`}
                     style={{
                       fontFamily: previewData.font || previewPlaceholders.font
@@ -705,7 +695,8 @@ export default function MyProfile() {
                       {(previewData.workImages.length > 0 || previewPlaceholders.workImages.length > 0) && (
                         <>
                           <p className="mock-section-title">My Work</p>
-                          <div className="mock-work-gallery">
+                          {/* FIX: Conditionally render the display mode based on state */}
+                          <div className={`mock-work-gallery ${state.workDisplayMode}`}>
                             {(previewData.workImages.length > 0
                               ? previewData.workImages
                               : previewPlaceholders.workImages
@@ -831,7 +822,6 @@ export default function MyProfile() {
                           Dark Mode
                         </button>
                       </div>
-                      {/* FIX: Conditionally render the theme variant buttons */}
                       {state.pageTheme === 'light' && (
                         <div className="option-row mt-3">
                           <button
@@ -932,7 +922,6 @@ export default function MyProfile() {
 
                     <div className="input-block">
                       <label htmlFor="mainHeading">Main Heading</label>
-                      {/* FIX: Removed the placeholder fallback from the value prop */}
                       <input
                         id="mainHeading"
                         type="text"
@@ -944,7 +933,6 @@ export default function MyProfile() {
 
                     <div className="input-block">
                       <label htmlFor="subHeading">Subheading</label>
-                      {/* FIX: Removed the placeholder fallback from the value prop */}
                       <input
                         id="subHeading"
                         type="text"
@@ -998,7 +986,6 @@ export default function MyProfile() {
                       </div>
                       <div className="input-block">
                         <label htmlFor="fullName">Full Name</label>
-                        {/* FIX: Removed the placeholder fallback from the value prop */}
                         <input
                           id="fullName"
                           type="text"
@@ -1010,7 +997,6 @@ export default function MyProfile() {
 
                       <div className="input-block">
                         <label htmlFor="jobTitle">Job Title</label>
-                        {/* FIX: Removed the placeholder fallback from the value prop */}
                         <input
                           id="jobTitle"
                           type="text"
@@ -1022,7 +1008,6 @@ export default function MyProfile() {
 
                       <div className="input-block">
                         <label htmlFor="bio">About Me Description</label>
-                        {/* FIX: Removed the placeholder fallback from the value prop */}
                         <textarea
                           id="bio"
                           value={state.bio || ''}
@@ -1035,6 +1020,33 @@ export default function MyProfile() {
 
                     <hr className="divider" />
                     <h3 className="editor-subtitle">My Work Section</h3>
+                    {/* FIX: New buttons for display options */}
+                    <div className="input-block">
+                      <label>Display Layout</label>
+                      <div className="option-row">
+                        <button
+                          type="button"
+                          className={`display-button ${state.workDisplayMode === 'list' ? 'is-active' : ''}`}
+                          onClick={() => updateState({ workDisplayMode: 'list' })}
+                        >
+                          List
+                        </button>
+                        <button
+                          type="button"
+                          className={`display-button ${state.workDisplayMode === 'grid' ? 'is-active' : ''}`}
+                          onClick={() => updateState({ workDisplayMode: 'grid' })}
+                        >
+                          Grid
+                        </button>
+                        <button
+                          type="button"
+                          className={`display-button ${state.workDisplayMode === 'carousel' ? 'is-active' : ''}`}
+                          onClick={() => updateState({ workDisplayMode: 'carousel' })}
+                        >
+                          Carousel
+                        </button>
+                      </div>
+                    </div>
 
                     <div className="input-block">
                       <label>Work Images</label>
@@ -1082,14 +1094,12 @@ export default function MyProfile() {
                       <label>Services</label>
                       {state.services.map((s, i) => (
                         <div key={i} className="editor-item-card">
-                          {/* FIX: Removed the placeholder fallback from the value prop */}
                           <input
                             type="text"
                             placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
                             value={s.name || ''}
                             onChange={(e) => handleServiceChange(i, "name", e.target.value)}
                           />
-                          {/* FIX: Removed the placeholder fallback from the value prop */}
                           <input
                             type="text"
                             placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
@@ -1110,21 +1120,18 @@ export default function MyProfile() {
                       <label>Reviews</label>
                       {state.reviews.map((r, i) => (
                         <div key={i} className="editor-item-card">
-                          {/* FIX: Removed the placeholder fallback from the value prop */}
                           <input
                             type="text"
                             placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
                             value={r.name || ''}
                             onChange={(e) => handleReviewChange(i, "name", e.target.value)}
                           />
-                          {/* FIX: Removed the placeholder fallback from the value prop */}
                           <textarea
                             placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
                             rows={2}
                             value={r.text || ''}
                             onChange={(e) => handleReviewChange(i, "text", e.target.value)}
                           />
-                          {/* FIX: Removed the placeholder fallback from the value prop */}
                           <input
                             type="number"
                             placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
@@ -1146,7 +1153,6 @@ export default function MyProfile() {
 
                     <div className="input-block">
                       <label htmlFor="contactEmail">Email Address</label>
-                      {/* FIX: Removed the placeholder fallback from the value prop */}
                       <input
                         id="contactEmail"
                         type="email"
@@ -1158,7 +1164,6 @@ export default function MyProfile() {
 
                     <div className="input-block">
                       <label htmlFor="phoneNumber">Phone Number</label>
-                      {/* FIX: Removed the placeholder fallback from the value prop */}
                       <input
                         id="phoneNumber"
                         type="tel"
