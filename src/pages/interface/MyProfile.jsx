@@ -533,18 +533,13 @@ export default function MyProfile() {
     }
   };
 
-  // FIX: This function has been updated to scroll by the exact width of one image item and to loop
+  // FIX: This function has been updated to scroll by the exact width of one item and to loop
   const scrollCarousel = (ref, direction) => {
     if (ref.current) {
       const carousel = ref.current;
-      const firstItem = carousel.querySelector('.mock-work-image-item-wrapper, .mock-service-item, .mock-review-card');
-
-      if (!firstItem) return;
-
-      // Get the width of a single item, including the gap (12px)
-      const itemWidth = firstItem.offsetWidth + 12;
       const currentScroll = carousel.scrollLeft;
       const maxScroll = carousel.scrollWidth - carousel.offsetWidth;
+      const itemWidth = carousel.offsetWidth; // Use container width for a full-item scroll
 
       let newScrollPosition;
 
