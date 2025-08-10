@@ -15,6 +15,40 @@
     --main-font-family: 'Inter', sans-serif;
 }
 
+/*
+ * FIX: Re-establishes the main layout for the preview and editor sections.
+ * This should be placed at the end of your stylesheet to ensure it takes priority.
+ */
+.myprofile-flex-container {
+    display: flex;
+    height: 100%;
+    gap: 60px;
+    /* This creates the space between the two sections */
+    min-height: 0;
+    align-items: flex-start;
+    max-width: 1200px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: visible;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.myprofile-content {
+    /* Ensures the mock phone doesn't shrink and maintains its size */
+    flex-shrink: 0;
+    flex-grow: 0;
+    width: 100%;
+    max-width: 350px;
+}
+
+.myprofile-editor-wrapper {
+    /* Ensures the editor section expands to fill the remaining space */
+    flex: 1;
+    min-width: 350px;
+    position: relative;
+}
+
 /* Define color variables for light theme variants */
 .light-mode.pure-light {
     --primary-bg: #FFFFFF;
