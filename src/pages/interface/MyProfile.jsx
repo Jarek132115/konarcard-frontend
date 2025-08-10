@@ -142,6 +142,8 @@ export default function MyProfile() {
       // FIX: Set theme variants to be shown if a card exists
       setShowThemeVariants(true);
     } else if (!isCardLoading && !businessCard) {
+      // FIX: This resetState is good, it clears all saved data from the state,
+      // leaving the editor inputs blank. The preview will still show placeholders.
       resetState();
       // FIX: Hide theme variants if no card data
       setShowThemeVariants(false);
@@ -524,6 +526,8 @@ export default function MyProfile() {
   };
 
   const getEditorValue = (fieldValue, placeholderValue) => {
+    // FIX: This function is now only used for placeholders in the preview.
+    // Editor inputs will display an empty string if there's no saved data.
     return fieldValue || placeholderValue || '';
   };
 
@@ -928,10 +932,11 @@ export default function MyProfile() {
 
                     <div className="input-block">
                       <label htmlFor="mainHeading">Main Heading</label>
+                      {/* FIX: Removed the placeholder fallback from the value prop */}
                       <input
                         id="mainHeading"
                         type="text"
-                        value={getEditorValue(state.mainHeading, previewPlaceholders.mainHeading)}
+                        value={state.mainHeading || ''}
                         onChange={(e) => updateState({ mainHeading: e.target.value })}
                         placeholder={previewPlaceholders.mainHeading}
                       />
@@ -939,10 +944,11 @@ export default function MyProfile() {
 
                     <div className="input-block">
                       <label htmlFor="subHeading">Subheading</label>
+                      {/* FIX: Removed the placeholder fallback from the value prop */}
                       <input
                         id="subHeading"
                         type="text"
-                        value={getEditorValue(state.subHeading, previewPlaceholders.subHeading)}
+                        value={state.subHeading || ''}
                         onChange={(e) => updateState({ subHeading: e.target.value })}
                         placeholder={previewPlaceholders.subHeading}
                       />
@@ -992,10 +998,11 @@ export default function MyProfile() {
                       </div>
                       <div className="input-block">
                         <label htmlFor="fullName">Full Name</label>
+                        {/* FIX: Removed the placeholder fallback from the value prop */}
                         <input
                           id="fullName"
                           type="text"
-                          value={getEditorValue(state.full_name, previewPlaceholders.full_name)}
+                          value={state.full_name || ''}
                           onChange={(e) => updateState({ full_name: e.target.value })}
                           placeholder={previewPlaceholders.full_name}
                         />
@@ -1003,10 +1010,11 @@ export default function MyProfile() {
 
                       <div className="input-block">
                         <label htmlFor="jobTitle">Job Title</label>
+                        {/* FIX: Removed the placeholder fallback from the value prop */}
                         <input
                           id="jobTitle"
                           type="text"
-                          value={getEditorValue(state.job_title, previewPlaceholders.job_title)}
+                          value={state.job_title || ''}
                           onChange={(e) => updateState({ job_title: e.target.value })}
                           placeholder={previewPlaceholders.job_title}
                         />
@@ -1014,9 +1022,10 @@ export default function MyProfile() {
 
                       <div className="input-block">
                         <label htmlFor="bio">About Me Description</label>
+                        {/* FIX: Removed the placeholder fallback from the value prop */}
                         <textarea
                           id="bio"
-                          value={getEditorValue(state.bio, previewPlaceholders.bio)}
+                          value={state.bio || ''}
                           onChange={(e) => updateState({ bio: e.target.value })}
                           rows={4}
                           placeholder={previewPlaceholders.bio}
@@ -1073,16 +1082,18 @@ export default function MyProfile() {
                       <label>Services</label>
                       {state.services.map((s, i) => (
                         <div key={i} className="editor-item-card">
+                          {/* FIX: Removed the placeholder fallback from the value prop */}
                           <input
                             type="text"
                             placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
-                            value={getEditorValue(s.name, previewPlaceholders.services[0]?.name)}
+                            value={s.name || ''}
                             onChange={(e) => handleServiceChange(i, "name", e.target.value)}
                           />
+                          {/* FIX: Removed the placeholder fallback from the value prop */}
                           <input
                             type="text"
                             placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
-                            value={getEditorValue(s.price, previewPlaceholders.services[0]?.price)}
+                            value={s.price || ''}
                             onChange={(e) => handleServiceChange(i, "price", e.target.value)}
                           />
                           <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
@@ -1099,24 +1110,27 @@ export default function MyProfile() {
                       <label>Reviews</label>
                       {state.reviews.map((r, i) => (
                         <div key={i} className="editor-item-card">
+                          {/* FIX: Removed the placeholder fallback from the value prop */}
                           <input
                             type="text"
                             placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
-                            value={getEditorValue(r.name, previewPlaceholders.reviews[0]?.name)}
+                            value={r.name || ''}
                             onChange={(e) => handleReviewChange(i, "name", e.target.value)}
                           />
+                          {/* FIX: Removed the placeholder fallback from the value prop */}
                           <textarea
                             placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
                             rows={2}
-                            value={getEditorValue(r.text, previewPlaceholders.reviews[0]?.text)}
+                            value={r.text || ''}
                             onChange={(e) => handleReviewChange(i, "text", e.target.value)}
                           />
+                          {/* FIX: Removed the placeholder fallback from the value prop */}
                           <input
                             type="number"
                             placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
                             min="1"
                             max="5"
-                            value={getEditorValue(r.rating, previewPlaceholders.reviews[0]?.rating)}
+                            value={r.rating || ''}
                             onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
                           />
                           <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
@@ -1132,10 +1146,11 @@ export default function MyProfile() {
 
                     <div className="input-block">
                       <label htmlFor="contactEmail">Email Address</label>
+                      {/* FIX: Removed the placeholder fallback from the value prop */}
                       <input
                         id="contactEmail"
                         type="email"
-                        value={getEditorValue(state.contact_email, previewPlaceholders.contact_email)}
+                        value={state.contact_email || ''}
                         onChange={(e) => updateState({ contact_email: e.target.value })}
                         placeholder={previewPlaceholders.contact_email}
                       />
@@ -1143,10 +1158,11 @@ export default function MyProfile() {
 
                     <div className="input-block">
                       <label htmlFor="phoneNumber">Phone Number</label>
+                      {/* FIX: Removed the placeholder fallback from the value prop */}
                       <input
                         id="phoneNumber"
                         type="tel"
-                        value={getEditorValue(state.phone_number, previewPlaceholders.phone_number)}
+                        value={state.phone_number || ''}
                         onChange={(e) => updateState({ phone_number: e.target.value })}
                         placeholder={previewPlaceholders.phone_number}
                       />
