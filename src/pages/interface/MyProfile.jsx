@@ -139,6 +139,7 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
+  // FIX: Add the new state initializations from businessCard data
   useEffect(() => {
     if (!isCardLoading && businessCard) {
       updateState({
@@ -161,8 +162,14 @@ export default function MyProfile() {
       });
       setServicesDisplayMode(businessCard.services_display_mode || 'list');
       setReviewsDisplayMode(businessCard.reviews_display_mode || 'list');
-      // FIX: Set new layout from existing card data, or default
       setAboutMeLayout(businessCard.about_me_layout || 'side-by-side');
+      // NEW: Initialize section visibility states from the fetched data
+      setShowMainSection(businessCard.show_main_section === false ? false : true);
+      setShowAboutMeSection(businessCard.show_about_me_section === false ? false : true);
+      setShowWorkSection(businessCard.show_work_section === false ? false : true);
+      setShowServicesSection(businessCard.show_services_section === false ? false : true);
+      setShowReviewsSection(businessCard.show_reviews_section === false ? false : true);
+      setShowContactSection(businessCard.show_contact_section === false ? false : true);
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
@@ -172,8 +179,14 @@ export default function MyProfile() {
       resetState();
       setServicesDisplayMode('list');
       setReviewsDisplayMode('list');
-      // FIX: Reset new layout to default
       setAboutMeLayout('side-by-side');
+      // NEW: Reset visibility states to default (true) if no card exists
+      setShowMainSection(true);
+      setShowAboutMeSection(true);
+      setShowWorkSection(true);
+      setShowServicesSection(true);
+      setShowReviewsSection(true);
+      setShowContactSection(true);
     }
   }, [businessCard, isCardLoading, updateState, resetState]);
 
@@ -888,6 +901,7 @@ export default function MyProfile() {
                                     {r.name}
                                   </p>
                                 </div>
+
                               ))}
                             </div>
                           </div>
@@ -930,6 +944,7 @@ export default function MyProfile() {
                         </button>
                       </div>
                     </div>
+
                   )}
 
                   <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
@@ -1170,7 +1185,7 @@ export default function MyProfile() {
                         <div className="input-block">
                           <label>Work Images</label>
                           {/* FIX: Add the new editor-list class here */}
-                          <div className={`editor-work-list ${state.workDisplayMode}`}>
+                          <div className="editor-work-image-grid">
                             {(state.workImages.length > 0
                               ? state.workImages
                               : previewPlaceholders.workImages
@@ -1242,7 +1257,7 @@ export default function MyProfile() {
                         <div className="input-block">
                           <label>Services</label>
                           {/* FIX: Add the new editor-list class here */}
-                          <div className={`editor-service-list ${servicesDisplayMode}`}>
+                          <div className="editor-service-list">
                             {state.services.map((s, i) => (
                               <div key={i} className="editor-item-card mock-service-item-wrapper">
                                 <input
@@ -1299,7 +1314,7 @@ export default function MyProfile() {
                         <div className="input-block">
                           <label>Reviews</label>
                           {/* FIX: Add the new editor-list class here */}
-                          <div className={`editor-reviews-list ${reviewsDisplayMode}`}>
+                          <div className="editor-reviews-list">
                             {state.reviews.map((r, i) => (
                               <div key={i} className="editor-item-card mock-review-card-wrapper">
                                 <input
@@ -1324,6 +1339,7 @@ export default function MyProfile() {
                                 />
                                 <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
                               </div>
+
                             ))}
                           </div>
                           <button type="button" onClick={handleAddReview} className="add-item-button">
