@@ -10,7 +10,6 @@ const UserPage = () => {
         queryKey: ["public-business-card", username],
         queryFn: async () => {
             const response = await api.get(`/api/business-card/by_username/${username}`);
-            // Assuming your backend sends the full business card object
             return response.data;
         },
         enabled: !!username,
@@ -44,10 +43,9 @@ const UserPage = () => {
         );
     }
 
-    // Check if the profile is active
-    const hasActiveSubscription = businessCard.user.isSubscribed;
-    const isTrialPeriodActive = businessCard.user.trialExpires && new Date(businessCard.user.trialExpires) > new Date();
-
+    // Corrected logic: Check for subscription and trial status directly on the businessCard object
+    const hasActiveSubscription = businessCard.isSubscribed;
+    const isTrialPeriodActive = businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
     const isProfileActive = hasActiveSubscription || isTrialPeriodActive;
 
     if (!isProfileActive) {
@@ -92,7 +90,6 @@ const UserPage = () => {
         }
         if (job_title) {
             vCardContent += `TITLE:${job_title}\n`;
-            vCardContent += `X-NICKNAME:${job_title}\n`;
         }
         if (phone_number) {
             vCardContent += `TEL;TYPE=CELL,VOICE:${phone_number}\n`;

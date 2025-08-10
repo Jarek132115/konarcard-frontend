@@ -4,8 +4,8 @@ import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
 import { useQueryClient } from "@tanstack/react-query";
-import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
-import { useCreateBusinessCard, buildBusinessCardFormData } from "../../hooks/useCreateBiz";
+import { useFetchBusinessCard, } from "../../hooks/useFetchBusinessCard";
+import { useCreateBusinessCard, buildBusinessCardFormData, } from "../../hooks/useCreateBiz";
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import ShareProfile from "../../components/ShareProfile";
@@ -351,7 +351,7 @@ export default function MyProfile() {
       const trialResponse = await api.post('/start-trial');
       if (trialResponse.data.success) {
         toast.success(trialResponse.data.message);
-        await refetchAuthUser();
+        await refetchAuthUser(); // We wait for this to complete
         await handleSubmit(e, true);
       }
     } catch (error) {
@@ -503,6 +503,7 @@ export default function MyProfile() {
     job_title: businessCard?.job_title || '',
     business_card_name: businessCard?.business_card_name || '',
     bio: businessCard?.bio || '',
+    isSubscribed: businessCard?.isSubscribed || false,
     contact_email: businessCard?.contact_email || '',
     phone_number: businessCard?.phone_number || '',
     username: userUsername || '',
