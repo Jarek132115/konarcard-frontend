@@ -591,43 +591,33 @@ export default function MyProfile() {
 
   // --- START: CORRECTED PREVIEW LOGIC & IMAGE SWAP ---
 
-  // This checks if we should show placeholders at all
   const shouldShowPlaceholders = !hasSavedData;
 
-  // Determine preview text source based on whether a user has saved data or not
   const previewFullName = state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : '');
   const previewJobTitle = state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : '');
   const previewBio = state.bio || (shouldShowPlaceholders ? previewPlaceholders.bio : '');
   const previewEmail = state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : '');
   const previewPhone = state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : '');
 
-  // Image Swap Logic
   let previewCoverPhotoSrc;
   let previewAvatarSrc = state.avatar || (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
   let previewWorkImages;
 
   if (shouldShowPlaceholders) {
-    // Before first save, show all template placeholders
     previewCoverPhotoSrc = previewPlaceholders.coverPhoto;
     previewWorkImages = previewPlaceholders.workImages;
   } else {
-    // After first save, check for a user-uploaded cover photo
-    // and swap it with the first work image if both exist.
     const hasWorkImages = state.workImages.length > 0;
     const hasCoverPhoto = !!state.coverPhoto;
 
     if (hasWorkImages && hasCoverPhoto) {
-      // Use the first work image for the cover photo preview
       previewCoverPhotoSrc = state.workImages[0].preview;
-      // Use the saved cover photo for the first work image preview
       previewWorkImages = [{ preview: state.coverPhoto }, ...state.workImages.slice(1)];
     } else {
-      // If no cover photo or no work images, just use the one that exists.
       previewCoverPhotoSrc = state.coverPhoto;
       previewWorkImages = state.workImages;
     }
   }
-  // --- END: CORRECTED PREVIEW LOGIC & IMAGE SWAP ---
 
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
@@ -644,7 +634,6 @@ export default function MyProfile() {
   };
 
   const getEditorImageSrc = (imageState, placeholderImage) => {
-    // The editor should only show placeholders if the user has no saved data yet.
     return imageState || (shouldShowPlaceholders ? placeholderImage : '');
   };
 
@@ -765,12 +754,14 @@ export default function MyProfile() {
                             className="mock-cover"
                           />
 
+                          {/* CORRECTED LOGIC */}
                           <h2 className="mock-title">
-                            {state.mainHeading || previewPlaceholders.main_heading}
+                            {state.mainHeading || (shouldShowPlaceholders ? previewPlaceholders.main_heading : '')}
                           </h2>
                           <p className="mock-subtitle">
-                            {state.subHeading || previewPlaceholders.sub_heading}
+                            {state.subHeading || (shouldShowPlaceholders ? previewPlaceholders.sub_heading : '')}
                           </p>
+
                           <button
                             type="button"
                             className="mock-button"
