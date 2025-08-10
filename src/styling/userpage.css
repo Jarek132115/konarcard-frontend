@@ -245,6 +245,12 @@
 }
 
 /* Work display modes */
+.landing-work-gallery.list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
 .landing-work-gallery.grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -252,6 +258,7 @@
 }
 
 .landing-work-gallery.carousel {
+    display: flex;
     flex-direction: row;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
@@ -288,6 +295,12 @@
 }
 
 /* Service display modes */
+.landing-services-list.list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
 .landing-services-list.carousel {
     flex-direction: row;
     overflow-x: auto;
@@ -343,6 +356,12 @@
 }
 
 /* Reviews display modes */
+.landing-reviews-list.list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
 .landing-reviews-list.carousel {
     flex-direction: row;
     overflow-x: auto;
