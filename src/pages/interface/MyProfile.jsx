@@ -21,6 +21,8 @@ export default function MyProfile() {
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  // FIX: Ref for the carousel element
+  const carouselRef = useRef(null);
 
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
   const isSubscribed = authUser?.isSubscribed || false;
@@ -131,7 +133,6 @@ export default function MyProfile() {
         reviews: (businessCard.reviews || []),
         contact_email: businessCard.contact_email || '',
         phone_number: businessCard.phone_number || '',
-        // FIX: Added to load the saved work display mode
         workDisplayMode: businessCard.work_display_mode || 'list',
       });
       setCoverPhotoFile(null);
@@ -362,7 +363,6 @@ export default function MyProfile() {
       state.services.length !== (originalCard.services?.length || 0) ||
       state.reviews.length !== (originalCard.reviews?.length || 0) ||
       state.workImages.length !== (originalCard.works?.length || 0) ||
-      // FIX: Check for changes in the new display mode field
       state.workDisplayMode !== (originalCard.work_display_mode || 'list')
     );
     return isStateDifferent;
@@ -416,7 +416,6 @@ export default function MyProfile() {
       reviews: state.reviews.filter(r => r.name || r.text),
       contact_email: state.contact_email,
       phone_number: state.phone_number,
-      // FIX: Add the work display mode to the formData
       work_display_mode: state.workDisplayMode,
     });
 
@@ -503,6 +502,17 @@ export default function MyProfile() {
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
       toast.success("Your page has been reset to the last published version.");
+    }
+  };
+
+  // FIX: New functions to handle carousel navigation
+  const scrollCarousel = (direction) => {
+    if (carouselRef.current) {
+      const scrollAmount = direction === 'left' ? -250 : 250;
+      carouselRef.current.scrollBy({
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -695,8 +705,26 @@ export default function MyProfile() {
                       {(previewData.workImages.length > 0 || previewPlaceholders.workImages.length > 0) && (
                         <>
                           <p className="mock-section-title">My Work</p>
-                          {/* FIX: Conditionally render the display mode based on state */}
-                          <div className={`mock-work-gallery ${state.workDisplayMode}`}>
+                          {/* FIX: Add carousel navigation buttons */}
+                          {state.workDisplayMode === 'carousel' && (
+                            <div className="carousel-nav-buttons">
+                              <button
+                                type="button"
+                                className="carousel-nav-button left-arrow"
+                                onClick={() => scrollCarousel('left')}
+                              >
+                                &#9664; {/* Left arrow character */}
+                              </button>
+                              <button
+                                type="button"
+                                className="carousel-nav-button right-arrow"
+                                onClick={() => scrollCarousel('right')}
+                              >
+                                &#9654; {/* Right arrow character */}
+                              </button>
+                            </div>
+                          )}
+                          <div ref={carouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
                             {(previewData.workImages.length > 0
                               ? previewData.workImages
                               : previewPlaceholders.workImages
@@ -1020,7 +1048,6 @@ export default function MyProfile() {
 
                     <hr className="divider" />
                     <h3 className="editor-subtitle">My Work Section</h3>
-                    {/* FIX: New buttons for display options */}
                     <div className="input-block">
                       <label>Display Layout</label>
                       <div className="option-row">

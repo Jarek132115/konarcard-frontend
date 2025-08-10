@@ -399,7 +399,7 @@
     color: var(--text-color);
 }
 
-/* Base styles for work gallery */
+/* FIX: Base styles for work gallery */
 .mock-work-gallery {
     display: flex;
     flex-direction: column;
@@ -414,22 +414,8 @@
 /* FIX: Grid layout */
 .mock-work-gallery.grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
-}
-
-/* FIX: Desktop grid layout for two columns */
-@media (min-width: 601px) {
-    .mock-work-gallery.grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* FIX: Desktop grid layout for three columns */
-@media (min-width: 801px) {
-    .mock-work-gallery.grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
 }
 
 /* FIX: Carousel layout */
@@ -1294,4 +1280,40 @@
 
 .option-row.mt-3 {
     margin-top: 10px;
+}
+
+/* FIX: New carousel navigation button styling */
+.carousel-nav-buttons {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    z-index: 5;
+    pointer-events: none;
+    /* Make container not intercept clicks */
+}
+
+.carousel-nav-button {
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    pointer-events: auto;
+    /* Enable clicks on buttons */
+}
+
+.carousel-nav-button:hover {
+    background-color: rgba(0, 0, 0, 0.6);
 }
