@@ -61,6 +61,8 @@ export default function MyProfile() {
   // FIX: New state for services and reviews display modes
   const [servicesDisplayMode, setServicesDisplayMode] = useState('list');
   const [reviewsDisplayMode, setReviewsDisplayMode] = useState('list');
+  // FIX: New state for about me layout
+  const [aboutMeLayout, setAboutMeLayout] = useState('side-by-side');
 
   const location = useLocation();
 
@@ -149,9 +151,10 @@ export default function MyProfile() {
         phone_number: businessCard.phone_number || '',
         workDisplayMode: businessCard.work_display_mode || 'list',
       });
-      // FIX: Set new display modes from existing card data, or default
       setServicesDisplayMode(businessCard.services_display_mode || 'list');
       setReviewsDisplayMode(businessCard.reviews_display_mode || 'list');
+      // FIX: Set new layout from existing card data, or default
+      setAboutMeLayout(businessCard.about_me_layout || 'side-by-side');
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
@@ -160,9 +163,10 @@ export default function MyProfile() {
       setShowThemeVariants(true);
     } else if (!isCardLoading && !businessCard) {
       resetState();
-      // FIX: Reset new display modes to default
       setServicesDisplayMode('list');
       setReviewsDisplayMode('list');
+      // FIX: Reset new layout to default
+      setAboutMeLayout('side-by-side');
       setShowThemeVariants(false);
     }
   }, [businessCard, isCardLoading, updateState, resetState]);
@@ -385,7 +389,9 @@ export default function MyProfile() {
       state.workImages.length !== (originalCard.works?.length || 0) ||
       state.workDisplayMode !== (originalCard.work_display_mode || 'list') ||
       servicesDisplayMode !== (originalCard.services_display_mode || 'list') ||
-      reviewsDisplayMode !== (originalCard.reviews_display_mode || 'list')
+      reviewsDisplayMode !== (originalCard.reviews_display_mode || 'list') ||
+      // FIX: Check for changes in the aboutMeLayout state
+      aboutMeLayout !== (originalCard.about_me_layout || 'side-by-side')
     );
     return isStateDifferent;
   };
@@ -439,9 +445,10 @@ export default function MyProfile() {
       contact_email: state.contact_email,
       phone_number: state.phone_number,
       work_display_mode: state.workDisplayMode,
-      // FIX: Add new display modes to the form data
       services_display_mode: servicesDisplayMode,
       reviews_display_mode: reviewsDisplayMode,
+      // FIX: Add new layout mode to form data
+      about_me_layout: aboutMeLayout,
     });
 
     try {
@@ -515,9 +522,10 @@ export default function MyProfile() {
           phone_number: businessCard.phone_number || '',
           workDisplayMode: businessCard.work_display_mode || 'list',
         });
-        // FIX: Reset new display modes to last published
         setServicesDisplayMode(businessCard.services_display_mode || 'list');
         setReviewsDisplayMode(businessCard.reviews_display_mode || 'list');
+        // FIX: Reset new layout to last published
+        setAboutMeLayout(businessCard.about_me_layout || 'side-by-side');
       } else {
         resetState();
       }
@@ -550,7 +558,7 @@ export default function MyProfile() {
         }
       } else {
         newScrollPosition = currentScroll + itemWidth;
-        if (newScrollPosition >= maxScroll) { // Use >= to catch floating point issues
+        if (newScrollPosition >= maxScroll) {
           newScrollPosition = 0;
         }
       }
@@ -721,7 +729,7 @@ export default function MyProfile() {
                       ) && (
                           <>
                             <p className="mock-section-title">About me</p>
-                            <div className="mock-about-container">
+                            <div className={`mock-about-container ${aboutMeLayout}`}>
                               <div className="mock-about-content-group">
                                 <div className="mock-about-header-group">
                                   <img
@@ -993,6 +1001,26 @@ export default function MyProfile() {
 
                     <hr className="divider" />
                     <h3 className="editor-subtitle">About Me Section</h3>
+
+                    <div className="input-block">
+                      <label>Display Layout</label>
+                      <div className="option-row">
+                        <button
+                          type="button"
+                          className={`display-button ${aboutMeLayout === 'side-by-side' ? 'is-active' : ''}`}
+                          onClick={() => setAboutMeLayout('side-by-side')}
+                        >
+                          Side by Side
+                        </button>
+                        <button
+                          type="button"
+                          className={`display-button ${aboutMeLayout === 'stacked' ? 'is-active' : ''}`}
+                          onClick={() => setAboutMeLayout('stacked')}
+                        >
+                          Stacked
+                        </button>
+                      </div>
+                    </div>
 
                     <div className="input-block">
                       <label htmlFor="coverPhoto">Cover Photo</label>
