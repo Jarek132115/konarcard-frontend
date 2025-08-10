@@ -15,7 +15,7 @@
     --main-font-family: 'Inter', sans-serif;
 }
 
-/* FIX: Define color variables for light theme variants */
+/* Define color variables for light theme variants */
 .light-mode.pure-light {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
@@ -44,7 +44,7 @@
     --page-header-color: #FFFFFF;
 }
 
-/* FIX: Define color variables for dark theme variants */
+/* Define color variables for dark theme variants */
 .dark-mode.pure-dark {
     --primary-bg: #000000;
     --secondary-bg: #1F1F1F;
@@ -411,10 +411,18 @@
     border-radius: 0;
 }
 
+/* FIX: New parent container for carousel to properly position buttons */
+.carousel-container {
+    position: relative;
+    /* Crucial for positioning the buttons inside it */
+    width: 100%;
+    /* Take up full width */
+}
+
 /* FIX: Grid layout */
 .mock-work-gallery.grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 12px;
 }
 
@@ -423,15 +431,12 @@
     display: flex;
     gap: 12px;
     overflow-x: auto;
-    /* Allows horizontal scrolling */
     padding-bottom: 15px;
-    /* Prevents scrollbar from overlapping content */
     -webkit-overflow-scrolling: touch;
-    /* Smoother scrolling on iOS */
     justify-content: flex-start;
-    /* Aligns items to the start */
     flex-wrap: nowrap;
-    /* Crucial for carousel to work */
+    /* FIX: The parent container is now the only one with this overflow */
+    overflow: unset;
 }
 
 /* Hide scrollbar for carousel on webkit browsers */
@@ -441,11 +446,11 @@
 
 /* Ensure work items in carousel and grid have a fixed width to prevent stretching */
 .mock-work-gallery.carousel .mock-work-image-item-wrapper {
-    flex: 0 0 auto;
-    width: 200px;
-    /* Fixed width for carousel items */
+    flex: 0 0 80%;
+    /* FIX: A fixed percentage to show partial next item */
     max-width: 80%;
     /* To handle small mobile screens better */
+    height: auto;
 }
 
 /* Individual work item wrapper styles */
@@ -624,7 +629,7 @@
     gap: 10px;
 }
 
-/* FIX: New button style for display options */
+/* New button style for display options */
 .display-button,
 .theme-button,
 .font-button {
@@ -1282,12 +1287,23 @@
     margin-top: 10px;
 }
 
+/* FIX: New parent container for carousel to properly position buttons */
+.carousel-container {
+    position: relative;
+    /* Crucial for positioning the buttons inside it */
+    width: 100%;
+    /* Take up full width */
+}
+
 /* FIX: New carousel navigation button styling */
 .carousel-nav-buttons {
     position: absolute;
-    width: 100%;
     top: 50%;
+    /* FIX: Position buttons in the vertical center */
+    left: 0;
+    right: 0;
     transform: translateY(-50%);
+    /* FIX: Correctly center buttons vertically */
     display: flex;
     justify-content: space-between;
     padding: 0 10px;
@@ -1316,4 +1332,43 @@
 
 .carousel-nav-button:hover {
     background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* FIX: Refined grid layout for max 2 columns */
+.mock-work-gallery.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+}
+
+@media (min-width: 601px) {
+    .mock-work-gallery.grid {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 columns on larger screens */
+    }
+}
+
+/* FIX: Carousel layout to properly size items and container */
+.mock-work-gallery.carousel {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 15px;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    position: relative;
+    /* This makes sure the container is sized and overflow is handled properly */
+    overflow-y: hidden;
+}
+
+.mock-work-gallery.carousel .mock-work-image-item-wrapper {
+    flex: 0 0 80%;
+    max-width: 80%;
+    height: auto;
+}
+
+.mock-work-image-item {
+    height: 100%;
+    object-fit: cover;
 }

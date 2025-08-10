@@ -21,7 +21,6 @@ export default function MyProfile() {
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  // FIX: Ref for the carousel element
   const carouselRef = useRef(null);
 
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
@@ -505,10 +504,10 @@ export default function MyProfile() {
     }
   };
 
-  // FIX: New functions to handle carousel navigation
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
-      const scrollAmount = direction === 'left' ? -250 : 250;
+      // FIX: Scroll by a percentage of the container's width for responsiveness
+      const scrollAmount = direction === 'left' ? -carouselRef.current.offsetWidth * 0.8 : carouselRef.current.offsetWidth * 0.8;
       carouselRef.current.scrollBy({
         left: scrollAmount,
         behavior: 'smooth'
@@ -705,38 +704,40 @@ export default function MyProfile() {
                       {(previewData.workImages.length > 0 || previewPlaceholders.workImages.length > 0) && (
                         <>
                           <p className="mock-section-title">My Work</p>
-                          {/* FIX: Add carousel navigation buttons */}
-                          {state.workDisplayMode === 'carousel' && (
-                            <div className="carousel-nav-buttons">
-                              <button
-                                type="button"
-                                className="carousel-nav-button left-arrow"
-                                onClick={() => scrollCarousel('left')}
-                              >
-                                &#9664; {/* Left arrow character */}
-                              </button>
-                              <button
-                                type="button"
-                                className="carousel-nav-button right-arrow"
-                                onClick={() => scrollCarousel('right')}
-                              >
-                                &#9654; {/* Right arrow character */}
-                              </button>
-                            </div>
-                          )}
-                          <div ref={carouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
-                            {(previewData.workImages.length > 0
-                              ? previewData.workImages
-                              : previewPlaceholders.workImages
-                            ).map((item, i) => (
-                              <div key={i} className="mock-work-image-item-wrapper">
-                                <img
-                                  src={item.preview || item}
-                                  alt={`work-${i}`}
-                                  className="mock-work-image-item"
-                                />
+                          {/* FIX: The carousel buttons need a parent container with position: relative */}
+                          <div className="carousel-container">
+                            {state.workDisplayMode === 'carousel' && (
+                              <div className="carousel-nav-buttons">
+                                <button
+                                  type="button"
+                                  className="carousel-nav-button left-arrow"
+                                  onClick={() => scrollCarousel('left')}
+                                >
+                                  &#9664; {/* Left arrow character */}
+                                </button>
+                                <button
+                                  type="button"
+                                  className="carousel-nav-button right-arrow"
+                                  onClick={() => scrollCarousel('right')}
+                                >
+                                  &#9654; {/* Right arrow character */}
+                                </button>
                               </div>
-                            ))}
+                            )}
+                            <div ref={carouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
+                              {(previewData.workImages.length > 0
+                                ? previewData.workImages
+                                : previewPlaceholders.workImages
+                              ).map((item, i) => (
+                                <div key={i} className="mock-work-image-item-wrapper">
+                                  <img
+                                    src={item.preview || item}
+                                    alt={`work-${i}`}
+                                    className="mock-work-image-item"
+                                  />
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </>
                       )}
@@ -1077,40 +1078,38 @@ export default function MyProfile() {
 
                     <div className="input-block">
                       <label>Work Images</label>
-                      <div className="work-preview-row">
-                        {state.workImages.map((img, i) => (
-                          <div key={i} className="work-image-item-wrapper">
-                            <img
-                              src={getEditorImageSrc(img.preview, previewPlaceholders.workImages?.[i]?.preview)}
-                              alt={`work-${i}`}
-                              className="work-image-preview"
-                            />
+                      <div className="work-preview-row-container">
+                        {state.workDisplayMode === 'carousel' && (
+                          <div className="carousel-nav-buttons">
                             <button
                               type="button"
-                              className="remove-image-button"
-                              onClick={() => handleRemoveWorkImage(i)}
+                              className="carousel-nav-button left-arrow"
+                              onClick={() => scrollCarousel('left')}
                             >
-                              &times;
+                              &#9664; {/* Left arrow character */}
+                            </button>
+                            <button
+                              type="button"
+                              className="carousel-nav-button right-arrow"
+                              onClick={() => scrollCarousel('right')}
+                            >
+                              &#9654; {/* Right arrow character */}
                             </button>
                           </div>
-                        ))}
-                        <div
-                          className="image-upload-area add-work-image-placeholder"
-                          onClick={() => {
-                            const input = document.createElement('input');
-                            input.type = 'file';
-                            input.accept = 'image/*';
-                            input.multiple = true;
-                            input.onchange = (e) => {
-                              handleAddWorkImage(e);
-                              document.body.removeChild(input);
-                            };
-                            document.body.appendChild(input);
-                            input.click();
-                          }}
-                        >
-                          <span className="upload-text">Add Work Image</span>
-                          <img src="" alt="Add Work" className="work-image-preview" />
+                        )}
+                        <div ref={carouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
+                          {(previewData.workImages.length > 0
+                            ? previewData.workImages
+                            : previewPlaceholders.workImages
+                          ).map((item, i) => (
+                            <div key={i} className="mock-work-image-item-wrapper">
+                              <img
+                                src={item.preview || item}
+                                alt={`work-${i}`}
+                                className="mock-work-image-item"
+                              />
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
