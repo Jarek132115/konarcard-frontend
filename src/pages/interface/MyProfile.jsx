@@ -51,13 +51,10 @@ export default function MyProfile() {
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
-  // State for services and reviews display modes
   const [servicesDisplayMode, setServicesDisplayMode] = useState('list');
   const [reviewsDisplayMode, setReviewsDisplayMode] = useState('list');
-  // State for about me layout
   const [aboutMeLayout, setAboutMeLayout] = useState('side-by-side');
 
-  // New state variables for section visibility
   const [showMainSection, setShowMainSection] = useState(true);
   const [showAboutMeSection, setShowAboutMeSection] = useState(true);
   const [showWorkSection, setShowWorkSection] = useState(true);
@@ -69,6 +66,9 @@ export default function MyProfile() {
 
   const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
   const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
+
+  // Check if the user has any saved data at all
+  const hasSavedData = !!businessCard;
 
   useEffect(() => {
     let handledRedirect = false;
@@ -131,62 +131,57 @@ export default function MyProfile() {
     }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // FIX: This is the critical useEffect hook. We need to handle state updates carefully.
   useEffect(() => {
-    if (!isCardLoading && businessCard) {
-      // Only update the state with fetched values that are not null or undefined,
-      // but don't reset the entire state for a better editing experience.
-      updateState({
-        businessName: businessCard.business_card_name || state.businessName,
-        pageTheme: businessCard.page_theme || state.pageTheme,
-        font: businessCard.style || state.font,
-        mainHeading: businessCard.main_heading || state.mainHeading,
-        subHeading: businessCard.sub_heading || state.subHeading,
-        job_title: businessCard.job_title || state.job_title,
-        full_name: businessCard.full_name || state.full_name,
-        bio: businessCard.bio || state.bio,
-        avatar: businessCard.avatar || state.avatar,
-        coverPhoto: businessCard.cover_photo || state.coverPhoto,
-        // Handle workImages to merge new files with existing ones
-        workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
-        services: businessCard.services || state.services,
-        reviews: businessCard.reviews || state.reviews,
-        contact_email: businessCard.contact_email || state.contact_email,
-        phone_number: businessCard.phone_number || state.phone_number,
-        workDisplayMode: businessCard.work_display_mode || state.workDisplayMode,
-      });
-      // Update display modes and layouts from fetched data
-      setServicesDisplayMode(businessCard.services_display_mode || servicesDisplayMode);
-      setReviewsDisplayMode(businessCard.reviews_display_mode || reviewsDisplayMode);
-      setAboutMeLayout(businessCard.about_me_layout || aboutMeLayout);
+    if (!isCardLoading) {
+      if (businessCard) {
+        updateState({
+          businessName: businessCard.business_card_name || '',
+          pageTheme: businessCard.page_theme || 'light',
+          font: businessCard.style || 'Inter',
+          mainHeading: businessCard.main_heading || '',
+          subHeading: businessCard.sub_heading || '',
+          job_title: businessCard.job_title || '',
+          full_name: businessCard.full_name || '',
+          bio: businessCard.bio || '',
+          avatar: businessCard.avatar || null,
+          coverPhoto: businessCard.cover_photo || null,
+          workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
+          services: businessCard.services || [],
+          reviews: businessCard.reviews || [],
+          contact_email: businessCard.contact_email || '',
+          phone_number: businessCard.phone_number || '',
+          workDisplayMode: businessCard.work_display_mode || 'list',
+        });
+        setServicesDisplayMode(businessCard.services_display_mode || 'list');
+        setReviewsDisplayMode(businessCard.reviews_display_mode || 'list');
+        setAboutMeLayout(businessCard.about_me_layout || 'side-by-side');
 
-      // Correctly set section visibility, defaulting to true if not saved
-      setShowMainSection(businessCard.show_main_section !== false);
-      setShowAboutMeSection(businessCard.show_about_me_section !== false);
-      setShowWorkSection(businessCard.show_work_section !== false);
-      setShowServicesSection(businessCard.show_services_section !== false);
-      setShowReviewsSection(businessCard.show_reviews_section !== false);
-      setShowContactSection(businessCard.show_contact_section !== false);
+        setShowMainSection(businessCard.show_main_section !== false);
+        setShowAboutMeSection(businessCard.show_about_me_section !== false);
+        setShowWorkSection(businessCard.show_work_section !== false);
+        setShowServicesSection(businessCard.show_services_section !== false);
+        setShowReviewsSection(businessCard.show_reviews_section !== false);
+        setShowContactSection(businessCard.show_contact_section !== false);
 
-      setCoverPhotoFile(null);
-      setAvatarFile(null);
-      setWorkImageFiles([]);
-      setCoverPhotoRemoved(false);
-      setIsAvatarRemoved(false);
-    } else if (!isCardLoading && !businessCard) {
-      // For new users, reset to the initial state and show all sections by default
-      resetState();
-      setServicesDisplayMode('list');
-      setReviewsDisplayMode('list');
-      setAboutMeLayout('side-by-side');
-      setShowMainSection(true);
-      setShowAboutMeSection(true);
-      setShowWorkSection(true);
-      setShowServicesSection(true);
-      setShowReviewsSection(true);
-      setShowContactSection(true);
+        setCoverPhotoFile(null);
+        setAvatarFile(null);
+        setWorkImageFiles([]);
+        setCoverPhotoRemoved(false);
+        setIsAvatarRemoved(false);
+      } else {
+        resetState();
+        setServicesDisplayMode('list');
+        setReviewsDisplayMode('list');
+        setAboutMeLayout('side-by-side');
+        setShowMainSection(true);
+        setShowAboutMeSection(true);
+        setShowWorkSection(true);
+        setShowServicesSection(true);
+        setShowReviewsSection(true);
+        setShowContactSection(true);
+      }
     }
-  }, [businessCard, isCardLoading, updateState, resetState]);
+  }, [businessCard, isCardLoading]);
 
 
   useEffect(() => {
@@ -463,7 +458,6 @@ export default function MyProfile() {
       services_display_mode: servicesDisplayMode,
       reviews_display_mode: reviewsDisplayMode,
       about_me_layout: aboutMeLayout,
-      // Pass the visibility states with the form data
       show_main_section: showMainSection,
       show_about_me_section: showAboutMeSection,
       show_work_section: showWorkSection,
@@ -483,7 +477,6 @@ export default function MyProfile() {
       setIsAvatarRemoved(false);
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
       setActiveBlobUrls([]);
-
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
     }
@@ -542,7 +535,6 @@ export default function MyProfile() {
         setServicesDisplayMode(businessCard.services_display_mode || 'list');
         setReviewsDisplayMode(businessCard.reviews_display_mode || 'list');
         setAboutMeLayout(businessCard.about_me_layout || 'side-by-side');
-        // Reset visibility states to the last published version
         setShowMainSection(businessCard.show_main_section !== false);
         setShowAboutMeSection(businessCard.show_about_me_section !== false);
         setShowWorkSection(businessCard.show_work_section !== false);
@@ -598,9 +590,9 @@ export default function MyProfile() {
     }
   };
 
-  // Correctly choose whether to use placeholder or real data for preview
-  const hasSavedData = !!businessCard;
-  const previewDataSource = hasSavedData ? businessCard : previewPlaceholders;
+  // Preview Logic: Use placeholders only if there is no saved data yet.
+  // Otherwise, always use the live state data.
+  const previewDataSource = hasSavedData ? state : previewPlaceholders;
 
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
@@ -621,7 +613,12 @@ export default function MyProfile() {
   };
 
   const getEditorImageSrc = (imageState, placeholderImage) => {
-    return imageState || placeholderImage || '';
+    // Corrected logic: if there is saved data, use the state.
+    // If there's no saved data, use the placeholder image.
+    if (hasSavedData) {
+      return imageState;
+    }
+    return imageState || placeholderImage;
   };
 
   const showAddImageText = (imageState) => {
@@ -736,7 +733,7 @@ export default function MyProfile() {
                       {showMainSection && (
                         <>
                           <img
-                            src={state.coverPhoto || previewDataSource.cover_photo}
+                            src={hasSavedData ? state.coverPhoto : previewPlaceholders.coverPhoto}
                             alt="Cover"
                             className="mock-cover"
                           />
@@ -757,7 +754,7 @@ export default function MyProfile() {
                       )}
 
                       {showAboutMeSection && (state.full_name || state.job_title || state.bio || state.avatar ||
-                        previewPlaceholders.full_name || previewPlaceholders.job_title || previewPlaceholders.bio || previewPlaceholders.avatar
+                        (!hasSavedData && (previewPlaceholders.full_name || previewPlaceholders.job_title || previewPlaceholders.bio || previewPlaceholders.avatar))
                       ) && (
                           <>
                             <p className="mock-section-title">About me</p>
@@ -765,7 +762,7 @@ export default function MyProfile() {
                               <div className="mock-about-content-group">
                                 <div className="mock-about-header-group">
                                   <img
-                                    src={state.avatar || previewDataSource.avatar}
+                                    src={hasSavedData ? state.avatar : previewPlaceholders.avatar}
                                     alt="Avatar"
                                     className="mock-avatar"
                                   />
@@ -786,7 +783,7 @@ export default function MyProfile() {
                           </>
                         )}
 
-                      {showWorkSection && (state.workImages.length > 0 || previewPlaceholders.workImages.length > 0) && (
+                      {showWorkSection && (state.workImages.length > 0 || !hasSavedData) && (
                         <>
                           <p className="mock-section-title">My Work</p>
                           <div className="work-preview-row-container">
@@ -809,7 +806,7 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
-                              {(state.workImages.length > 0
+                              {(hasSavedData
                                 ? state.workImages
                                 : previewPlaceholders.workImages
                               ).map((item, i) => (
@@ -826,7 +823,7 @@ export default function MyProfile() {
                         </>
                       )}
 
-                      {showServicesSection && (state.services.length > 0 || previewPlaceholders.services.length > 0) && (
+                      {showServicesSection && (state.services.length > 0 || !hasSavedData) && (
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="work-preview-row-container">
@@ -849,7 +846,7 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
-                              {(state.services.length > 0
+                              {(hasSavedData
                                 ? state.services
                                 : previewPlaceholders.services
                               ).map((s, i) => (
@@ -867,7 +864,7 @@ export default function MyProfile() {
                         </>
                       )}
 
-                      {showReviewsSection && (state.reviews.length > 0 || previewPlaceholders.reviews.length > 0) && (
+                      {showReviewsSection && (state.reviews.length > 0 || !hasSavedData) && (
                         <>
                           <p className="mock-section-title">Reviews</p>
                           <div className="work-preview-row-container">
@@ -890,7 +887,7 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
-                              {(state.reviews.length > 0
+                              {(hasSavedData
                                 ? state.reviews
                                 : previewPlaceholders.reviews
                               ).map((r, i) => (
@@ -918,8 +915,8 @@ export default function MyProfile() {
                       )}
 
                       {showContactSection && (state.contact_email || state.phone_number ||
-                        previewPlaceholders.contact_email || previewPlaceholders.phone_number
-                      ) && (
+                        (!hasSavedData && (previewPlaceholders.contact_email || previewPlaceholders.phone_number)))
+                        && (
                           <>
                             <p className="mock-section-title">Contact Details</p>
                             <div className="mock-contact-details">
