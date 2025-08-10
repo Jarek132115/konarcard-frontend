@@ -1247,8 +1247,8 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={workCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
-                              {(previewData.workImages.length > 0
-                                ? previewData.workImages
+                              {(state.workImages.length > 0
+                                ? state.workImages
                                 : previewPlaceholders.workImages
                               ).map((item, i) => (
                                 <div key={i} className="mock-work-image-item-wrapper">
@@ -1315,20 +1315,17 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={servicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
-                              {(state.services.length > 0
-                                ? state.services
-                                : previewPlaceholders.services
-                              ).map((s, i) => (
+                              {state.services.map((s, i) => (
                                 <div key={i} className="editor-item-card mock-service-item-wrapper">
                                   <input
                                     type="text"
-                                    placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
+                                    placeholder="Service Name"
                                     value={s.name || ''}
                                     onChange={(e) => handleServiceChange(i, "name", e.target.value)}
                                   />
                                   <input
                                     type="text"
-                                    placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
+                                    placeholder="Service Price/Detail"
                                     value={s.price || ''}
                                     onChange={(e) => handleServiceChange(i, "price", e.target.value)}
                                   />
@@ -1394,26 +1391,23 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={reviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
-                              {(state.reviews.length > 0
-                                ? state.reviews
-                                : previewPlaceholders.reviews
-                              ).map((r, i) => (
+                              {state.reviews.map((r, i) => (
                                 <div key={i} className="editor-item-card mock-review-card-wrapper">
                                   <input
                                     type="text"
-                                    placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
+                                    placeholder="Reviewer Name"
                                     value={r.name || ''}
                                     onChange={(e) => handleReviewChange(i, "name", e.target.value)}
                                   />
                                   <textarea
-                                    placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
+                                    placeholder="Review text"
                                     rows={2}
                                     value={r.text || ''}
                                     onChange={(e) => handleReviewChange(i, "text", e.target.value)}
                                   />
                                   <input
                                     type="number"
-                                    placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
+                                    placeholder="Rating (1-5)"
                                     min="1"
                                     max="5"
                                     value={r.rating || ''}
