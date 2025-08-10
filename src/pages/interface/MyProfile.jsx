@@ -22,9 +22,18 @@ export default function MyProfile() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   // FIX: Ref for the editor carousel container
-  const carouselRef = useRef(null);
+  const workCarouselRef = useRef(null);
   // FIX: Ref for the preview mock-phone carousel container
-  const previewCarouselRef = useRef(null);
+  const previewWorkCarouselRef = useRef(null);
+  // FIX: Ref for the editor services carousel container
+  const servicesCarouselRef = useRef(null);
+  // FIX: Ref for the preview mock-phone services carousel container
+  const previewServicesCarouselRef = useRef(null);
+  // FIX: Ref for the editor reviews carousel container
+  const reviewsCarouselRef = useRef(null);
+  // FIX: Ref for the preview mock-phone reviews carousel container
+  const previewReviewsCarouselRef = useRef(null);
+
 
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
   const isSubscribed = authUser?.isSubscribed || false;
@@ -49,6 +58,9 @@ export default function MyProfile() {
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showThemeVariants, setShowThemeVariants] = useState(false);
+  // FIX: New state for services and reviews display modes
+  const [servicesDisplayMode, setServicesDisplayMode] = useState('list');
+  const [reviewsDisplayMode, setReviewsDisplayMode] = useState('list');
 
   const location = useLocation();
 
@@ -137,6 +149,9 @@ export default function MyProfile() {
         phone_number: businessCard.phone_number || '',
         workDisplayMode: businessCard.work_display_mode || 'list',
       });
+      // FIX: Set new display modes from existing card data, or default
+      setServicesDisplayMode(businessCard.services_display_mode || 'list');
+      setReviewsDisplayMode(businessCard.reviews_display_mode || 'list');
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
@@ -145,6 +160,9 @@ export default function MyProfile() {
       setShowThemeVariants(true);
     } else if (!isCardLoading && !businessCard) {
       resetState();
+      // FIX: Reset new display modes to default
+      setServicesDisplayMode('list');
+      setReviewsDisplayMode('list');
       setShowThemeVariants(false);
     }
   }, [businessCard, isCardLoading, updateState, resetState]);
@@ -365,7 +383,9 @@ export default function MyProfile() {
       state.services.length !== (originalCard.services?.length || 0) ||
       state.reviews.length !== (originalCard.reviews?.length || 0) ||
       state.workImages.length !== (originalCard.works?.length || 0) ||
-      state.workDisplayMode !== (originalCard.work_display_mode || 'list')
+      state.workDisplayMode !== (originalCard.work_display_mode || 'list') ||
+      servicesDisplayMode !== (originalCard.services_display_mode || 'list') ||
+      reviewsDisplayMode !== (originalCard.reviews_display_mode || 'list')
     );
     return isStateDifferent;
   };
@@ -419,6 +439,9 @@ export default function MyProfile() {
       contact_email: state.contact_email,
       phone_number: state.phone_number,
       work_display_mode: state.workDisplayMode,
+      // FIX: Add new display modes to the form data
+      services_display_mode: servicesDisplayMode,
+      reviews_display_mode: reviewsDisplayMode,
     });
 
     try {
@@ -492,6 +515,9 @@ export default function MyProfile() {
           phone_number: businessCard.phone_number || '',
           workDisplayMode: businessCard.work_display_mode || 'list',
         });
+        // FIX: Reset new display modes to last published
+        setServicesDisplayMode(businessCard.services_display_mode || 'list');
+        setReviewsDisplayMode(businessCard.reviews_display_mode || 'list');
       } else {
         resetState();
       }
@@ -511,24 +537,24 @@ export default function MyProfile() {
   const scrollCarousel = (ref, direction) => {
     if (ref.current) {
       const carousel = ref.current;
-      const firstImage = carousel.querySelector('.mock-work-image-item-wrapper');
+      const firstItem = carousel.querySelector('.mock-work-image-item-wrapper, .mock-service-item, .mock-review-card');
 
-      if (!firstImage) return;
+      if (!firstItem) return;
 
-      // Get the width of a single item, including the gap
-      const imageWidth = firstImage.offsetWidth + 12;
+      // Get the width of a single item, including the gap (12px)
+      const itemWidth = firstItem.offsetWidth + 12;
       const currentScroll = carousel.scrollLeft;
       const maxScroll = carousel.scrollWidth - carousel.offsetWidth;
 
       let newScrollPosition;
 
       if (direction === 'left') {
-        newScrollPosition = currentScroll - imageWidth;
+        newScrollPosition = currentScroll - itemWidth;
         if (newScrollPosition < 0) {
           newScrollPosition = maxScroll; // Loop to the end
         }
       } else {
-        newScrollPosition = currentScroll + imageWidth;
+        newScrollPosition = currentScroll + itemWidth;
         if (newScrollPosition > maxScroll) {
           newScrollPosition = 0; // Loop back to the start
         }
@@ -736,20 +762,20 @@ export default function MyProfile() {
                                 <button
                                   type="button"
                                   className="carousel-nav-button left-arrow"
-                                  onClick={() => scrollCarousel(previewCarouselRef, 'left')}
+                                  onClick={() => scrollCarousel(previewWorkCarouselRef, 'left')}
                                 >
                                   &#9664;
                                 </button>
                                 <button
                                   type="button"
                                   className="carousel-nav-button right-arrow"
-                                  onClick={() => scrollCarousel(previewCarouselRef, 'right')}
+                                  onClick={() => scrollCarousel(previewWorkCarouselRef, 'right')}
                                 >
                                   &#9654;
                                 </button>
                               </div>
                             )}
-                            <div ref={previewCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
+                            <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
                               {(previewData.workImages.length > 0
                                 ? previewData.workImages
                                 : previewPlaceholders.workImages
@@ -770,20 +796,40 @@ export default function MyProfile() {
                       {(previewData.services.length > 0 || previewPlaceholders.services.length > 0) && (
                         <>
                           <p className="mock-section-title">My Services</p>
-                          <div className="mock-services-list">
-                            {(previewData.services.length > 0
-                              ? previewData.services
-                              : previewPlaceholders.services
-                            ).map((s, i) => (
-                              <div key={i} className="mock-service-item">
-                                <p className="mock-service-name">
-                                  {s.name}
-                                </p>
-                                <span className="mock-service-price">
-                                  {s.price}
-                                </span>
+                          <div className="work-preview-row-container">
+                            {servicesDisplayMode === 'carousel' && (
+                              <div className="carousel-nav-buttons">
+                                <button
+                                  type="button"
+                                  className="carousel-nav-button left-arrow"
+                                  onClick={() => scrollCarousel(previewServicesCarouselRef, 'left')}
+                                >
+                                  &#9664;
+                                </button>
+                                <button
+                                  type="button"
+                                  className="carousel-nav-button right-arrow"
+                                  onClick={() => scrollCarousel(previewServicesCarouselRef, 'right')}
+                                >
+                                  &#9654;
+                                </button>
                               </div>
-                            ))}
+                            )}
+                            <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
+                              {(previewData.services.length > 0
+                                ? previewData.services
+                                : previewPlaceholders.services
+                              ).map((s, i) => (
+                                <div key={i} className="mock-service-item">
+                                  <p className="mock-service-name">
+                                    {s.name}
+                                  </p>
+                                  <span className="mock-service-price">
+                                    {s.price}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </>
                       )}
@@ -791,28 +837,48 @@ export default function MyProfile() {
                       {(previewData.reviews.length > 0 || previewPlaceholders.reviews.length > 0) && (
                         <>
                           <p className="mock-section-title">Reviews</p>
-                          <div className="mock-reviews-list">
-                            {(previewData.reviews.length > 0
-                              ? previewData.reviews
-                              : previewPlaceholders.reviews
-                            ).map((r, i) => (
-                              <div key={i} className="mock-review-card">
-                                <div className="mock-star-rating">
-                                  {Array(r.rating || 0).fill().map((_, starIdx) => (
-                                    <span key={`filled-${starIdx}`}>★</span>
-                                  ))}
-                                  {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
-                                    <span key={`empty-${starIdx}`} className="empty-star">★</span>
-                                  ))}
-                                </div>
-                                <p className="mock-review-text">
-                                  {`"${r.text}"`}
-                                </p>
-                                <p className="mock-reviewer-name">
-                                  {r.name}
-                                </p>
+                          <div className="work-preview-row-container">
+                            {reviewsDisplayMode === 'carousel' && (
+                              <div className="carousel-nav-buttons">
+                                <button
+                                  type="button"
+                                  className="carousel-nav-button left-arrow"
+                                  onClick={() => scrollCarousel(previewReviewsCarouselRef, 'left')}
+                                >
+                                  &#9664;
+                                </button>
+                                <button
+                                  type="button"
+                                  className="carousel-nav-button right-arrow"
+                                  onClick={() => scrollCarousel(previewReviewsCarouselRef, 'right')}
+                                >
+                                  &#9654;
+                                </button>
                               </div>
-                            ))}
+                            )}
+                            <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
+                              {(previewData.reviews.length > 0
+                                ? previewData.reviews
+                                : previewPlaceholders.reviews
+                              ).map((r, i) => (
+                                <div key={i} className="mock-review-card">
+                                  <div className="mock-star-rating">
+                                    {Array(r.rating || 0).fill().map((_, starIdx) => (
+                                      <span key={`filled-${starIdx}`}>★</span>
+                                    ))}
+                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
+                                      <span key={`empty-${starIdx}`} className="empty-star">★</span>
+                                    ))}
+                                  </div>
+                                  <p className="mock-review-text">
+                                    {`"${r.text}"`}
+                                  </p>
+                                  <p className="mock-reviewer-name">
+                                    {r.name}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </>
                       )}
@@ -1109,20 +1175,20 @@ export default function MyProfile() {
                             <button
                               type="button"
                               className="carousel-nav-button left-arrow"
-                              onClick={() => scrollCarousel(carouselRef, 'left')}
+                              onClick={() => scrollCarousel(workCarouselRef, 'left')}
                             >
                               &#9664;
                             </button>
                             <button
                               type="button"
                               className="carousel-nav-button right-arrow"
-                              onClick={() => scrollCarousel(carouselRef, 'right')}
+                              onClick={() => scrollCarousel(workCarouselRef, 'right')}
                             >
                               &#9654;
                             </button>
                           </div>
                         )}
-                        <div ref={carouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
+                        <div ref={workCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
                           {(previewData.workImages.length > 0
                             ? previewData.workImages
                             : previewPlaceholders.workImages
@@ -1141,25 +1207,71 @@ export default function MyProfile() {
 
                     <hr className="divider" />
                     <h3 className="editor-subtitle">My Services Section</h3>
+                    {/* FIX: New display mode controls for Services */}
+                    <div className="input-block">
+                      <label>Display Layout</label>
+                      <div className="option-row">
+                        <button
+                          type="button"
+                          className={`display-button ${servicesDisplayMode === 'list' ? 'is-active' : ''}`}
+                          onClick={() => setServicesDisplayMode('list')}
+                        >
+                          List
+                        </button>
+                        <button
+                          type="button"
+                          className={`display-button ${servicesDisplayMode === 'carousel' ? 'is-active' : ''}`}
+                          onClick={() => setServicesDisplayMode('carousel')}
+                        >
+                          Carousel
+                        </button>
+                      </div>
+                    </div>
                     <div className="input-block">
                       <label>Services</label>
-                      {state.services.map((s, i) => (
-                        <div key={i} className="editor-item-card">
-                          <input
-                            type="text"
-                            placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
-                            value={s.name || ''}
-                            onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                          />
-                          <input
-                            type="text"
-                            placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
-                            value={s.price || ''}
-                            onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                          />
-                          <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
+                      {/* FIX: New carousel container for Services */}
+                      <div className="work-preview-row-container">
+                        {servicesDisplayMode === 'carousel' && (
+                          <div className="carousel-nav-buttons">
+                            <button
+                              type="button"
+                              className="carousel-nav-button left-arrow"
+                              onClick={() => scrollCarousel(servicesCarouselRef, 'left')}
+                            >
+                              &#9664;
+                            </button>
+                            <button
+                              type="button"
+                              className="carousel-nav-button right-arrow"
+                              onClick={() => scrollCarousel(servicesCarouselRef, 'right')}
+                            >
+                              &#9654;
+                            </button>
+                          </div>
+                        )}
+                        <div ref={servicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
+                          {(state.services.length > 0
+                            ? state.services
+                            : previewPlaceholders.services
+                          ).map((s, i) => (
+                            <div key={i} className="editor-item-card mock-service-item-wrapper">
+                              <input
+                                type="text"
+                                placeholder={previewPlaceholders.services[0]?.name || "Service Name"}
+                                value={s.name || ''}
+                                onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                              />
+                              <input
+                                type="text"
+                                placeholder={previewPlaceholders.services[0]?.price || "Service Price/Detail"}
+                                value={s.price || ''}
+                                onChange={(e) => handleServiceChange(i, "price", e.target.value)}
+                              />
+                              <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
                       <button type="button" onClick={handleAddService} className="add-item-button">
                         + Add Service
                       </button>
@@ -1167,33 +1279,79 @@ export default function MyProfile() {
 
                     <hr className="divider" />
                     <h3 className="editor-subtitle">Reviews Section</h3>
+                    {/* FIX: New display mode controls for Reviews */}
+                    <div className="input-block">
+                      <label>Display Layout</label>
+                      <div className="option-row">
+                        <button
+                          type="button"
+                          className={`display-button ${reviewsDisplayMode === 'list' ? 'is-active' : ''}`}
+                          onClick={() => setReviewsDisplayMode('list')}
+                        >
+                          List
+                        </button>
+                        <button
+                          type="button"
+                          className={`display-button ${reviewsDisplayMode === 'carousel' ? 'is-active' : ''}`}
+                          onClick={() => setReviewsDisplayMode('carousel')}
+                        >
+                          Carousel
+                        </button>
+                      </div>
+                    </div>
                     <div className="input-block">
                       <label>Reviews</label>
-                      {state.reviews.map((r, i) => (
-                        <div key={i} className="editor-item-card">
-                          <input
-                            type="text"
-                            placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
-                            value={r.name || ''}
-                            onChange={(e) => handleReviewChange(i, "name", e.target.value)}
-                          />
-                          <textarea
-                            placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
-                            rows={2}
-                            value={r.text || ''}
-                            onChange={(e) => handleReviewChange(i, "text", e.target.value)}
-                          />
-                          <input
-                            type="number"
-                            placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
-                            min="1"
-                            max="5"
-                            value={r.rating || ''}
-                            onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
-                          />
-                          <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
+                      {/* FIX: New carousel container for Reviews */}
+                      <div className="work-preview-row-container">
+                        {reviewsDisplayMode === 'carousel' && (
+                          <div className="carousel-nav-buttons">
+                            <button
+                              type="button"
+                              className="carousel-nav-button left-arrow"
+                              onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
+                            >
+                              &#9664;
+                            </button>
+                            <button
+                              type="button"
+                              className="carousel-nav-button right-arrow"
+                              onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
+                            >
+                              &#9654;
+                            </button>
+                          </div>
+                        )}
+                        <div ref={reviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
+                          {(state.reviews.length > 0
+                            ? state.reviews
+                            : previewPlaceholders.reviews
+                          ).map((r, i) => (
+                            <div key={i} className="editor-item-card mock-review-card-wrapper">
+                              <input
+                                type="text"
+                                placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
+                                value={r.name || ''}
+                                onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                              />
+                              <textarea
+                                placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
+                                rows={2}
+                                value={r.text || ''}
+                                onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                              />
+                              <input
+                                type="number"
+                                placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
+                                min="1"
+                                max="5"
+                                value={r.rating || ''}
+                                onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
+                              />
+                              <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
                       <button type="button" onClick={handleAddReview} className="add-item-button">
                         + Add Review
                       </button>

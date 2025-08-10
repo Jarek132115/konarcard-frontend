@@ -62,11 +62,9 @@
 .app-layout {
     display: flex;
     height: 100vh;
-    /* Full viewport height on desktop */
     background-color: var(--secondary-bg);
     position: relative;
     overflow: hidden;
-    /* Desktop: prevent scroll on app-layout, main-content-container handles it */
 }
 
 .main-content-container {
@@ -76,19 +74,15 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    /* Desktop: Take remaining height */
     box-sizing: border-box;
     margin-left: 260px;
-    /* Desktop sidebar offset */
     color: var(--text-color);
     transition: margin-left 0.3s ease-in-out;
     overflow-x: visible;
 }
 
-/* Page Header - Desktop styles (and base for mobile) */
 .page-header {
     display: flex;
-    /* Always keep flex for row layout */
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
@@ -104,18 +98,14 @@
     margin: 0;
     color: var(--page-header-color);
     white-space: nowrap;
-    /* Prevent title from wrapping on desktop */
     flex-shrink: 1;
-    /* Allow title to shrink if needed to fit */
     min-width: 0;
-    /* Allow text to be squeezed */
 }
 
 .page-actions {
     display: flex;
     gap: 12px;
     flex-shrink: 0;
-    /* Prevent buttons from shrinking */
 }
 
 .header-button {
@@ -134,15 +124,11 @@
     color: white;
 }
 
-/* Specific style for the share icon inside the button */
 .share-icon {
     height: 18px;
-    /* Adjust size as needed */
     width: auto;
     filter: brightness(0) invert(1);
-    /* Makes SVG white */
 }
-
 
 .header-button.black {
     background-color: black;
@@ -161,29 +147,23 @@
     align-items: center;
     gap: 20px;
     flex: 1;
-    /* Allows it to grow and shrink on desktop too */
     min-height: 0;
-    /* Important for flex items */
     box-sizing: border-box;
     overflow-x: visible;
-    /* Space at bottom for desktop */
 }
 
 .myprofile-flex-container {
     display: flex;
     height: 100%;
-    /* Desktop: Fill remaining space */
     gap: 60px;
     min-height: 0;
     align-items: flex-start;
-    /* Desktop alignment */
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
     overflow: visible;
     justify-content: center;
-    /* Added back for desktop to center mock phone/editor */
 }
 
 .myprofile-content {
@@ -196,7 +176,6 @@
     height: 100%;
     max-height: 100%;
     aspect-ratio: 9 / 17;
-    /* Maintain aspect ratio on desktop */
     overflow: visible;
 }
 
@@ -208,7 +187,6 @@
     border-radius: 2.5rem;
     box-sizing: border-box;
     overflow: visible;
-    /* Allows phone notches/speaker cutouts if any */
 }
 
 .mock-phone {
@@ -225,7 +203,6 @@
     font-family: var(--main-font-family);
     color: var(--text-color);
     overflow: hidden;
-    /* Keeps inner content within the phone frame */
 }
 
 .mock-phone-scrollable-content {
@@ -237,9 +214,7 @@
     gap: 0;
     padding: 0;
     overflow-y: auto;
-    /* This handles the internal scrolling of the preview */
     padding-right: 5px;
-    /* Space for scrollbar */
 }
 
 .mock-phone-scrollable-content::-webkit-scrollbar {
@@ -259,7 +234,6 @@
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Image placeholders and previews (no changes here needed) */
 .mock-cover,
 .avatar-preview,
 .mock-work-image-item,
@@ -399,14 +373,14 @@
     color: var(--text-color);
 }
 
-/* New parent container for carousel to properly position buttons */
 .work-preview-row-container {
     position: relative;
     width: 100%;
 }
 
-/* Base styles for work gallery */
-.mock-work-gallery {
+.mock-work-gallery,
+.mock-services-list,
+.mock-reviews-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
@@ -424,52 +398,98 @@
     gap: 12px;
 }
 
-/* FIX: Corrected Carousel layout CSS */
-.mock-work-gallery.carousel {
+/* FIX: Carousel layouts for all sections */
+.mock-work-gallery.carousel,
+.mock-services-list.carousel,
+.mock-reviews-list.carousel {
     display: flex;
     flex-direction: row;
-    /* FIX: Explicitly set to row for horizontal layout */
     gap: 12px;
     overflow-x: auto;
-    /* FIX: Enables horizontal scrolling */
     overflow-y: hidden;
-    max-height: 250px;
-    /* FIX: Prevents container from expanding vertically */
     -webkit-overflow-scrolling: touch;
     align-items: stretch;
     flex-wrap: nowrap;
     scroll-snap-type: x mandatory;
 }
 
-.mock-work-gallery.carousel::-webkit-scrollbar {
+.mock-work-gallery.carousel::-webkit-scrollbar,
+.mock-services-list.carousel::-webkit-scrollbar,
+.mock-reviews-list.carousel::-webkit-scrollbar {
     display: none;
 }
 
-/* FIX: Corrected individual image item styling for carousel */
-.mock-work-gallery.carousel .mock-work-image-item-wrapper {
+/* FIX: Carousel item styling for work images, services, and reviews */
+.mock-work-gallery.carousel .mock-work-image-item-wrapper,
+.mock-services-list.carousel .mock-service-item,
+.mock-reviews-list.carousel .mock-review-card {
     flex-shrink: 0;
     flex-grow: 0;
-    /* FIX: Prevents images from growing */
-    flex-basis: 100%;
-    /* FIX: Each item takes up 100% of the container width */
-    max-width: 100%;
-    /* FIX: Restrict the maximum width */
+    flex-basis: 90%;
+    /* Show a small portion of the next item */
+    max-width: 90%;
     scroll-snap-align: start;
-    /* Snap to the start of the item */
     height: auto;
     display: block;
+    box-sizing: border-box;
+}
+
+/* Specific styling for carousel wrappers */
+.mock-work-gallery.carousel .mock-work-image-item-wrapper {
     overflow: hidden;
     border-radius: 0.5rem;
     border: 1px solid var(--border-color);
-    box-sizing: border-box;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Individual image styling */
+.mock-services-list.carousel .mock-service-item {
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mock-reviews-list.carousel .mock-review-card {
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-nav-buttons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    z-index: 5;
+    pointer-events: none;
+    width: 100%;
+}
+
+.carousel-nav-button {
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    pointer-events: auto;
+}
+
+.carousel-nav-button:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
 .mock-work-gallery img.mock-work-image-item {
     width: 100%;
-    height: 100%;
-    /* FIX: Fill the height of the wrapper */
+    height: auto;
     aspect-ratio: 4 / 2.75;
     border-radius: 0;
     min-width: unset;
@@ -630,7 +650,6 @@
     gap: 10px;
 }
 
-/* New button style for display options */
 .display-button,
 .theme-button,
 .font-button {
@@ -1007,8 +1026,8 @@
     width: 100%;
 }
 
-/* --- MOBILE SPECIFIC STYLES (Max-width 1000px) --- */
 @media (max-width: 1000px) {
+
     .app-layout {
         height: auto;
         overflow-y: visible;
@@ -1161,7 +1180,6 @@
     }
 }
 
-/* --- SMALLER MOBILE SPECIFIC STYLES (Max-width 600px) --- */
 @media (max-width: 600px) {
 
     .page-actions .header-button {
@@ -1184,8 +1202,6 @@
     }
 }
 
-
-/* Very small screens (max-width 400px) - specific font size adjustments if needed */
 @media (max-width: 400px) {
     .main-content-container {
         padding: 15px;
@@ -1287,27 +1303,93 @@
     margin-top: 10px;
 }
 
-/* FIX: New parent container for carousel to properly position buttons */
 .work-preview-row-container {
     position: relative;
     width: 100%;
 }
 
-/* FIX: New carousel navigation button styling */
+.mock-work-gallery,
+.mock-services-list,
+.mock-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    margin-bottom: 36px;
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
+}
+
+.mock-work-gallery.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.mock-work-gallery.carousel,
+.mock-services-list.carousel,
+.mock-reviews-list.carousel {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-height: 250px;
+    -webkit-overflow-scrolling: touch;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    scroll-snap-type: x mandatory;
+}
+
+.mock-work-gallery.carousel::-webkit-scrollbar,
+.mock-services-list.carousel::-webkit-scrollbar,
+.mock-reviews-list.carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.mock-work-gallery.carousel .mock-work-image-item-wrapper,
+.mock-services-list.carousel .mock-service-item,
+.mock-reviews-list.carousel .mock-review-card {
+    flex-shrink: 0;
+    flex-grow: 0;
+    flex-basis: 90%;
+    max-width: 90%;
+    scroll-snap-align: start;
+    height: auto;
+    display: block;
+    box-sizing: border-box;
+}
+
+.mock-work-gallery.carousel .mock-work-image-item-wrapper {
+    overflow: hidden;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mock-services-list.carousel .mock-service-item {
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mock-reviews-list.carousel .mock-review-card {
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 .carousel-nav-buttons {
     position: absolute;
     top: 50%;
-    /* FIX: Position buttons in the vertical center */
-    left: 0;
-    right: 0;
     transform: translateY(-50%);
-    /* FIX: Correctly center buttons vertically */
     display: flex;
     justify-content: space-between;
     padding: 0 10px;
     z-index: 5;
     pointer-events: none;
-    /* Make container not intercept clicks */
+    width: 100%;
 }
 
 .carousel-nav-button {
@@ -1325,9 +1407,19 @@
     justify-content: center;
     transition: background-color 0.2s;
     pointer-events: auto;
-    /* Enable clicks on buttons */
 }
 
 .carousel-nav-button:hover {
     background-color: rgba(0, 0, 0, 0.6);
+}
+
+.mock-work-gallery img.mock-work-image-item {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 2.75;
+    border-radius: 0;
+    min-width: unset;
+    min-height: unset;
+    background-color: var(--placeholder-bg);
+    object-fit: cover;
 }
