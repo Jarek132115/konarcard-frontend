@@ -21,6 +21,7 @@
     /* Center content horizontally */
     font-family: 'Inter', sans-serif;
     /* Default font fallback */
+    color: #000;
 }
 
 /* Dark mode specific styles for the landing page background and text */
@@ -34,14 +35,16 @@
 /* Specific text colors for dark mode, for elements that need a different shade */
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-sub-heading,
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-profile-role,
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-service-item span {
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-service-item span,
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-contact-label {
     color: #bbb !important;
     /* Slightly lighter grey for sub-text in dark mode */
 }
 
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-about-section,
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-service-item,
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-review-card {
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-review-card,
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-contact-details {
     background-color: #333 !important;
     /* Darker background for sections/cards in dark mode */
     color: white !important;
@@ -163,10 +166,11 @@
     box-sizing: border-box;
 }
 
-/* NEW: About Me layout options */
+/* About Me layout options */
 .landing-about-section.side-by-side {
     align-items: center;
     gap: 1rem;
+    flex-direction: row;
 }
 
 .landing-about-section.stacked {
@@ -175,7 +179,7 @@
     text-align: center;
 }
 
-/* NEW: Adjustments for stacked layout */
+/* Adjustments for stacked layout */
 .landing-about-section.stacked .landing-about-content-group {
     text-align: center;
 }
@@ -231,9 +235,8 @@
 
 /* My Work section images gallery */
 .landing-work-gallery {
-    display: grid;
-    grid-template-columns: 1fr;
-    /* Single column by default for mobile */
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
     /* 16px */
     width: 100%;
@@ -241,28 +244,28 @@
     /* Limit max width */
 }
 
-/* NEW: Work display modes */
+/* Work display modes */
 .landing-work-gallery.grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
 }
 
 .landing-work-gallery.carousel {
-    display: flex;
+    flex-direction: row;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     gap: 1rem;
 }
 
-.landing-work-gallery.carousel img {
+.landing-work-gallery.carousel .landing-work-image {
     flex-shrink: 0;
     scroll-snap-align: start;
     width: 80%;
     max-width: 300px;
 }
 
-
-.landing-work-gallery img {
+.landing-work-gallery img.landing-work-image {
     width: 100%;
     /* Image fills the single column */
     aspect-ratio: 16 / 9;
@@ -284,7 +287,7 @@
     /* Limit max width */
 }
 
-/* NEW: Service display modes */
+/* Service display modes */
 .landing-services-list.carousel {
     flex-direction: row;
     overflow-x: auto;
@@ -339,7 +342,7 @@
     /* Limit max width */
 }
 
-/* NEW: Reviews display modes */
+/* Reviews display modes */
 .landing-reviews-list.carousel {
     flex-direction: row;
     overflow-x: auto;
@@ -387,6 +390,39 @@
     font-weight: 600;
     color: #555;
     margin: 0;
+}
+
+/* Contact Details Section */
+.landing-contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: #f1f1f1;
+    border-radius: 1rem;
+    padding: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.landing-contact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.landing-contact-label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 0;
+    color: #555;
+}
+
+.landing-contact-value {
+    font-size: 0.9375rem;
+    font-weight: normal;
+    margin: 0;
+    color: #000;
 }
 
 /* --- Responsive Adjustments for larger screens (e.g., tablet and desktop) --- */
