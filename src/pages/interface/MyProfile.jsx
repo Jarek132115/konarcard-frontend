@@ -17,7 +17,7 @@ export default function MyProfile() {
   const { state, updateState, resetState } = useBusinessCardStore();
   const fileInputRef = useRef(null);
   const avatarInputRef = useRef(null);
-  const workImageInputRef = useRef(null);
+  const workImageInputRef = useRef(null); // This ref will be used for the file input
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -209,6 +209,7 @@ export default function MyProfile() {
     }
   };
 
+  // FIX: Consolidated image upload to handle multiple files
   const handleAddWorkImage = (e) => {
     e.preventDefault();
     const files = Array.from(e.target.files || []);
@@ -974,7 +975,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">Main Section</h3>
                       <button type="button" onClick={() => setShowMainSection(!showMainSection)} className="toggle-button">
-                        {showMainSection ? 'Hide' : 'Show'}
+                        {showMainSection ? 'Hide Section' : 'Show Section'}
                       </button>
                     </div>
                     {showMainSection && (
@@ -986,21 +987,12 @@ export default function MyProfile() {
                             id="coverPhoto"
                             type="file"
                             accept="image/*"
+                            onChange={handleImageUpload} // FIX: Add onChange here
                             style={{ display: "none" }}
                           />
                           <div
                             className="image-upload-area cover-photo-upload"
-                            onClick={() => {
-                              const input = document.createElement('input');
-                              input.type = 'file';
-                              input.accept = 'image/*';
-                              input.onchange = (e) => {
-                                handleImageUpload(e);
-                                document.body.removeChild(input);
-                              };
-                              document.body.appendChild(input);
-                              input.click();
-                            }}
+                            onClick={() => fileInputRef.current.click()} // FIX: Use the ref
                           >
                             {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
                             <img
@@ -1048,7 +1040,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">About Me Section</h3>
                       <button type="button" onClick={() => setShowAboutMeSection(!showAboutMeSection)} className="toggle-button">
-                        {showAboutMeSection ? 'Hide' : 'Show'}
+                        {showAboutMeSection ? 'Hide Section' : 'Show Section'}
                       </button>
                     </div>
                     {showAboutMeSection && (
@@ -1080,21 +1072,12 @@ export default function MyProfile() {
                             id="avatar"
                             type="file"
                             accept="image/*"
+                            onChange={handleAvatarUpload} // FIX: Add onChange here
                             style={{ display: "none" }}
                           />
                           <div
                             className="image-upload-area avatar-upload"
-                            onClick={() => {
-                              const input = document.createElement('input');
-                              input.type = 'file';
-                              input.accept = 'image/*';
-                              input.onchange = (e) => {
-                                handleAvatarUpload(e);
-                                document.body.removeChild(input);
-                              };
-                              document.body.appendChild(input);
-                              input.click();
-                            }}
+                            onClick={() => avatarInputRef.current.click()} // FIX: Use the ref
                           >
                             {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
                             <img
@@ -1152,7 +1135,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">My Work Section</h3>
                       <button type="button" onClick={() => setShowWorkSection(!showWorkSection)} className="toggle-button">
-                        {showWorkSection ? 'Hide' : 'Show'}
+                        {showWorkSection ? 'Hide Section' : 'Show Section'}
                       </button>
                     </div>
                     {showWorkSection && (
@@ -1186,40 +1169,44 @@ export default function MyProfile() {
 
                         <div className="input-block">
                           <label>Work Images</label>
-                          <div className="work-preview-row-container">
-                            {state.workDisplayMode === 'carousel' && (
-                              <div className="carousel-nav-buttons">
+                          {/* FIX: Add the new editor-list class here */}
+                          <div className={`editor-work-list ${state.workDisplayMode}`}>
+                            {(state.workImages.length > 0
+                              ? state.workImages
+                              : previewPlaceholders.workImages
+                            ).map((item, i) => (
+                              <div key={i} className="editor-item-card work-image-item-wrapper">
+                                <img
+                                  src={item.preview || item}
+                                  alt={`work-${i}`}
+                                  className="work-image-preview"
+                                />
                                 <button
                                   type="button"
-                                  className="carousel-nav-button left-arrow"
-                                  onClick={() => scrollCarousel(workCarouselRef, 'left')}
+                                  className="remove-image-button"
+                                  onClick={(e) => { e.stopPropagation(); handleRemoveWorkImage(i); }}
                                 >
-                                  &#9664;
-                                </button>
-                                <button
-                                  type="button"
-                                  className="carousel-nav-button right-arrow"
-                                  onClick={() => scrollCarousel(workCarouselRef, 'right')}
-                                >
-                                  &#9654;
+                                  &times;
                                 </button>
                               </div>
+                            ))}
+                            {state.workImages.length < 10 && (
+                              <div
+                                className="add-work-image-placeholder"
+                                onClick={() => workImageInputRef.current.click()}
+                              >
+                                <span className="upload-text">Add Work Image(s)</span>
+                              </div>
                             )}
-                            <div ref={workCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
-                              {(state.workImages.length > 0
-                                ? state.workImages
-                                : previewPlaceholders.workImages
-                              ).map((item, i) => (
-                                <div key={i} className="mock-work-image-item-wrapper">
-                                  <img
-                                    src={item.preview || item}
-                                    alt={`work-${i}`}
-                                    className="mock-work-image-item"
-                                  />
-                                </div>
-                              ))}
-                            </div>
                           </div>
+                          <input
+                            ref={workImageInputRef}
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            onChange={handleAddWorkImage}
+                          />
                         </div>
                       </>
                     )}
@@ -1228,7 +1215,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">My Services Section</h3>
                       <button type="button" onClick={() => setShowServicesSection(!showServicesSection)} className="toggle-button">
-                        {showServicesSection ? 'Hide' : 'Show'}
+                        {showServicesSection ? 'Hide Section' : 'Show Section'}
                       </button>
                     </div>
                     {showServicesSection && (
@@ -1254,44 +1241,25 @@ export default function MyProfile() {
                         </div>
                         <div className="input-block">
                           <label>Services</label>
-                          <div className="work-preview-row-container">
-                            {servicesDisplayMode === 'carousel' && (
-                              <div className="carousel-nav-buttons">
-                                <button
-                                  type="button"
-                                  className="carousel-nav-button left-arrow"
-                                  onClick={() => scrollCarousel(servicesCarouselRef, 'left')}
-                                >
-                                  &#9664;
-                                </button>
-                                <button
-                                  type="button"
-                                  className="carousel-nav-button right-arrow"
-                                  onClick={() => scrollCarousel(servicesCarouselRef, 'right')}
-                                >
-                                  &#9654;
-                                </button>
+                          {/* FIX: Add the new editor-list class here */}
+                          <div className={`editor-service-list ${servicesDisplayMode}`}>
+                            {state.services.map((s, i) => (
+                              <div key={i} className="editor-item-card mock-service-item-wrapper">
+                                <input
+                                  type="text"
+                                  placeholder="Service Name"
+                                  value={s.name || ''}
+                                  onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Service Price/Detail"
+                                  value={s.price || ''}
+                                  onChange={(e) => handleServiceChange(i, "price", e.target.value)}
+                                />
+                                <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
                               </div>
-                            )}
-                            <div ref={servicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
-                              {state.services.map((s, i) => (
-                                <div key={i} className="editor-item-card mock-service-item-wrapper">
-                                  <input
-                                    type="text"
-                                    placeholder="Service Name"
-                                    value={s.name || ''}
-                                    onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                                  />
-                                  <input
-                                    type="text"
-                                    placeholder="Service Price/Detail"
-                                    value={s.price || ''}
-                                    onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                                  />
-                                  <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
-                                </div>
-                              ))}
-                            </div>
+                            ))}
                           </div>
                           <button type="button" onClick={handleAddService} className="add-item-button">
                             + Add Service
@@ -1304,7 +1272,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">Reviews Section</h3>
                       <button type="button" onClick={() => setShowReviewsSection(!showReviewsSection)} className="toggle-button">
-                        {showReviewsSection ? 'Hide' : 'Show'}
+                        {showReviewsSection ? 'Hide Section' : 'Show Section'}
                       </button>
                     </div>
                     {showReviewsSection && (
@@ -1330,52 +1298,33 @@ export default function MyProfile() {
                         </div>
                         <div className="input-block">
                           <label>Reviews</label>
-                          <div className="work-preview-row-container">
-                            {reviewsDisplayMode === 'carousel' && (
-                              <div className="carousel-nav-buttons">
-                                <button
-                                  type="button"
-                                  className="carousel-nav-button left-arrow"
-                                  onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
-                                >
-                                  &#9664;
-                                </button>
-                                <button
-                                  type="button"
-                                  className="carousel-nav-button right-arrow"
-                                  onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
-                                >
-                                  &#9654;
-                                </button>
+                          {/* FIX: Add the new editor-list class here */}
+                          <div className={`editor-reviews-list ${reviewsDisplayMode}`}>
+                            {state.reviews.map((r, i) => (
+                              <div key={i} className="editor-item-card mock-review-card-wrapper">
+                                <input
+                                  type="text"
+                                  placeholder="Reviewer Name"
+                                  value={r.name || ''}
+                                  onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                                />
+                                <textarea
+                                  placeholder="Review text"
+                                  rows={2}
+                                  value={r.text || ''}
+                                  onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                                />
+                                <input
+                                  type="number"
+                                  placeholder="Rating (1-5)"
+                                  min="1"
+                                  max="5"
+                                  value={r.rating || ''}
+                                  onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
+                                />
+                                <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
                               </div>
-                            )}
-                            <div ref={reviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
-                              {state.reviews.map((r, i) => (
-                                <div key={i} className="editor-item-card mock-review-card-wrapper">
-                                  <input
-                                    type="text"
-                                    placeholder="Reviewer Name"
-                                    value={r.name || ''}
-                                    onChange={(e) => handleReviewChange(i, "name", e.target.value)}
-                                  />
-                                  <textarea
-                                    placeholder="Review text"
-                                    rows={2}
-                                    value={r.text || ''}
-                                    onChange={(e) => handleReviewChange(i, "text", e.target.value)}
-                                  />
-                                  <input
-                                    type="number"
-                                    placeholder="Rating (1-5)"
-                                    min="1"
-                                    max="5"
-                                    value={r.rating || ''}
-                                    onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
-                                  />
-                                  <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
-                                </div>
-                              ))}
-                            </div>
+                            ))}
                           </div>
                           <button type="button" onClick={handleAddReview} className="add-item-button">
                             + Add Review
@@ -1388,7 +1337,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">Exchange Contact Details</h3>
                       <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="toggle-button">
-                        {showContactSection ? 'Hide' : 'Show'}
+                        {showContactSection ? 'Hide Section' : 'Show Section'}
                       </button>
                     </div>
                     {showContactSection && (
