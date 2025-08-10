@@ -67,7 +67,6 @@ export default function MyProfile() {
   const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
   const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
 
-  // Check if the user has any saved data at all
   const hasSavedData = !!businessCard;
 
   useEffect(() => {
@@ -613,12 +612,7 @@ export default function MyProfile() {
   };
 
   const getEditorImageSrc = (imageState, placeholderImage) => {
-    // Corrected logic: if there is saved data, use the state.
-    // If there's no saved data, use the placeholder image.
-    if (hasSavedData) {
-      return imageState;
-    }
-    return imageState || placeholderImage;
+    return imageState || placeholderImage || '';
   };
 
   const showAddImageText = (imageState) => {
@@ -733,7 +727,7 @@ export default function MyProfile() {
                       {showMainSection && (
                         <>
                           <img
-                            src={hasSavedData ? state.coverPhoto : previewPlaceholders.coverPhoto}
+                            src={hasSavedData ? (state.coverPhoto || previewPlaceholders.coverPhoto) : previewPlaceholders.coverPhoto}
                             alt="Cover"
                             className="mock-cover"
                           />
@@ -762,7 +756,7 @@ export default function MyProfile() {
                               <div className="mock-about-content-group">
                                 <div className="mock-about-header-group">
                                   <img
-                                    src={hasSavedData ? state.avatar : previewPlaceholders.avatar}
+                                    src={hasSavedData ? (state.avatar || previewPlaceholders.avatar) : previewPlaceholders.avatar}
                                     alt="Avatar"
                                     className="mock-avatar"
                                   />
@@ -1017,7 +1011,7 @@ export default function MyProfile() {
                           >
                             {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
                             <img
-                              src={getEditorImageSrc(state.coverPhoto, previewPlaceholders.coverPhoto)}
+                              src={state.coverPhoto || ''}
                               alt="Cover"
                               className="cover-preview"
                             />
@@ -1102,7 +1096,7 @@ export default function MyProfile() {
                           >
                             {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
                             <img
-                              src={getEditorImageSrc(state.avatar, previewPlaceholders.avatar)}
+                              src={state.avatar || ''}
                               alt="Avatar preview"
                               className="avatar-preview"
                             />
@@ -1191,10 +1185,7 @@ export default function MyProfile() {
                         <div className="input-block">
                           <label>Work Images</label>
                           <div className="editor-work-image-grid">
-                            {(state.workImages.length > 0
-                              ? state.workImages
-                              : previewPlaceholders.workImages
-                            ).map((item, i) => (
+                            {state.workImages.map((item, i) => (
                               <div key={i} className="editor-item-card work-image-item-wrapper">
                                 <img
                                   src={item.preview || item}
