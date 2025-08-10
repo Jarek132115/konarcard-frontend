@@ -649,7 +649,7 @@ export default function MyProfile() {
           )}
 
           {!authLoading && authUser && (
-            <>
+            <React.Fragment>
               {showVerificationPrompt && (
                 <div className="content-card-box verification-prompt">
                   <p>
@@ -879,21 +879,28 @@ export default function MyProfile() {
                                 ? previewData.reviews
                                 : previewPlaceholders.reviews
                               ).map((r, i) => (
-                                <div key={i} className="mock-review-card">
-                                  <div className="mock-star-rating">
-                                    {Array(r.rating || 0).fill().map((_, starIdx) => (
-                                      <span key={`filled-${starIdx}`}>★</span>
-                                    ))}
-                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
-                                      <span key={`empty-${starIdx}`} className="empty-star">★</span>
-                                    ))}
-                                  </div>
-                                  <p className="mock-review-text">
-                                    {`"${r.text}"`}
-                                  </p>
-                                  <p className="mock-reviewer-name">
-                                    {r.name}
-                                  </p>
+                                <div key={i} className="editor-item-card mock-review-card-wrapper">
+                                  <input
+                                    type="text"
+                                    placeholder={previewPlaceholders.reviews[0]?.name || "Reviewer Name"}
+                                    value={r.name || ''}
+                                    onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                                  />
+                                  <textarea
+                                    placeholder={previewPlaceholders.reviews[0]?.text || "Review text"}
+                                    rows={2}
+                                    value={r.text || ''}
+                                    onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                                  />
+                                  <input
+                                    type="number"
+                                    placeholder={previewPlaceholders.reviews[0]?.rating?.toString() || "Rating (1-5)"}
+                                    min="1"
+                                    max="5"
+                                    value={r.rating || ''}
+                                    onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
+                                  />
+                                  <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
                                 </div>
                               ))}
                             </div>
@@ -1086,7 +1093,6 @@ export default function MyProfile() {
                           </div>
                         </React.Fragment>
                       )}
-
                       <hr className="divider" />
                       <div className="editor-section-header">
                         <h3 className="editor-subtitle">About Me Section</h3>
@@ -1483,7 +1489,7 @@ export default function MyProfile() {
                   </div>
                 </div>
               </div>
-            </>
+            </React.Fragment>
           )}
         </div>
       </main>
