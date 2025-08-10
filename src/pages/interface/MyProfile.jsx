@@ -12,9 +12,6 @@ import ShareProfile from "../../components/ShareProfile";
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
-import HideIcon from '../../assets/icons/Hide.svg';
-import ShowIcon from '../../assets/icons/Show.svg';
-
 
 export default function MyProfile() {
   const { state, updateState, resetState } = useBusinessCardStore();
@@ -1018,7 +1015,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">Main Section</h3>
                       <button type="button" onClick={() => setShowMainSection(!showMainSection)} className="toggle-button">
-                        <img src={showMainSection ? HideIcon : ShowIcon} alt={showMainSection ? "Hide" : "Show"} />
+                        {showMainSection ? 'Hide' : 'Show'}
                       </button>
                     </div>
                     {showMainSection && (
@@ -1092,7 +1089,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">About Me Section</h3>
                       <button type="button" onClick={() => setShowAboutMeSection(!showAboutMeSection)} className="toggle-button">
-                        <img src={showAboutMeSection ? HideIcon : ShowIcon} alt={showAboutMeSection ? "Hide" : "Show"} />
+                        {showAboutMeSection ? 'Hide' : 'Show'}
                       </button>
                     </div>
                     {showAboutMeSection && (
@@ -1196,7 +1193,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">My Work Section</h3>
                       <button type="button" onClick={() => setShowWorkSection(!showWorkSection)} className="toggle-button">
-                        <img src={showWorkSection ? HideIcon : ShowIcon} alt={showWorkSection ? "Hide" : "Show"} />
+                        {showWorkSection ? 'Hide' : 'Show'}
                       </button>
                     </div>
                     {showWorkSection && (
@@ -1272,7 +1269,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">My Services Section</h3>
                       <button type="button" onClick={() => setShowServicesSection(!showServicesSection)} className="toggle-button">
-                        <img src={showServicesSection ? HideIcon : ShowIcon} alt={showServicesSection ? "Hide" : "Show"} />
+                        {showServicesSection ? 'Hide' : 'Show'}
                       </button>
                     </div>
                     {showServicesSection && (
@@ -1351,7 +1348,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">Reviews Section</h3>
                       <button type="button" onClick={() => setShowReviewsSection(!showReviewsSection)} className="toggle-button">
-                        <img src={showReviewsSection ? HideIcon : ShowIcon} alt={showReviewsSection ? "Hide" : "Show"} />
+                        {showReviewsSection ? 'Hide' : 'Show'}
                       </button>
                     </div>
                     {showReviewsSection && (
@@ -1438,7 +1435,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">Exchange Contact Details</h3>
                       <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="toggle-button">
-                        <img src={showContactSection ? HideIcon : ShowIcon} alt={showContactSection ? "Hide" : "Show"} />
+                        {showContactSection ? 'Hide' : 'Show'}
                       </button>
                     </div>
                     {showContactSection && (
