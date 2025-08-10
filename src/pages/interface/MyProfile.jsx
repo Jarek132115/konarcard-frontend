@@ -21,8 +21,10 @@ export default function MyProfile() {
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  // FIX: Ref for the carousel container
+  // FIX: Ref for the editor carousel container
   const carouselRef = useRef(null);
+  // FIX: Ref for the preview mock-phone carousel container
+  const previewCarouselRef = useRef(null);
 
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
   const isSubscribed = authUser?.isSubscribed || false;
@@ -505,17 +507,37 @@ export default function MyProfile() {
     }
   };
 
-  // FIX: This function has been updated to scroll by the exact width of one image item.
-  const scrollCarousel = (direction) => {
-    if (carouselRef.current) {
-      const firstImage = carouselRef.current.querySelector('.mock-work-image-item-wrapper');
-      if (firstImage) {
-        const scrollAmount = firstImage.offsetWidth;
-        carouselRef.current.scrollBy({
-          left: direction === 'left' ? -scrollAmount : scrollAmount,
-          behavior: 'smooth'
-        });
+  // FIX: This function has been updated to scroll by the exact width of one image item and to loop
+  const scrollCarousel = (ref, direction) => {
+    if (ref.current) {
+      const carousel = ref.current;
+      const firstImage = carousel.querySelector('.mock-work-image-item-wrapper');
+
+      if (!firstImage) return;
+
+      // Get the width of a single item, including the gap
+      const imageWidth = firstImage.offsetWidth + 12;
+      const currentScroll = carousel.scrollLeft;
+      const maxScroll = carousel.scrollWidth - carousel.offsetWidth;
+
+      let newScrollPosition;
+
+      if (direction === 'left') {
+        newScrollPosition = currentScroll - imageWidth;
+        if (newScrollPosition < 0) {
+          newScrollPosition = maxScroll; // Loop to the end
+        }
+      } else {
+        newScrollPosition = currentScroll + imageWidth;
+        if (newScrollPosition > maxScroll) {
+          newScrollPosition = 0; // Loop back to the start
+        }
       }
+
+      carousel.scrollTo({
+        left: newScrollPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -708,27 +730,26 @@ export default function MyProfile() {
                       {(previewData.workImages.length > 0 || previewPlaceholders.workImages.length > 0) && (
                         <>
                           <p className="mock-section-title">My Work</p>
-                          {/* FIX: New div with work-preview-row-container class wraps everything */}
                           <div className="work-preview-row-container">
                             {state.workDisplayMode === 'carousel' && (
                               <div className="carousel-nav-buttons">
                                 <button
                                   type="button"
                                   className="carousel-nav-button left-arrow"
-                                  onClick={() => scrollCarousel('left')}
+                                  onClick={() => scrollCarousel(previewCarouselRef, 'left')}
                                 >
                                   &#9664;
                                 </button>
                                 <button
                                   type="button"
                                   className="carousel-nav-button right-arrow"
-                                  onClick={() => scrollCarousel('right')}
+                                  onClick={() => scrollCarousel(previewCarouselRef, 'right')}
                                 >
                                   &#9654;
                                 </button>
                               </div>
                             )}
-                            <div ref={carouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
+                            <div ref={previewCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
                               {(previewData.workImages.length > 0
                                 ? previewData.workImages
                                 : previewPlaceholders.workImages
@@ -1082,21 +1103,20 @@ export default function MyProfile() {
 
                     <div className="input-block">
                       <label>Work Images</label>
-                      {/* FIX: New div with work-preview-row-container class wraps everything */}
                       <div className="work-preview-row-container">
                         {state.workDisplayMode === 'carousel' && (
                           <div className="carousel-nav-buttons">
                             <button
                               type="button"
                               className="carousel-nav-button left-arrow"
-                              onClick={() => scrollCarousel('left')}
+                              onClick={() => scrollCarousel(carouselRef, 'left')}
                             >
                               &#9664;
                             </button>
                             <button
                               type="button"
                               className="carousel-nav-button right-arrow"
-                              onClick={() => scrollCarousel('right')}
+                              onClick={() => scrollCarousel(carouselRef, 'right')}
                             >
                               &#9654;
                             </button>
