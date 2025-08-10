@@ -589,8 +589,6 @@ export default function MyProfile() {
     }
   };
 
-  // --- START: CORRECTED PREVIEW LOGIC & IMAGE SWAP ---
-
   const shouldShowPlaceholders = !hasSavedData;
 
   const previewFullName = state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : '');
@@ -754,12 +752,11 @@ export default function MyProfile() {
                             className="mock-cover"
                           />
 
-                          {/* CORRECTED LOGIC */}
                           <h2 className="mock-title">
-                            {state.mainHeading || (shouldShowPlaceholders ? previewPlaceholders.main_heading : '')}
+                            {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : '')}
                           </h2>
                           <p className="mock-subtitle">
-                            {state.subHeading || (shouldShowPlaceholders ? previewPlaceholders.sub_heading : '')}
+                            {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : '')}
                           </p>
 
                           <button
