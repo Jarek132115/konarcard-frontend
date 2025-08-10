@@ -391,14 +391,12 @@
     border-radius: 0;
 }
 
-/* Grid layout */
 .mock-work-gallery.grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
 
-/* FIX: Carousel layouts for all sections */
 .mock-work-gallery.carousel,
 .mock-services-list.carousel,
 .mock-reviews-list.carousel {
@@ -425,10 +423,11 @@
 .mock-reviews-list.carousel .mock-review-card {
     flex-shrink: 0;
     flex-grow: 0;
-    flex-basis: 90%;
-    /* Show a small portion of the next item */
-    max-width: 90%;
-    scroll-snap-align: start;
+    /* FIX: Change flex-basis to show part of the next item */
+    flex-basis: 85%;
+    max-width: 85%;
+    /* FIX: Align to the center for a smoother snap effect */
+    scroll-snap-align: center;
     height: auto;
     display: block;
     box-sizing: border-box;
@@ -1027,7 +1026,6 @@
 }
 
 @media (max-width: 1000px) {
-
     .app-layout {
         height: auto;
         overflow-y: visible;
@@ -1084,7 +1082,6 @@
         flex-shrink: 1;
         min-width: 0;
     }
-
 
     .subscription-overlay-mobile {
         display: block;
@@ -1335,7 +1332,6 @@
     gap: 12px;
     overflow-x: auto;
     overflow-y: hidden;
-    max-height: 250px;
     -webkit-overflow-scrolling: touch;
     align-items: stretch;
     flex-wrap: nowrap;
@@ -1353,9 +1349,9 @@
 .mock-reviews-list.carousel .mock-review-card {
     flex-shrink: 0;
     flex-grow: 0;
-    flex-basis: 90%;
-    max-width: 90%;
-    scroll-snap-align: start;
+    flex-basis: 85%;
+    max-width: 85%;
+    scroll-snap-align: center;
     height: auto;
     display: block;
     box-sizing: border-box;
@@ -1422,4 +1418,67 @@
     min-height: unset;
     background-color: var(--placeholder-bg);
     object-fit: cover;
+}
+
+.mock-services-list,
+.mock-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    width: 100%;
+    margin-bottom: 36px;
+}
+
+.mock-service-item,
+.mock-review-card {
+    background-color: var(--card-bg);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-color);
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mock-service-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.mock-service-price {
+    font-size: 0.8125rem;
+    color: var(--subtle-text-color);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.mock-star-rating {
+    color: gold;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1rem;
+}
+
+.mock-star-rating .empty-star {
+    color: #ccc;
+}
+
+.mock-review-text {
+    font-size: 0.9375rem;
+    color: var(--text-color);
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.mock-reviewer-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--subtle-text-color);
+    margin: 0;
 }
