@@ -22,8 +22,7 @@
 .myprofile-flex-container {
     display: flex;
     height: 100%;
-    gap: 60px;
-    /* This creates the space between the two sections */
+    gap: 60px; /* This creates the space between the two sections */
     min-height: 0;
     align-items: flex-start;
     max-width: 1200px;
