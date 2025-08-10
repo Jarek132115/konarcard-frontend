@@ -595,8 +595,6 @@ export default function MyProfile() {
   const shouldShowPlaceholders = !hasSavedData;
 
   // Determine preview text source based on whether a user has saved data or not
-  const previewMainHeading = state.mainHeading || (shouldShowPlaceholders ? previewPlaceholders.main_heading : '');
-  const previewSubHeading = state.subHeading || (shouldShowPlaceholders ? previewPlaceholders.sub_heading : '');
   const previewFullName = state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : '');
   const previewJobTitle = state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : '');
   const previewBio = state.bio || (shouldShowPlaceholders ? previewPlaceholders.bio : '');
@@ -604,32 +602,30 @@ export default function MyProfile() {
   const previewPhone = state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : '');
 
   // Image Swap Logic
-  let previewCoverPhotoSrc = '';
-  let previewAvatarSrc = '';
-  let previewWorkImages = [];
+  let previewCoverPhotoSrc;
+  let previewAvatarSrc = state.avatar || (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
+  let previewWorkImages;
 
   if (shouldShowPlaceholders) {
     // Before first save, show all template placeholders
     previewCoverPhotoSrc = previewPlaceholders.coverPhoto;
-    previewAvatarSrc = previewPlaceholders.avatar;
     previewWorkImages = previewPlaceholders.workImages;
   } else {
     // After first save, check for a user-uploaded cover photo
     // and swap it with the first work image if both exist.
+    const hasWorkImages = state.workImages.length > 0;
+    const hasCoverPhoto = !!state.coverPhoto;
 
-    // Use the first work image for the cover photo if it exists, otherwise use the saved cover photo.
-    previewCoverPhotoSrc = state.workImages.length > 0 ? state.workImages[0].preview : state.coverPhoto;
-
-    // Use the saved cover photo for the first work image if it exists.
-    // The rest of the work images stay the same.
-    if (state.coverPhoto && state.workImages.length > 0) {
+    if (hasWorkImages && hasCoverPhoto) {
+      // Use the first work image for the cover photo preview
+      previewCoverPhotoSrc = state.workImages[0].preview;
+      // Use the saved cover photo for the first work image preview
       previewWorkImages = [{ preview: state.coverPhoto }, ...state.workImages.slice(1)];
     } else {
+      // If no cover photo or no work images, just use the one that exists.
+      previewCoverPhotoSrc = state.coverPhoto;
       previewWorkImages = state.workImages;
     }
-
-    // The avatar and other images are not part of the swap, so they use the saved data directly.
-    previewAvatarSrc = state.avatar;
   }
   // --- END: CORRECTED PREVIEW LOGIC & IMAGE SWAP ---
 
@@ -770,10 +766,10 @@ export default function MyProfile() {
                           />
 
                           <h2 className="mock-title">
-                            {previewMainHeading}
+                            {state.mainHeading || previewPlaceholders.main_heading}
                           </h2>
                           <p className="mock-subtitle">
-                            {previewSubHeading}
+                            {state.subHeading || previewPlaceholders.sub_heading}
                           </p>
                           <button
                             type="button"
@@ -1064,7 +1060,7 @@ export default function MyProfile() {
                             type="text"
                             value={state.mainHeading || ''}
                             onChange={(e) => updateState({ mainHeading: e.target.value })}
-                            placeholder={previewPlaceholders.mainHeading}
+                            placeholder={previewPlaceholders.main_heading}
                           />
                         </div>
 
@@ -1075,7 +1071,7 @@ export default function MyProfile() {
                             type="text"
                             value={state.subHeading || ''}
                             onChange={(e) => updateState({ subHeading: e.target.value })}
-                            placeholder={previewPlaceholders.subHeading}
+                            placeholder={previewPlaceholders.sub_heading}
                           />
                         </div>
                       </>
