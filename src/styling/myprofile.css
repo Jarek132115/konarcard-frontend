@@ -427,10 +427,14 @@
 /* FIX: Corrected Carousel layout CSS */
 .mock-work-gallery.carousel {
     display: flex;
+    flex-direction: row;
+    /* FIX: Explicitly set to row for horizontal layout */
     gap: 12px;
     overflow-x: auto;
+    /* FIX: Enables horizontal scrolling */
     overflow-y: hidden;
-    padding-bottom: 15px;
+    max-height: 250px;
+    /* FIX: Prevents container from expanding vertically */
     -webkit-overflow-scrolling: touch;
     align-items: stretch;
     flex-wrap: nowrap;
@@ -444,9 +448,14 @@
 /* FIX: Corrected individual image item styling for carousel */
 .mock-work-gallery.carousel .mock-work-image-item-wrapper {
     flex-shrink: 0;
-    width: 100%;
-    scroll-snap-align: center;
+    flex-grow: 0;
+    /* FIX: Prevents images from growing */
+    flex-basis: 100%;
+    /* FIX: Each item takes up 100% of the container width */
     max-width: 100%;
+    /* FIX: Restrict the maximum width */
+    scroll-snap-align: start;
+    /* Snap to the start of the item */
     height: auto;
     display: block;
     overflow: hidden;
@@ -459,7 +468,8 @@
 /* Individual image styling */
 .mock-work-gallery img.mock-work-image-item {
     width: 100%;
-    height: auto;
+    height: 100%;
+    /* FIX: Fill the height of the wrapper */
     aspect-ratio: 4 / 2.75;
     border-radius: 0;
     min-width: unset;
@@ -999,7 +1009,6 @@
 
 /* --- MOBILE SPECIFIC STYLES (Max-width 1000px) --- */
 @media (max-width: 1000px) {
-
     .app-layout {
         height: auto;
         overflow-y: visible;
@@ -1276,4 +1285,49 @@
 
 .option-row.mt-3 {
     margin-top: 10px;
+}
+
+/* FIX: New parent container for carousel to properly position buttons */
+.work-preview-row-container {
+    position: relative;
+    width: 100%;
+}
+
+/* FIX: New carousel navigation button styling */
+.carousel-nav-buttons {
+    position: absolute;
+    top: 50%;
+    /* FIX: Position buttons in the vertical center */
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    /* FIX: Correctly center buttons vertically */
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    z-index: 5;
+    pointer-events: none;
+    /* Make container not intercept clicks */
+}
+
+.carousel-nav-button {
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    pointer-events: auto;
+    /* Enable clicks on buttons */
+}
+
+.carousel-nav-button:hover {
+    background-color: rgba(0, 0, 0, 0.6);
 }
