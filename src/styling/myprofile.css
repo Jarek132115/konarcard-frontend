@@ -399,13 +399,13 @@
     color: var(--text-color);
 }
 
-/* FIX: New parent container for carousel to properly position buttons */
+/* New parent container for carousel to properly position buttons */
 .work-preview-row-container {
     position: relative;
     width: 100%;
 }
 
-/* FIX: Base styles for work gallery */
+/* Base styles for work gallery */
 .mock-work-gallery {
     display: flex;
     flex-direction: column;
@@ -417,18 +417,17 @@
     border-radius: 0;
 }
 
-/* FIX: Grid layout */
+/* Grid layout */
 .mock-work-gallery.grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
 
-/* FIX: Carousel layout */
+/* Carousel layout */
 .mock-work-gallery.carousel {
     display: flex;
     gap: 12px;
-    /* overflow is handled by the parent container */
     overflow-x: auto;
     overflow-y: hidden;
     padding-bottom: 15px;
@@ -436,12 +435,51 @@
     align-items: stretch;
     /* Align items to stretch vertically */
     flex-wrap: nowrap;
+    /* FIX: Carousel container should also have position: relative for the scroll-snap-align to work on children */
+    position: relative;
+    scroll-snap-type: x mandatory;
 }
 
 .mock-work-gallery.carousel::-webkit-scrollbar {
     display: none;
 }
 
+/* FIX: The parent container for the buttons is the one with relative positioning, not this. */
+.carousel-nav-buttons {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.carousel-nav-button {
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    pointer-events: auto;
+}
+
+.carousel-nav-button:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Ensure work items in all layouts have consistent sizing */
 .mock-work-image-item-wrapper {
     position: relative;
     width: 100%;
@@ -454,7 +492,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* FIX: Ensure work items in carousel and grid have consistent sizing */
 .mock-work-gallery.list .mock-work-image-item-wrapper {
     width: 100%;
 }
@@ -465,12 +502,13 @@
 }
 
 .mock-work-gallery.carousel .mock-work-image-item-wrapper {
+    /* FIX: The flex-basis and max-width are what make the carousel work */
     flex: 0 0 80%;
     /* Show one main image and a bit of the next */
-    height: auto;
     max-width: 80%;
     scroll-snap-align: start;
     /* Snap to the start of the item */
+    height: auto;
 }
 
 /* Individual image styling */
@@ -1358,34 +1396,30 @@
     display: flex;
     gap: 12px;
     overflow-x: auto;
+    overflow-y: hidden;
     padding-bottom: 15px;
     -webkit-overflow-scrolling: touch;
     align-items: stretch;
-    /* Align items to stretch vertically */
     flex-wrap: nowrap;
     position: relative;
-    /* This makes sure the container is sized and overflow is handled properly */
-    overflow-y: hidden;
     scroll-snap-type: x mandatory;
 }
 
-.mock-work-gallery.carousel .mock-work-image-item-wrapper {
-    flex: 0 0 80%;
-    /* Show one main image and a bit of the next */
-    max-width: 80%;
-    height: auto;
-    scroll-snap-align: start;
-    /* Snap to the start of the item */
+.mock-work-gallery.carousel::-webkit-scrollbar {
+    display: none;
 }
 
-/* Individual image styling */
-.mock-work-gallery img.mock-work-image-item {
-    width: 100%;
+/* FIX: Individual image styling to ensure they show up side-by-side */
+.mock-work-gallery.carousel .mock-work-image-item-wrapper {
+    flex: 0 0 100%;
+    /* Show one image at a time */
+    max-width: 100%;
+    scroll-snap-align: center;
+    /* Snap to the center of the item for a better feel */
     height: auto;
-    aspect-ratio: 4 / 2.75;
-    border-radius: 0;
-    min-width: unset;
-    min-height: unset;
-    background-color: var(--placeholder-bg);
+}
+
+.mock-work-gallery.carousel .mock-work-image-item {
+    height: 100%;
     object-fit: cover;
 }

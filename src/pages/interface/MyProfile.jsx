@@ -705,7 +705,8 @@ export default function MyProfile() {
                       {(previewData.workImages.length > 0 || previewPlaceholders.workImages.length > 0) && (
                         <>
                           <p className="mock-section-title">My Work</p>
-                          <div className="carousel-container">
+                          {/* FIX: New div with work-preview-row-container class wraps everything */}
+                          <div className="work-preview-row-container">
                             {state.workDisplayMode === 'carousel' && (
                               <div className="carousel-nav-buttons">
                                 <button
@@ -1078,7 +1079,7 @@ export default function MyProfile() {
 
                     <div className="input-block">
                       <label>Work Images</label>
-                      {/* FIX: Moved carousel buttons inside a new container */}
+                      {/* FIX: New div with work-preview-row-container class wraps everything */}
                       <div className="work-preview-row-container">
                         {state.workDisplayMode === 'carousel' && (
                           <div className="carousel-nav-buttons">
