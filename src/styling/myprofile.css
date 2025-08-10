@@ -15,8 +15,6 @@
     --main-font-family: 'Inter', sans-serif;
 }
 
-
-
 /* Define color variables for light theme variants */
 .light-mode.pure-light {
     --primary-bg: #FFFFFF;
@@ -609,10 +607,38 @@
     font-weight: 600;
 }
 
+/* New CSS for the section headers with a toggle button */
+.editor-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
 .editor-subtitle {
     font-size: 16px;
     font-weight: 600;
-    margin-top: 10px;
+    margin: 0;
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle-button img {
+    width: 20px;
+    height: 20px;
+    filter: var(--dark-mode-filter, brightness(0) invert(0));
+}
+
+.dark-mode .toggle-button img {
+    filter: brightness(0) invert(1);
 }
 
 .input-block {
