@@ -1001,7 +1001,6 @@ export default function MyProfile() {
 
                     <hr className="divider" />
                     <h3 className="editor-subtitle">About Me Section</h3>
-
                     <div className="input-block">
                       <label>Display Layout</label>
                       <div className="option-row">
@@ -1021,7 +1020,6 @@ export default function MyProfile() {
                         </button>
                       </div>
                     </div>
-
                     <div className="input-block">
                       <label htmlFor="coverPhoto">Cover Photo</label>
                       <input
