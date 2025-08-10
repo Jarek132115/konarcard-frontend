@@ -176,9 +176,113 @@
     max-width: 800px;
 }
 
+/* --- START: NEW CAROUSEL STYLES FOR USERPAGE --- */
+
+/* Wrapper for carousel content and navigation buttons */
+.user-carousel-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+}
+
+/* Carousel navigation buttons */
+.user-carousel-nav-buttons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    z-index: 5;
+    pointer-events: none;
+    width: 100%;
+}
+
+.user-carousel-nav-button {
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    pointer-events: auto;
+}
+
+.user-carousel-nav-button:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Container for the carousel items */
+.user-work-gallery-carousel,
+.user-services-list-carousel,
+.user-reviews-list-carousel {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    /* Prevents items from wrapping to a new line */
+    gap: 1rem;
+    width: 100%;
+    max-width: 800px;
+    overflow-x: auto;
+    /* Enables horizontal scrolling */
+    scroll-snap-type: x mandatory;
+    /* Snaps to each item when scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* Improves scrolling on iOS */
+    scrollbar-width: none;
+    /* Hides scrollbar for Firefox */
+}
+
+/* Hide scrollbar for other browsers (like Chrome, Safari) */
+.user-work-gallery-carousel::-webkit-scrollbar,
+.user-services-list-carousel::-webkit-scrollbar,
+.user-reviews-list-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+/* Individual item styling for carousel mode */
+.user-work-gallery-carousel .landing-work-image,
+.user-services-list-carousel .landing-service-item,
+.user-reviews-list-carousel .landing-review-card {
+    flex-shrink: 0;
+    /* Prevents items from shrinking */
+    flex-grow: 0;
+    /* Prevents items from growing */
+    flex-basis: 100%;
+    /* Each item takes up 100% of the container width */
+    max-width: 100%;
+    /* Ensures it doesn't get wider than container */
+    scroll-snap-align: start;
+    /* Aligns the start of the item with the container's scroll-snap position */
+    box-sizing: border-box;
+    /* Ensures padding and border are included in the element's total width and height */
+}
+
+/* Adjust padding for the review cards and service items in carousel mode */
+.user-services-list-carousel .landing-service-item,
+.user-reviews-list-carousel .landing-review-card {
+    padding-right: 0.5rem;
+    /* Add some space between items */
+}
+
+/* You might need to add a small adjustment to the container to see the gap */
+.user-services-list-carousel,
+.user-reviews-list-carousel {
+    padding-right: 1rem;
+}
+
+/* --- END: NEW CAROUSEL STYLES FOR USERPAGE --- */
+
 
 /* My Work section images gallery */
-/* FIX: Change default layout to flex and row for all modes */
+/* The general gallery styles have been changed to be more flexible */
 .landing-work-gallery {
     display: flex;
     flex-direction: row;
@@ -189,35 +293,20 @@
     scroll-snap-type: x mandatory;
 }
 
-/* FIX: Specific rules for list mode */
+/* Specific rules for list mode */
 .landing-work-gallery.list {
     flex-direction: column;
     overflow-x: hidden;
     scroll-snap-type: none;
 }
 
-/* FIX: Specific rules for grid mode */
+/* Specific rules for grid mode */
 .landing-work-gallery.grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     overflow-x: hidden;
     scroll-snap-type: none;
-}
-
-/* FIX: Specific rules for carousel mode */
-.landing-work-gallery.carousel {
-    flex-direction: row;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 1rem;
-}
-
-.landing-work-gallery.carousel .landing-work-image {
-    flex-shrink: 0;
-    scroll-snap-align: start;
-    width: 80%;
-    max-width: 300px;
 }
 
 .landing-work-gallery img.landing-work-image {
@@ -228,7 +317,6 @@
 }
 
 /* My Services List */
-/* FIX: Change default layout to flex and column for all modes */
 .landing-services-list {
     display: flex;
     flex-direction: column;
@@ -237,22 +325,6 @@
     max-width: 800px;
     overflow-x: hidden;
 }
-
-/* FIX: Specific rules for carousel mode */
-.landing-services-list.carousel {
-    flex-direction: row;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 1rem;
-}
-
-.landing-services-list.carousel .landing-service-item {
-    flex-shrink: 0;
-    scroll-snap-align: start;
-    width: 80%;
-    max-width: 300px;
-}
-
 
 .landing-service-item {
     background-color: #f6f6f6;
@@ -278,7 +350,6 @@
 }
 
 /* Reviews List */
-/* FIX: Change default layout to flex and column for all modes */
 .landing-reviews-list {
     display: flex;
     flex-direction: column;
@@ -286,21 +357,6 @@
     width: 100%;
     max-width: 800px;
     overflow-x: hidden;
-}
-
-/* FIX: Specific rules for carousel mode */
-.landing-reviews-list.carousel {
-    flex-direction: row;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 1rem;
-}
-
-.landing-reviews-list.carousel .landing-review-card {
-    flex-shrink: 0;
-    scroll-snap-align: start;
-    width: 80%;
-    max-width: 300px;
 }
 
 .landing-review-card {
