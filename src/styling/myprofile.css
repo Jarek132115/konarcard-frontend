@@ -451,19 +451,16 @@
     overflow: hidden;
     border-radius: 0.5rem;
     border: 1px solid var(--border-color);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .mock-services-list.carousel .mock-service-item {
     border-radius: 0.75rem;
     padding: 0.75rem 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .mock-reviews-list.carousel .mock-review-card {
     border-radius: 0.75rem;
     padding: 0.75rem 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-nav-buttons {
@@ -532,7 +529,6 @@
     color: var(--text-color);
     width: 100%;
     box-sizing: border-box;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .mock-service-name {
