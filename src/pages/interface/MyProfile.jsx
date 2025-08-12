@@ -72,9 +72,7 @@ export default function MyProfile() {
   useEffect(() => {
     let handledRedirect = false;
     const checkSubscriptionStatus = async () => {
-      if (authLoading || !authUser) {
-        return;
-      }
+      if (authLoading || !authUser) return;
       const queryParams = new URLSearchParams(location.search);
       const paymentSuccess = queryParams.get('payment_success');
 
@@ -182,7 +180,6 @@ export default function MyProfile() {
     }
   }, [businessCard, isCardLoading]);
 
-
   useEffect(() => {
     return () => {
       activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
@@ -219,9 +216,8 @@ export default function MyProfile() {
     e.preventDefault();
     const files = Array.from(e.target.files || []);
     const newImageFiles = files.filter(file => file && file.type.startsWith("image/"));
-    if (newImageFiles.length === 0) {
-      return;
-    }
+    if (newImageFiles.length === 0) return;
+
     const newPreviewItems = newImageFiles.map(file => ({
       file: file,
       preview: createAndTrackBlobUrl(file),
@@ -378,12 +374,22 @@ export default function MyProfile() {
     }
   };
 
+  // ---- FIX: detect changes in section visibility too
   const hasProfileChanges = () => {
     if (coverPhotoFile || avatarFile || workImageFiles.length > 0 || coverPhotoRemoved || isAvatarRemoved) {
       return true;
     }
 
     const originalCard = businessCard || {};
+
+    // Original values with safe defaults to avoid masking changes
+    const origShowMain = originalCard.show_main_section !== false;
+    const origShowAbout = originalCard.show_about_me_section !== false;
+    const origShowWork = originalCard.show_work_section !== false;
+    const origShowServices = originalCard.show_services_section !== false;
+    const origShowReviews = originalCard.show_reviews_section !== false;
+    const origShowContact = originalCard.show_contact_section !== false;
+
     const isStateDifferent = (
       state.businessName !== (originalCard.business_card_name || '') ||
       state.pageTheme !== (originalCard.page_theme || 'light') ||
@@ -401,8 +407,16 @@ export default function MyProfile() {
       state.workDisplayMode !== (originalCard.work_display_mode || 'list') ||
       servicesDisplayMode !== (originalCard.services_display_mode || 'list') ||
       reviewsDisplayMode !== (originalCard.reviews_display_mode || 'list') ||
-      aboutMeLayout !== (originalCard.about_me_layout || 'side-by-side')
+      aboutMeLayout !== (originalCard.about_me_layout || 'side-by-side') ||
+      // NEW: section visibility comparisons
+      showMainSection !== origShowMain ||
+      showAboutMeSection !== origShowAbout ||
+      showWorkSection !== origShowWork ||
+      showServicesSection !== origShowServices ||
+      showReviewsSection !== origShowReviews ||
+      showContactSection !== origShowContact
     );
+
     return isStateDifferent;
   };
 
@@ -457,6 +471,7 @@ export default function MyProfile() {
       services_display_mode: servicesDisplayMode,
       reviews_display_mode: reviewsDisplayMode,
       about_me_layout: aboutMeLayout,
+      // ensure section flags are sent
       show_main_section: showMainSection,
       show_about_me_section: showAboutMeSection,
       show_work_section: showWorkSection,
