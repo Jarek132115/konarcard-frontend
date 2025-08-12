@@ -58,10 +58,10 @@ export const previewPlaceholders = {
 
   // Keep BOTH camelCase and snake_case so all components work.
   // Your MyProfile component reads snake_case (main_heading / sub_heading).
-  mainHeading: "Your Main Heading Here",
-  subHeading: "Your Tagline or Slogan Goes Here",
-  main_heading: "Your Main Heading Here",
-  sub_heading: "Your Tagline or Slogan Goes Here",
+  mainHeading: "Your Main Heading",
+  subHeading: "Your Sub Heading",
+  main_heading: "Your Main Heading",
+  sub_heading: "Your Sub Heading",
 
   job_title: "Your Job Title",
   full_name: "Your Full Name",
