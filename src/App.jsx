@@ -33,7 +33,7 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const location = useLocation();
-  const TIDIO_SCRIPT_URL = "//code.tidio.co/beofp4i2ttjkwkjoem91cbg7an99f40w.js";
+  // const TIDIO_SCRIPT_URL = "//code.tidio.co/beofp4i2ttjkwkjoem91cbg7an99f40w.js";
   const isUserPage = location.pathname.startsWith('/u/');
 
   return (
