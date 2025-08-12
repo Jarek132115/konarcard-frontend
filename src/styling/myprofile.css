@@ -585,6 +585,35 @@
     overflow: visible;
 }
 
+/* ALWAYS show work images 2 per row in the editor */
+.editor-work-image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+}
+
+.editor-work-image-grid .editor-item-card.work-image-item-wrapper,
+.editor-work-image-grid .add-work-image-placeholder {
+    width: 100%;
+    height: auto;
+}
+
+/* Make sure the image keeps shape nicely inside the grid cell */
+.editor-work-image-grid .work-image-preview {
+    width: 100%;
+    aspect-ratio: 4 / 2.75;
+    object-fit: cover;
+    display: block;
+}
+
+/* Optional: tighten the remove button a bit so it doesn't push layout */
+.editor-work-image-grid .remove-image-button {
+    top: 6px;
+    right: 6px;
+}
+
+
 .editor-content-wrapper {
     flex: 1;
     border-radius: 16px;
