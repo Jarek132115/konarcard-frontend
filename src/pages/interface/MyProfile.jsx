@@ -375,6 +375,7 @@ export default function MyProfile() {
   };
 
   // ---- FIX: detect changes in section visibility too
+  // Replace your hasProfileChanges with this version
   const hasProfileChanges = () => {
     if (coverPhotoFile || avatarFile || workImageFiles.length > 0 || coverPhotoRemoved || isAvatarRemoved) {
       return true;
@@ -382,7 +383,53 @@ export default function MyProfile() {
 
     const originalCard = businessCard || {};
 
-    // Original values with safe defaults to avoid masking changes
+    // Normalize helpers
+    const normStr = (v) => (v ?? '').toString().trim();
+    const normalizeServices = (arr) =>
+      (arr || []).map(s => ({ name: normStr(s.name), price: normStr(s.price) }));
+    const normalizeReviews = (arr) =>
+      (arr || []).map(r => ({
+        name: normStr(r.name),
+        text: normStr(r.text),
+        rating: Number.isFinite(r.rating) ? Number(r.rating) : 0
+      }));
+
+    const servicesChanged = (() => {
+      const a = normalizeServices(state.services);
+      const b = normalizeServices(originalCard.services);
+      if (a.length !== b.length) return true;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i].name !== b[i].name || a[i].price !== b[i].price) return true;
+      }
+      return false;
+    })();
+
+    const reviewsChanged = (() => {
+      const a = normalizeReviews(state.reviews);
+      const b = normalizeReviews(originalCard.reviews);
+      if (a.length !== b.length) return true;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i].name !== b[i].name || a[i].text !== b[i].text || a[i].rating !== b[i].rating) {
+          return true;
+        }
+      }
+      return false;
+    })();
+
+    // Work images: compare by resulting URLs (ignore local blob previews)
+    const currentWorks = (state.workImages || [])
+      .map(w => (w?.preview && !w.preview.startsWith('blob:')) ? w.preview : null)
+      .filter(Boolean);
+    const originalWorks = (originalCard.works || []);
+    const worksChanged = (() => {
+      if (currentWorks.length !== originalWorks.length) return true;
+      for (let i = 0; i < currentWorks.length; i++) {
+        if (currentWorks[i] !== originalWorks[i]) return true;
+      }
+      return false;
+    })();
+
+    // Original visibilities with safe defaults
     const origShowMain = originalCard.show_main_section !== false;
     const origShowAbout = originalCard.show_about_me_section !== false;
     const origShowWork = originalCard.show_work_section !== false;
@@ -401,14 +448,15 @@ export default function MyProfile() {
       state.bio !== (originalCard.bio || '') ||
       state.contact_email !== (originalCard.contact_email || '') ||
       state.phone_number !== (originalCard.phone_number || '') ||
-      state.services.length !== (originalCard.services?.length || 0) ||
-      state.reviews.length !== (originalCard.reviews?.length || 0) ||
-      state.workImages.length !== (originalCard.works?.length || 0) ||
       state.workDisplayMode !== (originalCard.work_display_mode || 'list') ||
       servicesDisplayMode !== (originalCard.services_display_mode || 'list') ||
       reviewsDisplayMode !== (originalCard.reviews_display_mode || 'list') ||
       aboutMeLayout !== (originalCard.about_me_layout || 'side-by-side') ||
-      // NEW: section visibility comparisons
+      // deep checks
+      servicesChanged ||
+      reviewsChanged ||
+      worksChanged ||
+      // visibility toggles
       showMainSection !== origShowMain ||
       showAboutMeSection !== origShowAbout ||
       showWorkSection !== origShowWork ||
@@ -419,6 +467,7 @@ export default function MyProfile() {
 
     return isStateDifferent;
   };
+
 
   const handleSubmit = async (e, fromTrialStart = false) => {
     e.preventDefault();
