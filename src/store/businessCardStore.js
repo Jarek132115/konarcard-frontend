@@ -65,7 +65,7 @@ export const previewPlaceholders = {
   job_title: "Bathroom Renovation Specialist",
   full_name: "James Carter",
   bio:
-    "With over 15 years of experience in luxury bathroom renovations, I specialize in creating functional, stylish, and timeless spaces. From modern wet rooms to classic claw-foot tubs, my goal is to bring your dream bathroom to life — on time and within budget. Every project is built on quality craftsmanship, premium materials, and a personal touch that ensures your satisfaction.",
+    "With 15 years of experience in luxury bathroom renovations, I create stylish, functional spaces tailored to each client. From modern wet rooms to classic designs, every project blends quality craftsmanship with attention to detail.",
 
   services: [
     { name: "Full Bathroom Renovation", price: "Starting from £4,995" },
