@@ -636,6 +636,27 @@ export default function MyProfile() {
   const shouldBlurEditor = !isSubscribed && hasTrialEnded;
   const isDarkMode = state.pageTheme === "dark";
 
+  // Styles to ensure headings are visible above/below the cover in preview
+  const coverImgStyle = {
+    position: 'relative',
+    zIndex: 0,
+    display: 'block',
+    width: '100%',
+    height: 'auto'
+  };
+  const titleStyle = {
+    position: 'relative',
+    zIndex: 1,
+    color: isDarkMode ? '#ffffff' : '#111111',
+    margin: '12px 12px 0'
+  };
+  const subtitleStyle = {
+    position: 'relative',
+    zIndex: 1,
+    color: isDarkMode ? '#f0f0f0' : '#333333',
+    margin: '6px 12px 12px'
+  };
+
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
@@ -737,13 +758,20 @@ export default function MyProfile() {
                               src={previewCoverPhotoSrc}
                               alt="Cover"
                               className="mock-cover"
+                              style={coverImgStyle}
                             />
                           )}
 
-                          <h2 className="mock-title">
+                          <h2
+                            className="mock-title"
+                            style={titleStyle}
+                          >
                             {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : 'Your Main Heading Here')}
                           </h2>
-                          <p className="mock-subtitle">
+                          <p
+                            className="mock-subtitle"
+                            style={subtitleStyle}
+                          >
                             {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : 'Your Tagline or Slogan Goes Here')}
                           </p>
 
@@ -1393,5 +1421,6 @@ export default function MyProfile() {
         username={userUsername || ''}
       />
     </div>
-  );
+
+  )
 }
