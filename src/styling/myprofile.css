@@ -1786,19 +1786,48 @@
     gap: 10px;
 }
 
-/* Force 2 images per row inside the phone preview */
-.mock-phone .mock-work-gallery {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
+/* === Work gallery: clean single-column list inside the phone preview === */
+.mock-phone .mock-work-gallery.list {
+    display: flex !important;
+    flex-direction: column !important;
     gap: 12px !important;
+    /* space between items */
     overflow: visible !important;
+    /* stop inner scrollbars from clipping */
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
-/* Make sure each image fits nicely */
-.mock-phone .mock-work-gallery .mock-work-image-item-wrapper,
-.mock-phone .mock-work-gallery .mock-work-image-item {
+.mock-phone .mock-work-gallery.list .mock-work-image-item-wrapper {
+    border: none !important;
+    box-shadow: none !important;
+    /* remove the shadow “halo” */
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 8px;
+    /* keep a subtle corner if you like */
+    overflow: hidden;
+    /* ensures image fills without showing gaps */
+}
+
+.mock-phone .mock-work-gallery.list img.mock-work-image-item {
+    display: block !important;
     width: 100% !important;
-    height: 100% !important;
-    aspect-ratio: 4 / 2.75 !important;
+    height: auto !important;
+    /* no odd vertical spacing */
+    aspect-ratio: 4 / 2.75;
+    /* keep your chosen shape */
     object-fit: cover !important;
+    /* crop to fill, no borders */
+    background: none !important;
+}
+
+.mock-phone .mock-work-gallery.carousel {
+    gap: 12px !important;
+    padding: 0 !important;
+}
+
+.mock-phone .mock-work-gallery.carousel .mock-work-image-item-wrapper {
+    border: none !important;
+    box-shadow: none !important;
 }
