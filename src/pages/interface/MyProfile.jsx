@@ -452,11 +452,9 @@ export default function MyProfile() {
       servicesDisplayMode !== (originalCard.services_display_mode || 'list') ||
       reviewsDisplayMode !== (originalCard.reviews_display_mode || 'list') ||
       aboutMeLayout !== (originalCard.about_me_layout || 'side-by-side') ||
-      // deep checks
       servicesChanged ||
       reviewsChanged ||
       worksChanged ||
-      // visibility toggles
       showMainSection !== origShowMain ||
       showAboutMeSection !== origShowAbout ||
       showWorkSection !== origShowWork ||
