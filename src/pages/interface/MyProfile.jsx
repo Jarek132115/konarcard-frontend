@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
 import { useQueryClient } from "@tanstack/react-query";
-import { useFetchBusinessCard, } from "../../hooks/useFetchBusinessCard";
-import { useCreateBusinessCard, buildBusinessCardFormData, } from "../../hooks/useCreateBiz";
+import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
+import { useCreateBusinessCard, buildBusinessCardFormData } from "../../hooks/useCreateBiz";
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import ShareProfile from "../../components/ShareProfile";
@@ -20,12 +20,9 @@ export default function MyProfile() {
   const workImageInputRef = useRef(null);
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const workCarouselRef = useRef(null);
   const previewWorkCarouselRef = useRef(null);
-  const servicesCarouselRef = useRef(null);
   const previewServicesCarouselRef = useRef(null);
-  const reviewsCarouselRef = useRef(null);
   const previewReviewsCarouselRef = useRef(null);
 
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
@@ -34,7 +31,8 @@ export default function MyProfile() {
   const userEmail = authUser?.email;
   const isUserVerified = authUser?.isVerified;
   const userUsername = authUser?.username;
-  const { data: businessCard, isLoading: isCardLoading, refetch: refetchBusinessCard } = useFetchBusinessCard(userId);
+  const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
+
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -48,8 +46,6 @@ export default function MyProfile() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
-  const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const [servicesDisplayMode, setServicesDisplayMode] = useState('list');
   const [reviewsDisplayMode, setReviewsDisplayMode] = useState('list');
@@ -68,6 +64,11 @@ export default function MyProfile() {
   const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
 
   const hasSavedData = !!businessCard;
+
+  // Only show contact/CTA if we actually have contact info (or placeholders pre-first-save)
+  const hasExchangeContact =
+    (state.contact_email && state.contact_email.trim()) ||
+    (state.phone_number && state.phone_number.trim());
 
   useEffect(() => {
     let handledRedirect = false;
@@ -178,7 +179,7 @@ export default function MyProfile() {
         setShowContactSection(true);
       }
     }
-  }, [businessCard, isCardLoading]);
+  }, [businessCard, isCardLoading, resetState, updateState]);
 
   useEffect(() => {
     return () => {
@@ -356,43 +357,20 @@ export default function MyProfile() {
     }
   };
 
-  const handleStartTrialAndSave = async (e) => {
-    if (!userId) {
-      toast.error("User not loaded. Please log in again.");
-      return;
-    }
-
-    try {
-      const trialResponse = await api.post('/start-trial');
-      if (trialResponse.data.success) {
-        toast.success("14-day free trial started successfully!");
-        await refetchAuthUser();
-        await handleSubmit(e, true);
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.error || "Failed to start trial.");
-    }
-  };
-
-  // ---- FIX: detect changes in section visibility too
-  // Replace your hasProfileChanges with this version
+  // detect changes (same as your improved version)
   const hasProfileChanges = () => {
     if (coverPhotoFile || avatarFile || workImageFiles.length > 0 || coverPhotoRemoved || isAvatarRemoved) {
       return true;
     }
 
     const originalCard = businessCard || {};
-
-    // Normalize helpers
     const normStr = (v) => (v ?? '').toString().trim();
-    const normalizeServices = (arr) =>
-      (arr || []).map(s => ({ name: normStr(s.name), price: normStr(s.price) }));
-    const normalizeReviews = (arr) =>
-      (arr || []).map(r => ({
-        name: normStr(r.name),
-        text: normStr(r.text),
-        rating: Number.isFinite(r.rating) ? Number(r.rating) : 0
-      }));
+    const normalizeServices = (arr) => (arr || []).map(s => ({ name: normStr(s.name), price: normStr(s.price) }));
+    const normalizeReviews = (arr) => (arr || []).map(r => ({
+      name: normStr(r.name),
+      text: normStr(r.text),
+      rating: Number.isFinite(r.rating) ? Number(r.rating) : 0
+    }));
 
     const servicesChanged = (() => {
       const a = normalizeServices(state.services);
@@ -416,7 +394,6 @@ export default function MyProfile() {
       return false;
     })();
 
-    // Work images: compare by resulting URLs (ignore local blob previews)
     const currentWorks = (state.workImages || [])
       .map(w => (w?.preview && !w.preview.startsWith('blob:')) ? w.preview : null)
       .filter(Boolean);
@@ -429,7 +406,6 @@ export default function MyProfile() {
       return false;
     })();
 
-    // Original visibilities with safe defaults
     const origShowMain = originalCard.show_main_section !== false;
     const origShowAbout = originalCard.show_about_me_section !== false;
     const origShowWork = originalCard.show_work_section !== false;
@@ -466,7 +442,6 @@ export default function MyProfile() {
     return isStateDifferent;
   };
 
-
   const handleSubmit = async (e, fromTrialStart = false) => {
     e.preventDefault();
 
@@ -486,14 +461,11 @@ export default function MyProfile() {
 
     const worksToUpload = state.workImages
       .map(item => {
-        if (item.file) {
-          return { file: item.file };
-        } else if (item.preview && !item.preview.startsWith('blob:')) {
-          return item.preview;
-        }
+        if (item.file) return { file: item.file };
+        if (item.preview && !item.preview.startsWith('blob:')) return item.preview;
         return null;
       })
-      .filter(item => item !== null);
+      .filter(Boolean);
 
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
@@ -518,7 +490,6 @@ export default function MyProfile() {
       services_display_mode: servicesDisplayMode,
       reviews_display_mode: reviewsDisplayMode,
       about_me_layout: aboutMeLayout,
-      // ensure section flags are sent
       show_main_section: showMainSection,
       show_about_me_section: showAboutMeSection,
       show_work_section: showWorkSection,
@@ -543,10 +514,7 @@ export default function MyProfile() {
     }
   };
 
-  const handleActivateCard = () => {
-    toast.info("Activate Card functionality to be defined!");
-  };
-
+  const handleActivateCard = () => toast.info("Activate Card functionality to be defined!");
   const handleShareCard = () => {
     if (!isUserVerified) {
       toast.error("Please verify your email to share your card.");
@@ -554,10 +522,7 @@ export default function MyProfile() {
     }
     setShowShareModal(true);
   };
-
-  const handleCloseShareModal = () => {
-    setShowShareModal(false);
-  };
+  const handleCloseShareModal = () => setShowShareModal(false);
 
   const handleStartSubscription = async () => {
     try {
@@ -631,23 +596,14 @@ export default function MyProfile() {
       const itemWidth = carousel.offsetWidth;
 
       let newScrollPosition;
-
       if (direction === 'left') {
         newScrollPosition = currentScroll - itemWidth;
-        if (newScrollPosition < 0) {
-          newScrollPosition = maxScroll;
-        }
+        if (newScrollPosition < 0) newScrollPosition = maxScroll;
       } else {
         newScrollPosition = currentScroll + itemWidth;
-        if (newScrollPosition >= maxScroll) {
-          newScrollPosition = 0;
-        }
+        if (newScrollPosition >= maxScroll) newScrollPosition = 0;
       }
-
-      carousel.scrollTo({
-        left: newScrollPosition,
-        behavior: 'smooth'
-      });
+      carousel.scrollTo({ left: newScrollPosition, behavior: 'smooth' });
     }
   };
 
@@ -659,47 +615,25 @@ export default function MyProfile() {
   const previewEmail = state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : '');
   const previewPhone = state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : '');
 
-  let previewCoverPhotoSrc;
-  let previewAvatarSrc = state.avatar || (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
-  let previewWorkImages;
+  // SIMPLIFIED: only use placeholders pre-first-save; otherwise use actual cover or nothing
+  const previewCoverPhotoSrc = shouldShowPlaceholders
+    ? previewPlaceholders.coverPhoto
+    : (state.coverPhoto || '');
 
-  if (shouldShowPlaceholders) {
-    previewCoverPhotoSrc = previewPlaceholders.coverPhoto;
-    previewWorkImages = previewPlaceholders.workImages;
-  } else {
-    const hasWorkImages = state.workImages.length > 0;
-    const hasCoverPhoto = !!state.coverPhoto;
+  const previewAvatarSrc = state.avatar || (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
 
-    if (hasWorkImages && hasCoverPhoto) {
-      previewCoverPhotoSrc = state.workImages[0].preview;
-      previewWorkImages = [{ preview: state.coverPhoto }, ...state.workImages.slice(1)];
-    } else {
-      previewCoverPhotoSrc = state.coverPhoto;
-      previewWorkImages = state.workImages;
-    }
-  }
+  // Work images placeholders still OK
+  const previewWorkImages = shouldShowPlaceholders
+    ? previewPlaceholders.workImages
+    : state.workImages;
 
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
-  const contactDetailsForVCard = {
-    full_name: businessCard?.full_name || '',
-    job_title: businessCard?.job_title || '',
-    business_card_name: businessCard?.business_card_name || '',
-    bio: businessCard?.bio || '',
-    isSubscribed: businessCard?.isSubscribed || false,
-    contact_email: businessCard?.contact_email || '',
-    phone_number: businessCard?.phone_number || '',
-    username: userUsername || '',
-  };
+  const getEditorImageSrc = (imageState, placeholderImage) =>
+    imageState || (shouldShowPlaceholders ? placeholderImage : '');
 
-  const getEditorImageSrc = (imageState, placeholderImage) => {
-    return imageState || (shouldShowPlaceholders ? placeholderImage : '');
-  };
-
-  const showAddImageText = (imageState) => {
-    return !imageState;
-  };
+  const showAddImageText = (imageState) => !imageState;
 
   const shouldBlurEditor = !isSubscribed && hasTrialEnded;
   const isDarkMode = state.pageTheme === "dark";
@@ -729,7 +663,7 @@ export default function MyProfile() {
       <main className="main-content-container">
         <PageHeader
           title={"My Profile"}
-          onActivateCard={handleActivateCard}
+          onActivateCard={() => toast.info("Activate Card functionality to be defined!")}
           onShareCard={handleShareCard}
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}
@@ -762,14 +696,8 @@ export default function MyProfile() {
                       onChange={(e) => setVerificationCodeCode(e.target.value)}
                       maxLength={6}
                     />
-                    <button type="submit">
-                      Verify Email
-                    </button>
-                    <button
-                      type="button"
-                      onClick={sendVerificationCode}
-                      disabled={resendCooldown > 0}
-                    >
+                    <button type="submit">Verify Email</button>
+                    <button type="button" onClick={sendVerificationCode} disabled={resendCooldown > 0}>
                       {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
                     </button>
                   </form>
@@ -779,7 +707,7 @@ export default function MyProfile() {
               {!isSubscribed && !isTrialActive && (
                 <div className="trial-not-started-banner">
                   <p>Publish your own live website in minutes for 14 days free.</p>
-                  <button className="blue-button" onClick={handleStartTrialAndSave}>
+                  <button className="blue-button" onClick={(e) => handleSubmit(e, true)}>
                     Get Started
                   </button>
                 </div>
@@ -803,15 +731,17 @@ export default function MyProfile() {
                     className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
                     style={{ fontFamily: state.font || previewPlaceholders.font }}
                   >
-
                     <div className="mock-phone-scrollable-content">
                       {showMainSection && (
                         <>
-                          <img
-                            src={previewCoverPhotoSrc}
-                            alt="Cover"
-                            className="mock-cover"
-                          />
+                          {/* Only show cover if we have one OR we're pre-first-save (placeholders) */}
+                          {(shouldShowPlaceholders || !!state.coverPhoto) && (
+                            <img
+                              src={previewCoverPhotoSrc}
+                              alt="Cover"
+                              className="mock-cover"
+                            />
+                          )}
 
                           <h2 className="mock-title">
                             {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : '')}
@@ -820,38 +750,34 @@ export default function MyProfile() {
                             {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : '')}
                           </p>
 
-                          <button
-                            type="button"
-                            className="mock-button"
-                          >
-                            Exchange Contact
-                          </button>
+                          {/* Only show CTA if we have contact OR pre-first-save */}
+                          {(shouldShowPlaceholders || hasExchangeContact) && (
+                            <button type="button" className="mock-button">
+                              Exchange Contact
+                            </button>
+                          )}
                         </>
                       )}
 
-                      {showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
+                      {showAboutMeSection && ((previewFullName || previewJobTitle || previewBio || previewAvatarSrc)) && (
                         <>
                           <p className="mock-section-title">About me</p>
                           <div className={`mock-about-container ${aboutMeLayout}`}>
                             <div className="mock-about-content-group">
                               <div className="mock-about-header-group">
-                                <img
-                                  src={previewAvatarSrc}
-                                  alt="Avatar"
-                                  className="mock-avatar"
-                                />
+                                {previewAvatarSrc && (
+                                  <img
+                                    src={previewAvatarSrc}
+                                    alt="Avatar"
+                                    className="mock-avatar"
+                                  />
+                                )}
                                 <div>
-                                  <p className="mock-profile-name">
-                                    {previewFullName}
-                                  </p>
-                                  <p className="mock-profile-role">
-                                    {previewJobTitle}
-                                  </p>
+                                  <p className="mock-profile-name">{previewFullName}</p>
+                                  <p className="mock-profile-role">{previewJobTitle}</p>
                                 </div>
                               </div>
-                              <p className="mock-bio-text">
-                                {previewBio}
-                              </p>
+                              <p className="mock-bio-text">{previewBio}</p>
                             </div>
                           </div>
                         </>
@@ -917,17 +843,10 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
-                              {(shouldShowPlaceholders
-                                ? previewPlaceholders.services
-                                : state.services
-                              ).map((s, i) => (
+                              {(shouldShowPlaceholders ? previewPlaceholders.services : state.services).map((s, i) => (
                                 <div key={i} className="mock-service-item">
-                                  <p className="mock-service-name">
-                                    {s.name}
-                                  </p>
-                                  <span className="mock-service-price">
-                                    {s.price}
-                                  </span>
+                                  <p className="mock-service-name">{s.name}</p>
+                                  <span className="mock-service-price">{s.price}</span>
                                 </div>
                               ))}
                             </div>
@@ -958,10 +877,7 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
-                              {(shouldShowPlaceholders
-                                ? previewPlaceholders.reviews
-                                : state.reviews
-                              ).map((r, i) => (
+                              {(shouldShowPlaceholders ? previewPlaceholders.reviews : state.reviews).map((r, i) => (
                                 <div key={i} className="mock-review-card">
                                   <div className="mock-star-rating">
                                     {Array(r.rating || 0).fill().map((_, starIdx) => (
@@ -971,14 +887,9 @@ export default function MyProfile() {
                                       <span key={`empty-${starIdx}`} className="empty-star">★</span>
                                     ))}
                                   </div>
-                                  <p className="mock-review-text">
-                                    {`"${r.text}"`}
-                                  </p>
-                                  <p className="mock-reviewer-name">
-                                    {r.name}
-                                  </p>
+                                  <p className="mock-review-text">{`"${r.text}"`}</p>
+                                  <p className="mock-reviewer-name">{r.name}</p>
                                 </div>
-
                               ))}
                             </div>
                           </div>
@@ -991,15 +902,11 @@ export default function MyProfile() {
                           <div className="mock-contact-details">
                             <div className="mock-contact-item">
                               <p className="mock-contact-label">Email:</p>
-                              <p className="mock-contact-value">
-                                {previewEmail}
-                              </p>
+                              <p className="mock-contact-value">{previewEmail}</p>
                             </div>
                             <div className="mock-contact-item">
                               <p className="mock-contact-label">Phone:</p>
-                              <p className="mock-contact-value">
-                                {previewPhone}
-                              </p>
+                              <p className="mock-contact-value">{previewPhone}</p>
                             </div>
                           </div>
                         </>
@@ -1009,7 +916,7 @@ export default function MyProfile() {
                 </div>
 
                 <div className="myprofile-editor-wrapper">
-                  {shouldBlurEditor && (
+                  {(!isSubscribed && hasTrialEnded) && (
                     <div className="subscription-overlay">
                       <div className="subscription-message">
                         <p className="desktop-h4">Subscription Required</p>
@@ -1019,10 +926,16 @@ export default function MyProfile() {
                         </button>
                       </div>
                     </div>
-
                   )}
 
-                  <form onSubmit={handleSubmit} className="myprofile-editor" style={{ filter: shouldBlurEditor ? 'blur(5px)' : 'none', pointerEvents: shouldBlurEditor ? 'none' : 'auto' }}>
+                  <form
+                    onSubmit={handleSubmit}
+                    className="myprofile-editor"
+                    style={{
+                      filter: (!isSubscribed && hasTrialEnded) ? 'blur(5px)' : 'none',
+                      pointerEvents: (!isSubscribed && hasTrialEnded) ? 'none' : 'auto'
+                    }}
+                  >
                     <h2 className="editor-title">Create Your Digital Business Card</h2>
 
                     <div className="input-block">
@@ -1408,7 +1321,6 @@ export default function MyProfile() {
                                 />
                                 <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
                               </div>
-
                             ))}
                           </div>
                           <button type="button" onClick={handleAddReview} className="add-item-button">
@@ -1452,17 +1364,10 @@ export default function MyProfile() {
                     )}
 
                     <div className="button-group">
-                      <button
-                        type="button"
-                        onClick={handleResetPage}
-                        className="ghost-button"
-                      >
+                      <button type="button" onClick={handleResetPage} className="ghost-button">
                         Reset Page
                       </button>
-                      <button
-                        type="submit"
-                        className="black-button desktop-button"
-                      >
+                      <button type="submit" className="black-button desktop-button">
                         Publish Now
                       </button>
                     </div>
@@ -1477,9 +1382,18 @@ export default function MyProfile() {
       <ShareProfile
         isOpen={showShareModal}
         onClose={handleCloseShareModal}
-        profileUrl={currentProfileUrl}
+        profileUrl={userUsername ? `https://www.konarcard.com/u/${userUsername}` : ''}
         qrCodeUrl={currentQrCodeUrl}
-        contactDetails={contactDetailsForVCard}
+        contactDetails={{
+          full_name: businessCard?.full_name || '',
+          job_title: businessCard?.job_title || '',
+          business_card_name: businessCard?.business_card_name || '',
+          bio: businessCard?.bio || '',
+          isSubscribed: businessCard?.isSubscribed || false,
+          contact_email: businessCard?.contact_email || '',
+          phone_number: businessCard?.phone_number || '',
+          username: userUsername || '',
+        }}
         username={userUsername || ''}
       />
     </div>
