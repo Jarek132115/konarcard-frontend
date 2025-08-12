@@ -85,9 +85,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
     flex-shrink: 0;
-    border-bottom: 1px solid grey;
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 20px;
     margin-bottom: 20px;
 }
@@ -500,9 +499,11 @@
     background-color: rgba(0, 0, 0, 0.6);
 }
 
-.mock-work-gallery img.mock-work-image-item {
+/* FIX: Ensure mock work images fill their container completely */
+.mock-work-image-item {
     width: 100%;
-    height: auto;
+    height: 100%;
+    /* Changed from 'auto' to '100%' */
     aspect-ratio: 4 / 2.75;
     border-radius: 0;
     min-width: unset;
@@ -602,6 +603,8 @@
 /* Make sure the image keeps shape nicely inside the grid cell */
 .editor-work-image-grid .work-image-preview {
     width: 100%;
+    height: 100%;
+    /* Changed from 'auto' to '100%' */
     aspect-ratio: 4 / 2.75;
     object-fit: cover;
     display: block;
@@ -830,7 +833,7 @@
 
 .work-image-preview {
     width: 100%;
-    height: auto;
+    height: 100%;
     aspect-ratio: 4 / 2.75;
     border-radius: 0;
     min-width: unset;
@@ -1207,7 +1210,6 @@
         height: auto !important;
         overflow: visible !important;
         max-width: 100%;
-        /* Ensure it doesn't get wider than its container on mobile */
     }
 
     .mock-cover {
@@ -1478,9 +1480,11 @@
     background-color: rgba(0, 0, 0, 0.6);
 }
 
+/* FIX: Ensure mock work images fill their container completely */
 .mock-work-gallery img.mock-work-image-item {
     width: 100%;
-    height: auto;
+    height: 100%;
+    /* Changed from 'auto' to '100%' */
     aspect-ratio: 4 / 2.75;
     border-radius: 0;
     min-width: unset;
@@ -1683,9 +1687,7 @@
 /* Force mobile sizing inside the mock phone preview, regardless of viewport */
 .mock-phone.mobile-preview {
     max-width: 360px;
-    /* realistic phone width */
     padding: 16px;
-    /* tighter phone padding */
     border-width: 6px;
     border-radius: 20px;
 }
