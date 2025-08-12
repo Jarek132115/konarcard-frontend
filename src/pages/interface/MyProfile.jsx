@@ -615,16 +615,19 @@ export default function MyProfile() {
   const previewPhone = state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : '');
 
   // Cover: show placeholder on fresh accounts; otherwise only show if set
-  const previewCoverPhotoSrc = shouldShowPlaceholders
-    ? previewPlaceholders.coverPhoto
-    : (state.coverPhoto || '');
+  const previewCoverPhotoSrc =
+    state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : '');
 
-  const previewAvatarSrc = state.avatar || (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
+
+  const previewAvatarSrc =
+    state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
 
   // Work images placeholders still OK for fresh accounts
-  const previewWorkImages = shouldShowPlaceholders
-    ? previewPlaceholders.workImages
-    : state.workImages;
+  const previewWorkImages =
+    (state.workImages && state.workImages.length > 0)
+      ? state.workImages
+      : (shouldShowPlaceholders ? previewPlaceholders.workImages : []);
+
 
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
