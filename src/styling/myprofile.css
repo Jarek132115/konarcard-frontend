@@ -1679,3 +1679,117 @@
     background-color: #fff0f0;
     color: #dc3545;
 }
+
+/* Force mobile sizing inside the mock phone preview, regardless of viewport */
+.mock-phone.mobile-preview {
+    max-width: 360px;
+    /* realistic phone width */
+    padding: 16px;
+    /* tighter phone padding */
+    border-width: 6px;
+    border-radius: 20px;
+}
+
+/* Headings & text scaled for mobile look */
+.mock-phone.mobile-preview .mock-title {
+    font-size: 1.4rem;
+    line-height: 1.25;
+    margin-top: 4px;
+}
+
+.mock-phone.mobile-preview .mock-subtitle {
+    font-size: 0.95rem;
+    margin-top: 6px;
+}
+
+.mock-phone.mobile-preview .mock-button {
+    font-size: 0.9rem;
+    padding: 0.65rem 1rem;
+    margin-top: 12px;
+    margin-bottom: 24px;
+}
+
+.mock-phone.mobile-preview .mock-section-title {
+    font-size: 0.95rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* About block & text */
+.mock-phone.mobile-preview .mock-about-container {
+    padding: 0.75rem;
+    gap: 0.6rem;
+}
+
+.mock-phone.mobile-preview .mock-avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+}
+
+.mock-phone.mobile-preview .mock-profile-name {
+    font-size: 1rem;
+}
+
+.mock-phone.mobile-preview .mock-profile-role {
+    font-size: 0.85rem;
+}
+
+.mock-phone.mobile-preview .mock-bio-text {
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+/* Lists/cards */
+.mock-phone.mobile-preview .mock-service-item {
+    padding: 0.65rem 0.8rem;
+}
+
+.mock-phone.mobile-preview .mock-service-name {
+    font-size: 0.9rem;
+}
+
+.mock-phone.mobile-preview .mock-service-price {
+    font-size: 0.8rem;
+}
+
+.mock-phone.mobile-preview .mock-review-card {
+    padding: 0.8rem;
+}
+
+.mock-phone.mobile-preview .mock-star-rating {
+    font-size: 0.95rem;
+}
+
+.mock-phone.mobile-preview .mock-review-text {
+    font-size: 0.9rem;
+}
+
+.mock-phone.mobile-preview .mock-reviewer-name {
+    font-size: 0.8rem;
+}
+
+/* Contact details */
+.mock-phone.mobile-preview .mock-contact-details {
+    padding: 0.8rem;
+}
+
+.mock-phone.mobile-preview .mock-contact-label,
+.mock-phone.mobile-preview .mock-contact-value {
+    font-size: 0.9rem;
+}
+
+/* Media inside the phone */
+.mock-phone.mobile-preview .mock-cover {
+    border-radius: 0.6rem;
+    margin-bottom: 0.85rem;
+}
+
+.mock-phone.mobile-preview .mock-work-image-item {
+    aspect-ratio: 4 / 2.75;
+}
+
+.mock-phone.mobile-preview .mock-work-gallery.grid {
+    gap: 10px;
+}

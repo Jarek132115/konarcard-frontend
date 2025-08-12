@@ -800,11 +800,10 @@ export default function MyProfile() {
               <div className="myprofile-flex-container">
                 <div className={`myprofile-content ${isMobile ? 'myprofile-mock-phone-mobile-container' : ''}`}>
                   <div
-                    className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
-                    style={{
-                      fontFamily: state.font || previewPlaceholders.font
-                    }}
+                    className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
+                    style={{ fontFamily: state.font || previewPlaceholders.font }}
                   >
+
                     <div className="mock-phone-scrollable-content">
                       {showMainSection && (
                         <>
