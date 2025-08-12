@@ -39,11 +39,11 @@ const useBusinessCardStore = create((set) => ({
 export default useBusinessCardStore;
 
 export const previewPlaceholders = {
-  businessName: "My Digital Business Card",
+  businessName: "Elite Bathrooms & Renovations",
   pageTheme: "light",
   pageThemeVariant: "subtle-light",
 
-  coverPhoto: "/Interface-Preview/Cover-Photo1.png",
+  coverPhoto: "/Interface-Preview/Cover-Photo1.png", // You can swap with a bathroom renovation photo
   avatar: "/Interface-Preview/Profile-Pic.png",
 
   workImages: [
@@ -52,46 +52,46 @@ export const previewPlaceholders = {
     { file: null, preview: "/Interface-Preview/Work-Images3.png" },
   ],
   workDisplayMode: "list",
-  servicesDisplayMode: "list", // New
-  reviewsDisplayMode: "list", // New
-  aboutMeLayout: "side-by-side", // New
+  servicesDisplayMode: "list",
+  reviewsDisplayMode: "list",
+  aboutMeLayout: "side-by-side",
 
-  // Keep BOTH camelCase and snake_case so all components work.
-  // Your MyProfile component reads snake_case (main_heading / sub_heading).
-  mainHeading: "Your Main Heading",
-  subHeading: "Your Sub Heading",
-  main_heading: "Your Main Heading",
-  sub_heading: "Your Sub Heading",
+  // Both camelCase & snake_case so it works with your component
+  mainHeading: "Transforming Bathrooms, Elevating Homes",
+  subHeading: "Premium bathroom renovations with unmatched craftsmanship",
+  main_heading: "Transforming Bathrooms, Elevating Homes",
+  sub_heading: "Premium bathroom renovations with unmatched craftsmanship",
 
-  job_title: "Your Job Title",
-  full_name: "Your Full Name",
+  job_title: "Bathroom Renovation Specialist",
+  full_name: "James Carter",
   bio:
-    "Welcome! This is your digital business card. Share your story, expertise, and how to connect with you. You can customize all content, colors, and fonts!",
+    "With over 15 years of experience in luxury bathroom renovations, I specialize in creating functional, stylish, and timeless spaces. From modern wet rooms to classic claw-foot tubs, my goal is to bring your dream bathroom to life — on time and within budget. Every project is built on quality craftsmanship, premium materials, and a personal touch that ensures your satisfaction.",
 
   services: [
-    { name: "Service 1 Title", price: "Starting from £195" },
-    { name: "Service 2 Title", price: "Starting from £295" },
-    { name: "Service 3 Title", price: "Starting from £395" },
+    { name: "Full Bathroom Renovation", price: "Starting from £4,995" },
+    { name: "Shower & Wet Room Installation", price: "Starting from £1,995" },
+    { name: "Custom Vanity & Cabinetry", price: "Starting from £995" },
+    { name: "Tiling & Flooring", price: "Starting from £495" },
   ],
 
   reviews: [
     {
-      name: "A Happy Client",
-      text: "Exceptional service and an innovative way to connect!",
+      name: "Sarah Mitchell",
+      text: "James completely transformed our outdated bathroom into a spa-like retreat. Impeccable attention to detail!",
       rating: 5,
     },
     {
-      name: "Another Satisfied User",
-      text: "Clean design and very easy to navigate. Highly recommended!",
-      rating: 4,
+      name: "Daniel Hughes",
+      text: "Professional, punctual, and the quality of work was outstanding. Highly recommend for any bathroom project.",
+      rating: 5,
     },
     {
-      name: "Another Satisfied User",
-      text: "Clean design and very easy to navigate. Highly recommended!",
+      name: "Laura Evans",
+      text: "We love our new walk-in shower! James guided us through every step and made the process stress-free.",
       rating: 4,
     },
   ],
 
-  contact_email: "youremail@example.com",
-  phone_number: "+123-456-7890",
+  contact_email: "info@elitebathrooms.co.uk",
+  phone_number: "+44 7700 900123",
 };
