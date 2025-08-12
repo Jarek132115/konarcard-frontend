@@ -432,7 +432,7 @@
     display: none;
 }
 
-.mock-work-gallery.carousel .mock-work-image-item-wrapper,
+.mock-work-gallery.carousel,
 .mock-services-list.carousel .mock-service-item,
 .mock-reviews-list.carousel .mock-review-card {
     flex-shrink: 0;
@@ -445,6 +445,20 @@
     box-sizing: border-box;
     margin-right: 12px;
 }
+
+.mock-work-image-item-wrapper {
+    width: 100%;
+    aspect-ratio: 4 / 2.75;
+    /* one source of truth for card shape */
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 0;
+    /* no inner padding */
+    box-shadow: none;
+    /* remove the faint shadow */
+}
+
 
 .mock-work-gallery.carousel .mock-work-image-item-wrapper {
     overflow: hidden;
@@ -1473,17 +1487,20 @@
 }
 
 /* FIX: Ensure mock work images fill their container completely */
-.mock-work-gallery img.mock-work-image-item {
+/* Keep only this one */
+.mock-work-gallery img.mock-work-image-item,
+.mock-work-image-item {
+    display: block;
     width: 100%;
     height: 100%;
-    /* Changed from 'auto' to '100%' */
-    aspect-ratio: 4 / 2.75;
-    border-radius: 0;
-    min-width: unset;
-    min-height: unset;
-    background-color: var(--placeholder-bg);
+    /* ← key line */
     object-fit: cover;
+    /* fill without distortion */
+    border-radius: 0;
+    /* wrapper does rounding */
+    background-color: var(--placeholder-bg);
 }
+
 
 .mock-services-list,
 .mock-reviews-list {
