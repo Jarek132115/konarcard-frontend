@@ -753,7 +753,7 @@ export default function MyProfile() {
 
                           {(shouldShowPlaceholders || hasExchangeContact) && (
                             <button type="button" className="mock-button">
-                              Exchange Contact
+                              Save My Number
                             </button>
                           )}
                         </>
@@ -1332,7 +1332,7 @@ export default function MyProfile() {
 
                     <hr className="divider" />
                     <div className="editor-section-header">
-                      <h3 className="editor-subtitle">Exchange Contact Details</h3>
+                      <h3 className="editor-subtitle">My Contact Details</h3>
                       <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="toggle-button">
                         {showContactSection ? 'Hide Section' : 'Show Section'}
                       </button>
