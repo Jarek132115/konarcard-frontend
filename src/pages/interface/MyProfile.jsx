@@ -741,10 +741,10 @@ export default function MyProfile() {
                           )}
 
                           <h2 className="mock-title">
-                            {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : '')}
+                            {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : 'Your Main Heading Here')}
                           </h2>
                           <p className="mock-subtitle">
-                            {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : '')}
+                            {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : 'Your Tagline or Slogan Goes Here')}
                           </p>
 
                           {(shouldShowPlaceholders || hasExchangeContact) && (
