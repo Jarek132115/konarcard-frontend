@@ -441,7 +441,7 @@
     flex-basis: 100%;
     max-width: 100%;
     scroll-snap-align: start;
-    height: auto;
+    height: fit-content;
     display: block;
     box-sizing: border-box;
     margin-right: 12px;
