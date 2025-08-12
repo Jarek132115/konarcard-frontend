@@ -1785,3 +1785,20 @@
 .mock-phone.mobile-preview .mock-work-gallery.grid {
     gap: 10px;
 }
+
+/* Force 2 images per row inside the phone preview */
+.mock-phone .mock-work-gallery {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    overflow: visible !important;
+}
+
+/* Make sure each image fits nicely */
+.mock-phone .mock-work-gallery .mock-work-image-item-wrapper,
+.mock-phone .mock-work-gallery .mock-work-image-item {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: 4 / 2.75 !important;
+    object-fit: cover !important;
+}
