@@ -20,7 +20,6 @@ export default function MyProfile() {
   const workImageInputRef = useRef(null);
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
-  const workCarouselRef = useRef(null);
   const previewWorkCarouselRef = useRef(null);
   const previewServicesCarouselRef = useRef(null);
   const previewReviewsCarouselRef = useRef(null);
@@ -615,19 +614,18 @@ export default function MyProfile() {
   const previewEmail = state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : '');
   const previewPhone = state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : '');
 
-  // SIMPLIFIED: only use placeholders pre-first-save; otherwise use actual cover or nothing
+  // Cover: show placeholder on fresh accounts; otherwise only show if set
   const previewCoverPhotoSrc = shouldShowPlaceholders
     ? previewPlaceholders.coverPhoto
     : (state.coverPhoto || '');
 
   const previewAvatarSrc = state.avatar || (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
 
-  // Work images placeholders still OK
+  // Work images placeholders still OK for fresh accounts
   const previewWorkImages = shouldShowPlaceholders
     ? previewPlaceholders.workImages
     : state.workImages;
 
-  const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
   const getEditorImageSrc = (imageState, placeholderImage) =>
@@ -734,7 +732,6 @@ export default function MyProfile() {
                     <div className="mock-phone-scrollable-content">
                       {showMainSection && (
                         <>
-                          {/* Only show cover if we have one OR we're pre-first-save (placeholders) */}
                           {(shouldShowPlaceholders || !!state.coverPhoto) && (
                             <img
                               src={previewCoverPhotoSrc}
@@ -750,7 +747,6 @@ export default function MyProfile() {
                             {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : '')}
                           </p>
 
-                          {/* Only show CTA if we have contact OR pre-first-save */}
                           {(shouldShowPlaceholders || hasExchangeContact) && (
                             <button type="button" className="mock-button">
                               Exchange Contact
