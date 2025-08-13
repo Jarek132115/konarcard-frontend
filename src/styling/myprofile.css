@@ -354,6 +354,20 @@
     flex-direction: row;
 }
 
+/* Let the text column shrink and wrap inside the about header row */
+.mock-about-header-group>div {
+    flex: 1;
+    /* fill remaining space */
+    min-width: 0;
+    /* <-- critical: allow wrapping instead of overflow */
+}
+
+/* Defensive: also allow the outer content group to shrink when side-by-side */
+.mock-about-container.side-by-side .mock-about-content-group {
+    min-width: 0;
+}
+
+
 .mock-avatar {
     width: 3.5rem;
     height: 3.5rem;
