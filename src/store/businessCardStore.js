@@ -6,24 +6,10 @@ const initialState = {
   pageThemeVariant: "subtle-light",
   font: "Inter",
 
-  // NEW: CTA button color
-  ctaButtonColor: "#111111",
-
-  // NEW: Typography settings object
-  typographyConfig: {},
-
-  // NEW: Social links
-  socialLinks: {
-    facebook: "",
-    instagram: "",
-    tiktok: "",
-    linkedin: "",
-  },
-
   coverPhoto: null,
   avatar: null,
   workImages: [],
-  workDisplayMode: "list",
+  workDisplayMode: "list", // Already added
 
   mainHeading: "",
   subHeading: "",
@@ -32,10 +18,10 @@ const initialState = {
   bio: "",
 
   services: [],
-  servicesDisplayMode: "list",
+  servicesDisplayMode: "list", // New
   reviews: [],
-  reviewsDisplayMode: "list",
-  aboutMeLayout: "side-by-side",
+  reviewsDisplayMode: "list", // New
+  aboutMeLayout: "side-by-side", // New
 
   contact_email: "",
   phone_number: "",
@@ -56,26 +42,8 @@ export const previewPlaceholders = {
   businessName: "Elite Bathrooms & Renovations",
   pageTheme: "light",
   pageThemeVariant: "subtle-light",
-  font: "Inter",
 
-  // NEW: CTA button color
-  ctaButtonColor: "#111111",
-
-  // NEW: Typography example config
-  typographyConfig: {
-    mainHeading: { size: 32, weight: 700, color: "#111111" },
-    subHeading: { size: 18, weight: 400, color: "#555555" },
-  },
-
-  // NEW: Social links placeholder
-  socialLinks: {
-    facebook: "https://facebook.com/example",
-    instagram: "https://instagram.com/example",
-    tiktok: "https://tiktok.com/@example",
-    linkedin: "https://linkedin.com/in/example",
-  },
-
-  coverPhoto: "/Interface-Preview/Cover-Photo1.png",
+  coverPhoto: "/Interface-Preview/Cover-Photo1.png", // You can swap with a bathroom renovation photo
   avatar: "/Interface-Preview/Profile-Pic.png",
 
   workImages: [
@@ -88,6 +56,7 @@ export const previewPlaceholders = {
   reviewsDisplayMode: "list",
   aboutMeLayout: "side-by-side",
 
+  // Both camelCase & snake_case so it works with your component
   mainHeading: "Transforming Bathrooms, Elevating Homes",
   subHeading: "Premium bathroom renovations with unmatched craftsmanship",
   main_heading: "Transforming Bathrooms, Elevating Homes",

@@ -149,13 +149,6 @@ export default function MyProfile() {
           contact_email: businessCard.contact_email || '',
           phone_number: businessCard.phone_number || '',
           workDisplayMode: businessCard.work_display_mode || 'list',
-          socialMediaLinks: businessCard.social_media_links || {
-            facebook: '',
-            instagram: '',
-            tiktok: '',
-            linkedin: ''
-          },
-          saveContactButtonColor: businessCard.save_contact_button_color || '#000000',
         });
         setServicesDisplayMode(businessCard.services_display_mode || 'list');
         setReviewsDisplayMode(businessCard.reviews_display_mode || 'list');
@@ -197,7 +190,7 @@ export default function MyProfile() {
 
   const createAndTrackBlobUrl = (file) => {
     const url = URL.createObjectURL(file);
-    activeBlobUrlsRef.current.push(url);   // track in ref
+    activeBlobUrlsRef.current.push(url);   // track in ref
     setActiveBlobUrls(prev => [...prev, url]); // (optional) keep state if you need it
     return url;
   };
@@ -404,27 +397,16 @@ export default function MyProfile() {
       return false;
     })();
 
-    const worksToUpload = state.workImages
-      .map(item => (item?.preview && !item.preview.startsWith('blob:')) ? item.preview : null)
+    const currentWorks = (state.workImages || [])
+      .map(w => (w?.preview && !w.preview.startsWith('blob:')) ? w.preview : null)
       .filter(Boolean);
     const originalWorks = (originalCard.works || []);
     const worksChanged = (() => {
-      if (worksToUpload.length !== originalWorks.length) return true;
-      for (let i = 0; i < worksToUpload.length; i++) {
-        if (worksToUpload[i] !== originalWorks[i]) return true;
+      if (currentWorks.length !== originalWorks.length) return true;
+      for (let i = 0; i < currentWorks.length; i++) {
+        if (currentWorks[i] !== originalWorks[i]) return true;
       }
       return false;
-    })();
-
-    const socialMediaLinksChanged = (() => {
-      const current = state.socialMediaLinks || {};
-      const original = originalCard.social_media_links || {};
-      return (
-        current.facebook !== (original.facebook || '') ||
-        current.instagram !== (original.instagram || '') ||
-        current.tiktok !== (original.tiktok || '') ||
-        current.linkedin !== (original.linkedin || '')
-      );
     })();
 
     const origShowMain = originalCard.show_main_section !== false;
@@ -452,8 +434,6 @@ export default function MyProfile() {
       servicesChanged ||
       reviewsChanged ||
       worksChanged ||
-      socialMediaLinksChanged ||
-      state.saveContactButtonColor !== (originalCard.save_contact_button_color || '#000000') ||
       showMainSection !== origShowMain ||
       showAboutMeSection !== origShowAbout ||
       showWorkSection !== origShowWork ||
@@ -467,11 +447,6 @@ export default function MyProfile() {
 
   const handleSubmit = async (e, fromTrialStart = false) => {
     e.preventDefault();
-
-    if (!isUserVerified) {
-      toast.error("Please verify your email address before saving.");
-      return;
-    }
 
     if (!isSubscribed && !isTrialActive && !fromTrialStart) {
       toast.error("Please start your free trial to publish your changes.");
@@ -514,8 +489,6 @@ export default function MyProfile() {
       reviews: state.reviews.filter(r => r.name || r.text),
       contact_email: state.contact_email,
       phone_number: state.phone_number,
-      social_media_links: state.socialMediaLinks,
-      save_contact_button_color: state.saveContactButtonColor,
       work_display_mode: state.workDisplayMode,
       services_display_mode: servicesDisplayMode,
       reviews_display_mode: reviewsDisplayMode,
@@ -587,13 +560,6 @@ export default function MyProfile() {
           reviews: (businessCard.reviews || []),
           contact_email: businessCard.contact_email || '',
           phone_number: businessCard.phone_number || '',
-          socialMediaLinks: businessCard.social_media_links || {
-            facebook: '',
-            instagram: '',
-            tiktok: '',
-            linkedin: ''
-          },
-          saveContactButtonColor: businessCard.save_contact_button_color || '#000000',
           workDisplayMode: businessCard.work_display_mode || 'list',
         });
         setServicesDisplayMode(businessCard.services_display_mode || 'list');
@@ -795,7 +761,7 @@ export default function MyProfile() {
                           </p>
 
                           {(shouldShowPlaceholders || hasExchangeContact) && (
-                            <button type="button" className="mock-button" style={{ backgroundColor: state.saveContactButtonColor }}>
+                            <button type="button" className="mock-button">
                               Save My Number
                             </button>
                           )}
@@ -1004,7 +970,7 @@ export default function MyProfile() {
                     <div className="input-block">
                       <label>Font</label>
                       <div className="option-row">
-                        {["Inter", "Montserrat", "Poppins", "Lora"].map((font) => (
+                        {["Inter", "Montserrat", "Poppins"].map((font) => (
                           <button
                             type="button"
                             key={font}
@@ -1015,69 +981,6 @@ export default function MyProfile() {
                           </button>
                         ))}
                       </div>
-                    </div>
-                    <div className="input-block">
-                      <label htmlFor="businessName">Business Name</label>
-                      <input
-                        id="businessName"
-                        type="text"
-                        value={state.businessName || ''}
-                        onChange={(e) => updateState({ businessName: e.target.value })}
-                        placeholder="Konar Design"
-                      />
-                    </div>
-
-                    <div className="input-block">
-                      <label htmlFor="saveContactButtonColor">Save My Contact Button Colour</label>
-                      <input
-                        id="saveContactButtonColor"
-                        type="color"
-                        value={state.saveContactButtonColor || '#000000'}
-                        onChange={(e) => updateState({ saveContactButtonColor: e.target.value })}
-                      />
-                    </div>
-                    <div className="input-block">
-                      <label htmlFor="socialMediaLinks.facebook">Facebook</label>
-                      <input
-                        id="socialMediaLinks.facebook"
-                        type="text"
-                        value={state.socialMediaLinks?.facebook || ''}
-                        onChange={(e) => updateState({ socialMediaLinks: { ...state.socialMediaLinks, facebook: e.target.value } })}
-                        placeholder="https://facebook.com/yourprofile"
-                      />
-                    </div>
-
-                    <div className="input-block">
-                      <label htmlFor="socialMediaLinks.instagram">Instagram</label>
-                      <input
-                        id="socialMediaLinks.instagram"
-                        type="text"
-                        value={state.socialMediaLinks?.instagram || ''}
-                        onChange={(e) => updateState({ socialMediaLinks: { ...state.socialMediaLinks, instagram: e.target.value } })}
-                        placeholder="https://instagram.com/yourprofile"
-                      />
-                    </div>
-
-                    <div className="input-block">
-                      <label htmlFor="socialMediaLinks.tiktok">Tiktok</label>
-                      <input
-                        id="socialMediaLinks.tiktok"
-                        type="text"
-                        value={state.socialMediaLinks?.tiktok || ''}
-                        onChange={(e) => updateState({ socialMediaLinks: { ...state.socialMediaLinks, tiktok: e.target.value } })}
-                        placeholder="https://tiktok.com/yourprofile"
-                      />
-                    </div>
-
-                    <div className="input-block">
-                      <label htmlFor="socialMediaLinks.linkedin">LinkedIn</label>
-                      <input
-                        id="socialMediaLinks.linkedin"
-                        type="text"
-                        value={state.socialMediaLinks?.linkedin || ''}
-                        onChange={(e) => updateState({ socialMediaLinks: { ...state.socialMediaLinks, linkedin: e.target.value } })}
-                        placeholder="https://linkedin.com/yourprofile"
-                      />
                     </div>
 
                     <hr className="divider" />

@@ -21,9 +21,6 @@ export const buildBusinessCardFormData = (data = {}) => {
     'services_display_mode',
     'reviews_display_mode',
     'about_me_layout',
-
-    // NEW: CTA button color (string hex)
-    'cta_button_color',
   ];
 
   simpleKeys.forEach((key) => {
@@ -36,17 +33,6 @@ export const buildBusinessCardFormData = (data = {}) => {
       }
     }
   });
-
-  // NEW: JSON objects
-  // typography_config: { [sectionKey]: { size, weight, color } }
-  if (data.typography_config && typeof data.typography_config === 'object') {
-    formData.append('typography_config', JSON.stringify(data.typography_config));
-  }
-
-  // social_links: { facebook, instagram, tiktok, linkedin }
-  if (data.social_links && typeof data.social_links === 'object') {
-    formData.append('social_links', JSON.stringify(data.social_links));
-  }
 
   // Images (files)
   if (data.cover_photo instanceof File) {
