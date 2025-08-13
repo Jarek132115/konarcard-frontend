@@ -23,6 +23,7 @@ export default function MyProfile() {
   const previewWorkCarouselRef = useRef(null);
   const previewServicesCarouselRef = useRef(null);
   const previewReviewsCarouselRef = useRef(null);
+  const activeBlobUrlsRef = useRef([]);
 
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
   const isSubscribed = authUser?.isSubscribed || false;
@@ -182,15 +183,18 @@ export default function MyProfile() {
 
   useEffect(() => {
     return () => {
-      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+      activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     };
-  }, [activeBlobUrls]);
+  }, []); // <-- empty deps: only on unmount
+
 
   const createAndTrackBlobUrl = (file) => {
-    const blobUrl = URL.createObjectURL(file);
-    setActiveBlobUrls(prev => [...prev, blobUrl]);
-    return blobUrl;
+    const url = URL.createObjectURL(file);
+    activeBlobUrlsRef.current.push(url);   // track in ref
+    setActiveBlobUrls(prev => [...prev, url]); // (optional) keep state if you need it
+    return url;
   };
+
 
   const handleImageUpload = (e) => {
     e.preventDefault();
@@ -230,49 +234,49 @@ export default function MyProfile() {
 
   const handleRemoveCoverPhoto = () => {
     const isLocalBlob = state.coverPhoto && state.coverPhoto.startsWith('blob:');
-    if (!isLocalBlob && state.coverPhoto) {
-      setCoverPhotoRemoved(true);
-    } else {
-      setCoverPhotoRemoved(false);
-    }
+    if (!isLocalBlob && state.coverPhoto) setCoverPhotoRemoved(true);
+    else setCoverPhotoRemoved(false);
 
     if (isLocalBlob) {
       URL.revokeObjectURL(state.coverPhoto);
+      // remove from ref + state trackers
+      activeBlobUrlsRef.current = activeBlobUrlsRef.current.filter(u => u !== state.coverPhoto);
       setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
     }
     updateState({ coverPhoto: null });
     setCoverPhotoFile(null);
   };
 
+
   const handleRemoveAvatar = () => {
     const isLocalBlob = state.avatar && state.avatar.startsWith('blob:');
-    if (!isLocalBlob && state.avatar) {
-      setIsAvatarRemoved(true);
-    } else {
-      setIsAvatarRemoved(false);
-    }
+    if (!isLocalBlob && state.avatar) setIsAvatarRemoved(true);
+    else setIsAvatarRemoved(false);
 
     if (isLocalBlob) {
       URL.revokeObjectURL(state.avatar);
+      activeBlobUrlsRef.current = activeBlobUrlsRef.current.filter(u => u !== state.avatar);
       setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
     }
     updateState({ avatar: null });
     setAvatarFile(null);
   };
 
+
   const handleRemoveWorkImage = (indexToRemove) => {
     const removedItem = state.workImages?.[indexToRemove];
 
     if (removedItem?.preview?.startsWith('blob:')) {
-      URL.revokeObjectURL(removedItem.preview);
-      setActiveBlobUrls(prev => prev.filter(url => url !== removedItem.preview));
+      URL.revokeObjectURL(removedItem.preview); // revoke just this one
+      // remove from ref + state trackers
+      activeBlobUrlsRef.current = activeBlobUrlsRef.current.filter(u => u !== removedItem.preview);
+      setActiveBlobUrls(prev => prev.filter(u => u !== removedItem.preview));
     }
 
-    const newWorkImages = state.workImages.filter((_, index) => index !== indexToRemove);
+    const newWorkImages = state.workImages.filter((_, i) => i !== indexToRemove);
     updateState({ workImages: newWorkImages });
-
-    setWorkImageFiles(prevFiles => prevFiles.filter(f => f !== removedItem.file));
   };
+
 
   const handleAddService = () => {
     updateState({ services: [...state.services, { name: "", price: "" }] });
@@ -506,7 +510,8 @@ export default function MyProfile() {
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
-      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+      activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+      activeBlobUrlsRef.current = [];
       setActiveBlobUrls([]);
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
@@ -581,8 +586,9 @@ export default function MyProfile() {
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
-      activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
-      setActiveBlobUrls([]);
+      activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+      activeBlobUrlsRef.current = [];
+      setActiveBlobUrls([]); // (optional) if you keep this state for debugging/UI
       toast.success("Your page has been reset to the last published version.");
     }
   };
