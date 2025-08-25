@@ -6,6 +6,11 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// ---- Convenience wrappers for app features ----
+// Starts a 14-day trial for the authenticated user.
+// Expected response: { trialExpires: ISOString }
+export const startTrial = () => api.post('/trial/start', {});
+
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -25,7 +30,7 @@ api.interceptors.response.use(
   },
   (error) => {
     // Check if the error is from a deliberate logout
-    const isLoggingOut = error.config.headers.isLoggingOut;
+    const isLoggingOut = error?.config?.headers?.isLoggingOut;
     if (!isLoggingOut && error.response && (error.response.status === 401 || error.response.status === 403)) {
       localStorage.removeItem('token');
       toast.error("Session expired or unauthorized. Please log in again.");
