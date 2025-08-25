@@ -10,7 +10,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import ShareProfile from "../../components/ShareProfile";
 import { AuthContext } from '../../components/AuthContext';
-import api from '../../services/api';
+import api, { startTrial } from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 export default function MyProfile() {
@@ -187,14 +187,12 @@ export default function MyProfile() {
     };
   }, []); // <-- empty deps: only on unmount
 
-
   const createAndTrackBlobUrl = (file) => {
     const url = URL.createObjectURL(file);
     activeBlobUrlsRef.current.push(url);   // track in ref
     setActiveBlobUrls(prev => [...prev, url]); // (optional) keep state if you need it
     return url;
   };
-
 
   const handleImageUpload = (e) => {
     e.preventDefault();
@@ -247,7 +245,6 @@ export default function MyProfile() {
     setCoverPhotoFile(null);
   };
 
-
   const handleRemoveAvatar = () => {
     const isLocalBlob = state.avatar && state.avatar.startsWith('blob:');
     if (!isLocalBlob && state.avatar) setIsAvatarRemoved(true);
@@ -262,7 +259,6 @@ export default function MyProfile() {
     setAvatarFile(null);
   };
 
-
   const handleRemoveWorkImage = (indexToRemove) => {
     const removedItem = state.workImages?.[indexToRemove];
 
@@ -276,7 +272,6 @@ export default function MyProfile() {
     const newWorkImages = state.workImages.filter((_, i) => i !== indexToRemove);
     updateState({ workImages: newWorkImages });
   };
-
 
   const handleAddService = () => {
     updateState({ services: [...state.services, { name: "", price: "" }] });
@@ -445,10 +440,11 @@ export default function MyProfile() {
     return isStateDifferent;
   };
 
-  const handleSubmit = async (e, fromTrialStart = false) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!isSubscribed && !isTrialActive && !fromTrialStart) {
+    // Require either an active subscription or an active trial to publish
+    if (!isSubscribed && !isTrialActive) {
       toast.error("Please start your free trial to publish your changes.");
       return;
     }
@@ -518,7 +514,27 @@ export default function MyProfile() {
     }
   };
 
-  const handleActivateCard = () => toast.info("Activate Card functionality to be defined!");
+  // Starts the 14-day trial timer without publishing/saving
+  const handleStartTrial = async () => {
+    if (isSubscribed || isTrialActive) {
+      toast('Your plan is already active.', { icon: 'ℹ️' });
+      return;
+    }
+    try {
+      const res = await startTrial(); // POST /trial/start
+      if (res?.data?.trialExpires) {
+        toast.success('Your 14-day trial is now active!');
+      } else {
+        toast.success('Trial activated!');
+      }
+      if (typeof refetchAuthUser === 'function') {
+        await refetchAuthUser(); // refresh user so isTrialActive updates
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.error || 'Could not start trial. Please try again.');
+    }
+  };
+
   const handleShareCard = () => {
     if (!isUserVerified) {
       toast.error("Please verify your email to share your card.");
@@ -624,7 +640,6 @@ export default function MyProfile() {
   const previewCoverPhotoSrc =
     state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : '');
 
-
   const previewAvatarSrc =
     state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
 
@@ -633,7 +648,6 @@ export default function MyProfile() {
     (state.workImages && state.workImages.length > 0)
       ? state.workImages
       : (shouldShowPlaceholders ? previewPlaceholders.workImages : []);
-
 
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
@@ -670,7 +684,7 @@ export default function MyProfile() {
       <main className="main-content-container">
         <PageHeader
           title={"My Profile"}
-          onActivateCard={() => toast.info("Activate Card functionality to be defined!")}
+          onActivateCard={handleStartTrial}
           onShareCard={handleShareCard}
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}
@@ -713,9 +727,9 @@ export default function MyProfile() {
 
               {!isSubscribed && !isTrialActive && (
                 <div className="trial-not-started-banner">
-                  <p>Publish your own live website in minutes for 14 days free.</p>
-                  <button className="blue-button" onClick={(e) => handleSubmit(e, true)}>
-                    Get Started
+                  <p><strong>Activate my website</strong> — 14 days free, no card required.</p>
+                  <button className="blue-button" onClick={handleStartTrial}>
+                    Activate
                   </button>
                 </div>
               )}
@@ -1406,6 +1420,5 @@ export default function MyProfile() {
         username={userUsername || ''}
       />
     </div>
-
   )
 }
