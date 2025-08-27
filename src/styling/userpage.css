@@ -72,7 +72,7 @@
 
 /* Exchange Contact Button */
 .landing-action-button {
-    color: #0081FF;
+    background: #000;
     color: #fff;
     padding: 0.875rem 1.5rem;
     border-radius: 0.5rem;
@@ -85,11 +85,14 @@
     box-sizing: border-box;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
+    font-family: inherit;
+    /* 👈 this makes the button use the same font as the page */
 }
 
 .landing-action-button:hover {
     opacity: 0.9;
 }
+
 
 /* Section titles */
 .landing-section-title {
