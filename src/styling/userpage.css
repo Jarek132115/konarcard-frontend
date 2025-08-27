@@ -181,16 +181,12 @@
     /* respect line breaks */
 }
 
-/* STACKED tweaks */
-/* Stacked layout: avatar becomes full-width square */
 .landing-about-section.stacked .landing-avatar {
     width: 100%;
     height: auto;
-    /* let aspect-ratio control height */
     aspect-ratio: 1 / 1;
     border-radius: 5%;
     margin-bottom: 0.75rem;
-    /* a little breathing room above the name */
 }
 
 
