@@ -359,7 +359,7 @@
 .landing-work-gallery img.landing-work-image,
 .user-work-gallery-carousel .landing-work-image {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 4 / 2.5;
     /* match figma */
     object-fit: cover;
     border-radius: 14px;
