@@ -135,15 +135,18 @@
 }
 
 /* Avatar (row 1, col 1) */
+/* Avatar: default size for side-by-side layout */
 .landing-avatar {
     grid-column: 1;
     grid-row: 1;
-    width: 3rem;
-    height: 3rem;
+    width: 50px;
+    /* ← fixed 50x50 */
+    height: 50px;
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
 }
+
 
 /* Header (name + role) (row 1, col 2) */
 .landing-about-header {
@@ -179,9 +182,17 @@
 }
 
 /* STACKED tweaks */
+/* Stacked layout: avatar becomes full-width square */
 .landing-about-section.stacked .landing-avatar {
+    width: 100%;
+    height: auto;
+    /* let aspect-ratio control height */
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
     margin-bottom: 0.75rem;
+    /* a little breathing room above the name */
 }
+
 
 .landing-about-section.stacked .landing-profile-name,
 .landing-about-section.stacked .landing-profile-role {
