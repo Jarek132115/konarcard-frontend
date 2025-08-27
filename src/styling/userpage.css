@@ -142,7 +142,7 @@
     width: 50px;
     /* ← fixed 50x50 */
     height: 50px;
-    border-radius: 50%;
+    border-radius: 10px;
     object-fit: cover;
     flex-shrink: 0;
 }
