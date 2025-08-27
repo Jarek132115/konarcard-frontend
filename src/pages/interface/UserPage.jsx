@@ -1,17 +1,22 @@
 import React, { useRef } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from '@tanstack/react-query';
-import api from '../../services/api';
+import { useQuery } from "@tanstack/react-query";
+import api from "../../services/api";
 
 const UserPage = () => {
     const { username } = useParams();
 
-    // Refs for each carousel section using new names
+    // Refs for carousels
     const workCarouselRef = useRef(null);
     const servicesCarouselRef = useRef(null);
     const reviewsCarouselRef = useRef(null);
 
-    const { data: businessCard, isLoading, isError, error } = useQuery({
+    const {
+        data: businessCard,
+        isLoading,
+        isError,
+        error,
+    } = useQuery({
         queryKey: ["public-business-card", username],
         queryFn: async () => {
             const response = await api.get(`/api/business-card/by_username/${username}`);
@@ -23,7 +28,7 @@ const UserPage = () => {
         retry: 1,
     });
 
-    // Carousel scrolling logic
+    // Carousel scrolling
     const scrollCarousel = (ref, direction) => {
         if (ref.current && ref.current.children.length > 0) {
             const carousel = ref.current;
@@ -32,28 +37,30 @@ const UserPage = () => {
             const maxScroll = carousel.scrollWidth - carousel.offsetWidth;
             let newScrollPosition;
 
-            if (direction === 'left') {
+            if (direction === "left") {
                 newScrollPosition = currentScroll - itemWidth;
-                if (newScrollPosition < 0) {
-                    newScrollPosition = maxScroll;
-                }
+                if (newScrollPosition < 0) newScrollPosition = maxScroll;
             } else {
                 newScrollPosition = currentScroll + itemWidth;
-                if (newScrollPosition >= maxScroll) {
-                    newScrollPosition = 0;
-                }
+                if (newScrollPosition >= maxScroll) newScrollPosition = 0;
             }
 
-            carousel.scrollTo({
-                left: newScrollPosition,
-                behavior: 'smooth'
-            });
+            carousel.scrollTo({ left: newScrollPosition, behavior: "smooth" });
         }
     };
 
     if (isLoading) {
         return (
-            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+            <div
+                className="user-landing-page"
+                style={{
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "100vh",
+                }}
+            >
                 <p>Loading business card...</p>
             </div>
         );
@@ -62,8 +69,31 @@ const UserPage = () => {
     if (isError) {
         console.error("Error fetching business card:", error);
         return (
-            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#f0f0f0", color: "#333", padding: "20px", fontFamily: "Arial, sans-serif" }}>
-                <div style={{ maxWidth: "600px", margin: "auto", padding: "40px", border: "1px solid #ddd", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0,0,0,0.1)" }}>
+            <div
+                className="user-landing-page"
+                style={{
+                    textAlign: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "100vh",
+                    backgroundColor: "#f0f0f0",
+                    color: "#333",
+                    padding: "20px",
+                    fontFamily: "Arial, sans-serif",
+                }}
+            >
+                <div
+                    style={{
+                        maxWidth: "600px",
+                        margin: "auto",
+                        padding: "40px",
+                        border: "1px solid #ddd",
+                        borderRadius: "10px",
+                        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                    }}
+                >
                     <h2 style={{ fontSize: "2rem", marginBottom: "20px" }}>Profile Unavailable</h2>
                     <p style={{ fontSize: "1.2rem", lineHeight: "1.6" }}>
                         This public profile is not currently active. The free trial may have expired or a subscription is needed.
@@ -78,7 +108,16 @@ const UserPage = () => {
 
     if (!businessCard) {
         return (
-            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+            <div
+                className="user-landing-page"
+                style={{
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "100vh",
+                }}
+            >
                 <p>No business card found for username "{username}".</p>
             </div>
         );
@@ -89,10 +128,32 @@ const UserPage = () => {
     const isProfileActive = hasActiveSubscription || isTrialPeriodActive;
 
     if (!isProfileActive) {
-        console.log("Profile is not active. isSubscribed:", hasActiveSubscription, "isTrialActive:", isTrialPeriodActive);
         return (
-            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#f0f0f0", color: "#333", padding: "20px", fontFamily: "Arial, sans-serif" }}>
-                <div style={{ maxWidth: "600px", margin: "auto", padding: "40px", border: "1px solid #ddd", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0,0,0,0.1)" }}>
+            <div
+                className="user-landing-page"
+                style={{
+                    textAlign: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "100vh",
+                    backgroundColor: "#f0f0f0",
+                    color: "#333",
+                    padding: "20px",
+                    fontFamily: "Arial, sans-serif",
+                }}
+            >
+                <div
+                    style={{
+                        maxWidth: "600px",
+                        margin: "auto",
+                        padding: "40px",
+                        border: "1px solid #ddd",
+                        borderRadius: "10px",
+                        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                    }}
+                >
                     <h2 style={{ fontSize: "2rem", marginBottom: "20px" }}>Profile Unavailable</h2>
                     <p style={{ fontSize: "1.2rem", lineHeight: "1.6" }}>
                         This public profile is not currently active. The free trial may have expired or a subscription is needed.
@@ -105,10 +166,10 @@ const UserPage = () => {
         );
     }
 
-    const aboutMeLayout = businessCard.about_me_layout || 'side-by-side';
-    const workDisplayMode = businessCard.work_display_mode || 'list';
-    const servicesDisplayMode = businessCard.services_display_mode || 'list';
-    const reviewsDisplayMode = businessCard.reviews_display_mode || 'list';
+    const aboutMeLayout = businessCard.about_me_layout || "side-by-side";
+    const workDisplayMode = businessCard.work_display_mode || "list";        // 'list' | 'grid' | 'carousel'
+    const servicesDisplayMode = businessCard.services_display_mode || "list";
+    const reviewsDisplayMode = businessCard.reviews_display_mode || "list";
 
     const showMainSection = businessCard.show_main_section !== false;
     const showAboutMeSection = businessCard.show_about_me_section !== false;
@@ -120,50 +181,48 @@ const UserPage = () => {
     const themeStyles = {
         backgroundColor: businessCard.page_theme === "dark" ? "#1F1F1F" : "#FFFFFF",
         color: businessCard.page_theme === "dark" ? "#FFFFFF" : "#000000",
-        fontFamily: businessCard.style || "Inter"
+        fontFamily: businessCard.style || "Inter",
     };
 
     const handleExchangeContact = () => {
-        const { full_name, job_title, business_card_name, bio, contact_email, phone_number, publicProfileUrl } = businessCard;
+        const {
+            full_name,
+            job_title,
+            business_card_name,
+            bio,
+            contact_email,
+            phone_number,
+            publicProfileUrl,
+        } = businessCard;
         const landingPageUrl = publicProfileUrl || `${window.location.origin}/u/${username}`;
 
-        const nameParts = full_name ? full_name.split(' ') : ['', ''];
-        const firstName = nameParts[0] || '';
-        const lastName = nameParts.slice(1).join(' ') || '';
-        const middleNames = nameParts.slice(1, -1).join(' ') || '';
+        const nameParts = full_name ? full_name.split(" ") : ["", ""];
+        const firstName = nameParts[0] || "";
+        const lastName = nameParts.slice(1).join(" ") || "";
+        const middleNames = nameParts.slice(1, -1).join(" ") || "";
 
         let vCardContent = `BEGIN:VCARD\n`;
         vCardContent += `VERSION:3.0\n`;
-        vCardContent += `FN:${full_name || ''}\n`;
+        vCardContent += `FN:${full_name || ""}\n`;
         vCardContent += `N:${lastName};${firstName};${middleNames};;\n`;
 
-        if (business_card_name) {
-            vCardContent += `ORG:${business_card_name}\n`;
-        }
-        if (job_title) {
-            vCardContent += `TITLE:${job_title}\n`;
-        }
-        if (phone_number) {
-            vCardContent += `TEL;TYPE=CELL,VOICE:${phone_number}\n`;
-        }
-        if (contact_email) {
-            vCardContent += `EMAIL;TYPE=PREF,INTERNET:${contact_email}\n`;
-        }
-        if (landingPageUrl) {
-            vCardContent += `URL:${landingPageUrl}\n`;
-        }
+        if (business_card_name) vCardContent += `ORG:${business_card_name}\n`;
+        if (job_title) vCardContent += `TITLE:${job_title}\n`;
+        if (phone_number) vCardContent += `TEL;TYPE=CELL,VOICE:${phone_number}\n`;
+        if (contact_email) vCardContent += `EMAIL;TYPE=PREF,INTERNET:${contact_email}\n`;
+        if (landingPageUrl) vCardContent += `URL:${landingPageUrl}\n`;
         if (bio) {
-            const escapedBio = bio.replace(/\n/g, '\\n');
+            const escapedBio = bio.replace(/\n/g, "\\n");
             vCardContent += `NOTE:${escapedBio}\n`;
         }
         vCardContent += `END:VCARD\n`;
 
-        const blob = new Blob([vCardContent], { type: 'text/vcard;charset=utf-8' });
+        const blob = new Blob([vCardContent], { type: "text/vcard;charset=utf-8" });
         const url = URL.createObjectURL(blob);
 
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
-        a.download = `${(full_name || username || 'contact').replace(/\s/g, '_')}.vcf`;
+        a.download = `${(full_name || username || "contact").replace(/\s/g, "_")}.vcf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -176,88 +235,78 @@ const UserPage = () => {
             {showMainSection && (
                 <>
                     {businessCard.cover_photo && (
-                        <img
-                            src={businessCard.cover_photo}
-                            alt="Cover"
-                            className="landing-cover-photo"
-                        />
+                        <img src={businessCard.cover_photo} alt="Cover" className="landing-cover-photo" />
                     )}
                     <h2 className="landing-main-heading">{businessCard.main_heading}</h2>
                     <p className="landing-sub-heading">{businessCard.sub_heading}</p>
-                    <button
-                        type="button"
-                        onClick={handleExchangeContact}
-                        className="landing-action-button"
-                    >
+                    <button type="button" onClick={handleExchangeContact} className="landing-action-button">
                         Save My Number
                     </button>
                 </>
             )}
 
             {/* About Me Section */}
-            {showAboutMeSection && (businessCard.full_name || businessCard.job_title || businessCard.bio || businessCard.avatar) && (
-                <>
-                    <p className="landing-section-title">About me</p>
+            {showAboutMeSection &&
+                (businessCard.full_name || businessCard.job_title || businessCard.bio || businessCard.avatar) && (
+                    <>
+                        <p className="landing-section-title">About me</p>
 
-                    {/* SIDE-BY-SIDE now uses a header row + bio row */}
-                    <div className={`landing-about-section ${aboutMeLayout}`}>
-                        {businessCard.avatar && (
-                            <img
-                                src={businessCard.avatar}
-                                alt="Avatar"
-                                className="landing-avatar"
-                            />
-                        )}
+                        <div className={`landing-about-section ${aboutMeLayout}`}>
+                            {businessCard.avatar && (
+                                <img src={businessCard.avatar} alt="Avatar" className="landing-avatar" />
+                            )}
 
-                        {/* Header (name + role) sits to the right of avatar on row 1 */}
-                        <div className="landing-about-header">
-                            <p className="landing-profile-name">{businessCard.full_name}</p>
-                            <p className="landing-profile-role">{businessCard.job_title}</p>
+                            <div className="landing-about-header">
+                                <p className="landing-profile-name">{businessCard.full_name}</p>
+                                <p className="landing-profile-role">{businessCard.job_title}</p>
+                            </div>
+
+                            {businessCard.bio && <p className="landing-bio-text">{businessCard.bio}</p>}
                         </div>
-
-                        {/* Bio becomes row 2 spanning the full width */}
-                        {businessCard.bio && (
-                            <p className="landing-bio-text">{businessCard.bio}</p>
-                        )}
-                    </div>
-                </>
-            )}
-
+                    </>
+                )}
 
             {/* My Work Section */}
             {showWorkSection && businessCard.works?.length > 0 && (
                 <>
                     <p className="landing-section-title">My Work</p>
-                    <div className="user-carousel-container">
-                        {workDisplayMode === 'carousel' && (
+
+                    {/* LIST / GRID use the same container as MyProfile for identical behavior */}
+                    {(workDisplayMode === "list" || workDisplayMode === "grid") && (
+                        <div className={`landing-work-gallery ${workDisplayMode}`}>
+                            {businessCard.works.map((url, i) => (
+                                <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />
+                            ))}
+                        </div>
+                    )}
+
+                    {/* CAROUSEL keeps the horizontal scroller + arrows */}
+                    {workDisplayMode === "carousel" && (
+                        <div className="user-carousel-container">
                             <div className="user-carousel-nav-buttons">
                                 <button
                                     type="button"
                                     className="user-carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(workCarouselRef, 'left')}
+                                    onClick={() => scrollCarousel(workCarouselRef, "left")}
                                 >
                                     &#9664;
                                 </button>
                                 <button
                                     type="button"
                                     className="user-carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(workCarouselRef, 'right')}
+                                    onClick={() => scrollCarousel(workCarouselRef, "right")}
                                 >
                                     &#9654;
                                 </button>
                             </div>
-                        )}
-                        <div ref={workCarouselRef} className={`user-work-gallery-carousel ${workDisplayMode}`}>
-                            {businessCard.works.map((url, i) => (
-                                <img
-                                    key={i}
-                                    src={url}
-                                    alt={`work-${i}`}
-                                    className="landing-work-image"
-                                />
-                            ))}
+
+                            <div ref={workCarouselRef} className="user-work-gallery-carousel">
+                                {businessCard.works.map((url, i) => (
+                                    <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </>
             )}
 
@@ -266,25 +315,28 @@ const UserPage = () => {
                 <>
                     <p className="landing-section-title">My Services</p>
                     <div className="user-carousel-container">
-                        {servicesDisplayMode === 'carousel' && (
+                        {servicesDisplayMode === "carousel" && (
                             <div className="user-carousel-nav-buttons">
                                 <button
                                     type="button"
                                     className="user-carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(servicesCarouselRef, 'left')}
+                                    onClick={() => scrollCarousel(servicesCarouselRef, "left")}
                                 >
                                     &#9664;
                                 </button>
                                 <button
                                     type="button"
                                     className="user-carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(servicesCarouselRef, 'right')}
+                                    onClick={() => scrollCarousel(servicesCarouselRef, "right")}
                                 >
                                     &#9654;
                                 </button>
                             </div>
                         )}
-                        <div ref={servicesCarouselRef} className={`user-services-list-carousel ${servicesDisplayMode}`}>
+                        <div
+                            ref={servicesCarouselRef}
+                            className={`user-services-list-carousel ${servicesDisplayMode === "carousel" ? "" : "list"}`}
+                        >
                             {businessCard.services.map((s, i) => (
                                 <div key={i} className="landing-service-item">
                                     <p className="landing-service-name">{s.name}</p>
@@ -301,34 +353,43 @@ const UserPage = () => {
                 <>
                     <p className="landing-section-title">Reviews</p>
                     <div className="user-carousel-container">
-                        {reviewsDisplayMode === 'carousel' && (
+                        {reviewsDisplayMode === "carousel" && (
                             <div className="user-carousel-nav-buttons">
                                 <button
                                     type="button"
                                     className="user-carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
+                                    onClick={() => scrollCarousel(reviewsCarouselRef, "left")}
                                 >
                                     &#9664;
                                 </button>
                                 <button
                                     type="button"
                                     className="user-carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
+                                    onClick={() => scrollCarousel(reviewsCarouselRef, "right")}
                                 >
                                     &#9654;
                                 </button>
                             </div>
                         )}
-                        <div ref={reviewsCarouselRef} className={`user-reviews-list-carousel ${reviewsDisplayMode}`}>
+                        <div
+                            ref={reviewsCarouselRef}
+                            className={`user-reviews-list-carousel ${reviewsDisplayMode === "carousel" ? "" : "list"}`}
+                        >
                             {businessCard.reviews.map((r, i) => (
                                 <div key={i} className="landing-review-card">
                                     <div className="landing-star-rating">
-                                        {Array(r.rating || 0).fill().map((_, starIdx) => (
-                                            <span key={`filled-${starIdx}`}>★</span>
-                                        ))}
-                                        {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
-                                            <span key={`empty-${starIdx}`} style={{ color: '#ccc' }}>★</span>
-                                        ))}
+                                        {Array(r.rating || 0)
+                                            .fill()
+                                            .map((_, starIdx) => (
+                                                <span key={`filled-${starIdx}`}>★</span>
+                                            ))}
+                                        {Array(Math.max(0, 5 - (r.rating || 0)))
+                                            .fill()
+                                            .map((_, starIdx) => (
+                                                <span key={`empty-${starIdx}`} style={{ color: "#ccc" }}>
+                                                    ★
+                                                </span>
+                                            ))}
                                     </div>
                                     <p className="landing-review-text">"{r.text}"</p>
                                     <p className="landing-reviewer-name">{r.name}</p>

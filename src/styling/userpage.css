@@ -1,4 +1,4 @@
-/* Main container for the public landing page */
+/* Main container */
 .user-landing-page {
     width: 100%;
     min-height: 100vh;
@@ -34,7 +34,7 @@
     color: #fff !important;
 }
 
-/* make body copy readable in dark cards */
+/* Body copy readable in dark cards */
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-bio-text,
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-review-card .landing-review-text {
     color: #ddd !important;
@@ -50,7 +50,7 @@
     max-width: 800px;
 }
 
-/* Main Heading (Name or Business Name) */
+/* Main Heading */
 .landing-main-heading {
     font-size: 2rem;
     font-weight: 700;
@@ -60,7 +60,7 @@
     max-width: 800px;
 }
 
-/* Subheading (Slogan or Tagline) */
+/* Subheading */
 .landing-sub-heading {
     font-size: 1rem;
     font-weight: 600;
@@ -86,15 +86,14 @@
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
     font-family: inherit;
-    /* 👈 this makes the button use the same font as the page */
+    /* match page font */
 }
 
 .landing-action-button:hover {
     opacity: 0.9;
 }
 
-
-/* Section titles */
+/* Section title */
 .landing-section-title {
     font-size: 16px;
     font-weight: 600;
@@ -105,7 +104,7 @@
     max-width: 800px;
 }
 
-/* ------------------ About Me ------------------ */
+/* ---------- About Me ---------- */
 .landing-about-section {
     background: #f1f1f1;
     border-radius: 0.75rem;
@@ -116,7 +115,6 @@
     margin-bottom: 1.5rem;
 }
 
-/* SIDE-BY-SIDE: row 1 = avatar + (name & role), row 2 = bio (full width) */
 .landing-about-section.side-by-side {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -126,7 +124,6 @@
     row-gap: 0.5rem;
 }
 
-/* STACKED: vertical */
 .landing-about-section.stacked {
     display: flex;
     flex-direction: column;
@@ -134,8 +131,7 @@
     text-align: center;
 }
 
-/* Avatar (row 1, col 1) */
-/* Avatar: default size for side-by-side layout */
+/* Avatar sizes */
 .landing-avatar {
     grid-column: 1;
     grid-row: 1;
@@ -146,8 +142,15 @@
     flex-shrink: 0;
 }
 
+.landing-about-section.stacked .landing-avatar {
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    border-radius: 5%;
+    margin-bottom: 0.75rem;
+}
 
-/* Header (name + role) (row 1, col 2) */
 .landing-about-header {
     grid-column: 2;
     grid-row: 1;
@@ -168,34 +171,21 @@
     color: #777;
 }
 
-/* Bio (row 2, spans both columns) */
 .landing-bio-text {
     grid-column: 1 / -1;
-    /* span 2 columns */
     grid-row: 2;
     font-size: 0.9375rem;
     margin: 0.35rem 0 0 0;
     line-height: 1.5;
     white-space: pre-line;
-    /* respect line breaks */
 }
-
-.landing-about-section.stacked .landing-avatar {
-    width: 100%;
-    max-width: 340px;
-    height: auto;
-    aspect-ratio: 1 / 1;
-    border-radius: 5%;
-    margin-bottom: 0.75rem;
-}
-
 
 .landing-about-section.stacked .landing-profile-name,
 .landing-about-section.stacked .landing-profile-role {
     text-align: center;
 }
 
-/* ------------------ Carousels ------------------ */
+/* ---------- Carousels (used only when mode === 'carousel') ---------- */
 .user-carousel-container {
     position: relative;
     width: 100%;
@@ -235,7 +225,34 @@
     background-color: rgba(0, 0, 0, 0.6);
 }
 
-.user-work-gallery-carousel,
+/* work carousel track (only when carousel mode is active) */
+.user-work-gallery-carousel {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    width: 100%;
+    max-width: 800px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.user-work-gallery-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.user-work-gallery-carousel .landing-work-image {
+    flex-shrink: 0;
+    flex-grow: 0;
+    flex-basis: 100%;
+    max-width: 100%;
+    scroll-snap-align: start;
+    box-sizing: border-box;
+}
+
+/* services & reviews carousel tracks */
 .user-services-list-carousel,
 .user-reviews-list-carousel {
     display: flex;
@@ -250,13 +267,11 @@
     scrollbar-width: none;
 }
 
-.user-work-gallery-carousel::-webkit-scrollbar,
 .user-services-list-carousel::-webkit-scrollbar,
 .user-reviews-list-carousel::-webkit-scrollbar {
     display: none;
 }
 
-.user-work-gallery-carousel .landing-work-image,
 .user-services-list-carousel .landing-service-item,
 .user-reviews-list-carousel .landing-review-card {
     flex-shrink: 0;
@@ -265,19 +280,10 @@
     max-width: 100%;
     scroll-snap-align: start;
     box-sizing: border-box;
-}
-
-.user-services-list-carousel .landing-service-item,
-.user-reviews-list-carousel .landing-review-card {
     padding-right: 0.5rem;
 }
 
-.user-services-list-carousel,
-.user-reviews-list-carousel {
-    padding-right: 1rem;
-}
-
-/* ------------------ Work Gallery ------------------ */
+/* ---------- Work Gallery (LIST / GRID) ---------- */
 .landing-work-gallery {
     display: flex;
     flex-direction: row;
@@ -288,12 +294,14 @@
     scroll-snap-type: x mandatory;
 }
 
+/* vertical list (no horizontal scrolling) */
 .landing-work-gallery.list {
     flex-direction: column;
     overflow-x: hidden;
     scroll-snap-type: none;
 }
 
+/* 2-column grid (no horizontal scrolling) */
 .landing-work-gallery.grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -302,14 +310,17 @@
     scroll-snap-type: none;
 }
 
-.landing-work-gallery img.landing-work-image {
+/* match MyProfile aspect ratio */
+.landing-work-gallery img.landing-work-image,
+.user-work-gallery-carousel .landing-work-image {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 4 / 2.75;
+    /* ← SAME as MyProfile */
     object-fit: cover;
     border-radius: 0.5rem;
 }
 
-/* ------------------ Services ------------------ */
+/* ---------- Services ---------- */
 .landing-services-list {
     display: flex;
     flex-direction: column;
@@ -342,7 +353,7 @@
     line-height: 1.3;
 }
 
-/* ------------------ Reviews ------------------ */
+/* ---------- Reviews ---------- */
 .landing-reviews-list {
     display: flex;
     flex-direction: column;
@@ -381,7 +392,7 @@
     margin: 0;
 }
 
-/* ------------------ Contact Details ------------------ */
+/* ---------- Contact Details ---------- */
 .landing-contact-details {
     display: flex;
     flex-direction: column;
@@ -414,7 +425,7 @@
     color: #000;
 }
 
-/* ------------------ Responsive ------------------ */
+/* ---------- Responsive ---------- */
 @media (min-width: 768px) {
     .user-landing-page {
         padding: 3rem 2rem;
