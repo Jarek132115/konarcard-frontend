@@ -1395,7 +1395,7 @@ export default function MyProfile() {
                     )}
 
                     <div className="button-group">
-                      <button type="button" onClick={handleResetPage} className="ghost-button">
+                      <button type="button" onClick={handleResetPage} className="ghost-button desktop-button">
                         Reset Page
                       </button>
                       <button type="submit" className="blue-button desktop-button">
