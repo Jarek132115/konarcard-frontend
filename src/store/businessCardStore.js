@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
-const initialState = {
+/** keep a pure template */
+const template = {
   businessName: "",
   pageTheme: "light",
   pageThemeVariant: "subtle-light",
@@ -9,7 +10,7 @@ const initialState = {
   coverPhoto: null,
   avatar: null,
   workImages: [],
-  workDisplayMode: "list", // Already added
+  workDisplayMode: "list",
 
   mainHeading: "",
   subHeading: "",
@@ -18,22 +19,31 @@ const initialState = {
   bio: "",
 
   services: [],
-  servicesDisplayMode: "list", // New
+  servicesDisplayMode: "list",
   reviews: [],
-  reviewsDisplayMode: "list", // New
-  aboutMeLayout: "side-by-side", // New
+  reviewsDisplayMode: "list",
+  aboutMeLayout: "side-by-side",
 
   contact_email: "",
   phone_number: "",
 };
 
+/** always return a fresh copy */
+const freshInitialState = () => ({
+  ...template,
+  // ensure new array identities
+  workImages: [],
+  services: [],
+  reviews: [],
+});
+
 const useBusinessCardStore = create((set) => ({
-  state: initialState,
+  state: freshInitialState(),
   updateState: (newState) =>
     set((store) => ({
       state: { ...store.state, ...newState },
     })),
-  resetState: () => set({ state: initialState }),
+  resetState: () => set({ state: freshInitialState() }),
 }));
 
 export default useBusinessCardStore;
@@ -43,7 +53,7 @@ export const previewPlaceholders = {
   pageTheme: "light",
   pageThemeVariant: "subtle-light",
 
-  coverPhoto: "/Interface-Preview/Cover-Photo1.png", // You can swap with a bathroom renovation photo
+  coverPhoto: "/Interface-Preview/Cover-Photo1.png",
   avatar: "/Interface-Preview/Profile-Pic.png",
 
   workImages: [
@@ -56,7 +66,6 @@ export const previewPlaceholders = {
   reviewsDisplayMode: "list",
   aboutMeLayout: "side-by-side",
 
-  // Both camelCase & snake_case so it works with your component
   mainHeading: "Transforming Bathrooms, Elevating Homes",
   subHeading: "Premium bathroom renovations with unmatched craftsmanship",
   main_heading: "Transforming Bathrooms, Elevating Homes",

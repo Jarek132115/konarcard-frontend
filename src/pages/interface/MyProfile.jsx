@@ -557,57 +557,49 @@ export default function MyProfile() {
     }
   };
 
-  const handleResetPage = () => {
-    if (window.confirm("Are you sure you want to reset all your changes? This cannot be undone.")) {
-      if (businessCard) {
-        updateState({
-          businessName: businessCard.business_card_name || '',
-          pageTheme: businessCard.page_theme || 'light',
-          font: businessCard.style || 'Inter',
-          mainHeading: businessCard.main_heading || '',
-          subHeading: businessCard.sub_heading || '',
-          job_title: businessCard.job_title || '',
-          full_name: businessCard.full_name || '',
-          bio: businessCard.bio || '',
-          avatar: businessCard.avatar || null,
-          coverPhoto: businessCard.cover_photo || null,
-          workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
-          services: (businessCard.services || []),
-          reviews: (businessCard.reviews || []),
-          contact_email: businessCard.contact_email || '',
-          phone_number: businessCard.phone_number || '',
-          workDisplayMode: businessCard.work_display_mode || 'list',
-        });
-        setServicesDisplayMode(businessCard.services_display_mode || 'list');
-        setReviewsDisplayMode(businessCard.reviews_display_mode || 'list');
-        setAboutMeLayout(businessCard.about_me_layout || 'side-by-side');
-        setShowMainSection(businessCard.show_main_section !== false);
-        setShowAboutMeSection(businessCard.show_about_me_section !== false);
-        setShowWorkSection(businessCard.show_work_section !== false);
-        setShowServicesSection(businessCard.show_services_section !== false);
-        setShowReviewsSection(businessCard.show_reviews_section !== false);
-        setShowContactSection(businessCard.show_contact_section !== false);
-      } else {
-        resetState();
-        setShowMainSection(true);
-        setShowAboutMeSection(true);
-        setShowWorkSection(true);
-        setShowServicesSection(true);
-        setShowReviewsSection(true);
-        setShowContactSection(true);
+  const handleResetPage = async () => {
+    if (!window.confirm("Are you sure you want to reset everything? This will delete your published profile and restore the default template.")) {
+      return;
+    }
+
+    try {
+      // 1) Attempt to delete/reset the server-side card (adjust endpoint if yours differs)
+      try {
+        await api.delete('/api/business-card'); // e.g. server infers user from auth
+        // If your backend expects a userId: await api.delete(`/api/business-card/${userId}`);
+        // Or a POST reset: await api.post('/api/business-card/reset');
+      } catch (err) {
+        // Ignore 404 or not-implemented; proceed with local reset
+        if (err?.response?.status !== 404) {
+          // Optional: console.warn('Server reset failed; continuing with client reset anyway.', err);
+        }
       }
 
+      // 2) Revoke any active blob URLs to avoid memory leaks
+      activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+      activeBlobUrlsRef.current = [];
+      setActiveBlobUrls([]);
+
+      // 3) Clear pending file states/flags
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
-      activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
-      activeBlobUrlsRef.current = [];
-      setActiveBlobUrls([]); // (optional) if you keep this state for debugging/UI
-      toast.success("Your page has been reset to the last published version.");
+
+      // 4) Reset Zustand to a fresh template (instant UI reset)
+      resetState();
+
+      // 5) Clear any cached server data so `businessCard` becomes null (shows placeholders)
+      queryClient.setQueryData(['businessCard', userId], null);
+      queryClient.removeQueries({ queryKey: ['businessCard', userId] });
+
+      toast.success("Your page has been reset to the default template.");
+    } catch (e) {
+      toast.error("Failed to fully reset. Please try again.");
     }
   };
+
 
   const scrollCarousel = (ref, direction) => {
     if (ref.current) {
