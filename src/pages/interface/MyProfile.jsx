@@ -990,6 +990,14 @@ export default function MyProfile() {
                             key={font}
                             className={`font-button ${state.font === font ? "is-active" : ""}`}
                             onClick={() => updateState({ font })}
+                            style={{
+                              fontFamily: `'${font}', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`,
+                              fontWeight: 700,
+                              letterSpacing: 0,
+                              textTransform: "none"
+                            }}
+                            aria-label={`Use ${font}`}
+                            title={font}
                           >
                             {font}
                           </button>
