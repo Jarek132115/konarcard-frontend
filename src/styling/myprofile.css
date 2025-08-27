@@ -1098,6 +1098,12 @@
     margin-top: auto;
 }
 
+@media (max-width: 1000px) {
+    .button-group {
+        flex-direction: column;
+    }
+}
+
 .button-group .ghost-button,
 .button-group .black-button {
     padding: 12px 20px;
