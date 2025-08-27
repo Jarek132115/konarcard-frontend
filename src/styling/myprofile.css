@@ -1,5 +1,7 @@
 /* myprofile.css */
 
+/* ===== App & Editor (unchanged editor styles, trimmed only preview-specific conflicts) ===== */
+
 :root {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
@@ -15,7 +17,6 @@
     --main-font-family: 'Inter', sans-serif;
 }
 
-/* Define color variables for light theme variants */
 .light-mode.pure-light {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
@@ -44,7 +45,6 @@
     --page-header-color: #FFFFFF;
 }
 
-/* Define color variables for dark theme variants */
 .dark-mode.pure-dark {
     --primary-bg: #000000;
     --secondary-bg: #1F1F1F;
@@ -236,367 +236,7 @@
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.mock-cover,
-.avatar-preview,
-.mock-work-image-item,
-.work-image-preview {
-    background-color: var(--placeholder-bg);
-    display: block;
-    object-fit: cover;
-    background-size: 50%;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.mock-cover[src=""],
-.avatar-preview[src=""],
-.work-image-preview[src=""] {
-    border: 1px dashed var(--border-color);
-    background-image: url('../assets/images/background-hero.png');
-    background-size: cover;
-}
-
-.avatar-preview[src=""] {
-    background-image: url('../assets/images/People.png');
-    background-size: cover;
-}
-
-.work-image-preview[src=""] {
-    background-image: url('/Interface-Preview/Work-Images1.png');
-    background-size: cover;
-}
-
-.mock-cover {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    border-radius: 0.75rem;
-    margin-bottom: 12px;
-}
-
-.mock-title,
-.mock-subtitle,
-.mock-profile-name,
-.mock-profile-role,
-.mock-service-name,
-.mock-service-price,
-.mock-review-text,
-.mock-reviewer-name,
-.mock-contact-value {
-    white-space: normal;
-    word-break: break-word;
-    overflow-wrap: break-word;
-}
-
-.mock-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0;
-    line-height: 1.2;
-    color: var(--text-color);
-}
-
-.mock-subtitle {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--subtle-text-color);
-    margin: 0;
-    margin-top: 6px;
-}
-
-.mock-button {
-    background: var(--button-bg);
-    color: var(--button-text);
-    padding: 0.75rem 1.25rem;
-    border-radius: 0.5rem;
-    border: none;
-    font-weight: 700;
-    font-size: 0.875rem;
-    margin: 0;
-    margin-top: 12px;
-    width: 100%;
-    box-sizing: border-box;
-    font-family: var(--main-font-family);
-    margin-bottom: 36px;
-}
-
-.mock-section-title {
-    font-size: 1rem;
-    margin: 0;
-    margin-bottom: 12px;
-    font-weight: 600;
-    text-align: left;
-    color: var(--text-color);
-}
-
-.mock-about-container {
-    background: var(--card-bg);
-    border-radius: 1rem;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    text-align: left;
-    width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 36px;
-}
-
-.mock-about-content-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.mock-about-header-group {
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-    flex-direction: row;
-}
-
-/* Let the text column shrink and wrap inside the about header row */
-.mock-about-header-group>div {
-    flex: 1;
-    /* fill remaining space */
-    min-width: 0;
-    /* <-- critical: allow wrapping instead of overflow */
-}
-
-/* Defensive: also allow the outer content group to shrink when side-by-side */
-.mock-about-container.side-by-side .mock-about-content-group {
-    min-width: 0;
-}
-
-
-.mock-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
-    background-color: var(--border-color);
-    object-fit: cover;
-    background-size: cover;
-    background-position: center;
-}
-
-
-.mock-profile-name {
-    font-weight: 700;
-    margin: 0;
-    font-size: 1.125rem;
-    color: var(--text-color);
-}
-
-.mock-profile-role {
-    font-size: 0.9375rem;
-    margin: 0;
-    color: var(--subtle-text-color);
-    font-weight: normal;
-}
-
-.mock-bio-text {
-    font-size: 0.9375rem;
-    line-height: 1.4;
-    margin-top: 0;
-    text-align: left;
-    color: var(--text-color);
-}
-
-.work-preview-row-container {
-    position: relative;
-    width: 100%;
-}
-
-.mock-work-gallery,
-.mock-services-list,
-.mock-reviews-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    width: 100%;
-    margin-bottom: 36px;
-    padding: 0;
-    background-color: transparent;
-    border-radius: 0;
-}
-
-.mock-work-gallery.grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.mock-work-gallery.carousel,
-.mock-services-list.carousel,
-.mock-reviews-list.carousel {
-    display: flex;
-    flex-direction: row;
-    gap: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    align-items: stretch;
-    flex-wrap: nowrap;
-    scroll-snap-type: x mandatory;
-}
-
-.mock-work-gallery.carousel::-webkit-scrollbar,
-.mock-services-list.carousel::-webkit-scrollbar,
-.mock-reviews-list.carousel::-webkit-scrollbar {
-    display: none;
-}
-
-.mock-work-gallery.carousel,
-.mock-services-list.carousel .mock-service-item,
-.mock-reviews-list.carousel .mock-review-card {
-    flex-shrink: 0;
-    flex-grow: 0;
-    flex-basis: 100%;
-    max-width: 100%;
-    scroll-snap-align: start;
-    height: fit-content;
-    display: block;
-    box-sizing: border-box;
-    margin-right: 12px;
-}
-
-.mock-work-image-item-wrapper {
-    width: 100%;
-    aspect-ratio: 4 / 2.75;
-    /* one source of truth for card shape */
-    overflow: hidden;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    padding: 0;
-    /* no inner padding */
-    box-shadow: none;
-    /* remove the faint shadow */
-}
-
-
-.mock-work-gallery.carousel .mock-work-image-item-wrapper {
-    overflow: hidden;
-    border-radius: 0.5rem;
-    border: 1px solid var(--border-color);
-}
-
-.mock-services-list.carousel .mock-service-item {
-    border-radius: 0.75rem;
-    padding: 0.75rem 1rem;
-}
-
-.mock-reviews-list.carousel .mock-review-card {
-    border-radius: 0.75rem;
-    padding: 0.75rem 1rem;
-}
-
-.carousel-nav-buttons {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: space-between;
-    padding: 0 10px;
-    z-index: 5;
-    pointer-events: none;
-    width: 100%;
-}
-
-.carousel-nav-button {
-    background-color: rgba(0, 0, 0, 0.4);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    font-size: 1.5rem;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    pointer-events: auto;
-}
-
-.carousel-nav-button:hover {
-    background-color: rgba(0, 0, 0, 0.6);
-}
-
-/* FIX: Ensure mock work images fill their container completely */
-.mock-work-image-item {
-    width: 100%;
-    height: 100%;
-    /* Changed from 'auto' to '100%' */
-    aspect-ratio: 4 / 2.75;
-    border-radius: 0;
-    min-width: unset;
-    min-height: unset;
-    background-color: var(--placeholder-bg);
-    object-fit: cover;
-}
-
-.mock-services-list,
-.mock-reviews-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
-    width: 100%;
-    margin-bottom: 36px;
-}
-
-.mock-service-item,
-.mock-review-card {
-    background-color: var(--card-bg);
-    border-radius: 0.75rem;
-    padding: 0.75rem 1rem;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    color: var(--text-color);
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.mock-service-name {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    margin: 0;
-    line-height: 1.3;
-}
-
-.mock-service-price {
-    font-size: 0.8125rem;
-    color: var(--subtle-text-color);
-    margin: 0;
-    line-height: 1.3;
-}
-
-.mock-star-rating {
-    color: gold;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.1rem;
-}
-
-.mock-star-rating .empty-star {
-    color: #ccc;
-}
-
-.mock-review-text {
-    font-size: 0.9375rem;
-    color: var(--text-color);
-    margin-top: 0;
-    margin-bottom: 0.75rem;
-    line-height: 1.4;
-}
-
-.mock-reviewer-name {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--subtle-text-color);
-    margin: 0;
-}
-
+/* Editor side */
 .myprofile-editor-wrapper {
     position: relative;
     max-width: 500px;
@@ -608,7 +248,6 @@
     overflow: visible;
 }
 
-/* ALWAYS show work images 2 per row in the editor */
 .editor-work-image-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -622,7 +261,6 @@
     height: auto;
 }
 
-/* Make sure the image keeps shape nicely inside the grid cell */
 .editor-work-image-grid .work-image-preview {
     width: 100%;
     height: 100%;
@@ -631,12 +269,10 @@
     display: block;
 }
 
-/* Optional: tighten the remove button a bit so it doesn't push layout */
 .editor-work-image-grid .remove-image-button {
     top: 6px;
     right: 6px;
 }
-
 
 .editor-content-wrapper {
     flex: 1;
@@ -671,7 +307,6 @@
     font-weight: 600;
 }
 
-/* New CSS for the section headers with a toggle button */
 .editor-section-header {
     display: flex;
     justify-content: space-between;
@@ -832,12 +467,6 @@
     margin: 20px 0;
     border: none;
     border-top: 1px solid var(--border-color);
-}
-
-.work-preview-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 12px;
 }
 
 .work-image-item-wrapper {
@@ -1116,6 +745,7 @@
     width: 100%;
 }
 
+/* ===== Responsive editor/app layout ===== */
 @media (max-width: 1000px) {
     .app-layout {
         height: auto;
@@ -1233,11 +863,6 @@
         max-width: 100%;
     }
 
-    .mock-cover {
-        aspect-ratio: unset !important;
-        height: auto !important;
-    }
-
     .myprofile-editor-wrapper {
         width: 100%;
         max-width: 100%;
@@ -1320,344 +945,9 @@
         border-width: 6px;
         border-radius: 20px;
     }
-
-    .mock-title {
-        font-size: 1.8rem;
-    }
-
-    .mock-subtitle {
-        font-size: 0.9rem;
-    }
-
-    .mock-button {
-        font-size: 0.8rem;
-        padding: 0.6rem 1rem;
-    }
-
-    .mock-section-title {
-        font-size: 0.9rem;
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .mock-about-container {
-        padding: 0.6rem;
-        gap: 0.6rem;
-    }
-
-    .mock-avatar {
-        width: 50px;
-        height: 50px;
-    }
-
-    .mock-profile-name {
-        font-size: 1rem;
-    }
-
-    .mock-profile-role {
-        font-size: 0.8rem;
-    }
-
-    .mock-service-item {
-        padding: 0.6rem 0.8rem;
-    }
-
-    .mock-service-name {
-        font-size: 0.875rem;
-    }
-
-    .mock-service-price {
-        font-size: 0.75rem;
-    }
-
-    .mock-review-card {
-        padding: 0.8rem;
-    }
-
-    .mock-star-rating {
-        font-size: 0.9rem;
-    }
-
-    .mock-review-text {
-        font-size: 0.875rem;
-    }
-
-    .mock-reviewer-name {
-        font-size: 0.8rem;
-    }
 }
 
-.option-row.mt-3 {
-    margin-top: 10px;
-}
-
-.work-preview-row-container {
-    position: relative;
-    width: 100%;
-}
-
-.mock-work-gallery,
-.mock-services-list,
-.mock-reviews-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    width: 100%;
-    margin-bottom: 36px;
-    padding: 0;
-    background-color: transparent;
-    border-radius: 0;
-}
-
-.mock-work-gallery.grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.mock-work-gallery.carousel,
-.mock-services-list.carousel,
-.mock-reviews-list.carousel {
-    display: flex;
-    flex-direction: row;
-    gap: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    align-items: stretch;
-    flex-wrap: nowrap;
-    scroll-snap-type: x mandatory;
-}
-
-.mock-work-gallery.carousel::-webkit-scrollbar,
-.mock-services-list.carousel::-webkit-scrollbar,
-.mock-reviews-list.carousel::-webkit-scrollbar {
-    display: none;
-}
-
-.mock-work-gallery.carousel .mock-work-image-item-wrapper,
-.mock-services-list.carousel .mock-service-item,
-.mock-reviews-list.carousel .mock-review-card {
-    flex-shrink: 0;
-    flex-grow: 0;
-    flex-basis: 100%;
-    max-width: 100%;
-    scroll-snap-align: start;
-    height: auto;
-    display: block;
-    box-sizing: border-box;
-    margin-right: 12px;
-}
-
-.mock-work-gallery.carousel .mock-work-image-item-wrapper {
-    overflow: hidden;
-    border-radius: 0.5rem;
-    border: 1px solid var(--border-color);
-}
-
-.mock-services-list.carousel .mock-service-item {
-    border-radius: 0.75rem;
-    padding: 0.75rem 1rem;
-}
-
-.mock-reviews-list.carousel .mock-review-card {
-    border-radius: 0.75rem;
-    padding: 0.75rem 1rem;
-}
-
-.carousel-nav-buttons {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: space-between;
-    padding: 0 10px;
-    z-index: 5;
-    pointer-events: none;
-    width: 100%;
-}
-
-.carousel-nav-button {
-    background-color: rgba(0, 0, 0, 0.4);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    font-size: 1.5rem;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    pointer-events: auto;
-}
-
-.carousel-nav-button:hover {
-    background-color: rgba(0, 0, 0, 0.6);
-}
-
-/* FIX: Ensure mock work images fill their container completely */
-/* Keep only this one */
-.mock-work-gallery img.mock-work-image-item,
-.mock-work-image-item {
-    display: block;
-    width: 100%;
-    height: 100%;
-    /* ← key line */
-    object-fit: cover;
-    /* fill without distortion */
-    border-radius: 0;
-    /* wrapper does rounding */
-    background-color: var(--placeholder-bg);
-}
-
-
-.mock-services-list,
-.mock-reviews-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
-    width: 100%;
-    margin-bottom: 36px;
-}
-
-.mock-service-item,
-.mock-review-card {
-    background-color: var(--card-bg);
-    border-radius: 0.75rem;
-    padding: 0.75rem 1rem;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    color: var(--text-color);
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.mock-service-name {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    margin: 0;
-    line-height: 1.3;
-}
-
-.mock-service-price {
-    font-size: 0.8125rem;
-    color: var(--subtle-text-color);
-    margin: 0;
-    line-height: 1.3;
-}
-
-.mock-star-rating {
-    color: gold;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.1rem;
-}
-
-.mock-star-rating .empty-star {
-    color: #ccc;
-}
-
-.mock-review-text {
-    font-size: 0.9375rem;
-    color: var(--text-color);
-    margin-top: 0;
-    margin-bottom: 0.75rem;
-    line-height: 1.4;
-}
-
-.mock-reviewer-name {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--subtle-text-color);
-    margin: 0;
-}
-
-.mock-about-container.side-by-side {
-    flex-direction: row;
-}
-
-.mock-about-container.side-by-side .mock-about-content-group {
-    flex: 1;
-}
-
-.mock-about-container.side-by-side .mock-about-header-group {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.mock-about-container.stacked {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.mock-about-container.stacked .mock-about-content-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-    width: 100%;
-}
-
-.mock-about-container.stacked .mock-about-header-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-}
-
-.mock-about-container.stacked .mock-avatar {
-    width: 100%;
-    height: auto;      
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    margin-bottom: 0.5rem;
-}
-
-.mock-about-container.stacked .mock-profile-name,
-.mock-about-container.stacked .mock-profile-role,
-.mock-about-container.stacked .mock-bio-text {
-    text-align: center;
-}
-
-.mock-contact-details {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    background: var(--card-bg);
-    border-radius: 1rem;
-    padding: 1rem;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.mock-contact-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.mock-contact-label {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    margin: 0;
-    color: var(--subtle-text-color);
-}
-
-.mock-contact-value {
-    font-size: 0.9375rem;
-    font-weight: normal;
-    margin: 0;
-    color: var(--text-color);
-}
-
+/* ===== Buttons cluster in editor ===== */
 .button-group {
     display: flex;
     justify-content: flex-end;
@@ -1703,7 +993,7 @@
     color: #dc3545;
 }
 
-/* Force mobile sizing inside the mock phone preview, regardless of viewport */
+/* ===== Phone preview scaling helpers ===== */
 .mock-phone.mobile-preview {
     max-width: 360px;
     padding: 16px;
@@ -1711,152 +1001,479 @@
     border-radius: 20px;
 }
 
-/* Headings & text scaled for mobile look */
-.mock-phone.mobile-preview .mock-title {
-    font-size: 1.4rem;
-    line-height: 1.25;
-    margin-top: 4px;
-}
+/* ======== LIVE PAGE VISUAL SYSTEM (PREVIEW-ONLY MIRROR) ======== */
 
-.mock-phone.mobile-preview .mock-subtitle {
-    font-size: 0.95rem;
-    margin-top: 6px;
-}
-
-.mock-phone.mobile-preview .mock-button {
-    font-size: 0.9rem;
-    padding: 0.65rem 1rem;
-    margin-top: 12px;
-    margin-bottom: 24px;
-}
-
-.mock-phone.mobile-preview .mock-section-title {
-    font-size: 0.95rem;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-/* About block & text */
-.mock-phone.mobile-preview .mock-about-container {
-    padding: 0.75rem;
-    gap: 0.6rem;
-}
-
-.mock-phone.mobile-preview .mock-about-container.stacked .mock-avatar {
+/* Main container */
+.user-landing-page {
     width: 100%;
+    min-height: 100vh;
+    background: #fff;
+    padding: 2rem 1.5rem;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+    color: #000;
+}
+
+/* Dark page background + base text */
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] {
+    background-color: #1F1F1F !important;
+    color: #fff;
+}
+
+/* Muted text (subtitle labels etc.) */
+.user-landing-page .landing-service-item .landing-service-price,
+.user-landing-page .landing-contact-label {
+    color: #000000;
+}
+
+/* Subheading default (light mode = black) */
+.user-landing-page .landing-sub-heading {
+    color: #000;
+}
+
+/* Subheading in dark mode = white */
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-sub-heading {
+    color: #fff;
+}
+
+/* Keep cards white in dark mode */
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-about-section,
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-service-item,
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-review-card,
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-contact-details {
+    background-color: #fff !important;
+    color: #111 !important;
+}
+
+/* Force readable body copy inside white cards when page is dark */
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-bio-text,
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-review-card .landing-review-text {
+    color: #111 !important;
+}
+
+/* Cover Photo */
+.landing-cover-photo {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 14px;
+    margin-bottom: 1.5rem;
+    max-width: 800px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, .12);
+}
+
+/* Main Heading */
+.landing-main-heading {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.2;
+    text-align: center;
+    max-width: 800px;
+}
+
+/* Subheading */
+.landing-sub-heading {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-top: 8px;
+    text-align: center;
+    max-width: 800px;
+}
+
+/* CTA */
+.landing-action-button {
+    background: #0081FF;
+    color: #fff;
+    padding: 0.9rem 1.2rem;
+    border-radius: 12px;
+    border: none;
+    font-weight: 800;
+    font-size: 0.95rem;
+    margin-top: 16px;
+    width: 100%;
+    max-width: 340px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: transform .06s ease, box-shadow .2s ease, opacity .2s ease;
+    font-family: inherit;
+    /* preserves font inheritance */
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .15);
+}
+
+.landing-action-button:hover {
+    opacity: .92;
+}
+
+.landing-action-button:active {
+    transform: translateY(1px);
+}
+
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-action-button {
+    background: #0081FF;
+    color: #ffffff;
+}
+
+/* Section title */
+.landing-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-top: 60px;
+    margin-bottom: 10px;
+    text-align: left;
+    width: 100%;
+    max-width: 800px;
+}
+
+/* Shared card look */
+.landing-about-section,
+.landing-service-item,
+.landing-review-card,
+.landing-contact-details {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, .06);
+}
+
+/* About */
+.landing-about-section {
+    padding: 14px;
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+}
+
+.landing-about-section.side-by-side {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 6px;
+}
+
+.landing-about-section.stacked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Avatar sizes */
+.landing-avatar {
+    grid-column: 1;
+    grid-row: 1;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+}
+
+.landing-about-section.stacked .landing-avatar {
+    width: 100%;
+    max-width: 340px;
     height: auto;
     aspect-ratio: 1 / 1;
-    border-radius: 5%;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
 
-.mock-phone.mobile-preview .mock-profile-name {
+.landing-about-header {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.landing-profile-name {
+    font-weight: 800;
+    margin: 0;
     font-size: 1rem;
+    color: #111;
 }
 
-.mock-phone.mobile-preview .mock-profile-role {
-    font-size: 0.85rem;
-}
-
-.mock-phone.mobile-preview .mock-bio-text {
+.landing-profile-role {
     font-size: 0.9rem;
-    line-height: 1.45;
+    margin: 0;
+    color: #333;
 }
 
-/* Lists/cards */
-.mock-phone.mobile-preview .mock-service-item {
-    padding: 0.65rem 0.8rem;
-}
-
-.mock-phone.mobile-preview .mock-service-name {
-    font-size: 0.9rem;
-}
-
-.mock-phone.mobile-preview .mock-service-price {
-    font-size: 0.8rem;
-}
-
-.mock-phone.mobile-preview .mock-review-card {
-    padding: 0.8rem;
-}
-
-.mock-phone.mobile-preview .mock-star-rating {
+.landing-bio-text {
+    grid-column: 1 / -1;
+    grid-row: 2;
     font-size: 0.95rem;
+    margin: 6px 0 0 0;
+    line-height: 1.55;
+    white-space: pre-line;
+    color: #111;
 }
 
-.mock-phone.mobile-preview .mock-review-text {
+.landing-about-section.stacked .landing-profile-name,
+.landing-about-section.stacked .landing-profile-role {
+    text-align: center;
+}
+
+/* Carousels container */
+.user-carousel-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+}
+
+.user-carousel-nav-buttons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 8px;
+    z-index: 5;
+    pointer-events: none;
+    width: 100%;
+}
+
+.user-carousel-nav-button {
+    background-color: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    pointer-events: auto;
+}
+
+.user-carousel-nav-button:hover {
+    background-color: rgba(0, 0, 0, .65);
+}
+
+/* work carousel track */
+.user-work-gallery-carousel {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    width: 100%;
+    max-width: 800px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.user-work-gallery-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.user-work-gallery-carousel .landing-work-image {
+    flex-shrink: 0;
+    flex-grow: 0;
+    flex-basis: 100%;
+    max-width: 100%;
+    scroll-snap-align: start;
+    box-sizing: border-box;
+}
+
+/* services & reviews carousel tracks */
+.user-services-list-carousel,
+.user-reviews-list-carousel {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    width: 100%;
+    max-width: 800px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.user-services-list-carousel::-webkit-scrollbar,
+.user-reviews-list-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.user-services-list-carousel .landing-service-item,
+.user-reviews-list-carousel .landing-review-card {
+    flex-shrink: 0;
+    flex-grow: 0;
+    flex-basis: 100%;
+    max-width: 100%;
+    scroll-snap-align: start;
+    box-sizing: border-box;
+    padding-right: 0.5rem;
+}
+
+/* LIST overrides (vertical stack like the design) */
+.user-services-list-carousel.list,
+.user-reviews-list-carousel.list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-x: hidden;
+    scroll-snap-type: none;
+    padding-right: 0;
+}
+
+/* Work Gallery (LIST / GRID) */
+.landing-work-gallery {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    width: 100%;
+    max-width: 800px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+}
+
+/* vertical list */
+.landing-work-gallery.list {
+    flex-direction: column;
+    overflow-x: hidden;
+    scroll-snap-type: none;
+    gap: 16px;
+}
+
+/* 2-column grid */
+.landing-work-gallery.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    overflow-x: hidden;
+    scroll-snap-type: none;
+}
+
+.landing-work-gallery img.landing-work-image,
+.user-work-gallery-carousel .landing-work-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    /* match figma */
+    object-fit: cover;
+    border-radius: 14px;
+}
+
+/* Services */
+.landing-services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 800px;
+    overflow-x: hidden;
+}
+
+.landing-service-item {
+    padding: 14px 16px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.landing-service-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+    color: #111;
+}
+
+.landing-service-price {
+    font-size: 0.85rem;
+    margin: 2px 0 0 0;
+}
+
+/* Reviews */
+.landing-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 800px;
+    overflow-x: hidden;
+}
+
+.landing-review-card {
+    padding: 14px 16px;
+}
+
+.landing-star-rating {
+    color: #111;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    letter-spacing: 0.06rem;
+}
+
+.landing-star-rating .empty-star {
+    color: #D1D5DB;
+}
+
+.landing-review-text {
+    font-size: 0.95rem;
+    color: #111;
+    margin: 0 0 10px 0;
+    line-height: 1.5;
+}
+
+.landing-reviewer-name {
     font-size: 0.9rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
 }
 
-.mock-phone.mobile-preview .mock-reviewer-name {
-    font-size: 0.8rem;
-}
-
-/* Contact details */
-.mock-phone.mobile-preview .mock-contact-details {
-    padding: 0.8rem;
-}
-
-.mock-phone.mobile-preview .mock-contact-label,
-.mock-phone.mobile-preview .mock-contact-value {
-    font-size: 0.9rem;
-}
-
-/* Media inside the phone */
-.mock-phone.mobile-preview .mock-cover {
-    border-radius: 0.6rem;
-    margin-bottom: 0.85rem;
-}
-
-.mock-phone.mobile-preview .mock-work-image-item {
-    aspect-ratio: 4 / 2.75;
-}
-
-.mock-phone.mobile-preview .mock-work-gallery.grid {
+/* Contact */
+.landing-contact-details {
+    display: flex;
+    flex-direction: column;
     gap: 10px;
+    padding: 14px 16px;
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 800px;
 }
 
-/* === Work gallery: clean single-column list inside the phone preview === */
-.mock-phone .mock-work-gallery.list {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    /* space between items */
-    overflow: visible !important;
-    /* stop inner scrollbars from clipping */
-    padding: 0 !important;
-    margin: 0 !important;
+.landing-contact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.mock-phone .mock-work-gallery.list .mock-work-image-item-wrapper {
-    border: none !important;
-    box-shadow: none !important;
-    /* remove the shadow “halo” */
-    margin: 0 !important;
-    padding: 0 !important;
-    border-radius: 8px;
-    /* keep a subtle corner if you like */
-    overflow: hidden;
-    /* ensures image fills without showing gaps */
+.landing-contact-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+    color: #cccccc;
 }
 
-.mock-phone .mock-work-gallery.list img.mock-work-image-item {
-    display: block !important;
-    width: 100% !important;
-    height: auto !important;
-    /* no odd vertical spacing */
-    aspect-ratio: 4 / 2.75;
-    /* keep your chosen shape */
-    object-fit: cover !important;
-    /* crop to fill, no borders */
-    background: none !important;
+.landing-contact-value {
+    font-size: 0.95rem;
+    margin: 0;
+    color: #111;
 }
 
-.mock-phone .mock-work-gallery.carousel {
-    gap: 12px !important;
-    padding: 0 !important;
-}
+/* Responsive for live page preview area */
+@media (min-width: 768px) {
+    .user-landing-page {
+        padding: 3rem 2rem;
+    }
 
-.mock-phone .mock-work-gallery.carousel .mock-work-image-item-wrapper {
-    border: none !important;
-    box-shadow: none !important;
+    .landing-work-gallery.grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
 }
