@@ -187,11 +187,6 @@ const UserPage = () => {
                     <button
                         type="button"
                         onClick={handleExchangeContact}
-                        style={{
-                            backgroundColor:
-                                businessCard.page_theme === "dark" ? "white" : "black",
-                            color: businessCard.page_theme !== "dark" ? "white" : "black",
-                        }}
                         className="landing-action-button"
                     >
                         Save My Number
