@@ -1390,7 +1390,7 @@ export default function MyProfile() {
                       <button type="button" onClick={handleResetPage} className="ghost-button">
                         Reset Page
                       </button>
-                      <button type="submit" className="black-button desktop-button">
+                      <button type="submit" className="blue-button desktop-button">
                         Publish Now
                       </button>
                     </div>
