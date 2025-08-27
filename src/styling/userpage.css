@@ -153,6 +153,7 @@
     align-items: center;
     column-gap: 12px;
     row-gap: 6px;
+    background: #f9f9f9;
 }
 
 .landing-about-section.stacked {
@@ -160,6 +161,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    background: #f9f9f9;
 }
 
 /* Avatar sizes */
@@ -443,6 +445,7 @@
     width: 100%;
     box-sizing: border-box;
     max-width: 800px;
+    background: #f9f9f9;
 }
 
 .landing-contact-item {
@@ -499,6 +502,7 @@
 .landing-services-list .landing-service-item,
 .landing-reviews-list .landing-review-card {
     text-align: center;
+    background: #f9f9f9;
 }
 
 /* Make sure the inner text lines are centered too */
