@@ -322,7 +322,7 @@
 .mock-service-item,
 .mock-review-card,
 .mock-contact-details {
-    background: #fff;
+    background: #f1f1f1;
     border-radius: 16px;
     border: 1px solid rgba(0, 0, 0, .06);
     color: #111;
