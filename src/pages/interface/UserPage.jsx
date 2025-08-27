@@ -194,7 +194,7 @@ const UserPage = () => {
                         }}
                         className="landing-action-button"
                     >
-                        Exchange Contact
+                        Save My Number
                     </button>
                 </>
             )}
