@@ -225,7 +225,7 @@
     background-color: rgba(0, 0, 0, 0.6);
 }
 
-/* work carousel track (only when carousel mode is active) */
+/* work carousel track */
 .user-work-gallery-carousel {
     display: flex;
     flex-direction: row;
@@ -315,12 +315,12 @@
 .user-work-gallery-carousel .landing-work-image {
     width: 100%;
     aspect-ratio: 4 / 2.75;
-    /* ← SAME as MyProfile */
+    /* SAME as MyProfile */
     object-fit: cover;
     border-radius: 0.5rem;
 }
 
-/* ---------- Services ---------- */
+/* ---------- Services (LIST) ---------- */
 .landing-services-list {
     display: flex;
     flex-direction: column;
@@ -353,7 +353,7 @@
     line-height: 1.3;
 }
 
-/* ---------- Reviews ---------- */
+/* ---------- Reviews (LIST) ---------- */
 .landing-reviews-list {
     display: flex;
     flex-direction: column;

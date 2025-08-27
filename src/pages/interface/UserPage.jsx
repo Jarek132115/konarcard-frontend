@@ -167,7 +167,7 @@ const UserPage = () => {
     }
 
     const aboutMeLayout = businessCard.about_me_layout || "side-by-side";
-    const workDisplayMode = businessCard.work_display_mode || "list";        // 'list' | 'grid' | 'carousel'
+    const workDisplayMode = businessCard.work_display_mode || "list"; // 'list' | 'grid' | 'carousel'
     const servicesDisplayMode = businessCard.services_display_mode || "list";
     const reviewsDisplayMode = businessCard.reviews_display_mode || "list";
 
@@ -271,7 +271,7 @@ const UserPage = () => {
                 <>
                     <p className="landing-section-title">My Work</p>
 
-                    {/* LIST / GRID use the same container as MyProfile for identical behavior */}
+                    {/* LIST / GRID (vertical & grid like MyProfile) */}
                     {(workDisplayMode === "list" || workDisplayMode === "grid") && (
                         <div className={`landing-work-gallery ${workDisplayMode}`}>
                             {businessCard.works.map((url, i) => (
@@ -280,7 +280,7 @@ const UserPage = () => {
                         </div>
                     )}
 
-                    {/* CAROUSEL keeps the horizontal scroller + arrows */}
+                    {/* CAROUSEL (horizontal with arrows) */}
                     {workDisplayMode === "carousel" && (
                         <div className="user-carousel-container">
                             <div className="user-carousel-nav-buttons">
@@ -314,8 +314,22 @@ const UserPage = () => {
             {showServicesSection && businessCard.services?.length > 0 && (
                 <>
                     <p className="landing-section-title">My Services</p>
-                    <div className="user-carousel-container">
-                        {servicesDisplayMode === "carousel" && (
+
+                    {/* LIST (vertical list) */}
+                    {servicesDisplayMode === "list" && (
+                        <div className="landing-services-list">
+                            {businessCard.services.map((s, i) => (
+                                <div key={i} className="landing-service-item">
+                                    <p className="landing-service-name">{s.name}</p>
+                                    <span className="landing-service-price">{s.price}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* CAROUSEL (horizontal with arrows) */}
+                    {servicesDisplayMode === "carousel" && (
+                        <div className="user-carousel-container">
                             <div className="user-carousel-nav-buttons">
                                 <button
                                     type="button"
@@ -332,19 +346,16 @@ const UserPage = () => {
                                     &#9654;
                                 </button>
                             </div>
-                        )}
-                        <div
-                            ref={servicesCarouselRef}
-                            className={`user-services-list-carousel ${servicesDisplayMode === "carousel" ? "" : "list"}`}
-                        >
-                            {businessCard.services.map((s, i) => (
-                                <div key={i} className="landing-service-item">
-                                    <p className="landing-service-name">{s.name}</p>
-                                    <span className="landing-service-price">{s.price}</span>
-                                </div>
-                            ))}
+                            <div ref={servicesCarouselRef} className="user-services-list-carousel">
+                                {businessCard.services.map((s, i) => (
+                                    <div key={i} className="landing-service-item">
+                                        <p className="landing-service-name">{s.name}</p>
+                                        <span className="landing-service-price">{s.price}</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </>
             )}
 
@@ -352,29 +363,10 @@ const UserPage = () => {
             {showReviewsSection && businessCard.reviews?.length > 0 && (
                 <>
                     <p className="landing-section-title">Reviews</p>
-                    <div className="user-carousel-container">
-                        {reviewsDisplayMode === "carousel" && (
-                            <div className="user-carousel-nav-buttons">
-                                <button
-                                    type="button"
-                                    className="user-carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(reviewsCarouselRef, "left")}
-                                >
-                                    &#9664;
-                                </button>
-                                <button
-                                    type="button"
-                                    className="user-carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(reviewsCarouselRef, "right")}
-                                >
-                                    &#9654;
-                                </button>
-                            </div>
-                        )}
-                        <div
-                            ref={reviewsCarouselRef}
-                            className={`user-reviews-list-carousel ${reviewsDisplayMode === "carousel" ? "" : "list"}`}
-                        >
+
+                    {/* LIST (vertical list) */}
+                    {reviewsDisplayMode === "list" && (
+                        <div className="landing-reviews-list">
                             {businessCard.reviews.map((r, i) => (
                                 <div key={i} className="landing-review-card">
                                     <div className="landing-star-rating">
@@ -396,7 +388,51 @@ const UserPage = () => {
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    )}
+
+                    {/* CAROUSEL (horizontal with arrows) */}
+                    {reviewsDisplayMode === "carousel" && (
+                        <div className="user-carousel-container">
+                            <div className="user-carousel-nav-buttons">
+                                <button
+                                    type="button"
+                                    className="user-carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(reviewsCarouselRef, "left")}
+                                >
+                                    &#9664;
+                                </button>
+                                <button
+                                    type="button"
+                                    className="user-carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(reviewsCarouselRef, "right")}
+                                >
+                                    &#9654;
+                                </button>
+                            </div>
+                            <div ref={reviewsCarouselRef} className="user-reviews-list-carousel">
+                                {businessCard.reviews.map((r, i) => (
+                                    <div key={i} className="landing-review-card">
+                                        <div className="landing-star-rating">
+                                            {Array(r.rating || 0)
+                                                .fill()
+                                                .map((_, starIdx) => (
+                                                    <span key={`filled2-${starIdx}`}>★</span>
+                                                ))}
+                                            {Array(Math.max(0, 5 - (r.rating || 0)))
+                                                .fill()
+                                                .map((_, starIdx) => (
+                                                    <span key={`empty2-${starIdx}`} style={{ color: "#ccc" }}>
+                                                        ★
+                                                    </span>
+                                                ))}
+                                        </div>
+                                        <p className="landing-review-text">"{r.text}"</p>
+                                        <p className="landing-reviewer-name">{r.name}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </>
             )}
 
