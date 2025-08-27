@@ -337,7 +337,6 @@
     text-align: left;
     width: 100%;
     box-sizing: border-box;
-    margin-bottom: 36px;
 }
 
 .mock-about-content-group {
@@ -419,7 +418,6 @@
     flex-direction: column;
     gap: .75rem;
     width: 100%;
-    margin-bottom: 36px;
     padding: 0;
     background-color: transparent;
     border-radius: 0;
