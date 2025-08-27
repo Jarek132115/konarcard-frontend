@@ -211,12 +211,16 @@ const UserPage = () => {
                                 className="landing-avatar"
                             />
                         )}
+
+                        {/* ⬇️ keep name, role, AND bio inside the gray card */}
                         <div className="landing-about-content-group">
                             <p className="landing-profile-name">{businessCard.full_name}</p>
                             <p className="landing-profile-role">{businessCard.job_title}</p>
+                            {businessCard.bio && (
+                                <p className="landing-bio-text">{businessCard.bio}</p>
+                            )}
                         </div>
                     </div>
-                    {businessCard.bio && <p className="landing-bio-text">{businessCard.bio}</p>}
                 </>
             )}
 
