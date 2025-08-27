@@ -563,6 +563,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .mock-contact-label {
@@ -573,7 +574,7 @@
 }
 
 .mock-contact-value {
-    font-size: 0.95rem;
+    font-size: 12px;
     font-weight: normal;
     margin: 0;
     color: #111;
