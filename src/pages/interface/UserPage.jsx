@@ -203,6 +203,8 @@ const UserPage = () => {
             {showAboutMeSection && (businessCard.full_name || businessCard.job_title || businessCard.bio || businessCard.avatar) && (
                 <>
                     <p className="landing-section-title">About me</p>
+
+                    {/* SIDE-BY-SIDE now uses a header row + bio row */}
                     <div className={`landing-about-section ${aboutMeLayout}`}>
                         {businessCard.avatar && (
                             <img
@@ -212,17 +214,20 @@ const UserPage = () => {
                             />
                         )}
 
-                        {/* ⬇️ keep name, role, AND bio inside the gray card */}
-                        <div className="landing-about-content-group">
+                        {/* Header (name + role) sits to the right of avatar on row 1 */}
+                        <div className="landing-about-header">
                             <p className="landing-profile-name">{businessCard.full_name}</p>
                             <p className="landing-profile-role">{businessCard.job_title}</p>
-                            {businessCard.bio && (
-                                <p className="landing-bio-text">{businessCard.bio}</p>
-                            )}
                         </div>
+
+                        {/* Bio becomes row 2 spanning the full width */}
+                        {businessCard.bio && (
+                            <p className="landing-bio-text">{businessCard.bio}</p>
+                        )}
                     </div>
                 </>
             )}
+
 
             {/* My Work Section */}
             {showWorkSection && businessCard.works?.length > 0 && (
