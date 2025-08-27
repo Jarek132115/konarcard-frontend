@@ -563,17 +563,8 @@ export default function MyProfile() {
     }
 
     try {
-      // 1) Attempt to delete/reset the server-side card (adjust endpoint if yours differs)
-      try {
-        await api.delete('/api/business-card'); // e.g. server infers user from auth
-        // If your backend expects a userId: await api.delete(`/api/business-card/${userId}`);
-        // Or a POST reset: await api.post('/api/business-card/reset');
-      } catch (err) {
-        // Ignore 404 or not-implemented; proceed with local reset
-        if (err?.response?.status !== 404) {
-          // Optional: console.warn('Server reset failed; continuing with client reset anyway.', err);
-        }
-      }
+      // 1) Delete the card on the server
+      await api.delete('/api/business-card/my_card');
 
       // 2) Revoke any active blob URLs to avoid memory leaks
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
@@ -587,16 +578,17 @@ export default function MyProfile() {
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
 
-      // 4) Reset Zustand to a fresh template (instant UI reset)
+      // 4) Reset Zustand to the fresh template (instant UI reset)
       resetState();
 
-      // 5) Clear any cached server data so `businessCard` becomes null (shows placeholders)
+      // 5) Clear + refetch the cached card so `businessCard` becomes null (placeholders show)
+      await queryClient.invalidateQueries(['businessCard', userId]);
       queryClient.setQueryData(['businessCard', userId], null);
-      queryClient.removeQueries({ queryKey: ['businessCard', userId] });
 
       toast.success("Your page has been reset to the default template.");
-    } catch (e) {
-      toast.error("Failed to fully reset. Please try again.");
+    } catch (err) {
+      console.error("Reset failed", err);
+      toast.error(err?.response?.data?.error || "Failed to reset page.");
     }
   };
 
