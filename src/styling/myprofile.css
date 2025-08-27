@@ -378,6 +378,7 @@
     background-position: center;
 }
 
+
 .mock-profile-name {
     font-weight: 700;
     margin: 0;
@@ -1614,8 +1615,9 @@
 
 .mock-about-container.stacked .mock-avatar {
     width: 100%;
-    height: 100%;
-    aspect-ratio: 1/1;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
     margin-bottom: 0.5rem;
 }
 
@@ -1740,10 +1742,11 @@
     gap: 0.6rem;
 }
 
-.mock-phone.mobile-preview .mock-avatar {
+.mock-phone.mobile-preview .mock-about-container.stacked .mock-avatar {
     width: 100%;
-    height: 100%;
-    aspect-ratio: 1/1;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
 }
 
 .mock-phone.mobile-preview .mock-profile-name {
