@@ -475,3 +475,28 @@
         gap: 20px;
     }
 }
+
+/* === Center services & reviews like the MyProfile preview === */
+
+/* Center the cards' content no matter list or carousel */
+.user-services-list-carousel,
+.user-reviews-list-carousel {
+    align-items: center;
+    /* centers each flex item/card on the track */
+}
+
+/* Cards themselves: center text & contents */
+.landing-service-item,
+.landing-review-card {
+    text-align: center;
+    align-items: center;
+    /* they are display:flex, flex-direction:column */
+}
+
+/* Make sure inner text blocks are centered too */
+.landing-service-name,
+.landing-service-price,
+.landing-review-text,
+.landing-reviewer-name {
+    text-align: center;
+}
