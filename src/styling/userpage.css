@@ -140,7 +140,6 @@
     grid-column: 1;
     grid-row: 1;
     width: 50px;
-    /* ← fixed 50x50 */
     height: 50px;
     border-radius: 10px;
     object-fit: cover;
