@@ -431,6 +431,7 @@
     padding: 14px 16px;
     width: 100%;
     box-sizing: border-box;
+    max-width: 800px;
 }
 
 .landing-contact-item {
