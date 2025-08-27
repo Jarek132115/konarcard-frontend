@@ -476,3 +476,41 @@
     }
 }
 
+/* Keep the service/review tracks full width (don't center the cards themselves) */
+.user-services-list-carousel,
+.user-reviews-list-carousel {
+    align-items: stretch !important;
+    /* cross-axis */
+}
+
+/* Ensure cards span the full track width */
+.user-services-list-carousel .landing-service-item,
+.user-reviews-list-carousel .landing-review-card,
+.landing-services-list .landing-service-item,
+.landing-reviews-list .landing-review-card {
+    width: 100%;
+    max-width: 800px;
+    /* matches your track max */
+}
+
+/* Center the content inside the cards only */
+.user-services-list-carousel .landing-service-item,
+.user-reviews-list-carousel .landing-review-card,
+.landing-services-list .landing-service-item,
+.landing-reviews-list .landing-review-card {
+    text-align: center;
+}
+
+/* Make sure the inner text lines are centered too */
+.landing-service-name,
+.landing-service-price,
+.landing-review-text,
+.landing-reviewer-name {
+    text-align: center;
+}
+
+/* Center the star row */
+.landing-star-rating {
+    display: flex;
+    justify-content: center;
+}
