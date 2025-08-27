@@ -1615,6 +1615,7 @@
 .mock-about-container.stacked .mock-avatar {
     width: 100%;
     height: 100%;
+    aspect-ratio: 1/1;
     margin-bottom: 0.5rem;
 }
 
@@ -1740,10 +1741,9 @@
 }
 
 .mock-phone.mobile-preview .mock-avatar {
-    width: 2.75rem;
-    height: 2.75rem;
-    min-width: 2.75rem;
-    min-height: 2.75rem;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1/1;
 }
 
 .mock-phone.mobile-preview .mock-profile-name {
