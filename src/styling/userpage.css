@@ -21,12 +21,15 @@
 
 /* Subtle muted lines (subtitle, role, etc.) */
 .user-landing-page .landing-sub-heading,
-.user-landing-page .landing-profile-role,
 .user-landing-page .landing-service-item .landing-service-price,
 .user-landing-page .landing-contact-label {
     color: #ffffff;
-    ;
     /* slate-500 */
+}
+
+.user-landing-page .landing-profile-role {
+    color: #000000;
+
 }
 
 /* Do NOT flip card backgrounds in dark mode — keep them white like the design */
