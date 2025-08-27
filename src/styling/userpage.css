@@ -1,5 +1,3 @@
-/* userpage.css */
-
 /* Main container for the public landing page */
 .user-landing-page {
     width: 100%;
@@ -37,10 +35,14 @@
     color: white !important;
 }
 
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-review-card .landing-review-text {
+/* make bio readable in dark card */
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-bio-text {
     color: #ddd !important;
 }
 
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-review-card .landing-review-text {
+    color: #ddd !important;
+}
 
 /* Cover Photo */
 .landing-cover-photo {
@@ -117,7 +119,7 @@
     margin-bottom: 1.5rem;
 }
 
-/* About Me layout options */
+/* layout options */
 .landing-about-section.side-by-side {
     align-items: center;
     gap: 1rem;
@@ -130,20 +132,15 @@
     text-align: center;
 }
 
-/* Adjustments for stacked layout */
-.landing-about-section.stacked .landing-about-content-group {
-    text-align: center;
+/* content column inside the gray card */
+.landing-about-content-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1 1 auto;
+    min-width: 0;
+    /* helps text wrap nicely */
 }
-
-.landing-about-section.stacked .landing-avatar {
-    margin-bottom: 1rem;
-}
-
-.landing-about-section.stacked .landing-profile-name,
-.landing-about-section.stacked .landing-profile-role {
-    text-align: center;
-}
-
 
 /* Avatar image within the about section */
 .landing-avatar {
@@ -166,26 +163,23 @@
     color: #777;
 }
 
-/* Adjusted bio text below the about section */
+/* Bio now lives INSIDE the gray card */
 .landing-bio-text {
-    text-align: left;
     font-size: 0.9375rem;
-    margin-top: 1rem;
+    margin: 0.35rem 0 0 0;
     line-height: 1.5;
-    width: 100%;
-    max-width: 800px;
+    white-space: pre-line;
+    /* respect line breaks like on MyProfile */
 }
 
-/* --- START: NEW CAROUSEL STYLES FOR USERPAGE --- */
+/* --- START: CAROUSEL STYLES --- */
 
-/* Wrapper for carousel content and navigation buttons */
 .user-carousel-container {
     position: relative;
     width: 100%;
     max-width: 800px;
 }
 
-/* Carousel navigation buttons */
 .user-carousel-nav-buttons {
     position: absolute;
     top: 50%;
@@ -219,70 +213,51 @@
     background-color: rgba(0, 0, 0, 0.6);
 }
 
-/* Container for the carousel items */
 .user-work-gallery-carousel,
 .user-services-list-carousel,
 .user-reviews-list-carousel {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    /* Prevents items from wrapping to a new line */
     gap: 1rem;
     width: 100%;
     max-width: 800px;
     overflow-x: auto;
-    /* Enables horizontal scrolling */
     scroll-snap-type: x mandatory;
-    /* Snaps to each item when scrolling */
     -webkit-overflow-scrolling: touch;
-    /* Improves scrolling on iOS */
     scrollbar-width: none;
-    /* Hides scrollbar for Firefox */
 }
 
-/* Hide scrollbar for other browsers (like Chrome, Safari) */
 .user-work-gallery-carousel::-webkit-scrollbar,
 .user-services-list-carousel::-webkit-scrollbar,
 .user-reviews-list-carousel::-webkit-scrollbar {
     display: none;
 }
 
-/* Individual item styling for carousel mode */
 .user-work-gallery-carousel .landing-work-image,
 .user-services-list-carousel .landing-service-item,
 .user-reviews-list-carousel .landing-review-card {
     flex-shrink: 0;
-    /* Prevents items from shrinking */
     flex-grow: 0;
-    /* Prevents items from growing */
     flex-basis: 100%;
-    /* Each item takes up 100% of the container width */
     max-width: 100%;
-    /* Ensures it doesn't get wider than container */
     scroll-snap-align: start;
-    /* Aligns the start of the item with the container's scroll-snap position */
     box-sizing: border-box;
-    /* Ensures padding and border are included in the element's total width and height */
 }
 
-/* Adjust padding for the review cards and service items in carousel mode */
 .user-services-list-carousel .landing-service-item,
 .user-reviews-list-carousel .landing-review-card {
     padding-right: 0.5rem;
-    /* Add some space between items */
 }
 
-/* You might need to add a small adjustment to the container to see the gap */
 .user-services-list-carousel,
 .user-reviews-list-carousel {
     padding-right: 1rem;
 }
 
-/* --- END: NEW CAROUSEL STYLES FOR USERPAGE --- */
+/* --- END: CAROUSEL STYLES --- */
 
-
-/* My Work section images gallery */
-/* The general gallery styles have been changed to be more flexible */
+/* Work gallery */
 .landing-work-gallery {
     display: flex;
     flex-direction: row;
@@ -293,14 +268,12 @@
     scroll-snap-type: x mandatory;
 }
 
-/* Specific rules for list mode */
 .landing-work-gallery.list {
     flex-direction: column;
     overflow-x: hidden;
     scroll-snap-type: none;
 }
 
-/* Specific rules for grid mode */
 .landing-work-gallery.grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -316,7 +289,7 @@
     border-radius: 0.5rem;
 }
 
-/* My Services List */
+/* Services */
 .landing-services-list {
     display: flex;
     flex-direction: column;
@@ -349,7 +322,7 @@
     line-height: 1.3;
 }
 
-/* Reviews List */
+/* Reviews */
 .landing-reviews-list {
     display: flex;
     flex-direction: column;
@@ -388,7 +361,7 @@
     margin: 0;
 }
 
-/* Contact Details Section */
+/* Contact Details */
 .landing-contact-details {
     display: flex;
     flex-direction: column;
@@ -421,13 +394,12 @@
     color: #000;
 }
 
-/* --- Responsive Adjustments for larger screens (e.g., tablet and desktop) --- */
+/* Responsive */
 @media (min-width: 768px) {
     .user-landing-page {
         padding: 3rem 2rem;
     }
 
-    /* Example: Two columns for work images on tablet/desktop */
     .landing-work-gallery.grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem;
