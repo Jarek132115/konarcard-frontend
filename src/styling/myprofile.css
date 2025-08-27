@@ -208,7 +208,7 @@
 }
 
 .mock-phone.mobile-preview {
-    max-width: 360px;
+    max-width: 100%;
     padding: 16px;
     border-width: 6px;
     border-radius: 20px;
@@ -1248,7 +1248,7 @@
         padding: 20px;
         border-width: 6px;
         border-radius: 20px;
-        height: auto !important;
+        height: 500px;
         overflow: visible !important;
         max-width: 100%;
     }
