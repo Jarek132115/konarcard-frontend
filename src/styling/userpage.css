@@ -27,9 +27,17 @@
     /* slate-500 */
 }
 
+/* Subheading default (light mode = black) */
 .user-landing-page .landing-sub-heading {
-    color: white;
+    color: #000;
+    /* black in light mode */
 }
+
+/* Subheading in dark mode = white */
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-sub-heading {
+    color: #fff;
+}
+
 
 /* Do NOT flip card backgrounds in dark mode — keep them white like the design */
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-about-section,
