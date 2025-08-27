@@ -24,7 +24,7 @@
 .user-landing-page .landing-profile-role,
 .user-landing-page .landing-service-item .landing-service-price,
 .user-landing-page .landing-contact-label {
-    color: #bdbdbd;
+    color: #cccccc;
     /* slate-500 */
 }
 
@@ -190,7 +190,7 @@
 .landing-profile-role {
     font-size: 0.9rem;
     margin: 0;
-    color: #bdbdbd;
+    color: #cccccc;
 }
 
 .landing-bio-text {
@@ -419,7 +419,7 @@
 .landing-reviewer-name {
     font-size: 0.9rem;
     font-weight: 700;
-    color: #bababa;
+    color: #cccccc;
     margin: 0;
 }
 
@@ -444,7 +444,7 @@
     font-size: 0.95rem;
     font-weight: 700;
     margin: 0;
-    color: #bcbcbc;
+    color: #cccccc;
 }
 
 .landing-contact-value {
