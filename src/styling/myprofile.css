@@ -197,7 +197,7 @@
     border: 8px solid black;
     border-radius: 30px;
     padding: 20px;
-    text-align: center;
+    text-align: left;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -1017,7 +1017,7 @@
     border-radius: 8px;
     background-color: var(--primary-bg);
     color: var(--text-color);
-    text-align: center;
+    text-align: left;
     max-width: 600px;
     width: 100%;
     box-sizing: border-box;
