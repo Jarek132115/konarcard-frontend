@@ -101,8 +101,8 @@
 }
 
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-action-button {
-    background: #fff;
-    color: #000;
+    background: #0081FF;
+    color: #ffffff;
 }
 
 /* Section title */
