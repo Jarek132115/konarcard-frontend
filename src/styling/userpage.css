@@ -24,7 +24,8 @@
 .user-landing-page .landing-profile-role,
 .user-landing-page .landing-service-item .landing-service-price,
 .user-landing-page .landing-contact-label {
-    color: #cccccc;
+    color: #333;
+    ;
     /* slate-500 */
 }
 
@@ -190,7 +191,7 @@
 .landing-profile-role {
     font-size: 0.9rem;
     margin: 0;
-    color: #cccccc;
+    color: #333;
 }
 
 .landing-bio-text {
