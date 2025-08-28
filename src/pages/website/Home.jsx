@@ -100,6 +100,14 @@ export default function Home() {
             <h1 className="desktop-h1 hero-heading">Stand Out. Get Noticed. Grow Your Business.</h1>
             <p style={{ maxWidth: 380 }} className="desktop-h6 hero-subtitle">
               Create a sleek digital profile that showcases your work and gets you hired.</p>
+
+            <div className="hero-cta">
+              {/* REVISED: This CTA now links to the main pricing page to present all options. */}
+              <Link to="/productandplan" className="cta-blue-button desktop-button">View Plans & Cards</Link>
+              <Link to="/productandplan/konarsubscription" className="cta-black-button desktop-button">
+                See How It Works
+              </Link>
+            </div>
             <div className="hero-social-proof">
               <div className="hero-avatars">
                 <img src={Profile1} alt="User 1" className="avatar" />
@@ -109,13 +117,6 @@ export default function Home() {
                 <img src={Profile5} alt="User 5" className="avatar" />
               </div>
               <p className="hero-rating">Trusted by 1,000+ tradies</p>
-            </div>
-            <div className="hero-cta">
-              {/* REVISED: This CTA now links to the main pricing page to present all options. */}
-              <Link to="/productandplan" className="cta-blue-button desktop-button">View Plans & Cards</Link>
-              <Link to="/productandplan/konarsubscription" className="cta-black-button desktop-button">
-                See How It Works
-              </Link>
             </div>
 
             <div className="hero-tick-wrap">
