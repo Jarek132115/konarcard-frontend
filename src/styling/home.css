@@ -1047,6 +1047,22 @@
         gap: 10px;
     }
 
+    .review-div-person>img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        /* fully rounded */
+        object-fit: cover;
+        /* crop, don’t squish */
+        object-position: center;
+        flex: 0 0 40px;
+        /* prevent stretching in flex */
+        display: block;
+        /* remove inline gap */
+        border: 1px solid #e6e6e6;
+        /* optional subtle edge */
+    }
+
     .stars {
         width: 120px;
         margin: 0 auto;
