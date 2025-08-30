@@ -114,8 +114,8 @@ export default function Home() {
                 <img src={Profile3} alt="User 3" className="avatar" />
               </div>
               <div className='avatar-text'>
-                <p className="hero-rating">Trusted by 1,000+ tradies</p>
-                <p className="hero-rating">Trusted by 1,000+ tradies</p>
+                <p style={{fontWeight: 700}} className="desktop-body-s">Trusted by 1,000+ tradies</p>
+                <p className="desktop-body-xs light-black">Trusted by 1,000+ tradies</p>
               </div>
             </div>
           </div>
