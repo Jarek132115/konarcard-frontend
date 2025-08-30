@@ -94,7 +94,6 @@ export default function Home() {
       <Navbar />
 
       <div className="home-hero">
-        <img src={BackgroundHero} alt="Hero Background" className="hero-image" />
         <div className="hero-container">
           <div className="hero-left">
             <h1 className="desktop-h1 hero-heading">Stand Out. Get Noticed. Grow Your Business.</h1>
