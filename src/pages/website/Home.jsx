@@ -116,7 +116,7 @@ export default function Home() {
                 <img src={pp3} alt="User 3" className="avatar" />
               </div>
               <div className='avatar-text'>
-                <p style={{fontWeight: 900}} className="desktop-body-s">1k+</p>
+                <p style={{fontWeight: 900}} className="desktop-h6">1k+</p>
                 <p className="desktop-body-xs light-black">Trusted by 1,000+ tradies</p>
               </div>
             </div>
