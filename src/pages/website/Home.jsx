@@ -112,33 +112,8 @@ export default function Home() {
                 <img src={Profile1} alt="User 1" className="avatar" />
                 <img src={Profile2} alt="User 2" className="avatar" />
                 <img src={Profile3} alt="User 3" className="avatar" />
-                <img src={Profile4} alt="User 4" className="avatar" />
-                <img src={Profile5} alt="User 5" className="avatar" />
               </div>
               <p className="hero-rating">Trusted by 1,000+ tradies</p>
-            </div>
-
-            <div className="hero-tick-wrap">
-              <div className="hero-tick-row">
-                <div className="hero-tick">
-                  <img src={TickIcon} className="icon" />
-                  <p>Custom Digital Profile</p>
-                </div>
-                <div className="hero-tick">
-                  <img src={TickIcon} className="icon" />
-                  <p>Share in Seconds</p>
-                </div>
-              </div>
-              <div className="hero-tick-row">
-                <div className="hero-tick">
-                  <img src={TickIcon} className="icon" />
-                  <p>Made for Tradespeople</p>
-                </div>
-                <div className="hero-tick">
-                  <img src={TickIcon} className="icon" />
-                  <p>Updates Instantly</p>
-                </div>
-              </div>
             </div>
           </div>
 
