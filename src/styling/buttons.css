@@ -62,49 +62,98 @@
   box-shadow: 0px 2px 8px rgba(0, 129, 255, 0.5);
 }
 
+/* ===== Redesigned CTA buttons (pill outline like image) ===== */
+.cta-blue-button,
+.cta-black-button {
+  -webkit-tap-highlight-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 26px;
+  /* comfy pill */
+  border-radius: 9999px;
+  /* full pill */
+  font-weight: 700;
+  line-height: 1.1;
+  text-decoration: none;
+  background: #FFFFFF;
+  /* white fill */
+  transition: background-color .15s ease, box-shadow .15s ease, transform .05s ease;
+  min-height: 44px;
+  /* touch target */
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    /* subtle lift */
+    0 8px 24px rgba(0, 0, 0, 0.08);
+  /* soft outer glow */
+}
+
+/* Blue outline + blue text */
 .cta-blue-button {
-  background-color: #0081FF;
-  padding: 10px 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  color: white;
-  transition: all 0.2s ease;
+  color: #0081FF;
+  border: 2px solid #0081FF;
 }
 
 .cta-blue-button:hover {
-  background-color: #006edc;
-  box-shadow: 0px 4px 12px rgba(0, 129, 255, 0.3);
+  background-color: #ffffff;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 14px 28px rgba(0, 129, 255, 0.22),
+    0 0 0 4px rgba(0, 129, 255, 0.12);
+  /* blue halo like the mock */
   cursor: pointer;
 }
 
 .cta-blue-button:active {
-  background-color: #006edc;
   transform: scale(0.98);
-  box-shadow: 0px 2px 8px rgba(0, 129, 255, 0.5);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 8px 16px rgba(0, 129, 255, 0.18),
+    0 0 0 3px rgba(0, 129, 255, 0.15);
 }
 
+.cta-blue-button:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 4px rgba(0, 129, 255, 0.18),
+    0 8px 24px rgba(0, 129, 255, 0.25);
+}
+
+/* Black outline + black text */
 .cta-black-button {
-  background: var(--White, #FFF);
-  padding: 10px 20px;
-  border-radius: 50%;
-  border: 2px solid var(--Black, #000);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: fit-content;
-  transition: all 0.2s ease;
+  color: #111;
+  /* rich black text */
+  border: 2px solid #111;
+  /* crisp outline */
 }
 
 .cta-black-button:hover {
-  background-color: #f0f8ff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.08),
+    0 14px 28px rgba(0, 0, 0, 0.14),
+    0 0 0 4px rgba(0, 0, 0, 0.06);
+  /* soft grey halo */
   cursor: pointer;
 }
 
 .cta-black-button:active {
-  background-color: #e0f0ff;
   transform: scale(0.98);
-  box-shadow: 0px 2px 8px rgba(0, 129, 255, 0.5);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.07),
+    0 8px 16px rgba(0, 0, 0, 0.12),
+    0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 
+.cta-black-button:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 4px rgba(0, 0, 0, 0.10),
+    0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+/* Keep existing alt subscribe button */
 .black-button-subscribe {
   background-color: white;
   padding: 10px 20px;
@@ -149,6 +198,12 @@
     display: flex;
     text-align: center;
     justify-content: center;
+  }
+
+  /* Make CTAs full-width on small screens for better tap targets */
+  .cta-blue-button,
+  .cta-black-button {
+    width: 100%;
   }
 }
 
