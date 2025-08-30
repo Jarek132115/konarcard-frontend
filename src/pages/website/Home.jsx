@@ -41,7 +41,9 @@ import QRCode from '../../assets/images/QR-Code.jpg';
 import ScanQRCode from '../../assets/images/ScanQR-Code.jpg';
 import LinkInBio from '../../assets/images/LinkInBio.jpg';
 import SMSSend from '../../assets/images/SMSSend.jpg';
-
+import pp1 from '../../assets/images/pp1.png'
+import pp2 from '../../assets/images/pp2.png'
+import pp3 from '../../assets/images/pp3.png'
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
@@ -109,9 +111,9 @@ export default function Home() {
             </div>
             <div className="hero-social-proof">
               <div className="hero-avatars">
-                <img src={Profile1} alt="User 1" className="avatar" />
-                <img src={Profile2} alt="User 2" className="avatar" />
-                <img src={Profile3} alt="User 3" className="avatar" />
+                <img src={pp1} alt="User 1" className="avatar" />
+                <img src={pp2} alt="User 2" className="avatar" />
+                <img src={pp3} alt="User 3" className="avatar" />
               </div>
               <div className='avatar-text'>
                 <p style={{fontWeight: 900}} className="desktop-body-s">1k+</p>
