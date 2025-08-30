@@ -144,7 +144,6 @@ export default function Home() {
       </div>
 
 
-      <div className="full-width-bg-container section-bg-grey first-section-after-hero">
         <div className="section">
           <div className="section-1-title">
             <h2 className="desktop-h3 text-center">Your Professional Page. Built for Your Trade.</h2>
@@ -197,7 +196,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
 
 
       <div className="section">
@@ -253,7 +251,6 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="full-width-bg-container section-bg-grey">
         <div className="section">
           <div className="section-1-title">
             <h2 className='desktop-h3 text-center'>Why Tradesmen Love Using This</h2>
@@ -304,7 +301,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
 
       <div className="section">
         <div className="section-1-title">
@@ -340,7 +336,6 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="full-width-bg-container section-bg-grey">
         <div className="section">
           <div className="section-1-title">
             <h2 className='desktop-h2 text-center'>Our Plans & Cards</h2>
@@ -413,7 +408,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
 
       <div className="section">
         <div className="section-1-title">
@@ -446,7 +440,6 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="full-width-bg-container section-bg-grey">
         <div className="section">
           <div className="section-1-title">
             <h2 className='desktop-h2 text-center'>The #1 Tool Tradies Are Talking About</h2>
@@ -560,7 +553,6 @@ export default function Home() {
             <Link to="/reviews" className="black-button desktop-button">Read More Reviews</Link>
           </div>
         </div>
-      </div>
 
       <div className="section">
         <div className="section-1-title">
