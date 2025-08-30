@@ -97,7 +97,7 @@ export default function Home() {
         <div className="hero-container">
           <div className="hero-left">
             <h1 className="desktop-h1 hero-heading">Stand Out. Get Noticed. Grow Your <span className='blue'>Business.</span></h1>
-            <p style={{fontWeight: 600}} className="desktop-h6 desktop-body">
+            <p style={{ fontWeight: 600 }} className="desktop-h6 desktop-body">
               Build a professional profile that gets you noticed, and share it effortlessly through your Konar Card with a single tap.</p>
 
             <div className="hero-cta">
@@ -113,7 +113,10 @@ export default function Home() {
                 <img src={Profile2} alt="User 2" className="avatar" />
                 <img src={Profile3} alt="User 3" className="avatar" />
               </div>
-              <p className="hero-rating">Trusted by 1,000+ tradies</p>
+              <div>
+                <p className="hero-rating">Trusted by 1,000+ tradies</p>
+                <p className="hero-rating">Trusted by 1,000+ tradies</p>
+              </div>
             </div>
           </div>
 
