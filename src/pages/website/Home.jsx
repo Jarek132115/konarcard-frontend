@@ -113,7 +113,7 @@ export default function Home() {
                 <img src={Profile2} alt="User 2" className="avatar" />
                 <img src={Profile3} alt="User 3" className="avatar" />
               </div>
-              <div>
+              <div className='avatar-text'>
                 <p className="hero-rating">Trusted by 1,000+ tradies</p>
                 <p className="hero-rating">Trusted by 1,000+ tradies</p>
               </div>

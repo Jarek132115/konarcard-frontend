@@ -270,6 +270,11 @@
         position: relative;
     }
 
+    .avatar-text {
+        display: flex;
+        gap: 5px;
+    }
+
     .hero-avatars .avatar {
         width: 40px;
         height: 40px;
