@@ -4,7 +4,6 @@ import Breadcrumbs from '../../components/Breadcrumbs'
 import Footer from '../../components/Footer'
 import ReviewStars from '../../assets/icons/Stars-Icon.svg'
 
-// Import profile images
 import pp1 from '../../assets/images/pp1.png'
 import pp2 from '../../assets/images/pp2.png'
 import pp3 from '../../assets/images/pp3.png'
