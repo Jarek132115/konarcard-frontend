@@ -92,7 +92,7 @@
 /* Blue outline + blue text */
 .cta-blue-button {
   color: #0081FF;
-  border: 2px solid #0081FF;
+  border: 4px solid #0081FF;
 }
 
 .cta-blue-button:hover {
@@ -124,7 +124,7 @@
 .cta-black-button {
   color: #111;
   /* rich black text */
-  border: 2px solid #111;
+  border: 4px solid #111;
   /* crisp outline */
 }
 
