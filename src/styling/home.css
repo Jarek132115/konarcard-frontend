@@ -1010,22 +1010,21 @@
     }
 
 
-    /* SECTION 8 */
-
-    /* Grid for all reviews */
+    /* Desktop default: 4 per row */
     .review-container-box {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        /* 3 equal columns */
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        /* 4 columns */
         gap: 20px;
     }
 
-    /* Flatten intermediate wrappers so each .review-div becomes a grid item */
+    /* Flatten wrappers so each .review-div is a grid item */
     .review-container,
     .review-pair {
         display: contents;
     }
 
+    /* Cards */
     .review-div {
         display: flex;
         flex-direction: column;
@@ -1037,13 +1036,13 @@
         gap: 10px;
         width: 100%;
         box-sizing: border-box;
-        /* prevent overflow affecting width */
     }
 
+    /* Avatar row */
     .review-div-person {
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
         gap: 10px;
     }
 
@@ -1051,16 +1050,11 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        /* fully rounded */
         object-fit: cover;
-        /* crop, don’t squish */
         object-position: center;
         flex: 0 0 40px;
-        /* prevent stretching in flex */
         display: block;
-        /* remove inline gap */
         border: 1px solid #e6e6e6;
-        /* subtle edge */
     }
 
     .stars {
@@ -1068,57 +1062,35 @@
         margin: 0 auto;
     }
 
-    /* CTA styling */
-    .cta-center-text.review-cta {
-        margin-top: 60px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        width: 100%;
+    /* ---------- Responsive ---------- */
+    /* Large tablets/small desktops: 3 per row */
+    @media (max-width: 1200px) {
+        .review-container-box {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
     }
 
-    /* ---------- Responsive ---------- */
+    /* Tablets: 2 per row */
     @media (max-width: 1000px) {
         .review-container-box {
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            /* 2 equal columns */
             gap: 16px;
-        }
-
-        .cta-center-text.review-cta .desktop-button {
-            width: 100%;
-            max-width: 100%;
-        }
-
-        .review-btn {
-            width: 100%;
-            text-align: center;
-            display: block;
-        }
-
-        .cta-center-text.review-cta {
-            margin-top: 40px;
-            gap: 5px;
         }
     }
 
+    /* Phones: 1 per row */
     @media (max-width: 600px) {
         .review-container-box {
             grid-template-columns: 1fr;
-            /* single column */
             gap: 12px;
         }
 
         .review-div {
             padding: 20px;
         }
-
-        .cta-center-text.review-cta {
-            margin-top: 20px;
-            gap: 5px;
-        }
     }
+
 
 
     /* SECTION 9 */
