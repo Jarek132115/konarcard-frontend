@@ -97,7 +97,7 @@ export default function Home() {
         <div className="hero-container">
           <div className="hero-left">
             <h1 className="desktop-h1 hero-heading">Stand Out. Get Noticed. Grow Your <span className='blue'>Business.</span></h1>
-            <p className="desktop-h6 hero-subtitle">
+            <p className="desktop-h6 desktop-body">
               Build a professional profile that gets you noticed, and share it effortlessly through your Konar Card with a single tap.</p>
 
             <div className="hero-cta">
