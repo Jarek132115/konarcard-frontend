@@ -615,7 +615,7 @@ body {
 .step-bullets {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
 }
 
 .step-bullets .section-list {
