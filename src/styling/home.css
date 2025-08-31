@@ -111,8 +111,10 @@ body {
 }
 
 .hero-heading {
-    width: 100%;
-    max-width: 500px
+    width: 540px;
+    max-width: none;
+    overflow: visible;
+    /* ensure any overflow shows */
 }
 
 .hero-tick-wrap {
