@@ -114,6 +114,7 @@ body {
     width: 540px;
     max-width: none;
     overflow: visible;
+    margin-bottom: 10px;
     /* ensure any overflow shows */
 }
 
