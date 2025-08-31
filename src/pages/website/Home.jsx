@@ -143,7 +143,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* --- NEW STEP CARDS (replace the 3 old sections) --- */}
+      {/* --- STEP CARDS --- */}
 
       {/* Step 1 */}
       <div className="section step-section">

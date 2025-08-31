@@ -539,7 +539,7 @@ body {
     }
 }
 
-/* --- NEW: STEP CARD LAYOUT (matches screenshot) --- */
+/* --- STEP CARD LAYOUT (updated to make images half width, top-aligned, with 10px padding on top/bottom + outer side) --- */
 .step-section {
     margin-top: 60px;
 }
@@ -561,32 +561,65 @@ body {
     border: 1px solid #e9e9e9;
     border-radius: 20px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    padding: 24px;
+    /* remove internal padding so media can reach the top edge area;
+       we'll control spacing from each side individually */
+    padding: 0;
     display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    gap: 24px;
-    align-items: center;
+    grid-template-columns: 1fr 1fr;
+    /* exact halves */
+    gap: 0;
+    align-items: stretch;
+    /* let both columns stretch to full card height */
+    min-height: 420px;
+    /* gives the media height to fill */
+}
+
+/* MEDIA SIDE */
+.step-card .step-media {
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+    /* top/bottom + outer-side padding = 10px */
+    padding: 10px 0 10px 10px;
+    /* default (image on left): outer side = left */
+    box-sizing: border-box;
+}
+
+.step-card.reverse .step-media {
+    padding: 10px 10px 10px 0;
+    /* image on right: outer side = right */
 }
 
 .step-card .step-media img {
     width: 100%;
     height: 100%;
-    max-height: 360px;
     object-fit: cover;
-    border-radius: 14px;
+    border-radius: 12px;
     display: block;
 }
 
+/* TEXT SIDE */
+.step-card .step-text {
+    align-self: start;
+    /* pin to the top */
+    padding: 20px;
+    /* comfortable text padding */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 .step-card .step-text h3 {
-    margin-bottom: 16px;
+    margin-bottom: 6px;
 }
 
 .step-note {
-    margin-top: 8px;
-    margin-bottom: 10px;
+    margin-top: 4px;
+    margin-bottom: 6px;
     color: #666;
 }
 
+/* reverse order for the middle card */
 .step-card.reverse .step-media {
     order: 2;
 }
@@ -598,8 +631,12 @@ body {
 @media (max-width: 1000px) {
     .step-card {
         grid-template-columns: 1fr;
-        gap: 18px;
-        padding: 20px;
+        min-height: unset;
+    }
+
+    .step-card .step-media {
+        padding: 10px;
+        /* when stacked, just give 10px all around */
     }
 
     .step-card.reverse .step-media,
@@ -613,136 +650,91 @@ body {
 }
 
 /* SECTION 7 - TRADESMEN USE IT (SPECIFIC STYLES) */
-/* Main container for the image collage */
 .people-showcase-container-flex {
-    /* NEW: Main flex container for the section */
     display: flex;
     gap: 10px;
     height: 500px;
-    /* Fixed height for desktop to control overall aspect ratio */
     align-items: stretch;
-    /* Stretch children to fill height */
     justify-content: center;
-    /* Center the overall grid */
 }
 
-/* Left Column: Single large image (40% width) */
 .people-showcase-left-col {
     flex: 0 0 40%;
-    /* Flex-grow 0, flex-shrink 0, basis 40% */
     overflow: hidden;
     border-radius: 20px;
     height: 100%;
-    /* Take full height of parent */
 }
 
-/* Right Column: Contains top row (2 images) and bottom single image (60% width, flex-direction: column) */
 .people-showcase-right-col {
     flex: 0 0 calc(60% - 20px);
-    /* Take 60% width minus the gap */
     display: flex;
     flex-direction: column;
     gap: 10px;
-    /* Gap between top row and bottom image */
     height: 100%;
-    /* Take full height of parent */
 }
 
-/* Top Row in Right Column: Two images side-by-side (flex-direction: row) */
 .people-showcase-top-row-flex {
     display: flex;
     flex: 1;
-    /* Allow to grow to take top space */
     gap: 10px;
     height: 50%;
-    /* Take 50% height of parent .people-showcase-right-col */
 }
 
-/* Bottom Single Image in Right Column */
 .people-showcase-bottom-single {
     flex: 1;
-    /* Allow to grow to take bottom space */
     overflow: hidden;
     border-radius: 20px;
     height: 50%;
-    /* Take 50% height of parent .people-showcase-right-col */
 }
 
-/* Individual image boxes (used within top row) */
 .people-showcase-box {
     flex: 1;
-    /* Make them share space equally */
     overflow: hidden;
     border-radius: 20px;
     height: 100%;
-    /* Fill height of their parent flex container */
 }
 
-/* Images themselves */
 .people-showcase-img {
     width: 100%;
     height: 100%;
-    /* Make image fill its container */
     object-fit: cover;
-    /* Cover the area, cropping if necessary */
     border-radius: 20px;
-    /* Apply to all images */
 }
 
-
-/* RESPONSIVE for SECTION 7 (Below 800px) */
 @media (max-width: 800px) {
     .people-showcase-container-flex {
         flex-direction: column;
-        /* Stack columns vertically */
         height: auto;
-        /* Allow height to be dynamic when stacked */
         margin-top: 20px;
         gap: 10px;
-        /* Space between stacked columns */
         align-items: center;
-        /* Center the stacked columns */
     }
 
     .people-showcase-left-col,
     .people-showcase-right-col {
         flex: unset;
-        /* Remove flex basis */
         width: 100%;
-        /* Take full width */
-        /* Limit max width for readability on larger tablets */
         height: auto;
-        /* Allow height to be dynamic */
     }
 
-    /* Mobile/Tablet specific image heights for stacking */
     .people-showcase-left-col .people-showcase-img {
-        /* The main image when it's on top */
         height: 250px;
-        /* Fixed height for mobile top image */
         margin-bottom: 0;
-        /* No extra margin */
     }
 
     .people-showcase-right-col {
         gap: 10px;
-        /* Smaller gap when stacked */
     }
 
     .people-showcase-top-row-flex {
         flex-direction: row;
-        /* Keep side-by-side */
         gap: 10px;
-        /* Smaller gap */
         height: 150px;
-        /* Fixed height for the two images side-by-side */
         flex: unset;
-        /* Remove flex grow, use fixed height */
     }
 
     .people-showcase-bottom-single .people-showcase-img {
         height: 200px;
-        /* Fixed height for the bottom single image */
     }
 }
 
@@ -751,25 +743,20 @@ body {
     .people-showcase-left-col,
     .people-showcase-right-col {
         max-width: 100%;
-        /* Full width on smaller mobiles */
     }
 
     .people-showcase-left-col .people-showcase-img {
         height: 200px;
-        /* Even smaller height for tiny screens */
     }
 
     .people-showcase-top-row-flex {
         height: 120px;
-        /* Adjust height for smaller side-by-side images */
     }
 
     .people-showcase-bottom-single .people-showcase-img {
         height: 150px;
-        /* Adjust height for smaller bottom image */
     }
 }
-
 
 .combined-offer-container {
     display: flex;
@@ -851,7 +838,6 @@ body {
     text-align: left;
     flex-grow: 1;
 }
-
 
 .subscription-description-footer {
     color: #555;
@@ -953,7 +939,6 @@ body {
     margin-right: auto;
     max-height: 250px;
 }
-
 
 .product-price-cta {
     display: flex;
@@ -1088,18 +1073,13 @@ body {
     }
 }
 
-
 /* SECTION 8 */
-
-/* Grid for all reviews */
 .review-container-box {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    /* 3 equal columns */
     gap: 20px;
 }
 
-/* Flatten intermediate wrappers so each .review-div becomes a grid item */
 .review-container,
 .review-pair {
     display: contents;
@@ -1116,7 +1096,6 @@ body {
     gap: 10px;
     width: 100%;
     box-sizing: border-box;
-    /* prevent overflow affecting width */
 }
 
 .review-div-person {
@@ -1130,16 +1109,11 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    /* fully rounded */
     object-fit: cover;
-    /* crop, don’t squish */
     object-position: center;
     flex: 0 0 40px;
-    /* prevent stretching in flex */
     display: block;
-    /* remove inline gap */
     border: 1px solid #e6e6e6;
-    /* subtle edge */
 }
 
 .stars {
@@ -1161,7 +1135,6 @@ body {
 @media (max-width: 1000px) {
     .review-container-box {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        /* 2 equal columns */
         gap: 16px;
     }
 
@@ -1185,7 +1158,6 @@ body {
 @media (max-width: 600px) {
     .review-container-box {
         grid-template-columns: 1fr;
-        /* single column */
         gap: 12px;
     }
 
@@ -1198,7 +1170,6 @@ body {
         gap: 5px;
     }
 }
-
 
 /* SECTION 9 */
 .faq-container {
