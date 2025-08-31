@@ -561,31 +561,29 @@ body {
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    /* makes columns equal height */
+    /* equalize columns */
     gap: 0;
 }
 
 .step-card .step-media,
 .step-card .step-text {
     flex: 0 0 50%;
-    /* exact halves */
     min-width: 0;
 }
 
 .step-card .step-media {
     display: flex;
     align-items: stretch;
-    /* image fills column height */
-    /* top/bottom + OUTER side padding = 10px */
     padding: 10px 0 10px 10px;
-    /* default (image on left) */
+    /* image-left: outer side has 10px */
     box-sizing: border-box;
 }
 
 .step-card.reverse .step-media {
     padding: 10px 10px 10px 0;
-    /* image on right */
 }
+
+/* image-right: outer side has 10px */
 
 .step-card .step-media img {
     width: 100%;
@@ -595,18 +593,42 @@ body {
     display: block;
 }
 
+/* step text column spacing is controlled explicitly */
 .step-card .step-text {
     align-self: flex-start;
-    /* stick to top */
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
 }
 
+/* exact gaps requested */
+.step-card .step-text h3 {
+    margin: 0 0 20px 0;
+}
+
+/* 20px to bullets */
+.step-bullets {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* bullets internal 10px */
+.step-bullets .section-list {
+    margin-top: 0;
+}
+
+/* override global 20px */
+.step-cta {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* 20px from bullets; 5px between note & CTA */
 .step-note {
-    margin-top: 4px;
-    margin-bottom: 6px;
+    margin: 0;
     color: #666;
 }
 
@@ -634,7 +656,7 @@ body {
         padding: 10px;
     }
 
-    /* when stacked, 10px all around */
+    /* stacked: 10px all round */
     .step-card.reverse .step-media,
     .step-card.reverse .step-text {
         order: initial;

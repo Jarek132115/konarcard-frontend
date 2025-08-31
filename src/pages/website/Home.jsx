@@ -153,40 +153,44 @@ export default function Home() {
             <img src={Section1Image} alt="Konar card on wallet" />
           </div>
           <div className="step-text">
-            <h3 className="desktop-h5">Not Just a Digital Card — Your Own Landing Page</h3>
+            <h3 className="desktop-h5">Create Your Profile</h3>
 
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={BoltIcon} className="icon" alt="" />
+            <div className="step-bullets">
+              <div className="section-list">
+                <div className="icon-white">
+                  <img src={BoltIcon} className="icon" alt="" />
+                </div>
+                <div className="section-list-info">
+                  <p className="desktop-h6">Sign up & go live</p>
+                  <p className="desktop-body-xs">Launch your profile in under 5 minutes.</p>
+                </div>
               </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Launch in 5 Minutes</p>
-                <p className="desktop-body-xs">Create and update your page in minutes — anytime you want.</p>
+
+              <div className="section-list">
+                <div className="icon-white">
+                  <img src={CustomizationIcon} className="icon" alt="" />
+                </div>
+                <div className="section-list-info">
+                  <p className="desktop-h6">Make it yours</p>
+                  <p className="desktop-body-xs">Add a logo, photo, colours and layout.</p>
+                </div>
+              </div>
+
+              <div className="section-list">
+                <div className="icon-white">
+                  <img src={FormCustomizationIcon} className="icon" alt="" />
+                </div>
+                <div className="section-list-info">
+                  <p className="desktop-h6">Simple editor</p>
+                  <p className="desktop-body-xs">Fill in easy fields — no coding needed.</p>
+                </div>
               </div>
             </div>
 
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={CustomizationIcon} className="icon" alt="" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Full Customization</p>
-                <p className="desktop-body-xs">Add a logo, profile photo, and more.</p>
-              </div>
+            <div className="step-cta">
+              <p className="desktop-body-xs light-black step-note">No credit card required*</p>
+              <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
             </div>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={FormCustomizationIcon} className="icon" alt="" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Simple Form Editor</p>
-                <p className="desktop-body-xs">Fill out easy fields — no coding needed.</p>
-              </div>
-            </div>
-
-            <p className="desktop-body-xs light-black step-note">No Credit Card Required*</p>
-            <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
           </div>
         </div>
       </div>
@@ -199,40 +203,44 @@ export default function Home() {
             <img src={EditProfile} alt="Editing profile on phones" />
           </div>
           <div className="step-text">
-            <h3 className="desktop-h5">Not Just a Digital Card — Your Own Landing Page</h3>
+            <h3 className="desktop-h5">Get Your Card</h3>
 
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={BoltIcon} className="icon" alt="" />
+            <div className="step-bullets">
+              <div className="section-list">
+                <div className="icon-white">
+                  <img src={BoltIcon} className="icon" alt="" />
+                </div>
+                <div className="section-list-info">
+                  <p className="desktop-h6">Pick your NFC card</p>
+                  <p className="desktop-body-xs">Choose a design that fits your brand.</p>
+                </div>
               </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Launch in 5 Minutes</p>
-                <p className="desktop-body-xs">Create and update your page in minutes — anytime you want.</p>
+
+              <div className="section-list">
+                <div className="icon-white">
+                  <img src={CustomizationIcon} className="icon" alt="" />
+                </div>
+                <div className="section-list-info">
+                  <p className="desktop-h6">We print & ship</p>
+                  <p className="desktop-body-xs">Fast turnaround, quality finish.</p>
+                </div>
+              </div>
+
+              <div className="section-list">
+                <div className="icon-white">
+                  <img src={FormCustomizationIcon} className="icon" alt="" />
+                </div>
+                <div className="section-list-info">
+                  <p className="desktop-h6">Link to your profile</p>
+                  <p className="desktop-body-xs">Your card opens your live page.</p>
+                </div>
               </div>
             </div>
 
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={CustomizationIcon} className="icon" alt="" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Full Customization</p>
-                <p className="desktop-body-xs">Add a logo, profile photo, and more.</p>
-              </div>
+            <div className="step-cta">
+              <p className="desktop-body-xs light-black step-note">No credit card required*</p>
+              <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
             </div>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={FormCustomizationIcon} className="icon" alt="" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Simple Form Editor</p>
-                <p className="desktop-body-xs">Fill out easy fields — no coding needed.</p>
-              </div>
-            </div>
-
-            <p className="desktop-body-xs light-black step-note">No Credit Card Required*</p>
-            <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
           </div>
         </div>
       </div>
@@ -245,40 +253,44 @@ export default function Home() {
             <img src={WhyYouNeedThis} alt="Showing your trade page" />
           </div>
           <div className="step-text">
-            <h3 className="desktop-h5">Not Just a Digital Card — Your Own Landing Page</h3>
+            <h3 className="desktop-h5">Show Off Your Card</h3>
 
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={BoltIcon} className="icon" alt="" />
+            <div className="step-bullets">
+              <div className="section-list">
+                <div className="icon-white">
+                  <img src={BoltIcon} className="icon" alt="" />
+                </div>
+                <div className="section-list-info">
+                  <p className="desktop-h6">Tap or scan to share</p>
+                  <p className="desktop-body-xs">Open your profile with NFC or QR.</p>
+                </div>
               </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Launch in 5 Minutes</p>
-                <p className="desktop-body-xs">Create and update your page in minutes — anytime you want.</p>
+
+              <div className="section-list">
+                <div className="icon-white">
+                  <img src={CustomizationIcon} className="icon" alt="" />
+                </div>
+                <div className="section-list-info">
+                  <p className="desktop-h6">Send your link anywhere</p>
+                  <p className="desktop-body-xs">Messages, socials, email — easy.</p>
+                </div>
+              </div>
+
+              <div className="section-list">
+                <div className="icon-white">
+                  <img src={FormCustomizationIcon} className="icon" alt="" />
+                </div>
+                <div className="section-list-info">
+                  <p className="desktop-h6">Win more work</p>
+                  <p className="desktop-body-xs">Stand out and get hired faster.</p>
+                </div>
               </div>
             </div>
 
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={CustomizationIcon} className="icon" alt="" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Full Customization</p>
-                <p className="desktop-body-xs">Add a logo, profile photo, and more.</p>
-              </div>
+            <div className="step-cta">
+              <p className="desktop-body-xs light-black step-note">No credit card required*</p>
+              <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
             </div>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={FormCustomizationIcon} className="icon" alt="" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Simple Form Editor</p>
-                <p className="desktop-body-xs">Fill out easy fields — no coding needed.</p>
-              </div>
-            </div>
-
-            <p className="desktop-body-xs light-black step-note">No Credit Card Required*</p>
-            <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
           </div>
         </div>
       </div>
