@@ -368,6 +368,12 @@ body {
     margin-top: 20px;
 }
 
+.section-list-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
 .margin-top-10 {
     margin-top: 10px;
 }
