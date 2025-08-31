@@ -296,7 +296,7 @@ body {
     font-weight: 700;
 }
 
-@media (max-width: 600px) {
+@media (max-width:600px) {
     .hero-social-proof {
         flex-direction: column;
         align-items: center;
@@ -372,7 +372,7 @@ body {
     margin-top: 10px;
 }
 
-/* CTA Styles - Unified Spacing Below Content */
+/* CTA spacing */
 .section-1-cta,
 .cta-center-text.review-cta,
 .faq-cta {
@@ -384,13 +384,13 @@ body {
     gap: 0px;
 }
 
-@media (max-width: 1200px) {
+@media (max-width:1200px) {
     .section {
         max-width: 900px;
     }
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .section-1-content {
         flex-direction: column;
         align-items: flex-start;
@@ -426,14 +426,12 @@ body {
 
     .section-1-left img {
         margin-bottom: 0px;
-        height: 500px;
         width: 100%;
         height: auto;
         object-fit: cover;
         aspect-ratio: 1 / 1;
     }
 
-    /* CTA Responsive Margins */
     .section-1-cta,
     .cta-center-text.review-cta,
     .faq-cta {
@@ -444,14 +442,14 @@ body {
     }
 }
 
-@media (max-width: 800px) {
+@media (max-width:800px) {
     .section-1-left img {
         height: auto;
         aspect-ratio: 1 / 1;
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width:600px) {
     .section {
         width: 90%;
         max-width: 90%;
@@ -459,7 +457,6 @@ body {
         padding: 0 10px;
     }
 
-    /* CTA Responsive Margins */
     .section-1-cta,
     .cta-center-text.review-cta,
     .faq-cta {
@@ -467,14 +464,14 @@ body {
     }
 }
 
-/* SECTION 3 (general container for flex items) */
+/* SECTION 3 */
 .section-3-container {
     display: flex;
     gap: 20px;
     flex: 1;
 }
 
-/* FULL-WIDTH BACKGROUND WRAPPER */
+/* FULL-WIDTH BG */
 .full-width-bg-container {
     width: 100%;
     background-color: #F6F6F6;
@@ -485,14 +482,14 @@ body {
     border-radius: 20px;
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .full-width-bg-container {
         margin-top: 80px;
         padding: 40px 0;
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width:600px) {
     .full-width-bg-container {
         margin-top: 60px;
         padding: 30px 0;
@@ -518,28 +515,27 @@ body {
     margin: 0 auto;
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .section-3-container-flex {
         flex-direction: column;
         gap: 40px;
     }
 }
 
-@media (max-width: 500px) {
+@media (max-width:500px) {
     .section-3-container {
         display: flex;
         flex-direction: column;
     }
 }
 
-/* SECTION 4 */
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .section-3-1x1-image-info p {
         text-align: left !important;
     }
 }
 
-/* --- STEP CARD LAYOUT (updated to make images half width, top-aligned, with 10px padding on top/bottom + outer side) --- */
+/* --- STEP CARDS (flex so height follows text) --- */
 .step-section {
     margin-top: 60px;
 }
@@ -561,33 +557,34 @@ body {
     border: 1px solid #e9e9e9;
     border-radius: 20px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    /* remove internal padding so media can reach the top edge area;
-       we'll control spacing from each side individually */
     padding: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    /* exact halves */
-    gap: 0;
+    display: flex;
+    flex-direction: row;
     align-items: stretch;
-    /* let both columns stretch to full card height */
-    min-height: 420px;
-    /* gives the media height to fill */
+    /* makes columns equal height */
+    gap: 0;
 }
 
-/* MEDIA SIDE */
+.step-card .step-media,
+.step-card .step-text {
+    flex: 0 0 50%;
+    /* exact halves */
+    min-width: 0;
+}
+
 .step-card .step-media {
     display: flex;
     align-items: stretch;
-    height: 100%;
-    /* top/bottom + outer-side padding = 10px */
+    /* image fills column height */
+    /* top/bottom + OUTER side padding = 10px */
     padding: 10px 0 10px 10px;
-    /* default (image on left): outer side = left */
+    /* default (image on left) */
     box-sizing: border-box;
 }
 
 .step-card.reverse .step-media {
     padding: 10px 10px 10px 0;
-    /* image on right: outer side = right */
+    /* image on right */
 }
 
 .step-card .step-media img {
@@ -598,12 +595,10 @@ body {
     display: block;
 }
 
-/* TEXT SIDE */
 .step-card .step-text {
-    align-self: start;
-    /* pin to the top */
+    align-self: flex-start;
+    /* stick to top */
     padding: 20px;
-    /* comfortable text padding */
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -619,7 +614,7 @@ body {
     color: #666;
 }
 
-/* reverse order for the middle card */
+/* reverse order for middle card */
 .step-card.reverse .step-media {
     order: 2;
 }
@@ -628,17 +623,22 @@ body {
     order: 1;
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .step-card {
-        grid-template-columns: 1fr;
-        min-height: unset;
+        flex-direction: column;
+    }
+
+    .step-card .step-media,
+    .step-card .step-text {
+        flex: 0 0 auto;
+        width: 100%;
     }
 
     .step-card .step-media {
         padding: 10px;
-        /* when stacked, just give 10px all around */
     }
 
+    /* when stacked, 10px all around */
     .step-card.reverse .step-media,
     .step-card.reverse .step-text {
         order: initial;
@@ -649,7 +649,7 @@ body {
     }
 }
 
-/* SECTION 7 - TRADESMEN USE IT (SPECIFIC STYLES) */
+/* SECTION 7 - TRADESMEN USE IT */
 .people-showcase-container-flex {
     display: flex;
     gap: 10px;
@@ -701,7 +701,7 @@ body {
     border-radius: 20px;
 }
 
-@media (max-width: 800px) {
+@media (max-width:800px) {
     .people-showcase-container-flex {
         flex-direction: column;
         height: auto;
@@ -738,7 +738,7 @@ body {
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width:600px) {
 
     .people-showcase-left-col,
     .people-showcase-right-col {
@@ -758,6 +758,7 @@ body {
     }
 }
 
+/* PLANS */
 .combined-offer-container {
     display: flex;
     gap: 20px;
@@ -765,7 +766,6 @@ body {
     align-items: stretch;
 }
 
-/* SUBSCRIPTION OFFER LEFT STYLES */
 .subscription-offer-left {
     flex: 1;
     display: flex;
@@ -870,7 +870,7 @@ body {
     color: #555;
 }
 
-/* CARD OFFER RIGHT STYLES */
+/* CARD */
 .card-offer-right {
     flex: 1;
     display: flex;
@@ -963,7 +963,7 @@ body {
     text-align: left;
 }
 
-/* Common Black Button Styles (Reverted to original general state) */
+/* buttons */
 .black-button {
     background-color: black;
     color: white;
@@ -973,7 +973,7 @@ body {
     text-decoration: none;
     display: inline-block;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color .3s ease;
     box-sizing: border-box;
 }
 
@@ -981,7 +981,6 @@ body {
     background-color: #333;
 }
 
-/* New class for buttons within the combined section to force full width */
 .combined-section-button {
     min-width: 100%;
     display: block;
@@ -993,12 +992,12 @@ body {
     font-weight: 600;
     text-decoration: none;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color .3s ease;
     box-sizing: border-box;
 }
 
-/* Responsive adjustments for the new combined section */
-@media (max-width: 1000px) {
+/* plan responsive */
+@media (max-width:1000px) {
     .combined-offer-section.section {
         max-width: 90%;
     }
@@ -1027,7 +1026,6 @@ body {
         display: block;
         margin-left: auto;
         margin-right: auto;
-        max-height: 250px;
     }
 
     .product-price-cta,
@@ -1041,7 +1039,7 @@ body {
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width:600px) {
     .combined-offer-section.section {
         max-width: 90%;
         padding: 0 10px;
@@ -1073,7 +1071,7 @@ body {
     }
 }
 
-/* SECTION 8 */
+/* REVIEWS */
 .review-container-box {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1121,7 +1119,6 @@ body {
     margin: 0 auto;
 }
 
-/* CTA styling */
 .cta-center-text.review-cta {
     margin-top: 60px;
     display: flex;
@@ -1131,8 +1128,7 @@ body {
     width: 100%;
 }
 
-/* ---------- Responsive ---------- */
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .review-container-box {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 16px;
@@ -1155,7 +1151,7 @@ body {
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width:600px) {
     .review-container-box {
         grid-template-columns: 1fr;
         gap: 12px;
@@ -1171,7 +1167,7 @@ body {
     }
 }
 
-/* SECTION 9 */
+/* FAQ */
 .faq-container {
     display: flex;
     gap: 20px;
@@ -1194,7 +1190,7 @@ body {
     margin-bottom: 0;
 }
 
-@media (max-width: 900px) {
+@media (max-width:900px) {
     .faq-container {
         flex-direction: column;
     }
