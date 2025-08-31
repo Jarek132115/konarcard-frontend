@@ -153,7 +153,7 @@ export default function Home() {
             <img src={Section1Image} alt="Konar card on wallet" />
           </div>
           <div className="step-text">
-            <h3 className="desktop-h4">Not Just a Digital Card — Your Own Landing Page</h3>
+            <h3 className="desktop-h5">Not Just a Digital Card — Your Own Landing Page</h3>
 
             <div className="section-list">
               <div className="icon-white">
