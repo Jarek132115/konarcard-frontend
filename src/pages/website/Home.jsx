@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -48,7 +48,6 @@ import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
 
-
 export default function Home() {
   const { user, loading: authLoading } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -60,10 +59,7 @@ export default function Home() {
   const handleSubscribe = async () => {
     if (!user) {
       navigate('/login', {
-        state: {
-          from: location.pathname,
-          checkoutType: 'subscription',
-        },
+        state: { from: location.pathname, checkoutType: 'subscription' },
       });
       return;
     }
@@ -77,19 +73,52 @@ export default function Home() {
       const res = await api.post('/subscribe', {
         returnUrl: window.location.origin + '/SuccessSubscription',
       });
-
       const { url } = res.data;
-
-      if (url) {
-        window.location.href = url;
-      } else {
-        toast.error('Could not start subscription. Please try again.');
-      }
+      if (url) window.location.href = url;
+      else toast.error('Could not start subscription. Please try again.');
     } catch (err) {
       toast.error(err.response?.data?.error || 'Subscription failed. Please try again.');
     }
   };
 
+  /* --- Make step images only as tall as their text columns --- */
+  useEffect(() => {
+    const cards = Array.from(document.querySelectorAll('.step-card'));
+    const observers = [];
+
+    const updateCard = (card) => {
+      const textEl = card.querySelector('.step-text');
+      const mediaEl = card.querySelector('.step-media');
+      if (!textEl || !mediaEl) return;
+
+      const textH = textEl.offsetHeight; // includes text padding
+      const cs = getComputedStyle(mediaEl);
+      const mediaPad =
+        parseFloat(cs.paddingTop || '0') + parseFloat(cs.paddingBottom || '0');
+
+      // image height should be (text column height) - (media top+bottom padding)
+      const imgH = Math.max(0, Math.round(textH - mediaPad));
+      card.style.setProperty('--step-media-img-h', `${imgH}px`);
+    };
+
+    cards.forEach((card) => {
+      updateCard(card);
+      const textEl = card.querySelector('.step-text');
+      if (textEl) {
+        const ro = new ResizeObserver(() => updateCard(card));
+        ro.observe(textEl);
+        observers.push(ro);
+      }
+    });
+
+    const onResize = () => cards.forEach(updateCard);
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      observers.forEach((o) => o.disconnect());
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
 
   return (
     <>
@@ -103,7 +132,6 @@ export default function Home() {
               Build a professional profile that gets you noticed, and share it effortlessly through your Konar Card with a single tap.</p>
 
             <div className="hero-cta">
-              {/* REVISED: This CTA now links to the main pricing page to present all options. */}
               <Link to="/productandplan" className="cta-blue-button desktop-button">View Plans & Cards</Link>
               <Link to="/productandplan/konarsubscription" className="cta-black-button desktop-button">
                 See How It Works
@@ -413,7 +441,6 @@ export default function Home() {
         </div>
 
         <div className="people-showcase-container-flex">
-
           <div className="people-showcase-left-col">
             <img src={People} className="people-showcase-img" alt="Tradesman holding Konar Card" />
           </div>
