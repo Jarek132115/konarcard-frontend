@@ -1,5 +1,3 @@
-/* frontend/src/styling/home.css (COMPLETE AND FINAL FILE - with CORRECTED "Our Plan & Cards" section title alignment) */
-
 /* --- GLOBAL STYLES --- */
 * {
     margin: 0;
@@ -142,14 +140,13 @@ body {
     height: 20px;
 }
 
-/* HERO RESPONSIVE */
-@media (max-width: 1200px) {
+@media (max-width:1200px) {
     .hero-container {
         max-width: 940px;
     }
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .home-hero {
         height: auto;
     }
@@ -225,7 +222,7 @@ body {
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width:400px) {
     .hero-cta {
         flex-direction: column;
         gap: 8px;
@@ -333,7 +330,7 @@ body {
 
 .icon-white {
     background-color: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
     border-radius: 10px;
     padding: 10px;
     display: flex;
@@ -368,11 +365,16 @@ body {
     margin-top: 20px;
 }
 
+.section-list-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
 .margin-top-10 {
     margin-top: 10px;
 }
 
-/* CTA spacing */
 .section-1-cta,
 .cta-center-text.review-cta,
 .faq-cta {
@@ -381,7 +383,7 @@ body {
     height: fit-content;
     display: flex;
     flex-direction: column;
-    gap: 0px;
+    gap: 0;
 }
 
 @media (max-width:1200px) {
@@ -429,7 +431,7 @@ body {
         width: 100%;
         height: auto;
         object-fit: cover;
-        aspect-ratio: 1 / 1;
+        aspect-ratio: 1/1;
     }
 
     .section-1-cta,
@@ -445,7 +447,7 @@ body {
 @media (max-width:800px) {
     .section-1-left img {
         height: auto;
-        aspect-ratio: 1 / 1;
+        aspect-ratio: 1/1;
     }
 }
 
@@ -464,21 +466,20 @@ body {
     }
 }
 
-/* SECTION 3 */
+/* (legacy section-3 styles kept for safety) */
 .section-3-container {
     display: flex;
     gap: 20px;
     flex: 1;
 }
 
-/* FULL-WIDTH BG */
 .full-width-bg-container {
     width: 100%;
     background-color: #F6F6F6;
     padding: 40px 0;
     margin-top: 100px;
     margin-bottom: 0;
-    box-shadow: 0 0px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0px 12px rgba(0, 0, 0, .1);
     border-radius: 20px;
 }
 
@@ -504,7 +505,7 @@ body {
 
 .section-3-1x1-image-info img {
     width: 100%;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1/1;
     object-fit: cover;
     border-radius: 12px;
     margin-bottom: 10px;
@@ -535,7 +536,7 @@ body {
     }
 }
 
-/* --- STEP CARDS (flex so height follows text) --- */
+/* --- STEP CARDS (flex so text sets height) --- */
 .step-section {
     margin-top: 60px;
 }
@@ -549,47 +550,42 @@ body {
     border-radius: 999px;
     color: #333;
     margin-bottom: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
 }
 
 .step-card {
     background: #fff;
     border: 1px solid #e9e9e9;
     border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
     padding: 0;
     display: flex;
     flex-direction: row;
-    align-items: stretch;
-    /* makes columns equal height */
+    align-items: flex-start;
     gap: 0;
 }
 
 .step-card .step-media,
 .step-card .step-text {
     flex: 0 0 50%;
-    /* exact halves */
     min-width: 0;
 }
 
 .step-card .step-media {
     display: flex;
-    align-items: stretch;
-    /* image fills column height */
-    /* top/bottom + OUTER side padding = 10px */
+    align-items: flex-start;
     padding: 10px 0 10px 10px;
-    /* default (image on left) */
     box-sizing: border-box;
 }
 
 .step-card.reverse .step-media {
     padding: 10px 10px 10px 0;
-    /* image on right */
 }
 
 .step-card .step-media img {
     width: 100%;
-    height: 100%;
+    height: var(--step-media-img-h, auto);
+    max-height: var(--step-media-img-h, none);
     object-fit: cover;
     border-radius: 12px;
     display: block;
@@ -597,24 +593,37 @@ body {
 
 .step-card .step-text {
     align-self: flex-start;
-    /* stick to top */
-    padding: 20px;
+    padding: 30px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
 }
 
 .step-card .step-text h3 {
-    margin-bottom: 6px;
+    margin: 0 0 20px 0;
+}
+
+.step-bullets {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.step-bullets .section-list {
+    margin-top: 0;
+}
+
+.step-cta {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .step-note {
-    margin-top: 4px;
-    margin-bottom: 6px;
+    margin: 0;
     color: #666;
 }
 
-/* reverse order for middle card */
 .step-card.reverse .step-media {
     order: 2;
 }
@@ -638,14 +647,84 @@ body {
         padding: 10px;
     }
 
-    /* when stacked, 10px all around */
     .step-card.reverse .step-media,
     .step-card.reverse .step-text {
         order: initial;
     }
 
     .step-card .step-media img {
+        height: auto;
         max-height: 260px;
+    }
+}
+
+/* --- HOW TO SHARE (new cards) --- */
+.share-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.share-card {
+    background: #fff;
+    border: 1px solid #e9e9e9;
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.share-card-media {
+    background: #efefef;
+    border-radius: 18px;
+    padding: 22px;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.share-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+    display: block;
+}
+
+.share-card h4 {
+    margin: 16px 4px 8px;
+}
+
+.share-card p {
+    margin: 0 4px 4px;
+    color: #555;
+}
+
+@media (max-width:1200px) {
+    .share-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width:1000px) {
+    .share-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .share-card-media {
+        height: 220px;
+    }
+}
+
+@media (max-width:600px) {
+    .share-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .share-card-media {
+        height: 200px;
     }
 }
 
@@ -770,7 +849,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
     border-radius: 20px;
     border: 1px solid #e0e0e0;
     background-color: white;
@@ -876,7 +955,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
     border-radius: 20px;
     border: 1px solid #e0e0e0;
     background-color: white;
@@ -1088,7 +1167,7 @@ body {
     flex-direction: column;
     justify-content: center;
     background-color: #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
     padding: 20px;
     border-radius: 20px;
     gap: 10px;
