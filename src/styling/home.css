@@ -596,7 +596,7 @@ body {
 
 .step-card .step-text {
     align-self: flex-start;
-    padding: 20px;
+    padding: 30px;
     display: flex;
     flex-direction: column;
 }
