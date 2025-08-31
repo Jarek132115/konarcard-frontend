@@ -344,7 +344,7 @@ export default function Home() {
               <img src={NFCBusinessCard} alt="NFC business card being tapped to share" />
             </div>
             <h4 className="desktop-h6">NFC Business Card</h4>
-            <p className="desktop-body">Tap to Instantly Share Details</p>
+            <p className="desktop-body-xs">Tap to Instantly Share Details</p>
           </div>
 
           <div className="share-card">
@@ -352,7 +352,7 @@ export default function Home() {
               <img src={ScanQRCode} alt="Scanning a QR code to open profile" />
             </div>
             <h4 className="desktop-h6">Scan QR Code</h4>
-            <p className="desktop-body">Scan the QR Code To Open Your Profile</p>
+            <p className="desktop-body-xs">Scan the QR Code To Open Your Profile</p>
           </div>
 
           <div className="share-card">
@@ -360,7 +360,7 @@ export default function Home() {
               <img src={SMSSend} alt="Sharing your link via message" />
             </div>
             <h4 className="desktop-h6">Share via Message</h4>
-            <p className="desktop-body">WhatsApp, SMS, Messenger &amp; More</p>
+            <p className="desktop-body-xs">WhatsApp, SMS, Messenger &amp; More</p>
           </div>
 
           <div className="share-card">
@@ -368,7 +368,7 @@ export default function Home() {
               <img src={LinkInBio} alt="Profile link placed in social bio" />
             </div>
             <h4 className="desktop-h6">Link In Bio</h4>
-            <p className="desktop-body">One link which you can share via any platform</p>
+            <p className="desktop-body-xs">One link which you can share via any platform</p>
           </div>
         </div>
       </div>
