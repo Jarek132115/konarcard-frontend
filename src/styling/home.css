@@ -335,7 +335,7 @@ body {
 
 .icon-white {
     background-color: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.20);
     border-radius: 10px;
     padding: 10px;
     display: flex;
