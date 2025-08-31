@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -48,6 +48,7 @@ import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
 
+
 export default function Home() {
   const { user, loading: authLoading } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -59,7 +60,10 @@ export default function Home() {
   const handleSubscribe = async () => {
     if (!user) {
       navigate('/login', {
-        state: { from: location.pathname, checkoutType: 'subscription' },
+        state: {
+          from: location.pathname,
+          checkoutType: 'subscription',
+        },
       });
       return;
     }
@@ -73,52 +77,19 @@ export default function Home() {
       const res = await api.post('/subscribe', {
         returnUrl: window.location.origin + '/SuccessSubscription',
       });
+
       const { url } = res.data;
-      if (url) window.location.href = url;
-      else toast.error('Could not start subscription. Please try again.');
+
+      if (url) {
+        window.location.href = url;
+      } else {
+        toast.error('Could not start subscription. Please try again.');
+      }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Subscription failed. Please try again.');
     }
   };
 
-  /* --- Make step images only as tall as their text columns --- */
-  useEffect(() => {
-    const cards = Array.from(document.querySelectorAll('.step-card'));
-    const observers = [];
-
-    const updateCard = (card) => {
-      const textEl = card.querySelector('.step-text');
-      const mediaEl = card.querySelector('.step-media');
-      if (!textEl || !mediaEl) return;
-
-      const textH = textEl.offsetHeight; // includes text padding
-      const cs = getComputedStyle(mediaEl);
-      const mediaPad =
-        parseFloat(cs.paddingTop || '0') + parseFloat(cs.paddingBottom || '0');
-
-      // image height should be (text column height) - (media top+bottom padding)
-      const imgH = Math.max(0, Math.round(textH - mediaPad));
-      card.style.setProperty('--step-media-img-h', `${imgH}px`);
-    };
-
-    cards.forEach((card) => {
-      updateCard(card);
-      const textEl = card.querySelector('.step-text');
-      if (textEl) {
-        const ro = new ResizeObserver(() => updateCard(card));
-        ro.observe(textEl);
-        observers.push(ro);
-      }
-    });
-
-    const onResize = () => cards.forEach(updateCard);
-    window.addEventListener('resize', onResize);
-
-    return () => {
-      observers.forEach((o) => o.disconnect());
-      window.removeEventListener('resize', onResize);
-    };
-  }, []);
 
   return (
     <>
@@ -132,6 +103,7 @@ export default function Home() {
               Build a professional profile that gets you noticed, and share it effortlessly through your Konar Card with a single tap.</p>
 
             <div className="hero-cta">
+              {/* REVISED: This CTA now links to the main pricing page to present all options. */}
               <Link to="/productandplan" className="cta-blue-button desktop-button">View Plans & Cards</Link>
               <Link to="/productandplan/konarsubscription" className="cta-black-button desktop-button">
                 See How It Works
@@ -181,44 +153,40 @@ export default function Home() {
             <img src={Section1Image} alt="Konar card on wallet" />
           </div>
           <div className="step-text">
-            <h3 className="desktop-h5">Create Your Profile</h3>
+            <h3 className="desktop-h5">Not Just a Digital Card — Your Own Landing Page</h3>
 
-            <div className="step-bullets">
-              <div className="section-list">
-                <div className="icon-white">
-                  <img src={BoltIcon} className="icon" alt="" />
-                </div>
-                <div className="section-list-info">
-                  <p className="desktop-h6">Sign up & go live</p>
-                  <p className="desktop-body-xs">Launch your profile in under 5 minutes.</p>
-                </div>
+            <div className="section-list">
+              <div className="icon-white">
+                <img src={BoltIcon} className="icon" alt="" />
               </div>
-
-              <div className="section-list">
-                <div className="icon-white">
-                  <img src={CustomizationIcon} className="icon" alt="" />
-                </div>
-                <div className="section-list-info">
-                  <p className="desktop-h6">Make it yours</p>
-                  <p className="desktop-body-xs">Add a logo, photo, colours and layout.</p>
-                </div>
-              </div>
-
-              <div className="section-list">
-                <div className="icon-white">
-                  <img src={FormCustomizationIcon} className="icon" alt="" />
-                </div>
-                <div className="section-list-info">
-                  <p className="desktop-h6">Simple editor</p>
-                  <p className="desktop-body-xs">Fill in easy fields — no coding needed.</p>
-                </div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Launch in 5 Minutes</p>
+                <p className="desktop-body-xs">Create and update your page in minutes — anytime you want.</p>
               </div>
             </div>
 
-            <div className="step-cta">
-              <p className="desktop-body-xs light-black step-note">No credit card required*</p>
-              <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
+            <div className="section-list">
+              <div className="icon-white">
+                <img src={CustomizationIcon} className="icon" alt="" />
+              </div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Full Customization</p>
+                <p className="desktop-body-xs">Add a logo, profile photo, and more.</p>
+              </div>
             </div>
+
+            <div className="section-list">
+              <div className="icon-white">
+                <img src={FormCustomizationIcon} className="icon" alt="" />
+              </div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Simple Form Editor</p>
+                <p className="desktop-body-xs">Fill out easy fields — no coding needed.</p>
+              </div>
+            </div>
+
+            <p className="desktop-body-xs light-black step-note">No Credit Card Required*</p>
+            <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
           </div>
         </div>
       </div>
@@ -231,44 +199,40 @@ export default function Home() {
             <img src={EditProfile} alt="Editing profile on phones" />
           </div>
           <div className="step-text">
-            <h3 className="desktop-h5">Get Your Card</h3>
+            <h3 className="desktop-h4">Not Just a Digital Card — Your Own Landing Page</h3>
 
-            <div className="step-bullets">
-              <div className="section-list">
-                <div className="icon-white">
-                  <img src={BoltIcon} className="icon" alt="" />
-                </div>
-                <div className="section-list-info">
-                  <p className="desktop-h6">Pick your NFC card</p>
-                  <p className="desktop-body-xs">Choose a design that fits your brand.</p>
-                </div>
+            <div className="section-list">
+              <div className="icon-white">
+                <img src={BoltIcon} className="icon" alt="" />
               </div>
-
-              <div className="section-list">
-                <div className="icon-white">
-                  <img src={CustomizationIcon} className="icon" alt="" />
-                </div>
-                <div className="section-list-info">
-                  <p className="desktop-h6">We print & ship</p>
-                  <p className="desktop-body-xs">Fast turnaround, quality finish.</p>
-                </div>
-              </div>
-
-              <div className="section-list">
-                <div className="icon-white">
-                  <img src={FormCustomizationIcon} className="icon" alt="" />
-                </div>
-                <div className="section-list-info">
-                  <p className="desktop-h6">Link to your profile</p>
-                  <p className="desktop-body-xs">Your card opens your live page.</p>
-                </div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Launch in 5 Minutes</p>
+                <p className="desktop-body-xs">Create and update your page in minutes — anytime you want.</p>
               </div>
             </div>
 
-            <div className="step-cta">
-              <p className="desktop-body-xs light-black step-note">No credit card required*</p>
-              <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
+            <div className="section-list">
+              <div className="icon-white">
+                <img src={CustomizationIcon} className="icon" alt="" />
+              </div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Full Customization</p>
+                <p className="desktop-body-xs">Add a logo, profile photo, and more.</p>
+              </div>
             </div>
+
+            <div className="section-list">
+              <div className="icon-white">
+                <img src={FormCustomizationIcon} className="icon" alt="" />
+              </div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Simple Form Editor</p>
+                <p className="desktop-body-xs">Fill out easy fields — no coding needed.</p>
+              </div>
+            </div>
+
+            <p className="desktop-body-xs light-black step-note">No Credit Card Required*</p>
+            <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
           </div>
         </div>
       </div>
@@ -281,44 +245,40 @@ export default function Home() {
             <img src={WhyYouNeedThis} alt="Showing your trade page" />
           </div>
           <div className="step-text">
-            <h3 className="desktop-h5">Show Off Your Card</h3>
+            <h3 className="desktop-h4">Not Just a Digital Card — Your Own Landing Page</h3>
 
-            <div className="step-bullets">
-              <div className="section-list">
-                <div className="icon-white">
-                  <img src={BoltIcon} className="icon" alt="" />
-                </div>
-                <div className="section-list-info">
-                  <p className="desktop-h6">Tap or scan to share</p>
-                  <p className="desktop-body-xs">Open your profile with NFC or QR.</p>
-                </div>
+            <div className="section-list">
+              <div className="icon-white">
+                <img src={BoltIcon} className="icon" alt="" />
               </div>
-
-              <div className="section-list">
-                <div className="icon-white">
-                  <img src={CustomizationIcon} className="icon" alt="" />
-                </div>
-                <div className="section-list-info">
-                  <p className="desktop-h6">Send your link anywhere</p>
-                  <p className="desktop-body-xs">Messages, socials, email — easy.</p>
-                </div>
-              </div>
-
-              <div className="section-list">
-                <div className="icon-white">
-                  <img src={FormCustomizationIcon} className="icon" alt="" />
-                </div>
-                <div className="section-list-info">
-                  <p className="desktop-h6">Win more work</p>
-                  <p className="desktop-body-xs">Stand out and get hired faster.</p>
-                </div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Launch in 5 Minutes</p>
+                <p className="desktop-body-xs">Create and update your page in minutes — anytime you want.</p>
               </div>
             </div>
 
-            <div className="step-cta">
-              <p className="desktop-body-xs light-black step-note">No credit card required*</p>
-              <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
+            <div className="section-list">
+              <div className="icon-white">
+                <img src={CustomizationIcon} className="icon" alt="" />
+              </div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Full Customization</p>
+                <p className="desktop-body-xs">Add a logo, profile photo, and more.</p>
+              </div>
             </div>
+
+            <div className="section-list">
+              <div className="icon-white">
+                <img src={FormCustomizationIcon} className="icon" alt="" />
+              </div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Simple Form Editor</p>
+                <p className="desktop-body-xs">Fill out easy fields — no coding needed.</p>
+              </div>
+            </div>
+
+            <p className="desktop-body-xs light-black step-note">No Credit Card Required*</p>
+            <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
           </div>
         </div>
       </div>
@@ -441,6 +401,7 @@ export default function Home() {
         </div>
 
         <div className="people-showcase-container-flex">
+
           <div className="people-showcase-left-col">
             <img src={People} className="people-showcase-img" alt="Tradesman holding Konar Card" />
           </div>
