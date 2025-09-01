@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import {Link, useNavigate, useParams } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
