@@ -380,7 +380,7 @@ export default function Home() {
               </div>
               <div className="pricing-divider" />
               <div className="pricing-price-row">
-                <span className="pricing-price">£7.95</span>
+                <span className="pricing-price">£5.95</span>
                 <span className="pricing-price-sub">Per Month</span>
               </div>
 
