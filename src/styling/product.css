@@ -54,10 +54,13 @@
     display: block;
 }
 
+/* --- THUMBNAILS: 1/1 squares, full width of main image --- */
 .pd-thumbs {
+    width: 100%;
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(5, 1fr);
+    /* 5 images */
+    gap: 12px;
     margin-top: 12px;
 }
 
@@ -65,7 +68,10 @@
     border: 1px solid #ececec;
     background: #fff;
     border-radius: 12px;
-    padding: 6px;
+    overflow: hidden;
+    /* keep image corners clean */
+    padding: 0;
+    /* let image fill the square */
     cursor: pointer;
     transition: box-shadow .15s ease, transform .06s ease, border-color .15s ease;
 }
@@ -73,8 +79,9 @@
 .pd-thumb img {
     width: 100%;
     aspect-ratio: 1/1;
+    /* perfect square */
     object-fit: cover;
-    border-radius: 8px;
+    /* fill the square */
     display: block;
 }
 
@@ -154,16 +161,17 @@
     line-height: 1.2;
 }
 
-/* Stars + price row */
+/* Stars + price — STACKED column */
 .pd-meta-row {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
+    flex-direction: column;
+    /* stack stars and price */
+    align-items: flex-start;
+    gap: 8px;
     margin: 8px 0 6px;
-    flex-wrap: wrap;
 }
 
+/* Stars */
 .pd-stars {
     display: inline-flex;
     align-items: center;
@@ -180,6 +188,7 @@
     font-weight: 600;
 }
 
+/* Price */
 .pd-price-wrap {
     display: flex;
     align-items: baseline;
@@ -204,13 +213,14 @@
     margin-left: 4px;
 }
 
-/* CTA row */
+/* CTA row — STACKED column (Qty -> Button) */
 .pd-cta-row {
     display: flex;
-    align-items: center;
-    gap: 14px;
+    flex-direction: column;
+    /* stack qty above button */
+    align-items: flex-start;
+    gap: 10px;
     margin-top: 8px;
-    flex-wrap: wrap;
 }
 
 .pd-qty {
@@ -256,6 +266,8 @@
     cursor: pointer;
     box-shadow: 0 10px 26px rgba(0, 129, 255, .28);
     transition: transform .06s ease, box-shadow .15s ease;
+    width: auto;
+    /* not forced full width on desktop */
 }
 
 .pd-buy-btn:hover {
@@ -276,7 +288,7 @@
     height: 20px;
 }
 
-/* Ensure buy button stretches on small screens */
+/* Ensure buy button stretches on small screens if desired */
 @media (max-width:1000px) {
     .pd-buy-btn {
         width: 100%;
