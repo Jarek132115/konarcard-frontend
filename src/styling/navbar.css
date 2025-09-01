@@ -319,3 +319,50 @@
     display: flex;
   }
 }
+
+/* =========================
+   MOBILE AUTH LINKS (as menu items)
+   ========================= */
+@media (max-width: 1000px) {
+  .mobile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .mobile-actions .desktop-button,
+  .mobile-actions .logout-btn {
+    all: unset;
+    /* remove pill/button styles */
+    display: block;
+    padding: 14px 6px;
+    font-size: 24px;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+  }
+
+  /* Normal auth links (Login / Signup / Dashboard) */
+  .mobile-actions .desktop-button {
+    color: #fff;
+  }
+
+  .mobile-actions .desktop-button:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  /* Logout link (red) */
+  .mobile-actions .logout-btn {
+    color: #ff4444;
+  }
+
+  .mobile-actions .logout-btn:hover {
+    background: rgba(255, 68, 68, 0.12);
+  }
+}
