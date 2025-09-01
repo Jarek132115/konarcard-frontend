@@ -114,7 +114,7 @@ export default function Home() {
       <div className="home-hero">
         <div className="hero-container">
           <div className="hero-left">
-            <div className="step-badge">14 Day <span style={{ fontWeight: 600, width: 'fit-content' }}>Free Trial</span> Now Available</div>
+            <div style={{width: 'fit-content'}} className="step-badge">14 Day <span style={{ fontWeight: 600 }}>Free Trial</span> Now Available</div>
             <h1 className="desktop-h1 hero-heading">
               Stand Out. Get Noticed. Grow Your <span className="blue">Business.</span>
             </h1>
