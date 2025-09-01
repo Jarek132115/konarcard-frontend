@@ -407,7 +407,7 @@ export default function Home() {
 
               {/* Sticky bottom area: quote + CTA */}
               <div className="pricing-bottom">
-                <p className="pricing-quote">
+                <p className="desktop-body-xs">
                   "Build a professional profile in minutes — no coding needed."
                 </p>
 
@@ -444,7 +444,7 @@ export default function Home() {
 
               {/* Sticky bottom area: quote + CTA */}
               <div className="pricing-bottom">
-                <p className="pricing-quote">
+                <p className="desktop-body-xs">
                   "Tap to share your profile instantly — perfect for in-person networking."
                 </p>
 
