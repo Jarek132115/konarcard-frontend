@@ -12,10 +12,10 @@ import pp3 from '../../assets/images/pp3.png';
 import pp4 from '../../assets/images/pp4.png';
 
 import ProductCover from '../../assets/images/Subscription-Main.jpg';
-import ProductImage1 from '../../assets/images/Product-Image-1.png';
-import ProductImage2 from '../../assets/images/Product-Image-2.png';
-import ProductImage3 from '../../assets/images/Product-Image-3.png';
-import ProductImage4 from '../../assets/images/Product-Image-4.png';
+import ProductImage1 from '../../assets/images/Subscription-Main.jpg';
+import ProductImage2 from '../../assets/images/Subscription-Main.jpg';
+import ProductImage3 from '../../assets/images/Subscription-Main.jpg';
+import ProductImage4 from '../../assets/images/Subscription-Main.jpg';
 
 import NFCIcon from '../../assets/icons/NFC-Icon.svg';
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
