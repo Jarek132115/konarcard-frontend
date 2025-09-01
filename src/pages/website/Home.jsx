@@ -128,7 +128,7 @@ export default function Home() {
       <div className="home-hero">
         <div className="hero-container">
           <div className="hero-left">
-            <div className="step-badge">14 Day Free Trial Now Available</div>
+            <div className="step-badge">14 Day <span style={{fontWeight: 600}}>Free Trial</span> Now Available</div>
             <h1 className="desktop-h1 hero-heading">Stand Out. Get Noticed. Grow Your <span className='blue'>Business.</span></h1>
             <p className="desktop-h6 desktop-body">
               Build a professional profile that gets you noticed, and share it effortlessly through your Konar Card with a single tap.</p>
