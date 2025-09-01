@@ -1125,16 +1125,9 @@ body {
     margin-top: 14px;
     border-radius: 16px;
     overflow: hidden;
-    /* same border feel as old pricing-media */
-    background: #111;
-    border: 1px solid #2a2a2a;
-
-    /* make the whole gallery height-controlled so thumbs never overflow */
     --thumb-h: 56px;
-    /* thumbnail strip height (desktop) */
     --thumb-gap: 10px;
     height: clamp(260px, 32vw, 380px);
-    padding: 10px;
     display: flex;
     flex-direction: column;
 }
