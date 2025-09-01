@@ -36,6 +36,7 @@ import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
 import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
 const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8');
 
+
 // RENAMED COMPONENT
 export default function KonarCard() {
   const [quantity, setQuantity] = useState(1);
