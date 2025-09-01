@@ -157,8 +157,9 @@ export default function KonarCard() {
         <div className="pd-right">
           <h1 className="pd-title desktop-h4">Konar Card - White Edition</h1>
           <p className="pd-sub desktop-body">
-            The card that gets you hired — instant profile, zero fuss.
+            Stand out and win more jobs — one tap opens your profile with your services, photos, and contact details.
           </p>
+
 
           <div className="pd-feature-grid">
             {featurePills.map((f, idx) => (
