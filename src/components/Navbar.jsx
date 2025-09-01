@@ -50,7 +50,7 @@ export default function Navbar() {
                   </>
                 ) : (
                   <>
-                    <Link to="/myprofile" className="btn login-btn" onClick={() => setMobileOpen(false)}>Dashboard</Link>
+                    <Link to="/myprofile" className="desktop-button cta-blue-button" onClick={() => setMobileOpen(false)}>Dashboard</Link>
                     <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="btn logout-btn">Logout</button>
                   </>
                 ))}
