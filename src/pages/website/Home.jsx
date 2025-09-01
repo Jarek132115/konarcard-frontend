@@ -185,7 +185,7 @@ export default function Home() {
             <div className="step-badge">Step 1</div>
             <div className="step-card">
               <div className="step-media">
-                <img src={Section1Image} alt="Konar card on wallet" />
+                <img src={EditProfile} alt="Konar card on wallet" />
               </div>
               <div className="step-text">
                 <h3 className="desktop-h5">Craft A Branded Profile Clients Trust</h3>
@@ -235,7 +235,7 @@ export default function Home() {
             <div className="step-badge">Step 2</div>
             <div className="step-card reverse">
               <div className="step-media">
-                <img src={EditProfile} alt="Editing profile on phones" />
+                <img src={Section1Image} alt="Editing profile on phones" />
               </div>
               <div className="step-text">
                 <h3 className="desktop-h5">Order Your Tap-To-Share Card Today</h3>
