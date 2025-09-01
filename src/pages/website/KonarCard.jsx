@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
@@ -7,21 +7,24 @@ import Footer from '../../components/Footer';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
 import { toast } from 'react-hot-toast';
+
 import pp1 from '../../assets/images/pp1.png';
 import pp2 from '../../assets/images/pp2.png';
 import pp3 from '../../assets/images/pp3.png';
 import pp4 from '../../assets/images/pp4.png';
+
 import ProductCover from '../../assets/images/Product-Cover.png';
 import ProductImage1 from '../../assets/images/Product-Image-1.png';
 import ProductImage2 from '../../assets/images/Product-Image-2.png';
 import ProductImage3 from '../../assets/images/Product-Image-3.png';
 import ProductImage4 from '../../assets/images/Product-Image-4.png';
+
 import NFCIcon from '../../assets/icons/NFC-Icon.svg';
 import HowItWorks1 from '../../assets/images/HowItWorks-1.png';
 import HowItWorks2 from '../../assets/images/HowItWorks-2.png';
 import HowItWorks3 from '../../assets/images/HowItWorks-3.png';
-import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'
-import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg'
+import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
+import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg';
 import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
 import SetupIcon from '../../assets/icons/Setup-Icon.svg';
 import BoxIcon from '../../assets/icons/Box-Icon.svg';
@@ -30,10 +33,9 @@ import LockIcon from '../../assets/icons/Lock-Icon.svg';
 import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
 import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
+
 const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8');
 
-
-// RENAMED COMPONENT
 export default function KonarCard() {
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(ProductCover);
@@ -74,30 +76,32 @@ export default function KonarCard() {
     }
   };
 
-  // Function to get dynamic delivery dates
+  // Delivery window shown under CTA
   const getDeliveryDates = () => {
     const today = new Date();
-    const deliveryStart = new Date(today);
-    // Add one day for next day delivery
-    deliveryStart.setDate(today.getDate() + 1);
-
-    const deliveryEnd = new Date(today);
-    // Add two days for the end of the delivery window
-    deliveryEnd.setDate(today.getDate() + 2);
-
+    const start = new Date(today);
+    start.setDate(today.getDate() + 1);
+    const end = new Date(today);
+    end.setDate(today.getDate() + 2);
     const monthNames = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
     ];
-
-    const startDay = deliveryStart.getDate();
-    const endDay = deliveryEnd.getDate();
-    const month = monthNames[deliveryStart.getMonth()];
-
-    return `Receive by ${startDay}-${endDay} ${month}`;
+    return `Receive by ${start.getDate()}-${end.getDate()} ${monthNames[start.getMonth()]}`;
   };
-
   const deliveryDateText = getDeliveryDates();
+
+  // Feature list (icons are placeholders—swap later)
+  const featurePills = [
+    { icon: PhoneIcon, title: 'Compatibility', text: 'Compatible with Android & iOS' },
+    { icon: NFCIcon, title: 'QR Code Backup', text: 'If NFC doesn’t work, scan the QR' },
+    { icon: WarrantyIcon, title: 'Warranty', text: '12-month warranty' },
+    { icon: NFCIcon, title: 'Fast Transfer', text: 'Share details with one tap' },
+    { icon: IDCardIcon, title: 'Chip & Memory', text: 'NTAG215 chip, 504 bytes' },
+    { icon: LockIcon, title: 'Data Retention', text: 'Stores securely 10+ years' },
+    { icon: BoxIcon, title: 'Size & Material', text: '85.5 × 54 × 0.8 mm, PVC' },
+    { icon: PalletteIcon, title: 'Eco-Friendly', text: 'Made from recyclable materials' },
+  ];
 
   return (
     <>
@@ -106,79 +110,91 @@ export default function KonarCard() {
         <Breadcrumbs />
       </div>
 
-      {/* Main Product Section from WhiteCard.jsx - Top Section */}
-      <div className="section-product">
-        <div className="product-preview">
-          <img src={mainImage} alt="Main Product Card" className="main-card" />
-          <div className="thumbnail-row">
-            {thumbnails.map((thumb, index) => (
-              <img
-                key={index}
-                src={thumb}
-                alt={`Product Thumbnail ${index + 1}`}
-                className="thumbnail"
-                onClick={() => setMainImage(thumb)}
-              />
+      {/* ============================= */}
+      {/* Product header (redesigned)   */}
+      {/* ============================= */}
+      <div className="section product-shell">
+        {/* LEFT: product image on tray + thumbnails */}
+        <div className="pd-left">
+          <div className="pd-card-tray">
+            <div className="pd-card">
+              <img src={mainImage} alt="Konar Card" />
+            </div>
+          </div>
+
+          <div className="pd-thumbs">
+            {thumbnails.map((t, i) => (
+              <button
+                key={i}
+                type="button"
+                className={`pd-thumb ${mainImage === t ? 'is-active' : ''}`}
+                onClick={() => setMainImage(t)}
+                aria-label={`View image ${i + 1}`}
+              >
+                <img src={t} alt={`Thumbnail ${i + 1}`} />
+              </button>
             ))}
           </div>
         </div>
 
-        <div className="product-options">
-          <p className="desktop-h5">Konar Card - White Edition</p> {/* This is the content title */}
-          <p className="desktop-body">
-            The smart, durable card that instantly shows your profile, work, services, and how to contact you in seconds.
+        {/* RIGHT: copy, features, price, CTA, delivery */}
+        <div className="pd-right">
+          <h1 className="pd-title desktop-h4">Konar Card - White Edition</h1>
+          <p className="pd-sub desktop-body">
+            The reliable card for everyday networking – Share instantly, automate follow-ups, sync to CRM and stand out while connecting.
           </p>
 
-          <div className="hero-tick-box">
-            <div className="hero-tick">
-              <img src={DeliveryIcon} className="icon" alt="Delivery" />
-              <div>
-                <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>Delivery 1-2 Days</p>
-                <p className='desktop-body-xs' style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
-                  {deliveryDateText}
-                </p>
+          <div className="pd-feature-grid">
+            {featurePills.map((f, idx) => (
+              <div className="pd-feature-pill" key={idx}>
+                <span className="pd-feature-icon">
+                  <img src={f.icon} alt="" />
+                </span>
+                <div className="pd-feature-copy">
+                  <p className="pd-feature-title desktop-body-s">{f.title}</p>
+                  <p className="pd-feature-text desktop-body-xs">{f.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="pd-meta-row">
+            <div className="pd-stars">
+              <img src={ReviewStars} alt="Rating" />
+              <span className="pd-reviews-count">(911)</span>
+            </div>
+
+            <div className="pd-price-wrap">
+              <span className="pd-price-now">£{(pricePerCard * quantity).toFixed(2)}</span>
+              <span className="pd-price-was">£{(originalPricePerCard * quantity).toFixed(2)}</span>
+              <span className="pd-onetime">One Time Purchase</span>
+            </div>
+          </div>
+
+          <div className="pd-cta-row">
+            <div className="pd-qty">
+              <span className="desktop-body-xs">Qty</span>
+              <div className="pd-qty-ctrl">
+                <button className="pd-qty-btn" onClick={() => setQuantity(q => Math.max(1, q - 1))} aria-label="Decrease quantity">−</button>
+                <div className="pd-qty-display">{quantity}</div>
+                <button className="pd-qty-btn" onClick={() => setQuantity(q => q + 1)} aria-label="Increase quantity">+</button>
               </div>
             </div>
-            <div className="hero-tick">
-              <img src={WarrantyIcon} className="icon" alt="Warranty" />
-              <div>
-                <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>12 Month Warranty</p>
-                <p className='desktop-body-xs' style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
-                  Damaged? Free replacement!
-                </p>
-              </div>
+
+            <button onClick={handleBuyNow} className="pd-buy-btn desktop-button">Buy Now</button>
+          </div>
+
+          <div className="pd-delivery">
+            <img src={DeliveryIcon} alt="" />
+            <div>
+              <p className="desktop-body-xs" style={{ fontWeight: 700 }}>Delivery 1–2 Days</p>
+              <p className="desktop-body-xs" style={{ color: '#666' }}>{deliveryDateText}</p>
             </div>
-          </div>
-
-          <div className="review-rating">
-            <img style={{ width: 80 }} src={ReviewStars} alt="Stars" />
-            <p>(22)</p>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', }}>
-            <p style={{ fontSize: 24, fontWeight: 600 }}>
-              £{(pricePerCard * quantity).toFixed(2)}
-            </p>
-            <p style={{ fontSize: 18, color: '#666', textDecoration: 'line-through' }}>
-              £{(originalPricePerCard * quantity).toFixed(2)}
-            </p>
-          </div>
-
-          <div className="option-group">
-            <p className="desktop-body-xs">Quantity:</p>
-            <div className="quantity-control">
-              <button className="qty-btn" onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
-              <div className="qty-display">{quantity}</div>
-              <button className="qty-btn" onClick={() => setQuantity(q => q + 1)}>+</button>
-            </div>
-
-            <button onClick={handleBuyNow} className="blue-button desktop-button">
-              Buy Now
-            </button>
           </div>
         </div>
       </div>
 
+      {/* ===== Social proof / Reviews ===== */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h2 text-center">The #1 Tool Tradies Are Talking About</h2>
@@ -255,7 +271,7 @@ export default function KonarCard() {
         </div>
       </div>
 
-      {/* How it works section from the original file */}
+      {/* ===== How it works ===== */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">How It Works</h2>
@@ -299,7 +315,7 @@ export default function KonarCard() {
         </div>
       </div>
 
-      {/* --- FAQ --- */}
+      {/* ===== FAQ ===== */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Frequently Asked Questions</h2>
@@ -406,7 +422,6 @@ export default function KonarCard() {
           <Link to="/faq" className="black-button desktop-button">Got more questions?</Link>
         </div>
       </div>
-
 
       <Footer />
     </>
