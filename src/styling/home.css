@@ -806,6 +806,13 @@ body {
     gap: 12px;
 }
 
+@media (max-width: 600px) {
+    .pricing-head {
+        align-items: start;
+        flex-direction: column;
+    }
+}
+
 .pricing-badge {
     background: #fff;
     color: #111;
