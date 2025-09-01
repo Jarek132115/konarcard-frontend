@@ -95,17 +95,11 @@
   background-color: #f0f8ff;
 }
 
-/* Make logout look like cta-blue-button but red */
 .logout-btn {
-  /* base reset/override */
   -webkit-tap-highlight-color: transparent;
   background: #FFFFFF;
   color: #FF0000;
-  /* red text */
   border: 2px solid #FF0000;
-  /* red outline */
-
-  /* match cta pill sizing/shape */
   display: inline-flex;
   align-items: center;
   justify-content: center;
