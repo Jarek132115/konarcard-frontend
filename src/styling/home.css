@@ -776,10 +776,27 @@ body {
     overflow: hidden;
     position: relative;
     box-shadow: 0 12px 32px rgba(0, 0, 0, .2);
+
+    /* NEW: allow child to stretch full height */
+    display: flex;
 }
 
 .pricing-inner {
     padding: 20px;
+
+    /* NEW: make inner a vertical flex container that can push footer down */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* NEW: footer area that sticks to the bottom of the card */
+.pricing-bottom {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* space between quote and CTA */
 }
 
 .pricing-head {
@@ -853,7 +870,7 @@ body {
 /* make tick icon white on blue card */
 
 .pricing-quote {
-    margin-top: 18px;
+    /* Keep it tidy at bottom area */
     font-style: italic;
     opacity: .95;
 }

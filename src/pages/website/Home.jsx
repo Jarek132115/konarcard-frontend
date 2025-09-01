@@ -325,7 +325,6 @@ export default function Home() {
       <div className="section share-section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">One Profile. Shared in Seconds.</h2>
-          <h3 className="desktop-h6 text-center">Tap it. Scan it. Link it. Your trade page goes anywhere</h3>
         </div>
 
         <div className="share-grid">
@@ -406,13 +405,20 @@ export default function Home() {
                 ))}
               </ul>
 
-              <p className="pricing-quote">
-                "Build a professional profile in minutes — no coding needed."
-              </p>
+              {/* Sticky bottom area: quote + CTA */}
+              <div className="pricing-bottom">
+                <p className="pricing-quote">
+                  "Build a professional profile in minutes — no coding needed."
+                </p>
 
-              <Link to="/productandplan/konarsubscription" className="cta-blue-button desktop-button" style={{marginTop: 10, width: "100%"}}>
-                Start Your 14 Day Free Trial
-              </Link>
+                <Link
+                  to="/productandplan/konarsubscription"
+                  className="cta-blue-button desktop-button"
+                  style={{ marginTop: 10, width: '100%' }}
+                >
+                  Start Your 14 Day Free Trial
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -436,18 +442,24 @@ export default function Home() {
                 <img src={PlasticCard} alt="Konar Card - White Edition" />
               </div>
 
-              <p className="pricing-quote">
-                "Tap to share your profile instantly — perfect for in-person networking."
-              </p>
+              {/* Sticky bottom area: quote + CTA */}
+              <div className="pricing-bottom">
+                <p className="pricing-quote">
+                  "Tap to share your profile instantly — perfect for in-person networking."
+                </p>
 
-              <Link to="/productandplan/konarcard" className="cta-black-button desktop-button" style={{marginTop: 10, width: "100%"}}>
-                View Card Details
-              </Link>
+                <Link
+                  to="/productandplan/konarcard"
+                  className="cta-black-button desktop-button"
+                  style={{ marginTop: 10, width: '100%' }}
+                >
+                  View Card Details
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
 
       {/* --- People showcase --- */}
       <div className="section">
