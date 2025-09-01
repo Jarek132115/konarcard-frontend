@@ -851,6 +851,10 @@ body {
     margin-top: 16px;
 }
 
+.invert-for-blue {
+    filter: brightness(0) invert(1);
+}
+
 .pricing-feature {
     display: flex;
     gap: 10px;
