@@ -410,7 +410,7 @@ export default function Home() {
                 "Build a professional profile in minutes — no coding needed."
               </p>
 
-              <Link to="/productandplan/konarsubscription" className="pricing-cta blue-button">
+              <Link to="/productandplan/konarsubscription" className="cta-blue-button desktop-button">
                 Start Your 14 Day Free Trial
               </Link>
             </div>
@@ -440,7 +440,7 @@ export default function Home() {
                 "Tap to share your profile instantly — perfect for in-person networking."
               </p>
 
-              <Link to="/productandplan/konarcard" className="pricing-cta pricing-cta--white pricing-cta--darktext">
+              <Link to="/productandplan/konarcard" className="cta-black-button desktop-button">
                 View Card Details
               </Link>
             </div>
