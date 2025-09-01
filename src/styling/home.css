@@ -611,6 +611,12 @@ body {
     flex-direction: column
 }
 
+@media (max-width: 1000px) {
+    .step-card .step-text {
+        padding: 10px 20px 20px 20px;
+    }
+}
+
 .step-card .step-text h3 {
     margin: 0 0 20px 0
 }
