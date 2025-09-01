@@ -849,6 +849,9 @@ body {
     flex-direction: column;
     gap: 12px;
     margin-top: 16px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: white;
 }
 
 .pricing-feature {
