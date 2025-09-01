@@ -45,7 +45,7 @@ export default function Navbar() {
               <div className="auth-links">
                 {!loading && (!user ? (
                   <>
-                    <Link to="/login" state={{ from: location }} className="btn login-btn" onClick={() => setMobileOpen(false)}>Login</Link>
+                    <Link to="/login" state={{ from: location }} className="desktop-button cta-blue-button" onClick={() => setMobileOpen(false)}>Login</Link>
                     <Link to="/register" state={{ from: location }} className="btn signup-btn" onClick={() => setMobileOpen(false)}>Sign up</Link>
                   </>
                 ) : (
