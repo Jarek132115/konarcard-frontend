@@ -188,7 +188,7 @@ export default function Home() {
                 <img src={Section1Image} alt="Konar card on wallet" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Create Your Profile</h3>
+                <h3 className="desktop-h5">Craft A Branded Profile Clients Trust</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
@@ -238,7 +238,7 @@ export default function Home() {
                 <img src={EditProfile} alt="Editing profile on phones" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Get Your Card</h3>
+                <h3 className="desktop-h5">Order Your Tap-To-Share Card Today</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
@@ -288,7 +288,7 @@ export default function Home() {
                 <img src={WhyYouNeedThis} alt="Showing your trade page" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Show Off Your Card</h3>
+                <h3 className="desktop-h5">Share In Seconds And Win More Jobs</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
