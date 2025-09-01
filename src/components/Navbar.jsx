@@ -75,7 +75,7 @@ export default function Navbar() {
                   <Link
                     to="/productandplan"
                     onClick={() => setMobileOpen(false)}
-                    className="desktop-h3"
+                    className="desktop-h4"
                   >
                     Product &amp; Plan
                   </Link>
@@ -84,7 +84,7 @@ export default function Navbar() {
                   <Link
                     to="/reviews"
                     onClick={() => setMobileOpen(false)}
-                    className="desktop-h3"
+                    className="desktop-h4"
                   >
                     Reviews
                   </Link>
@@ -93,7 +93,7 @@ export default function Navbar() {
                   <Link
                     to="/faq"
                     onClick={() => setMobileOpen(false)}
-                    className="desktop-h3"
+                    className="desktop-h4"
                   >
                     FAQs
                   </Link>
@@ -102,14 +102,13 @@ export default function Navbar() {
                   <Link
                     to="/contactus"
                     onClick={() => setMobileOpen(false)}
-                    className="desktop-h3"
+                    className="desktop-h4"
                   >
                     Contact Us
                   </Link>
                 </li>
               </ul>
 
-              {/* divider aligned with the navbar’s bottom rule */}
               <div className="mobile-divider" aria-hidden="true" />
 
               <div className="mobile-actions">
@@ -118,7 +117,7 @@ export default function Navbar() {
                     <Link
                       to="/login"
                       state={{ from: location }}
-                      className="desktop-h3"
+                      className="desktop-h4"
                       onClick={() => setMobileOpen(false)}
                     >
                       Login
@@ -126,7 +125,7 @@ export default function Navbar() {
                     <Link
                       to="/register"
                       state={{ from: location }}
-                      className="desktop-h3"
+                      className="desktop-h4"
                       onClick={() => setMobileOpen(false)}
                     >
                       Sign up
@@ -136,14 +135,17 @@ export default function Navbar() {
                   <>
                     <Link
                       to="/myprofile"
-                      className="desktop-h3"
+                      className="desktop-h4"
                       onClick={() => setMobileOpen(false)}
                     >
                       Dashboard
                     </Link>
+
+                    {/* Logout styled like a link (red) */}
                     <button
+                      type="button"
                       onClick={() => { handleLogout(); setMobileOpen(false); }}
-                      className="desktop-h3 logout-btn"
+                      className="desktop-h4 logout-link"
                     >
                       Logout
                     </button>
