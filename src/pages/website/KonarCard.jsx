@@ -292,50 +292,6 @@ export default function KonarCard() {
         </div>
       </div>
 
-      {/* ===== How it works ===== */}
-      <div className="section">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">How It Works</h2>
-          <h3 className="desktop-h6 text-center">
-            Tap the card on any phone. Your profile opens. Job done.
-          </h3>
-        </div>
-
-        <div className="how-it-works-container">
-          <div className="white-card-column">
-            <div className="how-it-works-info">
-              <p className="desktop-h5">Tap the Card</p>
-              <p className="desktop-body">
-                Hold the card near most phones — it works without any app.
-              </p>
-            </div>
-            <img src={HowItWorks1} className="white-card-column-image" />
-          </div>
-
-          <div className="how-it-works-right">
-            <div className="white-card">
-              <div className="how-it-works-info">
-                <p className="desktop-h5">Your Page Pops Up</p>
-                <p className="desktop-body">
-                  They see your name, photo, services, and how to reach you.
-                </p>
-              </div>
-              <img src={HowItWorks2} className="how-it-works-right-image" />
-            </div>
-
-            <div className="white-card">
-              <div className="how-it-works-info">
-                <p className="desktop-h5">They Save Your Info</p>
-                <p className="desktop-body">
-                  One tap saves your number, email, or connects to your socials.
-                </p>
-              </div>
-              <img src={HowItWorks3} className="how-it-works-right-image" />
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* ===== FAQ ===== */}
       <div className="section">
         <div className="section-1-title">
