@@ -210,7 +210,7 @@ export default function KonarCard() {
               </div>
             </div>
 
-            <button onClick={handleBuyNow} className="blue-button desktop-button">Buy Now</button>
+            <button onClick={handleBuyNow} className="cta-blue-button desktop-button">Buy Now</button>
           </div>
         </div>
       </div>
