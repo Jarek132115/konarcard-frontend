@@ -234,6 +234,20 @@
     gap: 8px;
 }
 
+@media (max-width: 600px) {
+    .pd-qty {
+        width: 100%;
+    }
+
+    .pd-qty-ctrl {
+        width: 100%;
+    }
+
+    .pd-qty-display {
+        width: 100%;
+    }
+}
+
 .pd-qty-ctrl {
     display: inline-flex;
     align-items: center;
