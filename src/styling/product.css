@@ -161,6 +161,11 @@
     line-height: 1.2;
 }
 
+/* Full-width pill (Delivery) */
+.pd-feature-pill--full {
+    grid-column: 1 / -1;
+}
+
 /* Stars + price — STACKED column */
 .pd-meta-row {
     display: flex;
@@ -275,18 +280,7 @@
     box-shadow: 0 14px 34px rgba(0, 129, 255, .36);
 }
 
-/* Delivery row under CTA */
-.pd-delivery {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 8px;
-}
-
-.pd-delivery img {
-    width: 20px;
-    height: 20px;
-}
+/* (Old .pd-delivery styles no longer needed; delivery uses full-width pill) */
 
 /* Ensure buy button stretches on small screens if desired */
 @media (max-width:1000px) {
@@ -360,7 +354,7 @@
     object-fit: contain;
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .how-it-works-container {
         flex-direction: column;
         gap: 20px;
@@ -409,7 +403,7 @@
     }
 }
 
-@media (max-width: 850px) {
+@media (max-width:850px) {
     .how-it-works-right {
         flex-direction: column;
     }
@@ -435,7 +429,7 @@
     }
 }
 
-@media (max-width: 500px) {
+@media (max-width:500px) {
     .white-card-column {
         flex-direction: column;
         align-items: end;

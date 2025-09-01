@@ -76,7 +76,7 @@ export default function KonarCard() {
     }
   };
 
-  // Delivery window shown under CTA
+  // Delivery window text
   const getDeliveryDates = () => {
     const today = new Date();
     const start = new Date(today);
@@ -84,8 +84,8 @@ export default function KonarCard() {
     const end = new Date(today);
     end.setDate(today.getDate() + 2);
     const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January','February','March','April','May','June',
+      'July','August','September','October','November','December'
     ];
     return `Receive by ${start.getDate()}-${end.getDate()} ${monthNames[start.getMonth()]}`;
   };
@@ -93,14 +93,14 @@ export default function KonarCard() {
 
   // Feature list (icons are placeholders—swap later)
   const featurePills = [
-    { icon: PhoneIcon, title: 'Compatibility', text: 'Compatible with Android & iOS' },
-    { icon: NFCIcon, title: 'QR Code Backup', text: 'If NFC doesn’t work, scan the QR' },
-    { icon: WarrantyIcon, title: 'Warranty', text: '12-month warranty' },
-    { icon: NFCIcon, title: 'Fast Transfer', text: 'Share details with one tap' },
-    { icon: IDCardIcon, title: 'Chip & Memory', text: 'NTAG215 chip, 504 bytes' },
-    { icon: LockIcon, title: 'Data Retention', text: 'Stores securely 10+ years' },
-    { icon: BoxIcon, title: 'Size & Material', text: '85.5 × 54 × 0.8 mm, PVC' },
-    { icon: PalletteIcon, title: 'Eco-Friendly', text: 'Made from recyclable materials' },
+    { icon: PhoneIcon,    title: 'Compatibility',  text: 'Compatible with Android & iOS' },
+    { icon: NFCIcon,      title: 'QR Code Backup', text: 'If NFC doesn’t work, scan the QR' },
+    { icon: WarrantyIcon, title: 'Warranty',       text: '12-month warranty' },
+    { icon: NFCIcon,      title: 'Fast Transfer',  text: 'Share details with one tap' },
+    { icon: IDCardIcon,   title: 'Chip & Memory',  text: 'NTAG215 chip, 504 bytes' },
+    { icon: LockIcon,     title: 'Data Retention', text: 'Stores securely 10+ years' },
+    { icon: BoxIcon,      title: 'Size & Material',text: '85.5 × 54 × 0.8 mm, PVC' },
+    { icon: PalletteIcon, title: 'Eco-Friendly',   text: 'Made from recyclable materials' },
   ];
 
   return (
@@ -137,7 +137,7 @@ export default function KonarCard() {
           </div>
         </div>
 
-        {/* RIGHT: copy, features, price, CTA, delivery */}
+        {/* RIGHT: copy, features, price, CTA */}
         <div className="pd-right">
           <h1 className="pd-title desktop-h4">Konar Card - White Edition</h1>
           <p className="pd-sub desktop-body">
@@ -156,12 +156,16 @@ export default function KonarCard() {
                 </div>
               </div>
             ))}
-          </div>
-          <div className="pd-delivery">
-            <img src={DeliveryIcon} alt="" />
-            <div>
-              <p className="desktop-body-xs" style={{ fontWeight: 700 }}>Delivery 1–2 Days</p>
-              <p className="desktop-body-xs" style={{ color: '#666' }}>{deliveryDateText}</p>
+
+            {/* Full-width Delivery pill (one long row) */}
+            <div className="pd-feature-pill pd-feature-pill--full">
+              <span className="pd-feature-icon">
+                <img src={DeliveryIcon} alt="" />
+              </span>
+              <div className="pd-feature-copy">
+                <p className="pd-feature-title desktop-body-s">Delivery 1–2 Days</p>
+                <p className="desktop-body-xs" style={{ color: '#666' }}>{deliveryDateText}</p>
+              </div>
             </div>
           </div>
 
@@ -190,8 +194,6 @@ export default function KonarCard() {
 
             <button onClick={handleBuyNow} className="pd-buy-btn desktop-button">Buy Now</button>
           </div>
-
-
         </div>
       </div>
 
