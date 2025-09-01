@@ -309,3 +309,32 @@
 .hamburger.active span {
   background: #fff;
 }
+
+/* =========================
+   MOBILE LINKS AS desktop-h3
+   ========================= */
+.mobile-list li a,
+.mobile-actions .desktop-button,
+.mobile-actions .logout-btn {
+  @apply desktop-h3;
+  /* if you aren’t using Tailwind with @apply, just use your desktop-h3 rules directly */
+  display: block;
+  padding: 14px 6px;
+  border-radius: 12px;
+  transition: background-color .15s ease, color .15s ease;
+}
+
+/* Hover states */
+.mobile-list li a:hover,
+.mobile-actions .desktop-button:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.mobile-actions .logout-btn {
+  color: #ff4444;
+}
+
+.mobile-actions .logout-btn:hover {
+  background: rgba(255, 68, 68, 0.12);
+}
