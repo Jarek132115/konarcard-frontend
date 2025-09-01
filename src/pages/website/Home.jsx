@@ -392,7 +392,6 @@ export default function Home() {
                   'Showcase your work with unlimited images',
                   'Collect and display client reviews (star ratings)',
                   'List your services and set pricing',
-                  'Customize your profile URL for easy sharing',
                   'Share via QR code, link, or save-to-contacts',
                   'Display work/services as list, grid, or carousel',
                   'Make it easy for clients to contact you',
