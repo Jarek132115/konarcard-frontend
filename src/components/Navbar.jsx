@@ -75,12 +75,12 @@ export default function Navbar() {
             {!loading && (!user ? (
               <>
                 <Link to="/login" state={{ from: location }} className="desktop-button cta-blue-button">Login</Link>
-                <Link to="/register" state={{ from: location }} className="btn signup-btn">Sign up</Link>
+                <Link to="/register" state={{ from: location }} className="desktop-button cta-black-button">Sign up</Link>
               </>
             ) : (
               <>
                 <Link to="/myprofile" className="desktop-button cta-blue-button">Dashboard</Link>
-                <button onClick={handleLogout} className="btn logout-btn">Logout</button>
+                <button onClick={handleLogout} className="desktop-button cta-black-button">Logout</button>
               </>
             ))}
           </div>
