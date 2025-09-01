@@ -365,8 +365,8 @@ export default function Home() {
       {/* --- PRICING (redesigned) --- */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Our Plans & Cards</h2>
-          <h3 className="desktop-h6 text-center">Choose what's right for your business.</h3>
+          <h2 className="desktop-h3 text-center">One Plan. One Card. Endless Opportunities.</h2>
+          <h3 className="desktop-h6 text-center">No confusion. Just one powerful plan to make you stand out.</h3>
         </div>
 
         <div className="pricing-grid">
