@@ -374,7 +374,7 @@ body {
 .section-list-info {
     display: flex;
     flex-direction: column;
-    gap: 5px
+    gap: 0px
 }
 
 .margin-top-10 {
