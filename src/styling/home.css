@@ -206,7 +206,8 @@ body {
 
     .hero-cta {
         justify-content: center;
-        margin-bottom: 20px
+        margin-bottom: 20px;
+        width: 100%;
     }
 
     .hero-tick-wrap {
