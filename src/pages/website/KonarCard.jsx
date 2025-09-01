@@ -23,7 +23,6 @@ import HowItWorks3 from '../../assets/images/HowItWorks-3.png';
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'
 import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg'
 import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
-import NFCIcon from '../../assets/icons/NFC-Icon.svg';
 import SetupIcon from '../../assets/icons/Setup-Icon.svg';
 import BoxIcon from '../../assets/icons/Box-Icon.svg';
 import HatIcon from '../../assets/icons/Hat-Icon.svg';
