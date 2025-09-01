@@ -75,7 +75,7 @@ export default function Navbar() {
                   <Link
                     to="/productandplan"
                     onClick={() => setMobileOpen(false)}
-                    className="desktop-h4"
+                    className="desktop-h5"
                   >
                     Product &amp; Plan
                   </Link>
@@ -84,7 +84,7 @@ export default function Navbar() {
                   <Link
                     to="/reviews"
                     onClick={() => setMobileOpen(false)}
-                    className="desktop-h4"
+                    className="desktop-h5"
                   >
                     Reviews
                   </Link>
@@ -93,7 +93,7 @@ export default function Navbar() {
                   <Link
                     to="/faq"
                     onClick={() => setMobileOpen(false)}
-                    className="desktop-h4"
+                    className="desktop-h5"
                   >
                     FAQs
                   </Link>
@@ -102,7 +102,7 @@ export default function Navbar() {
                   <Link
                     to="/contactus"
                     onClick={() => setMobileOpen(false)}
-                    className="desktop-h4"
+                    className="desktop-h5"
                   >
                     Contact Us
                   </Link>
@@ -117,7 +117,7 @@ export default function Navbar() {
                     <Link
                       to="/login"
                       state={{ from: location }}
-                      className="desktop-h4"
+                      className="desktop-h5"
                       onClick={() => setMobileOpen(false)}
                     >
                       Login
@@ -125,7 +125,7 @@ export default function Navbar() {
                     <Link
                       to="/register"
                       state={{ from: location }}
-                      className="desktop-h4"
+                      className="desktop-h5"
                       onClick={() => setMobileOpen(false)}
                     >
                       Sign up
@@ -135,7 +135,7 @@ export default function Navbar() {
                   <>
                     <Link
                       to="/myprofile"
-                      className="desktop-h4"
+                      className="desktop-h5"
                       onClick={() => setMobileOpen(false)}
                     >
                       Dashboard
@@ -145,7 +145,7 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => { handleLogout(); setMobileOpen(false); }}
-                      className="desktop-h4 logout-link"
+                      className="desktop-h5 logout-link"
                     >
                       Logout
                     </button>
