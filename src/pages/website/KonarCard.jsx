@@ -157,6 +157,13 @@ export default function KonarCard() {
               </div>
             ))}
           </div>
+          <div className="pd-delivery">
+            <img src={DeliveryIcon} alt="" />
+            <div>
+              <p className="desktop-body-xs" style={{ fontWeight: 700 }}>Delivery 1–2 Days</p>
+              <p className="desktop-body-xs" style={{ color: '#666' }}>{deliveryDateText}</p>
+            </div>
+          </div>
 
           <div className="pd-meta-row">
             <div className="pd-stars">
@@ -184,13 +191,7 @@ export default function KonarCard() {
             <button onClick={handleBuyNow} className="pd-buy-btn desktop-button">Buy Now</button>
           </div>
 
-          <div className="pd-delivery">
-            <img src={DeliveryIcon} alt="" />
-            <div>
-              <p className="desktop-body-xs" style={{ fontWeight: 700 }}>Delivery 1–2 Days</p>
-              <p className="desktop-body-xs" style={{ color: '#666' }}>{deliveryDateText}</p>
-            </div>
-          </div>
+
         </div>
       </div>
 
