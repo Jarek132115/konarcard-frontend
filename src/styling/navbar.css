@@ -148,7 +148,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 60px;
+  padding: 20px 0;
   /* 20px top/bottom padding equivalent look */
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   /* divider mirrors navbar bottom rule */
