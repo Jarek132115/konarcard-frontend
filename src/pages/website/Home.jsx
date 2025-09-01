@@ -384,7 +384,7 @@ export default function Home() {
               <div className="pricing-divider" />
               <div className="pricing-price-row">
                 <span className="desktop-h1">£4.95</span>
-                <span className="desktop-body-xs">Per Month</span>
+                <span className="desktop-button">Per Month</span>
               </div>
 
               <ul className="pricing-features">
