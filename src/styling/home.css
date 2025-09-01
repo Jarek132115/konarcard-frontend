@@ -926,7 +926,7 @@ body {
 
 /* Product (black) */
 .pricing-card--product {
-    background: #000;
+    background: #333;
     color: #fff;
     border: 1px solid #2a2a2a;
 }
