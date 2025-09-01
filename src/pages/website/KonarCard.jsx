@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
@@ -16,9 +16,6 @@ import ProductImage1 from '../../assets/images/Product-Image-1.png';
 import ProductImage2 from '../../assets/images/Product-Image-2.png';
 import ProductImage3 from '../../assets/images/Product-Image-3.png';
 import ProductImage4 from '../../assets/images/Product-Image-4.png';
-import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
-import PremiumMaterials from '../../assets/icons/Premium-Materials-Icon.svg';
-import QRCodeIcon from '../../assets/icons/QR-Code-Icon.svg';
 import NFCIcon from '../../assets/icons/NFC-Icon.svg';
 import HowItWorks1 from '../../assets/images/HowItWorks-1.png';
 import HowItWorks2 from '../../assets/images/HowItWorks-2.png';
@@ -26,7 +23,17 @@ import HowItWorks3 from '../../assets/images/HowItWorks-3.png';
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg'
 import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg'
-
+import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
+import NFCIcon from '../../assets/icons/NFC-Icon.svg';
+import ReviewStars from '../../assets/icons/Stars-Icon.svg';
+import SetupIcon from '../../assets/icons/Setup-Icon.svg';
+import BoxIcon from '../../assets/icons/Box-Icon.svg';
+import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
+import HatIcon from '../../assets/icons/Hat-Icon.svg';
+import LockIcon from '../../assets/icons/Lock-Icon.svg';
+import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
+import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
+import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
 const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8');
 
 // RENAMED COMPONENT
