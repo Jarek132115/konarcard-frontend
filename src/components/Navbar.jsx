@@ -71,22 +71,38 @@ export default function Navbar() {
 
               <ul className="mobile-list">
                 <li>
-                  <Link to="/productandplan" onClick={() => setMobileOpen(false)}>
+                  <Link
+                    to="/productandplan"
+                    onClick={() => setMobileOpen(false)}
+                    className="desktop-h3"
+                  >
                     Product &amp; Plan
                   </Link>
                 </li>
                 <li>
-                  <Link to="/reviews" onClick={() => setMobileOpen(false)}>
+                  <Link
+                    to="/reviews"
+                    onClick={() => setMobileOpen(false)}
+                    className="desktop-h3"
+                  >
                     Reviews
                   </Link>
                 </li>
                 <li>
-                  <Link to="/faq" onClick={() => setMobileOpen(false)}>
+                  <Link
+                    to="/faq"
+                    onClick={() => setMobileOpen(false)}
+                    className="desktop-h3"
+                  >
                     FAQs
                   </Link>
                 </li>
                 <li>
-                  <Link to="/contactus" onClick={() => setMobileOpen(false)}>
+                  <Link
+                    to="/contactus"
+                    onClick={() => setMobileOpen(false)}
+                    className="desktop-h3"
+                  >
                     Contact Us
                   </Link>
                 </li>
@@ -101,7 +117,7 @@ export default function Navbar() {
                     <Link
                       to="/login"
                       state={{ from: location }}
-                      className="desktop-button cta-blue-button"
+                      className="desktop-h3"
                       onClick={() => setMobileOpen(false)}
                     >
                       Login
@@ -109,7 +125,7 @@ export default function Navbar() {
                     <Link
                       to="/register"
                       state={{ from: location }}
-                      className="desktop-button cta-black-button"
+                      className="desktop-h3"
                       onClick={() => setMobileOpen(false)}
                     >
                       Sign up
@@ -119,14 +135,14 @@ export default function Navbar() {
                   <>
                     <Link
                       to="/myprofile"
-                      className="desktop-button cta-blue-button"
+                      className="desktop-h3"
                       onClick={() => setMobileOpen(false)}
                     >
                       Dashboard
                     </Link>
                     <button
                       onClick={() => { handleLogout(); setMobileOpen(false); }}
-                      className="logout-btn"
+                      className="desktop-h3 logout-btn"
                     >
                       Logout
                     </button>
