@@ -413,7 +413,7 @@ export default function Home() {
                   className="cta-blue-button desktop-button"
                   style={{ marginTop: 20, width: '100%' }}
                 >
-                  Start Your 14 Day Free Trial
+                  View Subscription Details
                 </Link>
               </div>
             </div>
