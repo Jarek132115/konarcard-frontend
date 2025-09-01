@@ -74,12 +74,12 @@ export default function Navbar() {
           <div className="auth-links">
             {!loading && (!user ? (
               <>
-                <Link to="/login" state={{ from: location }} className="btn desktop-button login-btn">Login</Link>
+                <Link to="/login" state={{ from: location }} className="desktop-button cta-blue-button">Login</Link>
                 <Link to="/register" state={{ from: location }} className="btn signup-btn">Sign up</Link>
               </>
             ) : (
               <>
-                <Link to="/myprofile" className="btn login-btn">Dashboard</Link>
+                <Link to="/myprofile" className="desktop-button cta-blue-button">Dashboard</Link>
                 <button onClick={handleLogout} className="btn logout-btn">Logout</button>
               </>
             ))}
