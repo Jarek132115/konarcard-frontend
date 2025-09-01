@@ -212,7 +212,7 @@ export default function Home() {
                 </div>
 
                 <div className="step-cta">
-                  <p className="desktop-body-xs gray step-note">No credit card required*</p>
+                  <p style={{fontStyle: "italic"}} className="desktop-body-xs gray step-note">No credit card required*</p>
                   <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
                 </div>
               </div>
@@ -262,7 +262,7 @@ export default function Home() {
                 </div>
 
                 <div className="step-cta">
-                  <p className="desktop-body-xs gray step-note">No credit card required*</p>
+                  <p style={{fontStyle: "italic"}} className="desktop-body-xs gray step-note">No credit card required*</p>
                   <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
                 </div>
               </div>
@@ -312,7 +312,7 @@ export default function Home() {
                 </div>
 
                 <div className="step-cta">
-                  <p className="desktop-body-xs gray step-note">No credit card required*</p>
+                  <p style={{fontStyle: "italic"}} className="desktop-body-xs gray step-note">No credit card required*</p>
                   <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
                 </div>
               </div>
