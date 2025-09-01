@@ -3,6 +3,7 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
+import LogoWhite from '../assets/icons/Logo-White.svg';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -18,20 +19,23 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-
         {/* ===== Mobile header ===== */}
         <div className="navbar-mobile-header">
-          <Link to="/" className="logo-link">
+          <Link to="/" className="logo-link" aria-label="Home">
             <img src={LogoIcon} alt="Logo" className="logo" />
           </Link>
-          <div
+
+          <button
+            type="button"
             className={`hamburger ${mobileOpen ? 'active' : ''}`}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
             onClick={() => setMobileOpen(!mobileOpen)}
           >
             <span></span>
             <span></span>
             <span></span>
-          </div>
+          </button>
         </div>
 
         {/* ===== Mobile overlay menu ===== */}
@@ -42,15 +46,20 @@ export default function Navbar() {
             aria-modal="true"
             aria-label="Mobile navigation"
             onClick={(e) => {
-              // Close only when clicking outside the panel
-              if (e.target.classList.contains('mobile-overlay')) {
-                setMobileOpen(false);
-              }
+              if (e.target.classList.contains('mobile-overlay')) setMobileOpen(false);
             }}
           >
-            <div className="mobile-panel">
+            <div className="mobile-panel" role="document">
               <div className="mobile-panel-header">
-                <span className="mobile-panel-title blue"></span>
+                <Link
+                  to="/"
+                  className="logo-link"
+                  aria-label="Home"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <img src={LogoWhite} alt="Logo" className="logo" />
+                </Link>
+
                 <button
                   className="mobile-close"
                   aria-label="Close menu"
@@ -82,6 +91,9 @@ export default function Navbar() {
                   </Link>
                 </li>
               </ul>
+
+              {/* divider that lines up with the navbar's bottom rule */}
+              <div className="mobile-divider" aria-hidden="true" />
 
               <div className="mobile-actions">
                 {!loading && (!user ? (
@@ -128,26 +140,35 @@ export default function Navbar() {
         {/* ===== Desktop navbar ===== */}
         <div className="navbar-desktop">
           <div className="navbar-left">
-            <Link to="/" className="logo-link">
+            <Link to="/" className="logo-link" aria-label="Home">
               <img src={LogoIcon} alt="Logo" className="logo" />
             </Link>
             <ul className="nav-links">
-              <li><Link to="/productandplan">Product & Plan</Link></li>
+              <li><Link to="/productandplan">Product &amp; Plan</Link></li>
               <li><Link to="/reviews">Reviews</Link></li>
               <li><Link to="/faq">FAQs</Link></li>
               <li><Link to="/contactus">Contact Us</Link></li>
             </ul>
           </div>
+
           <div className="auth-links">
             {!loading && (!user ? (
               <>
-                <Link to="/login" state={{ from: location }} className="desktop-button cta-blue-button">Login</Link>
-                <Link to="/register" state={{ from: location }} className="desktop-button cta-black-button">Sign up</Link>
+                <Link to="/login" state={{ from: location }} className="desktop-button cta-blue-button">
+                  Login
+                </Link>
+                <Link to="/register" state={{ from: location }} className="desktop-button cta-black-button">
+                  Sign up
+                </Link>
               </>
             ) : (
               <>
-                <Link to="/myprofile" className="desktop-button cta-blue-button">Dashboard</Link>
-                <button onClick={handleLogout} className="desktop-button cta-black-button">Logout</button>
+                <Link to="/myprofile" className="desktop-button cta-blue-button">
+                  Dashboard
+                </Link>
+                <button onClick={handleLogout} className="desktop-button cta-black-button">
+                  Logout
+                </button>
               </>
             ))}
           </div>
