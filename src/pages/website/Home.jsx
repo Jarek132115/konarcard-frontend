@@ -186,7 +186,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Sign up &amp; go live</p>
-                      <p className="desktop-body-xs">Launch your profile in under 5 minutes.</p>
+                      <p className="desktop-body-xs grey">Launch your profile in under 5 minutes.</p>
                     </div>
                   </div>
 

@@ -629,11 +629,11 @@ body {
 }
 
 .share-card h4 {
-    margin: 16px 4px 4px;
+    margin: 10px 10px 0 10px;
 }
 
 .share-card p {
-    margin: 0 4px 4px;
+    margin: 5px 10px 10px 10px;
     color: #555;
 }
 

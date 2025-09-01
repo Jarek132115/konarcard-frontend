@@ -216,7 +216,7 @@ export default function KonarCard() {
                 <div className="review-div-person">
                   <img src={pp1} alt="Reviewer" />
                   <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: '#333' }}>Plumber</p>
+                    <p className="desktop-body-xs grey">Plumber</p>
                     <p className="desktop-body-s">Mark B</p>
                   </div>
                 </div>
@@ -230,7 +230,7 @@ export default function KonarCard() {
                 <div className="review-div-person">
                   <img src={pp2} alt="Reviewer" />
                   <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: '#333' }}>Electrician</p>
+                    <p className="desktop-body-xs grey">Electrician</p>
                     <p className="desktop-body-s">Jake C</p>
                   </div>
                 </div>
@@ -246,7 +246,7 @@ export default function KonarCard() {
                 <div className="review-div-person">
                   <img src={pp3} alt="Reviewer" />
                   <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: '#333' }}>Builder</p>
+                    <p className="desktop-body-xs grey">Builder</p>
                     <p className="desktop-body-s">Tom G</p>
                   </div>
                 </div>
@@ -260,7 +260,7 @@ export default function KonarCard() {
                 <div className="review-div-person">
                   <img src={pp4} alt="Reviewer" />
                   <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: '#333' }}>Roofer</p>
+                    <p className="desktop-body-xs grey">Roofer</p>
                     <p className="desktop-body-s">Sam H</p>
                   </div>
                 </div>
