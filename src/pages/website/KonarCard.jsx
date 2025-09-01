@@ -178,7 +178,6 @@ export default function KonarCard() {
             <div className="pd-price-wrap">
               <span className="pd-price-now">£{(pricePerCard * quantity).toFixed(2)}</span>
               <span className="pd-price-was">£{(originalPricePerCard * quantity).toFixed(2)}</span>
-              <span className="pd-onetime">One Time Purchase</span>
             </div>
           </div>
 
