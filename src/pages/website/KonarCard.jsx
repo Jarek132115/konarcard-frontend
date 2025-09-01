@@ -286,10 +286,6 @@ export default function KonarCard() {
             </div>
           </div>
         </div>
-
-        <div className="faq-cta">
-          <Link to="/reviews" className="black-button desktop-button">Read More Reviews</Link>
-        </div>
       </div>
 
       {/* ===== FAQ ===== */}
@@ -393,10 +389,6 @@ export default function KonarCard() {
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="faq-cta">
-          <Link to="/faq" className="black-button desktop-button">Got more questions?</Link>
         </div>
       </div>
 
