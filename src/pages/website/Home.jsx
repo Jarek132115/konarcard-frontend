@@ -1,5 +1,4 @@
-// frontend/src/pages/Home/index.jsx
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -31,6 +30,14 @@ import pp1 from '../../assets/images/pp1.png';
 import pp2 from '../../assets/images/pp2.png';
 import pp3 from '../../assets/images/pp3.png';
 import pp4 from '../../assets/images/pp4.png';
+
+/* NEW — use the same product images & thumbnails as the Konar Card page */
+import ProductCover from '../../assets/images/Product-Cover.png';
+import ProductImage1 from '../../assets/images/Product-Image-1.png';
+import ProductImage2 from '../../assets/images/Product-Image-2.png';
+import ProductImage3 from '../../assets/images/Product-Image-3.png';
+import ProductImage4 from '../../assets/images/Product-Image-4.png';
+
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
@@ -42,6 +49,16 @@ export default function Home() {
 
   const isSubscribed = user ? user.isSubscribed : false;
   const loadingStatus = authLoading;
+
+  /* NEW — local state for the Home page preview */
+  const [homeMainImage, setHomeMainImage] = useState(ProductCover);
+  const homeThumbs = [
+    ProductCover,
+    ProductImage1,
+    ProductImage2,
+    ProductImage3,
+    ProductImage4,
+  ];
 
   const handleSubscribe = async () => {
     if (!user) {
@@ -212,7 +229,7 @@ export default function Home() {
                 </div>
 
                 <div className="step-cta">
-                  <p style={{fontStyle: "italic"}} className="desktop-body-xs gray step-note">No credit card required*</p>
+                  <p style={{ fontStyle: "italic" }} className="desktop-body-xs gray step-note">No credit card required*</p>
                   <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
                 </div>
               </div>
@@ -262,7 +279,7 @@ export default function Home() {
                 </div>
 
                 <div className="step-cta">
-                  <p style={{fontStyle: "italic"}} className="desktop-body-xs gray step-note">No credit card required*</p>
+                  <p style={{ fontStyle: "italic" }} className="desktop-body-xs gray step-note">No credit card required*</p>
                   <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
                 </div>
               </div>
@@ -312,10 +329,40 @@ export default function Home() {
                 </div>
 
                 <div className="step-cta">
-                  <p style={{fontStyle: "italic"}} className="desktop-body-xs gray step-note">No credit card required*</p>
+                  <p style={{ fontStyle: "italic" }} className="desktop-body-xs gray step-note">No credit card required*</p>
                   <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ====== NEW: Konar Card preview with thumbnails ====== */}
+      <div className="section">
+        <div className="section-1-title">
+          <h2 className="desktop-h3 text-center">Konar Card – Preview</h2>
+          <h3 className="desktop-h6 text-center">See the card and design options up close.</h3>
+        </div>
+
+        <div className="home-pd-tray">
+          <div className="home-pd-holder">
+            <div className="home-pd-main">
+              <img src={homeMainImage} alt="Konar Card preview" />
+            </div>
+
+            <div className="home-pd-thumbs">
+              {homeThumbs.map((src, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className={`home-pd-thumb ${homeMainImage === src ? 'is-active' : ''}`}
+                  onClick={() => setHomeMainImage(src)}
+                  aria-label={`Preview image ${i + 1}`}
+                >
+                  <img src={src} alt={`Thumbnail ${i + 1}`} />
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -400,14 +447,12 @@ export default function Home() {
                 ].map((text, i) => (
                   <li className="pricing-feature" key={i}>
                     <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
-                    <span style={{fontWeight: 600}} className='white desktop-body-s'>{text}</span>
+                    <span style={{ fontWeight: 600 }} className='white desktop-body-s'>{text}</span>
                   </li>
                 ))}
               </ul>
 
-              {/* Sticky bottom area: quote + CTA */}
               <div className="pricing-bottom">
-
                 <Link
                   to="/productandplan/konarsubscription"
                   className="cta-blue-button desktop-button"
@@ -439,9 +484,7 @@ export default function Home() {
                 <img src={PlasticCard} alt="Konar Card - White Edition" />
               </div>
 
-              {/* Sticky bottom area: quote + CTA */}
               <div className="pricing-bottom">
-
                 <Link
                   to="/productandplan/konarcard"
                   className="cta-black-button desktop-button"
