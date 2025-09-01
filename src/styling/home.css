@@ -300,6 +300,10 @@ body {
 }
 
 @media (max-width:600px) {
+    .hero-social-proof {
+        text-align: start;
+    }
+
     .hero-rating {
         font-weight: 600
     }
