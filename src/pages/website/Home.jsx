@@ -411,7 +411,7 @@ export default function Home() {
                 <Link
                   to="/productandplan/konarsubscription"
                   className="cta-blue-button desktop-button"
-                  style={{ marginTop: 10, width: '100%' }}
+                  style={{ marginTop: 20, width: '100%' }}
                 >
                   Start Your 14 Day Free Trial
                 </Link>
@@ -445,7 +445,7 @@ export default function Home() {
                 <Link
                   to="/productandplan/konarcard"
                   className="cta-black-button desktop-button"
-                  style={{ marginTop: 10, width: '100%' }}
+                  style={{ marginTop: 20, width: '100%' }}
                 >
                   View Card Details
                 </Link>
