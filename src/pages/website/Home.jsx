@@ -186,7 +186,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Sign up &amp; go live</p>
-                      <p className="desktop-body-xs grey">Launch your profile in under 5 minutes.</p>
+                      <p className="desktop-body-xs gray">Launch your profile in under 5 minutes.</p>
                     </div>
                   </div>
 
@@ -196,7 +196,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Make it yours</p>
-                      <p className="desktop-body-xs grey">Add a logo, photo, colours and layout.</p>
+                      <p className="desktop-body-xs gray">Add a logo, photo, colours and layout.</p>
                     </div>
                   </div>
 
@@ -206,13 +206,13 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Simple editor</p>
-                      <p className="desktop-body-xs grey">Fill in easy fields — no coding needed.</p>
+                      <p className="desktop-body-xs gray">Fill in easy fields — no coding needed.</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="step-cta">
-                  <p className="desktop-body-xs grey step-note">No credit card required*</p>
+                  <p className="desktop-body-xs gray step-note">No credit card required*</p>
                   <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
                 </div>
               </div>
@@ -236,7 +236,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Pick your NFC card</p>
-                      <p className="desktop-body-xs grey">Choose a design that fits your brand.</p>
+                      <p className="desktop-body-xs gray">Choose a design that fits your brand.</p>
                     </div>
                   </div>
 
@@ -246,7 +246,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">We print &amp; ship</p>
-                      <p className="desktop-body-xs grey">Fast turnaround, quality finish.</p>
+                      <p className="desktop-body-xs gray">Fast turnaround, quality finish.</p>
                     </div>
                   </div>
 
@@ -256,13 +256,13 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Link to your profile</p>
-                      <p className="desktop-body-xs grey">Your card opens your live page.</p>
+                      <p className="desktop-body-xs gray">Your card opens your live page.</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="step-cta">
-                  <p className="desktop-body-xs grey step-note">No credit card required*</p>
+                  <p className="desktop-body-xs gray step-note">No credit card required*</p>
                   <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
                 </div>
               </div>
@@ -286,7 +286,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Tap or scan to share</p>
-                      <p className="desktop-body-xs grey">Open your profile with NFC or QR.</p>
+                      <p className="desktop-body-xs gray">Open your profile with NFC or QR.</p>
                     </div>
                   </div>
 
@@ -296,7 +296,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Send your link anywhere</p>
-                      <p className="desktop-body-xs grey">Messages, socials, email — easy.</p>
+                      <p className="desktop-body-xs gray">Messages, socials, email — easy.</p>
                     </div>
                   </div>
 
@@ -306,13 +306,13 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Win more work</p>
-                      <p className="desktop-body-xs grey">Stand out and get hired faster.</p>
+                      <p className="desktop-body-xs gray">Stand out and get hired faster.</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="step-cta">
-                  <p className="desktop-body-xs grey step-note">No credit card required*</p>
+                  <p className="desktop-body-xs gray step-note">No credit card required*</p>
                   <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
                 </div>
               </div>
@@ -333,7 +333,7 @@ export default function Home() {
               <img src={NFCBusinessCard} alt="NFC business card being tapped to share" />
             </div>
             <h4 className="desktop-h6">NFC Business Card</h4>
-            <p className="desktop-body-xs grey">Tap to Instantly Share Details</p>
+            <p className="desktop-body-xs gray">Tap to Instantly Share Details</p>
           </div>
 
           <div className="share-card">
@@ -341,7 +341,7 @@ export default function Home() {
               <img src={ScanQRCode} alt="Scanning a QR code to open profile" />
             </div>
             <h4 className="desktop-h6">Scan QR Code</h4>
-            <p className="desktop-body-xs grey">Scan the QR Code To Open Your Profile</p>
+            <p className="desktop-body-xs gray">Scan the QR Code To Open Your Profile</p>
           </div>
 
           <div className="share-card">
@@ -349,7 +349,7 @@ export default function Home() {
               <img src={SMSSend} alt="Sharing your link via message" />
             </div>
             <h4 className="desktop-h6">Share via Message</h4>
-            <p className="desktop-body-xs grey">WhatsApp, SMS, Messenger &amp; More</p>
+            <p className="desktop-body-xs gray">WhatsApp, SMS, Messenger &amp; More</p>
           </div>
 
           <div className="share-card">
@@ -357,7 +357,7 @@ export default function Home() {
               <img src={LinkInBio} alt="Profile link placed in social bio" />
             </div>
             <h4 className="desktop-h6">Link In Bio</h4>
-            <p className="desktop-body-xs grey">One link which you can share via any platform</p>
+            <p className="desktop-body-xs gray">One link which you can share via any platform</p>
           </div>
         </div>
       </div>
