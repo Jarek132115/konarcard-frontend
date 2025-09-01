@@ -7,7 +7,10 @@ import Footer from '../../components/Footer';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
 import { toast } from 'react-hot-toast';
-
+import pp1 from '../../assets/images/pp1.png';
+import pp2 from '../../assets/images/pp2.png';
+import pp3 from '../../assets/images/pp3.png';
+import pp4 from '../../assets/images/pp4.png';
 import ProductCover from '../../assets/images/Product-Cover.png';
 import ProductImage1 from '../../assets/images/Product-Image-1.png';
 import ProductImage2 from '../../assets/images/Product-Image-2.png';
