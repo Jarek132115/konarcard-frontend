@@ -1120,43 +1120,41 @@ body {
     box-sizing: border-box;
 }
 
-/* ===== HOME KONAR CARD PREVIEW (main image + 5 thumbnails) ===== */
+/* ===== PRICING CARD: tray with main image + 5 thumbnails ===== */
+.pricing-media-tray {
+    margin-top: 14px;
+    border-radius: 16px;
+    overflow: hidden;
+    /* same border feel as old pricing-media */
+    background: #111;
+    border: 1px solid #2a2a2a;
 
-.home-pd-tray {
-    background: #f7f7f8;
-    border: 1px solid #ececec;
-    border-radius: 20px;
-    box-shadow: inset 0 -6px 16px rgba(0, 0, 0, .06), 0 6px 20px rgba(0, 0, 0, .08);
-    padding: 18px;
-}
-
-/* Total height is fixed; main image shrinks to make room for thumbs */
-.home-pd-holder {
-    --thumb-h: 76px;
-    /* height of the thumbnail strip (desktop) */
-    --thumb-gap: 12px;
-    /* spacing between thumbs */
-    height: clamp(340px, 48vw, 520px);
+    /* make the whole gallery height-controlled so thumbs never overflow */
+    --thumb-h: 56px;
+    /* thumbnail strip height (desktop) */
+    --thumb-gap: 10px;
+    height: clamp(260px, 32vw, 380px);
+    padding: 10px;
     display: flex;
     flex-direction: column;
 }
 
-.home-pd-main {
+.pricing-media-main {
     height: calc(100% - var(--thumb-h) - var(--thumb-gap));
-    background: #fff;
-    border-radius: 16px;
+    border-radius: 12px;
     overflow: hidden;
+    background: #000;
 }
 
-.home-pd-main img {
+.pricing-media-main img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
 }
 
-/* Thumbnails — exactly 1/1 squares, fill width */
-.home-pd-thumbs {
+/* thumbs full width, 1/1 squares */
+.pricing-media-thumbs {
     height: var(--thumb-h);
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -1164,45 +1162,45 @@ body {
     margin-top: var(--thumb-gap);
 }
 
-.home-pd-thumb {
-    border: 1px solid #ececec;
-    background: #fff;
-    border-radius: 12px;
+.pricing-media-thumb {
+    border: 1px solid #2a2a2a;
+    background: #000;
+    border-radius: 10px;
     overflow: hidden;
     padding: 0;
     cursor: pointer;
-    transition: box-shadow .15s ease, transform .06s ease, border-color .15s ease;
+    transition: transform .06s ease, box-shadow .15s ease, border-color .15s ease;
 }
 
-.home-pd-thumb img {
+.pricing-media-thumb img {
     width: 100%;
     height: 100%;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1/1;
     object-fit: cover;
     display: block;
 }
 
-.home-pd-thumb:hover {
+.pricing-media-thumb:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .3);
 }
 
-.home-pd-thumb.is-active {
+.pricing-media-thumb.is-active {
     border-color: #0a66ff;
-    box-shadow: 0 0 0 3px rgba(10, 102, 255, .12);
+    box-shadow: 0 0 0 3px rgba(10, 102, 255, .25);
 }
 
-/* Mobile: make the main image a square, stack naturally */
+/* Mobile: make main image 1:1 and keep thumbs neat */
 @media (max-width: 600px) {
-    .home-pd-holder {
-        --thumb-h: 58px;
+    .pricing-media-tray {
+        --thumb-h: 54px;
         height: auto;
-        /* let content decide height */
+        /* allow natural height */
     }
 
-    .home-pd-main {
+    .pricing-media-main {
         height: auto;
         aspect-ratio: 1 / 1;
-        /* 1x1 square on mobile */
+        /* square on mobile */
     }
 }

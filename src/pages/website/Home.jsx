@@ -1,3 +1,4 @@
+// frontend/src/pages/Home/index.jsx
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
@@ -31,7 +32,6 @@ import pp2 from '../../assets/images/pp2.png';
 import pp3 from '../../assets/images/pp3.png';
 import pp4 from '../../assets/images/pp4.png';
 
-/* NEW — use the same product images & thumbnails as the Konar Card page */
 import ProductCover from '../../assets/images/Product-Cover.png';
 import ProductImage1 from '../../assets/images/Product-Image-1.png';
 import ProductImage2 from '../../assets/images/Product-Image-2.png';
@@ -50,9 +50,9 @@ export default function Home() {
   const isSubscribed = user ? user.isSubscribed : false;
   const loadingStatus = authLoading;
 
-  /* NEW — local state for the Home page preview */
-  const [homeMainImage, setHomeMainImage] = useState(ProductCover);
-  const homeThumbs = [
+  // NEW: state for the pricing card (black) gallery
+  const [cardMainImage, setCardMainImage] = useState(ProductCover);
+  const cardThumbs = [
     ProductCover,
     ProductImage1,
     ProductImage2,
@@ -338,77 +338,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ====== NEW: Konar Card preview with thumbnails ====== */}
-      <div className="section">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Konar Card – Preview</h2>
-          <h3 className="desktop-h6 text-center">See the card and design options up close.</h3>
-        </div>
-
-        <div className="home-pd-tray">
-          <div className="home-pd-holder">
-            <div className="home-pd-main">
-              <img src={homeMainImage} alt="Konar Card preview" />
-            </div>
-
-            <div className="home-pd-thumbs">
-              {homeThumbs.map((src, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className={`home-pd-thumb ${homeMainImage === src ? 'is-active' : ''}`}
-                  onClick={() => setHomeMainImage(src)}
-                  aria-label={`Preview image ${i + 1}`}
-                >
-                  <img src={src} alt={`Thumbnail ${i + 1}`} />
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* --- HOW TO SHARE --- */}
-      <div className="section share-section">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">One Profile. Shared in Seconds.</h2>
-        </div>
-
-        <div className="share-grid">
-          <div className="share-card">
-            <div className="share-card-media">
-              <img src={NFCBusinessCard} alt="NFC business card being tapped to share" />
-            </div>
-            <h4 className="desktop-h6">NFC Business Card</h4>
-            <p className="desktop-body-xs gray">Tap to Instantly Share Details</p>
-          </div>
-
-          <div className="share-card">
-            <div className="share-card-media">
-              <img src={ScanQRCode} alt="Scanning a QR code to open profile" />
-            </div>
-            <h4 className="desktop-h6">Scan QR Code</h4>
-            <p className="desktop-body-xs gray">Scan the QR Code To Open Your Profile</p>
-          </div>
-
-          <div className="share-card">
-            <div className="share-card-media">
-              <img src={SMSSend} alt="Sharing your link via message" />
-            </div>
-            <h4 className="desktop-h6">Share via Message</h4>
-            <p className="desktop-body-xs gray">WhatsApp, SMS, Messenger &amp; More</p>
-          </div>
-
-          <div className="share-card">
-            <div className="share-card-media">
-              <img src={LinkInBio} alt="Profile link placed in social bio" />
-            </div>
-            <h4 className="desktop-h6">Link In Bio</h4>
-            <p className="desktop-body-xs gray">One link which you can share via any platform</p>
-          </div>
-        </div>
-      </div>
-
       {/* --- PRICING (redesigned) --- */}
       <div className="section">
         <div className="section-1-title">
@@ -464,7 +393,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Physical card (black) */}
+          {/* Physical card (black) — NOW WITH MAIN + 5 THUMBNAILS */}
           <div className="pricing-card pricing-card--product">
             <div className="pricing-inner">
               <div className="pricing-head">
@@ -480,8 +409,24 @@ export default function Home() {
                 <span className="desktop-button">One Time Purchase</span>
               </div>
 
-              <div className="pricing-media">
-                <img src={PlasticCard} alt="Konar Card - White Edition" />
+              {/* REPLACED: single image -> tray with thumbnails */}
+              <div className="pricing-media-tray">
+                <div className="pricing-media-main">
+                  <img src={cardMainImage} alt="Konar Card preview" />
+                </div>
+                <div className="pricing-media-thumbs">
+                  {cardThumbs.map((src, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={`pricing-media-thumb ${cardMainImage === src ? 'is-active' : ''}`}
+                      onClick={() => setCardMainImage(src)}
+                      aria-label={`View image ${i + 1}`}
+                    >
+                      <img src={src} alt={`Thumbnail ${i + 1}`} />
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="pricing-bottom">
@@ -498,6 +443,7 @@ export default function Home() {
         </div>
       </div>
 
+      {/* (rest of page unchanged) — People, Reviews, FAQ */}
       {/* --- People showcase --- */}
       <div className="section">
         <div className="section-1-title">
