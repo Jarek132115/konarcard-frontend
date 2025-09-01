@@ -76,31 +76,47 @@ export default function KonarCard() {
     }
   };
 
-  // Delivery window text
+  // Delivery window text: today+1 to today+4 (e.g., "2–5 September" or "30 Sep – 3 Oct 2025")
   const getDeliveryDates = () => {
     const today = new Date();
     const start = new Date(today);
     start.setDate(today.getDate() + 1);
     const end = new Date(today);
-    end.setDate(today.getDate() + 2);
+    end.setDate(today.getDate() + 4);
+
     const monthNames = [
-      'January','February','March','April','May','June',
-      'July','August','September','October','November','December'
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
     ];
-    return `Receive by ${start.getDate()}-${end.getDate()} ${monthNames[start.getMonth()]}`;
+    const shortMonth = (d) => monthNames[d.getMonth()].slice(0, 3);
+
+    const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
+
+    if (sameMonth) {
+      // "2–5 September"
+      return `${start.getDate()}–${end.getDate()} ${monthNames[start.getMonth()]}`;
+    }
+
+    const sameYear = start.getFullYear() === end.getFullYear();
+    if (sameYear) {
+      // "30 Sep – 3 Oct"
+      return `${start.getDate()} ${shortMonth(start)} – ${end.getDate()} ${shortMonth(end)}`;
+    }
+    // Cross-year: "30 Dec 2025 – 2 Jan 2026"
+    return `${start.getDate()} ${shortMonth(start)} ${start.getFullYear()} – ${end.getDate()} ${shortMonth(end)} ${end.getFullYear()}`;
   };
   const deliveryDateText = getDeliveryDates();
 
   // Feature list (icons are placeholders—swap later)
   const featurePills = [
-    { icon: PhoneIcon,    title: 'Compatibility',  text: 'Compatible with Android & iOS' },
-    { icon: NFCIcon,      title: 'QR Code Backup', text: 'If NFC doesn’t work, scan the QR' },
-    { icon: WarrantyIcon, title: 'Warranty',       text: '12-month warranty' },
-    { icon: NFCIcon,      title: 'Fast Transfer',  text: 'Share details with one tap' },
-    { icon: IDCardIcon,   title: 'Chip & Memory',  text: 'NTAG215 chip, 504 bytes' },
-    { icon: LockIcon,     title: 'Data Retention', text: 'Stores securely 10+ years' },
-    { icon: BoxIcon,      title: 'Size & Material',text: '85.5 × 54 × 0.8 mm, PVC' },
-    { icon: PalletteIcon, title: 'Eco-Friendly',   text: 'Made from recyclable materials' },
+    { icon: PhoneIcon, title: 'Compatibility', text: 'Compatible with Android & iOS' },
+    { icon: NFCIcon, title: 'QR Code Backup', text: 'If NFC doesn’t work, scan the QR' },
+    { icon: WarrantyIcon, title: 'Warranty', text: '12-month warranty' },
+    { icon: NFCIcon, title: 'Fast Transfer', text: 'Share details with one tap' },
+    { icon: IDCardIcon, title: 'Chip & Memory', text: 'NTAG215 chip, 504 bytes' },
+    { icon: LockIcon, title: 'Data Retention', text: 'Stores securely 10+ years' },
+    { icon: BoxIcon, title: 'Size & Material', text: '85.5 × 54 × 0.8 mm, PVC' },
+    { icon: PalletteIcon, title: 'Eco-Friendly', text: 'Made from recyclable materials' },
   ];
 
   return (
@@ -163,8 +179,10 @@ export default function KonarCard() {
                 <img src={DeliveryIcon} alt="" />
               </span>
               <div className="pd-feature-copy">
-                <p className="pd-feature-title desktop-body-s">Delivery 1–2 Days</p>
-                <p className="desktop-body-xs" style={{ color: '#666' }}>{deliveryDateText}</p>
+                <p className="pd-feature-title desktop-body-s">Ships within 24h</p>
+                <p className="desktop-body-xs" style={{ color: '#666' }}>
+                  Estimated delivery: {deliveryDateText}
+                </p>
               </div>
             </div>
           </div>
