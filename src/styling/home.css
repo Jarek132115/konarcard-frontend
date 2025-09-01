@@ -1258,4 +1258,9 @@ body {
         aspect-ratio: 1 / 1;
         object-fit: cover;
     }
+
+    .pricing-media-thumb {
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+    }
 }
