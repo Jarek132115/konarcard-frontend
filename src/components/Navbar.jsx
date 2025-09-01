@@ -19,6 +19,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
+
         {/* ===== Mobile header ===== */}
         <div className="navbar-mobile-header">
           <Link to="/" className="logo-link" aria-label="Home">
@@ -108,7 +109,7 @@ export default function Navbar() {
                 </li>
               </ul>
 
-              {/* divider that lines up with the navbar's bottom rule */}
+              {/* divider aligned with the navbar’s bottom rule */}
               <div className="mobile-divider" aria-hidden="true" />
 
               <div className="mobile-actions">
@@ -189,6 +190,7 @@ export default function Navbar() {
             ))}
           </div>
         </div>
+
       </div>
     </nav>
   );

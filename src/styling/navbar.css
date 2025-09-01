@@ -7,7 +7,7 @@
   z-index: 999;
   width: 100%;
   padding: 20px 0;
-  /* keep this padding equal to overlay header spacing */
+  /* keep this equal to overlay header spacing */
   background: #fff;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
   /* bottom rule */
@@ -80,7 +80,7 @@
   background: transparent;
   border: 0;
   padding: 0;
-  /* ensures icon aligns with close button padding below */
+  /* aligns with close button (no extra pad) */
 }
 
 .hamburger span {
@@ -88,7 +88,7 @@
   height: 3px;
   background: #111;
   border-radius: 3px;
-  transition: transform .3s ease, opacity .3s ease;
+  transition: transform .3s ease, opacity .3s ease, background .3s ease;
 }
 
 .hamburger.active span:nth-child(1) {
@@ -101,6 +101,11 @@
 
 .hamburger.active span:nth-child(3) {
   transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* when open, make bars white so it visually matches the close icon position/color */
+.hamburger.active span {
+  background: #fff;
 }
 
 /* =========================
@@ -122,7 +127,7 @@
   animation: overlayFade .25s ease-out;
 }
 
-/* Slide-in panel (right) — black / #333 with blue accents */
+/* Slide-in panel (right) — black / #333 with blue accent */
 .mobile-panel {
   position: fixed;
   top: 0;
@@ -138,20 +143,20 @@
   border-left: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: -10px 0 40px rgba(0, 0, 0, 0.35);
   padding: 0 20px;
-  /* horizontal pad matches navbar-container */
+  /* match navbar-container horizontal pad */
   transform: translateX(100%);
   animation: panelIn .35s cubic-bezier(.22, .9, .24, 1) forwards;
 }
 
-/* Header row (same vertical padding height as .navbar) */
+/* Header row (same vertical padding as .navbar) */
 .mobile-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 20px 0;
-  /* 20px top/bottom padding equivalent look */
+  /* equal to .navbar padding */
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  /* divider mirrors navbar bottom rule */
+  /* mirrors navbar bottom rule */
 }
 
 .mobile-panel-title {
@@ -171,9 +176,9 @@
   font-size: 28px;
   line-height: 1;
   padding: 0;
-  /* no extra padding so it lines up with hamburger */
+  /* no extra pad, aligns with burger */
   border-radius: 10px;
-  transition: transform .08s ease, background-color .15s ease, color .15s ease;
+  transition: transform .08s ease, color .15s ease;
 }
 
 .mobile-close:hover {
@@ -194,29 +199,37 @@
   gap: 8px;
 }
 
-.mobile-list li a {
+/* Make open-menu links use desktop-h3 look */
+.mobile-list li a.desktop-h3,
+.mobile-actions .desktop-h3,
+.mobile-actions .logout-btn.desktop-h3 {
   display: block;
   padding: 14px 6px;
-  color: #f5f8ff;
-  text-decoration: none;
+  /* These values should mirror your .desktop-h3 typographic rules. If .desktop-h3
+     already exists globally, these won’t fight—just ensure the class is present. */
   font-size: 28px;
   line-height: 1.2;
   font-weight: 600;
   letter-spacing: -0.02em;
+
+  color: #f5f8ff;
+  text-decoration: none;
   border-radius: 12px;
-  transition: background-color .15s ease, opacity .15s ease, transform .08s ease, color .15s ease;
+  transition: background-color .15s ease, color .15s ease, transform .08s ease;
 }
 
-.mobile-list li a:hover {
+.mobile-list li a.desktop-h3:hover,
+.mobile-actions .desktop-h3:hover {
   background: rgba(255, 255, 255, 0.06);
   color: #eaf2ff;
 }
 
-.mobile-list li a:active {
+.mobile-list li a.desktop-h3:active,
+.mobile-actions .desktop-h3:active {
   transform: translateY(1px);
 }
 
-/* Divider between links and actions, aligned where the navbar line would be */
+/* Divider between links and actions */
 .mobile-divider {
   height: 1px;
   background: rgba(255, 255, 255, 0.08);
@@ -232,41 +245,18 @@
   flex-direction: column;
 }
 
-/* Make auth items look like the other menu links on mobile */
-@media (max-width: 1000px) {
-
-  .mobile-actions .desktop-button,
-  .mobile-actions .logout-btn {
-    all: unset;
-    display: block;
-    padding: 14px 6px;
-    font-size: 24px;
-    line-height: 1.3;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: background-color .15s ease, color .15s ease;
-  }
-
-  .mobile-actions .desktop-button {
-    color: #fff;
-  }
-
-  .mobile-actions .desktop-button:hover {
-    background: rgba(255, 255, 255, 0.06);
-  }
-
-  .mobile-actions .logout-btn {
-    color: #ff4444;
-  }
-
-  .mobile-actions .logout-btn:hover {
-    background: rgba(255, 68, 68, 0.12);
-  }
+/* Logout remains red on mobile */
+.mobile-actions .logout-btn.desktop-h3 {
+  color: #ff4444;
 }
 
-/* Animations */
+.mobile-actions .logout-btn.desktop-h3:hover {
+  background: rgba(255, 68, 68, 0.12);
+}
+
+/* =========================
+   Animations
+   ========================= */
 @keyframes overlayFade {
   from {
     opacity: 0;
@@ -304,37 +294,4 @@
   .navbar-mobile-header {
     display: flex;
   }
-}
-
-.hamburger.active span {
-  background: #fff;
-}
-
-/* =========================
-   MOBILE LINKS AS desktop-h3
-   ========================= */
-.mobile-list li a,
-.mobile-actions .desktop-button,
-.mobile-actions .logout-btn {
-  @apply desktop-h3;
-  /* if you aren’t using Tailwind with @apply, just use your desktop-h3 rules directly */
-  display: block;
-  padding: 14px 6px;
-  border-radius: 12px;
-  transition: background-color .15s ease, color .15s ease;
-}
-
-/* Hover states */
-.mobile-list li a:hover,
-.mobile-actions .desktop-button:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
-}
-
-.mobile-actions .logout-btn {
-  color: #ff4444;
-}
-
-.mobile-actions .logout-btn:hover {
-  background: rgba(255, 68, 68, 0.12);
 }
