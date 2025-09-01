@@ -400,7 +400,7 @@ export default function Home() {
                 ].map((text, i) => (
                   <li className="pricing-feature" key={i}>
                     <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
-                    <span>{text}</span>
+                    <span className='black'>{text}</span>
                   </li>
                 ))}
               </ul>
