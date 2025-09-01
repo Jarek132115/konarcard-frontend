@@ -377,7 +377,7 @@ export default function Home() {
       {/* --- Plans --- */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className='desktop-h2 text-center'>Our Plans & Cards</h2>
+          <h2 className='desktop-h3 text-center'>Our Plans & Cards</h2>
           <h3 className='desktop-h6 text-center'>Choose what's right for your business.</h3>
         </div>
         <div className="combined-offer-container">
