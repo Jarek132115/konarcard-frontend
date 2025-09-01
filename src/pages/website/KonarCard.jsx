@@ -26,7 +26,6 @@ import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
 import NFCIcon from '../../assets/icons/NFC-Icon.svg';
 import SetupIcon from '../../assets/icons/Setup-Icon.svg';
 import BoxIcon from '../../assets/icons/Box-Icon.svg';
-import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
 import HatIcon from '../../assets/icons/Hat-Icon.svg';
 import LockIcon from '../../assets/icons/Lock-Icon.svg';
 import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
