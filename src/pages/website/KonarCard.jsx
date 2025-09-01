@@ -26,8 +26,6 @@ import HowItWorks3 from '../../assets/images/HowItWorks-3.png';
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg'
 import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg'
-import WhatIsKonar from '../../assets/images/WhatIsKonar.jpg';
-
 
 const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8');
 
