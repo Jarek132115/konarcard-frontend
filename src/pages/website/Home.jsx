@@ -379,7 +379,7 @@ export default function Home() {
                   <h3 className="desktop-h5">Power Profile</h3>
                   <p className='desktop-body-xs'>Win more work with a power profile</p>
                 </div>
-                <span className="pricing-badge">14-Day Free Trial</span>
+                <span className="pricing-badge blue">14-Day Free Trial</span>
               </div>
               <div className="pricing-divider" />
               <div className="pricing-price-row">
