@@ -1238,3 +1238,24 @@ body {
         object-fit: cover;
     }
 }
+
+/* Tighter gaps & 1:1 thumbnails on small screens */
+
+/* Under 600px: smaller gap */
+@media (max-width: 600px) {
+    .pricing-media-thumbs {
+        gap: 4px;
+    }
+}
+
+/* Under 430px: square thumbs, tiny gap */
+@media (max-width: 430px) {
+    .pricing-media-thumbs {
+        gap: 2px;
+    }
+
+    .pricing-media-thumb img {
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+    }
+}
