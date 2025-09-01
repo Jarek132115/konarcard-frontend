@@ -420,7 +420,10 @@ export default function Home() {
           <div className="pricing-card pricing-card--product">
             <div className="pricing-inner">
               <div className="pricing-head">
-                <h3 className="desktop-h5">Konar Card - White Edition</h3>
+                <div>
+                  <h3 className="desktop-h5">Konar Card - White Edition</h3>
+                  <p className='desktop-body-xs'>Tap to share your profile instantly.</p>
+                </div>
                 <span className="pricing-badge">12 Month Warranty</span>
               </div>
               <div className="pricing-divider" />
