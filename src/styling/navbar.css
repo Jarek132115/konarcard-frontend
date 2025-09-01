@@ -95,15 +95,70 @@
   background-color: #f0f8ff;
 }
 
+/* Make logout look like cta-blue-button but red */
 .logout-btn {
-  background-color: white;
+  /* base reset/override */
+  -webkit-tap-highlight-color: transparent;
+  background: #FFFFFF;
   color: #FF0000;
+  /* red text */
   border: 2px solid #FF0000;
+  /* red outline */
+
+  /* match cta pill sizing/shape */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 26px;
+  border-radius: 9999px;
+  /* full pill */
+  font-weight: 700;
+  line-height: 1.1;
+  text-decoration: none;
+  min-height: 44px;
+  /* touch target */
+
+  /* same shadows & transitions as cta-blue-button */
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: background-color .15s ease, box-shadow .15s ease, transform .05s ease;
 }
 
 .logout-btn:hover {
-  background-color: #fff0f0;
+  background-color: #ffffff;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 14px 28px rgba(255, 0, 0, 0.22),
+    /* red halo */
+    0 0 0 4px rgba(255, 0, 0, 0.12);
+  /* red focus ring style halo */
+  cursor: pointer;
 }
+
+.logout-btn:active {
+  transform: scale(0.98);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 8px 16px rgba(255, 0, 0, 0.18),
+    0 0 0 3px rgba(255, 0, 0, 0.15);
+}
+
+.logout-btn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 4px rgba(255, 0, 0, 0.18),
+    0 8px 24px rgba(255, 0, 0, 0.25);
+}
+
+/* Keep mobile menu visual consistent */
+.mobile-menu .auth-links .logout-btn {
+  color: #FF0000;
+  width: 50%;
+  /* or 100% if you prefer full-width on mobile */
+}
+
 
 /* MOBILE NAVBAR */
 .navbar-mobile-header {
