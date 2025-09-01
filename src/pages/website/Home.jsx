@@ -3,27 +3,18 @@ import React, { useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import NewBackground from '../../assets/images/New-Background.jpg';
-import BackgroundHero from '../../assets/images/background-hero.png';
 import Section1Image from '../../assets/images/Section-1-Image.png';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import FormCustomizationIcon from '../../assets/icons/FormCustomization-Icon.svg';
 import CustomizationIcon from '../../assets/icons/Customization-Icon.svg';
 import BoltIcon from '../../assets/icons/Bolt-Icon.svg';
 import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
-import ImagesIcon from '../../assets/icons/Images-Icon.svg';
-import UpdateIcon from '../../assets/icons/Update-Icon.svg';
 import NFCIcon from '../../assets/icons/NFC-Icon.svg';
-import Section3_Image1 from '../../assets/images/Section3-Image1.png';
-import Section3_Image2 from '../../assets/images/Section3-Image2.png';
-import Section3_Image3 from '../../assets/images/Section3-Image3.png';
-import Section3_Image4 from '../../assets/images/Section3-Image4.png';
 import EditProfile from '../../assets/images/Edit-Profile.jpg';
 import WhyYouNeedThis from '../../assets/images/WhyYouNeedThis.png';
 import People from '../../assets/images/People.png';
 import PlasticCard from '../../assets/images/PlasticCard.png';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
-import ReviewPerson from '../../assets/images/Review-Person.png';
 import SetupIcon from '../../assets/icons/Setup-Icon.svg';
 import BoxIcon from '../../assets/icons/Box-Icon.svg';
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
@@ -32,20 +23,14 @@ import LockIcon from '../../assets/icons/Lock-Icon.svg';
 import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
 import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
-import Profile1 from '../../assets/images/Profile1.png';
-import Profile2 from '../../assets/images/Profile2.png';
-import Profile3 from '../../assets/images/Profile3.png';
-import Profile4 from '../../assets/images/Profile4.png';
-import Profile5 from '../../assets/images/Profile5.png';
 import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
-import QRCode from '../../assets/images/QR-Code.jpg';
 import ScanQRCode from '../../assets/images/ScanQR-Code.jpg';
 import LinkInBio from '../../assets/images/LinkInBio.jpg';
 import SMSSend from '../../assets/images/SMSSend.jpg';
-import pp1 from '../../assets/images/pp1.png'
-import pp2 from '../../assets/images/pp2.png'
-import pp3 from '../../assets/images/pp3.png'
-import pp4 from '../../assets/images/pp4.png'
+import pp1 from '../../assets/images/pp1.png';
+import pp2 from '../../assets/images/pp2.png';
+import pp3 from '../../assets/images/pp3.png';
+import pp4 from '../../assets/images/pp4.png';
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
@@ -125,27 +110,30 @@ export default function Home() {
     <>
       <Navbar />
 
+      {/* HERO */}
       <div className="home-hero">
         <div className="hero-container">
           <div className="hero-left">
-            <div className="step-badge">14 Day <span style={{fontWeight: 600}}>Free Trial</span> Now Available</div>
-            <h1 className="desktop-h1 hero-heading">Stand Out. Get Noticed. Grow Your <span className='blue'>Business.</span></h1>
+            <div className="step-badge">14 Day <span style={{ fontWeight: 600 }}>Free Trial</span> Now Available</div>
+            <h1 className="desktop-h1 hero-heading">
+              Stand Out. Get Noticed. Grow Your <span className="blue">Business.</span>
+            </h1>
             <p className="desktop-h6 desktop-body">
-              Build a professional profile that gets you noticed, and share it effortlessly through your Konar Card with a single tap.</p>
+              Build a professional profile that gets you noticed, and share it effortlessly through your Konar Card with a single tap.
+            </p>
 
             <div className="hero-cta">
               <Link to="/productandplan" className="cta-blue-button desktop-button">View Plans & Cards</Link>
-              <Link to="/productandplan/konarsubscription" className="cta-black-button desktop-button">
-                See How It Works
-              </Link>
+              <Link to="/productandplan/konarsubscription" className="cta-black-button desktop-button">See How It Works</Link>
             </div>
+
             <div className="hero-social-proof">
               <div className="hero-avatars">
                 <img src={pp1} alt="User 1" className="avatar" />
                 <img src={pp2} alt="User 2" className="avatar" />
                 <img src={pp3} alt="User 3" className="avatar" />
               </div>
-              <div className='avatar-text'>
+              <div className="avatar-text">
                 <p style={{ fontWeight: 900 }} className="desktop-h6">1k+</p>
                 <p className="desktop-body-xs light-black">Trusted by 1,000+ tradies</p>
               </div>
@@ -186,7 +174,7 @@ export default function Home() {
             <div className="step-badge">Step 1</div>
             <div className="step-card">
               <div className="step-media">
-                <img src={EditProfile} alt="Konar card on wallet" />
+                <img src={EditProfile} alt="Create your profile" />
               </div>
               <div className="step-text">
                 <h3 className="desktop-h5">Craft A Branded Profile Clients Trust</h3>
@@ -236,7 +224,7 @@ export default function Home() {
             <div className="step-badge">Step 2</div>
             <div className="step-card reverse">
               <div className="step-media">
-                <img src={Section1Image} alt="Editing profile on phones" />
+                <img src={Section1Image} alt="Order your NFC card" />
               </div>
               <div className="step-text">
                 <h3 className="desktop-h5">Order Your Tap-To-Share Card Today</h3>
@@ -286,7 +274,7 @@ export default function Home() {
             <div className="step-badge">Step 3</div>
             <div className="step-card">
               <div className="step-media">
-                <img src={WhyYouNeedThis} alt="Showing your trade page" />
+                <img src={WhyYouNeedThis} alt="Share your page" />
               </div>
               <div className="step-text">
                 <h3 className="desktop-h5">Share In Seconds And Win More Jobs</h3>
@@ -336,8 +324,8 @@ export default function Home() {
       {/* --- HOW TO SHARE --- */}
       <div className="section share-section">
         <div className="section-1-title">
-          <h2 className='desktop-h3 text-center'>One Profile. Shared in Seconds.</h2>
-          <h3 className='desktop-h6 text-center'>Tap it. Scan it. Link it. Your trade page goes anywhere</h3>
+          <h2 className="desktop-h3 text-center">One Profile. Shared in Seconds.</h2>
+          <h3 className="desktop-h6 text-center">Tap it. Scan it. Link it. Your trade page goes anywhere</h3>
         </div>
 
         <div className="share-grid">
@@ -375,73 +363,77 @@ export default function Home() {
         </div>
       </div>
 
-      {/* --- Plans --- */}
+      {/* --- PRICING (redesigned) --- */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className='desktop-h3 text-center'>Our Plans & Cards</h2>
-          <h3 className='desktop-h6 text-center'>Choose what's right for your business.</h3>
+          <h2 className="desktop-h3 text-center">Our Plans & Cards</h2>
+          <h3 className="desktop-h6 text-center">Choose what's right for your business.</h3>
         </div>
-        <div className="combined-offer-container">
-          <div className="subscription-offer-left">
-            <div className="subscription-header">
-              <p className='desktop-h5'>Power Profile</p>
-              <div className="free-trial-badge">14 Day Free Trial</div>
-            </div>
-            <p className='desktop-body-s subscription-subheader'>Create a stunning, professional profile in minutes. No coding needed.</p>
 
-            <div className="subscription-features">
-              {[
-                "Update anytime, instantly",
-                "Choose your own font",
-                "Select Light or Dark mode",
-                "Craft your 'About Me' section",
-                "Showcase your work portfolio",
-                "Display client reviews",
-                "List your services",
-                "Set your pricing",
-              ].map((text, idx) => (
-                <div className="hero-tick" key={idx}>
-                  <img src={TickIcon} className="icon" />
-                  <p>{text}</p>
-                </div>
-              ))}
-            </div>
-
-            <p className='desktop-body-s subscription-description-footer'>
-              "The perfect tool for tradesmen to make an unforgettable first impression and get new clients."
-            </p>
-
-            <div className="subscription-price-cta">
-              <div className='price-display'>
-                <p className='desktop-h5'>£7.95</p>
-                <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
+        <div className="pricing-grid">
+          {/* Subscription card (blue) */}
+          <div className="pricing-card pricing-card--subscription">
+            <div className="pricing-inner">
+              <div className="pricing-head">
+                <h3 className="desktop-h5">Power Profile</h3>
+                <span className="pricing-badge">14-Day Free Trial</span>
               </div>
-              <Link to="/productandplan/konarsubscription" className="desktop-button combined-section-button black-button">
-                View Subscription Details
+              <div className="pricing-divider" />
+              <div className="pricing-price-row">
+                <span className="pricing-price">£4.95</span>
+                <span className="pricing-price-sub">Per Month</span>
+              </div>
+
+              <ul className="pricing-features">
+                {[
+                  'Upload unlimited photos (Portfolio / Gallery)',
+                  'Add multiple social links and websites',
+                  'Personalize your landing page URL (yourname.cardsite.com)',
+                  'Priority support and setup help',
+                  'Premium NFC card design options',
+                  'CRM Integration.',
+                  'Networking Toolkit.',
+                  'Automated Follow-Ups.',
+                ].map((text, i) => (
+                  <li className="pricing-feature" key={i}>
+                    <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
+                    <span>{text}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <p className="pricing-quote">
+                "For professionals and businesses ready to make every first impression count."
+              </p>
+
+              <Link to="/productandplan/konarsubscription" className="pricing-cta pricing-cta--white">
+                Start Your 14 Day Free Trial
               </Link>
             </div>
           </div>
 
-          <div className="card-offer-right">
-            <div className="product-header">
-              <p className='desktop-h5'>Plastic NFC Card</p>
-              <div className="free-trial-badge product-header-badge">12 Month Warranty</div>
-            </div>
-            <p className='desktop-body-s product-subheader'>Lightweight, Durable, Always Ready</p>
-            <p className='desktop-body-xs product-optional-sentence'>This product is optional, buy one to stand out.</p>
-
-            <img src={PlasticCard} className="product-image" />
-
-            <p className='desktop-body-s subscription-description-footer'>
-              "For those who want to stand out above those who already stand out!"
-            </p>
-
-            <div className="product-price-cta">
-              <div className='price-display'>
-                <p className='desktop-h5'>£24.95</p>
-                <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
+          {/* Physical card (black) */}
+          <div className="pricing-card pricing-card--product">
+            <div className="pricing-inner">
+              <div className="pricing-head">
+                <h3 className="desktop-h5">Konar Card - White Edition</h3>
+                <span className="pricing-badge">12 Month Warranty</span>
               </div>
-              <Link to="/productandplan/konarcard" className="desktop-button combined-section-button black-button">
+              <div className="pricing-divider" />
+              <div className="pricing-price-row">
+                <span className="pricing-price">£24.95</span>
+                <span className="pricing-price-sub">One Time Purchase</span>
+              </div>
+
+              <div className="pricing-media">
+                <img src={PlasticCard} alt="Konar Card - White Edition" />
+              </div>
+
+              <p className="pricing-quote">
+                "For professionals and businesses ready to make every first impression count."
+              </p>
+
+              <Link to="/productandplan/konarcard" className="pricing-cta pricing-cta--white pricing-cta--darktext">
                 View Card Details
               </Link>
             </div>
@@ -483,13 +475,12 @@ export default function Home() {
       {/* --- Reviews --- */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className='desktop-h2 text-center'>The #1 Tool Tradies Are Talking About</h2>
-          <h3 className='desktop-h6 text-center'>
+          <h2 className="desktop-h2 text-center">The #1 Tool Tradies Are Talking About</h2>
+          <h3 className="desktop-h6 text-center">
             Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
           </h3>
         </div>
         <div className="review-container-box">
-          {/* Row 1 */}
           <div className="review-container">
             <div className="review-pair">
               <div className="review-div">
@@ -552,6 +543,7 @@ export default function Home() {
             </div>
           </div>
         </div>
+
         <div className="faq-cta">
           <Link to="/reviews" className="black-button desktop-button">Read More Reviews</Link>
         </div>
@@ -560,105 +552,106 @@ export default function Home() {
       {/* --- FAQ --- */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className='desktop-h3 text-center'>Frequently Asked Questions</h2>
-          <h3 className='desktop-h6 text-center'>For any other questions feel free to contact us at any time</h3>
+          <h2 className="desktop-h3 text-center">Frequently Asked Questions</h2>
+          <h3 className="desktop-h6 text-center">For any other questions feel free to contact us at any time</h3>
         </div>
         <div className="faq-container">
           <div className="faq-column">
             <div className="section-list">
-              <div className=" icon-white">
+              <div className="icon-white">
                 <img src={IDCardIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className='desktop-h6'>What is a Konar digital profile?</p>
-                <p className='desktop-body-s'>It’s your own landing page showing your trade, services, photos, and contact details — all online.</p>
+                <p className="desktop-h6">What is a Konar digital profile?</p>
+                <p className="desktop-body-s">It’s your own landing page showing your trade, services, photos, and contact details — all online.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white">
+              <div className="icon-white">
                 <img src={NFCIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className='desktop-h6'>Do I need an NFC card to use it?</p>
-                <p className='desktop-body-s'>No. You can use and share your digital profile without ever buying a physical card.</p>
+                <p className="desktop-h6">Do I need an NFC card to use it?</p>
+                <p className="desktop-body-s">No. You can use and share your digital profile without ever buying a physical card.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white">
+              <div className="icon-white">
                 <img src={PhoneIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className='desktop-h6'>How do people view my profile?</p>
-                <p className='desktop-body-s'>Share via link, QR code, or NFC tap — works instantly on most phones.</p>
+                <p className="desktop-h6">How do people view my profile?</p>
+                <p className="desktop-body-s">Share via link, QR code, or NFC tap — works instantly on most phones.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white">
+              <div className="icon-white">
                 <img src={SetupIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className='desktop-h6'>How do I set up my page?</p>
-                <p className='desktop-body-s'>Just fill in your trade, upload photos, list services — done in under five minutes.</p>
+                <p className="desktop-h6">How do I set up my page?</p>
+                <p className="desktop-body-s">Just fill in your trade, upload photos, list services — done in under five minutes.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white">
+              <div className="icon-white">
                 <img src={PencilIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className='desktop-h6'>Can I update my page anytime?</p>
-                <p className='desktop-body-s'>Yes. Log in from any device to update info, images, services, or pricing instantly.</p>
+                <p className="desktop-h6">Can I update my page anytime?</p>
+                <p className="desktop-body-s">Yes. Log in from any device to update info, images, services, or pricing instantly.</p>
               </div>
             </div>
           </div>
           <div className="faq-column">
             <div className="section-list">
-              <div className=" icon-white">
+              <div className="icon-white">
                 <img src={WalletIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className='desktop-h6'>What does it cost to use?</p>
-                <p className='desktop-body-s'>We offer a free plan. Premium features unlock with our £5.95/month Power Profile subscription.</p>
+                <p className="desktop-h6">What does it cost to use?</p>
+                <p className="desktop-body-s">We offer a free plan. Premium features unlock with our £5.95/month Power Profile subscription.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white">
+              <div className="icon-white">
                 <img src={BoxIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className='desktop-h6'>What happens if I lose my NFC card?</p>
-                <p className='desktop-body-s'>Your page still works without the card. You can always reorder one if you want to keep tapping.</p>
+                <p className="desktop-h6">What happens if I lose my NFC card?</p>
+                <p className="desktop-body-s">Your page still works without the card. You can always reorder one if you want to keep tapping.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white">
+              <div className="icon-white">
                 <img src={HatIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className='desktop-h6'>Who is this for exactly?</p>
-                <p className='desktop-body-s'>Any tradesperson who wants to get noticed, win more work, and look professional online.</p>
+                <p className="desktop-h6">Who is this for exactly?</p>
+                <p className="desktop-body-s">Any tradesperson who wants to get noticed, win more work, and look professional online.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white">
+              <div className="icon-white">
                 <img src={PalletteIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className='desktop-h6'>Can I customise the design and layout?</p>
-                <p className='desktop-body-s'>Yes. Pick fonts, colours, and layouts to match your brand and make it yours.</p>
+                <p className="desktop-h6">Can I customise the design and layout?</p>
+                <p className="desktop-body-s">Yes. Pick fonts, colours, and layouts to match your brand and make it yours.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white">
+              <div className="icon-white">
                 <img src={LockIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className='desktop-h6'>Is my personal data safe on here?</p>
-                <p className='desktop-body-s'>Absolutely. You control everything shown, and your data is hosted securely at all times.</p>
+                <p className="desktop-h6">Is my personal data safe on here?</p>
+                <p className="desktop-body-s">Absolutely. You control everything shown, and your data is hosted securely at all times.</p>
               </div>
             </div>
           </div>
         </div>
+
         <div className="faq-cta">
           <Link to="/faq" className="black-button desktop-button">Got more questions?</Link>
         </div>
