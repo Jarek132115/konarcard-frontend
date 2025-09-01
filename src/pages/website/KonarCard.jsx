@@ -174,52 +174,79 @@ export default function KonarCard() {
         </div>
       </div>
 
-      {/* What is NFC section - REVISED */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Your Konar Business Card Explained</h2>
-          <h3 className="desktop-h6 text-center">It’s a smart card you tap on a phone to share your details — no apps needed.</h3>
+          <h2 className="desktop-h2 text-center">The #1 Tool Tradies Are Talking About</h2>
+          <h3 className="desktop-h6 text-center">
+            Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
+          </h3>
+        </div>
+        <div className="review-container-box">
+          <div className="review-container">
+            <div className="review-pair">
+              <div className="review-div">
+                <img className="stars" src={ReviewStars} alt="5 star rating" />
+                <p className="desktop-body-s text-center">
+                  “Since using KonarCard I’m actually getting replies. Clients say it looks slick and I’m getting referrals.”
+                </p>
+                <div className="review-div-person">
+                  <img src={pp1} alt="Reviewer" />
+                  <div className="review-person-name">
+                    <p className="desktop-body-xs" style={{ color: '#333' }}>Plumber</p>
+                    <p className="desktop-body-s">Mark B</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="review-div">
+                <img className="stars" src={ReviewStars} alt="5 star rating" />
+                <p className="desktop-body-s text-center">
+                  “Saved me a fortune on printing. I tap the card and customers have everything in seconds.”
+                </p>
+                <div className="review-div-person">
+                  <img src={pp2} alt="Reviewer" />
+                  <div className="review-person-name">
+                    <p className="desktop-body-xs" style={{ color: '#333' }}>Electrician</p>
+                    <p className="desktop-body-s">Jake C</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="review-pair">
+              <div className="review-div">
+                <img className="stars" src={ReviewStars} alt="5 star rating" />
+                <p className="desktop-body-s text-center">
+                  “Gives me a proper online presence without a pricey website. Photos and reviews do the selling.”
+                </p>
+                <div className="review-div-person">
+                  <img src={pp3} alt="Reviewer" />
+                  <div className="review-person-name">
+                    <p className="desktop-body-xs" style={{ color: '#333' }}>Builder</p>
+                    <p className="desktop-body-s">Tom G</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="review-div">
+                <img className="stars" src={ReviewStars} alt="5 star rating" />
+                <p className="desktop-body-s text-center">
+                  “I update prices and services on my phone. No reprinting, no fuss — just more enquiries.”
+                </p>
+                <div className="review-div-person">
+                  <img src={pp4} alt="Reviewer" />
+                  <div className="review-person-name">
+                    <p className="desktop-body-xs" style={{ color: '#333' }}>Roofer</p>
+                    <p className="desktop-body-s">Sam H</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div style={{ gap: 40 }} className="section-1-content">
-          <div className="section-1-left">
-            <img src={WhatIsKonar} className="" />
-          </div>
-
-          <div className="section-1-right">
-            <p className="desktop-h5">Why Our Cards Are Better</p>
-            <p className="desktop-body">The durable, smart card that's always ready to impress.</p>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={PremiumMaterials} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Durable and Professional</p>
-                <p className="desktop-body-xs">Made from high-quality, long-lasting plastic that stands up to daily use.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={NFCIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Tap to Share</p>
-                <p className="desktop-body-xs">Instantly share your full profile with a simple tap on a phone—no apps or setup needed.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={QRCodeIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">QR Code Backup</p>
-                <p className="desktop-body-xs">A scannable code on the back ensures your profile is always accessible, even without NFC.</p>
-              </div>
-            </div>
-          </div>
+        <div className="faq-cta">
+          <Link to="/reviews" className="black-button desktop-button">Read More Reviews</Link>
         </div>
       </div>
 
