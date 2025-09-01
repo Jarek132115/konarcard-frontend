@@ -11,7 +11,7 @@ import pp2 from '../../assets/images/pp2.png';
 import pp3 from '../../assets/images/pp3.png';
 import pp4 from '../../assets/images/pp4.png';
 
-import ProductCover from '../../assets/images/Product-Cover.png';
+import ProductCover from '../../assets/images/Subscription-Main.jpg';
 import ProductImage1 from '../../assets/images/Product-Image-1.png';
 import ProductImage2 from '../../assets/images/Product-Image-2.png';
 import ProductImage3 from '../../assets/images/Product-Image-3.png';
