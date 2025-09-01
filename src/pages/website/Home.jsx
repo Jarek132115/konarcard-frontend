@@ -114,7 +114,7 @@ export default function Home() {
       <div className="home-hero">
         <div className="hero-container">
           <div className="hero-left">
-            <div style={{width: 'fit-content'}} className="step-badge">14 Day <span style={{ fontWeight: 600 }}>Free Trial</span> Now Available</div>
+            <div style={{ width: 'fit-content' }} className="step-badge">14 Day <span style={{ fontWeight: 600 }}>Free Trial</span> Now Available</div>
             <h1 className="desktop-h1 hero-heading">
               Stand Out. Get Noticed. Grow Your <span className="blue">Business.</span>
             </h1>
@@ -380,20 +380,22 @@ export default function Home() {
               </div>
               <div className="pricing-divider" />
               <div className="pricing-price-row">
-                <span className="pricing-price">£4.95</span>
+                <span className="pricing-price">£7.95</span>
                 <span className="pricing-price-sub">Per Month</span>
               </div>
 
               <ul className="pricing-features">
                 {[
-                  'Upload unlimited photos (Portfolio / Gallery)',
-                  'Add multiple social links and websites',
-                  'Personalize your landing page URL (yourname.cardsite.com)',
-                  'Priority support and setup help',
-                  'Premium NFC card design options',
-                  'CRM Integration.',
-                  'Networking Toolkit.',
-                  'Automated Follow-Ups.',
+                  'Update your profile instantly (real-time edits)',
+                  'Choose fonts and light/dark themes',
+                  'Write a compelling “About Me” section',
+                  'Showcase your work with unlimited images',
+                  'Collect and display client reviews (star ratings)',
+                  'List your services and set pricing',
+                  'Customize your profile URL for easy sharing',
+                  'Share via QR code, link, or save-to-contacts',
+                  'Display work/services as list, grid, or carousel',
+                  'Make it easy for clients to contact you',
                 ].map((text, i) => (
                   <li className="pricing-feature" key={i}>
                     <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
@@ -403,7 +405,7 @@ export default function Home() {
               </ul>
 
               <p className="pricing-quote">
-                "For professionals and businesses ready to make every first impression count."
+                "Build a professional profile in minutes — no coding needed."
               </p>
 
               <Link to="/productandplan/konarsubscription" className="pricing-cta pricing-cta--white">
@@ -430,7 +432,7 @@ export default function Home() {
               </div>
 
               <p className="pricing-quote">
-                "For professionals and businesses ready to make every first impression count."
+                "Tap to share your profile instantly — perfect for in-person networking."
               </p>
 
               <Link to="/productandplan/konarcard" className="pricing-cta pricing-cta--white pricing-cta--darktext">
@@ -440,6 +442,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+
 
       {/* --- People showcase --- */}
       <div className="section">
