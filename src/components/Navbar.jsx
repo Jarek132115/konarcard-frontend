@@ -50,7 +50,7 @@ export default function Navbar() {
           >
             <div className="mobile-panel">
               <div className="mobile-panel-header">
-                <span className="mobile-panel-title">Menu</span>
+                <span className="mobile-panel-title blue">Menu</span>
                 <button
                   className="mobile-close"
                   aria-label="Close menu"
