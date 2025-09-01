@@ -1,96 +1,112 @@
-import React, { useContext } from 'react';
+// frontend/src/pages/ProductAndPlan/KonarSubscription.jsx
+import React, { useContext, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Footer from '../../components/Footer';
-import QRCode from '../../assets/icons/QR-Code-Icon.svg';
-import NFCIcon from '../../assets/icons/NFC-Icon.svg';
-import HowItWorks1 from '../../assets/images/HowItWorks-1.png';
-import HowItWorks2 from '../../assets/images/HowItWorks-2.png';
-import HowItWorks3 from '../../assets/images/HowItWorks-3.png';
-import ProfilePencil from '../../assets/icons/ProfilePencil-Icon.svg';
-import ToolBoxIcon from '../../assets/icons/ToolBox-Icon.svg';
-import UpdateIcon from '../../assets/icons/Update-Icon.svg';
-import Section1Image from '../../assets/images/Section-1-Image.png';
-import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
-import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
-import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg';
+
+// ICONS + MEDIA (placeholders — replace with your subscription images)
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
+import LightningIcon from '../../assets/icons/Bolt-Icon.svg';
+import NFCIcon from '../../assets/icons/NFC-Icon.svg';
+import QRIcon from '../../assets/icons/QR-Code-Icon.svg';
+import ProfilePencil from '../../assets/icons/ProfilePencil-Icon.svg';
+import PaletteIcon from '../../assets/icons/Pallette-Icon.svg';
+import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
+import TickIcon from '../../assets/icons/Tick-Icon.svg';
+import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg'; // used in the full-width pill
+
+// TEMP gallery images (swap to subscription visuals)
+import ProductCover from '../../assets/images/Product-Cover.png';
+import ProductImage1 from '../../assets/images/Product-Image-1.png';
+import ProductImage2 from '../../assets/images/Product-Image-2.png';
+import ProductImage3 from '../../assets/images/Product-Image-3.png';
+import ProductImage4 from '../../assets/images/Product-Image-4.png';
 
 export default function KonarSubscription() {
     const { user, loading: authLoading } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
 
-    const isSubscribed = user ? user.isSubscribed : false;
-    const loadingStatus = authLoading;
+    // ====== Pricing (update if needed) ======
+    const pricePerMonth = 4.95;    // show current
+    const previousPerMonth = 7.95; // strike-through
 
-    const newPrice = 7.95;
-    const oldPrice = 12.95;
+    // ====== Gallery, 1 main + 5 thumbs just like KonarCard ======
+    const [mainImage, setMainImage] = useState(ProductCover);
+    const thumbnails = [
+        ProductCover,
+        ProductImage1,
+        ProductImage2,
+        ProductImage3,
+        ProductImage4,
+    ];
 
-    // Logic for button text and state
-    let buttonText = "Start Your Free 14-Day Trial";
-    let buttonDisabled = false;
+    // ====== Auth / CTA logic ======
+    const isSubscribed = !!user && user.isSubscribed;
+    let ctaText = 'Start Your Free 14-Day Trial';
+    let ctaDisabled = false;
 
-    if (loadingStatus) {
-        buttonText = "Loading...";
-        buttonDisabled = true;
+    if (authLoading) {
+        ctaText = 'Loading…';
+        ctaDisabled = true;
     } else if (user) {
         if (isSubscribed) {
-            buttonText = "Subscribed";
-            buttonDisabled = true;
+            ctaText = 'Subscribed';
+            ctaDisabled = true;
         } else {
-            buttonText = "Subscribe Now";
-            buttonDisabled = false;
+            ctaText = 'Start Your Free 14-Day Trial';
         }
     }
-
-    const getFreeTrialEndDate = () => {
-        const today = new Date();
-        const endDate = new Date(today);
-        endDate.setDate(today.getDate() + 14);
-
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return endDate.toLocaleDateString('en-GB', options);
-    };
-
-    const freeTrialEndDate = getFreeTrialEndDate();
 
     const handleSubscribe = async () => {
         if (!user) {
             navigate('/login', {
-                state: {
-                    from: location.pathname,
-                    checkoutType: 'subscription',
-                },
+                state: { from: location.pathname, checkoutType: 'subscription' },
             });
             return;
         }
-
         if (isSubscribed) {
             toast.info('You are already subscribed to the Power Profile.');
             return;
         }
-
         try {
             const res = await api.post('/subscribe', {
                 returnUrl: window.location.origin + '/SuccessSubscription',
             });
-
             const { url } = res.data;
-
-            if (url) {
-                window.location.href = url;
-            } else {
-                toast.error('Could not start subscription. Please try again.');
-            }
+            if (url) window.location.href = url;
+            else toast.error('Could not start subscription. Please try again.');
         } catch (err) {
             toast.error(err.response?.data?.error || 'Subscription failed. Please try again.');
         }
     };
+
+    // ====== Copy (subscription-focused) ======
+    const featurePills = [
+        { icon: ProfilePencil, title: 'Easy Setup', text: 'Build your page in minutes' },
+        { icon: PaletteIcon, title: 'Custom Branding', text: 'Fonts, colours, layouts' },
+        { icon: PhoneIcon, title: 'Contact Buttons', text: 'Call, WhatsApp, email, map' },
+        { icon: NFCIcon, title: 'Tap to Share', text: 'Works with NFC cards' },
+        { icon: QRIcon, title: 'QR + Link', text: 'Share anywhere, instantly' },
+        { icon: TickIcon, title: 'Show Your Work', text: 'Photos, services, pricing' },
+        { icon: TickIcon, title: 'Reviews', text: 'Collect & display stars' },
+        { icon: LightningIcon, title: 'Update Anytime', text: 'Changes go live instantly' },
+    ];
+
+    // ====== “Delivery” full-width pill (repurposed) ======
+    // For subscription, we show instant activation + free trial date.
+    const getFreeTrialEndDate = () => {
+        const today = new Date();
+        const end = new Date(today);
+        end.setDate(today.getDate() + 14);
+        const opts = { year: 'numeric', month: 'long', day: 'numeric' };
+        return end.toLocaleDateString('en-GB', opts);
+    };
+    const freeTrialEndDate = getFreeTrialEndDate();
 
     return (
         <>
@@ -99,113 +115,99 @@ export default function KonarSubscription() {
                 <Breadcrumbs />
             </div>
 
-            <div className="section-product">
-                <div className="product-preview">
-                    <img src={Section1Image} alt="Power Profile in action" className="main-card" />
+            {/* ===== Product header shell (IDENTICAL structure to KonarCard) ===== */}
+            <div className="section product-shell">
+                {/* LEFT: tray + main + 5 thumbnails */}
+                <div className="pd-left">
+                    <div className="pd-card-tray">
+                        <div className="pd-card">
+                            <img src={mainImage} alt="Konar Power Profile" />
+                        </div>
+                    </div>
+
+                    <div className="pd-thumbs">
+                        {thumbnails.map((t, i) => (
+                            <button
+                                key={i}
+                                type="button"
+                                className={`pd-thumb ${mainImage === t ? 'is-active' : ''}`}
+                                onClick={() => setMainImage(t)}
+                                aria-label={`View image ${i + 1}`}
+                            >
+                                <img src={t} alt={`Thumbnail ${i + 1}`} />
+                            </button>
+                        ))}
+                    </div>
                 </div>
-                <div className="product-options">
-                    <p className="desktop-h5">Konar Power Profile Subscription</p>
-                    <p className="desktop-body">
-                        Upgrade your digital profile with all the tools you need to look professional and win more work.
+
+                {/* RIGHT: content swapped for subscription */}
+                <div className="pd-right">
+                    <h1 className="pd-title desktop-h4">Konar Power Profile</h1>
+                    <p className="pd-sub desktop-body">
+                        Stand out and win more jobs — one tap opens your profile with your services, photos, and contact details.
                     </p>
 
-                    <div className="hero-tick-box">
-                        <div className="hero-tick">
-                            <img src={DeliveryIcon} className="icon" alt="Free Trial" />
-                            <div>
-                                <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>14 Day Free Trial</p>
-                                <p className='desktop-body-xs' style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
-                                    Free until {freeTrialEndDate}
+                    <div className="pd-feature-grid">
+                        {featurePills.map((f, idx) => (
+                            <div className="pd-feature-pill" key={idx}>
+                                <span className="pd-feature-icon">
+                                    <img src={f.icon} alt="" />
+                                </span>
+                                <div className="pd-feature-copy">
+                                    <p className="pd-feature-title desktop-body-s">{f.title}</p>
+                                    <p className="pd-feature-text desktop-body-xs">{f.text}</p>
+                                </div>
+                            </div>
+                        ))}
+
+                        {/* Full-width pill (kept same component, different text) */}
+                        <div className="pd-feature-pill pd-feature-pill--full">
+                            <span className="pd-feature-icon">
+                                <img src={DeliveryIcon} alt="" />
+                            </span>
+                            <div className="pd-feature-copy">
+                                <p className="pd-feature-title desktop-body-s">Instant activation</p>
+                                <p className="desktop-body-xs" style={{ color: '#666' }}>
+                                    Free for 14 days — trial ends {freeTrialEndDate}
                                 </p>
                             </div>
                         </div>
-                        <div className="hero-tick">
-                            <img src={WarrantyIcon} className="icon" alt="Warranty" />
-                            <div>
-                                <p className='bold-tick desktop-body-xs' style={{ fontSize: 14 }}>Cancel Anytime</p>
-                                <p className='desktop-body-xs' style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
-                                    No long-term contracts.
-                                </p>
-                            </div>
+                    </div>
+
+                    {/* Stars + price (styled exactly like KonarCard) */}
+                    <div className="pd-meta-row">
+                        <div className="pd-stars">
+                            <img src={ReviewStars} alt="Rating" />
+                            <span className="pd-reviews-count light-black">(1,024)</span>
+                        </div>
+
+                        <div className="pd-price-wrap">
+                            <span className="pd-price-now">£{pricePerMonth.toFixed(2)}</span>
+                            <span className="pd-price-was">£{previousPerMonth.toFixed(2)}</span>
+                            <span className="pd-onetime">Per Month</span>
                         </div>
                     </div>
 
-                    <div className="review-rating">
-                        <img style={{ width: 80 }} src={ReviewStars} alt="Stars" />
-                        <p>(22)</p>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', }}>
-                        <p style={{ fontSize: 20, fontWeight: 600 }}>
-                            £{newPrice.toFixed(2)}
-                        </p>
-                        <p style={{ fontSize: 16, color: '#666', textDecoration: 'line-through' }}>
-                            £{oldPrice.toFixed(2)}
-                        </p>
-                        <p style={{ fontSize: 16, color: '#666' }}>
-                            per month
-                        </p>
-                    </div>
-
-                    <div className="option-group">
-                        <button onClick={handleSubscribe} className="blue-button desktop-button" disabled={buttonDisabled}>
-                            {buttonText}
+                    {/* CTA row (no quantity for subscription, but same layout) */}
+                    <div className="pd-cta-row">
+                        <button
+                            onClick={handleSubscribe}
+                            className="pd-buy-btn desktop-button"
+                            disabled={ctaDisabled}
+                            style={{ background: '#0081FF' }}
+                        >
+                            {ctaText}
                         </button>
+
+                        {/* Optional: secondary link */}
+                        <Link to="/productandplan" className="desktop-button" style={{ textDecoration: 'underline' }}>
+                            View Plans & Cards
+                        </Link>
                     </div>
                 </div>
             </div>
 
-            <div style={{ marginTop: 40 }} className="section">
-                <div className="section-1-title">
-                    <h2 className="desktop-h3 text-center">Your Digital Page to Win Work</h2>
-                    <h3 className="desktop-h6 text-center">Share your contact details, show your best jobs, and earn trust — all in one simple link.</h3>
-                </div>
-                <div style={{ gap: 40 }} className="section-1-content">
-                    <div className="section-1-left">
-                        <img src={Section1Image} className="" />
-                    </div>
-                    <div className="section-1-right">
-                        <p className="desktop-h5">Look Pro. Build Trust. Get Hired.</p>
-                        <p className="desktop-body">Show clients what you do and make it easy for them to call, message, or book you.</p>
-                        <div className="section-list">
-                            <div className="icon-white">
-                                <img src={ProfilePencil} className="icon" />
-                            </div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">Add Your Info</p>
-                                <p className="desktop-body-xs">Put your name, trade, and photo on your page — make it personal and professional.</p>
-                            </div>
-                        </div>
-                        <div className="section-list">
-                            <div className="icon-white">
-                                <img src={ToolBoxIcon} className="icon" />
-                            </div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">Show Off Your Work</p>
-                                <p className="desktop-body-xs">Upload job photos, add your services and pricing, and share reviews from happy customers.</p>
-                            </div>
-                        </div>
-                        <div className="section-list">
-                            <div className="icon-white">
-                                <img src={UpdateIcon} className="icon" />
-                            </div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">Update Anytime</p>
-                                <p className="desktop-body-xs">New prices? New jobs? You can update your page anytime, no hassle.</p>
-                            </div>
-                        </div>
-                        <div className="section-list">
-                            <div className="icon-white">
-                                <img src={NFCIcon} className="icon" />
-                            </div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">Share It Fast</p>
-                                <p className="desktop-body-xs">Tap a phone, scan a code, or send a link. Your page opens anywhere — no apps needed.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {/* ===== Keep your existing lower sections (FAQs etc.) or add subscription-specific blocks ===== */}
             <div className="section">
                 <div className="section-1-title">
                     <h2 className="desktop-h3 text-center">How It Works</h2>
@@ -213,6 +215,7 @@ export default function KonarSubscription() {
                         Set up your profile in minutes. Show off your work and win more jobs.
                     </h3>
                 </div>
+
                 <div className="how-it-works-container">
                     <div className="white-card-column">
                         <div className="how-it-works-info">
@@ -221,8 +224,9 @@ export default function KonarSubscription() {
                                 Add your name, photos, services, and prices — no tech stuff needed.
                             </p>
                         </div>
-                        <img src={HowItWorks1} className="white-card-column-image" />
+                        <img src={ProductImage1} className="white-card-column-image" />
                     </div>
+
                     <div className="how-it-works-right">
                         <div className="white-card">
                             <div className="how-it-works-info">
@@ -231,20 +235,22 @@ export default function KonarSubscription() {
                                     Tap, scan, or send a link. Your full page opens in seconds.
                                 </p>
                             </div>
-                            <img src={HowItWorks2} className="how-it-works-right-image" />
+                            <img src={ProductImage2} className="how-it-works-right-image" />
                         </div>
+
                         <div className="white-card">
                             <div className="how-it-works-info">
                                 <p className="desktop-h5">Win More Work</p>
                                 <p className="desktop-body">
-                                    Look pro, earn trust, and get booked faster with real reviews and a clean profile.
+                                    Look pro, earn trust, and get booked faster with reviews and a clean profile.
                                 </p>
                             </div>
-                            <img src={HowItWorks3} className="how-it-works-right-image" />
+                            <img src={ProductImage3} className="how-it-works-right-image" />
                         </div>
                     </div>
                 </div>
             </div>
+
             <Footer />
         </>
     );
