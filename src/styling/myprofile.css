@@ -1537,3 +1537,57 @@
         /* same height as .myprofile-mobile-header */
     }
 }
+
+/* --- MOBILE SIDEBAR POLISH -------------------------------------------- */
+@media (max-width: 1000px) {
+
+    /* A) remove any built-in header/close row the sidebar might render */
+    .sidebar-header,
+    .sidebar .sidebar-close,
+    .sidebar .close,
+    .sidebar [aria-label="Close"],
+    .sidebar [aria-label*="close" i],
+    .sidebar [title="Close"],
+    .sidebar [title*="close" i] {
+        display: none !important;
+    }
+
+    /* B) make the drawer cover the ENTIRE viewport width (under our fixed top bar) */
+    .sidebar,
+    .sidebar-panel,
+    .sidebar-drawer {
+        position: fixed !important;
+        top: 56px;
+        /* height of .myprofile-mobile-header */
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw !important;
+        max-width: none !important;
+        background: #fff;
+        /* full-bleed white sheet */
+        border: 0;
+        box-shadow: none;
+        /* give the content some breathing room from the header */
+        padding-top: 20px;
+        /* so "MAIN" isn't clipped */
+    }
+
+    /* C) keep the nav content on the LEFT, with a fixed comfortable width.
+        The rest of the sheet stays white, so it looks full-bleed. */
+    .sidebar>*:first-child,
+    .sidebar .sidebar-content,
+    .sidebar .sidebar-scroll,
+    .sidebar .nav {
+        max-width: 320px;
+        /* tweak 300–360px to taste */
+        width: 100%;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    /* D) safety: ensure the mobile header clips anything behind it */
+    .myprofile-mobile-header {
+        overflow: hidden;
+    }
+}
