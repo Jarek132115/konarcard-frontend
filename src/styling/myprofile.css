@@ -11,23 +11,30 @@
     --placeholder-bg: #f0f0f0;
     --page-header-color: #000000;
     --main-font-family: 'Inter', sans-serif;
+
+    /* single source of truth for all outer gutters */
     --page-gutter: 16px;
+
+    /* sidebar width (kept in sync with sidebar.css) */
     --sb-w: 268px;
+
+    /* max inner width for preview+editor */
     --workspace-max: 1200px;
 }
 
+/* ====== themes ====== */
 .light-mode.pure-light {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
     --card-bg: #F1F1F1;
-    --input-border: #ccc;
+    --input-border: #ccc
 }
 
 .light-mode.subtle-light {
     --primary-bg: #F9F9F9;
     --secondary-bg: #F1F1F1;
     --card-bg: #FFFFFF;
-    --input-border: #e0e0e0;
+    --input-border: #e0e0e0
 }
 
 .dark-mode {
@@ -48,22 +55,23 @@
     --primary-bg: #000;
     --secondary-bg: #1F1F1F;
     --card-bg: #2C2C2C;
-    --input-border: #333;
+    --input-border: #333
 }
 
 .dark-mode.subtle-dark {
     --primary-bg: #1F1F1F;
     --secondary-bg: #2C2C2C;
     --card-bg: #333333;
-    --input-border: #666;
+    --input-border: #666
 }
 
+/* ====== layout ====== */
 .app-layout {
     display: flex;
     height: 100vh;
     background-color: var(--secondary-bg);
     position: relative;
-    overflow: hidden;
+    overflow: hidden
 }
 
 .main-content-container {
@@ -74,12 +82,26 @@
     flex-direction: column;
     height: 100%;
     box-sizing: border-box;
-    margin-left: 280px;
     color: var(--text-color);
     transition: margin-left .3s ease-in-out;
     overflow-x: visible;
 }
 
+/* leave a gutter on BOTH sides of the sidebar (edge & content) */
+@media (min-width:1001px) {
+    .main-content-container {
+        margin-left: calc(var(--sb-w) + (var(--page-gutter) * 2))
+    }
+}
+
+@media (max-width:1000px) {
+    .main-content-container {
+        margin-left: 0 !important;
+        padding-top: 72px
+    }
+}
+
+/* header card */
 .page-header-card {
     display: flex;
     align-items: center;
@@ -95,14 +117,14 @@
 .dark-mode .page-header-card {
     background: #202020;
     border-color: rgba(255, 255, 255, .08);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .35)
 }
 
 .page-header-left {
     display: flex;
     align-items: center;
     gap: 12px;
-    min-width: 0;
+    min-width: 0
 }
 
 .ph-avatar {
@@ -113,18 +135,18 @@
     background: #e9eef6;
     border: 1px solid rgba(0, 0, 0, .06);
     box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
-    flex-shrink: 0;
+    flex-shrink: 0
 }
 
 .dark-mode .ph-avatar {
     border-color: rgba(255, 255, 255, .08);
-    background: #2a2a2a;
+    background: #2a2a2a
 }
 
 .ph-user {
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    min-width: 0
 }
 
 .ph-name {
@@ -134,7 +156,7 @@
     color: var(--text-color);
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis
 }
 
 .ph-email {
@@ -143,29 +165,29 @@
     color: var(--subtle-text-color);
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis
 }
 
 .page-header-right {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 10px
 }
 
 .header-share .share-icon {
     height: 18px;
     width: auto;
-    filter: brightness(0) invert(1);
+    filter: brightness(0) invert(1)
 }
 
 .page-title-under {
     font-size: 24px;
     font-weight: 700;
-    margin: 0 0 16px 0;
+    margin: 0 0 16px;
     color: var(--page-header-color);
     white-space: nowrap;
     flex-shrink: 1;
-    min-width: 0;
+    min-width: 0
 }
 
 .page-title-mobile-shrink {
@@ -174,7 +196,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     flex-shrink: 1;
-    min-width: 0;
+    min-width: 0
 }
 
 .myprofile-main-content {
@@ -185,12 +207,13 @@
     flex: 1;
     min-height: 0;
     box-sizing: border-box;
-    overflow-x: visible;
+    overflow-x: visible
 }
 
+/* ===== Workspace card (wraps preview + editor) ===== */
 .myprofile-workspace {
     width: 100%;
-    max-width: calc(var(--workspace-max) + 2*var(--page-gutter));
+    max-width: calc(var(--workspace-max) + (var(--page-gutter) * 2));
     margin: 0 auto;
     background: #fff;
     border: 1px solid rgba(0, 0, 0, .08);
@@ -202,9 +225,10 @@
 .dark-mode .myprofile-workspace {
     background: #202020;
     border-color: rgba(255, 255, 255, .08);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .35)
 }
 
+/* inner layout */
 .myprofile-flex-container {
     display: flex;
     height: 100%;
@@ -215,10 +239,11 @@
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
-    overflow: visible;
     justify-content: center;
+    overflow: visible;
 }
 
+/* ======= preview ======= */
 .myprofile-content {
     flex-shrink: 0;
     flex-grow: 0;
@@ -229,7 +254,7 @@
     height: 100%;
     max-height: 100%;
     aspect-ratio: 3/4;
-    overflow: visible;
+    overflow: visible
 }
 
 .mock-phone-wrapper {
@@ -239,7 +264,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
     border-radius: 2.5rem;
     box-sizing: border-box;
-    overflow: visible;
+    overflow: visible
 }
 
 .mock-phone {
@@ -258,14 +283,14 @@
     font-family: var(--main-font-family);
     color: var(--text-color);
     overflow: hidden;
-    position: relative;
+    position: relative
 }
 
 .mock-phone.mobile-preview {
     max-width: 100%;
     padding: 16px;
     border-width: 6px;
-    border-radius: 20px;
+    border-radius: 20px
 }
 
 .mock-phone-scrollable-content {
@@ -277,24 +302,24 @@
     gap: 0;
     padding: 0;
     overflow-y: auto;
-    padding-right: 5px;
+    padding-right: 5px
 }
 
 .mock-phone-scrollable-content::-webkit-scrollbar {
-    width: 5px;
+    width: 5px
 }
 
 .mock-phone-scrollable-content::-webkit-scrollbar-track {
-    background: transparent;
+    background: transparent
 }
 
 .mock-phone-scrollable-content::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, .2);
-    border-radius: 10px;
+    border-radius: 10px
 }
 
 .dark-mode .mock-phone-scrollable-content::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, .2);
+    background-color: rgba(255, 255, 255, .2)
 }
 
 .mock-cover {
@@ -305,7 +330,7 @@
     margin-bottom: 1.5rem;
     background-color: var(--placeholder-bg);
     background-size: cover;
-    background-position: center;
+    background-position: center
 }
 
 .mock-title {
@@ -313,18 +338,18 @@
     font-weight: 800;
     margin: 0;
     line-height: 1.2;
-    color: var(--text-color);
+    color: var(--text-color)
 }
 
 .mock-subtitle {
     font-size: .95rem;
     font-weight: 600;
     margin: 8px 0 0 0;
-    color: #000;
+    color: #000
 }
 
 .dark-mode .mock-subtitle {
-    color: #fff;
+    color: #fff
 }
 
 .mock-button {
@@ -340,15 +365,15 @@
     box-sizing: border-box;
     font-family: var(--main-font-family);
     transition: transform .06s ease, box-shadow .2s ease, opacity .2s ease;
-    margin-bottom: 36px;
+    margin-bottom: 36px
 }
 
 .mock-button:hover {
-    opacity: .92;
+    opacity: .92
 }
 
 .mock-button:active {
-    transform: translateY(1px);
+    transform: translateY(1px)
 }
 
 .mock-section-title {
@@ -357,7 +382,7 @@
     margin-top: 60px;
     margin-bottom: 10px;
     text-align: left;
-    color: var(--text-color);
+    color: var(--text-color)
 }
 
 .mock-about-container,
@@ -367,7 +392,7 @@
     background: #f9f9f9;
     border-radius: 16px;
     border: 1px solid rgba(0, 0, 0, .06);
-    color: #111;
+    color: #111
 }
 
 .mock-about-container {
@@ -377,21 +402,21 @@
     gap: .75rem;
     text-align: left;
     width: 100%;
-    box-sizing: border-box;
+    box-sizing: border-box
 }
 
 .mock-about-content-group {
     display: flex;
     flex-direction: column;
     gap: .75rem;
-    min-width: 0;
+    min-width: 0
 }
 
 .mock-about-header-group {
     display: flex;
     gap: .75rem;
     align-items: flex-start;
-    flex-direction: row;
+    flex-direction: row
 }
 
 .mock-avatar {
@@ -401,28 +426,28 @@
     object-fit: cover;
     background-size: cover;
     background-position: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .12)
 }
 
 .mock-profile-name {
     font-weight: 800;
     margin: 0;
     font-size: 1rem;
-    color: #111;
+    color: #111
 }
 
 .mock-profile-role {
     font-size: .9375rem;
     margin: 0;
     color: #333;
-    font-weight: normal;
+    font-weight: normal
 }
 
 .mock-bio-text {
     font-size: .95rem;
     line-height: 1.55;
     margin: 0;
-    color: #111;
+    color: #111
 }
 
 .mock-work-image-item-wrapper {
@@ -432,7 +457,7 @@
     border-radius: 14px;
     border: 1px solid var(--border-color);
     padding: 0;
-    box-shadow: none;
+    box-shadow: none
 }
 
 .mock-work-image-item {
@@ -441,12 +466,12 @@
     height: 100%;
     aspect-ratio: 4/2.5;
     object-fit: cover;
-    background: none;
+    background: none
 }
 
 .work-preview-row-container {
     position: relative;
-    width: 100%;
+    width: 100%
 }
 
 .mock-work-gallery,
@@ -458,13 +483,13 @@
     width: 100%;
     padding: 0;
     background-color: transparent;
-    border-radius: 0;
+    border-radius: 0
 }
 
 .mock-work-gallery.grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 12px
 }
 
 .mock-work-gallery.carousel,
@@ -484,7 +509,7 @@
 .mock-work-gallery.carousel::-webkit-scrollbar,
 .mock-services-list.carousel::-webkit-scrollbar,
 .mock-reviews-list.carousel::-webkit-scrollbar {
-    display: none;
+    display: none
 }
 
 .mock-work-gallery.carousel .mock-work-image-item-wrapper,
@@ -510,7 +535,7 @@
     padding: 0 10px;
     z-index: 5;
     pointer-events: none;
-    width: 100%;
+    width: 100%
 }
 
 .carousel-nav-button {
@@ -527,15 +552,15 @@
     align-items: center;
     justify-content: center;
     transition: background-color .2s;
-    pointer-events: auto;
+    pointer-events: auto
 }
 
 .carousel-nav-button:hover {
-    background-color: rgba(0, 0, 0, .6);
+    background-color: rgba(0, 0, 0, .6)
 }
 
 .mock-service-item {
-    padding: .75rem 1rem;
+    padding: .75rem 1rem
 }
 
 .mock-service-name {
@@ -543,42 +568,42 @@
     font-weight: 700;
     margin: 0;
     line-height: 1.3;
-    color: #111;
+    color: #111
 }
 
 .mock-service-price {
     font-size: .85rem;
     margin: 2px 0 0 0;
-    color: #000;
+    color: #000
 }
 
 .mock-review-card {
-    padding: .75rem 1rem;
+    padding: .75rem 1rem
 }
 
 .mock-star-rating {
     color: #111;
     font-size: 1.1rem;
     margin-bottom: 6px;
-    letter-spacing: .06rem;
+    letter-spacing: .06rem
 }
 
 .mock-star-rating .empty-star {
-    color: #D1D5DB;
+    color: #D1D5DB
 }
 
 .mock-review-text {
     font-size: .95rem;
     color: #111;
     margin: 0 0 10px 0;
-    line-height: 1.5;
+    line-height: 1.5
 }
 
 .mock-reviewer-name {
     font-size: .9rem;
     font-weight: 700;
     color: #333;
-    margin: 0;
+    margin: 0
 }
 
 .mock-contact-details {
@@ -589,30 +614,31 @@
     border-radius: 16px;
     padding: 14px 16px;
     width: 100%;
-    box-sizing: border-box;
+    box-sizing: border-box
 }
 
 .mock-contact-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: wrap
 }
 
 .mock-contact-label {
     font-size: .95rem;
     font-weight: 700;
     margin: 0;
-    color: #333;
+    color: #333
 }
 
 .mock-contact-value {
     font-size: 12px;
     font-weight: normal;
     margin: 0;
-    color: #111;
+    color: #111
 }
 
+/* ======= editor ======= */
 .myprofile-editor-wrapper {
     position: relative;
     max-width: 500px;
@@ -621,33 +647,7 @@
     flex: 1;
     display: flex;
     height: 100%;
-    overflow: visible;
-}
-
-.editor-work-image-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    width: 100%;
-}
-
-.editor-work-image-grid .editor-item-card.work-image-item-wrapper,
-.editor-work-image-grid .add-work-image-placeholder {
-    width: 100%;
-    height: auto;
-}
-
-.editor-work-image-grid .work-image-preview {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 4/3;
-    object-fit: cover;
-    display: block;
-}
-
-.editor-work-image-grid .remove-image-button {
-    top: 6px;
-    right: 6px;
+    overflow: visible
 }
 
 .editor-content-wrapper {
@@ -680,20 +680,20 @@
 
 .editor-title {
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 600
 }
 
 .editor-section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 10px
 }
 
 .editor-subtitle {
     font-size: 16px;
     font-weight: 600;
-    margin: 0;
+    margin: 0
 }
 
 .toggle-button {
@@ -703,29 +703,29 @@
     padding: 5px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center
 }
 
 .toggle-button img {
     width: 20px;
     height: 20px;
-    filter: var(--dark-mode-filter, brightness(0) invert(0));
+    filter: var(--dark-mode-filter, brightness(0) invert(0))
 }
 
 .dark-mode .toggle-button img {
-    filter: brightness(0) invert(1);
+    filter: brightness(0) invert(1)
 }
 
 .input-block {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 6px
 }
 
 .input-block label {
     font-size: 14px;
     font-weight: 500;
-    color: var(--text-color);
+    color: var(--text-color)
 }
 
 .input-block input[type="text"],
@@ -747,12 +747,12 @@
 .input-block input::placeholder,
 .input-block textarea::placeholder {
     color: var(--subtle-text-color);
-    opacity: .7;
+    opacity: .7
 }
 
 .option-row {
     display: flex;
-    gap: 10px;
+    gap: 10px
 }
 
 .display-button,
@@ -775,7 +775,7 @@
 .font-button.is-active {
     background-color: #007bff;
     color: white;
-    border-color: #007bff;
+    border-color: #007bff
 }
 
 .image-upload-area {
@@ -798,12 +798,12 @@
     font-size: .9rem;
     font-weight: 500;
     text-align: center;
-    z-index: 2;
+    z-index: 2
 }
 
 .image-upload-area img[src=""],
 .image-upload-area img:not([src]) {
-    display: none;
+    display: none
 }
 
 .image-upload-area img:not([src=""]):not(:not([src])) {
@@ -811,38 +811,64 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: 1;
+    z-index: 1
 }
 
 .cover-photo-upload {
     width: 100%;
-    height: 180px;
+    height: 180px
 }
 
 .avatar-upload {
     width: 90px;
     height: 90px;
-    border-radius: 50%;
+    border-radius: 50%
 }
 
 .cover-preview {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 8px
 }
 
 .avatar-preview {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 50%;
+    border-radius: 50%
 }
 
 .myprofile-editor .divider {
     margin: 20px 0;
     border: none;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-color)
+}
+
+.editor-work-image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%
+}
+
+.editor-work-image-grid .editor-item-card.work-image-item-wrapper,
+.editor-work-image-grid .add-work-image-placeholder {
+    width: 100%;
+    height: auto
+}
+
+.editor-work-image-grid .work-image-preview {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block
+}
+
+.editor-work-image-grid .remove-image-button {
+    top: 6px;
+    right: 6px
 }
 
 .work-image-item-wrapper {
@@ -854,7 +880,7 @@
     border-radius: .5rem;
     border: 1px solid var(--border-color);
     box-sizing: border-box;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
 }
 
 .work-image-preview {
@@ -865,7 +891,7 @@
     min-width: unset;
     min-height: unset;
     background-color: var(--placeholder-bg);
-    object-fit: cover;
+    object-fit: cover
 }
 
 .remove-image-button {
@@ -885,11 +911,11 @@
     justify-content: center;
     align-items: center;
     transition: background-color .2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
 }
 
 .remove-image-button:hover {
-    background-color: #c82333;
+    background-color: #c82333
 }
 
 .add-work-image-placeholder {
@@ -904,18 +930,18 @@
     background-color: var(--placeholder-bg);
     box-sizing: border-box;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
 }
 
 .add-work-image-placeholder .upload-text {
     position: static;
     margin-bottom: 0;
     font-size: 14px;
-    white-space: nowrap;
+    white-space: nowrap
 }
 
 .add-work-image-placeholder img {
-    display: none;
+    display: none
 }
 
 .add-work-image-button,
@@ -929,12 +955,12 @@
     cursor: pointer;
     transition: background .2s;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
 }
 
 .add-work-image-button:hover,
 .add-item-button:hover {
-    background-color: #eee;
+    background-color: #eee
 }
 
 .editor-item-card {
@@ -946,12 +972,12 @@
     flex-direction: column;
     gap: 6px;
     position: relative;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
 }
 
 .editor-item-card input,
 .editor-item-card textarea {
-    margin-bottom: 0;
+    margin-bottom: 0
 }
 
 .remove-item-button {
@@ -964,11 +990,11 @@
     border-radius: 8px;
     cursor: pointer;
     transition: background-color .2s, border-color .2s;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
 }
 
 .remove-item-button:hover {
-    background-color: #c82333;
+    background-color: #c82333
 }
 
 .submit-button {
@@ -981,9 +1007,10 @@
     margin-top: auto;
     background-color: var(--button-bg);
     color: var(--button-text);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
 }
 
+/* ===== subscription overlay ===== */
 .subscription-overlay {
     position: absolute;
     top: 0;
@@ -998,7 +1025,7 @@
     z-index: 10;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
 }
 
 .subscription-message {
@@ -1028,20 +1055,21 @@
     font-weight: 600;
     cursor: pointer;
     transition: background-color .3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
 }
 
 .start-trial-button:hover {
-    background-color: #0056b3;
+    background-color: #0056b3
 }
 
 .subscription-overlay-mobile {
     display: none;
     width: 100%;
     box-sizing: border-box;
-    overflow: visible;
+    overflow: visible
 }
 
+/* ===== generic cards / states ===== */
 .content-card-box {
     box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
     padding: 20px;
@@ -1052,35 +1080,35 @@
     max-width: 600px;
     width: 100%;
     box-sizing: border-box;
-    overflow: visible;
+    overflow: visible
 }
 
 .content-card-box.loading-state {
     font-size: 1.2rem;
-    color: #666;
+    color: #666
 }
 
 .content-card-box.error-state {
     color: red;
     border: 1px solid red;
-    background-color: #ffe6e6;
+    background-color: #ffe6e6
 }
 
 .content-card-box.verification-prompt {
     background-color: #fffbe6;
-    border: 1px solid #ffe58f;
+    border: 1px solid #ffe58f
 }
 
 .content-card-box.verification-prompt p {
     font-size: 16px;
     margin-bottom: 15px;
-    color: #555;
+    color: #555
 }
 
 .content-card-box.verification-prompt p:first-child {
     font-size: 18px;
     font-weight: 600;
-    color: #ffcc00;
+    color: #ffcc00
 }
 
 .content-card-box.verification-prompt form {
@@ -1088,7 +1116,7 @@
     flex-direction: column;
     gap: 10px;
     max-width: 300px;
-    margin: 0 auto;
+    margin: 0 auto
 }
 
 .content-card-box.verification-prompt input[type="text"] {
@@ -1096,7 +1124,7 @@
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
 }
 
 .content-card-box.verification-prompt button[type="submit"] {
@@ -1108,36 +1136,17 @@
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
 }
 
 .content-card-box.verification-prompt button[type="button"]:disabled {
     background-color: #e0e0e0;
     color: #999;
-    cursor: not-allowed;
+    cursor: not-allowed
 }
 
 .trial-not-started-banner {
-    width: 100%;
-}
-
-.button-group {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: auto;
-}
-
-@media (max-width:1000px) {
-    .button-group {
-        flex-direction: column;
-    }
-}
-
-.button-group .black-button {
-    background-color: var(--button-bg);
-    color: var(--button-text);
-    border: 1px solid var(--button-bg);
+    width: 100%
 }
 
 .trial-countdown-banner,
@@ -1146,24 +1155,206 @@
     text-align: center;
     border-radius: 8px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 500
 }
 
 .trial-countdown-banner {
     background-color: #e6f7ff;
-    color: #007bff;
+    color: #007bff
 }
 
 .trial-ended-banner {
     background-color: #fff0f0;
-    color: #dc3545;
+    color: #dc3545
 }
 
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: auto
+}
+
+.button-group .black-button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--button-bg)
+}
+
+@media (max-width:1000px) {
+    .button-group {
+        flex-direction: column
+    }
+}
+
+/* ===== stacked / side-by-side About layouts ===== */
+.mock-about-container.stacked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center
+}
+
+.mock-about-container.stacked .mock-about-content-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .75rem;
+    width: 100%
+}
+
+.mock-about-container.stacked .mock-about-header-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    width: 100%
+}
+
+.mock-about-container.stacked .mock-avatar {
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    aspect-ratio: 1/1;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    object-fit: cover
+}
+
+.mock-about-container.stacked .mock-profile-name,
+.mock-about-container.stacked .mock-profile-role,
+.mock-about-container.stacked .mock-bio-text {
+    text-align: center
+}
+
+.mock-about-container.side-by-side .mock-about-header-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: .75rem
+}
+
+.mock-about-container.side-by-side .mock-avatar {
+    width: 50px;
+    height: 50px;
+    aspect-ratio: auto;
+    border-radius: 10px;
+    margin: 0;
+    object-fit: cover
+}
+
+/* ===== mobile header ===== */
+.myprofile-mobile-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    padding: 0 14px;
+    background: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, .08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1100;
+    overflow: hidden
+}
+
+.dark-mode .myprofile-mobile-header {
+    background: #111;
+    border-bottom-color: rgba(255, 255, 255, .08)
+}
+
+@media (min-width:1001px) {
+    .myprofile-mobile-header {
+        display: none
+    }
+}
+
+.myprofile-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0
+}
+
+.myprofile-logo {
+    width: 28px;
+    height: 28px;
+    display: block;
+    flex-shrink: 0;
+    max-width: none
+}
+
+.sidebar-menu-toggle {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer
+}
+
+.sidebar-menu-toggle:hover {
+    background: rgba(0, 0, 0, .06)
+}
+
+.dark-mode .sidebar-menu-toggle:hover {
+    background: rgba(255, 255, 255, .08)
+}
+
+.sidebar-menu-toggle span {
+    position: absolute;
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: #111;
+    border-radius: 2px;
+    transition: transform .2s ease, opacity .2s ease
+}
+
+.dark-mode .sidebar-menu-toggle span {
+    background: #fff
+}
+
+.sidebar-menu-toggle span:nth-child(1) {
+    transform: translateY(-6px)
+}
+
+.sidebar-menu-toggle span:nth-child(2) {
+    transform: translateY(0)
+}
+
+.sidebar-menu-toggle span:nth-child(3) {
+    transform: translateY(6px)
+}
+
+.sidebar-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg)
+}
+
+.sidebar-menu-toggle.active span:nth-child(2) {
+    opacity: 0
+}
+
+.sidebar-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg)
+}
+
+.body-no-scroll {
+    overflow: hidden
+}
+
+/* ===== extra responsive tweaks ===== */
 @media (max-width:1000px) {
     .app-layout {
         height: auto;
         overflow-y: visible;
-        flex-direction: column;
+        flex-direction: column
     }
 
     .main-content-container {
@@ -1177,25 +1368,25 @@
     }
 
     .myprofile-main-content {
-        padding-bottom: 50px;
+        padding-bottom: 50px
     }
 
     .page-title-under {
-        margin-bottom: 16px;
+        margin-bottom: 16px
     }
 
     .subscription-overlay-mobile {
         display: block;
         padding: 0;
-        box-sizing: border-box;
+        box-sizing: border-box
     }
 
     .subscription-overlay-mobile .subscription-message {
-        width: 100%;
+        width: 100%
     }
 
     .myprofile-workspace {
-        padding: 16px;
+        padding: 16px
     }
 
     .myprofile-flex-container {
@@ -1244,12 +1435,12 @@
         border-radius: 20px;
         height: 500px;
         overflow: visible !important;
-        max-width: 100%;
+        max-width: 100%
     }
 
     .mock-cover {
         aspect-ratio: unset !important;
-        height: auto !important;
+        height: auto !important
     }
 
     .myprofile-editor-wrapper {
@@ -1269,7 +1460,7 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
         display: flex;
         flex-direction: column;
-        overflow: visible;
+        overflow: visible
     }
 
     .myprofile-editor {
@@ -1279,266 +1470,42 @@
         height: auto !important;
         background: var(--primary-bg);
         overflow-y: visible !important;
-        margin-bottom: 40px;
+        margin-bottom: 40px
     }
 }
 
 @media (max-width:600px) {
     .page-header-right .desktop-button {
         padding: 10px 15px;
-        width: auto;
+        width: auto
     }
 
     .page-header-right .desktop-button .share-icon {
         height: 20px;
         width: auto;
-        filter: brightness(0) invert(1);
+        filter: brightness(0) invert(1)
     }
 }
 
 @media (max-width:400px) {
     .main-content-container {
         padding: 15px;
-        margin-top: 100px;
+        margin-top: 100px
     }
 
     .subscription-overlay-mobile .subscription-message {
         padding: 20px;
-        gap: 10px;
+        gap: 10px
     }
 
     .start-trial-button {
         padding: 10px 20px;
-        font-size: 14px;
+        font-size: 14px
     }
 
     .mock-phone {
         padding: 20px;
         border-width: 6px;
-        border-radius: 20px;
-    }
-}
-
-.mock-about-container.stacked {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.mock-about-container.stacked .mock-about-content-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: .75rem;
-    width: 100%;
-}
-
-.mock-about-container.stacked .mock-about-header-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: .5rem;
-    width: 100%;
-}
-
-.mock-about-container.stacked .mock-avatar {
-    width: 100%;
-    max-width: 340px;
-    height: auto;
-    aspect-ratio: 1/1;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    object-fit: cover;
-}
-
-.mock-about-container.stacked .mock-profile-name,
-.mock-about-container.stacked .mock-profile-role,
-.mock-about-container.stacked .mock-bio-text {
-    text-align: center;
-}
-
-.mock-about-container.side-by-side .mock-about-header-group {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: .75rem;
-}
-
-.mock-about-container.side-by-side .mock-avatar {
-    width: 50px;
-    height: 50px;
-    aspect-ratio: auto;
-    border-radius: 10px;
-    margin: 0;
-    object-fit: cover;
-}
-
-.myprofile-mobile-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 56px;
-    padding: 0 14px;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, .08);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 1100;
-    overflow: hidden;
-}
-
-.dark-mode .myprofile-mobile-header {
-    background: #111;
-    border-bottom-color: rgba(255, 255, 255, .08);
-}
-
-@media (min-width:1001px) {
-    .myprofile-mobile-header {
-        display: none;
-    }
-}
-
-.myprofile-brand {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-}
-
-.myprofile-logo {
-    width: 28px;
-    height: 28px;
-    display: block;
-    flex-shrink: 0;
-    max-width: none;
-}
-
-.sidebar-menu-toggle {
-    appearance: none;
-    border: 0;
-    background: transparent;
-    width: 34px;
-    height: 34px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-.sidebar-menu-toggle:hover {
-    background: rgba(0, 0, 0, .06);
-}
-
-.dark-mode .sidebar-menu-toggle:hover {
-    background: rgba(255, 255, 255, .08);
-}
-
-.sidebar-menu-toggle span {
-    position: absolute;
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: #111;
-    border-radius: 2px;
-    transition: transform .2s ease, opacity .2s ease;
-}
-
-.dark-mode .sidebar-menu-toggle span {
-    background: #fff;
-}
-
-.sidebar-menu-toggle span:nth-child(1) {
-    transform: translateY(-6px);
-}
-
-.sidebar-menu-toggle span:nth-child(2) {
-    transform: translateY(0);
-}
-
-.sidebar-menu-toggle span:nth-child(3) {
-    transform: translateY(6px);
-}
-
-.sidebar-menu-toggle.active span:nth-child(1) {
-    transform: rotate(45deg);
-}
-
-.sidebar-menu-toggle.active span:nth-child(2) {
-    opacity: 0;
-}
-
-.sidebar-menu-toggle.active span:nth-child(3) {
-    transform: rotate(-45deg);
-}
-
-.body-no-scroll {
-    overflow: hidden;
-}
-
-@media (max-width:1000px) {
-    .main-content-container {
-        margin-left: 0 !important;
-        padding-top: 72px;
-    }
-}
-
-@media (min-width:1001px) {
-    .main-content-container {
-        margin-left: calc(var(--sb-w, 268px) + var(--page-gutter));
-    }
-}
-
-@media (max-width:1000px) {
-
-    .sidebar-header,
-    .sidebar .sidebar-close,
-    .sidebar .close,
-    .sidebar [aria-label="Close"],
-    .sidebar [aria-label*="close" i],
-    .sidebar [title="Close"],
-    .sidebar [title*="close" i] {
-        display: none !important;
-    }
-
-    .sidebar,
-    .sidebar-panel,
-    .sidebar-drawer {
-        position: fixed !important;
-        top: 56px;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100vw !important;
-        max-width: none !important;
-        background: #fff;
-        border: 0;
-        box-shadow: none;
-        padding-top: 40px;
-    }
-
-    .sidebar>*:first-child,
-    .sidebar .sidebar-content,
-    .sidebar .sidebar-scroll,
-    .sidebar .nav {
-        max-width: 320px;
-        width: 100%;
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-
-    .sidebar .sidebar-scroll,
-    .sidebar .sidebar-content,
-    .sidebar .nav {
-        margin-top: 12px;
-    }
-
-    .sidebar .section-title:first-child,
-    .sidebar .menu-section-title:first-child,
-    .sidebar .nav>*:first-child {
-        margin-top: 30px !important;
+        border-radius: 20px
     }
 }
