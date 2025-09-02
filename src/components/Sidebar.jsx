@@ -31,12 +31,14 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             />
 
             <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                {/* Mobile top bar (inside panel) */}
-                <div className="sidebar-mobile-header-inner">
-                    <Link to="/myprofile" className="sidebar-logo-link-mobile" onClick={closeSidebar}>
-                        <img src={LogoIcon} alt="Konar logo" className="sidebar-logo-mobile" />
-                        <span className="brand-wordmark">KONAR</span>
-                    </Link>
+                {/* ===== Desktop brand header (hidden on mobile) ===== */}
+                <div className="brand-header desktop-only">
+                    <img src={LogoIcon} alt="Konar logo" className="brand-logo" />
+                    <span className="brand-wordmark">KONAR</span>
+                </div>
+
+                {/* Small close (mobile only). No brand shown on mobile. */}
+                <div className="sidebar-mobile-top-row mobile-only">
                     <button
                         className="close-sidebar-button"
                         onClick={closeSidebar}
@@ -47,19 +49,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 </div>
 
                 <div className="sidebar-content-wrapper">
-                    {/* Brand header (desktop) */}
-                    <div className="brand-header">
-                        <img src={LogoIcon} alt="Konar logo" className="brand-logo" />
-                        <span className="brand-wordmark">KONAR</span>
-                    </div>
-
-                    <hr className="divider" />
-
+                    {/* MAIN */}
                     <div className="top-links-group">
-                        {/* MAIN */}
                         <div className="main-links-container">
                             <p className="section-title">MAIN</p>
 
+                            {/* Dashboard */}
                             <Link
                                 to="/myprofile"
                                 onClick={closeSidebar}
@@ -69,6 +64,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <p className="desktop-body-s">My Profile</p>
                             </Link>
 
+                            {/* Products & Plans (still included) */}
                             <Link
                                 to="/nfccards"
                                 onClick={closeSidebar}
@@ -107,28 +103,19 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <img src={contactInterface} alt="" className="icon" />
                                 <p className="desktop-body-s">Contact Us</p>
                             </Link>
+
+                            {/* Logout directly under Contact Us (per request) */}
+                            <button
+                                className="sidebar-button logout-button"
+                                onClick={() => { handleLogout(); closeSidebar(); }}
+                            >
+                                <img src={logoutInterface} alt="" className="icon" />
+                                <p className="desktop-body-s">Logout Account</p>
+                            </button>
                         </div>
                     </div>
 
-                    {/* Footer actions */}
-                    <div className="footer-actions">
-                        <Link
-                            to="/"
-                            onClick={closeSidebar}
-                            className={`sidebar-button ${isActive('/') ? 'active-sidebar-link' : ''}`}
-                        >
-                            <img src={homeInterface} alt="" className="icon" />
-                            <p className="desktop-body-s">Go to Homepage</p>
-                        </Link>
-
-                        <button
-                            className="sidebar-button logout-button"
-                            onClick={() => { handleLogout(); closeSidebar(); }}
-                        >
-                            <img src={logoutInterface} alt="" className="icon" />
-                            <p className="desktop-body-s">Logout Account</p>
-                        </button>
-                    </div>
+                    {/* Removed footer actions block (no more "Go to Homepage") */}
                 </div>
             </aside>
         </>

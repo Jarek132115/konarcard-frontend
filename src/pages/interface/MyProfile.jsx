@@ -580,6 +580,12 @@ export default function MyProfile() {
     <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
       {/* Mobile header (fixed) */}
       <div className="myprofile-mobile-header">
+        {/* Logo LEFT */}
+        <div className="myprofile-brand">
+          <img src={LogoIcon} alt="Konar" className="myprofile-logo" />
+        </div>
+
+        {/* Burger RIGHT */}
         <button
           type="button"
           className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
@@ -589,10 +595,6 @@ export default function MyProfile() {
         >
           <span></span><span></span><span></span>
         </button>
-
-        <div className="myprofile-brand">
-          <img src={LogoIcon} alt="Konar" className="myprofile-logo" />
-        </div>
       </div>
 
       {/* Sidebar (includes its own overlay) */}
