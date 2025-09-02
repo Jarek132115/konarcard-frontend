@@ -1,5 +1,3 @@
-/* myprofile.css */
-
 :root {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
@@ -1381,7 +1379,7 @@
     object-fit: cover;
 }
 
-/* === Mobile app header (burger + small logo) === */
+/* === Mobile app header (logo left, burger right) === */
 .myprofile-mobile-header {
     position: fixed;
     top: 0;
@@ -1425,7 +1423,6 @@
     display: block;
     flex-shrink: 0;
     max-width: none;
-    /* override global img rules */
 }
 
 /* Burger button */
@@ -1477,7 +1474,7 @@
     transform: translateY(6px);
 }
 
-/* when you want to animate to X, you already toggle .active in JSX */
+/* animate to X when .active */
 .sidebar-menu-toggle.active span:nth-child(1) {
     transform: rotate(45deg);
 }
