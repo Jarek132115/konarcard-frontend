@@ -1,55 +1,84 @@
+// src/pages/website/MyProfile.jsx
 import React, { useRef, useEffect, useState, useContext } from "react";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import { useCreateBusinessCard, buildBusinessCardFormData } from "../../hooks/useCreateBiz";
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
+import axios from "axios";
+import { toast } from "react-hot-toast";
 import ShareProfile from "../../components/ShareProfile";
-import { AuthContext } from '../../components/AuthContext';
-import api, { startTrial } from '../../services/api';
-import LogoIcon from '../../assets/icons/Logo-Icon.svg';
+import { AuthContext } from "../../components/AuthContext";
+import api, { startTrial } from "../../services/api";
+import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 
 export default function MyProfile() {
+  /* =========================
+     STORES / HOOKS / CONTEXT
+     ========================= */
   const { state, updateState, resetState } = useBusinessCardStore();
+  const createBusinessCard = useCreateBusinessCard();
+  const queryClient = useQueryClient();
+  const location = useLocation();
+
+  const {
+    user: authUser,
+    loading: authLoading,
+    fetchUser: refetchAuthUser,
+  } = useContext(AuthContext);
+
+  const userId = authUser?._id;
+  const userEmail = authUser?.email;
+  const isSubscribed = !!authUser?.isSubscribed;
+  const isUserVerified = !!authUser?.isVerified;
+  const userUsername = authUser?.username;
+
+  const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
+
+  /* =========================
+     LOCAL REFS
+     ========================= */
   const fileInputRef = useRef(null);
   const avatarInputRef = useRef(null);
   const workImageInputRef = useRef(null);
-  const createBusinessCard = useCreateBusinessCard();
-  const queryClient = useQueryClient();
+
+  // preview carousels
   const previewWorkCarouselRef = useRef(null);
   const previewServicesCarouselRef = useRef(null);
   const previewReviewsCarouselRef = useRef(null);
+
+  // track blob URLs to revoke on unmount
   const activeBlobUrlsRef = useRef([]);
 
-  const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
-  const isSubscribed = authUser?.isSubscribed || false;
-  const userId = authUser?._id;
-  const userEmail = authUser?.email;
-  const isUserVerified = authUser?.isVerified;
-  const userUsername = authUser?.username;
-  const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
-
+  /* =========================
+     LOCAL STATE
+     ========================= */
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
-  const [verificationCodeInput, setVerificationCodeCode] = useState('');
+  const [verificationCodeInput, setVerificationCodeCode] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
+
   const [coverPhotoFile, setCoverPhotoFile] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
   const [workImageFiles, setWorkImageFiles] = useState([]);
   const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
   const [activeBlobUrls, setActiveBlobUrls] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
 
-  const [servicesDisplayMode, setServicesDisplayMode] = useState('list');
-  const [reviewsDisplayMode, setReviewsDisplayMode] = useState('list');
-  const [aboutMeLayout, setAboutMeLayout] = useState('side-by-side');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // responsive flags (use matchMedia so they’re correct immediately)
+  const mqDesktopToMobile = "(max-width: 1000px)";
+  const mqSmallMobile = "(max-width: 600px)";
+  const [isMobile, setIsMobile] = useState(window.matchMedia(mqDesktopToMobile).matches);
+  const [isSmallMobile, setIsSmallMobile] = useState(window.matchMedia(mqSmallMobile).matches);
+
+  // editor display toggles
+  const [servicesDisplayMode, setServicesDisplayMode] = useState("list");
+  const [reviewsDisplayMode, setReviewsDisplayMode] = useState("list");
+  const [aboutMeLayout, setAboutMeLayout] = useState("side-by-side");
 
   const [showMainSection, setShowMainSection] = useState(true);
   const [showAboutMeSection, setShowAboutMeSection] = useState(true);
@@ -58,139 +87,147 @@ export default function MyProfile() {
   const [showReviewsSection, setShowReviewsSection] = useState(true);
   const [showContactSection, setShowContactSection] = useState(true);
 
-  const location = useLocation();
-
-  const isTrialActive = authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date();
-  const hasTrialEnded = authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date();
+  /* =========================
+     TRIAL/PLAN STATUS
+     ========================= */
+  const isTrialActive = !!(authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date());
+  const hasTrialEnded = !!(authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date());
 
   const hasSavedData = !!businessCard;
-
-  // Only show contact/CTA if we actually have contact info (or placeholders pre-first-save)
   const hasExchangeContact =
     (state.contact_email && state.contact_email.trim()) ||
     (state.phone_number && state.phone_number.trim());
 
-  useEffect(() => {
-    let handledRedirect = false;
-    const checkSubscriptionStatus = async () => {
-      if (authLoading || !authUser) return;
-      const queryParams = new URLSearchParams(location.search);
-      const paymentSuccess = queryParams.get('payment_success');
+  /* =========================
+     EFFECTS
+     ========================= */
 
-      if (paymentSuccess === 'true' && !isSubscribed && !handledRedirect) {
-        handledRedirect = true;
-        if (typeof refetchAuthUser === 'function') {
-          await refetchAuthUser();
-        }
+  // handle payment_success query and refresh user
+  useEffect(() => {
+    let handled = false;
+
+    const run = async () => {
+      if (authLoading || !authUser) return;
+      const params = new URLSearchParams(location.search);
+      const paymentSuccess = params.get("payment_success");
+      if (paymentSuccess === "true" && !isSubscribed && !handled) {
+        handled = true;
+        if (typeof refetchAuthUser === "function") await refetchAuthUser();
         window.history.replaceState({}, document.title, location.pathname);
         toast.success("Subscription updated successfully!");
       }
     };
 
-    checkSubscriptionStatus();
+    run();
   }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser]);
 
+  // responsive listeners (matchMedia is better for first render)
   useEffect(() => {
-    const handleResize = () => {
-      const currentIsMobile = window.innerWidth <= 1000;
-      const currentIsSmallMobile = window.innerWidth <= 600;
-      setIsMobile(currentIsMobile);
-      setIsSmallMobile(currentIsSmallMobile);
-      if (!currentIsMobile && sidebarOpen) {
-        setSidebarOpen(false);
-      }
+    const mm1 = window.matchMedia(mqDesktopToMobile);
+    const mm2 = window.matchMedia(mqSmallMobile);
+
+    const onChange = () => {
+      setIsMobile(mm1.matches);
+      setIsSmallMobile(mm2.matches);
+      if (!mm1.matches && sidebarOpen) setSidebarOpen(false); // close when switching to desktop
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    mm1.addEventListener("change", onChange);
+    mm2.addEventListener("change", onChange);
+    return () => {
+      mm1.removeEventListener("change", onChange);
+      mm2.removeEventListener("change", onChange);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sidebarOpen]);
 
+  // lock body scroll when the sidebar is open on mobile
   useEffect(() => {
-    if (sidebarOpen && isMobile) {
-      document.body.classList.add('body-no-scroll');
-    } else {
-      document.body.classList.remove('body-no-scroll');
-    }
+    if (sidebarOpen && isMobile) document.body.classList.add("body-no-scroll");
+    else document.body.classList.remove("body-no-scroll");
   }, [sidebarOpen, isMobile]);
 
+  // resend cooldown
   useEffect(() => {
-    let timer;
-    if (resendCooldown > 0) {
-      timer = setTimeout(() => setResendCooldown(cooldown => cooldown - 1), 1000);
-    }
-    return () => clearTimeout(timer);
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(t);
   }, [resendCooldown]);
 
+  // verification prompt
   useEffect(() => {
-    if (!authLoading && authUser && !isUserVerified && userEmail) {
-      setShowVerificationPrompt(true);
-    } else if (!authLoading && isUserVerified) {
-      setShowVerificationPrompt(false);
-    }
+    if (!authLoading && authUser && !isUserVerified && userEmail) setShowVerificationPrompt(true);
+    else if (!authLoading && isUserVerified) setShowVerificationPrompt(false);
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
+  // hydrate editor with server data
   useEffect(() => {
-    if (!isCardLoading) {
-      if (businessCard) {
-        updateState({
-          businessName: businessCard.business_card_name || '',
-          pageTheme: businessCard.page_theme || 'light',
-          font: businessCard.style || 'Inter',
-          mainHeading: businessCard.main_heading || '',
-          subHeading: businessCard.sub_heading || '',
-          job_title: businessCard.job_title || '',
-          full_name: businessCard.full_name || '',
-          bio: businessCard.bio || '',
-          avatar: businessCard.avatar || null,
-          coverPhoto: businessCard.cover_photo || null,
-          workImages: (businessCard.works || []).map(url => ({ file: null, preview: url })),
-          services: businessCard.services || [],
-          reviews: businessCard.reviews || [],
-          contact_email: businessCard.contact_email || '',
-          phone_number: businessCard.phone_number || '',
-          workDisplayMode: businessCard.work_display_mode || 'list',
-        });
-        setServicesDisplayMode(businessCard.services_display_mode || 'list');
-        setReviewsDisplayMode(businessCard.reviews_display_mode || 'list');
-        setAboutMeLayout(businessCard.about_me_layout || 'side-by-side');
+    if (isCardLoading) return;
 
-        setShowMainSection(businessCard.show_main_section !== false);
-        setShowAboutMeSection(businessCard.show_about_me_section !== false);
-        setShowWorkSection(businessCard.show_work_section !== false);
-        setShowServicesSection(businessCard.show_services_section !== false);
-        setShowReviewsSection(businessCard.show_reviews_section !== false);
-        setShowContactSection(businessCard.show_contact_section !== false);
+    if (businessCard) {
+      updateState({
+        businessName: businessCard.business_card_name || "",
+        pageTheme: businessCard.page_theme || "light",
+        font: businessCard.style || "Inter",
+        mainHeading: businessCard.main_heading || "",
+        subHeading: businessCard.sub_heading || "",
+        job_title: businessCard.job_title || "",
+        full_name: businessCard.full_name || "",
+        bio: businessCard.bio || "",
+        avatar: businessCard.avatar || null,
+        coverPhoto: businessCard.cover_photo || null,
+        workImages: (businessCard.works || []).map((url) => ({ file: null, preview: url })),
+        services: businessCard.services || [],
+        reviews: businessCard.reviews || [],
+        contact_email: businessCard.contact_email || "",
+        phone_number: businessCard.phone_number || "",
+        workDisplayMode: businessCard.work_display_mode || "list",
+      });
 
-        setCoverPhotoFile(null);
-        setAvatarFile(null);
-        setWorkImageFiles([]);
-        setCoverPhotoRemoved(false);
-        setIsAvatarRemoved(false);
-      } else {
-        resetState();
-        setServicesDisplayMode('list');
-        setReviewsDisplayMode('list');
-        setAboutMeLayout('side-by-side');
-        setShowMainSection(true);
-        setShowAboutMeSection(true);
-        setShowWorkSection(true);
-        setShowServicesSection(true);
-        setShowReviewsSection(true);
-        setShowContactSection(true);
-      }
+      setServicesDisplayMode(businessCard.services_display_mode || "list");
+      setReviewsDisplayMode(businessCard.reviews_display_mode || "list");
+      setAboutMeLayout(businessCard.about_me_layout || "side-by-side");
+
+      setShowMainSection(businessCard.show_main_section !== false);
+      setShowAboutMeSection(businessCard.show_about_me_section !== false);
+      setShowWorkSection(businessCard.show_work_section !== false);
+      setShowServicesSection(businessCard.show_services_section !== false);
+      setShowReviewsSection(businessCard.show_reviews_section !== false);
+      setShowContactSection(businessCard.show_contact_section !== false);
+
+      setCoverPhotoFile(null);
+      setAvatarFile(null);
+      setWorkImageFiles([]);
+      setCoverPhotoRemoved(false);
+      setIsAvatarRemoved(false);
+    } else {
+      resetState();
+      setServicesDisplayMode("list");
+      setReviewsDisplayMode("list");
+      setAboutMeLayout("side-by-side");
+      setShowMainSection(true);
+      setShowAboutMeSection(true);
+      setShowWorkSection(true);
+      setShowServicesSection(true);
+      setShowReviewsSection(true);
+      setShowContactSection(true);
     }
   }, [businessCard, isCardLoading, resetState, updateState]);
 
+  // revoke blobs on unmount
   useEffect(() => {
     return () => {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     };
-  }, []); // <-- empty deps: only on unmount
+  }, []);
 
+  /* =========================
+     HELPERS
+     ========================= */
   const createAndTrackBlobUrl = (file) => {
     const url = URL.createObjectURL(file);
-    activeBlobUrlsRef.current.push(url);   // track in ref
-    setActiveBlobUrls(prev => [...prev, url]); // (optional) keep state if you need it
+    activeBlobUrlsRef.current.push(url);
+    setActiveBlobUrls((prev) => [...prev, url]);
     return url;
   };
 
@@ -204,9 +241,9 @@ export default function MyProfile() {
     }
   };
 
-  const handleAvatarUpload = (event) => {
-    event.preventDefault();
-    const file = event.target.files?.[0];
+  const handleAvatarUpload = (e) => {
+    e.preventDefault();
+    const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
       updateState({ avatar: createAndTrackBlobUrl(file) });
       setAvatarFile(file);
@@ -214,218 +251,171 @@ export default function MyProfile() {
     }
   };
 
-  const handleAddWorkImage = (e) => {
-    e.preventDefault();
-    const files = Array.from(e.target.files || []);
-    const newImageFiles = files.filter(file => file && file.type.startsWith("image/"));
-    if (newImageFiles.length === 0) return;
-
-    const newPreviewItems = newImageFiles.map(file => ({
-      file: file,
-      preview: createAndTrackBlobUrl(file),
-    }));
-    updateState({
-      workImages: [...state.workImages, ...newPreviewItems],
-    });
-    setWorkImageFiles(prevFiles => [...prevFiles, ...newImageFiles]);
-  };
-
   const handleRemoveCoverPhoto = () => {
-    const isLocalBlob = state.coverPhoto && state.coverPhoto.startsWith('blob:');
+    const isLocalBlob = state.coverPhoto && state.coverPhoto.startsWith("blob:");
     if (!isLocalBlob && state.coverPhoto) setCoverPhotoRemoved(true);
     else setCoverPhotoRemoved(false);
 
     if (isLocalBlob) {
       URL.revokeObjectURL(state.coverPhoto);
-      // remove from ref + state trackers
-      activeBlobUrlsRef.current = activeBlobUrlsRef.current.filter(u => u !== state.coverPhoto);
-      setActiveBlobUrls(prev => prev.filter(url => url !== state.coverPhoto));
+      activeBlobUrlsRef.current = activeBlobUrlsRef.current.filter((u) => u !== state.coverPhoto);
+      setActiveBlobUrls((prev) => prev.filter((u) => u !== state.coverPhoto));
     }
     updateState({ coverPhoto: null });
     setCoverPhotoFile(null);
   };
 
   const handleRemoveAvatar = () => {
-    const isLocalBlob = state.avatar && state.avatar.startsWith('blob:');
+    const isLocalBlob = state.avatar && state.avatar.startsWith("blob:");
     if (!isLocalBlob && state.avatar) setIsAvatarRemoved(true);
     else setIsAvatarRemoved(false);
 
     if (isLocalBlob) {
       URL.revokeObjectURL(state.avatar);
-      activeBlobUrlsRef.current = activeBlobUrlsRef.current.filter(u => u !== state.avatar);
-      setActiveBlobUrls(prev => prev.filter(url => url !== state.avatar));
+      activeBlobUrlsRef.current = activeBlobUrlsRef.current.filter((u) => u !== state.avatar);
+      setActiveBlobUrls((prev) => prev.filter((u) => u !== state.avatar));
     }
     updateState({ avatar: null });
     setAvatarFile(null);
   };
 
-  const handleRemoveWorkImage = (indexToRemove) => {
-    const removedItem = state.workImages?.[indexToRemove];
+  const handleAddWorkImage = (e) => {
+    e.preventDefault();
+    const files = Array.from(e.target.files || []).filter((f) => f && f.type.startsWith("image/"));
+    if (!files.length) return;
 
-    if (removedItem?.preview?.startsWith('blob:')) {
-      URL.revokeObjectURL(removedItem.preview); // revoke just this one
-      // remove from ref + state trackers
-      activeBlobUrlsRef.current = activeBlobUrlsRef.current.filter(u => u !== removedItem.preview);
-      setActiveBlobUrls(prev => prev.filter(u => u !== removedItem.preview));
+    const previewItems = files.map((file) => ({ file, preview: createAndTrackBlobUrl(file) }));
+    updateState({ workImages: [...state.workImages, ...previewItems] });
+    setWorkImageFiles((prev) => [...prev, ...files]);
+  };
+
+  const handleRemoveWorkImage = (idx) => {
+    const item = state.workImages?.[idx];
+    if (item?.preview?.startsWith("blob:")) {
+      URL.revokeObjectURL(item.preview);
+      activeBlobUrlsRef.current = activeBlobUrlsRef.current.filter((u) => u !== item.preview);
+      setActiveBlobUrls((prev) => prev.filter((u) => u !== item.preview));
     }
-
-    const newWorkImages = state.workImages.filter((_, i) => i !== indexToRemove);
-    updateState({ workImages: newWorkImages });
+    updateState({ workImages: state.workImages.filter((_, i) => i !== idx) });
   };
 
-  const handleAddService = () => {
-    updateState({ services: [...state.services, { name: "", price: "" }] });
+  const handleAddService = () => updateState({ services: [...state.services, { name: "", price: "" }] });
+  const handleServiceChange = (i, field, value) => {
+    const arr = [...state.services];
+    arr[i] = { ...arr[i], [field]: value };
+    updateState({ services: arr });
   };
+  const handleRemoveService = (i) => updateState({ services: state.services.filter((_, x) => x !== i) });
 
-  const handleServiceChange = (index, field, value) => {
-    const updated = [...state.services];
-    updated[index] = { ...updated[index], [field]: value };
-    updateState({ services: updated });
-  };
+  const handleAddReview = () =>
+    updateState({ reviews: [...state.reviews, { name: "", text: "", rating: 5 }] });
 
-  const handleRemoveService = (indexToRemove) => {
-    updateState({
-      services: state.services.filter((_, index) => index !== indexToRemove),
-    });
-  };
-
-  const handleAddReview = () => {
-    updateState({
-      reviews: [...state.reviews, { name: "", text: "", rating: 5 }],
-    });
-  };
-
-  const handleReviewChange = (index, field, value) => {
-    const updated = [...state.reviews];
-    if (field === 'rating') {
-      const parsedRating = parseInt(value);
-      updated[index] = { ...updated[index], [field]: isNaN(parsedRating) ? 0 : Math.min(5, Math.max(0, parsedRating)) };
+  const handleReviewChange = (i, field, value) => {
+    const arr = [...state.reviews];
+    if (field === "rating") {
+      const n = parseInt(value);
+      arr[i] = { ...arr[i], rating: Number.isFinite(n) ? Math.min(5, Math.max(0, n)) : 0 };
     } else {
-      updated[index] = { ...updated[index], [field]: value };
+      arr[i] = { ...arr[i], [field]: value };
     }
-    updateState({ reviews: updated });
+    updateState({ reviews: arr });
   };
-
-  const handleRemoveReview = (indexToRemove) => {
-    updateState({
-      reviews: state.reviews.filter((_, index) => index !== indexToRemove),
-    });
-  };
+  const handleRemoveReview = (i) => updateState({ reviews: state.reviews.filter((_, x) => x !== i) });
 
   const sendVerificationCode = async () => {
-    if (!userEmail) {
-      toast.error("Email not found. Please log in again.");
-      return;
-    }
+    if (!userEmail) return toast.error("Email not found. Please log in again.");
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/resend-code`, { email: userEmail });
-      if (res.data.error) {
-        toast.error(res.data.error);
-      } else {
-        toast.success('Verification code sent!');
+      if (res.data.error) toast.error(res.data.error);
+      else {
+        toast.success("Verification code sent!");
         setResendCooldown(30);
       }
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Could not resend code.');
+      toast.error(err.response?.data?.error || "Could not resend code.");
     }
   };
 
   const handleVerifyCode = async (e) => {
     e.preventDefault();
-    if (!userEmail) {
-      toast.error("Email not found. Cannot verify.");
-      return;
-    }
+    if (!userEmail) return toast.error("Email not found. Cannot verify.");
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/verify-email`, {
         email: userEmail,
         code: verificationCodeInput,
       });
-
-      if (res.data.error) {
-        toast.error(res.data.error);
-      } else {
-        toast.success('Email verified successfully!');
+      if (res.data.error) toast.error(res.data.error);
+      else {
+        toast.success("Email verified successfully!");
         setShowVerificationPrompt(false);
-        setVerificationCodeCode('');
+        setVerificationCodeCode("");
         refetchAuthUser();
       }
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Verification failed.');
+      toast.error(err.response?.data?.error || "Verification failed.");
     }
   };
 
-  // detect changes (same as your improved version)
+  // compare changes to determine if publish is needed
   const hasProfileChanges = () => {
-    if (coverPhotoFile || avatarFile || workImageFiles.length > 0 || coverPhotoRemoved || isAvatarRemoved) {
-      return true;
-    }
+    if (coverPhotoFile || avatarFile || workImageFiles.length || coverPhotoRemoved || isAvatarRemoved) return true;
 
-    const originalCard = businessCard || {};
-    const normStr = (v) => (v ?? '').toString().trim();
-    const normalizeServices = (arr) => (arr || []).map(s => ({ name: normStr(s.name), price: normStr(s.price) }));
-    const normalizeReviews = (arr) => (arr || []).map(r => ({
-      name: normStr(r.name),
-      text: normStr(r.text),
-      rating: Number.isFinite(r.rating) ? Number(r.rating) : 0
-    }));
+    const original = businessCard || {};
+    const norm = (v) => (v ?? "").toString().trim();
+
+    const normalizeServices = (arr) => (arr || []).map((s) => ({ name: norm(s.name), price: norm(s.price) }));
+    const normalizeReviews = (arr) =>
+      (arr || []).map((r) => ({ name: norm(r.name), text: norm(r.text), rating: Number(r.rating) || 0 }));
 
     const servicesChanged = (() => {
       const a = normalizeServices(state.services);
-      const b = normalizeServices(originalCard.services);
+      const b = normalizeServices(original.services);
       if (a.length !== b.length) return true;
-      for (let i = 0; i < a.length; i++) {
-        if (a[i].name !== b[i].name || a[i].price !== b[i].price) return true;
-      }
+      for (let i = 0; i < a.length; i++) if (a[i].name !== b[i].name || a[i].price !== b[i].price) return true;
       return false;
     })();
 
     const reviewsChanged = (() => {
       const a = normalizeReviews(state.reviews);
-      const b = normalizeReviews(originalCard.reviews);
+      const b = normalizeReviews(original.reviews);
       if (a.length !== b.length) return true;
-      for (let i = 0; i < a.length; i++) {
-        if (a[i].name !== b[i].name || a[i].text !== b[i].text || a[i].rating !== b[i].rating) {
-          return true;
-        }
-      }
+      for (let i = 0; i < a.length; i++)
+        if (a[i].name !== b[i].name || a[i].text !== b[i].text || a[i].rating !== b[i].rating) return true;
       return false;
     })();
 
     const currentWorks = (state.workImages || [])
-      .map(w => (w?.preview && !w.preview.startsWith('blob:')) ? w.preview : null)
+      .map((w) => (w?.preview && !w.preview.startsWith("blob:") ? w.preview : null))
       .filter(Boolean);
-    const originalWorks = (originalCard.works || []);
+    const originalWorks = original.works || [];
     const worksChanged = (() => {
       if (currentWorks.length !== originalWorks.length) return true;
-      for (let i = 0; i < currentWorks.length; i++) {
-        if (currentWorks[i] !== originalWorks[i]) return true;
-      }
+      for (let i = 0; i < currentWorks.length; i++) if (currentWorks[i] !== originalWorks[i]) return true;
       return false;
     })();
 
-    const origShowMain = originalCard.show_main_section !== false;
-    const origShowAbout = originalCard.show_about_me_section !== false;
-    const origShowWork = originalCard.show_work_section !== false;
-    const origShowServices = originalCard.show_services_section !== false;
-    const origShowReviews = originalCard.show_reviews_section !== false;
-    const origShowContact = originalCard.show_contact_section !== false;
+    const origShowMain = original.show_main_section !== false;
+    const origShowAbout = original.show_about_me_section !== false;
+    const origShowWork = original.show_work_section !== false;
+    const origShowServices = original.show_services_section !== false;
+    const origShowReviews = original.show_reviews_section !== false;
+    const origShowContact = original.show_contact_section !== false;
 
-    const isStateDifferent = (
-      state.businessName !== (originalCard.business_card_name || '') ||
-      state.pageTheme !== (originalCard.page_theme || 'light') ||
-      state.font !== (originalCard.style || 'Inter') ||
-      state.mainHeading !== (originalCard.main_heading || '') ||
-      state.subHeading !== (originalCard.sub_heading || '') ||
-      state.job_title !== (originalCard.job_title || '') ||
-      state.full_name !== (originalCard.full_name || '') ||
-      state.bio !== (originalCard.bio || '') ||
-      state.contact_email !== (originalCard.contact_email || '') ||
-      state.phone_number !== (originalCard.phone_number || '') ||
-      state.workDisplayMode !== (originalCard.work_display_mode || 'list') ||
-      servicesDisplayMode !== (originalCard.services_display_mode || 'list') ||
-      reviewsDisplayMode !== (originalCard.reviews_display_mode || 'list') ||
-      aboutMeLayout !== (originalCard.about_me_layout || 'side-by-side') ||
+    return (
+      state.businessName !== (original.business_card_name || "") ||
+      state.pageTheme !== (original.page_theme || "light") ||
+      state.font !== (original.style || "Inter") ||
+      state.mainHeading !== (original.main_heading || "") ||
+      state.subHeading !== (original.sub_heading || "") ||
+      state.job_title !== (original.job_title || "") ||
+      state.full_name !== (original.full_name || "") ||
+      state.bio !== (original.bio || "") ||
+      state.contact_email !== (original.contact_email || "") ||
+      state.phone_number !== (original.phone_number || "") ||
+      state.workDisplayMode !== (original.work_display_mode || "list") ||
+      servicesDisplayMode !== (original.services_display_mode || "list") ||
+      reviewsDisplayMode !== (original.reviews_display_mode || "list") ||
+      aboutMeLayout !== (original.about_me_layout || "side-by-side") ||
       servicesChanged ||
       reviewsChanged ||
       worksChanged ||
@@ -436,32 +426,18 @@ export default function MyProfile() {
       showReviewsSection !== origShowReviews ||
       showContactSection !== origShowContact
     );
-
-    return isStateDifferent;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Require either an active subscription or an active trial to publish
-    if (!isSubscribed && !isTrialActive) {
-      toast.error("Please start your free trial to publish your changes.");
-      return;
-    }
-
-    if (!hasProfileChanges()) {
-      if (isSubscribed || isTrialActive) {
-        toast.error("You haven't made any changes.");
-      } else {
-        toast.error("Please start your trial to publish your changes.");
-      }
-      return;
-    }
+    if (!isSubscribed && !isTrialActive) return toast.error("Please start your free trial to publish your changes.");
+    if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
 
     const worksToUpload = state.workImages
-      .map(item => {
+      .map((item) => {
         if (item.file) return { file: item.file };
-        if (item.preview && !item.preview.startsWith('blob:')) return item.preview;
+        if (item.preview && !item.preview.startsWith("blob:")) return item.preview;
         return null;
       })
       .filter(Boolean);
@@ -481,8 +457,8 @@ export default function MyProfile() {
       cover_photo_removed: coverPhotoRemoved,
       avatar_removed: isAvatarRemoved,
       works: worksToUpload,
-      services: state.services.filter(s => s.name || s.price),
-      reviews: state.reviews.filter(r => r.name || r.text),
+      services: state.services.filter((s) => s.name || s.price),
+      reviews: state.reviews.filter((r) => r.name || r.text),
       contact_email: state.contact_email,
       phone_number: state.phone_number,
       work_display_mode: state.workDisplayMode,
@@ -500,91 +476,67 @@ export default function MyProfile() {
     try {
       await createBusinessCard.mutateAsync(formData);
       toast.success("Your page is Published!");
-      queryClient.invalidateQueries(['businessCard', userId]);
+      queryClient.invalidateQueries(["businessCard", userId]);
+
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
+
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
       activeBlobUrlsRef.current = [];
       setActiveBlobUrls([]);
-    } catch (error) {
-      toast.error(error.response?.data?.error || "Something went wrong while saving. Check console for details.");
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Something went wrong while saving.");
     }
   };
 
-  // Starts the 14-day trial timer without publishing/saving
   const handleStartTrial = async () => {
-    if (isSubscribed || isTrialActive) {
-      toast('Your plan is already active.', { icon: 'ℹ️' });
-      return;
-    }
+    if (isSubscribed || isTrialActive) return toast("Your plan is already active.", { icon: "ℹ️" });
     try {
-      const res = await startTrial(); // POST /trial/start
-      if (res?.data?.trialExpires) {
-        toast.success('Your 14-day trial is now active!');
-      } else {
-        toast.success('Trial activated!');
-      }
-      if (typeof refetchAuthUser === 'function') {
-        await refetchAuthUser(); // refresh user so isTrialActive updates
-      }
+      const res = await startTrial();
+      if (res?.data?.trialExpires) toast.success("Your 14-day trial is now active!");
+      else toast.success("Trial activated!");
+      if (typeof refetchAuthUser === "function") await refetchAuthUser();
     } catch (err) {
-      toast.error(err?.response?.data?.error || 'Could not start trial. Please try again.');
+      toast.error(err?.response?.data?.error || "Could not start trial. Please try again.");
+    }
+  };
+
+  const handleStartSubscription = async () => {
+    try {
+      const response = await api.post("/subscribe", {});
+      if (response.data?.url) window.location.href = response.data.url;
+      else toast.error("Failed to start subscription. Please try again.");
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to start subscription.");
     }
   };
 
   const handleShareCard = () => {
-    if (!isUserVerified) {
-      toast.error("Please verify your email to share your card.");
-      return;
-    }
+    if (!isUserVerified) return toast.error("Please verify your email to share your card.");
     setShowShareModal(true);
   };
   const handleCloseShareModal = () => setShowShareModal(false);
 
-  const handleStartSubscription = async () => {
-    try {
-      const response = await api.post('/subscribe', {});
-      if (response.data && response.data.url) {
-        window.location.href = response.data.url;
-      } else {
-        toast.error("Failed to start subscription. Please try again.");
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.error || "Failed to start subscription.");
-    }
-  };
-
   const handleResetPage = async () => {
-    if (!window.confirm("Are you sure you want to reset everything? This will delete your published profile and restore the default template.")) {
-      return;
-    }
-
+    if (!window.confirm("Are you sure you want to reset everything? This will delete your published profile and restore the default template.")) return;
     try {
-      // 1) Delete the card on the server
-      await api.delete('/api/business-card/my_card');
-
-      // 2) Revoke any active blob URLs to avoid memory leaks
+      await api.delete("/api/business-card/my_card");
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
       activeBlobUrlsRef.current = [];
       setActiveBlobUrls([]);
 
-      // 3) Clear pending file states/flags
       setCoverPhotoFile(null);
       setAvatarFile(null);
       setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
 
-      // 4) Reset Zustand to the fresh template (instant UI reset)
       resetState();
-
-      // 5) Clear + refetch the cached card so `businessCard` becomes null (placeholders show)
-      await queryClient.invalidateQueries(['businessCard', userId]);
-      queryClient.setQueryData(['businessCard', userId], null);
-
+      await queryClient.invalidateQueries(["businessCard", userId]);
+      queryClient.setQueryData(["businessCard", userId], null);
       toast.success("Your page has been reset to the default template.");
     } catch (err) {
       console.error("Reset failed", err);
@@ -592,80 +544,65 @@ export default function MyProfile() {
     }
   };
 
-
-  const scrollCarousel = (ref, direction) => {
-    if (ref.current) {
-      const carousel = ref.current;
-      const currentScroll = carousel.scrollLeft;
-      const maxScroll = carousel.scrollWidth - carousel.offsetWidth;
-      const itemWidth = carousel.offsetWidth;
-
-      let newScrollPosition;
-      if (direction === 'left') {
-        newScrollPosition = currentScroll - itemWidth;
-        if (newScrollPosition < 0) newScrollPosition = maxScroll;
-      } else {
-        newScrollPosition = currentScroll + itemWidth;
-        if (newScrollPosition >= maxScroll) newScrollPosition = 0;
-      }
-      carousel.scrollTo({ left: newScrollPosition, behavior: 'smooth' });
-    }
+  const scrollCarousel = (ref, dir) => {
+    const el = ref.current;
+    if (!el) return;
+    const w = el.offsetWidth;
+    const max = el.scrollWidth - w;
+    let next = dir === "left" ? el.scrollLeft - w : el.scrollLeft + w;
+    if (next < 0) next = max;
+    if (next >= max) next = 0;
+    el.scrollTo({ left: next, behavior: "smooth" });
   };
 
   const shouldShowPlaceholders = !hasSavedData;
-
-  const previewFullName = state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : '');
-  const previewJobTitle = state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : '');
-  const previewBio = state.bio || (shouldShowPlaceholders ? previewPlaceholders.bio : '');
-  const previewEmail = state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : '');
-  const previewPhone = state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : '');
-
-  // Cover: show placeholder on fresh accounts; otherwise only show if set
-  const previewCoverPhotoSrc =
-    state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : '');
-
-  const previewAvatarSrc =
-    state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
-
-  // Work images placeholders still OK for fresh accounts
+  const previewFullName = state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
+  const previewJobTitle = state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : "");
+  const previewBio = state.bio || (shouldShowPlaceholders ? previewPlaceholders.bio : "");
+  const previewEmail = state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : "");
+  const previewPhone = state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : "");
+  const previewCoverPhotoSrc = state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
+  const previewAvatarSrc = state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
   const previewWorkImages =
-    (state.workImages && state.workImages.length > 0)
+    state.workImages && state.workImages.length > 0
       ? state.workImages
-      : (shouldShowPlaceholders ? previewPlaceholders.workImages : []);
-
-  const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
-
-  const getEditorImageSrc = (imageState, placeholderImage) =>
-    imageState || (shouldShowPlaceholders ? placeholderImage : '');
-
-  const showAddImageText = (imageState) => !imageState;
-
-  const shouldBlurEditor = !isSubscribed && hasTrialEnded;
+      : shouldShowPlaceholders
+        ? previewPlaceholders.workImages
+        : [];
+  const currentQrCodeUrl = businessCard?.qrCodeUrl || "";
+  const getEditorImageSrc = (img, ph) => img || (shouldShowPlaceholders ? ph : "");
+  const showAddImageText = (img) => !img;
   const isDarkMode = state.pageTheme === "dark";
 
+  /* =========================
+     RENDER
+     ========================= */
   return (
-    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
+    <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
+      {/* Mobile header (fixed) */}
       <div className="myprofile-mobile-header">
-        <Link to="/myprofile" className="myprofile-logo-link">
-          <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
-        </Link>
-        <div
-          className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
-          onClick={() => setSidebarOpen(!sidebarOpen)}
+        <button
+          className="sidebar-menu-toggle"
+          aria-label="Open menu"
+          onClick={() => setSidebarOpen(true)}
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <span></span><span></span><span></span>
+        </button>
+
+        <div className="myprofile-brand">
+          <img src={LogoIcon} alt="Konar" className="myprofile-logo" />
         </div>
       </div>
 
+      {/* Sidebar + overlay */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
       {sidebarOpen && isMobile && (
-        <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
+        <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
       )}
 
+      {/* MAIN */}
       <main className="main-content-container">
+        {/* Page header (shows user name/email + Share) */}
         <PageHeader
           title={"My Profile"}
           onActivateCard={handleStartTrial}
@@ -678,7 +615,7 @@ export default function MyProfile() {
           {!authLoading && !authUser && (
             <div className="content-card-box error-state">
               <p>User not loaded. Please ensure you are logged in.</p>
-              <button onClick={() => window.location.href = '/login'}>Go to Login</button>
+              <button onClick={() => (window.location.href = "/login")}>Go to Login</button>
             </div>
           )}
 
@@ -687,8 +624,7 @@ export default function MyProfile() {
               {showVerificationPrompt && (
                 <div className="content-card-box verification-prompt">
                   <p>
-                    <span role="img" aria-label="warning">⚠️</span>
-                    Your email is not verified!
+                    <span role="img" aria-label="warning">⚠️</span> Your email is not verified!
                   </p>
                   <p>
                     Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to your business card.
@@ -703,7 +639,7 @@ export default function MyProfile() {
                     />
                     <button type="submit">Verify Email</button>
                     <button type="button" onClick={sendVerificationCode} disabled={resendCooldown > 0}>
-                      {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
+                      {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend Code"}
                     </button>
                   </form>
                 </div>
@@ -712,26 +648,30 @@ export default function MyProfile() {
               {!isSubscribed && !isTrialActive && (
                 <div className="trial-not-started-banner">
                   <p><strong>Activate my website</strong> — 14 days free, no card required.</p>
-                  <button className="blue-button" onClick={handleStartTrial}>
-                    Activate
-                  </button>
+                  <button className="blue-button" onClick={handleStartTrial}>Activate</button>
                 </div>
               )}
 
               {isTrialActive && (
                 <div className="trial-countdown-banner">
-                  <p>Your free trial ends on {new Date(authUser.trialExpires).toLocaleDateString()}. <Link to="/subscription">Subscribe now!</Link></p>
+                  <p>
+                    Your free trial ends on {new Date(authUser.trialExpires).toLocaleDateString()}.{" "}
+                    <Link to="/subscription">Subscribe now!</Link>
+                  </p>
                 </div>
               )}
 
               {hasTrialEnded && !isSubscribed && (
                 <div className="trial-ended-banner">
-                  <p>Your free trial has ended. <Link to="/subscription">Subscribe now</Link> to prevent your profile from being deleted.</p>
+                  <p>
+                    Your free trial has ended. <Link to="/subscription">Subscribe now</Link> to prevent your profile from being deleted.
+                  </p>
                 </div>
               )}
 
               <div className="myprofile-flex-container">
-                <div className={`myprofile-content ${isMobile ? 'myprofile-mock-phone-mobile-container' : ''}`}>
+                {/* Phone preview */}
+                <div className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`}>
                   <div
                     className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
                     style={{ fontFamily: state.font || previewPlaceholders.font }}
@@ -740,44 +680,30 @@ export default function MyProfile() {
                       {showMainSection && (
                         <>
                           {(shouldShowPlaceholders || !!state.coverPhoto) && (
-                            <img
-                              src={previewCoverPhotoSrc}
-                              alt="Cover"
-                              className="mock-cover"
-                            />
+                            <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
                           )}
 
-                          <h2
-                            className="mock-title"
-                          >
-                            {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : 'Your Main Heading Here')}
+                          <h2 className="mock-title">
+                            {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
                           </h2>
-                          <p
-                            className="mock-subtitle"
-                          >
-                            {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : 'Your Tagline or Slogan Goes Here')}
+                          <p className="mock-subtitle">
+                            {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
                           </p>
 
                           {(shouldShowPlaceholders || hasExchangeContact) && (
-                            <button type="button" className="mock-button">
-                              Save My Number
-                            </button>
+                            <button type="button" className="mock-button">Save My Number</button>
                           )}
                         </>
                       )}
 
-                      {showAboutMeSection && ((previewFullName || previewJobTitle || previewBio || previewAvatarSrc)) && (
+                      {showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
                         <>
                           <p className="mock-section-title">About me</p>
                           <div className={`mock-about-container ${aboutMeLayout}`}>
                             <div className="mock-about-content-group">
                               <div className="mock-about-header-group">
                                 {previewAvatarSrc && (
-                                  <img
-                                    src={previewAvatarSrc}
-                                    alt="Avatar"
-                                    className="mock-avatar"
-                                  />
+                                  <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
                                 )}
                                 <div>
                                   <p className="mock-profile-name">{previewFullName}</p>
@@ -790,23 +716,23 @@ export default function MyProfile() {
                         </>
                       )}
 
-                      {showWorkSection && (previewWorkImages.length > 0) && (
+                      {showWorkSection && previewWorkImages.length > 0 && (
                         <>
                           <p className="mock-section-title">My Work</p>
                           <div className="work-preview-row-container">
-                            {state.workDisplayMode === 'carousel' && (
+                            {state.workDisplayMode === "carousel" && (
                               <div className="carousel-nav-buttons">
                                 <button
                                   type="button"
                                   className="carousel-nav-button left-arrow"
-                                  onClick={() => scrollCarousel(previewWorkCarouselRef, 'left')}
+                                  onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
                                 >
                                   &#9664;
                                 </button>
                                 <button
                                   type="button"
                                   className="carousel-nav-button right-arrow"
-                                  onClick={() => scrollCarousel(previewWorkCarouselRef, 'right')}
+                                  onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
                                 >
                                   &#9654;
                                 </button>
@@ -815,11 +741,7 @@ export default function MyProfile() {
                             <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
                               {previewWorkImages.map((item, i) => (
                                 <div key={i} className="mock-work-image-item-wrapper">
-                                  <img
-                                    src={item.preview || item}
-                                    alt={`work-${i}`}
-                                    className="mock-work-image-item"
-                                  />
+                                  <img src={item.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
                                 </div>
                               ))}
                             </div>
@@ -831,20 +753,12 @@ export default function MyProfile() {
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="work-preview-row-container">
-                            {servicesDisplayMode === 'carousel' && (
+                            {servicesDisplayMode === "carousel" && (
                               <div className="carousel-nav-buttons">
-                                <button
-                                  type="button"
-                                  className="carousel-nav-button left-arrow"
-                                  onClick={() => scrollCarousel(previewServicesCarouselRef, 'left')}
-                                >
+                                <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>
                                   &#9664;
                                 </button>
-                                <button
-                                  type="button"
-                                  className="carousel-nav-button right-arrow"
-                                  onClick={() => scrollCarousel(previewServicesCarouselRef, 'right')}
-                                >
+                                <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}>
                                   &#9654;
                                 </button>
                               </div>
@@ -865,20 +779,12 @@ export default function MyProfile() {
                         <>
                           <p className="mock-section-title">Reviews</p>
                           <div className="work-preview-row-container">
-                            {reviewsDisplayMode === 'carousel' && (
+                            {reviewsDisplayMode === "carousel" && (
                               <div className="carousel-nav-buttons">
-                                <button
-                                  type="button"
-                                  className="carousel-nav-button left-arrow"
-                                  onClick={() => scrollCarousel(previewReviewsCarouselRef, 'left')}
-                                >
+                                <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}>
                                   &#9664;
                                 </button>
-                                <button
-                                  type="button"
-                                  className="carousel-nav-button right-arrow"
-                                  onClick={() => scrollCarousel(previewReviewsCarouselRef, 'right')}
-                                >
+                                <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}>
                                   &#9654;
                                 </button>
                               </div>
@@ -887,12 +793,8 @@ export default function MyProfile() {
                               {(shouldShowPlaceholders ? previewPlaceholders.reviews : state.reviews).map((r, i) => (
                                 <div key={i} className="mock-review-card">
                                   <div className="mock-star-rating">
-                                    {Array(r.rating || 0).fill().map((_, starIdx) => (
-                                      <span key={`filled-${starIdx}`}>★</span>
-                                    ))}
-                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, starIdx) => (
-                                      <span key={`empty-${starIdx}`} className="empty-star">★</span>
-                                    ))}
+                                    {Array(r.rating || 0).fill().map((_, idx) => <span key={`f-${idx}`}>★</span>)}
+                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, idx) => <span key={`e-${idx}`} className="empty-star">★</span>)}
                                   </div>
                                   <p className="mock-review-text">{`"${r.text}"`}</p>
                                   <p className="mock-reviewer-name">{r.name}</p>
@@ -922,15 +824,14 @@ export default function MyProfile() {
                   </div>
                 </div>
 
+                {/* Editor */}
                 <div className="myprofile-editor-wrapper">
                   {(!isSubscribed && hasTrialEnded) && (
                     <div className="subscription-overlay">
                       <div className="subscription-message">
                         <p className="desktop-h4">Subscription Required</p>
                         <p className="desktop-h6">Your free trial has ended. Please subscribe to continue editing your profile.</p>
-                        <button className="blue-button" onClick={handleStartSubscription}>
-                          Go to Subscription
-                        </button>
+                        <button className="blue-button" onClick={handleStartSubscription}>Go to Subscription</button>
                       </div>
                     </div>
                   )}
@@ -939,12 +840,13 @@ export default function MyProfile() {
                     onSubmit={handleSubmit}
                     className="myprofile-editor"
                     style={{
-                      filter: (!isSubscribed && hasTrialEnded) ? 'blur(5px)' : 'none',
-                      pointerEvents: (!isSubscribed && hasTrialEnded) ? 'none' : 'auto'
+                      filter: !isSubscribed && hasTrialEnded ? "blur(5px)" : "none",
+                      pointerEvents: !isSubscribed && hasTrialEnded ? "none" : "auto",
                     }}
                   >
                     <h2 className="editor-title">Create Your Digital Business Card</h2>
 
+                    {/* Theme */}
                     <div className="input-block">
                       <label>Page Theme</label>
                       <div className="option-row">
@@ -965,6 +867,7 @@ export default function MyProfile() {
                       </div>
                     </div>
 
+                    {/* Fonts */}
                     <div className="input-block">
                       <label>Font</label>
                       <div className="option-row">
@@ -974,14 +877,7 @@ export default function MyProfile() {
                             key={font}
                             className={`font-button ${state.font === font ? "is-active" : ""}`}
                             onClick={() => updateState({ font })}
-                            style={{
-                              fontFamily: `'${font}', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`,
-                              fontWeight: 700,
-                              letterSpacing: 0,
-                              textTransform: "none"
-                            }}
-                            aria-label={`Use ${font}`}
-                            title={font}
+                            style={{ fontFamily: `'${font}', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`, fontWeight: 700 }}
                           >
                             {font}
                           </button>
@@ -993,7 +889,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">Main Section</h3>
                       <button type="button" onClick={() => setShowMainSection(!showMainSection)} className="toggle-button">
-                        {showMainSection ? 'Hide Section' : 'Show Section'}
+                        {showMainSection ? "Hide Section" : "Show Section"}
                       </button>
                     </div>
                     {showMainSection && (
@@ -1008,22 +904,11 @@ export default function MyProfile() {
                             onChange={handleImageUpload}
                             style={{ display: "none" }}
                           />
-                          <div
-                            className="image-upload-area cover-photo-upload"
-                            onClick={() => fileInputRef.current.click()}
-                          >
+                          <div className="image-upload-area cover-photo-upload" onClick={() => fileInputRef.current?.click()}>
                             {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
-                            <img
-                              src={getEditorImageSrc(state.coverPhoto, previewPlaceholders.coverPhoto)}
-                              alt="Cover"
-                              className="cover-preview"
-                            />
+                            <img src={getEditorImageSrc(state.coverPhoto, previewPlaceholders.coverPhoto)} alt="Cover" className="cover-preview" />
                             {state.coverPhoto && (
-                              <button
-                                type="button"
-                                className="remove-image-button"
-                                onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}
-                              >
+                              <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}>
                                 &times;
                               </button>
                             )}
@@ -1035,7 +920,7 @@ export default function MyProfile() {
                           <input
                             id="mainHeading"
                             type="text"
-                            value={state.mainHeading || ''}
+                            value={state.mainHeading || ""}
                             onChange={(e) => updateState({ mainHeading: e.target.value })}
                             placeholder={previewPlaceholders.main_heading}
                           />
@@ -1046,7 +931,7 @@ export default function MyProfile() {
                           <input
                             id="subHeading"
                             type="text"
-                            value={state.subHeading || ''}
+                            value={state.subHeading || ""}
                             onChange={(e) => updateState({ subHeading: e.target.value })}
                             placeholder={previewPlaceholders.sub_heading}
                           />
@@ -1058,7 +943,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">About Me Section</h3>
                       <button type="button" onClick={() => setShowAboutMeSection(!showAboutMeSection)} className="toggle-button">
-                        {showAboutMeSection ? 'Hide Section' : 'Show Section'}
+                        {showAboutMeSection ? "Hide Section" : "Show Section"}
                       </button>
                     </div>
                     {showAboutMeSection && (
@@ -1068,15 +953,15 @@ export default function MyProfile() {
                           <div className="option-row">
                             <button
                               type="button"
-                              className={`display-button ${aboutMeLayout === 'side-by-side' ? 'is-active' : ''}`}
-                              onClick={() => setAboutMeLayout('side-by-side')}
+                              className={`display-button ${aboutMeLayout === "side-by-side" ? "is-active" : ""}`}
+                              onClick={() => setAboutMeLayout("side-by-side")}
                             >
                               Side by Side
                             </button>
                             <button
                               type="button"
-                              className={`display-button ${aboutMeLayout === 'stacked' ? 'is-active' : ''}`}
-                              onClick={() => setAboutMeLayout('stacked')}
+                              className={`display-button ${aboutMeLayout === "stacked" ? "is-active" : ""}`}
+                              onClick={() => setAboutMeLayout("stacked")}
                             >
                               Stacked
                             </button>
@@ -1093,32 +978,22 @@ export default function MyProfile() {
                             onChange={handleAvatarUpload}
                             style={{ display: "none" }}
                           />
-                          <div
-                            className="image-upload-area avatar-upload"
-                            onClick={() => avatarInputRef.current.click()}
-                          >
+                          <div className="image-upload-area avatar-upload" onClick={() => avatarInputRef.current?.click()}>
                             {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
-                            <img
-                              src={state.avatar || ''}
-                              alt="Avatar preview"
-                              className="avatar-preview"
-                            />
+                            <img src={state.avatar || ""} alt="Avatar preview" className="avatar-preview" />
                             {state.avatar && (
-                              <button
-                                type="button"
-                                className="remove-image-button"
-                                onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}
-                              >
+                              <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}>
                                 &times;
                               </button>
                             )}
                           </div>
+
                           <div className="input-block">
                             <label htmlFor="fullName">Full Name</label>
                             <input
                               id="fullName"
                               type="text"
-                              value={state.full_name || ''}
+                              value={state.full_name || ""}
                               onChange={(e) => updateState({ full_name: e.target.value })}
                               placeholder={previewPlaceholders.full_name}
                             />
@@ -1129,7 +1004,7 @@ export default function MyProfile() {
                             <input
                               id="jobTitle"
                               type="text"
-                              value={state.job_title || ''}
+                              value={state.job_title || ""}
                               onChange={(e) => updateState({ job_title: e.target.value })}
                               placeholder={previewPlaceholders.job_title}
                             />
@@ -1139,9 +1014,9 @@ export default function MyProfile() {
                             <label htmlFor="bio">About Me Description</label>
                             <textarea
                               id="bio"
-                              value={state.bio || ''}
-                              onChange={(e) => updateState({ bio: e.target.value })}
                               rows={4}
+                              value={state.bio || ""}
+                              onChange={(e) => updateState({ bio: e.target.value })}
                               placeholder={previewPlaceholders.bio}
                             />
                           </div>
@@ -1153,7 +1028,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">My Work Section</h3>
                       <button type="button" onClick={() => setShowWorkSection(!showWorkSection)} className="toggle-button">
-                        {showWorkSection ? 'Hide Section' : 'Show Section'}
+                        {showWorkSection ? "Hide Section" : "Show Section"}
                       </button>
                     </div>
                     {showWorkSection && (
@@ -1163,22 +1038,22 @@ export default function MyProfile() {
                           <div className="option-row">
                             <button
                               type="button"
-                              className={`display-button ${state.workDisplayMode === 'list' ? 'is-active' : ''}`}
-                              onClick={() => updateState({ workDisplayMode: 'list' })}
+                              className={`display-button ${state.workDisplayMode === "list" ? "is-active" : ""}`}
+                              onClick={() => updateState({ workDisplayMode: "list" })}
                             >
                               List
                             </button>
                             <button
                               type="button"
-                              className={`display-button ${state.workDisplayMode === 'grid' ? 'is-active' : ''}`}
-                              onClick={() => updateState({ workDisplayMode: 'grid' })}
+                              className={`display-button ${state.workDisplayMode === "grid" ? "is-active" : ""}`}
+                              onClick={() => updateState({ workDisplayMode: "grid" })}
                             >
                               Grid
                             </button>
                             <button
                               type="button"
-                              className={`display-button ${state.workDisplayMode === 'carousel' ? 'is-active' : ''}`}
-                              onClick={() => updateState({ workDisplayMode: 'carousel' })}
+                              className={`display-button ${state.workDisplayMode === "carousel" ? "is-active" : ""}`}
+                              onClick={() => updateState({ workDisplayMode: "carousel" })}
                             >
                               Carousel
                             </button>
@@ -1190,25 +1065,14 @@ export default function MyProfile() {
                           <div className="editor-work-image-grid">
                             {state.workImages.map((item, i) => (
                               <div key={i} className="editor-item-card work-image-item-wrapper">
-                                <img
-                                  src={item.preview || item}
-                                  alt={`work-${i}`}
-                                  className="work-image-preview"
-                                />
-                                <button
-                                  type="button"
-                                  className="remove-image-button"
-                                  onClick={(e) => { e.stopPropagation(); handleRemoveWorkImage(i); }}
-                                >
+                                <img src={item.preview || item} alt={`work-${i}`} className="work-image-preview" />
+                                <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveWorkImage(i); }}>
                                   &times;
                                 </button>
                               </div>
                             ))}
                             {state.workImages.length < 10 && (
-                              <div
-                                className="add-work-image-placeholder"
-                                onClick={() => workImageInputRef.current.click()}
-                              >
+                              <div className="add-work-image-placeholder" onClick={() => workImageInputRef.current?.click()}>
                                 <span className="upload-text">Add Work Image(s)</span>
                               </div>
                             )}
@@ -1229,7 +1093,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">My Services Section</h3>
                       <button type="button" onClick={() => setShowServicesSection(!showServicesSection)} className="toggle-button">
-                        {showServicesSection ? 'Hide Section' : 'Show Section'}
+                        {showServicesSection ? "Hide Section" : "Show Section"}
                       </button>
                     </div>
                     {showServicesSection && (
@@ -1239,20 +1103,21 @@ export default function MyProfile() {
                           <div className="option-row">
                             <button
                               type="button"
-                              className={`display-button ${servicesDisplayMode === 'list' ? 'is-active' : ''}`}
-                              onClick={() => setServicesDisplayMode('list')}
+                              className={`display-button ${servicesDisplayMode === "list" ? "is-active" : ""}`}
+                              onClick={() => setServicesDisplayMode("list")}
                             >
                               List
                             </button>
                             <button
                               type="button"
-                              className={`display-button ${servicesDisplayMode === 'carousel' ? 'is-active' : ''}`}
-                              onClick={() => setServicesDisplayMode('carousel')}
+                              className={`display-button ${servicesDisplayMode === "carousel" ? "is-active" : ""}`}
+                              onClick={() => setServicesDisplayMode("carousel")}
                             >
                               Carousel
                             </button>
                           </div>
                         </div>
+
                         <div className="input-block">
                           <label>Services</label>
                           <div className="editor-service-list">
@@ -1261,16 +1126,18 @@ export default function MyProfile() {
                                 <input
                                   type="text"
                                   placeholder="Service Name"
-                                  value={s.name || ''}
+                                  value={s.name || ""}
                                   onChange={(e) => handleServiceChange(i, "name", e.target.value)}
                                 />
                                 <input
                                   type="text"
                                   placeholder="Service Price/Detail"
-                                  value={s.price || ''}
+                                  value={s.price || ""}
                                   onChange={(e) => handleServiceChange(i, "price", e.target.value)}
                                 />
-                                <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
+                                <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">
+                                  Remove
+                                </button>
                               </div>
                             ))}
                           </div>
@@ -1285,7 +1152,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">Reviews Section</h3>
                       <button type="button" onClick={() => setShowReviewsSection(!showReviewsSection)} className="toggle-button">
-                        {showReviewsSection ? 'Hide Section' : 'Show Section'}
+                        {showReviewsSection ? "Hide Section" : "Show Section"}
                       </button>
                     </div>
                     {showReviewsSection && (
@@ -1295,20 +1162,21 @@ export default function MyProfile() {
                           <div className="option-row">
                             <button
                               type="button"
-                              className={`display-button ${reviewsDisplayMode === 'list' ? 'is-active' : ''}`}
-                              onClick={() => setReviewsDisplayMode('list')}
+                              className={`display-button ${reviewsDisplayMode === "list" ? "is-active" : ""}`}
+                              onClick={() => setReviewsDisplayMode("list")}
                             >
                               List
                             </button>
                             <button
                               type="button"
-                              className={`display-button ${reviewsDisplayMode === 'carousel' ? 'is-active' : ''}`}
-                              onClick={() => setReviewsDisplayMode('carousel')}
+                              className={`display-button ${reviewsDisplayMode === "carousel" ? "is-active" : ""}`}
+                              onClick={() => setReviewsDisplayMode("carousel")}
                             >
                               Carousel
                             </button>
                           </div>
                         </div>
+
                         <div className="input-block">
                           <label>Reviews</label>
                           <div className="editor-reviews-list">
@@ -1317,13 +1185,13 @@ export default function MyProfile() {
                                 <input
                                   type="text"
                                   placeholder="Reviewer Name"
-                                  value={r.name || ''}
+                                  value={r.name || ""}
                                   onChange={(e) => handleReviewChange(i, "name", e.target.value)}
                                 />
                                 <textarea
                                   placeholder="Review text"
                                   rows={2}
-                                  value={r.text || ''}
+                                  value={r.text || ""}
                                   onChange={(e) => handleReviewChange(i, "text", e.target.value)}
                                 />
                                 <input
@@ -1331,10 +1199,12 @@ export default function MyProfile() {
                                   placeholder="Rating (1-5)"
                                   min="1"
                                   max="5"
-                                  value={r.rating || ''}
+                                  value={r.rating || ""}
                                   onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
                                 />
-                                <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
+                                <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">
+                                  Remove
+                                </button>
                               </div>
                             ))}
                           </div>
@@ -1349,7 +1219,7 @@ export default function MyProfile() {
                     <div className="editor-section-header">
                       <h3 className="editor-subtitle">My Contact Details</h3>
                       <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="toggle-button">
-                        {showContactSection ? 'Hide Section' : 'Show Section'}
+                        {showContactSection ? "Hide Section" : "Show Section"}
                       </button>
                     </div>
                     {showContactSection && (
@@ -1359,7 +1229,7 @@ export default function MyProfile() {
                           <input
                             id="contactEmail"
                             type="email"
-                            value={state.contact_email || ''}
+                            value={state.contact_email || ""}
                             onChange={(e) => updateState({ contact_email: e.target.value })}
                             placeholder={previewPlaceholders.contact_email}
                           />
@@ -1370,7 +1240,7 @@ export default function MyProfile() {
                           <input
                             id="phoneNumber"
                             type="tel"
-                            value={state.phone_number || ''}
+                            value={state.phone_number || ""}
                             onChange={(e) => updateState({ phone_number: e.target.value })}
                             placeholder={previewPlaceholders.phone_number}
                           />
@@ -1397,20 +1267,20 @@ export default function MyProfile() {
       <ShareProfile
         isOpen={showShareModal}
         onClose={handleCloseShareModal}
-        profileUrl={userUsername ? `https://www.konarcard.com/u/${userUsername}` : ''}
+        profileUrl={userUsername ? `https://www.konarcard.com/u/${userUsername}` : ""}
         qrCodeUrl={currentQrCodeUrl}
         contactDetails={{
-          full_name: businessCard?.full_name || '',
-          job_title: businessCard?.job_title || '',
-          business_card_name: businessCard?.business_card_name || '',
-          bio: businessCard?.bio || '',
+          full_name: businessCard?.full_name || "",
+          job_title: businessCard?.job_title || "",
+          business_card_name: businessCard?.business_card_name || "",
+          bio: businessCard?.bio || "",
           isSubscribed: businessCard?.isSubscribed || false,
-          contact_email: businessCard?.contact_email || '',
-          phone_number: businessCard?.phone_number || '',
-          username: userUsername || '',
+          contact_email: businessCard?.contact_email || "",
+          phone_number: businessCard?.phone_number || "",
+          username: userUsername || "",
         }}
-        username={userUsername || ''}
+        username={userUsername || ""}
       />
     </div>
-  )
+  );
 }
