@@ -11,6 +11,9 @@
     --placeholder-bg: #f0f0f0;
     --page-header-color: #000000;
     --main-font-family: 'Inter', sans-serif;
+    --page-gutter: 16px;
+    --sb-w: 268px;
+    --workspace-max: 1200px;
 }
 
 .light-mode.pure-light {
@@ -66,7 +69,7 @@
 .main-content-container {
     flex: 1;
     font-family: var(--main-font-family);
-    padding: 12px;
+    padding: var(--page-gutter);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -86,7 +89,7 @@
     border-radius: 16px;
     padding: 14px 18px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
-    margin-bottom: 18px;
+    margin-bottom: var(--page-gutter);
 }
 
 .dark-mode .page-header-card {
@@ -177,12 +180,29 @@
 .myprofile-main-content {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 20px;
+    align-items: stretch;
+    gap: var(--page-gutter);
     flex: 1;
     min-height: 0;
     box-sizing: border-box;
     overflow-x: visible;
+}
+
+.myprofile-workspace {
+    width: 100%;
+    max-width: calc(var(--workspace-max) + 2*var(--page-gutter));
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 16px;
+    padding: var(--page-gutter);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
+}
+
+.dark-mode .myprofile-workspace {
+    background: #202020;
+    border-color: rgba(255, 255, 255, .08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
 }
 
 .myprofile-flex-container {
@@ -191,7 +211,7 @@
     gap: 60px;
     min-height: 0;
     align-items: flex-start;
-    max-width: 1200px;
+    max-width: var(--workspace-max);
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
@@ -208,7 +228,7 @@
     position: relative;
     height: 100%;
     max-height: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 3/4;
     overflow: visible;
 }
 
@@ -226,7 +246,7 @@
     width: 100%;
     max-width: 350px;
     height: 100%;
-    aspect-ratio: 9 / 17;
+    aspect-ratio: 9/17;
     background: var(--primary-bg);
     border: 8px solid black;
     border-radius: 30px;
@@ -279,7 +299,7 @@
 
 .mock-cover {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 4/3;
     object-fit: cover;
     border-radius: 14px;
     margin-bottom: 1.5rem;
@@ -297,7 +317,7 @@
 }
 
 .mock-subtitle {
-    font-size: 0.95rem;
+    font-size: .95rem;
     font-weight: 600;
     margin: 8px 0 0 0;
     color: #000;
@@ -310,11 +330,11 @@
 .mock-button {
     background: #0081FF;
     color: #fff;
-    padding: 0.9rem 1.2rem;
+    padding: .9rem 1.2rem;
     border-radius: 12px;
     border: none;
     font-weight: 800;
-    font-size: 0.95rem;
+    font-size: .95rem;
     margin-top: 16px;
     width: 100%;
     box-sizing: border-box;
@@ -392,14 +412,14 @@
 }
 
 .mock-profile-role {
-    font-size: 0.9375rem;
+    font-size: .9375rem;
     margin: 0;
     color: #333;
     font-weight: normal;
 }
 
 .mock-bio-text {
-    font-size: 0.95rem;
+    font-size: .95rem;
     line-height: 1.55;
     margin: 0;
     color: #111;
@@ -407,7 +427,7 @@
 
 .mock-work-image-item-wrapper {
     width: 100%;
-    aspect-ratio: 4 / 2.5;
+    aspect-ratio: 4/2.5;
     overflow: hidden;
     border-radius: 14px;
     border: 1px solid var(--border-color);
@@ -419,7 +439,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    aspect-ratio: 4 / 2.5;
+    aspect-ratio: 4/2.5;
     object-fit: cover;
     background: none;
 }
@@ -519,7 +539,7 @@
 }
 
 .mock-service-name {
-    font-size: 0.95rem;
+    font-size: .95rem;
     font-weight: 700;
     margin: 0;
     line-height: 1.3;
@@ -527,7 +547,7 @@
 }
 
 .mock-service-price {
-    font-size: 0.85rem;
+    font-size: .85rem;
     margin: 2px 0 0 0;
     color: #000;
 }
@@ -548,14 +568,14 @@
 }
 
 .mock-review-text {
-    font-size: 0.95rem;
+    font-size: .95rem;
     color: #111;
     margin: 0 0 10px 0;
     line-height: 1.5;
 }
 
 .mock-reviewer-name {
-    font-size: 0.9rem;
+    font-size: .9rem;
     font-weight: 700;
     color: #333;
     margin: 0;
@@ -580,7 +600,7 @@
 }
 
 .mock-contact-label {
-    font-size: 0.95rem;
+    font-size: .95rem;
     font-weight: 700;
     margin: 0;
     color: #333;
@@ -620,7 +640,7 @@
 .editor-work-image-grid .work-image-preview {
     width: 100%;
     height: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 4/3;
     object-fit: cover;
     display: block;
 }
@@ -840,7 +860,7 @@
 .work-image-preview {
     width: 100%;
     height: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 4/3;
     border-radius: 0;
     min-width: unset;
     min-height: unset;
@@ -1108,7 +1128,7 @@
     margin-top: auto;
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .button-group {
         flex-direction: column;
     }
@@ -1139,7 +1159,7 @@
     color: #dc3545;
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .app-layout {
         height: auto;
         overflow-y: visible;
@@ -1172,6 +1192,10 @@
 
     .subscription-overlay-mobile .subscription-message {
         width: 100%;
+    }
+
+    .myprofile-workspace {
+        padding: 16px;
     }
 
     .myprofile-flex-container {
@@ -1259,7 +1283,7 @@
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width:600px) {
     .page-header-right .desktop-button {
         padding: 10px 15px;
         width: auto;
@@ -1272,7 +1296,7 @@
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width:400px) {
     .main-content-container {
         padding: 15px;
         margin-top: 100px;
@@ -1306,7 +1330,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: .75rem;
     width: 100%;
 }
 
@@ -1314,7 +1338,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: .5rem;
     width: 100%;
 }
 
@@ -1322,7 +1346,7 @@
     width: 100%;
     max-width: 340px;
     height: auto;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1/1;
     border-radius: 10px;
     margin-bottom: 10px;
     object-fit: cover;
@@ -1338,7 +1362,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.75rem;
+    gap: .75rem;
 }
 
 .mock-about-container.side-by-side .mock-avatar {
@@ -1371,7 +1395,7 @@
     border-bottom-color: rgba(255, 255, 255, .08);
 }
 
-@media (min-width: 1001px) {
+@media (min-width:1001px) {
     .myprofile-mobile-header {
         display: none;
     }
@@ -1455,20 +1479,20 @@
     overflow: hidden;
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .main-content-container {
         margin-left: 0 !important;
         padding-top: 72px;
     }
 }
 
-@media (min-width: 1001px) {
+@media (min-width:1001px) {
     .main-content-container {
-        margin-left: var(--sb-w, 268px);
+        margin-left: calc(var(--sb-w, 268px) + var(--page-gutter));
     }
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
 
     .sidebar-header,
     .sidebar .sidebar-close,
@@ -1493,7 +1517,7 @@
         background: #fff;
         border: 0;
         box-shadow: none;
-        padding-top: 32px;
+        padding-top: 40px;
     }
 
     .sidebar>*:first-child,
@@ -1506,29 +1530,12 @@
         padding-right: 16px;
     }
 
-    .sidebar :is(h1, h2, h3, h4, h5, h6, .section-title, .menu-section-title, .nav-section-title, .section-label) {
-        margin-top: 0 !important;
-    }
-}
-
-@media (max-width: 1000px) {
-
-    /* push the first section down a bit so MAIN isn’t clipped */
-    .sidebar,
-    .sidebar-panel,
-    .sidebar-drawer {
-        padding-top: 40px;
-        /* was 32px — gives extra breathing room */
-    }
-
-    /* extra safety: if your nav/scroll wrapper is the first child */
     .sidebar .sidebar-scroll,
     .sidebar .sidebar-content,
     .sidebar .nav {
         margin-top: 12px;
     }
 
-    /* if the section title is the first element, nudge it too */
     .sidebar .section-title:first-child,
     .sidebar .menu-section-title:first-child,
     .sidebar .nav>*:first-child {
