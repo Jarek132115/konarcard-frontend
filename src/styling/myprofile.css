@@ -75,7 +75,7 @@
     flex-direction: column;
     height: 100%;
     box-sizing: border-box;
-    margin-left: 260px;
+    margin-left: 280px;
     color: var(--text-color);
     transition: margin-left .3s ease-in-out;
     overflow-x: visible;
