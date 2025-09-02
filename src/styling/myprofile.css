@@ -13,7 +13,6 @@
     --main-font-family: 'Inter', sans-serif;
 }
 
-/* Light/Dark variables (unchanged) */
 .light-mode.pure-light {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
@@ -56,7 +55,6 @@
     --input-border: #666;
 }
 
-/* Layout */
 .app-layout {
     display: flex;
     height: 100vh;
@@ -79,9 +77,6 @@
     overflow-x: visible;
 }
 
-/* =========================
-   NEW PAGE HEADER (card)
-   ========================= */
 .page-header-card {
     display: flex;
     align-items: center;
@@ -148,7 +143,6 @@
     text-overflow: ellipsis;
 }
 
-/* Right actions */
 .page-header-right {
     display: flex;
     align-items: center;
@@ -161,7 +155,6 @@
     filter: brightness(0) invert(1);
 }
 
-/* Title sits UNDER the card, like the inspiration */
 .page-title-under {
     font-size: 24px;
     font-weight: 700;
@@ -172,7 +165,6 @@
     min-width: 0;
 }
 
-/* Old title utility for mobile shrink */
 .page-title-mobile-shrink {
     font-size: clamp(18px, 5vw, 24px) !important;
     white-space: nowrap;
@@ -181,10 +173,6 @@
     flex-shrink: 1;
     min-width: 0;
 }
-
-/* --------------------------------- */
-/* Main content wrapper + preview UI */
-/* --------------------------------- */
 
 .myprofile-main-content {
     display: flex;
@@ -289,9 +277,6 @@
     background-color: rgba(255, 255, 255, .2);
 }
 
-/* ===== Preview: bring visuals in line with UserPage ===== */
-
-/* Cover photo */
 .mock-cover {
     width: 100%;
     aspect-ratio: 4 / 3;
@@ -303,7 +288,6 @@
     background-position: center;
 }
 
-/* Heading + Subheading */
 .mock-title {
     font-size: 2rem;
     font-weight: 800;
@@ -323,7 +307,6 @@
     color: #fff;
 }
 
-/* CTA button */
 .mock-button {
     background: #0081FF;
     color: #fff;
@@ -348,7 +331,6 @@
     transform: translateY(1px);
 }
 
-/* Section title spacing/colors */
 .mock-section-title {
     font-size: 1rem;
     font-weight: 700;
@@ -358,7 +340,6 @@
     color: var(--text-color);
 }
 
-/* Cards — force white like live page (even in dark mode) */
 .mock-about-container,
 .mock-service-item,
 .mock-review-card,
@@ -369,7 +350,6 @@
     color: #111;
 }
 
-/* About */
 .mock-about-container {
     padding: 1rem;
     display: flex;
@@ -425,7 +405,6 @@
     color: #111;
 }
 
-/* Work */
 .mock-work-image-item-wrapper {
     width: 100%;
     aspect-ratio: 4 / 2.5;
@@ -535,7 +514,6 @@
     background-color: rgba(0, 0, 0, .6);
 }
 
-/* Services */
 .mock-service-item {
     padding: .75rem 1rem;
 }
@@ -554,7 +532,6 @@
     color: #000;
 }
 
-/* Reviews */
 .mock-review-card {
     padding: .75rem 1rem;
 }
@@ -584,7 +561,6 @@
     margin: 0;
 }
 
-/* Contact */
 .mock-contact-details {
     display: flex;
     flex-direction: column;
@@ -617,7 +593,6 @@
     color: #111;
 }
 
-/* Editor panel (unchanged core) */
 .myprofile-editor-wrapper {
     position: relative;
     max-width: 500px;
@@ -989,7 +964,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
 }
 
-/* Subscription overlays */
 .subscription-overlay {
     position: absolute;
     top: 0;
@@ -1127,7 +1101,6 @@
     width: 100%;
 }
 
-/* Buttons cluster */
 .button-group {
     display: flex;
     justify-content: flex-end;
@@ -1166,7 +1139,6 @@
     color: #dc3545;
 }
 
-/* Responsive */
 @media (max-width: 1000px) {
     .app-layout {
         height: auto;
@@ -1323,7 +1295,6 @@
     }
 }
 
-/* ── About Me live toggle fix ───────────── */
 .mock-about-container.stacked {
     display: flex;
     flex-direction: column;
@@ -1379,7 +1350,6 @@
     object-fit: cover;
 }
 
-/* === Mobile app header (logo left, burger right) === */
 .myprofile-mobile-header {
     position: fixed;
     top: 0;
@@ -1393,7 +1363,7 @@
     align-items: center;
     justify-content: space-between;
     z-index: 1100;
-    /* above overlay (1002) and sidebar (1003) */
+    overflow: hidden;
 }
 
 .dark-mode .myprofile-mobile-header {
@@ -1401,14 +1371,12 @@
     border-bottom-color: rgba(255, 255, 255, .08);
 }
 
-/* hide this header on desktop; it’s only for <1000px */
 @media (min-width: 1001px) {
     .myprofile-mobile-header {
         display: none;
     }
 }
 
-/* tiny brand wrapper to prevent logo from stretching */
 .myprofile-brand {
     display: flex;
     align-items: center;
@@ -1416,7 +1384,6 @@
     min-width: 0;
 }
 
-/* force the logo to a fixed size so the big “K” cannot blow up */
 .myprofile-logo {
     width: 28px;
     height: 28px;
@@ -1425,7 +1392,6 @@
     max-width: none;
 }
 
-/* Burger button */
 .sidebar-menu-toggle {
     appearance: none;
     border: 0;
@@ -1447,7 +1413,6 @@
     background: rgba(255, 255, 255, .08);
 }
 
-/* the 3 lines */
 .sidebar-menu-toggle span {
     position: absolute;
     display: block;
@@ -1474,7 +1439,6 @@
     transform: translateY(6px);
 }
 
-/* animate to X when .active */
 .sidebar-menu-toggle.active span:nth-child(1) {
     transform: rotate(45deg);
 }
@@ -1487,61 +1451,25 @@
     transform: rotate(-45deg);
 }
 
-/* keep the document from scrolling while the drawer is open */
 .body-no-scroll {
     overflow: hidden;
 }
 
-/* main content needs to clear the fixed header on mobile */
 @media (max-width: 1000px) {
     .main-content-container {
         margin-left: 0 !important;
         padding-top: 72px;
-        /* space for the fixed header */
     }
 }
 
-/* Ensure desktop keeps room for the sidebar */
 @media (min-width: 1001px) {
     .main-content-container {
         margin-left: var(--sb-w, 268px);
     }
 }
 
-/* 1) Clip anything behind the fixed header (just in case) */
-.myprofile-mobile-header {
-    overflow: hidden;
-    /* hides the tiny sliver that was poking through */
-}
-
-/* 2) On mobile, hide ANY close/X control inside the Sidebar */
 @media (max-width: 1000px) {
 
-    /* cover common cases: class, header close, aria-label, title */
-    .sidebar .sidebar-close,
-    .sidebar .close,
-    .sidebar .close-btn,
-    .sidebar-header .close,
-    .sidebar [aria-label="Close"],
-    .sidebar [aria-label*="close" i],
-    .sidebar [title="Close"],
-    .sidebar [title*="close" i] {
-        display: none !important;
-    }
-
-    /* If your drawer starts at the very top, give it space below the fixed header */
-    .sidebar,
-    .sidebar-panel,
-    .sidebar-drawer {
-        padding-top: 56px;
-        /* same height as .myprofile-mobile-header */
-    }
-}
-
-/* --- MOBILE SIDEBAR POLISH -------------------------------------------- */
-@media (max-width: 1000px) {
-
-    /* A) remove any built-in header/close row the sidebar might render */
     .sidebar-header,
     .sidebar .sidebar-close,
     .sidebar .close,
@@ -1552,42 +1480,33 @@
         display: none !important;
     }
 
-    /* B) make the drawer cover the ENTIRE viewport width (under our fixed top bar) */
     .sidebar,
     .sidebar-panel,
     .sidebar-drawer {
         position: fixed !important;
         top: 56px;
-        /* height of .myprofile-mobile-header */
         left: 0;
         right: 0;
         bottom: 0;
         width: 100vw !important;
         max-width: none !important;
         background: #fff;
-        /* full-bleed white sheet */
         border: 0;
         box-shadow: none;
-        /* give the content some breathing room from the header */
-        padding-top: 20px;
-        /* so "MAIN" isn't clipped */
+        padding-top: 32px;
     }
 
-    /* C) keep the nav content on the LEFT, with a fixed comfortable width.
-        The rest of the sheet stays white, so it looks full-bleed. */
     .sidebar>*:first-child,
     .sidebar .sidebar-content,
     .sidebar .sidebar-scroll,
     .sidebar .nav {
         max-width: 320px;
-        /* tweak 300–360px to taste */
         width: 100%;
         padding-left: 16px;
         padding-right: 16px;
     }
 
-    /* D) safety: ensure the mobile header clips anything behind it */
-    .myprofile-mobile-header {
-        overflow: hidden;
+    .sidebar :is(h1, h2, h3, h4, h5, h6, .section-title, .menu-section-title, .nav-section-title, .section-label) {
+        margin-top: 0 !important;
     }
 }
