@@ -1510,3 +1510,28 @@
         margin-top: 0 !important;
     }
 }
+
+@media (max-width: 1000px) {
+
+    /* push the first section down a bit so MAIN isn’t clipped */
+    .sidebar,
+    .sidebar-panel,
+    .sidebar-drawer {
+        padding-top: 40px;
+        /* was 32px — gives extra breathing room */
+    }
+
+    /* extra safety: if your nav/scroll wrapper is the first child */
+    .sidebar .sidebar-scroll,
+    .sidebar .sidebar-content,
+    .sidebar .nav {
+        margin-top: 12px;
+    }
+
+    /* if the section title is the first element, nudge it too */
+    .sidebar .section-title:first-child,
+    .sidebar .menu-section-title:first-child,
+    .sidebar .nav>*:first-child {
+        margin-top: 12px !important;
+    }
+}
