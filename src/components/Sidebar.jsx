@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 
@@ -11,13 +11,8 @@ import logoutInterface from '../assets/icons/Logout-Interface.svg';
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
-    const { user, logout } = useContext(AuthContext);
+    const { logout } = useContext(AuthContext);
     const location = useLocation();
-
-    useEffect(() => {
-        // Debug (kept from your version)
-        // console.log("Sidebar user:", user);
-    }, [user]);
 
     const handleLogout = async () => {
         await logout();
@@ -35,30 +30,23 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 onClick={closeSidebar}
             />
 
-            <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                {/* Mobile header */}
+            <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+                {/* Mobile top bar (inside panel) */}
                 <div className="sidebar-mobile-header-inner">
                     <Link to="/myprofile" className="sidebar-logo-link-mobile" onClick={closeSidebar}>
-                        <img src={LogoIcon} alt="Logo" className="sidebar-logo-mobile" />
+                        <img src={LogoIcon} alt="Konar logo" className="sidebar-logo-mobile" />
+                        <span className="brand-wordmark">KONAR</span>
                     </Link>
                     <button className="close-sidebar-button" onClick={closeSidebar} aria-label="Close menu">
                         <span></span><span></span><span></span>
                     </button>
                 </div>
 
-                {/* Scrollable content */}
                 <div className="sidebar-content-wrapper">
-                    {/* Account block */}
-                    <div className="my-account-container">
-                        <img
-                            src={user?.avatar || LogoIcon}
-                            alt="User"
-                            className="profile-pic"
-                        />
-                        <div className="user-info">
-                            <p className="email desktop-body-xs">{user?.email || 'Not logged in'}</p>
-                            <p className="name">{user?.name || ''}</p>
-                        </div>
+                    {/* Brand header (desktop) */}
+                    <div className="brand-header">
+                        <img src={LogoIcon} alt="Konar logo" className="brand-logo" />
+                        <span className="brand-wordmark">KONAR</span>
                     </div>
 
                     <hr className="divider" />
@@ -67,6 +55,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         {/* MAIN */}
                         <div className="main-links-container">
                             <p className="section-title">MAIN</p>
+
                             <Link
                                 to="/myprofile"
                                 onClick={closeSidebar}
@@ -75,29 +64,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <img src={homeInterface} alt="" className="icon" />
                                 <p className="desktop-body-s">My Profile</p>
                             </Link>
-                        </div>
-
-                        <hr className="divider" />
-
-                        {/* ACCOUNT */}
-                        <div className="account-links-container">
-                            <p className="section-title">ACCOUNT</p>
-
-                            <Link
-                                to="/profile"
-                                onClick={closeSidebar}
-                                className={`sidebar-button ${isActive('/profile') ? 'active-sidebar-link' : ''}`}
-                            >
-                                <img src={settingsInterface} alt="" className="icon" />
-                                <p className="desktop-body-s">My Account</p>
-                            </Link>
 
                             <Link
                                 to="/nfccards"
                                 onClick={closeSidebar}
-                                className={`sidebar-button ${isActive('/products-and-plans') ||
-                                        isActive('/nfccards') ||
-                                        isActive('/subscription')
+                                className={`sidebar-button ${isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription')
                                         ? 'active-sidebar-link'
                                         : ''
                                     }`}
@@ -109,9 +80,19 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                         <hr className="divider" />
 
-                        {/* HELP */}
-                        <div className="help-links-container">
-                            <p className="section-title">HELP</p>
+                        {/* GENERAL */}
+                        <div className="account-links-container">
+                            <p className="section-title">GENERAL</p>
+
+                            <Link
+                                to="/profile"
+                                onClick={closeSidebar}
+                                className={`sidebar-button ${isActive('/profile') ? 'active-sidebar-link' : ''}`}
+                            >
+                                <img src={settingsInterface} alt="" className="icon" />
+                                <p className="desktop-body-s">My Account</p>
+                            </Link>
+
                             <Link
                                 to="/contact-support"
                                 onClick={closeSidebar}
@@ -143,7 +124,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         </button>
                     </div>
                 </div>
-            </div>
+            </aside>
         </>
     );
 }
