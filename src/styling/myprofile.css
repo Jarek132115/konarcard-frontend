@@ -1,6 +1,5 @@
 /* myprofile.css */
 
-/* =================  Theme tokens  ================= */
 :root {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
@@ -9,20 +8,14 @@
     --card-bg: #F1F1F1;
     --button-bg: black;
     --button-text: white;
-    --border-color: #e6e9ee;
-    /* softened to match inspo */
+    --border-color: #ccc;
     --input-border: #ccc;
     --placeholder-bg: #f0f0f0;
     --page-header-color: #000000;
     --main-font-family: 'Inter', sans-serif;
-
-    /* header chip */
-    --chip-bg: #fff;
-    --chip-border: #e9edf1;
-    --chip-shadow: 0 2px 4px rgba(15, 23, 42, .04);
 }
 
-/* Light/Dark variants */
+/* Light/Dark variables (unchanged) */
 .light-mode.pure-light {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
@@ -45,14 +38,10 @@
     --card-bg: #333333;
     --button-bg: white;
     --button-text: black;
-    --border-color: #444b55;
+    --border-color: #555;
     --input-border: #666;
     --placeholder-bg: #444;
     --page-header-color: #FFFFFF;
-
-    --chip-bg: #2a2d31;
-    --chip-border: #3a3f46;
-    --chip-shadow: 0 2px 6px rgba(0, 0, 0, .25);
 }
 
 .dark-mode.pure-dark {
@@ -69,7 +58,7 @@
     --input-border: #666;
 }
 
-/* =================  App layout  ================= */
+/* Layout */
 .app-layout {
     display: flex;
     height: 100vh;
@@ -87,131 +76,118 @@
     height: 100%;
     box-sizing: border-box;
     margin-left: 260px;
-    /* sidebar width */
     color: var(--text-color);
     transition: margin-left .3s ease-in-out;
     overflow-x: visible;
 }
 
-/* =================  Page header (NEW)  ================= */
-.page-header {
+/* =========================
+   NEW PAGE HEADER (card)
+   ========================= */
+.page-header-card {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    flex-shrink: 0;
-    border-bottom: 1px solid var(--border-color);
-    padding: 14px 0 18px;
-    margin-bottom: 20px;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 16px;
+    padding: 14px 18px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
+    margin-bottom: 18px;
 }
 
-/* Left cluster: user chip + title */
+.dark-mode .page-header-card {
+    background: #202020;
+    border-color: rgba(255, 255, 255, .08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+}
+
 .page-header-left {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     min-width: 0;
 }
 
-/* Compact user chip (logo + name + email) */
-.brand-chip {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--chip-bg);
-    border: 1px solid var(--chip-border);
-    border-radius: 12px;
-    padding: 8px 10px;
-    box-shadow: var(--chip-shadow);
-    min-width: 0;
+.ph-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e9eef6;
+    border: 1px solid rgba(0, 0, 0, .06);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+    flex-shrink: 0;
 }
 
-.brand-chip-logo {
-    width: 28px;
-    height: 28px;
+.dark-mode .ph-avatar {
+    border-color: rgba(255, 255, 255, .08);
+    background: #2a2a2a;
 }
 
-.brand-chip-text {
+.ph-user {
     display: flex;
     flex-direction: column;
     min-width: 0;
 }
 
-.brand-chip-name {
-    font-size: 13px;
+.ph-name {
+    margin: 0;
     font-weight: 700;
+    font-size: 16px;
     color: var(--text-color);
-    line-height: 1.1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.brand-chip-email {
-    font-size: 12px;
+.ph-email {
+    margin: 0;
+    font-size: 13px;
     color: var(--subtle-text-color);
-    line-height: 1.1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Title */
-.page-title {
+/* Right actions */
+.page-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-share .share-icon {
+    height: 18px;
+    width: auto;
+    filter: brightness(0) invert(1);
+}
+
+/* Title sits UNDER the card, like the inspiration */
+.page-title-under {
     font-size: 24px;
     font-weight: 700;
-    margin: 0;
+    margin: 0 0 16px 0;
     color: var(--page-header-color);
     white-space: nowrap;
     flex-shrink: 1;
     min-width: 0;
 }
 
-/* Right actions */
-.page-actions {
-    display: flex;
-    gap: 12px;
-    flex-shrink: 0;
+/* Old title utility for mobile shrink */
+.page-title-mobile-shrink {
+    font-size: clamp(18px, 5vw, 24px) !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+    min-width: 0;
 }
 
-.header-button {
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 14px;
-    border: 1px solid transparent;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, .06);
-    transition: transform .12s ease, box-shadow .15s ease, background-color .15s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
+/* --------------------------------- */
+/* Main content wrapper + preview UI */
+/* --------------------------------- */
 
-.header-button.blue-button {
-    background-color: #0081FF;
-    color: #fff;
-    border-color: #0081FF;
-}
-
-.header-button.blue-button:hover {
-    box-shadow: 0 6px 16px rgba(0, 129, 255, .25);
-    transform: translateY(-1px);
-}
-
-.header-button.blue-button:active {
-    transform: translateY(0);
-}
-
-.share-icon {
-    height: 18px;
-    width: 18px;
-}
-
-.icon-left {
-    margin-right: 2px;
-}
-
-/* =================  Main content  ================= */
 .myprofile-main-content {
     display: flex;
     flex-direction: column;
@@ -315,7 +291,9 @@
     background-color: rgba(255, 255, 255, .2);
 }
 
-/* ===== Preview elements ===== */
+/* ===== Preview: bring visuals in line with UserPage ===== */
+
+/* Cover photo */
 .mock-cover {
     width: 100%;
     aspect-ratio: 4 / 3;
@@ -327,6 +305,7 @@
     background-position: center;
 }
 
+/* Heading + Subheading */
 .mock-title {
     font-size: 2rem;
     font-weight: 800;
@@ -346,6 +325,7 @@
     color: #fff;
 }
 
+/* CTA button */
 .mock-button {
     background: #0081FF;
     color: #fff;
@@ -370,6 +350,7 @@
     transform: translateY(1px);
 }
 
+/* Section title spacing/colors */
 .mock-section-title {
     font-size: 1rem;
     font-weight: 700;
@@ -379,7 +360,7 @@
     color: var(--text-color);
 }
 
-/* Cards */
+/* Cards — force white like live page (even in dark mode) */
 .mock-about-container,
 .mock-service-item,
 .mock-review-card,
@@ -433,14 +414,14 @@
 }
 
 .mock-profile-role {
-    font-size: .9375rem;
+    font-size: 0.9375rem;
     margin: 0;
     color: #333;
     font-weight: normal;
 }
 
 .mock-bio-text {
-    font-size: .95rem;
+    font-size: 0.95rem;
     line-height: 1.55;
     margin: 0;
     color: #111;
@@ -466,7 +447,6 @@
     background: none;
 }
 
-/* Carousels */
 .work-preview-row-container {
     position: relative;
     width: 100%;
@@ -538,7 +518,7 @@
 
 .carousel-nav-button {
     background-color: rgba(0, 0, 0, .4);
-    color: #fff;
+    color: white;
     border: none;
     border-radius: 50%;
     width: 30px;
@@ -563,7 +543,7 @@
 }
 
 .mock-service-name {
-    font-size: .95rem;
+    font-size: 0.95rem;
     font-weight: 700;
     margin: 0;
     line-height: 1.3;
@@ -571,7 +551,7 @@
 }
 
 .mock-service-price {
-    font-size: .85rem;
+    font-size: 0.85rem;
     margin: 2px 0 0 0;
     color: #000;
 }
@@ -593,14 +573,14 @@
 }
 
 .mock-review-text {
-    font-size: .95rem;
+    font-size: 0.95rem;
     color: #111;
     margin: 0 0 10px 0;
     line-height: 1.5;
 }
 
 .mock-reviewer-name {
-    font-size: .9rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #333;
     margin: 0;
@@ -626,7 +606,7 @@
 }
 
 .mock-contact-label {
-    font-size: .95rem;
+    font-size: 0.95rem;
     font-weight: 700;
     margin: 0;
     color: #333;
@@ -639,7 +619,7 @@
     color: #111;
 }
 
-/* Editor panel */
+/* Editor panel (unchanged core) */
 .myprofile-editor-wrapper {
     position: relative;
     max-width: 500px;
@@ -801,7 +781,7 @@
 .theme-button.is-active,
 .font-button.is-active {
     background-color: #007bff;
-    color: #fff;
+    color: white;
     border-color: #007bff;
 }
 
@@ -903,7 +883,7 @@
     height: 24px;
     font-size: 16px;
     background-color: #dc3545;
-    color: #fff;
+    color: white;
     border-radius: 50%;
     cursor: pointer;
     border: none;
@@ -987,7 +967,7 @@
     font-size: 12px;
     border: 1px solid transparent;
     background-color: #dc3545;
-    color: #fff;
+    color: white;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color .2s, border-color .2s;
@@ -1048,7 +1028,7 @@
 
 .start-trial-button {
     background-color: #007bff;
-    color: #fff;
+    color: white;
     padding: 12px 25px;
     border: none;
     border-radius: 8px;
@@ -1131,7 +1111,7 @@
     padding: 10px 15px;
     border-radius: 8px;
     background-color: #007bff;
-    color: #fff;
+    color: white;
     border: none;
     cursor: pointer;
     font-size: 16px;
@@ -1157,7 +1137,7 @@
     margin-top: auto;
 }
 
-@media (max-width:1000px) {
+@media (max-width: 1000px) {
     .button-group {
         flex-direction: column;
     }
@@ -1188,27 +1168,12 @@
     color: #dc3545;
 }
 
-/* ==============  Responsive  ============== */
+/* Responsive */
 @media (max-width: 1000px) {
     .app-layout {
         height: auto;
         overflow-y: visible;
         flex-direction: column;
-    }
-
-    .myprofile-mobile-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: fit-content;
-        padding: 0 20px;
-        z-index: 100;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-        background-color: #fff;
     }
 
     .main-content-container {
@@ -1225,23 +1190,8 @@
         padding-bottom: 50px;
     }
 
-    .page-header {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-        margin-bottom: 20px !important;
-        border-bottom: 1px solid var(--border-color) !important;
-        padding-bottom: 15px !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-    }
-
-    .page-title.page-title-mobile-shrink {
-        font-size: clamp(18px, 5vw, 24px) !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        flex-shrink: 1;
-        min-width: 0;
+    .page-title-under {
+        margin-bottom: 16px;
     }
 
     .subscription-overlay-mobile {
@@ -1340,40 +1290,15 @@
 }
 
 @media (max-width: 600px) {
-    .page-actions .header-button {
+    .page-header-right .desktop-button {
         padding: 10px 15px;
         width: auto;
-        font-size: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
     }
 
-    .page-actions .header-button .share-icon {
+    .page-header-right .desktop-button .share-icon {
         height: 20px;
         width: auto;
         filter: brightness(0) invert(1);
-    }
-
-    .page-actions .header-button span {
-        display: none;
-    }
-
-    .brand-chip {
-        padding: 6px 8px;
-    }
-
-    .brand-chip-logo {
-        width: 24px;
-        height: 24px;
-    }
-
-    .brand-chip-name {
-        font-size: 12px;
-    }
-
-    .brand-chip-email {
-        font-size: 11px;
     }
 }
 
@@ -1381,15 +1306,6 @@
     .main-content-container {
         padding: 15px;
         margin-top: 100px;
-    }
-
-    .myprofile-mobile-header {
-        height: fit-content;
-        padding: 0 15px;
-    }
-
-    .myprofile-logo {
-        height: 25px;
     }
 
     .subscription-overlay-mobile .subscription-message {
@@ -1409,7 +1325,7 @@
     }
 }
 
-/* ── About Me layout toggles ───────── */
+/* ── About Me live toggle fix ───────────── */
 .mock-about-container.stacked {
     display: flex;
     flex-direction: column;
@@ -1421,7 +1337,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: .75rem;
+    gap: 0.75rem;
     width: 100%;
 }
 
@@ -1429,7 +1345,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: .5rem;
+    gap: 0.5rem;
     width: 100%;
 }
 
@@ -1453,7 +1369,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: .75rem;
+    gap: 0.75rem;
 }
 
 .mock-about-container.side-by-side .mock-avatar {
