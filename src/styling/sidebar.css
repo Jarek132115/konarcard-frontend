@@ -1,276 +1,209 @@
+/* ====== Palette & feel (subtle, airy) ====== */
+:root {
+    --sb-bg: #ffffff;
+    --sb-border: #e9edf1;
+    --sb-divider: #eef1f4;
+    --sb-text: #111827;
+    --sb-muted: #6b7280;
+    --sb-hover: #f4f6f8;
+    --sb-active: #eef3f7;
+    --sb-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .06);
+    --sb-red: #e74c3c;
+    --sb-red-bg: #fff1f0;
+}
+
+/* ====== Shell ====== */
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
-    min-width: 220px;
-    width: fit-content;
-    max-width: 260px;
-    background-color: white;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    min-width: 240px;
+    width: 264px;
+    background: var(--sb-bg);
+    border-right: 1px solid var(--sb-border);
+    box-shadow: none;
     display: flex;
-    /* Always flex on desktop */
     flex-direction: column;
     padding: 20px;
     box-sizing: border-box;
-    z-index: 999;
-    transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    z-index: 1003;
+    transition: transform .3s ease-in-out, visibility .3s ease-in-out;
     overflow: hidden;
-    /* No transform or visibility: hidden here for desktop */
 }
 
-/* This rule is for the mobile state of the sidebar, applied within media query */
-/* It's here for clarity but its primary effect is within the media query */
-.sidebar.open {
-    transform: translateX(0);
-    visibility: visible;
-    display: flex;
-    /* Ensure it's flex when open on mobile */
-}
-
-
-.sidebar-mobile-header-inner {
-    display: none;
-    /* Always hidden on desktop */
-}
-
+/* Scrollable content area */
 .sidebar-content-wrapper {
     display: flex;
     flex-direction: column;
     height: 100%;
     overflow-y: auto;
-    padding-right: 5px;
+    padding-right: 6px;
 }
 
 .sidebar-content-wrapper::-webkit-scrollbar {
-    width: 5px;
+    width: 6px;
+}
+
+.sidebar-content-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, .1);
+    border-radius: 6px;
 }
 
 .sidebar-content-wrapper::-webkit-scrollbar-track {
     background: transparent;
 }
 
-.sidebar-content-wrapper::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-}
-
+/* ====== Profile block ====== */
 .my-account-container {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
-    flex-shrink: 0;
+    margin-bottom: 16px;
 }
 
 .profile-pic {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     margin-right: 12px;
     object-fit: cover;
-    background-color: #eee;
+    background: #f2f3f5;
+    box-shadow: inset 0 0 0 1px var(--sb-border);
 }
 
 .user-info {
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    min-width: 0;
-    flex-grow: 1;
 }
 
 .user-info .email {
-    color: #333;
     margin: 0;
+    color: var(--sb-text);
+    font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
 }
 
 .user-info .name {
+    margin: 2px 0 0;
     font-size: 12px;
-    color: #777;
-    margin: 0;
+    color: var(--sb-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
 }
 
+/* ====== Dividers & section headings ====== */
 .divider {
     border: none;
-    border-top: 1px solid #eee;
-    margin: 10px 0;
+    border-top: 1px solid var(--sb-divider);
+    margin: 12px 0;
 }
 
 .section-title {
     font-size: 11px;
-    font-weight: 700;
-    color: #999;
-    margin-bottom: 8px;
+    font-weight: 800;
+    color: #9aa3af;
+    margin: 0 0 8px;
+    letter-spacing: .08em;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
+/* ====== Link groups ====== */
 .top-links-group {
-    flex-grow: 1;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
 }
 
 .main-links-container,
 .account-links-container,
 .help-links-container {
-    margin-bottom: 12px;
-    flex-shrink: 0;
+    margin-bottom: 8px;
 }
 
+/* ====== Buttons / items ====== */
 .sidebar-button {
     display: flex;
     align-items: center;
-    padding: 8px 10px;
-    border-radius: 8px;
-    text-decoration: none;
-    background: none;
-    border: none;
+    gap: 10px;
     width: 100%;
-    text-align: left;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: transparent;
+    border: none;
+    text-decoration: none;
+    color: var(--sb-text);
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    color: #000;
+    transition: background-color .15s ease, color .15s ease, box-shadow .15s ease;
 }
 
 .sidebar-button .icon {
     width: 18px;
     height: 18px;
-    margin-right: 10px;
-    opacity: 1;
-    filter: none;
-    transition: opacity 0.2s ease, filter 0.2s ease;
+    flex: 0 0 18px;
+    opacity: .85;
+    transition: opacity .15s ease, transform .08s ease;
 }
 
 .sidebar-button p {
     margin: 0;
     font-size: 14px;
+    font-weight: 600;
 }
 
 .sidebar-button:hover {
-    background-color: #f0f0f0;
-    color: #000;
+    background: var(--sb-hover);
 }
 
 .sidebar-button:hover .icon {
     opacity: 1;
-    filter: none;
-}
-
-.logout-button p {
-    color: #e74c3c;
-}
-
-.logout-button .icon {
-    filter: invert(40%) sepia(80%) saturate(1500%) hue-rotate(340deg) brightness(90%) contrast(100%);
-}
-
-.logout-button:hover {
-    background-color: #ffebeb;
-}
-
-.logout-button:hover p {
-    color: #c0392b;
-}
-
-.logout-button:hover .icon {
-    filter: invert(40%) sepia(80%) saturate(1500%) hue-rotate(340deg) brightness(90%) contrast(100%);
-}
-
-.footer-actions {
-    padding-top: 12px;
-    border-top: 1px solid #eee;
-    flex-shrink: 0;
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    transform: translateY(-1px);
 }
 
 .sidebar-button.active-sidebar-link {
-    background-color: #f0f0f0;
-    color: #000;
-    font-weight: 600;
-}
-
-.sidebar-button.active-sidebar-link:hover {
-    background-color: #e0e0e0;
-    color: #000;
+    background: var(--sb-active);
 }
 
 .sidebar-button.active-sidebar-link .icon {
     opacity: 1;
-    filter: none;
 }
 
-.myprofile-mobile-header {
-    display: none;
-    /* Hidden by default on desktop */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 20px;
-    z-index: 1001;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    background-color: white;
-}
-
-.myprofile-logo-link {
-    margin-right: auto;
-}
-
-.myprofile-logo-link .myprofile-logo {
-    height: 32px;
-}
-
-.sidebar-menu-toggle {
-    display: none;
-    /* Hidden by default on desktop */
+/* Footer section with top border */
+.footer-actions {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--sb-divider);
+    display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    width: 25px;
-    height: 18px;
-    cursor: pointer;
-    z-index: 1002;
-    background: transparent;
+    gap: 6px;
 }
 
-.app-layout.sidebar-active .sidebar-menu-toggle {
-    display: none;
+/* Logout variant */
+.logout-button p {
+    color: var(--sb-red);
 }
 
-.sidebar-menu-toggle span {
-    display: block;
-    width: 100%;
-    height: 3px;
-    background: black;
-    border-radius: 2px;
-    transition: all 0.3s ease;
-    opacity: 1;
+.logout-button:hover {
+    background: var(--sb-red-bg);
 }
 
+.logout-button .icon {
+    filter: invert(39%) sepia(73%) saturate(1397%) hue-rotate(338deg) brightness(96%) contrast(95%);
+}
+
+/* ====== Mobile overlay & behavior ====== */
 .sidebar-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    inset: 0;
+    background: rgba(0, 0, 0, .45);
+    z-index: 1002;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    transition: opacity .25s ease, visibility .25s ease;
 }
 
 .sidebar-overlay.active {
@@ -278,74 +211,60 @@
     visibility: visible;
 }
 
+/* Hidden off-canvas by default on mobile */
 @media (max-width: 1000px) {
-
     .sidebar {
-        display: flex;
         transform: translateX(-100%);
         visibility: hidden;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        box-shadow: none;
-        z-index: 1003;
-        overflow-y: auto;
+        width: min(92vw, 360px);
+        border-right: none;
+        box-shadow: var(--sb-shadow);
         padding: 0;
-        transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
     }
 
     .sidebar.open {
         transform: translateX(0);
         visibility: visible;
-        /* Make visible when open on mobile */
     }
 
+    /* Mobile header inside panel */
     .sidebar-mobile-header-inner {
         display: flex;
-        /* Show this header on mobile */
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
         padding: 20px;
-        background-color: white;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border-bottom: 1px solid #eee;
-        flex-shrink: 0;
-        width: 100%;
-        box-sizing: border-box;
+        background: var(--sb-bg);
+        border-bottom: 1px solid var(--sb-divider);
     }
 
-    .sidebar-mobile-header-inner .sidebar-logo-link-mobile {
-        margin-right: auto;
-        margin-left: 0;
+    .sidebar-logo-link-mobile {
+        display: inline-flex;
     }
 
-    .sidebar-logo-link-mobile .sidebar-logo-mobile {
+    .sidebar-logo-mobile {
         height: 32px;
-        margin-right: 0;
     }
 
     .close-sidebar-button {
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-        cursor: pointer;
-        padding: 5px;
+        appearance: none;
+        background: transparent;
+        border: 0;
+        width: 28px;
+        height: 28px;
         position: relative;
-        width: 25px;
-        height: 25px;
+        cursor: pointer;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
     }
 
     .close-sidebar-button span {
-        width: 100%;
-        height: 3px;
-        background: black;
-        border-radius: 3px;
-        transition: all 0.3s ease;
         position: absolute;
+        width: 22px;
+        height: 2.5px;
+        background: #111;
+        border-radius: 2px;
+        transition: transform .2s ease, opacity .2s ease;
     }
 
     .close-sidebar-button span:nth-child(1) {
@@ -361,30 +280,17 @@
     }
 
     .sidebar-content-wrapper {
-        padding: 20px;
         height: calc(100% - 62px);
-        box-sizing: border-box;
-        overflow-y: auto;
-        padding-bottom: 40px;
+        padding: 18px 20px 28px;
     }
 
-    .my-account-container {
-        padding-bottom: 15px;
-        border-bottom: none;
-        margin-bottom: 15px;
-    }
-
-    .profile-pic {
-        width: 50px;
-        height: 50px;
-    }
-
-    .user-info .name {
-        font-size: 13px;
-    }
-
+    /* Slightly larger touch targets on mobile */
     .sidebar-button {
-        padding: 10px 15px;
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+
+    .sidebar-button p {
         font-size: 15px;
     }
 
@@ -392,42 +298,18 @@
         width: 20px;
         height: 20px;
     }
+}
 
-    .sidebar-button p {
-        font-size: 15px;
-    }
+/* Keep desktop-specific mobile header off */
+.sidebar-mobile-header-inner {
+    display: none;
+}
 
-    .divider {
-        display: none;
-    }
+/* Safety: ensure overlay sits below panel but above app */
+.sidebar {
+    z-index: 1003;
+}
 
-    .my-account-container+.divider {
-        display: block;
-        margin: 15px 0;
-    }
-
-    .top-links-group {
-        overflow-y: visible;
-        padding-right: 0;
-    }
-
-    .main-links-container,
-    .account-links-container,
-    .help-links-container {
-        margin-bottom: 10px;
-    }
-
-    .footer-actions {
-        padding-top: 15px;
-    }
-
-    .myprofile-mobile-header {
-        display: flex;
-        /* Show on mobile */
-    }
-
-    .sidebar-menu-toggle {
-        display: flex;
-        /* Show on mobile */
-    }
+.sidebar-overlay {
+    z-index: 1002;
 }
