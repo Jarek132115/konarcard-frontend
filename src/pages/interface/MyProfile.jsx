@@ -1,4 +1,3 @@
-// src/pages/website/MyProfile.jsx
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
@@ -582,9 +581,11 @@ export default function MyProfile() {
       {/* Mobile header (fixed) */}
       <div className="myprofile-mobile-header">
         <button
-          className="sidebar-menu-toggle"
-          aria-label="Open menu"
-          onClick={() => setSidebarOpen(true)}
+          type="button"
+          className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
+          aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={sidebarOpen}
+          onClick={() => setSidebarOpen(o => !o)}
         >
           <span></span><span></span><span></span>
         </button>
@@ -594,11 +595,8 @@ export default function MyProfile() {
         </div>
       </div>
 
-      {/* Sidebar + overlay */}
+      {/* Sidebar (includes its own overlay) */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      {sidebarOpen && isMobile && (
-        <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
-      )}
 
       {/* MAIN */}
       <main className="main-content-container">

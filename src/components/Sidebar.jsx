@@ -37,7 +37,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         <img src={LogoIcon} alt="Konar logo" className="sidebar-logo-mobile" />
                         <span className="brand-wordmark">KONAR</span>
                     </Link>
-                    <button className="close-sidebar-button" onClick={closeSidebar} aria-label="Close menu">
+                    <button
+                        className="close-sidebar-button"
+                        onClick={closeSidebar}
+                        aria-label="Close menu"
+                    >
                         <span></span><span></span><span></span>
                     </button>
                 </div>
@@ -68,7 +72,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <Link
                                 to="/nfccards"
                                 onClick={closeSidebar}
-                                className={`sidebar-button ${isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription')
+                                className={`sidebar-button ${isActive('/products-and-plans') ||
+                                        isActive('/nfccards') ||
+                                        isActive('/subscription')
                                         ? 'active-sidebar-link'
                                         : ''
                                     }`}
