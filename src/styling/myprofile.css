@@ -1,5 +1,6 @@
 /* myprofile.css */
 
+/* =================  Theme tokens  ================= */
 :root {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
@@ -8,14 +9,20 @@
     --card-bg: #F1F1F1;
     --button-bg: black;
     --button-text: white;
-    --border-color: #ccc;
+    --border-color: #e6e9ee;
+    /* softened to match inspo */
     --input-border: #ccc;
     --placeholder-bg: #f0f0f0;
     --page-header-color: #000000;
     --main-font-family: 'Inter', sans-serif;
+
+    /* header chip */
+    --chip-bg: #fff;
+    --chip-border: #e9edf1;
+    --chip-shadow: 0 2px 4px rgba(15, 23, 42, .04);
 }
 
-/* Light/Dark variables (unchanged) */
+/* Light/Dark variants */
 .light-mode.pure-light {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
@@ -38,10 +45,14 @@
     --card-bg: #333333;
     --button-bg: white;
     --button-text: black;
-    --border-color: #555;
+    --border-color: #444b55;
     --input-border: #666;
     --placeholder-bg: #444;
     --page-header-color: #FFFFFF;
+
+    --chip-bg: #2a2d31;
+    --chip-border: #3a3f46;
+    --chip-shadow: 0 2px 6px rgba(0, 0, 0, .25);
 }
 
 .dark-mode.pure-dark {
@@ -58,7 +69,7 @@
     --input-border: #666;
 }
 
-/* Layout / header */
+/* =================  App layout  ================= */
 .app-layout {
     display: flex;
     height: 100vh;
@@ -76,21 +87,75 @@
     height: 100%;
     box-sizing: border-box;
     margin-left: 260px;
+    /* sidebar width */
     color: var(--text-color);
     transition: margin-left .3s ease-in-out;
     overflow-x: visible;
 }
 
+/* =================  Page header (NEW)  ================= */
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
     border-bottom: 1px solid var(--border-color);
-    padding-bottom: 20px;
+    padding: 14px 0 18px;
     margin-bottom: 20px;
 }
 
+/* Left cluster: user chip + title */
+.page-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+/* Compact user chip (logo + name + email) */
+.brand-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    border-radius: 12px;
+    padding: 8px 10px;
+    box-shadow: var(--chip-shadow);
+    min-width: 0;
+}
+
+.brand-chip-logo {
+    width: 28px;
+    height: 28px;
+}
+
+.brand-chip-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.brand-chip-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.brand-chip-email {
+    font-size: 12px;
+    color: var(--subtle-text-color);
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Title */
 .page-title {
     font-size: 24px;
     font-weight: 700;
@@ -101,6 +166,7 @@
     min-width: 0;
 }
 
+/* Right actions */
 .page-actions {
     display: flex;
     gap: 12px;
@@ -108,38 +174,44 @@
 }
 
 .header-button {
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 700;
     cursor: pointer;
     font-size: 14px;
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-    transition: transform .2s, box-shadow .2s;
+    border: 1px solid transparent;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .06);
+    transition: transform .12s ease, box-shadow .15s ease, background-color .15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .header-button.blue-button {
-    background-color: #007bff;
-    color: white;
+    background-color: #0081FF;
+    color: #fff;
+    border-color: #0081FF;
+}
+
+.header-button.blue-button:hover {
+    box-shadow: 0 6px 16px rgba(0, 129, 255, .25);
+    transform: translateY(-1px);
+}
+
+.header-button.blue-button:active {
+    transform: translateY(0);
 }
 
 .share-icon {
     height: 18px;
-    width: auto;
-    filter: brightness(0) invert(1);
+    width: 18px;
 }
 
-.header-button.black {
-    background-color: black;
-    color: white;
+.icon-left {
+    margin-right: 2px;
 }
 
-.header-button.white {
-    background-color: white;
-    color: black;
-    border: 1px solid var(--border-color);
-}
-
+/* =================  Main content  ================= */
 .myprofile-main-content {
     display: flex;
     flex-direction: column;
@@ -243,9 +315,7 @@
     background-color: rgba(255, 255, 255, .2);
 }
 
-/* ===== Preview: bring visuals in line with UserPage ===== */
-
-/* Cover photo — match 4:3, radius, shadow, spacing */
+/* ===== Preview elements ===== */
 .mock-cover {
     width: 100%;
     aspect-ratio: 4 / 3;
@@ -257,7 +327,6 @@
     background-position: center;
 }
 
-/* Heading + Subheading */
 .mock-title {
     font-size: 2rem;
     font-weight: 800;
@@ -271,16 +340,12 @@
     font-weight: 600;
     margin: 8px 0 0 0;
     color: #000;
-    /* light: black */
 }
 
 .dark-mode .mock-subtitle {
     color: #fff;
 }
 
-/* dark: white */
-
-/* CTA button — match blue style */
 .mock-button {
     background: #0081FF;
     color: #fff;
@@ -305,7 +370,6 @@
     transform: translateY(1px);
 }
 
-/* Section title spacing/colors */
 .mock-section-title {
     font-size: 1rem;
     font-weight: 700;
@@ -315,7 +379,7 @@
     color: var(--text-color);
 }
 
-/* Cards — force white like live page (even in dark mode) */
+/* Cards */
 .mock-about-container,
 .mock-service-item,
 .mock-review-card,
@@ -369,24 +433,23 @@
 }
 
 .mock-profile-role {
-    font-size: 0.9375rem;
+    font-size: .9375rem;
     margin: 0;
     color: #333;
     font-weight: normal;
 }
 
 .mock-bio-text {
-    font-size: 0.95rem;
+    font-size: .95rem;
     line-height: 1.55;
     margin: 0;
     color: #111;
 }
 
-/* Work — ensure 4:3 tiles */
+/* Work */
 .mock-work-image-item-wrapper {
     width: 100%;
     aspect-ratio: 4 / 2.5;
-    /* align to live page */
     overflow: hidden;
     border-radius: 14px;
     border: 1px solid var(--border-color);
@@ -403,7 +466,7 @@
     background: none;
 }
 
-/* Carousels (keep your preview arrows) */
+/* Carousels */
 .work-preview-row-container {
     position: relative;
     width: 100%;
@@ -475,7 +538,7 @@
 
 .carousel-nav-button {
     background-color: rgba(0, 0, 0, .4);
-    color: white;
+    color: #fff;
     border: none;
     border-radius: 50%;
     width: 30px;
@@ -500,7 +563,7 @@
 }
 
 .mock-service-name {
-    font-size: 0.95rem;
+    font-size: .95rem;
     font-weight: 700;
     margin: 0;
     line-height: 1.3;
@@ -508,12 +571,10 @@
 }
 
 .mock-service-price {
-    font-size: 0.85rem;
+    font-size: .85rem;
     margin: 2px 0 0 0;
     color: #000;
 }
-
-/* live page uses black for muted service price in card */
 
 /* Reviews */
 .mock-review-card {
@@ -532,14 +593,14 @@
 }
 
 .mock-review-text {
-    font-size: 0.95rem;
+    font-size: .95rem;
     color: #111;
     margin: 0 0 10px 0;
     line-height: 1.5;
 }
 
 .mock-reviewer-name {
-    font-size: 0.9rem;
+    font-size: .9rem;
     font-weight: 700;
     color: #333;
     margin: 0;
@@ -565,7 +626,7 @@
 }
 
 .mock-contact-label {
-    font-size: 0.95rem;
+    font-size: .95rem;
     font-weight: 700;
     margin: 0;
     color: #333;
@@ -578,7 +639,7 @@
     color: #111;
 }
 
-/* Editor panel (unchanged) */
+/* Editor panel */
 .myprofile-editor-wrapper {
     position: relative;
     max-width: 500px;
@@ -611,7 +672,6 @@
     display: block;
 }
 
-/* 4:3 for editor tiles too */
 .editor-work-image-grid .remove-image-button {
     top: 6px;
     right: 6px;
@@ -741,7 +801,7 @@
 .theme-button.is-active,
 .font-button.is-active {
     background-color: #007bff;
-    color: white;
+    color: #fff;
     border-color: #007bff;
 }
 
@@ -843,7 +903,7 @@
     height: 24px;
     font-size: 16px;
     background-color: #dc3545;
-    color: white;
+    color: #fff;
     border-radius: 50%;
     cursor: pointer;
     border: none;
@@ -927,7 +987,7 @@
     font-size: 12px;
     border: 1px solid transparent;
     background-color: #dc3545;
-    color: white;
+    color: #fff;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color .2s, border-color .2s;
@@ -951,6 +1011,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
 }
 
+/* Subscription overlays */
 .subscription-overlay {
     position: absolute;
     top: 0;
@@ -987,7 +1048,7 @@
 
 .start-trial-button {
     background-color: #007bff;
-    color: white;
+    color: #fff;
     padding: 12px 25px;
     border: none;
     border-radius: 8px;
@@ -1070,7 +1131,7 @@
     padding: 10px 15px;
     border-radius: 8px;
     background-color: #007bff;
-    color: white;
+    color: #fff;
     border: none;
     cursor: pointer;
     font-size: 16px;
@@ -1096,7 +1157,7 @@
     margin-top: auto;
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .button-group {
         flex-direction: column;
     }
@@ -1127,7 +1188,7 @@
     color: #dc3545;
 }
 
-/* Responsive */
+/* ==============  Responsive  ============== */
 @media (max-width: 1000px) {
     .app-layout {
         height: auto;
@@ -1147,7 +1208,7 @@
         padding: 0 20px;
         z-index: 100;
         box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-        background-color: white;
+        background-color: #fff;
     }
 
     .main-content-container {
@@ -1165,9 +1226,6 @@
     }
 
     .page-header {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
         margin-top: 0 !important;
         padding-top: 0 !important;
         margin-bottom: 20px !important;
@@ -1250,7 +1308,6 @@
         height: auto !important;
     }
 
-    /* keep your mobile flexibility */
     .myprofile-editor-wrapper {
         width: 100%;
         max-width: 100%;
@@ -1301,6 +1358,23 @@
     .page-actions .header-button span {
         display: none;
     }
+
+    .brand-chip {
+        padding: 6px 8px;
+    }
+
+    .brand-chip-logo {
+        width: 24px;
+        height: 24px;
+    }
+
+    .brand-chip-name {
+        font-size: 12px;
+    }
+
+    .brand-chip-email {
+        font-size: 11px;
+    }
 }
 
 @media (max-width: 400px) {
@@ -1335,9 +1409,7 @@
     }
 }
 
-/* ── About Me live toggle fix (append to END of myprofile.css) ───────────── */
-
-/* Stacked: column layout, centered, full-width square avatar (max 340px) */
+/* ── About Me layout toggles ───────── */
 .mock-about-container.stacked {
     display: flex;
     flex-direction: column;
@@ -1349,7 +1421,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: .75rem;
     width: 100%;
 }
 
@@ -1357,7 +1429,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: .5rem;
     width: 100%;
 }
 
@@ -1377,12 +1449,11 @@
     text-align: center;
 }
 
-/* Side-by-side: keep the header row + 50×50 avatar */
 .mock-about-container.side-by-side .mock-about-header-group {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.75rem;
+    gap: .75rem;
 }
 
 .mock-about-container.side-by-side .mock-avatar {
