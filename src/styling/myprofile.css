@@ -1380,3 +1380,133 @@
     margin: 0;
     object-fit: cover;
 }
+
+/* === Mobile app header (burger + small logo) === */
+.myprofile-mobile-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    padding: 0 14px;
+    background: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, .08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1100;
+    /* above overlay (1002) and sidebar (1003) */
+}
+
+.dark-mode .myprofile-mobile-header {
+    background: #111;
+    border-bottom-color: rgba(255, 255, 255, .08);
+}
+
+/* hide this header on desktop; it’s only for <1000px */
+@media (min-width: 1001px) {
+    .myprofile-mobile-header {
+        display: none;
+    }
+}
+
+/* tiny brand wrapper to prevent logo from stretching */
+.myprofile-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+/* force the logo to a fixed size so the big “K” cannot blow up */
+.myprofile-logo {
+    width: 28px;
+    height: 28px;
+    display: block;
+    flex-shrink: 0;
+    max-width: none;
+    /* override global img rules */
+}
+
+/* Burger button */
+.sidebar-menu-toggle {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.sidebar-menu-toggle:hover {
+    background: rgba(0, 0, 0, .06);
+}
+
+.dark-mode .sidebar-menu-toggle:hover {
+    background: rgba(255, 255, 255, .08);
+}
+
+/* the 3 lines */
+.sidebar-menu-toggle span {
+    position: absolute;
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: #111;
+    border-radius: 2px;
+    transition: transform .2s ease, opacity .2s ease;
+}
+
+.dark-mode .sidebar-menu-toggle span {
+    background: #fff;
+}
+
+.sidebar-menu-toggle span:nth-child(1) {
+    transform: translateY(-6px);
+}
+
+.sidebar-menu-toggle span:nth-child(2) {
+    transform: translateY(0);
+}
+
+.sidebar-menu-toggle span:nth-child(3) {
+    transform: translateY(6px);
+}
+
+/* when you want to animate to X, you already toggle .active in JSX */
+.sidebar-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg);
+}
+
+.sidebar-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.sidebar-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg);
+}
+
+/* keep the document from scrolling while the drawer is open */
+.body-no-scroll {
+    overflow: hidden;
+}
+
+/* main content needs to clear the fixed header on mobile */
+@media (max-width: 1000px) {
+    .main-content-container {
+        margin-left: 0 !important;
+        padding-top: 72px;
+        /* space for the fixed header */
+    }
+}
+
+/* Ensure desktop keeps room for the sidebar */
+@media (min-width: 1001px) {
+    .main-content-container {
+        margin-left: var(--sb-w, 268px);
+    }
+}
