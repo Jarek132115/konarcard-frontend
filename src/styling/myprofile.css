@@ -1507,3 +1507,21 @@
         margin-left: var(--sb-w, 268px);
     }
 }
+
+/* Hide the header burger/X when the sidebar is open */
+.app-layout.sidebar-active .sidebar-menu-toggle {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Nudge the sidebar panel down on mobile so its own close button isn't hidden */
+@media (max-width: 1000px) {
+
+    /* Adjust these selectors to match your Sidebar root/panel */
+    .sidebar-panel,
+    .sidebar-drawer,
+    .sidebar {
+        padding-top: 56px;
+        /* same as .myprofile-mobile-header height */
+    }
+}
