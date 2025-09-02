@@ -70,7 +70,7 @@
 .main-content-container {
     flex: 1;
     font-family: var(--main-font-family);
-    padding: 30px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     height: 100%;
