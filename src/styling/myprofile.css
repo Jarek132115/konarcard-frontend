@@ -1508,3 +1508,32 @@
     }
 }
 
+/* 1) Clip anything behind the fixed header (just in case) */
+.myprofile-mobile-header {
+    overflow: hidden;
+    /* hides the tiny sliver that was poking through */
+}
+
+/* 2) On mobile, hide ANY close/X control inside the Sidebar */
+@media (max-width: 1000px) {
+
+    /* cover common cases: class, header close, aria-label, title */
+    .sidebar .sidebar-close,
+    .sidebar .close,
+    .sidebar .close-btn,
+    .sidebar-header .close,
+    .sidebar [aria-label="Close"],
+    .sidebar [aria-label*="close" i],
+    .sidebar [title="Close"],
+    .sidebar [title*="close" i] {
+        display: none !important;
+    }
+
+    /* If your drawer starts at the very top, give it space below the fixed header */
+    .sidebar,
+    .sidebar-panel,
+    .sidebar-drawer {
+        padding-top: 56px;
+        /* same height as .myprofile-mobile-header */
+    }
+}
