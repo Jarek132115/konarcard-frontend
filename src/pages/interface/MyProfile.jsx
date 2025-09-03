@@ -669,600 +669,596 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {/* >>> NEW WHITE CONTAINER WRAPPER (matches inspiration) <<< */}
-              <div className="myprofile-workspace">
-                <div className="myprofile-flex-container">
-                  {/* Phone preview */}
-                  <div className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`}>
-                    <div
-                      className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
-                      style={{ fontFamily: state.font || previewPlaceholders.font }}
-                    >
-                      <div className="mock-phone-scrollable-content">
-                        {showMainSection && (
-                          <>
-                            {(shouldShowPlaceholders || !!state.coverPhoto) && (
-                              <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
-                            )}
-
-                            <h2 className="mock-title">
-                              {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
-                            </h2>
-                            <p className="mock-subtitle">
-                              {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
-                            </p>
-
-                            {(shouldShowPlaceholders || hasExchangeContact) && (
-                              <button type="button" className="mock-button">Save My Number</button>
-                            )}
-                          </>
-                        )}
-
-                        {showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
-                          <>
-                            <p className="mock-section-title">About me</p>
-                            <div className={`mock-about-container ${aboutMeLayout}`}>
-                              <div className="mock-about-content-group">
-                                <div className="mock-about-header-group">
-                                  {previewAvatarSrc && (
-                                    <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
-                                  )}
-                                  <div>
-                                    <p className="mock-profile-name">{previewFullName}</p>
-                                    <p className="mock-profile-role">{previewJobTitle}</p>
-                                  </div>
-                                </div>
-                                <p className="mock-bio-text">{previewBio}</p>
-                              </div>
-                            </div>
-                          </>
-                        )}
-
-                        {showWorkSection && previewWorkImages.length > 0 && (
-                          <>
-                            <p className="mock-section-title">My Work</p>
-                            <div className="work-preview-row-container">
-                              {state.workDisplayMode === "carousel" && (
-                                <div className="carousel-nav-buttons">
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
-                                  >
-                                    &#9664;
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
-                                  >
-                                    &#9654;
-                                  </button>
-                                </div>
-                              )}
-                              <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
-                                {previewWorkImages.map((item, i) => (
-                                  <div key={i} className="mock-work-image-item-wrapper">
-                                    <img src={item.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </>
-                        )}
-
-                        {showServicesSection && (state.services.length > 0 || !hasSavedData) && (
-                          <>
-                            <p className="mock-section-title">My Services</p>
-                            <div className="work-preview-row-container">
-                              {servicesDisplayMode === "carousel" && (
-                                <div className="carousel-nav-buttons">
-                                  <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>
-                                    &#9664;
-                                  </button>
-                                  <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}>
-                                    &#9654;
-                                  </button>
-                                </div>
-                              )}
-                              <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
-                                {(shouldShowPlaceholders ? previewPlaceholders.services : state.services).map((s, i) => (
-                                  <div key={i} className="mock-service-item">
-                                    <p className="mock-service-name">{s.name}</p>
-                                    <span className="mock-service-price">{s.price}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </>
-                        )}
-
-                        {showReviewsSection && (state.reviews.length > 0 || !hasSavedData) && (
-                          <>
-                            <p className="mock-section-title">Reviews</p>
-                            <div className="work-preview-row-container">
-                              {reviewsDisplayMode === "carousel" && (
-                                <div className="carousel-nav-buttons">
-                                  <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}>
-                                    &#9664;
-                                  </button>
-                                  <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}>
-                                    &#9654;
-                                  </button>
-                                </div>
-                              )}
-                              <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
-                                {(shouldShowPlaceholders ? previewPlaceholders.reviews : state.reviews).map((r, i) => (
-                                  <div key={i} className="mock-review-card">
-                                    <div className="mock-star-rating">
-                                      {Array(r.rating || 0).fill().map((_, idx) => <span key={`f-${idx}`}>★</span>)}
-                                      {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, idx) => <span key={`e-${idx}`} className="empty-star">★</span>)}
-                                    </div>
-                                    <p className="mock-review-text">{`"${r.text}"`}</p>
-                                    <p className="mock-reviewer-name">{r.name}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </>
-                        )}
-
-                        {showContactSection && (previewEmail || previewPhone) && (
-                          <>
-                            <p className="mock-section-title">Contact Details</p>
-                            <div className="mock-contact-details">
-                              <div className="mock-contact-item">
-                                <p className="mock-contact-label">Email:</p>
-                                <p className="mock-contact-value">{previewEmail}</p>
-                              </div>
-                              <div className="mock-contact-item">
-                                <p className="mock-contact-label">Phone:</p>
-                                <p className="mock-contact-value">{previewPhone}</p>
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Editor */}
-                  <div className="myprofile-editor-wrapper">
-                    {(!isSubscribed && hasTrialEnded) && (
-                      <div className="subscription-overlay">
-                        <div className="subscription-message">
-                          <p className="desktop-h4">Subscription Required</p>
-                          <p className="desktop-h6">Your free trial has ended. Please subscribe to continue editing your profile.</p>
-                          <button className="blue-button" onClick={handleStartSubscription}>Go to Subscription</button>
-                        </div>
-                      </div>
-                    )}
-
-                    <form
-                      onSubmit={handleSubmit}
-                      className="myprofile-editor"
-                      style={{
-                        filter: !isSubscribed && hasTrialEnded ? "blur(5px)" : "none",
-                        pointerEvents: !isSubscribed && hasTrialEnded ? "none" : "auto",
-                      }}
-                    >
-                      <h2 className="editor-title">Create Your Digital Business Card</h2>
-
-                      {/* Theme */}
-                      <div className="input-block">
-                        <label>Page Theme</label>
-                        <div className="option-row">
-                          <button
-                            type="button"
-                            className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
-                            onClick={() => updateState({ pageTheme: "light" })}
-                          >
-                            Light Mode
-                          </button>
-                          <button
-                            type="button"
-                            className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
-                            onClick={() => updateState({ pageTheme: "dark" })}
-                          >
-                            Dark Mode
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Fonts */}
-                      <div className="input-block">
-                        <label>Font</label>
-                        <div className="option-row">
-                          {["Inter", "Montserrat", "Poppins"].map((font) => (
-                            <button
-                              type="button"
-                              key={font}
-                              className={`font-button ${state.font === font ? "is-active" : ""}`}
-                              onClick={() => updateState({ font })}
-                              style={{ fontFamily: `'${font}', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`, fontWeight: 700 }}
-                            >
-                              {font}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <hr className="divider" />
-                      <div className="editor-section-header">
-                        <h3 className="editor-subtitle">Main Section</h3>
-                        <button type="button" onClick={() => setShowMainSection(!showMainSection)} className="toggle-button">
-                          {showMainSection ? "Hide Section" : "Show Section"}
-                        </button>
-                      </div>
+              <div className="myprofile-flex-container">
+                {/* Phone preview */}
+                <div className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`}>
+                  <div
+                    className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
+                    style={{ fontFamily: state.font || previewPlaceholders.font }}
+                  >
+                    <div className="mock-phone-scrollable-content">
                       {showMainSection && (
                         <>
-                          <div className="input-block">
-                            <label htmlFor="coverPhoto">Cover Photo</label>
-                            <input
-                              ref={fileInputRef}
-                              id="coverPhoto"
-                              type="file"
-                              accept="image/*"
-                              onChange={handleImageUpload}
-                              style={{ display: "none" }}
-                            />
-                            <div className="image-upload-area cover-photo-upload" onClick={() => fileInputRef.current?.click()}>
-                              {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
-                              <img src={getEditorImageSrc(state.coverPhoto, previewPlaceholders.coverPhoto)} alt="Cover" className="cover-preview" />
-                              {state.coverPhoto && (
-                                <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}>
-                                  &times;
+                          {(shouldShowPlaceholders || !!state.coverPhoto) && (
+                            <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
+                          )}
+
+                          <h2 className="mock-title">
+                            {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
+                          </h2>
+                          <p className="mock-subtitle">
+                            {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
+                          </p>
+
+                          {(shouldShowPlaceholders || hasExchangeContact) && (
+                            <button type="button" className="mock-button">Save My Number</button>
+                          )}
+                        </>
+                      )}
+
+                      {showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
+                        <>
+                          <p className="mock-section-title">About me</p>
+                          <div className={`mock-about-container ${aboutMeLayout}`}>
+                            <div className="mock-about-content-group">
+                              <div className="mock-about-header-group">
+                                {previewAvatarSrc && (
+                                  <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
+                                )}
+                                <div>
+                                  <p className="mock-profile-name">{previewFullName}</p>
+                                  <p className="mock-profile-role">{previewJobTitle}</p>
+                                </div>
+                              </div>
+                              <p className="mock-bio-text">{previewBio}</p>
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {showWorkSection && previewWorkImages.length > 0 && (
+                        <>
+                          <p className="mock-section-title">My Work</p>
+                          <div className="work-preview-row-container">
+                            {state.workDisplayMode === "carousel" && (
+                              <div className="carousel-nav-buttons">
+                                <button
+                                  type="button"
+                                  className="carousel-nav-button left-arrow"
+                                  onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
+                                >
+                                  &#9664;
                                 </button>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="input-block">
-                            <label htmlFor="mainHeading">Main Heading</label>
-                            <input
-                              id="mainHeading"
-                              type="text"
-                              value={state.mainHeading || ""}
-                              onChange={(e) => updateState({ mainHeading: e.target.value })}
-                              placeholder={previewPlaceholders.main_heading}
-                            />
-                          </div>
-
-                          <div className="input-block">
-                            <label htmlFor="subHeading">Subheading</label>
-                            <input
-                              id="subHeading"
-                              type="text"
-                              value={state.subHeading || ""}
-                              onChange={(e) => updateState({ subHeading: e.target.value })}
-                              placeholder={previewPlaceholders.sub_heading}
-                            />
-                          </div>
-                        </>
-                      )}
-
-                      <hr className="divider" />
-                      <div className="editor-section-header">
-                        <h3 className="editor-subtitle">About Me Section</h3>
-                        <button type="button" onClick={() => setShowAboutMeSection(!showAboutMeSection)} className="toggle-button">
-                          {showAboutMeSection ? "Hide Section" : "Show Section"}
-                        </button>
-                      </div>
-                      {showAboutMeSection && (
-                        <>
-                          <div className="input-block">
-                            <label>Display Layout</label>
-                            <div className="option-row">
-                              <button
-                                type="button"
-                                className={`display-button ${aboutMeLayout === "side-by-side" ? "is-active" : ""}`}
-                                onClick={() => setAboutMeLayout("side-by-side")}
-                              >
-                                Side by Side
-                              </button>
-                              <button
-                                type="button"
-                                className={`display-button ${aboutMeLayout === "stacked" ? "is-active" : ""}`}
-                                onClick={() => setAboutMeLayout("stacked")}
-                              >
-                                Stacked
-                              </button>
-                            </div>
-                          </div>
-
-                          <div className="input-block">
-                            <label htmlFor="avatar">Profile Photo</label>
-                            <input
-                              ref={avatarInputRef}
-                              id="avatar"
-                              type="file"
-                              accept="image/*"
-                              onChange={handleAvatarUpload}
-                              style={{ display: "none" }}
-                            />
-                            <div className="image-upload-area avatar-upload" onClick={() => avatarInputRef.current?.click()}>
-                              {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
-                              <img src={state.avatar || ""} alt="Avatar preview" className="avatar-preview" />
-                              {state.avatar && (
-                                <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}>
-                                  &times;
+                                <button
+                                  type="button"
+                                  className="carousel-nav-button right-arrow"
+                                  onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
+                                >
+                                  &#9654;
                                 </button>
-                              )}
-                            </div>
-
-                            <div className="input-block">
-                              <label htmlFor="fullName">Full Name</label>
-                              <input
-                                id="fullName"
-                                type="text"
-                                value={state.full_name || ""}
-                                onChange={(e) => updateState({ full_name: e.target.value })}
-                                placeholder={previewPlaceholders.full_name}
-                              />
-                            </div>
-
-                            <div className="input-block">
-                              <label htmlFor="jobTitle">Job Title</label>
-                              <input
-                                id="jobTitle"
-                                type="text"
-                                value={state.job_title || ""}
-                                onChange={(e) => updateState({ job_title: e.target.value })}
-                                placeholder={previewPlaceholders.job_title}
-                              />
-                            </div>
-
-                            <div className="input-block">
-                              <label htmlFor="bio">About Me Description</label>
-                              <textarea
-                                id="bio"
-                                rows={4}
-                                value={state.bio || ""}
-                                onChange={(e) => updateState({ bio: e.target.value })}
-                                placeholder={previewPlaceholders.bio}
-                              />
-                            </div>
-                          </div>
-                        </>
-                      )}
-
-                      <hr className="divider" />
-                      <div className="editor-section-header">
-                        <h3 className="editor-subtitle">My Work Section</h3>
-                        <button type="button" onClick={() => setShowWorkSection(!showWorkSection)} className="toggle-button">
-                          {showWorkSection ? "Hide Section" : "Show Section"}
-                        </button>
-                      </div>
-                      {showWorkSection && (
-                        <>
-                          <div className="input-block">
-                            <label>Display Layout</label>
-                            <div className="option-row">
-                              <button
-                                type="button"
-                                className={`display-button ${state.workDisplayMode === "list" ? "is-active" : ""}`}
-                                onClick={() => updateState({ workDisplayMode: "list" })}
-                              >
-                                List
-                              </button>
-                              <button
-                                type="button"
-                                className={`display-button ${state.workDisplayMode === "grid" ? "is-active" : ""}`}
-                                onClick={() => updateState({ workDisplayMode: "grid" })}
-                              >
-                                Grid
-                              </button>
-                              <button
-                                type="button"
-                                className={`display-button ${state.workDisplayMode === "carousel" ? "is-active" : ""}`}
-                                onClick={() => updateState({ workDisplayMode: "carousel" })}
-                              >
-                                Carousel
-                              </button>
-                            </div>
-                          </div>
-
-                          <div className="input-block">
-                            <label>Work Images</label>
-                            <div className="editor-work-image-grid">
-                              {state.workImages.map((item, i) => (
-                                <div key={i} className="editor-item-card work-image-item-wrapper">
-                                  <img src={item.preview || item} alt={`work-${i}`} className="work-image-preview" />
-                                  <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveWorkImage(i); }}>
-                                    &times;
-                                  </button>
-                                </div>
-                              ))}
-                              {state.workImages.length < 10 && (
-                                <div className="add-work-image-placeholder" onClick={() => workImageInputRef.current?.click()}>
-                                  <span className="upload-text">Add Work Image(s)</span>
-                                </div>
-                              )}
-                            </div>
-                            <input
-                              ref={workImageInputRef}
-                              type="file"
-                              multiple
-                              accept="image/*"
-                              style={{ display: "none" }}
-                              onChange={handleAddWorkImage}
-                            />
-                          </div>
-                        </>
-                      )}
-
-                      <hr className="divider" />
-                      <div className="editor-section-header">
-                        <h3 className="editor-subtitle">My Services Section</h3>
-                        <button type="button" onClick={() => setShowServicesSection(!showServicesSection)} className="toggle-button">
-                          {showServicesSection ? "Hide Section" : "Show Section"}
-                        </button>
-                      </div>
-                      {showServicesSection && (
-                        <>
-                          <div className="input-block">
-                            <label>Display Layout</label>
-                            <div className="option-row">
-                              <button
-                                type="button"
-                                className={`display-button ${servicesDisplayMode === "list" ? "is-active" : ""}`}
-                                onClick={() => setServicesDisplayMode("list")}
-                              >
-                                List
-                              </button>
-                              <button
-                                type="button"
-                                className={`display-button ${servicesDisplayMode === "carousel" ? "is-active" : ""}`}
-                                onClick={() => setServicesDisplayMode("carousel")}
-                              >
-                                Carousel
-                              </button>
-                            </div>
-                          </div>
-
-                          <div className="input-block">
-                            <label>Services</label>
-                            <div className="editor-service-list">
-                              {state.services.map((s, i) => (
-                                <div key={i} className="editor-item-card mock-service-item-wrapper">
-                                  <input
-                                    type="text"
-                                    placeholder="Service Name"
-                                    value={s.name || ""}
-                                    onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                                  />
-                                  <input
-                                    type="text"
-                                    placeholder="Service Price/Detail"
-                                    value={s.price || ""}
-                                    onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                                  />
-                                  <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">
-                                    Remove
-                                  </button>
+                              </div>
+                            )}
+                            <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
+                              {previewWorkImages.map((item, i) => (
+                                <div key={i} className="mock-work-image-item-wrapper">
+                                  <img src={item.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
                                 </div>
                               ))}
                             </div>
-                            <button type="button" onClick={handleAddService} className="add-item-button">
-                              + Add Service
-                            </button>
                           </div>
                         </>
                       )}
 
-                      <hr className="divider" />
-                      <div className="editor-section-header">
-                        <h3 className="editor-subtitle">Reviews Section</h3>
-                        <button type="button" onClick={() => setShowReviewsSection(!showReviewsSection)} className="toggle-button">
-                          {showReviewsSection ? "Hide Section" : "Show Section"}
-                        </button>
-                      </div>
-                      {showReviewsSection && (
+                      {showServicesSection && (state.services.length > 0 || !hasSavedData) && (
                         <>
-                          <div className="input-block">
-                            <label>Display Layout</label>
-                            <div className="option-row">
-                              <button
-                                type="button"
-                                className={`display-button ${reviewsDisplayMode === "list" ? "is-active" : ""}`}
-                                onClick={() => setReviewsDisplayMode("list")}
-                              >
-                                List
-                              </button>
-                              <button
-                                type="button"
-                                className={`display-button ${reviewsDisplayMode === "carousel" ? "is-active" : ""}`}
-                                onClick={() => setReviewsDisplayMode("carousel")}
-                              >
-                                Carousel
-                              </button>
-                            </div>
-                          </div>
-
-                          <div className="input-block">
-                            <label>Reviews</label>
-                            <div className="editor-reviews-list">
-                              {state.reviews.map((r, i) => (
-                                <div key={i} className="editor-item-card mock-review-card-wrapper">
-                                  <input
-                                    type="text"
-                                    placeholder="Reviewer Name"
-                                    value={r.name || ""}
-                                    onChange={(e) => handleReviewChange(i, "name", e.target.value)}
-                                  />
-                                  <textarea
-                                    placeholder="Review text"
-                                    rows={2}
-                                    value={r.text || ""}
-                                    onChange={(e) => handleReviewChange(i, "text", e.target.value)}
-                                  />
-                                  <input
-                                    type="number"
-                                    placeholder="Rating (1-5)"
-                                    min="1"
-                                    max="5"
-                                    value={r.rating || ""}
-                                    onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
-                                  />
-                                  <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">
-                                    Remove
-                                  </button>
+                          <p className="mock-section-title">My Services</p>
+                          <div className="work-preview-row-container">
+                            {servicesDisplayMode === "carousel" && (
+                              <div className="carousel-nav-buttons">
+                                <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>
+                                  &#9664;
+                                </button>
+                                <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}>
+                                  &#9654;
+                                </button>
+                              </div>
+                            )}
+                            <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
+                              {(shouldShowPlaceholders ? previewPlaceholders.services : state.services).map((s, i) => (
+                                <div key={i} className="mock-service-item">
+                                  <p className="mock-service-name">{s.name}</p>
+                                  <span className="mock-service-price">{s.price}</span>
                                 </div>
                               ))}
                             </div>
-                            <button type="button" onClick={handleAddReview} className="add-item-button">
-                              + Add Review
-                            </button>
                           </div>
                         </>
                       )}
 
-                      <hr className="divider" />
-                      <div className="editor-section-header">
-                        <h3 className="editor-subtitle">My Contact Details</h3>
-                        <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="toggle-button">
-                          {showContactSection ? "Hide Section" : "Show Section"}
-                        </button>
-                      </div>
-                      {showContactSection && (
+                      {showReviewsSection && (state.reviews.length > 0 || !hasSavedData) && (
                         <>
-                          <div className="input-block">
-                            <label htmlFor="contactEmail">Email Address</label>
-                            <input
-                              id="contactEmail"
-                              type="email"
-                              value={state.contact_email || ""}
-                              onChange={(e) => updateState({ contact_email: e.target.value })}
-                              placeholder={previewPlaceholders.contact_email}
-                            />
-                          </div>
-
-                          <div className="input-block">
-                            <label htmlFor="phoneNumber">Phone Number</label>
-                            <input
-                              id="phoneNumber"
-                              type="tel"
-                              value={state.phone_number || ""}
-                              onChange={(e) => updateState({ phone_number: e.target.value })}
-                              placeholder={previewPlaceholders.phone_number}
-                            />
+                          <p className="mock-section-title">Reviews</p>
+                          <div className="work-preview-row-container">
+                            {reviewsDisplayMode === "carousel" && (
+                              <div className="carousel-nav-buttons">
+                                <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}>
+                                  &#9664;
+                                </button>
+                                <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}>
+                                  &#9654;
+                                </button>
+                              </div>
+                            )}
+                            <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
+                              {(shouldShowPlaceholders ? previewPlaceholders.reviews : state.reviews).map((r, i) => (
+                                <div key={i} className="mock-review-card">
+                                  <div className="mock-star-rating">
+                                    {Array(r.rating || 0).fill().map((_, idx) => <span key={`f-${idx}`}>★</span>)}
+                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, idx) => <span key={`e-${idx}`} className="empty-star">★</span>)}
+                                  </div>
+                                  <p className="mock-review-text">{`"${r.text}"`}</p>
+                                  <p className="mock-reviewer-name">{r.name}</p>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </>
                       )}
 
-                      <div className="button-group">
-                        <button type="button" onClick={handleResetPage} className="black-button desktop-button">
-                          Reset Page
-                        </button>
-                        <button type="submit" className="blue-button desktop-button">
-                          Publish Now
-                        </button>
-                      </div>
-                    </form>
+                      {showContactSection && (previewEmail || previewPhone) && (
+                        <>
+                          <p className="mock-section-title">Contact Details</p>
+                          <div className="mock-contact-details">
+                            <div className="mock-contact-item">
+                              <p className="mock-contact-label">Email:</p>
+                              <p className="mock-contact-value">{previewEmail}</p>
+                            </div>
+                            <div className="mock-contact-item">
+                              <p className="mock-contact-label">Phone:</p>
+                              <p className="mock-contact-value">{previewPhone}</p>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
+
+                {/* Editor */}
+                <div className="myprofile-editor-wrapper">
+                  {(!isSubscribed && hasTrialEnded) && (
+                    <div className="subscription-overlay">
+                      <div className="subscription-message">
+                        <p className="desktop-h4">Subscription Required</p>
+                        <p className="desktop-h6">Your free trial has ended. Please subscribe to continue editing your profile.</p>
+                        <button className="blue-button" onClick={handleStartSubscription}>Go to Subscription</button>
+                      </div>
+                    </div>
+                  )}
+
+                  <form
+                    onSubmit={handleSubmit}
+                    className="myprofile-editor"
+                    style={{
+                      filter: !isSubscribed && hasTrialEnded ? "blur(5px)" : "none",
+                      pointerEvents: !isSubscribed && hasTrialEnded ? "none" : "auto",
+                    }}
+                  >
+                    <h2 className="editor-title">Create Your Digital Business Card</h2>
+
+                    {/* Theme */}
+                    <div className="input-block">
+                      <label>Page Theme</label>
+                      <div className="option-row">
+                        <button
+                          type="button"
+                          className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
+                          onClick={() => updateState({ pageTheme: "light" })}
+                        >
+                          Light Mode
+                        </button>
+                        <button
+                          type="button"
+                          className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
+                          onClick={() => updateState({ pageTheme: "dark" })}
+                        >
+                          Dark Mode
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Fonts */}
+                    <div className="input-block">
+                      <label>Font</label>
+                      <div className="option-row">
+                        {["Inter", "Montserrat", "Poppins"].map((font) => (
+                          <button
+                            type="button"
+                            key={font}
+                            className={`font-button ${state.font === font ? "is-active" : ""}`}
+                            onClick={() => updateState({ font })}
+                            style={{ fontFamily: `'${font}', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`, fontWeight: 700 }}
+                          >
+                            {font}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <hr className="divider" />
+                    <div className="editor-section-header">
+                      <h3 className="editor-subtitle">Main Section</h3>
+                      <button type="button" onClick={() => setShowMainSection(!showMainSection)} className="toggle-button">
+                        {showMainSection ? "Hide Section" : "Show Section"}
+                      </button>
+                    </div>
+                    {showMainSection && (
+                      <>
+                        <div className="input-block">
+                          <label htmlFor="coverPhoto">Cover Photo</label>
+                          <input
+                            ref={fileInputRef}
+                            id="coverPhoto"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            style={{ display: "none" }}
+                          />
+                          <div className="image-upload-area cover-photo-upload" onClick={() => fileInputRef.current?.click()}>
+                            {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
+                            <img src={getEditorImageSrc(state.coverPhoto, previewPlaceholders.coverPhoto)} alt="Cover" className="cover-preview" />
+                            {state.coverPhoto && (
+                              <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}>
+                                &times;
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="input-block">
+                          <label htmlFor="mainHeading">Main Heading</label>
+                          <input
+                            id="mainHeading"
+                            type="text"
+                            value={state.mainHeading || ""}
+                            onChange={(e) => updateState({ mainHeading: e.target.value })}
+                            placeholder={previewPlaceholders.main_heading}
+                          />
+                        </div>
+
+                        <div className="input-block">
+                          <label htmlFor="subHeading">Subheading</label>
+                          <input
+                            id="subHeading"
+                            type="text"
+                            value={state.subHeading || ""}
+                            onChange={(e) => updateState({ subHeading: e.target.value })}
+                            placeholder={previewPlaceholders.sub_heading}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    <hr className="divider" />
+                    <div className="editor-section-header">
+                      <h3 className="editor-subtitle">About Me Section</h3>
+                      <button type="button" onClick={() => setShowAboutMeSection(!showAboutMeSection)} className="toggle-button">
+                        {showAboutMeSection ? "Hide Section" : "Show Section"}
+                      </button>
+                    </div>
+                    {showAboutMeSection && (
+                      <>
+                        <div className="input-block">
+                          <label>Display Layout</label>
+                          <div className="option-row">
+                            <button
+                              type="button"
+                              className={`display-button ${aboutMeLayout === "side-by-side" ? "is-active" : ""}`}
+                              onClick={() => setAboutMeLayout("side-by-side")}
+                            >
+                              Side by Side
+                            </button>
+                            <button
+                              type="button"
+                              className={`display-button ${aboutMeLayout === "stacked" ? "is-active" : ""}`}
+                              onClick={() => setAboutMeLayout("stacked")}
+                            >
+                              Stacked
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="input-block">
+                          <label htmlFor="avatar">Profile Photo</label>
+                          <input
+                            ref={avatarInputRef}
+                            id="avatar"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleAvatarUpload}
+                            style={{ display: "none" }}
+                          />
+                          <div className="image-upload-area avatar-upload" onClick={() => avatarInputRef.current?.click()}>
+                            {showAddImageText(state.avatar) && <span className="upload-text">Add Profile Photo</span>}
+                            <img src={state.avatar || ""} alt="Avatar preview" className="avatar-preview" />
+                            {state.avatar && (
+                              <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}>
+                                &times;
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="input-block">
+                            <label htmlFor="fullName">Full Name</label>
+                            <input
+                              id="fullName"
+                              type="text"
+                              value={state.full_name || ""}
+                              onChange={(e) => updateState({ full_name: e.target.value })}
+                              placeholder={previewPlaceholders.full_name}
+                            />
+                          </div>
+
+                          <div className="input-block">
+                            <label htmlFor="jobTitle">Job Title</label>
+                            <input
+                              id="jobTitle"
+                              type="text"
+                              value={state.job_title || ""}
+                              onChange={(e) => updateState({ job_title: e.target.value })}
+                              placeholder={previewPlaceholders.job_title}
+                            />
+                          </div>
+
+                          <div className="input-block">
+                            <label htmlFor="bio">About Me Description</label>
+                            <textarea
+                              id="bio"
+                              rows={4}
+                              value={state.bio || ""}
+                              onChange={(e) => updateState({ bio: e.target.value })}
+                              placeholder={previewPlaceholders.bio}
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    <hr className="divider" />
+                    <div className="editor-section-header">
+                      <h3 className="editor-subtitle">My Work Section</h3>
+                      <button type="button" onClick={() => setShowWorkSection(!showWorkSection)} className="toggle-button">
+                        {showWorkSection ? "Hide Section" : "Show Section"}
+                      </button>
+                    </div>
+                    {showWorkSection && (
+                      <>
+                        <div className="input-block">
+                          <label>Display Layout</label>
+                          <div className="option-row">
+                            <button
+                              type="button"
+                              className={`display-button ${state.workDisplayMode === "list" ? "is-active" : ""}`}
+                              onClick={() => updateState({ workDisplayMode: "list" })}
+                            >
+                              List
+                            </button>
+                            <button
+                              type="button"
+                              className={`display-button ${state.workDisplayMode === "grid" ? "is-active" : ""}`}
+                              onClick={() => updateState({ workDisplayMode: "grid" })}
+                            >
+                              Grid
+                            </button>
+                            <button
+                              type="button"
+                              className={`display-button ${state.workDisplayMode === "carousel" ? "is-active" : ""}`}
+                              onClick={() => updateState({ workDisplayMode: "carousel" })}
+                            >
+                              Carousel
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="input-block">
+                          <label>Work Images</label>
+                          <div className="editor-work-image-grid">
+                            {state.workImages.map((item, i) => (
+                              <div key={i} className="editor-item-card work-image-item-wrapper">
+                                <img src={item.preview || item} alt={`work-${i}`} className="work-image-preview" />
+                                <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveWorkImage(i); }}>
+                                  &times;
+                                </button>
+                              </div>
+                            ))}
+                            {state.workImages.length < 10 && (
+                              <div className="add-work-image-placeholder" onClick={() => workImageInputRef.current?.click()}>
+                                <span className="upload-text">Add Work Image(s)</span>
+                              </div>
+                            )}
+                          </div>
+                          <input
+                            ref={workImageInputRef}
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            onChange={handleAddWorkImage}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    <hr className="divider" />
+                    <div className="editor-section-header">
+                      <h3 className="editor-subtitle">My Services Section</h3>
+                      <button type="button" onClick={() => setShowServicesSection(!showServicesSection)} className="toggle-button">
+                        {showServicesSection ? "Hide Section" : "Show Section"}
+                      </button>
+                    </div>
+                    {showServicesSection && (
+                      <>
+                        <div className="input-block">
+                          <label>Display Layout</label>
+                          <div className="option-row">
+                            <button
+                              type="button"
+                              className={`display-button ${servicesDisplayMode === "list" ? "is-active" : ""}`}
+                              onClick={() => setServicesDisplayMode("list")}
+                            >
+                              List
+                            </button>
+                            <button
+                              type="button"
+                              className={`display-button ${servicesDisplayMode === "carousel" ? "is-active" : ""}`}
+                              onClick={() => setServicesDisplayMode("carousel")}
+                            >
+                              Carousel
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="input-block">
+                          <label>Services</label>
+                          <div className="editor-service-list">
+                            {state.services.map((s, i) => (
+                              <div key={i} className="editor-item-card mock-service-item-wrapper">
+                                <input
+                                  type="text"
+                                  placeholder="Service Name"
+                                  value={s.name || ""}
+                                  onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Service Price/Detail"
+                                  value={s.price || ""}
+                                  onChange={(e) => handleServiceChange(i, "price", e.target.value)}
+                                />
+                                <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">
+                                  Remove
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                          <button type="button" onClick={handleAddService} className="add-item-button">
+                            + Add Service
+                          </button>
+                        </div>
+                      </>
+                    )}
+
+                    <hr className="divider" />
+                    <div className="editor-section-header">
+                      <h3 className="editor-subtitle">Reviews Section</h3>
+                      <button type="button" onClick={() => setShowReviewsSection(!showReviewsSection)} className="toggle-button">
+                        {showReviewsSection ? "Hide Section" : "Show Section"}
+                      </button>
+                    </div>
+                    {showReviewsSection && (
+                      <>
+                        <div className="input-block">
+                          <label>Display Layout</label>
+                          <div className="option-row">
+                            <button
+                              type="button"
+                              className={`display-button ${reviewsDisplayMode === "list" ? "is-active" : ""}`}
+                              onClick={() => setReviewsDisplayMode("list")}
+                            >
+                              List
+                            </button>
+                            <button
+                              type="button"
+                              className={`display-button ${reviewsDisplayMode === "carousel" ? "is-active" : ""}`}
+                              onClick={() => setReviewsDisplayMode("carousel")}
+                            >
+                              Carousel
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="input-block">
+                          <label>Reviews</label>
+                          <div className="editor-reviews-list">
+                            {state.reviews.map((r, i) => (
+                              <div key={i} className="editor-item-card mock-review-card-wrapper">
+                                <input
+                                  type="text"
+                                  placeholder="Reviewer Name"
+                                  value={r.name || ""}
+                                  onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                                />
+                                <textarea
+                                  placeholder="Review text"
+                                  rows={2}
+                                  value={r.text || ""}
+                                  onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                                />
+                                <input
+                                  type="number"
+                                  placeholder="Rating (1-5)"
+                                  min="1"
+                                  max="5"
+                                  value={r.rating || ""}
+                                  onChange={(e) => handleReviewChange(i, "rating", parseInt(e.target.value) || 0)}
+                                />
+                                <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">
+                                  Remove
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                          <button type="button" onClick={handleAddReview} className="add-item-button">
+                            + Add Review
+                          </button>
+                        </div>
+                      </>
+                    )}
+
+                    <hr className="divider" />
+                    <div className="editor-section-header">
+                      <h3 className="editor-subtitle">My Contact Details</h3>
+                      <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="toggle-button">
+                        {showContactSection ? "Hide Section" : "Show Section"}
+                      </button>
+                    </div>
+                    {showContactSection && (
+                      <>
+                        <div className="input-block">
+                          <label htmlFor="contactEmail">Email Address</label>
+                          <input
+                            id="contactEmail"
+                            type="email"
+                            value={state.contact_email || ""}
+                            onChange={(e) => updateState({ contact_email: e.target.value })}
+                            placeholder={previewPlaceholders.contact_email}
+                          />
+                        </div>
+
+                        <div className="input-block">
+                          <label htmlFor="phoneNumber">Phone Number</label>
+                          <input
+                            id="phoneNumber"
+                            type="tel"
+                            value={state.phone_number || ""}
+                            onChange={(e) => updateState({ phone_number: e.target.value })}
+                            placeholder={previewPlaceholders.phone_number}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    <div className="button-group">
+                      <button type="button" onClick={handleResetPage} className="black-button desktop-button">
+                        Reset Page
+                      </button>
+                      <button type="submit" className="blue-button desktop-button">
+                        Publish Now
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
-              {/* <<< end white container wrapper */}
             </>
           )}
         </div>

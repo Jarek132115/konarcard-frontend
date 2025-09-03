@@ -1543,23 +1543,3 @@
     }
 }
 
-.myprofile-workspace {
-    width: 100%;
-    max-width: calc(var(--workspace-max) + 2*var(--page-gutter));
-    margin: 0 auto;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, .08);
-    border-radius: 20px;
-    /* ✅ rounded more for card effect */
-    padding: 24px;
-    /* ✅ a bit more breathing room */
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
-    /* ✅ softer but visible shadow */
-}
-
-.dark-mode .myprofile-workspace {
-    background: #202020;
-    border-color: rgba(255, 255, 255, .08);
-    border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
-}
