@@ -1,4 +1,3 @@
-// src/pages/website/MyProfile.jsx
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
@@ -428,82 +427,6 @@ export default function MyProfile() {
     );
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!isSubscribed && !isTrialActive) return toast.error("Please start your free trial to publish your changes.");
-    if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
-
-    const worksToUpload = state.workImages
-      .map((item) => {
-        if (item.file) return { file: item.file };
-        if (item.preview && !item.preview.startsWith("blob:")) return item.preview;
-        return null;
-      })
-      .filter(Boolean);
-
-    const formData = buildBusinessCardFormData({
-      business_card_name: state.businessName,
-      page_theme: state.pageTheme,
-      font: state.font,
-      main_heading: state.mainHeading,
-      sub_heading: state.subHeading,
-      job_title: state.job_title,
-      full_name: state.full_name,
-      bio: state.bio,
-      user: userId,
-      cover_photo: coverPhotoFile,
-      avatar: avatarFile,
-      cover_photo_removed: coverPhotoRemoved,
-      avatar_removed: isAvatarRemoved,
-      works: worksToUpload,
-      services: state.services.filter((s) => s.name || s.price),
-      reviews: state.reviews.filter((r) => r.name || r.text),
-      contact_email: state.contact_email,
-      phone_number: state.phone_number,
-      work_display_mode: state.workDisplayMode,
-      services_display_mode: servicesDisplayMode,
-      reviews_display_mode: reviewsDisplayMode,
-      about_me_layout: aboutMeLayout,
-      show_main_section: showMainSection,
-      show_about_me_section: showAboutMeSection,
-      show_work_section: showWorkSection,
-      show_services_section: showServicesSection,
-      show_reviews_section: showReviewsSection,
-      show_contact_section: showContactSection,
-    });
-
-    try {
-      await createBusinessCard.mutateAsync(formData);
-      toast.success("Your page is Published!");
-      queryClient.invalidateQueries(["businessCard", userId]);
-
-      setCoverPhotoFile(null);
-      setAvatarFile(null);
-      setWorkImageFiles([]);
-      setCoverPhotoRemoved(false);
-      setIsAvatarRemoved(false);
-
-      activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
-      activeBlobUrlsRef.current = [];
-      setActiveBlobUrls([]);
-    } catch (err) {
-      toast.error(err.response?.data?.error || "Something went wrong while saving.");
-    }
-  };
-
-  const handleStartTrial = async () => {
-    if (isSubscribed || isTrialActive) return toast("Your plan is already active.", { icon: "ℹ️" });
-    try {
-      const res = await startTrial();
-      if (res?.data?.trialExpires) toast.success("Your 14-day trial is now active!");
-      else toast.success("Trial activated!");
-      if (typeof refetchAuthUser === "function") await refetchAuthUser();
-    } catch (err) {
-      toast.error(err?.response?.data?.error || "Could not start trial. Please try again.");
-    }
-  };
-
   const handleStartSubscription = async () => {
     try {
       const response = await api.post("/subscribe", {});
@@ -574,6 +497,94 @@ export default function MyProfile() {
   const showAddImageText = (img) => !img;
   const isDarkMode = state.pageTheme === "dark";
 
+  // NEW: ensure trial is started automatically if needed
+  const ensureTrialIfNeeded = async () => {
+    if (isSubscribed || isTrialActive) return;
+    try {
+      const res = await startTrial();
+      if (res?.data?.trialExpires) {
+        toast.success("Your 14-day trial started!");
+      } else {
+        toast.success("Trial activated!");
+      }
+      if (typeof refetchAuthUser === "function") await refetchAuthUser();
+    } catch (err) {
+      // It's okay if trial already started elsewhere
+      const msg = err?.response?.data?.error || "";
+      if (!/already started/i.test(msg)) {
+        console.error("Failed to auto-start trial:", msg);
+      }
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
+
+    // Auto-start trial on first save if not active (no extra button)
+    if (!isSubscribed && !isTrialActive) {
+      await ensureTrialIfNeeded();
+    }
+
+    const worksToUpload = state.workImages
+      .map((item) => {
+        if (item.file) return { file: item.file };
+        if (item.preview && !item.preview.startsWith("blob:")) return item.preview;
+        return null;
+      })
+      .filter(Boolean);
+
+    const formData = buildBusinessCardFormData({
+      business_card_name: state.businessName,
+      page_theme: state.pageTheme,
+      font: state.font,
+      main_heading: state.mainHeading,
+      sub_heading: state.subHeading,
+      job_title: state.job_title,
+      full_name: state.full_name,
+      bio: state.bio,
+      user: userId,
+      cover_photo: coverPhotoFile,
+      avatar: avatarFile,
+      cover_photo_removed: coverPhotoRemoved,
+      avatar_removed: isAvatarRemoved,
+      works: worksToUpload,
+      services: state.services.filter((s) => s.name || s.price),
+      reviews: state.reviews.filter((r) => r.name || r.text),
+      contact_email: state.contact_email,
+      phone_number: state.phone_number,
+      work_display_mode: state.workDisplayMode,
+      services_display_mode: servicesDisplayMode,
+      reviews_display_mode: reviewsDisplayMode,
+      about_me_layout: aboutMeLayout,
+      show_main_section: showMainSection,
+      show_about_me_section: showAboutMeSection,
+      show_work_section: showWorkSection,
+      show_services_section: showServicesSection,
+      show_reviews_section: showReviewsSection,
+      show_contact_section: showContactSection,
+    });
+
+    try {
+      await createBusinessCard.mutateAsync(formData);
+      toast.success("Your page is Published!");
+      queryClient.invalidateQueries(["businessCard", userId]);
+
+      setCoverPhotoFile(null);
+      setAvatarFile(null);
+      setWorkImageFiles([]);
+      setCoverPhotoRemoved(false);
+      setIsAvatarRemoved(false);
+
+      activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+      activeBlobUrlsRef.current = [];
+      setActiveBlobUrls([]);
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Something went wrong while saving.");
+    }
+  };
+
   /* =========================
      RENDER
      ========================= */
@@ -643,14 +654,7 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {!isSubscribed && !isTrialActive && (
-                <div className="trial-banner">
-                  <p><strong>Activate my website</strong> — 14 days free, no card required.</p>
-                  <button className="cta-blue-button" onClick={handleStartTrial}>
-                    Activate
-                  </button>
-                </div>
-              )}
+              {/* Removed explicit Activate banner. Trial starts automatically on first save. */}
 
               {isTrialActive && (
                 <div className="trial-banner">
@@ -666,7 +670,6 @@ export default function MyProfile() {
                   </button>
                 </div>
               )}
-
 
               {hasTrialEnded && !isSubscribed && (
                 <div className="trial-ended-banner">
