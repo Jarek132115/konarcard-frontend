@@ -567,8 +567,8 @@ export default function MyProfile() {
     state.workImages && state.workImages.length > 0
       ? state.workImages
       : shouldShowPlaceholders
-      ? previewPlaceholders.workImages
-      : [];
+        ? previewPlaceholders.workImages
+        : [];
   const currentQrCodeUrl = businessCard?.qrCodeUrl || "";
   const getEditorImageSrc = (img, ph) => img || (shouldShowPlaceholders ? ph : "");
   const showAddImageText = (img) => !img;
@@ -602,10 +602,8 @@ export default function MyProfile() {
 
       {/* MAIN */}
       <main className="main-content-container">
-        {/* Page header (shows user name/email + Share) */}
+        {/* Page header (shows user name/email + Share) — title removed */}
         <PageHeader
-          title={"My Profile"}
-          onActivateCard={handleStartTrial}
           onShareCard={handleShareCard}
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}
