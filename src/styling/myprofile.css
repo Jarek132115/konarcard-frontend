@@ -217,6 +217,9 @@
     box-sizing: border-box;
     overflow: visible;
     justify-content: center;
+    background: white;
+    border-radius: 16px;
+    padding: 14px 18px;
 }
 
 .myprofile-content {
