@@ -644,20 +644,29 @@ export default function MyProfile() {
               )}
 
               {!isSubscribed && !isTrialActive && (
-                <div className="trial-not-started-banner">
+                <div className="trial-banner">
                   <p><strong>Activate my website</strong> — 14 days free, no card required.</p>
-                  <button className="blue-button" onClick={handleStartTrial}>Activate</button>
+                  <button className="cta-blue-button" onClick={handleStartTrial}>
+                    Activate
+                  </button>
                 </div>
               )}
 
               {isTrialActive && (
-                <div className="trial-countdown-banner">
+                <div className="trial-banner">
                   <p>
-                    Your free trial ends on {new Date(authUser.trialExpires).toLocaleDateString()}.{" "}
-                    <Link to="/subscription">Subscribe now!</Link>
+                    Your free trial ends on{" "}
+                    <strong>{new Date(authUser.trialExpires).toLocaleDateString()}</strong>.
                   </p>
+                  <button
+                    className="cta-blue-button"
+                    onClick={handleStartSubscription}
+                  >
+                    Subscribe Now
+                  </button>
                 </div>
               )}
+
 
               {hasTrialEnded && !isSubscribed && (
                 <div className="trial-ended-banner">
