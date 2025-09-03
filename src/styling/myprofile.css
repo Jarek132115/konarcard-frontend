@@ -211,7 +211,6 @@
     gap: 60px;
     min-height: 0;
     align-items: flex-start;
-    max-width: var(--workspace-max);
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
