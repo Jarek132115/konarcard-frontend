@@ -166,7 +166,6 @@
 .header-share .share-icon {
     height: 18px;
     width: auto;
-    filter: brightness(0) invert(1);
 }
 
 .page-title-under {
@@ -1451,7 +1450,6 @@
     .page-header-right .desktop-button .share-icon {
         height: 20px;
         width: auto;
-        filter: brightness(0) invert(1);
     }
 
     .main-content-container {
