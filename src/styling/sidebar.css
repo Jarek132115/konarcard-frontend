@@ -1,6 +1,6 @@
 /* ====== Soft cardy sidebar like the reference (RESPONSIVE) ====== */
 :root {
-    --sb-bg: #FFFFFF;
+    --sb-bg: #F7F7F7;
     --sb-border: #eef1f4;
     --sb-divider: #eef1f4;
     --sb-text: #0f172a;
@@ -39,8 +39,7 @@
     width: var(--sb-w);
     background: var(--sb-bg);
     border: 1px solid var(--sb-border);
-    border-radius: 28px;
-    box-shadow: var(--sb-shadow);
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     padding: 18px;
