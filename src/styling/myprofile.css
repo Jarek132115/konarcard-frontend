@@ -235,6 +235,13 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
 }
 
+@media (max-width: 1000px) {
+    .myprofile-flex-container {
+        border: none;
+        padding: 0;
+    }
+}
+
 /* ===== Phone preview column ===== */
 .myprofile-content {
     flex-shrink: 0;
