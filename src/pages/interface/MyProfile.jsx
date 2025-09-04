@@ -658,12 +658,12 @@ export default function MyProfile() {
 
               {isTrialActive && (
                 <div className="trial-banner">
-                  <p>
+                  <p className="desktop-body">
                     Your free trial ends on{" "}
                     <strong>{new Date(authUser.trialExpires).toLocaleDateString()}</strong>.
                   </p>
                   <button
-                    className="cta-blue-button"
+                    className="blue-trial desktop-body"
                     onClick={handleStartSubscription}
                   >
                     Subscribe Now
