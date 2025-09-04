@@ -653,12 +653,12 @@ export default function MyProfile() {
 
               {isTrialActive && (
                 <div className="trial-banner">
-                  <p className="desktop-body">
+                  <p className="desktop-body-s">
                     Your free trial ends on{" "}
                     <strong>{new Date(authUser.trialExpires).toLocaleDateString()}</strong>.
                   </p>
                   <button
-                    className="blue-trial desktop-body"
+                    className="blue-trial desktop-body-s"
                     onClick={handleStartSubscription}
                   >
                     Subscribe Now
