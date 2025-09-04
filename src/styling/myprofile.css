@@ -1396,7 +1396,7 @@
         padding: 20px;
         border-width: 6px;
         border-radius: 20px;
-        height: 700px;
+        height: 80vh;
         overflow: visible !important;
         max-width: 100%;
     }
@@ -1454,9 +1454,6 @@
         filter: brightness(0) invert(1);
     }
 
-    .mock-phone {
-        height: 550px;
-    }
 }
 
 @media (max-width:400px) {
