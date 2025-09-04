@@ -166,6 +166,7 @@
 .header-share .share-icon {
     height: 18px;
     width: auto;
+    filter: invert(38%) sepia(91%) saturate(2303%) hue-rotate(201deg) brightness(96%) contrast(99%);
 }
 
 .page-title-under {
@@ -1450,10 +1451,12 @@
     .page-header-right .desktop-button .share-icon {
         height: 20px;
         width: auto;
+        filter: invert(38%) sepia(91%) saturate(2303%) hue-rotate(201deg) brightness(96%) contrast(99%);
     }
 
+
     .main-content-container {
-        padding:  80px 20px 0;
+        padding: 80px 20px 0;
     }
 
 }
