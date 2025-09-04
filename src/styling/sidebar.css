@@ -85,7 +85,8 @@
 
 .brand-wordmark {
     font-weight: 800;
-    letter-spacing: .06em;
+    font-size: 24px;
+    letter-spacing: 0px;
     color: var(--sb-text);
 }
 
