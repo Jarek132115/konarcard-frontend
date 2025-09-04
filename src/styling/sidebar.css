@@ -50,7 +50,6 @@
     z-index: 1003;
     transition: transform .3s ease-in-out, visibility .3s ease-in-out, width .2s ease-in-out, left .2s ease-in-out;
     overflow: hidden;
-    /* contain children; scroll is on content wrapper */
 }
 
 /* Make sure parent layouts don't force an overflow */
@@ -167,16 +166,6 @@
     background: var(--sb-active);
 }
 
-/* Footer */
-.footer-actions {
-    margin-top: auto;
-    padding-top: 14px;
-    border-top: 1px solid var(--sb-divider);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
 /* Logout styling */
 .logout-button p {
     color: var(--sb-red);
@@ -190,8 +179,17 @@
     filter: invert(39%) sepia(73%) saturate(1397%) hue-rotate(338deg) brightness(96%) contrast(95%);
 }
 
+/* Helpers to show/hide chunks */
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: block;
+}
+
 /* ===== Tablet tightening (pre-mobile) ===== */
-@media (max-width: 1280px) {
+@media (max-width:1280px) {
     :root {
         --sb-w: clamp(228px, 19vw, 260px);
         --sb-gutter: 8px;
@@ -216,15 +214,16 @@
 }
 
 /* ===== Mobile behavior ===== */
-.sidebar-mobile-header-inner {
-    display: none;
-}
+@media (max-width:1000px) {
+    .desktop-only {
+        display: none;
+    }
 
-/* desktop hidden */
+    .mobile-only {
+        display: flex;
+    }
 
-@media (max-width: 1000px) {
-
-    /* Turn into slide-in panel */
+    /* Slide-in drawer */
     .sidebar {
         top: 0;
         left: 0;
@@ -243,38 +242,23 @@
         visibility: visible;
     }
 
-    /* Mobile top bar inside drawer */
-    .sidebar-mobile-header-inner {
+    /* Drawer top row (X) */
+    .sidebar-mobile-top-row {
+        height: 56px;
+        padding: 0 16px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 20px;
+        justify-content: flex-end;
         border-bottom: 1px solid var(--sb-divider);
         background: var(--sb-bg);
-    }
-
-    .sidebar-logo-link-mobile {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-    }
-
-    .sidebar-logo-mobile {
-        height: 28px;
-        width: 28px;
-    }
-
-    .brand-wordmark {
-        color: var(--sb-text);
     }
 
     .close-sidebar-button {
         appearance: none;
         background: transparent;
         border: 0;
-        width: 28px;
-        height: 28px;
+        width: 34px;
+        height: 34px;
         position: relative;
         cursor: pointer;
         display: inline-flex;
@@ -303,7 +287,7 @@
     }
 
     .sidebar-content-wrapper {
-        height: calc(100% - 62px);
+        height: calc(100% - 56px);
         padding: 16px 18px 26px;
     }
 
@@ -323,7 +307,7 @@
 }
 
 /* Motion friendliness */
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion:reduce) {
 
     .sidebar,
     .sidebar-overlay {

@@ -509,7 +509,6 @@ export default function MyProfile() {
       }
       if (typeof refetchAuthUser === "function") await refetchAuthUser();
     } catch (err) {
-      // It's okay if trial already started elsewhere
       const msg = err?.response?.data?.error || "";
       if (!/already started/i.test(msg)) {
         console.error("Failed to auto-start trial:", msg);
@@ -592,28 +591,26 @@ export default function MyProfile() {
     <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
       {/* Mobile header (fixed) */}
       <div className="myprofile-mobile-header">
-        <button
-          className="sidebar-menu-toggle"
-          aria-label="Open menu"
-          onClick={() => setSidebarOpen(true)}
-        >
-          <span></span><span></span><span></span>
-        </button>
-
+        {/* Logo on the LEFT */}
         <div className="myprofile-brand">
           <img src={LogoIcon} alt="Konar" className="myprofile-logo" />
         </div>
+
+        {/* Burger toggles and turns into an X when open */}
+        <button
+          className={`sidebar-menu-toggle ${sidebarOpen ? "active" : ""}`}
+          aria-label={sidebarOpen ? "Close menu" : "Open menu"}
+          onClick={() => setSidebarOpen((s) => !s)}
+        >
+          <span></span><span></span><span></span>
+        </button>
       </div>
 
-      {/* Sidebar + overlay */}
+      {/* Sidebar + overlay (overlay handled inside the Sidebar component too) */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      {sidebarOpen && isMobile && (
-        <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
-      )}
 
       {/* MAIN */}
       <main className="main-content-container">
-        {/* Page header (shows user name/email + Share) — title removed */}
         <PageHeader
           onShareCard={handleShareCard}
           isMobile={isMobile}
@@ -653,8 +650,6 @@ export default function MyProfile() {
                   </form>
                 </div>
               )}
-
-              {/* Removed explicit Activate banner. Trial starts automatically on first save. */}
 
               {isTrialActive && (
                 <div className="trial-banner">
@@ -763,7 +758,7 @@ export default function MyProfile() {
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="work-preview-row-container">
-                            {servicesDisplayMode === "carousel" && (
+                            {reviewsDisplayMode === "carousel" && (
                               <div className="carousel-nav-buttons">
                                 <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>
                                   &#9664;

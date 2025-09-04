@@ -37,7 +37,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <span className="brand-wordmark">KONAR</span>
                 </div>
 
-                {/* Small close (mobile only). No brand shown on mobile. */}
+                {/* ===== Mobile drawer top row (X button) ===== */}
                 <div className="sidebar-mobile-top-row mobile-only">
                     <button
                         className="close-sidebar-button"
@@ -64,7 +64,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <p className="desktop-body-s">My Profile</p>
                             </Link>
 
-                            {/* Products & Plans (still included) */}
+                            {/* Products & Plans */}
                             <Link
                                 to="/nfccards"
                                 onClick={closeSidebar}
@@ -104,18 +104,19 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <p className="desktop-body-s">Contact Us</p>
                             </Link>
 
-                            {/* Logout directly under Contact Us (per request) */}
+                            {/* Logout directly under Contact Us */}
                             <button
                                 className="sidebar-button logout-button"
-                                onClick={() => { handleLogout(); closeSidebar(); }}
+                                onClick={() => {
+                                    handleLogout();
+                                    closeSidebar();
+                                }}
                             >
                                 <img src={logoutInterface} alt="" className="icon" />
                                 <p className="desktop-body-s">Logout Account</p>
                             </button>
                         </div>
                     </div>
-
-                    {/* Removed footer actions block (no more "Go to Homepage") */}
                 </div>
             </aside>
         </>
