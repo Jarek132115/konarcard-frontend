@@ -1454,6 +1454,10 @@
         filter: brightness(0) invert(1);
     }
 
+    .main-content-container {
+        padding:  80px 20px 0;
+    }
+
 }
 
 @media (max-width:400px) {
