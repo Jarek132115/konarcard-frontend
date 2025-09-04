@@ -1490,12 +1490,6 @@
         }
     }
 
-    @media (min-width:1001px) {
-        .main-content-container {
-            margin-left: calc(var(--sb-w, 268px) + var(--page-gutter));
-        }
-    }
-
     @media (max-width:1000px) {
 
         .sidebar-header,
