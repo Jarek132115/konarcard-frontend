@@ -1320,8 +1320,8 @@
     }
 
     .main-content-container {
-        width: 90%;
-        max-width: 90%;
+        width: 100%;
+        max-width: 100%;
         padding: 0 20px;
         padding-top: 100px;
         /* room for mobile header */
