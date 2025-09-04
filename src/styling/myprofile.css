@@ -1594,3 +1594,8 @@
         background: none;
         border: none;
     }
+
+    .blue-trial:hover {
+        cursor: pointer;
+        font-weight: 700;
+    }
