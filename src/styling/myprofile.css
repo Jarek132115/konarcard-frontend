@@ -273,7 +273,7 @@
     aspect-ratio: 9/17;
     background: var(--primary-bg);
     border: 1px solid rgba(0, 0, 0, .08);
-    border-radius: 30px;
+    border-radius: 16px;
     padding: 20px;
     text-align: center;
     box-sizing: border-box;
@@ -289,7 +289,7 @@
     max-width: 100%;
     padding: 16px;
     border-width: 6px;
-    border-radius: 20px;
+    border-radius: 16px;
 }
 
 .mock-phone-scrollable-content {
