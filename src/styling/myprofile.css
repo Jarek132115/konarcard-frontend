@@ -1328,8 +1328,6 @@
         height: auto !important;
         overflow-x: visible;
         margin: auto;
-        margin-left: 0 !important;
-        /* critical: remove the desktop offset */
     }
 
     .myprofile-main-content {
