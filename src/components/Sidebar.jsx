@@ -52,7 +52,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     {/* MAIN */}
                     <div className="top-links-group">
                         <div className="main-links-container">
-                            <p className="section-title">MAIN</p>
+                            <p style={{marginTop: 40}} className="section-title">MAIN</p>
 
                             {/* Dashboard */}
                             <Link
