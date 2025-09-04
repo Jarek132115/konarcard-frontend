@@ -1603,7 +1603,7 @@
     .myprofile-content,
     .myprofile-editor-wrapper {
         flex: 1 1 50% !important;
-        max-width: 600px !important;
+        max-width: 500px !important;
         min-width: 0 !important;
     }
 
