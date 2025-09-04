@@ -43,7 +43,6 @@
     background: var(--sb-bg);
     border: 1px solid var(--sb-border);
     border-radius: var(--sb-radius);
-    box-shadow: var(--sb-shadow);
     display: flex;
     flex-direction: column;
     padding: 18px;
