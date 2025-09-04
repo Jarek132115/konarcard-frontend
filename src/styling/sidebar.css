@@ -11,7 +11,7 @@
     --sb-red: #e74c3c;
     --sb-red-bg: #fff1f0;
     --sb-radius: 16px;
-    --sb-gutter: 10px;
+    --sb-gutter: 20px;
     /* desktop margin from viewport edges */
     --sb-w: clamp(240px, 17vw, 280px);
 }
