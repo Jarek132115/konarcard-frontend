@@ -12,6 +12,7 @@
     --sb-red-bg: #fff1f0;
     --sb-radius: 16px;
     --sb-gutter: 20px;
+    /* keep 20px until < 1000px */
     /* desktop margin from viewport edges */
     --sb-w: clamp(240px, 17vw, 280px);
 }
@@ -190,12 +191,11 @@
 
 /* ===== Tablet tightening (pre-mobile) ===== */
 @media (max-width:1280px) {
-    :root {
-        --sb-w: clamp(228px, 19vw, 260px);
-        --sb-gutter: 8px;
-    }
 
+    /* keep gutter at 20px — do NOT override --sb-gutter here */
+    /* You can still tighten width/padding without touching the gutter */
     .sidebar {
+        width: clamp(228px, 19vw, 260px);
         padding: 16px;
     }
 
@@ -213,7 +213,7 @@
     }
 }
 
-/* ===== Mobile behavior ===== */
+/* ===== Mobile behavior (<1000px) ===== */
 @media (max-width:1000px) {
     .desktop-only {
         display: none;
