@@ -79,7 +79,7 @@
 .main-content-container {
     flex: 1;
     font-family: var(--main-font-family);
-    padding: 20px 20px 20px 0;;
+    padding: var(--page-gutter);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -1593,3 +1593,27 @@
 }
 
 /* End of MyProfile.css */
+
+
+/* ===============================================
+   OVERRIDES FOR PREVIEW + EDITOR SPLIT (Desktop)
+   =============================================== */
+@media (min-width:1001px) {
+
+    .myprofile-content,
+    .myprofile-editor-wrapper {
+        flex: 1 1 50% !important;
+        max-width: 600px !important;
+        min-width: 0 !important;
+    }
+
+    .myprofile-content {
+        flex-shrink: 1 !important;
+        aspect-ratio: unset !important;
+    }
+
+    .myprofile-editor-wrapper {
+        min-width: 0 !important;
+        /* remove old min-width:350px restriction */
+    }
+}
