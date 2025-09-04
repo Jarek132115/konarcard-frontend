@@ -84,7 +84,6 @@
     flex-direction: column;
     height: 100%;
     box-sizing: border-box;
-    /* IMPORTANT: keep a 4px breathing room between fixed Sidebar and content */
     margin-left: calc(var(--sb-w) + var(--sb-gutter) + 4px);
     color: var(--text-color);
     transition: margin-left .3s ease-in-out;
@@ -96,7 +95,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #fff;
+    background: #F7F7F7;
     border: 1px solid rgba(0, 0, 0, .08);
     border-radius: 16px;
     padding: 14px 18px;
@@ -229,7 +228,7 @@
     box-sizing: border-box;
     overflow: visible;
     justify-content: center;
-    background: white;
+    background: #F7F7F7;
     border: 1px solid rgba(0, 0, 0, .08);
     border-radius: 16px;
     padding: 14px 18px;
