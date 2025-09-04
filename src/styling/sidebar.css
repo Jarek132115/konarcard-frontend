@@ -4,25 +4,18 @@
     --sb-border: #eef1f4;
     --sb-divider: #eef1f4;
     --sb-text: #0f172a;
-    /* very dark slate */
     --sb-muted: #96a0ad;
-    /* soft gray for inactive */
     --sb-hover: #f7f9fb;
-    /* hover wash */
     --sb-active-bg: #EAF3FF;
-    /* your blue wash */
     --sb-active-text: #0081FF;
-    /* your blue */
     --sb-shadow: 0 2px 6px rgba(15, 23, 42, .05), 0 12px 28px rgba(15, 23, 42, .06);
     --sb-red: #e74c3c;
     --sb-red-bg: #fff1f0;
     --sb-radius: 22px;
     --sb-gutter: 20px;
-    /* keep 20px until <1000px */
     --sb-w: clamp(232px, 17vw, 280px);
 }
 
-/* Overlay (mobile only when open) */
 .sidebar-overlay {
     position: fixed;
     inset: 0;
@@ -38,7 +31,6 @@
     visibility: visible;
 }
 
-/* ===== Shell ===== */
 .sidebar {
     position: fixed;
     top: calc(var(--sb-gutter) + env(safe-area-inset-top, 0));
@@ -48,7 +40,6 @@
     background: var(--sb-bg);
     border: 1px solid var(--sb-border);
     border-radius: 28px;
-    /* rounder like the shot */
     box-shadow: var(--sb-shadow);
     display: flex;
     flex-direction: column;
@@ -64,7 +55,6 @@
     min-width: 0;
 }
 
-/* Scroll area */
 .sidebar-content-wrapper {
     display: flex;
     flex-direction: column;
@@ -82,7 +72,6 @@
     border-radius: 6px;
 }
 
-/* Brand */
 .brand-header {
     display: flex;
     align-items: center;
@@ -101,7 +90,6 @@
     color: var(--sb-text);
 }
 
-/* Section & divider */
 .divider {
     border: none;
     border-top: 1px solid var(--sb-divider);
@@ -117,7 +105,6 @@
     text-transform: uppercase;
 }
 
-/* Groups */
 .top-links-group {
     flex: 1 1 auto;
     display: flex;
@@ -130,7 +117,6 @@
     margin-bottom: 6px;
 }
 
-/* ===== Item ===== */
 .sidebar-button {
     position: relative;
     display: flex;
@@ -163,7 +149,6 @@
     color: inherit;
 }
 
-/* Hover */
 .sidebar-button:hover {
     background: var(--sb-hover);
     color: #415063;
@@ -187,25 +172,10 @@
 
 .sidebar-button.active-sidebar-link .icon {
     opacity: 1;
-    filter: none;
-    /* keep original SVG colors */
+    filter: invert(38%) sepia(91%) saturate(2303%) hue-rotate(201deg) brightness(96%) contrast(99%);
     transform: translateY(-1px);
 }
 
-/* Left rounded indicator like the ref */
-.sidebar-button.active-sidebar-link::before {
-    content: "";
-    position: absolute;
-    left: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 6px;
-    height: 26px;
-    border-radius: 8px;
-    background: var(--sb-active-text);
-}
-
-/* Optional tiny badge style (e.g., “12+”) if you add a span.badge */
 .sidebar-button .badge {
     margin-left: auto;
     font-size: 10px;
@@ -218,7 +188,6 @@
     transform: translateY(-1px);
 }
 
-/* Logout color */
 .logout-button p {
     color: var(--sb-red);
 }
@@ -231,7 +200,6 @@
     filter: invert(39%) sepia(73%) saturate(1397%) hue-rotate(338deg) brightness(96%) contrast(95%);
 }
 
-/* Desktop vs mobile helpers */
 .mobile-only {
     display: none;
 }
@@ -240,7 +208,6 @@
     display: block;
 }
 
-/* ===== Tablet tighten (don’t change gutter) ===== */
 @media (max-width:1280px) {
     .sidebar {
         width: clamp(220px, 19vw, 260px);
@@ -256,7 +223,6 @@
     }
 }
 
-/* ===== Mobile drawer (<1000px) ===== */
 @media (max-width:1000px) {
     .desktop-only {
         display: none;
@@ -348,7 +314,6 @@
     }
 }
 
-/* Motion prefs */
 @media (prefers-reduced-motion:reduce) {
 
     .sidebar,
