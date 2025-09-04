@@ -38,7 +38,7 @@
     height: calc(100vh - (var(--sb-gutter)*2) - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));
     width: var(--sb-w);
     background: var(--sb-bg);
-    border: 1px solid var(--sb-border);
+    border: 1px solid rgba(0, 0, 0, .08);
     border-radius: 16px;
     display: flex;
     flex-direction: column;
