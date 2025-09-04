@@ -1591,4 +1591,6 @@
     .blue-trial {
         color: #0056b3;
         font-weight: 600px;
+        background: none;
+        border: none;
     }
