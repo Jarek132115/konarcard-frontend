@@ -272,7 +272,7 @@
     height: 100%;
     aspect-ratio: 9/17;
     background: var(--primary-bg);
-    border: 8px solid black;
+    border: 1px solid rgba(0, 0, 0, .08);
     border-radius: 30px;
     padding: 20px;
     text-align: center;
