@@ -1,23 +1,28 @@
 /* ====== Soft cardy sidebar like the reference (RESPONSIVE) ====== */
 :root {
-    --sb-bg: #F7F7F7;
-    --sb-border: #e9edf1;
+    --sb-bg: #FFFFFF;
+    --sb-border: #eef1f4;
     --sb-divider: #eef1f4;
-    --sb-text: #111827;
-    --sb-muted: #6b7280;
-    --sb-hover: #f5f7f9;
-    --sb-active: #eef3f7;
+    --sb-text: #0f172a;
+    /* very dark slate */
+    --sb-muted: #96a0ad;
+    /* soft gray for inactive */
+    --sb-hover: #f7f9fb;
+    /* hover wash */
+    --sb-active-bg: #EAF3FF;
+    /* your blue wash */
+    --sb-active-text: #0081FF;
+    /* your blue */
     --sb-shadow: 0 2px 6px rgba(15, 23, 42, .05), 0 12px 28px rgba(15, 23, 42, .06);
     --sb-red: #e74c3c;
     --sb-red-bg: #fff1f0;
-    --sb-radius: 16px;
+    --sb-radius: 22px;
     --sb-gutter: 20px;
-    /* keep 20px until < 1000px */
-    /* desktop margin from viewport edges */
-    --sb-w: clamp(240px, 17vw, 280px);
+    /* keep 20px until <1000px */
+    --sb-w: clamp(232px, 17vw, 280px);
 }
 
-/* Overlay (mobile only visible when open) */
+/* Overlay (mobile only when open) */
 .sidebar-overlay {
     position: fixed;
     inset: 0;
@@ -33,7 +38,7 @@
     visibility: visible;
 }
 
-/* ===== Sidebar shell (desktop / tablet) ===== */
+/* ===== Shell ===== */
 .sidebar {
     position: fixed;
     top: calc(var(--sb-gutter) + env(safe-area-inset-top, 0));
@@ -42,7 +47,9 @@
     width: var(--sb-w);
     background: var(--sb-bg);
     border: 1px solid var(--sb-border);
-    border-radius: var(--sb-radius);
+    border-radius: 28px;
+    /* rounder like the shot */
+    box-shadow: var(--sb-shadow);
     display: flex;
     flex-direction: column;
     padding: 18px;
@@ -52,7 +59,6 @@
     overflow: hidden;
 }
 
-/* Make sure parent layouts don't force an overflow */
 .sidebar,
 .sidebar * {
     min-width: 0;
@@ -76,7 +82,7 @@
     border-radius: 6px;
 }
 
-/* Brand header */
+/* Brand */
 .brand-header {
     display: flex;
     align-items: center;
@@ -85,8 +91,8 @@
 }
 
 .brand-logo {
-    height: 26px;
     width: 26px;
+    height: 26px;
 }
 
 .brand-wordmark {
@@ -95,11 +101,11 @@
     color: var(--sb-text);
 }
 
-/* Section dividers & titles */
+/* Section & divider */
 .divider {
     border: none;
     border-top: 1px solid var(--sb-divider);
-    margin: 12px 0;
+    margin: 10px 0 6px;
 }
 
 .section-title {
@@ -107,7 +113,7 @@
     font-weight: 800;
     letter-spacing: .08em;
     color: #9aa3af;
-    margin: 0 0 8px;
+    margin: 8px 8px 10px;
     text-transform: uppercase;
 }
 
@@ -124,49 +130,95 @@
     margin-bottom: 6px;
 }
 
-/* Items */
+/* ===== Item ===== */
 .sidebar-button {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     width: 100%;
-    padding: 10px 12px;
-    border-radius: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
     background: transparent;
     border: none;
     text-decoration: none;
-    color: var(--sb-text);
+    color: var(--sb-muted);
     cursor: pointer;
-    transition: background-color .15s ease, color .15s ease;
+    transition: background-color .15s ease, color .15s ease, transform .08s ease;
 }
 
 .sidebar-button .icon {
-    width: 18px;
-    height: 18px;
-    opacity: .9;
+    width: 20px;
+    height: 20px;
+    opacity: .7;
     transition: opacity .15s ease, transform .08s ease;
+    filter: grayscale(100%) opacity(.85);
 }
 
 .sidebar-button p {
     margin: 0;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
+    line-height: 1;
+    color: inherit;
 }
 
+/* Hover */
 .sidebar-button:hover {
     background: var(--sb-hover);
+    color: #415063;
 }
 
 .sidebar-button:hover .icon {
     opacity: 1;
     transform: translateY(-1px);
+    filter: grayscale(40%);
 }
 
+/* ===== Active style (your blue) ===== */
 .sidebar-button.active-sidebar-link {
-    background: var(--sb-active);
+    background: var(--sb-active-bg);
+    color: var(--sb-active-text);
 }
 
-/* Logout styling */
+.sidebar-button.active-sidebar-link p {
+    color: var(--sb-active-text);
+}
+
+.sidebar-button.active-sidebar-link .icon {
+    opacity: 1;
+    filter: none;
+    /* keep original SVG colors */
+    transform: translateY(-1px);
+}
+
+/* Left rounded indicator like the ref */
+.sidebar-button.active-sidebar-link::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 26px;
+    border-radius: 8px;
+    background: var(--sb-active-text);
+}
+
+/* Optional tiny badge style (e.g., “12+”) if you add a span.badge */
+.sidebar-button .badge {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: var(--sb-active-text);
+    color: #fff;
+    line-height: 1;
+    transform: translateY(-1px);
+}
+
+/* Logout color */
 .logout-button p {
     color: var(--sb-red);
 }
@@ -179,7 +231,7 @@
     filter: invert(39%) sepia(73%) saturate(1397%) hue-rotate(338deg) brightness(96%) contrast(95%);
 }
 
-/* Helpers to show/hide chunks */
+/* Desktop vs mobile helpers */
 .mobile-only {
     display: none;
 }
@@ -188,31 +240,23 @@
     display: block;
 }
 
-/* ===== Tablet tightening (pre-mobile) ===== */
+/* ===== Tablet tighten (don’t change gutter) ===== */
 @media (max-width:1280px) {
-
-    /* keep gutter at 20px — do NOT override --sb-gutter here */
-    /* You can still tighten width/padding without touching the gutter */
     .sidebar {
-        width: clamp(228px, 19vw, 260px);
+        width: clamp(220px, 19vw, 260px);
         padding: 16px;
     }
 
     .sidebar-button {
-        padding: 10px 12px;
+        padding: 11px 13px;
     }
 
     .sidebar-button p {
-        font-size: 13.5px;
-    }
-
-    .sidebar-button .icon {
-        width: 18px;
-        height: 18px;
+        font-size: 14px;
     }
 }
 
-/* ===== Mobile behavior (<1000px) ===== */
+/* ===== Mobile drawer (<1000px) ===== */
 @media (max-width:1000px) {
     .desktop-only {
         display: none;
@@ -222,7 +266,6 @@
         display: flex;
     }
 
-    /* Slide-in drawer */
     .sidebar {
         top: 0;
         left: 0;
@@ -234,6 +277,7 @@
         padding: 0;
         transform: translateX(-100%);
         visibility: hidden;
+        box-shadow: none;
     }
 
     .sidebar.open {
@@ -241,7 +285,6 @@
         visibility: visible;
     }
 
-    /* Drawer top row (X) */
     .sidebar-mobile-top-row {
         height: 56px;
         padding: 0 16px;
@@ -291,21 +334,21 @@
     }
 
     .sidebar-button {
-        padding: 12px 14px;
-        border-radius: 12px;
-    }
-
-    .sidebar-button p {
-        font-size: 15px;
+        padding: 13px 15px;
+        border-radius: 14px;
     }
 
     .sidebar-button .icon {
         width: 20px;
         height: 20px;
     }
+
+    .sidebar-button p {
+        font-size: 15px;
+    }
 }
 
-/* Motion friendliness */
+/* Motion prefs */
 @media (prefers-reduced-motion:reduce) {
 
     .sidebar,
