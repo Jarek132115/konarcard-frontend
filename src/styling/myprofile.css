@@ -11,7 +11,7 @@
         --placeholder-bg: #f0f0f0;
         --page-header-color: #000000;
         --main-font-family: 'Inter', sans-serif;
-        --page-gutter: 10px;
+        --page-gutter: 20px;
         --sb-w: 268px;
         --workspace-max: 1200px;
     }
@@ -61,7 +61,7 @@
     .app-layout {
         display: flex;
         height: 100vh;
-        background-color: var(--secondary-bg);
+        background-color: #fff;
         position: relative;
         overflow: hidden;
     }
