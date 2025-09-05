@@ -176,79 +176,95 @@ export default function NFCCards() {
         />
 
         <div className="profile-page-wrapper">
-          <div className="subscription-offer-left contact-card-content">
-            <div className="subscription-header">
-              <p className='desktop-h5'>Power Profile</p>
-              <div className="free-trial-badge">14 Day Free Trial</div>
+          <div className="section">
+            <div className="section-1-title">
+              <h2 className="desktop-h3 text-center">One Plan. One Card. Endless Opportunities.</h2>
+              <h3 className="desktop-h6 text-center">No confusion. Just one powerful plan to make you stand out.</h3>
             </div>
-            <p className='desktop-body-s subscription-subheader'>Create a stunning, professional profile in minutes. No coding needed.</p>
 
-            <div className="subscription-features">
-              {[
-                "Update anytime, instantly",
-                "Choose your own font",
-                "Select Light or Dark mode",
-                "Craft your 'About Me' section",
-                "Showcase your work portfolio",
-                "Display client reviews",
-                "List your services",
-                "Set your pricing",
-              ].map((text, idx) => (
-                <div className="hero-tick" key={idx}>
-                  <img src={TickIcon} className="icon" />
-                  <p>{text}</p>
+            <div className="pricing-grid">
+              {/* Subscription card (blue) */}
+              <div className="pricing-card pricing-card--subscription">
+                <div className="pricing-inner">
+                  <div className="pricing-head">
+                    <div>
+                      <h3 className="desktop-h5">Power Profile</h3>
+                      <p className='desktop-body-xs'>Win more work with a power profile</p>
+                    </div>
+                    <span className="pricing-badge blue">14-Day Free Trial</span>
+                  </div>
+                  <div className="pricing-divider" />
+                  <div className="pricing-price-row">
+                    <span className="desktop-h1">£4.95</span>
+                    <span className="desktop-button">Per Month</span>
+                  </div>
+
+                  <ul className="pricing-features">
+                    {[
+                      'Update your profile instantly (real-time edits)',
+                      'Choose fonts and light/dark themes',
+                      'Write a compelling “About Me” section',
+                      'Showcase your work with unlimited images',
+                      'Collect and display client reviews (star ratings)',
+                      'List your services and set pricing',
+                      'Share via QR code, link, or save-to-contacts',
+                      'Display work/services as list, grid, or carousel',
+                      'Make it easy for clients to contact you',
+                    ].map((text, i) => (
+                      <li className="pricing-feature" key={i}>
+                        <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
+                        <span style={{ fontWeight: 600 }} className='white desktop-body-x'>{text}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Sticky bottom area: quote + CTA */}
+                  <div className="pricing-bottom">
+
+                    <Link
+                      to="/productandplan/konarsubscription"
+                      className="cta-blue-button desktop-button"
+                      style={{ marginTop: 20, width: '100%' }}
+                    >
+                      View Subscription Details
+                    </Link>
+                  </div>
                 </div>
-              ))}
-            </div>
-
-            <p className='desktop-body-s subscription-description-footer'>
-              "The perfect tool for tradesmen to make an unforgettable first impression and get new clients."
-            </p>
-
-            <div className="subscription-price-cta">
-              <div className='price-display'>
-                <p className='desktop-h5'>£7.95</p>
-                <p className='light-black' style={{ fontSize: 14 }}>Per Month</p>
               </div>
-              {isSubscribed ? (
-                <div className="active-plan-buttons">
-                  <button className="desktop-button combined-section-button black-button">
-                    Plan Active
-                  </button>
-                  <button onClick={handleCancelSubscription} className={`desktop-button combined-section-button red-button ${isConfirmingCancel ? 'confirm-cancel' : ''}`}>
-                    {isConfirmingCancel ? (cancelCountdown > 0 ? `Cancel in ${cancelCountdown}...` : 'Confirm Cancel') : 'Cancel Subscription'}
-                  </button>
+
+              {/* Physical card (black) */}
+              <div className="pricing-card pricing-card--product">
+                <div className="pricing-inner">
+                  <div className="pricing-head">
+                    <div>
+                      <h3 className="desktop-h5">Konar Card - White Edition</h3>
+                      <p className='desktop-body-xs'>Tap to share your profile instantly.</p>
+                    </div>
+                    <span className="pricing-badge">12 Month Warranty</span>
+                  </div>
+                  <div className="pricing-divider" />
+                  <div className="pricing-price-row">
+                    <span className="desktop-h1">£24.95</span>
+                    <span className="desktop-button">One Time Purchase</span>
+                  </div>
+
+                  <div className="pricing-media">
+                    <img src={PlasticCard} alt="Konar Card - White Edition" />
+                  </div>
+
+                  {/* Sticky bottom area: quote + CTA */}
+                  <div className="pricing-bottom">
+
+                    <Link
+                      to="/productandplan/konarcard"
+                      className="cta-black-button desktop-button"
+                      style={{ marginTop: 20, width: '100%' }}
+                    >
+                      View Card Details
+                    </Link>
+                  </div>
                 </div>
-              ) : (
-                <button onClick={handleSubscribe} className="desktop-button combined-section-button black-button">
-                  Subscribe Now
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="card-offer-right contact-card-content">
-            <div className="product-header">
-              <p className='desktop-h5'>Plastic NFC Card</p>
-              <div className="free-trial-badge product-header-badge">12 Month Warranty</div>
-            </div>
-            <p className='desktop-body-s product-subheader'>Lightweight, Durable, Always Ready</p>
-            <p className='desktop-body-xs product-optional-sentence'>This product is optional, buy one to stand out.</p>
-
-            <img src={PlasticCard} className="product-image" />
-
-            <p className='desktop-body-s subscription-description-footer'>
-              "For those who want to stand out above those who already stand out!"
-            </p>
-
-            <div className="product-price-cta">
-              <div className='price-display'>
-                <p className='desktop-h5'>£24.95</p>
-                <p className='light-black' style={{ fontSize: 14 }}>Lifetime Use</p>
               </div>
-              <Link to="/productandplan/konarcard" className="desktop-button combined-section-button black-button">
-                View Card Details
-              </Link>
             </div>
           </div>
         </div>
