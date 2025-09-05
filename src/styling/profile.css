@@ -5,7 +5,7 @@
     align-items: center;
     /* Center horizontally */
     justify-content: center;
-    padding: 20px;
+    padding: 0px;
     gap: 40px;
     box-sizing: border-box;
 }
