@@ -176,12 +176,6 @@ export default function NFCCards() {
         />
 
         <div className="profile-page-wrapper">
-          <div className="section">
-            <div className="section-1-title">
-              <h2 className="desktop-h3 text-center">One Plan. One Card. Endless Opportunities.</h2>
-              <h3 className="desktop-h6 text-center">No confusion. Just one powerful plan to make you stand out.</h3>
-            </div>
-
             <div className="pricing-grid">
               {/* Subscription card (blue) */}
               <div className="pricing-card pricing-card--subscription">
@@ -267,7 +261,6 @@ export default function NFCCards() {
               </div>
             </div>
           </div>
-        </div>
       </main>
 
       <ShareProfile
