@@ -176,7 +176,7 @@ export default function NFCCards() {
         />
 
         <div className="profile-page-wrapper">
-            <div className="pricing-grid-new">
+            <div style={{borderRadius: 16}} className="pricing-grid-new">
               {/* Subscription card (blue) */}
               <div className="pricing-card pricing-card--subscription">
                 <div className="pricing-inner">
@@ -227,7 +227,7 @@ export default function NFCCards() {
               </div>
 
               {/* Physical card (black) */}
-              <div className="pricing-card pricing-card--product">
+              <div style={{borderRadius: 16}} className="pricing-card pricing-card--product">
                 <div className="pricing-inner">
                   <div className="pricing-head">
                     <div>
