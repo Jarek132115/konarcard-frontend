@@ -1403,7 +1403,7 @@
         padding: 20px;
         border-width: 6px;
         border-radius: 20px;
-        height: 70vh;
+        height: fit-content;
         overflow: visible !important;
         max-width: 100%;
     }
