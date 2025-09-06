@@ -132,6 +132,12 @@ body.dark-mode .share-modal-content {
     flex-shrink: 0;
 }
 
+/* Make the Visit Profile icon blue */
+.visit-profile-icon {
+    /* same blue tone used elsewhere in the app */
+    filter: invert(38%) sepia(91%) saturate(2303%) hue-rotate(201deg) brightness(96%) contrast(99%);
+}
+
 /* QR code section */
 .qr-code-section {
     display: flex;

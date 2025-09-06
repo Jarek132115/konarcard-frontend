@@ -113,7 +113,7 @@ export default function ShareProfile({
                             <img
                                 src={VisitProfileIcon}
                                 alt="Visit Profile"
-                                className="share-button-icon"
+                                className="share-button-icon visit-profile-icon"
                             />
                             Visit Profile
                         </a>
@@ -134,7 +134,7 @@ export default function ShareProfile({
                             <a
                                 href={qrCodeImage}
                                 download={`${username || "konarcard"}-qrcode.png`}
-                                className="cta-blue-button share-button-custom"
+                                className="cta-black-button share-button-custom"
                             >
                                 <img
                                     src={DownloadQRIcon}
