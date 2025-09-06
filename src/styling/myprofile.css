@@ -991,6 +991,10 @@
     justify-content: center;
 }
 
+.editor-item-card:hover {
+    cursor: pointer;
+}
+
 .editor-item-card input,
 .editor-item-card textarea {
     margin-bottom: 0;
