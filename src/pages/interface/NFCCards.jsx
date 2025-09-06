@@ -175,7 +175,7 @@ export default function NFCCards() {
           isSmallMobile={isSmallMobile}
         />
 
-        <div className="myprofile-flex-container">
+        <div className="profile-page-wrapper">
           <div className="pricing-grid">
             {/* Subscription card (blue) */}
             <div style={{ borderRadius: 16 }} className="pricing-card pricing-card--subscription">
