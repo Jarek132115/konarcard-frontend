@@ -1269,10 +1269,10 @@ export default function MyProfile() {
                     )}
 
                     <div className="button-group">
-                      <button type="button" onClick={handleResetPage} className="black-button desktop-button">
+                      <button type="button" onClick={handleResetPage} className="cta-black-button desktop-button">
                         Reset Page
                       </button>
-                      <button type="submit" className="blue-button desktop-button">
+                      <button type="submit" className="cta-blue-button desktop-button">
                         Publish Now
                       </button>
                     </div>
