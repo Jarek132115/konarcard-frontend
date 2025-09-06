@@ -117,7 +117,7 @@
    ========================= */
 .pricing-grid {
   display: flex;
-  gap: 40px;
+  gap: 20px;
   justify-content: center;
   align-items: stretch;
   /* stretch equal heights */
