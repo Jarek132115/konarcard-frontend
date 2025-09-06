@@ -119,7 +119,31 @@
   display: flex;
   gap: 40px;
   justify-content: center;
-  align-items: flex-start;
+  align-items: stretch;
+  /* stretch equal heights */
+}
+
+/* Make each card take exactly 50% on desktop */
+.pricing-card {
+  flex: 1 1 0;
+  /* equal flex share */
+  min-width: 0;
+  /* prevent overflow from long content */
+  max-width: none;
+}
+
+/* Let the inner card fill the height so footer buttons align nicely */
+.pricing-card .pricing-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make media responsive inside product card */
+.pricing-media img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 @media (max-width: 1000px) {

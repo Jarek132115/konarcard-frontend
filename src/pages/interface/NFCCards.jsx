@@ -176,7 +176,6 @@ export default function NFCCards() {
         />
 
         <div className="profile-page-wrapper">
-          {/* CHANGED: wrapper class renamed to pricing-grid */}
           <div className="pricing-grid">
             {/* Subscription card (blue) */}
             <div style={{ borderRadius: 16 }} className="pricing-card pricing-card--subscription">
@@ -215,7 +214,6 @@ export default function NFCCards() {
                   ))}
                 </ul>
 
-                {/* Sticky bottom area: quote + CTA */}
                 <div className="pricing-bottom">
                   <Link
                     to="/productandplan/konarsubscription"
@@ -248,7 +246,6 @@ export default function NFCCards() {
                   <img src={PlasticCard} alt="Konar Card - White Edition" />
                 </div>
 
-                {/* Sticky bottom area: quote + CTA */}
                 <div className="pricing-bottom">
                   <Link
                     to="/productandplan/konarcard"
