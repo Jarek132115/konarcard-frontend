@@ -113,6 +113,9 @@
     /* subtle lift */
     0 8px 24px rgba(0, 0, 0, 0.08);
   /* soft outer glow */
+
+  /* FIX: match desktop-button font size */
+  font-size: 0.95rem;
 }
 
 /* Blue outline + blue text */
