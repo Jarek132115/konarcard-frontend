@@ -364,7 +364,6 @@
     box-sizing: border-box;
     font-family: var(--main-font-family);
     transition: transform .06s ease, box-shadow .2s ease, opacity .2s ease;
-    margin-bottom: 36px;
 }
 
 .mock-button:hover {
