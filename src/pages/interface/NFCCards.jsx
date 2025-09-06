@@ -175,92 +175,93 @@ export default function NFCCards() {
           isSmallMobile={isSmallMobile}
         />
 
-        <div className="myprofile-flex-container">
-            <div className="pricing-grid-new">
-              {/* Subscription card (blue) */}
-              <div  style={{borderRadius: 16}} className="pricing-card pricing-card--subscription">
-                <div className="pricing-inner">
-                  <div className="pricing-head">
-                    <div>
-                      <h3 className="desktop-h5">Power Profile</h3>
-                      <p className='desktop-body-xs'>Win more work with a power profile</p>
-                    </div>
-                    <span className="pricing-badge blue">14-Day Free Trial</span>
+        <div className="profile-page-wrapper">
+          {/* CHANGED: wrapper class renamed to pricing-grid */}
+          <div className="pricing-grid">
+            {/* Subscription card (blue) */}
+            <div style={{ borderRadius: 16 }} className="pricing-card pricing-card--subscription">
+              <div className="pricing-inner">
+                <div className="pricing-head">
+                  <div>
+                    <h3 className="desktop-h5">Power Profile</h3>
+                    <p className="desktop-body-xs">Win more work with a power profile</p>
                   </div>
-                  <div className="pricing-divider" />
-                  <div className="pricing-price-row">
-                    <span className="desktop-h1">£4.95</span>
-                    <span className="desktop-button">Per Month</span>
-                  </div>
+                  <span className="pricing-badge blue">14-Day Free Trial</span>
+                </div>
+                <div className="pricing-divider" />
+                <div className="pricing-price-row">
+                  <span className="desktop-h1">£4.95</span>
+                  <span className="desktop-button">Per Month</span>
+                </div>
 
-                  <ul className="pricing-features">
-                    {[
-                      'Update your profile instantly (real-time edits)',
-                      'Choose fonts and light/dark themes',
-                      'Write a compelling “About Me” section',
-                      'Showcase your work with unlimited images',
-                      'Collect and display client reviews (star ratings)',
-                      'List your services and set pricing',
-                      'Share via QR code, link, or save-to-contacts',
-                      'Display work/services as list, grid, or carousel',
-                      'Make it easy for clients to contact you',
-                    ].map((text, i) => (
-                      <li className="pricing-feature" key={i}>
-                        <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
-                        <span style={{ fontWeight: 600 }} className='white desktop-body-x'>{text}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <ul className="pricing-features">
+                  {[
+                    'Update your profile instantly (real-time edits)',
+                    'Choose fonts and light/dark themes',
+                    'Write a compelling “About Me” section',
+                    'Showcase your work with unlimited images',
+                    'Collect and display client reviews (star ratings)',
+                    'List your services and set pricing',
+                    'Share via QR code, link, or save-to-contacts',
+                    'Display work/services as list, grid, or carousel',
+                    'Make it easy for clients to contact you',
+                  ].map((text, i) => (
+                    <li className="pricing-feature" key={i}>
+                      <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
+                      <span style={{ fontWeight: 600 }} className="white desktop-body-x">
+                        {text}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
 
-                  {/* Sticky bottom area: quote + CTA */}
-                  <div className="pricing-bottom">
-
-                    <Link
-                      to="/productandplan/konarsubscription"
-                      className="cta-blue-button desktop-button"
-                      style={{ marginTop: 20, width: '100%' }}
-                    >
-                      View Subscription Details
-                    </Link>
-                  </div>
+                {/* Sticky bottom area: quote + CTA */}
+                <div className="pricing-bottom">
+                  <Link
+                    to="/productandplan/konarsubscription"
+                    className="cta-blue-button desktop-button"
+                    style={{ marginTop: 20, width: '100%' }}
+                  >
+                    View Subscription Details
+                  </Link>
                 </div>
               </div>
+            </div>
 
-              {/* Physical card (black) */}
-              <div style={{borderRadius: 16}} className="pricing-card pricing-card--product">
-                <div className="pricing-inner">
-                  <div className="pricing-head">
-                    <div>
-                      <h3 className="desktop-h5">Konar Card - White Edition</h3>
-                      <p className='desktop-body-xs'>Tap to share your profile instantly.</p>
-                    </div>
-                    <span className="pricing-badge">12 Month Warranty</span>
+            {/* Physical card (black) */}
+            <div style={{ borderRadius: 16 }} className="pricing-card pricing-card--product">
+              <div className="pricing-inner">
+                <div className="pricing-head">
+                  <div>
+                    <h3 className="desktop-h5">Konar Card - White Edition</h3>
+                    <p className="desktop-body-xs">Tap to share your profile instantly.</p>
                   </div>
-                  <div className="pricing-divider" />
-                  <div className="pricing-price-row">
-                    <span className="desktop-h1">£24.95</span>
-                    <span className="desktop-button">One Time Purchase</span>
-                  </div>
+                  <span className="pricing-badge">12 Month Warranty</span>
+                </div>
+                <div className="pricing-divider" />
+                <div className="pricing-price-row">
+                  <span className="desktop-h1">£24.95</span>
+                  <span className="desktop-button">One Time Purchase</span>
+                </div>
 
-                  <div className="pricing-media">
-                    <img src={PlasticCard} alt="Konar Card - White Edition" />
-                  </div>
+                <div className="pricing-media">
+                  <img src={PlasticCard} alt="Konar Card - White Edition" />
+                </div>
 
-                  {/* Sticky bottom area: quote + CTA */}
-                  <div className="pricing-bottom">
-
-                    <Link
-                      to="/productandplan/konarcard"
-                      className="cta-black-button desktop-button"
-                      style={{ marginTop: 20, width: '100%' }}
-                    >
-                      View Card Details
-                    </Link>
-                  </div>
+                {/* Sticky bottom area: quote + CTA */}
+                <div className="pricing-bottom">
+                  <Link
+                    to="/productandplan/konarcard"
+                    className="cta-black-button desktop-button"
+                    style={{ marginTop: 20, width: '100%' }}
+                  >
+                    View Card Details
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
+        </div>
       </main>
 
       <ShareProfile

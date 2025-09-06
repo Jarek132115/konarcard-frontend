@@ -104,11 +104,31 @@
   margin-bottom: 10px;
 }
 
-
 .Prouct-Image-Section {
   width: 100%;
   margin: 0 auto;
   display: flex;
   align-items: center;
   gap: 40px;
+}
+
+/* =========================
+   Pricing grid for plans/cards
+   ========================= */
+.pricing-grid {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+@media (max-width: 1000px) {
+  .pricing-grid {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .pricing-card {
+    width: 100%;
+  }
 }
