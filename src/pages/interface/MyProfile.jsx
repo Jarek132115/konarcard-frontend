@@ -909,11 +909,26 @@ export default function MyProfile() {
                             onChange={handleImageUpload}
                             style={{ display: "none" }}
                           />
-                          <div className="image-upload-area cover-photo-upload" onClick={() => fileInputRef.current?.click()}>
-                            {showAddImageText(state.coverPhoto) && <span className="upload-text">Add Cover Photo</span>}
-                            <img src={getEditorImageSrc(state.coverPhoto, previewPlaceholders.coverPhoto)} alt="Cover" className="cover-preview" />
+                          {/* UPDATED: match Work Images card style */}
+                          <div
+                            className="editor-item-card work-image-item-wrapper cover-photo-card"
+                            onClick={() => fileInputRef.current?.click()}
+                          >
+                            {state.coverPhoto ? (
+                              <img
+                                src={getEditorImageSrc(state.coverPhoto, previewPlaceholders.coverPhoto)}
+                                alt="Cover"
+                                className="work-image-preview"
+                              />
+                            ) : (
+                              <span className="upload-text">Add Cover Photo</span>
+                            )}
                             {state.coverPhoto && (
-                              <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}>
+                              <button
+                                type="button"
+                                className="remove-image-button"
+                                onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}
+                              >
                                 &times;
                               </button>
                             )}

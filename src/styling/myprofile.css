@@ -894,6 +894,21 @@
     object-fit: cover;
 }
 
+/* NEW: Cover photo matches the gray work image card */
+.cover-photo-card {
+    width: 100%;
+    height: 180px;
+    background-color: var(--placeholder-bg);
+    display: grid;
+    place-items: center;
+}
+
+.cover-photo-card .upload-text {
+    position: static;
+    color: var(--subtle-text-color);
+    font-size: 14px;
+}
+
 .remove-image-button {
     position: absolute;
     top: 5px;
