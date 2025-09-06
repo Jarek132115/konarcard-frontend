@@ -1460,7 +1460,6 @@
         height: auto !important;
         background: var(--primary-bg);
         overflow-y: visible !important;
-        margin-bottom: 40px;
     }
 
     .button-group {
