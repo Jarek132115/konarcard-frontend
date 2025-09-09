@@ -131,20 +131,21 @@
   /* stretch equal heights */
 }
 
-/* Make each card take exactly 50% on desktop */
+/* Make each card split space evenly on desktop */
 .pricing-card {
-  flex: 1 1 0;
-  /* equal flex share */
+  flex: 1 1 auto;
+  /* was 1 1 0; use auto so column layout won't collapse */
   min-width: 0;
   /* prevent overflow from long content */
   max-width: none;
 }
 
-/* Let the inner card fill the height so footer buttons align nicely */
+/* Let the inner card stack content and be naturally tall */
 .pricing-card .pricing-inner {
-  height: 100%;
   display: flex;
   flex-direction: column;
+  height: auto;
+  /* don't force 100% without a definite parent height */
 }
 
 /* Make media responsive inside product card */
@@ -161,6 +162,13 @@
   }
 
   .pricing-card {
+    flex: 0 1 auto;
+    /* allow natural height in column flow */
     width: 100%;
+  }
+
+  .pricing-card .pricing-inner {
+    height: auto;
+    /* explicit reset for safety on mobile */
   }
 }
