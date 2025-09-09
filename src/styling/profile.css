@@ -148,7 +148,7 @@
 .profile-reset-password-inline-btn {
     flex-shrink: 0;
     /* Prevent button from shrinking below its content */
-    padding: 12px 15px;
+    padding: 6px;
     /* Match input padding for height */
     border-radius: 0 6px 6px 0;
     /* Rounded only on right side */
