@@ -270,7 +270,7 @@ body.dark-mode .profile-reset-password-inline-btn:hover {
 
     /* Fix for Reset button size on Tablet and Mobile */
     .profile-reset-password-inline-btn {
-        padding: 10px 12px;
+        padding: 4px;
         font-size: 13px;
         min-width: 60px;
         /* Still provide a minimum */
