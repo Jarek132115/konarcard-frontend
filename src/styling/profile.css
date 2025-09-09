@@ -20,25 +20,16 @@
 /* The actual card box that holds the form */
 .profile-settings-card {
     background: #ffffff;
-    padding: 20px;
-    /* Internal padding */
-    border-radius: 20px;
-    /* 20px border as requested */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    /* Shadow similar to modals */
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, .08);
     max-width: 550px;
-    /* Max width between 500-600px, chose 550px */
     width: 100%;
-    /* Ensure it takes full width up to max-width */
-    border: 1px solid #e0e0e0;
-    /* Border as requested */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    /* Align text and form elements to the left within the card */
     gap: 20px;
-    /* Space between main sections like display name, password, buttons */
 }
 
 /* Styling for individual input blocks */
