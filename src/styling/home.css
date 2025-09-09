@@ -839,8 +839,7 @@ body {
 .pricing-price-row {
     display: flex;
     align-items: baseline;
-    gap: 14px;
-    margin-top: 8px;
+    gap: 0;
 }
 
 .pricing-price {
