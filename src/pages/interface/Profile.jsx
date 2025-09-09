@@ -241,15 +241,18 @@ export default function Profile() {
             <div className="profile-action-buttons-group">
               <button
                 onClick={handleDelete}
-                className="black-button profile-action-button"
+                className="cta-black-button desktop-button profile-action-button"
                 disabled={isConfirmingDelete && deleteCountdown > 0}
               >
-                <span className="desktop-button">
-                  {isConfirmingDelete ? (deleteCountdown > 0 ? `Delete in ${deleteCountdown}...` : 'Confirm Delete') : 'Delete Your Account'}
-                </span>
+                {isConfirmingDelete
+                  ? (deleteCountdown > 0 ? `Delete in ${deleteCountdown}...` : 'Confirm Delete')
+                  : 'Delete Your Account'}
               </button>
-              <button onClick={handleSave} className="blue-button profile-action-button">
-                <span className="desktop-button">Save Updates</span>
+              <button
+                onClick={handleSave}
+                className="cta-blue-button desktop-button profile-action-button"
+              >
+                Save Updates
               </button>
             </div>
           </div>
