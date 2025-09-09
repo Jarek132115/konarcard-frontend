@@ -15,7 +15,7 @@ export default function ContactSupport() {
         email: '',
         reason: '',
         message: '',
-        agree: true
+        agree: true,
     });
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -23,11 +23,11 @@ export default function ContactSupport() {
     const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
     const [showShareModal, setShowShareModal] = useState(false);
 
-    const { user: authUser, loading: authLoading } = useContext(AuthContext);
+    const { user: authUser } = useContext(AuthContext);
     const userId = authUser?._id;
     const userUsername = authUser?.username;
 
-    const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
+    const { data: businessCard } = useFetchBusinessCard(userId);
 
     useEffect(() => {
         const handleResize = () => {
@@ -35,51 +35,33 @@ export default function ContactSupport() {
             const currentIsSmallMobile = window.innerWidth <= 600;
             setIsMobile(currentIsMobile);
             setIsSmallMobile(currentIsSmallMobile);
-            if (!currentIsMobile && sidebarOpen) {
-                setSidebarOpen(false);
-            }
+            if (!currentIsMobile && sidebarOpen) setSidebarOpen(false);
         };
-
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, [sidebarOpen]);
 
     useEffect(() => {
-        if (sidebarOpen && isMobile) {
-            document.body.classList.add('body-no-scroll');
-        } else {
-            document.body.classList.remove('body-no-scroll');
-        }
+        if (sidebarOpen && isMobile) document.body.classList.add('body-no-scroll');
+        else document.body.classList.remove('body-no-scroll');
     }, [sidebarOpen, isMobile]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
+        setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!formData.name || !formData.email || !formData.reason || !formData.message) {
             toast.error('Please fill in all required fields.');
             return;
         }
-
         try {
             const res = await api.post('/contact', formData);
-
             if (res.data.success) {
                 toast.success('Message sent!');
-                setFormData({
-                    name: '',
-                    email: '',
-                    reason: '',
-                    message: '',
-                    agree: true
-                });
+                setFormData({ name: '', email: '', reason: '', message: '', agree: true });
             } else {
                 toast.error(res.data.error || 'Something went wrong');
             }
@@ -90,15 +72,12 @@ export default function ContactSupport() {
 
     const handleShareCard = () => {
         if (!authUser?.isVerified) {
-            toast.error("Please verify your email to share your card.");
+            toast.error('Please verify your email to share your card.');
             return;
         }
         setShowShareModal(true);
     };
-
-    const handleCloseShareModal = () => {
-        setShowShareModal(false);
-    };
+    const handleCloseShareModal = () => setShowShareModal(false);
 
     const contactDetailsForVCard = {
         full_name: businessCard?.full_name || authUser?.name || '',
@@ -115,6 +94,7 @@ export default function ContactSupport() {
 
     return (
         <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
+            {/* Mobile header */}
             <div className="myprofile-mobile-header">
                 <Link to="/" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -123,99 +103,93 @@ export default function ContactSupport() {
                     className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
                     onClick={() => setSidebarOpen(!sidebarOpen)}
                 >
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span></span><span></span><span></span>
                 </div>
             </div>
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
             {sidebarOpen && isMobile && (
-                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>
+                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
             )}
 
             <main className="main-content-container">
                 <PageHeader
                     title="Contact Support"
-                    onActivateCard={() => { /* Functionality not implemented here */ }}
+                    onActivateCard={() => { }}
                     onShareCard={handleShareCard}
                     isMobile={isMobile}
                     isSmallMobile={isSmallMobile}
                 />
 
-                <div className="contact-page-wrapper">
-                    <div className="contact-card-content">
+                {/* IMPORTANT: reuse the same wrapper & card classes as Profile */}
+                <div className="profile-page-wrapper contact">
+                    <div className="profile-settings-card">
                         <p className="desktop-body light-black contact-intro-text">
                             Want to talk to us right now?{' '}
                             <span
                                 className="support-live-chat-link"
-                                onClick={() => {
-                                    if (window.tidioChatApi) {
-                                        window.tidioChatApi.open();
-                                    }
-                                }}
+                                onClick={() => window.tidioChatApi && window.tidioChatApi.open()}
                             >
                                 Start a live chat.
                             </span>
                         </p>
 
-                        <form className='support-form' onSubmit={handleSubmit}>
-                            <label htmlFor="name" className="support-label desktop-body-s black">Your Name</label>
+                        <form onSubmit={handleSubmit} className="support-form">
+                            <label htmlFor="name" className="profile-label desktop-body-s black">Your Name</label>
                             <input
-                                type='text'
-                                id='name'
-                                name='name'
-                                placeholder='Enter your name'
+                                id="name"
+                                name="name"
+                                type="text"
+                                placeholder="Enter your name"
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
-                                className='support-input desktop-body'
+                                className="profile-input-field desktop-body"
                             />
 
-                            <label htmlFor="email" className="support-label desktop-body-s black">Your Email</label>
+                            <label htmlFor="email" className="profile-label desktop-body-s black">Your Email</label>
                             <input
-                                type='email'
-                                id='email'
-                                name='email'
-                                placeholder='Enter your email'
+                                id="email"
+                                name="email"
+                                type="email"
+                                placeholder="Enter your email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
-                                className='support-input desktop-body'
+                                className="profile-input-field desktop-body"
                             />
 
-                            <label htmlFor="reason" className="support-label desktop-body-s black">Reason for contact</label>
+                            <label htmlFor="reason" className="profile-label desktop-body-s black">Reason for contact</label>
                             <select
-                                id='reason'
-                                name='reason'
+                                id="reason"
+                                name="reason"
                                 value={formData.reason}
                                 onChange={handleChange}
                                 required
-                                className='support-select desktop-body'
+                                className="profile-input-field desktop-body"
                             >
-                                <option value=''>Select a reason</option>
-                                <option value='Card not working'>My card isn’t working</option>
-                                <option value='Card damaged'>My card is damaged</option>
-                                <option value='Profile issue'>I can’t see my profile</option>
-                                <option value='Setup help'>Help setting up profile</option>
-                                <option value='Other'>Other</option>
+                                <option value="">Select a reason</option>
+                                <option value="Card not working">My card isn’t working</option>
+                                <option value="Card damaged">My card is damaged</option>
+                                <option value="Profile issue">I can’t see my profile</option>
+                                <option value="Setup help">Help setting up profile</option>
+                                <option value="Other">Other</option>
                             </select>
 
-                            <label htmlFor="message" className="support-label desktop-body-s black">Your Message</label>
+                            <label htmlFor="message" className="profile-label desktop-body-s black">Your Message</label>
                             <textarea
-                                id='message'
-                                name='message'
+                                id="message"
+                                name="message"
                                 placeholder="Enter your message..."
                                 value={formData.message}
                                 onChange={handleChange}
                                 required
-                                className='support-textarea desktop-body'
                                 rows="3"
+                                className="profile-input-field desktop-body"
                             />
 
-                            <button type='submit' className=' blue-button desktop-button'>
-                                <span className='desktop-button'>Submit</span>
+                            <button type="submit" className="cta-blue-button desktop-button" style={{ width: '100%' }}>
+                                Submit
                             </button>
                         </form>
                     </div>
