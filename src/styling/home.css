@@ -1269,3 +1269,16 @@ body {
         object-fit: cover;
     }
 }
+
+/* Global baseline for all icons */
+img.icon,
+svg.icon {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+}
+
+.pricing-check {
+    width: 25px;
+    height: 25px;
+}
