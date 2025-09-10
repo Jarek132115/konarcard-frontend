@@ -25,6 +25,9 @@ import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
 import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
 import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
 import LinkIcon from '../../assets/icons/Link-Icon.svg';
+import TapIcon from '../../assets/icons/Tap-Icon.svg';
+import MoneyIcon from '../../assets/icons/Money-Icon.svg';
+import ShareIcon from '../../assets/icons/Share-Icon.svg';
 import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 import ScanQRCode from '../../assets/images/ScanQR-Code.jpg';
 import LinkInBio from '../../assets/images/LinkInBio.jpg';
@@ -303,7 +306,7 @@ export default function Home() {
                 <div className="step-bullets">
                   <div className="section-list">
                     <div className="icon-white">
-                      <img src={BoltIcon} className="icon" alt="" />
+                      <img src={TapIcon} className="icon" alt="" />
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Tap or scan to share</p>
@@ -313,7 +316,7 @@ export default function Home() {
 
                   <div className="section-list">
                     <div className="icon-white">
-                      <img src={CustomizationIcon} className="icon" alt="" />
+                      <img src={ShareIcon} className="icon" alt="" />
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Send your link anywhere</p>
@@ -323,7 +326,7 @@ export default function Home() {
 
                   <div className="section-list">
                     <div className="icon-white">
-                      <img src={FormCustomizationIcon} className="icon" alt="" />
+                      <img src={MoneyIcon} className="icon" alt="" />
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Win more work</p>
