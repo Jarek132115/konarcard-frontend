@@ -1193,11 +1193,13 @@ body {
     .pricing-media-tray {
         --thumb-h: 54px;
         height: auto;
+        /* allow natural height */
     }
 
     .pricing-media-main {
         height: auto;
         aspect-ratio: 1 / 1;
+        /* square on mobile */
     }
 }
 
@@ -1234,17 +1236,19 @@ body {
         width: 100%;
         height: 100%;
         aspect-ratio: 1 / 1;
+        /* keep thumbs perfectly square */
         object-fit: cover;
     }
 }
 
-/* Tighter gaps & 1:1 thumbnails on small screens */
+/* Under 600px: smaller gap */
 @media (max-width: 600px) {
     .pricing-media-thumbs {
         gap: 4px;
     }
 }
 
+/* Under 430px: square thumbs, tiny gap */
 @media (max-width: 430px) {
     .pricing-media-thumbs {
         gap: 2px;
@@ -1261,7 +1265,7 @@ body {
     }
 }
 
-/* Global baseline for all icons (img, svg, span) */
+/* ===== Global baseline for all icons (img, svg, span masked) ===== */
 .icon,
 img.icon,
 svg.icon {
@@ -1269,13 +1273,12 @@ svg.icon {
     height: 20px;
     display: inline-block;
     flex: 0 0 20px;
-    /* keeps size in flex rows */
 }
 
-/* Masked icon paints the SVG shape with background-color */
+/* Masked icons (use with <span class="icon icon-mask" style="mask-image:url(...)" />) */
 .icon-mask {
     background-color: #333;
-    /* <- your desired colour */
+    /* control icon colour here */
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
@@ -1284,8 +1287,7 @@ svg.icon {
     mask-size: contain;
 }
 
-
-/* Keep the pricing tick larger (white on blue card via your existing class) */
+/* Keep pricing tick sizing */
 .pricing-check {
     width: 25px;
     height: 25px;
