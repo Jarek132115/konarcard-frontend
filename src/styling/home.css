@@ -1261,26 +1261,29 @@ body {
     }
 }
 
-/* Global baseline for all icons */
+/* Global baseline for all icons (img, svg, span) */
+.icon,
 img.icon,
 svg.icon {
     width: 20px;
     height: 20px;
     display: inline-block;
+    flex: 0 0 20px;
+    /* keeps size in flex rows */
 }
 
-/* Masked icon color control */
+/* Masked icon paints the SVG shape with background-color */
 .icon-mask {
     background-color: #333;
-    /* icon colour */
+    /* <- your desired colour */
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
     mask-position: center;
     -webkit-mask-size: contain;
     mask-size: contain;
-    display: inline-block;
 }
+
 
 /* Keep the pricing tick larger (white on blue card via your existing class) */
 .pricing-check {
