@@ -195,7 +195,7 @@ export default function Home() {
                 <img src={EditProfile} alt="Create your profile" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Craft a branded profile clients instantly recognise and trust</h3>
+                <h3 className="desktop-h5">Craft A Branded Profile Clients Trust</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
@@ -203,8 +203,8 @@ export default function Home() {
                       <img src={BoltIcon} className="icon" alt="" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Sign up and get your profile live</p>
-                      <p className="desktop-body-xs gray">Launch your professional profile in under five minutes.</p>
+                      <p className="desktop-h6">Sign up &amp; go live</p>
+                      <p className="desktop-body-xs gray">Launch your profile in under 5 minutes.</p>
                     </div>
                   </div>
 
@@ -213,8 +213,8 @@ export default function Home() {
                       <img src={CustomizationIcon} className="icon" alt="" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Brand it with your colours and style</p>
-                      <p className="desktop-body-xs gray">Add your logo, photos, colours and preferred layout.</p>
+                      <p className="desktop-h6">Make it yours</p>
+                      <p className="desktop-body-xs gray">Add a logo, photo, colours and layout.</p>
                     </div>
                   </div>
 
@@ -223,8 +223,8 @@ export default function Home() {
                       <img src={FormCustomizationIcon} className="icon" alt="" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Use a simple editor with guided fields</p>
-                      <p className="desktop-body-xs gray">Complete simple fields; no coding skills are required.</p>
+                      <p className="desktop-h6">Simple editor</p>
+                      <p className="desktop-body-xs gray">Fill in easy fields — no coding needed.</p>
                     </div>
                   </div>
                 </div>
@@ -242,10 +242,10 @@ export default function Home() {
             <div className="step-badge">Step 2</div>
             <div className="step-card reverse">
               <div className="step-media">
-                <img src={Section1Image} alt="Order your Konar Card White Edition" />
+                <img src={Section1Image} alt="Order your NFC card" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Order the Konar Card White Edition today for impact</h3>
+                <h3 className="desktop-h5">Order Your Tap-To-Share Card Today</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
@@ -253,8 +253,9 @@ export default function Home() {
                       <img src={BoltIcon} className="icon" alt="" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Order the Konar Card White Edition</p>
-                      <p className="desktop-body-xs gray">One premium finish designed to suit every brand.</p>
+                      {/* CHANGED */}
+                      <p className="desktop-h6">Order your Konar Card</p>
+                      <p className="desktop-body-xs gray">Choose a design that fits your brand.</p>
                     </div>
                   </div>
 
@@ -263,8 +264,8 @@ export default function Home() {
                       <img src={CustomizationIcon} className="icon" alt="" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">We print, quality check and ship fast</p>
-                      <p className="desktop-body-xs gray">Fast turnaround and durable, high-quality card finish guaranteed.</p>
+                      <p className="desktop-h6">We print &amp; ship</p>
+                      <p className="desktop-body-xs gray">Fast turnaround, quality finish.</p>
                     </div>
                   </div>
 
@@ -273,8 +274,8 @@ export default function Home() {
                       <img src={FormCustomizationIcon} className="icon" alt="" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Card is linked directly to your profile</p>
-                      <p className="desktop-body-xs gray">Your card instantly opens your live profile page.</p>
+                      <p className="desktop-h6">Link to your profile</p>
+                      <p className="desktop-body-xs gray">Your card opens your live page.</p>
                     </div>
                   </div>
                 </div>
@@ -295,7 +296,7 @@ export default function Home() {
                 <img src={WhyYouNeedThis} alt="Share your page" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Share in seconds and win more local jobs</h3>
+                <h3 className="desktop-h5">Share In Seconds And Win More Jobs</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
@@ -303,8 +304,8 @@ export default function Home() {
                       <img src={BoltIcon} className="icon" alt="" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Tap or scan to share instantly, anywhere</p>
-                      <p className="desktop-body-xs gray">Open your profile instantly using NFC or QR.</p>
+                      <p className="desktop-h6">Tap or scan to share</p>
+                      <p className="desktop-body-xs gray">Open your profile with NFC or QR.</p>
                     </div>
                   </div>
 
@@ -313,8 +314,8 @@ export default function Home() {
                       <img src={CustomizationIcon} className="icon" alt="" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Send your profile link anywhere with ease</p>
-                      <p className="desktop-body-xs gray">Share by message, social media, email or anywhere.</p>
+                      <p className="desktop-h6">Send your link anywhere</p>
+                      <p className="desktop-body-xs gray">Messages, socials, email — easy.</p>
                     </div>
                   </div>
 
@@ -323,8 +324,8 @@ export default function Home() {
                       <img src={FormCustomizationIcon} className="icon" alt="" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Win more work and convert enquiries faster</p>
-                      <p className="desktop-body-xs gray">Stand out, impress clients and get hired faster.</p>
+                      <p className="desktop-h6">Win more work</p>
+                      <p className="desktop-body-xs gray">Stand out and get hired faster.</p>
                     </div>
                   </div>
                 </div>
