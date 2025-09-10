@@ -47,6 +47,19 @@ import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
 
+/** Masked icon so we can enforce color via CSS without editing SVG files */
+const MaskIcon = ({ src, className = '', label = '' }) => (
+  <span
+    className={`icon icon-mask ${className}`}
+    role="img"
+    aria-label={label || 'icon'}
+    style={{
+      WebkitMaskImage: `url(${src})`,
+      maskImage: `url(${src})`,
+    }}
+  />
+);
+
 export default function Home() {
   const { user, loading: authLoading } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -184,7 +197,6 @@ export default function Home() {
       </div>
 
       {/* ---------- 3 STEPS GROUP (with heading + 40px gaps) ---------- */}
-      {/* ---------- 3 STEPS GROUP (with heading + 40px gaps) ---------- */}
       <div className="section steps-section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Getting Set Up Is Quick & Easy</h2>
@@ -205,7 +217,7 @@ export default function Home() {
                 <div className="step-bullets">
                   <div className="section-list">
                     <div className="icon-white">
-                      <img src={BoltIcon} className="icon" alt="" />
+                      <MaskIcon src={BoltIcon} />
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Sign up &amp; go live</p>
@@ -215,7 +227,7 @@ export default function Home() {
 
                   <div className="section-list">
                     <div className="icon-white">
-                      <img src={CustomizationIcon} className="icon" alt="" />
+                      <MaskIcon src={CustomizationIcon} />
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Make it yours</p>
@@ -225,7 +237,7 @@ export default function Home() {
 
                   <div className="section-list">
                     <div className="icon-white">
-                      <img src={FormCustomizationIcon} className="icon" alt="" />
+                      <MaskIcon src={FormCustomizationIcon} />
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Simple editor</p>
@@ -255,7 +267,7 @@ export default function Home() {
                 <div className="step-bullets">
                   <div className="section-list">
                     <div className="icon-white">
-                      <img src={NFCIcon} className="icon" alt="" />
+                      <MaskIcon src={NFCIcon} />
                     </div>
                     <div className="section-list-info">
                       {/* CHANGED */}
@@ -266,7 +278,7 @@ export default function Home() {
 
                   <div className="section-list">
                     <div className="icon-white">
-                      <img src={DeliveryIcon} className="icon" alt="" />
+                      <MaskIcon src={DeliveryIcon} />
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">We print &amp; ship</p>
@@ -276,7 +288,7 @@ export default function Home() {
 
                   <div className="section-list">
                     <div className="icon-white">
-                      <img src={LinkIcon} className="icon" alt="" />
+                      <MaskIcon src={LinkIcon} />
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Link to your profile</p>
@@ -306,7 +318,7 @@ export default function Home() {
                 <div className="step-bullets">
                   <div className="section-list">
                     <div className="icon-white">
-                      <img src={TapIcon} className="icon" alt="" />
+                      <MaskIcon src={TapIcon} />
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Tap or scan to share</p>
@@ -316,7 +328,7 @@ export default function Home() {
 
                   <div className="section-list">
                     <div className="icon-white">
-                      <img src={ShareIcon} className="icon" alt="" />
+                      <MaskIcon src={ShareIcon} />
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Send your link anywhere</p>
@@ -326,7 +338,7 @@ export default function Home() {
 
                   <div className="section-list">
                     <div className="icon-white">
-                      <img src={MoneyIcon} className="icon" alt="" />
+                      <MaskIcon src={MoneyIcon} />
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Win more work</p>
@@ -344,7 +356,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
 
       {/* --- PRICING (redesigned) --- */}
       <div className="section">
@@ -570,7 +581,7 @@ export default function Home() {
           <div className="faq-column">
             <div className="section-list">
               <div className="icon-white">
-                <img src={IDCardIcon} className="icon" />
+                <MaskIcon src={IDCardIcon} />
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">What is a Konar digital profile?</p>
@@ -579,7 +590,7 @@ export default function Home() {
             </div>
             <div className="section-list">
               <div className="icon-white">
-                <img src={NFCIcon} className="icon" />
+                <MaskIcon src={NFCIcon} />
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">Do I need an NFC card to use it?</p>
@@ -588,7 +599,7 @@ export default function Home() {
             </div>
             <div className="section-list">
               <div className="icon-white">
-                <img src={PhoneIcon} className="icon" />
+                <MaskIcon src={PhoneIcon} />
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">How do people view my profile?</p>
@@ -597,7 +608,7 @@ export default function Home() {
             </div>
             <div className="section-list">
               <div className="icon-white">
-                <img src={SetupIcon} className="icon" />
+                <MaskIcon src={SetupIcon} />
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">How do I set up my page?</p>
@@ -606,7 +617,7 @@ export default function Home() {
             </div>
             <div className="section-list">
               <div className="icon-white">
-                <img src={PencilIcon} className="icon" />
+                <MaskIcon src={PencilIcon} />
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">Can I update my page anytime?</p>
@@ -617,7 +628,7 @@ export default function Home() {
           <div className="faq-column">
             <div className="section-list">
               <div className="icon-white">
-                <img src={WalletIcon} className="icon" />
+                <MaskIcon src={WalletIcon} />
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">What does it cost to use?</p>
@@ -626,7 +637,7 @@ export default function Home() {
             </div>
             <div className="section-list">
               <div className="icon-white">
-                <img src={BoxIcon} className="icon" />
+                <MaskIcon src={BoxIcon} />
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">What happens if I lose my NFC card?</p>
@@ -635,7 +646,7 @@ export default function Home() {
             </div>
             <div className="section-list">
               <div className="icon-white">
-                <img src={HatIcon} className="icon" />
+                <MaskIcon src={HatIcon} />
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">Who is this for exactly?</p>
@@ -644,7 +655,7 @@ export default function Home() {
             </div>
             <div className="section-list">
               <div className="icon-white">
-                <img src={PalletteIcon} className="icon" />
+                <MaskIcon src={PalletteIcon} />
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">Can I customise the design and layout?</p>
@@ -653,7 +664,7 @@ export default function Home() {
             </div>
             <div className="section-list">
               <div className="icon-white">
-                <img src={LockIcon} className="icon" />
+                <MaskIcon src={LockIcon} />
               </div>
               <div className="section-list-info">
                 <p className="desktop-h6">Is my personal data safe on here?</p>

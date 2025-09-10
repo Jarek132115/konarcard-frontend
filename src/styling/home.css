@@ -1193,28 +1193,23 @@ body {
     .pricing-media-tray {
         --thumb-h: 54px;
         height: auto;
-        /* allow natural height */
     }
 
     .pricing-media-main {
         height: auto;
         aspect-ratio: 1 / 1;
-        /* square on mobile */
     }
 }
 
 /* Pricing card gallery: keep 4:3 under 1000px */
 @media (max-width: 1000px) {
     .pricing-media-tray {
-        /* let the tray size itself based on the 4:3 main area + thumbs */
         height: auto;
         --thumb-h: 60px;
-        /* tweak if you want taller/shorter thumbs */
         --thumb-gap: 10px;
     }
 
     .pricing-media-main {
-        /* key part: enforce 4:3 aspect on smaller screens */
         height: auto;
         aspect-ratio: 4 / 3;
         border-radius: 12px;
@@ -1239,21 +1234,17 @@ body {
         width: 100%;
         height: 100%;
         aspect-ratio: 1 / 1;
-        /* keep thumbs perfectly square */
         object-fit: cover;
     }
 }
 
 /* Tighter gaps & 1:1 thumbnails on small screens */
-
-/* Under 600px: smaller gap */
 @media (max-width: 600px) {
     .pricing-media-thumbs {
         gap: 4px;
     }
 }
 
-/* Under 430px: square thumbs, tiny gap */
 @media (max-width: 430px) {
     .pricing-media-thumbs {
         gap: 2px;
@@ -1278,6 +1269,20 @@ svg.icon {
     display: inline-block;
 }
 
+/* Masked icon color control */
+.icon-mask {
+    background-color: #333;
+    /* icon colour */
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    display: inline-block;
+}
+
+/* Keep the pricing tick larger (white on blue card via your existing class) */
 .pricing-check {
     width: 25px;
     height: 25px;
