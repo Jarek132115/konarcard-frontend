@@ -255,7 +255,7 @@ export default function Home() {
                     <div className="section-list-info">
                       {/* CHANGED */}
                       <p className="desktop-h6">Order your Konar Card</p>
-                      <p className="desktop-body-xs gray">Choose a design that fits your brand.</p>
+                      <p className="desktop-body-xs gray">The only card you'll ever need.</p>
                     </div>
                   </div>
 
