@@ -7,9 +7,6 @@
   z-index: 999;
   width: 100%;
   padding: 20px 0;
-  /* equal to overlay header spacing */
-  background: #fff;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
 
 .navbar-container {
