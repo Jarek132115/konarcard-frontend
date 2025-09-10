@@ -146,7 +146,7 @@ export default function Home() {
 
             <div className="hero-cta">
               <Link to="/productandplan" className="cta-blue-button desktop-button">View Plans & Cards</Link>
-              <Link to="/productandplan/konarsubscription" className="cta-black-button desktop-button">Start Your 14-Day Trial</Link>
+              <Link to="/register" className="cta-black-button desktop-button">Start Your 14-Day Trial</Link>
             </div>
 
             <div className="hero-social-proof">
