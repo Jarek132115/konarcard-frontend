@@ -1265,7 +1265,7 @@ body {
     }
 }
 
-/* ===== Global baseline for all icons (img, svg, span masked) ===== */
+/* ===== Global icon system ===== */
 .icon,
 img.icon,
 svg.icon {
@@ -1273,18 +1273,14 @@ svg.icon {
     height: 20px;
     display: inline-block;
     flex: 0 0 20px;
+    object-fit: contain;
 }
 
-/* Masked icons (use with <span class="icon icon-mask" style="mask-image:url(...)" />) */
-.icon-mask {
-    background-color: #333;
-    /* control icon colour here */
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
+/* Ensure all <img class="icon"> render as #333 on white chips.
+   Black (#000) at 0.8 alpha over white blends to #333. */
+.icon-img {
+    opacity: 0.8;
+    /* exact #333 over white backgrounds */
 }
 
 /* Keep pricing tick sizing */
