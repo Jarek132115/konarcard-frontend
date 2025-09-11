@@ -40,7 +40,7 @@ export default function ProductAndPlan() {
                             </div>
                             <div className="pricing-divider" />
                             <div className="pricing-price-row">
-                                <span className="desktop-h1">£4.95</span>
+                                <span className="desktop-h3">£4.95</span>
                                 <span className="desktop-button">/Month</span>
                             </div>
 
@@ -89,8 +89,7 @@ export default function ProductAndPlan() {
                             </div>
                             <div className="pricing-divider" />
                             <div className="pricing-price-row">
-                                <span className="desktop-h1">£24.95</span>
-                                <span className="desktop-button">One Time Purchase</span>
+                                <span className="desktop-h3">£24.95</span>
                             </div>
 
                             <div className="pricing-media">
