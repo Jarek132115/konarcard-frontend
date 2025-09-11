@@ -40,7 +40,7 @@ export default function FAQ() {
         <Breadcrumbs />
       </div>
 
-      <div style={{ marginTop: 40 }} className="section-1-title section">
+      <div className="section-1-title section">
         <h2 className="desktop-h1 text-center">Got Questions? We’ve Got Answers.</h2>
         <h3 className="desktop-h6 text-center">
           Straightforward info on the card, your digital profile, pricing, shipping, returns and more.
