@@ -164,8 +164,6 @@ export default function ContactUs() {
         </form>
       </div>
 
-      ---
-
       <div className="section">
         <div className="section-1-title">
           <h2 className='desktop-h3 text-center'>Frequently Asked Questions</h2>
