@@ -50,7 +50,7 @@ export default function KonarSubscription() {
 
     // Feature list (subscription-focused copy, same pill UI)
     const featurePills = [
-        { icon: PhoneIcon, title: 'Contact Buttons', text: 'Call, WhatsApp, email, map' },
+        { icon: PhoneIcon, title: 'Contact Button', text: 'Save my number' },
         { icon: NFCIcon, title: 'Tap to Share', text: 'Works with NFC cards' },
         { icon: WarrantyIcon, title: 'Live Updates', text: 'Edit anytime, goes live' },
         { icon: NFCIcon, title: 'QR & Link', text: 'Share anywhere in seconds' },
