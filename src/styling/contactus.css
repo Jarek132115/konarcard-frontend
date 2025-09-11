@@ -15,7 +15,7 @@
 
 /* NEW: spacing for labels above inputs */
 .field-label {
-    margin-bottom: 8px;
+    margin-bottom: 0;
     display: block;
 }
 
