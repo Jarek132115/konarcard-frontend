@@ -363,8 +363,8 @@ export default function Home() {
               </div>
               <div className="pricing-divider" />
               <div className="pricing-price-row">
-                <span className="desktop-h1">£4.95</span>
-                <span className="desktop-button">Per Month</span>
+                <span style={{ paddingRight: 5 }} className="desktop-h3">£4.95</span>
+                <span style={{ padding: 0 }} className="desktop-button">/Month</span>
               </div>
 
               <ul className="pricing-features">
@@ -381,12 +381,14 @@ export default function Home() {
                 ].map((text, i) => (
                   <li className="pricing-feature" key={i}>
                     <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
-                    <span style={{ fontWeight: 600 }} className='white desktop-body-s'>{text}</span>
+                    <span className='white desktop-body-x'>{text}</span>
                   </li>
                 ))}
               </ul>
 
+              {/* Sticky bottom area: quote + CTA */}
               <div className="pricing-bottom">
+
                 <Link
                   to="/productandplan/konarsubscription"
                   className="cta-blue-button desktop-button"
@@ -398,7 +400,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Physical card (black) — NOW WITH MAIN + 5 THUMBNAILS */}
+          {/* Physical card (black) */}
           <div className="pricing-card pricing-card--product">
             <div className="pricing-inner">
               <div className="pricing-head">
@@ -410,31 +412,16 @@ export default function Home() {
               </div>
               <div className="pricing-divider" />
               <div className="pricing-price-row">
-                <span className="desktop-h1">£24.95</span>
-                <span className="desktop-button">One Time Purchase</span>
+                <span className="desktop-h3">£24.95</span>
               </div>
 
-              {/* REPLACED: single image -> tray with thumbnails */}
-              <div className="pricing-media-tray">
-                <div className="pricing-media-main">
-                  <img src={cardMainImage} alt="Konar Card preview" />
-                </div>
-                <div className="pricing-media-thumbs">
-                  {cardThumbs.map((src, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      className={`pricing-media-thumb ${cardMainImage === src ? 'is-active' : ''}`}
-                      onClick={() => setCardMainImage(src)}
-                      aria-label={`View image ${i + 1}`}
-                    >
-                      <img src={src} alt={`Thumbnail ${i + 1}`} />
-                    </button>
-                  ))}
-                </div>
+              <div className="pricing-media">
+                <img src={PlasticCard} alt="Konar Card - White Edition" />
               </div>
 
+              {/* Sticky bottom area: quote + CTA */}
               <div className="pricing-bottom">
+
                 <Link
                   to="/productandplan/konarcard"
                   className="cta-black-button desktop-button"
