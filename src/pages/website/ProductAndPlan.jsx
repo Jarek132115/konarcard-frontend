@@ -41,7 +41,7 @@ export default function ProductAndPlan() {
                             <div className="pricing-divider" />
                             <div className="pricing-price-row">
                                 <span className="desktop-h1">£4.95</span>
-                                <span className="desktop-button">Per Month</span>
+                                <span className="desktop-button">/Month</span>
                             </div>
 
                             <ul className="pricing-features">
@@ -58,7 +58,7 @@ export default function ProductAndPlan() {
                                 ].map((text, i) => (
                                     <li className="pricing-feature" key={i}>
                                         <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
-                                        <span className='white desktop-body-xs'>{text}</span>
+                                        <span className='white desktop-body-x'>{text}</span>
                                     </li>
                                 ))}
                             </ul>
