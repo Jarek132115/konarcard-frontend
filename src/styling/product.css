@@ -130,7 +130,13 @@
     border: 1px solid #ededed;
     border-radius: 14px;
     box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
-    padding: 12px;
+    padding: 6px;
+}
+
+.pd-feature-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .pd-feature-icon {
