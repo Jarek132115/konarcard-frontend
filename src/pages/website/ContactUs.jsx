@@ -160,7 +160,7 @@ export default function ContactUs() {
             </span>
           </label>
 
-          <button type="submit" className="cta-blue-button desktop-button">
+          <button type="submit" className="cta-black-button desktop-button">
             Submit
           </button>
         </form>
