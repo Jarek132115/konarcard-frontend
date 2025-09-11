@@ -200,8 +200,8 @@ export default function FAQ() {
               <div className="section-list-info">
                 <p className="desktop-h6">Do I need a subscription to use the card?</p>
                 <p className="desktop-body-xs">
-                  The card is a one-time purchase. You can view your profile without a subscription,
-                  but you’ll need Power Profile to keep editing after the free trial.
+                  The card is a one-time purchase. To keep your profile online and editable beyond the 14-day free trial,
+                  you’ll need an active subscription. Without it, taps/QR/link won’t show your page.
                 </p>
               </div>
             </div>
@@ -211,9 +211,10 @@ export default function FAQ() {
             <div className="section-list">
               <div className="icon-white"><img src={TimeIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">What happens after my 14-day trial?</p>
+                <p className="desktop-h6">How does the free trial work?</p>
                 <p className="desktop-body-xs">
-                  If you don’t subscribe, your page stays live but editing is disabled. You can subscribe anytime to continue editing.
+                  The free trial and the subscription include the <strong>same features</strong>. If your trial ends and you don’t
+                  subscribe, your page will <strong>no longer be visible</strong> (taps/QR won’t load it). Subscribe anytime to reactivate.
                 </p>
               </div>
             </div>
@@ -221,9 +222,10 @@ export default function FAQ() {
             <div className="section-list">
               <div className="icon-white"><img src={ShieldIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">Can I cancel?</p>
+                <p className="desktop-h6">What happens if I cancel?</p>
                 <p className="desktop-body-xs">
-                  Yes. Cancel from your account dashboard. You’ll keep access until the end of the current billing period.
+                  You’ll keep access until the end of your current billing period. After that, your page will
+                  <strong> no longer show</strong> until you subscribe again.
                 </p>
               </div>
             </div>
