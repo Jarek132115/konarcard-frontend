@@ -43,7 +43,7 @@
     resize: vertical;
 }
 
-.terms-label {
+.terms-labels {
     display: flex;
     align-items: center;
     gap: 10px;

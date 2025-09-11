@@ -146,7 +146,7 @@ export default function ContactUs() {
             />
           </div>
 
-          <label className="terms-label">
+          <label className="terms-labels">
             <input
               type="checkbox"
               name="agree"
