@@ -74,9 +74,6 @@ export default function ContactUs() {
       <div style={{ marginTop: 40 }} className="section">
         <div className="contact-title-container">
           <p className="desktop-h1 text-center">Let’s talk</p>
-          <p className="desktop-body text-center">
-            Have a question, need support, or just want to say hi? We’re here and ready to help.
-          </p>
         </div>
 
         <div className="live-chat-info">
