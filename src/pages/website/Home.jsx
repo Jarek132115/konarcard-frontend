@@ -32,6 +32,8 @@ import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 import ScanQRCode from '../../assets/images/ScanQR-Code.jpg';
 import LinkInBio from '../../assets/images/LinkInBio.jpg';
 import SMSSend from '../../assets/images/SMSSend.jpg';
+import QRCode from '../../assets/icons/QR-Code-Icon.svg';
+
 import pp1 from '../../assets/images/pp1.png';
 import pp2 from '../../assets/images/pp2.png';
 import pp3 from '../../assets/images/pp3.png';
