@@ -346,7 +346,7 @@ export default function Home() {
       {/* ---------- HOW TO SHARE (new section after steps) ---------- */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Share Your Profile Anywhere</h2>
+          <h2 className="desktop-h3 text-center">One Profile. Shared Every Way.</h2>
           <h3 className="desktop-h6 text-center">Four simple ways to get your details in front of clients.</h3>
         </div>
 
