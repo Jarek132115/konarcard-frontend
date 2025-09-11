@@ -40,7 +40,7 @@ export default function ProductAndPlan() {
                             </div>
                             <div className="pricing-divider" />
                             <div className="pricing-price-row">
-                                <span className="desktop-h3">£4.95</span>
+                                <span style={{paddingRight: 5}} className="desktop-h3">£4.95</span>
                                 <span style={{padding: 0 }} className="desktop-button">/Month</span>
                             </div>
 
