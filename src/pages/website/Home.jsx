@@ -482,6 +482,7 @@ export default function Home() {
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Tradesmen Use It. Clients Love It.</h2>
+          <h3 className="desktop-h6 text-center">See how tradies use this every day.</h3>
         </div>
 
         <div className="people-showcase-container-flex">
