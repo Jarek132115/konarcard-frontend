@@ -130,7 +130,7 @@ export default function KonarSubscription() {
                     <div className="pd-meta-row">
                         <div className="pd-stars">
                             <img src={ReviewStars} alt="Rating" />
-                            <span className="pd-reviews-count light-black">(1,024)</span>
+                            <span className="pd-reviews-count light-black">(165)</span>
                         </div>
 
                         <div className="pd-price-wrap">
