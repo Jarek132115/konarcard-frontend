@@ -9,15 +9,12 @@ import api from '../../services/api'; // <--- ADDED: Import the API service
 
 import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
 import NFCIcon from '../../assets/icons/NFC-Icon.svg';
-import BoltIcon from '../../assets/icons/Bolt-Icon.svg';
-import SetupIcon from '../../assets/icons/Setup-Icon.svg';
-import BoxIcon from '../../assets/icons/Box-Icon.svg';
-import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
-import HatIcon from '../../assets/icons/Hat-Icon.svg';
-import LockIcon from '../../assets/icons/Lock-Icon.svg';
+import QRCode from '../../assets/icons/QR-Code-Icon.svg';
+import ProfileIcon from '../../assets/icons/Profile-Icon.svg';
 import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
-import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
-import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
+import BoltIcon from '../../assets/icons/Bolt-Icon.svg';
+import TimeIcon from '../../assets/icons/Time-Icon.svg';
+import ShieldIcon from '../../assets/icons/Shield-Icon.svg';
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -172,86 +169,72 @@ export default function ContactUs() {
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Frequently Asked Questions</h2>
-          <h3 className="desktop-h6 text-center">For any other questions feel free to contact us at any time</h3>
+          <h3 className="desktop-h6 text-center">Here are some quick answers before you reach out</h3>
         </div>
         <div className="faq-container">
           <div className="faq-column">
             <div className="section-list">
               <div className=" icon-white"><img src={IDCardIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">What is a Konar digital profile?</p>
-                <p className="desktop-body-xs">It’s your own landing page showing your trade, services, photos, and contact details — all online.</p>
+                <p className="desktop-h6">What is the Konar NFC business card?</p>
+                <p className="desktop-body-xs">A reusable card with an NFC chip that opens your Konar profile with a tap—no app, no battery, no fuss.</p>
               </div>
             </div>
             <div className="section-list">
               <div className=" icon-white"><img src={NFCIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">Do I need an NFC card to use it?</p>
-                <p className="desktop-body-xs">No. You can use and share your digital profile without ever buying a physical card.</p>
+                <p className="desktop-h6">How does the tap actually work?</p>
+                <p className="desktop-body-xs">The phone’s NFC reader powers the chip and instantly launches your live profile link.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={PhoneIcon} className="icon" /></div>
+              <div className=" icon-white"><img src={QRCode} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">How do people view my profile?</p>
-                <p className="desktop-body-xs">Share via link, QR code, or NFC tap — works instantly on most phones.</p>
+                <p className="desktop-h6">What if someone can’t tap?</p>
+                <p className="desktop-body-xs">Every card also has a QR code and a shareable link—so there’s always a backup.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={SetupIcon} className="icon" /></div>
+              <div className=" icon-white"><img src={ProfileIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">How do I set up my page?</p>
-                <p className="desktop-body-xs">Just fill in your trade, upload photos, list services — done in under five minutes.</p>
-              </div>
-            </div>
-            <div className="section-list">
-              <div className=" icon-white"><img src={PencilIcon} className="icon" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Can I update my page anytime?</p>
-                <p className="desktop-body-xs">Yes. Log in from any device to update info, images, services, or pricing instantly.</p>
+                <p className="desktop-h6">What can my profile include?</p>
+                <p className="desktop-body-xs">Your name, job title, bio, photos, services with pricing, reviews, and contact details.</p>
               </div>
             </div>
           </div>
           <div className="faq-column">
             <div className="section-list">
-              <div className=" icon-white"><img src={WalletIcon} className="icon" /></div>
+              <div className=" icon-white"><img src={PencilIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">What does it cost to use?</p>
-                <p className="desktop-body-xs">We offer a free plan. Premium features unlock with our £5.95/month Power Profile subscription.</p>
+                <p className="desktop-h6">Can I edit my page later?</p>
+                <p className="desktop-body-xs">Yes. Update info, images, services, or layout anytime—changes go live instantly.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={BoxIcon} className="icon" /></div>
+              <div className=" icon-white"><img src={BoltIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">What happens if I lose my NFC card?</p>
-                <p className="desktop-body-xs">Your page still works without the card. You can always reorder one if you want to keep tapping.</p>
+                <p className="desktop-h6">How do I share my page?</p>
+                <p className="desktop-body-xs">Tap your card, show the QR code, or copy your unique link to send anywhere.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={HatIcon} className="icon" /></div>
+              <div className=" icon-white"><img src={TimeIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">Who is this for exactly?</p>
-                <p className="desktop-body-xs">Any tradesperson who wants to get noticed, win more work, and look professional online.</p>
+                <p className="desktop-h6">How does the free trial work?</p>
+                <p className="desktop-body-xs">The free trial includes the same features as the subscription. If it ends and you don’t subscribe, your page will no longer show.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={PalletteIcon} className="icon" /></div>
+              <div className=" icon-white"><img src={ShieldIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">Can I customise the design and layout?</p>
-                <p className="desktop-body-xs">Yes. Pick fonts, colours, and layouts to match your brand and make it yours.</p>
-              </div>
-            </div>
-            <div className="section-list">
-              <div className=" icon-white"><img src={LockIcon} className="icon" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Is my personal data safe on here?</p>
-                <p className="desktop-body-xs">Absolutely. You control everything shown, and your data is hosted securely at all times.</p>
+                <p className="desktop-h6">What happens if I cancel?</p>
+                <p className="desktop-body-xs">You’ll keep access until the end of the billing period. After that, your page won’t show until you subscribe again.</p>
               </div>
             </div>
           </div>
         </div>
         <div style={{ marginTop: 40, display: 'flex', justifyContent: 'center' }}>
-          <Link to="/faq" className="black-button desktop-button">Frequently Asked Questions</Link>
+          <Link to="/faq" className="black-button desktop-button">See All FAQs</Link>
         </div>
       </div>
 
