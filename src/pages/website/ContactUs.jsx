@@ -25,29 +25,26 @@ export default function ContactUs() {
     email: '',
     reason: '',
     message: '',
-    agree: false
+    agree: true, // <-- PRE-CHECKED BY DEFAULT
   });
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // The `agree` checkbox is no longer required in your working example,
-    // but the original code had it. I'll keep the validation here just in case.
     if (!formData.name || !formData.email || !formData.reason || !formData.message || !formData.agree) {
       toast.error('Please fill in all fields and agree to the privacy policy.');
       return;
     }
 
     try {
-      // **UPDATED: Use the imported `api` service for the POST request**
       const res = await api.post('/contact', formData);
 
       if (res.data.success) {
@@ -57,7 +54,7 @@ export default function ContactUs() {
           email: '',
           reason: '',
           message: '',
-          agree: false
+          agree: true, // <-- keep it checked after reset
         });
       } else {
         toast.error(res.data.error || 'Something went wrong');
@@ -74,11 +71,14 @@ export default function ContactUs() {
         <Breadcrumbs />
       </div>
 
-      <div style={{ marginTop: 40 }} className='section'>
-        <div className='contact-title-container'>
-          <p className='desktop-h1 text-center'>Let’s talk</p>
-          <p className='desktop-body text-center'>Have a question, need support, or just want to say hi? We’re here and ready to help.</p>
+      <div style={{ marginTop: 40 }} className="section">
+        <div className="contact-title-container">
+          <p className="desktop-h1 text-center">Let’s talk</p>
+          <p className="desktop-body text-center">
+            Have a question, need support, or just want to say hi? We’re here and ready to help.
+          </p>
         </div>
+
         <div className="live-chat-info">
           <p className="desktop-body text-center">
             Want to talk to us right now?{' '}
@@ -95,48 +95,56 @@ export default function ContactUs() {
           </p>
         </div>
 
-        <form className='contact-form' onSubmit={handleSubmit}>
-          <div className='contact-input-container'>
+        <form className="contact-form" onSubmit={handleSubmit}>
+          <div className="contact-input-container">
+            <label htmlFor="name" className="desktop-body field-label">Name</label>
             <input
-              type='text'
-              name='name'
-              placeholder='Enter your name'
+              id="name"
+              type="text"
+              name="name"
+              placeholder="Enter your name"
               value={formData.name}
               onChange={handleChange}
               required
             />
           </div>
 
-          <div className='contact-input-container'>
+          <div className="contact-input-container">
+            <label htmlFor="email" className="desktop-body field-label">Email</label>
             <input
-              type='email'
-              name='email'
-              placeholder='Enter your email'
+              id="email"
+              type="email"
+              name="email"
+              placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
               required
             />
           </div>
 
-          <div className='contact-input-container'>
+          <div className="contact-input-container">
+            <label htmlFor="reason" className="desktop-body field-label">Reason</label>
             <select
-              name='reason'
+              id="reason"
+              name="reason"
               value={formData.reason}
               onChange={handleChange}
               required
             >
-              <option value=''>Select a reason</option>
-              <option value='Card not working'>My card isn’t working</option>
-              <option value='Card damaged'>My card is damaged</option>
-              <option value='Profile issue'>I can’t see my profile</option>
-              <option value='Setup help'>Help setting up profile</option>
-              <option value='Other'>Other</option>
+              <option value="">Select a reason</option>
+              <option value="Card not working">My card isn’t working</option>
+              <option value="Card damaged">My card is damaged</option>
+              <option value="Profile issue">I can’t see my profile</option>
+              <option value="Setup help">Help setting up profile</option>
+              <option value="Other">Other</option>
             </select>
           </div>
 
-          <div className='contact-input-container-message'>
+          <div className="contact-input-container-message">
+            <label htmlFor="message" className="desktop-body field-label">Message</label>
             <textarea
-              name='message'
+              id="message"
+              name="message"
               placeholder="Enter your message..."
               value={formData.message}
               onChange={handleChange}
@@ -144,21 +152,21 @@ export default function ContactUs() {
             />
           </div>
 
-          <label className='terms-label'>
+          <label className="terms-label">
             <input
-              type='checkbox'
-              name='agree'
-              className='terms-checkbox'
+              type="checkbox"
+              name="agree"
+              className="terms-checkbox"
               checked={formData.agree}
               onChange={handleChange}
               required
             />
-            <span className='desktop-body-xs'>
+            <span className="desktop-body-xs">
               I understand that Konar will securely hold my data in accordance with their privacy policy.
             </span>
           </label>
 
-          <button type='submit' className='blue-button desktop-button'>
+          <button type="submit" className="blue-button desktop-button">
             Submit
           </button>
         </form>
@@ -166,23 +174,83 @@ export default function ContactUs() {
 
       <div className="section">
         <div className="section-1-title">
-          <h2 className='desktop-h3 text-center'>Frequently Asked Questions</h2>
-          <h3 className='desktop-h6 text-center'>For any other questions feel free to contact us at any time</h3>
+          <h2 className="desktop-h3 text-center">Frequently Asked Questions</h2>
+          <h3 className="desktop-h6 text-center">For any other questions feel free to contact us at any time</h3>
         </div>
         <div className="faq-container">
           <div className="faq-column">
-            <div className="section-list"><div className=" icon-white"><img src={IDCardIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>What is a Konar digital profile?</p><p className='desktop-body-xs'>It’s your own landing page showing your trade, services, photos, and contact details — all online.</p></div></div>
-            <div className="section-list"><div className=" icon-white"><img src={NFCIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>Do I need an NFC card to use it?</p><p className='desktop-body-xs'>No. You can use and share your digital profile without ever buying a physical card.</p></div></div>
-            <div className="section-list"><div className=" icon-white"><img src={PhoneIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>How do people view my profile?</p><p className='desktop-body-xs'>Share via link, QR code, or NFC tap — works instantly on most phones.</p></div></div>
-            <div className="section-list"><div className=" icon-white"><img src={SetupIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>How do I set up my page?</p><p className='desktop-body-xs'>Just fill in your trade, upload photos, list services — done in under five minutes.</p></div></div>
-            <div className="section-list"><div className=" icon-white"><img src={PencilIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>Can I update my page anytime?</p><p className='desktop-body-xs'>Yes. Log in from any device to update info, images, services, or pricing instantly.</p></div></div>
+            <div className="section-list">
+              <div className=" icon-white"><img src={IDCardIcon} className="icon" /></div>
+              <div className="section-list-info">
+                <p className="desktop-h6">What is a Konar digital profile?</p>
+                <p className="desktop-body-xs">It’s your own landing page showing your trade, services, photos, and contact details — all online.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white"><img src={NFCIcon} className="icon" /></div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Do I need an NFC card to use it?</p>
+                <p className="desktop-body-xs">No. You can use and share your digital profile without ever buying a physical card.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white"><img src={PhoneIcon} className="icon" /></div>
+              <div className="section-list-info">
+                <p className="desktop-h6">How do people view my profile?</p>
+                <p className="desktop-body-xs">Share via link, QR code, or NFC tap — works instantly on most phones.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white"><img src={SetupIcon} className="icon" /></div>
+              <div className="section-list-info">
+                <p className="desktop-h6">How do I set up my page?</p>
+                <p className="desktop-body-xs">Just fill in your trade, upload photos, list services — done in under five minutes.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white"><img src={PencilIcon} className="icon" /></div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Can I update my page anytime?</p>
+                <p className="desktop-body-xs">Yes. Log in from any device to update info, images, services, or pricing instantly.</p>
+              </div>
+            </div>
           </div>
           <div className="faq-column">
-            <div className="section-list"><div className=" icon-white"><img src={WalletIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>What does it cost to use?</p><p className='desktop-body-xs'>We offer a free plan. Premium features unlock with our £5.95/month Power Profile subscription.</p></div></div>
-            <div className="section-list"><div className=" icon-white"><img src={BoxIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>What happens if I lose my NFC card?</p><p className='desktop-body-xs'>Your page still works without the card. You can always reorder one if you want to keep tapping.</p></div></div>
-            <div className="section-list"><div className=" icon-white"><img src={HatIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>Who is this for exactly?</p><p className='desktop-body-xs'>Any tradesperson who wants to get noticed, win more work, and look professional online.</p></div></div>
-            <div className="section-list"><div className=" icon-white"><img src={PalletteIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>Can I customise the design and layout?</p><p className='desktop-body-xs'>Yes. Pick fonts, colours, and layouts to match your brand and make it yours.</p></div></div>
-            <div className="section-list"><div className=" icon-white"><img src={LockIcon} className="icon" /></div><div className="section-list-info"><p className='desktop-h6'>Is my personal data safe on here?</p><p className='desktop-body-xs'>Absolutely. You control everything shown, and your data is hosted securely at all times.</p></div></div>
+            <div className="section-list">
+              <div className=" icon-white"><img src={WalletIcon} className="icon" /></div>
+              <div className="section-list-info">
+                <p className="desktop-h6">What does it cost to use?</p>
+                <p className="desktop-body-xs">We offer a free plan. Premium features unlock with our £5.95/month Power Profile subscription.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white"><img src={BoxIcon} className="icon" /></div>
+              <div className="section-list-info">
+                <p className="desktop-h6">What happens if I lose my NFC card?</p>
+                <p className="desktop-body-xs">Your page still works without the card. You can always reorder one if you want to keep tapping.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white"><img src={HatIcon} className="icon" /></div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Who is this for exactly?</p>
+                <p className="desktop-body-xs">Any tradesperson who wants to get noticed, win more work, and look professional online.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white"><img src={PalletteIcon} className="icon" /></div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Can I customise the design and layout?</p>
+                <p className="desktop-body-xs">Yes. Pick fonts, colours, and layouts to match your brand and make it yours.</p>
+              </div>
+            </div>
+            <div className="section-list">
+              <div className=" icon-white"><img src={LockIcon} className="icon" /></div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Is my personal data safe on here?</p>
+                <p className="desktop-body-xs">Absolutely. You control everything shown, and your data is hosted securely at all times.</p>
+              </div>
+            </div>
           </div>
         </div>
         <div style={{ marginTop: 40, display: 'flex', justifyContent: 'center' }}>

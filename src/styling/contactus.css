@@ -13,6 +13,12 @@
     flex-direction: column;
 }
 
+/* NEW: spacing for labels above inputs */
+.field-label {
+    margin-bottom: 8px;
+    display: block;
+}
+
 .contact-form input[type='text'],
 .contact-form input[type='email'],
 .contact-form textarea,
@@ -83,4 +89,13 @@
 
 .live-chat-link:hover {
     color: #005fcc;
+}
+
+/* NEW: mobile alignment override for title, subtitle, and live chat text */
+@media (max-width: 600px) {
+
+    .contact-title-container .text-center,
+    .live-chat-info .text-center {
+        text-align: left !important;
+    }
 }
