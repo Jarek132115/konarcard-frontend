@@ -657,6 +657,10 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        <div className="faq-cta">
+          <Link to="/faq" className="black-button desktop-button">Read More Q&A</Link>
+        </div>
       </div>
 
       <Footer />
