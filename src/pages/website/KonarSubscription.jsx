@@ -220,10 +220,6 @@ export default function KonarSubscription() {
                         </div>
                     </div>
                 </div>
-
-                <div className="faq-cta">
-                    <Link to="/reviews" className="black-button desktop-button">Read More Reviews</Link>
-                </div>
             </div>
 
             {/* ===== FAQ (same block as KonarCard) ===== */}
