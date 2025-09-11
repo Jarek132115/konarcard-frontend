@@ -233,9 +233,6 @@ export default function ContactUs() {
             </div>
           </div>
         </div>
-        <div style={{ marginTop: 40, display: 'flex', justifyContent: 'center' }}>
-          <Link to="/faq" className="black-button desktop-button">See All FAQs</Link>
-        </div>
       </div>
 
       <Footer />
