@@ -106,51 +106,6 @@ export default function FAQ() {
         </div>
       </div>
 
-      {/* Customisation & Design */}
-      <div style={{ marginTop: 40 }} className="section">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Customisation & Design</h2>
-          <h3 className="desktop-h6 text-center">Make it look exactly like your brand.</h3>
-        </div>
-
-        <div className="faq-container">
-          <div className="faq-column">
-            <div className="section-list">
-              <div className="icon-white"><img src={MaterialsIcon} className="icon" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">What materials can I choose?</p>
-                <p className="desktop-body-xs">Plastic, Wood, and Metal options—each with a different feel and durability.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white"><img src={Pencil} className="icon" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Can I customise the card design?</p>
-                <p className="desktop-body-xs">Yes—upload your logo, set colours, and choose finishes during setup.</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="faq-column">
-            <div className="section-list">
-              <div className="icon-white"><img src={ProfilePencil} className="icon" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Can I update my digital page later?</p>
-                <p className="desktop-body-xs">Anytime. Edit services, photos, prices, and contact details in your dashboard—no reprinting needed.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white"><img src={ShieldIcon} className="icon" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Are the cards durable?</p>
-                <p className="desktop-body-xs">Built for daily use and scratch-resistant; treated to handle real-world jobs.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Digital Profile & Setup */}
       <div style={{ marginTop: 40 }} className="section">
