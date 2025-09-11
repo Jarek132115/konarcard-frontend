@@ -1,3 +1,4 @@
+// frontend/src/pages/FAQ/index.jsx
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
@@ -41,14 +42,16 @@ export default function FAQ() {
 
       <div style={{ marginTop: 40 }} className="section-1-title section">
         <h2 className="desktop-h1 text-center">Got Questions? We’ve Got Answers.</h2>
-        <h3 className="desktop-h6 text-center">Everything you need to know about cards, profiles, pricing, shipping, returns, and more.</h3>
+        <h3 className="desktop-h6 text-center">
+          Straightforward info on the card, your digital profile, pricing, shipping, returns and more.
+        </h3>
       </div>
 
       {/* Product & Technology */}
       <div style={{ marginTop: 80 }} className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Product & Technology</h2>
-          <h3 className="desktop-h6 text-center">How the card and tap-to-share actually work.</h3>
+          <h3 className="desktop-h6 text-center">How tap-to-share works and what’s inside the card.</h3>
         </div>
 
         <div className="faq-container">
@@ -56,16 +59,21 @@ export default function FAQ() {
             <div className="section-list">
               <div className="icon-white"><img src={IDCardIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">What is an NFC business card?</p>
-                <p className="desktop-body-xs">A physical card with a tiny chip that opens your Konar profile on a phone with a tap—no app or battery needed.</p>
+                <p className="desktop-h6">What is the Konar NFC business card?</p>
+                <p className="desktop-body-xs">
+                  A reusable card with a tiny NFC chip that opens your Konar profile on someone’s phone with a tap—no app,
+                  no battery, no fuss.
+                </p>
               </div>
             </div>
 
             <div className="section-list">
               <div className="icon-white"><img src={NFCIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">How does the tap work?</p>
-                <p className="desktop-body-xs">The phone’s NFC reader powers the chip and launches your profile instantly.</p>
+                <p className="desktop-h6">How does the tap actually work?</p>
+                <p className="desktop-body-xs">
+                  The phone’s NFC reader powers the chip and instantly launches your live profile link. You control what’s shown.
+                </p>
               </div>
             </div>
 
@@ -73,7 +81,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={QRCode} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What if someone can’t tap?</p>
-                <p className="desktop-body-xs">Every card includes a QR code and a shareable link—so your page is always accessible.</p>
+                <p className="desktop-body-xs">
+                  Every card has a QR code and your profile also has a shareable link—so there’s always a backup.
+                </p>
               </div>
             </div>
           </div>
@@ -82,36 +92,39 @@ export default function FAQ() {
             <div className="section-list">
               <div className="icon-white"><img src={PhoneIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">Does it work on all phones?</p>
-                <p className="desktop-body-xs">Works on iPhone 7+ and most Android phones with NFC enabled. QR works on any camera phone.</p>
+                <p className="desktop-h6">Will it work with their phone?</p>
+                <p className="desktop-body-xs">
+                  Works on iPhone 7 or newer and most Android phones with NFC enabled. QR works on any phone with a camera.
+                </p>
               </div>
             </div>
 
             <div className="section-list">
               <div className="icon-white"><img src={NFCChipIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">Is the chip visible?</p>
-                <p className="desktop-body-xs">No—it's sealed inside the card and doesn’t affect the look or finish.</p>
+                <p className="desktop-h6">Is the NFC chip visible?</p>
+                <p className="desktop-body-xs">No. It’s sealed inside the card and doesn’t affect the finish or design.</p>
               </div>
             </div>
 
             <div className="section-list">
               <div className="icon-white"><img src={TimeIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">How long will it last?</p>
-                <p className="desktop-body-xs">Years of everyday use. There’s no battery to run out and nothing to charge.</p>
+                <p className="desktop-h6">How long does the card last?</p>
+                <p className="desktop-body-xs">
+                  Years of everyday use. There’s no battery to die and nothing to charge.
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-
       {/* Digital Profile & Setup */}
       <div style={{ marginTop: 40 }} className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Digital Profile & Setup</h2>
-          <h3 className="desktop-h6 text-center">What you can add and how to build it fast.</h3>
+          <h3 className="desktop-h6 text-center">Build it fast. Update it anytime.</h3>
         </div>
 
         <div className="faq-container">
@@ -119,34 +132,43 @@ export default function FAQ() {
             <div className="section-list">
               <div className="icon-white"><img src={ProfileIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">What can my page include?</p>
-                <p className="desktop-body-xs">Contact details, services, prices, gallery, reviews, bio and social links—plus custom buttons.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white"><img src={InfoIcon} className="icon" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Do I need to be techy?</p>
-                <p className="desktop-body-xs">No. It’s a simple dashboard—most people finish in under five minutes.</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="faq-column">
-            <div className="section-list">
-              <div className="icon-white"><img src={TimeIcon} className="icon" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">How do I share my page?</p>
-                <p className="desktop-body-xs">Tap the card, scan the QR, or share the link by text, email, or socials.</p>
+                <p className="desktop-h6">What can my profile include?</p>
+                <p className="desktop-body-xs">
+                  Your name, job title, bio, services with prices, photo gallery, reviews (star ratings), contact buttons,
+                  social links and more.
+                </p>
               </div>
             </div>
 
             <div className="section-list">
               <div className="icon-white"><img src={BoltIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">Who is it for?</p>
-                <p className="desktop-body-xs">Built for tradies—plumbers, sparkies, builders, tilers, gardeners and more.</p>
+                <p className="desktop-h6">How long does setup take?</p>
+                <p className="desktop-body-xs">
+                  Most tradies finish in under 5 minutes—just fill in a few fields and hit Publish.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="faq-column">
+            <div className="section-list">
+              <div className="icon-white"><img src={Pencil} className="icon" /></div>
+              <div className="section-list-info">
+                <p className="desktop-h6">Can I edit my page later?</p>
+                <p className="desktop-body-xs">
+                  Yes. Make changes anytime—fonts, colours, layout, services, prices, photos and more update instantly.
+                </p>
+              </div>
+            </div>
+
+            <div className="section-list">
+              <div className="icon-white"><img src={QRCode} className="icon" /></div>
+              <div className="section-list-info">
+                <p className="desktop-h6">How do I share my page?</p>
+                <p className="desktop-body-xs">
+                  Tap your card, show the QR code, or copy your link to send via WhatsApp, SMS, Messenger or socials.
+                </p>
               </div>
             </div>
           </div>
@@ -157,34 +179,42 @@ export default function FAQ() {
       <div style={{ marginTop: 40 }} className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Pricing & Subscription</h2>
-          <h3 className="desktop-h6 text-center">Free trial, what’s included, and billing.</h3>
+          <h3 className="desktop-h6 text-center">Free trial, what’s included and billing basics.</h3>
         </div>
 
         <div className="faq-container">
           <div className="faq-column">
             <div className="section-list">
-              <div className="icon-white"><img src={BoltIcon} className="icon" /></div>
+              <div className="icon-white"><img src={ProfilePencil} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">What do I get with the subscription?</p>
-                <p className="desktop-body-xs">Your online profile with unlimited edits, gallery, services, reviews, styling and analytics after a 14-day free trial.</p>
+                <p className="desktop-h6">What’s included in Power Profile?</p>
+                <p className="desktop-body-xs">
+                  Unlimited edits, gallery, services with pricing, reviews, themes/fonts, layouts, QR/link sharing and more—
+                  all live instantly.
+                </p>
               </div>
             </div>
 
             <div className="section-list">
               <div className="icon-white"><img src={InfoIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">Do I need it to use the card?</p>
-                <p className="desktop-body-xs">Card is a one-time purchase. Subscription is optional but required to keep editing your page after the trial.</p>
+                <p className="desktop-h6">Do I need a subscription to use the card?</p>
+                <p className="desktop-body-xs">
+                  The card is a one-time purchase. You can view your profile without a subscription,
+                  but you’ll need Power Profile to keep editing after the free trial.
+                </p>
               </div>
             </div>
           </div>
 
           <div className="faq-column">
             <div className="section-list">
-              <div className="icon-white"><img src={ProfilePencil} className="icon" /></div>
+              <div className="icon-white"><img src={TimeIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">What happens after the trial?</p>
-                <p className="desktop-body-xs">If you don’t subscribe, your page stays live but editing is disabled. Subscribe any time to keep editing.</p>
+                <p className="desktop-h6">What happens after my 14-day trial?</p>
+                <p className="desktop-body-xs">
+                  If you don’t subscribe, your page stays live but editing is disabled. You can subscribe anytime to continue editing.
+                </p>
               </div>
             </div>
 
@@ -192,7 +222,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={ShieldIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Can I cancel?</p>
-                <p className="desktop-body-xs">Yes—cancel in your account. Access runs until the end of the current billing period.</p>
+                <p className="desktop-body-xs">
+                  Yes. Cancel from your account dashboard. You’ll keep access until the end of the current billing period.
+                </p>
               </div>
             </div>
           </div>
@@ -203,7 +235,7 @@ export default function FAQ() {
       <div style={{ marginTop: 40 }} className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Shipping & Delivery</h2>
-          <h3 className="desktop-h6 text-center">Production times, delivery windows, and tracking.</h3>
+          <h3 className="desktop-h6 text-center">Production times, delivery windows and tracking.</h3>
         </div>
 
         <div className="faq-container">
@@ -212,7 +244,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={DeliveryIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">When will my card arrive?</p>
-                <p className="desktop-body-xs">Production 2–4 business days. Free Standard delivery 3–7 business days; Express 1–3 business days.</p>
+                <p className="desktop-body-xs">
+                  Production takes 2–4 business days. Standard delivery is 3–7 business days; Express is 1–3 business days.
+                </p>
               </div>
             </div>
 
@@ -220,7 +254,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={WorldIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Do you ship internationally?</p>
-                <p className="desktop-body-xs">Yes—Europe 3–5 days, outside Europe up to 10 days. Customs/taxes may apply.</p>
+                <p className="desktop-body-xs">
+                  Yes. Europe typically 3–5 days; outside Europe up to 10 days. Local customs/taxes may apply.
+                </p>
               </div>
             </div>
           </div>
@@ -230,7 +266,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={AddressIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Can I change my address?</p>
-                <p className="desktop-body-xs">Only before production starts. Contact support ASAP with your order number.</p>
+                <p className="desktop-body-xs">
+                  If production hasn’t started, yes—contact support ASAP with your order number and the new address.
+                </p>
               </div>
             </div>
 
@@ -238,7 +276,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={TrackIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How do I track my order?</p>
-                <p className="desktop-body-xs">We’ll email you a tracking link the moment your card ships.</p>
+                <p className="desktop-body-xs">
+                  We’ll email a tracking link as soon as your card ships.
+                </p>
               </div>
             </div>
           </div>
@@ -249,7 +289,7 @@ export default function FAQ() {
       <div style={{ marginTop: 40 }} className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Returns, Cancellations & Refunds</h2>
-          <h3 className="desktop-h6 text-center">What to do if something goes wrong.</h3>
+          <h3 className="desktop-h6 text-center">If something’s not right, here’s what to do.</h3>
         </div>
 
         <div className="faq-container">
@@ -257,8 +297,10 @@ export default function FAQ() {
             <div className="section-list">
               <div className="icon-white"><img src={ReturnIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">Can I return or exchange?</p>
-                <p className="desktop-body-xs">Custom cards aren’t returnable unless there’s a manufacturing defect.</p>
+                <p className="desktop-h6">Can I return or exchange my card?</p>
+                <p className="desktop-body-xs">
+                  Custom-printed cards aren’t returnable unless there’s a manufacturing defect.
+                </p>
               </div>
             </div>
 
@@ -266,7 +308,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={CancelIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Can I cancel my order?</p>
-                <p className="desktop-body-xs">Cancellations are possible within 2 hours of purchase (before production begins).</p>
+                <p className="desktop-body-xs">
+                  You can cancel within 2 hours of purchase (before production starts). After that we’ve likely begun printing.
+                </p>
               </div>
             </div>
           </div>
@@ -275,8 +319,10 @@ export default function FAQ() {
             <div className="section-list">
               <div className="icon-white"><img src={DamagedIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">What if it arrives damaged?</p>
-                <p className="desktop-body-xs">Contact support within 7 days with photos/video—we’ll arrange a free replacement.</p>
+                <p className="desktop-h6">What if my card arrives damaged?</p>
+                <p className="desktop-body-xs">
+                  Contact support within 7 days with photos/video and we’ll arrange a fast replacement at no cost.
+                </p>
               </div>
             </div>
 
@@ -284,7 +330,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={RefundIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Do you offer refunds?</p>
-                <p className="desktop-body-xs">If a replacement can’t be provided, refunds are issued to your original payment method (5–10 business days).</p>
+                <p className="desktop-body-xs">
+                  If a replacement isn’t possible, we’ll refund to your original payment method (usually 5–10 business days).
+                </p>
               </div>
             </div>
           </div>
@@ -303,8 +351,10 @@ export default function FAQ() {
             <div className="section-list">
               <div className="icon-white"><img src={ShieldIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">What’s the warranty?</p>
-                <p className="desktop-body-xs">6-month limited warranty covering manufacturing defects, faulty chips, and printing errors.</p>
+                <p className="desktop-h6">What’s included in the warranty?</p>
+                <p className="desktop-body-xs">
+                  12-month limited warranty covering manufacturing defects, faulty chips and printing errors.
+                </p>
               </div>
             </div>
           </div>
@@ -314,7 +364,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={InfoIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What isn’t covered?</p>
-                <p className="desktop-body-xs">Damage from bending, cracking, cuts, water (unless waterproof model), normal wear, misuse, loss or theft.</p>
+                <p className="desktop-body-xs">
+                  Bending, cracks, cuts, water damage (unless a waterproof model), normal wear, misuse, loss or theft.
+                </p>
               </div>
             </div>
           </div>
@@ -334,15 +386,19 @@ export default function FAQ() {
               <div className="icon-white"><img src={EcoIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Are NFC cards eco-friendly?</p>
-                <p className="desktop-body-xs">One card can replace thousands of paper cards over its lifetime—less waste, fewer reprints.</p>
+                <p className="desktop-body-xs">
+                  One Konar card can replace thousands of paper cards over its lifetime—less printing, less waste.
+                </p>
               </div>
             </div>
 
             <div className="section-list">
               <div className="icon-white"><img src={TreeIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">Do you use sustainable materials?</p>
-                <p className="desktop-body-xs">Wood cards are made from responsibly sourced materials; metal cards are long-lasting.</p>
+                <p className="desktop-h6">What materials do you use?</p>
+                <p className="desktop-body-xs">
+                  We use durable, long-lasting materials. Our wood options are responsibly sourced; metal cards are built to last.
+                </p>
               </div>
             </div>
           </div>
@@ -352,7 +408,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={RecycleIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How does this help the planet?</p>
-                <p className="desktop-body-xs">Cuts paper use, reduces carbon from print runs, and keeps contact details digital.</p>
+                <p className="desktop-body-xs">
+                  Cuts paper usage, reduces carbon from print runs and keeps your details digital and up-to-date.
+                </p>
               </div>
             </div>
           </div>
@@ -372,7 +430,10 @@ export default function FAQ() {
               <div className="icon-white"><img src={InfoIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What data do you collect?</p>
-                <p className="desktop-body-xs">Profile info, contact details, order/shipping data and payment info—only to run your account and fulfil orders.</p>
+                <p className="desktop-body-xs">
+                  Profile details you add, contact info, order/shipping data and payment information—only to run your account
+                  and fulfil orders.
+                </p>
               </div>
             </div>
           </div>
@@ -382,7 +443,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={ShieldIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Do you sell my data?</p>
-                <p className="desktop-body-xs">No. We never sell your data. Limited sharing only with payment, printing and shipping partners.</p>
+                <p className="desktop-body-xs">
+                  No. We never sell your data. We only share what’s necessary with trusted payment, printing and shipping partners.
+                </p>
               </div>
             </div>
           </div>
@@ -393,7 +456,6 @@ export default function FAQ() {
       <div style={{ marginTop: 40 }} className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Support & Help</h2>
-          <h3 className="desktop-h6 text-center">We’re here if you get stuck.</h3>
         </div>
 
         <div className="faq-container">
@@ -401,8 +463,10 @@ export default function FAQ() {
             <div className="section-list">
               <div className="icon-white"><img src={ContactIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">How can I contact support?</p>
-                <p className="desktop-body-xs">Live chat on the site, email, or submit a Help Centre request—whatever’s easiest.</p>
+                <p className="desktop-h6">How do I contact support?</p>
+                <p className="desktop-body-xs">
+                  Use live chat on the site, drop us an email, or submit a Help Centre request—whatever works for you.
+                </p>
               </div>
             </div>
 
@@ -410,7 +474,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={TutorialIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Do you have tutorials?</p>
-                <p className="desktop-body-xs">Yes—step-by-step guides and videos to help you set up fast.</p>
+                <p className="desktop-body-xs">
+                  Yes—quick step-by-step guides and short videos to get you set up fast.
+                </p>
               </div>
             </div>
           </div>
@@ -419,8 +485,10 @@ export default function FAQ() {
             <div className="section-list">
               <div className="icon-white"><img src={TimeIcon} className="icon" /></div>
               <div className="section-list-info">
-                <p className="desktop-h6">How fast do you respond?</p>
-                <p className="desktop-body-xs">We usually reply within 24 hours on weekdays.</p>
+                <p className="desktop-h6">How quickly do you reply?</p>
+                <p className="desktop-body-xs">
+                  We usually respond within 24 hours on weekdays.
+                </p>
               </div>
             </div>
 
@@ -428,7 +496,9 @@ export default function FAQ() {
               <div className="icon-white"><img src={InfoIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Need help setting up?</p>
-                <p className="desktop-body-xs">Ping us—our team can walk you through the whole setup.</p>
+                <p className="desktop-body-xs">
+                  Ping us—our team can walk you through everything and make sure your page looks top tier.
+                </p>
               </div>
             </div>
           </div>
