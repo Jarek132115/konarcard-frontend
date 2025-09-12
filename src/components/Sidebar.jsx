@@ -7,6 +7,7 @@ import homeInterface from '../assets/icons/Home-Interface.svg';
 import cardInterface from '../assets/icons/Card-Interface.svg';
 import settingsInterface from '../assets/icons/Settings-Interface.svg';
 import contactInterface from '../assets/icons/Contact-Interface.svg';
+import helpInterface from '../assets/icons/Help-Interface.svg'; // 🆕 Add a help icon (create/import this asset)
 import logoutInterface from '../assets/icons/Logout-Interface.svg';
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
@@ -52,16 +53,16 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     {/* MAIN */}
                     <div className="top-links-group">
                         <div className="main-links-container">
-                            <p style={{marginTop: 40}} className="section-title">MAIN</p>
+                            <p style={{ marginTop: 40 }} className="section-title">MAIN</p>
 
-                            {/* Dashboard */}
+                            {/* Home */}
                             <Link
                                 to="/myprofile"
                                 onClick={closeSidebar}
                                 className={`sidebar-button ${isActive('/myprofile') ? 'active-sidebar-link' : ''}`}
                             >
                                 <img src={homeInterface} alt="" className="icon" />
-                                <p className="desktop-body-s">My Profile</p>
+                                <p className="desktop-body-s">Home</p>
                             </Link>
 
                             {/* Products & Plans */}
@@ -69,10 +70,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 to="/nfccards"
                                 onClick={closeSidebar}
                                 className={`sidebar-button ${isActive('/products-and-plans') ||
-                                        isActive('/nfccards') ||
-                                        isActive('/subscription')
-                                        ? 'active-sidebar-link'
-                                        : ''
+                                    isActive('/nfccards') ||
+                                    isActive('/subscription')
+                                    ? 'active-sidebar-link'
+                                    : ''
                                     }`}
                             >
                                 <img src={cardInterface} alt="" className="icon" />
@@ -104,7 +105,17 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <p className="desktop-body-s">Contact Us</p>
                             </Link>
 
-                            {/* Logout directly under Contact Us */}
+                            {/* 🆕 Help Centre */}
+                            <Link
+                                to="/helpcentreinterface"
+                                onClick={closeSidebar}
+                                className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`}
+                            >
+                                <img src={helpInterface} alt="" className="icon" />
+                                <p className="desktop-body-s">Help Centre</p>
+                            </Link>
+
+                            {/* Logout */}
                             <button
                                 className="sidebar-button logout-button"
                                 onClick={() => {
