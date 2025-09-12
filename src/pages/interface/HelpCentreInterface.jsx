@@ -73,7 +73,7 @@ export default function HelpCentre() {
             className="maintenance-card"
             style={{
               width: '100%',
-              marginTop: '2rem',
+              marginTop: '5px',
               background: '#fff',
               borderRadius: '16px',
               boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
