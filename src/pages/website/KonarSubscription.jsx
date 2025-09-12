@@ -29,6 +29,12 @@ import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
 import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
 
+// Added for subscription FAQs
+import InfoIcon from '../../assets/icons/Info-Icon.svg';
+import TimeIcon from '../../assets/icons/Time-Icon.svg';
+import ShieldIcon from '../../assets/icons/Shield-Icon.svg';
+import ProfilePencil from '../../assets/icons/ProfilePencil-Icon.svg';
+
 export default function KonarSubscription() {
     // Pricing (subscription)
     const pricePerMonth = 4.95;
@@ -149,10 +155,10 @@ export default function KonarSubscription() {
                 </div>
             </div>
 
-            {/* ===== Reviews (same block as KonarCard) ===== */}
+            {/* ===== Reviews ===== */}
             <div className="section">
                 <div className="section-1-title">
-                    <h2 className="desktop-h3 text-center">The #1 Tool Tradies Are Talking About</h2>
+                    <h2 className="desktop-h3 text-center">See How Tradies Put Konar To Work</h2>
                     <h3 className="desktop-h6 text-center">
                         Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
                     </h3>
@@ -222,104 +228,94 @@ export default function KonarSubscription() {
                 </div>
             </div>
 
-            {/* ===== FAQ (same block as KonarCard) ===== */}
+            {/* ===== FAQ (Subscription-specific) ===== */}
             <div className="section">
                 <div className="section-1-title">
-                    <h2 className="desktop-h3 text-center">Frequently Asked Questions</h2>
-                    <h3 className="desktop-h6 text-center">For any other questions feel free to contact us at any time</h3>
+                    <h2 className="desktop-h3 text-center">Power Profile — Subscription FAQs</h2>
+                    <h3 className="desktop-h6 text-center">Free trial, what’s included, and what happens after.</h3>
                 </div>
+
                 <div className="faq-container">
                     <div className="faq-column">
                         <div className="section-list">
-                            <div className="icon-white">
-                                <img src={IDCardIcon} className="icon" />
-                            </div>
+                            <div className="icon-white"><img src={ProfilePencil} className="icon" /></div>
                             <div className="section-list-info">
-                                <p className="desktop-h6">What is a Konar digital profile?</p>
-                                <p className="desktop-body-s">It’s your own landing page showing your trade, services, photos, and contact details — all online.</p>
+                                <p className="desktop-h6">What do I get with Power Profile?</p>
+                                <p className="desktop-body-s">
+                                    Unlimited edits, gallery, services with pricing, reviews, themes/fonts, layouts, and easy sharing via QR or link — changes go live instantly.
+                                </p>
                             </div>
                         </div>
+
                         <div className="section-list">
-                            <div className="icon-white">
-                                <img src={NFCIcon} className="icon" />
-                            </div>
+                            <div className="icon-white"><img src={InfoIcon} className="icon" /></div>
                             <div className="section-list-info">
-                                <p className="desktop-h6">Do I need an NFC card to use it?</p>
-                                <p className="desktop-body-s">No. You can use and share your digital profile without ever buying a physical card.</p>
+                                <p className="desktop-h6">How does the free trial work?</p>
+                                <p className="desktop-body-s">
+                                    The 14-day trial includes all the same features as a paid subscription. If your trial ends and you don’t subscribe, your page will be hidden (not publicly viewable) until you subscribe.
+                                </p>
                             </div>
                         </div>
+
                         <div className="section-list">
-                            <div className="icon-white">
-                                <img src={PhoneIcon} className="icon" />
-                            </div>
+                            <div className="icon-white"><img src={WalletIcon} className="icon" /></div>
                             <div className="section-list-info">
-                                <p className="desktop-h6">How do people view my profile?</p>
-                                <p className="desktop-body-s">Share via link, QR code, or NFC tap — works instantly on most phones.</p>
+                                <p className="desktop-h6">Do I need a subscription to use the card?</p>
+                                <p className="desktop-body-s">
+                                    The card is a one-time purchase, but without an active trial or subscription your page is hidden — so tapping the card won’t show your profile until you subscribe again.
+                                </p>
                             </div>
                         </div>
+
                         <div className="section-list">
-                            <div className="icon-white">
-                                <img src={SetupIcon} className="icon" />
-                            </div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">How do I set up my page?</p>
-                                <p className="desktop-body-s">Just fill in your trade, upload photos, list services — done in under five minutes.</p>
-                            </div>
-                        </div>
-                        <div className="section-list">
-                            <div className="icon-white">
-                                <img src={PencilIcon} className="icon" />
-                            </div>
+                            <div className="icon-white"><img src={PencilIcon} className="icon" /></div>
                             <div className="section-list-info">
                                 <p className="desktop-h6">Can I update my page anytime?</p>
-                                <p className="desktop-body-s">Yes. Log in from any device to update info, images, services, or pricing instantly.</p>
+                                <p className="desktop-body-s">
+                                    Yes — while on an active trial or subscription you can edit from any device and your changes publish instantly.
+                                </p>
                             </div>
                         </div>
                     </div>
+
                     <div className="faq-column">
                         <div className="section-list">
-                            <div className="icon-white">
-                                <img src={WalletIcon} className="icon" />
-                            </div>
+                            <div className="icon-white"><img src={TimeIcon} className="icon" /></div>
                             <div className="section-list-info">
-                                <p className="desktop-h6">What does it cost to use?</p>
-                                <p className="desktop-body-s">We offer a free plan. Premium features unlock with our £5.95/month Power Profile subscription.</p>
+                                <p className="desktop-h6">What happens if I cancel?</p>
+                                <p className="desktop-body-s">
+                                    You’ll keep access until the end of the current billing period. After that, your page will be hidden until you resubscribe.
+                                </p>
                             </div>
                         </div>
+
                         <div className="section-list">
-                            <div className="icon-white">
-                                <img src={BoxIcon} className="icon" />
-                            </div>
+                            <div className="icon-white"><img src={ShieldIcon} className="icon" /></div>
                             <div className="section-list-info">
-                                <p className="desktop-h6">What happens if I lose my NFC card?</p>
-                                <p className="desktop-body-s">Your page still works without the card. You can always reorder one if you want to keep tapping.</p>
+                                <p className="desktop-h6">Is there a contract?</p>
+                                <p className="desktop-body-s">
+                                    No long-term contracts. It’s a simple monthly plan — cancel anytime from your account dashboard.
+                                </p>
                             </div>
                         </div>
+
                         <div className="section-list">
-                            <div className="icon-white">
-                                <img src={HatIcon} className="icon" />
-                            </div>
+                            <div className="icon-white"><img src={SetupIcon} className="icon" /></div>
                             <div className="section-list-info">
-                                <p className="desktop-h6">Who is this for exactly?</p>
-                                <p className="desktop-body-s">Any tradesperson who wants to get noticed, win more work, and look professional online.</p>
+                                <p className="desktop-h6">How do I start my trial or subscription?</p>
+                                <p className="desktop-body-s">
+                                    Create your profile, then start the free trial. When you’re ready, subscribe in a few clicks from your account to keep your page live.
+                                </p>
                             </div>
                         </div>
+
                         <div className="section-list">
-                            <div className="icon-white">
-                                <img src={PalletteIcon} className="icon" />
-                            </div>
+                            <div className="icon-white"><img src={HatIcon} className="icon" /></div>
                             <div className="section-list-info">
-                                <p className="desktop-h6">Can I customise the design and layout?</p>
-                                <p className="desktop-body-s">Yes. Pick fonts, colours, and layouts to match your brand and make it yours.</p>
-                            </div>
-                        </div>
-                        <div className="section-list">
-                            <div className="icon-white">
-                                <img src={LockIcon} className="icon" />
-                            </div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">Is my personal data safe on here?</p>
-                                <p className="desktop-body-s">Absolutely. You control everything shown, and your data is hosted securely at all times.</p>
+                                <p className="desktop-h6">Who is Power Profile for?</p>
+                                <p className="desktop-body-s">
+                                    Built for tradies — plumbers, sparkies, builders, tilers, gardeners and more — who want to look pro and win more work.
+                                </p>
                             </div>
                         </div>
                     </div>
