@@ -77,7 +77,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                     }`}
                             >
                                 <img src={cardInterface} alt="" className="icon" />
-                                <p className="desktop-body-s">Products &amp; Plans</p>
+                                <p className="desktop-body-s">Product &amp; Plan</p>
                             </Link>
                         </div>
 
