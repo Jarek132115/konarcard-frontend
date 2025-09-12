@@ -73,7 +73,7 @@ export default function HelpCentreInterface() {
             style={{
               width: '100%',
               marginTop: '5px',
-              background: '#fff',
+              background: '#F7F7F7',
               border: '1px solid rgba(0, 0, 0, 0.08)',
               borderRadius: '16px',
               padding: '28px',
