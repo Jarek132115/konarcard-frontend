@@ -28,6 +28,9 @@ import ContactSupport from './pages/interface/ContactSupport';
 import UserPage from './pages/interface/UserPage';
 import SuccessSubscription from './pages/website/SuccessSubscription';
 
+// 🆕 My Orders
+import MyOrders from './pages/interface/MyOrder';
+
 axios.defaults.baseURL = 'https://konarcard-backend-331608269918.europe-west1.run.app';
 axios.defaults.withCredentials = true;
 
@@ -60,6 +63,8 @@ function App() {
 
         {/* Protected Routes */}
         <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
+        {/* 🆕 My Orders */}
+        <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
         <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
         <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
         <Route path="/nfccards" element={<ProtectedRoute><NFCCards /></ProtectedRoute>} />

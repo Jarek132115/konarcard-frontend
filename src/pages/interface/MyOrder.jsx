@@ -7,7 +7,7 @@ import homeInterface from '../assets/icons/Home-Interface.svg';
 import cardInterface from '../assets/icons/Card-Interface.svg';
 import settingsInterface from '../assets/icons/Settings-Interface.svg';
 import contactInterface from '../assets/icons/Contact-Interface.svg';
-import helpInterface from '../assets/icons/Help-Interface.svg';
+import helpInterface from '../assets/icons/Help-Interface.svg'; // 🆕 Add a help icon (create/import this asset)
 import logoutInterface from '../assets/icons/Logout-Interface.svg';
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
@@ -65,25 +65,15 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <p className="desktop-body-s">Home</p>
                             </Link>
 
-                            {/* My Orders */}
-                            <Link
-                                to="/myorders"
-                                onClick={closeSidebar}
-                                className={`sidebar-button ${isActive('/myorders') ? 'active-sidebar-link' : ''}`}
-                            >
-                                <img src={cardInterface} alt="" className="icon" />
-                                <p className="desktop-body-s">My Orders</p>
-                            </Link>
-
                             {/* Products & Plans */}
                             <Link
                                 to="/nfccards"
                                 onClick={closeSidebar}
                                 className={`sidebar-button ${isActive('/products-and-plans') ||
-                                        isActive('/nfccards') ||
-                                        isActive('/subscription')
-                                        ? 'active-sidebar-link'
-                                        : ''
+                                    isActive('/nfccards') ||
+                                    isActive('/subscription')
+                                    ? 'active-sidebar-link'
+                                    : ''
                                     }`}
                             >
                                 <img src={cardInterface} alt="" className="icon" />
@@ -115,7 +105,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <p className="desktop-body-s">Contact Us</p>
                             </Link>
 
-                            {/* Help Centre */}
+                            {/* 🆕 Help Centre */}
                             <Link
                                 to="/helpcentreinterface"
                                 onClick={closeSidebar}
