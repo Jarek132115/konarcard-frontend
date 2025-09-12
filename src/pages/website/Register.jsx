@@ -5,6 +5,8 @@ import { toast } from 'react-hot-toast';
 import { AuthContext } from '../../components/AuthContext';
 import backgroundImg from '../../assets/images/background.png';
 
+const POST_AUTH_KEY = 'postAuthAction';
+
 export default function Register() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -26,6 +28,16 @@ export default function Register() {
     const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
     const blurTimeoutRef = useRef(null);
 
+    // If we were sent here with a post-auth action (e.g., Buy Now or Subscribe), persist it.
+    useEffect(() => {
+        const action = location.state?.postAuthAction;
+        if (action) {
+            try {
+                localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action));
+            } catch { }
+        }
+    }, [location.state]);
+
     useEffect(() => {
         if (cooldown > 0) {
             const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
@@ -44,16 +56,12 @@ export default function Register() {
     };
 
     const handlePasswordFocus = () => {
-        if (blurTimeoutRef.current) {
-            clearTimeout(blurTimeoutRef.current);
-        }
+        if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
         setShowPasswordFeedback(true);
     };
 
     const handlePasswordBlur = () => {
-        blurTimeoutRef.current = setTimeout(() => {
-            setShowPasswordFeedback(false);
-        }, 100);
+        blurTimeoutRef.current = setTimeout(() => setShowPasswordFeedback(false), 100);
     };
 
     const registerUser = async (e) => {
@@ -96,6 +104,56 @@ export default function Register() {
         }
     };
 
+    // After we verify & log in, run any pending post-auth action (subscribe / buy_card)
+    const runPendingActionOrDefault = async () => {
+        let action = null;
+        try {
+            const saved = localStorage.getItem(POST_AUTH_KEY);
+            if (saved) action = JSON.parse(saved);
+        } catch { }
+
+        // Clear it so we don't loop later
+        try { localStorage.removeItem(POST_AUTH_KEY); } catch { }
+
+        if (!action) {
+            navigate('/myprofile');
+            return;
+        }
+
+        if (action.type === 'subscribe') {
+            try {
+                // Your existing subscription endpoint returns { url }
+                const res = await axios.post('/subscribe', {
+                    returnUrl: window.location.origin + '/SuccessSubscription',
+                });
+                const url = res?.data?.url;
+                if (url) {
+                    window.location.href = url;
+                    return;
+                }
+                toast.error('Could not start subscription. Please try again.');
+                navigate('/subscription');
+            } catch (err) {
+                toast.error(err?.response?.data?.error || 'Subscription failed. Please try again.');
+                navigate('/subscription');
+            }
+            return;
+        }
+
+        if (action.type === 'buy_card') {
+            const qty = Number(action?.payload?.quantity) || 1;
+            // Hand control back to the Konar Card page to spin up Stripe (same code path you already have there)
+            navigate('/productandplan/konarcard', {
+                state: { triggerCheckout: true, quantity: qty },
+                replace: true,
+            });
+            return;
+        }
+
+        // Fallback
+        navigate('/myprofile');
+    };
+
     const verifyCode = async (e) => {
         e.preventDefault();
         try {
@@ -109,8 +167,7 @@ export default function Register() {
             } else {
                 toast.success('Email verified! Logging you in...');
                 login(res.data.token, res.data.user);
-                // Redirect to /myprofile after successful registration and verification
-                navigate('/myprofile');
+                await runPendingActionOrDefault();
             }
         } catch (err) {
             toast.error('Verification failed');

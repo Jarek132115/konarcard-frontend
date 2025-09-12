@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Footer from '../../components/Footer';
@@ -37,7 +37,16 @@ import TimeIcon from '../../assets/icons/Time-Icon.svg';
 import ShieldIcon from '../../assets/icons/Shield-Icon.svg';
 import ProfilePencil from '../../assets/icons/ProfilePencil-Icon.svg';
 
+// NEW: auth + api
+import { AuthContext } from '../../components/AuthContext';
+import api from '../../services/api';
+import { toast } from 'react-hot-toast';
+
 export default function KonarSubscription() {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { user } = useContext(AuthContext);
+
     // Pricing (subscription)
     const pricePerMonth = 4.95;
     const originalPerMonth = 7.95;
@@ -75,6 +84,46 @@ export default function KonarSubscription() {
         { icon: BoxIcon, title: 'Gallery', text: 'Show finished jobs' },
         { icon: PalletteIcon, title: 'Branding', text: 'Fonts, colours, layouts' },
     ];
+
+    const startSubscription = useCallback(async () => {
+        try {
+            const res = await api.post('/subscribe', {
+                returnUrl: window.location.origin + '/SuccessSubscription',
+            });
+            const { url } = res.data || {};
+            if (url) {
+                window.location.href = url;
+            } else {
+                toast.error(res?.data?.error || 'Could not start subscription. Please try again.');
+            }
+        } catch (err) {
+            toast.error(err?.response?.data?.error || 'Subscription failed. Please try again.');
+        }
+    }, []);
+
+    const handleStartTrial = async () => {
+        if (!user) {
+            navigate('/register', {
+                state: {
+                    postAuthAction: {
+                        type: 'start_subscription',
+                    },
+                },
+            });
+            return;
+        }
+        await startSubscription();
+    };
+
+    // If we returned here after login/registration with triggerSubscribe flag, auto-start subscription
+    useEffect(() => {
+        if (location.state?.triggerSubscribe) {
+            // clear state to avoid loops
+            navigate(location.pathname, { replace: true });
+            startSubscription();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.state]);
 
     return (
         <>
@@ -158,7 +207,7 @@ export default function KonarSubscription() {
 
                     {/* CTA row */}
                     <div className="pd-cta-row">
-                        <button className="cta-blue-button desktop-button">
+                        <button className="cta-blue-button desktop-button" onClick={handleStartTrial}>
                             Start Your Free 14-Day Trial
                         </button>
                     </div>
@@ -331,7 +380,6 @@ export default function KonarSubscription() {
                     </div>
                 </div>
             </div>
-
 
             <Footer />
         </>

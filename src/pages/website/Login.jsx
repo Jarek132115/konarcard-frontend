@@ -5,6 +5,8 @@ import { AuthContext } from '../../components/AuthContext';
 import backgroundImg from '../../assets/images/background.png';
 import api from '../../services/api';
 
+const POST_AUTH_KEY = 'postAuthAction';
+
 export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -18,6 +20,16 @@ export default function Login() {
     const [forgotPasswordStep, setForgotPasswordStep] = useState(false);
     const [emailForReset, setEmailForReset] = useState('');
 
+    // Persist any post-auth action we were sent with (e.g., from Buy Now / Subscribe)
+    useEffect(() => {
+        const action = location.state?.postAuthAction;
+        if (action) {
+            try {
+                localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action));
+            } catch { }
+        }
+    }, [location.state]);
+
     useEffect(() => {
         let timer;
         if (cooldown > 0) {
@@ -28,13 +40,59 @@ export default function Login() {
 
     const togglePassword = () => setShowPassword(!showPassword);
 
+    const runPendingActionOrDefault = async () => {
+        let action = null;
+        try {
+            const saved = localStorage.getItem(POST_AUTH_KEY);
+            if (saved) action = JSON.parse(saved);
+        } catch { }
+
+        // clear so it doesn't loop
+        try { localStorage.removeItem(POST_AUTH_KEY); } catch { }
+
+        if (!action) {
+            navigate('/myprofile');
+            return;
+        }
+
+        if (action.type === 'subscribe') {
+            try {
+                const res = await api.post('/subscribe', {
+                    returnUrl: window.location.origin + '/SuccessSubscription',
+                });
+                const url = res?.data?.url;
+                if (url) {
+                    window.location.href = url;
+                    return;
+                }
+                toast.error('Could not start subscription. Please try again.');
+                navigate('/subscription');
+            } catch (err) {
+                toast.error(err?.response?.data?.error || 'Subscription failed. Please try again.');
+                navigate('/subscription');
+            }
+            return;
+        }
+
+        if (action.type === 'buy_card') {
+            const qty = Number(action?.payload?.quantity) || 1;
+            navigate('/productandplan/konarcard', {
+                state: { triggerCheckout: true, quantity: qty },
+                replace: true,
+            });
+            return;
+        }
+
+        navigate('/myprofile');
+    };
+
     const loginUser = async (e) => {
         e.preventDefault();
         try {
             const res = await api.post('/login', data);
 
             if (res.data.error) {
-                if (res.data.error.includes('verify your email')) {
+                if (res.data.error.toLowerCase().includes('verify your email')) {
                     toast.error('Email not verified. New code sent!');
                     setVerificationStep(true);
                     setCooldown(30);
@@ -44,8 +102,7 @@ export default function Login() {
             } else {
                 toast.success('Login successful!');
                 login(res.data.token, res.data.user);
-                // Explicitly navigate to /myprofile after successful login
-                navigate('/myprofile');
+                await runPendingActionOrDefault();
             }
         } catch (err) {
             toast.error(err.message || 'Login failed');
@@ -67,8 +124,7 @@ export default function Login() {
                     toast.error(loginRes.data.error);
                 } else {
                     login(loginRes.data.token, loginRes.data.user);
-                    // Explicitly navigate to /myprofile after successful verification
-                    navigate('/myprofile');
+                    await runPendingActionOrDefault();
                 }
             }
         } catch (err) {

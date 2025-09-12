@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
@@ -39,9 +39,17 @@ import QRCode from '../../assets/icons/QR-Code-Icon.svg';
 import NFCChipIcon from '../../assets/icons/NFCChip-Icon.svg';
 import TimeIcon from '../../assets/icons/Time-Icon.svg';
 
+// NEW: auth + api
+import { AuthContext } from '../../components/AuthContext';
+import api from '../../services/api';
+
 const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8');
 
 export default function KonarCard() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useContext(AuthContext);
+
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(ProductCover);
 
@@ -56,30 +64,51 @@ export default function KonarCard() {
     ProductImage4,
   ];
 
+  const startCheckout = useCallback(async (qty) => {
+    try {
+      const stripe = await stripePromise;
+
+      // use api service so auth token is attached
+      const res = await api.post('/checkout/create-checkout-session', { quantity: qty });
+      const sessionId = res?.data?.id;
+      if (!sessionId) {
+        toast.error(res?.data?.error || 'Could not start checkout. Please try again.');
+        return;
+      }
+      const result = await stripe.redirectToCheckout({ sessionId });
+      if (result.error) toast.error(result.error.message);
+    } catch (err) {
+      toast.error(err?.response?.data?.error || 'Checkout failed. Please try again.');
+    }
+  }, []);
+
+  // Buy Now handler w/ auth-gate and post-auth continuation
   const handleBuyNow = async () => {
-    const stripe = await stripePromise;
-
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/checkout/create-checkout-session`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ quantity }),
-    });
-
-    const session = await response.json();
-
-    if (session.error) {
-      toast.error(session.error);
+    if (!user) {
+      navigate('/register', {
+        state: {
+          postAuthAction: {
+            type: 'buy_card',
+            payload: { quantity },
+          },
+        },
+      });
       return;
     }
-
-    const result = await stripe.redirectToCheckout({
-      sessionId: session.id,
-    });
-
-    if (result.error) {
-      toast.error(result.error.message);
-    }
+    await startCheckout(quantity);
   };
+
+  // If we returned here after login/registration with triggerCheckout flag, auto-run checkout
+  useEffect(() => {
+    if (location.state?.triggerCheckout) {
+      const qty = Number(location.state?.quantity) || quantity;
+      setQuantity(qty);
+      // clear the flag on history entry to avoid loops if user navigates back
+      navigate(location.pathname, { replace: true });
+      startCheckout(qty);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
 
   // Delivery window text: today+1 to today+4 (e.g., "2–5 September" or "30 Sep – 3 Oct 2025")
   const getDeliveryDates = () => {
