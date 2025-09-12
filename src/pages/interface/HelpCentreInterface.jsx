@@ -72,7 +72,7 @@ export default function HelpCentre() {
           <div
             className="maintenance-card"
             style={{
-              maxWidth: 720,
+              maxWidth: '100%',
               width: '100%',
               marginTop: '2rem',
               background: '#fff',
