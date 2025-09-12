@@ -55,13 +55,7 @@ export default function KonarSubscription() {
     const [mainImage, setMainImage] = useState(ProductCover);
 
     // Thumbnails: keep cover first, then mockups in requested order
-    const thumbnails = [
-        ProductCover, // keep cover first
-        Mockup1,      // 1.png
-        Mockup3,      // 3.png
-        Mockup2,      // 2.png
-        Mockup4       // 4.png
-    ];
+    const thumbnails = [ProductCover, Mockup1, Mockup3, Mockup2, Mockup4];
 
     // “Full-width pill” line (repurposed for subscription)
     const getFreeTrialEndDate = () => {
@@ -106,7 +100,8 @@ export default function KonarSubscription() {
             navigate('/register', {
                 state: {
                     postAuthAction: {
-                        type: 'start_subscription',
+                        // FIX: must match Login/Register handler
+                        type: 'subscribe',
                     },
                 },
             });
@@ -115,10 +110,9 @@ export default function KonarSubscription() {
         await startSubscription();
     };
 
-    // If we returned here after login/registration with triggerSubscribe flag, auto-start subscription
+    // (Optional) If you later route back with triggerSubscribe, this will handle it.
     useEffect(() => {
         if (location.state?.triggerSubscribe) {
-            // clear state to avoid loops
             navigate(location.pathname, { replace: true });
             startSubscription();
         }

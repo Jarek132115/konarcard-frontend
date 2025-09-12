@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { AuthContext } from '../../components/AuthContext';
 import backgroundImg from '../../assets/images/background.png';
+import api from '../../services/api'; // use configured axios instance
 
 const POST_AUTH_KEY = 'postAuthAction';
 
@@ -28,7 +28,7 @@ export default function Register() {
     const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
     const blurTimeoutRef = useRef(null);
 
-    // If we were sent here with a post-auth action (e.g., Buy Now or Subscribe), persist it.
+    // Persist incoming post-auth action (e.g., Buy Now / Subscribe)
     useEffect(() => {
         const action = location.state?.postAuthAction;
         if (action) {
@@ -78,7 +78,7 @@ export default function Register() {
         }
 
         try {
-            const res = await axios.post('/register', {
+            const res = await api.post('/register', {
                 name: data.name,
                 email: data.email,
                 username: data.username.trim().toLowerCase(),
@@ -104,7 +104,7 @@ export default function Register() {
         }
     };
 
-    // After we verify & log in, run any pending post-auth action (subscribe / buy_card)
+    // After verify -> login -> run pending action (subscribe / buy_card) or default
     const runPendingActionOrDefault = async () => {
         let action = null;
         try {
@@ -112,7 +112,6 @@ export default function Register() {
             if (saved) action = JSON.parse(saved);
         } catch { }
 
-        // Clear it so we don't loop later
         try { localStorage.removeItem(POST_AUTH_KEY); } catch { }
 
         if (!action) {
@@ -122,8 +121,7 @@ export default function Register() {
 
         if (action.type === 'subscribe') {
             try {
-                // Your existing subscription endpoint returns { url }
-                const res = await axios.post('/subscribe', {
+                const res = await api.post('/subscribe', {
                     returnUrl: window.location.origin + '/SuccessSubscription',
                 });
                 const url = res?.data?.url;
@@ -142,7 +140,6 @@ export default function Register() {
 
         if (action.type === 'buy_card') {
             const qty = Number(action?.payload?.quantity) || 1;
-            // Hand control back to the Konar Card page to spin up Stripe (same code path you already have there)
             navigate('/productandplan/konarcard', {
                 state: { triggerCheckout: true, quantity: qty },
                 replace: true,
@@ -150,14 +147,13 @@ export default function Register() {
             return;
         }
 
-        // Fallback
         navigate('/myprofile');
     };
 
     const verifyCode = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('/verify-email', {
+            const res = await api.post('/verify-email', {
                 email: data.email,
                 code,
             });
@@ -176,7 +172,7 @@ export default function Register() {
 
     const resendCode = async () => {
         try {
-            const res = await axios.post('/resend-code', { email: data.email });
+            const res = await api.post('/resend-code', { email: data.email });
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {
