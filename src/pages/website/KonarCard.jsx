@@ -34,6 +34,11 @@ import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
 import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
 
+// NEW: icons used in the card-specific FAQ list
+import QRCode from '../../assets/icons/QR-Code-Icon.svg';
+import NFCChipIcon from '../../assets/icons/NFCChip-Icon.svg';
+import TimeIcon from '../../assets/icons/Time-Icon.svg';
+
 const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8');
 
 export default function KonarCard() {
@@ -160,7 +165,6 @@ export default function KonarCard() {
             Stand out and win more jobs — one tap opens your profile with your services, photos, and contact details.
           </p>
 
-
           <div className="pd-feature-grid">
             {featurePills.map((f, idx) => (
               <div className="pd-feature-pill" key={idx}>
@@ -218,7 +222,7 @@ export default function KonarCard() {
       {/* ===== Social proof / Reviews ===== */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h2 text-center">The #1 Tool Tradies Are Talking About</h2>
+          <h2 className="desktop-h2 text-center">See How Tradies Put Konar To Work</h2>
           <h3 className="desktop-h6 text-center">
             Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
           </h3>
@@ -288,11 +292,11 @@ export default function KonarCard() {
         </div>
       </div>
 
-      {/* ===== FAQ ===== */}
+      {/* ===== FAQ (Card-specific) ===== */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Frequently Asked Questions</h2>
-          <h3 className="desktop-h6 text-center">For any other questions feel free to contact us at any time</h3>
+          <h2 className="desktop-h3 text-center">Konar Card — Product FAQs</h2>
+          <h3 className="desktop-h6 text-center">Everything about the card, tap-to-share, delivery and warranty.</h3>
         </div>
         <div className="faq-container">
           <div className="faq-column">
@@ -301,91 +305,80 @@ export default function KonarCard() {
                 <img src={IDCardIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className="desktop-h6">What is a Konar digital profile?</p>
-                <p className="desktop-body-s">It’s your own landing page showing your trade, services, photos, and contact details — all online.</p>
+                <p className="desktop-h6">What is the Konar NFC business card?</p>
+                <p className="desktop-body-s">A reusable card with a tiny NFC chip that opens your Konar profile with a tap—no app, no battery.</p>
               </div>
             </div>
+
             <div className="section-list">
               <div className="icon-white">
                 <img src={NFCIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className="desktop-h6">Do I need an NFC card to use it?</p>
-                <p className="desktop-body-s">No. You can use and share your digital profile without ever buying a physical card.</p>
+                <p className="desktop-h6">How does the tap actually work?</p>
+                <p className="desktop-body-s">The phone’s NFC reader powers the chip and instantly launches your live profile link.</p>
               </div>
             </div>
+
+            <div className="section-list">
+              <div className="icon-white">
+                <img src={QRCode} className="icon" />
+              </div>
+              <div className="section-list-info">
+                <p className="desktop-h6">What if someone can’t tap?</p>
+                <p className="desktop-body-s">Every card includes a QR code and your profile has a shareable link — there’s always a backup.</p>
+              </div>
+            </div>
+
             <div className="section-list">
               <div className="icon-white">
                 <img src={PhoneIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className="desktop-h6">How do people view my profile?</p>
-                <p className="desktop-body-s">Share via link, QR code, or NFC tap — works instantly on most phones.</p>
-              </div>
-            </div>
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={SetupIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">How do I set up my page?</p>
-                <p className="desktop-body-s">Just fill in your trade, upload photos, list services — done in under five minutes.</p>
-              </div>
-            </div>
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={PencilIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Can I update my page anytime?</p>
-                <p className="desktop-body-s">Yes. Log in from any device to update info, images, services, or pricing instantly.</p>
+                <p className="desktop-h6">Will it work with their phone?</p>
+                <p className="desktop-body-s">Works on iPhone 7+ and most Android phones with NFC enabled. QR works on any camera phone.</p>
               </div>
             </div>
           </div>
+
           <div className="faq-column">
             <div className="section-list">
               <div className="icon-white">
-                <img src={WalletIcon} className="icon" />
+                <img src={NFCChipIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className="desktop-h6">What does it cost to use?</p>
-                <p className="desktop-body-s">We offer a free plan. Premium features unlock with our £5.95/month Power Profile subscription.</p>
+                <p className="desktop-h6">Is the NFC chip visible?</p>
+                <p className="desktop-body-s">No — it’s sealed inside the card and doesn’t affect the finish or design.</p>
               </div>
             </div>
+
             <div className="section-list">
               <div className="icon-white">
-                <img src={BoxIcon} className="icon" />
+                <img src={TimeIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className="desktop-h6">What happens if I lose my NFC card?</p>
-                <p className="desktop-body-s">Your page still works without the card. You can always reorder one if you want to keep tapping.</p>
+                <p className="desktop-h6">How long does the card last?</p>
+                <p className="desktop-body-s">Years of everyday use. There’s no battery to die and nothing to charge.</p>
               </div>
             </div>
+
             <div className="section-list">
               <div className="icon-white">
-                <img src={HatIcon} className="icon" />
+                <img src={DeliveryIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className="desktop-h6">Who is this for exactly?</p>
-                <p className="desktop-body-s">Any tradesperson who wants to get noticed, win more work, and look professional online.</p>
+                <p className="desktop-h6">When will my card arrive?</p>
+                <p className="desktop-body-s">Production 2–4 business days. Standard delivery 3–7 business days; Express 1–3 business days.</p>
               </div>
             </div>
+
             <div className="section-list">
               <div className="icon-white">
-                <img src={PalletteIcon} className="icon" />
+                <img src={WarrantyIcon} className="icon" />
               </div>
               <div className="section-list-info">
-                <p className="desktop-h6">Can I customise the design and layout?</p>
-                <p className="desktop-body-s">Yes. Pick fonts, colours, and layouts to match your brand and make it yours.</p>
-              </div>
-            </div>
-            <div className="section-list">
-              <div className="icon-white">
-                <img src={LockIcon} className="icon" />
-              </div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Is my personal data safe on here?</p>
-                <p className="desktop-body-s">Absolutely. You control everything shown, and your data is hosted securely at all times.</p>
+                <p className="desktop-h6">What’s included in the warranty?</p>
+                <p className="desktop-body-s">12-month limited warranty covering manufacturing defects, faulty chips and printing errors.</p>
               </div>
             </div>
           </div>
