@@ -74,7 +74,7 @@ export default function HelpCentreInterface() {
               width: '100%',
               marginTop: '5px',
               background: '#fff',
-              border: '1px solid rgba(0, 0, 0, 0.08)', // <-- fixed
+              border: '1px solid rgba(0, 0, 0, 0.08)',
               borderRadius: '16px',
               padding: '28px',
               textAlign: 'center',
