@@ -12,10 +12,12 @@ import pp3 from '../../assets/images/pp3.png';
 import pp4 from '../../assets/images/pp4.png';
 
 import ProductCover from '../../assets/images/Subscription-Main.jpg';
-import ProductImage1 from '../../assets/images/Subscription-Main.jpg';
-import ProductImage2 from '../../assets/images/Subscription-Main.jpg';
-import ProductImage3 from '../../assets/images/Subscription-Main.jpg';
-import ProductImage4 from '../../assets/images/Subscription-Main.jpg';
+
+// New mockups
+import Mockup1 from '../../assets/images/1.png';
+import Mockup2 from '../../assets/images/2.png';
+import Mockup3 from '../../assets/images/3.png';
+import Mockup4 from '../../assets/images/4.png';
 
 import NFCIcon from '../../assets/icons/NFC-Icon.svg';
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
@@ -40,9 +42,17 @@ export default function KonarSubscription() {
     const pricePerMonth = 4.95;
     const originalPerMonth = 7.95;
 
-    // Gallery state (same pattern as KonarCard)
+    // Gallery state
     const [mainImage, setMainImage] = useState(ProductCover);
-    const thumbnails = [ProductCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4];
+
+    // Thumbnails: keep cover first, then mockups in requested order
+    const thumbnails = [
+        ProductCover, // keep cover first
+        Mockup1,      // 1.png
+        Mockup3,      // 3.png
+        Mockup2,      // 2.png
+        Mockup4       // 4.png
+    ];
 
     // “Full-width pill” line (repurposed for subscription)
     const getFreeTrialEndDate = () => {
@@ -54,7 +64,7 @@ export default function KonarSubscription() {
     };
     const freeTrialEndDate = getFreeTrialEndDate();
 
-    // Feature list (subscription-focused copy, same pill UI)
+    // Feature list
     const featurePills = [
         { icon: PhoneIcon, title: 'Contact Button', text: 'Save my number' },
         { icon: NFCIcon, title: 'Tap to Share', text: 'Works with NFC cards' },
@@ -73,7 +83,7 @@ export default function KonarSubscription() {
                 <Breadcrumbs />
             </div>
 
-            {/* ===== Product header (identical shell) ===== */}
+            {/* ===== Product header ===== */}
             <div className="section product-shell">
                 {/* LEFT: tray + main + thumbs */}
                 <div className="pd-left">
@@ -98,7 +108,7 @@ export default function KonarSubscription() {
                     </div>
                 </div>
 
-                {/* RIGHT: same structure, subscription copy */}
+                {/* RIGHT: subscription copy */}
                 <div className="pd-right">
                     <h1 className="pd-title desktop-h4">Konar Power Profile</h1>
                     <p className="pd-sub desktop-body">
@@ -132,7 +142,7 @@ export default function KonarSubscription() {
                         </div>
                     </div>
 
-                    {/* Stars + price row (same classes) */}
+                    {/* Stars + price row */}
                     <div className="pd-meta-row">
                         <div className="pd-stars">
                             <img src={ReviewStars} alt="Rating" />
@@ -146,7 +156,7 @@ export default function KonarSubscription() {
                         </div>
                     </div>
 
-                    {/* CTA row — SAME classes as KonarCard */}
+                    {/* CTA row */}
                     <div className="pd-cta-row">
                         <button className="cta-blue-button desktop-button">
                             Start Your Free 14-Day Trial
