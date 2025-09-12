@@ -5,7 +5,7 @@ import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
-export default function HelpCentre() {
+export default function HelpCentreInterface() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
@@ -60,9 +60,8 @@ export default function HelpCentre() {
 
       {/* Main */}
       <main className="main-content-container">
-        {/* Header (no action buttons passed, so none will render) */}
         <PageHeader
-          title="Help Center"
+          title="Help Centre"
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}
         />
@@ -75,8 +74,8 @@ export default function HelpCentre() {
               width: '100%',
               marginTop: '5px',
               background: '#fff',
+              border: '1px solid rgba(0, 0, 0, 0.08)', // <-- fixed
               borderRadius: '16px',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
               padding: '28px',
               textAlign: 'center',
             }}
