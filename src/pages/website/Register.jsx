@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { AuthContext } from '../../components/AuthContext';
 import backgroundImg from '../../assets/images/background.png';
-import api from '../../services/api'; // use configured axios instance
+import api from '../../services/api'; // configured axios instance
 
 const POST_AUTH_KEY = 'postAuthAction';
 
@@ -32,9 +32,7 @@ export default function Register() {
     useEffect(() => {
         const action = location.state?.postAuthAction;
         if (action) {
-            try {
-                localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action));
-            } catch { }
+            try { localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action)); } catch { }
         }
     }, [location.state]);
 
@@ -80,8 +78,8 @@ export default function Register() {
         try {
             const res = await api.post('/register', {
                 name: data.name,
-                email: data.email,
-                username: data.username.trim().toLowerCase(),
+                email: data.email.trim().toLowerCase(),            // normalize email
+                username: data.username.trim().toLowerCase(),       // normalize username
                 password: data.password,
                 confirmPassword: data.confirmPassword,
             });
@@ -154,7 +152,7 @@ export default function Register() {
         e.preventDefault();
         try {
             const res = await api.post('/verify-email', {
-                email: data.email,
+                email: data.email.trim().toLowerCase(),   // normalize email
                 code,
             });
 
@@ -165,21 +163,21 @@ export default function Register() {
                 login(res.data.token, res.data.user);
                 await runPendingActionOrDefault();
             }
-        } catch (err) {
+        } catch {
             toast.error('Verification failed');
         }
     };
 
     const resendCode = async () => {
         try {
-            const res = await api.post('/resend-code', { email: data.email });
+            const res = await api.post('/resend-code', { email: data.email.trim().toLowerCase() }); // normalize
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {
                 toast.success('New verification code sent!');
                 setCooldown(30);
             }
-        } catch (err) {
+        } catch {
             toast.error('Could not resend code');
         }
     };
@@ -225,7 +223,30 @@ export default function Register() {
                         {!verificationStep ? (
                             <form onSubmit={registerUser} className="login-form">
                                 <label htmlFor="name" className="form-label">Name</label>
-                                <input type="text" id="name" name="name" placeholder="Name" value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })} className="standard-input" autoComplete="off" />
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    placeholder="Name"
+                                    value={data.name}
+                                    onChange={(e) => setData({ ...data, name: e.target.value })}
+                                    className="standard-input"
+                                    autoComplete="name"
+                                />
+
+                                <label htmlFor="email" className="form-label">Email</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    placeholder="Email"
+                                    value={data.email}
+                                    onChange={(e) => setData({ ...data, email: e.target.value })}
+                                    className="standard-input"
+                                    autoComplete="username"     // tell PMs this is the account identifier
+                                    autoCapitalize="none"
+                                    inputMode="email"
+                                />
 
                                 <label htmlFor="username" className="form-label">
                                     Username <span className="text-sm text-gray-500">(username cannot be changed)</span>
@@ -239,12 +260,10 @@ export default function Register() {
                                         placeholder="username"
                                         value={data.username}
                                         onChange={(e) => setData({ ...data, username: e.target.value })}
-                                        autoComplete="off"
+                                        autoComplete="off"       // avoid PM saving this as login username
+                                        autoCapitalize="none"
                                     />
                                 </div>
-
-                                <label htmlFor="email" className="form-label">Email</label>
-                                <input type="email" id="email" name="email" placeholder="Email" value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} className="standard-input" autoComplete="off" />
 
                                 <label htmlFor="password" className="form-label">Password</label>
                                 <div className="password-wrapper">
@@ -255,7 +274,7 @@ export default function Register() {
                                         placeholder="Password"
                                         value={data.password}
                                         onChange={(e) => setData({ ...data, password: e.target.value })}
-                                        autoComplete="new-password"
+                                        autoComplete="new-password"   // create credential
                                         onFocus={handlePasswordFocus}
                                         onBlur={handlePasswordBlur}
                                     />
@@ -306,11 +325,28 @@ export default function Register() {
                             </form>
                         ) : (
                             <form onSubmit={verifyCode} className="login-form">
-                                <p className="verification-instruction">Enter the 6-digit code sent to <strong>{data.email}</strong></p>
+                                <p className="verification-instruction">
+                                    Enter the 6-digit code sent to <strong>{data.email.trim().toLowerCase()}</strong>
+                                </p>
                                 <label htmlFor="verificationCode" className="form-label">Verification Code</label>
-                                <input type="text" id="verificationCode" name="verificationCode" placeholder="Enter verification code" value={code} onChange={(e) => setCode(e.target.value)} className="standard-input" autoComplete="off" />
+                                <input
+                                    type="text"
+                                    id="verificationCode"
+                                    name="verificationCode"
+                                    placeholder="Enter verification code"
+                                    value={code}
+                                    onChange={(e) => setCode(e.target.value)}
+                                    className="standard-input"
+                                    autoComplete="one-time-code"
+                                />
                                 <button type="submit" className="primary-button verify-email-button">Verify Email</button>
-                                <button type="button" className="secondary-button resend-code-button" onClick={resendCode} disabled={cooldown > 0} style={{ marginTop: '1rem' }}>
+                                <button
+                                    type="button"
+                                    className="secondary-button resend-code-button"
+                                    onClick={resendCode}
+                                    disabled={cooldown > 0}
+                                    style={{ marginTop: '1rem' }}
+                                >
                                     {cooldown > 0 ? `Resend in ${cooldown}s` : 'Resend Code'}
                                 </button>
                             </form>

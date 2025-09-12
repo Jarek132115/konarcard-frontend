@@ -24,9 +24,7 @@ export default function Login() {
     useEffect(() => {
         const action = location.state?.postAuthAction;
         if (action) {
-            try {
-                localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action));
-            } catch { }
+            try { localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action)); } catch { }
         }
     }, [location.state]);
 
@@ -47,7 +45,6 @@ export default function Login() {
             if (saved) action = JSON.parse(saved);
         } catch { }
 
-        // clear so it doesn't loop
         try { localStorage.removeItem(POST_AUTH_KEY); } catch { }
 
         if (!action) {
@@ -89,7 +86,10 @@ export default function Login() {
     const loginUser = async (e) => {
         e.preventDefault();
         try {
-            const res = await api.post('/login', data);
+            const res = await api.post('/login', {
+                email: data.email.trim().toLowerCase(),   // normalize email
+                password: data.password,
+            });
 
             if (res.data.error) {
                 if (res.data.error.toLowerCase().includes('verify your email')) {
@@ -112,13 +112,19 @@ export default function Login() {
     const verifyCode = async (e) => {
         e.preventDefault();
         try {
-            const res = await api.post('/verify-email', { email: data.email, code });
+            const res = await api.post('/verify-email', {
+                email: data.email.trim().toLowerCase(),   // normalize email
+                code,
+            });
 
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {
                 toast.success('Email verified! Logging you in...');
-                const loginRes = await api.post('/login', data);
+                const loginRes = await api.post('/login', {
+                    email: data.email.trim().toLowerCase(), // normalize email
+                    password: data.password,
+                });
 
                 if (loginRes.data.error) {
                     toast.error(loginRes.data.error);
@@ -134,7 +140,9 @@ export default function Login() {
 
     const resendCode = async () => {
         try {
-            const res = await api.post('/resend-code', { email: data.email });
+            const res = await api.post('/resend-code', {
+                email: data.email.trim().toLowerCase(),  // normalize email
+            });
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {
@@ -149,7 +157,9 @@ export default function Login() {
     const sendResetLink = async (e) => {
         e.preventDefault();
         try {
-            const res = await api.post('/forgot-password', { email: emailForReset });
+            const res = await api.post('/forgot-password', {
+                email: emailForReset.trim().toLowerCase(), // normalize email
+            });
             if (res.data.error) {
                 toast.error(res.data.error);
             } else {
@@ -194,17 +204,23 @@ export default function Login() {
                             <input
                                 type="email"
                                 id="resetEmail"
-                                name="resetEmail"
+                                name="email"
                                 placeholder="Enter your email"
                                 value={emailForReset}
                                 onChange={(e) => setEmailForReset(e.target.value)}
                                 className="standard-input"
-                                autoComplete="off"
+                                autoComplete="username"
+                                autoCapitalize="none"
+                                inputMode="email"
                             />
                             <button type="submit" className="primary-button send-reset-link-button">
                                 Send Reset Link
                             </button>
-                            <button type="button" onClick={() => setForgotPasswordStep(false)} className="secondary-button back-to-login-button">
+                            <button
+                                type="button"
+                                onClick={() => setForgotPasswordStep(false)}
+                                className="secondary-button back-to-login-button"
+                            >
                                 Back to Login
                             </button>
                         </form>
@@ -214,23 +230,25 @@ export default function Login() {
                             <input
                                 type="email"
                                 id="loginEmail"
-                                name="loginEmail"
+                                name="email"                         // important for PMs
                                 placeholder="Email"
                                 value={data.email}
                                 onChange={(e) => setData({ ...data, email: e.target.value })}
                                 className="standard-input"
-                                autoComplete="off"
+                                autoComplete="username"              // tells PMs this is the identifier
+                                autoCapitalize="none"
+                                inputMode="email"
                             />
                             <label htmlFor="loginPassword" className="form-label">Password</label>
                             <div className="password-wrapper">
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     id="loginPassword"
-                                    name="loginPassword"
+                                    name="password"
                                     placeholder="Password"
                                     value={data.password}
                                     onChange={(e) => setData({ ...data, password: e.target.value })}
-                                    autoComplete="off"
+                                    autoComplete="current-password"
                                 />
                                 <button type="button" onClick={togglePassword}>
                                     {showPassword ? 'Hide' : 'Show'}
@@ -243,7 +261,9 @@ export default function Login() {
                         </form>
                     ) : (
                         <form onSubmit={verifyCode} className="login-form">
-                            <p className="verification-instruction">Enter the 6-digit code sent to <strong>{data.email}</strong></p>
+                            <p className="verification-instruction">
+                                Enter the 6-digit code sent to <strong>{data.email.trim().toLowerCase()}</strong>
+                            </p>
                             <label htmlFor="verificationCode" className="form-label">Verification Code</label>
                             <input
                                 type="text"
@@ -254,7 +274,7 @@ export default function Login() {
                                 onChange={(e) => setCode(e.target.value)}
                                 className="standard-input"
                                 maxLength={6}
-                                autoComplete="off"
+                                autoComplete="one-time-code"
                             />
                             <button type="submit" className="primary-button verify-email-button">Verify Email</button>
                             <button
