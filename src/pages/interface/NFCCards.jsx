@@ -56,7 +56,7 @@ export default function NFCCards() {
     if (isConfirmingCancel) {
       if (cancelCountdown > 0) {
         const timer = setTimeout(() => {
-          setCancelCountdown(cancelCountdown - 1);
+          setCancelCountdown((s) => s - 1);
         }, 1000);
         return () => clearTimeout(timer);
       }
@@ -97,18 +97,20 @@ export default function NFCCards() {
   };
 
   const handleCancelSubscription = async () => {
+    // First press -> start countdown
     if (!isConfirmingCancel) {
       setIsConfirmingCancel(true);
       return;
     }
 
+    // Only allow cancel when countdown finished
     if (cancelCountdown === 0) {
       try {
         const res = await api.post('/cancel-subscription');
         if (res.data.success) {
           toast.success(res.data.message);
         } else {
-          toast.error(res.data.error);
+          toast.error(res.data.error || 'Failed to cancel subscription.');
         }
       } catch (err) {
         toast.error(err.response?.data?.error || 'Failed to cancel subscription.');
@@ -215,13 +217,60 @@ export default function NFCCards() {
                 </ul>
 
                 <div className="pricing-bottom">
-                  <Link
-                    to="/productandplan/konarsubscription"
-                    className="cta-blue-button desktop-button"
-                    style={{ marginTop: 20, width: '100%' }}
-                  >
-                    View Subscription Details
-                  </Link>
+                  {!isSubscribed ? (
+                    // Not subscribed → keep existing CTA
+                    <Link
+                      to="/productandplan/konarsubscription"
+                      className="cta-blue-button desktop-button"
+                      style={{ marginTop: 20, width: '100%' }}
+                    >
+                      View Subscription Details
+                    </Link>
+                  ) : (
+                    // Subscribed → show "Plan active" + "Cancel subscription" with 3s confirm
+                    <>
+                      <button
+                        className="cta-blue-button desktop-button"
+                        style={{
+                          marginTop: 20,
+                          width: '100%',
+                          opacity: 0.7,
+                          cursor: 'not-allowed',
+                        }}
+                        disabled
+                        type="button"
+                      >
+                        Plan active
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleCancelSubscription}
+                        className="desktop-button"
+                        style={{
+                          marginTop: 12,
+                          width: '100%',
+                          border: '1px solid #ef4444',
+                          color: '#ef4444',
+                          background: 'transparent',
+                          borderRadius: 12,
+                          padding: '12px 16px',
+                        }}
+                        disabled={isConfirmingCancel && cancelCountdown > 0}
+                        title={
+                          isConfirmingCancel && cancelCountdown > 0
+                            ? `Confirm cancel in ${cancelCountdown}s`
+                            : 'Cancel subscription'
+                        }
+                      >
+                        {isConfirmingCancel
+                          ? cancelCountdown > 0
+                            ? `Confirm cancel in ${cancelCountdown}s`
+                            : 'Confirm cancel now'
+                          : 'Cancel subscription'}
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
