@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './components/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute'; // Import ProtectedRoute
+import ProtectedRoute from './components/ProtectedRoute';
+
 import Home from './pages/website/Home';
 import Register from './pages/website/Register';
 import Login from './pages/website/Login';
@@ -18,6 +18,7 @@ import ContactUs from './pages/website/ContactUs';
 import Policies from './pages/website/Policies';
 import Success from './pages/website/Success';
 import ScrollToTop from './components/ScrollToTop';
+
 import MyProfile from './pages/interface/MyProfile';
 import Billing from './pages/interface/Billing';
 import HelpCentreInterface from './pages/interface/HelpCentreInterface';
@@ -28,7 +29,7 @@ import ContactSupport from './pages/interface/ContactSupport';
 import UserPage from './pages/interface/UserPage';
 import SuccessSubscription from './pages/website/SuccessSubscription';
 
-// 🆕 My Orders
+// 🆕 Import MyOrders
 import MyOrders from './pages/interface/MyOrder';
 
 axios.defaults.baseURL = 'https://konarcard-backend-331608269918.europe-west1.run.app';
@@ -63,7 +64,6 @@ function App() {
 
         {/* Protected Routes */}
         <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
-        {/* 🆕 My Orders */}
         <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
         <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
         <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
@@ -75,6 +75,7 @@ function App() {
         {/* Public User Page */}
         <Route path="/u/:username" element={<UserPage />} />
       </Routes>
+
       {!isUserPage && (
         <script src={TIDIO_SCRIPT_URL} async></script>
       )}

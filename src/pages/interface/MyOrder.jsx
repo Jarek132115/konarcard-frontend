@@ -5,11 +5,28 @@ import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
+import api from '../../services/api';
+
+function formatAmount(amount, currency = 'gbp') {
+    if (typeof amount !== 'number') return '—';
+    // Stripe sends smallest currency unit
+    const value = amount / 100;
+    return new Intl.NumberFormat(undefined, {
+        style: 'currency',
+        currency: currency.toUpperCase(),
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(value);
+}
 
 export default function MyOrders() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
     const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
+
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [err, setErr] = useState('');
 
     useEffect(() => {
         const handleResize = () => {
@@ -30,6 +47,25 @@ export default function MyOrders() {
             document.body.classList.remove('body-no-scroll');
         }
     }, [sidebarOpen, isMobile]);
+
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            try {
+                setLoading(true);
+                setErr('');
+                const res = await api.get('/me/orders');
+                if (!mounted) return;
+                const list = Array.isArray(res?.data?.data) ? res.data.data : [];
+                setOrders(list);
+            } catch (e) {
+                setErr(e?.response?.data?.error || 'Failed to load orders');
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        })();
+        return () => { mounted = false; };
+    }, []);
 
     return (
         <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -67,26 +103,59 @@ export default function MyOrders() {
                     isSmallMobile={isSmallMobile}
                 />
 
-                {/* Static placeholder */}
-                <div className="w-full flex items-center justify-center">
-                    <div
-                        style={{
-                            width: '100%',
-                            marginTop: '5px',
-                            background: '#fff',
-                            border: '1px solid rgba(0,0,0,0.08)',
-                            borderRadius: '16px',
-                            padding: '28px',
-                            textAlign: 'center',
-                        }}
-                    >
-                        <h2 className="desktop-h5" style={{ marginBottom: 8 }}>
-                            My Orders
-                        </h2>
-                        <p className="desktop-body-s" style={{ color: '#6b7280' }}>
-                            Your orders will appear here soon.
-                        </p>
-                    </div>
+                {/* Card */}
+                <div
+                    style={{
+                        width: '100%',
+                        marginTop: '5px',
+                        background: '#fff',
+                        border: '1px solid rgba(0,0,0,0.08)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                    }}
+                >
+                    {loading ? (
+                        <p>Loading orders…</p>
+                    ) : err ? (
+                        <p style={{ color: '#b91c1c' }}>{err}</p>
+                    ) : orders.length === 0 ? (
+                        <p>No orders yet.</p>
+                    ) : (
+                        <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ textAlign: 'left', borderBottom: '1px solid #eee' }}>
+                                        <th style={{ padding: '10px 8px' }}>Type</th>
+                                        <th style={{ padding: '10px 8px' }}>Status</th>
+                                        <th style={{ padding: '10px 8px' }}>Quantity</th>
+                                        <th style={{ padding: '10px 8px' }}>Amount</th>
+                                        <th style={{ padding: '10px 8px' }}>Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders.map((o) => (
+                                        <tr key={o.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                                            <td style={{ padding: '10px 8px', textTransform: 'capitalize' }}>
+                                                {o.type}
+                                            </td>
+                                            <td style={{ padding: '10px 8px', textTransform: 'capitalize' }}>
+                                                {o.status}
+                                            </td>
+                                            <td style={{ padding: '10px 8px' }}>
+                                                {o.type === 'subscription' ? '—' : (o.quantity || 1)}
+                                            </td>
+                                            <td style={{ padding: '10px 8px' }}>
+                                                {formatAmount(o.amountTotal, o.currency)}
+                                            </td>
+                                            <td style={{ padding: '10px 8px' }}>
+                                                {o.createdAt ? new Date(o.createdAt).toLocaleString() : '—'}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
             </main>
         </div>
