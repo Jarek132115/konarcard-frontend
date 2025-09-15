@@ -1,9 +1,9 @@
-// src/components/Navbar.jsx
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
-import LogoWhite from '../assets/icons/Logo-White.svg';
+// Keep LogoWhite import if used elsewhere, but we won't use it in the white drawer
+// import LogoWhite from '../assets/icons/Logo-White.svg';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -58,7 +58,8 @@ export default function Navbar() {
                   aria-label="Home"
                   onClick={() => setMobileOpen(false)}
                 >
-                  <img src={LogoWhite} alt="Logo" className="logo" />
+                  {/* White drawer → dark logo */}
+                  <img src={LogoIcon} alt="Logo" className="logo" />
                 </Link>
 
                 <button

@@ -76,7 +76,6 @@
   background: transparent;
   border: 0;
   padding: 0;
-  /* aligns with close button (no extra pad) */
 }
 
 .hamburger span {
@@ -99,9 +98,9 @@
   transform: rotate(-45deg) translate(6px, -6px);
 }
 
-/* when open, make bars white like the “X” */
+/* when open, keep bars dark (the overlay covers the page behind anyway) */
 .hamburger.active span {
-  background: #fff;
+  background: #111;
 }
 
 /* =========================
@@ -118,29 +117,34 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
   animation: overlayFade .25s ease-out;
 }
 
+/* LEFT drawer, WHITE theme */
 .mobile-panel {
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
+  /* ← open from the LEFT */
   height: 100vh;
   width: min(520px, 92vw);
   display: flex;
   flex-direction: column;
-  color: #eaf2ff;
-  background:
-    radial-gradient(110% 110% at 100% 0%, rgba(0, 129, 255, .12) 0%, rgba(0, 0, 0, 0) 45%),
-    linear-gradient(180deg, #111 0%, #1a1a1a 55%, #222 100%);
-  border-left: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.35);
+  color: #111;
+  background: #fff;
+  /* ← white background */
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  /* ← right border now */
+  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.08);
+  /* ← shadow on the right side */
   padding: 0 20px;
   /* match navbar-container horizontal pad */
-  transform: translateX(100%);
-  animation: panelIn .35s cubic-bezier(.22, .9, .24, 1) forwards;
+  transform: translateX(-100%);
+  /* ← start off-screen left */
+  animation: panelInLeft .35s cubic-bezier(.22, .9, .24, 1) forwards;
+  /* ← slide from left */
 }
 
 /* Header row — same vertical padding as .navbar */
@@ -149,8 +153,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 0;
-  /* equal to .navbar padding */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .mobile-close {
@@ -158,17 +161,16 @@
   appearance: none;
   background: transparent;
   border: none;
-  color: #eaf2ff;
+  color: #111;
   font-size: 28px;
   line-height: 1;
   padding: 0;
-  /* align with burger */
   border-radius: 10px;
   transition: transform .08s ease, color .15s ease;
 }
 
 .mobile-close:hover {
-  color: #cfe3ff;
+  color: #444;
 }
 
 .mobile-close:active {
@@ -185,21 +187,18 @@
   gap: 8px;
 }
 
-/* --- Use desktop-h4 look for all open-menu items --- */
+/* desktop-h4 look in white theme */
 .mobile-list li a.desktop-h4,
 .mobile-actions .desktop-h4,
 .mobile-actions .logout-link.desktop-h4 {
   display: block;
   padding: 14px 6px;
-  /* If you already have a global .desktop-h4, these values act as sensible defaults,
-     and won’t fight unless more specific. */
   font-size: 22px;
-  /* h4 scale */
   line-height: 1.35;
   font-weight: 700;
   letter-spacing: -0.01em;
 
-  color: #f5f8ff;
+  color: #111;
   text-decoration: none;
   border-radius: 12px;
   transition: background-color .15s ease, color .15s ease, transform .08s ease;
@@ -207,8 +206,8 @@
 
 .mobile-list li a.desktop-h4:hover,
 .mobile-actions .desktop-h4:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #eaf2ff;
+  background: rgba(0, 0, 0, 0.05);
+  color: #000;
 }
 
 .mobile-list li a.desktop-h4:active,
@@ -219,7 +218,7 @@
 /* Divider above auth links */
 .mobile-divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.08);
   margin-top: 10px;
 }
 
@@ -232,7 +231,7 @@
   flex-direction: column;
 }
 
-/* Logout styled like a link but red; remove any default button styles */
+/* Logout styled like a link but red */
 .logout-link {
   all: unset;
   cursor: pointer;
@@ -266,9 +265,10 @@
   }
 }
 
-@keyframes panelIn {
+/* slide IN from the LEFT */
+@keyframes panelInLeft {
   from {
-    transform: translateX(100%);
+    transform: translateX(-100%);
   }
 
   to {
