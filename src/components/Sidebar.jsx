@@ -4,6 +4,7 @@ import { AuthContext } from './AuthContext';
 
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import homeInterface from '../assets/icons/Home-Interface.svg';
+import orderIcon from '../assets/icons/MyOrder-Icon.svg';
 import cardInterface from '../assets/icons/Card-Interface.svg';
 import settingsInterface from '../assets/icons/Settings-Interface.svg';
 import contactInterface from '../assets/icons/Contact-Interface.svg';
@@ -71,7 +72,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 onClick={closeSidebar}
                                 className={`sidebar-button ${isActive('/myorders') ? 'active-sidebar-link' : ''}`}
                             >
-                                <img src={cardInterface} alt="" className="icon" />
+                                <img src={orderIcon} alt="" className="icon" />
                                 <p className="desktop-body-s">My Orders</p>
                             </Link>
 
