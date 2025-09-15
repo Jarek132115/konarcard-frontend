@@ -9,8 +9,8 @@ export default function Success() {
         <p className='desktop-body'>Thank you for your order. Your smart card is on its way.</p>
 
         <div className="success-buttons">
-          <Link to="/" className="black-button desktop-button" style={{ width: '100%' }}>Go to Home</Link>
-          <Link to="/myprofile" className="blue-button desktop-button" style={{ width: '100%' }}>Go to Your Dashboard</Link>
+          <Link to="/" className="cta-black-button desktop-button" style={{ width: '100%' }}>Go to Home</Link>
+          <Link to="/myprofile" className="cta-blue-button desktop-button" style={{ width: '100%' }}>Go to Your Dashboard</Link>
         </div>
       </div>
     </div>
