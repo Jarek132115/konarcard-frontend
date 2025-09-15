@@ -12,9 +12,9 @@
 }
 
 .success-box {
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 10px;
+    background: #F7F7F7;
+    padding: 30px;
+    border-radius: 16px;
     text-align: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     max-width: 550px;
