@@ -47,7 +47,7 @@ export default function Footer() {
                 </div>
                 <div className="footer-bottom">
                     <div className="copyright-box">
-                        <img src={CopyrightIcon} />
+                        <img src={CopyrightIcon} alt='copyright icon' />
                         <p style={{ color: '#333', fontSize: 12 }}>2025 KONAR LTD. All Rights Reserved</p>
                     </div>
                     <div className="policy-box-footer">
