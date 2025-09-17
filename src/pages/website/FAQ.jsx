@@ -31,6 +31,7 @@ import TreeIcon from '../../assets/icons/Tree-Icon.svg'
 import RecycleIcon from '../../assets/icons/Recycle-Icon.svg'
 import ContactIcon from '../../assets/icons/Contact-Icon.svg'
 import TutorialIcon from '../../assets/icons/Tutorial-Icon.svg'
+import ShareIcon from '../../assets/icons/Share-Icon.svg';
 
 export default function FAQ() {
   return (
@@ -163,7 +164,7 @@ export default function FAQ() {
             </div>
 
             <div className="section-list">
-              <div className="icon-white"><img src={QRCode} className="icon" /></div>
+              <div className="icon-white"><img src={ShareIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How do I share my page?</p>
                 <p className="desktop-body-xs">
