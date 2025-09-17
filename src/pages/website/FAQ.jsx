@@ -32,6 +32,7 @@ import RecycleIcon from '../../assets/icons/Recycle-Icon.svg'
 import ContactIcon from '../../assets/icons/Contact-Icon.svg'
 import TutorialIcon from '../../assets/icons/Tutorial-Icon.svg'
 import ShareIcon from '../../assets/icons/Share-Icon.svg';
+import QuestionIcon from '../../assets/icons/Question-Icon.svg';
 
 export default function FAQ() {
   return (
@@ -210,7 +211,7 @@ export default function FAQ() {
 
           <div className="faq-column">
             <div className="section-list">
-              <div className="icon-white"><img src={TimeIcon} className="icon" /></div>
+              <div className="icon-white"><img src={QuestionIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How does the free trial work?</p>
                 <p className="desktop-body-xs">
