@@ -1,10 +1,14 @@
+/* Fix Chrome deprecation: never force overflow:visible on replaced elements */
 img,
 video,
 canvas {
-  overflow: hidden;
-  overflow: clip;
+  overflow: clip !important;
+  /* modern */
   overflow-clip-margin: content-box;
+  /* fallback for older engines (optional) */
+  /* overflow: hidden !important; */
 }
+
 
 
 html,
