@@ -141,7 +141,7 @@ export default function FAQ() {
             </div>
 
             <div className="section-list">
-              <div className="icon-white"><img src={BoltIcon} className="icon" /></div>
+              <div className="icon-white"><img src={ProfilePencil} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How long does setup take?</p>
                 <p className="desktop-body-xs">
