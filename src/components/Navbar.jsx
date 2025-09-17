@@ -2,14 +2,14 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
-// Keep LogoWhite import if used elsewhere, but we won't use it in the white drawer
-// import LogoWhite from '../assets/icons/Logo-White.svg';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, loading, logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext); // <-- no loading usage
   const navigate = useNavigate();
   const location = useLocation();
+
+  const isAuthed = !!user;
 
   const handleLogout = async () => {
     await logout();
@@ -58,7 +58,6 @@ export default function Navbar() {
                   aria-label="Home"
                   onClick={() => setMobileOpen(false)}
                 >
-                  {/* White drawer → dark logo */}
                   <img src={LogoIcon} alt="Logo" className="logo" />
                 </Link>
 
@@ -113,11 +112,11 @@ export default function Navbar() {
               <div className="mobile-divider" aria-hidden="true" />
 
               <div className="mobile-actions">
-                {!loading && (!user ? (
+                {!isAuthed ? (
                   <>
                     <Link
                       to="/login"
-                      state={{ from: location }}
+                      state={{ from: location.pathname }}
                       className="desktop-h4"
                       onClick={() => setMobileOpen(false)}
                     >
@@ -125,7 +124,7 @@ export default function Navbar() {
                     </Link>
                     <Link
                       to="/register"
-                      state={{ from: location }}
+                      state={{ from: location.pathname }}
                       className="desktop-h4"
                       onClick={() => setMobileOpen(false)}
                     >
@@ -141,8 +140,6 @@ export default function Navbar() {
                     >
                       Dashboard
                     </Link>
-
-                    {/* Logout styled like a link (red) */}
                     <button
                       type="button"
                       onClick={() => { handleLogout(); setMobileOpen(false); }}
@@ -151,7 +148,7 @@ export default function Navbar() {
                       Logout
                     </button>
                   </>
-                ))}
+                )}
               </div>
             </div>
           </div>
@@ -172,12 +169,12 @@ export default function Navbar() {
           </div>
 
           <div className="auth-links">
-            {!loading && (!user ? (
+            {!isAuthed ? (
               <>
-                <Link to="/login" state={{ from: location }} className="desktop-button cta-blue-button">
+                <Link to="/login" state={{ from: location.pathname }} className="desktop-button cta-blue-button">
                   Login
                 </Link>
-                <Link to="/register" state={{ from: location }} className="desktop-button cta-black-button">
+                <Link to="/register" state={{ from: location.pathname }} className="desktop-button cta-black-button">
                   Sign up
                 </Link>
               </>
@@ -190,7 +187,7 @@ export default function Navbar() {
                   Logout
                 </button>
               </>
-            ))}
+            )}
           </div>
         </div>
 
