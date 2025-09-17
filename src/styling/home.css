@@ -76,7 +76,7 @@ body {
     min-width: 300px;
     height: 100%;
     align-self: stretch;
-    overflow: visible !important;
+    overflow: visible;
     box-sizing: border-box;
     min-height: 0;
 }
@@ -93,7 +93,7 @@ body {
     visibility: visible !important;
     opacity: 1 !important;
     z-index: auto !important;
-    overflow: visible !important;
+    overflow: visible;
 }
 
 .hero-subtitle {
