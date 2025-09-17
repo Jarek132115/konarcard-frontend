@@ -185,13 +185,9 @@ export default function Home() {
                 controlsList="nodownload nofullscreen noremoteplayback"
                 style={{ backgroundColor: 'transparent' }}
               >
-                {/* iPhone/Safari needs HEVC-with-alpha (export as H.265 with alpha) */}
                 <source src="/videos/Hero-Alpha-HEVC.mp4" type='video/mp4; codecs="hvc1"' />
-                {/* Chrome/Android: WebM with alpha */}
                 <source src="/videos/Hero-Alpha.webm" type="video/webm" />
-                {/* Last-resort fallback without alpha (will show solid bg) */}
                 <source src="/videos/Hero-Video.mp4" type="video/mp4" />
-                {/* Fallback text for very old browsers */}
                 Your browser does not support the video tag.
               </video>
             </div>
