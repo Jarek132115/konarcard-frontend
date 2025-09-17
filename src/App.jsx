@@ -1,85 +1,77 @@
-import axios from 'axios';
-import { Routes, Route, useLocation } from 'react-router-dom';
+// App.jsx (only the changes shown)
+import { Routes, Route } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
-
-import Home from './pages/website/Home';
-import Register from './pages/website/Register';
-import Login from './pages/website/Login';
-import ResetPassword from './pages/website/ResetPassword';
-import ProductAndPlan from './pages/website/ProductAndPlan';
-import FAQ from './pages/website/FAQ';
-import HelpCentre from './pages/website/HelpCentre';
-import Reviews from './pages/website/Reviews';
-import KonarCard from './pages/website/KonarCard';
-import KonarSubscription from './pages/website/KonarSubscription';
-import ContactUs from './pages/website/ContactUs';
-import Policies from './pages/website/Policies';
-import Success from './pages/website/Success';
 import ScrollToTop from './components/ScrollToTop';
 
-import MyProfile from './pages/interface/MyProfile';
-import Billing from './pages/interface/Billing';
-import HelpCentreInterface from './pages/interface/HelpCentreInterface';
-import NFCCards from './pages/interface/NFCCards';
-import Notifications from './pages/interface/Notifications';
-import Profile from './pages/interface/Profile';
-import ContactSupport from './pages/interface/ContactSupport';
-import UserPage from './pages/interface/UserPage';
-import SuccessSubscription from './pages/website/SuccessSubscription';
+// Lazy pages
+const Home = lazy(() => import('./pages/website/Home'));
+const Register = lazy(() => import('./pages/website/Register'));
+const Login = lazy(() => import('./pages/website/Login'));
+const ResetPassword = lazy(() => import('./pages/website/ResetPassword'));
+const ProductAndPlan = lazy(() => import('./pages/website/ProductAndPlan'));
+const FAQ = lazy(() => import('./pages/website/FAQ'));
+const HelpCentre = lazy(() => import('./pages/website/HelpCentre'));
+const Reviews = lazy(() => import('./pages/website/Reviews'));
+const KonarCard = lazy(() => import('./pages/website/KonarCard'));
+const KonarSubscription = lazy(() => import('./pages/website/KonarSubscription'));
+const ContactUs = lazy(() => import('./pages/website/ContactUs'));
+const Policies = lazy(() => import('./pages/website/Policies'));
+const Success = lazy(() => import('./pages/website/Success'));
+const SuccessSubscription = lazy(() => import('./pages/website/SuccessSubscription'));
 
-// 🆕 MyOrders
-import MyOrders from './pages/interface/MyOrder';
+// Interface (protected)
+const MyProfile = lazy(() => import('./pages/interface/MyProfile'));
+const MyOrders = lazy(() => import('./pages/interface/MyOrder'));
+const Billing = lazy(() => import('./pages/interface/Billing'));
+const HelpCentreInterface = lazy(() => import('./pages/interface/HelpCentreInterface'));
+const NFCCards = lazy(() => import('./pages/interface/NFCCards'));
+const Notifications = lazy(() => import('./pages/interface/Notifications'));
+const Profile = lazy(() => import('./pages/interface/Profile'));
+const ContactSupport = lazy(() => import('./pages/interface/ContactSupport'));
 
-// 🆕 Tidio delayed loader
-import TidioDelayedLoader from './components/TidioDelayedLoader';
-
-axios.defaults.baseURL = 'https://konarcard-backend-331608269918.europe-west1.run.app';
-axios.defaults.withCredentials = true;
+// Public user page
+const UserPage = lazy(() => import('./pages/interface/UserPage'));
 
 function App() {
-  const location = useLocation();
-  const isUserPage = location.pathname.startsWith('/u/');
-
   return (
     <AuthProvider>
       <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
       <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/productandplan" element={<ProductAndPlan />} />
-        <Route path="/productandplan/konarcard" element={<KonarCard />} />
-        <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
-        <Route path="/whatisnfc" element={<KonarCard />} />
-        <Route path="/subscription" element={<KonarSubscription />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/reviews" element={<Reviews />} />
-        <Route path="/helpcentre" element={<HelpCentre />} />
-        <Route path="/contactus" element={<ContactUs />} />
-        <Route path="/policies" element={<Policies />} />
-        <Route path="/success" element={<Success />} />
-        <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
 
-        {/* Protected Routes */}
-        <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
-        <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
-        <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
-        <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
-        <Route path="/nfccards" element={<ProtectedRoute><NFCCards /></ProtectedRoute>} />
-        <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
+      <Suspense fallback={<div style={{ padding: 24 }}>Loading…</div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/productandplan" element={<ProductAndPlan />} />
+          <Route path="/productandplan/konarcard" element={<KonarCard />} />
+          <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
+          <Route path="/whatisnfc" element={<KonarCard />} />
+          <Route path="/subscription" element={<KonarSubscription />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/helpcentre" element={<HelpCentre />} />
+          <Route path="/contactus" element={<ContactUs />} />
+          <Route path="/policies" element={<Policies />} />
+          <Route path="/success" element={<Success />} />
+          <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
 
-        {/* Public User Page */}
-        <Route path="/u/:username" element={<UserPage />} />
-      </Routes>
+          <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
+          <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+          <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+          <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
+          <Route path="/nfccards" element={<ProtectedRoute><NFCCards /></ProtectedRoute>} />
+          <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
 
-      {/* Load Tidio only on non-/u/* pages, after ~4s */}
-      <TidioDelayedLoader enabled={!isUserPage} delayMs={4000} />
+          <Route path="/u/:username" element={<UserPage />} />
+        </Routes>
+      </Suspense>
     </AuthProvider>
   );
 }

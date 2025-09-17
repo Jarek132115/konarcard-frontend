@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { loadStripe } from '@stripe/stripe-js';
+// ⛔️ removed: import { loadStripe } from '@stripe/stripe-js';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Footer from '../../components/Footer';
@@ -34,16 +34,25 @@ import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
 import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
 
-// NEW: icons used in the card-specific FAQ list
-import QRCode from '../../assets/icons/QR-Code-Icon.svg';
-import NFCChipIcon from '../../assets/icons/NFCChip-Icon.svg';
-import TimeIcon from '../../assets/icons/Time-Icon.svg';
-
 // NEW: auth + api
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 
-const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8');
+/* -------------------------------------------
+   STRIPE (lazy): only import when needed
+-------------------------------------------- */
+const STRIPE_PK =
+  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ||
+  'pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8';
+
+let stripePromiseCache = null;
+async function getStripe() {
+  if (!stripePromiseCache) {
+    const { loadStripe } = await import('@stripe/stripe-js'); // ← dynamic import
+    stripePromiseCache = loadStripe(STRIPE_PK);
+  }
+  return stripePromiseCache;
+}
 
 export default function KonarCard() {
   const navigate = useNavigate();
@@ -66,7 +75,7 @@ export default function KonarCard() {
 
   const startCheckout = useCallback(async (qty) => {
     try {
-      const stripe = await stripePromise;
+      const stripe = await getStripe(); // ← load only now
 
       // use api service so auth token is attached
       const res = await api.post('/checkout/create-checkout-session', { quantity: qty });
@@ -110,7 +119,7 @@ export default function KonarCard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state]);
 
-  // Delivery window text: today+1 to today+4 (e.g., "2–5 September" or "30 Sep – 3 Oct 2025")
+  // Delivery window text: today+1 to today+4
   const getDeliveryDates = () => {
     const today = new Date();
     const start = new Date(today);
@@ -126,22 +135,15 @@ export default function KonarCard() {
 
     const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
 
-    if (sameMonth) {
-      // "2–5 September"
-      return `${start.getDate()}–${end.getDate()} ${monthNames[start.getMonth()]}`;
-    }
+    if (sameMonth) return `${start.getDate()}–${end.getDate()} ${monthNames[start.getMonth()]}`;
 
     const sameYear = start.getFullYear() === end.getFullYear();
-    if (sameYear) {
-      // "30 Sep – 3 Oct"
-      return `${start.getDate()} ${shortMonth(start)} – ${end.getDate()} ${shortMonth(end)}`;
-    }
-    // Cross-year: "30 Dec 2025 – 2 Jan 2026"
+    if (sameYear) return `${start.getDate()} ${shortMonth(start)} – ${end.getDate()} ${shortMonth(end)}`;
+
     return `${start.getDate()} ${shortMonth(start)} ${start.getFullYear()} – ${end.getDate()} ${shortMonth(end)} ${end.getFullYear()}`;
   };
   const deliveryDateText = getDeliveryDates();
 
-  // Feature list (icons are placeholders—swap later)
   const featurePills = [
     { icon: PhoneIcon, title: 'Compatibility', text: 'Compatible with Android & iOS' },
     { icon: NFCIcon, title: 'QR Code Backup', text: 'If NFC doesn’t work, scan the QR' },
