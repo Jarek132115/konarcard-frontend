@@ -331,7 +331,7 @@ export default function Home() {
               <img src={NFCBusinessCard} alt="NFC business card being tapped to share details" />
             </div>
             <h4 className="desktop-h6">NFC Business Card</h4>
-            <p className="desktop-body-s">Tap to Instantly Share Details</p>
+            <p className="desktop-body-s">Tap to Instantly Share Details With Anyone</p>
           </div>
 
           <div className="share-card">
