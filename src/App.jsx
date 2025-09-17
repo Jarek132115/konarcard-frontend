@@ -1,4 +1,4 @@
-// App.jsx (only the changes shown)
+// App.jsx
 import { Routes, Route } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import { Toaster } from 'react-hot-toast';
@@ -41,7 +41,8 @@ function App() {
       <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
       <ScrollToTop />
 
-      <Suspense fallback={<div style={{ padding: 24 }}>Loading…</div>}>
+      {/* Remove the visible "Loading…" to avoid the flash */}
+      <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
@@ -60,6 +61,7 @@ function App() {
           <Route path="/success" element={<Success />} />
           <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
 
+          {/* Protected routes */}
           <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
           <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
           <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
@@ -69,6 +71,7 @@ function App() {
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
 
+          {/* Public user page */}
           <Route path="/u/:username" element={<UserPage />} />
         </Routes>
       </Suspense>
