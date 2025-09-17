@@ -492,6 +492,18 @@ export default function MyProfile() {
       : shouldShowPlaceholders
         ? previewPlaceholders.workImages
         : [];
+
+  // ✨ NEW: live-preview lists (use typed items if any; else placeholders only when empty)
+  const servicesForPreview =
+    (state.services && state.services.length > 0)
+      ? state.services
+      : (shouldShowPlaceholders ? previewPlaceholders.services : []);
+
+  const reviewsForPreview =
+    (state.reviews && state.reviews.length > 0)
+      ? state.reviews
+      : (shouldShowPlaceholders ? previewPlaceholders.reviews : []);
+
   const currentQrCodeUrl = businessCard?.qrCodeUrl || "";
   const getEditorImageSrc = (img, ph) => img || (shouldShowPlaceholders ? ph : "");
   const showAddImageText = (img) => !img;
@@ -754,11 +766,11 @@ export default function MyProfile() {
                         </>
                       )}
 
-                      {showServicesSection && (state.services.length > 0 || !hasSavedData) && (
+                      {showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) && (
                         <>
                           <p className="mock-section-title">My Services</p>
                           <div className="work-preview-row-container">
-                            {reviewsDisplayMode === "carousel" && (
+                            {servicesDisplayMode === "carousel" && (
                               <div className="carousel-nav-buttons">
                                 <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>
                                   &#9664;
@@ -769,7 +781,7 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
-                              {(shouldShowPlaceholders ? previewPlaceholders.services : state.services).map((s, i) => (
+                              {servicesForPreview.map((s, i) => (
                                 <div key={i} className="mock-service-item">
                                   <p className="mock-service-name">{s.name}</p>
                                   <span className="mock-service-price">{s.price}</span>
@@ -780,7 +792,7 @@ export default function MyProfile() {
                         </>
                       )}
 
-                      {showReviewsSection && (state.reviews.length > 0 || !hasSavedData) && (
+                      {showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) && (
                         <>
                           <p className="mock-section-title">Reviews</p>
                           <div className="work-preview-row-container">
@@ -795,7 +807,7 @@ export default function MyProfile() {
                               </div>
                             )}
                             <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
-                              {(shouldShowPlaceholders ? previewPlaceholders.reviews : state.reviews).map((r, i) => (
+                              {reviewsForPreview.map((r, i) => (
                                 <div key={i} className="mock-review-card">
                                   <div className="mock-star-rating">
                                     {Array(r.rating || 0).fill().map((_, idx) => <span key={`f-${idx}`}>★</span>)}
