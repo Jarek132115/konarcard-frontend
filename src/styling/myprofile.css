@@ -1424,7 +1424,7 @@
         border-width: 6px;
         border-radius: 20px;
         height: fit-content;
-        overflow: visible !important;
+        overflow: visible;
         max-width: 100%;
     }
 
