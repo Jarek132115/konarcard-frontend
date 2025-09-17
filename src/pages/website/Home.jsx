@@ -1,5 +1,5 @@
 // frontend/src/pages/Home/index.jsx
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -53,36 +53,25 @@ import api from '../../services/api';
 import { toast } from 'react-hot-toast';
 
 export default function Home() {
-  const { user, loading: authLoading } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 
   const isSubscribed = user ? user.isSubscribed : false;
-  const loadingStatus = authLoading;
 
-  // NEW: state for the pricing card (black) gallery
+  // gallery state (kept for future use even if not shown here)
   const [cardMainImage, setCardMainImage] = useState(ProductCover);
-  const cardThumbs = [
-    ProductCover,
-    ProductImage1,
-    ProductImage2,
-    ProductImage3,
-    ProductImage4,
-  ];
+  const cardThumbs = [ProductCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4];
 
   const handleSubscribe = async () => {
     if (!user) {
-      navigate('/login', {
-        state: { from: location.pathname, checkoutType: 'subscription' },
-      });
+      navigate('/login', { state: { from: location.pathname, checkoutType: 'subscription' } });
       return;
     }
-
     if (isSubscribed) {
       toast.info('You are already subscribed to the Power Profile.');
       return;
     }
-
     try {
       const res = await api.post('/subscribe', {
         returnUrl: window.location.origin + '/SuccessSubscription',
@@ -95,44 +84,6 @@ export default function Home() {
     }
   };
 
-  /* --- Make step images only as tall as their text columns --- */
-  useEffect(() => {
-    const cards = Array.from(document.querySelectorAll('.step-card'));
-    const observers = [];
-
-    const updateCard = (card) => {
-      const textEl = card.querySelector('.step-text');
-      const mediaEl = card.querySelector('.step-media');
-      if (!textEl || !mediaEl) return;
-
-      const textH = textEl.offsetHeight;
-      const cs = getComputedStyle(mediaEl);
-      const mediaPad =
-        parseFloat(cs.paddingTop || '0') + parseFloat(cs.paddingBottom || '0');
-
-      const imgH = Math.max(0, Math.round(textH - mediaPad));
-      card.style.setProperty('--step-media-img-h', `${imgH}px`);
-    };
-
-    cards.forEach((card) => {
-      updateCard(card);
-      const textEl = card.querySelector('.step-text');
-      if (textEl) {
-        const ro = new ResizeObserver(() => updateCard(card));
-        ro.observe(textEl);
-        observers.push(ro);
-      }
-    });
-
-    const onResize = () => cards.forEach(updateCard);
-    window.addEventListener('resize', onResize);
-
-    return () => {
-      observers.forEach((o) => o.disconnect());
-      window.removeEventListener('resize', onResize);
-    };
-  }, []);
-
   return (
     <>
       <Navbar />
@@ -141,7 +92,9 @@ export default function Home() {
       <div className="home-hero">
         <div className="hero-container">
           <div className="hero-left">
-            <div style={{ width: 'fit-content' }} className="step-badge">14 Day <span style={{ fontWeight: 600 }}>Free Trial</span> Now Available</div>
+            <div style={{ width: 'fit-content' }} className="step-badge">
+              14 Day <span style={{ fontWeight: 600 }}>Free Trial</span> Now Available
+            </div>
             <h1 className="desktop-h1 hero-heading">
               Stand Out. Get Noticed. Grow Your <span className="blue">Business.</span>
             </h1>
@@ -150,8 +103,12 @@ export default function Home() {
             </p>
 
             <div className="hero-cta">
-              <Link to="/productandplan" className="cta-blue-button desktop-button">View Plans & Cards</Link>
-              <Link to="/register" className="cta-black-button desktop-button">Start Your 14-Day Trial</Link>
+              <Link to="/productandplan" className="cta-blue-button desktop-button">
+                View Plans & Cards
+              </Link>
+              <Link to="/register" className="cta-black-button desktop-button">
+                Start Your 14-Day Trial
+              </Link>
             </div>
 
             <div className="hero-social-proof">
@@ -161,7 +118,9 @@ export default function Home() {
                 <img src={pp3} alt="User 3" className="avatar" />
               </div>
               <div className="avatar-text">
-                <p style={{ fontWeight: 900 }} className="desktop-h6">1k+</p>
+                <p style={{ fontWeight: 900 }} className="desktop-h6">
+                  1k+
+                </p>
                 <p className="desktop-body-xs light-black">Trusted by 1,000+ tradies</p>
               </div>
             </div>
@@ -175,7 +134,7 @@ export default function Home() {
               muted
               playsInline
               preload="auto"
-              aria-hidden="true"           // <-- remove incompatible role, hide decorative video
+              aria-hidden="true"
               width="812"
               height="500"
             >
@@ -186,7 +145,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
 
       {/* ---------- 3 STEPS GROUP (with heading + 40px gaps) ---------- */}
       <div className="section steps-section">
@@ -239,8 +197,12 @@ export default function Home() {
                 </div>
 
                 <div className="step-cta">
-                  <p style={{ fontStyle: "italic" }} className="desktop-body-xs gray step-note">No credit card required*</p>
-                  <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
+                  <p style={{ fontStyle: 'italic' }} className="desktop-body-xs gray step-note">
+                    No credit card required*
+                  </p>
+                  <Link to="/register" className="cta-blue-button desktop-button">
+                    Start Your 14 Day Free Trial
+                  </Link>
                 </div>
               </div>
             </div>
@@ -289,8 +251,12 @@ export default function Home() {
                 </div>
 
                 <div className="step-cta">
-                  <p style={{ fontStyle: "italic" }} className="desktop-body-xs gray step-note">No credit card required*</p>
-                  <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
+                  <p style={{ fontStyle: 'italic' }} className="desktop-body-xs gray step-note">
+                    No credit card required*
+                  </p>
+                  <Link to="/register" className="cta-blue-button desktop-button">
+                    Start Your 14 Day Free Trial
+                  </Link>
                 </div>
               </div>
             </div>
@@ -339,8 +305,12 @@ export default function Home() {
                 </div>
 
                 <div className="step-cta">
-                  <p style={{ fontStyle: "italic" }} className="desktop-body-xs gray step-note">No credit card required*</p>
-                  <Link to="/register" className="cta-blue-button desktop-button">Start Your 14 Day Free Trial</Link>
+                  <p style={{ fontStyle: 'italic' }} className="desktop-body-xs gray step-note">
+                    No credit card required*
+                  </p>
+                  <Link to="/register" className="cta-blue-button desktop-button">
+                    Start Your 14 Day Free Trial
+                  </Link>
                 </div>
               </div>
             </div>
@@ -404,7 +374,7 @@ export default function Home() {
               <div className="pricing-head">
                 <div>
                   <h3 className="desktop-h5">Power Profile</h3>
-                  <p className='desktop-body-xs'>Win more work with a power profile</p>
+                  <p className="desktop-body-xs">Win more work with a power profile</p>
                 </div>
                 <span className="pricing-badge blue">14-Day Free Trial</span>
               </div>
@@ -428,14 +398,12 @@ export default function Home() {
                 ].map((text, i) => (
                   <li className="pricing-feature" key={i}>
                     <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
-                    <span className='white desktop-body-x'>{text}</span>
+                    <span className="white desktop-body-x">{text}</span>
                   </li>
                 ))}
               </ul>
 
-              {/* Sticky bottom area: quote + CTA */}
               <div className="pricing-bottom">
-
                 <Link
                   to="/productandplan/konarsubscription"
                   className="cta-blue-button desktop-button"
@@ -453,7 +421,7 @@ export default function Home() {
               <div className="pricing-head">
                 <div>
                   <h3 className="desktop-h5">Konar Card - White Edition</h3>
-                  <p className='desktop-body-xs'>Tap to share your profile instantly.</p>
+                  <p className="desktop-body-xs">Tap to share your profile instantly.</p>
                 </div>
                 <span className="pricing-badge">12 Month Warranty</span>
               </div>
@@ -466,9 +434,7 @@ export default function Home() {
                 <img src={PlasticCard} alt="Konar Card - White Edition" />
               </div>
 
-              {/* Sticky bottom area: quote + CTA */}
               <div className="pricing-bottom">
-
                 <Link
                   to="/productandplan/konarcard"
                   className="cta-black-button desktop-button"
@@ -482,8 +448,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* (rest of page unchanged) — People, Reviews, FAQ */}
-      {/* --- People showcase --- */}
+      {/* People, Reviews, FAQ */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Tradesmen Use It. Clients Love It.</h2>
@@ -512,7 +477,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* --- Reviews --- */}
+      {/* Reviews */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">The #1 Tool Tradies Are Talking About</h2>
@@ -589,7 +554,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* --- FAQ --- */}
+      {/* FAQ */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Frequently Asked Questions</h2>

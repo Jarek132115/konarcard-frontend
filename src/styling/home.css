@@ -76,7 +76,7 @@ body {
     min-width: 300px;
     height: 100%;
     align-self: stretch;
-    overflow: visible;
+    overflow: visible !important;
     box-sizing: border-box;
     min-height: 0;
 }
@@ -93,7 +93,7 @@ body {
     visibility: visible !important;
     opacity: 1 !important;
     z-index: auto !important;
-    overflow: visible;
+    overflow: visible !important;
 }
 
 .hero-subtitle {
@@ -108,7 +108,7 @@ body {
     flex-wrap: nowrap;
 }
 
-/* <-- Your requested desktop-only wide heading (540px, overflow allowed) --> */
+/* desktop-only wide heading */
 .hero-heading {
     width: 540px;
     max-width: none;
@@ -246,16 +246,7 @@ body {
     }
 
     .hero-video-element {
-        position: relative;
-        width: 100% !important;
         height: 300px !important;
-        margin-left: 0 !important;
-        top: auto !important;
-        right: auto !important;
-        transform: none !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        z-index: auto !important;
     }
 }
 
@@ -490,53 +481,47 @@ body {
     box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
 }
 
+/* Reflow-safe, CSS Grid Step card */
 .step-card {
     background: #fff;
     border: 1px solid #e9e9e9;
     border-radius: 20px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
     padding: 0;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 0;
-}
 
-.step-card .step-media,
-.step-card .step-text {
-    flex: 0 0 50%;
-    min-width: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "media text";
+    align-items: stretch;
+    /* makes both columns equal height */
 }
 
 .step-card .step-media {
-    display: flex;
-    align-items: flex-start;
-    padding: 10px 0 10px 10px;
-    box-sizing: border-box;
-}
-
-.step-card.reverse .step-media {
+    grid-area: media;
     padding: 10px;
 }
 
-.step-card .step-media img {
-    width: 100%;
-    height: var(--step-media-img-h, auto);
-    max-height: var(--step-media-img-h, none);
-    object-fit: cover;
-    border-radius: 12px;
-    display: block;
-}
-
 .step-card .step-text {
-    align-self: flex-start;
+    grid-area: text;
     padding: 30px;
     display: flex;
     flex-direction: column;
 }
 
+.step-card.reverse {
+    grid-template-areas: "text media";
+}
+
 .step-card .step-text h3 {
     margin: 0 0 20px 0;
+}
+
+.step-card .step-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
 }
 
 .step-bullets {
@@ -561,33 +546,28 @@ body {
     color: #666;
 }
 
-.step-card.reverse .step-media {
-    order: 2;
-}
-
-.step-card.reverse .step-text {
-    order: 1;
-}
-
 @media (max-width:1000px) {
     .step-card {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "media"
+            "text";
     }
 
-    .step-card .step-media,
-    .step-card .step-text {
-        flex: 0 0 auto;
-        width: 100%;
-        padding: 10px 20px 20px 20px;
+    .step-card.reverse {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "media"
+            "text";
+        /* same order on mobile */
     }
 
     .step-card .step-media {
         padding: 10px;
     }
 
-    .step-card.reverse .step-media,
-    .step-card.reverse .step-text {
-        order: initial;
+    .step-card .step-text {
+        padding: 20px;
     }
 
     .step-card .step-media img {
@@ -782,27 +762,22 @@ body {
     overflow: hidden;
     position: relative;
     box-shadow: 0 12px 32px rgba(0, 0, 0, .2);
-
-    /* NEW: allow child to stretch full height */
     display: flex;
+    /* allow inner to fill height */
 }
 
 .pricing-inner {
     padding: 20px;
-
-    /* NEW: make inner a vertical flex container that can push footer down */
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-/* NEW: footer area that sticks to the bottom of the card */
 .pricing-bottom {
     margin-top: auto;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    /* space between quote and CTA */
 }
 
 .pricing-head {
@@ -878,10 +853,7 @@ body {
     flex: 0 0 20px;
 }
 
-/* make tick icon white on blue card */
-
 .pricing-quote {
-    /* Keep it tidy at bottom area */
     font-style: italic;
     opacity: .95;
 }
@@ -960,7 +932,6 @@ body {
     object-fit: cover;
 }
 
-/* Responsive for pricing */
 @media (max-width:1000px) {
     .pricing-grid {
         grid-template-columns: 1fr;
@@ -1188,22 +1159,18 @@ body {
     box-shadow: 0 0 0 3px rgba(10, 102, 255, .25);
 }
 
-/* Mobile: make main image 1:1 and keep thumbs neat */
 @media (max-width: 600px) {
     .pricing-media-tray {
         --thumb-h: 54px;
         height: auto;
-        /* allow natural height */
     }
 
     .pricing-media-main {
         height: auto;
         aspect-ratio: 1 / 1;
-        /* square on mobile */
     }
 }
 
-/* Pricing card gallery: keep 4:3 under 1000px */
 @media (max-width: 1000px) {
     .pricing-media-tray {
         height: auto;
@@ -1236,30 +1203,23 @@ body {
         width: 100%;
         height: 100%;
         aspect-ratio: 1 / 1;
-        /* keep thumbs perfectly square */
         object-fit: cover;
     }
 }
 
-/* Under 600px: smaller gap */
 @media (max-width: 600px) {
     .pricing-media-thumbs {
         gap: 4px;
     }
 }
 
-/* Under 430px: square thumbs, tiny gap */
 @media (max-width: 430px) {
     .pricing-media-thumbs {
         gap: 2px;
     }
 
+    .pricing-media-thumb,
     .pricing-media-thumb img {
-        aspect-ratio: 1 / 1;
-        object-fit: cover;
-    }
-
-    .pricing-media-thumb {
         aspect-ratio: 1 / 1;
         object-fit: cover;
     }
@@ -1276,14 +1236,10 @@ svg.icon {
     object-fit: contain;
 }
 
-/* Ensure all <img class="icon"> render as #333 on white chips.
-   Black (#000) at 0.8 alpha over white blends to #333. */
 .icon-img {
     opacity: 0.8;
-    /* exact #333 over white backgrounds */
 }
 
-/* Keep pricing tick sizing */
 .pricing-check {
     width: 25px;
     height: 25px;
