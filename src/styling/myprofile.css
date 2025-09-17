@@ -1429,7 +1429,7 @@
     }
 
     .mock-cover {
-        aspect-ratio: unset !important;
+        aspect-ratio: 4/3 !important;
         height: auto !important;
     }
 
