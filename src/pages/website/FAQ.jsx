@@ -459,33 +459,13 @@ export default function FAQ() {
               <div className="section-list-info">
                 <p className="desktop-h6">How do I contact support?</p>
                 <p className="desktop-body-xs">
-                  Use live chat on the site, drop us an email, or submit a Help Centre request—whatever works for you.
-                </p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white"><img src={TutorialIcon} className="icon" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Do you have tutorials?</p>
-                <p className="desktop-body-xs">
-                  Yes—quick step-by-step guides and short videos to get you set up fast.
+                  Use live chat on the site, drop us an email, or submit a Help Centre request—whatever works for you. We respond within a few hours.
                 </p>
               </div>
             </div>
           </div>
 
           <div className="faq-column">
-            <div className="section-list">
-              <div className="icon-white"><img src={TimeIcon} className="icon" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">How quickly do you reply?</p>
-                <p className="desktop-body-xs">
-                  We usually respond within 24 hours on weekdays.
-                </p>
-              </div>
-            </div>
-
             <div className="section-list">
               <div className="icon-white"><img src={InfoIcon} className="icon" /></div>
               <div className="section-list-info">
