@@ -220,7 +220,7 @@ export default function FAQ() {
             </div>
 
             <div className="section-list">
-              <div className="icon-white"><img src={ShieldIcon} className="icon" /></div>
+              <div className="icon-white"><img src={CancelIcon} className="icon" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What happens if I cancel?</p>
                 <p className="desktop-body-xs">
