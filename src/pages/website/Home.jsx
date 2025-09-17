@@ -168,12 +168,6 @@ export default function Home() {
           </div>
 
           <div className="hero-right">
-            {/* Accessibility + iOS transparency fix:
-               - role="img" lives on the wrapper (allowed)
-               - video is aria-hidden
-               - first source is HEVC with alpha for iOS Safari
-               - then WebM for Chrome/Android, then generic MP4 fallback
-            */}
             <div
               role="img"
               aria-label="Hero animation showing a phone profile with transparent background"
