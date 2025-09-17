@@ -175,8 +175,7 @@ export default function Home() {
               muted
               playsInline
               preload="auto"
-              role="img"
-              aria-label="Hero Animation showing a phone profile with transparent background"
+              aria-hidden="true"           // <-- remove incompatible role, hide decorative video
               width="812"
               height="500"
             >
@@ -187,6 +186,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+
 
       {/* ---------- 3 STEPS GROUP (with heading + 40px gaps) ---------- */}
       <div className="section steps-section">
@@ -605,21 +605,21 @@ export default function Home() {
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={NFCIcon} className="icon" alt='icon'/></div>
+              <div className=" icon-white"><img src={NFCIcon} className="icon" alt='icon' /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How does the tap actually work?</p>
                 <p className="desktop-body-xs">The phone’s NFC reader powers the chip and instantly launches your live profile link.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={QRCode} className="icon" alt='icon'/></div>
+              <div className=" icon-white"><img src={QRCode} className="icon" alt='icon' /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What if someone can’t tap?</p>
                 <p className="desktop-body-xs">Every card also has a QR code and a shareable link—so there’s always a backup.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={ProfileIcon} className="icon" alt='icon'/></div>
+              <div className=" icon-white"><img src={ProfileIcon} className="icon" alt='icon' /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What can my profile include?</p>
                 <p className="desktop-body-xs">Your name, job title, bio, photos, services with pricing, reviews, and contact details.</p>
@@ -628,28 +628,28 @@ export default function Home() {
           </div>
           <div className="faq-column">
             <div className="section-list">
-              <div className=" icon-white"><img src={PencilIcon} className="icon" alt='icon'/></div>
+              <div className=" icon-white"><img src={PencilIcon} className="icon" alt='icon' /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Can I edit my page later?</p>
                 <p className="desktop-body-xs">Yes. Update info, images, services, or layout anytime—changes go live instantly.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={BoltIcon} className="icon" alt='icon'/></div>
+              <div className=" icon-white"><img src={BoltIcon} className="icon" alt='icon' /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How do I share my page?</p>
                 <p className="desktop-body-xs">Tap your card, show the QR code, or copy your unique link to send anywhere.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={TimeIcon} className="icon" alt='icon'/></div>
+              <div className=" icon-white"><img src={TimeIcon} className="icon" alt='icon' /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How does the free trial work?</p>
                 <p className="desktop-body-xs">The free trial includes the same features as the subscription. If it ends and you don’t subscribe, your page will no longer show.</p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={ShieldIcon} className="icon" alt='icon'/></div>
+              <div className=" icon-white"><img src={ShieldIcon} className="icon" alt='icon' /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What happens if I cancel?</p>
                 <p className="desktop-body-xs">You’ll keep access until the end of the billing period. After that, your page won’t show until you subscribe again.</p>
