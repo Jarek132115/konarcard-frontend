@@ -6,36 +6,20 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false); // <-- start false
 
     const fetchUser = async () => {
-        setLoading(true);
-        const storedToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-
-        if (!storedToken) {
-            setUser(null);
-            setLoading(false);
-            return;
-        }
-
         try {
             const response = await api.get('/profile');
-            const fetchedUser = response.data.data;
-
+            const fetchedUser = response.data?.data;
             if (response.status === 200 && fetchedUser) {
                 setUser(fetchedUser);
             } else {
                 setUser(null);
-                if (typeof window !== 'undefined') {
-                    localStorage.removeItem('token');
-                }
+                localStorage.removeItem('token');
             }
         } catch (err) {
-            if (err.response && err.response.status === 401) {
-                if (typeof window !== 'undefined') {
-                    localStorage.removeItem('token');
-                }
-            }
+            if (err.response?.status === 401) localStorage.removeItem('token');
             setUser(null);
         } finally {
             setLoading(false);
@@ -43,45 +27,31 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const token = localStorage.getItem('token');
-            if (token) {
-                fetchUser();
-            } else {
-                setUser(null);
-                setLoading(false);
-            }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setUser(null);
+            // loading stays false → no flash anywhere
+            return;
         }
+        setLoading(true);      // <-- only if token exists
+        fetchUser();           // <-- will set loading false in finally
     }, []);
 
     const login = (token, userData) => {
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('token', token);
-            setUser(userData);
-            setLoading(false);
-        }
+        localStorage.setItem('token', token);
+        setUser(userData);
+        setLoading(false);
     };
 
     const logout = () => {
-        if (typeof window !== 'undefined') {
-            localStorage.removeItem('token');
-        }
+        localStorage.removeItem('token');
         setUser(null);
         toast.success('You have been logged out!');
     };
 
-    const contextValue = {
-        user,
-        setUser,
-        fetchUser,
-        login,
-        logout,
-        loading
-    };
-
     return (
-        <AuthContext.Provider value={contextValue}>
-            {children}
+        <AuthContext.Provider value={{ user, setUser, fetchUser, login, logout, loading }}>
+            {children} {/* no global "Loading..." here */}
         </AuthContext.Provider>
     );
 };
