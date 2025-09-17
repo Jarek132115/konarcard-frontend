@@ -395,16 +395,6 @@ export default function FAQ() {
                 </p>
               </div>
             </div>
-
-            <div className="section-list">
-              <div className="icon-white"><img src={TreeIcon} className="icon" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">What materials do you use?</p>
-                <p className="desktop-body-xs">
-                  We use durable, long-lasting materials. Our wood options are responsibly sourced; metal cards are built to last.
-                </p>
-              </div>
-            </div>
           </div>
 
           <div className="faq-column">
