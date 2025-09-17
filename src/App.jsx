@@ -29,15 +29,17 @@ import ContactSupport from './pages/interface/ContactSupport';
 import UserPage from './pages/interface/UserPage';
 import SuccessSubscription from './pages/website/SuccessSubscription';
 
-// 🆕 Import MyOrders
+// 🆕 MyOrders
 import MyOrders from './pages/interface/MyOrder';
+
+// 🆕 Tidio delayed loader
+import TidioDelayedLoader from './components/TidioDelayedLoader';
 
 axios.defaults.baseURL = 'https://konarcard-backend-331608269918.europe-west1.run.app';
 axios.defaults.withCredentials = true;
 
 function App() {
   const location = useLocation();
-  const TIDIO_SCRIPT_URL = "//code.tidio.co/beofp4i2ttjkwkjoem91cbg7an99f40w.js";
   const isUserPage = location.pathname.startsWith('/u/');
 
   return (
@@ -76,9 +78,8 @@ function App() {
         <Route path="/u/:username" element={<UserPage />} />
       </Routes>
 
-      {!isUserPage && (
-        <script src={TIDIO_SCRIPT_URL} async></script>
-      )}
+      {/* Load Tidio only on non-/u/* pages, after ~4s */}
+      <TidioDelayedLoader enabled={!isUserPage} delayMs={4000} />
     </AuthProvider>
   );
 }
