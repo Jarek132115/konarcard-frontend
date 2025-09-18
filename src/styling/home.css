@@ -709,17 +709,6 @@ body {
     }
 }
 
-/* === Mobile under 600px: single column === */
-@media (max-width: 600px) {
-    .people-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .people-grid .pg-item {
-        grid-column: 1 / -1 !important;
-    }
-}
-
 
 /* --- PRICING (redesigned cards) --- */
 .pricing-grid {
