@@ -1,9 +1,10 @@
+// frontend/src/services/api.js
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: false, // 🔑 turn this off if you only use Bearer tokens
+  withCredentials: false, // using Bearer token, not cookies
 });
 
 // Attach token on every request
@@ -20,22 +21,29 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Safer response interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const isLoggingOut = error?.config?.headers?.isLoggingOut;
+    const { response, config } = error || {};
+    const status = response?.status;
+
+    // Only clear token for 401s from the profile endpoint
     if (
-      !isLoggingOut &&
-      error.response &&
-      (error.response.status === 401 || error.response.status === 403)
+      status === 401 &&
+      config?.url &&
+      (config.url.endsWith('/profile') || config.url.includes('/profile?'))
     ) {
       localStorage.removeItem('token');
-      toast.error('Session expired or unauthorized. Please log in again.');
+      toast.error('Session expired. Please log in again.');
     }
+
+    // Otherwise, don’t nuke the token — just reject
     return Promise.reject(error);
   }
 );
 
+// Example: feature helper
 export const startTrial = () => api.post('/trial/start', {});
 
 export default api;
