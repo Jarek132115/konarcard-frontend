@@ -494,33 +494,35 @@ export default function Home() {
       </div>
 
       {/* People, Reviews, FAQ */}
+      {/* People, Reviews, FAQ */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Tradesmen Use It. Clients Love It.</h2>
-          <h3 className="desktop-h6 text-center">See how tradies use this every day.</h3>
+          <h2 className="desktop-h3 text-center">Real Tradies. <span className="blue">Real Moments.</span></h2>
+          <h3 className="desktop-h6 text-center">4 photos of Konar used on real jobs.</h3>
         </div>
 
-        <div className="people-showcase-container-flex">
-          <div className="people-showcase-left-col">
-            <img src={People} className="people-showcase-img" alt="Tradesman holding Konar Card" />
+        {/* NEW: 4-image grid (1-2-1 on <1000px) */}
+        <div className="people-grid">
+          {/* Row 1 (mobile: spans 2 columns) */}
+          <div className="pg-item span-2">
+            <img src={People} alt="Tradies using Konar on the job site" />
           </div>
 
-          <div className="people-showcase-right-col">
-            <div className="people-showcase-top-row-flex">
-              <div className="people-showcase-box">
-                <img src={People} className="people-showcase-img" alt="Tradesman showing Konar Card" />
-              </div>
-              <div className="people-showcase-box">
-                <img src={People} className="people-showcase-img" alt="Woman holding Konar Card" />
-              </div>
-            </div>
+          {/* Row 2 (two side-by-side) */}
+          <div className="pg-item">
+            <img src={People} alt="Konar card being shared with a client" />
+          </div>
+          <div className="pg-item">
+            <img src={People} alt="Tradie showing Konar card close-up" />
+          </div>
 
-            <div className="people-showcase-bottom-single">
-              <img src={People} className="people-showcase-img" alt="Group of tradesmen holding Konar Cards" />
-            </div>
+          {/* Row 3 (mobile: spans 2 columns) */}
+          <div className="pg-item span-2">
+            <img src={People} alt="Team on site showing Konar cards" />
           </div>
         </div>
       </div>
+
 
       {/* Reviews */}
       <div className="section">

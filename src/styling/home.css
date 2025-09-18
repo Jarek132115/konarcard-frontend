@@ -636,113 +636,37 @@ body {
 }
 
 /* SECTION 7 - TRADESMEN USE IT */
-.people-showcase-container-flex {
-    display: flex;
+/* === TRADIES GALLERY (4 images) === */
+.people-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-    height: 500px;
-    align-items: stretch;
-    justify-content: center;
+    /* spacing between images */
 }
 
-.people-showcase-left-col {
-    flex: 0 0 40%;
+/* each item is a 4:3 rounded tile */
+.pg-item {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 10px;
     overflow: hidden;
-    border-radius: 20px;
-    height: 100%;
 }
 
-.people-showcase-right-col {
-    flex: 0 0 calc(60% - 20px);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    height: 100%;
-}
-
-.people-showcase-top-row-flex {
-    display: flex;
-    flex: 1;
-    gap: 10px;
-    height: 50%;
-}
-
-.people-showcase-bottom-single {
-    flex: 1;
-    overflow: hidden;
-    border-radius: 20px;
-    height: 50%;
-}
-
-.people-showcase-box {
-    flex: 1;
-    overflow: hidden;
-    border-radius: 20px;
-    height: 100%;
-}
-
-.people-showcase-img {
+.pg-item img {
     width: 100%;
     height: 100%;
+    display: block;
     object-fit: cover;
-    border-radius: 20px;
 }
 
-@media (max-width:800px) {
-    .people-showcase-container-flex {
-        flex-direction: column;
-        height: auto;
-        margin-top: 20px;
-        gap: 10px;
-        align-items: center;
-    }
-
-    .people-showcase-left-col,
-    .people-showcase-right-col {
-        flex: unset;
-        width: 100%;
-        height: auto;
-    }
-
-    .people-showcase-left-col .people-showcase-img {
-        height: 250px;
-        margin-bottom: 0;
-    }
-
-    .people-showcase-right-col {
-        gap: 10px;
-    }
-
-    .people-showcase-top-row-flex {
-        flex-direction: row;
-        gap: 10px;
-        height: 150px;
-        flex: unset;
-    }
-
-    .people-showcase-bottom-single .people-showcase-img {
-        height: 200px;
+/* Mobile/tablet: 1 | 2 | 1 layout */
+@media (max-width: 1000px) {
+    .pg-item.span-2 {
+        grid-column: 1 / -1;
+        /* span both columns for row 1 & 3 */
     }
 }
 
-@media (max-width:600px) {
-
-    .people-showcase-left-col,
-    .people-showcase-right-col {
-        max-width: 100%;
-    }
-
-    .people-showcase-left-col .people-showcase-img {
-        height: 200px;
-    }
-
-    .people-showcase-top-row-flex {
-        height: 120px;
-    }
-
-    .people-showcase-bottom-single .people-showcase-img {
-        height: 150px;
-    }
-}
 
 /* --- PRICING (redesigned cards) --- */
 .pricing-grid {
