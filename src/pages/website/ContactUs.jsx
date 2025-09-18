@@ -70,7 +70,7 @@ export default function ContactUs() {
 
       <div style={{ marginTop: 40 }} className="section">
         <div className="contact-title-container">
-          <p className="desktop-h1 text-center">Let’s talk</p>
+          <p className="desktop-h1 text-center">Let’s <span className='blue'>Talk!</span></p>
         </div>
 
         <div className="live-chat-info">
