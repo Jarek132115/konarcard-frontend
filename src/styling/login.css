@@ -515,3 +515,22 @@ a,
         word-break: break-word;
     }
 }
+
+/* Make the whole username row clickable */
+.username-input-wrapper {
+    cursor: text;
+    /* show caret anywhere inside */
+}
+
+/* Remove the visual gap and let clicks pass through */
+.username-input-wrapper .url-prefix {
+    padding-right: 0 !important;
+    /* no gap between prefix and input text */
+    pointer-events: none;
+    /* clicks on domain go to wrapper/input */
+}
+
+/* Give the username caret a tiny pad so it's not glued to the slash */
+.username-input-wrapper input {
+    padding-left: 6px !important;
+}
