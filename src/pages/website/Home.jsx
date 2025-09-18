@@ -1,5 +1,4 @@
-// frontend/src/pages/Home/index.jsx
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -63,6 +62,25 @@ export default function Home() {
   const [cardMainImage, setCardMainImage] = useState(ProductCover);
   const cardThumbs = [ProductCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4];
 
+  // video modal
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+
+  useEffect(() => {
+    // lock scroll when modal is open
+    if (isVideoOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      const onKey = (e) => {
+        if (e.key === 'Escape') setIsVideoOpen(false);
+      };
+      window.addEventListener('keydown', onKey);
+      return () => {
+        document.body.style.overflow = prev;
+        window.removeEventListener('keydown', onKey);
+      };
+    }
+  }, [isVideoOpen]);
+
   const handleSubscribe = async () => {
     if (!user) {
       navigate('/login', { state: { from: location.pathname, checkoutType: 'subscription' } });
@@ -107,9 +125,18 @@ export default function Home() {
               <Link to="/register" className="cta-blue-button desktop-button">
                 Start Your Free Trial
               </Link>
-              <Link to="/productandplan" className="cta-black-button desktop-button">
-                View Plans & Cards
-              </Link>
+
+              {/* NEW: Watch video button toggles modal */}
+              <button
+                type="button"
+                className="cta-black-button desktop-button hero-watch-btn"
+                onClick={() => setIsVideoOpen(true)}
+                aria-haspopup="dialog"
+                aria-expanded={isVideoOpen}
+                aria-controls="how-it-works-modal"
+              >
+                Watch How It Works
+              </button>
             </div>
 
             <div className="hero-social-proof">
@@ -145,10 +172,10 @@ export default function Home() {
             </video>
           </div>
         </div>
-      </div >
+      </div>
 
       {/* ---------- 3 STEPS GROUP (with heading + 40px gaps) ---------- */}
-      <div div className="section steps-section" >
+      <div className="section steps-section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Getting Set Up Is Quick & Easy</h2>
           <h3 className="desktop-h6 text-center">The fastest way to show what you do and win the job.</h3>
@@ -317,10 +344,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div >
+      </div>
 
       {/* ---------- HOW TO SHARE (new section after steps) ---------- */}
-      <div div className="section" >
+      <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">One Profile. Shared Every Way.</h2>
           <h3 className="desktop-h6 text-center">Four simple ways to get your details in front of clients.</h3>
@@ -359,10 +386,10 @@ export default function Home() {
             <p className="desktop-body-xs">One link which you can share via any platform</p>
           </div>
         </div>
-      </div >
+      </div>
 
       {/* --- PRICING (redesigned) --- */}
-      <div div className="section" >
+      <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">One Plan. One Card. Endless Opportunities.</h2>
           <h3 className="desktop-h6 text-center">No confusion. Just one powerful plan to make you stand out.</h3>
@@ -447,10 +474,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div >
+      </div>
 
       {/* People, Reviews, FAQ */}
-      <div div className="section" >
+      <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Tradesmen Use It. Clients Love It.</h2>
           <h3 className="desktop-h6 text-center">See how tradies use this every day.</h3>
@@ -476,10 +503,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div >
+      </div>
 
       {/* Reviews */}
-      <div div className="section" >
+      <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">The #1 Tool Tradies Are Talking About</h2>
           <h3 className="desktop-h6 text-center">
@@ -553,10 +580,10 @@ export default function Home() {
         <div className="faq-cta">
           <Link to="/reviews" className="black-button desktop-button">Read More Reviews</Link>
         </div>
-      </div >
+      </div>
 
       {/* FAQ */}
-      <div div className="section" >
+      <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Frequently Asked Questions</h2>
           <h3 className="desktop-h6 text-center">For any other questions, feel free to reach out.</h3>
@@ -576,7 +603,7 @@ export default function Home() {
                 <p className="desktop-h6">How does the tap actually work?</p>
                 <p className="desktop-body-xs">The phone’s NFC reader powers the chip and instantly launches your live profile link.</p>
               </div>
-            </div>
+            </div >
             <div className="section-list">
               <div className=" icon-white"><img src={QRCode} className="icon" alt='icon' /></div>
               <div className="section-list-info">
@@ -627,9 +654,54 @@ export default function Home() {
         <div className="faq-cta">
           <Link to="/faq" className="black-button desktop-button">Read More Q&A</Link>
         </div>
-      </div >
+      </div>
 
       <Footer />
+
+      {/* =========================
+          HOW IT WORKS - MODAL
+          (no video wired yet; just drop your src later)
+         ========================= */}
+      {isVideoOpen && (
+        <div
+          id="how-it-works-modal"
+          className="video-modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="How it works video"
+          onClick={(e) => {
+            if (e.target.classList.contains('video-modal-overlay')) setIsVideoOpen(false);
+          }}
+        >
+          <div className="video-modal" role="document">
+            <button
+              className="video-close"
+              aria-label="Close video"
+              onClick={() => setIsVideoOpen(false)}
+              autoFocus
+            >
+              ✕
+            </button>
+
+            {/* 16:9 responsive frame; replace the placeholder with your video later */}
+            <div className="video-frame">
+              {/* EXAMPLE to add later:
+                  <video controls playsInline>
+                    <source src="/videos/how-it-works.mp4" type="video/mp4" />
+                  </video>
+                 or an iframe embed
+              */}
+              <div className="video-placeholder">
+                <p className="desktop-body-s">Video coming soon</p>
+              </div>
+            </div>
+
+            <p className="video-caption desktop-body-xs">
+              Learn how Konar Card helps you share your profile in seconds.
+            </p>
+          </div>
+        </div>
+      )}
     </>
   );
 }
