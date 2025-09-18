@@ -38,13 +38,16 @@ api.interceptors.response.use(
     const { response, config } = error || {};
     const status = response?.status;
 
-    // Only clear token for 401s from the profile endpoint
+    // Only clear token for 401/403s from the profile endpoint (invalid/expired token)
     if (
-      status === 401 &&
+      (status === 401 || status === 403) &&
       config?.url &&
-      (config.url.includes('/profile'))
+      config.url.includes('/profile')
     ) {
-      localStorage.removeItem('token');
+      try {
+        localStorage.removeItem('token');
+        localStorage.removeItem('authUser');
+      } catch { /* ignore */ }
       toast.error('Session expired. Please log in again.');
     }
 
