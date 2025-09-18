@@ -1,3 +1,4 @@
+// src/main.jsx
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -34,7 +35,6 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <Router>
-        {/* ✅ Provide AuthContext to the whole app */}
         <AuthProvider>
           <App />
         </AuthProvider>
@@ -43,7 +43,7 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>
 );
 
-// OPTIONAL: if you’re not using a PWA SW, ensure none is registered
+// OPTIONAL: ensure no stale service worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
 }

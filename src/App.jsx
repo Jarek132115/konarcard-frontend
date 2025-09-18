@@ -1,7 +1,8 @@
-// App.jsx
+// src/App.jsx
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { Suspense, useContext } from 'react';
 import { Toaster } from 'react-hot-toast';
+
 import { AuthContext } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
@@ -9,8 +10,34 @@ import TidioDelayedLoader from './components/TidioDelayedLoader';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { lazyWithRetry } from './utils/lazyWithRetry';
 
-// lazy imports (unchanged)
-// ...
+// ----- LAZY PAGES (adjust paths/casing to match your repo exactly) -----
+const Home = lazyWithRetry(() => import('./pages/Home.jsx'));
+const Register = lazyWithRetry(() => import('./pages/auth/Register.jsx'));
+const Login = lazyWithRetry(() => import('./pages/auth/Login.jsx'));
+const ResetPassword = lazyWithRetry(() => import('./pages/auth/ResetPassword.jsx'));
+
+const ProductAndPlan = lazyWithRetry(() => import('./pages/ProductAndPlan.jsx'));
+const KonarCard = lazyWithRetry(() => import('./pages/KonarCard.jsx'));
+const KonarSubscription = lazyWithRetry(() => import('./pages/KonarSubscription.jsx'));
+const FAQ = lazyWithRetry(() => import('./pages/FAQ.jsx'));
+const Reviews = lazyWithRetry(() => import('./pages/Reviews.jsx'));
+const HelpCentre = lazyWithRetry(() => import('./pages/HelpCentre.jsx'));
+const ContactUs = lazyWithRetry(() => import('./pages/ContactUs.jsx'));
+const Policies = lazyWithRetry(() => import('./pages/Policies.jsx'));
+const Success = lazyWithRetry(() => import('./pages/Success.jsx'));
+const SuccessSubscription = lazyWithRetry(() => import('./pages/SuccessSubscription.jsx'));
+const UserPage = lazyWithRetry(() => import('./pages/UserPage.jsx'));
+
+// dashboard/protected
+const MyProfile = lazyWithRetry(() => import('./pages/dashboard/MyProfile.jsx'));
+const MyOrders = lazyWithRetry(() => import('./pages/dashboard/MyOrders.jsx'));
+const Billing = lazyWithRetry(() => import('./pages/dashboard/Billing.jsx'));
+const HelpCentreInterface = lazyWithRetry(() => import('./pages/dashboard/HelpCentreInterface.jsx'));
+const NFCCards = lazyWithRetry(() => import('./pages/dashboard/NFCCards.jsx'));
+const Notifications = lazyWithRetry(() => import('./pages/dashboard/Notifications.jsx'));
+const Profile = lazyWithRetry(() => import('./pages/dashboard/Profile.jsx'));
+const ContactSupport = lazyWithRetry(() => import('./pages/dashboard/ContactSupport.jsx'));
+// ----------------------------------------------------------------------
 
 function TidioWrapper() {
   const location = useLocation();
@@ -28,12 +55,12 @@ function TidioWrapper() {
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
 }
 
-function App() {
+export default function App() {
   const { initialized, loading } = useContext(AuthContext);
 
-  // ✨ HARD GATE: do not render any routes until auth bootstrap finishes.
+  // Hard gate until auth bootstrap finishes
   if (!initialized || loading) {
-    return <div style={{ padding: 16 }}>Loading…</div>; // or your skeleton
+    return <div style={{ padding: 16 }}>Loading…</div>;
   }
 
   return (
@@ -45,7 +72,7 @@ function App() {
       <RouteErrorBoundary>
         <Suspense fallback={<div style={{ padding: 16 }}>Loading…</div>}>
           <Routes>
-            {/* PUBLIC routes */}
+            {/* PUBLIC */}
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
@@ -65,7 +92,7 @@ function App() {
             <Route path="/successsubscription" element={<SuccessSubscription />} />
             <Route path="/u/:username" element={<UserPage />} />
 
-            {/* PROTECTED routes */}
+            {/* PROTECTED */}
             <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
             <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
             <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
@@ -80,5 +107,3 @@ function App() {
     </>
   );
 }
-
-export default App;
