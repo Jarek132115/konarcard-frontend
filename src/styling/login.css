@@ -430,3 +430,12 @@ a,
         left: 16px;
     }
 }
+
+/* Ensure every control inside the auth wrapper uses Inter */
+.login-wrapper,
+.login-wrapper input,
+.login-wrapper button,
+.login-wrapper select,
+.login-wrapper textarea {
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+}
