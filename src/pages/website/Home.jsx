@@ -104,11 +104,11 @@ export default function Home() {
             </p>
 
             <div className="hero-cta">
+              <Link to="/register" className="cta-black-button desktop-button">
+                Start Your Free Trial
+              </Link>
               <Link to="/productandplan" className="cta-blue-button desktop-button">
                 View Plans & Cards
-              </Link>
-              <Link to="/register" className="cta-black-button desktop-button">
-                Start Your 14-Day Trial
               </Link>
             </div>
 
