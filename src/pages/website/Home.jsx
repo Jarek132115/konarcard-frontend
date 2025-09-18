@@ -190,7 +190,7 @@ export default function Home() {
                 <img src={EditProfile} alt="Create your profile" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Craft A Branded Profile Clients Trust</h3>
+                <h3 className="desktop-h5">Craft Your Branded Profile</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
@@ -298,7 +298,7 @@ export default function Home() {
                 <img src={WhyYouNeedThis} alt="Share your page" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Share In Seconds And Win More Jobs</h3>
+                <h3 className="desktop-h5">Ready To Share And Win More Jobs</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
