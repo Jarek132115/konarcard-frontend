@@ -1240,3 +1240,67 @@ svg.icon {
     width: 25px;
     height: 25px;
 }
+
+/* Hero-only animated badge */
+.home-hero .hero-badge {
+    position: relative;
+    animation: badgePulsePop 2.6s ease-in-out infinite;
+    will-change: transform, background, color, box-shadow, border-color;
+    transform-origin: center left;
+    /* feels snappier near the headline */
+}
+
+/* Optional: pause on hover/focus for accessibility */
+.home-hero .hero-badge:hover,
+.home-hero .hero-badge:focus {
+    animation-play-state: paused;
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .home-hero .hero-badge {
+        animation: none;
+    }
+}
+
+/* Keyframes: grow → pop blue → settle */
+@keyframes badgePulsePop {
+    0% {
+        transform: scale(1);
+        background: #f3f4f6;
+        color: #333;
+        border-color: #e6e6e6;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+    }
+
+    35% {
+        transform: scale(1.06);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, .10);
+    }
+
+    50% {
+        transform: scale(1.12);
+        background: #0081FF;
+        /* pop to brand blue */
+        color: #fff;
+        border-color: #0081FF;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, .18),
+            0 0 0 8px rgba(0, 129, 255, .12);
+        /* soft blue glow */
+    }
+
+    65% {
+        transform: scale(1.06);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, .10);
+    }
+
+    100% {
+        transform: scale(1);
+        background: #f3f4f6;
+        /* return to original */
+        color: #333;
+        border-color: #e6e6e6;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+    }
+}
