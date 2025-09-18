@@ -6,15 +6,25 @@
     --blue: #0081FF;
     --blue-hover: #0066cc;
     --bg: #ffffff;
-    /* white background like the reference */
     --text: #111;
     --muted: #666;
     --radius-sm: 8px;
     --nav-height: 64px;
-    /* fixed navbar height assumption */
+    /* adjust if your fixed navbar height differs */
 }
 
-/* ====== Global “no-edit” defaults, but allow inputs to work ====== */
+/* Global hardening */
+html,
+body {
+    overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 * {
     caret-color: transparent !important;
     -webkit-user-select: none !important;
@@ -39,26 +49,20 @@ button,
 a,
 .close-button,
 .myprofile-hamburger {
-    caret-color: transparent !important;
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    -ms-user-select: none !important;
-    user-select: none !important;
+    caret-color: transparent !important
 }
 
 /* ====== Auth-page navbar adjustments ====== */
-/* Hide all navbar links/buttons on auth pages, keep only the logo */
 .auth-page .nav-links,
 .auth-page .auth-links,
 .auth-page .hamburger {
-    display: none !important;
+    display: none !important
 }
 
-/* Close (X) placed at the right end of the fixed navbar */
+/* Right-side X inside navbar */
 .auth-page .auth-nav-close {
     position: fixed;
     top: 20px;
-    /* vertically centers in 64px bar with 20px navbar padding in your CSS */
     right: 20px;
     z-index: 1001;
     width: 36px;
@@ -78,7 +82,7 @@ a,
 
 .auth-page .auth-nav-close:hover {
     background: #f3f3f3;
-    transform: translateY(-1px);
+    transform: translateY(-1px)
 }
 
 /* ====== Layout ====== */
@@ -87,20 +91,28 @@ a,
     background: var(--bg);
     display: grid;
     place-items: center;
+    /* desktop center */
     padding: 24px;
     font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     position: relative;
 }
 
-/* Ensure content clears the fixed navbar at all sizes */
+/* Clear the fixed navbar */
 .auth-page .login-wrapper {
-    padding-top: var(--nav-height);
+    padding-top: var(--nav-height)
 }
 
-/* On mobile (<1000px), add extra 20px gap under navbar */
-@media (max-width: 1000px) {
+/* >>> MOBILE/TABLET: under 1000px do NOT center vertically.
+   Put the form 20px below the navbar. */
+@media (max-width:1000px) {
     .auth-page .login-wrapper {
-        padding-top: calc(var(--nav-height) + 20px);
+        display: block;
+        /* break out of grid centering */
+        padding: calc(var(--nav-height) + 20px) 16px 24px;
+    }
+
+    .login-right {
+        margin: 0 auto;
     }
 }
 
@@ -108,7 +120,7 @@ a,
 .login-left,
 .login-visual,
 .login-quote {
-    display: none !important;
+    display: none !important
 }
 
 /* Single centered column */
@@ -120,30 +132,30 @@ a,
     justify-content: center;
 }
 
-/* “Card” becomes a simple container — NO bg/border/shadow */
+/* Simple container — NO bg/border/shadow */
 .login-card {
     width: 100%;
     background: transparent;
     border: none;
     box-shadow: none;
-    padding: 0;
+    padding: 0
 }
 
-/* ====== Headings/Subtext ====== */
+/* ====== Heading/Subtext ====== */
 .desktop-h3.text-center,
 .login-title {
     text-align: center;
-    color: var(--text);
+    color: var(--text)
 }
 
 .desktop-body-text.text-center {
-    color: var(--muted);
+    color: var(--muted)
 }
 
 /* ====== Form ====== */
 .login-form {
     display: flex;
-    flex-direction: column;
+    flex-direction: column
 }
 
 .form-label {
@@ -166,12 +178,11 @@ a,
     font-size: 14px;
     outline: none;
     transition: border-color .15s ease, box-shadow .15s ease;
-    box-sizing: border-box;
 }
 
 .login-form .standard-input:focus {
     border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(0, 129, 255, .12);
+    box-shadow: 0 0 0 3px rgba(0, 129, 255, .12)
 }
 
 /* Username with prefix (Register) */
@@ -184,24 +195,28 @@ a,
     background: #fff;
     overflow: hidden;
     cursor: text;
-    /* clicking anywhere activates text cursor */
+    min-width: 0;
+    /* allow shrinking on tiny screens */
 }
 
 .username-input-wrapper .url-prefix {
     padding-left: 12px;
-    /* no right padding so username text touches prefix */
+    /* no right padding -> flush join */
     font-size: 14px;
     color: #666;
     white-space: nowrap;
-    flex-shrink: 0;
+    flex-shrink: 1;
     line-height: 44px;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .username-input-wrapper input {
     flex: 1;
+    min-width: 0;
     height: 100%;
     padding: 0 12px 0 0;
-    /* 0 left so it sits flush with prefix */
+    /* 0 left so it touches prefix */
     border: 0;
     background: transparent;
     outline: none;
@@ -210,7 +225,7 @@ a,
 
 .username-input-wrapper:focus-within {
     border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(0, 129, 255, .12);
+    box-shadow: 0 0 0 3px rgba(0, 129, 255, .12)
 }
 
 /* Password field + toggle */
@@ -236,7 +251,7 @@ a,
 
 .password-wrapper:focus-within {
     border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(0, 129, 255, .12);
+    box-shadow: 0 0 0 3px rgba(0, 129, 255, .12)
 }
 
 .password-wrapper button {
@@ -255,7 +270,7 @@ a,
 }
 
 .password-wrapper button:hover {
-    background: #e7efff;
+    background: #e7efff
 }
 
 /* Remember me / link row */
@@ -272,11 +287,11 @@ a,
 .terms-label a {
     color: var(--blue);
     font-weight: 600;
-    text-decoration: none;
+    text-decoration: none
 }
 
 .terms-label a:hover {
-    text-decoration: underline;
+    text-decoration: underline
 }
 
 /* Custom checkbox */
@@ -312,11 +327,11 @@ a,
 
 .terms-label input[type="checkbox"].konar-checkbox:checked {
     background: var(--blue) !important;
-    border-color: var(--blue) !important;
+    border-color: var(--blue) !important
 }
 
 .terms-label input[type="checkbox"].konar-checkbox:checked::before {
-    opacity: 1;
+    opacity: 1
 }
 
 /* Password feedback (Register) */
@@ -325,7 +340,7 @@ a,
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px 12px;
-    margin: 8px 0 8px;
+    margin: 8px 0;
     color: #333;
 }
 
@@ -333,28 +348,28 @@ a,
     margin: 0;
     display: flex;
     align-items: center;
-    font-weight: 500;
+    font-weight: 500
 }
 
 .feedback-icon {
     width: 16px;
     height: 16px;
-    margin-right: 6px;
+    margin-right: 6px
 }
 
 .password-feedback .valid {
-    color: #1a7f37;
+    color: #1a7f37
 }
 
 .password-feedback .invalid {
-    color: #b42318;
+    color: #b42318
 }
 
 /* Verification copy */
 .verification-instruction {
     margin-bottom: 10px;
     text-align: center;
-    color: #333;
+    color: #333
 }
 
 /* Buttons */
@@ -382,7 +397,7 @@ a,
 .verify-email-button,
 .send-reset-link-button {
     background: var(--blue);
-    color: #fff;
+    color: #fff
 }
 
 .primary-button:hover,
@@ -397,7 +412,7 @@ a,
 .resend-code-button,
 .back-to-login-button {
     background: #111;
-    color: #fff;
+    color: #fff
 }
 
 .secondary-button:hover,
@@ -407,7 +422,7 @@ a,
     transform: translateY(-1px);
 }
 
-/* Text link button (Forgot password) */
+/* Text link */
 .link-button {
     background: none;
     border: none;
@@ -420,7 +435,7 @@ a,
 }
 
 .link-button:hover {
-    color: var(--blue-hover);
+    color: var(--blue-hover)
 }
 
 /* Under-form text */
@@ -428,77 +443,54 @@ a,
     margin-top: 18px;
     font-size: 14px;
     text-align: center;
-    color: #777;
+    color: #777
 }
 
 .login-alt-text a {
     font-weight: 700;
     color: var(--blue);
-    text-decoration: none;
+    text-decoration: none
 }
 
 .login-alt-text a:hover {
-    text-decoration: underline;
+    text-decoration: underline
 }
 
 /* ====== Responsive ====== */
-@media (max-width: 720px) {
+@media (max-width:720px) {
     .password-feedback {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr
     }
 }
 
-@media (max-width: 520px) {
-    .login-wrapper {
-        padding: 18px;
-    }
-}
-
-/* Ensure every control inside the auth wrapper uses Inter */
-.login-wrapper,
-.login-wrapper input,
-.login-wrapper button,
-.login-wrapper select,
-.login-wrapper textarea {
-    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
-}
-
-/* --- Small-phone hardening (<420px) --- */
-@media (max-width: 420px) {
-    .login-wrapper {
-        padding: 12px;
+/* Small phones hardening */
+@media (max-width:430px) {
+    .auth-page .login-wrapper {
+        padding: calc(var(--nav-height) + 20px) 12px 20px
     }
 
-    .login-card {
-        padding: 0;
-        border-radius: 14px;
-    }
-
-    /* Let the username row shrink without causing horizontal scroll */
+    /* Username row: allow extreme shrink */
     .username-input-wrapper {
-        min-width: 0;
-        /* allow flex child to actually shrink */
+        min-width: 0
     }
 
     .username-input-wrapper .url-prefix {
-        min-width: 0;
-        max-width: 55%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-size: 12px;
-        padding-left: 10px;
+        max-width: 72%;
+        /* give input at least ~28% */
+        font-size: 11px;
+        /* slightly smaller prefix */
+        padding-left: 8px;
     }
 
     .username-input-wrapper input {
         min-width: 0;
+        padding-right: 8px;
         font-size: 14px;
-        padding-right: 10px;
     }
 
     .password-wrapper button {
         padding: 0 12px;
-        font-size: 12px;
+        font-size: 12px
     }
 
     .primary-button,
@@ -511,13 +503,13 @@ a,
         height: 42px;
         margin-top: 10px;
     }
+}
 
-    .password-feedback {
-        grid-template-columns: 1fr;
-    }
-
-    .login-card,
-    .login-card * {
-        word-break: break-word;
-    }
+/* Ensure Inter everywhere in the auth */
+.login-wrapper,
+.login-wrapper input,
+.login-wrapper button,
+.login-wrapper select,
+.login-wrapper textarea {
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
 }
