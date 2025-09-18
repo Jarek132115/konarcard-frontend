@@ -1,7 +1,9 @@
+// frontend/src/pages/auth/Register.jsx
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { AuthContext } from '../../components/AuthContext';
+import Navbar from '../../components/Navbar';
 import api from '../../services/api';
 
 const POST_AUTH_KEY = 'postAuthAction';
@@ -139,8 +141,6 @@ export default function Register() {
                 setIsVerifying(false);
             } else {
                 toast.success('Email verified! Logging you in...');
-                // If your /verify-email already returns token/user, you could use that.
-                // Otherwise, just log in with the credentials:
                 const loginRes = await api.post('/login', {
                     email: data.email.trim().toLowerCase(),
                     password: data.password,
@@ -169,42 +169,22 @@ export default function Register() {
         }
     };
 
-    // Nav bar styles (inline so you don’t need new CSS)
-    const bar = {
-        height: 64,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        maxWidth: 1040,
-        margin: '0 auto',
-        padding: '0 16px',
-    };
-
     return (
-        <>
-            {/* Minimal top navbar: logo left, X right */}
-            <header style={{ width: '100%', borderBottom: '1px solid #eee' }}>
-                <div style={bar}>
-                    <Link to="/" aria-label="Home" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-                        {/* Replace text with your <img src={logo} alt="Konar" style={{height: 24}}/> if you have a logo asset */}
-                        <span style={{ fontWeight: 800, fontSize: 18, color: '#111' }}>konarcard</span>
-                    </Link>
-                    <button
-                        onClick={() => navigate('/')}
-                        aria-label="Close"
-                        style={{
-                            width: 36, height: 36, borderRadius: 18, border: '1px solid #e5e5e5', background: '#fff',
-                            display: 'grid', placeItems: 'center', fontSize: 20, cursor: 'pointer'
-                        }}
-                    >
-                        ×
-                    </button>
-                </div>
-            </header>
+        <div className="auth-page">
+            {/* Real navbar */}
+            <Navbar />
 
+            {/* Page-level close button that sits at the right end of the navbar */}
+            <button
+                className="auth-nav-close"
+                onClick={() => navigate('/')}
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+            {/* Content */}
             <div className="login-wrapper">
-                {/* Single centered column */}
                 <div className="login-right">
                     <div className="login-card" role="form" aria-labelledby="register-title">
                         <h1 id="register-title" className="desktop-h3 text-center" style={{ marginBottom: 8 }}>
@@ -245,13 +225,12 @@ export default function Register() {
                                     Username <span className="desktop-body-xs" style={{ color: '#666' }}>(cannot be changed)</span>
                                 </label>
 
-                                {/* Click anywhere focuses the input; prefix touches username (no gap) */}
+                                {/* Click anywhere focuses input; username text touches the domain */}
                                 <div
                                     className="username-input-wrapper"
                                     onClick={() => usernameInputRef.current?.focus()}
                                     role="group"
                                     aria-label="Username (with site prefix)"
-                                    style={{ cursor: 'text' }}
                                 >
                                     <span className="url-prefix">www.konarcard.com/u/</span>
                                     <input
@@ -263,7 +242,7 @@ export default function Register() {
                                         onChange={(e) => setData({ ...data, username: e.target.value })}
                                         autoComplete="off"
                                         required
-                                        style={{ paddingLeft: 0 }} // keep the text directly after the prefix
+                                        style={{ paddingLeft: 0 }}
                                     />
                                 </div>
 
@@ -369,6 +348,6 @@ export default function Register() {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
