@@ -1241,30 +1241,41 @@ svg.icon {
     height: 25px;
 }
 
-/* Hero-only animated badge */
+/* Hero-only animated badge — smooth 2-step loop */
 .home-hero .hero-badge {
     position: relative;
-    animation: badgePulsePop 2.6s ease-in-out infinite;
+    /* slower + very smooth */
+    animation: badgeBlueBreath 4.8s ease-in-out infinite;
     will-change: transform, background, color, box-shadow, border-color;
-    transform-origin: center left;
-    /* feels snappier near the headline */
+    /* stay centered while scaling on all viewports */
+    transform-origin: center center;
 }
 
-/* Optional: pause on hover/focus for accessibility */
+/* Keep it centered on mobile layouts too */
+@media (max-width:1000px) {
+    .home-hero .hero-badge {
+        margin-left: auto;
+        margin-right: auto;
+        transform-origin: center center;
+        /* reinforce centering during scale */
+    }
+}
+
+/* Optional: pause if user hovers/focuses */
 .home-hero .hero-badge:hover,
 .home-hero .hero-badge:focus {
     animation-play-state: paused;
 }
 
-/* Respect user motion preferences */
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
     .home-hero .hero-badge {
         animation: none;
     }
 }
 
-/* Keyframes: grow → pop blue → settle */
-@keyframes badgePulsePop {
+/* 2-step: normal → gentle blue pop → back */
+@keyframes badgeBlueBreath {
     0% {
         transform: scale(1);
         background: #f3f4f6;
@@ -1273,32 +1284,18 @@ svg.icon {
         box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
     }
 
-    35% {
-        transform: scale(1.06);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, .10);
-    }
-
     50% {
-        transform: scale(1.12);
+        /* tiny pop, no big glow */
+        transform: scale(1.04);
         background: #0081FF;
-        /* pop to brand blue */
         color: #fff;
         border-color: #0081FF;
-        box-shadow:
-            0 8px 24px rgba(0, 0, 0, .18),
-            0 0 0 8px rgba(0, 129, 255, .12);
-        /* soft blue glow */
-    }
-
-    65% {
-        transform: scale(1.06);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, .10);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
     }
 
     100% {
         transform: scale(1);
         background: #f3f4f6;
-        /* return to original */
         color: #333;
         border-color: #e6e6e6;
         box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
