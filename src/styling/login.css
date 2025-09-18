@@ -1,36 +1,41 @@
 /* frontend/src/styling/login.css */
 
-/* --- NEW GLOBAL STYLES TO PREVENT UNWANTED EDITING --- */
-/* Apply to all elements by default */
-* {
-    caret-color: transparent !important;
-    /* Hide caret on non-input elements */
-    -webkit-user-select: none !important;
-    /* Disable text selection for WebKit */
-    -moz-user-select: none !important;
-    /* Disable text selection for Firefox */
-    -ms-user-select: none !important;
-    /* Disable text selection for IE/Edge */
-    user-select: none !important;
-    /* Disable text selection for standard */
+/* ====== Design tokens to match site ====== */
+:root {
+    --blue: #0081FF;
+    --blue-hover: #0066cc;
+    --bg: #f9f9f9;
+    --card-bg: #ffffff;
+    --border: #e9e9e9;
+    --text: #111;
+    --muted: #555;
+    --radius-lg: 20px;
+    --radius-sm: 8px;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, .08);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, .10);
 }
 
-/* Re-enable content editing and caret specifically for input fields, textareas, and selects */
+/* ====== Global “no-edit” defaults, but allow inputs to work ====== */
+* {
+    caret-color: transparent !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+
 input[type="text"],
 input[type="email"],
 input[type="password"],
 textarea,
 select {
     caret-color: initial !important;
-    /* Ensure caret is visible in inputs */
     -webkit-user-select: text !important;
-    /* Re-enable text selection for inputs */
     -moz-user-select: text !important;
     -ms-user-select: text !important;
     user-select: text !important;
 }
 
-/* Ensure buttons and other interactive elements explicitly don't get a caret or selection */
 button,
 a,
 .close-button,
@@ -42,272 +47,207 @@ a,
     user-select: none !important;
 }
 
-
-/* --- EXISTING STYLES BELOW (No changes needed here, they will be applied after the global reset) --- */
-
+/* ====== Layout ====== */
 .login-wrapper {
-    display: flex;
-    height: 100vh;
-    font-family: 'Inter', sans-serif;
-    background-color: #f9f9f9;
-    overflow: hidden;
+    min-height: 100dvh;
+    background: var(--bg);
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    position: relative;
 }
 
+/* Remove the image/quote completely on all breakpoints */
+.login-left,
+.login-visual,
+.login-quote {
+    display: none !important;
+}
+
+/* Right side becomes the only column */
+.login-right {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Card */
+.login-card {
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 28px;
+}
+
+/* Close (X) */
 .close-button {
     position: absolute;
     top: 24px;
     left: 24px;
     width: 44px;
     height: 44px;
-    background-color: white;
+    background: #fff;
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    place-items: center;
     font-size: 22px;
-    font-weight: bold;
+    font-weight: 700;
     color: #000;
     cursor: pointer;
     z-index: 10;
-    transition: all 0.2s ease;
+    transition: transform .15s ease, background .15s ease;
 }
 
 .close-button:hover {
-    transform: scale(1.1);
-    background-color: #f0f0f0;
+    transform: scale(1.06);
+    background: #f2f2f2;
 }
 
-.login-left {
-    flex: 1;
-    position: relative;
+/* ====== Typography & spacing ====== */
+.login-title {
+    text-align: center;
+    margin: 0 0 6px 0;
+    color: var(--text);
+}
+
+.desktop-body-text.text-center {
+    color: var(--muted);
+}
+
+/* ====== Form ====== */
+.login-form {
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-end;
-    overflow: hidden;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    padding: 0;
+    flex-direction: column;
 }
 
-.login-visual {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    z-index: 1;
-}
-
-.login-quote {
-    position: relative;
-    z-index: 2;
-    background: rgba(0, 0, 0, 0.6);
-    padding: 24px;
-    max-width: 420px;
-    color: white;
-    border-top-right-radius: 16px;
-    margin: 0;
-    border-bottom-left-radius: 0;
-}
-
-.login-left .login-quote {
-    margin-left: 0;
-    margin-bottom: 0;
-}
-
-/* === QUOTE TEXT === */
-.quote-icon {
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.quote-text {
-    font-size: 15px;
-    margin: 12px 0;
-    line-height: 1.5;
-}
-
-.quote-author {
-    font-size: 14px;
-    opacity: 0.85;
-    margin-bottom: 0;
-}
-
-/* --- FORM STYLES (Shared between Register and Login) --- */
-/* Form Labels */
 .form-label {
     display: block;
     text-align: left;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     color: #333;
-    margin-bottom: 4px;
+    margin: 14px 0 6px;
 }
 
-/* Styling for standard form inputs using a dedicated class */
+/* Inputs */
 .login-form .standard-input {
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
-    background-color: #eef3ff;
-    margin-bottom: 12px;
-    /* Adjusted margin-bottom */
     width: 100%;
-    box-sizing: border-box;
-    height: 40px;
+    height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: var(--radius-sm);
+    background: #eef3ff;
+    font-size: 14px;
     outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    box-sizing: border-box;
 }
 
 .login-form .standard-input:focus {
-    border-color: #0081FF;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0, 129, 255, .15);
 }
 
-/* Specific styling for the username input with prefix (only used in Register) */
+/* Username w/ prefix (Register) */
 .username-input-wrapper {
     display: flex;
     align-items: center;
+    height: 44px;
     border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #eef3ff;
-    margin-bottom: 12px;
+    border-radius: var(--radius-sm);
+    background: #eef3ff;
     overflow: hidden;
-    /* Ensures content doesn't spill out */
-    width: 100%;
-    box-sizing: border-box;
-    height: 40px;
 }
 
 .username-input-wrapper .url-prefix {
     padding: 0 0 0 12px;
-    /* Left padding only */
     font-size: 14px;
     color: #555;
     white-space: nowrap;
-    /* Prevents the prefix from wrapping */
-    background-color: transparent;
-    border-right: none;
-    box-sizing: border-box;
-    /* width: 180px; /* Fixed width to prevent shifting, adjust if needed */
     flex-shrink: 0;
-    /* Prevents shrinking */
-    line-height: 40px;
-    /* Vertically center text */
+    line-height: 44px;
 }
 
 .username-input-wrapper input {
-    flex-grow: 1;
-    /* Allows the input to take up remaining space */
-    border: none;
-    padding: 0 12px 0 0;
-    /* Right padding only */
-    margin-bottom: 0;
-    background-color: transparent;
-    outline: none;
-    border-radius: 0 8px 8px 0;
-    /* Only round the right corners */
-    box-sizing: border-box;
+    flex: 1;
     height: 100%;
-    line-height: 40px;
-    /* Vertically center text */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    padding: 0 12px;
+    border: 0;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
 }
 
 .username-input-wrapper:focus-within {
-    border-color: #0081FF;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0, 129, 255, .15);
 }
 
-
-/* Password Wrapper */
+/* Password field + toggle */
 .password-wrapper {
     position: relative;
-    display: flex;
-    align-items: stretch;
+    height: 44px;
     border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #eef3ff;
-    margin-bottom: 12px;
+    border-radius: var(--radius-sm);
+    background: #eef3ff;
+    display: flex;
     overflow: hidden;
-    width: 100%;
-    box-sizing: border-box;
-    height: 40px;
 }
 
 .password-wrapper input {
-    flex-grow: 1;
-    padding: 0 12px;
-    padding-right: 60px;
-    border: none;
-    background-color: transparent;
-    outline: none;
-    border-radius: 8px;
-    margin-bottom: 0;
-    box-sizing: border-box;
+    flex: 1;
     height: 100%;
-    line-height: 40px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    border: 0;
+    background: transparent;
+    outline: none;
+    padding: 0 12px 0 12px;
+    font-size: 14px;
 }
 
 .password-wrapper:focus-within {
-    border-color: #0081FF;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0, 129, 255, .15);
 }
-
 
 .password-wrapper button {
     position: absolute;
-    top: 0;
     right: 0;
+    top: 0;
     height: 100%;
-    padding: 0 15px;
-    background-color: #0081FF;
-    color: white;
-    border: none;
-    font-size: 14px;
-    font-weight: bold;
+    padding: 0 14px;
+    background: var(--blue);
+    color: #fff;
+    border: 0;
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-    transition: background-color 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    outline: none;
+    transition: background .15s ease;
 }
 
 .password-wrapper button:hover {
-    background-color: #0066cc;
+    background: var(--blue-hover);
 }
 
-/* Password Feedback (only used in Register) */
+/* Password feedback (Register) */
 .password-feedback {
     font-size: 12px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: -4px;
-    margin-bottom: 12px;
-    text-align: left;
-    transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease, margin 0.3s ease;
-    opacity: 1;
-    transform: translateY(0);
-    height: auto;
-    overflow: visible;
+    gap: 8px 12px;
+    margin: 8px 0 8px;
+    color: #333;
 }
 
-.password-feedback.hidden {
-    opacity: 0;
-    transform: translateY(-10px);
-    pointer-events: none;
-    height: 0;
-    margin-bottom: 0;
-    margin-top: 0;
+.feedback-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
 }
 
 .password-feedback p {
@@ -317,319 +257,30 @@ a,
     font-weight: 500;
 }
 
-.feedback-icon {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-}
-
 .password-feedback .valid {
-    color: green;
+    color: #1a7f37;
 }
 
 .password-feedback .invalid {
-    color: red;
+    color: #b42318;
 }
 
-/* === RIGHT SIDE (FORM PANEL) === */
-.login-right {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-    background: #f9f9f9;
+.password-feedback.hidden {
+    opacity: 0;
+    transform: translateY(-6px);
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+    transition: all .2s ease;
 }
 
-.login-card {
-    width: 100%;
-    max-width: 500px;
-    padding: 30px;
-    border-radius: 20px;
-}
-
-.login-title {
+/* Verification code */
+.verification-instruction {
+    margin-bottom: 10px;
     text-align: center;
-    margin-bottom: 2px;
-    /* Adjusted margin to accommodate new paragraph */
-}
-
-.login-form {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Button Styling (Adjusted for Login/Register pages) */
-.primary-button {
-    padding: 12px;
-    background-color: black;
-    color: white;
-    border: none;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 10px;
-    /* Space above first button */
-    font-family: 'Inter';
-    transition: background 0.2s ease;
-}
-
-.primary-button:hover {
-    background-color: #333;
-}
-
-.secondary-button {
-    padding: 12px;
-    background-color: #333;
-    color: white;
-    border: none;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 10px;
-    /* Max 10px gap between buttons */
-    font-family: 'Inter';
-    transition: background 0.2s ease;
-}
-
-.secondary-button:hover {
-    background-color: #333333b0;
-}
-
-/* Specific styling for the Verify Email button (blue, used in Register and Login verification step) */
-.verify-email-button {
-    background-color: #0081FF;
-}
-
-.verify-email-button:hover {
-    background-color: #0066cc;
-}
-
-/* Specific styling for the Resend Code button (black, used in Register and Login verification step) */
-.resend-code-button {
-    background-color: black;
-}
-
-.resend-code-button:hover {
-    background-color: #333;
-}
-
-/* NEW: Login Specific Button Overrides */
-.sign-in-button {
-    background-color: #0081FF;
-    /* Blue background for Sign In */
-}
-
-.sign-in-button:hover {
-    background-color: #0066cc;
-}
-
-.send-reset-link-button {
-    background-color: #0081FF;
-    /* Blue background for Send Reset Link */
-}
-
-.send-reset-link-button:hover {
-    background-color: #0066cc;
-}
-
-.back-to-login-button {
-    background-color: black;
-    /* Black background for Back to Login */
-}
-
-.back-to-login-button:hover {
-    background-color: #333;
-}
-
-/* NEW: Link Button for Forgot Password (text-based button) */
-.link-button {
-    background: none;
-    border: none;
-    color: black;
-    /* Forgot Password text to be black */
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    /* Reverted to center as per your last clarification */
-    padding: 5px 0;
-    /* Add some padding for click target */
-    margin-top: 5px;
-    /* Small space below primary button */
-    transition: color 0.2s ease;
-}
-
-.link-button:hover {
     color: #333;
-    /* Slightly lighter black on hover */
 }
 
-.login-alt-text {
-    margin-top: 14px;
-    font-size: 14px;
-    text-align: center;
-}
-
-.login-alt-text a {
-    font-weight: 600;
-    color: black;
-    /* Default black for "Create one" */
-    text-decoration: none;
-}
-
-/* NEW: "Create one" link to be blue */
-.login-alt-text .create-account-link {
-    color: #0081FF;
-}
-
-.login-alt-text .create-account-link:hover {
-    text-decoration: underline;
-}
-
-
-/* === DIVIDER === */
-.divider {
-    text-align: center;
-    margin: 20px 0;
-    position: relative;
-}
-
-.divider span {
-    background: #f9f9f9;
-    padding: 0 10px;
-    position: relative;
-    z-index: 1;
-}
-
-.divider::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    width: 100%;
-    height: 1px;
-    background: #ccc;
-    left: 0;
-    z-index: 0;
-}
-
-/* === SOCIAL BUTTONS === */
-.social-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.social-buttons a {
-    color: #000;
-}
-
-.social-button {
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: white;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    justify-content: center;
-    transition: background 0.2s ease;
-}
-
-.social-button:hover {
-    background-color: #f0f0f0;
-}
-
-.social-button img {
-    width: 20px;
-    height: 20px;
-}
-
-/* === TERMS === */
-.terms-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    line-height: 1.4;
-    margin-top: 10px;
-    margin-bottom: 12px;
-}
-
-/* HIGHLY SPECIFIC CHECKBOX STYLES */
-.terms-label input[type="checkbox"].konar-checkbox {
-    width: 25px !important;
-    height: 25px !important;
-    min-width: 25px !important;
-    min-height: 25px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
-    border: 1px solid #ccc !important;
-    border-radius: 4px !important;
-    background-color: white !important;
-    cursor: pointer !important;
-    display: inline-block !important;
-    position: relative !important;
-    flex-shrink: 0 !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-/* Checkmark style */
-.terms-label input[type="checkbox"].konar-checkbox::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    width: 14px !important;
-    height: 8px !important;
-    border: 3px solid black !important;
-    border-top: none !important;
-    border-right: none !important;
-    transform: translate(-50%, -50%) rotate(-45deg) !important;
-    margin-top: -1px !important;
-    margin-left: -1px !important;
-    opacity: 0 !important;
-    transition: opacity 0.1s ease !important;
-}
-
-/* Checkbox checked state */
-.terms-label input[type="checkbox"].konar-checkbox:checked {
-    background-color: #0081FF !important;
-    border-color: #0081FF !important;
-}
-
-.terms-label input[type="checkbox"].konar-checkbox:checked::before {
-    opacity: 1 !important;
-}
-
-/* Checkbox unchecked state */
-.terms-label input[type="checkbox"].konar-checkbox:not(:checked) {
-    background-color: white !important;
-    border-color: #ccc !important;
-}
-
-.terms-label input[type="checkbox"].konar-checkbox:not(:checked)::before {
-    opacity: 0 !important;
-}
-
-/* Terms links */
-.terms-label a {
-    color: #0081FF;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-/* === VERIFICATION CODE INPUTS === */
 .verification-code-container {
     display: flex;
     justify-content: space-between;
@@ -643,70 +294,264 @@ a,
     text-align: center;
     font-size: 20px;
     border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #eef3ff;
-    box-sizing: border-box;
+    border-radius: var(--radius-sm);
+    background: #eef3ff;
     outline: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
 }
 
 .verification-code-input:focus {
-    border-color: #0081FF;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0, 129, 255, .15);
 }
 
-/* Space after the "code has been sent to..." text */
-.verification-instruction {
-    margin-bottom: 10px;
+/* Terms */
+.terms-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    margin: 8px 0 12px;
+    color: #333;
+}
+
+.terms-label a {
+    color: var(--blue);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.terms-label a:hover {
+    text-decoration: underline;
+}
+
+/* Custom checkbox */
+.terms-label input[type="checkbox"].konar-checkbox {
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px !important;
+    min-height: 22px !important;
+    margin: 0 !important;
+    border: 1px solid #ccc !important;
+    border-radius: 4px !important;
+    background: #fff !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    position: relative !important;
+    cursor: pointer !important;
+}
+
+.terms-label input[type="checkbox"].konar-checkbox::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 7px;
+    border: 3px solid #fff;
+    border-top: none;
+    border-right: none;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    opacity: 0;
+    transition: opacity .1s ease;
+}
+
+.terms-label input[type="checkbox"].konar-checkbox:checked {
+    background: var(--blue) !important;
+    border-color: var(--blue) !important;
+}
+
+.terms-label input[type="checkbox"].konar-checkbox:checked::before {
+    opacity: 1;
+}
+
+/* Buttons */
+.primary-button,
+.secondary-button,
+.verify-email-button,
+.resend-code-button,
+.sign-in-button,
+.send-reset-link-button,
+.back-to-login-button {
+    width: 100%;
+    height: 44px;
+    padding: 12px;
+    border-radius: 9999px;
+    font-weight: 800;
+    font-size: 14px;
+    border: 0;
+    cursor: pointer;
+    transition: transform .06s ease, box-shadow .15s ease, background .15s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .12);
+    margin-top: 12px;
+}
+
+.primary-button {
+    background: var(--blue);
+    color: #fff;
+}
+
+.primary-button:hover {
+    background: var(--blue-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .18);
+}
+
+.secondary-button {
+    background: #111;
+    color: #fff;
+}
+
+.secondary-button:hover {
+    background: #333;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .18);
+}
+
+/* Explicit overrides to keep your naming working */
+.verify-email-button,
+.sign-in-button,
+.send-reset-link-button {
+    background: var(--blue);
+    color: #fff;
+}
+
+.verify-email-button:hover,
+.sign-in-button:hover,
+.send-reset-link-button:hover {
+    background: var(--blue-hover);
+}
+
+.resend-code-button,
+.back-to-login-button {
+    background: #111;
+    color: #fff;
+}
+
+.resend-code-button:hover,
+.back-to-login-button:hover {
+    background: #333;
+}
+
+/* Text link button */
+.link-button {
+    background: none;
+    border: none;
+    color: #000;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
     text-align: center;
+    padding: 6px 0;
+    margin-top: 6px;
 }
 
-/* Tablet responsiveness */
-@media (max-width: 1000px) {
+.link-button:hover {
+    color: #333;
+}
+
+/* Under-card text */
+.login-alt-text {
+    margin-top: 14px;
+    font-size: 14px;
+    text-align: center;
+    color: #333;
+}
+
+.login-alt-text a {
+    font-weight: 700;
+    color: var(--blue);
+    text-decoration: none;
+}
+
+.login-alt-text a:hover {
+    text-decoration: underline;
+}
+
+/* Divider */
+.divider {
+    text-align: center;
+    margin: 18px 0;
+    position: relative;
+}
+
+.divider span {
+    background: var(--card-bg);
+    padding: 0 10px;
+    position: relative;
+    z-index: 1;
+    color: #666;
+}
+
+.divider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #ddd;
+    z-index: 0;
+}
+
+/* Social */
+.social-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.social-button {
+    height: 44px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid #ccc;
+    border-radius: var(--radius-sm);
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    cursor: pointer;
+    transition: background .15s ease;
+}
+
+.social-button:hover {
+    background: #f3f3f3;
+}
+
+.social-button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 720px) {
+    .login-card {
+        padding: 22px;
+    }
+
+    .password-feedback {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
     .login-wrapper {
-        flex-direction: column;
-        height: 100vh;
-    }
-
-    .login-left {
-        display: none;
-    }
-
-    .login-right {
-        flex: 1;
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-        padding-top: 160px;
-        padding-bottom: 40px;
+        padding: 18px;
     }
 
     .login-card {
-        width: 100%;
-        max-width: 500px;
-        padding: 30px;
-    }
-}
-
-/* Mobile responsiveness */
-@media (max-width: 600px) {
-    .login-wrapper {
-        height: 100vh;
+        padding: 18px;
+        border-radius: 16px;
     }
 
-    .login-right {
-        /* Adjusted padding to create 5% side margins for the 90% width card */
-        padding: 100px 5% 40px 5%;
-    }
-
-    .login-card {
-        width: 90%;
-        /* Set width to 90% */
-        max-width: 90%;
-        /* Ensure it doesn't exceed 90% */
-        padding: 00px;
-        /* Keep internal padding */
+    .close-button {
+        top: 16px;
+        left: 16px;
     }
 
     .verification-code-input {
@@ -716,6 +561,6 @@ a,
     }
 
     .verification-code-container {
-        gap: 5px;
+        gap: 6px;
     }
 }
