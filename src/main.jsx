@@ -26,6 +26,7 @@ import './styling/contactinterface.css';
 import './styling/nfccard.css';
 
 import App from './App.jsx';
+import { AuthProvider } from './components/AuthContext';
 
 const queryClient = new QueryClient();
 
@@ -33,7 +34,10 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <Router>
-        <App />
+        {/* ✅ Provide AuthContext to the whole app */}
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </Router>
     </QueryClientProvider>
   </StrictMode>
