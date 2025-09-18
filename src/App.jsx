@@ -1,8 +1,8 @@
 // App.jsx
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { Suspense } from 'react';
+import { Suspense, useContext } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './components/AuthContext';
+import { AuthProvider, AuthContext } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import TidioDelayedLoader from './components/TidioDelayedLoader';
@@ -59,6 +59,22 @@ function TidioWrapper() {
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
 }
 
+/**
+ * AppAuth gate: don’t render ANY routes until the auth layer is ready.
+ * This closes the last race where the router may briefly think user=null
+ * and redirect to /login during refresh on slower devices.
+ */
+function AuthGate({ children }) {
+  const { initialized, loading, user } = useContext(AuthContext);
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+  if (!initialized || loading || (token && !user)) {
+    // show nothing (or a tiny splash) while hydrating
+    return null;
+  }
+  return children;
+}
+
 function App() {
   return (
     <AuthProvider>
@@ -68,39 +84,41 @@ function App() {
 
       <RouteErrorBoundary>
         <Suspense fallback={<div style={{ padding: 16 }}>Loading…</div>}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <Route path="/productandplan" element={<ProductAndPlan />} />
-            <Route path="/productandplan/konarcard" element={<KonarCard />} />
-            <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
-            <Route path="/whatisnfc" element={<KonarCard />} />
-            <Route path="/subscription" element={<KonarSubscription />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/reviews" element={<Reviews />} />
-            <Route path="/helpcentre" element={<HelpCentre />} />
-            <Route path="/contactus" element={<ContactUs />} />
-            <Route path="/policies" element={<Policies />} />
-            <Route path="/success" element={<Success />} />
-            {/* keep original case and add lowercase alias */}
-            <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
-            <Route path="/successsubscription" element={<SuccessSubscription />} />
+          <AuthGate>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route path="/productandplan" element={<ProductAndPlan />} />
+              <Route path="/productandplan/konarcard" element={<KonarCard />} />
+              <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
+              <Route path="/whatisnfc" element={<KonarCard />} />
+              <Route path="/subscription" element={<KonarSubscription />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/reviews" element={<Reviews />} />
+              <Route path="/helpcentre" element={<HelpCentre />} />
+              <Route path="/contactus" element={<ContactUs />} />
+              <Route path="/policies" element={<Policies />} />
+              <Route path="/success" element={<Success />} />
+              {/* keep original case and add lowercase alias */}
+              <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
+              <Route path="/successsubscription" element={<SuccessSubscription />} />
 
-            {/* Protected routes */}
-            <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
-            <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
-            <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
-            <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
-            <Route path="/nfccards" element={<ProtectedRoute><NFCCards /></ProtectedRoute>} />
-            <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
+              {/* Protected routes */}
+              <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
+              <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+              <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+              <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
+              <Route path="/nfccards" element={<ProtectedRoute><NFCCards /></ProtectedRoute>} />
+              <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
 
-            {/* Public user page */}
-            <Route path="/u/:username" element={<UserPage />} />
-          </Routes>
+              {/* Public user page */}
+              <Route path="/u/:username" element={<UserPage />} />
+            </Routes>
+          </AuthGate>
         </Suspense>
       </RouteErrorBoundary>
     </AuthProvider>
