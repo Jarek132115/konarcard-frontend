@@ -497,8 +497,8 @@ export default function Home() {
       {/* People, Reviews, FAQ */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Real Tradies. <span className="blue">Real Moments.</span></h2>
-          <h3 className="desktop-h6 text-center">4 photos of Konar used on real jobs.</h3>
+          <h2 className="desktop-h3 text-center">Tradies Are Making the <span className="blue">Switch.</span></h2>
+          <h3 className="desktop-h6 text-center">See how Konar is used every day by real tradespeople.</h3>
         </div>
 
         {/* NEW: 4-image grid (1-2-1 on <1000px) */}
