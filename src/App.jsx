@@ -27,21 +27,15 @@ const Policies            = lazyWithRetry(() => import('./pages/website/Policies
 const Success             = lazyWithRetry(() => import('./pages/website/Success.jsx'));
 const SuccessSubscription = lazyWithRetry(() => import('./pages/website/SuccessSubscription.jsx'));
 
-// Your route was /u/:username; closest file in repo is WhiteCard.jsx
 const UserPage            = lazyWithRetry(() => import('./pages/website/WhiteCard.jsx'));
-
-// Dashboard / interface (src/pages/interface)
 const Billing               = lazyWithRetry(() => import('./pages/interface/Billing.jsx'));
 const ContactSupport        = lazyWithRetry(() => import('./pages/interface/ContactSupport.jsx'));
 const HelpCentreInterface   = lazyWithRetry(() => import('./pages/interface/HelpCentreInterface.jsx'));
-
-// If/when you add these files under src/pages/interface, uncomment these:
-// const MyProfile          = lazyWithRetry(() => import('./pages/interface/MyProfile.jsx'));
-// const MyOrders           = lazyWithRetry(() => import('./pages/interface/MyOrders.jsx'));
-// const NFCCards           = lazyWithRetry(() => import('./pages/interface/NFCCards.jsx'));
-// const Notifications      = lazyWithRetry(() => import('./pages/interface/Notifications.jsx'));
-// const Profile            = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
-// ====================================================================================
+const MyProfile          = lazyWithRetry(() => import('./pages/interface/MyProfile.jsx'));
+const MyOrders           = lazyWithRetry(() => import('./pages/interface/MyOrders.jsx'));
+const NFCCards           = lazyWithRetry(() => import('./pages/interface/NFCCards.jsx'));
+const Notifications      = lazyWithRetry(() => import('./pages/interface/Notifications.jsx'));
+const Profile            = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
 
 function TidioWrapper() {
   const location = useLocation();
