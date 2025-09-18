@@ -567,7 +567,7 @@ body {
     }
 
     .step-card .step-text {
-        padding: 20px;
+        padding: 10px 20px 20px 20px;
     }
 
     .step-card .step-media img {
