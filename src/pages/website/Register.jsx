@@ -1,4 +1,3 @@
-// frontend/src/pages/auth/Register.jsx
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -25,11 +24,10 @@ export default function Register() {
     const [cooldown, setCooldown] = useState(0);
     const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
 
-    // focus helpers (so clicking anywhere in the username row focuses input)
     const usernameRef = useRef(null);
-    const passwordRef = useRef(null);
+    const blurTimeoutRef = useRef(null);
 
-    // Persist incoming post-auth action (subscribe / buy_card)
+    // Persist incoming post-auth action
     useEffect(() => {
         const action = location.state?.postAuthAction;
         if (action) {
@@ -39,38 +37,47 @@ export default function Register() {
 
     useEffect(() => {
         if (cooldown > 0) {
-            const t = setTimeout(() => setCooldown(s => s - 1), 1000);
+            const t = setTimeout(() => setCooldown((s) => s - 1), 1000);
             return () => clearTimeout(t);
         }
     }, [cooldown]);
 
+    // Password rules (no "match" rule anymore)
     const passwordChecks = {
         minLength: data.password.length >= 8,
         hasUppercase: /[A-Z]/.test(data.password),
         hasNumber: /\d/.test(data.password),
     };
 
+    const handlePasswordFocus = () => {
+        if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+        setShowPasswordFeedback(true);
+    };
+    const handlePasswordBlur = () => {
+        blurTimeoutRef.current = setTimeout(() => setShowPasswordFeedback(false), 120);
+    };
+
+    const focusUsername = () => usernameRef.current?.focus();
+
     const registerUser = async (e) => {
         e.preventDefault();
 
-        // simple validation (no confirm password anymore)
-        if (!data.name.trim() || !data.email.trim() || !data.username.trim() || !data.password) {
-            toast.error('Please fill in all fields.');
+        // basic checks
+        if (!data.username.trim()) {
+            toast.error('Username is required.');
             return;
         }
         if (!Object.values(passwordChecks).every(Boolean)) {
             toast.error('Please meet all password requirements.');
-            passwordRef.current?.focus();
             return;
         }
 
         try {
             const res = await api.post('/register', {
-                name: data.name.trim(),
+                name: data.name,
                 email: data.email.trim().toLowerCase(),
                 username: data.username.trim().toLowerCase(),
                 password: data.password,
-                // confirmPassword REMOVED
             });
 
             if (res.data?.error) {
@@ -81,12 +88,13 @@ export default function Register() {
                 setCooldown(30);
             }
         } catch (err) {
-            if (err.response) toast.error(err.response.data.error || 'Registration failed');
+            if (err.response) toast.error(err.response.data?.error || 'Registration failed');
             else if (err.request) toast.error('No response from server. Check network.');
             else toast.error('Registration failed');
         }
     };
 
+    // After verify -> login -> run pending action or default
     const runPendingActionOrDefault = async () => {
         let action = null;
         try {
@@ -137,9 +145,25 @@ export default function Register() {
                 toast.error(res.data.error);
             } else {
                 toast.success('Email verified! Logging you in...');
-                // server returns token + user on verify in your controller
-                login(res.data.token, res.data.user);
-                await runPendingActionOrDefault();
+                // Controller returns token + user on verify — use it if present, otherwise re-login
+                const token = res.data?.token;
+                const user = res.data?.user;
+                if (token && user) {
+                    login(token, user);
+                    await runPendingActionOrDefault();
+                } else {
+                    // Fallback: login call
+                    const loginRes = await api.post('/login', {
+                        email: data.email.trim().toLowerCase(),
+                        password: data.password,
+                    });
+                    if (loginRes.data?.error) {
+                        toast.error(loginRes.data.error);
+                    } else {
+                        login(loginRes.data.token, loginRes.data.user);
+                        await runPendingActionOrDefault();
+                    }
+                }
             }
         } catch {
             toast.error('Verification failed');
@@ -160,23 +184,25 @@ export default function Register() {
         <div className="login-wrapper">
             <Link to="/" className="close-button" aria-label="Close">×</Link>
 
+            {/* Single centered column */}
             <div className="login-right">
                 <div className="login-card" role="form" aria-labelledby="register-title">
                     <h1 id="register-title" className="desktop-h3 text-center" style={{ marginBottom: 8 }}>
                         Create Your Account
                     </h1>
-                    <p className="desktop-body-text text-center" style={{ marginBottom: 24 }}>
-                        Enter your details to get started.
-                    </p>
+                    {!verificationStep && (
+                        <p className="desktop-body-text text-center" style={{ marginBottom: 24 }}>
+                            Enter your details to get started.
+                        </p>
+                    )}
 
                     {!verificationStep ? (
                         <form onSubmit={registerUser} className="login-form">
-                            {/* Name */}
-                            <label htmlFor="name" className="form-label">Name</label>
+                            <label htmlFor="name" className="form-label">Full name</label>
                             <input
                                 type="text"
                                 id="name"
-                                placeholder="Full name"
+                                placeholder="Your name"
                                 value={data.name}
                                 onChange={(e) => setData({ ...data, name: e.target.value })}
                                 className="standard-input"
@@ -184,7 +210,6 @@ export default function Register() {
                                 required
                             />
 
-                            {/* Email */}
                             <label htmlFor="email" className="form-label">Email</label>
                             <input
                                 type="email"
@@ -198,17 +223,19 @@ export default function Register() {
                                 required
                             />
 
-                            {/* Username (full-row clickable, 0-gap style) */}
                             <label htmlFor="username" className="form-label">
                                 Username <span className="desktop-body-xs" style={{ color: '#666' }}>(cannot be changed)</span>
                             </label>
+
+                            {/* CLICK ANYWHERE -> focus input; no visual gap after domain */}
                             <div
                                 className="username-input-wrapper"
-                                onClick={() => usernameRef.current?.focus()}
-                                role="group"
-                                aria-label="Username"
+                                onClick={focusUsername}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && focusUsername()}
                             >
-                                <span className="url-prefix">www.konarcard.com/u/</span>
+                                <span className="url-prefix" aria-hidden="true">www.konarcard.com/u/</span>
                                 <input
                                     ref={usernameRef}
                                     type="text"
@@ -221,47 +248,37 @@ export default function Register() {
                                 />
                             </div>
 
-                            {/* Password */}
                             <label htmlFor="password" className="form-label">Password</label>
-                            <div className="password-wrapper" onClick={() => passwordRef.current?.focus()}>
+                            <div className="password-wrapper">
                                 <input
-                                    ref={passwordRef}
                                     type={showPassword ? 'text' : 'password'}
                                     id="password"
                                     placeholder="Create a password"
                                     value={data.password}
                                     onChange={(e) => setData({ ...data, password: e.target.value })}
                                     autoComplete="new-password"
-                                    onFocus={() => setShowPasswordFeedback(true)}
-                                    onBlur={() => setTimeout(() => setShowPasswordFeedback(false), 120)}
+                                    onFocus={handlePasswordFocus}
+                                    onBlur={handlePasswordBlur}
                                     required
                                 />
-                                <button type="button" onClick={() => setShowPassword(s => !s)}>
+                                <button type="button" onClick={() => setShowPassword((s) => !s)}>
                                     {showPassword ? 'Hide' : 'Show'}
                                 </button>
                             </div>
 
-                            {/* Password feedback (no match rule anymore) */}
                             {showPasswordFeedback && (
                                 <div className="password-feedback">
                                     <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
-                                        <span className="feedback-icon" /> Minimum 8 characters
+                                        {passwordChecks.minLength ? '✓' : '✗'} Minimum 8 characters
                                     </p>
                                     <p className={passwordChecks.hasUppercase ? 'valid' : 'invalid'}>
-                                        <span className="feedback-icon" /> One uppercase letter
+                                        {passwordChecks.hasUppercase ? '✓' : '✗'} One uppercase letter
                                     </p>
                                     <p className={passwordChecks.hasNumber ? 'valid' : 'invalid'}>
-                                        <span className="feedback-icon" /> One number
+                                        {passwordChecks.hasNumber ? '✓' : '✗'} One number
                                     </p>
                                 </div>
                             )}
-
-                            <label className="terms-label">
-                                <input type="checkbox" className="terms-checkbox konar-checkbox" required />
-                                <span className="desktop-body-xs">
-                                    I agree to the <a href="/policies">Terms of Service</a> & <a href="/policies">Privacy Policy</a>
-                                </span>
-                            </label>
 
                             <button type="submit" className="primary-button sign-in-button">Create Account</button>
                         </form>
