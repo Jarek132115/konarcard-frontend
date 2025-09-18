@@ -32,7 +32,7 @@ const Billing = lazyWithRetry(() => import('./pages/interface/Billing.jsx'));
 const ContactSupport = lazyWithRetry(() => import('./pages/interface/ContactSupport.jsx'));
 const HelpCentreInterface = lazyWithRetry(() => import('./pages/interface/HelpCentreInterface.jsx'));
 const MyProfile = lazyWithRetry(() => import('./pages/interface/MyProfile.jsx'));
-const MyOrders = lazyWithRetry(() => import('./pages/interface/MyOrders.jsx'));
+const MyOrders = lazyWithRetry(() => import('./pages/interface/MyOrder.jsx'));
 const NFCCards = lazyWithRetry(() => import('./pages/interface/NFCCards.jsx'));
 const Notifications = lazyWithRetry(() => import('./pages/interface/Notifications.jsx'));
 const Profile = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
