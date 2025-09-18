@@ -310,7 +310,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Tap or scan</p>
-                      <p className="desktop-body-xs gray">Open your profile via NFC or QR.</p>
+                      <p className="desktop-body-xs gray">NFC + QR open your profile instantly.</p>
                     </div>
                   </div>
 
@@ -319,8 +319,8 @@ export default function Home() {
                       <img src={ShareIcon} className="icon icon-img" alt="Icon" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Share the link</p>
-                      <p className="desktop-body-xs gray">Text, WhatsApp, socials, email—easy.</p>
+                      <p className="desktop-h6">Send your link</p>
+                      <p className="desktop-body-xs gray">Text, WhatsApp, socials, email, or add to your bio.</p>
                     </div>
                   </div>
 
@@ -330,7 +330,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Get booked faster</p>
-                      <p className="desktop-body-xs gray">Stand out with photos & reviews.</p>
+                      <p className="desktop-body-xs gray">Show photos, services, and reviews; clients save your number in one click.</p>
                     </div>
                   </div>
                 </div>
