@@ -30,10 +30,10 @@ export const AuthProvider = ({ children }) => {
         if (token) attachAuthHeader(token);
         if (cachedUser) setUser(cachedUser);
 
-        // 2) We are ready to render the app immediately (no visible loader)
+        // 2) Ready to render app immediately
         setInitialized(true);
 
-        // 3) Background-validate token & refresh user (no blocking UI)
+        // 3) Background-validate token & refresh user
         if (token) {
             api.get('/profile')
                 .then((res) => {
@@ -44,14 +44,17 @@ export const AuthProvider = ({ children }) => {
                         else localStorage.removeItem(USER_KEY);
                     } catch { /* ignore */ }
                 })
-                .catch(() => {
-                    // Bad token → clear everything quietly
-                    try {
-                        localStorage.removeItem(TOKEN_KEY);
-                        localStorage.removeItem(USER_KEY);
-                    } catch { /* ignore */ }
-                    attachAuthHeader(null);
-                    setUser(null);
+                .catch((err) => {
+                    const status = err?.response?.status;
+                    // Only clear on real auth failures; ignore network/CORS hiccups
+                    if (status === 401 || status === 403) {
+                        try {
+                            localStorage.removeItem(TOKEN_KEY);
+                            localStorage.removeItem(USER_KEY);
+                        } catch { /* ignore */ }
+                        attachAuthHeader(null);
+                        setUser(null);
+                    }
                 });
         }
     }, []);
@@ -63,7 +66,7 @@ export const AuthProvider = ({ children }) => {
         } catch { /* ignore */ }
         attachAuthHeader(token);
         setUser(userData || null);
-        setInitialized(true); // ensure true
+        setInitialized(true);
     };
 
     const logout = () => {
