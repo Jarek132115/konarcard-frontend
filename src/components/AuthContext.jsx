@@ -1,72 +1,91 @@
-import React, { createContext, useEffect, useState, useMemo } from 'react';
+import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import api from '../services/api';
-import { toast } from 'react-hot-toast';
 
 export const AuthContext = createContext();
 
+const TOKEN_KEY = 'token';
+const USER_KEY = 'authUser';
+
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(false);
     const [initialized, setInitialized] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const bootstrappedRef = useRef(false);
 
-    const fetchUser = async () => {
-        setLoading(true);
-        try {
-            // 🚫 add cache-buster & force no-cache
-            const res = await api.get(`/profile?ts=${Date.now()}`, {
-                headers: {
-                    'Cache-Control': 'no-store',
-                    'Pragma': 'no-cache',
-                },
-            });
-
-            const fetchedUser = res.data?.data;
-            setUser(fetchedUser || null);
-            if (!fetchedUser) {
-                localStorage.removeItem('token');
-            }
-        } catch (err) {
-            if (err?.response?.status === 401) {
-                localStorage.removeItem('token');
-            }
-            setUser(null);
-        } finally {
-            setLoading(false);
-            setInitialized(true);
-        }
+    const attachAuthHeader = (token) => {
+        if (token) api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        else delete api.defaults.headers.common.Authorization;
     };
 
+    // ---- Immediate, synchronous hydrate so `user` isn't null on first render
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        if (bootstrappedRef.current) return;
+        bootstrappedRef.current = true;
+
+        const token = localStorage.getItem(TOKEN_KEY);
+        const cachedUser = (() => {
+            try { return JSON.parse(localStorage.getItem(USER_KEY) || 'null'); }
+            catch { return null; }
+        })();
+
+        if (token) attachAuthHeader(token);
+        if (cachedUser) setUser(cachedUser);
+
+        // Background validate token & refresh user
         if (token) {
-            fetchUser();
+            setLoading(true);
+            api.get('/profile')
+                .then(res => {
+                    const fresh = res?.data?.data || null;
+                    setUser(fresh);
+                    try {
+                        if (fresh) localStorage.setItem(USER_KEY, JSON.stringify(fresh));
+                        else localStorage.removeItem(USER_KEY);
+                    } catch { }
+                })
+                .catch(() => {
+                    // token bad; clear everything
+                    try {
+                        localStorage.removeItem(TOKEN_KEY);
+                        localStorage.removeItem(USER_KEY);
+                    } catch { }
+                    attachAuthHeader(null);
+                    setUser(null);
+                })
+                .finally(() => {
+                    setLoading(false);
+                    setInitialized(true);
+                });
         } else {
+            // no token at all
             setInitialized(true);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const login = (token, userData) => {
-        localStorage.setItem('token', token);
+        try {
+            localStorage.setItem(TOKEN_KEY, token);
+            localStorage.setItem(USER_KEY, JSON.stringify(userData || {}));
+        } catch { }
+        attachAuthHeader(token);
         setUser(userData || null);
-        setLoading(false);
         setInitialized(true);
+        setLoading(false);
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
+        try {
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(USER_KEY);
+        } catch { }
+        attachAuthHeader(null);
         setUser(null);
-        toast.success('You have been logged out!');
     };
 
     const value = useMemo(
-        () => ({ user, setUser, fetchUser, login, logout, loading, initialized }),
+        () => ({ user, setUser, login, logout, loading, initialized }),
         [user, loading, initialized]
     );
 
-    return (
-        <AuthContext.Provider value={value}>
-            {children}
-        </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
