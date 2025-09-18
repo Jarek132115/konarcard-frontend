@@ -612,7 +612,8 @@ body {
         grid-template-rows: repeat(2, 1fr);
         gap: 10px;
         align-items: stretch;
-        height: clamp(360px, 45vw, 560px)
+        height: clamp(360px, 45vw, 450px);
+        /* <-- max now 450px */
     }
 
     .people-grid .pg-item:nth-child(1) {
