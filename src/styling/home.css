@@ -1360,40 +1360,47 @@ svg.icon {
     }
 }
 
-/* Subtle blue glow for hero keyword */
+/* Start with no glow; smoothly expand to a wide glow, then back */
 .hero-glow {
     position: relative;
-    /* ensure the base text is blue (you already use .blue) */
-    text-shadow:
-        0 0 6px rgba(0, 129, 255, 0.55),
-        0 0 14px rgba(0, 129, 255, 0.40),
-        0 0 26px rgba(0, 129, 255, 0.28);
+    text-shadow: none;
+    animation: heroBlueBreathe 5.2s ease-in-out infinite;
+    will-change: text-shadow;
 }
 
-/* Optional: very gentle breathing glow */
-@keyframes heroBluePulse {
+@keyframes heroBlueBreathe {
 
     0%,
     100% {
+        /* no glow */
+        text-shadow: none;
+    }
+
+    20% {
+        /* tiny hint */
         text-shadow:
-            0 0 6px rgba(0, 129, 255, 0.55),
-            0 0 14px rgba(0, 129, 255, 0.40),
-            0 0 26px rgba(0, 129, 255, 0.28);
+            0 0 4px rgba(0, 129, 255, .30),
+            0 0 10px rgba(0, 129, 255, .22);
     }
 
     50% {
+        /* big, spread-out glow */
         text-shadow:
-            0 0 8px rgba(0, 129, 255, 0.65),
-            0 0 18px rgba(0, 129, 255, 0.50),
-            0 0 32px rgba(0, 129, 255, 0.36);
+            0 0 10px rgba(0, 129, 255, .65),
+            0 0 24px rgba(0, 129, 255, .50),
+            0 0 48px rgba(0, 129, 255, .35),
+            0 0 80px rgba(0, 129, 255, .22);
+    }
+
+    80% {
+        /* back toward subtle */
+        text-shadow:
+            0 0 6px rgba(0, 129, 255, .40),
+            0 0 14px rgba(0, 129, 255, .28);
     }
 }
 
-.hero-glow {
-    animation: heroBluePulse 4.5s ease-in-out infinite;
-}
-
-/* Respect users who prefer reduced motion */
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
     .hero-glow {
         animation: none;
