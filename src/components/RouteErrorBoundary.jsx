@@ -7,26 +7,17 @@ export default class RouteErrorBoundary extends Component {
         return { hasError: true };
     }
 
-    componentDidCatch(err, info) {
+    componentDidCatch(err) {
         const msg = String(err?.message || "");
-        // Handle removed chunks after a deploy
-        if (err?.name === "ChunkLoadError" || /Loading chunk \d+ failed/i.test(msg)) {
-            if (!window.__didHardReloadForChunk__) {
-                window.__didHardReloadForChunk__ = true;
-                window.location.reload();
-                return;
-            }
-        }
+        const isChunkError =
+            err?.name === "ChunkLoadError" ||
+            /Loading chunk \d+ failed/i.test(msg) ||
+            /Failed to fetch dynamically imported module/i.test(msg) ||
+            /Importing a module script failed/i.test(msg);
 
-        // Optional: log unexpected errors somewhere
-        // console.error("RouteErrorBoundary caught:", err, info);
-    }
-
-    componentDidUpdate(prevProps) {
-        // If route changed and we were showing the error UI, clear it.
-        if (this.state.hasError && this.props.location !== prevProps.location) {
-            // Only works if you wrap with withRouter or pass `location` from a parent
-            // this.setState({ hasError: false });
+        if (isChunkError && !window.__didHardReloadForChunk__) {
+            window.__didHardReloadForChunk__ = true;
+            window.location.reload();
         }
     }
 
