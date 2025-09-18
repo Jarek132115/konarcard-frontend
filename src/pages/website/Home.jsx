@@ -413,7 +413,7 @@ export default function Home() {
               <div className="pricing-divider" />
               <div className="pricing-price-row">
                 <span style={{ paddingRight: 5 }} className="desktop-h3">£4.95</span>
-                <span style={{ padding: 0 }} className="desktop-button">/Month</span>
+                <span style={{ padding: 0 }} className="desktop-button">/Month - Cancel Anytime</span>
               </div>
 
               <ul className="pricing-features">
