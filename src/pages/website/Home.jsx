@@ -178,8 +178,10 @@ export default function Home() {
       {/* ---------- 3 STEPS GROUP (with heading + 40px gaps) ---------- */}
       <div className="section steps-section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Getting Set Up Is <span className='blue'>Quick</span> & <span className='blue'>Easy</span></h2>
-          <h3 className="desktop-h6 text-center">The fastest way to show what you do and win the job.</h3>
+          <h2 className="desktop-h3 text-center">
+            Get Set Up in <span className='blue'>3 Quick</span> <span className='blue'>& Easy</span> Steps
+          </h2>
+          <h3 className="desktop-h6 text-center">From sign-up to booked jobs—in minutes.</h3>
         </div>
 
         <div className="steps-stack">
@@ -191,7 +193,7 @@ export default function Home() {
                 <img src={EditProfile} alt="Create your profile" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Sing Up & Craft Your Profile</h3>
+                <h3 className="desktop-h5">Sign Up & Build Your Profile</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
@@ -199,8 +201,8 @@ export default function Home() {
                       <img src={BoltIcon} className="icon icon-img" alt="Icon" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Sign up &amp; go live</p>
-                      <p className="desktop-body-xs gray">Launch your profile in under 5 minutes.</p>
+                      <p className="desktop-h6">Go live fast</p>
+                      <p className="desktop-body-xs gray">Create your account—be live in under 5 minutes.</p>
                     </div>
                   </div>
 
@@ -210,7 +212,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Make it yours</p>
-                      <p className="desktop-body-xs gray">Add a logo, photo, colours and layout.</p>
+                      <p className="desktop-body-xs gray">Add logo, photos, colours, and layout.</p>
                     </div>
                   </div>
 
@@ -220,7 +222,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Simple editor</p>
-                      <p className="desktop-body-xs gray">Fill in easy fields — no coding needed.</p>
+                      <p className="desktop-body-xs gray">Just fill the fields—no coding needed.</p>
                     </div>
                   </div>
                 </div>
@@ -230,7 +232,7 @@ export default function Home() {
                     No credit card required*
                   </p>
                   <Link to="/register" className="cta-blue-button desktop-button">
-                    Start Your 14 Day Free Trial
+                    Start Your 14-Day Free Trial
                   </Link>
                 </div>
               </div>
@@ -245,7 +247,7 @@ export default function Home() {
                 <img src={Section1Image} alt="Order your NFC card" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Order Your Konar Business Card</h3>
+                <h3 className="desktop-h5">Order Your Konar Card</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
@@ -253,8 +255,8 @@ export default function Home() {
                       <img src={NFCIcon} className="icon icon-img" alt="Icon" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Order your Konar Card</p>
-                      <p className="desktop-body-xs gray">The only card you'll ever need.</p>
+                      <p className="desktop-h6">One card, unlimited shares</p>
+                      <p className="desktop-body-xs gray">Your tap-to-share card for every job.</p>
                     </div>
                   </div>
 
@@ -263,8 +265,8 @@ export default function Home() {
                       <img src={DeliveryIcon} className="icon icon-img" alt="Icon" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">We print &amp; ship</p>
-                      <p className="desktop-body-xs gray">Fast turnaround, quality finish.</p>
+                      <p className="desktop-h6">We print & ship</p>
+                      <p className="desktop-body-xs gray">Fast turnaround. Premium finish.</p>
                     </div>
                   </div>
 
@@ -273,8 +275,8 @@ export default function Home() {
                       <img src={LinkIcon} className="icon icon-img" alt="Icon" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Link to your profile</p>
-                      <p className="desktop-body-xs gray">Your card opens your live page.</p>
+                      <p className="desktop-h6">Linked to your profile</p>
+                      <p className="desktop-body-xs gray">Pre-linked to your live Konar profile.</p>
                     </div>
                   </div>
                 </div>
@@ -284,7 +286,7 @@ export default function Home() {
                     No credit card required*
                   </p>
                   <Link to="/register" className="cta-blue-button desktop-button">
-                    Start Your 14 Day Free Trial
+                    Start Your 14-Day Free Trial
                   </Link>
                 </div>
               </div>
@@ -299,7 +301,7 @@ export default function Home() {
                 <img src={WhyYouNeedThis} alt="Share your page" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">You’re ready—share it and land more work.</h3>
+                <h3 className="desktop-h5">Share Everywhere & Win More Work</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
@@ -307,8 +309,8 @@ export default function Home() {
                       <img src={TapIcon} className="icon icon-img" alt="Icon" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Tap or scan to share</p>
-                      <p className="desktop-body-xs gray">Open your profile with NFC or QR.</p>
+                      <p className="desktop-h6">Tap or scan</p>
+                      <p className="desktop-body-xs gray">Open your profile via NFC or QR.</p>
                     </div>
                   </div>
 
@@ -317,8 +319,8 @@ export default function Home() {
                       <img src={ShareIcon} className="icon icon-img" alt="Icon" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Send your link anywhere</p>
-                      <p className="desktop-body-xs gray">Messages, socials, email — easy.</p>
+                      <p className="desktop-h6">Share the link</p>
+                      <p className="desktop-body-xs gray">Text, WhatsApp, socials, email—easy.</p>
                     </div>
                   </div>
 
@@ -327,8 +329,8 @@ export default function Home() {
                       <img src={MoneyIcon} className="icon icon-img" alt="Icon" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Win more work</p>
-                      <p className="desktop-body-xs gray">Stand out and get hired faster.</p>
+                      <p className="desktop-h6">Get booked faster</p>
+                      <p className="desktop-body-xs gray">Stand out with photos & reviews.</p>
                     </div>
                   </div>
                 </div>
@@ -338,7 +340,7 @@ export default function Home() {
                     No credit card required*
                   </p>
                   <Link to="/register" className="cta-blue-button desktop-button">
-                    Start Your 14 Day Free Trial
+                    Start Your 14-Day Free Trial
                   </Link>
                 </div>
               </div>
@@ -346,6 +348,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+
 
       {/* ---------- HOW TO SHARE (new section after steps) ---------- */}
       <div className="section">
