@@ -1359,3 +1359,43 @@ svg.icon {
         right: 8px;
     }
 }
+
+/* Subtle blue glow for hero keyword */
+.hero-glow {
+    position: relative;
+    /* ensure the base text is blue (you already use .blue) */
+    text-shadow:
+        0 0 6px rgba(0, 129, 255, 0.55),
+        0 0 14px rgba(0, 129, 255, 0.40),
+        0 0 26px rgba(0, 129, 255, 0.28);
+}
+
+/* Optional: very gentle breathing glow */
+@keyframes heroBluePulse {
+
+    0%,
+    100% {
+        text-shadow:
+            0 0 6px rgba(0, 129, 255, 0.55),
+            0 0 14px rgba(0, 129, 255, 0.40),
+            0 0 26px rgba(0, 129, 255, 0.28);
+    }
+
+    50% {
+        text-shadow:
+            0 0 8px rgba(0, 129, 255, 0.65),
+            0 0 18px rgba(0, 129, 255, 0.50),
+            0 0 32px rgba(0, 129, 255, 0.36);
+    }
+}
+
+.hero-glow {
+    animation: heroBluePulse 4.5s ease-in-out infinite;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .hero-glow {
+        animation: none;
+    }
+}

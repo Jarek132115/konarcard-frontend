@@ -115,8 +115,9 @@ export default function Home() {
             </div>
 
             <h1 className="desktop-h1 hero-heading">
-              Your Business Card. <span className="blue">Supercharged.</span>
+              Your Business Card. <span className="blue hero-glow">Supercharged.</span>
             </h1>
+
             <p className="desktop-h6 desktop-body">
               One tap opens your full profile—photos, services, reviews—and saves your details to their phone. No app. Just jobs.
             </p>
