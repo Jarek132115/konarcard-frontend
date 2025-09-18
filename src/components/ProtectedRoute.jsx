@@ -6,10 +6,8 @@ const ProtectedRoute = ({ children }) => {
     const { user, loading, initialized } = useContext(AuthContext);
     const location = useLocation();
 
-    // Don’t decide until the first auth check is complete
-    if (!initialized || loading) {
-        return <div style={{ padding: 16 }}>Loading…</div>;
-    }
+    // While checking auth: render nothing
+    if (!initialized || loading) return null;
 
     if (!user) {
         return <Navigate to="/login" replace state={{ from: location }} />;
