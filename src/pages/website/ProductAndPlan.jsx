@@ -1,16 +1,11 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import Navbar from '../../components/Navbar'
-import Breadcrumbs from '../../components/Breadcrumbs'
-import Footer from '../../components/Footer'
-import PremiumMaterials from '../../assets/icons/Premium-Materials-Icon.svg'
-import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'
-import QRCode from '../../assets/icons/QR-Code-Icon.svg'
-import NFCIcon from '../../assets/icons/NFC-Icon.svg'
-import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
-import ReviewStars from '../../assets/icons/Stars-Icon.svg';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import Navbar from '../../components/Navbar';
+import Breadcrumbs from '../../components/Breadcrumbs';
+import Footer from '../../components/Footer';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
-import PlasticCard from '../../assets/images/PlasticCard.png';
+
+// ✅ add the 5 images for the gallery
 import ProductCover from '../../assets/images/Product-Cover.png';
 import ProductImage1 from '../../assets/images/Product-Image-1.png';
 import ProductImage2 from '../../assets/images/Product-Image-2.png';
@@ -18,6 +13,10 @@ import ProductImage3 from '../../assets/images/Product-Image-3.png';
 import ProductImage4 from '../../assets/images/Product-Image-4.png';
 
 export default function ProductAndPlan() {
+    // ✅ state for gallery
+    const [cardMainImage, setCardMainImage] = useState(ProductCover);
+    const cardThumbs = [ProductCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4];
+
     return (
         <>
             <Navbar />
@@ -28,7 +27,9 @@ export default function ProductAndPlan() {
             {/* --- PRICING (redesigned) --- */}
             <div className="section">
                 <div className="section-1-title">
-                    <h2 className="desktop-h2 text-center">One <span className='blue'>Plan</span>. One <span className='blue'>Card</span>. Endless <span className='blue'>Opportunities</span>.</h2>
+                    <h2 className="desktop-h2 text-center">
+                        One <span className='blue'>Plan</span>. One <span className='blue'>Card</span>. Endless <span className='blue'>Opportunities</span>.
+                    </h2>
                     <h3 className="desktop-h6 text-center">No confusion. Just one powerful plan to make you stand out.</h3>
                 </div>
 
@@ -81,7 +82,6 @@ export default function ProductAndPlan() {
                     </div>
 
                     {/* Physical card (black) */}
-                    {/* Physical card (black) */}
                     <div className="pricing-card pricing-card--product">
                         <div className="pricing-inner">
                             <div className="pricing-head">
@@ -107,6 +107,8 @@ export default function ProductAndPlan() {
                                             key={i}
                                             className={`pricing-media-thumb ${cardMainImage === src ? 'is-active' : ''}`}
                                             onClick={() => setCardMainImage(src)}
+                                            type="button"
+                                            aria-label={`Show product image ${i + 1}`}
                                         >
                                             <img src={src} alt={`Konar Card thumbnail ${i + 1}`} />
                                         </button>
