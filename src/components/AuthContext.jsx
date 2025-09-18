@@ -1,3 +1,4 @@
+// frontend/src/components/AuthContext.jsx
 import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import api from '../services/api';
 
@@ -13,53 +14,63 @@ export const AuthProvider = ({ children }) => {
     const bootstrappedRef = useRef(false);
 
     const attachAuthHeader = (token) => {
-        if (token) api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        else delete api.defaults.headers.common.Authorization;
+        if (token) {
+            api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        } else {
+            delete api.defaults.headers.common.Authorization;
+        }
     };
 
-    // ---- Immediate, synchronous hydrate so `user` isn't null on first render
     useEffect(() => {
         if (bootstrappedRef.current) return;
         bootstrappedRef.current = true;
 
+        // 1) Read token + cached user synchronously
         const token = localStorage.getItem(TOKEN_KEY);
-        const cachedUser = (() => {
-            try { return JSON.parse(localStorage.getItem(USER_KEY) || 'null'); }
-            catch { return null; }
-        })();
+        let cachedUser = null;
+        try {
+            cachedUser = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+        } catch {
+            cachedUser = null;
+        }
 
         if (token) attachAuthHeader(token);
         if (cachedUser) setUser(cachedUser);
 
-        // Background validate token & refresh user
-        if (token) {
-            setLoading(true);
-            api.get('/profile')
-                .then(res => {
-                    const fresh = res?.data?.data || null;
-                    setUser(fresh);
-                    try {
-                        if (fresh) localStorage.setItem(USER_KEY, JSON.stringify(fresh));
-                        else localStorage.removeItem(USER_KEY);
-                    } catch { }
-                })
-                .catch(() => {
-                    // token bad; clear everything
-                    try {
-                        localStorage.removeItem(TOKEN_KEY);
-                        localStorage.removeItem(USER_KEY);
-                    } catch { }
-                    attachAuthHeader(null);
-                    setUser(null);
-                })
-                .finally(() => {
-                    setLoading(false);
-                    setInitialized(true);
-                });
-        } else {
-            // no token at all
+        // 2) If no token, mark initialized right away
+        if (!token) {
             setInitialized(true);
+            return;
         }
+
+        // 3) Validate token + refresh user
+        setLoading(true);
+        api
+            .get('/profile')
+            .then((res) => {
+                const fresh = res?.data?.data || null;
+                setUser(fresh);
+                try {
+                    if (fresh) {
+                        localStorage.setItem(USER_KEY, JSON.stringify(fresh));
+                    } else {
+                        localStorage.removeItem(USER_KEY);
+                    }
+                } catch { }
+            })
+            .catch(() => {
+                // Bad token → clear everything
+                try {
+                    localStorage.removeItem(TOKEN_KEY);
+                    localStorage.removeItem(USER_KEY);
+                } catch { }
+                attachAuthHeader(null);
+                setUser(null);
+            })
+            .finally(() => {
+                setLoading(false);
+                setInitialized(true);
+            });
     }, []);
 
     const login = (token, userData) => {
@@ -69,8 +80,8 @@ export const AuthProvider = ({ children }) => {
         } catch { }
         attachAuthHeader(token);
         setUser(userData || null);
-        setInitialized(true);
         setLoading(false);
+        setInitialized(true);
     };
 
     const logout = () => {
@@ -83,7 +94,14 @@ export const AuthProvider = ({ children }) => {
     };
 
     const value = useMemo(
-        () => ({ user, setUser, login, logout, loading, initialized }),
+        () => ({
+            user,
+            setUser,
+            login,
+            logout,
+            loading,
+            initialized,
+        }),
         [user, loading, initialized]
     );
 
