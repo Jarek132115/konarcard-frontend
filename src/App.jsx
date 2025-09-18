@@ -5,8 +5,9 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
+import TidioDelayedLoader from './components/TidioDelayedLoader'; // 👈 add this import
 
-// Lazy pages
+// Lazy pages (unchanged)
 const Home = lazy(() => import('./pages/website/Home'));
 const Register = lazy(() => import('./pages/website/Register'));
 const Login = lazy(() => import('./pages/website/Login'));
@@ -41,7 +42,10 @@ function App() {
       <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
       <ScrollToTop />
 
-      {/* Remove the visible "Loading…" to avoid the flash */}
+      {/* 👇 Mount Tidio once for the whole app */}
+      <TidioDelayedLoader enabled={true} delayMs={4000} />
+
+      {/* Keep Suspense fallback null to avoid flash */}
       <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Home />} />
