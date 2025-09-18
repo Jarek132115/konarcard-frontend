@@ -115,7 +115,7 @@ export default function Home() {
             </div>
 
             <h1 className="desktop-h1 hero-heading">
-              Your Business Card. <span className="blue hero-glow">Supercharged.</span>
+              Your Business Card. <span className="blue hero-glow">Supercharged.</span> to Win More Jobs.
             </h1>
 
             <p className="desktop-h6 desktop-body">
