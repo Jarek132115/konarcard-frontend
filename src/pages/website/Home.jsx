@@ -177,7 +177,7 @@ export default function Home() {
       {/* ---------- 3 STEPS GROUP (with heading + 40px gaps) ---------- */}
       <div className="section steps-section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Getting Set Up Is Quick & Easy</h2>
+          <h2 className="desktop-h3 text-center">Getting Set Up Is <span className='blue'>Quick</span> & <span className='blue'>Easy</span></h2>
           <h3 className="desktop-h6 text-center">The fastest way to show what you do and win the job.</h3>
         </div>
 
