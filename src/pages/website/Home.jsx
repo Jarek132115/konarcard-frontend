@@ -604,7 +604,7 @@ export default function Home() {
       {/* FAQ */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Frequently Asked Questions</h2>
+          <h2 className="desktop-h3 text-center">Frequently <span className='blue'>Asked</span> Questions</h2>
           <h3 className="desktop-h6 text-center">For any other questions, feel free to reach out.</h3>
         </div>
         <div className="faq-container">
