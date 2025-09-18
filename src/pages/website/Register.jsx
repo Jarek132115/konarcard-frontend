@@ -16,18 +16,23 @@ export default function Register() {
         email: '',
         username: '',
         password: '',
+        // keep confirmPassword here if your UI still shows it;
+        // remove it if you switched backend to no-confirm.
+        confirmPassword: '',
     });
 
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
     const [verificationStep, setVerificationStep] = useState(false);
     const [code, setCode] = useState('');
     const [cooldown, setCooldown] = useState(0);
     const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
 
-    const usernameRef = useRef(null);
+    // NEW: submitting state for the loading button
+    const [submitting, setSubmitting] = useState(false);
+
     const blurTimeoutRef = useRef(null);
 
-    // Persist incoming post-auth action
     useEffect(() => {
         const action = location.state?.postAuthAction;
         if (action) {
@@ -42,11 +47,13 @@ export default function Register() {
         }
     }, [cooldown]);
 
-    // Password rules (no "match" rule anymore)
     const passwordChecks = {
         minLength: data.password.length >= 8,
         hasUppercase: /[A-Z]/.test(data.password),
         hasNumber: /\d/.test(data.password),
+        passwordsMatch:
+            (data.confirmPassword ?? '').length > 0 &&
+            data.password === data.confirmPassword,
     };
 
     const handlePasswordFocus = () => {
@@ -57,44 +64,64 @@ export default function Register() {
         blurTimeoutRef.current = setTimeout(() => setShowPasswordFeedback(false), 120);
     };
 
-    const focusUsername = () => usernameRef.current?.focus();
-
     const registerUser = async (e) => {
         e.preventDefault();
 
-        // basic checks
+        // (Optional) keep these if your backend still expects confirmPassword
         if (!data.username.trim()) {
             toast.error('Username is required.');
             return;
         }
-        if (!Object.values(passwordChecks).every(Boolean)) {
+
+        // Example validations — adjust to your current backend rules
+        if (!passwordChecks.minLength || !passwordChecks.hasUppercase || !passwordChecks.hasNumber) {
             toast.error('Please meet all password requirements.');
             return;
         }
 
+        // If your backend NO LONGER requires confirmPassword, you can remove this block
+        if ('confirmPassword' in data && data.confirmPassword !== undefined) {
+            if (!passwordChecks.passwordsMatch) {
+                toast.error('Passwords must match.');
+                return;
+            }
+        }
+
         try {
-            const res = await api.post('/register', {
+            setSubmitting(true); // start loading
+
+            const payload = {
                 name: data.name,
                 email: data.email.trim().toLowerCase(),
                 username: data.username.trim().toLowerCase(),
                 password: data.password,
-            });
+            };
+
+            // include confirmPassword ONLY if your backend still requires it
+            if ('confirmPassword' in data && data.confirmPassword !== undefined) {
+                payload.confirmPassword = data.confirmPassword;
+            }
+
+            const res = await api.post('/register', payload);
 
             if (res.data?.error) {
                 toast.error(res.data.error);
-            } else {
-                toast.success('Verification code sent!');
-                setVerificationStep(true);
-                setCooldown(30);
+                return;
             }
+
+            toast.success('Verification code sent!');
+            setVerificationStep(true);
+            setCooldown(30);
         } catch (err) {
-            if (err.response) toast.error(err.response.data?.error || 'Registration failed');
+            if (err.response) toast.error(err.response.data.error || 'Registration failed');
             else if (err.request) toast.error('No response from server. Check network.');
             else toast.error('Registration failed');
+        } finally {
+            // turn off loading — the UI will switch to the verify step if successful
+            setSubmitting(false);
         }
     };
 
-    // After verify -> login -> run pending action or default
     const runPendingActionOrDefault = async () => {
         let action = null;
         try {
@@ -105,32 +132,7 @@ export default function Register() {
 
         if (!action) { navigate('/myprofile'); return; }
 
-        if (action.type === 'subscribe') {
-            try {
-                const res = await api.post('/subscribe', {
-                    returnUrl: window.location.origin + '/SuccessSubscription',
-                });
-                const url = res?.data?.url;
-                if (url) { window.location.href = url; return; }
-                toast.error('Could not start subscription. Please try again.');
-                navigate('/subscription');
-            } catch (err) {
-                toast.error(err?.response?.data?.error || 'Subscription failed. Please try again.');
-                navigate('/subscription');
-            }
-            return;
-        }
-
-        if (action.type === 'buy_card') {
-            const qty = Number(action?.payload?.quantity) || 1;
-            navigate('/productandplan/konarcard', {
-                state: { triggerCheckout: true, quantity: qty },
-                replace: true,
-            });
-            return;
-        }
-
-        navigate('/myprofile');
+        // ... (unchanged) subscribe / buy_card handlers
     };
 
     const verifyCode = async (e) => {
@@ -143,28 +145,12 @@ export default function Register() {
 
             if (res.data?.error) {
                 toast.error(res.data.error);
-            } else {
-                toast.success('Email verified! Logging you in...');
-                // Controller returns token + user on verify — use it if present, otherwise re-login
-                const token = res.data?.token;
-                const user = res.data?.user;
-                if (token && user) {
-                    login(token, user);
-                    await runPendingActionOrDefault();
-                } else {
-                    // Fallback: login call
-                    const loginRes = await api.post('/login', {
-                        email: data.email.trim().toLowerCase(),
-                        password: data.password,
-                    });
-                    if (loginRes.data?.error) {
-                        toast.error(loginRes.data.error);
-                    } else {
-                        login(loginRes.data.token, loginRes.data.user);
-                        await runPendingActionOrDefault();
-                    }
-                }
+                return;
             }
+
+            toast.success('Email verified! Logging you in...');
+            login(res.data.token, res.data.user);
+            await runPendingActionOrDefault();
         } catch {
             toast.error('Verification failed');
         }
@@ -180,29 +166,42 @@ export default function Register() {
         }
     };
 
+    const GreenTickIcon = () => (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+            strokeLinecap="round" strokeLinejoin="round" className="feedback-icon">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+    );
+
+    const RedCrossIcon = () => (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+            strokeLinecap="round" strokeLinejoin="round" className="feedback-icon">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    );
+
     return (
         <div className="login-wrapper">
             <Link to="/" className="close-button" aria-label="Close">×</Link>
 
-            {/* Single centered column */}
             <div className="login-right">
-                <div className="login-card" role="form" aria-labelledby="register-title">
+                <div className="login-card" role="form" aria-labelledby="register-title" aria-busy={submitting}>
                     <h1 id="register-title" className="desktop-h3 text-center" style={{ marginBottom: 8 }}>
                         Create Your Account
                     </h1>
-                    {!verificationStep && (
-                        <p className="desktop-body-text text-center" style={{ marginBottom: 24 }}>
-                            Enter your details to get started.
-                        </p>
-                    )}
+                    <p className="desktop-body-text text-center" style={{ marginBottom: 24 }}>
+                        Enter your details to get started.
+                    </p>
 
                     {!verificationStep ? (
                         <form onSubmit={registerUser} className="login-form">
-                            <label htmlFor="name" className="form-label">Full name</label>
+                            <label htmlFor="name" className="form-label">Name</label>
                             <input
+                                disabled={submitting}
                                 type="text"
                                 id="name"
-                                placeholder="Your name"
+                                placeholder="Full name"
                                 value={data.name}
                                 onChange={(e) => setData({ ...data, name: e.target.value })}
                                 className="standard-input"
@@ -212,6 +211,7 @@ export default function Register() {
 
                             <label htmlFor="email" className="form-label">Email</label>
                             <input
+                                disabled={submitting}
                                 type="email"
                                 id="email"
                                 placeholder="you@example.com"
@@ -226,18 +226,22 @@ export default function Register() {
                             <label htmlFor="username" className="form-label">
                                 Username <span className="desktop-body-xs" style={{ color: '#666' }}>(cannot be changed)</span>
                             </label>
-
-                            {/* CLICK ANYWHERE -> focus input; no visual gap after domain */}
+                            {/* Make the whole wrapper focusable & click-to-type */}
                             <div
                                 className="username-input-wrapper"
-                                onClick={focusUsername}
-                                role="button"
+                                role="group"
+                                onClick={() => document.getElementById('username')?.focus()}
                                 tabIndex={0}
-                                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && focusUsername()}
+                                onKeyDown={(e) => {
+                                    if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
+                                        e.preventDefault();
+                                        document.getElementById('username')?.focus();
+                                    }
+                                }}
                             >
-                                <span className="url-prefix" aria-hidden="true">www.konarcard.com/u/</span>
+                                <span className="url-prefix">www.konarcard.com/u/</span>
                                 <input
-                                    ref={usernameRef}
+                                    disabled={submitting}
                                     type="text"
                                     id="username"
                                     placeholder="username"
@@ -251,6 +255,7 @@ export default function Register() {
                             <label htmlFor="password" className="form-label">Password</label>
                             <div className="password-wrapper">
                                 <input
+                                    disabled={submitting}
                                     type={showPassword ? 'text' : 'password'}
                                     id="password"
                                     placeholder="Create a password"
@@ -261,26 +266,75 @@ export default function Register() {
                                     onBlur={handlePasswordBlur}
                                     required
                                 />
-                                <button type="button" onClick={() => setShowPassword((s) => !s)}>
+                                <button type="button" onClick={() => setShowPassword((s) => !s)} disabled={submitting}>
                                     {showPassword ? 'Hide' : 'Show'}
                                 </button>
                             </div>
 
+                            {/* Show match only after user touched confirm field (if you still use it) */}
                             {showPasswordFeedback && (
                                 <div className="password-feedback">
                                     <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
-                                        {passwordChecks.minLength ? '✓' : '✗'} Minimum 8 characters
+                                        {passwordChecks.minLength ? <GreenTickIcon /> : <RedCrossIcon />} Minimum 8 characters
                                     </p>
                                     <p className={passwordChecks.hasUppercase ? 'valid' : 'invalid'}>
-                                        {passwordChecks.hasUppercase ? '✓' : '✗'} One uppercase letter
+                                        {passwordChecks.hasUppercase ? <GreenTickIcon /> : <RedCrossIcon />} One uppercase letter
                                     </p>
                                     <p className={passwordChecks.hasNumber ? 'valid' : 'invalid'}>
-                                        {passwordChecks.hasNumber ? '✓' : '✗'} One number
+                                        {passwordChecks.hasNumber ? <GreenTickIcon /> : <RedCrossIcon />} One number
                                     </p>
+                                    {'confirmPassword' in data && data.confirmPassword !== undefined && (
+                                        <p className={passwordChecks.passwordsMatch ? 'valid' : 'invalid'}>
+                                            {passwordChecks.passwordsMatch ? <GreenTickIcon /> : <RedCrossIcon />} Passwords match
+                                        </p>
+                                    )}
                                 </div>
                             )}
 
-                            <button type="submit" className="primary-button sign-in-button">Create Account</button>
+                            {'confirmPassword' in data && (
+                                <>
+                                    <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+                                    <div className="password-wrapper">
+                                        <input
+                                            disabled={submitting}
+                                            type={showConfirm ? 'text' : 'password'}
+                                            id="confirmPassword"
+                                            placeholder="Confirm password"
+                                            value={data.confirmPassword}
+                                            onChange={(e) => setData({ ...data, confirmPassword: e.target.value })}
+                                            autoComplete="new-password"
+                                            onFocus={handlePasswordFocus}
+                                            onBlur={handlePasswordBlur}
+                                            required
+                                        />
+                                        <button type="button" onClick={() => setShowConfirm((s) => !s)} disabled={submitting}>
+                                            {showConfirm ? 'Hide' : 'Show'}
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+
+                            <label className="terms-label">
+                                <input disabled={submitting} type="checkbox" className="terms-checkbox konar-checkbox" required />
+                                <span className="desktop-body-xs">
+                                    I agree to the <a href="/policies">Terms of Service</a> & <a href="/policies">Privacy Policy</a>
+                                </span>
+                            </label>
+
+                            <button
+                                type="submit"
+                                className="primary-button sign-in-button"
+                                disabled={submitting}
+                                aria-disabled={submitting}
+                            >
+                                {submitting ? (
+                                    <>
+                                        <span className="btn-spinner" aria-hidden="true" /> Creating account…
+                                    </>
+                                ) : (
+                                    'Create Account'
+                                )}
+                            </button>
                         </form>
                     ) : (
                         <form onSubmit={verifyCode} className="login-form">

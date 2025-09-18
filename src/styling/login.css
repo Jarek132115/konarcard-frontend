@@ -534,3 +534,33 @@ a,
 .username-input-wrapper input {
     padding-left: 6px !important;
 }
+
+/* Loading spinner inside primary button */
+.btn-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: btnSpin .8s linear infinite;
+    vertical-align: -2px;
+}
+
+@keyframes btnSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Generic disabled look for buttons/inputs */
+button:disabled,
+button[aria-disabled="true"],
+input:disabled,
+select:disabled,
+textarea:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    pointer-events: none;
+}
