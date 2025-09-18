@@ -11,6 +11,11 @@ import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import PlasticCard from '../../assets/images/PlasticCard.png';
+import ProductCover from '../../assets/images/Product-Cover.png';
+import ProductImage1 from '../../assets/images/Product-Image-1.png';
+import ProductImage2 from '../../assets/images/Product-Image-2.png';
+import ProductImage3 from '../../assets/images/Product-Image-3.png';
+import ProductImage4 from '../../assets/images/Product-Image-4.png';
 
 export default function ProductAndPlan() {
     return (
