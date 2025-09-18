@@ -16,6 +16,11 @@ export default function Navbar() {
     navigate('/');
   };
 
+  // helper: check if path matches
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -172,11 +177,39 @@ export default function Navbar() {
               <img src={LogoIcon} alt="Logo" className="logo" />
             </Link>
             <ul className="nav-links">
-              {/* No Home item on desktop (logo handles home) */}
-              <li><Link to="/productandplan">Product &amp; Plan</Link></li>
-              <li><Link to="/reviews">Reviews</Link></li>
-              <li><Link to="/faq">FAQs</Link></li>
-              <li><Link to="/contactus">Contact Us</Link></li>
+              {/* Highlight active link, skip home */}
+              <li>
+                <Link
+                  to="/productandplan"
+                  className={isActive('/productandplan') ? 'active' : ''}
+                >
+                  Product &amp; Plan
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/reviews"
+                  className={isActive('/reviews') ? 'active' : ''}
+                >
+                  Reviews
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/faq"
+                  className={isActive('/faq') ? 'active' : ''}
+                >
+                  FAQs
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/contactus"
+                  className={isActive('/contactus') ? 'active' : ''}
+                >
+                  Contact Us
+                </Link>
+              </li>
             </ul>
           </div>
 

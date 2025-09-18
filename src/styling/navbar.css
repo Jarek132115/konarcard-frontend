@@ -296,3 +296,9 @@
     display: flex;
   }
 }
+
+/* Active link highlight */
+.nav-links a.active {
+  color: #0081FF;
+  font-weight: 700;
+}
