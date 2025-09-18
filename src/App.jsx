@@ -1,4 +1,3 @@
-// src/App.jsx
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { Suspense, useContext } from 'react';
 import { Toaster } from 'react-hot-toast';
@@ -10,8 +9,7 @@ import TidioDelayedLoader from './components/TidioDelayedLoader';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { lazyWithRetry } from './utils/lazyWithRetry';
 
-// ===================== Lazy imports (paths must match exactly) =====================
-// Public site (src/pages/website)
+// Public
 const Home = lazyWithRetry(() => import('./pages/website/Home.jsx'));
 const Register = lazyWithRetry(() => import('./pages/website/Register.jsx'));
 const Login = lazyWithRetry(() => import('./pages/website/Login.jsx'));
@@ -26,13 +24,14 @@ const ContactUs = lazyWithRetry(() => import('./pages/website/ContactUs.jsx'));
 const Policies = lazyWithRetry(() => import('./pages/website/Policies.jsx'));
 const Success = lazyWithRetry(() => import('./pages/website/Success.jsx'));
 const SuccessSubscription = lazyWithRetry(() => import('./pages/website/SuccessSubscription.jsx'));
-
 const UserPage = lazyWithRetry(() => import('./pages/website/WhiteCard.jsx'));
+
+// Interface (protected)
 const Billing = lazyWithRetry(() => import('./pages/interface/Billing.jsx'));
 const ContactSupport = lazyWithRetry(() => import('./pages/interface/ContactSupport.jsx'));
 const HelpCentreInterface = lazyWithRetry(() => import('./pages/interface/HelpCentreInterface.jsx'));
 const MyProfile = lazyWithRetry(() => import('./pages/interface/MyProfile.jsx'));
-const MyOrders = lazyWithRetry(() => import('./pages/interface/MyOrder.jsx'));
+const MyOrders = lazyWithRetry(() => import('./pages/interface/MyOrder.jsx')); // <-- fixed
 const NFCCards = lazyWithRetry(() => import('./pages/interface/NFCCards.jsx'));
 const Notifications = lazyWithRetry(() => import('./pages/interface/Notifications.jsx'));
 const Profile = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
@@ -54,12 +53,8 @@ function TidioWrapper() {
 }
 
 export default function App() {
-  const { initialized, loading } = useContext(AuthContext);
-
-  // Hard gate until auth bootstrap finishes
-  if (!initialized || loading) {
-    return <div style={{ padding: 16 }}>Loading…</div>;
-  }
+  // NOTE: we do NOT hard-gate on initialized here anymore
+  useContext(AuthContext); // keeps context warm; no need to read values here
 
   return (
     <>
@@ -68,7 +63,7 @@ export default function App() {
       <TidioWrapper />
 
       <RouteErrorBoundary>
-        <Suspense fallback={<div style={{ padding: 16 }}>Loading…</div>}>
+        <Suspense fallback={null}>
           <Routes>
             {/* PUBLIC */}
             <Route path="/" element={<Home />} />
@@ -90,7 +85,7 @@ export default function App() {
             <Route path="/successsubscription" element={<SuccessSubscription />} />
             <Route path="/u/:username" element={<UserPage />} />
 
-            {/* PROTECTED (only the files that currently exist) */}
+            {/* PROTECTED */}
             <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
             <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
             <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
