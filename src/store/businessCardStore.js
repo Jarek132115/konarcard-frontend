@@ -77,10 +77,10 @@ export const previewPlaceholders = {
     "With 15 years of experience in luxury bathroom renovations, I create stylish, functional spaces tailored to each client. From modern wet rooms to classic designs, every project blends quality craftsmanship with attention to detail.",
 
   services: [
-    { name: "Full Bathroom Renovation", price: "Starting from £4,995" },
-    { name: "Shower & Wet Room Installation", price: "Starting from £1,995" },
-    { name: "Custom Vanity & Cabinetry", price: "Starting from £995" },
-    { name: "Tiling & Flooring", price: "Starting from £495" },
+    { name: "Full Bathroom Renovation", price: "Starting from £9,995" },
+    { name: "Shower & Wet Room Installation", price: "Starting from £9,995" },
+    { name: "Custom Vanity & Cabinetry", price: "Starting from £9,995" },
+    { name: "Tiling & Flooring", price: "Starting from £9,995" },
   ],
 
   reviews: [
