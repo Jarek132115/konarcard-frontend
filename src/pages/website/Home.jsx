@@ -387,7 +387,7 @@ export default function Home() {
               <img src={LinkInBio} alt="Link in bio on social profile" />
             </div>
             <h4 className="desktop-h6">Link In Bio</h4>
-            <p className="desktop-body-xs">One link which you can share via any platform</p>
+            <p className="desktop-body-xs">Add to Instagram, Facebook, TikTok, or your website.</p>
           </div>
         </div>
       </div>
