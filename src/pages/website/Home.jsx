@@ -201,8 +201,8 @@ export default function Home() {
                       <img src={BoltIcon} className="icon icon-img" alt="Icon" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Go live fast</p>
-                      <p className="desktop-body-xs gray">Create your account—be live in under 5 minutes.</p>
+                      <p className="desktop-h6">Go live in minutes</p>
+                      <p className="desktop-body-xs gray">Create your account, pick a layout, publish.</p>
                     </div>
                   </div>
 
@@ -212,7 +212,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">Make it yours</p>
-                      <p className="desktop-body-xs gray">Add logo, photos, colours, and layout.</p>
+                      <p className="desktop-body-xs gray">Add logo, photos, brand colours, and services.</p>
                     </div>
                   </div>
 
@@ -221,8 +221,8 @@ export default function Home() {
                       <img src={FormCustomizationIcon} className="icon icon-img" alt="Icon" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Simple editor</p>
-                      <p className="desktop-body-xs gray">Just fill the fields—no coding needed.</p>
+                      <p className="desktop-h6">Enable “Save My Number”</p>
+                      <p className="desktop-body-xs gray">One tap and your details are in their phone.</p>
                     </div>
                   </div>
                 </div>
