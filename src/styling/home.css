@@ -1236,10 +1236,6 @@ svg.icon {
     object-fit: contain;
 }
 
-.icon-img {
-    opacity: 0.8;
-}
-
 .pricing-check {
     width: 25px;
     height: 25px;
