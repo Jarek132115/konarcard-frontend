@@ -12,30 +12,30 @@ import { lazyWithRetry } from './utils/lazyWithRetry';
 
 // ===================== Lazy imports (paths must match exactly) =====================
 // Public site (src/pages/website)
-const Home                = lazyWithRetry(() => import('./pages/website/Home.jsx'));
-const Register            = lazyWithRetry(() => import('./pages/website/Register.jsx'));
-const Login               = lazyWithRetry(() => import('./pages/website/Login.jsx'));
-const ResetPassword       = lazyWithRetry(() => import('./pages/website/ResetPassword.jsx'));
-const ProductAndPlan      = lazyWithRetry(() => import('./pages/website/ProductAndPlan.jsx'));
-const KonarCard           = lazyWithRetry(() => import('./pages/website/KonarCard.jsx'));
-const KonarSubscription   = lazyWithRetry(() => import('./pages/website/KonarSubscription.jsx'));
-const FAQ                 = lazyWithRetry(() => import('./pages/website/FAQ.jsx'));
-const Reviews             = lazyWithRetry(() => import('./pages/website/Reviews.jsx'));
-const HelpCentre          = lazyWithRetry(() => import('./pages/website/HelpCentre.jsx'));
-const ContactUs           = lazyWithRetry(() => import('./pages/website/ContactUs.jsx'));
-const Policies            = lazyWithRetry(() => import('./pages/website/Policies.jsx'));
-const Success             = lazyWithRetry(() => import('./pages/website/Success.jsx'));
+const Home = lazyWithRetry(() => import('./pages/website/Home.jsx'));
+const Register = lazyWithRetry(() => import('./pages/website/Register.jsx'));
+const Login = lazyWithRetry(() => import('./pages/website/Login.jsx'));
+const ResetPassword = lazyWithRetry(() => import('./pages/website/ResetPassword.jsx'));
+const ProductAndPlan = lazyWithRetry(() => import('./pages/website/ProductAndPlan.jsx'));
+const KonarCard = lazyWithRetry(() => import('./pages/website/KonarCard.jsx'));
+const KonarSubscription = lazyWithRetry(() => import('./pages/website/KonarSubscription.jsx'));
+const FAQ = lazyWithRetry(() => import('./pages/website/FAQ.jsx'));
+const Reviews = lazyWithRetry(() => import('./pages/website/Reviews.jsx'));
+const HelpCentre = lazyWithRetry(() => import('./pages/website/HelpCentre.jsx'));
+const ContactUs = lazyWithRetry(() => import('./pages/website/ContactUs.jsx'));
+const Policies = lazyWithRetry(() => import('./pages/website/Policies.jsx'));
+const Success = lazyWithRetry(() => import('./pages/website/Success.jsx'));
 const SuccessSubscription = lazyWithRetry(() => import('./pages/website/SuccessSubscription.jsx'));
 
-const UserPage            = lazyWithRetry(() => import('./pages/website/WhiteCard.jsx'));
-const Billing               = lazyWithRetry(() => import('./pages/interface/Billing.jsx'));
-const ContactSupport        = lazyWithRetry(() => import('./pages/interface/ContactSupport.jsx'));
-const HelpCentreInterface   = lazyWithRetry(() => import('./pages/interface/HelpCentreInterface.jsx'));
-const MyProfile          = lazyWithRetry(() => import('./pages/interface/MyProfile.jsx'));
-const MyOrders           = lazyWithRetry(() => import('./pages/interface/MyOrders.jsx'));
-const NFCCards           = lazyWithRetry(() => import('./pages/interface/NFCCards.jsx'));
-const Notifications      = lazyWithRetry(() => import('./pages/interface/Notifications.jsx'));
-const Profile            = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
+const UserPage = lazyWithRetry(() => import('./pages/website/WhiteCard.jsx'));
+const Billing = lazyWithRetry(() => import('./pages/interface/Billing.jsx'));
+const ContactSupport = lazyWithRetry(() => import('./pages/interface/ContactSupport.jsx'));
+const HelpCentreInterface = lazyWithRetry(() => import('./pages/interface/HelpCentreInterface.jsx'));
+const MyProfile = lazyWithRetry(() => import('./pages/interface/MyProfile.jsx'));
+const MyOrders = lazyWithRetry(() => import('./pages/interface/MyOrders.jsx'));
+const NFCCards = lazyWithRetry(() => import('./pages/interface/NFCCards.jsx'));
+const Notifications = lazyWithRetry(() => import('./pages/interface/Notifications.jsx'));
+const Profile = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
 
 function TidioWrapper() {
   const location = useLocation();
