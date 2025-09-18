@@ -12,7 +12,14 @@ export const AuthProvider = ({ children }) => {
     const fetchUser = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/profile');
+            // 🚫 add cache-buster & force no-cache
+            const res = await api.get(`/profile?ts=${Date.now()}`, {
+                headers: {
+                    'Cache-Control': 'no-store',
+                    'Pragma': 'no-cache',
+                },
+            });
+
             const fetchedUser = res.data?.data;
             setUser(fetchedUser || null);
             if (!fetchedUser) {
