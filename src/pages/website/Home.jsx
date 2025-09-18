@@ -97,10 +97,10 @@ export default function Home() {
             </div>
 
             <h1 className="desktop-h1 hero-heading">
-              Your Business Card, <span className="blue">Supercharged.</span>
+              Your Business Card. <span className="blue">Supercharged.</span>
             </h1>
             <p className="desktop-h6 desktop-body">
-              Build a professional profile that gets you noticed, and share it effortlessly through your Konar Card with a single tap.
+              One tap opens your full profile—photos, services, reviews—and saves your details to their phone. No app. Just jobs.
             </p>
 
             <div className="hero-cta">
@@ -145,10 +145,10 @@ export default function Home() {
             </video>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* ---------- 3 STEPS GROUP (with heading + 40px gaps) ---------- */}
-      <div className="section steps-section">
+      <div div className="section steps-section" >
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Getting Set Up Is Quick & Easy</h2>
           <h3 className="desktop-h6 text-center">The fastest way to show what you do and win the job.</h3>
@@ -317,10 +317,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* ---------- HOW TO SHARE (new section after steps) ---------- */}
-      <div className="section">
+      <div div className="section" >
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">One Profile. Shared Every Way.</h2>
           <h3 className="desktop-h6 text-center">Four simple ways to get your details in front of clients.</h3>
@@ -359,10 +359,10 @@ export default function Home() {
             <p className="desktop-body-s">One link which you can share via any platform</p>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* --- PRICING (redesigned) --- */}
-      <div className="section">
+      <div div className="section" >
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">One Plan. One Card. Endless Opportunities.</h2>
           <h3 className="desktop-h6 text-center">No confusion. Just one powerful plan to make you stand out.</h3>
@@ -447,10 +447,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* People, Reviews, FAQ */}
-      <div className="section">
+      <div div className="section" >
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Tradesmen Use It. Clients Love It.</h2>
           <h3 className="desktop-h6 text-center">See how tradies use this every day.</h3>
@@ -476,10 +476,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* Reviews */}
-      <div className="section">
+      <div div className="section" >
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">The #1 Tool Tradies Are Talking About</h2>
           <h3 className="desktop-h6 text-center">
@@ -553,10 +553,10 @@ export default function Home() {
         <div className="faq-cta">
           <Link to="/reviews" className="black-button desktop-button">Read More Reviews</Link>
         </div>
-      </div>
+      </div >
 
       {/* FAQ */}
-      <div className="section">
+      <div div className="section" >
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Frequently Asked Questions</h2>
           <h3 className="desktop-h6 text-center">For any other questions, feel free to reach out.</h3>
@@ -627,7 +627,7 @@ export default function Home() {
         <div className="faq-cta">
           <Link to="/faq" className="black-button desktop-button">Read More Q&A</Link>
         </div>
-      </div>
+      </div >
 
       <Footer />
     </>
