@@ -298,7 +298,7 @@ export default function Home() {
                 <img src={WhyYouNeedThis} alt="Share your page" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Ready To Share And Win More Jobs</h3>
+                <h3 className="desktop-h5">You’re ready—share it and land more work.</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
