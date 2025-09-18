@@ -190,7 +190,7 @@ export default function Home() {
                 <img src={EditProfile} alt="Create your profile" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Craft Your Branded Profile</h3>
+                <h3 className="desktop-h5">Sing Up & Craft Your Profile</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
