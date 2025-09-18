@@ -296,7 +296,7 @@ export default function Login() {
                                         <span className="desktop-body-xs" style={{ color: '#666' }}>Remember me</span>
                                     </label>
 
-                                    <button type="button" className="link-button" onClick={() => setForgotPasswordStep(true)}>
+                                    <button type="button" className="link-button desktop-body-xs" onClick={() => setForgotPasswordStep(true)}>
                                         Forgot your password?
                                     </button>
                                 </div>
