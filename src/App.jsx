@@ -100,14 +100,11 @@ export default function App() {
             <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
             <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
             <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
-
-            {/* TODO: add these back when the files exist under src/pages/interface
             <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
             <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
             <Route path="/nfccards" element={<ProtectedRoute><NFCCards /></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            */}
           </Routes>
         </Suspense>
       </RouteErrorBoundary>
