@@ -1301,3 +1301,137 @@ svg.icon {
         box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
     }
 }
+
+/* =========================
+   HERO "Watch How It Works" button (optional nudge)
+   ========================= */
+.hero-watch-btn {
+    position: relative;
+}
+
+/* =========================
+   VIDEO MODAL
+   ========================= */
+.video-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: overlayFade .2s ease-out;
+    padding: 20px;
+}
+
+.video-modal {
+    position: relative;
+    width: min(900px, 96vw);
+    background: #101010;
+    color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .4);
+    padding: 16px 16px 12px 16px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    animation: modalIn .25s cubic-bezier(.22, .9, .24, 1);
+}
+
+.video-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    appearance: none;
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .15s ease, transform .08s ease;
+}
+
+.video-close:hover {
+    background: rgba(255, 255, 255, .15);
+}
+
+.video-close:active {
+    transform: scale(.96);
+}
+
+/* Responsive 16:9 area */
+.video-frame {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+}
+
+/* Placeholder until you add a real video */
+.video-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: #ccc;
+    background:
+        radial-gradient(ellipse at 30% 20%, rgba(0, 129, 255, .25), transparent 45%),
+        radial-gradient(ellipse at 70% 80%, rgba(255, 255, 255, .06), transparent 50%),
+        #000;
+    text-align: center;
+}
+
+.video-frame video,
+.video-frame iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Caption text under the frame */
+.video-caption {
+    margin-top: 8px;
+    color: #eaeaea;
+    opacity: .9;
+}
+
+/* Animations */
+@keyframes modalIn {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes overlayFade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Small screens tweaks */
+@media (max-width: 520px) {
+    .video-modal {
+        padding: 12px 12px 10px 12px;
+        border-radius: 14px;
+    }
+
+    .video-close {
+        top: 8px;
+        right: 8px;
+    }
+}
