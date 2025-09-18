@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { AuthContext } from '../../components/AuthContext';
@@ -15,13 +15,15 @@ export default function Login() {
 
     const [data, setData] = useState({ email: '', password: '' });
     const [rememberMe, setRememberMe] = useState(false);
-
     const [code, setCode] = useState('');
     const [verificationStep, setVerificationStep] = useState(false);
     const [cooldown, setCooldown] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
     const [forgotPasswordStep, setForgotPasswordStep] = useState(false);
     const [emailForReset, setEmailForReset] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [isSendingReset, setIsSendingReset] = useState(false);
 
     // bring back remembered email
     useEffect(() => {
@@ -35,7 +37,7 @@ export default function Login() {
         } catch { }
     }, []);
 
-    // Persist post-auth action (e.g., subscribe/buy)
+    // Persist post-auth action
     useEffect(() => {
         const action = location.state?.postAuthAction;
         if (action) {
@@ -106,40 +108,46 @@ export default function Login() {
             }
         } catch { }
 
+        setIsSubmitting(true);
         try {
             const res = await api.post('/login', {
                 email: data.email.trim().toLowerCase(),
                 password: data.password,
             });
 
-            if (res.data.error) {
-                if (res.data.error.toLowerCase().includes('verify your email')) {
+            if (res.data?.error) {
+                if (res.data.error.toLowerCase().includes('verify your email') || res.data.resend) {
                     toast.error('Email not verified. New code sent!');
                     setVerificationStep(true);
                     setCooldown(30);
                 } else {
                     toast.error(res.data.error);
                 }
+                setIsSubmitting(false);
             } else {
                 toast.success('Login successful!');
                 login(res.data.token, res.data.user);
                 await runPendingActionOrDefault();
+                setIsSubmitting(false);
             }
         } catch (err) {
             toast.error(err.message || 'Login failed');
+            setIsSubmitting(false);
         }
     };
 
     const verifyCode = async (e) => {
         e.preventDefault();
+        setIsVerifying(true);
         try {
             const res = await api.post('/verify-email', {
                 email: data.email.trim().toLowerCase(),
                 code,
             });
 
-            if (res.data.error) {
+            if (res.data?.error) {
                 toast.error(res.data.error);
+                setIsVerifying(false);
             } else {
                 toast.success('Email verified! Logging you in...');
                 const loginRes = await api.post('/login', {
@@ -147,8 +155,9 @@ export default function Login() {
                     password: data.password,
                 });
 
-                if (loginRes.data.error) {
+                if (loginRes.data?.error) {
                     toast.error(loginRes.data.error);
+                    setIsVerifying(false);
                 } else {
                     login(loginRes.data.token, loginRes.data.user);
                     await runPendingActionOrDefault();
@@ -156,6 +165,7 @@ export default function Login() {
             }
         } catch (err) {
             toast.error(err.message || 'Verification failed');
+            setIsVerifying(false);
         }
     };
 
@@ -164,7 +174,7 @@ export default function Login() {
             const res = await api.post('/resend-code', {
                 email: data.email.trim().toLowerCase(),
             });
-            if (res.data.error) toast.error(res.data.error);
+            if (res.data?.error) toast.error(res.data.error);
             else { toast.success('New code sent!'); setCooldown(30); }
         } catch (err) {
             toast.error(err.message || 'Could not resend code');
@@ -173,136 +183,197 @@ export default function Login() {
 
     const sendResetLink = async (e) => {
         e.preventDefault();
+        setIsSendingReset(true);
         try {
             const res = await api.post('/forgot-password', {
                 email: emailForReset.trim().toLowerCase(),
             });
-            if (res.data.error) toast.error(res.data.error);
+            if (res.data?.error) toast.error(res.data.error);
             else toast.success('Reset link sent to your email');
+            setIsSendingReset(false);
         } catch (err) {
             toast.error(err.message || 'Failed to send reset link');
+            setIsSendingReset(false);
         }
     };
 
+    // Nav bar styles (inline so you don’t need new CSS)
+    const bar = {
+        height: 64,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        maxWidth: 1040,
+        margin: '0 auto',
+        padding: '0 16px',
+    };
+
     return (
-        <div className="login-wrapper">
-            <button className="close-button" onClick={() => navigate('/')} aria-label="Close">×</button>
+        <>
+            {/* Minimal top navbar: logo left, X right */}
+            <header style={{ width: '100%', borderBottom: '1px solid #eee' }}>
+                <div style={bar}>
+                    <Link to="/" aria-label="Home" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+                        {/* Replace text with your <img src={logo} alt="Konar" style={{height: 24}}/> if you have a logo asset */}
+                        <span style={{ fontWeight: 800, fontSize: 18, color: '#111' }}>konarcard</span>
+                    </Link>
+                    <button
+                        onClick={() => navigate('/')}
+                        aria-label="Close"
+                        style={{
+                            width: 36, height: 36, borderRadius: 18, border: '1px solid #e5e5e5', background: '#fff',
+                            display: 'grid', placeItems: 'center', fontSize: 20, cursor: 'pointer'
+                        }}
+                    >
+                        ×
+                    </button>
+                </div>
+            </header>
 
-            {/* Single centered column */}
-            <div className="login-right">
-                <div className="login-card" role="form" aria-labelledby="login-title">
-                    <h1 id="login-title" className="desktop-h3 text-center" style={{ marginBottom: 8 }}>Welcome Back</h1>
-                    <p className="desktop-body-text text-center" style={{ marginBottom: 24 }}>
-                        Enter your email and password to access your account.
-                    </p>
+            <div className="login-wrapper">
+                {/* Single centered column */}
+                <div className="login-right">
+                    <div className="login-card" role="form" aria-labelledby="login-title">
+                        <h1 id="login-title" className="desktop-h3 text-center" style={{ marginBottom: 8 }}>Welcome Back</h1>
+                        <p className="desktop-body-text text-center" style={{ marginBottom: 24 }}>
+                            Enter your email and password to access your account.
+                        </p>
 
-                    {forgotPasswordStep ? (
-                        <form onSubmit={sendResetLink} className="login-form">
-                            <label htmlFor="resetEmail" className="form-label">Email</label>
-                            <input
-                                type="email"
-                                id="resetEmail"
-                                placeholder="Enter your email"
-                                value={emailForReset}
-                                onChange={(e) => setEmailForReset(e.target.value)}
-                                className="standard-input"
-                                autoComplete="username"
-                                inputMode="email"
-                                required
-                            />
-                            <button type="submit" className="primary-button send-reset-link-button">Send Reset Link</button>
-                            <button type="button" onClick={() => setForgotPasswordStep(false)} className="secondary-button back-to-login-button">
-                                Back to Login
-                            </button>
-                        </form>
-                    ) : !verificationStep ? (
-                        <form className="login-form" onSubmit={loginUser}>
-                            <label htmlFor="loginEmail" className="form-label">Email</label>
-                            <input
-                                type="email"
-                                id="loginEmail"
-                                name="email"
-                                placeholder="you@example.com"
-                                value={data.email}
-                                onChange={(e) => setData({ ...data, email: e.target.value })}
-                                className="standard-input"
-                                autoComplete="username"
-                                inputMode="email"
-                                required
-                            />
-
-                            <label htmlFor="loginPassword" className="form-label">Password</label>
-                            <div className="password-wrapper">
+                        {forgotPasswordStep ? (
+                            <form onSubmit={sendResetLink} className="login-form">
+                                <label htmlFor="resetEmail" className="form-label">Email</label>
                                 <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    id="loginPassword"
-                                    name="password"
-                                    placeholder="Your password"
-                                    value={data.password}
-                                    onChange={(e) => setData({ ...data, password: e.target.value })}
-                                    autoComplete="current-password"
+                                    type="email"
+                                    id="resetEmail"
+                                    placeholder="Enter your email"
+                                    value={emailForReset}
+                                    onChange={(e) => setEmailForReset(e.target.value)}
+                                    className="standard-input"
+                                    autoComplete="username"
+                                    inputMode="email"
                                     required
                                 />
-                                <button type="button" onClick={togglePassword} aria-label="Toggle password visibility">
-                                    {showPassword ? 'Hide' : 'Show'}
+                                <button
+                                    type="submit"
+                                    className="primary-button send-reset-link-button"
+                                    disabled={isSendingReset}
+                                    aria-busy={isSendingReset}
+                                >
+                                    {isSendingReset ? 'Sending…' : 'Send Reset Link'}
                                 </button>
-                            </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setForgotPasswordStep(false)}
+                                    className="secondary-button back-to-login-button"
+                                >
+                                    Back to Login
+                                </button>
+                            </form>
+                        ) : !verificationStep ? (
+                            <form className="login-form" onSubmit={loginUser}>
+                                <label htmlFor="loginEmail" className="form-label">Email</label>
+                                <input
+                                    type="email"
+                                    id="loginEmail"
+                                    name="email"
+                                    placeholder="you@example.com"
+                                    value={data.email}
+                                    onChange={(e) => setData({ ...data, email: e.target.value })}
+                                    className="standard-input"
+                                    autoComplete="username"
+                                    inputMode="email"
+                                    required
+                                />
 
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 0 12px' }}>
-                                <label className="terms-label" style={{ margin: 0 }}>
+                                <label htmlFor="loginPassword" className="form-label">Password</label>
+                                <div className="password-wrapper">
                                     <input
-                                        type="checkbox"
-                                        className="konar-checkbox"
-                                        checked={rememberMe}
-                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                        type={showPassword ? 'text' : 'password'}
+                                        id="loginPassword"
+                                        name="password"
+                                        placeholder="Your password"
+                                        value={data.password}
+                                        onChange={(e) => setData({ ...data, password: e.target.value })}
+                                        autoComplete="current-password"
+                                        required
                                     />
-                                    <span className="desktop-body-xs" style={{ color: '#666' }}>Remember me</span>
-                                </label>
+                                    <button type="button" onClick={togglePassword} aria-label="Toggle password visibility">
+                                        {showPassword ? 'Hide' : 'Show'}
+                                    </button>
+                                </div>
 
-                                <button type="button" className="link-button" onClick={() => setForgotPasswordStep(true)}>
-                                    Forgot your password?
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 0 12px' }}>
+                                    <label className="terms-label" style={{ margin: 0, cursor: 'pointer' }}>
+                                        <input
+                                            type="checkbox"
+                                            className="konar-checkbox"
+                                            checked={rememberMe}
+                                            onChange={(e) => setRememberMe(e.target.checked)}
+                                        />
+                                        <span className="desktop-body-xs" style={{ color: '#666' }}>Remember me</span>
+                                    </label>
+
+                                    <button type="button" className="link-button" onClick={() => setForgotPasswordStep(true)}>
+                                        Forgot your password?
+                                    </button>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="primary-button sign-in-button"
+                                    disabled={isSubmitting}
+                                    aria-busy={isSubmitting}
+                                >
+                                    {isSubmitting ? 'Signing in…' : 'Log In'}
                                 </button>
-                            </div>
+                            </form>
+                        ) : (
+                            <form onSubmit={verifyCode} className="login-form">
+                                <p className="verification-instruction">
+                                    Enter the 6-digit code sent to <strong>{data.email.trim().toLowerCase()}</strong>
+                                </p>
+                                <label htmlFor="verificationCode" className="form-label">Verification Code</label>
+                                <input
+                                    type="text"
+                                    id="verificationCode"
+                                    name="verificationCode"
+                                    placeholder="Enter verification code"
+                                    value={code}
+                                    onChange={(e) => setCode(e.target.value)}
+                                    className="standard-input"
+                                    maxLength={6}
+                                    autoComplete="one-time-code"
+                                    required
+                                />
+                                <button
+                                    type="submit"
+                                    className="primary-button verify-email-button"
+                                    disabled={isVerifying}
+                                    aria-busy={isVerifying}
+                                >
+                                    {isVerifying ? 'Verifying…' : 'Verify Email'}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="secondary-button resend-code-button"
+                                    onClick={resendCode}
+                                    disabled={cooldown > 0}
+                                    style={{ marginTop: '1rem' }}
+                                >
+                                    {cooldown > 0 ? `Resend available in ${cooldown}s` : 'Resend Code'}
+                                </button>
+                            </form>
+                        )}
 
-                            <button type="submit" className="cta-blue-button desktop-button">Log In</button>
-                        </form>
-                    ) : (
-                        <form onSubmit={verifyCode} className="login-form">
-                            <p className="verification-instruction">
-                                Enter the 6-digit code sent to <strong>{data.email.trim().toLowerCase()}</strong>
+                        {!forgotPasswordStep && !verificationStep && (
+                            <p className="login-alt-text">
+                                Don’t have an account? <Link to="/register">Register Now.</Link>
                             </p>
-                            <label htmlFor="verificationCode" className="form-label">Verification Code</label>
-                            <input
-                                type="text"
-                                id="verificationCode"
-                                placeholder="123456"
-                                value={code}
-                                onChange={(e) => setCode(e.target.value)}
-                                className="standard-input"
-                                maxLength={6}
-                                autoComplete="one-time-code"
-                                required
-                            />
-                            <button type="submit" className="primary-button verify-email-button">Verify Email</button>
-                            <button
-                                type="button"
-                                className="secondary-button resend-code-button"
-                                onClick={resendCode}
-                                disabled={cooldown > 0}
-                                style={{ marginTop: '1rem' }}
-                            >
-                                {cooldown > 0 ? `Resend in ${cooldown}s` : 'Resend Code'}
-                            </button>
-                        </form>
-                    )}
-
-                    {!forgotPasswordStep && !verificationStep && (
-                        <p className="login-alt-text">
-                            Don’t have an account? <Link to="/register">Register Now.</Link>
-                        </p>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
