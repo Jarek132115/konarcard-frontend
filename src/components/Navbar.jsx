@@ -5,7 +5,7 @@ import LogoIcon from '../assets/icons/Logo-Icon.svg';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, logout } = useContext(AuthContext); // <-- no loading usage
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -71,6 +71,17 @@ export default function Navbar() {
               </div>
 
               <ul className="mobile-list">
+                {/* Mobile-only Home link */}
+                <li className="mobile-only">
+                  <Link
+                    to="/"
+                    onClick={() => setMobileOpen(false)}
+                    className="desktop-h4"
+                  >
+                    Home
+                  </Link>
+                </li>
+
                 <li>
                   <Link
                     to="/productandplan"
@@ -161,6 +172,7 @@ export default function Navbar() {
               <img src={LogoIcon} alt="Logo" className="logo" />
             </Link>
             <ul className="nav-links">
+              {/* No Home item on desktop (logo handles home) */}
               <li><Link to="/productandplan">Product &amp; Plan</Link></li>
               <li><Link to="/reviews">Reviews</Link></li>
               <li><Link to="/faq">FAQs</Link></li>

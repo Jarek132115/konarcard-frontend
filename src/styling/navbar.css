@@ -14,7 +14,6 @@
   margin: 0 auto;
   align-items: center;
   padding: 0 20px;
-  /* same horizontal pad as overlay */
 }
 
 /* Desktop bar */
@@ -98,7 +97,6 @@
   transform: rotate(-45deg) translate(6px, -6px);
 }
 
-/* when open, keep bars dark (the overlay covers the page behind anyway) */
 .hamburger.active span {
   background: #111;
 }
@@ -127,24 +125,17 @@
   position: fixed;
   top: 0;
   left: 0;
-  /* ← open from the LEFT */
   height: 100vh;
   width: min(520px, 92vw);
   display: flex;
   flex-direction: column;
   color: #111;
   background: #fff;
-  /* ← white background */
   border-right: 1px solid rgba(0, 0, 0, 0.06);
-  /* ← right border now */
   box-shadow: 10px 0 40px rgba(0, 0, 0, 0.08);
-  /* ← shadow on the right side */
   padding: 0 20px;
-  /* match navbar-container horizontal pad */
   transform: translateX(-100%);
-  /* ← start off-screen left */
   animation: panelInLeft .35s cubic-bezier(.22, .9, .24, 1) forwards;
-  /* ← slide from left */
 }
 
 /* Header row — same vertical padding as .navbar */
@@ -197,7 +188,6 @@
   line-height: 1.35;
   font-weight: 700;
   letter-spacing: -0.01em;
-
   color: #111;
   text-decoration: none;
   border-radius: 12px;
@@ -253,6 +243,19 @@
 }
 
 /* =========================
+   “Mobile-only” utility
+   ========================= */
+.mobile-only {
+  display: block;
+}
+
+@media (min-width: 1000px) {
+  .mobile-only {
+    display: none;
+  }
+}
+
+/* =========================
    Animations
    ========================= */
 @keyframes overlayFade {
@@ -265,7 +268,6 @@
   }
 }
 
-/* slide IN from the LEFT */
 @keyframes panelInLeft {
   from {
     transform: translateX(-100%);
