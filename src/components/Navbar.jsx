@@ -76,9 +76,13 @@ export default function Navbar() {
               </div>
 
               <ul className="mobile-list">
-                {/* keep Home un-highlighted */}
+                {/* Home link highlights on "/" */}
                 <li className="mobile-only">
-                  <Link to="/" onClick={() => setMobileOpen(false)} className="desktop-h4">
+                  <Link
+                    to="/"
+                    onClick={() => setMobileOpen(false)}
+                    className={`desktop-h4 ${isActive('/') ? 'active' : ''}`}
+                  >
                     Home
                   </Link>
                 </li>
@@ -120,7 +124,6 @@ export default function Navbar() {
                   </Link>
                 </li>
               </ul>
-
 
               <div className="mobile-divider" aria-hidden="true" />
 
@@ -174,7 +177,6 @@ export default function Navbar() {
               <img src={LogoIcon} alt="Logo" className="logo" />
             </Link>
             <ul className="nav-links">
-              {/* Highlight active link, skip home */}
               <li>
                 <Link
                   to="/productandplan"

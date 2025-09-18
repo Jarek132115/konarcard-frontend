@@ -51,6 +51,12 @@
   font-weight: 600;
 }
 
+/* Desktop active */
+.nav-links a.active {
+  color: #0081FF;
+  font-weight: 700;
+}
+
 /* Desktop auth pills come from your existing button classes */
 .auth-links {
   display: flex;
@@ -102,13 +108,6 @@
 }
 
 /* =========================
-   Disable old dropdown
-   ========================= */
-.mobile-menu {
-  display: none !important;
-}
-
-/* =========================
    MOBILE OVERLAY MENU
    ========================= */
 .mobile-overlay {
@@ -120,7 +119,6 @@
   animation: overlayFade .25s ease-out;
 }
 
-/* LEFT drawer, WHITE theme */
 .mobile-panel {
   position: fixed;
   top: 0;
@@ -138,7 +136,6 @@
   animation: panelInLeft .35s cubic-bezier(.22, .9, .24, 1) forwards;
 }
 
-/* Header row — same vertical padding as .navbar */
 .mobile-panel-header {
   display: flex;
   align-items: center;
@@ -178,7 +175,6 @@
   gap: 8px;
 }
 
-/* desktop-h4 look in white theme */
 .mobile-list li a.desktop-h4,
 .mobile-actions .desktop-h4,
 .mobile-actions .logout-link.desktop-h4 {
@@ -203,6 +199,13 @@
 .mobile-list li a.desktop-h4:active,
 .mobile-actions .desktop-h4:active {
   transform: translateY(1px);
+}
+
+/* Mobile active — match desktop look */
+.mobile-list a.active {
+  color: #0081FF;
+  font-weight: 700;
+  background: transparent;
 }
 
 /* Divider above auth links */
@@ -295,18 +298,4 @@
   .navbar-mobile-header {
     display: flex;
   }
-}
-
-/* Desktop active (already present) */
-.nav-links a.active {
-  color: #0081FF;
-  font-weight: 700;
-}
-
-/* Mobile overlay active */
-.mobile-list a.active {
-  color: #0081FF;
-  background: rgba(0, 129, 255, 0.10);
-  font-weight: 800;
-  border-radius: 12px;
 }
