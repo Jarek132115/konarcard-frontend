@@ -297,8 +297,16 @@
   }
 }
 
-/* Active link highlight */
+/* Desktop active (already present) */
 .nav-links a.active {
   color: #0081FF;
   font-weight: 700;
+}
+
+/* Mobile overlay active */
+.mobile-list a.active {
+  color: #0081FF;
+  background: rgba(0, 129, 255, 0.10);
+  font-weight: 800;
+  border-radius: 12px;
 }

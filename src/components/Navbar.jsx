@@ -76,13 +76,9 @@ export default function Navbar() {
               </div>
 
               <ul className="mobile-list">
-                {/* Mobile-only Home link */}
+                {/* keep Home un-highlighted */}
                 <li className="mobile-only">
-                  <Link
-                    to="/"
-                    onClick={() => setMobileOpen(false)}
-                    className="desktop-h4"
-                  >
+                  <Link to="/" onClick={() => setMobileOpen(false)} className="desktop-h4">
                     Home
                   </Link>
                 </li>
@@ -91,7 +87,7 @@ export default function Navbar() {
                   <Link
                     to="/productandplan"
                     onClick={() => setMobileOpen(false)}
-                    className="desktop-h4"
+                    className={`desktop-h4 ${isActive('/productandplan') ? 'active' : ''}`}
                   >
                     Product &amp; Plan
                   </Link>
@@ -100,7 +96,7 @@ export default function Navbar() {
                   <Link
                     to="/reviews"
                     onClick={() => setMobileOpen(false)}
-                    className="desktop-h4"
+                    className={`desktop-h4 ${isActive('/reviews') ? 'active' : ''}`}
                   >
                     Reviews
                   </Link>
@@ -109,7 +105,7 @@ export default function Navbar() {
                   <Link
                     to="/faq"
                     onClick={() => setMobileOpen(false)}
-                    className="desktop-h4"
+                    className={`desktop-h4 ${isActive('/faq') ? 'active' : ''}`}
                   >
                     FAQs
                   </Link>
@@ -118,12 +114,13 @@ export default function Navbar() {
                   <Link
                     to="/contactus"
                     onClick={() => setMobileOpen(false)}
-                    className="desktop-h4"
+                    className={`desktop-h4 ${isActive('/contactus') ? 'active' : ''}`}
                   >
                     Contact Us
                   </Link>
                 </li>
               </ul>
+
 
               <div className="mobile-divider" aria-hidden="true" />
 
