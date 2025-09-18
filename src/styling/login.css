@@ -108,7 +108,7 @@ a,
     .auth-page .login-wrapper {
         display: block;
         /* break out of grid centering */
-        padding: calc(var(--nav-height) + 20px) 16px 24px;
+        padding: calc(var(--nav-height) + 20px) 6% 24px;
     }
 
     .login-right {
