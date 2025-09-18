@@ -202,11 +202,15 @@
 }
 
 /* Mobile active — match desktop look */
-.mobile-list a.active {
-  color: #0081FF;
-  font-weight: 700;
-  background: transparent;
+/* Force mobile active links to match desktop look */
+.mobile-list li a.desktop-h4.active,
+.mobile-actions .desktop-h4.active {
+  color: #0081FF !important;
+  /* override black */
+  font-weight: 700 !important;
+  background: transparent !important;
 }
+
 
 /* Divider above auth links */
 .mobile-divider {
