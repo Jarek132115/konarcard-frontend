@@ -244,7 +244,7 @@ export default function Home() {
                 <img src={Section1Image} alt="Order your NFC card" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Order Your Tap-To-Share Card Today</h3>
+                <h3 className="desktop-h5">Order Your Konar Business Card</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
