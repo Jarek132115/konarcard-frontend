@@ -33,6 +33,7 @@ import LockIcon from '../../assets/icons/Lock-Icon.svg';
 import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
 import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
+import QRCode from '../../assets/icons/QRCode-Icon.svg';
 
 // NEW: auth + api
 import { AuthContext } from '../../components/AuthContext';
