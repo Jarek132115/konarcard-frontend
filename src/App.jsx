@@ -1,13 +1,13 @@
 // App.jsx
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
-import TidioDelayedLoader from './components/TidioDelayedLoader'; // 👈 add this import
+import TidioDelayedLoader from './components/TidioDelayedLoader';
 
-// Lazy pages (unchanged)
+// Lazy pages
 const Home = lazy(() => import('./pages/website/Home'));
 const Register = lazy(() => import('./pages/website/Register'));
 const Login = lazy(() => import('./pages/website/Login'));
@@ -36,16 +36,37 @@ const ContactSupport = lazy(() => import('./pages/interface/ContactSupport'));
 // Public user page
 const UserPage = lazy(() => import('./pages/interface/UserPage'));
 
+// --- Wrapper to control Tidio enablement ---
+function TidioWrapper() {
+  const location = useLocation();
+
+  const isDashboardPath = location.pathname.startsWith('/myprofile')
+    || location.pathname.startsWith('/myorders')
+    || location.pathname.startsWith('/billing')
+    || location.pathname.startsWith('/helpcentreinterface')
+    || location.pathname.startsWith('/nfccards')
+    || location.pathname.startsWith('/notifications')
+    || location.pathname.startsWith('/profile')
+    || location.pathname.startsWith('/contact-support');
+
+  // Only allow Tidio on `/contact-support` inside dashboard
+  const enableTidio =
+    !isDashboardPath || location.pathname === '/contact-support';
+
+  return (
+    <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
       <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
       <ScrollToTop />
 
-      {/* 👇 Mount Tidio once for the whole app */}
-      <TidioDelayedLoader enabled={true} delayMs={4000} />
+      {/* ✅ Mounted with dynamic enable/disable */}
+      <TidioWrapper />
 
-      {/* Keep Suspense fallback null to avoid flash */}
       <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Home />} />
