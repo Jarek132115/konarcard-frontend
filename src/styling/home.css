@@ -635,27 +635,17 @@ body {
     }
 }
 
-/* SECTION 7 - TRADESMEN USE IT */
-/* === PEOPLE (desktop collage: 40% | 30% | 30%) === */
+/* === PEOPLE GRID (Desktop collage) === */
 @media (min-width: 1000px) {
     .people-grid {
         display: grid;
         grid-template-columns: 0.4fr 0.3fr 0.3fr;
-        /* left tall + two right cols */
         grid-template-rows: repeat(2, 1fr);
-        /* 2 equal rows on the right */
         gap: 10px;
         align-items: stretch;
         height: clamp(360px, 45vw, 560px);
-        /* gives a nice, responsive collage height */
     }
 
-    /* place items:
-     1) tall left, spans rows 1-2
-     2) top-right, spans columns 2-3
-     3) bottom-right, left cell
-     4) bottom-right, right cell
-  */
     .people-grid .pg-item:nth-child(1) {
         grid-column: 1 / 2;
         grid-row: 1 / 3;
@@ -676,27 +666,59 @@ body {
         grid-row: 2 / 3;
     }
 
-    /* make every tile fill its grid cell neatly */
     .people-grid .pg-item,
     .people-grid .pg-item img {
-        height: 100%;
-    }
-
-    .people-grid .pg-item img {
         width: 100%;
+        height: 100%;
         object-fit: cover;
         border-radius: 10px;
         display: block;
     }
 }
 
-/* keep your existing mobile/tablet layout (1 | 2 | 1) */
+/* === Tablet & under 1000px: enforce 1 | 2 | 1 pattern === */
 @media (max-width: 1000px) {
-    .pg-item.span-2 {
+    .people-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        width: 100%;
+    }
+
+    .people-grid .pg-item:nth-child(1) {
         grid-column: 1 / -1;
+        /* spans both columns */
+    }
+
+    .people-grid .pg-item:nth-child(2),
+    .people-grid .pg-item:nth-child(3) {
+        grid-column: span 1;
+        /* side by side */
+    }
+
+    .people-grid .pg-item:nth-child(4) {
+        grid-column: 1 / -1;
+        /* spans both columns again */
+    }
+
+    .people-grid .pg-item img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        border-radius: 10px;
     }
 }
 
+/* === Mobile under 600px: single column === */
+@media (max-width: 600px) {
+    .people-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .people-grid .pg-item {
+        grid-column: 1 / -1 !important;
+    }
+}
 
 
 /* --- PRICING (redesigned cards) --- */
