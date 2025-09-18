@@ -247,7 +247,7 @@ export default function Home() {
                 <img src={Section1Image} alt="Order your NFC card" />
               </div>
               <div className="step-text">
-                <h3 className="desktop-h5">Order Your Konar Card</h3>
+                <h3 className="desktop-h5">Order Your Own Konar Card</h3>
 
                 <div className="step-bullets">
                   <div className="section-list">
@@ -256,7 +256,7 @@ export default function Home() {
                     </div>
                     <div className="section-list-info">
                       <p className="desktop-h6">One card, unlimited shares</p>
-                      <p className="desktop-body-xs gray">Your tap-to-share card for every job.</p>
+                      <p className="desktop-body-xs gray">NFC card linked to your live profile.</p>
                     </div>
                   </div>
 
@@ -265,7 +265,7 @@ export default function Home() {
                       <img src={DeliveryIcon} className="icon icon-img" alt="Icon" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">We print & ship</p>
+                      <p className="desktop-h6">Printed & shipped fast</p>
                       <p className="desktop-body-xs gray">Fast turnaround. Premium finish.</p>
                     </div>
                   </div>
@@ -275,8 +275,8 @@ export default function Home() {
                       <img src={LinkIcon} className="icon icon-img" alt="Icon" />
                     </div>
                     <div className="section-list-info">
-                      <p className="desktop-h6">Linked to your profile</p>
-                      <p className="desktop-body-xs gray">Pre-linked to your live Konar profile.</p>
+                      <p className="desktop-h6">Always up to date</p>
+                      <p className="desktop-body-xs gray">Change your profile anytime; the card stays current.</p>
                     </div>
                   </div>
                 </div>
