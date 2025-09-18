@@ -1448,3 +1448,16 @@ svg.icon {
         animation: none;
     }
 }
+
+@media (max-width: 500px) {
+    .pricing-card--subscription .pricing-features .pricing-check {
+        width: 20px;
+        height: 20px;
+        flex: 0 0 20px;
+    }
+
+    .pricing-card--subscription .pricing-features .pricing-feature span {
+        font-size: 12px;
+        line-height: 1.35;
+    }
+}
