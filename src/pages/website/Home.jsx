@@ -396,7 +396,7 @@ export default function Home() {
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">One <span className='blue'>Plan</span>. One <span className='blue'>Card</span>. Endless <span className='blue'>Opportunities</span>.</h2>
-          <h3 className="desktop-h6 text-center">No confusion. Just one powerful plan to make you stand out.</h3>
+          <h3 className="desktop-h6 text-center">Start your Power Profile free for 14 days. Add the Konar Card when you’re ready.</h3>
         </div>
 
         <div className="pricing-grid">
@@ -405,7 +405,7 @@ export default function Home() {
             <div className="pricing-inner">
               <div className="pricing-head">
                 <div>
-                  <h3 className="desktop-h5">Power Profile</h3>
+                  <h3 className="desktop-h5">Konar Profile</h3>
                   <p className="desktop-body-xs">Win more work with a power profile</p>
                 </div>
                 <span className="pricing-badge dark-blue">14-Day Free Trial</span>
@@ -418,14 +418,12 @@ export default function Home() {
 
               <ul className="pricing-features">
                 {[
-                  'Update your profile instantly (real-time edits)',
-                  'Choose fonts and light/dark themes',
-                  'Write a compelling “About Me” section',
-                  'Showcase your work with unlimited images',
-                  'Collect and display client reviews (star ratings)',
-                  'List your services and set pricing',
-                  'Share via QR code, link, or save-to-contacts',
-                  'Display work/services as list, grid, or carousel',
+                  'Simple editor; no tech skills.',
+                  'Show what you do, fast.',
+                  'Share via link and QR.',
+                  'Your details saved in one click.',
+                  'Stand out with branded visuals.',
+                  'Update anytime; changes go live.',
                   'Make it easy for clients to contact you',
                 ].map((text, i) => (
                   <li className="pricing-feature" key={i}>
