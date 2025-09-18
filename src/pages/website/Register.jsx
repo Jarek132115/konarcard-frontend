@@ -24,6 +24,9 @@ export default function Register() {
     const [verificationStep, setVerificationStep] = useState(false);
     const [code, setCode] = useState('');
     const [cooldown, setCooldown] = useState(0);
+
+    // Which field is focused? "password" | "confirm" | null
+    const [focusedField, setFocusedField] = useState(null);
     const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
     const blurTimeoutRef = useRef(null);
 
@@ -49,12 +52,17 @@ export default function Register() {
         passwordsMatch: data.password === data.confirmPassword && data.confirmPassword.length > 0,
     };
 
-    const handlePasswordFocus = () => {
+    const handleFieldFocus = (field) => {
         if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+        setFocusedField(field);          // "password" or "confirm"
         setShowPasswordFeedback(true);
     };
-    const handlePasswordBlur = () => {
-        blurTimeoutRef.current = setTimeout(() => setShowPasswordFeedback(false), 120);
+
+    const handleFieldBlur = () => {
+        blurTimeoutRef.current = setTimeout(() => {
+            setShowPasswordFeedback(false);
+            setFocusedField(null);
+        }, 120);
     };
 
     const registerUser = async (e) => {
@@ -64,6 +72,7 @@ export default function Register() {
             toast.error('Username is required.');
             return;
         }
+        // Must pass all checks
         if (!Object.values(passwordChecks).every(Boolean)) {
             toast.error('Please meet all password requirements.');
             return;
@@ -177,7 +186,6 @@ export default function Register() {
         <div className="login-wrapper">
             <Link to="/" className="close-button" aria-label="Close">×</Link>
 
-            {/* Single centered column */}
             <div className="login-right">
                 <div className="login-card" role="form" aria-labelledby="register-title">
                     <h1 id="register-title" className="desktop-h3 text-center" style={{ marginBottom: 8 }}>
@@ -239,8 +247,8 @@ export default function Register() {
                                     value={data.password}
                                     onChange={(e) => setData({ ...data, password: e.target.value })}
                                     autoComplete="new-password"
-                                    onFocus={handlePasswordFocus}
-                                    onBlur={handlePasswordBlur}
+                                    onFocus={() => handleFieldFocus('password')}
+                                    onBlur={handleFieldBlur}
                                     required
                                 />
                                 <button type="button" onClick={() => setShowPassword((s) => !s)}>
@@ -248,25 +256,8 @@ export default function Register() {
                                 </button>
                             </div>
 
-                            <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
-                            <div className="password-wrapper">
-                                <input
-                                    type={showConfirm ? 'text' : 'password'}
-                                    id="confirmPassword"
-                                    placeholder="Confirm password"
-                                    value={data.confirmPassword}
-                                    onChange={(e) => setData({ ...data, confirmPassword: e.target.value })}
-                                    autoComplete="new-password"
-                                    onFocus={handlePasswordFocus}
-                                    onBlur={handlePasswordBlur}
-                                    required
-                                />
-                                <button type="button" onClick={() => setShowConfirm((s) => !s)}>
-                                    {showConfirm ? 'Hide' : 'Show'}
-                                </button>
-                            </div>
-
-                            {showPasswordFeedback && (
+                            {/* Feedback under first field: show only rules 1–3 */}
+                            {showPasswordFeedback && focusedField === 'password' && (
                                 <div className="password-feedback">
                                     <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
                                         {passwordChecks.minLength ? <GreenTickIcon /> : <RedCrossIcon />} Minimum 8 characters
@@ -277,6 +268,30 @@ export default function Register() {
                                     <p className={passwordChecks.hasNumber ? 'valid' : 'invalid'}>
                                         {passwordChecks.hasNumber ? <GreenTickIcon /> : <RedCrossIcon />} One number
                                     </p>
+                                </div>
+                            )}
+
+                            <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+                            <div className="password-wrapper">
+                                <input
+                                    type={showConfirm ? 'text' : 'password'}
+                                    id="confirmPassword"
+                                    placeholder="Confirm password"
+                                    value={data.confirmPassword}
+                                    onChange={(e) => setData({ ...data, confirmPassword: e.target.value })}
+                                    autoComplete="new-password"
+                                    onFocus={() => handleFieldFocus('confirm')}
+                                    onBlur={handleFieldBlur}
+                                    required
+                                />
+                                <button type="button" onClick={() => setShowConfirm((s) => !s)}>
+                                    {showConfirm ? 'Hide' : 'Show'}
+                                </button>
+                            </div>
+
+                            {/* Feedback under second field: show ONLY match status */}
+                            {showPasswordFeedback && focusedField === 'confirm' && (
+                                <div className="password-feedback">
                                     <p className={passwordChecks.passwordsMatch ? 'valid' : 'invalid'}>
                                         {passwordChecks.passwordsMatch ? <GreenTickIcon /> : <RedCrossIcon />} Passwords match
                                     </p>
@@ -290,7 +305,7 @@ export default function Register() {
                                 </span>
                             </label>
 
-                            <button type="submit" className="cta-blue-button desktop-button">Create Account</button>
+                            <button type="submit" className="primary-button sign-in-button">Create Account</button>
                         </form>
                     ) : (
                         <form onSubmit={verifyCode} className="login-form">
