@@ -1211,9 +1211,9 @@ svg.icon {
     50% {
         /* tiny pop, no big glow */
         transform: scale(1.04);
-        background: #0081FF;
+        background: #006FE6;
         color: #fff;
-        border-color: #0081FF;
+        border-color: #006FE6;
         box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
     }
 
