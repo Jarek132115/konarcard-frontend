@@ -108,7 +108,7 @@ a,
     .auth-page .login-wrapper {
         display: block;
         /* break out of grid centering */
-        padding: calc(var(--nav-height) + 20px) 6% 24px;
+        padding: calc(var(--nav-height) + 20px) 12px 24px;
     }
 
     .login-right {
@@ -464,7 +464,7 @@ a,
 /* Small phones hardening */
 @media (max-width:430px) {
     .auth-page .login-wrapper {
-        padding: calc(var(--nav-height) + 20px) 12px 20px
+        padding: calc(var(--nav-height) + 20px) 6% 20px
     }
 
     /* Username row: allow extreme shrink */
