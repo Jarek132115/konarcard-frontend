@@ -420,11 +420,13 @@ export default function Home() {
                 {[
                   'Simple editor; no tech skills.',
                   'Show what you do, fast.',
-                  'Share via link and QR.',
-                  'Your details saved in one click.',
-                  'Stand out with branded visuals.',
-                  'Update anytime; changes go live.',
-                  'Make it easy for clients to contact you',
+                  'Unlimited images — show all your work.',
+                  'Unlimited services — list every job.',
+                  'Unlimited reviews — build instant trust.',
+                  'Custom branding — logo, colours, layout.',
+                  'Share everywhere — link, QR, NFC tap.',
+                  'Update anytime — changes live instantly.',
+                  'No app needed — iPhone, Android.',
                 ].map((text, i) => (
                   <li className="pricing-feature" key={i}>
                     <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
