@@ -43,7 +43,7 @@ export default function FAQ() {
       </div>
 
       <div className="section-1-title section">
-        <h2 className="desktop-h1 text-center">Got Questions? We’ve Got Answers.</h2>
+        <h2 className="desktop-h1 text-center">Got <span className='blue'>Questions?</span> We’ve Got <span className='blue'>Answers.</span></h2>
         <h3 className="desktop-h6 text-center">
           Straightforward info on the card, your digital profile, pricing, shipping, returns and more.
         </h3>
