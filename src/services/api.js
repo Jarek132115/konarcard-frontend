@@ -7,7 +7,7 @@ const api = axios.create({
   withCredentials: false, // using Bearer token, not cookies
 });
 
-// Attach token on every request
+// Attach token + disable caching on sensitive routes
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -16,6 +16,16 @@ api.interceptors.request.use(
     } else {
       delete config.headers.Authorization;
     }
+
+    // 🚫 Disable caching for auth-sensitive endpoints
+    if (config.url?.includes('/profile') || config.url?.includes('/me/orders')) {
+      config.headers['Cache-Control'] = 'no-store';
+      config.headers['Pragma'] = 'no-cache';
+      // Add cache-buster query param
+      const sep = config.url.includes('?') ? '&' : '?';
+      config.url = `${config.url}${sep}ts=${Date.now()}`;
+    }
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -32,18 +42,17 @@ api.interceptors.response.use(
     if (
       status === 401 &&
       config?.url &&
-      (config.url.endsWith('/profile') || config.url.includes('/profile?'))
+      (config.url.includes('/profile'))
     ) {
       localStorage.removeItem('token');
       toast.error('Session expired. Please log in again.');
     }
 
-    // Otherwise, don’t nuke the token — just reject
     return Promise.reject(error);
   }
 );
 
-// Example: feature helper
+// Example helper
 export const startTrial = () => api.post('/trial/start', {});
 
 export default api;
