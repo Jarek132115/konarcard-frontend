@@ -1225,3 +1225,78 @@ body {
             0 0 80px rgba(0, 129, 255, .22)
     }
 }
+
+/* =========================
+   HOW IT WORKS – MODAL
+   ========================= */
+
+/* Full-screen overlay */
+.video-modal-overlay {
+    position: fixed;
+    inset: 0;
+    /* top/right/bottom/left: 0 */
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    /* above nav, footer, widgets */
+}
+
+/* Modal panel */
+.video-modal {
+    position: relative;
+    width: min(900px, 92vw);
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Close button */
+.video-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    cursor: pointer;
+}
+
+/* 16:9 responsive frame */
+.video-frame {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    /* 16:9 */
+    background: #000;
+}
+
+/* Make the media fill the frame */
+.video-frame>video,
+.video-frame>iframe,
+.video-placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Placeholder styling (until real video is added) */
+.video-placeholder {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    opacity: 0.85;
+}
+
+/* Optional: prevent the overlay from being hidden by any positioned parents */
+body .video-modal-overlay {
+    isolation: isolate;
+    /* creates a new stacking context */
+}
