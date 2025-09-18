@@ -10,34 +10,38 @@ import TidioDelayedLoader from './components/TidioDelayedLoader';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { lazyWithRetry } from './utils/lazyWithRetry';
 
-// ----- LAZY PAGES (adjust paths/casing to match your repo exactly) -----
-const Home = lazyWithRetry(() => import('./pages/Home.jsx'));
-const Register = lazyWithRetry(() => import('./pages/auth/Register.jsx'));
-const Login = lazyWithRetry(() => import('./pages/auth/Login.jsx'));
-const ResetPassword = lazyWithRetry(() => import('./pages/auth/ResetPassword.jsx'));
+// ===================== Lazy imports (paths must match exactly) =====================
+// Public site (src/pages/website)
+const Home                = lazyWithRetry(() => import('./pages/website/Home.jsx'));
+const Register            = lazyWithRetry(() => import('./pages/website/Register.jsx'));
+const Login               = lazyWithRetry(() => import('./pages/website/Login.jsx'));
+const ResetPassword       = lazyWithRetry(() => import('./pages/website/ResetPassword.jsx'));
+const ProductAndPlan      = lazyWithRetry(() => import('./pages/website/ProductAndPlan.jsx'));
+const KonarCard           = lazyWithRetry(() => import('./pages/website/KonarCard.jsx'));
+const KonarSubscription   = lazyWithRetry(() => import('./pages/website/KonarSubscription.jsx'));
+const FAQ                 = lazyWithRetry(() => import('./pages/website/FAQ.jsx'));
+const Reviews             = lazyWithRetry(() => import('./pages/website/Reviews.jsx'));
+const HelpCentre          = lazyWithRetry(() => import('./pages/website/HelpCentre.jsx'));
+const ContactUs           = lazyWithRetry(() => import('./pages/website/ContactUs.jsx'));
+const Policies            = lazyWithRetry(() => import('./pages/website/Policies.jsx'));
+const Success             = lazyWithRetry(() => import('./pages/website/Success.jsx'));
+const SuccessSubscription = lazyWithRetry(() => import('./pages/website/SuccessSubscription.jsx'));
 
-const ProductAndPlan = lazyWithRetry(() => import('./pages/ProductAndPlan.jsx'));
-const KonarCard = lazyWithRetry(() => import('./pages/KonarCard.jsx'));
-const KonarSubscription = lazyWithRetry(() => import('./pages/KonarSubscription.jsx'));
-const FAQ = lazyWithRetry(() => import('./pages/FAQ.jsx'));
-const Reviews = lazyWithRetry(() => import('./pages/Reviews.jsx'));
-const HelpCentre = lazyWithRetry(() => import('./pages/HelpCentre.jsx'));
-const ContactUs = lazyWithRetry(() => import('./pages/ContactUs.jsx'));
-const Policies = lazyWithRetry(() => import('./pages/Policies.jsx'));
-const Success = lazyWithRetry(() => import('./pages/Success.jsx'));
-const SuccessSubscription = lazyWithRetry(() => import('./pages/SuccessSubscription.jsx'));
-const UserPage = lazyWithRetry(() => import('./pages/UserPage.jsx'));
+// Your route was /u/:username; closest file in repo is WhiteCard.jsx
+const UserPage            = lazyWithRetry(() => import('./pages/website/WhiteCard.jsx'));
 
-// dashboard/protected
-const MyProfile = lazyWithRetry(() => import('./pages/dashboard/MyProfile.jsx'));
-const MyOrders = lazyWithRetry(() => import('./pages/dashboard/MyOrders.jsx'));
-const Billing = lazyWithRetry(() => import('./pages/dashboard/Billing.jsx'));
-const HelpCentreInterface = lazyWithRetry(() => import('./pages/dashboard/HelpCentreInterface.jsx'));
-const NFCCards = lazyWithRetry(() => import('./pages/dashboard/NFCCards.jsx'));
-const Notifications = lazyWithRetry(() => import('./pages/dashboard/Notifications.jsx'));
-const Profile = lazyWithRetry(() => import('./pages/dashboard/Profile.jsx'));
-const ContactSupport = lazyWithRetry(() => import('./pages/dashboard/ContactSupport.jsx'));
-// ----------------------------------------------------------------------
+// Dashboard / interface (src/pages/interface)
+const Billing               = lazyWithRetry(() => import('./pages/interface/Billing.jsx'));
+const ContactSupport        = lazyWithRetry(() => import('./pages/interface/ContactSupport.jsx'));
+const HelpCentreInterface   = lazyWithRetry(() => import('./pages/interface/HelpCentreInterface.jsx'));
+
+// If/when you add these files under src/pages/interface, uncomment these:
+// const MyProfile          = lazyWithRetry(() => import('./pages/interface/MyProfile.jsx'));
+// const MyOrders           = lazyWithRetry(() => import('./pages/interface/MyOrders.jsx'));
+// const NFCCards           = lazyWithRetry(() => import('./pages/interface/NFCCards.jsx'));
+// const Notifications      = lazyWithRetry(() => import('./pages/interface/Notifications.jsx'));
+// const Profile            = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
+// ====================================================================================
 
 function TidioWrapper() {
   const location = useLocation();
@@ -92,15 +96,18 @@ export default function App() {
             <Route path="/successsubscription" element={<SuccessSubscription />} />
             <Route path="/u/:username" element={<UserPage />} />
 
-            {/* PROTECTED */}
-            <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
-            <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+            {/* PROTECTED (only the files that currently exist) */}
             <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
             <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
+            <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
+
+            {/* TODO: add these back when the files exist under src/pages/interface
+            <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
+            <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
             <Route path="/nfccards" element={<ProtectedRoute><NFCCards /></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
+            */}
           </Routes>
         </Suspense>
       </RouteErrorBoundary>
