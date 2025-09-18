@@ -23,7 +23,7 @@ export default function ProductAndPlan() {
             {/* --- PRICING (redesigned) --- */}
             <div className="section">
                 <div className="section-1-title">
-                    <h2 className="desktop-h2 text-center">One Plan. One Card. Endless Opportunities.</h2>
+                    <h2 className="desktop-h2 text-center">One <span className='blue'>Plan</span>. One <span className='blue'>Card</span>. Endless <span className='blue'>Opportunities</span>.</h2>
                     <h3 className="desktop-h6 text-center">No confusion. Just one powerful plan to make you stand out.</h3>
                 </div>
 
@@ -34,14 +34,14 @@ export default function ProductAndPlan() {
                             <div className="pricing-head">
                                 <div>
                                     <h3 className="desktop-h5">Power Profile</h3>
-                                    <p className='desktop-body-xs'>Win more work with a power profile</p>
+                                    <p className="desktop-body-xs">Win more work with a power profile</p>
                                 </div>
-                                <span className="pricing-badge blue">14-Day Free Trial</span>
+                                <span className="pricing-badge dark-blue">14-Day Free Trial</span>
                             </div>
                             <div className="pricing-divider" />
                             <div className="pricing-price-row">
-                                <span style={{paddingRight: 5}} className="desktop-h3">£4.95</span>
-                                <span style={{padding: 0 }} className="desktop-button">/Month</span>
+                                <span style={{ paddingRight: 5 }} className="desktop-h3">£4.95</span>
+                                <span style={{ padding: 0 }} className="desktop-button">/Month</span>
                             </div>
 
                             <ul className="pricing-features">
@@ -58,14 +58,12 @@ export default function ProductAndPlan() {
                                 ].map((text, i) => (
                                     <li className="pricing-feature" key={i}>
                                         <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
-                                        <span className='white desktop-body-x'>{text}</span>
+                                        <span className="white desktop-body-x">{text}</span>
                                     </li>
                                 ))}
                             </ul>
 
-                            {/* Sticky bottom area: quote + CTA */}
                             <div className="pricing-bottom">
-
                                 <Link
                                     to="/productandplan/konarsubscription"
                                     className="cta-blue-button desktop-button"
@@ -78,12 +76,13 @@ export default function ProductAndPlan() {
                     </div>
 
                     {/* Physical card (black) */}
+                    {/* Physical card (black) */}
                     <div className="pricing-card pricing-card--product">
                         <div className="pricing-inner">
                             <div className="pricing-head">
                                 <div>
                                     <h3 className="desktop-h5">Konar Card - White Edition</h3>
-                                    <p className='desktop-body-xs'>Tap to share your profile instantly.</p>
+                                    <p className="desktop-body-xs">Tap to share your profile instantly.</p>
                                 </div>
                                 <span className="pricing-badge">12 Month Warranty</span>
                             </div>
@@ -92,13 +91,26 @@ export default function ProductAndPlan() {
                                 <span className="desktop-h3">£24.95</span>
                             </div>
 
-                            <div className="pricing-media">
-                                <img src={PlasticCard} alt="Konar Card - White Edition" />
+                            {/* === GALLERY WITH THUMBNAILS === */}
+                            <div className="pricing-media-tray">
+                                <div className="pricing-media-main">
+                                    <img src={cardMainImage} alt="Konar Card - White Edition" />
+                                </div>
+                                <div className="pricing-media-thumbs">
+                                    {cardThumbs.map((src, i) => (
+                                        <button
+                                            key={i}
+                                            className={`pricing-media-thumb ${cardMainImage === src ? 'is-active' : ''}`}
+                                            onClick={() => setCardMainImage(src)}
+                                        >
+                                            <img src={src} alt={`Konar Card thumbnail ${i + 1}`} />
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
+                            {/* === END GALLERY === */}
 
-                            {/* Sticky bottom area: quote + CTA */}
                             <div className="pricing-bottom">
-
                                 <Link
                                     to="/productandplan/konarcard"
                                     className="cta-black-button desktop-button"
@@ -109,6 +121,7 @@ export default function ProductAndPlan() {
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
