@@ -304,6 +304,11 @@ body {
     flex: 1
 }
 
+.icon {
+    width: 25px;
+    height: 25px;
+}
+
 .icon-white {
     background: #fff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
