@@ -427,6 +427,7 @@ export default function Home() {
                   'Share everywhere — link, QR, NFC tap.',
                   'Update anytime — changes live instantly.',
                   'No app needed — iPhone, Android.',
+                  'Cancel Anytime',
                 ].map((text, i) => (
                   <li className="pricing-feature" key={i}>
                     <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
