@@ -1300,3 +1300,27 @@ body .video-modal-overlay {
     isolation: isolate;
     /* creates a new stacking context */
 }
+
+/* Close button (X in the corner) */
+.video-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.video-close:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
