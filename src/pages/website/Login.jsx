@@ -264,7 +264,7 @@ export default function Login() {
                                 </button>
                             </div>
 
-                            <button type="submit" className="primary-button sign-in-button">Log In</button>
+                            <button type="submit" className="cta-blue-button desktop-button">Log In</button>
                         </form>
                     ) : (
                         <form onSubmit={verifyCode} className="login-form">
