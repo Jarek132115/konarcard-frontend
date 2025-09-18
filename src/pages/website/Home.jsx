@@ -444,6 +444,7 @@ export default function Home() {
           </div>
 
           {/* Physical card (black) */}
+          {/* Physical card (black) */}
           <div className="pricing-card pricing-card--product">
             <div className="pricing-inner">
               <div className="pricing-head">
@@ -458,9 +459,24 @@ export default function Home() {
                 <span className="desktop-h3">£24.95</span>
               </div>
 
-              <div className="pricing-media">
-                <img src={PlasticCard} alt="Konar Card - White Edition" />
+              {/* === GALLERY WITH THUMBNAILS === */}
+              <div className="pricing-media-tray">
+                <div className="pricing-media-main">
+                  <img src={cardMainImage} alt="Konar Card - White Edition" />
+                </div>
+                <div className="pricing-media-thumbs">
+                  {cardThumbs.map((src, i) => (
+                    <button
+                      key={i}
+                      className={`pricing-media-thumb ${cardMainImage === src ? 'is-active' : ''}`}
+                      onClick={() => setCardMainImage(src)}
+                    >
+                      <img src={src} alt={`Konar Card thumbnail ${i + 1}`} />
+                    </button>
+                  ))}
+                </div>
               </div>
+              {/* === END GALLERY === */}
 
               <div className="pricing-bottom">
                 <Link
@@ -473,6 +489,7 @@ export default function Home() {
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
