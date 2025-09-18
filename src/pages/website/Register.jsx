@@ -290,7 +290,7 @@ export default function Register() {
                                 </span>
                             </label>
 
-                            <button type="submit" className="primary-button sign-in-button">Create Account</button>
+                            <button type="submit" className="cta-blue-button desktop-button">Create Account</button>
                         </form>
                     ) : (
                         <form onSubmit={verifyCode} className="login-form">
