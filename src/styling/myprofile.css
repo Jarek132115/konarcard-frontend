@@ -1647,23 +1647,27 @@
     }
 }
 
-/* ===== Mobile Preview Controls — Docked when open, fully rounded when closed ===== */
+/* ===== Mobile Preview Controls (full-width pill, no bottom piece) ===== */
 .mp-mobile-controls {
     position: sticky;
     top: 64px;
+    /* under your fixed mobile header */
     z-index: 1005;
     display: flex;
     flex-direction: column;
+    /* pill on top, preview below */
     align-items: stretch;
+    /* make pill span the container width */
     gap: 0;
-    padding: 0 0 8px 0;
-    margin: 0;
+    padding: 0;
+    margin: 0 0 12px 0;
     background: transparent;
-    transition: opacity .2s ease, transform .2s ease;
+    transition: opacity .2s ease, transform .2s ease, margin .2s ease;
     will-change: transform;
     backface-visibility: hidden;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
+    width: 100%;
 }
 
 @media (min-width:1001px) {
@@ -1675,23 +1679,30 @@
 .mp-mobile-controls.is-open {
     opacity: 1;
     transform: translateY(0);
+    margin-bottom: 12px;
+    /* normal gap under open preview */
 }
 
 .mp-mobile-controls.is-collapsed {
     opacity: .96;
     transform: translateY(-2px);
+    margin-bottom: 0;
+    /* remove extra whitespace when closed */
 }
 
-/* Segmented container */
+/* --- Pill (tabs track) --- */
 .mp-pill {
     display: flex;
-    width: 100%;
+    /* tabs side-by-side */
     border: 1px solid rgba(0, 0, 0, .12);
+    border-bottom: 0;
+    /* preview sits flush under the pill */
     border-radius: 16px 16px 0 0;
-    /* open: top-only, docks to preview */
+    /* top rounded, flat bottom */
     overflow: hidden;
     background: #fff;
     box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+    width: 100%;
 }
 
 .dark-mode .mp-pill {
@@ -1700,13 +1711,18 @@
     box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
 }
 
-/* When CLOSED: make the pill fully rounded (bottom corners too) */
+/* When the preview is closed, make the pill a chip (rounded all around) */
 .mp-mobile-controls.is-collapsed .mp-pill {
+    border-bottom: 1px solid rgba(0, 0, 0, .12);
     border-radius: 16px;
-    /* all four corners */
+    /* 16px on all corners */
 }
 
-/* Tabs: 16px radius only on TOP outer corners when open (flat bottom). */
+.dark-mode .mp-mobile-controls.is-collapsed .mp-pill {
+    border-bottom-color: rgba(255, 255, 255, .12);
+}
+
+/* --- Tabs --- */
 .mp-tab {
     appearance: none;
     -webkit-appearance: none;
@@ -1719,38 +1735,22 @@
     flex: 1 1 0;
     text-align: center;
     cursor: pointer;
-    white-space: nowrap;
     transition: background-color .2s ease, color .2s ease, transform .06s ease, opacity .2s ease;
-    border-radius: 0;
-    /* flat bottom while open */
-    position: relative;
+    border-radius: 16px 16px 0 0;
+    /* flat on bottom, 16px on top */
 }
 
-.mp-tab:first-child {
-    border-top-left-radius: 16px;
-}
-
-.mp-tab:last-child {
-    border-top-right-radius: 16px;
-}
-
-.mp-tab+.mp-tab::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 10%;
-    width: 1px;
-    height: 80%;
-    background: rgba(0, 0, 0, .12);
-}
-
-.dark-mode .mp-tab+.mp-tab::before {
-    background: rgba(255, 255, 255, .12);
+.mp-tab+.mp-tab {
+    border-left: 1px solid rgba(0, 0, 0, .12);
 }
 
 .dark-mode .mp-tab {
     background: #2a2a2a;
     color: #fff;
+}
+
+.dark-mode .mp-tab+.mp-tab {
+    border-left-color: rgba(255, 255, 255, .12);
 }
 
 .mp-tab:active {
@@ -1763,7 +1763,7 @@
     color: #fff;
 }
 
-/* Visit Page style when not selected */
+/* Visit Page base state when not selected */
 .mp-tab.visit {
     background: #fff;
     color: #111;
@@ -1774,68 +1774,44 @@
     color: #fff;
 }
 
-/* When CLOSED: tabs get bottom rounding too so the whole pill is rounded */
-.mp-mobile-controls.is-collapsed .mp-tab:first-child {
-    border-bottom-left-radius: 16px;
+/* Slight deemphasis for unselected tab while collapsed */
+.mp-mobile-controls.is-collapsed .mp-tab:not(.active) {
+    opacity: .9;
 }
 
-.mp-mobile-controls.is-collapsed .mp-tab:last-child {
-    border-bottom-right-radius: 16px;
-}
-
-/* Remove old bottom holder completely */
-.mp-pill-bottom {
-    display: none !important;
-}
-
-/* ===== Preview wrapper — no cut-off, hides completely when closed ===== */
+/* --- Preview collapsing pane right under the pill --- */
 .mp-preview-wrap {
-    margin-top: 0;
-    max-height: none !important;
-    overflow: visible !important;
+    overflow: hidden;
+    /* hides during collapse */
+    transition: max-height .3s ease, opacity .2s ease, transform .2s ease, margin .2s ease;
+    max-height: 2000px;
+    /* roomy when open */
+    opacity: 1;
+    transform: scale(1);
+    margin: 0;
+    /* no extra gap; pill handles spacing */
 }
 
-/* CLOSED state: remove all space so editor jumps up (no white gap) */
+/* Closed state (your inline style already sets these, this ensures CSS fallback) */
 .mp-mobile-controls.is-collapsed .mp-preview-wrap {
-    display: none !important;
-    height: 0 !important;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    transform: scale(.98) !important;
     margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
 }
 
-/* Phone preview: flush to tabs when open (no top radius/border), rounded bottom */
-.mp-mobile-controls .mp-preview-wrap .mock-phone.mobile-preview {
-    height: auto !important;
-    overflow: visible;
-    border-top: none !important;
-    border-left: 1px solid rgba(0, 0, 0, .08);
-    border-right: 1px solid rgba(0, 0, 0, .08);
-    border-bottom: 1px solid rgba(0, 0, 0, .08);
+/* Make the preview attach perfectly: no top border or rounding on the phone */
+.mock-phone.mobile-preview {
+    border-top: 0 !important;
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
-    border-bottom-left-radius: 16px !important;
-    border-bottom-right-radius: 16px !important;
 }
 
-.dark-mode .mp-mobile-controls .mp-preview-wrap .mock-phone.mobile-preview {
-    border-left-color: rgba(255, 255, 255, .12);
-    border-right-color: rgba(255, 255, 255, .12);
-    border-bottom-color: rgba(255, 255, 255, .12);
-}
-
-/* Keep controls above phone and centered on mobile */
-@media (max-width:1000px) {
-    .myprofile-mock-phone-mobile-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .mp-mobile-controls {
-        top: 64px;
-    }
+/* Let the preview content scroll fully (no cut-off) */
+.mock-phone-scrollable-content {
+    overflow-y: auto;
+    max-height: none;
+    /* ensure full growth inside the collapsible wrapper */
 }
 
 /* Tiny screens */
@@ -1862,4 +1838,16 @@
 .myprofile-flex-container {
     transform: none !important;
     will-change: auto;
+}
+
+/* Stack controls ABOVE the phone and keep centered column layout on mobile */
+@media (max-width:1000px) {
+    .myprofile-mock-phone-mobile-container {
+        display: flex;
+        flex-direction: column;
+        /* controls then phone */
+        align-items: stretch;
+        /* pill spans width */
+        gap: 10px;
+    }
 }
