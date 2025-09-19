@@ -1,9 +1,8 @@
+// frontend/src/pages/admin/AdminDashboard.jsx
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
-import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 function formatAmount(amount, currency = 'gbp') {
@@ -25,9 +24,7 @@ const STATUS_OPTIONS = [
 ];
 
 export default function AdminDashboard() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-    const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);
     const [orders, setOrders] = useState([]);
@@ -39,24 +36,17 @@ export default function AdminDashboard() {
     const [fulfillmentStatus, setFulfillmentStatus] = useState('');
 
     // Local edit buffers per order
-    const [edit, setEdit] = useState({}); // { [orderId]: { trackingUrl, deliveryWindow, fulfillmentStatus, notifyTracking, notifyStatus } }
+    // { [orderId]: { trackingUrl, deliveryWindow, fulfillmentStatus, notifyTracking, notifyStatus } }
+    const [edit, setEdit] = useState({});
 
-    useEffect(() => {
-        const onResize = () => {
-            const m = window.innerWidth <= 1000;
-            const sm = window.innerWidth <= 600;
-            setIsMobile(m);
-            setIsSmallMobile(sm);
-            if (!m && sidebarOpen) setSidebarOpen(false);
-        };
-        window.addEventListener('resize', onResize);
-        return () => window.removeEventListener('resize', onResize);
-    }, [sidebarOpen]);
-
-    useEffect(() => {
-        if (sidebarOpen && isMobile) document.body.classList.add('body-no-scroll');
-        else document.body.classList.remove('body-no-scroll');
-    }, [sidebarOpen, isMobile]);
+    async function handleLogout() {
+        try { await api.post('/logout'); } catch { }
+        try {
+            localStorage.removeItem('token');
+            localStorage.removeItem('authUser');
+        } catch { }
+        navigate('/login', { replace: true });
+    }
 
     async function loadOrders() {
         setLoading(true);
@@ -66,9 +56,11 @@ export default function AdminDashboard() {
             if (q) params.q = q;
             if (type) params.type = type;
             if (fulfillmentStatus) params.fulfillmentStatus = fulfillmentStatus;
+
             const res = await api.get('/admin/orders', { params });
             const data = Array.isArray(res?.data?.data) ? res.data.data : [];
             setOrders(data);
+
             // seed edit buffers
             const seed = {};
             for (const o of data) {
@@ -82,7 +74,13 @@ export default function AdminDashboard() {
             }
             setEdit(seed);
         } catch (e) {
-            setError(e?.response?.data?.error || 'Failed to load orders');
+            const msg = e?.response?.data?.error || 'Failed to load orders';
+            setError(msg);
+            // if not admin, server returns 403 — push them out
+            if (e?.response?.status === 403) {
+                toast.error('Admin only');
+                navigate('/myprofile', { replace: true });
+            }
         } finally {
             setLoading(false);
         }
@@ -142,31 +140,52 @@ export default function AdminDashboard() {
     const filteredCount = useMemo(() => orders.length, [orders]);
 
     return (
-        <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
-            {/* Top bar (reuse your mobile header style) */}
-            <div className="myprofile-mobile-header">
-                <Link to="/myprofile" className="myprofile-logo-link">
-                    <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
-                </Link>
+        <div className="app-layout">
+            {/* Simple top bar: logo left, logout right */}
+            <div
+                style={{
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 10,
+                    background: 'transparent',
+                }}
+            >
                 <div
-                    className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                    style={{
+                        maxWidth: 1200,
+                        margin: '12px auto 6px',
+                        padding: '0 16px',
+                    }}
                 >
-                    <span></span><span></span><span></span>
+                    <div
+                        style={{
+                            background: '#fff',
+                            border: '1px solid rgba(0,0,0,0.08)',
+                            borderRadius: 16,
+                            padding: 12,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <Link to="/admin" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+                            <img src={LogoIcon} alt="Konar" style={{ height: 28, width: 28 }} />
+                            <span className="desktop-body" style={{ fontWeight: 700 }}>Admin — Orders</span>
+                        </Link>
+
+                        <button
+                            onClick={handleLogout}
+                            className="cta-blue-button desktop-button"
+                            style={{ padding: '10px 16px' }}
+                        >
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-            {sidebarOpen && isMobile && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />}
-
+            {/* Body */}
             <main className="main-content-container">
-                <PageHeader
-                    title="Admin — Orders"
-                    subtitle={`Manage tracking, ETA, and status. (${filteredCount} result${filteredCount === 1 ? '' : 's'})`}
-                    isMobile={isMobile}
-                    isSmallMobile={isSmallMobile}
-                />
-
                 {/* Filters */}
                 <div
                     style={{
@@ -221,6 +240,9 @@ export default function AdminDashboard() {
                                 Reset
                             </button>
                         </div>
+                    </div>
+                    <div className="desktop-body-s" style={{ color: '#6b7280' }}>
+                        {filteredCount} result{filteredCount === 1 ? '' : 's'}
                     </div>
                 </div>
 
