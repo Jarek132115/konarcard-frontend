@@ -1647,7 +1647,7 @@
     }
 }
 
-/* ===== Mobile Preview Controls — FLAT-BOTTOM SEGMENTS (no bottom holder) ===== */
+/* ===== Mobile Preview Controls — Docked when open, fully rounded when closed ===== */
 .mp-mobile-controls {
     position: sticky;
     top: 64px;
@@ -1658,8 +1658,6 @@
     gap: 0;
     padding: 0 0 8px 0;
     margin: 0;
-    width: 100%;
-    max-width: none;
     background: transparent;
     transition: opacity .2s ease, transform .2s ease;
     will-change: transform;
@@ -1684,13 +1682,13 @@
     transform: translateY(-2px);
 }
 
-/* Segmented container: only TOP corners rounded so the bottom edge is flat */
+/* Segmented container */
 .mp-pill {
     display: flex;
     width: 100%;
     border: 1px solid rgba(0, 0, 0, .12);
     border-radius: 16px 16px 0 0;
-    /* ← top only */
+    /* open: top-only, docks to preview */
     overflow: hidden;
     background: #fff;
     box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
@@ -1702,7 +1700,13 @@
     box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
 }
 
-/* Tabs: flat bottom, 16px radius ONLY on the top outer corners */
+/* When CLOSED: make the pill fully rounded (bottom corners too) */
+.mp-mobile-controls.is-collapsed .mp-pill {
+    border-radius: 16px;
+    /* all four corners */
+}
+
+/* Tabs: 16px radius only on TOP outer corners when open (flat bottom). */
 .mp-tab {
     appearance: none;
     -webkit-appearance: none;
@@ -1718,7 +1722,7 @@
     white-space: nowrap;
     transition: background-color .2s ease, color .2s ease, transform .06s ease, opacity .2s ease;
     border-radius: 0;
-    /* flat bottom & inner corners */
+    /* flat bottom while open */
     position: relative;
 }
 
@@ -1759,7 +1763,7 @@
     color: #fff;
 }
 
-/* Visit Page look when not selected */
+/* Visit Page style when not selected */
 .mp-tab.visit {
     background: #fff;
     color: #111;
@@ -1770,21 +1774,37 @@
     color: #fff;
 }
 
-/* Kill old bottom holder entirely */
+/* When CLOSED: tabs get bottom rounding too so the whole pill is rounded */
+.mp-mobile-controls.is-collapsed .mp-tab:first-child {
+    border-bottom-left-radius: 16px;
+}
+
+.mp-mobile-controls.is-collapsed .mp-tab:last-child {
+    border-bottom-right-radius: 16px;
+}
+
+/* Remove old bottom holder completely */
 .mp-pill-bottom {
     display: none !important;
 }
 
-/* ===== Preview wrapper — prevent cut-off and make it flush under tabs ===== */
+/* ===== Preview wrapper — no cut-off, hides completely when closed ===== */
 .mp-preview-wrap {
     margin-top: 0;
     max-height: none !important;
-    /* override inline cap */
     overflow: visible !important;
-    /* ensure nothing is clipped */
 }
 
-/* Phone preview: top is FLUSH (no border, no radius). Sides+bottom keep border. */
+/* CLOSED state: remove all space so editor jumps up (no white gap) */
+.mp-mobile-controls.is-collapsed .mp-preview-wrap {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Phone preview: flush to tabs when open (no top radius/border), rounded bottom */
 .mp-mobile-controls .mp-preview-wrap .mock-phone.mobile-preview {
     height: auto !important;
     overflow: visible;
