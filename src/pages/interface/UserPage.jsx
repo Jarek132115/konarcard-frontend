@@ -504,7 +504,7 @@ const unavailable = ({ username, isAuthed }) => (
                     className="unavailable-help-button"
                     onClick={() => goToContactWithChat(isAuthed)}
                 >
-                    Struggling setting up your profile? <u>Contact us now</u>
+                    Struggling setting up your profile? <u style={{textDecoration: 'underline'}} className="dark-blue">Contact us now</u>
                 </button>
             </div>
         </div>
