@@ -74,6 +74,9 @@ export default function MyProfile() {
   const [isMobile, setIsMobile] = useState(window.matchMedia(mqDesktopToMobile).matches);
   const [isSmallMobile, setIsSmallMobile] = useState(window.matchMedia(mqSmallMobile).matches);
 
+  // NEW: mobile preview visibility (for the Show/Hide Preview control)
+  const [mobilePreviewVisible, setMobilePreviewVisible] = useState(true);
+
   // editor display toggles
   const [servicesDisplayMode, setServicesDisplayMode] = useState("list");
   const [reviewsDisplayMode, setReviewsDisplayMode] = useState("list");
@@ -129,6 +132,7 @@ export default function MyProfile() {
       setIsMobile(mm1.matches);
       setIsSmallMobile(mm2.matches);
       if (!mm1.matches && sidebarOpen) setSidebarOpen(false); // close when switching to desktop
+      if (!mm1.matches) setMobilePreviewVisible(true); // ensure preview is visible again on desktop
     };
 
     mm1.addEventListener("change", onChange);
@@ -596,6 +600,9 @@ export default function MyProfile() {
     }
   };
 
+  // Public profile URL for the "Visit Page" button
+  const profilePublicUrl = userUsername ? `${window.location.origin}/u/${userUsername}` : "";
+
   /* =========================
      RENDER
      ========================= */
@@ -686,9 +693,37 @@ export default function MyProfile() {
                 </div>
               )}
 
+              {/* ======= MOBILE: Floating controls (Show/Hide Preview | Visit Page) ======= */}
+              {isMobile && (
+                <div className="mobile-preview-controls">
+                  <div className="mpc-pill">
+                    <button
+                      type="button"
+                      className="mpc-btn toggle"
+                      onClick={() => setMobilePreviewVisible((v) => !v)}
+                      aria-pressed={mobilePreviewVisible ? "true" : "false"}
+                    >
+                      {mobilePreviewVisible ? "Hide Preview" : "Show Preview"}
+                    </button>
+
+                    <a
+                      className={`mpc-btn visit ${profilePublicUrl ? "" : "disabled"}`}
+                      href={profilePublicUrl || undefined}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-disabled={!profilePublicUrl}
+                    >
+                      Visit Page
+                    </a>
+                  </div>
+                </div>
+              )}
+
               <div className="myprofile-flex-container">
                 {/* Phone preview */}
-                <div className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`}>
+                <div
+                  className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""} ${isMobile && !mobilePreviewVisible ? "is-collapsed" : ""}`}
+                >
                   <div
                     className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
                     style={{ fontFamily: state.font || previewPlaceholders.font }}
