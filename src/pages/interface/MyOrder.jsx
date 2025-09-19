@@ -46,6 +46,32 @@ function statusIndex(s) {
             return 0;
     }
 }
+function statusBadgeClass(s) {
+    switch ((s || "").toLowerCase()) {
+        case "order_placed":
+            return "status-placed";
+        case "designing_card":
+            return "status-designing";
+        case "packaged":
+            return "status-packaged";
+        case "shipped":
+            return "status-shipped";
+        default:
+            return "status-placed";
+    }
+}
+function formatDateTimeNoSeconds(iso) {
+    if (!iso) return "—";
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    });
+}
 function ProgressBar({ status }) {
     const idx = statusIndex(status);
     const percent = Math.max(0, Math.min(100, (idx / 3) * 100));
@@ -141,10 +167,7 @@ export default function MyOrders() {
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
             {sidebarOpen && isMobile && (
-                <div
-                    className="sidebar-overlay active"
-                    onClick={() => setSidebarOpen(false)}
-                />
+                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
             )}
 
             <main className="main-content-container">
@@ -174,12 +197,9 @@ export default function MyOrders() {
                         <div className="orders-list">
                             {orders.map((o) => {
                                 const isSub = (o.type || "").toLowerCase() === "subscription";
-                                const isCard = (o.type || "").toLowerCase() === "card";
                                 const amount = formatAmount(o.amountTotal, o.currency);
                                 const delivery =
-                                    o.deliveryWindow ||
-                                    o.metadata?.estimatedDelivery ||
-                                    "—";
+                                    o.deliveryWindow || o.metadata?.estimatedDelivery || "—";
                                 const qty = isSub ? "—" : o.quantity || 1;
 
                                 const deliveryName =
@@ -190,23 +210,23 @@ export default function MyOrders() {
 
                                 return (
                                     <article key={o.id} className="order-card">
+                                        {/* TOP STATUS PILL */}
+                                        <div className={`order-status-badge ${statusBadgeClass(fulfillRaw)}`}>
+                                            {formatFulfillmentStatus(fulfillRaw)}
+                                        </div>
+
                                         <div className="order-thumb">
-                                            <img
-                                                src={ProductThumb}
-                                                alt="Product"
-                                                className="order-thumb-img"
-                                            />
+                                            <img src={ProductThumb} alt="Product" className="order-thumb-img" />
                                         </div>
 
                                         <div className="order-details">
+                                            {/* Meta: Card · Paid · DD/MM/YYYY, HH:MM (no seconds) */}
                                             <header className="order-meta">
-                                                <span className="type">{o.type}</span>
+                                                <span className="type">{(o.type || "").toLowerCase()}</span>
                                                 <span aria-hidden="true">•</span>
-                                                <span className="status">{o.status}</span>
+                                                <span className="status">{(o.status || "").toLowerCase()}</span>
                                                 <span aria-hidden="true">•</span>
-                                                <time>
-                                                    {o.createdAt ? new Date(o.createdAt).toLocaleString() : "—"}
-                                                </time>
+                                                <time>{formatDateTimeNoSeconds(o.createdAt)}</time>
                                             </header>
 
                                             {/* Responsive fields grid */}
@@ -230,7 +250,7 @@ export default function MyOrders() {
                                                     <ProgressBar status={fulfillRaw} />
                                                 </div>
 
-                                                {/* “Dot + two-line” info (same vibe as unavailable card) */}
+                                                {/* “Dot + two-line” info */}
                                                 <div className="order-line order-info">
                                                     <span className="dot" aria-hidden="true" />
                                                     <div className="reason">
@@ -274,7 +294,6 @@ export default function MyOrders() {
                                                 </Link>
                                             </div>
                                         </div>
-
                                     </article>
                                 );
                             })}
