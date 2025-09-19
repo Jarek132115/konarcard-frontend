@@ -345,38 +345,40 @@ const centerPage = {
     minHeight: "100vh",
 };
 
+// --- replace the whole unavailable() with this ---
 const unavailable = (username) => (
-    <div
-        className="user-landing-page"
-        style={{
-            ...centerPage,
-            flexDirection: "column",
-            backgroundColor: "#f0f0f0",
-            color: "#333",
-            padding: 20,
-            fontFamily: "Arial, sans-serif",
-        }}
-    >
-        <div
-            style={{
-                maxWidth: 600,
-                margin: "auto",
-                padding: 40,
-                border: "1px solid #ddd",
-                borderRadius: 10,
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                background: "#fff",
-            }}
-        >
-            <h2 style={{ fontSize: "2rem", marginBottom: 20 }}>Profile Unavailable</h2>
-            <p style={{ fontSize: "1.2rem", lineHeight: 1.6 }}>
-                This public profile is not currently active. The free trial may have expired or a subscription is needed.
+    <div className="user-landing-page unavailable-wrap">
+        <div className="unavailable-card">
+            <div className="unavailable-badge">Profile status</div>
+
+            <h1 className="unavailable-title">This profile isn’t live yet</h1>
+
+            <p className="unavailable-sub">
+                There are a couple of common reasons:
             </p>
-            <p style={{ fontSize: "1.1rem", marginTop: 20 }}>
-                Please contact <strong>@{username}</strong> directly for more information.
+
+            <ul className="unavailable-list">
+                <li>
+                    <span className="dot" /> <strong>No content published yet.</strong>
+                    The owner might not have created their page.
+                </li>
+                <li>
+                    <span className="dot" /> <strong>Access expired.</strong>
+                    The free trial may have ended or a subscription is required.
+                </li>
+            </ul>
+
+            <div className="unavailable-actions">
+                <a className="cta-blue" href="/myprofile">Create / Edit My Profile</a>
+                <a className="cta-outline" href="/subscription">Check Subscription</a>
+            </div>
+
+            <p className="unavailable-foot">
+                Want to reach them directly? Try contacting <strong>@{username}</strong>.
             </p>
         </div>
     </div>
 );
+
 
 export default UserPage;
