@@ -242,11 +242,6 @@
     flex-wrap: wrap;
 }
 
-.order-actions .desktop-button {
-    padding: 10px 14px;
-    border-radius: 10px;
-}
-
 /* responsive */
 @media (max-width: 900px) {
     .order-card {
