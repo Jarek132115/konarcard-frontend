@@ -5,7 +5,7 @@ import Breadcrumbs from '../../components/Breadcrumbs';
 import Footer from '../../components/Footer';
 import TickIcon from '../../assets/icons/Tick-Icon.svg';
 
-// ✅ add the 5 images for the gallery
+// ✅ gallery images
 import ProductCover from '../../assets/images/Product-Cover.png';
 import ProductImage1 from '../../assets/images/Product-Image-1.png';
 import ProductImage2 from '../../assets/images/Product-Image-2.png';
@@ -13,7 +13,6 @@ import ProductImage3 from '../../assets/images/Product-Image-3.png';
 import ProductImage4 from '../../assets/images/Product-Image-4.png';
 
 export default function ProductAndPlan() {
-    // ✅ state for gallery
     const [cardMainImage, setCardMainImage] = useState(ProductCover);
     const cardThumbs = [ProductCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4];
 
@@ -24,13 +23,15 @@ export default function ProductAndPlan() {
                 <Breadcrumbs />
             </div>
 
-            {/* --- PRICING (redesigned) --- */}
+            {/* --- PRICING --- */}
             <div className="section">
                 <div className="section-1-title">
                     <h2 className="desktop-h2 text-center">
-                        One <span className='blue'>Plan</span>. One <span className='blue'>Card</span>. Endless <span className='blue'>Opportunities</span>.
+                        One <span className="blue">Plan</span>. One <span className="blue">Card</span>. Endless <span className="blue">Opportunities</span>.
                     </h2>
-                    <h3 className="desktop-h6 text-center">No confusion. Just one powerful plan to make you stand out.</h3>
+                    <h3 className="desktop-h6 text-center">
+                        Start your Power Profile free for 14 days. Add the Konar Card when you’re ready.
+                    </h3>
                 </div>
 
                 <div className="pricing-grid">
@@ -39,7 +40,7 @@ export default function ProductAndPlan() {
                         <div className="pricing-inner">
                             <div className="pricing-head">
                                 <div>
-                                    <h3 className="desktop-h5">Power Profile</h3>
+                                    <h3 className="desktop-h5">Konar Profile</h3>
                                     <p className="desktop-body-xs">Win more work with a power profile</p>
                                 </div>
                                 <span className="pricing-badge dark-blue">14-Day Free Trial</span>
@@ -47,20 +48,21 @@ export default function ProductAndPlan() {
                             <div className="pricing-divider" />
                             <div className="pricing-price-row">
                                 <span style={{ paddingRight: 5 }} className="desktop-h3">£4.95</span>
-                                <span style={{ padding: 0 }} className="desktop-button">/Month</span>
+                                <span style={{ padding: 0 }} className="desktop-button">/Month - After 14 Days</span>
                             </div>
 
                             <ul className="pricing-features">
                                 {[
-                                    'Update your profile instantly (real-time edits)',
-                                    'Choose fonts and light/dark themes',
-                                    'Write a compelling “About Me” section',
-                                    'Showcase your work with unlimited images',
-                                    'Collect and display client reviews (star ratings)',
-                                    'List your services and set pricing',
-                                    'Share via QR code, link, or save-to-contacts',
-                                    'Display work/services as list, grid, or carousel',
-                                    'Make it easy for clients to contact you',
+                                    'Simple editor; no tech skills.',
+                                    'Show what you do, fast.',
+                                    'Unlimited images — show all your work.',
+                                    'Unlimited services — list every job.',
+                                    'Unlimited reviews — build instant trust.',
+                                    'Custom branding — logo, colours, layout.',
+                                    'Share everywhere — link, QR, NFC tap.',
+                                    'Update anytime — changes live instantly.',
+                                    'No app needed — iPhone, Android.',
+                                    'Cancel Anytime',
                                 ].map((text, i) => (
                                     <li className="pricing-feature" key={i}>
                                         <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
@@ -96,7 +98,7 @@ export default function ProductAndPlan() {
                                 <span className="desktop-h3">£24.95</span>
                             </div>
 
-                            {/* === GALLERY WITH THUMBNAILS === */}
+                            {/* === Gallery === */}
                             <div className="pricing-media-tray">
                                 <div className="pricing-media-main">
                                     <img src={cardMainImage} alt="Konar Card - White Edition" />
@@ -115,7 +117,6 @@ export default function ProductAndPlan() {
                                     ))}
                                 </div>
                             </div>
-                            {/* === END GALLERY === */}
 
                             <div className="pricing-bottom">
                                 <Link
@@ -128,7 +129,6 @@ export default function ProductAndPlan() {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
 
