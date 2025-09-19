@@ -1,8 +1,10 @@
 // frontend/src/pages/admin/AdminDashboard.jsx
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
+import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 function formatAmount(amount, currency = 'gbp') {
@@ -24,7 +26,9 @@ const STATUS_OPTIONS = [
 ];
 
 export default function AdminDashboard() {
-    const navigate = useNavigate();
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+    const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
 
     const [loading, setLoading] = useState(true);
     const [orders, setOrders] = useState([]);
@@ -36,17 +40,24 @@ export default function AdminDashboard() {
     const [fulfillmentStatus, setFulfillmentStatus] = useState('');
 
     // Local edit buffers per order
-    // { [orderId]: { trackingUrl, deliveryWindow, fulfillmentStatus, notifyTracking, notifyStatus } }
-    const [edit, setEdit] = useState({});
+    const [edit, setEdit] = useState({}); // { [orderId]: { trackingUrl, deliveryWindow, fulfillmentStatus, notifyTracking, notifyStatus } }
 
-    async function handleLogout() {
-        try { await api.post('/logout'); } catch { }
-        try {
-            localStorage.removeItem('token');
-            localStorage.removeItem('authUser');
-        } catch { }
-        navigate('/login', { replace: true });
-    }
+    useEffect(() => {
+        const onResize = () => {
+            const m = window.innerWidth <= 1000;
+            const sm = window.innerWidth <= 600;
+            setIsMobile(m);
+            setIsSmallMobile(sm);
+            if (!m && sidebarOpen) setSidebarOpen(false);
+        };
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
+    }, [sidebarOpen]);
+
+    useEffect(() => {
+        if (sidebarOpen && isMobile) document.body.classList.add('body-no-scroll');
+        else document.body.classList.remove('body-no-scroll');
+    }, [sidebarOpen, isMobile]);
 
     async function loadOrders() {
         setLoading(true);
@@ -56,7 +67,6 @@ export default function AdminDashboard() {
             if (q) params.q = q;
             if (type) params.type = type;
             if (fulfillmentStatus) params.fulfillmentStatus = fulfillmentStatus;
-
             const res = await api.get('/admin/orders', { params });
             const data = Array.isArray(res?.data?.data) ? res.data.data : [];
             setOrders(data);
@@ -74,13 +84,7 @@ export default function AdminDashboard() {
             }
             setEdit(seed);
         } catch (e) {
-            const msg = e?.response?.data?.error || 'Failed to load orders';
-            setError(msg);
-            // if not admin, server returns 403 — push them out
-            if (e?.response?.status === 403) {
-                toast.error('Admin only');
-                navigate('/myprofile', { replace: true });
-            }
+            setError(e?.response?.data?.error || 'Failed to load orders');
         } finally {
             setLoading(false);
         }
@@ -140,75 +144,44 @@ export default function AdminDashboard() {
     const filteredCount = useMemo(() => orders.length, [orders]);
 
     return (
-        <div className="app-layout">
-            {/* Simple top bar: logo left, logout right */}
-            <div
-                style={{
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 10,
-                    background: 'transparent',
-                }}
-            >
+        <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
+            {/* Mobile header (keeps the dashboard pattern the same) */}
+            <div className="myprofile-mobile-header">
+                <Link to="/myprofile" className="myprofile-logo-link">
+                    <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
+                </Link>
                 <div
-                    style={{
-                        maxWidth: 1200,
-                        margin: '12px auto 6px',
-                        padding: '0 16px',
-                    }}
+                    className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
                 >
-                    <div
-                        style={{
-                            background: '#fff',
-                            border: '1px solid rgba(0,0,0,0.08)',
-                            borderRadius: 16,
-                            padding: 12,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                        }}
-                    >
-                        <Link to="/admin" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
-                            <img src={LogoIcon} alt="Konar" style={{ height: 28, width: 28 }} />
-                            <span className="desktop-body" style={{ fontWeight: 700 }}>Admin — Orders</span>
-                        </Link>
-
-                        <button
-                            onClick={handleLogout}
-                            className="cta-blue-button desktop-button"
-                            style={{ padding: '10px 16px' }}
-                        >
-                            Logout
-                        </button>
-                    </div>
+                    <span></span><span></span><span></span>
                 </div>
             </div>
 
-            {/* Body */}
-            <main className="main-content-container">
+            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            {sidebarOpen && isMobile && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />}
+
+            <main className="main-content-container admin-main">
+                <PageHeader
+                    title="Admin — Orders"
+                    subtitle={`Search customers and manage orders. (${filteredCount} result${filteredCount === 1 ? '' : 's'})`}
+                    isMobile={isMobile}
+                    isSmallMobile={isSmallMobile}
+                />
+
                 {/* Filters */}
-                <div
-                    style={{
-                        background: '#fff',
-                        border: '1px solid rgba(0,0,0,0.08)',
-                        borderRadius: 16,
-                        padding: 16,
-                        marginBottom: 12,
-                        display: 'grid',
-                        gap: 10,
-                    }}
-                >
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 160px 200px auto', gap: 10 }}>
+                <div className="admin-filters">
+                    <div className="admin-filters-grid">
                         <input
-                            placeholder="Search by user email or userId"
+                            placeholder="Search by email, name, username, userId or orderId"
                             value={q}
                             onChange={(e) => setQ(e.target.value)}
-                            style={{ border: '1px solid #e5e7eb', borderRadius: 10, padding: '10px 12px' }}
+                            className="admin-input"
                         />
                         <select
                             value={type}
                             onChange={(e) => setType(e.target.value)}
-                            style={{ border: '1px solid #e5e7eb', borderRadius: 10, padding: '10px 12px' }}
+                            className="admin-input"
                         >
                             <option value="">All types</option>
                             <option value="card">Card</option>
@@ -217,214 +190,191 @@ export default function AdminDashboard() {
                         <select
                             value={fulfillmentStatus}
                             onChange={(e) => setFulfillmentStatus(e.target.value)}
-                            style={{ border: '1px solid #e5e7eb', borderRadius: 10, padding: '10px 12px' }}
+                            className="admin-input"
                         >
                             <option value="">Any status</option>
                             {STATUS_OPTIONS.map((s) => (
                                 <option key={s.value} value={s.value}>{s.label}</option>
                             ))}
                         </select>
-                        <div style={{ display: 'flex', gap: 8 }}>
-                            <button
-                                className="cta-blue-button desktop-button"
-                                onClick={loadOrders}
-                                style={{ padding: '10px 14px' }}
-                            >
+                        <div className="admin-filter-actions">
+                            <button className="cta-blue-button desktop-button" onClick={loadOrders}>
                                 Apply
                             </button>
                             <button
-                                className="desktop-button"
+                                className="desktop-button admin-reset-btn"
                                 onClick={() => { setQ(''); setType(''); setFulfillmentStatus(''); }}
-                                style={{ padding: '10px 14px', border: '1px solid #e5e7eb', borderRadius: 10, background: '#fff' }}
                             >
                                 Reset
                             </button>
                         </div>
                     </div>
-                    <div className="desktop-body-s" style={{ color: '#6b7280' }}>
-                        {filteredCount} result{filteredCount === 1 ? '' : 's'}
-                    </div>
+                    <div className="admin-results-pill">{filteredCount} result{filteredCount === 1 ? '' : 's'}</div>
                 </div>
 
                 {/* List */}
-                <div
-                    style={{
-                        width: '100%',
-                        background: '#fff',
-                        border: '1px solid rgba(0,0,0,0.08)',
-                        borderRadius: 16,
-                        padding: 16,
-                    }}
-                >
+                <div className="admin-list">
                     {loading ? (
                         <p>Loading…</p>
                     ) : error ? (
-                        <p style={{ color: '#b91c1c' }}>{error}</p>
+                        <p className="error-text">{error}</p>
                     ) : orders.length === 0 ? (
-                        <p>No orders found.</p>
+                        <div className="admin-empty">
+                            <div className="admin-empty-badge">Orders</div>
+                            <h2 className="admin-empty-title">No orders found</h2>
+                            <p className="admin-empty-sub">Try a different search.</p>
+                        </div>
                     ) : (
-                        <div style={{ display: 'grid', gap: 16 }}>
+                        <div className="admin-orders-grid">
                             {orders.map((o) => {
                                 const id = o._id;
                                 const ebuf = edit[id] || {};
                                 const isCard = (o.type || '').toLowerCase() === 'card';
                                 const isSub = (o.type || '').toLowerCase() === 'subscription';
 
+                                const customerName = o.customerName || o?.metadata?.customerName || '—';
+                                const customerEmail = o.customerEmail || o?.metadata?.customerEmail || '—';
+
+                                const deliverTo =
+                                    o.deliveryName || o?.metadata?.deliveryName || o?.shipping?.name || '—';
+                                const address =
+                                    o.deliveryAddress ||
+                                    o?.metadata?.deliveryAddress ||
+                                    o?.shipping?.address ||
+                                    '—';
+
                                 return (
-                                    <div
-                                        key={id}
-                                        style={{
-                                            border: '1px solid #f1f5f9',
-                                            borderRadius: 12,
-                                            padding: 16,
-                                            display: 'grid',
-                                            gap: 12,
-                                            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-                                        }}
-                                    >
-                                        {/* Header row */}
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'baseline' }}>
-                                            <span className="desktop-body-s" style={{ textTransform: 'capitalize', fontWeight: 600 }}>
-                                                {o.type}
-                                            </span>
-                                            <span className="desktop-body-s" style={{ color: '#6b7280' }}>•</span>
-                                            <span className="desktop-body-s">{o.status}</span>
-                                            <span className="desktop-body-s" style={{ color: '#6b7280' }}>•</span>
-                                            <span className="desktop-body-s">
-                                                {o.createdAt ? new Date(o.createdAt).toLocaleString() : '—'}
-                                            </span>
-                                            <span style={{ flex: 1 }} />
-                                            <span className="desktop-body-s" style={{ color: '#6b7280' }}>Order ID:</span>
-                                            <span className="desktop-body-s" style={{ fontFamily: 'monospace' }}>{id}</span>
+                                    <section key={id} className="admin-order-card">
+                                        {/* Header */}
+                                        <header className="admin-order-header">
+                                            <div className="admin-order-type">
+                                                <span className="pill">{o.type || '—'}</span>
+                                                <span className="sep">•</span>
+                                                <span className="muted">{o.status || '—'}</span>
+                                                <span className="sep">•</span>
+                                                <span className="muted">{o.createdAt ? new Date(o.createdAt).toLocaleString() : '—'}</span>
+                                            </div>
+                                            <div className="admin-order-id">
+                                                <span className="muted">Order ID:</span>
+                                                <code>{id}</code>
+                                                <button
+                                                    type="button"
+                                                    className="admin-copy-btn"
+                                                    onClick={() => { navigator.clipboard.writeText(id); toast.success('Copied'); }}
+                                                    title="Copy order ID"
+                                                >
+                                                    Copy
+                                                </button>
+                                            </div>
+                                        </header>
+
+                                        {/* Customer row */}
+                                        <div className="admin-customer">
+                                            <div><strong>Customer:</strong> {customerName}</div>
+                                            <div><strong>Email:</strong> {customerEmail}</div>
                                         </div>
 
-                                        {/* Amount + Shipping info */}
-                                        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                                        {/* Money / shipping keys */}
+                                        <div className="admin-order-kv">
                                             <div><strong>Amount:</strong> {formatAmount(o.amountTotal, o.currency)}</div>
+                                            {isCard && <div><strong>Qty:</strong> {o.quantity ?? 1}</div>}
+                                            {isSub && o.stripeSubscriptionId && (
+                                                <div><strong>Subscription:</strong> <code>{o.stripeSubscriptionId}</code></div>
+                                            )}
                                             {isCard && (
                                                 <>
-                                                    <div><strong>Qty:</strong> {o.quantity ?? 1}</div>
                                                     <div><strong>ETA:</strong> {o.deliveryWindow || '—'}</div>
-                                                    <div><strong>Tracking:</strong> {o.trackingUrl ? <a href={o.trackingUrl} target="_blank" rel="noreferrer">{o.trackingUrl}</a> : '—'}</div>
+                                                    <div className="admin-wide"><strong>Tracking:</strong> {o.trackingUrl ? <a href={o.trackingUrl} target="_blank" rel="noreferrer">{o.trackingUrl}</a> : '—'}</div>
                                                     <div><strong>Fulfilment:</strong> {o.fulfillmentStatus || 'order_placed'}</div>
-                                                    <div><strong>Deliver To:</strong> {o.deliveryName || o?.metadata?.deliveryName || '—'}</div>
-                                                    <div><strong>Address:</strong> {o.deliveryAddress || o?.metadata?.deliveryAddress || '—'}</div>
+                                                    <div><strong>Deliver To:</strong> {deliverTo}</div>
+                                                    <div className="admin-wide"><strong>Address:</strong> {address}</div>
                                                 </>
                                             )}
                                         </div>
 
-                                        {/* Form A: Tracking + ETA */}
+                                        {/* Card-only controls */}
                                         {isCard && (
-                                            <div
-                                                style={{
-                                                    borderTop: '1px solid #f1f5f9',
-                                                    paddingTop: 12,
-                                                    display: 'grid',
-                                                    gap: 10,
-                                                }}
-                                            >
-                                                <div style={{ fontWeight: 600 }}>Tracking & ETA</div>
-                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 10 }}>
-                                                    <input
-                                                        placeholder="Tracking URL (Royal Mail link)"
-                                                        value={ebuf.trackingUrl || ''}
-                                                        onChange={(e) => setEditField(id, 'trackingUrl', e.target.value)}
-                                                        style={{ border: '1px solid #e5e7eb', borderRadius: 10, padding: '10px 12px' }}
-                                                    />
-                                                    <input
-                                                        placeholder="Estimated delivery (e.g. 20–23 Sep)"
-                                                        value={ebuf.deliveryWindow || ''}
-                                                        onChange={(e) => setEditField(id, 'deliveryWindow', e.target.value)}
-                                                        style={{ border: '1px solid #e5e7eb', borderRadius: 10, padding: '10px 12px' }}
-                                                    />
-                                                </div>
-                                                <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={!!ebuf.notifyTracking}
-                                                        onChange={(e) => setEditField(id, 'notifyTracking', e.target.checked)}
-                                                    />
-                                                    <span className="desktop-body-s">Email customer “Order shipped — track it here”</span>
-                                                </label>
-                                                <div style={{ display: 'flex', gap: 8 }}>
-                                                    <button
-                                                        className="cta-blue-button desktop-button"
-                                                        onClick={() => saveTracking(o)}
-                                                        style={{ padding: '10px 14px' }}
-                                                    >
-                                                        Save tracking
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Form B: Status */}
-                                        {isCard && (
-                                            <div
-                                                style={{
-                                                    borderTop: '1px solid #f1f5f9',
-                                                    paddingTop: 12,
-                                                    display: 'grid',
-                                                    gap: 10,
-                                                }}
-                                            >
-                                                <div style={{ fontWeight: 600 }}>Order Status</div>
-                                                <div style={{ display: 'grid', gridTemplateColumns: '260px auto', gap: 10 }}>
-                                                    <select
-                                                        value={ebuf.fulfillmentStatus || 'order_placed'}
-                                                        onChange={(e) => setEditField(id, 'fulfillmentStatus', e.target.value)}
-                                                        style={{ border: '1px solid #e5e7eb', borderRadius: 10, padding: '10px 12px' }}
-                                                    >
-                                                        {STATUS_OPTIONS.map((opt) => (
-                                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                                        ))}
-                                                    </select>
-                                                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                            <>
+                                                {/* Tracking & ETA */}
+                                                <div className="admin-block">
+                                                    <div className="admin-block-title">Tracking &amp; ETA</div>
+                                                    <div className="admin-2col">
+                                                        <input
+                                                            placeholder="Tracking URL (Royal Mail link)"
+                                                            value={ebuf.trackingUrl || ''}
+                                                            onChange={(e) => setEditField(id, 'trackingUrl', e.target.value)}
+                                                            className="admin-input"
+                                                        />
+                                                        <input
+                                                            placeholder="Estimated delivery (e.g. 20–23 Sep)"
+                                                            value={ebuf.deliveryWindow || ''}
+                                                            onChange={(e) => setEditField(id, 'deliveryWindow', e.target.value)}
+                                                            className="admin-input"
+                                                        />
+                                                    </div>
+                                                    <label className="admin-checkbox">
                                                         <input
                                                             type="checkbox"
-                                                            checked={!!ebuf.notifyStatus}
-                                                            onChange={(e) => setEditField(id, 'notifyStatus', e.target.checked)}
+                                                            checked={!!ebuf.notifyTracking}
+                                                            onChange={(e) => setEditField(id, 'notifyTracking', e.target.checked)}
                                                         />
-                                                        <span className="desktop-body-s">Email customer about this status update</span>
+                                                        <span>Email customer “Order shipped — track it here”</span>
                                                     </label>
+                                                    <div className="admin-actions">
+                                                        <button className="cta-blue-button desktop-button" onClick={() => saveTracking(o)}>
+                                                            Save tracking
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                                <div style={{ display: 'flex', gap: 8 }}>
-                                                    <button
-                                                        className="cta-blue-button desktop-button"
-                                                        onClick={() => saveStatus(o)}
-                                                        style={{ padding: '10px 14px' }}
-                                                    >
-                                                        Save status
-                                                    </button>
+
+                                                {/* Order Status */}
+                                                <div className="admin-block">
+                                                    <div className="admin-block-title">Order Status</div>
+                                                    <div className="admin-2col">
+                                                        <select
+                                                            value={ebuf.fulfillmentStatus || 'order_placed'}
+                                                            onChange={(e) => setEditField(id, 'fulfillmentStatus', e.target.value)}
+                                                            className="admin-input"
+                                                        >
+                                                            {STATUS_OPTIONS.map((opt) => (
+                                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                            ))}
+                                                        </select>
+                                                        <label className="admin-checkbox">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={!!ebuf.notifyStatus}
+                                                                onChange={(e) => setEditField(id, 'notifyStatus', e.target.checked)}
+                                                            />
+                                                            <span>Email customer about this status update</span>
+                                                        </label>
+                                                    </div>
+                                                    <div className="admin-actions">
+                                                        <button className="cta-blue-button desktop-button" onClick={() => saveStatus(o)}>
+                                                            Save status
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </>
                                         )}
 
                                         {/* Subscription helper */}
                                         {isSub && o.stripeSubscriptionId && (
-                                            <div
-                                                style={{
-                                                    borderTop: '1px solid #f1f5f9',
-                                                    paddingTop: 12,
-                                                    display: 'flex',
-                                                    gap: 8,
-                                                    alignItems: 'center',
-                                                    flexWrap: 'wrap',
-                                                }}
-                                            >
-                                                <span className="desktop-body-s" style={{ color: '#6b7280' }}>
-                                                    Subscription: {o.stripeSubscriptionId}
-                                                </span>
-                                                <button
-                                                    className="desktop-button"
-                                                    onClick={() => cancelSubscription(o)}
-                                                    style={{ padding: '10px 14px', border: '1px solid #ef4444', color: '#ef4444', background: '#fff', borderRadius: 10 }}
-                                                >
-                                                    Cancel at period end
-                                                </button>
+                                            <div className="admin-block">
+                                                <div className="admin-block-title">Subscription</div>
+                                                <div className="admin-sub-row">
+                                                    <span className="muted">Stripe ID:</span>
+                                                    <code>{o.stripeSubscriptionId}</code>
+                                                    <button
+                                                        className="admin-danger-btn"
+                                                        onClick={() => cancelSubscription(o)}
+                                                    >
+                                                        Cancel at period end
+                                                    </button>
+                                                </div>
                                             </div>
                                         )}
-                                    </div>
+                                    </section>
                                 );
                             })}
                         </div>

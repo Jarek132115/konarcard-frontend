@@ -1,0 +1,249 @@
+/* ===== Admin Orders ===================================================== */
+
+.admin-main {
+    padding-bottom: 24px;
+}
+
+/* Filters strip */
+.admin-filters {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 6px 0 12px;
+}
+
+.admin-filters-grid {
+    display: grid;
+    grid-template-columns: 1fr 200px 220px auto;
+    gap: 10px;
+}
+
+.admin-input {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 12px;
+    outline: none;
+}
+
+.admin-filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.admin-reset-btn {
+    padding: 10px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.admin-results-pill {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 6px 10px;
+    font-weight: 700;
+    font-size: 12px;
+    color: #1e3a8a;
+    background: #e9eef6;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 999px;
+}
+
+/* Empty state */
+.admin-empty {
+    text-align: center;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 16px;
+    padding: 28px 20px;
+}
+
+.admin-empty-badge {
+    display: inline-block;
+    font-weight: 700;
+    font-size: .8rem;
+    letter-spacing: .02em;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #e9eef6;
+    color: #1e3a8a;
+    border: 1px solid rgba(0, 0, 0, .06);
+    margin-bottom: 10px;
+}
+
+.admin-empty-title {
+    margin: 6px 0 4px;
+    font-weight: 800;
+}
+
+.admin-empty-sub {
+    margin: 0;
+    color: #555;
+}
+
+/* List wrap */
+.admin-list {
+    width: 100%;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 12px;
+}
+
+/* Grid of cards */
+.admin-orders-grid {
+    display: grid;
+    gap: 14px;
+}
+
+/* Order card */
+.admin-order-card {
+    border: 1px solid #f1f5f9;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: grid;
+    gap: 12px;
+}
+
+/* Header row */
+.admin-order-header {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.admin-order-type {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.pill {
+    display: inline-block;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.sep {
+    color: #9ca3af;
+}
+
+.muted {
+    color: #6b7280;
+}
+
+.admin-order-id {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.admin-copy-btn {
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    border-radius: 10px;
+    padding: 8px 10px;
+}
+
+/* Customer row */
+.admin-customer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: #f9f9f9;
+    border: 1px solid rgba(0, 0, 0, .06);
+    border-radius: 12px;
+    padding: 10px 12px;
+}
+
+/* Key/Value grid */
+.admin-order-kv {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+    gap: 10px 12px;
+}
+
+.admin-order-kv .admin-wide {
+    grid-column: span 2;
+}
+
+/* Section blocks */
+.admin-block {
+    border-top: 1px solid #f1f5f9;
+    padding-top: 12px;
+    display: grid;
+    gap: 10px;
+}
+
+.admin-block-title {
+    font-weight: 700;
+}
+
+/* Two column control row */
+.admin-2col {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 10px;
+}
+
+.admin-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #111;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Subscription helper */
+.admin-sub-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.admin-danger-btn {
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 14px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .admin-filters-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-2col {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-order-kv {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-order-kv .admin-wide {
+        grid-column: auto;
+    }
+
+    .admin-customer {
+        grid-template-columns: 1fr;
+    }
+}
