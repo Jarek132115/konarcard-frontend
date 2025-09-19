@@ -1651,7 +1651,7 @@
 .mp-mobile-controls {
     position: sticky;
     top: 64px;
-    /* sits under the fixed mobile header (56px + a bit) */
+    /* under fixed mobile header (56px + a bit) */
     z-index: 1005;
     display: flex;
     gap: 8px;
@@ -1735,7 +1735,7 @@
     opacity: .92;
 }
 
-/* Reduce visual weight when collapsed so Visit looks 'selected' while opening link */
+/* Reduce visual weight when collapsed so Visit looks 'selected' */
 .mp-mobile-controls.is-collapsed .mp-tab:not(.active) {
     opacity: .9;
 }
