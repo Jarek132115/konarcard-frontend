@@ -1647,16 +1647,17 @@
     }
 }
 
-/* ===== Mobile Preview Controls (Show Preview / Visit Page) ===== */
+/* ===== Mobile Preview Controls (Pill: tabs + bottom holder) ===== */
 .mp-mobile-controls {
     position: sticky;
     top: 64px;
-    /* under fixed mobile header (56px + a bit) */
+    /* just below the fixed mobile header */
     z-index: 1005;
     display: flex;
-    gap: 8px;
-    padding: 10px;
-    margin: 0 0 12px 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0 0 12px 0;
     background: transparent;
     transition: opacity .2s ease, transform .2s ease;
 }
@@ -1674,112 +1675,121 @@
 .mp-mobile-controls.is-open {
     opacity: 1;
     transform: translateY(0);
-    pointer-events: auto;
 }
 
 .mp-mobile-controls.is-collapsed {
-    opacity: .88;
+    opacity: .96;
     transform: translateY(-2px);
 }
 
-/* Segmented tabs */
+/* Top half of the pill (tabs track) */
+.mp-pill {
+    display: flex;
+    margin: 0 8px;
+    border: 1px solid rgba(0, 0, 0, .12);
+    border-bottom: 0;
+    border-radius: 14px 14px 0 0;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+}
+
+.dark-mode .mp-pill {
+    border-color: rgba(255, 255, 255, .12);
+    background: #202020;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
+}
+
+/* Bottom half of the pill (always there) */
+.mp-pill-bottom {
+    height: 46px;
+    /* height of the “holder” */
+    margin: 0 8px;
+    border: 1px solid rgba(0, 0, 0, .12);
+    border-top: 0;
+    border-radius: 0 0 14px 14px;
+    background: #f6f6f6;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+}
+
+.dark-mode .mp-pill-bottom {
+    border-color: rgba(255, 255, 255, .12);
+    background: #151515;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
+}
+
+/* Tabs */
 .mp-tab {
     appearance: none;
     -webkit-appearance: none;
     text-decoration: none;
-    border: 1px solid rgba(0, 0, 0, .08);
+    border: 0;
     background: #f7f7f7;
     color: #111;
-    font: 700 .9rem/1 var(--main-font-family, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif);
-    padding: 10px 14px;
-    border-radius: 12px;
+    font: 700 .95rem/1 var(--main-font-family, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif);
+    padding: 12px 16px;
     flex: 1 1 0;
     text-align: center;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
-    transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .06s ease, opacity .2s ease;
     cursor: pointer;
-    white-space: nowrap;
+    transition: background-color .2s ease, color .2s ease, transform .06s ease, opacity .2s ease;
+}
+
+/* vertical divider between tabs */
+.mp-tab+.mp-tab {
+    border-left: 1px solid rgba(0, 0, 0, .12);
+}
+
+.dark-mode .mp-tab {
+    background: #2a2a2a;
+    color: #fff;
+}
+
+.dark-mode .mp-tab+.mp-tab {
+    border-left-color: rgba(255, 255, 255, .12);
 }
 
 .mp-tab:active {
     transform: translateY(1px);
 }
 
-.dark-mode .mp-tab {
-    border-color: rgba(255, 255, 255, .08);
-    background: #202020;
-    color: #fff;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
-}
-
-/* Active state (Show Preview selected) */
+/* Active state (selected tab) */
 .mp-tab.active,
 .mp-tab[aria-selected="true"] {
     background: #0081FF;
     color: #fff;
-    border-color: #0081FF;
 }
 
-/* Visit Page variant */
+/* Visit Page specific base look */
 .mp-tab.visit {
-    background: #fff;
-    color: #111;
+    background: #ffffff;
 }
 
 .dark-mode .mp-tab.visit {
     background: #151515;
-    color: #fff;
 }
 
-.mp-tab.visit:hover {
+/* Slight deemphasis for the unselected tab when collapsed */
+.mp-mobile-controls.is-collapsed .mp-tab:not(.active) {
     opacity: .92;
 }
 
-/* Reduce visual weight when collapsed so Visit looks 'selected' */
-.mp-mobile-controls.is-collapsed .mp-tab:not(.active) {
-    opacity: .9;
-}
-
-/* Compact on very small screens */
+/* Compact tweaks on tiny screens */
 @media (max-width:400px) {
     .mp-mobile-controls {
         top: 60px;
-        padding: 8px;
-        gap: 6px;
+    }
+
+    .mp-pill {
+        border-radius: 12px 12px 0 0;
+    }
+
+    .mp-pill-bottom {
+        border-radius: 0 0 12px 12px;
+        height: 42px;
     }
 
     .mp-tab {
-        padding: 9px 10px;
-        font-size: .85rem;
-        border-radius: 10px;
-    }
-}
-
-/* Fix: stack the mobile controls ABOVE the phone preview */
-@media (max-width:1000px) {
-
-    /* you add this class on the preview wrapper when mobile */
-    .myprofile-mock-phone-mobile-container {
-        display: flex;
-        flex-direction: column;
-        /* 💡 stack controls then phone */
-        align-items: center;
-        /* center both */
-        gap: 10px;
-        /* small space between controls and phone */
-    }
-
-    /* make the segmented control match the phone width and center */
-    .mp-mobile-controls {
-        position: sticky;
-        top: 64px;
-        /* keep your sticky behavior */
-        width: 100%;
-        max-width: 350px;
-        /* same as phone max-width */
-        margin: 0 auto 12px;
-        /* center above phone */
-        justify-content: center;
-        /* optional: center the row of tabs */
+        padding: 10px 12px;
+        font-size: .9rem;
     }
 }

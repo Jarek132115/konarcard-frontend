@@ -748,39 +748,43 @@ export default function MyProfile() {
                 {/* Phone preview column */}
                 <div className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`}>
 
-                  {/* NEW: Always render the control ABOVE the preview; pill when closed */}
-                  <div style={controlsWrapStyle} aria-label="Preview controls" role="group">
-                    {previewOpen ? (
-                      <div style={controlsStyle(false)}>
+                  {/* Mobile controls (top pill + bottom holder) */}
+                  {isMobile && (
+                    <div
+                      className={`mp-mobile-controls ${previewOpen ? "is-open" : "is-collapsed"}`}
+                      role="tablist"
+                      aria-label="Preview controls"
+                    >
+                      {/* Top half of the pill */}
+                      <div className="mp-pill">
                         <button
                           type="button"
-                          onClick={() => setPreviewOpen(false)}
-                          style={blueBtn}
+                          role="tab"
+                          aria-selected={previewOpen}
+                          className={`mp-tab ${previewOpen ? "active" : ""}`}
+                          onClick={() => setPreviewOpen((s) => !s)}
                         >
-                          Close Preview
+                          {previewOpen ? "Close Preview" : "Show Preview"}
                         </button>
+
                         <a
+                          role="tab"
+                          aria-selected={!previewOpen}
+                          className={`mp-tab visit ${!previewOpen ? "active" : ""}`}
                           href={visitUrl}
                           target="_blank"
                           rel="noreferrer"
-                          style={{ ...grayBtn, textDecoration: "none", display: "inline-flex", alignItems: "center" }}
+                          onClick={() => setPreviewOpen(false)}
                         >
                           Visit Page
                         </a>
                       </div>
-                    ) : (
-                      <div style={controlsStyle(true)}>
-                        <button
-                          type="button"
-                          onClick={() => setPreviewOpen(true)}
-                          style={{ ...blueBtn, padding: "8px 14px" }}
-                          aria-expanded={previewOpen}
-                        >
-                          Show Preview
-                        </button>
-                      </div>
-                    )}
-                  </div>
+
+                      {/* Bottom grey holder (always visible) */}
+                      <div className="mp-pill-bottom" aria-hidden="true" />
+                    </div>
+                  )}
+
 
                   {/* Collapsible preview */}
                   <div style={collapsibleStyle}>
