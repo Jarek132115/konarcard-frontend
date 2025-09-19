@@ -40,7 +40,7 @@ const HelpCentre = lazyWithRetry(() => import('./pages/website/HelpCentre.jsx'))
 const ContactUs = lazyWithRetry(() => import('./pages/website/ContactUs.jsx'));
 const Policies = lazyWithRetry(() => import('./pages/website/Policies.jsx'));
 // ⬇️ use the new success page for card orders
-const SuccessCard = lazyWithRetry(() => import('./pages/interface/Success.jsx'));
+const SuccessCard = lazyWithRetry(() => import('./pages/website/Success.jsx'));
 const SuccessSubscription = lazyWithRetry(() => import('./pages/website/SuccessSubscription.jsx'));
 const UserPage = lazyWithRetry(() => import('./pages/interface/UserPage.jsx'));
 
