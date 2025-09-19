@@ -1651,14 +1651,24 @@
 .mp-mobile-controls {
     position: sticky;
     top: 64px;
-    /* under fixed mobile header (56px + a bit) */
+    /* below your fixed mobile header */
     z-index: 1005;
     display: flex;
+    flex-direction: row;
+    /* row, not column */
+    align-items: stretch;
+    justify-content: center;
+    /* center the row */
     gap: 8px;
     padding: 10px;
     margin: 0 0 12px 0;
+    width: 100%;
+    max-width: 350px;
+    /* match phone max-width */
     background: transparent;
     transition: opacity .2s ease, transform .2s ease;
+    flex-wrap: nowrap;
+    /* prevent wrapping to 2 lines */
 }
 
 @media (min-width:1001px) {
@@ -1682,23 +1692,29 @@
     transform: translateY(-2px);
 }
 
-/* Segmented tabs */
+/* Tabs (look like segmented buttons) */
 .mp-tab {
     appearance: none;
     -webkit-appearance: none;
     text-decoration: none;
+    display: inline-flex;
+    /* keeps height consistent */
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    /* let flex shrink evenly */
+    flex: 1 1 0;
+    white-space: nowrap;
+    /* no wrapping */
+    padding: 10px 14px;
+    border-radius: 12px;
     border: 1px solid rgba(0, 0, 0, .08);
     background: #f7f7f7;
     color: #111;
     font: 700 .9rem/1 var(--main-font-family, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif);
-    padding: 10px 14px;
-    border-radius: 12px;
-    flex: 1 1 0;
-    text-align: center;
     box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
     transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .06s ease, opacity .2s ease;
     cursor: pointer;
-    white-space: nowrap;
 }
 
 .mp-tab:active {
@@ -1712,7 +1728,6 @@
     box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
 }
 
-/* Active state (Show Preview selected) */
 .mp-tab.active,
 .mp-tab[aria-selected="true"] {
     background: #0081FF;
@@ -1720,7 +1735,7 @@
     border-color: #0081FF;
 }
 
-/* Visit Page variant */
+/* Visit Page base variant (unselected look) */
 .mp-tab.visit {
     background: #fff;
     color: #111;
@@ -1735,9 +1750,52 @@
     opacity: .92;
 }
 
-/* Reduce visual weight when collapsed so Visit looks 'selected' */
+/* De-emphasize the unselected tab when collapsed */
 .mp-mobile-controls.is-collapsed .mp-tab:not(.active) {
     opacity: .9;
+}
+
+/* ===== Stack the controls ABOVE the phone on mobile ===== */
+@media (max-width:1000px) {
+    .myprofile-mock-phone-mobile-container {
+        display: flex;
+        flex-direction: column;
+        /* controls then phone */
+        align-items: center;
+        /* center both */
+        gap: 10px;
+    }
+
+    .mp-mobile-controls {
+        margin: 0 auto 12px;
+        /* center the bar */
+        width: 100%;
+        max-width: 350px;
+        /* same as phone */
+    }
+}
+
+/* --- Light flicker guard for some mobile browsers --- */
+/* 1) promote to own layer; 2) remove heavy transitions on tiny screens */
+.mp-mobile-controls {
+    will-change: transform;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+@media (max-width:480px) {
+    .mp-mobile-controls {
+        transition: none;
+    }
+
+    /* fewer repaints on older WebViews */
+}
+
+/* Avoid any ancestor transform breaking sticky */
+.myprofile-content,
+.myprofile-flex-container {
+    transform: none !important;
 }
 
 /* Compact on very small screens */
@@ -1753,71 +1811,4 @@
         font-size: .85rem;
         border-radius: 10px;
     }
-}
-
-/* Fix: stack the mobile controls ABOVE the phone preview */
-@media (max-width:1000px) {
-
-    /* you add this class on the preview wrapper when mobile */
-    .myprofile-mock-phone-mobile-container {
-        display: flex;
-        flex-direction: column;
-        /* 💡 stack controls then phone */
-        align-items: center;
-        /* center both */
-        gap: 10px;
-        /* small space between controls and phone */
-    }
-
-    /* make the segmented control match the phone width and center */
-    .mp-mobile-controls {
-        position: sticky;
-        top: 64px;
-        /* keep your sticky behavior */
-        width: 100%;
-        max-width: 350px;
-        /* same as phone max-width */
-        margin: 0 auto 12px;
-        /* center above phone */
-        justify-content: center;
-        /* optional: center the row of tabs */
-    }
-}
-
-/* --- Mobile flashing fix (sticky + transitions + GPU) --- */
-
-/* 1) Promote the sticky controls to their own layer to stop repaint thrash */
-.mp-mobile-controls {
-    will-change: transform;
-    backface-visibility: hidden;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-}
-
-/* 2) On iOS Safari specifically, remove the transform/opacity transitions
-      and stop using sticky (falls back to static in flow, but no flicker). */
-@supports (-webkit-touch-callout: none) {
-    .mp-mobile-controls {
-        position: static;
-        /* turn off sticky on iOS to avoid the bug */
-        top: auto;
-        transition: none !important;
-        /* kill the transform/opacity animations */
-    }
-}
-
-/* 3) On some Android WebViews/Samsung Internet, sticky+opacity transitions also flicker.
-      Disable the fancy transitions only for very small screens. */
-@media (max-width: 480px) {
-    .mp-mobile-controls {
-        transition: none;
-        /* keeps layout stable on finicky devices */
-    }
-}
-
-/* 4) Safety: avoid any ancestor creating a new stacking context that fights sticky */
-.myprofile-content,
-.myprofile-flex-container {
-    transform: none !important;
-    will-change: auto;
 }
