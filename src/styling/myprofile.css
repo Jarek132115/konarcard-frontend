@@ -1646,3 +1646,111 @@
         /* remove old min-width:350px restriction */
     }
 }
+
+/* ===== Mobile Preview Controls (Show Preview / Visit Page) ===== */
+.mp-mobile-controls {
+    position: sticky;
+    top: 64px;
+    /* sits under the fixed mobile header (56px + a bit) */
+    z-index: 1005;
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    margin: 0 0 12px 0;
+    background: transparent;
+    transition: opacity .2s ease, transform .2s ease;
+}
+
+@media (min-width:1001px) {
+    .mp-mobile-controls {
+        display: none;
+    }
+}
+
+.dark-mode .mp-mobile-controls {
+    background: transparent;
+}
+
+.mp-mobile-controls.is-open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.mp-mobile-controls.is-collapsed {
+    opacity: .88;
+    transform: translateY(-2px);
+}
+
+/* Segmented tabs */
+.mp-tab {
+    appearance: none;
+    -webkit-appearance: none;
+    text-decoration: none;
+    border: 1px solid rgba(0, 0, 0, .08);
+    background: #f7f7f7;
+    color: #111;
+    font: 700 .9rem/1 var(--main-font-family, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif);
+    padding: 10px 14px;
+    border-radius: 12px;
+    flex: 1 1 0;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .06s ease, opacity .2s ease;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.mp-tab:active {
+    transform: translateY(1px);
+}
+
+.dark-mode .mp-tab {
+    border-color: rgba(255, 255, 255, .08);
+    background: #202020;
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
+}
+
+/* Active state (Show Preview selected) */
+.mp-tab.active,
+.mp-tab[aria-selected="true"] {
+    background: #0081FF;
+    color: #fff;
+    border-color: #0081FF;
+}
+
+/* Visit Page variant */
+.mp-tab.visit {
+    background: #fff;
+    color: #111;
+}
+
+.dark-mode .mp-tab.visit {
+    background: #151515;
+    color: #fff;
+}
+
+.mp-tab.visit:hover {
+    opacity: .92;
+}
+
+/* Reduce visual weight when collapsed so Visit looks 'selected' while opening link */
+.mp-mobile-controls.is-collapsed .mp-tab:not(.active) {
+    opacity: .9;
+}
+
+/* Compact on very small screens */
+@media (max-width:400px) {
+    .mp-mobile-controls {
+        top: 60px;
+        padding: 8px;
+        gap: 6px;
+    }
+
+    .mp-tab {
+        padding: 9px 10px;
+        font-size: .85rem;
+        border-radius: 10px;
+    }
+}
