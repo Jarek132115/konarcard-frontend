@@ -1,4 +1,3 @@
-// src/components/AuthContext.jsx
 import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import api from '../services/api';
 
@@ -9,8 +8,12 @@ const USER_KEY = 'authUser';
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [initialized, setInitialized] = useState(false);
-    const [loading, setLoading] = useState(true); // expose for screens that show a spinner if needed
+
+    // Flags
+    const [initialized, setInitialized] = useState(false); // app boot complete
+    const [loading, setLoading] = useState(true);          // optional (legacy consumers)
+    const [hydrating, setHydrating] = useState(false);     // actively refreshing session
+
     const bootstrappedRef = useRef(false);
 
     const attachAuthHeader = (token) => {
@@ -18,7 +21,7 @@ export const AuthProvider = ({ children }) => {
         else delete api.defaults.headers.common.Authorization;
     };
 
-    // Exposed method for screens to force-refresh the session (e.g., after subscribe)
+    // Exposed method to force-refresh session
     const fetchUser = async () => {
         const token = localStorage.getItem(TOKEN_KEY);
         if (!token) {
@@ -29,6 +32,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         attachAuthHeader(token);
+        setHydrating(true);
         try {
             const res = await api.get('/profile');
             const fresh = res?.data?.data || null;
@@ -49,6 +53,8 @@ export const AuthProvider = ({ children }) => {
                 setUser(null);
             }
             return null;
+        } finally {
+            setHydrating(false);
         }
     };
 
@@ -59,9 +65,7 @@ export const AuthProvider = ({ children }) => {
         // 1) Read token + cached user synchronously (no UI flash)
         const token = localStorage.getItem(TOKEN_KEY);
         let cachedUser = null;
-        try {
-            cachedUser = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
-        } catch { }
+        try { cachedUser = JSON.parse(localStorage.getItem(USER_KEY) || 'null'); } catch { }
 
         if (token) attachAuthHeader(token);
         if (cachedUser) setUser(cachedUser);
@@ -72,12 +76,10 @@ export const AuthProvider = ({ children }) => {
 
         // 2) Background refresh (don’t block paint)
         if (token) {
-            (async () => {
-                const fresh = await fetchUser();
-                // nothing else; user state already updated inside fetchUser
-            })();
+            // fetchUser() will toggle hydrating true→false around the request
+            fetchUser();
         }
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const login = (token, userData) => {
         try {
@@ -88,6 +90,7 @@ export const AuthProvider = ({ children }) => {
         setUser(userData || null);
         setInitialized(true);
         setLoading(false);
+        setHydrating(false);
     };
 
     const logout = () => {
@@ -97,6 +100,7 @@ export const AuthProvider = ({ children }) => {
         } catch { }
         attachAuthHeader(null);
         setUser(null);
+        setHydrating(false);
     };
 
     const value = useMemo(
@@ -105,11 +109,12 @@ export const AuthProvider = ({ children }) => {
             setUser,
             login,
             logout,
-            initialized, // “app is booted” flag
-            loading,     // optional: some places use this
+            initialized, // “app booted” flag
+            loading,     // legacy optional
+            hydrating,   // refreshing session in background
             fetchUser,   // allow screens to revalidate on demand
         }),
-        [user, initialized, loading]
+        [user, initialized, loading, hydrating]
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
