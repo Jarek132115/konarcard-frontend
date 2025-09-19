@@ -31,7 +31,7 @@ import Billing from './pages/interface/Billing.jsx';
 import ContactSupport from './pages/interface/ContactSupport.jsx';
 import HelpCentreInterface from './pages/interface/HelpCentreInterface.jsx';
 import MyProfile from './pages/interface/MyProfile.jsx';
-import MyOrders from './pages/interface/MyOrders.jsx'; // <-- ensure this matches the real filename
+import MyOrders from './pages/interface/MyOrder.jsx'; // <-- ensure this matches the real filename
 import NFCCards from './pages/interface/NFCCards.jsx';
 import Notifications from './pages/interface/Notifications.jsx';
 import Profile from './pages/interface/Profile.jsx';
