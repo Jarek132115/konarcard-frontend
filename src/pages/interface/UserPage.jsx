@@ -345,40 +345,41 @@ const centerPage = {
     minHeight: "100vh",
 };
 
-// --- replace the whole unavailable() with this ---
+// --- FULL REPLACEMENT ---
 const unavailable = (username) => (
     <div className="user-landing-page unavailable-wrap">
         <div className="unavailable-card">
             <div className="unavailable-badge">Profile status</div>
 
             <h1 className="unavailable-title">This profile isn’t live yet</h1>
-
-            <p className="unavailable-sub">
-                There are a couple of common reasons:
-            </p>
+            <p className="unavailable-sub">There are a couple of common reasons:</p>
 
             <ul className="unavailable-list">
-                <li>
-                    <span className="dot" /> <strong>No content published yet.</strong>
-                    The owner might not have created their page.
+                <li className="unavailable-item">
+                    <span className="dot" />
+                    <div className="reason">
+                        <div className="desktop-body-s"><strong>No content published yet.</strong></div>
+                        <div className="desktop-body-xs">The owner might not have created their page.</div>
+                    </div>
                 </li>
-                <li>
-                    <span className="dot" /> <strong>Access expired.</strong>
-                    The free trial may have ended or a subscription is required.
+
+                <li className="unavailable-item">
+                    <span className="dot" />
+                    <div className="reason">
+                        <div className="desktop-body-s"><strong>Access expired.</strong></div>
+                        <div className="desktop-body-xs">The free trial may have ended or a subscription is required.</div>
+                    </div>
                 </li>
             </ul>
 
             <div className="unavailable-actions">
-                <a className="cta-blue" href="/myprofile">Create / Edit My Profile</a>
-                <a className="cta-outline" href="/subscription">Check Subscription</a>
+                <a className="desktop-button cta-blue-button" href="/myprofile">Create / Edit My Profile</a>
+                <a className="desktop-button cta-black-button" href="/subscription">Check Subscription</a>
             </div>
-
-            <p className="unavailable-foot">
-                Want to reach them directly? Try contacting <strong>@{username}</strong>.
-            </p>
         </div>
     </div>
 );
+
 
 
 export default UserPage;

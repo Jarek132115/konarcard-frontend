@@ -567,81 +567,67 @@
     opacity: .9;
 }
 
+/* List -> column layout with two-line reason (title + subtext) */
 .unavailable-list {
-    text-align: left;
+    list-style: none;
     margin: 0 auto 18px;
     padding: 0;
-    list-style: none;
-    max-width: 520px;
-    color: #111;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.unavailable-list li {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    padding: 10px 12px;
+.unavailable-item {
+    display: grid;
+    grid-template-columns: 12px 1fr;
+    gap: 10px 12px;
+    align-items: start;
+    padding: 12px 14px;
     border: 1px solid rgba(0, 0, 0, .06);
     border-radius: 12px;
     background: #f9f9f9;
     box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
-    margin-bottom: 10px;
 }
 
-.unavailable-list .dot {
+.unavailable-item .dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
     background: #0081FF;
     margin-top: 7px;
-    flex: 0 0 8px;
 }
 
+.unavailable-item .reason {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Buttons: use your existing component styles */
 .unavailable-actions {
     display: flex;
     gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
-    margin: 14px 0 8px;
+    margin-top: 6px;
 }
 
-.unavailable-actions .cta-blue,
-.unavailable-actions .cta-outline {
-    padding: 10px 16px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: .95rem;
-    text-decoration: none;
-    transition: transform .06s ease, opacity .2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+/* When buttons stack, make them full-width */
+@media (max-width: 520px) {
+    .unavailable-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .unavailable-actions .desktop-button {
+        width: 100%;
+    }
 }
 
-.unavailable-actions .cta-blue {
-    background: #0081FF;
-    color: #fff;
-    border: none;
-}
-
-.unavailable-actions .cta-outline {
-    background: #fff;
-    color: #000;
-    border: 1px solid rgba(0, 0, 0, .12);
-}
-
-.unavailable-actions a:hover {
-    opacity: .92;
-}
-
-.unavailable-actions a:active {
-    transform: translateY(1px);
-}
-
-.unavailable-foot {
-    margin-top: 10px;
-    color: #555;
-}
-
-/* Dark theme compatibility with your page theme */
+/* Dark theme compatibility */
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .unavailable-wrap {
     background: #1F1F1F !important;
 }
@@ -653,14 +639,8 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
 }
 
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .unavailable-list li {
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .unavailable-item {
     background: #151515;
     border-color: rgba(255, 255, 255, .08);
     color: #fff;
-}
-
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .unavailable-actions .cta-outline {
-    background: #202020;
-    color: #fff;
-    border-color: rgba(255, 255, 255, .12);
 }
