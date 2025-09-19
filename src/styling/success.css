@@ -1,3 +1,4 @@
+/* Base (from your old CSS, extended) */
 .success-page-wrapper,
 .success-page {
     display: flex;
@@ -15,9 +16,9 @@
     background: #F7F7F7;
     padding: 30px;
     border-radius: 16px;
-    text-align: center;
+    text-align: left;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    max-width: 550px;
+    max-width: 700px;
     width: 100%;
     border: 1px solid #e0e0e0;
     position: relative;
@@ -30,7 +31,81 @@
 
 .success-buttons {
     display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+/* Page layout shell to match your existing app layout */
+.success-container {
+    max-width: 700px;
+    width: 100%;
+    margin: 5px auto 0;
+    text-align: left;
+}
+
+/* Tiles */
+.success-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.info-tile {
+    background: var(--card-bg, #F7F7F7);
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.info-tile .label {
+    margin: 0;
+    color: #666;
+}
+
+.info-tile .value {
+    margin: 0;
+}
+
+/* Key/Value list */
+.kv {
+    display: grid;
+    gap: 6px;
+}
+
+.kv-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.kv-label {
+    color: #666;
+}
+
+.kv-value {
+    text-transform: none;
+}
+
+/* Status */
+.status-text {
+    text-transform: capitalize;
+}
+
+/* Mobile handling */
+@media (max-width: 700px) {
+    .success-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Buttons – rely on your existing classes; ensure min widths here */
+.success-buttons .desktop-button {
+    min-width: 180px;
+}
+
+/* Header alignment */
+.success-header {
+    margin-top: 0;
+    margin-bottom: 8px;
 }
