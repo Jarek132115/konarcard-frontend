@@ -23,21 +23,17 @@
 .user-landing-page .landing-service-item .landing-service-price,
 .user-landing-page .landing-contact-label {
     color: #000000;
-    ;
-    /* slate-500 */
 }
 
 /* Subheading default (light mode = black) */
 .user-landing-page .landing-sub-heading {
     color: #000;
-    /* black in light mode */
 }
 
 /* Subheading in dark mode = white */
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-sub-heading {
     color: #fff;
 }
-
 
 /* Do NOT flip card backgrounds in dark mode — keep them white like the design */
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-about-section,
@@ -48,7 +44,7 @@
     color: #111 !important;
 }
 
-/* Body copy readability in any dark card content (only if something forces dark text) */
+/* Body copy readability in any dark card content */
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-bio-text,
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-review-card .landing-review-text {
     color: #111 !important;
@@ -84,7 +80,7 @@
     max-width: 800px;
 }
 
-/* Primary CTA: black in light, white in dark */
+/* Primary CTA */
 .landing-action-button {
     background: #0081FF;
     color: #fff;
@@ -221,7 +217,7 @@
     text-align: center;
 }
 
-/* ---------- Carousels (used only when mode === 'carousel') ---------- */
+/* ---------- Carousels ---------- */
 .user-carousel-container {
     position: relative;
     width: 100%;
@@ -319,7 +315,7 @@
     padding-right: 0.5rem;
 }
 
-/* LIST overrides (vertical stack like the design) */
+/* LIST overrides */
 .user-services-list-carousel.list,
 .user-reviews-list-carousel.list {
     display: flex;
@@ -341,7 +337,6 @@
     scroll-snap-type: x mandatory;
 }
 
-/* vertical list */
 .landing-work-gallery.list {
     flex-direction: column;
     overflow-x: hidden;
@@ -349,7 +344,6 @@
     gap: 16px;
 }
 
-/* 2-column grid */
 .landing-work-gallery.grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -362,7 +356,6 @@
 .user-work-gallery-carousel .landing-work-image {
     width: 100%;
     aspect-ratio: 4 / 2.5;
-    /* match figma */
     object-fit: cover;
     border-radius: 14px;
 }
@@ -479,11 +472,10 @@
     }
 }
 
-/* Keep the service/review tracks full width (don't center the cards themselves) */
+/* Keep service/review tracks full width */
 .user-services-list-carousel,
 .user-reviews-list-carousel {
     align-items: stretch !important;
-    /* cross-axis */
 }
 
 /* Ensure cards span the full track width */
@@ -493,10 +485,9 @@
 .landing-reviews-list .landing-review-card {
     width: 100%;
     max-width: 800px;
-    /* matches your track max */
 }
 
-/* Center the content inside the cards only */
+/* Center the content inside those cards only */
 .user-services-list-carousel .landing-service-item,
 .user-reviews-list-carousel .landing-review-card,
 .landing-services-list .landing-service-item,
@@ -505,7 +496,6 @@
     background: #f9f9f9;
 }
 
-/* Make sure the inner text lines are centered too */
 .landing-service-name,
 .landing-service-price,
 .landing-review-text,
@@ -513,7 +503,7 @@
     text-align: center;
 }
 
-/* Center the star row */
+/* Center star row */
 .landing-star-rating {
     display: flex;
     justify-content: center;
@@ -567,7 +557,7 @@
     opacity: .9;
 }
 
-/* List -> column layout with two-line reason (title + subtext) */
+/* List -> column with two-line reason */
 .unavailable-list {
     list-style: none;
     margin: 0 auto 18px;
@@ -605,7 +595,7 @@
     gap: 2px;
 }
 
-/* Buttons: use your existing component styles */
+/* Actions */
 .unavailable-actions {
     display: flex;
     gap: 10px;
@@ -614,7 +604,30 @@
     margin-top: 6px;
 }
 
-/* When buttons stack, make them full-width */
+/* Helper link under CTA */
+.unavailable-help {
+    margin-top: 10px;
+}
+
+.unavailable-help-button {
+    background: transparent;
+    border: none;
+    padding: 6px 4px;
+    cursor: pointer;
+    font: inherit;
+    color: #111;
+    font-weight: 700;
+}
+
+.unavailable-help-button:hover {
+    opacity: .9;
+}
+
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .unavailable-help-button {
+    color: #fff;
+}
+
+/* Stack buttons full width on small screens */
 @media (max-width: 520px) {
     .unavailable-actions {
         flex-direction: column;

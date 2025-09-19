@@ -1,8 +1,9 @@
 // src/pages/UserPage/UserPage.jsx
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
+import { AuthContext } from "../../components/AuthContext";
 
 const PLACEHOLDER_HINTS = [
     "placeholder",
@@ -11,8 +12,8 @@ const PLACEHOLDER_HINTS = [
     "stock",
     "default",
     "template",
-    "konar",        // your brand stock renders
-    "card-mock",    // common mock names
+    "konar",
+    "card-mock",
 ];
 
 const looksLikePlaceholderUrl = (url = "") =>
@@ -38,16 +39,24 @@ const filterRealReviews = (arr) =>
 
 const UserPage = () => {
     const { username } = useParams();
+    const { isAuthenticated } = useContext(AuthContext) || {};
 
     // Refs for carousels
     const workCarouselRef = useRef(null);
     const servicesCarouselRef = useRef(null);
     const reviewsCarouselRef = useRef(null);
 
-    const { data: businessCard, isLoading, isError, error } = useQuery({
+    const {
+        data: businessCard,
+        isLoading,
+        isError,
+        error,
+    } = useQuery({
         queryKey: ["public-business-card", username],
         queryFn: async () => {
-            const response = await api.get(`/api/business-card/by_username/${username}`);
+            const response = await api.get(
+                `/api/business-card/by_username/${username}`
+            );
             return response.data;
         },
         enabled: !!username,
@@ -63,7 +72,8 @@ const UserPage = () => {
             const itemWidth = carousel.children[0].offsetWidth;
             const currentScroll = carousel.scrollLeft;
             const maxScroll = carousel.scrollWidth - carousel.offsetWidth;
-            let next = direction === "left" ? currentScroll - itemWidth : currentScroll + itemWidth;
+            let next =
+                direction === "left" ? currentScroll - itemWidth : currentScroll + itemWidth;
             if (next < 0) next = maxScroll;
             if (next >= maxScroll) next = 0;
             carousel.scrollTo({ left: next, behavior: "smooth" });
@@ -80,7 +90,7 @@ const UserPage = () => {
 
     if (isError) {
         console.error("Error fetching business card:", error);
-        return unavailable(username);
+        return unavailable({ username, isAuthed: !!isAuthenticated });
     }
 
     if (!businessCard) {
@@ -96,14 +106,17 @@ const UserPage = () => {
         businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
     const isProfileActive = hasActiveSubscription || isTrialActive;
 
-    if (!isProfileActive) return unavailable(username);
+    if (!isProfileActive) return unavailable({ username, isAuthed: !!isAuthenticated });
 
     // ---------- Derive ONLY real, user-filled content ----------
-    const realCover = nonEmpty(businessCard.cover_photo) && !looksLikePlaceholderUrl(businessCard.cover_photo);
+    const realCover =
+        nonEmpty(businessCard.cover_photo) &&
+        !looksLikePlaceholderUrl(businessCard.cover_photo);
     const realMainHeading = nonEmpty(businessCard.main_heading);
     const realSubHeading = nonEmpty(businessCard.sub_heading);
 
-    const realAvatar = nonEmpty(businessCard.avatar) && !looksLikePlaceholderUrl(businessCard.avatar);
+    const realAvatar =
+        nonEmpty(businessCard.avatar) && !looksLikePlaceholderUrl(businessCard.avatar);
     const realFullName = nonEmpty(businessCard.full_name);
     const realJobTitle = nonEmpty(businessCard.job_title);
     const realBio = nonEmpty(businessCard.bio);
@@ -112,14 +125,23 @@ const UserPage = () => {
     const services = filterRealServices(businessCard.services);
     const reviews = filterRealReviews(businessCard.reviews);
 
-    const hasContact = nonEmpty(businessCard.contact_email) || nonEmpty(businessCard.phone_number);
+    const hasContact =
+        nonEmpty(businessCard.contact_email) || nonEmpty(businessCard.phone_number);
 
-    const showMainSection = businessCard.show_main_section !== false && (realCover || realMainHeading || realSubHeading || hasContact);
-    const showAboutMeSection = businessCard.show_about_me_section !== false && (realAvatar || realFullName || realJobTitle || realBio);
-    const showWorkSection = businessCard.show_work_section !== false && works.length > 0;
-    const showServicesSection = businessCard.show_services_section !== false && services.length > 0;
-    const showReviewsSection = businessCard.show_reviews_section !== false && reviews.length > 0;
-    const showContactSection = businessCard.show_contact_section !== false && hasContact;
+    const showMainSection =
+        businessCard.show_main_section !== false &&
+        (realCover || realMainHeading || realSubHeading || hasContact);
+    const showAboutMeSection =
+        businessCard.show_about_me_section !== false &&
+        (realAvatar || realFullName || realJobTitle || realBio);
+    const showWorkSection =
+        businessCard.show_work_section !== false && works.length > 0;
+    const showServicesSection =
+        businessCard.show_services_section !== false && services.length > 0;
+    const showReviewsSection =
+        businessCard.show_reviews_section !== false && reviews.length > 0;
+    const showContactSection =
+        businessCard.show_contact_section !== false && hasContact;
 
     const nothingToShow =
         !showMainSection &&
@@ -130,7 +152,7 @@ const UserPage = () => {
         !showContactSection;
 
     const aboutMeLayout = businessCard.about_me_layout || "side-by-side"; // 'side-by-side' | 'stacked'
-    const workDisplayMode = businessCard.work_display_mode || "list";      // 'list' | 'grid' | 'carousel'
+    const workDisplayMode = businessCard.work_display_mode || "list"; // 'list' | 'grid' | 'carousel'
     const servicesDisplayMode = businessCard.services_display_mode || "list";
     const reviewsDisplayMode = businessCard.reviews_display_mode || "list";
 
@@ -151,7 +173,8 @@ const UserPage = () => {
             phone_number,
             publicProfileUrl,
         } = businessCard;
-        const landingPageUrl = publicProfileUrl || `${window.location.origin}/u/${username}`;
+        const landingPageUrl =
+            publicProfileUrl || `${window.location.origin}/u/${username}`;
 
         const nameParts = (full_name || "").split(" ");
         const firstName = nameParts[0] || "";
@@ -182,9 +205,14 @@ const UserPage = () => {
 
     if (nothingToShow) {
         return (
-            <div className="user-landing-page" style={{ ...themeStyles, ...centerPage, padding: 24 }}>
+            <div
+                className="user-landing-page"
+                style={{ ...themeStyles, ...centerPage, padding: 24 }}
+            >
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
-                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>This profile isn’t set up yet</h2>
+                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>
+                        This profile isn’t set up yet
+                    </h2>
                     <p style={{ marginTop: 10, opacity: 0.8 }}>
                         @{username} hasn’t published any content here yet.
                     </p>
@@ -198,11 +226,25 @@ const UserPage = () => {
             {/* Main Section */}
             {showMainSection && (
                 <>
-                    {realCover && <img src={businessCard.cover_photo} alt="Cover" className="landing-cover-photo" />}
-                    {realMainHeading && <h2 className="landing-main-heading">{businessCard.main_heading}</h2>}
-                    {realSubHeading && <p className="landing-sub-heading">{businessCard.sub_heading}</p>}
+                    {realCover && (
+                        <img
+                            src={businessCard.cover_photo}
+                            alt="Cover"
+                            className="landing-cover-photo"
+                        />
+                    )}
+                    {realMainHeading && (
+                        <h2 className="landing-main-heading">{businessCard.main_heading}</h2>
+                    )}
+                    {realSubHeading && (
+                        <p className="landing-sub-heading">{businessCard.sub_heading}</p>
+                    )}
                     {hasContact && (
-                        <button type="button" onClick={handleExchangeContact} className="landing-action-button">
+                        <button
+                            type="button"
+                            onClick={handleExchangeContact}
+                            className="landing-action-button"
+                        >
                             Save My Number
                         </button>
                     )}
@@ -214,10 +256,16 @@ const UserPage = () => {
                 <>
                     <p className="landing-section-title">About Me</p>
                     <div className={`landing-about-section ${aboutMeLayout}`}>
-                        {realAvatar && <img src={businessCard.avatar} alt="Avatar" className="landing-avatar" />}
+                        {realAvatar && (
+                            <img src={businessCard.avatar} alt="Avatar" className="landing-avatar" />
+                        )}
                         <div className="landing-about-header">
-                            {realFullName && <p className="landing-profile-name">{businessCard.full_name}</p>}
-                            {realJobTitle && <p className="landing-profile-role">{businessCard.job_title}</p>}
+                            {realFullName && (
+                                <p className="landing-profile-name">{businessCard.full_name}</p>
+                            )}
+                            {realJobTitle && (
+                                <p className="landing-profile-role">{businessCard.job_title}</p>
+                            )}
                         </div>
                         {realBio && <p className="landing-bio-text">{businessCard.bio}</p>}
                     </div>
@@ -238,10 +286,18 @@ const UserPage = () => {
                     {workDisplayMode === "carousel" && (
                         <div className="user-carousel-container">
                             <div className="user-carousel-nav-buttons">
-                                <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(workCarouselRef, "left")}>
+                                <button
+                                    type="button"
+                                    className="user-carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(workCarouselRef, "left")}
+                                >
                                     &#9664;
                                 </button>
-                                <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(workCarouselRef, "right")}>
+                                <button
+                                    type="button"
+                                    className="user-carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(workCarouselRef, "right")}
+                                >
                                     &#9654;
                                 </button>
                             </div>
@@ -262,19 +318,35 @@ const UserPage = () => {
                     <div className="user-carousel-container">
                         {servicesDisplayMode === "carousel" && (
                             <div className="user-carousel-nav-buttons">
-                                <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(servicesCarouselRef, "left")}>
+                                <button
+                                    type="button"
+                                    className="user-carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(servicesCarouselRef, "left")}
+                                >
                                     &#9664;
                                 </button>
-                                <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(servicesCarouselRef, "right")}>
+                                <button
+                                    type="button"
+                                    className="user-carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(servicesCarouselRef, "right")}
+                                >
                                     &#9654;
                                 </button>
                             </div>
                         )}
-                        <div ref={servicesCarouselRef} className={`user-services-list-carousel ${servicesDisplayMode === "carousel" ? "" : "list"}`}>
+                        <div
+                            ref={servicesCarouselRef}
+                            className={`user-services-list-carousel ${servicesDisplayMode === "carousel" ? "" : "list"
+                                }`}
+                        >
                             {services.map((s, i) => (
                                 <div key={i} className="landing-service-item">
-                                    {nonEmpty(s.name) && <p className="landing-service-name">{s.name}</p>}
-                                    {nonEmpty(s.price) && <span className="landing-service-price">{s.price}</span>}
+                                    {nonEmpty(s.name) && (
+                                        <p className="landing-service-name">{s.name}</p>
+                                    )}
+                                    {nonEmpty(s.price) && (
+                                        <span className="landing-service-price">{s.price}</span>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -289,23 +361,49 @@ const UserPage = () => {
                     <div className="user-carousel-container">
                         {reviewsDisplayMode === "carousel" && (
                             <div className="user-carousel-nav-buttons">
-                                <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(reviewsCarouselRef, "left")}>
+                                <button
+                                    type="button"
+                                    className="user-carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(reviewsCarouselRef, "left")}
+                                >
                                     &#9664;
                                 </button>
-                                <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(reviewsCarouselRef, "right")}>
+                                <button
+                                    type="button"
+                                    className="user-carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(reviewsCarouselRef, "right")}
+                                >
                                     &#9654;
                                 </button>
                             </div>
                         )}
-                        <div ref={reviewsCarouselRef} className={`user-reviews-list-carousel ${reviewsDisplayMode === "carousel" ? "" : "list"}`}>
+                        <div
+                            ref={reviewsCarouselRef}
+                            className={`user-reviews-list-carousel ${reviewsDisplayMode === "carousel" ? "" : "list"
+                                }`}
+                        >
                             {reviews.map((r, i) => (
                                 <div key={i} className="landing-review-card">
                                     <div className="landing-star-rating">
-                                        {Array(r.rating || 0).fill().map((_, j) => <span key={`f-${j}`}>★</span>)}
-                                        {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, j) => <span key={`e-${j}`} className="empty-star">★</span>)}
+                                        {Array(r.rating || 0)
+                                            .fill()
+                                            .map((_, j) => (
+                                                <span key={`f-${j}`}>★</span>
+                                            ))}
+                                        {Array(Math.max(0, 5 - (r.rating || 0)))
+                                            .fill()
+                                            .map((_, j) => (
+                                                <span key={`e-${j}`} className="empty-star">
+                                                    ★
+                                                </span>
+                                            ))}
                                     </div>
-                                    {nonEmpty(r.text) && <p className="landing-review-text">"{r.text}"</p>}
-                                    {nonEmpty(r.name) && <p className="landing-reviewer-name">{r.name}</p>}
+                                    {nonEmpty(r.text) && (
+                                        <p className="landing-review-text">"{r.text}"</p>
+                                    )}
+                                    {nonEmpty(r.name) && (
+                                        <p className="landing-reviewer-name">{r.name}</p>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -321,13 +419,17 @@ const UserPage = () => {
                         {nonEmpty(businessCard.contact_email) && (
                             <div className="landing-contact-item">
                                 <p className="landing-contact-label">Email:</p>
-                                <p className="landing-contact-value">{businessCard.contact_email}</p>
+                                <p className="landing-contact-value">
+                                    {businessCard.contact_email}
+                                </p>
                             </div>
                         )}
                         {nonEmpty(businessCard.phone_number) && (
                             <div className="landing-contact-item">
                                 <p className="landing-contact-label">Phone:</p>
-                                <p className="landing-contact-value">{businessCard.phone_number}</p>
+                                <p className="landing-contact-value">
+                                    {businessCard.phone_number}
+                                </p>
                             </div>
                         )}
                     </div>
@@ -345,8 +447,17 @@ const centerPage = {
     minHeight: "100vh",
 };
 
+// Helper to open Contact page + live chat based on login state
+const goToContactWithChat = (isAuthed) => {
+    try {
+        // A small flag your Contact pages can read to auto-open Tidio
+        localStorage.setItem("openChatOnLoad", "1");
+    } catch { }
+    window.location.href = isAuthed ? "/contact-support" : "/contactus";
+};
+
 // --- FULL REPLACEMENT ---
-const unavailable = (username) => (
+const unavailable = ({ username, isAuthed }) => (
     <div className="user-landing-page unavailable-wrap">
         <div className="unavailable-card">
             <div className="unavailable-badge">Profile status</div>
@@ -358,27 +469,46 @@ const unavailable = (username) => (
                 <li className="unavailable-item">
                     <span className="dot" />
                     <div className="reason">
-                        <div className="desktop-body-s"><strong>No content published yet.</strong></div>
-                        <div className="desktop-body-xs">The owner might not have created their page.</div>
+                        <div className="desktop-body-s">
+                            <strong>No content published yet.</strong>
+                        </div>
+                        <div className="desktop-body-xs">
+                            The owner might not have created their page.
+                        </div>
                     </div>
                 </li>
 
                 <li className="unavailable-item">
                     <span className="dot" />
                     <div className="reason">
-                        <div className="desktop-body-s"><strong>Access expired.</strong></div>
-                        <div className="desktop-body-xs">The free trial may have ended or a subscription is required.</div>
+                        <div className="desktop-body-s">
+                            <strong>Access expired.</strong>
+                        </div>
+                        <div className="desktop-body-xs">
+                            The free trial may have ended or a subscription is required.
+                        </div>
                     </div>
                 </li>
             </ul>
 
             <div className="unavailable-actions">
-                <a className="desktop-button cta-blue-button" href="/myprofile">Create / Edit My Profile</a>
+                <a className="desktop-button cta-blue-button" href="/myprofile">
+                    Create / Edit My Profile
+                </a>
+            </div>
+
+            {/* NEW helper under the main CTA */}
+            <div className="unavailable-help">
+                <button
+                    type="button"
+                    className="unavailable-help-button"
+                    onClick={() => goToContactWithChat(isAuthed)}
+                >
+                    Struggling setting up your profile? <u>Contact us now</u>
+                </button>
             </div>
         </div>
     </div>
 );
-
-
 
 export default UserPage;
