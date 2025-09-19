@@ -1651,13 +1651,14 @@
 .mp-mobile-controls {
     position: sticky;
     top: 64px;
-    /* under your fixed mobile header */
-    z-index: 1005;
+    /* under the fixed mobile header */
+    z-index: 400;
+    /* LOWER than overlays/modals */
     display: flex;
     flex-direction: column;
     /* pill on top, preview below */
     align-items: stretch;
-    /* make pill span the container width */
+    /* pill spans the container width */
     gap: 0;
     padding: 0;
     margin: 0 0 12px 0;
@@ -1690,10 +1691,20 @@
     /* remove extra whitespace when closed */
 }
 
+/* --- Hide/disable controls while overlays are open --- */
+.app-layout.sidebar-active .mp-mobile-controls,
+.share-profile-open .mp-mobile-controls,
+.modal-open .mp-mobile-controls,
+.ReactModal__Overlay--after-open~* .mp-mobile-controls {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    margin: 0 !important;
+    transform: translateY(-2px) !important;
+}
+
 /* --- Pill (tabs track) --- */
 .mp-pill {
     display: flex;
-    /* tabs side-by-side */
     border: 1px solid rgba(0, 0, 0, .12);
     border-bottom: 0;
     /* preview sits flush under the pill */
@@ -1738,7 +1749,6 @@
     transition: background-color .2s ease, color .2s ease, transform .06s ease, opacity .2s ease;
     border-radius: 0;
     /* flat by default */
-    position: relative;
 }
 
 .mp-tab:first-child {
@@ -1800,9 +1810,12 @@
     transform: scale(1);
     margin: 0;
     /* no extra gap; pill handles spacing */
+    position: relative;
+    z-index: 0;
+    /* keep under overlays */
 }
 
-/* Closed state (CSS fallback to match inline style) */
+/* Closed state fallback (mirrors your inline styles) */
 .mp-mobile-controls.is-collapsed .mp-preview-wrap {
     max-height: 0 !important;
     opacity: 0 !important;
@@ -1811,18 +1824,17 @@
     pointer-events: none;
 }
 
-/* Make the preview attach perfectly: no top border or rounding on the phone */
+/* Phone attaches to pill: no top border/radius */
 .mock-phone.mobile-preview {
     border-top: 0 !important;
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
 }
 
-/* Let the preview content scroll fully (no cut-off) */
+/* Ensure preview content can fully scroll (no cut-off) */
 .mock-phone-scrollable-content {
     overflow-y: auto;
     max-height: none;
-    /* ensure full growth inside the collapsible wrapper */
 }
 
 /* Tiny screens */
@@ -1844,7 +1856,7 @@
     }
 }
 
-/* Safety: make sure ancestors don’t break sticky */
+/* Safety: ancestors shouldn’t break sticky */
 .myprofile-content,
 .myprofile-flex-container {
     transform: none !important;
