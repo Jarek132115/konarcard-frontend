@@ -374,7 +374,6 @@ const unavailable = (username) => (
 
             <div className="unavailable-actions">
                 <a className="desktop-button cta-blue-button" href="/myprofile">Create / Edit My Profile</a>
-                <a className="desktop-button cta-black-button" href="/subscription">Check Subscription</a>
             </div>
         </div>
     </div>
