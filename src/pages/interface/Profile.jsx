@@ -208,7 +208,7 @@ export default function Profile() {
             </div>
 
             <div className="profile-setting-block">
-              <label className="profile-label desktop-body-s black">Landing Page URL</label>
+              <label className="profile-label desktop-body-s black">Business Card Page URL</label>
               <div className="profile-url-display-group">
                 <span className="profile-url-prefix desktop-body">www.konarcard.com/u/</span>
                 <input
