@@ -237,6 +237,7 @@ export default function Login() {
                                     required
                                 />
                                 <button
+                                style={{ margin: '20px 0 10px 0'}}
                                     type="submit"
                                     className="desktop-button cta-blue-button"
                                     disabled={isSendingReset}
