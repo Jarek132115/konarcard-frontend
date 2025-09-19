@@ -29,6 +29,35 @@ function statusLabel(s) {
     default: return 'Order placed';
   }
 }
+function statusIndex(s) {
+  switch ((s || '').toLowerCase()) {
+    case 'order_placed': return 0;
+    case 'designing_card': return 1;
+    case 'packaged': return 2;
+    case 'shipped': return 3;
+    default: return 0;
+  }
+}
+function ProgressBar({ status }) {
+  const idx = statusIndex(status);
+  const percent = Math.max(0, Math.min(100, (idx / 3) * 100));
+  return (
+    <div style={{ width: '100%', marginTop: 8 }}>
+      <div style={{
+        height: 8,
+        width: '100%',
+        background: '#e5e7eb',
+        borderRadius: 999,
+        overflow: 'hidden',
+      }}>
+        <div style={{ width: `${percent}%`, height: '100%', background: '#0ea5e9' }} />
+      </div>
+      <div style={{ marginTop: 6, fontSize: 12, color: '#6b7280' }}>
+        {idx + 1} / 4 · {statusLabel(status)}
+      </div>
+    </div>
+  );
+}
 
 export default function SuccessCard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -95,7 +124,7 @@ export default function SuccessCard() {
   const estimatedDelivery = latestCardOrder?.deliveryWindow || latestCardOrder?.metadata?.estimatedDelivery || '—';
   const deliveryAddress = latestCardOrder?.deliveryAddress || latestCardOrder?.metadata?.deliveryAddress || null;
 
-  // New fields
+  // New fields mirrored from admin/webhook
   const fulfillmentStatus = latestCardOrder?.fulfillmentStatus || 'order_placed';
   const trackingUrl = latestCardOrder?.trackingUrl || latestCardOrder?.metadata?.trackingUrl || '';
 
@@ -103,14 +132,10 @@ export default function SuccessCard() {
     if (trackingUrl) {
       window.open(trackingUrl, '_blank', 'noopener,noreferrer');
     } else {
-      toast(
-        'Your card is still being processed. We’ll email you when tracking is available.',
-        { icon: '⏳' }
-      );
+      toast('Your card is still being processed. We’ll email you when tracking is available.', { icon: '⏳' });
     }
   }
 
-  // Chip style (like the 14-day trial badge)
   const chip = {
     display: 'inline-block',
     padding: '6px 10px',
@@ -159,26 +184,24 @@ export default function SuccessCard() {
             <p style={{ color: '#b91c1c' }}>{err}</p>
           ) : (
             <div className="success-box">
-              {/* Status chip + Track button row */}
+              {/* Status chip + Track button */}
               <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
                 <span style={chip}>{statusLabel(fulfillmentStatus)}</span>
                 <button
                   type="button"
                   onClick={handleTrack}
                   className="desktop-button"
-                  style={{
-                    padding: '8px 12px',
-                    borderRadius: 10,
-                    border: '1px solid #e5e7eb',
-                    background: '#fff',
-                  }}
+                  style={{ padding: '8px 12px', borderRadius: 10, border: '1px solid #e5e7eb', background: '#fff' }}
                   title={trackingUrl ? 'Open tracking in a new tab' : 'Tracking not available yet'}
                 >
                   Track order
                 </button>
               </div>
 
-              <h2 className="desktop-h4 success-header">Payment Successful!</h2>
+              {/* Compact progress bar */}
+              <ProgressBar status={fulfillmentStatus} />
+
+              <h2 className="desktop-h4 success-header" style={{ marginTop: 12 }}>Payment Successful!</h2>
               <p className="desktop-body" style={{ margin: 0, color: '#555' }}>
                 Thank you for your order. Your Konar card is on its way.
               </p>

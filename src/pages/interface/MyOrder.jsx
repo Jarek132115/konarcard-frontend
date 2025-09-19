@@ -18,7 +18,6 @@ function formatAmount(amount, currency = 'gbp') {
         maximumFractionDigits: 2,
     }).format(value);
 }
-
 function formatFulfillmentStatus(s) {
     switch ((s || '').toLowerCase()) {
         case 'order_placed': return 'Order placed';
@@ -27,6 +26,29 @@ function formatFulfillmentStatus(s) {
         case 'shipped': return 'Shipped';
         default: return 'Order placed';
     }
+}
+function statusIndex(s) {
+    switch ((s || '').toLowerCase()) {
+        case 'order_placed': return 0;
+        case 'designing_card': return 1;
+        case 'packaged': return 2;
+        case 'shipped': return 3;
+        default: return 0;
+    }
+}
+function ProgressBar({ status }) {
+    const idx = statusIndex(status);
+    const percent = Math.max(0, Math.min(100, (idx / 3) * 100));
+    return (
+        <div style={{ width: '100%', marginTop: 6 }}>
+            <div style={{ height: 6, width: '100%', background: '#e5e7eb', borderRadius: 999, overflow: 'hidden' }}>
+                <div style={{ width: `${percent}%`, height: '100%', background: '#0ea5e9' }} />
+            </div>
+            <div style={{ marginTop: 4, fontSize: 12, color: '#6b7280' }}>
+                {idx + 1} / 4 · {formatFulfillmentStatus(status)}
+            </div>
+        </div>
+    );
 }
 
 export default function MyOrders() {
@@ -46,9 +68,7 @@ export default function MyOrders() {
             const sm = window.innerWidth <= 600;
             setIsMobile(m);
             setIsSmallMobile(sm);
-            if (!m && sidebarOpen) {
-                setSidebarOpen(false);
-            }
+            if (!m && sidebarOpen) setSidebarOpen(false);
         };
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
@@ -141,13 +161,13 @@ export default function MyOrders() {
                                 const isSub = (o.type || '').toLowerCase() === 'subscription';
                                 const isCard = (o.type || '').toLowerCase() === 'card';
                                 const amount = formatAmount(o.amountTotal, o.currency);
-                                const delivery =
-                                    o.deliveryWindow || o.metadata?.estimatedDelivery || '—';
+                                const delivery = o.deliveryWindow || o.metadata?.estimatedDelivery || '—';
                                 const qty = isSub ? '—' : o.quantity || 1;
 
                                 const deliveryName = o.deliveryName || o?.metadata?.deliveryName || '—';
                                 const deliveryAddress = o.deliveryAddress || o?.metadata?.deliveryAddress || '—';
                                 const fulfillText = formatFulfillmentStatus(o.fulfillmentStatus);
+                                const fulfillRaw = o.fulfillmentStatus || 'order_placed';
 
                                 return (
                                     <div
@@ -220,6 +240,10 @@ export default function MyOrders() {
                                                     <div className="order-line" style={{ fontSize: 14 }}>
                                                         <strong>Order status:</strong> {fulfillText}
                                                     </div>
+
+                                                    {/* Compact progress bar */}
+                                                    <ProgressBar status={fulfillRaw} />
+
                                                     <div className="order-line" style={{ fontSize: 14 }}>
                                                         <strong>Delivery name:</strong> {deliveryName}
                                                     </div>
