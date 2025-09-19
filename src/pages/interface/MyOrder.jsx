@@ -7,7 +7,6 @@ import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import api from '../../services/api';
 
 import ProductThumb from '../../assets/images/Product-Cover.png';
-import './myorders.css';
 
 function formatAmount(amount, currency = 'gbp') {
     if (typeof amount !== 'number') return '—';
