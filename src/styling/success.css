@@ -1,4 +1,4 @@
-/* Base (from your old CSS, extended) */
+/* Wrapper */
 .success-page-wrapper,
 .success-page {
     display: flex;
@@ -12,15 +12,20 @@
     width: 100%;
 }
 
+/* Main card — match PageHeader look */
 .success-box {
-    background: #F7F7F7;
+    background: #fff;
+    /* same as PageHeader */
     padding: 30px;
-    border-radius: 16px;
+    border-radius: 12px;
+    /* same radius as PageHeader */
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    /* same subtle border */
     text-align: left;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    /* very light, consistent */
     max-width: 700px;
     width: 100%;
-    border: 1px solid #e0e0e0;
     position: relative;
     overflow: hidden;
 }
@@ -29,6 +34,7 @@
     margin-bottom: 5px;
 }
 
+/* Buttons row */
 .success-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -36,7 +42,7 @@
     margin-top: 18px;
 }
 
-/* Page layout shell to match your existing app layout */
+/* Content container */
 .success-container {
     max-width: 700px;
     width: 100%;
@@ -44,7 +50,7 @@
     text-align: left;
 }
 
-/* Tiles */
+/* Info grid */
 .success-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -53,8 +59,9 @@
 }
 
 .info-tile {
-    background: var(--card-bg, #F7F7F7);
-    border: 1px solid rgba(0, 0, 0, .08);
+    background: #fff;
+    /* same as PageHeader */
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     padding: 14px;
 }
@@ -87,24 +94,24 @@
     text-transform: none;
 }
 
-/* Status */
+/* Status text */
 .status-text {
     text-transform: capitalize;
 }
 
-/* Mobile handling */
+/* Mobile */
 @media (max-width: 700px) {
     .success-grid {
         grid-template-columns: 1fr;
     }
 }
 
-/* Buttons – rely on your existing classes; ensure min widths here */
+/* Buttons */
 .success-buttons .desktop-button {
     min-width: 180px;
 }
 
-/* Header alignment */
+/* Headings inside box */
 .success-header {
     margin-top: 0;
     margin-bottom: 8px;
