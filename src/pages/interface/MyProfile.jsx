@@ -74,9 +74,6 @@ export default function MyProfile() {
   const [isMobile, setIsMobile] = useState(window.matchMedia(mqDesktopToMobile).matches);
   const [isSmallMobile, setIsSmallMobile] = useState(window.matchMedia(mqSmallMobile).matches);
 
-  // NEW: mobile preview visibility (for the Show/Hide Preview control)
-  const [mobilePreviewVisible, setMobilePreviewVisible] = useState(true);
-
   // editor display toggles
   const [servicesDisplayMode, setServicesDisplayMode] = useState("list");
   const [reviewsDisplayMode, setReviewsDisplayMode] = useState("list");
@@ -88,6 +85,9 @@ export default function MyProfile() {
   const [showServicesSection, setShowServicesSection] = useState(true);
   const [showReviewsSection, setShowReviewsSection] = useState(true);
   const [showContactSection, setShowContactSection] = useState(true);
+
+  // NEW: mobile preview toggle
+  const [showPreviewMobile, setShowPreviewMobile] = useState(true);
 
   /* =========================
      TRIAL/PLAN STATUS
@@ -132,7 +132,6 @@ export default function MyProfile() {
       setIsMobile(mm1.matches);
       setIsSmallMobile(mm2.matches);
       if (!mm1.matches && sidebarOpen) setSidebarOpen(false); // close when switching to desktop
-      if (!mm1.matches) setMobilePreviewVisible(true); // ensure preview is visible again on desktop
     };
 
     mm1.addEventListener("change", onChange);
@@ -600,12 +599,11 @@ export default function MyProfile() {
     }
   };
 
-  // Public profile URL for the "Visit Page" button
-  const profilePublicUrl = userUsername ? `${window.location.origin}/u/${userUsername}` : "";
-
   /* =========================
      RENDER
      ========================= */
+  const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
+
   return (
     <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
       {/* Mobile header (fixed) */}
@@ -693,187 +691,191 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {/* ======= MOBILE: Floating controls (Show/Hide Preview | Visit Page) ======= */}
-              {isMobile && (
-                <div className="mobile-preview-controls">
-                  <div className="mpc-pill">
-                    <button
-                      type="button"
-                      className="mpc-btn toggle"
-                      onClick={() => setMobilePreviewVisible((v) => !v)}
-                      aria-pressed={mobilePreviewVisible ? "true" : "false"}
-                    >
-                      {mobilePreviewVisible ? "Hide Preview" : "Show Preview"}
-                    </button>
-
-                    <a
-                      className={`mpc-btn visit ${profilePublicUrl ? "" : "disabled"}`}
-                      href={profilePublicUrl || undefined}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-disabled={!profilePublicUrl}
-                    >
-                      Visit Page
-                    </a>
-                  </div>
-                </div>
-              )}
-
               <div className="myprofile-flex-container">
                 {/* Phone preview */}
-                <div
-                  className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""} ${isMobile && !mobilePreviewVisible ? "is-collapsed" : ""}`}
-                >
-                  <div
-                    className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
-                    style={{ fontFamily: state.font || previewPlaceholders.font }}
-                  >
-                    <div className="mock-phone-scrollable-content">
-                      {showMainSection && (
-                        <>
-                          {(shouldShowPlaceholders || !!state.coverPhoto) && (
-                            <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
-                          )}
-
-                          <h2 className="mock-title">
-                            {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
-                          </h2>
-                          <p className="mock-subtitle">
-                            {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
-                          </p>
-
-                          {(shouldShowPlaceholders || hasExchangeContact) && (
-                            <button type="button" className="mock-button">Save My Number</button>
-                          )}
-                        </>
-                      )}
-
-                      {showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
-                        <>
-                          <p className="mock-section-title">About me</p>
-                          <div className={`mock-about-container ${aboutMeLayout}`}>
-                            <div className="mock-about-content-group">
-                              <div className="mock-about-header-group">
-                                {previewAvatarSrc && (
-                                  <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
-                                )}
-                                <div>
-                                  <p className="mock-profile-name">{previewFullName}</p>
-                                  <p className="mock-profile-role">{previewJobTitle}</p>
-                                </div>
-                              </div>
-                              <p className="mock-bio-text">{previewBio}</p>
-                            </div>
-                          </div>
-                        </>
-                      )}
-
-                      {showWorkSection && previewWorkImages.length > 0 && (
-                        <>
-                          <p className="mock-section-title">My Work</p>
-                          <div className="work-preview-row-container">
-                            {state.workDisplayMode === "carousel" && (
-                              <div className="carousel-nav-buttons">
-                                <button
-                                  type="button"
-                                  className="carousel-nav-button left-arrow"
-                                  onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
-                                >
-                                  &#9664;
-                                </button>
-                                <button
-                                  type="button"
-                                  className="carousel-nav-button right-arrow"
-                                  onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
-                                >
-                                  &#9654;
-                                </button>
-                              </div>
-                            )}
-                            <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
-                              {previewWorkImages.map((item, i) => (
-                                <div key={i} className="mock-work-image-item-wrapper">
-                                  <img src={item.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </>
-                      )}
-
-                      {showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) && (
-                        <>
-                          <p className="mock-section-title">My Services</p>
-                          <div className="work-preview-row-container">
-                            {servicesDisplayMode === "carousel" && (
-                              <div className="carousel-nav-buttons">
-                                <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>
-                                  &#9664;
-                                </button>
-                                <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}>
-                                  &#9654;
-                                </button>
-                              </div>
-                            )}
-                            <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
-                              {servicesForPreview.map((s, i) => (
-                                <div key={i} className="mock-service-item">
-                                  <p className="mock-service-name">{s.name}</p>
-                                  <span className="mock-service-price">{s.price}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </>
-                      )}
-
-                      {showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) && (
-                        <>
-                          <p className="mock-section-title">Reviews</p>
-                          <div className="work-preview-row-container">
-                            {reviewsDisplayMode === "carousel" && (
-                              <div className="carousel-nav-buttons">
-                                <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}>
-                                  &#9664;
-                                </button>
-                                <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}>
-                                  &#9654;
-                                </button>
-                              </div>
-                            )}
-                            <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
-                              {reviewsForPreview.map((r, i) => (
-                                <div key={i} className="mock-review-card">
-                                  <div className="mock-star-rating">
-                                    {Array(r.rating || 0).fill().map((_, idx) => <span key={`f-${idx}`}>★</span>)}
-                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, idx) => <span key={`e-${idx}`} className="empty-star">★</span>)}
-                                  </div>
-                                  <p className="mock-review-text">{`"${r.text}"`}</p>
-                                  <p className="mock-reviewer-name">{r.name}</p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </>
-                      )}
-
-                      {showContactSection && (previewEmail || previewPhone) && (
-                        <>
-                          <p className="mock-section-title">Contact Details</p>
-                          <div className="mock-contact-details">
-                            <div className="mock-contact-item">
-                              <p className="mock-contact-label">Email:</p>
-                              <p className="mock-contact-value">{previewEmail}</p>
-                            </div>
-                            <div className="mock-contact-item">
-                              <p className="mock-contact-label">Phone:</p>
-                              <p className="mock-contact-value">{previewPhone}</p>
-                            </div>
-                          </div>
-                        </>
-                      )}
+                <div className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`}>
+                  {/* MOBILE: sticky segmented control (Show Preview / Visit Page) */}
+                  {isMobile && (
+                    <div className={`mp-mobile-controls ${showPreviewMobile ? "is-open" : "is-collapsed"}`} role="tablist" aria-label="Preview controls">
+                      <button
+                        type="button"
+                        role="tab"
+                        aria-selected={showPreviewMobile}
+                        className={`mp-tab ${showPreviewMobile ? "active" : ""}`}
+                        onClick={() => setShowPreviewMobile(true)}
+                      >
+                        Show Preview
+                      </button>
+                      <a
+                        role="tab"
+                        aria-selected={!showPreviewMobile}
+                        className="mp-tab visit"
+                        href={visitUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(e) => {
+                          // keep the tab look pressed while opening link
+                          setShowPreviewMobile(false);
+                        }}
+                      >
+                        Visit Page
+                      </a>
                     </div>
-                  </div>
+                  )}
+
+                  {/* Render preview only when toggled ON (mobile). Always ON on desktop. */}
+                  {(!isMobile || showPreviewMobile) && (
+                    <div
+                      className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
+                      style={{ fontFamily: state.font || previewPlaceholders.font }}
+                    >
+                      <div className="mock-phone-scrollable-content">
+                        {showMainSection && (
+                          <>
+                            {(shouldShowPlaceholders || !!state.coverPhoto) && (
+                              <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
+                            )}
+
+                            <h2 className="mock-title">
+                              {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
+                            </h2>
+                            <p className="mock-subtitle">
+                              {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
+                            </p>
+
+                            {(shouldShowPlaceholders || hasExchangeContact) && (
+                              <button type="button" className="mock-button">Save My Number</button>
+                            )}
+                          </>
+                        )}
+
+                        {showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
+                          <>
+                            <p className="mock-section-title">About me</p>
+                            <div className={`mock-about-container ${aboutMeLayout}`}>
+                              <div className="mock-about-content-group">
+                                <div className="mock-about-header-group">
+                                  {previewAvatarSrc && (
+                                    <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
+                                  )}
+                                  <div>
+                                    <p className="mock-profile-name">{previewFullName}</p>
+                                    <p className="mock-profile-role">{previewJobTitle}</p>
+                                  </div>
+                                </div>
+                                <p className="mock-bio-text">{previewBio}</p>
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {showWorkSection && previewWorkImages.length > 0 && (
+                          <>
+                            <p className="mock-section-title">My Work</p>
+                            <div className="work-preview-row-container">
+                              {state.workDisplayMode === "carousel" && (
+                                <div className="carousel-nav-buttons">
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
+                                  >
+                                    &#9664;
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
+                                  >
+                                    &#9654;
+                                  </button>
+                                </div>
+                              )}
+                              <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
+                                {previewWorkImages.map((item, i) => (
+                                  <div key={i} className="mock-work-image-item-wrapper">
+                                    <img src={item.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) && (
+                          <>
+                            <p className="mock-section-title">My Services</p>
+                            <div className="work-preview-row-container">
+                              {servicesDisplayMode === "carousel" && (
+                                <div className="carousel-nav-buttons">
+                                  <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>
+                                    &#9664;
+                                  </button>
+                                  <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}>
+                                    &#9654;
+                                  </button>
+                                </div>
+                              )}
+                              <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
+                                {servicesForPreview.map((s, i) => (
+                                  <div key={i} className="mock-service-item">
+                                    <p className="mock-service-name">{s.name}</p>
+                                    <span className="mock-service-price">{s.price}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) && (
+                          <>
+                            <p className="mock-section-title">Reviews</p>
+                            <div className="work-preview-row-container">
+                              {reviewsDisplayMode === "carousel" && (
+                                <div className="carousel-nav-buttons">
+                                  <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}>
+                                    &#9664;
+                                  </button>
+                                  <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}>
+                                    &#9654;
+                                  </button>
+                                </div>
+                              )}
+                              <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
+                                {reviewsForPreview.map((r, i) => (
+                                  <div key={i} className="mock-review-card">
+                                    <div className="mock-star-rating">
+                                      {Array(r.rating || 0).fill().map((_, idx) => <span key={`f-${idx}`}>★</span>)}
+                                      {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, idx) => <span key={`e-${idx}`} className="empty-star">★</span>)}
+                                    </div>
+                                    <p className="mock-review-text">{`"${r.text}"`}</p>
+                                    <p className="mock-reviewer-name">{r.name}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {showContactSection && (previewEmail || previewPhone) && (
+                          <>
+                            <p className="mock-section-title">Contact Details</p>
+                            <div className="mock-contact-details">
+                              <div className="mock-contact-item">
+                                <p className="mock-contact-label">Email:</p>
+                                <p className="mock-contact-value">{previewEmail}</p>
+                              </div>
+                              <div className="mock-contact-item">
+                                <p className="mock-contact-label">Phone:</p>
+                                <p className="mock-contact-value">{previewPhone}</p>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Editor */}
