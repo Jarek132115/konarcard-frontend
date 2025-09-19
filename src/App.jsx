@@ -64,7 +64,7 @@ const Notifications = lazyWithRetry(() => import('./pages/interface/Notification
 const Profile = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
 
 // -------- Admin (protected) --------
-const AdminOrders = lazyWithRetry(() => import('./pages/admin/AdminOrders.jsx'));
+const AdminOrders = lazyWithRetry(() => import('./pages/admin/AdminDashboard.jsx'));
 
 function TidioWrapper() {
   const location = useLocation();
