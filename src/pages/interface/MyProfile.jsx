@@ -1,3 +1,4 @@
+// src/pages/MyProfile/MyProfile.jsx
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
@@ -68,7 +69,7 @@ export default function MyProfile() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // responsive flags (use matchMedia so they’re correct immediately)
+  // responsive flags
   const mqDesktopToMobile = "(max-width: 1000px)";
   const mqSmallMobile = "(max-width: 600px)";
   const [isMobile, setIsMobile] = useState(window.matchMedia(mqDesktopToMobile).matches);
@@ -86,7 +87,7 @@ export default function MyProfile() {
   const [showReviewsSection, setShowReviewsSection] = useState(true);
   const [showContactSection, setShowContactSection] = useState(true);
 
-  // NEW: preview open/closed (used on all breakpoints)
+  // preview open/closed
   const [previewOpen, setPreviewOpen] = useState(true);
 
   /* =========================
@@ -103,11 +104,8 @@ export default function MyProfile() {
   /* =========================
      EFFECTS
      ========================= */
-
-  // handle payment_success query and refresh user
   useEffect(() => {
     let handled = false;
-
     const run = async () => {
       if (authLoading || !authUser) return;
       const params = new URLSearchParams(location.search);
@@ -119,21 +117,17 @@ export default function MyProfile() {
         toast.success("Subscription updated successfully!");
       }
     };
-
     run();
   }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser]);
 
-  // responsive listeners (matchMedia is better for first render)
   useEffect(() => {
     const mm1 = window.matchMedia(mqDesktopToMobile);
     const mm2 = window.matchMedia(mqSmallMobile);
-
     const onChange = () => {
       setIsMobile(mm1.matches);
       setIsSmallMobile(mm2.matches);
-      if (!mm1.matches && sidebarOpen) setSidebarOpen(false); // close when switching to desktop
+      if (!mm1.matches && sidebarOpen) setSidebarOpen(false);
     };
-
     mm1.addEventListener("change", onChange);
     mm2.addEventListener("change", onChange);
     return () => {
@@ -143,26 +137,22 @@ export default function MyProfile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sidebarOpen]);
 
-  // lock body scroll when the sidebar is open on mobile
   useEffect(() => {
     if (sidebarOpen && isMobile) document.body.classList.add("body-no-scroll");
     else document.body.classList.remove("body-no-scroll");
   }, [sidebarOpen, isMobile]);
 
-  // resend cooldown
   useEffect(() => {
     if (resendCooldown <= 0) return;
     const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
     return () => clearTimeout(t);
   }, [resendCooldown]);
 
-  // verification prompt
   useEffect(() => {
     if (!authLoading && authUser && !isUserVerified && userEmail) setShowVerificationPrompt(true);
     else if (!authLoading && isUserVerified) setShowVerificationPrompt(false);
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // hydrate editor with server data
   useEffect(() => {
     if (isCardLoading) return;
 
@@ -216,7 +206,6 @@ export default function MyProfile() {
     }
   }, [businessCard, isCardLoading, resetState, updateState]);
 
-  // revoke blobs on unmount
   useEffect(() => {
     return () => {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
@@ -358,7 +347,6 @@ export default function MyProfile() {
     }
   };
 
-  // compare changes to determine if publish is needed
   const hasProfileChanges = () => {
     if (coverPhotoFile || avatarFile || workImageFiles.length || coverPhotoRemoved || isAvatarRemoved) return true;
 
@@ -496,7 +484,6 @@ export default function MyProfile() {
         ? previewPlaceholders.workImages
         : [];
 
-  // ✨ NEW: live-preview lists (use typed items if any; else placeholders only when empty)
   const servicesForPreview =
     (state.services && state.services.length > 0)
       ? state.services
@@ -512,7 +499,6 @@ export default function MyProfile() {
   const showAddImageText = (img) => !img;
   const isDarkMode = state.pageTheme === "dark";
 
-  // NEW: ensure trial is started automatically if needed
   const ensureTrialIfNeeded = async () => {
     if (isSubscribed || isTrialActive) return;
     try {
@@ -533,10 +519,7 @@ export default function MyProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
-
-    // Auto-start trial on first save if not active (no extra button)
     if (!isSubscribed && !isTrialActive) {
       await ensureTrialIfNeeded();
     }
@@ -604,7 +587,6 @@ export default function MyProfile() {
      ========================= */
   const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
 
-  
   const collapsibleStyle = {
     transition: "all .3s ease",
     maxHeight: previewOpen ? 2000 : 0,
@@ -615,14 +597,11 @@ export default function MyProfile() {
 
   return (
     <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
-      {/* Mobile header (fixed) */}
+      {/* Mobile header */}
       <div className="myprofile-mobile-header">
-        {/* Logo on the LEFT */}
         <div className="myprofile-brand">
           <img src={LogoIcon} alt="Konar" className="myprofile-logo" />
         </div>
-
-        {/* Burger toggles and turns into an X when open */}
         <button
           className={`sidebar-menu-toggle ${sidebarOpen ? "active" : ""}`}
           aria-label={sidebarOpen ? "Close menu" : "Open menu"}
@@ -632,10 +611,8 @@ export default function MyProfile() {
         </button>
       </div>
 
-      {/* Sidebar + overlay (overlay handled inside the Sidebar component too) */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* MAIN */}
       <main className="main-content-container">
         <PageHeader
           onShareCard={handleShareCard}
@@ -655,9 +632,7 @@ export default function MyProfile() {
             <>
               {showVerificationPrompt && (
                 <div className="content-card-box verification-prompt">
-                  <p>
-                    <span role="img" aria-label="warning">⚠️</span> Your email is not verified!
-                  </p>
+                  <p><span role="img" aria-label="warning">⚠️</span> Your email is not verified!</p>
                   <p>
                     Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to your business card.
                   </p>
@@ -683,10 +658,7 @@ export default function MyProfile() {
                     Your free trial ends on{" "}
                     <strong>{new Date(authUser.trialExpires).toLocaleDateString()}</strong>.
                   </p>
-                  <button
-                    className="blue-trial desktop-body-s"
-                    onClick={handleStartSubscription}
-                  >
+                  <button className="blue-trial desktop-body-s" onClick={handleStartSubscription}>
                     Subscribe Now
                   </button>
                 </div>
@@ -704,13 +676,9 @@ export default function MyProfile() {
                 {/* Phone preview column */}
                 <div className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`}>
 
-                  {/* Mobile controls (top pill + bottom holder) */}
-                  {isMobile && (
-                    <div
-                      className={`mp-mobile-controls ${previewOpen ? "is-open" : "is-collapsed"}`}
-                      role="tablist"
-                      aria-label="Preview controls"
-                    >
+                  {/* ===== MOBILE: pill (top) + preview (center) + holder (bottom) ===== */}
+                  {isMobile ? (
+                    <div className={`mp-mobile-controls ${previewOpen ? "is-open" : "is-collapsed"}`} role="tablist" aria-label="Preview controls">
                       {/* Top half of the pill */}
                       <div className="mp-pill">
                         <button
@@ -722,7 +690,6 @@ export default function MyProfile() {
                         >
                           {previewOpen ? "Close Preview" : "Show Preview"}
                         </button>
-
                         <a
                           role="tab"
                           aria-selected={!previewOpen}
@@ -736,16 +703,149 @@ export default function MyProfile() {
                         </a>
                       </div>
 
-                      {/* Bottom grey holder (always visible) */}
+                      {/* Phone preview */}
+                      <div className="mp-preview-wrap" style={collapsibleStyle}>
+                        <div
+                          className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
+                          style={{ fontFamily: state.font || previewPlaceholders.font }}
+                        >
+                          <div className="mock-phone-scrollable-content">
+                            {/* MAIN */}
+                            {showMainSection && (
+                              <>
+                                {(shouldShowPlaceholders || !!state.coverPhoto) && (
+                                  <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
+                                )}
+                                <h2 className="mock-title">
+                                  {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
+                                </h2>
+                                <p className="mock-subtitle">
+                                  {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
+                                </p>
+                                {(shouldShowPlaceholders || hasExchangeContact) && (
+                                  <button type="button" className="mock-button">Save My Number</button>
+                                )}
+                              </>
+                            )}
+
+                            {/* ABOUT */}
+                            {showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
+                              <>
+                                <p className="mock-section-title">About me</p>
+                                <div className={`mock-about-container ${aboutMeLayout}`}>
+                                  <div className="mock-about-content-group">
+                                    <div className="mock-about-header-group">
+                                      {previewAvatarSrc && <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />}
+                                      <div>
+                                        <p className="mock-profile-name">{previewFullName}</p>
+                                        <p className="mock-profile-role">{previewJobTitle}</p>
+                                      </div>
+                                    </div>
+                                    <p className="mock-bio-text">{previewBio}</p>
+                                  </div>
+                                </div>
+                              </>
+                            )}
+
+                            {/* WORK */}
+                            {showWorkSection && previewWorkImages.length > 0 && (
+                              <>
+                                <p className="mock-section-title">My Work</p>
+                                <div className="work-preview-row-container">
+                                  {state.workDisplayMode === "carousel" && (
+                                    <div className="carousel-nav-buttons">
+                                      <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}>&#9664;</button>
+                                      <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}>&#9654;</button>
+                                    </div>
+                                  )}
+                                  <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
+                                    {previewWorkImages.map((item, i) => (
+                                      <div key={i} className="mock-work-image-item-wrapper">
+                                        <img src={item.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </>
+                            )}
+
+                            {/* SERVICES */}
+                            {showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) && (
+                              <>
+                                <p className="mock-section-title">My Services</p>
+                                <div className="work-preview-row-container">
+                                  {servicesDisplayMode === "carousel" && (
+                                    <div className="carousel-nav-buttons">
+                                      <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>&#9664;</button>
+                                      <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}>&#9654;</button>
+                                    </div>
+                                  )}
+                                  <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
+                                    {servicesForPreview.map((s, i) => (
+                                      <div key={i} className="mock-service-item">
+                                        <p className="mock-service-name">{s.name}</p>
+                                        <span className="mock-service-price">{s.price}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </>
+                            )}
+
+                            {/* REVIEWS */}
+                            {showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) && (
+                              <>
+                                <p className="mock-section-title">Reviews</p>
+                                <div className="work-preview-row-container">
+                                  {reviewsDisplayMode === "carousel" && (
+                                    <div className="carousel-nav-buttons">
+                                      <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}>&#9664;</button>
+                                      <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}>&#9654;</button>
+                                    </div>
+                                  )}
+                                  <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
+                                    {reviewsForPreview.map((r, i) => (
+                                      <div key={i} className="mock-review-card">
+                                        <div className="mock-star-rating">
+                                          {Array(r.rating || 0).fill().map((_, idx) => <span key={`f-${idx}`}>★</span>)}
+                                          {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, idx) => <span key={`e-${idx}`} className="empty-star">★</span>)}
+                                        </div>
+                                        <p className="mock-review-text">{`"${r.text}"`}</p>
+                                        <p className="mock-reviewer-name">{r.name}</p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </>
+                            )}
+
+                            {/* CONTACT */}
+                            {showContactSection && (previewEmail || previewPhone) && (
+                              <>
+                                <p className="mock-section-title">Contact Details</p>
+                                <div className="mock-contact-details">
+                                  <div className="mock-contact-item">
+                                    <p className="mock-contact-label">Email:</p>
+                                    <p className="mock-contact-value">{previewEmail}</p>
+                                  </div>
+                                  <div className="mock-contact-item">
+                                    <p className="mock-contact-label">Phone:</p>
+                                    <p className="mock-contact-value">{previewPhone}</p>
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Bottom grey holder */}
                       <div className="mp-pill-bottom" aria-hidden="true" />
                     </div>
-                  )}
-
-
-                  {/* Collapsible preview */}
-                  <div style={collapsibleStyle}>
+                  ) : (
+                    // ===== DESKTOP: plain phone preview (no mobile pill UI) =====
                     <div
-                      className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
+                      className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
                       style={{ fontFamily: state.font || previewPlaceholders.font }}
                     >
                       <div className="mock-phone-scrollable-content">
@@ -754,14 +854,12 @@ export default function MyProfile() {
                             {(shouldShowPlaceholders || !!state.coverPhoto) && (
                               <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
                             )}
-
                             <h2 className="mock-title">
                               {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
                             </h2>
                             <p className="mock-subtitle">
                               {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
                             </p>
-
                             {(shouldShowPlaceholders || hasExchangeContact) && (
                               <button type="button" className="mock-button">Save My Number</button>
                             )}
@@ -774,9 +872,7 @@ export default function MyProfile() {
                             <div className={`mock-about-container ${aboutMeLayout}`}>
                               <div className="mock-about-content-group">
                                 <div className="mock-about-header-group">
-                                  {previewAvatarSrc && (
-                                    <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
-                                  )}
+                                  {previewAvatarSrc && <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />}
                                   <div>
                                     <p className="mock-profile-name">{previewFullName}</p>
                                     <p className="mock-profile-role">{previewJobTitle}</p>
@@ -794,20 +890,8 @@ export default function MyProfile() {
                             <div className="work-preview-row-container">
                               {state.workDisplayMode === "carousel" && (
                                 <div className="carousel-nav-buttons">
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
-                                  >
-                                    &#9664;
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
-                                  >
-                                    &#9654;
-                                  </button>
+                                  <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}>&#9664;</button>
+                                  <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}>&#9654;</button>
                                 </div>
                               )}
                               <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
@@ -825,14 +909,10 @@ export default function MyProfile() {
                           <>
                             <p className="mock-section-title">My Services</p>
                             <div className="work-preview-row-container">
-                              {servicesDisplayMode === "carousel" && (
+                              {reviewsDisplayMode === "carousel" && (
                                 <div className="carousel-nav-buttons">
-                                  <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>
-                                    &#9664;
-                                  </button>
-                                  <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}>
-                                    &#9654;
-                                  </button>
+                                  <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>&#9664;</button>
+                                  <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}>&#9654;</button>
                                 </div>
                               )}
                               <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
@@ -853,12 +933,8 @@ export default function MyProfile() {
                             <div className="work-preview-row-container">
                               {reviewsDisplayMode === "carousel" && (
                                 <div className="carousel-nav-buttons">
-                                  <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}>
-                                    &#9664;
-                                  </button>
-                                  <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}>
-                                    &#9654;
-                                  </button>
+                                  <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}>&#9664;</button>
+                                  <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}>&#9654;</button>
                                 </div>
                               )}
                               <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
@@ -894,7 +970,7 @@ export default function MyProfile() {
                         )}
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Editor */}
@@ -977,7 +1053,6 @@ export default function MyProfile() {
                             onChange={handleImageUpload}
                             style={{ display: "none" }}
                           />
-                          {/* UPDATED: match Work Images card style */}
                           <div
                             className="editor-item-card work-image-item-wrapper cover-photo-card"
                             onClick={() => fileInputRef.current?.click()}
