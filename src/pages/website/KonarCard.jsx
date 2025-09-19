@@ -81,7 +81,7 @@ export default function KonarCard() {
       const stripe = await getStripe(); // ← load only now
 
       // use api service so auth token is attached
-      const res = await api.post('/checkout/create-checkout-session', { quantity: qty });
+      const res = await api.post('/api/checkout/create-checkout-session', { quantity: qty });
       const sessionId = res?.data?.id;
       if (!sessionId) {
         toast.error(res?.data?.error || 'Could not start checkout. Please try again.');
