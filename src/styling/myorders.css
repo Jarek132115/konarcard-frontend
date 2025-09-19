@@ -1,11 +1,18 @@
+/* ===== My Orders page (uses same design language as user-landing-page) ===== */
+
 .orders-container {
     width: 100%;
-    margin-top: 5px;
+    margin-top: 6px;
     background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, .08);
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+}
+
+/* empty / hint states */
+.orders-hint {
+    opacity: .8;
 }
 
 .error-text {
@@ -16,22 +23,55 @@
     margin-top: 12px;
 }
 
+.orders-empty {
+    text-align: center;
+    padding: 26px 12px;
+}
+
+.orders-empty-badge {
+    display: inline-block;
+    font-weight: 700;
+    font-size: .8rem;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #e9eef6;
+    color: #1e3a8a;
+    border: 1px solid rgba(0, 0, 0, .06);
+    margin-bottom: 10px;
+}
+
+.orders-empty-title {
+    margin: 4px 0 8px;
+    font-size: clamp(1.2rem, 3.2vw, 1.6rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: #000;
+}
+
+.orders-empty-sub {
+    margin: 0 0 14px;
+    color: #333;
+    opacity: .9;
+}
+
+/* list */
 .orders-list {
     display: grid;
+    grid-template-columns: 1fr;
     gap: 16px;
 }
 
-/* Card */
+/* card */
 .order-card {
     display: grid;
     grid-template-columns: 120px 1fr;
     gap: 16px;
-    border: 1px solid #f1f5f9;
-    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, .06);
+    border-radius: 14px;
     padding: 16px;
-    align-items: center;
     background: #fff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
+    align-items: center;
 }
 
 .order-thumb {
@@ -39,7 +79,7 @@
     height: 120px;
     border-radius: 12px;
     overflow: hidden;
-    background: #fafafa;
+    background: #f9f9f9;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -68,13 +108,44 @@
 .order-meta .type {
     text-transform: capitalize;
     color: #111;
-    font-weight: 500;
+    font-weight: 700;
 }
 
+.order-meta .status {
+    text-transform: capitalize;
+}
+
+/* lines */
 .order-line {
     font-size: 14px;
 }
 
+/* progress (blue accent + subtle track) */
+.order-progress {
+    width: 100%;
+    margin-top: 6px;
+}
+
+.order-progress-track {
+    height: 6px;
+    width: 100%;
+    border-radius: 999px;
+    background: #e9edf3;
+    overflow: hidden;
+}
+
+.order-progress-fill {
+    height: 100%;
+    background: #0081FF;
+}
+
+.order-progress-caption {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* actions */
 .order-actions {
     display: flex;
     gap: 10px;
@@ -87,7 +158,19 @@
     border-radius: 10px;
 }
 
-/* Mobile */
+/* responsive */
+@media (min-width: 760px) {
+    .orders-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1100px) {
+    .orders-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
 @media (max-width: 700px) {
     .order-card {
         grid-template-columns: 1fr;
@@ -98,4 +181,21 @@
         height: auto;
         max-height: 200px;
     }
+}
+
+/* ===== Dark theme parity (same selector style as user-landing-page) ===== */
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .orders-container {
+    background: #202020;
+    color: #fff;
+    border-color: rgba(255, 255, 255, .08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+}
+
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .order-card {
+    background: #151515;
+    border-color: rgba(255, 255, 255, .08);
+}
+
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .order-progress-track {
+    background: #2a2a2a;
 }
