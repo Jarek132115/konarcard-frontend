@@ -1754,3 +1754,32 @@
         border-radius: 10px;
     }
 }
+
+/* Fix: stack the mobile controls ABOVE the phone preview */
+@media (max-width:1000px) {
+
+    /* you add this class on the preview wrapper when mobile */
+    .myprofile-mock-phone-mobile-container {
+        display: flex;
+        flex-direction: column;
+        /* 💡 stack controls then phone */
+        align-items: center;
+        /* center both */
+        gap: 10px;
+        /* small space between controls and phone */
+    }
+
+    /* make the segmented control match the phone width and center */
+    .mp-mobile-controls {
+        position: sticky;
+        top: 64px;
+        /* keep your sticky behavior */
+        width: 100%;
+        max-width: 350px;
+        /* same as phone max-width */
+        margin: 0 auto 12px;
+        /* center above phone */
+        justify-content: center;
+        /* optional: center the row of tabs */
+    }
+}
