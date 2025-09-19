@@ -10,6 +10,9 @@ const POST_AUTH_KEY = 'postAuthAction';
 const REMEMBER_KEY = 'rememberLogin';
 const REMEMBERED_EMAIL_KEY = 'rememberedEmail';
 
+// Keep this in sync with Cloud Run ADMIN_EMAILS for UI-side convenience
+const ADMIN_EMAILS_UI = ['supportteam@konarcard.com'];
+
 export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -26,6 +29,9 @@ export default function Login() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
     const [isSendingReset, setIsSendingReset] = useState(false);
+
+    // --- helpers ---
+    const isAdminEmail = (email) => ADMIN_EMAILS_UI.includes((email || '').toLowerCase());
 
     // bring back remembered email
     useEffect(() => {
@@ -129,7 +135,15 @@ export default function Login() {
             } else {
                 toast.success('Login successful!');
                 login(res.data.token, res.data.user);
-                await runPendingActionOrDefault();
+
+                // Admin → go straight to admin dashboard
+                const email = res?.data?.user?.email || data.email;
+                if (isAdminEmail(email)) {
+                    navigate('/admin', { replace: true });
+                } else {
+                    await runPendingActionOrDefault();
+                }
+
                 setIsSubmitting(false);
             }
         } catch (err) {
@@ -162,7 +176,14 @@ export default function Login() {
                     setIsVerifying(false);
                 } else {
                     login(loginRes.data.token, loginRes.data.user);
-                    await runPendingActionOrDefault();
+
+                    // Admin → go straight to admin dashboard
+                    const email = loginRes?.data?.user?.email || data.email;
+                    if (isAdminEmail(email)) {
+                        navigate('/admin', { replace: true });
+                    } else {
+                        await runPendingActionOrDefault();
+                    }
                 }
             }
         } catch (err) {
@@ -237,7 +258,7 @@ export default function Login() {
                                     required
                                 />
                                 <button
-                                style={{ margin: '20px 0 10px 0'}}
+                                    style={{ margin: '20px 0 10px 0' }}
                                     type="submit"
                                     className="desktop-button cta-blue-button"
                                     disabled={isSendingReset}
@@ -328,7 +349,7 @@ export default function Login() {
                                     maxLength={6}
                                     autoComplete="one-time-code"
                                     required
-                                    style={{ marginBottom: 20}}
+                                    style={{ marginBottom: 20 }}
                                 />
                                 <button
                                     type="submit"

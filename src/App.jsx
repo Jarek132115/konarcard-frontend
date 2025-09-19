@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 
 import { AuthContext } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import ScrollToTop from './components/ScrollToTop';
 import TidioDelayedLoader from './components/TidioDelayedLoader';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
@@ -53,7 +54,7 @@ const NFCCards = lazyWithRetry(() => import('./pages/interface/NFCCards.jsx'));
 const Notifications = lazyWithRetry(() => import('./pages/interface/Notifications.jsx'));
 const Profile = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
 
-// Admin
+// Admin (protected + admin-only)
 const AdminDashboard = lazyWithRetry(() => import('./pages/admin/AdminDashboard.jsx'));
 
 function TidioWrapper() {
@@ -67,7 +68,7 @@ function TidioWrapper() {
     location.pathname.startsWith('/notifications') ||
     location.pathname.startsWith('/profile') ||
     location.pathname.startsWith('/contact-support') ||
-    location.pathname.startsWith('/admin');
+    location.pathname.startsWith('/admin'); // avoid chat bubble on admin
 
   const enableTidio = !isDashboardPath || location.pathname === '/contact-support';
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
@@ -84,6 +85,7 @@ export default function App() {
       Login.preload?.();
       MyProfile.preload?.();
       ContactSupport.preload?.();
+      AdminDashboard.preload?.();
     };
     if ('requestIdleCallback' in window) {
       // @ts-ignore
@@ -124,7 +126,17 @@ export default function App() {
             <Route path="/successsubscription" element={<SuccessSubscription />} />
             <Route path="/u/:username" element={<UserPage />} />
 
-            {/* PROTECTED */}
+            {/* ADMIN (must be logged in + in ADMIN_EMAILS_UI) */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedAdminRoute>
+                  <AdminDashboard />
+                </ProtectedAdminRoute>
+              }
+            />
+
+            {/* PROTECTED (regular user area) */}
             <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
             <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
             <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
@@ -133,9 +145,6 @@ export default function App() {
             <Route path="/nfccards" element={<ProtectedRoute><NFCCards /></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-
-            {/* ADMIN */}
-            <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           </Routes>
         </Suspense>
       </RouteErrorBoundary>
