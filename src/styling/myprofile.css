@@ -1647,19 +1647,21 @@
     }
 }
 
-/* ===== Mobile Preview Controls (Pill: tabs + bottom holder) ===== */
+/* ===== Mobile Preview Controls — FULL-WIDTH PILL (no bottom holder) ===== */
 .mp-mobile-controls {
     position: sticky;
     top: 64px;
-    /* sits under your fixed mobile header */
+    /* under fixed mobile header */
     z-index: 1005;
     display: flex;
     flex-direction: column;
-    /* pill on top, holder under */
-    align-items: center;
-    /* center in the column */
+    align-items: stretch;
+    /* take full width */
     gap: 0;
-    padding: 0 0 12px 0;
+    padding: 0 0 8px 0;
+    margin: 0;
+    width: 100%;
+    max-width: none;
     background: transparent;
     transition: opacity .2s ease, transform .2s ease;
     will-change: transform;
@@ -1684,23 +1686,13 @@
     transform: translateY(-2px);
 }
 
-/* Make controls line up with the phone width */
-.mp-mobile-controls,
-.mp-pill,
-.mp-pill-bottom {
-    width: 100%;
-    max-width: 350px;
-    /* same as your phone preview */
-    margin: 0 auto;
-}
-
-/* Top half of the pill (tab track) */
+/* Segmented pill (top only) */
 .mp-pill {
     display: flex;
-    /* <-- important: put tabs side-by-side */
+    width: 100%;
     border: 1px solid rgba(0, 0, 0, .12);
-    border-bottom: 0;
-    border-radius: 14px 14px 0 0;
+    border-radius: 9999px;
+    /* pill */
     overflow: hidden;
     background: #fff;
     box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
@@ -1723,27 +1715,34 @@
     font: 700 .95rem/1 var(--main-font-family, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif);
     padding: 12px 16px;
     flex: 1 1 0;
-    /* each tab takes 50% */
     text-align: center;
     cursor: pointer;
+    white-space: nowrap;
     transition: background-color .2s ease, color .2s ease, transform .06s ease, opacity .2s ease;
+    position: relative;
 }
 
-.mp-tab+.mp-tab {
-    border-left: 1px solid rgba(0, 0, 0, .12);
+.mp-tab+.mp-tab::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10%;
+    width: 1px;
+    height: 80%;
+    background: rgba(0, 0, 0, .12);
+}
+
+.dark-mode .mp-tab+.mp-tab::before {
+    background: rgba(255, 255, 255, .12);
+}
+
+.mp-tab:active {
+    transform: translateY(1px);
 }
 
 .dark-mode .mp-tab {
     background: #2a2a2a;
     color: #fff;
-}
-
-.dark-mode .mp-tab+.mp-tab {
-    border-left-color: rgba(255, 255, 255, .12);
-}
-
-.mp-tab:active {
-    transform: translateY(1px);
 }
 
 .mp-tab.active,
@@ -1754,7 +1753,7 @@
 
 /* Visit Page base look when not selected */
 .mp-tab.visit {
-    background: #ffffff;
+    background: #fff;
     color: #111;
 }
 
@@ -1763,34 +1762,29 @@
     color: #fff;
 }
 
-/* Bottom half of the pill (always visible, hugs the preview) */
+/* Remove the old bottom holder entirely */
 .mp-pill-bottom {
-    height: 46px;
-    border: 1px solid rgba(0, 0, 0, .12);
-    border-top: 0;
-    border-radius: 0 0 14px 14px;
-    background: #f6f6f6;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+    display: none !important;
 }
 
-.dark-mode .mp-pill-bottom {
-    border-color: rgba(255, 255, 255, .12);
-    background: #151515;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
+/* Phone preview should sit flush under the pill (square top) */
+.mp-preview-wrap {
+    margin-top: 0;
 }
 
-.mp-mobile-controls.is-collapsed .mp-tab:not(.active) {
-    opacity: .92;
+.mp-mobile-controls .mp-preview-wrap .mock-phone.mobile-preview {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top: none;
 }
 
-/* Stack controls ABOVE the phone and keep both centered */
+/* Stack controls ABOVE the phone and keep centered on mobile */
 @media (max-width:1000px) {
     .myprofile-mock-phone-mobile-container {
         display: flex;
         flex-direction: column;
         /* controls then phone */
         align-items: center;
-        /* center both */
         gap: 10px;
     }
 
@@ -1803,15 +1797,6 @@
 @media (max-width:400px) {
     .mp-mobile-controls {
         top: 60px;
-    }
-
-    .mp-pill {
-        border-radius: 12px 12px 0 0;
-    }
-
-    .mp-pill-bottom {
-        border-radius: 0 0 12px 12px;
-        height: 42px;
     }
 
     .mp-tab {
