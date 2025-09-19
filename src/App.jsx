@@ -24,7 +24,7 @@ const ContactUs = lazyWithRetry(() => import('./pages/website/ContactUs.jsx'));
 const Policies = lazyWithRetry(() => import('./pages/website/Policies.jsx'));
 const Success = lazyWithRetry(() => import('./pages/website/Success.jsx'));
 const SuccessSubscription = lazyWithRetry(() => import('./pages/website/SuccessSubscription.jsx'));
-const UserPage = lazyWithRetry(() => import('./pages/website/UserPage.jsx'));
+const UserPage = lazyWithRetry(() => import('./pages/interface/UserPage.jsx'));
 
 // Interface (protected)
 const Billing = lazyWithRetry(() => import('./pages/interface/Billing.jsx'));
