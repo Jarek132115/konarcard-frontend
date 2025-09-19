@@ -1722,7 +1722,7 @@
     border-bottom-color: rgba(255, 255, 255, .12);
 }
 
-/* --- Tabs --- */
+/* --- Tabs (flat where they meet; only outer top corners rounded) --- */
 .mp-tab {
     appearance: none;
     -webkit-appearance: none;
@@ -1736,21 +1736,31 @@
     text-align: center;
     cursor: pointer;
     transition: background-color .2s ease, color .2s ease, transform .06s ease, opacity .2s ease;
-    border-radius: 16px 16px 0 0;
-    /* flat on bottom, 16px on top */
+    border-radius: 0;
+    /* flat by default */
+    position: relative;
 }
 
+.mp-tab:first-child {
+    border-top-left-radius: 16px;
+}
+
+.mp-tab:last-child {
+    border-top-right-radius: 16px;
+}
+
+/* Divider between tabs */
 .mp-tab+.mp-tab {
     border-left: 1px solid rgba(0, 0, 0, .12);
+}
+
+.dark-mode .mp-tab+.mp-tab {
+    border-left-color: rgba(255, 255, 255, .12);
 }
 
 .dark-mode .mp-tab {
     background: #2a2a2a;
     color: #fff;
-}
-
-.dark-mode .mp-tab+.mp-tab {
-    border-left-color: rgba(255, 255, 255, .12);
 }
 
 .mp-tab:active {
@@ -1792,12 +1802,13 @@
     /* no extra gap; pill handles spacing */
 }
 
-/* Closed state (your inline style already sets these, this ensures CSS fallback) */
+/* Closed state (CSS fallback to match inline style) */
 .mp-mobile-controls.is-collapsed .mp-preview-wrap {
     max-height: 0 !important;
     opacity: 0 !important;
     transform: scale(.98) !important;
     margin: 0 !important;
+    pointer-events: none;
 }
 
 /* Make the preview attach perfectly: no top border or rounding on the phone */
