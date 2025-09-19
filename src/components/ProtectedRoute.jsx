@@ -8,10 +8,10 @@ export default function ProtectedRoute({ children }) {
     const navigate = useNavigate();
     const redirectedRef = useRef(false);
 
-    // Wait for app bootstrap + any in-flight hydration before deciding
-    if (!initialized || hydrating) return null; // could render a small skeleton
+    // Don’t decide until the app finished booting and any background hydration is done
+    if (!initialized || hydrating) return null; // (optional) render a tiny skeleton here
 
-    // One-shot redirect to avoid ping-pong / flashing
+    // One-shot redirect to avoid ping-pong / StrictMode double effects
     useEffect(() => {
         if (redirectedRef.current) return;
         if (!user) {
@@ -23,6 +23,6 @@ export default function ProtectedRoute({ children }) {
         }
     }, [user, navigate, location]);
 
-    if (!user) return null; // we triggered a redirect already
+    if (!user) return null; // redirect already triggered
     return children;
 }
