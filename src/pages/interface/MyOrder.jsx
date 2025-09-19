@@ -19,6 +19,16 @@ function formatAmount(amount, currency = 'gbp') {
     }).format(value);
 }
 
+function formatFulfillmentStatus(s) {
+    switch ((s || '').toLowerCase()) {
+        case 'order_placed': return 'Order placed';
+        case 'designing_card': return 'Designing card';
+        case 'packaged': return 'Packaged';
+        case 'shipped': return 'Shipped';
+        default: return 'Order placed';
+    }
+}
+
 export default function MyOrders() {
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -36,7 +46,9 @@ export default function MyOrders() {
             const sm = window.innerWidth <= 600;
             setIsMobile(m);
             setIsSmallMobile(sm);
-            if (!m && sidebarOpen) setSidebarOpen(false);
+            if (!m && sidebarOpen) {
+                setSidebarOpen(false);
+            }
         };
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
@@ -105,15 +117,26 @@ export default function MyOrders() {
             <main className="main-content-container">
                 <PageHeader title="My Orders" isMobile={isMobile} isSmallMobile={isSmallMobile} />
 
-                <div className="orders-container">
+                <div
+                    className="orders-container"
+                    style={{
+                        width: '100%',
+                        marginTop: '5px',
+                        background: '#fff',
+                        border: '1px solid rgba(0,0,0,0.08)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
+                    }}
+                >
                     {loading ? (
                         <p>Loading orders…</p>
                     ) : err ? (
-                        <p className="error-text">{err}</p>
+                        <p className="error-text" style={{ color: '#b91c1c' }}>{err}</p>
                     ) : orders.length === 0 ? (
                         <p>No orders yet.</p>
                     ) : (
-                        <div className="orders-list">
+                        <div className="orders-list" style={{ display: 'grid', gap: 16 }}>
                             {orders.map((o) => {
                                 const isSub = (o.type || '').toLowerCase() === 'subscription';
                                 const isCard = (o.type || '').toLowerCase() === 'card';
@@ -122,51 +145,103 @@ export default function MyOrders() {
                                     o.deliveryWindow || o.metadata?.estimatedDelivery || '—';
                                 const qty = isSub ? '—' : o.quantity || 1;
 
+                                const deliveryName = o.deliveryName || o?.metadata?.deliveryName || '—';
+                                const deliveryAddress = o.deliveryAddress || o?.metadata?.deliveryAddress || '—';
+                                const fulfillText = formatFulfillmentStatus(o.fulfillmentStatus);
+
                                 return (
-                                    <div key={o.id} className="order-card">
+                                    <div
+                                        key={o.id}
+                                        className="order-card"
+                                        style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: '120px 1fr',
+                                            gap: 16,
+                                            border: '1px solid #f1f5f9',
+                                            borderRadius: 12,
+                                            padding: 16,
+                                            alignItems: 'center',
+                                            background: '#fff',
+                                            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                                        }}
+                                    >
                                         {/* Thumbnail */}
-                                        <div className="order-thumb">
+                                        <div
+                                            className="order-thumb"
+                                            style={{
+                                                width: 120,
+                                                height: 120,
+                                                borderRadius: 12,
+                                                overflow: 'hidden',
+                                                background: '#fafafa',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                            }}
+                                        >
                                             <img
                                                 src={ProductThumb}
                                                 alt="Product"
                                                 className="order-thumb-img"
+                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                             />
                                         </div>
 
                                         {/* Details */}
-                                        <div className="order-details">
-                                            <div className="order-meta">
-                                                <span className="type">{o.type}</span>
-                                                <span>•</span>
-                                                <span>{o.status}</span>
-                                                <span>•</span>
-                                                <span>
-                                                    {o.createdAt
-                                                        ? new Date(o.createdAt).toLocaleString()
-                                                        : '—'}
+                                        <div className="order-details" style={{ display: 'grid', gap: 8 }}>
+                                            <div
+                                                className="order-meta"
+                                                style={{
+                                                    display: 'flex',
+                                                    gap: 8,
+                                                    alignItems: 'baseline',
+                                                    flexWrap: 'wrap',
+                                                    fontSize: 14,
+                                                    color: '#6b7280',
+                                                }}
+                                            >
+                                                <span className="type" style={{ textTransform: 'capitalize', color: '#111', fontWeight: 500 }}>
+                                                    {o.type}
                                                 </span>
+                                                <span>•</span>
+                                                <span style={{ textTransform: 'capitalize' }}>{o.status}</span>
+                                                <span>•</span>
+                                                <span>{o.createdAt ? new Date(o.createdAt).toLocaleString() : '—'}</span>
                                             </div>
 
                                             {isCard && (
                                                 <>
-                                                    <div className="order-line">
+                                                    <div className="order-line" style={{ fontSize: 14 }}>
                                                         <strong>Quantity:</strong> {qty}
                                                     </div>
-                                                    <div className="order-line">
+                                                    <div className="order-line" style={{ fontSize: 14 }}>
                                                         <strong>Estimated delivery:</strong> {delivery}
+                                                    </div>
+                                                    <div className="order-line" style={{ fontSize: 14 }}>
+                                                        <strong>Order status:</strong> {fulfillText}
+                                                    </div>
+                                                    <div className="order-line" style={{ fontSize: 14 }}>
+                                                        <strong>Delivery name:</strong> {deliveryName}
+                                                    </div>
+                                                    <div className="order-line" style={{ fontSize: 14 }}>
+                                                        <strong>Delivery address:</strong> {deliveryAddress}
                                                     </div>
                                                 </>
                                             )}
 
-                                            <div className="order-line">
+                                            <div className="order-line" style={{ fontSize: 14 }}>
                                                 <strong>Amount:</strong> {amount}
                                             </div>
 
-                                            <div className="order-actions">
+                                            <div
+                                                className="order-actions"
+                                                style={{ display: 'flex', gap: 10, marginTop: 10, flexWrap: 'wrap' }}
+                                            >
                                                 {isSub ? (
                                                     <button
                                                         onClick={cancelSubscription}
                                                         className="cta-black-button desktop-button"
+                                                        style={{ padding: '10px 14px', borderRadius: 10 }}
                                                     >
                                                         Cancel subscription
                                                     </button>
@@ -174,6 +249,7 @@ export default function MyOrders() {
                                                     <button
                                                         onClick={() => navigate('/contactus')}
                                                         className="cta-black-button desktop-button"
+                                                        style={{ padding: '10px 14px', borderRadius: 10 }}
                                                     >
                                                         Problem with order
                                                     </button>
@@ -182,6 +258,7 @@ export default function MyOrders() {
                                                 <Link
                                                     to={isSub ? '/SuccessSubscription' : '/success'}
                                                     className="cta-blue-button desktop-button"
+                                                    style={{ padding: '10px 14px', borderRadius: 10 }}
                                                 >
                                                     View details
                                                 </Link>
@@ -193,7 +270,7 @@ export default function MyOrders() {
                         </div>
                     )}
 
-                    {actionMsg && <p className="action-message">{actionMsg}</p>}
+                    {actionMsg && <p className="action-message" style={{ marginTop: 12 }}>{actionMsg}</p>}
                 </div>
             </main>
         </div>

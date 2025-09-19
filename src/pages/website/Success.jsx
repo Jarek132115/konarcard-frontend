@@ -7,6 +7,7 @@ import PageHeader from '../../components/PageHeader';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import api from '../../services/api';
 import { AuthContext } from '../../components/AuthContext';
+import { toast } from 'react-hot-toast';
 
 function formatAmount(amount, currency = 'gbp') {
   if (typeof amount !== 'number') return '—';
@@ -17,6 +18,16 @@ function formatAmount(amount, currency = 'gbp') {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value);
+}
+
+function statusLabel(s) {
+  switch ((s || '').toLowerCase()) {
+    case 'order_placed': return 'Order placed';
+    case 'designing_card': return 'Designing your card';
+    case 'packaged': return 'Packaged';
+    case 'shipped': return 'Shipped';
+    default: return 'Order placed';
+  }
 }
 
 export default function SuccessCard() {
@@ -82,7 +93,43 @@ export default function SuccessCard() {
   const status = (latestCardOrder?.status || 'paid').toLowerCase();
   const orderId = latestCardOrder?._id || latestCardOrder?.id || '—';
   const estimatedDelivery = latestCardOrder?.deliveryWindow || latestCardOrder?.metadata?.estimatedDelivery || '—';
-  const deliveryAddress = latestCardOrder?.metadata?.deliveryAddress || null;
+  const deliveryAddress = latestCardOrder?.deliveryAddress || latestCardOrder?.metadata?.deliveryAddress || null;
+
+  // New fields
+  const fulfillmentStatus = latestCardOrder?.fulfillmentStatus || 'order_placed';
+  const trackingUrl = latestCardOrder?.trackingUrl || latestCardOrder?.metadata?.trackingUrl || '';
+
+  function handleTrack() {
+    if (trackingUrl) {
+      window.open(trackingUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      toast(
+        'Your card is still being processed. We’ll email you when tracking is available.',
+        { icon: '⏳' }
+      );
+    }
+  }
+
+  // Chip style (like the 14-day trial badge)
+  const chip = {
+    display: 'inline-block',
+    padding: '6px 10px',
+    borderRadius: 999,
+    fontSize: 12,
+    fontWeight: 700,
+    letterSpacing: 0.2,
+    border: '1px solid rgba(0,0,0,0.08)',
+    background:
+      fulfillmentStatus === 'shipped' ? '#e8f5e9' :
+        fulfillmentStatus === 'packaged' ? '#fff7ed' :
+          fulfillmentStatus === 'designing_card' ? '#eff6ff' :
+            '#f3f4f6',
+    color:
+      fulfillmentStatus === 'shipped' ? '#166534' :
+        fulfillmentStatus === 'packaged' ? '#9a3412' :
+          fulfillmentStatus === 'designing_card' ? '#1d4ed8' :
+            '#374151',
+  };
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -112,6 +159,25 @@ export default function SuccessCard() {
             <p style={{ color: '#b91c1c' }}>{err}</p>
           ) : (
             <div className="success-box">
+              {/* Status chip + Track button row */}
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
+                <span style={chip}>{statusLabel(fulfillmentStatus)}</span>
+                <button
+                  type="button"
+                  onClick={handleTrack}
+                  className="desktop-button"
+                  style={{
+                    padding: '8px 12px',
+                    borderRadius: 10,
+                    border: '1px solid #e5e7eb',
+                    background: '#fff',
+                  }}
+                  title={trackingUrl ? 'Open tracking in a new tab' : 'Tracking not available yet'}
+                >
+                  Track order
+                </button>
+              </div>
+
               <h2 className="desktop-h4 success-header">Payment Successful!</h2>
               <p className="desktop-body" style={{ margin: 0, color: '#555' }}>
                 Thank you for your order. Your Konar card is on its way.
