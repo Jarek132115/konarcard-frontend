@@ -32,15 +32,17 @@ function parseDateMaybe(v) {
     return null;
 }
 
+/** Prefer mirrored DB value; only return if it's in the future. */
 function pickTrialUntil(profile, latestSub) {
     const now = Date.now();
+
     const primary = parseDateMaybe(
         profile?.trialExpires ??
         profile?.trial_expires ??
         profile?.trialEnd ??
         profile?.trial_end
     );
-    if (primary) return primary;
+    if (primary && +primary > now) return primary;
 
     const subCandidates = [
         profile?.subscription?.trialEndsAt,
@@ -53,7 +55,7 @@ function pickTrialUntil(profile, latestSub) {
     ];
     for (const c of subCandidates) {
         const d = parseDateMaybe(c);
-        if (d) return d;
+        if (d && +d > now) return d;
     }
     return null;
 }
@@ -104,11 +106,9 @@ export default function SuccessSubscription() {
                 const list = Array.isArray(res?.data?.data) ? res.data.data : [];
                 if (mounted) setOrders(list);
             } catch (e) {
-                if (mounted)
-                    setErr(
-                        e?.response?.data?.error ||
-                        'Could not load your subscription details.'
-                    );
+                if (mounted) {
+                    setErr(e?.response?.data?.error || 'Could not load your subscription details.');
+                }
             } finally {
                 if (mounted) setLoading(false);
             }
@@ -119,13 +119,9 @@ export default function SuccessSubscription() {
     }, [authUser]);
 
     const latestSub = useMemo(() => {
-        const subs = (orders || []).filter(
-            (o) => (o.type || '').toLowerCase() === 'subscription'
-        );
+        const subs = (orders || []).filter(o => (o.type || '').toLowerCase() === 'subscription');
         if (!subs.length) return null;
-        return subs.sort(
-            (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
-        )[0];
+        return subs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
     }, [orders]);
 
     const amountPaid = useMemo(() => {
@@ -136,20 +132,8 @@ export default function SuccessSubscription() {
         );
     }, [latestSub]);
 
-    const trialUntil = useMemo(
-        () => pickTrialUntil(profile, latestSub),
-        [profile, latestSub]
-    );
-    const now = Date.now();
-
-    let trialLabel = '—';
-    if (trialUntil) {
-        if (+trialUntil > now) {
-            trialLabel = `${trialUntil.toLocaleString()}`;
-        } else {
-            trialLabel = `Trial ended on ${trialUntil.toLocaleString()}`;
-        }
-    }
+    const trialUntil = useMemo(() => pickTrialUntil(profile, latestSub), [profile, latestSub]);
+    const trialLabel = trialUntil ? trialUntil.toLocaleString() : '—';
 
     const subStatus =
         (latestSub?.status || '').toLowerCase() ||
@@ -166,27 +150,18 @@ export default function SuccessSubscription() {
                     onClick={() => setSidebarOpen(!sidebarOpen)}
                     aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
                 >
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span></span><span></span><span></span>
                 </button>
             </div>
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
             {sidebarOpen && isMobile && (
-                <div
-                    className="sidebar-overlay active"
-                    onClick={() => setSidebarOpen(false)}
-                />
+                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
             )}
 
             <main className="main-content-container">
-                <PageHeader
-                    title="Subscription"
-                    isMobile={isMobile}
-                    isSmallMobile={isSmallMobile}
-                />
+                <PageHeader title="Subscription" isMobile={isMobile} isSmallMobile={isSmallMobile} />
 
                 <div className="success-container">
                     {loading ? (
@@ -197,8 +172,7 @@ export default function SuccessSubscription() {
                         <div className="success-box">
                             <h2 className="desktop-h4 success-header">Konar Profile Plan</h2>
                             <p className="desktop-body" style={{ margin: 0, color: '#555' }}>
-                                Your subscription is{' '}
-                                <strong className="status-text">{subStatus}</strong>.
+                                Your subscription is <strong className="status-text">{subStatus}</strong>.
                             </p>
 
                             <div className="success-grid">
@@ -207,21 +181,14 @@ export default function SuccessSubscription() {
                                     <p className="desktop-h5 value">{amountPaid}</p>
                                 </div>
                                 <div className="info-tile">
-                                    <p className="desktop-body-s label">Free trial</p>
+                                    <p className="desktop-body-s label">Free trial active until</p>
                                     <p className="desktop-h5 value">{trialLabel}</p>
                                 </div>
                             </div>
 
                             <div className="success-buttons">
-                                <Link
-                                    to="/myprofile"
-                                    className="cta-blue-button desktop-button"
-                                >
-                                    Go to Dashboard
-                                </Link>
-                                <Link to="/myorders" className="cta-black-button desktop-button">
-                                    View Orders
-                                </Link>
+                                <Link to="/myprofile" className="cta-blue-button desktop-button">Go to Dashboard</Link>
+                                <Link to="/myorders" className="cta-black-button desktop-button">View Orders</Link>
                             </div>
 
                             <hr className="divider" />
@@ -230,16 +197,12 @@ export default function SuccessSubscription() {
                                 <div className="kv-row">
                                     <span className="desktop-body-s kv-label">Created</span>
                                     <span className="desktop-body-s kv-value">
-                                        {latestSub?.createdAt
-                                            ? new Date(latestSub.createdAt).toLocaleString()
-                                            : '—'}
+                                        {latestSub?.createdAt ? new Date(latestSub.createdAt).toLocaleString() : '—'}
                                     </span>
                                 </div>
                                 <div className="kv-row">
                                     <span className="desktop-body-s kv-label">Status</span>
-                                    <span className="desktop-body-s kv-value status-text">
-                                        {subStatus}
-                                    </span>
+                                    <span className="desktop-body-s kv-value status-text">{subStatus}</span>
                                 </div>
                             </div>
                         </div>

@@ -9,8 +9,7 @@ import api from '../../services/api';
 
 function formatAmount(amount, currency = 'gbp') {
     if (typeof amount !== 'number') return '—';
-    // Stripe sends smallest currency unit
-    const value = amount / 100;
+    const value = amount / 100; // Stripe sends smallest unit
     return new Intl.NumberFormat(undefined, {
         style: 'currency',
         currency: currency.toUpperCase(),
@@ -103,7 +102,6 @@ export default function MyOrders() {
                     isSmallMobile={isSmallMobile}
                 />
 
-                {/* Card */}
                 <div
                     style={{
                         width: '100%',
@@ -129,6 +127,7 @@ export default function MyOrders() {
                                         <th style={{ padding: '10px 8px' }}>Status</th>
                                         <th style={{ padding: '10px 8px' }}>Quantity</th>
                                         <th style={{ padding: '10px 8px' }}>Amount</th>
+                                        <th style={{ padding: '10px 8px' }}>Estimated Delivery</th>
                                         <th style={{ padding: '10px 8px' }}>Created</th>
                                     </tr>
                                 </thead>
@@ -146,6 +145,9 @@ export default function MyOrders() {
                                             </td>
                                             <td style={{ padding: '10px 8px' }}>
                                                 {formatAmount(o.amountTotal, o.currency)}
+                                            </td>
+                                            <td style={{ padding: '10px 8px' }}>
+                                                {o.type === 'card' ? (o.deliveryWindow || '—') : '—'}
                                             </td>
                                             <td style={{ padding: '10px 8px' }}>
                                                 {o.createdAt ? new Date(o.createdAt).toLocaleString() : '—'}
