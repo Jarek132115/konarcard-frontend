@@ -36,7 +36,7 @@ import LockIcon from '../../assets/icons/Lock-Icon.svg';
 import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
 import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
-
+import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import InfoIcon from '../../assets/icons/Info-Icon.svg';
 import TimeIcon from '../../assets/icons/Time-Icon.svg';
 import ShieldIcon from '../../assets/icons/Shield-Icon.svg';
