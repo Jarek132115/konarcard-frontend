@@ -1875,38 +1875,3 @@
     }
 }
 
-/* Make the phone padding a variable so the cover can bleed out */
-.mock-phone {
-    --phone-pad: 20px;
-    /* desktop phone padding */
-    --phone-radius: 16px;
-    /* phone corner radius */
-    padding: var(--phone-pad);
-    border-radius: var(--phone-radius);
-}
-
-/* On mobile preview the phone uses a smaller padding */
-.mock-phone.mobile-preview {
-    --phone-pad: 16px;
-    /* mobile phone padding */
-}
-
-/* Full-bleed cover (touches the phone edges) */
-.mock-cover {
-    /* push up and out to cancel the phone's padding on all sides */
-    margin-top: calc(var(--phone-pad) * -1);
-    margin-left: calc(var(--phone-pad) * -1);
-    margin-right: calc(var(--phone-pad) * -1);
-    width: calc(100% + calc(var(--phone-pad) * 2));
-
-    /* keep your existing visual shape */
-    display: block;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-
-    /* top corners follow the phone shell; bottom corners stay as before */
-    border-top-left-radius: var(--phone-radius);
-    border-top-right-radius: var(--phone-radius);
-    border-bottom-left-radius: 14px;
-    border-bottom-right-radius: 14px;
-}
