@@ -53,6 +53,9 @@ const NFCCards = lazyWithRetry(() => import('./pages/interface/NFCCards.jsx'));
 const Notifications = lazyWithRetry(() => import('./pages/interface/Notifications.jsx'));
 const Profile = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
 
+// Admin
+const AdminDashboard = lazyWithRetry(() => import('./pages/admin/AdminDashboard.jsx'));
+
 function TidioWrapper() {
   const location = useLocation();
   const isDashboardPath =
@@ -63,7 +66,8 @@ function TidioWrapper() {
     location.pathname.startsWith('/nfccards') ||
     location.pathname.startsWith('/notifications') ||
     location.pathname.startsWith('/profile') ||
-    location.pathname.startsWith('/contact-support');
+    location.pathname.startsWith('/contact-support') ||
+    location.pathname.startsWith('/admin');
 
   const enableTidio = !isDashboardPath || location.pathname === '/contact-support';
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
@@ -76,7 +80,6 @@ export default function App() {
   // Optional: gently “preload” likely-next routes when the main thread is idle
   useEffect(() => {
     const preload = () => {
-      // if your lazyWithRetry attaches .preload, call it; otherwise this is a no-op
       Home.preload?.();
       Login.preload?.();
       MyProfile.preload?.();
@@ -99,7 +102,6 @@ export default function App() {
       <TidioWrapper />
 
       <RouteErrorBoundary>
-        {/* Real skeleton instead of null prevents white flash during lazy loads */}
         <Suspense fallback={<PageSkeleton />}>
           <Routes>
             {/* PUBLIC */}
@@ -131,6 +133,9 @@ export default function App() {
             <Route path="/nfccards" element={<ProtectedRoute><NFCCards /></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+
+            {/* ADMIN */}
+            <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           </Routes>
         </Suspense>
       </RouteErrorBoundary>
