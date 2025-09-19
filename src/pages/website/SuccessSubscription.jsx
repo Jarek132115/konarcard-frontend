@@ -1,3 +1,4 @@
+// src/pages/interface/SuccessSubscription.jsx
 import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -32,34 +33,6 @@ function parseDateMaybe(v) {
     return null;
 }
 
-/** Prefer mirrored DB value; only return if it's in the future. */
-function pickTrialUntil(profile, latestSub) {
-    const now = Date.now();
-
-    const primary = parseDateMaybe(
-        profile?.trialExpires ??
-        profile?.trial_expires ??
-        profile?.trialEnd ??
-        profile?.trial_end
-    );
-    if (primary && +primary > now) return primary;
-
-    const subCandidates = [
-        profile?.subscription?.trialEndsAt,
-        profile?.subscription?.trial_end,
-        latestSub?.trialEndsAt,
-        latestSub?.trial_end,
-        latestSub?.trialEnd,
-        latestSub?.trialPeriodEnd,
-        latestSub?.currentPeriodEnd,
-    ];
-    for (const c of subCandidates) {
-        const d = parseDateMaybe(c);
-        if (d && +d > now) return d;
-    }
-    return null;
-}
-
 export default function SuccessSubscription() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
@@ -70,6 +43,9 @@ export default function SuccessSubscription() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState('');
+
+    // subscription status from server (trial_end/current_period_end/etc)
+    const [subStatusInfo, setSubStatusInfo] = useState(null);
 
     useEffect(() => {
         const onResize = () => {
@@ -102,38 +78,57 @@ export default function SuccessSubscription() {
                     setProfile(authUser);
                 }
 
+                // Orders (to get plan price)
                 const res = await api.get('/me/orders');
                 const list = Array.isArray(res?.data?.data) ? res.data.data : [];
                 if (mounted) setOrders(list);
-            } catch (e) {
-                if (mounted) {
-                    setErr(e?.response?.data?.error || 'Could not load your subscription details.');
+
+                // Subscription status (next charge date lives here)
+                try {
+                    const s1 = await api.get('/subscription/status'); // preferred route
+                    if (mounted) setSubStatusInfo(s1?.data || null);
+                } catch {
+                    try {
+                        const s2 = await api.get('/check-subscription'); // fallback if your route is named differently
+                        if (mounted) setSubStatusInfo(s2?.data || null);
+                    } catch {
+                        // ignore; we'll just show what we can
+                    }
                 }
+            } catch (e) {
+                if (mounted) setErr(e?.response?.data?.error || 'Could not load your subscription details.');
             } finally {
                 if (mounted) setLoading(false);
             }
         })();
-        return () => {
-            mounted = false;
-        };
+        return () => { mounted = false; };
     }, [authUser]);
 
     const latestSub = useMemo(() => {
-        const subs = (orders || []).filter(o => (o.type || '').toLowerCase() === 'subscription');
+        const subs = (orders || []).filter((o) => (o.type || '').toLowerCase() === 'subscription');
         if (!subs.length) return null;
         return subs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
     }, [orders]);
 
-    const amountPaid = useMemo(() => {
+    const amountToday = useMemo(() => {
         if (!latestSub) return '—';
-        return formatAmount(
-            typeof latestSub.amountTotal === 'number' ? latestSub.amountTotal : 0,
-            latestSub.currency || 'gbp'
-        );
+        return formatAmount(typeof latestSub.amountTotal === 'number' ? latestSub.amountTotal : 0, latestSub.currency || 'gbp');
     }, [latestSub]);
 
-    const trialUntil = useMemo(() => pickTrialUntil(profile, latestSub), [profile, latestSub]);
-    const trialLabel = trialUntil ? trialUntil.toLocaleString() : '—';
+    // Next charge logic
+    const nextChargeDate = useMemo(() => {
+        const t = parseDateMaybe(subStatusInfo?.trial_end);
+        const cpe = parseDateMaybe(subStatusInfo?.current_period_end);
+        const cancelAtEnd = !!subStatusInfo?.cancel_at_period_end;
+
+        // If still in trial and not set to cancel, trial_end is the first charge date.
+        if (t && +t > Date.now() && !cancelAtEnd) return t;
+
+        // Otherwise next renewal is at current_period_end (if present)
+        if (cpe && +cpe > Date.now()) return cpe;
+
+        return null;
+    }, [subStatusInfo]);
 
     const subStatus =
         (latestSub?.status || '').toLowerCase() ||
@@ -155,10 +150,7 @@ export default function SuccessSubscription() {
             </div>
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-            {sidebarOpen && isMobile && (
-                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
-            )}
+            {sidebarOpen && isMobile && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />}
 
             <main className="main-content-container">
                 <PageHeader title="Subscription" isMobile={isMobile} isSmallMobile={isSmallMobile} />
@@ -178,17 +170,28 @@ export default function SuccessSubscription() {
                             <div className="success-grid">
                                 <div className="info-tile">
                                     <p className="desktop-body-s label">Amount paid today</p>
-                                    <p className="desktop-h5 value">{amountPaid}</p>
+                                    <p className="desktop-h5 value">{amountToday}</p>
                                 </div>
                                 <div className="info-tile">
-                                    <p className="desktop-body-s label">Free trial active until</p>
-                                    <p className="desktop-h5 value">{trialLabel}</p>
+                                    <p className="desktop-body-s label">
+                                        {subStatusInfo?.trial_end && parseDateMaybe(subStatusInfo.trial_end) && +parseDateMaybe(subStatusInfo.trial_end) > Date.now()
+                                            ? 'Free trial active until'
+                                            : 'Next charge on'}
+                                    </p>
+                                    <p className="desktop-h5 value">
+                                        {nextChargeDate ? nextChargeDate.toLocaleString() : '—'}
+                                        {nextChargeDate && latestSub ? ` · ${formatAmount(latestSub.amountTotal, latestSub.currency)}` : ''}
+                                    </p>
                                 </div>
                             </div>
 
-                            <div className="success-buttons">
-                                <Link to="/myprofile" className="cta-blue-button desktop-button">Go to Dashboard</Link>
-                                <Link to="/myorders" className="cta-black-button desktop-button">View Orders</Link>
+                            <div className="success-buttons" style={{ display: 'grid', gap: 12 }}>
+                                <Link to="/myprofile" className="cta-blue-button desktop-button" style={{ width: '100%' }}>
+                                    Go to Dashboard
+                                </Link>
+                                <Link to="/myorders" className="cta-black-button desktop-button" style={{ width: '100%' }}>
+                                    View Orders
+                                </Link>
                             </div>
 
                             <hr className="divider" />

@@ -1,3 +1,4 @@
+// src/pages/interface/SuccessCard.jsx
 import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -60,13 +61,11 @@ export default function SuccessCard() {
         if (mounted) setLoading(false);
       }
     })();
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, [authUser]);
 
   const latestCardOrder = useMemo(() => {
-    const cards = (orders || []).filter(o => (o.type || '').toLowerCase() === 'card');
+    const cards = (orders || []).filter((o) => (o.type || '').toLowerCase() === 'card');
     if (!cards.length) return null;
     return cards.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
   }, [orders]);
@@ -79,22 +78,11 @@ export default function SuccessCard() {
     );
   }, [latestCardOrder]);
 
-  const quantity =
-    latestCardOrder?.quantity ??
-    latestCardOrder?.metadata?.quantity ??
-    1;
-
+  const quantity = latestCardOrder?.quantity ?? latestCardOrder?.metadata?.quantity ?? 1;
   const status = (latestCardOrder?.status || 'paid').toLowerCase();
-  const orderId = latestCardOrder?.id || latestCardOrder?._id || '—';
-
-  // Prefer new deliveryWindow field; fall back to legacy metadata.estimatedDelivery
-  const estimatedDelivery =
-    latestCardOrder?.deliveryWindow ??
-    latestCardOrder?.metadata?.estimatedDelivery ??
-    '—';
-
-  const deliveryAddress =
-    latestCardOrder?.metadata?.deliveryAddress || null;
+  const orderId = latestCardOrder?._id || latestCardOrder?.id || '—';
+  const estimatedDelivery = latestCardOrder?.deliveryWindow || latestCardOrder?.metadata?.estimatedDelivery || '—';
+  const deliveryAddress = latestCardOrder?.metadata?.deliveryAddress || null;
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -107,27 +95,15 @@ export default function SuccessCard() {
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <span></span><span></span><span></span>
         </button>
       </div>
 
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-      {sidebarOpen && isMobile && (
-        <div
-          className="sidebar-overlay active"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      {sidebarOpen && isMobile && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />}
 
       <main className="main-content-container">
-        <PageHeader
-          title="Order"
-          isMobile={isMobile}
-          isSmallMobile={isSmallMobile}
-        />
+        <PageHeader title="Order" isMobile={isMobile} isSmallMobile={isSmallMobile} />
 
         <div className="success-container">
           {loading ? (
@@ -136,9 +112,7 @@ export default function SuccessCard() {
             <p style={{ color: '#b91c1c' }}>{err}</p>
           ) : (
             <div className="success-box">
-              <h2 className="desktop-h4 success-header">
-                Payment Successful!
-              </h2>
+              <h2 className="desktop-h4 success-header">Payment Successful!</h2>
               <p className="desktop-body" style={{ margin: 0, color: '#555' }}>
                 Thank you for your order. Your Konar card is on its way.
               </p>
@@ -154,49 +128,26 @@ export default function SuccessCard() {
                 </div>
               </div>
 
-              <div className="success-buttons">
-                <Link to="/" className="cta-black-button desktop-button">Go to Home</Link>
-                <Link to="/myprofile" className="cta-blue-button desktop-button">Go to Your Dashboard</Link>
-                <Link to="/myorders" className="cta-black-button desktop-button">View Orders</Link>
+              <div className="success-buttons" style={{ display: 'grid', gap: 12 }}>
+                <Link to="/myprofile" className="cta-blue-button desktop-button" style={{ width: '100%' }}>
+                  Go to Your Dashboard
+                </Link>
+                <Link to="/myorders" className="cta-black-button desktop-button" style={{ width: '100%' }}>
+                  View Orders
+                </Link>
               </div>
 
               <hr className="divider" />
 
               <div className="kv">
-                <div className="kv-row">
-                  <span className="desktop-body-s kv-label">Order ID</span>
-                  <span className="desktop-body-s kv-value">{orderId}</span>
-                </div>
-
-                <div className="kv-row">
-                  <span className="desktop-body-s kv-label">Quantity</span>
-                  <span className="desktop-body-s kv-value">{quantity}</span>
-                </div>
-
-                <div className="kv-row">
-                  <span className="desktop-body-s kv-label">Price Paid</span>
-                  <span className="desktop-body-s kv-value">{amountPaid}</span>
-                </div>
-
+                <div className="kv-row"><span className="desktop-body-s kv-label">Order ID</span><span className="desktop-body-s kv-value">{orderId}</span></div>
+                <div className="kv-row"><span className="desktop-body-s kv-label">Quantity</span><span className="desktop-body-s kv-value">{quantity}</span></div>
+                <div className="kv-row"><span className="desktop-body-s kv-label">Price Paid</span><span className="desktop-body-s kv-value">{amountPaid}</span></div>
                 {deliveryAddress && (
-                  <div className="kv-row">
-                    <span className="desktop-body-s kv-label">Delivery Address</span>
-                    <span className="desktop-body-s kv-value">{deliveryAddress}</span>
-                  </div>
+                  <div className="kv-row"><span className="desktop-body-s kv-label">Delivery Address</span><span className="desktop-body-s kv-value">{deliveryAddress}</span></div>
                 )}
-
-                <div className="kv-row">
-                  <span className="desktop-body-s kv-label">Created</span>
-                  <span className="desktop-body-s kv-value">
-                    {latestCardOrder?.createdAt
-                      ? new Date(latestCardOrder.createdAt).toLocaleString()
-                      : '—'}
-                  </span>
-                </div>
-                <div className="kv-row">
-                  <span className="desktop-body-s kv-label">Status</span>
-                  <span className="desktop-body-s kv-value status-text">{status}</span>
-                </div>
+                <div className="kv-row"><span className="desktop-body-s kv-label">Created</span><span className="desktop-body-s kv-value">{latestCardOrder?.createdAt ? new Date(latestCardOrder.createdAt).toLocaleString() : '—'}</span></div>
+                <div className="kv-row"><span className="desktop-body-s kv-label">Status</span><span className="desktop-body-s kv-value status-text">{status}</span></div>
               </div>
             </div>
           )}
