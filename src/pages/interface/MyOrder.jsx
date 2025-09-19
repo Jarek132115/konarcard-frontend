@@ -277,10 +277,10 @@ export default function MyOrders() {
                                                     </button>
                                                 ) : (
                                                     <button
-                                                        onClick={() => navigate("/contactus")}
+                                                        onClick={() => navigate("/productandplan/konarcard")}
                                                         className="cta-black-button desktop-button"
                                                     >
-                                                        Problem with order
+                                                        Buy Again
                                                     </button>
                                                 )}
 
