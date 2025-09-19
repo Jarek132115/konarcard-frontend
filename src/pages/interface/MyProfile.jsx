@@ -993,7 +993,7 @@ export default function MyProfile() {
                       pointerEvents: !isSubscribed && hasTrialEnded ? "none" : "auto",
                     }}
                   >
-                    <h2 className="editor-title">Create Your Digital Business Card</h2>
+                    <h2 className="editor-title">Edit Your Digital Business Card</h2>
 
                     {/* Theme */}
                     <div className="input-block">
