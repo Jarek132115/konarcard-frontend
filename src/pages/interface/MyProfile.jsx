@@ -153,6 +153,36 @@ export default function MyProfile() {
     else if (!authLoading && isUserVerified) setShowVerificationPrompt(false);
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
+  // Auto-scroll to editor if coming from public profile CTA (mobile only)
+  useEffect(() => {
+    const wantScroll = localStorage.getItem('scrollToEditorOnLoad') === '1';
+    if (!wantScroll) return;
+
+    // mobile only
+    if (window.innerWidth <= 1000) {
+      // Try a few times in case layout is still mounting
+      let tries = 0;
+      const tick = () => {
+        const el =
+          document.getElementById('myprofile-editor') ||
+          document.querySelector('.myprofile-editor-anchor');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          try { localStorage.removeItem('scrollToEditorOnLoad'); } catch { }
+        } else if (tries < 20) {
+          tries += 1;
+          setTimeout(tick, 150);
+        } else {
+          try { localStorage.removeItem('scrollToEditorOnLoad'); } catch { }
+        }
+      };
+      tick();
+    } else {
+      try { localStorage.removeItem('scrollToEditorOnLoad'); } catch { }
+    }
+  }, []);
+
+
   useEffect(() => {
     if (isCardLoading) return;
 

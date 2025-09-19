@@ -37,26 +37,27 @@ const filterRealReviews = (arr) =>
         (r) => r && (nonEmpty(r.name) || nonEmpty(r.text) || (r.rating ?? 0) > 0)
     );
 
-const UserPage = () => {
+const centerPage = {
+    textAlign: "center",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "100vh",
+};
+
+export default function UserPage() {
     const { username } = useParams();
-    const { isAuthenticated } = useContext(AuthContext) || {};
+    const { user: authUser } = useContext(AuthContext);
 
     // Refs for carousels
     const workCarouselRef = useRef(null);
     const servicesCarouselRef = useRef(null);
     const reviewsCarouselRef = useRef(null);
 
-    const {
-        data: businessCard,
-        isLoading,
-        isError,
-        error,
-    } = useQuery({
+    const { data: businessCard, isLoading, isError, error } = useQuery({
         queryKey: ["public-business-card", username],
         queryFn: async () => {
-            const response = await api.get(
-                `/api/business-card/by_username/${username}`
-            );
+            const response = await api.get(`/api/business-card/by_username/${username}`);
             return response.data;
         },
         enabled: !!username,
@@ -65,21 +66,43 @@ const UserPage = () => {
         retry: 1,
     });
 
-    // Carousel scrolling
+    // Utilities
     const scrollCarousel = (ref, direction) => {
         if (ref.current && ref.current.children.length > 0) {
             const carousel = ref.current;
             const itemWidth = carousel.children[0].offsetWidth;
             const currentScroll = carousel.scrollLeft;
             const maxScroll = carousel.scrollWidth - carousel.offsetWidth;
-            let next =
-                direction === "left" ? currentScroll - itemWidth : currentScroll + itemWidth;
+            let next = direction === "left" ? currentScroll - itemWidth : currentScroll + itemWidth;
             if (next < 0) next = maxScroll;
             if (next >= maxScroll) next = 0;
             carousel.scrollTo({ left: next, behavior: "smooth" });
         }
     };
 
+    // ---- CTA handlers (fixed) ----
+    const goEditProfile = () => {
+        try {
+            // Only scroll on mobile; MyProfile effect will check this
+            localStorage.setItem("scrollToEditorOnLoad", "1");
+        } catch { }
+        window.location.href = "/myprofile";
+    };
+
+    const goContactSupportSmart = () => {
+        try {
+            localStorage.setItem("openChatOnLoad", "1");
+        } catch { }
+        if (authUser) {
+            // Logged in -> interface page
+            window.location.href = "/contact-support";
+        } else {
+            // Public page
+            window.location.href = "/contactus";
+        }
+    };
+
+    // ---- Loading / errors ----
     if (isLoading) {
         return (
             <div className="user-landing-page" style={centerPage}>
@@ -90,7 +113,7 @@ const UserPage = () => {
 
     if (isError) {
         console.error("Error fetching business card:", error);
-        return unavailable({ username, isAuthed: !!isAuthenticated });
+        return unavailable(username, goEditProfile, goContactSupportSmart);
     }
 
     if (!businessCard) {
@@ -106,7 +129,7 @@ const UserPage = () => {
         businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
     const isProfileActive = hasActiveSubscription || isTrialActive;
 
-    if (!isProfileActive) return unavailable({ username, isAuthed: !!isAuthenticated });
+    if (!isProfileActive) return unavailable(username, goEditProfile, goContactSupportSmart);
 
     // ---------- Derive ONLY real, user-filled content ----------
     const realCover =
@@ -151,8 +174,8 @@ const UserPage = () => {
         !showReviewsSection &&
         !showContactSection;
 
-    const aboutMeLayout = businessCard.about_me_layout || "side-by-side"; // 'side-by-side' | 'stacked'
-    const workDisplayMode = businessCard.work_display_mode || "list"; // 'list' | 'grid' | 'carousel'
+    const aboutMeLayout = businessCard.about_me_layout || "side-by-side";
+    const workDisplayMode = businessCard.work_display_mode || "list";
     const servicesDisplayMode = businessCard.services_display_mode || "list";
     const reviewsDisplayMode = businessCard.reviews_display_mode || "list";
 
@@ -173,8 +196,7 @@ const UserPage = () => {
             phone_number,
             publicProfileUrl,
         } = businessCard;
-        const landingPageUrl =
-            publicProfileUrl || `${window.location.origin}/u/${username}`;
+        const landingPageUrl = publicProfileUrl || `${window.location.origin}/u/${username}`;
 
         const nameParts = (full_name || "").split(" ");
         const firstName = nameParts[0] || "";
@@ -205,14 +227,9 @@ const UserPage = () => {
 
     if (nothingToShow) {
         return (
-            <div
-                className="user-landing-page"
-                style={{ ...themeStyles, ...centerPage, padding: 24 }}
-            >
+            <div className="user-landing-page" style={{ ...themeStyles, ...centerPage, padding: 24 }}>
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
-                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>
-                        This profile isn’t set up yet
-                    </h2>
+                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>This profile isn’t set up yet</h2>
                     <p style={{ marginTop: 10, opacity: 0.8 }}>
                         @{username} hasn’t published any content here yet.
                     </p>
@@ -227,24 +244,12 @@ const UserPage = () => {
             {showMainSection && (
                 <>
                     {realCover && (
-                        <img
-                            src={businessCard.cover_photo}
-                            alt="Cover"
-                            className="landing-cover-photo"
-                        />
+                        <img src={businessCard.cover_photo} alt="Cover" className="landing-cover-photo" />
                     )}
-                    {realMainHeading && (
-                        <h2 className="landing-main-heading">{businessCard.main_heading}</h2>
-                    )}
-                    {realSubHeading && (
-                        <p className="landing-sub-heading">{businessCard.sub_heading}</p>
-                    )}
+                    {realMainHeading && <h2 className="landing-main-heading">{businessCard.main_heading}</h2>}
+                    {realSubHeading && <p className="landing-sub-heading">{businessCard.sub_heading}</p>}
                     {hasContact && (
-                        <button
-                            type="button"
-                            onClick={handleExchangeContact}
-                            className="landing-action-button"
-                        >
+                        <button type="button" onClick={handleExchangeContact} className="landing-action-button">
                             Save My Number
                         </button>
                     )}
@@ -256,16 +261,10 @@ const UserPage = () => {
                 <>
                     <p className="landing-section-title">About Me</p>
                     <div className={`landing-about-section ${aboutMeLayout}`}>
-                        {realAvatar && (
-                            <img src={businessCard.avatar} alt="Avatar" className="landing-avatar" />
-                        )}
+                        {realAvatar && <img src={businessCard.avatar} alt="Avatar" className="landing-avatar" />}
                         <div className="landing-about-header">
-                            {realFullName && (
-                                <p className="landing-profile-name">{businessCard.full_name}</p>
-                            )}
-                            {realJobTitle && (
-                                <p className="landing-profile-role">{businessCard.job_title}</p>
-                            )}
+                            {realFullName && <p className="landing-profile-name">{businessCard.full_name}</p>}
+                            {realJobTitle && <p className="landing-profile-role">{businessCard.job_title}</p>}
                         </div>
                         {realBio && <p className="landing-bio-text">{businessCard.bio}</p>}
                     </div>
@@ -278,7 +277,7 @@ const UserPage = () => {
                     <p className="landing-section-title">My Work</p>
                     {(workDisplayMode === "list" || workDisplayMode === "grid") && (
                         <div className={`landing-work-gallery ${workDisplayMode}`}>
-                            {works.map((url, i) => (
+                            {filterRealImages(businessCard.works).map((url, i) => (
                                 <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />
                             ))}
                         </div>
@@ -302,7 +301,7 @@ const UserPage = () => {
                                 </button>
                             </div>
                             <div ref={workCarouselRef} className="user-work-gallery-carousel">
-                                {works.map((url, i) => (
+                                {filterRealImages(businessCard.works).map((url, i) => (
                                     <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />
                                 ))}
                             </div>
@@ -336,17 +335,12 @@ const UserPage = () => {
                         )}
                         <div
                             ref={servicesCarouselRef}
-                            className={`user-services-list-carousel ${servicesDisplayMode === "carousel" ? "" : "list"
-                                }`}
+                            className={`user-services-list-carousel ${servicesDisplayMode === "carousel" ? "" : "list"}`}
                         >
                             {services.map((s, i) => (
                                 <div key={i} className="landing-service-item">
-                                    {nonEmpty(s.name) && (
-                                        <p className="landing-service-name">{s.name}</p>
-                                    )}
-                                    {nonEmpty(s.price) && (
-                                        <span className="landing-service-price">{s.price}</span>
-                                    )}
+                                    {nonEmpty(s.name) && <p className="landing-service-name">{s.name}</p>}
+                                    {nonEmpty(s.price) && <span className="landing-service-price">{s.price}</span>}
                                 </div>
                             ))}
                         </div>
@@ -379,8 +373,7 @@ const UserPage = () => {
                         )}
                         <div
                             ref={reviewsCarouselRef}
-                            className={`user-reviews-list-carousel ${reviewsDisplayMode === "carousel" ? "" : "list"
-                                }`}
+                            className={`user-reviews-list-carousel ${reviewsDisplayMode === "carousel" ? "" : "list"}`}
                         >
                             {reviews.map((r, i) => (
                                 <div key={i} className="landing-review-card">
@@ -398,12 +391,8 @@ const UserPage = () => {
                                                 </span>
                                             ))}
                                     </div>
-                                    {nonEmpty(r.text) && (
-                                        <p className="landing-review-text">"{r.text}"</p>
-                                    )}
-                                    {nonEmpty(r.name) && (
-                                        <p className="landing-reviewer-name">{r.name}</p>
-                                    )}
+                                    {nonEmpty(r.text) && <p className="landing-review-text">"{r.text}"</p>}
+                                    {nonEmpty(r.name) && <p className="landing-reviewer-name">{r.name}</p>}
                                 </div>
                             ))}
                         </div>
@@ -419,17 +408,13 @@ const UserPage = () => {
                         {nonEmpty(businessCard.contact_email) && (
                             <div className="landing-contact-item">
                                 <p className="landing-contact-label">Email:</p>
-                                <p className="landing-contact-value">
-                                    {businessCard.contact_email}
-                                </p>
+                                <p className="landing-contact-value">{businessCard.contact_email}</p>
                             </div>
                         )}
                         {nonEmpty(businessCard.phone_number) && (
                             <div className="landing-contact-item">
                                 <p className="landing-contact-label">Phone:</p>
-                                <p className="landing-contact-value">
-                                    {businessCard.phone_number}
-                                </p>
+                                <p className="landing-contact-value">{businessCard.phone_number}</p>
                             </div>
                         )}
                     </div>
@@ -437,78 +422,45 @@ const UserPage = () => {
             )}
         </div>
     );
-};
 
-const centerPage = {
-    textAlign: "center",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "100vh",
-};
+    // ---- Unavailable (inline so we can use handlers above) ----
+    function unavailable(username, onEdit, onContact) {
+        return (
+            <div className="user-landing-page unavailable-wrap">
+                <div className="unavailable-card">
+                    <div className="unavailable-badge">Profile status</div>
 
-// Helper to open Contact page + live chat based on login state
-const goToContactWithChat = (isAuthed) => {
-    try {
-        // A small flag your Contact pages can read to auto-open Tidio
-        localStorage.setItem("openChatOnLoad", "1");
-    } catch { }
-    window.location.href = isAuthed ? "/contact-support" : "/contactus";
-};
+                    <h1 className="unavailable-title">This profile isn’t live yet</h1>
+                    <p className="unavailable-sub">There are a couple of common reasons:</p>
 
-// --- FULL REPLACEMENT ---
-const unavailable = ({ username, isAuthed }) => (
-    <div className="user-landing-page unavailable-wrap">
-        <div className="unavailable-card">
-            <div className="unavailable-badge">Profile status</div>
+                    <ul className="unavailable-list">
+                        <li className="unavailable-item">
+                            <span className="dot" />
+                            <div className="reason">
+                                <div className="desktop-body-s"><strong>No content published yet.</strong></div>
+                                <div className="desktop-body-xs">The owner might not have created their page.</div>
+                            </div>
+                        </li>
 
-            <h1 className="unavailable-title">This profile isn’t live yet</h1>
-            <p className="unavailable-sub">There are a couple of common reasons:</p>
+                        <li className="unavailable-item">
+                            <span className="dot" />
+                            <div className="reason">
+                                <div className="desktop-body-s"><strong>Access expired.</strong></div>
+                                <div className="desktop-body-xs">The free trial may have ended or a subscription is required.</div>
+                            </div>
+                        </li>
+                    </ul>
 
-            <ul className="unavailable-list">
-                <li className="unavailable-item">
-                    <span className="dot" />
-                    <div className="reason">
-                        <div className="desktop-body-s">
-                            <strong>No content published yet.</strong>
-                        </div>
-                        <div className="desktop-body-xs">
-                            The owner might not have created their page.
-                        </div>
+                    <div className="unavailable-actions">
+                        <button className="desktop-button cta-blue-button" onClick={onEdit}>
+                            Create / Edit My Profile
+                        </button>
+                        <button className="desktop-button cta-black-button" onClick={onContact}>
+                            Contact us
+                        </button>
                     </div>
-                </li>
-
-                <li className="unavailable-item">
-                    <span className="dot" />
-                    <div className="reason">
-                        <div className="desktop-body-s">
-                            <strong>Access expired.</strong>
-                        </div>
-                        <div className="desktop-body-xs">
-                            The free trial may have ended or a subscription is required.
-                        </div>
-                    </div>
-                </li>
-            </ul>
-
-            <div className="unavailable-actions">
-                <a className="desktop-button cta-blue-button" href="/myprofile">
-                    Create / Edit My Profile
-                </a>
+                </div>
             </div>
-
-            {/* NEW helper under the main CTA */}
-            <div className="unavailable-help">
-                <button
-                    type="button"
-                    className="unavailable-help-button"
-                    onClick={() => goToContactWithChat(isAuthed)}
-                >
-                    Struggling setting up your profile? <u style={{textDecoration: 'underline'}} className="dark-blue">Contact us now</u>
-                </button>
-            </div>
-        </div>
-    </div>
-);
-
-export default UserPage;
+        );
+    }
+}
