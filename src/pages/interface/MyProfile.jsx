@@ -86,8 +86,8 @@ export default function MyProfile() {
   const [showReviewsSection, setShowReviewsSection] = useState(true);
   const [showContactSection, setShowContactSection] = useState(true);
 
-  // NEW: mobile preview toggle
-  const [showPreviewMobile, setShowPreviewMobile] = useState(true);
+  // NEW: preview open/closed (used on all breakpoints)
+  const [previewOpen, setPreviewOpen] = useState(true);
 
   /* =========================
      TRIAL/PLAN STATUS
@@ -604,6 +604,59 @@ export default function MyProfile() {
      ========================= */
   const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
 
+  // Inline styles for the preview controls + collapse (so you don't need a CSS update)
+  const controlsWrapStyle = {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    marginBottom: "10px",
+  };
+
+  const controlsStyle = (pill = false) => ({
+    display: "inline-flex",
+    gap: 10,
+    padding: pill ? "8px 14px" : 6,
+    background: "#fff",
+    border: "1px solid rgba(0,0,0,.08)",
+    boxShadow: "0 8px 24px rgba(0,0,0,.06)",
+    borderRadius: pill ? 9999 : 14,
+    alignItems: "center",
+    position: "relative",
+    zIndex: 2,
+  });
+
+  const blueBtn = {
+    background: "#0081FF",
+    color: "#fff",
+    padding: "10px 14px",
+    border: 0,
+    borderRadius: 12,
+    fontWeight: 800,
+    fontSize: ".95rem",
+    cursor: "pointer",
+    boxShadow: "0 4px 12px rgba(0,0,0,.1)",
+  };
+
+  const grayBtn = {
+    background: "#fff",
+    color: "#111",
+    padding: "10px 14px",
+    border: "1px solid rgba(0,0,0,.08)",
+    borderRadius: 12,
+    fontWeight: 700,
+    fontSize: ".95rem",
+    cursor: "pointer",
+    boxShadow: "0 4px 12px rgba(0,0,0,.1)",
+  };
+
+  const collapsibleStyle = {
+    transition: "all .3s ease",
+    maxHeight: previewOpen ? 2000 : 0,
+    opacity: previewOpen ? 1 : 0,
+    overflow: "hidden",
+    transform: previewOpen ? "scale(1)" : "scale(.98)",
+  };
+
   return (
     <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
       {/* Mobile header (fixed) */}
@@ -692,39 +745,45 @@ export default function MyProfile() {
               )}
 
               <div className="myprofile-flex-container">
-                {/* Phone preview */}
+                {/* Phone preview column */}
                 <div className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`}>
-                  {/* MOBILE: sticky segmented control (Show Preview / Visit Page) */}
-                  {isMobile && (
-                    <div className={`mp-mobile-controls ${showPreviewMobile ? "is-open" : "is-collapsed"}`} role="tablist" aria-label="Preview controls">
-                      <button
-                        type="button"
-                        role="tab"
-                        aria-selected={showPreviewMobile}
-                        className={`mp-tab ${showPreviewMobile ? "active" : ""}`}
-                        onClick={() => setShowPreviewMobile(true)}
-                      >
-                        Show Preview
-                      </button>
-                      <a
-                        role="tab"
-                        aria-selected={!showPreviewMobile}
-                        className="mp-tab visit"
-                        href={visitUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={(e) => {
-                          // keep the tab look pressed while opening link
-                          setShowPreviewMobile(false);
-                        }}
-                      >
-                        Visit Page
-                      </a>
-                    </div>
-                  )}
 
-                  {/* Render preview only when toggled ON (mobile). Always ON on desktop. */}
-                  {(!isMobile || showPreviewMobile) && (
+                  {/* NEW: Always render the control ABOVE the preview; pill when closed */}
+                  <div style={controlsWrapStyle} aria-label="Preview controls" role="group">
+                    {previewOpen ? (
+                      <div style={controlsStyle(false)}>
+                        <button
+                          type="button"
+                          onClick={() => setPreviewOpen(false)}
+                          style={blueBtn}
+                        >
+                          Close Preview
+                        </button>
+                        <a
+                          href={visitUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ ...grayBtn, textDecoration: "none", display: "inline-flex", alignItems: "center" }}
+                        >
+                          Visit Page
+                        </a>
+                      </div>
+                    ) : (
+                      <div style={controlsStyle(true)}>
+                        <button
+                          type="button"
+                          onClick={() => setPreviewOpen(true)}
+                          style={{ ...blueBtn, padding: "8px 14px" }}
+                          aria-expanded={previewOpen}
+                        >
+                          Show Preview
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Collapsible preview */}
+                  <div style={collapsibleStyle}>
                     <div
                       className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
                       style={{ fontFamily: state.font || previewPlaceholders.font }}
@@ -875,7 +934,7 @@ export default function MyProfile() {
                         )}
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
 
                 {/* Editor */}

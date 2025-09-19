@@ -55,7 +55,7 @@ export default function Home() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [previewOpen, setPreviewOpen] = useState(true);
   const isSubscribed = user ? user.isSubscribed : false;
 
   // gallery state (kept for future use even if not shown here)
