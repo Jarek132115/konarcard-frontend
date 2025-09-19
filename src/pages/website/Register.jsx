@@ -319,7 +319,7 @@ export default function Register() {
                                     autoComplete="one-time-code"
                                     maxLength={6}
                                     required
-                                    style={{ marginBottom: 10 }}
+                                    style={{ marginBottom: 20 }}
                                 />
                                 <button
                                     type="submit"

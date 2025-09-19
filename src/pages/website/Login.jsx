@@ -327,7 +327,7 @@ export default function Login() {
                                     maxLength={6}
                                     autoComplete="one-time-code"
                                     required
-                                    style={{ marginBottom: 10}}
+                                    style={{ marginBottom: 20}}
                                 />
                                 <button
                                     type="submit"
