@@ -1,4 +1,3 @@
-// src/pages/interface/MyOrder.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -7,7 +6,8 @@ import PageHeader from '../../components/PageHeader';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import api from '../../services/api';
 
-import ProductThumb from '../../assets/images/Product-Cover.png'; // small image for the card
+import ProductThumb from '../../assets/images/Product-Cover.png';
+import './myorders.css';
 
 function formatAmount(amount, currency = 'gbp') {
     if (typeof amount !== 'number') return '—';
@@ -106,25 +106,15 @@ export default function MyOrders() {
             <main className="main-content-container">
                 <PageHeader title="My Orders" isMobile={isMobile} isSmallMobile={isSmallMobile} />
 
-                <div
-                    style={{
-                        width: '100%',
-                        marginTop: '5px',
-                        background: '#fff',
-                        border: '1px solid rgba(0,0,0,0.08)',
-                        borderRadius: '16px',
-                        padding: '24px',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
-                    }}
-                >
+                <div className="orders-container">
                     {loading ? (
                         <p>Loading orders…</p>
                     ) : err ? (
-                        <p style={{ color: '#b91c1c' }}>{err}</p>
+                        <p className="error-text">{err}</p>
                     ) : orders.length === 0 ? (
                         <p>No orders yet.</p>
                     ) : (
-                        <div style={{ display: 'grid', gap: 16 }}>
+                        <div className="orders-list">
                             {orders.map((o) => {
                                 const isSub = (o.type || '').toLowerCase() === 'subscription';
                                 const isCard = (o.type || '').toLowerCase() === 'card';
@@ -134,64 +124,22 @@ export default function MyOrders() {
                                 const qty = isSub ? '—' : o.quantity || 1;
 
                                 return (
-                                    <div
-                                        key={o.id}
-                                        style={{
-                                            display: 'grid',
-                                            gridTemplateColumns: '120px 1fr',
-                                            gap: 16,
-                                            border: '1px solid #f1f5f9',
-                                            borderRadius: 12,
-                                            padding: 16,
-                                            alignItems: 'center',
-                                            background: '#fff',
-                                            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-                                        }}
-                                    >
+                                    <div key={o.id} className="order-card">
                                         {/* Thumbnail */}
-                                        <div
-                                            style={{
-                                                width: 120,
-                                                height: 120,
-                                                borderRadius: 12,
-                                                overflow: 'hidden',
-                                                background: '#fafafa',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                            }}
-                                        >
+                                        <div className="order-thumb">
                                             <img
                                                 src={ProductThumb}
                                                 alt="Product"
-                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                className="order-thumb-img"
                                             />
                                         </div>
 
                                         {/* Details */}
-                                        <div style={{ display: 'grid', gap: 8 }}>
-                                            {/* Meta row */}
-                                            <div
-                                                style={{
-                                                    display: 'flex',
-                                                    gap: 8,
-                                                    alignItems: 'baseline',
-                                                    flexWrap: 'wrap',
-                                                    fontSize: 14,
-                                                    color: '#6b7280',
-                                                }}
-                                            >
-                                                <span
-                                                    style={{
-                                                        textTransform: 'capitalize',
-                                                        color: '#111',
-                                                        fontWeight: 500,
-                                                    }}
-                                                >
-                                                    {o.type}
-                                                </span>
+                                        <div className="order-details">
+                                            <div className="order-meta">
+                                                <span className="type">{o.type}</span>
                                                 <span>•</span>
-                                                <span style={{ textTransform: 'capitalize' }}>{o.status}</span>
+                                                <span>{o.status}</span>
                                                 <span>•</span>
                                                 <span>
                                                     {o.createdAt
@@ -202,33 +150,24 @@ export default function MyOrders() {
 
                                             {isCard && (
                                                 <>
-                                                    <div style={{ fontSize: 14 }}>
+                                                    <div className="order-line">
                                                         <strong>Quantity:</strong> {qty}
                                                     </div>
-                                                    <div style={{ fontSize: 14 }}>
+                                                    <div className="order-line">
                                                         <strong>Estimated delivery:</strong> {delivery}
                                                     </div>
                                                 </>
                                             )}
 
-                                            <div style={{ fontSize: 14 }}>
+                                            <div className="order-line">
                                                 <strong>Amount:</strong> {amount}
                                             </div>
 
-                                            {/* Actions */}
-                                            <div
-                                                style={{
-                                                    display: 'flex',
-                                                    gap: 10,
-                                                    marginTop: 10,
-                                                    flexWrap: 'wrap',
-                                                }}
-                                            >
+                                            <div className="order-actions">
                                                 {isSub ? (
                                                     <button
                                                         onClick={cancelSubscription}
                                                         className="cta-black-button desktop-button"
-                                                        style={{ padding: '10px 14px', borderRadius: 10 }}
                                                     >
                                                         Cancel subscription
                                                     </button>
@@ -236,7 +175,6 @@ export default function MyOrders() {
                                                     <button
                                                         onClick={() => navigate('/contactus')}
                                                         className="cta-black-button desktop-button"
-                                                        style={{ padding: '10px 14px', borderRadius: 10 }}
                                                     >
                                                         Problem with order
                                                     </button>
@@ -245,7 +183,6 @@ export default function MyOrders() {
                                                 <Link
                                                     to={isSub ? '/SuccessSubscription' : '/success'}
                                                     className="cta-blue-button desktop-button"
-                                                    style={{ padding: '10px 14px', borderRadius: 10 }}
                                                 >
                                                     View details
                                                 </Link>
@@ -257,7 +194,7 @@ export default function MyOrders() {
                         </div>
                     )}
 
-                    {actionMsg && <p style={{ marginTop: 12 }}>{actionMsg}</p>}
+                    {actionMsg && <p className="action-message">{actionMsg}</p>}
                 </div>
             </main>
         </div>
