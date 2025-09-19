@@ -1,11 +1,10 @@
 // frontend/src/pages/admin/AdminDashboard.jsx
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useMemo, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
-import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
+import { AuthContext } from '../../components/AuthContext';
 
 function formatAmount(amount, currency = 'gbp') {
     if (typeof amount !== 'number') return '—';
@@ -26,9 +25,8 @@ const STATUS_OPTIONS = [
 ];
 
 export default function AdminDashboard() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-    const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
+    const navigate = useNavigate();
+    const { logout } = useContext(AuthContext);
 
     const [loading, setLoading] = useState(true);
     const [orders, setOrders] = useState([]);
@@ -39,25 +37,18 @@ export default function AdminDashboard() {
     const [type, setType] = useState('');
     const [fulfillmentStatus, setFulfillmentStatus] = useState('');
 
-    // Local edit buffers per order
+    // Local edit buffers
     const [edit, setEdit] = useState({}); // { [orderId]: { trackingUrl, deliveryWindow, fulfillmentStatus, notifyTracking, notifyStatus } }
 
-    useEffect(() => {
-        const onResize = () => {
-            const m = window.innerWidth <= 1000;
-            const sm = window.innerWidth <= 600;
-            setIsMobile(m);
-            setIsSmallMobile(sm);
-            if (!m && sidebarOpen) setSidebarOpen(false);
-        };
-        window.addEventListener('resize', onResize);
-        return () => window.removeEventListener('resize', onResize);
-    }, [sidebarOpen]);
-
-    useEffect(() => {
-        if (sidebarOpen && isMobile) document.body.classList.add('body-no-scroll');
-        else document.body.classList.remove('body-no-scroll');
-    }, [sidebarOpen, isMobile]);
+    const doLogout = async () => {
+        try { await api.post('/logout'); } catch { }
+        try {
+            localStorage.removeItem('token');
+            localStorage.removeItem('authUser');
+        } catch { }
+        logout?.();
+        navigate('/login', { replace: true });
+    };
 
     async function loadOrders() {
         setLoading(true);
@@ -71,7 +62,6 @@ export default function AdminDashboard() {
             const data = Array.isArray(res?.data?.data) ? res.data.data : [];
             setOrders(data);
 
-            // seed edit buffers
             const seed = {};
             for (const o of data) {
                 seed[o._id] = {
@@ -92,29 +82,28 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         loadOrders();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    function setEditField(id, field, value) {
-        setEdit((prev) => ({ ...prev, [id]: { ...(prev[id] || {}), [field]: value } }));
-    }
+    const setEditField = (id, field, value) => {
+        setEdit(prev => ({ ...prev, [id]: { ...(prev[id] || {}), [field]: value } }));
+    };
 
-    async function saveTracking(o) {
+    const saveTracking = async (o) => {
         const buf = edit[o._id] || {};
         try {
             await api.patch(`/admin/orders/${o._id}/tracking`, {
                 trackingUrl: buf.trackingUrl || '',
                 deliveryWindow: buf.deliveryWindow || '',
-                notify: !!buf.notifyTracking && !!buf.trackingUrl, // only email if we have a link
+                notify: !!buf.notifyTracking && !!buf.trackingUrl,
             });
             toast.success('Tracking updated');
             await loadOrders();
         } catch (e) {
             toast.error(e?.response?.data?.error || 'Failed to update tracking');
         }
-    }
+    };
 
-    async function saveStatus(o) {
+    const saveStatus = async (o) => {
         const buf = edit[o._id] || {};
         try {
             await api.patch(`/admin/orders/${o._id}/status`, {
@@ -126,251 +115,188 @@ export default function AdminDashboard() {
         } catch (e) {
             toast.error(e?.response?.data?.error || 'Failed to update status');
         }
-    }
+    };
 
-    async function cancelSubscription(o) {
+    const cancelSubscription = async (o) => {
         try {
             const res = await api.post(`/admin/subscription/${o._id}/cancel`);
-            if (res?.data?.success) {
-                toast.success('Subscription set to cancel at period end');
-            } else {
-                toast.error(res?.data?.error || 'Failed to cancel subscription');
-            }
+            if (res?.data?.success) toast.success('Subscription set to cancel at period end');
+            else toast.error(res?.data?.error || 'Failed to cancel subscription');
         } catch (e) {
             toast.error(e?.response?.data?.error || 'Failed to cancel subscription');
         }
-    }
+    };
 
     const filteredCount = useMemo(() => orders.length, [orders]);
 
     return (
-        <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
-            {/* Mobile header (keeps the dashboard pattern the same) */}
-            <div className="myprofile-mobile-header">
-                <Link to="/myprofile" className="myprofile-logo-link">
-                    <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
-                </Link>
-                <div
-                    className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                >
-                    <span></span><span></span><span></span>
-                </div>
-            </div>
+        <div className="admin-shell">
+            {/* Slim left rail */}
+            <aside className="admin-side">
+                <button className="admin-logo-btn" onClick={() => navigate('/')}>
+                    <img src={LogoIcon} alt="KONAR" />
+                </button>
+                <div className="admin-spacer" />
+                <button className="admin-logout-btn" onClick={doLogout}>Logout</button>
+            </aside>
 
-            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-            {sidebarOpen && isMobile && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />}
-
-            <main className="main-content-container admin-main">
-                <PageHeader
-                    title="Admin — Orders"
-                    subtitle={`Search customers and manage orders. (${filteredCount} result${filteredCount === 1 ? '' : 's'})`}
-                    isMobile={isMobile}
-                    isSmallMobile={isSmallMobile}
-                />
-
+            {/* Main content */}
+            <main className="admin-main">
                 {/* Filters */}
                 <div className="admin-filters">
-                    <div className="admin-filters-grid">
-                        <input
-                            placeholder="Search by email, name, username, userId or orderId"
-                            value={q}
-                            onChange={(e) => setQ(e.target.value)}
-                            className="admin-input"
-                        />
-                        <select
-                            value={type}
-                            onChange={(e) => setType(e.target.value)}
-                            className="admin-input"
+                    <input
+                        className="admin-input"
+                        placeholder="Search by email, name, username, userId or orderId"
+                        value={q}
+                        onChange={(e) => setQ(e.target.value)}
+                    />
+                    <select className="admin-select" value={type} onChange={(e) => setType(e.target.value)}>
+                        <option value="">All types</option>
+                        <option value="card">Card</option>
+                        <option value="subscription">Subscription</option>
+                    </select>
+                    <select
+                        className="admin-select"
+                        value={fulfillmentStatus}
+                        onChange={(e) => setFulfillmentStatus(e.target.value)}
+                    >
+                        <option value="">Any status</option>
+                        {STATUS_OPTIONS.map((s) => (
+                            <option key={s.value} value={s.value}>{s.label}</option>
+                        ))}
+                    </select>
+                    <div className="admin-filter-buttons">
+                        <button className="btn-primary" onClick={loadOrders}>Apply</button>
+                        <button
+                            className="btn-ghost"
+                            onClick={() => { setQ(''); setType(''); setFulfillmentStatus(''); }}
                         >
-                            <option value="">All types</option>
-                            <option value="card">Card</option>
-                            <option value="subscription">Subscription</option>
-                        </select>
-                        <select
-                            value={fulfillmentStatus}
-                            onChange={(e) => setFulfillmentStatus(e.target.value)}
-                            className="admin-input"
-                        >
-                            <option value="">Any status</option>
-                            {STATUS_OPTIONS.map((s) => (
-                                <option key={s.value} value={s.value}>{s.label}</option>
-                            ))}
-                        </select>
-                        <div className="admin-filter-actions">
-                            <button className="cta-blue-button desktop-button" onClick={loadOrders}>
-                                Apply
-                            </button>
-                            <button
-                                className="desktop-button admin-reset-btn"
-                                onClick={() => { setQ(''); setType(''); setFulfillmentStatus(''); }}
-                            >
-                                Reset
-                            </button>
-                        </div>
+                            Reset
+                        </button>
                     </div>
-                    <div className="admin-results-pill">{filteredCount} result{filteredCount === 1 ? '' : 's'}</div>
                 </div>
 
-                {/* List */}
-                <div className="admin-list">
+                <p className="admin-results">{filteredCount} result{filteredCount === 1 ? '' : 's'}</p>
+
+                {/* Orders list */}
+                <div className="admin-card">
                     {loading ? (
                         <p>Loading…</p>
                     ) : error ? (
-                        <p className="error-text">{error}</p>
+                        <p className="admin-error">{error}</p>
                     ) : orders.length === 0 ? (
-                        <div className="admin-empty">
-                            <div className="admin-empty-badge">Orders</div>
-                            <h2 className="admin-empty-title">No orders found</h2>
-                            <p className="admin-empty-sub">Try a different search.</p>
-                        </div>
+                        <p>No orders found.</p>
                     ) : (
-                        <div className="admin-orders-grid">
+                        <div className="admin-list">
                             {orders.map((o) => {
                                 const id = o._id;
                                 const ebuf = edit[id] || {};
                                 const isCard = (o.type || '').toLowerCase() === 'card';
                                 const isSub = (o.type || '').toLowerCase() === 'subscription';
-
-                                const customerName = o.customerName || o?.metadata?.customerName || '—';
-                                const customerEmail = o.customerEmail || o?.metadata?.customerEmail || '—';
-
-                                const deliverTo =
-                                    o.deliveryName || o?.metadata?.deliveryName || o?.shipping?.name || '—';
-                                const address =
-                                    o.deliveryAddress ||
-                                    o?.metadata?.deliveryAddress ||
-                                    o?.shipping?.address ||
-                                    '—';
+                                const customerName = o.user?.name || o.deliveryName || o?.metadata?.deliveryName || '—';
+                                const customerEmail = o.user?.email || '—';
+                                const deliveryAddr = o.deliveryAddress || o?.metadata?.deliveryAddress || '—';
 
                                 return (
-                                    <section key={id} className="admin-order-card">
-                                        {/* Header */}
-                                        <header className="admin-order-header">
-                                            <div className="admin-order-type">
-                                                <span className="pill">{o.type || '—'}</span>
-                                                <span className="sep">•</span>
-                                                <span className="muted">{o.status || '—'}</span>
-                                                <span className="sep">•</span>
-                                                <span className="muted">{o.createdAt ? new Date(o.createdAt).toLocaleString() : '—'}</span>
-                                            </div>
-                                            <div className="admin-order-id">
-                                                <span className="muted">Order ID:</span>
-                                                <code>{id}</code>
-                                                <button
-                                                    type="button"
-                                                    className="admin-copy-btn"
-                                                    onClick={() => { navigator.clipboard.writeText(id); toast.success('Copied'); }}
-                                                    title="Copy order ID"
-                                                >
-                                                    Copy
-                                                </button>
-                                            </div>
-                                        </header>
-
-                                        {/* Customer row */}
-                                        <div className="admin-customer">
-                                            <div><strong>Customer:</strong> {customerName}</div>
-                                            <div><strong>Email:</strong> {customerEmail}</div>
+                                    <section key={id} className="order">
+                                        {/* Top line */}
+                                        <div className="order-top">
+                                            <div className="pill">{(o.type || '').charAt(0).toUpperCase() + (o.type || '').slice(1)}</div>
+                                            <span className="sep">•</span>
+                                            <span className="muted">{o.status || '—'}</span>
+                                            <span className="sep">•</span>
+                                            <span className="muted">{o.createdAt ? new Date(o.createdAt).toLocaleString() : '—'}</span>
+                                            <div className="grow" />
+                                            <span className="muted">Order ID:</span>
+                                            <code className="mono">{id}</code>
+                                            <button
+                                                className="btn-copy"
+                                                onClick={() => { navigator.clipboard.writeText(id); toast.success('Copied'); }}
+                                            >Copy</button>
                                         </div>
 
-                                        {/* Money / shipping keys */}
-                                        <div className="admin-order-kv">
+                                        {/* Customer + amounts */}
+                                        <div className="order-grid">
+                                            <div><strong>Customer:</strong> {customerName}</div>
+                                            <div className="right"><strong>Email:</strong> {customerEmail}</div>
+
                                             <div><strong>Amount:</strong> {formatAmount(o.amountTotal, o.currency)}</div>
-                                            {isCard && <div><strong>Qty:</strong> {o.quantity ?? 1}</div>}
-                                            {isSub && o.stripeSubscriptionId && (
-                                                <div><strong>Subscription:</strong> <code>{o.stripeSubscriptionId}</code></div>
-                                            )}
+                                            <div className="right"><strong>Qty:</strong> {o.quantity ?? 1}</div>
+
                                             {isCard && (
                                                 <>
-                                                    <div><strong>ETA:</strong> {o.deliveryWindow || '—'}</div>
-                                                    <div className="admin-wide"><strong>Tracking:</strong> {o.trackingUrl ? <a href={o.trackingUrl} target="_blank" rel="noreferrer">{o.trackingUrl}</a> : '—'}</div>
+                                                    <div><strong>Tracking:</strong> {o.trackingUrl ? <a href={o.trackingUrl} target="_blank" rel="noreferrer">{o.trackingUrl}</a> : '—'}</div>
+                                                    <div className="right"><strong>ETA:</strong> {o.deliveryWindow || '—'}</div>
                                                     <div><strong>Fulfilment:</strong> {o.fulfillmentStatus || 'order_placed'}</div>
-                                                    <div><strong>Deliver To:</strong> {deliverTo}</div>
-                                                    <div className="admin-wide"><strong>Address:</strong> {address}</div>
+                                                    <div className="right"><strong>Address:</strong> {deliveryAddr}</div>
                                                 </>
                                             )}
                                         </div>
 
-                                        {/* Card-only controls */}
+                                        {/* Tracking & ETA (cards only) */}
                                         {isCard && (
-                                            <>
-                                                {/* Tracking & ETA */}
-                                                <div className="admin-block">
-                                                    <div className="admin-block-title">Tracking &amp; ETA</div>
-                                                    <div className="admin-2col">
-                                                        <input
-                                                            placeholder="Tracking URL (Royal Mail link)"
-                                                            value={ebuf.trackingUrl || ''}
-                                                            onChange={(e) => setEditField(id, 'trackingUrl', e.target.value)}
-                                                            className="admin-input"
-                                                        />
-                                                        <input
-                                                            placeholder="Estimated delivery (e.g. 20–23 Sep)"
-                                                            value={ebuf.deliveryWindow || ''}
-                                                            onChange={(e) => setEditField(id, 'deliveryWindow', e.target.value)}
-                                                            className="admin-input"
-                                                        />
-                                                    </div>
-                                                    <label className="admin-checkbox">
+                                            <div className="order-block">
+                                                <h4>Tracking & ETA</h4>
+                                                <div className="row">
+                                                    <input
+                                                        className="admin-input"
+                                                        placeholder="Tracking URL (Royal Mail link)"
+                                                        value={ebuf.trackingUrl || ''}
+                                                        onChange={(e) => setEditField(id, 'trackingUrl', e.target.value)}
+                                                    />
+                                                    <input
+                                                        className="admin-input"
+                                                        placeholder="Estimated delivery (e.g. 20–23 September)"
+                                                        value={ebuf.deliveryWindow || ''}
+                                                        onChange={(e) => setEditField(id, 'deliveryWindow', e.target.value)}
+                                                    />
+                                                </div>
+                                                <label className="check-row">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={!!ebuf.notifyTracking}
+                                                        onChange={(e) => setEditField(id, 'notifyTracking', e.target.checked)}
+                                                    />
+                                                    <span>Email customer “Order shipped — track it here”</span>
+                                                </label>
+                                                <button className="btn-primary" onClick={() => saveTracking(o)}>Save tracking</button>
+                                            </div>
+                                        )}
+
+                                        {/* Status (cards only) */}
+                                        {isCard && (
+                                            <div className="order-block">
+                                                <h4>Order Status</h4>
+                                                <div className="row">
+                                                    <select
+                                                        className="admin-select"
+                                                        value={ebuf.fulfillmentStatus || 'order_placed'}
+                                                        onChange={(e) => setEditField(id, 'fulfillmentStatus', e.target.value)}
+                                                    >
+                                                        {STATUS_OPTIONS.map(opt => (
+                                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                        ))}
+                                                    </select>
+                                                    <label className="check-row">
                                                         <input
                                                             type="checkbox"
-                                                            checked={!!ebuf.notifyTracking}
-                                                            onChange={(e) => setEditField(id, 'notifyTracking', e.target.checked)}
+                                                            checked={!!ebuf.notifyStatus}
+                                                            onChange={(e) => setEditField(id, 'notifyStatus', e.target.checked)}
                                                         />
-                                                        <span>Email customer “Order shipped — track it here”</span>
+                                                        <span>Email customer about this status update</span>
                                                     </label>
-                                                    <div className="admin-actions">
-                                                        <button className="cta-blue-button desktop-button" onClick={() => saveTracking(o)}>
-                                                            Save tracking
-                                                        </button>
-                                                    </div>
                                                 </div>
-
-                                                {/* Order Status */}
-                                                <div className="admin-block">
-                                                    <div className="admin-block-title">Order Status</div>
-                                                    <div className="admin-2col">
-                                                        <select
-                                                            value={ebuf.fulfillmentStatus || 'order_placed'}
-                                                            onChange={(e) => setEditField(id, 'fulfillmentStatus', e.target.value)}
-                                                            className="admin-input"
-                                                        >
-                                                            {STATUS_OPTIONS.map((opt) => (
-                                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                                            ))}
-                                                        </select>
-                                                        <label className="admin-checkbox">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={!!ebuf.notifyStatus}
-                                                                onChange={(e) => setEditField(id, 'notifyStatus', e.target.checked)}
-                                                            />
-                                                            <span>Email customer about this status update</span>
-                                                        </label>
-                                                    </div>
-                                                    <div className="admin-actions">
-                                                        <button className="cta-blue-button desktop-button" onClick={() => saveStatus(o)}>
-                                                            Save status
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </>
+                                                <button className="btn-primary" onClick={() => saveStatus(o)}>Save status</button>
+                                            </div>
                                         )}
 
                                         {/* Subscription helper */}
                                         {isSub && o.stripeSubscriptionId && (
-                                            <div className="admin-block">
-                                                <div className="admin-block-title">Subscription</div>
-                                                <div className="admin-sub-row">
-                                                    <span className="muted">Stripe ID:</span>
-                                                    <code>{o.stripeSubscriptionId}</code>
-                                                    <button
-                                                        className="admin-danger-btn"
-                                                        onClick={() => cancelSubscription(o)}
-                                                    >
-                                                        Cancel at period end
-                                                    </button>
+                                            <div className="order-block">
+                                                <h4>Subscription</h4>
+                                                <div className="row">
+                                                    <code className="mono">Stripe ID: {o.stripeSubscriptionId}</code>
+                                                    <button className="btn-danger" onClick={() => cancelSubscription(o)}>Cancel at period end</button>
                                                 </div>
                                             </div>
                                         )}
