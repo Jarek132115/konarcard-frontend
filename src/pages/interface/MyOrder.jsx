@@ -64,7 +64,9 @@ export default function MyOrders() {
                 if (mounted) setLoading(false);
             }
         })();
-        return () => { mounted = false; };
+        return () => {
+            mounted = false;
+        };
     }, []);
 
     async function cancelSubscription() {
@@ -72,7 +74,6 @@ export default function MyOrders() {
         try {
             await api.post('/cancel-subscription');
             setActionMsg('Subscription will cancel at the end of the current billing period.');
-            // refresh orders list in case status changed
             const res = await api.get('/me/orders', { params: { ts: Date.now() } });
             const list = Array.isArray(res?.data?.data) ? res.data.data : [];
             setOrders(list);
@@ -91,12 +92,16 @@ export default function MyOrders() {
                     className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
                     onClick={() => setSidebarOpen(!sidebarOpen)}
                 >
-                    <span></span><span></span><span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
             </div>
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-            {sidebarOpen && isMobile && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />}
+            {sidebarOpen && isMobile && (
+                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
+            )}
 
             <main className="main-content-container">
                 <PageHeader title="My Orders" isMobile={isMobile} isSmallMobile={isSmallMobile} />
@@ -109,6 +114,7 @@ export default function MyOrders() {
                         border: '1px solid rgba(0,0,0,0.08)',
                         borderRadius: '16px',
                         padding: '24px',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
                     }}
                 >
                     {loading ? (
@@ -123,55 +129,106 @@ export default function MyOrders() {
                                 const isSub = (o.type || '').toLowerCase() === 'subscription';
                                 const isCard = (o.type || '').toLowerCase() === 'card';
                                 const amount = formatAmount(o.amountTotal, o.currency);
-                                const delivery = o.deliveryWindow || o.metadata?.estimatedDelivery || '—';
-                                const qty = isSub ? '—' : (o.quantity || 1);
+                                const delivery =
+                                    o.deliveryWindow || o.metadata?.estimatedDelivery || '—';
+                                const qty = isSub ? '—' : o.quantity || 1;
 
                                 return (
-                                    <div key={o.id}
+                                    <div
+                                        key={o.id}
                                         style={{
                                             display: 'grid',
-                                            gridTemplateColumns: '100px 1fr',
+                                            gridTemplateColumns: '120px 1fr',
                                             gap: 16,
                                             border: '1px solid #f1f5f9',
                                             borderRadius: 12,
-                                            padding: 12,
-                                            alignItems: 'center'
+                                            padding: 16,
+                                            alignItems: 'center',
+                                            background: '#fff',
+                                            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
                                         }}
                                     >
                                         {/* Thumbnail */}
-                                        <div style={{
-                                            width: 100, height: 100, borderRadius: 12, overflow: 'hidden',
-                                            background: '#fafafa', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                        }}>
-                                            <img src={ProductThumb} alt="Product" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        <div
+                                            style={{
+                                                width: 120,
+                                                height: 120,
+                                                borderRadius: 12,
+                                                overflow: 'hidden',
+                                                background: '#fafafa',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                            }}
+                                        >
+                                            <img
+                                                src={ProductThumb}
+                                                alt="Product"
+                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                            />
                                         </div>
 
                                         {/* Details */}
-                                        <div style={{ display: 'grid', gap: 6 }}>
-                                            <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', flexWrap: 'wrap' }}>
-                                                <span className="desktop-body-s" style={{ textTransform: 'capitalize' }}>{o.type}</span>
-                                                <span className="desktop-body-s" style={{ color: '#6b7280' }}>•</span>
-                                                <span className="desktop-body-s" style={{ textTransform: 'capitalize' }}>{o.status}</span>
-                                                <span className="desktop-body-s" style={{ color: '#6b7280' }}>•</span>
-                                                <span className="desktop-body-s">{o.createdAt ? new Date(o.createdAt).toLocaleString() : '—'}</span>
+                                        <div style={{ display: 'grid', gap: 8 }}>
+                                            {/* Meta row */}
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    gap: 8,
+                                                    alignItems: 'baseline',
+                                                    flexWrap: 'wrap',
+                                                    fontSize: 14,
+                                                    color: '#6b7280',
+                                                }}
+                                            >
+                                                <span
+                                                    style={{
+                                                        textTransform: 'capitalize',
+                                                        color: '#111',
+                                                        fontWeight: 500,
+                                                    }}
+                                                >
+                                                    {o.type}
+                                                </span>
+                                                <span>•</span>
+                                                <span style={{ textTransform: 'capitalize' }}>{o.status}</span>
+                                                <span>•</span>
+                                                <span>
+                                                    {o.createdAt
+                                                        ? new Date(o.createdAt).toLocaleString()
+                                                        : '—'}
+                                                </span>
                                             </div>
 
                                             {isCard && (
                                                 <>
-                                                    <div className="desktop-body-s"><strong>Quantity:</strong> {qty}</div>
-                                                    <div className="desktop-body-s"><strong>Estimated delivery:</strong> {delivery}</div>
+                                                    <div style={{ fontSize: 14 }}>
+                                                        <strong>Quantity:</strong> {qty}
+                                                    </div>
+                                                    <div style={{ fontSize: 14 }}>
+                                                        <strong>Estimated delivery:</strong> {delivery}
+                                                    </div>
                                                 </>
                                             )}
 
-                                            <div className="desktop-body-s"><strong>Amount:</strong> {amount}</div>
+                                            <div style={{ fontSize: 14 }}>
+                                                <strong>Amount:</strong> {amount}
+                                            </div>
 
                                             {/* Actions */}
-                                            <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    gap: 10,
+                                                    marginTop: 10,
+                                                    flexWrap: 'wrap',
+                                                }}
+                                            >
                                                 {isSub ? (
                                                     <button
                                                         onClick={cancelSubscription}
                                                         className="cta-black-button desktop-button"
-                                                        style={{ padding: '10px 14px' }}
+                                                        style={{ padding: '10px 14px', borderRadius: 10 }}
                                                     >
                                                         Cancel subscription
                                                     </button>
@@ -179,13 +236,17 @@ export default function MyOrders() {
                                                     <button
                                                         onClick={() => navigate('/contactus')}
                                                         className="cta-black-button desktop-button"
-                                                        style={{ padding: '10px 14px' }}
+                                                        style={{ padding: '10px 14px', borderRadius: 10 }}
                                                     >
                                                         Problem with order
                                                     </button>
                                                 )}
 
-                                                <Link to={isSub ? '/SuccessSubscription' : '/success'} className="cta-blue-button desktop-button" style={{ padding: '10px 14px' }}>
+                                                <Link
+                                                    to={isSub ? '/SuccessSubscription' : '/success'}
+                                                    className="cta-blue-button desktop-button"
+                                                    style={{ padding: '10px 14px', borderRadius: 10 }}
+                                                >
                                                     View details
                                                 </Link>
                                             </div>
