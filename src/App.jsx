@@ -5,7 +5,6 @@ import { Toaster } from 'react-hot-toast';
 
 import { AuthContext } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
-import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import ScrollToTop from './components/ScrollToTop';
 import TidioDelayedLoader from './components/TidioDelayedLoader';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
@@ -40,7 +39,8 @@ const Reviews = lazyWithRetry(() => import('./pages/website/Reviews.jsx'));
 const HelpCentre = lazyWithRetry(() => import('./pages/website/HelpCentre.jsx'));
 const ContactUs = lazyWithRetry(() => import('./pages/website/ContactUs.jsx'));
 const Policies = lazyWithRetry(() => import('./pages/website/Policies.jsx'));
-const Success = lazyWithRetry(() => import('./pages/website/Success.jsx'));
+// ⬇️ use the new success page for card orders
+const SuccessCard = lazyWithRetry(() => import('./pages/interface/SuccessCard.jsx'));
 const SuccessSubscription = lazyWithRetry(() => import('./pages/website/SuccessSubscription.jsx'));
 const UserPage = lazyWithRetry(() => import('./pages/interface/UserPage.jsx'));
 
@@ -54,9 +54,6 @@ const NFCCards = lazyWithRetry(() => import('./pages/interface/NFCCards.jsx'));
 const Notifications = lazyWithRetry(() => import('./pages/interface/Notifications.jsx'));
 const Profile = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
 
-// Admin (protected + admin-only)
-const AdminDashboard = lazyWithRetry(() => import('./pages/admin/AdminDashboard.jsx'));
-
 function TidioWrapper() {
   const location = useLocation();
   const isDashboardPath =
@@ -67,8 +64,7 @@ function TidioWrapper() {
     location.pathname.startsWith('/nfccards') ||
     location.pathname.startsWith('/notifications') ||
     location.pathname.startsWith('/profile') ||
-    location.pathname.startsWith('/contact-support') ||
-    location.pathname.startsWith('/admin'); // avoid chat bubble on admin
+    location.pathname.startsWith('/contact-support');
 
   const enableTidio = !isDashboardPath || location.pathname === '/contact-support';
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
@@ -85,7 +81,6 @@ export default function App() {
       Login.preload?.();
       MyProfile.preload?.();
       ContactSupport.preload?.();
-      AdminDashboard.preload?.();
     };
     if ('requestIdleCallback' in window) {
       // @ts-ignore
@@ -121,22 +116,16 @@ export default function App() {
             <Route path="/helpcentre" element={<HelpCentre />} />
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/policies" element={<Policies />} />
-            <Route path="/success" element={<Success />} />
+
+            {/* ⬇️ Card checkout success uses the new page; keep it protected since checkout is protected */}
+            <Route path="/success" element={<ProtectedRoute><SuccessCard /></ProtectedRoute>} />
+
+            {/* Keep subscription success as-is */}
             <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
             <Route path="/successsubscription" element={<SuccessSubscription />} />
             <Route path="/u/:username" element={<UserPage />} />
 
-            {/* ADMIN (must be logged in + in ADMIN_EMAILS_UI) */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedAdminRoute>
-                  <AdminDashboard />
-                </ProtectedAdminRoute>
-              }
-            />
-
-            {/* PROTECTED (regular user area) */}
+            {/* PROTECTED */}
             <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
             <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
             <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
