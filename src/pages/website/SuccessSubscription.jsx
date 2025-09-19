@@ -1,4 +1,3 @@
-// src/pages/website/SuccessSubscription.jsx
 import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -7,6 +6,8 @@ import PageHeader from '../../components/PageHeader';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import api from '../../services/api';
 import { AuthContext } from '../../components/AuthContext';
+
+import './SuccessPages.css';
 
 function formatAmount(amount, currency = 'gbp') {
     if (typeof amount !== 'number') return '—';
@@ -21,14 +22,11 @@ function formatAmount(amount, currency = 'gbp') {
 
 function parseDateMaybe(v) {
     if (!v && v !== 0) return null;
-    // ISO string?
     if (typeof v === 'string') {
         const d = new Date(v);
         return Number.isNaN(+d) ? null : d;
     }
-    // number: could be seconds or ms
     if (typeof v === 'number') {
-        // if it's 10-digit (seconds), convert to ms
         const ms = v < 2e12 ? v * 1000 : v;
         const d = new Date(ms);
         return Number.isNaN(+d) ? null : d;
@@ -36,31 +34,26 @@ function parseDateMaybe(v) {
     return null;
 }
 
+/** Prefer the mirrored DB value (profile.trialExpires) and only show if future. */
 function pickTrialUntil(profile, latestSub) {
-    // 1) Profile/User fields (multiple spellings)
-    const candidates = [
-        profile?.trialExpires,
-        profile?.trial_expires,
-        profile?.trialEnd,
-        profile?.trial_end,
+    const now = Date.now();
+    const primary = parseDateMaybe(
+        profile?.trialExpires ?? profile?.trial_expires ?? profile?.trialEnd ?? profile?.trial_end
+    );
+    if (primary && +primary > now) return primary;
+
+    const subCandidates = [
         profile?.subscription?.trialEndsAt,
         profile?.subscription?.trial_end,
+        latestSub?.trialEndsAt,
+        latestSub?.trial_end,
+        latestSub?.trialEnd,
+        latestSub?.trialPeriodEnd,
+        latestSub?.currentPeriodEnd,
     ];
-
-    // 2) Subscription/order record fallbacks
-    if (latestSub) {
-        candidates.push(
-            latestSub.trialEndsAt,
-            latestSub.trial_end,
-            latestSub.trialEnd,
-            latestSub.trialPeriodEnd,
-            latestSub.currentPeriodEnd
-        );
-    }
-
-    for (const c of candidates) {
+    for (const c of subCandidates) {
         const d = parseDateMaybe(c);
-        if (d) return d;
+        if (d && +d > now) return d;
     }
     return null;
 }
@@ -133,10 +126,12 @@ export default function SuccessSubscription() {
         );
     }, [latestSub]);
 
-    const trialUntilStr = useMemo(() => {
-        const d = pickTrialUntil(profile, latestSub);
-        return d ? d.toLocaleString() : '—';
-    }, [profile, latestSub]);
+    const trialUntil = useMemo(() => pickTrialUntil(profile, latestSub), [profile, latestSub]);
+    const trialUntilStr = useMemo(() => (trialUntil ? trialUntil.toLocaleString() : '—'), [trialUntil]);
+
+    const subStatus =
+        (latestSub?.status || '').toLowerCase() ||
+        (profile?.isSubscribed ? 'active' : 'inactive');
 
     return (
         <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -154,110 +149,58 @@ export default function SuccessSubscription() {
             </div>
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
             {sidebarOpen && isMobile && (
                 <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
             )}
 
             <main className="main-content-container">
-                <PageHeader
-                    title="Subscription"
-                    isMobile={isMobile}
-                    isSmallMobile={isSmallMobile}
-                />
+                <PageHeader title="Subscription" isMobile={isMobile} isSmallMobile={isSmallMobile} />
 
-                <div
-                    className="content-card-box"
-                    style={{ maxWidth: 700, width: '100%', margin: '5px auto 0', textAlign: 'left' }}
-                >
+                <div className="success-container">
                     {loading ? (
                         <p>Activating your subscription…</p>
                     ) : err ? (
                         <p style={{ color: '#b91c1c' }}>{err}</p>
                     ) : (
-                        <>
-                            <h2 className="desktop-h4" style={{ marginTop: 0, marginBottom: 8 }}>
-                                Konar Profile Plan
-                            </h2>
+                        <div className="success-box">
+                            <h2 className="desktop-h4 success-header">Konar Profile Plan</h2>
                             <p className="desktop-body" style={{ margin: 0, color: '#555' }}>
-                                Your subscription is <strong>{(latestSub?.status || 'Active')}</strong>.
+                                Your subscription is{' '}
+                                <strong className="status-text">{subStatus}</strong>.
                             </p>
 
-                            <div
-                                style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: '1fr 1fr',
-                                    gap: 12,
-                                    marginTop: 16,
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        background: 'var(--card-bg, #F7F7F7)',
-                                        border: '1px solid rgba(0,0,0,.08)',
-                                        borderRadius: 12,
-                                        padding: 14,
-                                    }}
-                                >
-                                    <p className="desktop-body-s" style={{ margin: 0, color: '#666' }}>
-                                        Amount paid today
-                                    </p>
-                                    <p className="desktop-h5" style={{ margin: 0 }}>
-                                        {amountPaid}
-                                    </p>
+                            <div className="success-grid">
+                                <div className="info-tile">
+                                    <p className="desktop-body-s label">Amount paid today</p>
+                                    <p className="desktop-h5 value">{amountPaid}</p>
                                 </div>
-
-                                <div
-                                    style={{
-                                        background: 'var(--card-bg, #F7F7F7)',
-                                        border: '1px solid rgba(0,0,0,.08)',
-                                        borderRadius: 12,
-                                        padding: 14,
-                                    }}
-                                >
-                                    <p className="desktop-body-s" style={{ margin: 0, color: '#666' }}>
-                                        Free trial active until
-                                    </p>
-                                    <p className="desktop-h5" style={{ margin: 0 }}>
-                                        {trialUntilStr}
-                                    </p>
+                                <div className="info-tile">
+                                    <p className="desktop-body-s label">Free trial active until</p>
+                                    <p className="desktop-h5 value">{trialUntilStr}</p>
                                 </div>
                             </div>
 
-                            <div style={{ marginTop: 18, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                                <Link
-                                    to="/myprofile"
-                                    className="cta-blue-button desktop-button"
-                                    style={{ minWidth: 180 }}
-                                >
-                                    Go to Dashboard
-                                </Link>
-                                {/* Black button style, but now "View Orders" */}
-                                <Link
-                                    to="/myorders"
-                                    className="cta-black-button desktop-button"
-                                    style={{ minWidth: 180 }}
-                                >
-                                    View Orders
-                                </Link>
+                            <div className="success-buttons">
+                                <Link to="/myprofile" className="cta-blue-button desktop-button">Go to Dashboard</Link>
+                                <Link to="/myorders" className="cta-black-button desktop-button">View Orders</Link>
                             </div>
 
                             <hr className="divider" />
 
-                            <div style={{ display: 'grid', gap: 6 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span className="desktop-body-s" style={{ color: '#666' }}>Created</span>
-                                    <span className="desktop-body-s">
+                            <div className="kv">
+                                <div className="kv-row">
+                                    <span className="desktop-body-s kv-label">Created</span>
+                                    <span className="desktop-body-s kv-value">
                                         {latestSub?.createdAt ? new Date(latestSub.createdAt).toLocaleString() : '—'}
                                     </span>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span className="desktop-body-s" style={{ color: '#666' }}>Status</span>
-                                    <span className="desktop-body-s" style={{ textTransform: 'capitalize' }}>
-                                        {latestSub?.status || 'active'}
-                                    </span>
+                                <div className="kv-row">
+                                    <span className="desktop-body-s kv-label">Status</span>
+                                    <span className="desktop-body-s kv-value status-text">{subStatus}</span>
                                 </div>
                             </div>
-                        </>
+                        </div>
                     )}
                 </div>
             </main>
