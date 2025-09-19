@@ -1783,3 +1783,41 @@
         /* optional: center the row of tabs */
     }
 }
+
+/* --- Mobile flashing fix (sticky + transitions + GPU) --- */
+
+/* 1) Promote the sticky controls to their own layer to stop repaint thrash */
+.mp-mobile-controls {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+/* 2) On iOS Safari specifically, remove the transform/opacity transitions
+      and stop using sticky (falls back to static in flow, but no flicker). */
+@supports (-webkit-touch-callout: none) {
+    .mp-mobile-controls {
+        position: static;
+        /* turn off sticky on iOS to avoid the bug */
+        top: auto;
+        transition: none !important;
+        /* kill the transform/opacity animations */
+    }
+}
+
+/* 3) On some Android WebViews/Samsung Internet, sticky+opacity transitions also flicker.
+      Disable the fancy transitions only for very small screens. */
+@media (max-width: 480px) {
+    .mp-mobile-controls {
+        transition: none;
+        /* keeps layout stable on finicky devices */
+    }
+}
+
+/* 4) Safety: avoid any ancestor creating a new stacking context that fights sticky */
+.myprofile-content,
+.myprofile-flex-container {
+    transform: none !important;
+    will-change: auto;
+}
