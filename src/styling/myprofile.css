@@ -1647,16 +1647,14 @@
     }
 }
 
-/* ===== Mobile Preview Controls — FULL-WIDTH PILL (no bottom holder) ===== */
+/* ===== Mobile Preview Controls — FLAT-BOTTOM SEGMENTS (no bottom holder) ===== */
 .mp-mobile-controls {
     position: sticky;
     top: 64px;
-    /* under fixed mobile header */
     z-index: 1005;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    /* take full width */
     gap: 0;
     padding: 0 0 8px 0;
     margin: 0;
@@ -1686,13 +1684,13 @@
     transform: translateY(-2px);
 }
 
-/* Segmented pill (top only) */
+/* Segmented container: only TOP corners rounded so the bottom edge is flat */
 .mp-pill {
     display: flex;
     width: 100%;
     border: 1px solid rgba(0, 0, 0, .12);
-    border-radius: 9999px;
-    /* pill */
+    border-radius: 16px 16px 0 0;
+    /* ← top only */
     overflow: hidden;
     background: #fff;
     box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
@@ -1704,7 +1702,7 @@
     box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
 }
 
-/* Tabs */
+/* Tabs: flat bottom, 16px radius ONLY on the top outer corners */
 .mp-tab {
     appearance: none;
     -webkit-appearance: none;
@@ -1719,7 +1717,17 @@
     cursor: pointer;
     white-space: nowrap;
     transition: background-color .2s ease, color .2s ease, transform .06s ease, opacity .2s ease;
+    border-radius: 0;
+    /* flat bottom & inner corners */
     position: relative;
+}
+
+.mp-tab:first-child {
+    border-top-left-radius: 16px;
+}
+
+.mp-tab:last-child {
+    border-top-right-radius: 16px;
 }
 
 .mp-tab+.mp-tab::before {
@@ -1736,13 +1744,13 @@
     background: rgba(255, 255, 255, .12);
 }
 
-.mp-tab:active {
-    transform: translateY(1px);
-}
-
 .dark-mode .mp-tab {
     background: #2a2a2a;
     color: #fff;
+}
+
+.mp-tab:active {
+    transform: translateY(1px);
 }
 
 .mp-tab.active,
@@ -1751,7 +1759,7 @@
     color: #fff;
 }
 
-/* Visit Page base look when not selected */
+/* Visit Page look when not selected */
 .mp-tab.visit {
     background: #fff;
     color: #111;
@@ -1762,28 +1770,45 @@
     color: #fff;
 }
 
-/* Remove the old bottom holder entirely */
+/* Kill old bottom holder entirely */
 .mp-pill-bottom {
     display: none !important;
 }
 
-/* Phone preview should sit flush under the pill (square top) */
+/* ===== Preview wrapper — prevent cut-off and make it flush under tabs ===== */
 .mp-preview-wrap {
     margin-top: 0;
+    max-height: none !important;
+    /* override inline cap */
+    overflow: visible !important;
+    /* ensure nothing is clipped */
 }
 
+/* Phone preview: top is FLUSH (no border, no radius). Sides+bottom keep border. */
 .mp-mobile-controls .mp-preview-wrap .mock-phone.mobile-preview {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    border-top: none;
+    height: auto !important;
+    overflow: visible;
+    border-top: none !important;
+    border-left: 1px solid rgba(0, 0, 0, .08);
+    border-right: 1px solid rgba(0, 0, 0, .08);
+    border-bottom: 1px solid rgba(0, 0, 0, .08);
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: 16px !important;
+    border-bottom-right-radius: 16px !important;
 }
 
-/* Stack controls ABOVE the phone and keep centered on mobile */
+.dark-mode .mp-mobile-controls .mp-preview-wrap .mock-phone.mobile-preview {
+    border-left-color: rgba(255, 255, 255, .12);
+    border-right-color: rgba(255, 255, 255, .12);
+    border-bottom-color: rgba(255, 255, 255, .12);
+}
+
+/* Keep controls above phone and centered on mobile */
 @media (max-width:1000px) {
     .myprofile-mock-phone-mobile-container {
         display: flex;
         flex-direction: column;
-        /* controls then phone */
         align-items: center;
         gap: 10px;
     }
