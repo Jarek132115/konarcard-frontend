@@ -177,6 +177,7 @@ export default function MyOrders() {
                     isSmallMobile={isSmallMobile}
                 />
 
+                {/* outer container now has no background/border—just spacing */}
                 <section className="orders-container">
                     {loading ? (
                         <p className="orders-hint">Loading orders…</p>
@@ -210,7 +211,7 @@ export default function MyOrders() {
 
                                 return (
                                     <article key={o.id} className="order-card">
-                                        {/* TOP STATUS PILL */}
+                                        {/* TOP STATUS PILL ONLY */}
                                         <div className={`order-status-badge ${statusBadgeClass(fulfillRaw)}`}>
                                             {formatFulfillmentStatus(fulfillRaw)}
                                         </div>
@@ -229,7 +230,7 @@ export default function MyOrders() {
                                                 <time>{formatDateTimeNoSeconds(o.createdAt)}</time>
                                             </header>
 
-                                            {/* Responsive fields grid */}
+                                            {/* Fields */}
                                             <div className="order-fields">
                                                 <div className="order-line">
                                                     <strong>Quantity:</strong> {qty}
@@ -241,11 +242,8 @@ export default function MyOrders() {
                                                 <div className="order-line">
                                                     <strong>Estimated delivery:</strong> {delivery}
                                                 </div>
-                                                <div className="order-line">
-                                                    <strong>Order status:</strong> {formatFulfillmentStatus(fulfillRaw)}
-                                                </div>
 
-                                                {/* Progress bar spans full row */}
+                                                {/* Progress (spans full row) */}
                                                 <div className="order-line order-progress-wrap">
                                                     <ProgressBar status={fulfillRaw} />
                                                 </div>

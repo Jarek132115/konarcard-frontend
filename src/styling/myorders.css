@@ -1,13 +1,13 @@
-/* ===== My Orders page (uses same design language as user-landing-page) ===== */
+/* ===== My Orders page (cards carry the visual container) ===== */
 
+/* outer container now only provides spacing; no background/border */
 .orders-container {
     width: 100%;
     margin-top: 6px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, .08);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
 /* empty / hint states */
@@ -26,6 +26,10 @@
 .orders-empty {
     text-align: center;
     padding: 26px 12px;
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
 }
 
 .orders-empty-badge {
@@ -54,29 +58,28 @@
     opacity: .9;
 }
 
-/* list: single column so each card spans full width */
+/* list */
 .orders-list {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 18px;
 }
 
-/* ===== Card ===== */
+/* ===== Individual card (now same look as old outer container) ===== */
 .order-card {
     position: relative;
     display: grid;
     grid-template-columns: 250px 1fr;
-    /* bigger image on desktop */
     gap: 18px;
-    border: 1px solid rgba(0, 0, 0, .06);
-    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 16px;
     padding: 16px;
     background: #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
     align-items: start;
 }
 
-/* Status badge at the very top */
+/* top status pill (only shown here; removed duplicate field) */
 .order-status-badge {
     position: absolute;
     top: 12px;
@@ -112,6 +115,7 @@
     color: #0f766e;
 }
 
+/* media */
 .order-thumb {
     width: 250px;
     height: 250px;
@@ -129,12 +133,12 @@
     object-fit: cover;
 }
 
+/* content */
 .order-details {
     display: grid;
     gap: 10px;
 }
 
-/* Meta row: Card · Paid · DD/MM/YYYY, HH:MM (no seconds) */
 .order-meta {
     display: flex;
     gap: 8px;
@@ -154,12 +158,11 @@
     text-transform: capitalize;
 }
 
-/* lines */
 .order-line {
     font-size: 14px;
 }
 
-/* ===== Fields grid: spread info nicely across width on desktop ===== */
+/* fields layout */
 .order-fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -167,7 +170,7 @@
     align-items: start;
 }
 
-/* progress (blue accent + subtle track) — spans both columns */
+/* progress */
 .order-progress-wrap {
     grid-column: 1 / -1;
 }
@@ -196,7 +199,7 @@
     color: #6b7280;
 }
 
-/* ===== “Unavailable list” style reused for address/name ===== */
+/* “dot + two-line” blocks */
 .order-info {
     display: grid;
     grid-template-columns: 12px 1fr;
@@ -244,8 +247,7 @@
     border-radius: 10px;
 }
 
-/* ===== Responsive ===== */
-/* Mobile/vertical: image on top, info stacked one-under-another */
+/* responsive */
 @media (max-width: 900px) {
     .order-card {
         grid-template-columns: 1fr;
@@ -267,24 +269,13 @@
     }
 }
 
-/* Optional: slightly tighter padding on very small screens */
-@media (max-width: 520px) {
-    .orders-container {
-        padding: 18px;
-    }
-}
-
-/* ===== Dark theme parity (same selector style as user-landing-page) ===== */
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .orders-container {
-    background: #202020;
+/* dark theme parity */
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .orders-empty,
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .order-card {
+    background: #151515;
     color: #fff;
     border-color: rgba(255, 255, 255, .08);
     box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
-}
-
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .order-card {
-    background: #151515;
-    border-color: rgba(255, 255, 255, .08);
 }
 
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .order-progress-track {
