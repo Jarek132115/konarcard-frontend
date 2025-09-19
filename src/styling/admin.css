@@ -1,4 +1,8 @@
-/* Admin shell */
+/* =========================
+   Admin Dashboard — Responsive
+   ========================= */
+
+/* Layout */
 .admin-shell {
     display: grid;
     grid-template-columns: 84px 1fr;
@@ -6,7 +10,7 @@
     background: #f7f7f7;
 }
 
-/* Left rail */
+/* Left rail (desktop) */
 .admin-side {
     position: sticky;
     top: 0;
@@ -18,6 +22,7 @@
     align-items: center;
     padding: 14px 10px;
     gap: 10px;
+    z-index: 40;
 }
 
 .admin-logo-btn {
@@ -219,21 +224,97 @@
     gap: 8px;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
+/* =========================
+   Mobile ≤ 720px
+   ========================= */
+@media (max-width: 720px) {
+
+    /* Layout becomes single column with a top navbar */
+    .admin-shell {
+        grid-template-columns: 1fr;
+    }
+
+    /* Turn side rail into a sticky top bar */
+    .admin-side {
+        position: sticky;
+        top: 0;
+        height: auto;
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, .06);
+        z-index: 50;
+    }
+
+    .admin-logo-btn img {
+        width: 30px;
+        height: 30px;
+    }
+
+    /* Show an icon-only “×” logout on mobile */
+    .admin-logout-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        padding: 0;
+        position: relative;
+        font-size: 0;
+        /* hide "Logout" text */
+        line-height: 0;
+    }
+
+    .admin-logout-btn::after {
+        content: '×';
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font-size: 22px;
+        color: #ef4444;
+    }
+
+    /* Tighter main padding */
+    .admin-main {
+        padding: 12px;
+    }
+
+    /* Filters stack */
     .admin-filters {
         grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 12px;
     }
 
-    .row {
-        grid-template-columns: 1fr;
+    .admin-filter-buttons {
+        justify-content: flex-start;
     }
 
+    .btn-primary,
+    .btn-ghost {
+        padding: 10px 12px;
+    }
+
+    /* Order details stack */
     .order-grid {
         grid-template-columns: 1fr;
     }
 
     .order-grid .right {
         text-align: left;
+    }
+
+    /* Rows stack */
+    .row {
+        grid-template-columns: 1fr;
+    }
+
+    /* Make action buttons easier to tap */
+    .btn-primary,
+    .btn-danger {
+        padding: 12px 14px;
+        border-radius: 12px;
     }
 }
