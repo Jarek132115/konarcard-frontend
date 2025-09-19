@@ -1,6 +1,6 @@
 // src/pages/interface/SuccessCard.jsx
 import React, { useEffect, useMemo, useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
@@ -60,6 +60,7 @@ function ProgressBar({ status }) {
 }
 
 export default function SuccessCard() {
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
@@ -68,6 +69,11 @@ export default function SuccessCard() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState('');
+
+  // NEW: state for instant confirmation result
+  const [confirming, setConfirming] = useState(false);
+  const [confirmedOrder, setConfirmedOrder] = useState(null);
+  const [confirmErr, setConfirmErr] = useState('');
 
   useEffect(() => {
     const onResize = () => {
@@ -86,6 +92,30 @@ export default function SuccessCard() {
     else document.body.classList.remove('body-no-scroll');
   }, [sidebarOpen, isMobile]);
 
+  // 1) Try to confirm the Checkout session immediately (freshest data)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const sid = params.get('session_id');
+    if (!sid) return;
+
+    let mounted = true;
+    (async () => {
+      try {
+        setConfirming(true);
+        setConfirmErr('');
+        const res = await api.get('/api/stripe/confirm', { params: { session_id: sid } });
+        const ord = res?.data?.data || null;
+        if (mounted) setConfirmedOrder(ord);
+      } catch (e) {
+        if (mounted) setConfirmErr(e?.response?.data?.error || 'Could not confirm your order immediately.');
+      } finally {
+        if (mounted) setConfirming(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, [location.search]);
+
+  // 2) Fallback: fetch orders list (used if confirm not available, or for older orders)
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -110,23 +140,28 @@ export default function SuccessCard() {
     return cards.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
   }, [orders]);
 
+  // Prefer the freshly-confirmed order, fall back to the latest from list
+  const order = confirmedOrder || latestCardOrder;
+
   const amountPaid = useMemo(() => {
-    if (!latestCardOrder) return '—';
+    if (!order) return '—';
     return formatAmount(
-      typeof latestCardOrder.amountTotal === 'number' ? latestCardOrder.amountTotal : 0,
-      latestCardOrder.currency || 'gbp'
+      typeof order.amountTotal === 'number' ? order.amountTotal : 0,
+      order.currency || 'gbp'
     );
-  }, [latestCardOrder]);
+  }, [order]);
 
-  const quantity = latestCardOrder?.quantity ?? latestCardOrder?.metadata?.quantity ?? 1;
-  const status = (latestCardOrder?.status || 'paid').toLowerCase();
-  const orderId = latestCardOrder?._id || latestCardOrder?.id || '—';
-  const estimatedDelivery = latestCardOrder?.deliveryWindow || latestCardOrder?.metadata?.estimatedDelivery || '—';
-  const deliveryAddress = latestCardOrder?.deliveryAddress || latestCardOrder?.metadata?.deliveryAddress || null;
+  const quantity = order?.quantity ?? order?.metadata?.quantity ?? 1;
+  const status = (order?.status || 'paid').toLowerCase();
+  const orderId = order?._id || order?.id || '—';
+  const estimatedDelivery = order?.deliveryWindow || order?.metadata?.estimatedDelivery || '—';
 
-  // New fields mirrored from admin/webhook
-  const fulfillmentStatus = latestCardOrder?.fulfillmentStatus || 'order_placed';
-  const trackingUrl = latestCardOrder?.trackingUrl || latestCardOrder?.metadata?.trackingUrl || '';
+  const deliveryName = order?.deliveryName || order?.metadata?.deliveryName || '';
+  const deliveryAddress = order?.deliveryAddress || order?.metadata?.deliveryAddress || '';
+
+  // Fulfilment & tracking
+  const fulfillmentStatus = order?.fulfillmentStatus || 'order_placed';
+  const trackingUrl = order?.trackingUrl || order?.metadata?.trackingUrl || '';
 
   function handleTrack() {
     if (trackingUrl) {
@@ -156,6 +191,8 @@ export default function SuccessCard() {
             '#374151',
   };
 
+  const isBusy = loading || confirming;
+
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
       <div className="myprofile-mobile-header">
@@ -178,10 +215,14 @@ export default function SuccessCard() {
         <PageHeader title="Order" isMobile={isMobile} isSmallMobile={isSmallMobile} />
 
         <div className="success-container">
-          {loading ? (
+          {isBusy ? (
             <p>Confirming your payment…</p>
           ) : err ? (
             <p style={{ color: '#b91c1c' }}>{err}</p>
+          ) : confirmErr && !order ? (
+            <p style={{ color: '#b91c1c' }}>{confirmErr}</p>
+          ) : !order ? (
+            <p>No recent card order found.</p>
           ) : (
             <div className="success-box">
               {/* Status chip + Track button */}
@@ -229,14 +270,38 @@ export default function SuccessCard() {
               <hr className="divider" />
 
               <div className="kv">
-                <div className="kv-row"><span className="desktop-body-s kv-label">Order ID</span><span className="desktop-body-s kv-value">{orderId}</span></div>
-                <div className="kv-row"><span className="desktop-body-s kv-label">Quantity</span><span className="desktop-body-s kv-value">{quantity}</span></div>
-                <div className="kv-row"><span className="desktop-body-s kv-label">Price Paid</span><span className="desktop-body-s kv-value">{amountPaid}</span></div>
-                {deliveryAddress && (
-                  <div className="kv-row"><span className="desktop-body-s kv-label">Delivery Address</span><span className="desktop-body-s kv-value">{deliveryAddress}</span></div>
+                <div className="kv-row">
+                  <span className="desktop-body-s kv-label">Order ID</span>
+                  <span className="desktop-body-s kv-value">{orderId}</span>
+                </div>
+                <div className="kv-row">
+                  <span className="desktop-body-s kv-label">Quantity</span>
+                  <span className="desktop-body-s kv-value">{quantity}</span>
+                </div>
+                <div className="kv-row">
+                  <span className="desktop-body-s kv-label">Price Paid</span>
+                  <span className="desktop-body-s kv-value">{amountPaid}</span>
+                </div>
+
+                {(deliveryName || deliveryAddress) && (
+                  <div className="kv-row">
+                    <span className="desktop-body-s kv-label">Delivery</span>
+                    <span className="desktop-body-s kv-value">
+                      {[deliveryName, deliveryAddress].filter(Boolean).join(' · ')}
+                    </span>
+                  </div>
                 )}
-                <div className="kv-row"><span className="desktop-body-s kv-label">Created</span><span className="desktop-body-s kv-value">{latestCardOrder?.createdAt ? new Date(latestCardOrder.createdAt).toLocaleString() : '—'}</span></div>
-                <div className="kv-row"><span className="desktop-body-s kv-label">Status</span><span className="desktop-body-s kv-value status-text">{status}</span></div>
+
+                <div className="kv-row">
+                  <span className="desktop-body-s kv-label">Created</span>
+                  <span className="desktop-body-s kv-value">
+                    {order?.createdAt ? new Date(order.createdAt).toLocaleString() : '—'}
+                  </span>
+                </div>
+                <div className="kv-row">
+                  <span className="desktop-body-s kv-label">Status</span>
+                  <span className="desktop-body-s kv-value status-text">{status}</span>
+                </div>
               </div>
             </div>
           )}
