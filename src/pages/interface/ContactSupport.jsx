@@ -29,6 +29,28 @@ export default function ContactSupport() {
 
     const { data: businessCard } = useFetchBusinessCard(userId);
 
+    // --- Auto-open chat if navigation carried the flag ---
+    useEffect(() => {
+        const openIfFlag = () => {
+            if (localStorage.getItem('openChatOnLoad') !== '1') return;
+
+            const started = Date.now();
+            const tryOpen = () => {
+                const ready = typeof window !== 'undefined' && window.tidioChatApi && typeof window.tidioChatApi.open === 'function';
+                if (ready) {
+                    try { localStorage.removeItem('openChatOnLoad'); } catch { }
+                    window.tidioChatApi.open();
+                } else if (Date.now() - started < 5000) {
+                    setTimeout(tryOpen, 200);
+                } else {
+                    try { localStorage.removeItem('openChatOnLoad'); } catch { }
+                }
+            };
+            tryOpen();
+        };
+        openIfFlag();
+    }, []);
+
     useEffect(() => {
         const handleResize = () => {
             const currentIsMobile = window.innerWidth <= 1000;
@@ -121,7 +143,7 @@ export default function ContactSupport() {
                     isSmallMobile={isSmallMobile}
                 />
 
-                {/* IMPORTANT: reuse the same wrapper & card classes as Profile */}
+                {/* Reuse same structure classes for consistent look */}
                 <div className="profile-page-wrapper contact">
                     <div className="profile-settings-card">
                         <p className="desktop-body light-black contact-intro-text">
