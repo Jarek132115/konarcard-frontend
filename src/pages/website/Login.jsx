@@ -238,7 +238,7 @@ export default function Login() {
                                 />
                                 <button
                                     type="submit"
-                                    className="primary-button send-reset-link-button"
+                                    className="desktop-button cta-blue-button"
                                     disabled={isSendingReset}
                                     aria-busy={isSendingReset}
                                 >
@@ -247,7 +247,7 @@ export default function Login() {
                                 <button
                                     type="button"
                                     onClick={() => setForgotPasswordStep(false)}
-                                    className="secondary-button back-to-login-button"
+                                    className="cta-black-button desktop-button"
                                 >
                                     Back to Login
                                 </button>
