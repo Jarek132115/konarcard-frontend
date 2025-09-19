@@ -149,6 +149,31 @@ export default function MyOrders() {
         }
     }
 
+    // NEW: quick reorder (card Checkout)
+    async function orderAgain(order) {
+        try {
+            setActionMsg("");
+            // Default to 1; you can swap to order.quantity if you want to repeat the same qty.
+            const res = await api.post("/api/checkout/card", { quantity: 1 });
+            const url =
+                res?.data?.url ||
+                res?.data?.sessionUrl ||
+                res?.data?.session?.url;
+
+            if (url) {
+                window.location.href = url; // send to Stripe Checkout
+            } else {
+                throw new Error("Checkout URL not returned");
+            }
+        } catch (e) {
+            setActionMsg(
+                e?.response?.data?.error ||
+                e?.message ||
+                "Could not start Checkout. Please try again."
+            );
+        }
+    }
+
     return (
         <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
             <div className="myprofile-mobile-header">
@@ -277,10 +302,10 @@ export default function MyOrders() {
                                                     </button>
                                                 ) : (
                                                     <button
-                                                        onClick={() => navigate("/contactus")}
+                                                        onClick={() => orderAgain(o)}
                                                         className="cta-black-button desktop-button"
                                                     >
-                                                        Order Another
+                                                        Order again
                                                     </button>
                                                 )}
 
