@@ -1,5 +1,6 @@
+// src/App.jsx
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { Suspense, useContext } from 'react';
+import { Suspense, useContext, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import { AuthContext } from './components/AuthContext';
@@ -9,10 +10,26 @@ import TidioDelayedLoader from './components/TidioDelayedLoader';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { lazyWithRetry } from './utils/lazyWithRetry';
 
+// --- Lightweight page skeleton so route swaps never white-flash ---
+function PageSkeleton() {
+  return (
+    <div style={{ padding: '20px 16px', maxWidth: 1200, margin: '0 auto' }}>
+      <div style={{
+        height: 40, marginBottom: 12, borderRadius: 12, background: '#f2f2f2',
+        boxShadow: '0 8px 24px rgba(0,0,0,.06)'
+      }} />
+      <div style={{
+        height: 220, borderRadius: 16, background: '#f2f2f2',
+        boxShadow: '0 8px 24px rgba(0,0,0,.06)'
+      }} />
+    </div>
+  );
+}
+
 // Public
-const Home = lazyWithRetry(() => import('./pages/website/Home.jsx'));
+const Home = lazyWithRetry(() => import(/* webpackPrefetch: true */ './pages/website/Home.jsx'));
 const Register = lazyWithRetry(() => import('./pages/website/Register.jsx'));
-const Login = lazyWithRetry(() => import('./pages/website/Login.jsx'));
+const Login = lazyWithRetry(() => import(/* webpackPrefetch: true */ './pages/website/Login.jsx'));
 const ResetPassword = lazyWithRetry(() => import('./pages/website/ResetPassword.jsx'));
 const ProductAndPlan = lazyWithRetry(() => import('./pages/website/ProductAndPlan.jsx'));
 const KonarCard = lazyWithRetry(() => import('./pages/website/KonarCard.jsx'));
@@ -28,10 +45,10 @@ const UserPage = lazyWithRetry(() => import('./pages/interface/UserPage.jsx'));
 
 // Interface (protected)
 const Billing = lazyWithRetry(() => import('./pages/interface/Billing.jsx'));
-const ContactSupport = lazyWithRetry(() => import('./pages/interface/ContactSupport.jsx'));
+const ContactSupport = lazyWithRetry(() => import(/* webpackPrefetch: true */ './pages/interface/ContactSupport.jsx'));
 const HelpCentreInterface = lazyWithRetry(() => import('./pages/interface/HelpCentreInterface.jsx'));
-const MyProfile = lazyWithRetry(() => import('./pages/interface/MyProfile.jsx'));
-const MyOrders = lazyWithRetry(() => import('./pages/interface/MyOrder.jsx')); // <-- fixed
+const MyProfile = lazyWithRetry(() => import(/* webpackPrefetch: true */ './pages/interface/MyProfile.jsx'));
+const MyOrders = lazyWithRetry(() => import('./pages/interface/MyOrder.jsx'));
 const NFCCards = lazyWithRetry(() => import('./pages/interface/NFCCards.jsx'));
 const Notifications = lazyWithRetry(() => import('./pages/interface/Notifications.jsx'));
 const Profile = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
@@ -53,8 +70,27 @@ function TidioWrapper() {
 }
 
 export default function App() {
-  // NOTE: we do NOT hard-gate on initialized here anymore
-  useContext(AuthContext); // keeps context warm; no need to read values here
+  // keep context warm; don’t block render here
+  useContext(AuthContext);
+
+  // Optional: gently “preload” likely-next routes when the main thread is idle
+  useEffect(() => {
+    const preload = () => {
+      // if your lazyWithRetry attaches .preload, call it; otherwise this is a no-op
+      Home.preload?.();
+      Login.preload?.();
+      MyProfile.preload?.();
+      ContactSupport.preload?.();
+    };
+    if ('requestIdleCallback' in window) {
+      // @ts-ignore
+      const id = window.requestIdleCallback(preload, { timeout: 2000 });
+      return () => window.cancelIdleCallback?.(id);
+    } else {
+      const t = setTimeout(preload, 300);
+      return () => clearTimeout(t);
+    }
+  }, []);
 
   return (
     <>
@@ -63,7 +99,8 @@ export default function App() {
       <TidioWrapper />
 
       <RouteErrorBoundary>
-        <Suspense fallback={null}>
+        {/* Real skeleton instead of null prevents white flash during lazy loads */}
+        <Suspense fallback={<PageSkeleton />}>
           <Routes>
             {/* PUBLIC */}
             <Route path="/" element={<Home />} />

@@ -29,7 +29,26 @@ import './styling/nfccard.css';
 import App from './App.jsx';
 import { AuthProvider } from './components/AuthContext';
 
-const queryClient = new QueryClient();
+// Anti-flash defaults:
+// - no refetch on focus/reconnect/mount
+// - generous staleTime so data is “fresh” longer
+// - keepPreviousData to prevent UI flicker on key changes
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 15 * 60 * 1000,   // 15 minutes
+      keepPreviousData: true,
+    },
+    mutations: {
+      retry: 0,
+    },
+  },
+});
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
