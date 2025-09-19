@@ -322,7 +322,7 @@
                                     />
                                     <button
                                         type="submit"
-                                        className="primary-button verify-email-button"
+                                        className="cta-blue-button desktop-button"
                                         disabled={isVerifying}
                                         aria-busy={isVerifying}
                                     >
@@ -330,7 +330,7 @@
                                     </button>
                                     <button
                                         type="button"
-                                        className="secondary-button resend-code-button"
+                                        className="cta-black-button desktop-button"
                                         onClick={resendCode}
                                         disabled={cooldown > 0}
                                         style={{ marginTop: '1rem' }}
