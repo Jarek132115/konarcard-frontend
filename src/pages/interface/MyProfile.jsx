@@ -678,7 +678,7 @@ export default function MyProfile() {
 
                   {/* ===== MOBILE: pill (top) + preview (center) + holder (bottom) ===== */}
                   {isMobile ? (
-                    <div className={`mp-mobile-controls ${previewOpen ? "is-open" : "is-collapsed"}`} role="tablist" aria-label="Preview controls">
+                    <div className={`mp-mobile-controls desktop-h6 ${previewOpen ? "is-open" : "is-collapsed"}`} role="tablist" aria-label="Preview controls">
                       {/* Top half of the pill */}
                       <div className="mp-pill">
                         <button
