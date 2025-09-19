@@ -43,7 +43,7 @@ function TidioWrapper() {
   const location = useLocation();
   const isDashboardPath =
     location.pathname.startsWith('/myprofile') ||
-    location.pathname.startsWith('/myorders') ||
+    location.pathname.startsWith('/myorder') ||
     location.pathname.startsWith('/billing') ||
     location.pathname.startsWith('/helpcentreinterface') ||
     location.pathname.startsWith('/nfccards') ||
