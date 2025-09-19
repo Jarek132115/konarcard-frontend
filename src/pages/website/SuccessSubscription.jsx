@@ -7,8 +7,6 @@ import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import api from '../../services/api';
 import { AuthContext } from '../../components/AuthContext';
 
-import './SuccessPages.css';
-
 function formatAmount(amount, currency = 'gbp') {
     if (typeof amount !== 'number') return '—';
     const value = amount / 100;
