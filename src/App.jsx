@@ -14,19 +14,28 @@ import { lazyWithRetry } from './utils/lazyWithRetry';
 function PageSkeleton() {
   return (
     <div style={{ padding: '20px 16px', maxWidth: 1200, margin: '0 auto' }}>
-      <div style={{
-        height: 40, marginBottom: 12, borderRadius: 12, background: '#f2f2f2',
-        boxShadow: '0 8px 24px rgba(0,0,0,.06)'
-      }} />
-      <div style={{
-        height: 220, borderRadius: 16, background: '#f2f2f2',
-        boxShadow: '0 8px 24px rgba(0,0,0,.06)'
-      }} />
+      <div
+        style={{
+          height: 40,
+          marginBottom: 12,
+          borderRadius: 12,
+          background: '#f2f2f2',
+          boxShadow: '0 8px 24px rgba(0,0,0,.06)',
+        }}
+      />
+      <div
+        style={{
+          height: 220,
+          borderRadius: 16,
+          background: '#f2f2f2',
+          boxShadow: '0 8px 24px rgba(0,0,0,.06)',
+        }}
+      />
     </div>
   );
 }
 
-// Public
+// -------- Public pages --------
 const Home = lazyWithRetry(() => import(/* webpackPrefetch: true */ './pages/website/Home.jsx'));
 const Register = lazyWithRetry(() => import('./pages/website/Register.jsx'));
 const Login = lazyWithRetry(() => import(/* webpackPrefetch: true */ './pages/website/Login.jsx'));
@@ -39,12 +48,12 @@ const Reviews = lazyWithRetry(() => import('./pages/website/Reviews.jsx'));
 const HelpCentre = lazyWithRetry(() => import('./pages/website/HelpCentre.jsx'));
 const ContactUs = lazyWithRetry(() => import('./pages/website/ContactUs.jsx'));
 const Policies = lazyWithRetry(() => import('./pages/website/Policies.jsx'));
-// ⬇️ use the new success page for card orders
+// Card checkout success page
 const SuccessCard = lazyWithRetry(() => import('./pages/website/Success.jsx'));
 const SuccessSubscription = lazyWithRetry(() => import('./pages/website/SuccessSubscription.jsx'));
 const UserPage = lazyWithRetry(() => import('./pages/interface/UserPage.jsx'));
 
-// Interface (protected)
+// -------- Interface (protected) --------
 const Billing = lazyWithRetry(() => import('./pages/interface/Billing.jsx'));
 const ContactSupport = lazyWithRetry(() => import(/* webpackPrefetch: true */ './pages/interface/ContactSupport.jsx'));
 const HelpCentreInterface = lazyWithRetry(() => import('./pages/interface/HelpCentreInterface.jsx'));
@@ -53,6 +62,9 @@ const MyOrders = lazyWithRetry(() => import('./pages/interface/MyOrder.jsx'));
 const NFCCards = lazyWithRetry(() => import('./pages/interface/NFCCards.jsx'));
 const Notifications = lazyWithRetry(() => import('./pages/interface/Notifications.jsx'));
 const Profile = lazyWithRetry(() => import('./pages/interface/Profile.jsx'));
+
+// -------- Admin (protected) --------
+const AdminOrders = lazyWithRetry(() => import('./pages/admin/AdminOrders.jsx'));
 
 function TidioWrapper() {
   const location = useLocation();
@@ -64,7 +76,8 @@ function TidioWrapper() {
     location.pathname.startsWith('/nfccards') ||
     location.pathname.startsWith('/notifications') ||
     location.pathname.startsWith('/profile') ||
-    location.pathname.startsWith('/contact-support');
+    location.pathname.startsWith('/contact-support') ||
+    location.pathname.startsWith('/admin'); // 👈 make /admin behave like dashboard
 
   const enableTidio = !isDashboardPath || location.pathname === '/contact-support';
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
@@ -81,6 +94,7 @@ export default function App() {
       Login.preload?.();
       MyProfile.preload?.();
       ContactSupport.preload?.();
+      AdminOrders.preload?.();
     };
     if ('requestIdleCallback' in window) {
       // @ts-ignore
@@ -117,23 +131,98 @@ export default function App() {
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/policies" element={<Policies />} />
 
-            {/* ⬇️ Card checkout success uses the new page; keep it protected since checkout is protected */}
-            <Route path="/success" element={<ProtectedRoute><SuccessCard /></ProtectedRoute>} />
+            {/* Card checkout success (protected because checkout is protected) */}
+            <Route
+              path="/success"
+              element={
+                <ProtectedRoute>
+                  <SuccessCard />
+                </ProtectedRoute>
+              }
+            />
 
-            {/* Keep subscription success as-is */}
+            {/* Subscription success (public as before) */}
             <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
             <Route path="/successsubscription" element={<SuccessSubscription />} />
+
+            {/* Public profile pages */}
             <Route path="/u/:username" element={<UserPage />} />
 
-            {/* PROTECTED */}
-            <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
-            <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
-            <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
-            <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
-            <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
-            <Route path="/nfccards" element={<ProtectedRoute><NFCCards /></ProtectedRoute>} />
-            <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            {/* PROTECTED (user interface) */}
+            <Route
+              path="/billing"
+              element={
+                <ProtectedRoute>
+                  <Billing />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/helpcentreinterface"
+              element={
+                <ProtectedRoute>
+                  <HelpCentreInterface />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/contact-support"
+              element={
+                <ProtectedRoute>
+                  <ContactSupport />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/myprofile"
+              element={
+                <ProtectedRoute>
+                  <MyProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/myorders"
+              element={
+                <ProtectedRoute>
+                  <MyOrders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/nfccards"
+              element={
+                <ProtectedRoute>
+                  <NFCCards />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <Notifications />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ADMIN (protected – backend also enforces admin) */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminOrders />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Suspense>
       </RouteErrorBoundary>
