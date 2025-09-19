@@ -68,18 +68,22 @@ export default function Profile() {
 
   const handleSave = async () => {
     try {
-      const res = await api.put(
-        '/update-profile',
-        {
-          name: updatedName,
-        }
-      );
+      // ✅ backend route is PUT /profile (not /update-profile)
+      const res = await api.put('/profile', { name: updatedName });
 
-      if (res.data.success) {
+      if (res?.data?.success) {
+        const fresh = res.data.data;
+        // update local state immediately
+        setUser?.(fresh);
+        // keep localStorage in sync for reloads
+        try {
+          localStorage.setItem('authUser', JSON.stringify(fresh));
+        } catch { }
+        // Optionally refetch from server if your context provides it
+        fetchUser?.();
         toast.success('Profile updated successfully!');
-        fetchUser();
       } else {
-        toast.error(res.data.error || 'Something went wrong');
+        toast.error(res?.data?.error || 'Something went wrong');
       }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to update profile');
@@ -94,14 +98,20 @@ export default function Profile() {
 
     if (deleteCountdown === 0) {
       try {
-        const res = await api.delete('/delete-account');
+        // ✅ backend route is DELETE /profile (not /delete-account)
+        const res = await api.delete('/profile');
 
-        if (res.data.success) {
+        if (res?.data?.success) {
           toast.success('Your account has been deleted');
-          setUser(null);
+          // clear auth locally
+          try {
+            localStorage.removeItem('token');
+            localStorage.removeItem('authUser');
+          } catch { }
+          setUser?.(null);
           window.location.href = '/';
         } else {
-          toast.error(res.data.error || 'Failed to delete account');
+          toast.error(res?.data?.error || 'Failed to delete account');
         }
       } catch (err) {
         toast.error(err.response?.data?.error || 'Server error deleting account');
