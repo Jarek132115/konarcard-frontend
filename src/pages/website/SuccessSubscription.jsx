@@ -10,7 +10,7 @@ import { AuthContext } from '../../components/AuthContext';
 
 function formatAmount(amount, currency = 'gbp') {
     if (typeof amount !== 'number') return '—';
-    const value = amount / 100; // Stripe smallest unit
+    const value = amount / 100;
     return new Intl.NumberFormat(undefined, {
         style: 'currency',
         currency: currency.toUpperCase(),
@@ -19,20 +19,63 @@ function formatAmount(amount, currency = 'gbp') {
     }).format(value);
 }
 
+function parseDateMaybe(v) {
+    if (!v && v !== 0) return null;
+    // ISO string?
+    if (typeof v === 'string') {
+        const d = new Date(v);
+        return Number.isNaN(+d) ? null : d;
+    }
+    // number: could be seconds or ms
+    if (typeof v === 'number') {
+        // if it's 10-digit (seconds), convert to ms
+        const ms = v < 2e12 ? v * 1000 : v;
+        const d = new Date(ms);
+        return Number.isNaN(+d) ? null : d;
+    }
+    return null;
+}
+
+function pickTrialUntil(profile, latestSub) {
+    // 1) Profile/User fields (multiple spellings)
+    const candidates = [
+        profile?.trialExpires,
+        profile?.trial_expires,
+        profile?.trialEnd,
+        profile?.trial_end,
+        profile?.subscription?.trialEndsAt,
+        profile?.subscription?.trial_end,
+    ];
+
+    // 2) Subscription/order record fallbacks
+    if (latestSub) {
+        candidates.push(
+            latestSub.trialEndsAt,
+            latestSub.trial_end,
+            latestSub.trialEnd,
+            latestSub.trialPeriodEnd,
+            latestSub.currentPeriodEnd
+        );
+    }
+
+    for (const c of candidates) {
+        const d = parseDateMaybe(c);
+        if (d) return d;
+    }
+    return null;
+}
+
 export default function SuccessSubscription() {
-    // Interface shell state (same as MyOrders for consistent look)
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
     const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
 
-    // Data
     const { user: authUser } = useContext(AuthContext);
     const [profile, setProfile] = useState(authUser || null);
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState('');
 
-    // Responsive listeners
     useEffect(() => {
         const onResize = () => {
             const m = window.innerWidth <= 1000;
@@ -50,7 +93,6 @@ export default function SuccessSubscription() {
         else document.body.classList.remove('body-no-scroll');
     }, [sidebarOpen, isMobile]);
 
-    // Load profile (if context wasn’t ready) + orders
     useEffect(() => {
         let mounted = true;
         (async () => {
@@ -58,7 +100,6 @@ export default function SuccessSubscription() {
                 setLoading(true);
                 setErr('');
 
-                // If context has user use it, else fetch
                 if (!authUser) {
                     const p = await api.get('/profile', { params: { ts: Date.now() } });
                     if (mounted) setProfile(p?.data?.data || null);
@@ -66,7 +107,6 @@ export default function SuccessSubscription() {
                     setProfile(authUser);
                 }
 
-                // Load orders to find latest subscription
                 const res = await api.get('/me/orders');
                 const list = Array.isArray(res?.data?.data) ? res.data.data : [];
                 if (mounted) setOrders(list);
@@ -79,32 +119,27 @@ export default function SuccessSubscription() {
         return () => { mounted = false; };
     }, [authUser]);
 
-    // Pick the most recent subscription order
     const latestSub = useMemo(() => {
         const subs = (orders || []).filter(o => (o.type || '').toLowerCase() === 'subscription');
         if (!subs.length) return null;
-        // assume orders are not guaranteed sorted
         return subs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
     }, [orders]);
 
     const amountPaid = useMemo(() => {
         if (!latestSub) return '—';
-        // show zero as £0.00 too
         return formatAmount(
             typeof latestSub.amountTotal === 'number' ? latestSub.amountTotal : 0,
             latestSub.currency || 'gbp'
         );
     }, [latestSub]);
 
-    const trialUntil = useMemo(() => {
-        const t = profile?.trialExpires ? new Date(profile.trialExpires) : null;
-        if (!t || Number.isNaN(+t)) return '—';
-        return t.toLocaleString();
-    }, [profile]);
+    const trialUntilStr = useMemo(() => {
+        const d = pickTrialUntil(profile, latestSub);
+        return d ? d.toLocaleString() : '—';
+    }, [profile, latestSub]);
 
     return (
         <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
-            {/* Mobile header (same as interface pages) */}
             <div className="myprofile-mobile-header">
                 <Link to="/" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -118,13 +153,11 @@ export default function SuccessSubscription() {
                 </button>
             </div>
 
-            {/* Sidebar (interface look) */}
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
             {sidebarOpen && isMobile && (
                 <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
             )}
 
-            {/* Main */}
             <main className="main-content-container">
                 <PageHeader
                     title="Subscription"
@@ -132,15 +165,9 @@ export default function SuccessSubscription() {
                     isSmallMobile={isSmallMobile}
                 />
 
-                {/* Card styled like your interface “content-card-box” */}
                 <div
                     className="content-card-box"
-                    style={{
-                        maxWidth: 700,
-                        width: '100%',
-                        margin: '5px auto 0',
-                        textAlign: 'left',
-                    }}
+                    style={{ maxWidth: 700, width: '100%', margin: '5px auto 0', textAlign: 'left' }}
                 >
                     {loading ? (
                         <p>Activating your subscription…</p>
@@ -191,7 +218,7 @@ export default function SuccessSubscription() {
                                         Free trial active until
                                     </p>
                                     <p className="desktop-h5" style={{ margin: 0 }}>
-                                        {trialUntil}
+                                        {trialUntilStr}
                                     </p>
                                 </div>
                             </div>
@@ -204,22 +231,11 @@ export default function SuccessSubscription() {
                                 >
                                     Go to Dashboard
                                 </Link>
-                                <Link
-                                    to="/billing"
-                                    className="cta-black-button desktop-button"
-                                    style={{ minWidth: 180 }}
-                                >
-                                    Manage Billing
-                                </Link>
+                                {/* Black button style, but now "View Orders" */}
                                 <Link
                                     to="/myorders"
-                                    className="desktop-button"
-                                    style={{
-                                        minWidth: 180,
-                                        borderRadius: 12,
-                                        border: '1px solid rgba(0,0,0,.12)',
-                                        background: 'transparent',
-                                    }}
+                                    className="cta-black-button desktop-button"
+                                    style={{ minWidth: 180 }}
                                 >
                                     View Orders
                                 </Link>
