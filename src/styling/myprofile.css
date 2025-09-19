@@ -1647,16 +1647,11 @@
     }
 }
 
-/* =========================================================
-   MOBILE PREVIEW CONTROLS (Show Preview / Visit Page)
-   Segmented buttons that sit ABOVE the phone preview
-   ========================================================= */
-
-/* container that holds the two buttons */
+/* ===== Mobile Preview Controls (Show Preview / Visit Page) ===== */
 .mp-mobile-controls {
     position: sticky;
     top: 64px;
-    /* just under the fixed mobile header */
+    /* under fixed mobile header (56px + a bit) */
     z-index: 1005;
     display: flex;
     gap: 8px;
@@ -1687,7 +1682,7 @@
     transform: translateY(-2px);
 }
 
-/* segmented buttons */
+/* Segmented tabs */
 .mp-tab {
     appearance: none;
     -webkit-appearance: none;
@@ -1700,10 +1695,10 @@
     border-radius: 12px;
     flex: 1 1 0;
     text-align: center;
-    white-space: nowrap;
-    cursor: pointer;
     box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
     transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .06s ease, opacity .2s ease;
+    cursor: pointer;
+    white-space: nowrap;
 }
 
 .mp-tab:active {
@@ -1717,7 +1712,7 @@
     box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
 }
 
-/* active (selected) state */
+/* Active state (Show Preview selected) */
 .mp-tab.active,
 .mp-tab[aria-selected="true"] {
     background: #0081FF;
@@ -1725,7 +1720,7 @@
     border-color: #0081FF;
 }
 
-/* Visit Page variant keeps neutral look when not active */
+/* Visit Page variant */
 .mp-tab.visit {
     background: #fff;
     color: #111;
@@ -1740,12 +1735,12 @@
     opacity: .92;
 }
 
-/* when collapsed, make the non-active one look slightly dimmer */
+/* Reduce visual weight when collapsed so Visit looks 'selected' */
 .mp-mobile-controls.is-collapsed .mp-tab:not(.active) {
     opacity: .9;
 }
 
-/* ---------- compact tweaks ---------- */
+/* Compact on very small screens */
 @media (max-width:400px) {
     .mp-mobile-controls {
         top: 60px;
@@ -1760,25 +1755,31 @@
     }
 }
 
-/* ---------- layout help so controls line up with the phone ---------- */
+/* Fix: stack the mobile controls ABOVE the phone preview */
 @media (max-width:1000px) {
 
-    /* stack controls ABOVE the phone and center both */
+    /* you add this class on the preview wrapper when mobile */
     .myprofile-mock-phone-mobile-container {
         display: flex;
         flex-direction: column;
-        /* controls then phone */
+        /* 💡 stack controls then phone */
         align-items: center;
-        /* center horizontally */
+        /* center both */
         gap: 10px;
+        /* small space between controls and phone */
     }
 
-    /* make the control bar match the phone width */
+    /* make the segmented control match the phone width and center */
     .mp-mobile-controls {
+        position: sticky;
+        top: 64px;
+        /* keep your sticky behavior */
         width: 100%;
         max-width: 350px;
-        /* same as .mock-phone max-width */
+        /* same as phone max-width */
         margin: 0 auto 12px;
+        /* center above phone */
         justify-content: center;
+        /* optional: center the row of tabs */
     }
 }
