@@ -54,30 +54,31 @@
     opacity: .9;
 }
 
-/* list */
+/* list: single column so each card spans full width */
 .orders-list {
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
 }
 
-/* card */
+/* ===== Card ===== */
 .order-card {
     display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 16px;
+    grid-template-columns: 250px 1fr;
+    /* bigger image on desktop */
+    gap: 18px;
     border: 1px solid rgba(0, 0, 0, .06);
     border-radius: 14px;
     padding: 16px;
     background: #fff;
     box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
-    align-items: center;
+    align-items: start;
 }
 
 .order-thumb {
-    width: 120px;
-    height: 120px;
-    border-radius: 12px;
+    width: 250px;
+    height: 250px;
+    border-radius: 14px;
     overflow: hidden;
     background: #f9f9f9;
     display: flex;
@@ -93,7 +94,7 @@
 
 .order-details {
     display: grid;
-    gap: 8px;
+    gap: 10px;
 }
 
 .order-meta {
@@ -120,10 +121,22 @@
     font-size: 14px;
 }
 
-/* progress (blue accent + subtle track) */
+/* ===== Fields grid: spread info nicely across width on desktop ===== */
+.order-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 18px;
+    align-items: start;
+}
+
+/* progress (blue accent + subtle track) — spans both columns */
+.order-progress-wrap {
+    grid-column: 1 / -1;
+}
+
 .order-progress {
     width: 100%;
-    margin-top: 6px;
+    margin-top: 2px;
 }
 
 .order-progress-track {
@@ -145,6 +158,41 @@
     color: #6b7280;
 }
 
+/* ===== “Unavailable list” style reused for address/name ===== */
+.order-info {
+    display: grid;
+    grid-template-columns: 12px 1fr;
+    gap: 10px 12px;
+    align-items: start;
+    padding: 10px 12px;
+    border: 1px solid rgba(0, 0, 0, .06);
+    border-radius: 12px;
+    background: #f9f9f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
+}
+
+.order-info .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #0081FF;
+    margin-top: 7px;
+}
+
+.order-info .reason {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.order-info .desktop-body-s {
+    color: #111;
+}
+
+.order-info .desktop-body-xs {
+    color: #333;
+}
+
 /* actions */
 .order-actions {
     display: flex;
@@ -158,20 +206,9 @@
     border-radius: 10px;
 }
 
-/* responsive */
-@media (min-width: 760px) {
-    .orders-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (min-width: 1100px) {
-    .orders-list {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 700px) {
+/* ===== Responsive ===== */
+/* Mobile/vertical: image on top, info stacked one-under-another */
+@media (max-width: 900px) {
     .order-card {
         grid-template-columns: 1fr;
     }
@@ -179,7 +216,19 @@
     .order-thumb {
         width: 100%;
         height: auto;
-        max-height: 200px;
+        max-height: 260px;
+        /* keep it visually large but responsive */
+    }
+
+    .order-fields {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Optional: slightly tighter padding on very small screens */
+@media (max-width: 520px) {
+    .orders-container {
+        padding: 18px;
     }
 }
 
@@ -198,4 +247,9 @@
 
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .order-progress-track {
     background: #2a2a2a;
+}
+
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .order-info {
+    background: #1b1b1b;
+    border-color: rgba(255, 255, 255, .08);
 }

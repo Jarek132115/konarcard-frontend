@@ -205,38 +205,50 @@ export default function MyOrders() {
                                                 <span className="status">{o.status}</span>
                                                 <span aria-hidden="true">•</span>
                                                 <time>
-                                                    {o.createdAt
-                                                        ? new Date(o.createdAt).toLocaleString()
-                                                        : "—"}
+                                                    {o.createdAt ? new Date(o.createdAt).toLocaleString() : "—"}
                                                 </time>
                                             </header>
 
-                                            {isCard && (
-                                                <>
-                                                    <div className="order-line">
-                                                        <strong>Quantity:</strong> {qty}
-                                                    </div>
-                                                    <div className="order-line">
-                                                        <strong>Estimated delivery:</strong> {delivery}
-                                                    </div>
-                                                    <div className="order-line">
-                                                        <strong>Order status:</strong>{" "}
-                                                        {formatFulfillmentStatus(fulfillRaw)}
-                                                    </div>
-                                                    <ProgressBar status={fulfillRaw} />
-                                                    <div className="order-line">
-                                                        <strong>Delivery name:</strong> {deliveryName}
-                                                    </div>
-                                                    <div className="order-line">
-                                                        <strong>Delivery address:</strong> {deliveryAddress}
-                                                    </div>
-                                                </>
-                                            )}
+                                            {/* Responsive fields grid */}
+                                            <div className="order-fields">
+                                                <div className="order-line">
+                                                    <strong>Quantity:</strong> {qty}
+                                                </div>
+                                                <div className="order-line">
+                                                    <strong>Amount:</strong> {amount}
+                                                </div>
 
-                                            <div className="order-line">
-                                                <strong>Amount:</strong> {amount}
+                                                <div className="order-line">
+                                                    <strong>Estimated delivery:</strong> {delivery}
+                                                </div>
+                                                <div className="order-line">
+                                                    <strong>Order status:</strong> {formatFulfillmentStatus(fulfillRaw)}
+                                                </div>
+
+                                                {/* Progress bar spans full row */}
+                                                <div className="order-line order-progress-wrap">
+                                                    <ProgressBar status={fulfillRaw} />
+                                                </div>
+
+                                                {/* “Dot + two-line” info (same vibe as unavailable card) */}
+                                                <div className="order-line order-info">
+                                                    <span className="dot" aria-hidden="true" />
+                                                    <div className="reason">
+                                                        <div className="desktop-body-s"><strong>Delivery name:</strong></div>
+                                                        <div className="desktop-body-xs">{deliveryName}</div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="order-line order-info">
+                                                    <span className="dot" aria-hidden="true" />
+                                                    <div className="reason">
+                                                        <div className="desktop-body-s"><strong>Delivery address:</strong></div>
+                                                        <div className="desktop-body-xs">{deliveryAddress}</div>
+                                                    </div>
+                                                </div>
                                             </div>
 
+                                            {/* Actions */}
                                             <div className="order-actions">
                                                 {isSub ? (
                                                     <button
@@ -262,6 +274,7 @@ export default function MyOrders() {
                                                 </Link>
                                             </div>
                                         </div>
+
                                     </article>
                                 );
                             })}
