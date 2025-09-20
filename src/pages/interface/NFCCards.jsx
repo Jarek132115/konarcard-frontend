@@ -5,7 +5,6 @@ import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
-import TickIcon from '../../assets/icons/Tick-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 import { toast } from 'react-hot-toast';
@@ -193,7 +192,6 @@ export default function NFCCards() {
         </div>
       </div>
 
-      {/* ✅ Sidebar back in */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       {sidebarOpen && isMobile && (
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
@@ -215,7 +213,6 @@ export default function NFCCards() {
               {/* Subscription card */}
               <div className="pricing-card nfc-pricing-subscription" style={{ borderRadius: 16 }}>
                 <div className="pricing-inner">
-                  {/* content block grows; CTA stays bottom */}
                   <div className="pricing-content">
                     <div className="pricing-head">
                       <div>
@@ -233,14 +230,13 @@ export default function NFCCards() {
                     <ul className="pricing-features">
                       {homeFeatureBullets.map((text, i) => (
                         <li className="pricing-feature" key={i}>
-                          <img src={TickIcon} alt="" className="pricing-check" />
+                          <span className="blue-dot" aria-hidden="true" />
                           <span className="desktop-body-x">{text}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  {/* CTA (20px gap above; sticks to bottom) */}
                   <div className="pricing-bottom">
                     {isSubscribed ? (
                       <button
@@ -300,7 +296,6 @@ export default function NFCCards() {
                     </div>
                   </div>
 
-                  {/* CTA (20px gap above; sticks to bottom) */}
                   <div className="pricing-bottom">
                     <button
                       onClick={handleOrderCard}

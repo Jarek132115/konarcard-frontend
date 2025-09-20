@@ -166,10 +166,16 @@
   color: #333;
 }
 
-.nfc-pricing-page .pricing-check {
-  width: 22px;
-  height: 22px;
-  filter: none;
+/* blue bullet (replaces tick icon) */
+.nfc-pricing-page .blue-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #0081FF;
+  display: inline-block;
+  margin-top: 7px;
+  /* aligns with first line of text */
+  flex: 0 0 10px;
 }
 
 /* =========================================================
@@ -193,7 +199,7 @@
 
 .nfc-pricing-page .nfc-pricing-product .pricing-media-tray {
   flex: 0 0 auto;
-  /* <— prevents thumbnails from vanishing */
+  /* prevents thumbnails from vanishing */
 }
 
 /* Compact tray with tight spacing */
@@ -213,7 +219,8 @@
   border-radius: 12px;
   overflow: hidden;
   background: #f9f9f9;
-  border: 1px solid rgba(0, 0, 0, .06);
+  border: 1px solid rgba(0, 0, 0, .10);
+  /* subtle border for visibility */
 }
 
 .nfc-pricing-page .pricing-media-main.fixed-43 img {
@@ -223,27 +230,31 @@
   display: block;
 }
 
-/* Thumbnails row: tight and visible */
+/* Thumbnails row: tight and visible (flex) */
 .nfc-pricing-page .pricing-media-thumbs.tight {
-  display: grid;
-  grid-auto-flow: column;
+  display: flex;
+  /* <- use flex on desktop */
+  align-items: center;
   gap: var(--media-gap);
-  justify-content: start;
+  justify-content: flex-start;
   margin-top: 0;
   /* keep close to main image */
+  min-height: 56px;
+  /* ensures row is visible */
+  flex-wrap: nowrap;
 }
 
 .nfc-pricing-page .pricing-media-thumb {
   border-radius: 10px;
   overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, .10);
+  border: 1px solid rgba(0, 0, 0, .12);
+  /* light grey border */
   background: #fff;
   padding: 0;
 }
 
 .nfc-pricing-page .pricing-media-thumb img {
   width: 86px;
-  /* a touch larger for clarity */
   height: 56px;
   object-fit: cover;
   display: block;
@@ -252,7 +263,7 @@
 .nfc-pricing-page .pricing-media-thumb.is-active {
   outline: 2px solid #0081FF;
   outline-offset: -2px;
-  border-color: rgba(0, 0, 0, .10);
+  border-color: rgba(0, 0, 0, .12);
   box-shadow: none;
 }
 
