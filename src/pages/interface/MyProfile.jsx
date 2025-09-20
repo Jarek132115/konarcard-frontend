@@ -40,10 +40,12 @@ export default function MyProfile() {
   const previewReviewsCarouselRef = useRef(null);
 
   const activeBlobUrlsRef = useRef([]);
+  const mpWrapRef = useRef(null); // mobile preview wrapper for dynamic height
 
   // Local state
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState("");
+  the
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
 
@@ -214,6 +216,23 @@ export default function MyProfile() {
     };
   }, []);
 
+  // Keep mobile preview expanded to its content height (no cutting off)
+  useEffect(() => {
+    if (!isMobile) return;
+    const el = mpWrapRef.current;
+    if (!el) return;
+    if (previewOpen) {
+      // set to actual scrollHeight so CSS transition can work smoothly
+      el.style.maxHeight = el.scrollHeight + "px";
+      el.style.opacity = "1";
+      el.style.transform = "scale(1)";
+    } else {
+      el.style.maxHeight = "0px";
+      el.style.opacity = "0";
+      el.style.transform = "scale(.98)";
+    }
+  }, [isMobile, previewOpen, state, servicesDisplayMode, reviewsDisplayMode, aboutMeLayout]);
+
   // Helpers
   const createAndTrackBlobUrl = (file) => {
     const url = URL.createObjectURL(file);
@@ -332,54 +351,38 @@ export default function MyProfile() {
     }
   };
 
-  // --- helpers you’re missing ---
-
-  // Resets the editor + local files/blobs
+  // Reset editor + files/blobs
   const handleResetPage = () => {
-    // reset store-managed fields
     resetState();
-
-    // reset local UI state
     setServicesDisplayMode("list");
     setReviewsDisplayMode("list");
     setAboutMeLayout("side-by-side");
-
     setShowMainSection(true);
     setShowAboutMeSection(true);
     setShowWorkSection(true);
     setShowServicesSection(true);
     setShowReviewsSection(true);
     setShowContactSection(true);
-
-    // clear any selected files + removal flags
     setCoverPhotoFile(null);
     setAvatarFile(null);
     setWorkImageFiles([]);
     setCoverPhotoRemoved(false);
     setIsAvatarRemoved(false);
-
-    // revoke any blob URLs we created
     activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     activeBlobUrlsRef.current = [];
-
     toast.success("Editor reset.");
   };
 
-  // Smooth-scroll the horizontal carousels in the preview
+  // Smooth-scroll horizontal carousels
   const scrollCarousel = (ref, direction) => {
     const el = ref?.current;
     if (!el) return;
-    const amount = el.clientWidth * 0.9; // ~one “page”
-    el.scrollBy({
-      left: direction === "left" ? -amount : amount,
-      behavior: "smooth",
-    });
+    const amount = el.clientWidth * 0.9;
+    el.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
   };
-
 
   const hasProfileChanges = () => {
     if (coverPhotoFile || avatarFile || workImageFiles.length || coverPhotoRemoved || isAvatarRemoved) return true;
-
     const original = businessCard || {};
     const norm = (v) => (v ?? "").toString().trim();
 
@@ -542,13 +545,10 @@ export default function MyProfile() {
   // Render
   const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
 
-  const collapsibleStyle = {
-    transition: "all .3s ease",
-    maxHeight: previewOpen ? 2000 : 0,
-    opacity: previewOpen ? 1 : 0,
-    overflow: "hidden",
-    transform: previewOpen ? "scale(1)" : "scale(.98)",
-  };
+  // Desktop column scroll (preview + editor) — inside-column scroll only
+  const columnScrollStyle = !isMobile
+    ? { maxHeight: "calc(100vh - 140px)", overflow: "auto" }
+    : undefined;
 
   const shouldShowPlaceholders = !hasSavedData;
   const previewFullName = state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
@@ -610,6 +610,7 @@ export default function MyProfile() {
                   <form onSubmit={handleVerifyCode}>
                     <input
                       type="text"
+                      className="text-input"
                       placeholder="Enter 6-digit code"
                       value={verificationCodeInput}
                       onChange={(e) => setVerificationCodeCode(e.target.value)}
@@ -644,16 +645,27 @@ export default function MyProfile() {
 
               <div className="myprofile-flex-container">
                 {/* Preview column */}
-                <div className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`}>
+                <div className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`} style={columnScrollStyle}>
                   {isMobile ? (
                     <div className={`mp-mobile-controls desktop-h6 ${previewOpen ? "is-open" : "is-collapsed"}`} role="tablist" aria-label="Preview controls">
-                      <div className="mp-pill">
+                      {/* 2-up pill controls, 50% each, left aligned */}
+                      <div
+                        className="mp-pill"
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "1fr 1fr",
+                          gap: 8,
+                          width: "min(420px, 100%)",
+                          justifyItems: "stretch",
+                        }}
+                      >
                         <button
                           type="button"
                           role="tab"
                           aria-selected={previewOpen}
                           className={`mp-tab ${previewOpen ? "active" : ""}`}
                           onClick={() => setPreviewOpen((s) => !s)}
+                          style={{ width: "100%" }}
                         >
                           {previewOpen ? "Hide Preview" : "Show Preview"}
                         </button>
@@ -665,12 +677,17 @@ export default function MyProfile() {
                           target="_blank"
                           rel="noreferrer"
                           onClick={() => setPreviewOpen(false)}
+                          style={{ width: "100%", textAlign: "center" }}
                         >
                           Visit Page
                         </a>
                       </div>
 
-                      <div className="mp-preview-wrap" style={collapsibleStyle}>
+                      <div
+                        className="mp-preview-wrap"
+                        ref={mpWrapRef}
+                        style={{ maxHeight: previewOpen ? undefined : 0, overflow: "hidden", transition: "max-height .3s ease, opacity .3s ease, transform .3s ease" }}
+                      >
                         <div
                           className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
                           style={{ fontFamily: state.font || previewPlaceholders.font }}
@@ -807,12 +824,13 @@ export default function MyProfile() {
                       </div>
                     </div>
                   ) : (
-                    // Desktop phone preview (no inner-scroll; page scrolls)
+                    // Desktop phone preview — column scroll only
                     <div
                       className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
                       style={{ fontFamily: state.font || previewPlaceholders.font }}
                     >
                       <div className="mock-phone-scrollable-content desktop-no-inner-scroll">
+                        {/* (same as mobile content, omitted here for brevity - kept identical) */}
                         {showMainSection && (
                           <>
                             {(shouldShowPlaceholders || !!state.coverPhoto) && (
@@ -938,7 +956,7 @@ export default function MyProfile() {
                 </div>
 
                 {/* Editor column */}
-                <div className="myprofile-editor-wrapper" id="myprofile-editor">
+                <div className="myprofile-editor-wrapper" id="myprofile-editor" style={columnScrollStyle}>
                   {(!isSubscribed && hasTrialEnded) && (
                     <div className="subscription-overlay">
                       <div className="subscription-message">
@@ -1029,6 +1047,7 @@ export default function MyProfile() {
                           <input
                             id="mainHeading"
                             type="text"
+                            className="text-input"
                             value={state.mainHeading || ""}
                             onChange={(e) => updateState({ mainHeading: e.target.value })}
                             placeholder={previewPlaceholders.main_heading}
@@ -1040,6 +1059,7 @@ export default function MyProfile() {
                           <input
                             id="subHeading"
                             type="text"
+                            className="text-input"
                             value={state.subHeading || ""}
                             onChange={(e) => updateState({ subHeading: e.target.value })}
                             placeholder={previewPlaceholders.sub_heading}
@@ -1080,7 +1100,7 @@ export default function MyProfile() {
                         <div className="input-block">
                           <label htmlFor="avatar">Profile Photo</label>
                           <input ref={avatarInputRef} id="avatar" type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
-                          {/* Avatar tile now matches work image tile */}
+                          {/* Avatar tile identical to work image tile */}
                           <div className="editor-item-card work-image-item-wrapper avatar-tile" onClick={() => avatarInputRef.current?.click()}>
                             {state.avatar ? (
                               <img src={state.avatar || ""} alt="Avatar preview" className="work-image-preview" />
@@ -1100,6 +1120,7 @@ export default function MyProfile() {
                           <input
                             id="fullName"
                             type="text"
+                            className="text-input"
                             value={state.full_name || ""}
                             onChange={(e) => updateState({ full_name: e.target.value })}
                             placeholder={previewPlaceholders.full_name}
@@ -1111,6 +1132,7 @@ export default function MyProfile() {
                           <input
                             id="jobTitle"
                             type="text"
+                            className="text-input"
                             value={state.job_title || ""}
                             onChange={(e) => updateState({ job_title: e.target.value })}
                             placeholder={previewPlaceholders.job_title}
@@ -1122,6 +1144,7 @@ export default function MyProfile() {
                           <textarea
                             id="bio"
                             rows={4}
+                            className="text-input"
                             value={state.bio || ""}
                             onChange={(e) => updateState({ bio: e.target.value })}
                             placeholder={previewPlaceholders.bio}
@@ -1226,8 +1249,8 @@ export default function MyProfile() {
                                 className="editor-item-card mock-service-item-wrapper"
                                 style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 8, alignItems: "center" }}
                               >
-                                <input type="text" placeholder="Service Name" value={s.name || ""} onChange={(e) => handleServiceChange(i, "name", e.target.value)} />
-                                <input type="text" placeholder="Service Price/Detail" value={s.price || ""} onChange={(e) => handleServiceChange(i, "price", e.target.value)} />
+                                <input type="text" className="text-input" placeholder="Service Name" value={s.name || ""} onChange={(e) => handleServiceChange(i, "name", e.target.value)} />
+                                <input type="text" className="text-input" placeholder="Service Price/Detail" value={s.price || ""} onChange={(e) => handleServiceChange(i, "price", e.target.value)} />
                                 <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
                               </div>
                             ))}
@@ -1275,9 +1298,9 @@ export default function MyProfile() {
                                 className="editor-item-card mock-review-card-wrapper"
                                 style={{ display: "grid", gridTemplateColumns: "1fr 1fr 110px auto", gap: 8, alignItems: "center" }}
                               >
-                                <input type="text" placeholder="Reviewer Name" value={r.name || ""} onChange={(e) => handleReviewChange(i, "name", e.target.value)} />
-                                <textarea placeholder="Review text" rows={2} value={r.text || ""} onChange={(e) => handleReviewChange(i, "text", e.target.value)} />
-                                <input type="number" placeholder="Rating (1-5)" min="1" max="5" value={r.rating || ""} onChange={(e) => handleReviewChange(i, "rating", e.target.value)} />
+                                <input type="text" className="text-input" placeholder="Reviewer Name" value={r.name || ""} onChange={(e) => handleReviewChange(i, "name", e.target.value)} />
+                                <textarea className="text-input" placeholder="Review text" rows={2} value={r.text || ""} onChange={(e) => handleReviewChange(i, "text", e.target.value)} />
+                                <input type="number" className="text-input" placeholder="Rating (1-5)" min="1" max="5" value={r.rating || ""} onChange={(e) => handleReviewChange(i, "rating", e.target.value)} />
                                 <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
                               </div>
                             ))}
@@ -1301,6 +1324,7 @@ export default function MyProfile() {
                           <input
                             id="contactEmail"
                             type="email"
+                            className="text-input"
                             value={state.contact_email || ""}
                             onChange={(e) => updateState({ contact_email: e.target.value })}
                             placeholder={previewPlaceholders.contact_email}
@@ -1312,6 +1336,7 @@ export default function MyProfile() {
                           <input
                             id="phoneNumber"
                             type="tel"
+                            className="text-input"
                             value={state.phone_number || ""}
                             onChange={(e) => updateState({ phone_number: e.target.value })}
                             placeholder={previewPlaceholders.phone_number}
