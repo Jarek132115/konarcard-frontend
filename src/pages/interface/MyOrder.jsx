@@ -1,3 +1,4 @@
+// src/pages/interface/MyOrders.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -82,7 +83,10 @@ function ProgressBar({ status }) {
     return (
         <div className="order-progress">
             <div className="order-progress-track">
-                <div className="order-progress-fill" style={{ width: `${percent}%` }} />
+                <div
+                    className="order-progress-fill"
+                    style={{ width: `${percent}%` }}
+                />
             </div>
             <div className="order-progress-caption">
                 {idx + 1} / 4 · {formatFulfillmentStatus(status)}
@@ -116,7 +120,8 @@ export default function MyOrders() {
     }, [sidebarOpen]);
 
     useEffect(() => {
-        if (sidebarOpen && isMobile) document.body.classList.add("body-no-scroll");
+        if (sidebarOpen && isMobile)
+            document.body.classList.add("body-no-scroll");
         else document.body.classList.remove("body-no-scroll");
     }, [sidebarOpen, isMobile]);
 
@@ -144,7 +149,9 @@ export default function MyOrders() {
         setActionMsg("");
         try {
             await api.post("/cancel-subscription");
-            setActionMsg("Subscription will cancel at the end of the current billing period.");
+            setActionMsg(
+                "Subscription will cancel at the end of the current billing period."
+            );
             const res = await api.get("/me/orders", { params: { ts: Date.now() } });
             setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
         } catch (e) {
@@ -156,7 +163,9 @@ export default function MyOrders() {
 
     function renderSubscription(o) {
         const trialEnd = o.trialEnd ? formatDateTimeNoSeconds(o.trialEnd) : "—";
-        const periodEnd = o.currentPeriodEnd ? formatDateTimeNoSeconds(o.currentPeriodEnd) : "—";
+        const periodEnd = o.currentPeriodEnd
+            ? formatDateTimeNoSeconds(o.currentPeriodEnd)
+            : "—";
 
         return (
             <>
@@ -175,7 +184,8 @@ export default function MyOrders() {
 
     function renderCard(o) {
         const amount = formatAmount(o.amountTotal, o.currency);
-        const delivery = o.deliveryWindow || o.metadata?.estimatedDelivery || "—";
+        const delivery =
+            o.deliveryWindow || o.metadata?.estimatedDelivery || "—";
         const qty = o.quantity || 1;
         const fulfillRaw = o.fulfillmentStatus || "order_placed";
 
@@ -215,7 +225,10 @@ export default function MyOrders() {
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
             {sidebarOpen && isMobile && (
-                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
+                <div
+                    className="sidebar-overlay active"
+                    onClick={() => setSidebarOpen(false)}
+                />
             )}
 
             <main className="main-content-container">
@@ -237,7 +250,10 @@ export default function MyOrders() {
                             <p className="orders-empty-sub">
                                 Your purchases will appear here once you’ve checked out.
                             </p>
-                            <Link to="/productandplan" className="cta-blue-button desktop-button">
+                            <Link
+                                to="/productandplan"
+                                className="cta-blue-button desktop-button"
+                            >
                                 Browse products
                             </Link>
                         </div>
@@ -248,12 +264,20 @@ export default function MyOrders() {
 
                                 return (
                                     <article key={o.id} className="order-card">
-                                        <div className={`order-status-badge ${statusBadgeClass(o.fulfillmentStatus)}`}>
+                                        <div
+                                            className={`order-status-badge ${statusBadgeClass(
+                                                o.fulfillmentStatus
+                                            )}`}
+                                        >
                                             {formatFulfillmentStatus(o.fulfillmentStatus)}
                                         </div>
 
                                         <div className="order-thumb">
-                                            <img src={ProductThumb} alt="Product" className="order-thumb-img" />
+                                            <img
+                                                src={ProductThumb}
+                                                alt="Product"
+                                                className="order-thumb-img"
+                                            />
                                         </div>
 
                                         <div className="order-details">
@@ -273,15 +297,23 @@ export default function MyOrders() {
                                                         <div className="order-line order-info">
                                                             <span className="dot" aria-hidden="true" />
                                                             <div className="reason">
-                                                                <div className="desktop-body-s"><strong>Delivery name:</strong></div>
-                                                                <div className="desktop-body-xs">{o.deliveryName || "—"}</div>
+                                                                <div className="desktop-body-s">
+                                                                    <strong>Delivery name:</strong>
+                                                                </div>
+                                                                <div className="desktop-body-xs">
+                                                                    {o.deliveryName || "—"}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div className="order-line order-info">
                                                             <span className="dot" aria-hidden="true" />
                                                             <div className="reason">
-                                                                <div className="desktop-body-s"><strong>Delivery address:</strong></div>
-                                                                <div className="desktop-body-xs">{o.deliveryAddress || "—"}</div>
+                                                                <div className="desktop-body-s">
+                                                                    <strong>Delivery address:</strong>
+                                                                </div>
+                                                                <div className="desktop-body-xs">
+                                                                    {o.deliveryAddress || "—"}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </>
@@ -298,7 +330,9 @@ export default function MyOrders() {
                                                         }
                                                         className="cta-black-button desktop-button"
                                                     >
-                                                        {confirmingCancel ? "Confirm cancel" : "Cancel subscription"}
+                                                        {confirmingCancel
+                                                            ? "Confirm cancel"
+                                                            : "Cancel subscription"}
                                                     </button>
                                                 ) : (
                                                     <button
@@ -310,7 +344,11 @@ export default function MyOrders() {
                                                 )}
 
                                                 <Link
-                                                    to={isSub ? `/SuccessSubscription?id=${o.id}` : `/success?id=${o.id}`}
+                                                    to={
+                                                        isSub
+                                                            ? `/SuccessSubscription?id=${o.id}`
+                                                            : `/success?id=${o.id}`
+                                                    }
                                                     className="cta-blue-button desktop-button"
                                                 >
                                                     View details
