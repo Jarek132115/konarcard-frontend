@@ -1,28 +1,26 @@
-import React, { useContext, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+// src/components/ProtectedRoute.jsx
+import React, { useContext } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 
 export default function ProtectedRoute({ children }) {
-  const { user, initialized, hydrating } = useContext(AuthContext);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const redirectedRef = useRef(false);
+    const { user, initialized, loading } = useContext(AuthContext);
+    const location = useLocation();
+    const token =
+        typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
-  // Wait for app bootstrap + any in-flight hydration before deciding
-  if (!initialized || hydrating) return null; // could render a small skeleton
+    // While bootstrapping (or we have a token but user not rehydrated yet), render nothing
+    if (!initialized || loading || (token && !user)) return null;
 
-  // One-shot redirect to avoid ping-pong / flashing
-  useEffect(() => {
-    if (redirectedRef.current) return;
-    if (!user) {
-      redirectedRef.current = true;
-      navigate('/login', {
-        replace: true,
-        state: { from: location.pathname + location.search },
-      });
-    }
-  }, [user, navigate, location]);
+    // No session -> redirect declaratively (no useNavigate, no effects)
+    if (!user)
+        return (
+            <Navigate
+                to="/login"
+                replace
+                state={{ from: location.pathname + location.search }}
+            />
+        );
 
-  if (!user) return null; // we triggered a redirect already
-  return children;
+    return children;
 }
