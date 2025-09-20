@@ -183,3 +183,60 @@
     /* don’t force 100% without a fixed parent height */
   }
 }
+
+/* =========================
+   NFC PRICING PAGE OVERRIDES
+   ========================= */
+.nfc-pricing-page .nfc-pricing-subscription,
+.nfc-pricing-page .nfc-pricing-product {
+  background: #fff;
+  /* White cards */
+  color: #111;
+  /* Dark text */
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Divider line */
+.nfc-pricing-page .nfc-pricing-subscription .pricing-divider,
+.nfc-pricing-page .nfc-pricing-product .pricing-divider {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* Pricing badge inside these cards */
+.nfc-pricing-page .nfc-pricing-subscription .pricing-badge,
+.nfc-pricing-page .nfc-pricing-product .pricing-badge {
+  background: #f3f4f6;
+  color: #111;
+  border: 1px solid #e6e6e6;
+  box-shadow: none;
+}
+
+/* Features text stays dark */
+.nfc-pricing-page .nfc-pricing-subscription .pricing-feature span,
+.nfc-pricing-page .nfc-pricing-product .pricing-feature span {
+  color: #333;
+}
+
+/* Check icons normal (not inverted) */
+.nfc-pricing-page .nfc-pricing-subscription .pricing-check,
+.nfc-pricing-page .nfc-pricing-product .pricing-check {
+  filter: none;
+}
+
+/* Media gallery matches white style */
+.nfc-pricing-page .nfc-pricing-product .pricing-media-main {
+  background: #f9f9f9;
+  border: 1px solid #e6e6e6;
+}
+
+.nfc-pricing-page .nfc-pricing-product .pricing-media-thumb {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+}
+
+.nfc-pricing-page .nfc-pricing-product .pricing-media-thumb.is-active {
+  border-color: #0a66ff;
+  box-shadow: 0 0 0 2px rgba(10, 102, 255, 0.25);
+}
