@@ -74,13 +74,25 @@ export default function MyProfile() {
   /* Effects */
   useEffect(() => {
     const onResize = () => {
-      setIsMobile(window.innerWidth <= 1000);
-      setIsSmallMobile(window.innerWidth <= 600);
-      if (!window.innerWidth <= 1000 && sidebarOpen) setSidebarOpen(false);
+      const m = window.innerWidth <= 1000;
+      const sm = window.innerWidth <= 600;
+      setIsMobile(m);
+      setIsSmallMobile(sm);
+
+      // Fix condition: close sidebar if window grows above desktop breakpoint
+      if (window.innerWidth > 1000 && sidebarOpen) setSidebarOpen(false);
     };
+
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, [sidebarOpen]);
+
+
+  useEffect(() => {
+    if (sidebarOpen && isMobile) document.body.classList.add("body-no-scroll");
+    else document.body.classList.remove("body-no-scroll");
+  }, [sidebarOpen, isMobile]);
+
 
   useEffect(() => {
     if (!authUser) return;

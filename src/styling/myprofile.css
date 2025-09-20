@@ -1487,3 +1487,132 @@
         min-width: 0 !important;
     }
 }
+
+/* GENERAL */
+.body-no-scroll {
+    overflow: hidden;
+}
+
+/* Layout */
+.myprofile-flex-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 1000px) {
+    .myprofile-flex-container {
+        grid-template-columns: 1fr;
+        /* full-width stacks */
+    }
+
+    .myprofile-content,
+    .myprofile-editor-container {
+        width: 100%;
+    }
+}
+
+/* Mobile controls pill */
+.mp-mobile-controls {
+    position: sticky;
+    /* stays visible above preview */
+    top: 64px;
+    /* below your header */
+    z-index: 5;
+    background: transparent;
+    margin-bottom: 8px;
+}
+
+.mp-pill {
+    display: flex;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #E8E8E8;
+    border-radius: 999px;
+    padding: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
+}
+
+.mp-tab {
+    border: 0;
+    background: transparent;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.mp-tab.active {
+    background: #0b5cff;
+    color: #fff;
+}
+
+.mp-tab.visit {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* subtle bottom spacer (keeps separation from preview) */
+.mp-pill-bottom {
+    height: 6px;
+}
+
+/* Phone preview – make it full width and not internally scrollable on mobile */
+.mock-phone {
+    width: 100%;
+    max-width: 430px;
+    /* desktop keeps phone feel */
+    margin: 0 auto;
+    border-radius: 20px;
+    border: 1px solid #ececec;
+    overflow: hidden;
+    /* no nested scrollbars */
+}
+
+.mock-phone-scrollable-content {
+    overflow: visible;
+    /* no internal scroll */
+    max-height: none;
+}
+
+@media (max-width: 1000px) {
+    .mock-phone {
+        max-width: 100%;
+        border-radius: 16px;
+    }
+}
+
+/* Make galleries naturally wrap rather than overflow on mobile */
+@media (max-width: 1000px) {
+
+    .mock-work-gallery.carousel,
+    .mock-services-list.carousel,
+    .mock-reviews-list.carousel {
+        scroll-behavior: smooth;
+        overflow-x: auto;
+        /* horizontal swipe still allowed */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .work-preview-row-container {
+        overflow: visible;
+    }
+}
+
+/* Editor column */
+.settings-card {
+    width: 100%;
+}
+
+.editor-form {
+    width: 100%;
+}
+
+/* Ensure the “remove” buttons sit above images */
+.remove-image-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+}
