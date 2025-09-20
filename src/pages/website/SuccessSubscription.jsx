@@ -1,4 +1,3 @@
-// src/pages/interface/SuccessSubscription.jsx
 import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -19,33 +18,15 @@ function formatAmount(amount, currency = 'gbp') {
     }).format(value);
 }
 
-function parseDateMaybe(v) {
-    if (!v && v !== 0) return null;
-    if (typeof v === 'string') {
-        const d = new Date(v);
-        return Number.isNaN(+d) ? null : d;
-    }
-    if (typeof v === 'number') {
-        const ms = v < 2e12 ? v * 1000 : v;
-        const d = new Date(ms);
-        return Number.isNaN(+d) ? null : d;
-    }
-    return null;
-}
-
 export default function SuccessSubscription() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
     const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
 
     const { user: authUser } = useContext(AuthContext);
-    const [profile, setProfile] = useState(authUser || null);
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState('');
-
-    // subscription status from server (trial_end/current_period_end/etc)
-    const [subStatusInfo, setSubStatusInfo] = useState(null);
 
     useEffect(() => {
         const onResize = () => {
@@ -70,31 +51,8 @@ export default function SuccessSubscription() {
             try {
                 setLoading(true);
                 setErr('');
-
-                if (!authUser) {
-                    const p = await api.get('/profile', { params: { ts: Date.now() } });
-                    if (mounted) setProfile(p?.data?.data || null);
-                } else {
-                    setProfile(authUser);
-                }
-
-                // Orders (to get plan price)
-                const res = await api.get('/me/orders');
-                const list = Array.isArray(res?.data?.data) ? res.data.data : [];
-                if (mounted) setOrders(list);
-
-                // Subscription status (next charge date lives here)
-                try {
-                    const s1 = await api.get('/subscription/status'); // preferred route
-                    if (mounted) setSubStatusInfo(s1?.data || null);
-                } catch {
-                    try {
-                        const s2 = await api.get('/check-subscription'); // fallback if your route is named differently
-                        if (mounted) setSubStatusInfo(s2?.data || null);
-                    } catch {
-                        // ignore; we'll just show what we can
-                    }
-                }
+                const res = await api.get('/me/orders', { params: { ts: Date.now() } });
+                if (mounted) setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
             } catch (e) {
                 if (mounted) setErr(e?.response?.data?.error || 'Could not load your subscription details.');
             } finally {
@@ -102,7 +60,7 @@ export default function SuccessSubscription() {
             }
         })();
         return () => { mounted = false; };
-    }, [authUser]);
+    }, []);
 
     const latestSub = useMemo(() => {
         const subs = (orders || []).filter((o) => (o.type || '').toLowerCase() === 'subscription');
@@ -110,29 +68,24 @@ export default function SuccessSubscription() {
         return subs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
     }, [orders]);
 
+    const subStatus = latestSub?.status || 'inactive';
+
     const amountToday = useMemo(() => {
         if (!latestSub) return '—';
-        return formatAmount(typeof latestSub.amountTotal === 'number' ? latestSub.amountTotal : 0, latestSub.currency || 'gbp');
+        if (latestSub.trialEnd && new Date(latestSub.trialEnd) > new Date()) {
+            return 'Free trial — no charge today';
+        }
+        return formatAmount(latestSub.amountTotal ?? 495, latestSub.currency || 'gbp');
     }, [latestSub]);
 
-    // Next charge logic
     const nextChargeDate = useMemo(() => {
-        const t = parseDateMaybe(subStatusInfo?.trial_end);
-        const cpe = parseDateMaybe(subStatusInfo?.current_period_end);
-        const cancelAtEnd = !!subStatusInfo?.cancel_at_period_end;
-
-        // If still in trial and not set to cancel, trial_end is the first charge date.
-        if (t && +t > Date.now() && !cancelAtEnd) return t;
-
-        // Otherwise next renewal is at current_period_end (if present)
-        if (cpe && +cpe > Date.now()) return cpe;
-
+        if (!latestSub) return null;
+        if (latestSub.trialEnd && new Date(latestSub.trialEnd) > new Date()) {
+            return new Date(latestSub.trialEnd);
+        }
+        if (latestSub.currentPeriodEnd) return new Date(latestSub.currentPeriodEnd);
         return null;
-    }, [subStatusInfo]);
-
-    const subStatus =
-        (latestSub?.status || '').toLowerCase() ||
-        (profile?.isSubscribed ? 'active' : 'inactive');
+    }, [latestSub]);
 
     return (
         <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -160,6 +113,8 @@ export default function SuccessSubscription() {
                         <p>Activating your subscription…</p>
                     ) : err ? (
                         <p style={{ color: '#b91c1c' }}>{err}</p>
+                    ) : !latestSub ? (
+                        <p>No subscription found.</p>
                     ) : (
                         <div className="success-box">
                             <h2 className="desktop-h4 success-header">Konar Profile Plan</h2>
@@ -174,13 +129,15 @@ export default function SuccessSubscription() {
                                 </div>
                                 <div className="info-tile">
                                     <p className="desktop-body-s label">
-                                        {subStatusInfo?.trial_end && parseDateMaybe(subStatusInfo.trial_end) && +parseDateMaybe(subStatusInfo.trial_end) > Date.now()
+                                        {latestSub.trialEnd && new Date(latestSub.trialEnd) > new Date()
                                             ? 'Free trial active until'
                                             : 'Next charge on'}
                                     </p>
                                     <p className="desktop-h5 value">
                                         {nextChargeDate ? nextChargeDate.toLocaleString() : '—'}
-                                        {nextChargeDate && latestSub ? ` · ${formatAmount(latestSub.amountTotal, latestSub.currency)}` : ''}
+                                        {nextChargeDate && latestSub && !latestSub.trialEnd
+                                            ? ` · ${formatAmount(latestSub.amountTotal ?? 495, latestSub.currency)}`
+                                            : ''}
                                     </p>
                                 </div>
                             </div>
