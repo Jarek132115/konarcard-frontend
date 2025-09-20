@@ -8,12 +8,8 @@ const USER_KEY = 'authUser';
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-
-    // Flags
-    const [initialized, setInitialized] = useState(false); // app boot complete
-    const [loading, setLoading] = useState(true);          // optional (legacy consumers)
-    const [hydrating, setHydrating] = useState(false);     // actively refreshing session
-
+    const [initialized, setInitialized] = useState(false);  // app bootstrapped
+    const [hydrating, setHydrating] = useState(false);  // in-flight /profile fetch
     const bootstrappedRef = useRef(false);
 
     const attachAuthHeader = (token) => {
@@ -21,7 +17,6 @@ export const AuthProvider = ({ children }) => {
         else delete api.defaults.headers.common.Authorization;
     };
 
-    // Exposed method to force-refresh session
     const fetchUser = async () => {
         const token = localStorage.getItem(TOKEN_KEY);
         if (!token) {
@@ -38,13 +33,14 @@ export const AuthProvider = ({ children }) => {
             const fresh = res?.data?.data || null;
             setUser(fresh);
             try {
-                if (fresh) localStorage.setItem(USER_KEY, JSON.stringify(fresh));
-                else localStorage.removeItem(USER_KEY);
+                fresh
+                    ? localStorage.setItem(USER_KEY, JSON.stringify(fresh))
+                    : localStorage.removeItem(USER_KEY);
             } catch { }
             return fresh;
         } catch (err) {
             const status = err?.response?.status;
-            if (status === 401 || status === 403) {
+            if (status === 401 || 403 === status) {
                 try {
                     localStorage.removeItem(TOKEN_KEY);
                     localStorage.removeItem(USER_KEY);
@@ -62,24 +58,19 @@ export const AuthProvider = ({ children }) => {
         if (bootstrappedRef.current) return;
         bootstrappedRef.current = true;
 
-        // 1) Read token + cached user synchronously (no UI flash)
         const token = localStorage.getItem(TOKEN_KEY);
-        let cachedUser = null;
-        try { cachedUser = JSON.parse(localStorage.getItem(USER_KEY) || 'null'); } catch { }
+        let cached = null;
+        try { cached = JSON.parse(localStorage.getItem(USER_KEY) || 'null'); } catch { }
 
         if (token) attachAuthHeader(token);
-        if (cachedUser) setUser(cachedUser);
+        if (cached) setUser(cached);
 
-        // Ready to render app immediately with cached state
+        // signal app is ready to render immediately with whatever we have
         setInitialized(true);
-        setLoading(false);
 
-        // 2) Background refresh (don’t block paint)
-        if (token) {
-            // fetchUser() will toggle hydrating true→false around the request
-            fetchUser();
-        }
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+        // do a background revalidation if we have a token
+        if (token) { void fetchUser(); }
+    }, []);
 
     const login = (token, userData) => {
         try {
@@ -89,8 +80,6 @@ export const AuthProvider = ({ children }) => {
         attachAuthHeader(token);
         setUser(userData || null);
         setInitialized(true);
-        setLoading(false);
-        setHydrating(false);
     };
 
     const logout = () => {
@@ -100,22 +89,16 @@ export const AuthProvider = ({ children }) => {
         } catch { }
         attachAuthHeader(null);
         setUser(null);
-        setHydrating(false);
     };
 
-    const value = useMemo(
-        () => ({
-            user,
-            setUser,
-            login,
-            logout,
-            initialized, // “app booted” flag
-            loading,     // legacy optional
-            hydrating,   // refreshing session in background
-            fetchUser,   // allow screens to revalidate on demand
-        }),
-        [user, initialized, loading, hydrating]
-    );
+    const value = useMemo(() => ({
+        user,
+        login,
+        logout,
+        fetchUser,
+        initialized,
+        hydrating,
+    }), [user, initialized, hydrating]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
