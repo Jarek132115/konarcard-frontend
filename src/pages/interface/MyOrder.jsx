@@ -113,7 +113,7 @@ function SubscriptionProgress({ trialEnd, currentPeriodEnd, amountTotal, currenc
     );
 }
 
-/* --------- New: simple label-over-value block --------- */
+/* --------- Simple label-over-value block --------- */
 function KV({ label, children }) {
     return (
         <div className="order-kv">
@@ -225,6 +225,15 @@ export default function MyOrders() {
         });
     }, [orders]);
 
+    /** Do we currently have any active subscription? */
+    const hasActiveSubscription = React.useMemo(() => {
+        return (visibleOrders || []).some(
+            (o) =>
+                (o.type || "").toLowerCase() === "subscription" &&
+                (o.status || "").toLowerCase() === "active"
+        );
+    }, [visibleOrders]);
+
     function renderSubscription(o) {
         const cancelledAt =
             (o.metadata && o.metadata.cancelledAt) ? o.metadata.cancelledAt : (o.status === "canceled" ? o.updatedAt : null);
@@ -300,7 +309,7 @@ export default function MyOrders() {
                         <div className="orders-list">
                             {visibleOrders.map((o) => {
                                 const isSub = (o.type || "").toLowerCase() === "subscription";
-                                const canceled = isSub && o.status === "canceled";
+                                const canceled = isSub && (o.status || "").toLowerCase() === "canceled";
 
                                 return (
                                     <article key={o.id} className={`order-card ${isSub ? "is-subscription" : ""}`}>
@@ -326,7 +335,19 @@ export default function MyOrders() {
                                             <div className="order-actions">
                                                 {isSub ? (
                                                     canceled ? (
-                                                        <button onClick={resubscribeNow} className="cta-black-button desktop-button">Resubscribe now</button>
+                                                        hasActiveSubscription ? (
+                                                            <button
+                                                                className="cta-black-button desktop-button disabled"
+                                                                disabled
+                                                                aria-disabled="true"
+                                                            >
+                                                                Cancelled
+                                                            </button>
+                                                        ) : (
+                                                            <button onClick={resubscribeNow} className="cta-black-button desktop-button">
+                                                                Resubscribe now
+                                                            </button>
+                                                        )
                                                     ) : (
                                                         <button
                                                             onClick={() =>
