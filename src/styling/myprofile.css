@@ -67,14 +67,24 @@
     --input-border: #666;
 }
 
-/* ===== Layout ===== */
+/* SAFE global layout */
 .app-layout {
     display: flex;
-    height: 100vh;
-    background-color: #fff;
-    position: relative;
-    overflow: hidden;
+    flex-direction: row;
+    min-height: 100vh;
+    /* let pages grow */
+    height: auto;
+    /* don't cap to viewport */
+    overflow: visible;
+    /* let the document own the scroll */
 }
+
+@media (max-width: 1000px) {
+    .app-layout {
+        flex-direction: column;
+    }
+}
+
 
 .main-content-container {
     flex: 1;
@@ -1874,4 +1884,3 @@
         gap: 10px;
     }
 }
-
