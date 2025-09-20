@@ -74,13 +74,8 @@ function statusBadgeClass(order) {
 function formatDate(iso) {
     if (!iso) return "—";
     const d = new Date(iso);
-    return d.toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
+    return d.toLocaleDateString(undefined, { year: "numeric", month: "2-digit", day: "2-digit" });
 }
-
 function formatDateTimeNoSeconds(iso) {
     if (!iso) return "—";
     const d = new Date(iso);
@@ -122,8 +117,7 @@ function SubscriptionProgress({ trialEnd, currentPeriodEnd, amountTotal, currenc
     if (!inTrial) {
         const start = new Date(end);
         start.setMonth(start.getMonth() - 1);
-        percent =
-            now <= start ? 0 : now >= end ? 100 : Math.round(((now - start) / (end - start)) * 100);
+        percent = now <= start ? 0 : now >= end ? 100 : Math.round(((now - start) / (end - start)) * 100);
     }
 
     const amountStr = formatAmount(amountTotal ?? 495, currency);
@@ -220,7 +214,7 @@ export default function MyOrders() {
 
     function renderSubscription(o) {
         const cancelledAt =
-            (o.metadata && o.metadata.cancelledAt) ? o.metadata.cancelledAt : (o.status === 'canceled' ? o.updatedAt : null);
+            o.metadata && o.metadata.cancelledAt ? o.metadata.cancelledAt : o.status === "canceled" ? o.updatedAt : null;
 
         return (
             <>
@@ -228,7 +222,7 @@ export default function MyOrders() {
                     <strong>Status:</strong> {o.status}
                 </div>
 
-                {o.status === 'canceled' && cancelledAt && (
+                {o.status === "canceled" && cancelledAt && (
                     <div className="order-line">
                         <strong>Canceled on:</strong> {formatDateTimeNoSeconds(cancelledAt)}
                     </div>
@@ -287,9 +281,7 @@ export default function MyOrders() {
             </div>
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-            {sidebarOpen && isMobile && (
-                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
-            )}
+            {sidebarOpen && isMobile && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />}
 
             <main className="main-content-container">
                 <PageHeader title="My Orders" isMobile={isMobile} isSmallMobile={isSmallMobile} />
@@ -303,9 +295,7 @@ export default function MyOrders() {
                         <div className="orders-empty">
                             <div className="orders-empty-badge">Orders</div>
                             <h3 className="orders-empty-title">No orders yet</h3>
-                            <p className="orders-empty-sub">
-                                Your purchases will appear here once you’ve checked out.
-                            </p>
+                            <p className="orders-empty-sub">Your purchases will appear here once you’ve checked out.</p>
                             <Link to="/productandplan" className="cta-blue-button desktop-button">
                                 Browse products
                             </Link>
@@ -365,15 +355,13 @@ export default function MyOrders() {
                                             <div className="order-actions">
                                                 {isSub ? (
                                                     canceled ? (
-                                                        <button onClick={resubscribeNow} className="cta-blue-button desktop-button">
+                                                        <button onClick={resubscribeNow} className="cta-black-button desktop-button">
                                                             Resubscribe now
                                                         </button>
                                                     ) : (
                                                         <button
                                                             onClick={() =>
-                                                                confirmingCancelId === o.id
-                                                                    ? cancelSubscription(o.id)
-                                                                    : setConfirmingCancelId(o.id)
+                                                                confirmingCancelId === o.id ? cancelSubscription(o.id) : setConfirmingCancelId(o.id)
                                                             }
                                                             className="cta-black-button desktop-button"
                                                         >
@@ -381,10 +369,7 @@ export default function MyOrders() {
                                                         </button>
                                                     )
                                                 ) : (
-                                                    <button
-                                                        onClick={() => navigate("/contactus")}
-                                                        className="cta-black-button desktop-button"
-                                                    >
+                                                    <button onClick={() => navigate("/contactus")} className="cta-black-button desktop-button">
                                                         Order Another
                                                     </button>
                                                 )}
