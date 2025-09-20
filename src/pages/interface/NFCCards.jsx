@@ -10,6 +10,7 @@ import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
+import { loadStripe } from '@stripe/stripe-js';
 
 /** Product gallery (same as Home) */
 import CardCover from '../../assets/images/Product-Cover.png';
@@ -17,6 +18,28 @@ import ProductImage1 from '../../assets/images/Product-Image-1.png';
 import ProductImage2 from '../../assets/images/Product-Image-2.png';
 import ProductImage3 from '../../assets/images/Product-Image-3.png';
 import ProductImage4 from '../../assets/images/Product-Image-4.png';
+
+/* ---- Helpers for Stripe ---- */
+async function getStripePublishableKey() {
+  // 1) Try env (CRA / Vite)
+  const envKey =
+    process.env.REACT_APP_STRIPE_PK ||
+    process.env.VITE_STRIPE_PK ||
+    process.env.NEXT_PUBLIC_STRIPE_PK;
+
+  if (envKey) return envKey;
+
+  // 2) Try backend endpoint (return { publishableKey: 'pk_...' })
+  try {
+    const res = await api.get('/stripe-pk', { params: { ts: Date.now() } });
+    const key = res?.data?.publishableKey || res?.data?.key || res?.data?.pk;
+    if (key) return key;
+  } catch {
+    /* ignore here; we'll show a toast below */
+  }
+
+  return null;
+}
 
 export default function NFCCards() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -66,8 +89,11 @@ export default function NFCCards() {
         returnUrl: window.location.origin + '/SuccessSubscription',
       });
       const { url } = res.data || {};
-      if (url) window.location.href = url;
-      else toast.error('Could not start subscription. Please try again.');
+      if (url) {
+        window.location.assign(url);
+      } else {
+        toast.error('Could not start subscription. Please try again.');
+      }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Subscription failed. Please try again.');
     }
@@ -76,43 +102,55 @@ export default function NFCCards() {
   /** Open Stripe Checkout for the physical card order */
   const handleOrderCard = async () => {
     if (ordering) return; // prevent double-submit
-    // if user must be logged in, redirect to login first
     if (!authUser) {
       navigate('/login', { state: { from: location.pathname, checkoutType: 'card' } });
       return;
     }
+
     setOrdering(true);
     try {
-      // Most backends want success/cancel URLs and some product context
       const origin = window.location.origin;
+
+      // Adjust payload to whatever your backend expects.
       const payload = {
-        productId: 'konar-card-white',   // <- keep this ID in sync with your backend/catalog
+        productId: 'konar-card-white', // keep in sync with backend catalog
         quantity: 1,
         successUrl: `${origin}/success`,
         cancelUrl: `${origin}/productandplan`,
-        returnUrl: `${origin}/success`,   // back-compat if your server uses this key
+        // Some servers still use 'returnUrl':
+        returnUrl: `${origin}/success`,
       };
 
       const res = await api.post('/buy-card', payload);
       const data = res?.data || {};
 
-      // Support different field names your backend might return
+      // 1) Preferred: backend returns a direct URL to the hosted Checkout page.
       const redirectUrl = data.url || data.sessionUrl;
       if (redirectUrl) {
         window.location.assign(redirectUrl);
         return;
       }
 
-      // Some APIs return a sessionId and expect Stripe.js redirectToCheckout on the client.
+      // 2) Alternate: backend returns a sessionId — use Stripe.js client redirect.
       if (data.sessionId) {
-        // If your app already loads Stripe.js + publishable key elsewhere, you can swap in:
-        // const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PK);
-        // await stripe.redirectToCheckout({ sessionId: data.sessionId });
-        // For now, fall back:
-        toast.error('Checkout session created but no redirect URL returned.');
+        const pk = await getStripePublishableKey();
+        if (!pk) {
+          toast.error('Missing Stripe publishable key. Set REACT_APP_STRIPE_PK or add /stripe-pk endpoint.');
+          return;
+        }
+        const stripe = await loadStripe(pk);
+        if (!stripe) {
+          toast.error('Could not load Stripe. Please refresh and try again.');
+          return;
+        }
+        const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+        if (error) {
+          toast.error(error.message || 'Stripe redirect failed. Please try again.');
+        }
         return;
       }
 
+      // If we got here, backend response didn’t include anything usable.
       toast.error('Could not start checkout. Please try again.');
     } catch (err) {
       const msg = err?.response?.data?.error || err?.message || 'Checkout failed. Please try again.';
@@ -189,7 +227,7 @@ export default function NFCCards() {
 
         <div className="profile-page-wrapper">
           <div className="pricing-grid">
-            {/* Subscription card (blue) */}
+            {/* Subscription card */}
             <div className="pricing-card pricing-card--subscription" style={{ borderRadius: 16 }}>
               <div className="pricing-inner">
                 <div className="pricing-head">
@@ -238,7 +276,7 @@ export default function NFCCards() {
               </div>
             </div>
 
-            {/* Physical card (black) — gallery + “Order now” */}
+            {/* Physical card — gallery + “Order now” */}
             <div className="pricing-card pricing-card--product" style={{ borderRadius: 16 }}>
               <div className="pricing-inner">
                 <div className="pricing-head">
