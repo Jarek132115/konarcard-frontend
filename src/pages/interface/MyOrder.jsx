@@ -1,4 +1,3 @@
-// src/pages/interface/MyOrders.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -18,6 +17,7 @@ function formatAmount(amount, currency = "gbp") {
         maximumFractionDigits: 2,
     }).format(value);
 }
+
 function formatFulfillmentStatus(s) {
     switch ((s || "").toLowerCase()) {
         case "order_placed":
@@ -32,6 +32,7 @@ function formatFulfillmentStatus(s) {
             return "Order placed";
     }
 }
+
 function statusIndex(s) {
     switch ((s || "").toLowerCase()) {
         case "order_placed":
@@ -46,6 +47,7 @@ function statusIndex(s) {
             return 0;
     }
 }
+
 function statusBadgeClass(s) {
     switch ((s || "").toLowerCase()) {
         case "order_placed":
@@ -60,6 +62,7 @@ function statusBadgeClass(s) {
             return "status-placed";
     }
 }
+
 function formatDateTimeNoSeconds(iso) {
     if (!iso) return "—";
     const d = new Date(iso);
@@ -72,6 +75,7 @@ function formatDateTimeNoSeconds(iso) {
         hour12: false,
     });
 }
+
 function ProgressBar({ status }) {
     const idx = statusIndex(status);
     const percent = Math.max(0, Math.min(100, (idx / 3) * 100));
@@ -149,6 +153,49 @@ export default function MyOrders() {
         }
     }
 
+    function renderSubscription(o) {
+        const trialEnd = o.trialEnd ? formatDateTimeNoSeconds(o.trialEnd) : "—";
+        const periodEnd = o.currentPeriodEnd ? formatDateTimeNoSeconds(o.currentPeriodEnd) : "—";
+
+        return (
+            <>
+                <div className="order-line">
+                    <strong>Status:</strong> {o.status}
+                </div>
+                <div className="order-line">
+                    <strong>Trial ends:</strong> {trialEnd}
+                </div>
+                <div className="order-line">
+                    <strong>Next billing date:</strong> {periodEnd}
+                </div>
+            </>
+        );
+    }
+
+    function renderCard(o) {
+        const amount = formatAmount(o.amountTotal, o.currency);
+        const delivery = o.deliveryWindow || o.metadata?.estimatedDelivery || "—";
+        const qty = o.quantity || 1;
+        const fulfillRaw = o.fulfillmentStatus || "order_placed";
+
+        return (
+            <>
+                <div className="order-line">
+                    <strong>Quantity:</strong> {qty}
+                </div>
+                <div className="order-line">
+                    <strong>Amount:</strong> {amount}
+                </div>
+                <div className="order-line">
+                    <strong>Estimated delivery:</strong> {delivery}
+                </div>
+                <div className="order-line order-progress-wrap">
+                    <ProgressBar status={fulfillRaw} />
+                </div>
+            </>
+        );
+    }
+
     return (
         <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
             <div className="myprofile-mobile-header">
@@ -167,10 +214,7 @@ export default function MyOrders() {
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
             {sidebarOpen && isMobile && (
-                <div
-                    className="sidebar-overlay active"
-                    onClick={() => setSidebarOpen(false)}
-                />
+                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
             )}
 
             <main className="main-content-container">
@@ -200,128 +244,46 @@ export default function MyOrders() {
                         <div className="orders-list">
                             {orders.map((o) => {
                                 const isSub = (o.type || "").toLowerCase() === "subscription";
-                                const amount = formatAmount(o.amountTotal, o.currency);
-                                const qty = o.quantity || 1;
-
-                                const deliveryName =
-                                    o.deliveryName || o?.metadata?.deliveryName || "—";
-                                const deliveryAddress =
-                                    o.deliveryAddress || o?.metadata?.deliveryAddress || "—";
-                                const fulfillRaw = o.fulfillmentStatus || "order_placed";
+                                const deliveryName = o.deliveryName || o?.metadata?.deliveryName || "—";
+                                const deliveryAddress = o.deliveryAddress || o?.metadata?.deliveryAddress || "—";
 
                                 return (
                                     <article key={o.id} className="order-card">
-                                        <div
-                                            className={`order-status-badge ${statusBadgeClass(
-                                                fulfillRaw
-                                            )}`}
-                                        >
-                                            {formatFulfillmentStatus(fulfillRaw)}
+                                        <div className={`order-status-badge ${statusBadgeClass(o.fulfillmentStatus)}`}>
+                                            {formatFulfillmentStatus(o.fulfillmentStatus)}
                                         </div>
 
                                         <div className="order-thumb">
-                                            <img
-                                                src={ProductThumb}
-                                                alt="Product"
-                                                className="order-thumb-img"
-                                            />
+                                            <img src={ProductThumb} alt="Product" className="order-thumb-img" />
                                         </div>
 
                                         <div className="order-details">
                                             <header className="order-meta">
-                                                <span className="type">
-                                                    {(o.type || "").toLowerCase()}
-                                                </span>
+                                                <span className="type">{o.type}</span>
                                                 <span aria-hidden="true">•</span>
-                                                <span className="status">
-                                                    {(o.status || "").toLowerCase()}
-                                                </span>
+                                                <span className="status">{o.status}</span>
                                                 <span aria-hidden="true">•</span>
                                                 <time>{formatDateTimeNoSeconds(o.createdAt)}</time>
                                             </header>
 
                                             <div className="order-fields">
-                                                {isSub ? (
-                                                    <>
-                                                        <div className="order-line">
-                                                            <strong>Plan status:</strong> {o.status || "—"}
-                                                        </div>
-                                                        <div className="order-line">
-                                                            <strong>Trial ends:</strong>{" "}
-                                                            {o.trialEnd
-                                                                ? formatDateTimeNoSeconds(o.trialEnd)
-                                                                : "—"}
-                                                        </div>
-                                                        <div className="order-line">
-                                                            <strong>Next billing:</strong>{" "}
-                                                            {o.nextBillingDate
-                                                                ? formatDateTimeNoSeconds(o.nextBillingDate)
-                                                                : "—"}
-                                                        </div>
-                                                        <div className="order-line order-info">
-                                                            <span className="dot" aria-hidden="true" />
-                                                            <div className="reason">
-                                                                <div className="desktop-body-s">
-                                                                    <strong>Subscriber name:</strong>
-                                                                </div>
-                                                                <div className="desktop-body-xs">
-                                                                    {deliveryName}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="order-line order-info">
-                                                            <span className="dot" aria-hidden="true" />
-                                                            <div className="reason">
-                                                                <div className="desktop-body-s">
-                                                                    <strong>Subscriber email:</strong>
-                                                                </div>
-                                                                <div className="desktop-body-xs">
-                                                                    {o.subscriberEmail || "—"}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <div className="order-line">
-                                                            <strong>Quantity:</strong> {qty}
-                                                        </div>
-                                                        <div className="order-line">
-                                                            <strong>Amount:</strong> {amount}
-                                                        </div>
-                                                        <div className="order-line">
-                                                            <strong>Estimated delivery:</strong>{" "}
-                                                            {o.deliveryWindow ||
-                                                                o.metadata?.estimatedDelivery ||
-                                                                "—"}
-                                                        </div>
-                                                        <div className="order-line order-progress-wrap">
-                                                            <ProgressBar status={fulfillRaw} />
-                                                        </div>
-                                                        <div className="order-line order-info">
-                                                            <span className="dot" aria-hidden="true" />
-                                                            <div className="reason">
-                                                                <div className="desktop-body-s">
-                                                                    <strong>Delivery name:</strong>
-                                                                </div>
-                                                                <div className="desktop-body-xs">
-                                                                    {deliveryName}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="order-line order-info">
-                                                            <span className="dot" aria-hidden="true" />
-                                                            <div className="reason">
-                                                                <div className="desktop-body-s">
-                                                                    <strong>Delivery address:</strong>
-                                                                </div>
-                                                                <div className="desktop-body-xs">
-                                                                    {deliveryAddress}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </>
-                                                )}
+                                                {isSub ? renderSubscription(o) : renderCard(o)}
+
+                                                <div className="order-line order-info">
+                                                    <span className="dot" aria-hidden="true" />
+                                                    <div className="reason">
+                                                        <div className="desktop-body-s"><strong>Delivery name:</strong></div>
+                                                        <div className="desktop-body-xs">{deliveryName}</div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="order-line order-info">
+                                                    <span className="dot" aria-hidden="true" />
+                                                    <div className="reason">
+                                                        <div className="desktop-body-s"><strong>Delivery address:</strong></div>
+                                                        <div className="desktop-body-xs">{deliveryAddress}</div>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <div className="order-actions">
@@ -354,7 +316,6 @@ export default function MyOrders() {
                             })}
                         </div>
                     )}
-
                     {actionMsg && <p className="action-message">{actionMsg}</p>}
                 </section>
             </main>
