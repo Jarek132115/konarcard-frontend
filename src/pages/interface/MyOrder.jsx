@@ -236,7 +236,7 @@ export default function MyOrders() {
                             <p className="orders-empty-sub">
                                 Your purchases will appear here once you’ve checked out.
                             </p>
-                            <Link to="/" className="cta-blue-button desktop-button">
+                            <Link to="/productandplan" className="cta-blue-button desktop-button">
                                 Browse products
                             </Link>
                         </div>
