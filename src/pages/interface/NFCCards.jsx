@@ -24,6 +24,7 @@ export default function NFCCards() {
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
 
   const [showShareModal, setShowShareModal] = useState(false);
+  const [ordering, setOrdering] = useState(false);
 
   const { user: authUser } = useContext(AuthContext);
   const isSubscribed = !!authUser?.isSubscribed;
@@ -74,21 +75,50 @@ export default function NFCCards() {
 
   /** Open Stripe Checkout for the physical card order */
   const handleOrderCard = async () => {
+    if (ordering) return; // prevent double-submit
     // if user must be logged in, redirect to login first
     if (!authUser) {
       navigate('/login', { state: { from: location.pathname, checkoutType: 'card' } });
       return;
     }
+    setOrdering(true);
     try {
-      // Adjust endpoint to your backend route that creates the Checkout Session
-      const res = await api.post('/buy-card', {
-        returnUrl: window.location.origin + '/success',
-      });
-      const { url } = res.data || {};
-      if (url) window.location.href = url;
-      else toast.error('Could not start checkout. Please try again.');
+      // Most backends want success/cancel URLs and some product context
+      const origin = window.location.origin;
+      const payload = {
+        productId: 'konar-card-white',   // <- keep this ID in sync with your backend/catalog
+        quantity: 1,
+        successUrl: `${origin}/success`,
+        cancelUrl: `${origin}/productandplan`,
+        returnUrl: `${origin}/success`,   // back-compat if your server uses this key
+      };
+
+      const res = await api.post('/buy-card', payload);
+      const data = res?.data || {};
+
+      // Support different field names your backend might return
+      const redirectUrl = data.url || data.sessionUrl;
+      if (redirectUrl) {
+        window.location.assign(redirectUrl);
+        return;
+      }
+
+      // Some APIs return a sessionId and expect Stripe.js redirectToCheckout on the client.
+      if (data.sessionId) {
+        // If your app already loads Stripe.js + publishable key elsewhere, you can swap in:
+        // const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PK);
+        // await stripe.redirectToCheckout({ sessionId: data.sessionId });
+        // For now, fall back:
+        toast.error('Checkout session created but no redirect URL returned.');
+        return;
+      }
+
+      toast.error('Could not start checkout. Please try again.');
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Checkout failed. Please try again.');
+      const msg = err?.response?.data?.error || err?.message || 'Checkout failed. Please try again.';
+      toast.error(msg);
+    } finally {
+      setOrdering(false);
     }
   };
 
@@ -247,8 +277,9 @@ export default function NFCCards() {
                     className="cta-black-button desktop-button"
                     style={{ marginTop: 20, width: '100%' }}
                     type="button"
+                    disabled={ordering}
                   >
-                    Order now
+                    {ordering ? 'Starting checkout…' : 'Order now'}
                   </button>
                 </div>
               </div>
