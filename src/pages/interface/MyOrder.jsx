@@ -223,11 +223,23 @@ export default function MyOrders() {
     }
 
     function renderSubscription(o) {
+        // prefer explicit stamp from backend; fallback to updatedAt if missing
+        const cancelledAt =
+            (o.metadata && o.metadata.cancelledAt) ? o.metadata.cancelledAt : (o.status === 'canceled' ? o.updatedAt : null);
+
         return (
             <>
                 <div className="order-line">
                     <strong>Status:</strong> {o.status}
                 </div>
+
+                {/* Show cancellation timestamp if applicable */}
+                {o.status === 'canceled' && cancelledAt && (
+                    <div className="order-line">
+                        <strong>Canceled on:</strong> {formatDateTimeNoSeconds(cancelledAt)}
+                    </div>
+                )}
+
                 <div className="order-line order-progress-wrap">
                     <SubscriptionProgress
                         trialEnd={o.trialEnd}
@@ -239,6 +251,7 @@ export default function MyOrders() {
             </>
         );
     }
+
 
     function renderCard(o) {
         const amount = formatAmount(o.amountTotal, o.currency);
