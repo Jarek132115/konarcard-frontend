@@ -1,4 +1,9 @@
 /* ===== My Orders page ===== */
+:root {
+    /* keep one source of truth for the CTA spacing */
+    --card-cta-gap: 10px;
+}
+
 .orders-container {
     width: 100%;
     margin-top: 6px;
@@ -90,6 +95,11 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
     background: #e9eef6;
     color: #1e3a8a;
+    display: inline-flex;
+    /* ensure fits content by default too */
+    width: auto;
+    max-width: 100%;
+    white-space: nowrap;
 }
 
 .order-status-badge.status-placed {
@@ -140,11 +150,11 @@
     object-fit: cover;
 }
 
-/* Details: make CTAs hug the bottom */
+/* Details: make CTAs hug the bottom for cards by default */
 .order-details {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--card-cta-gap);
     min-height: 250px;
 }
 
@@ -234,13 +244,19 @@
     gap: 2px;
 }
 
-/* Actions: at bottom with even spacing */
+/* Actions: for non-subscription cards, keep pinned to bottom */
 .order-actions {
     margin-top: auto;
     display: flex;
     gap: 10px;
     justify-content: space-between;
     flex-wrap: wrap;
+}
+
+/* Make subscription card gap smaller: don't pin to bottom */
+.order-card.is-subscription .order-actions {
+    margin-top: var(--card-cta-gap) !important;
+    /* matches card gap between last line and CTA */
 }
 
 /* Cancelled button style fallback (unused now) */
@@ -251,11 +267,20 @@
     cursor: not-allowed;
 }
 
-/* Outline "View details" to create two-tone CTA row */
+/* Outline (legacy) */
 .cta-outline-button {
     background: #fff;
     color: #0b6bdc;
     border: 1px solid #cfe2ff;
+}
+
+/* View Details: give classes + full width with max 400px */
+.view-details.desktop-button.cta-blue-button {
+    width: 100%;
+    max-width: 400px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Responsive */
@@ -274,8 +299,14 @@
         grid-template-columns: 1fr;
     }
 
+    /* Keep the chip compact (no full-width stretch) */
     .order-status-badge {
         position: static;
         margin-bottom: 8px;
+        display: inline-flex;
+        width: auto;
+        max-width: 100%;
+        white-space: nowrap;
+        align-self: flex-start;
     }
 }

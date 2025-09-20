@@ -111,10 +111,7 @@ function CardProgress({ status }) {
     );
 }
 
-/** Subscription progress
- * - If in trial => show a neutral bar (0%) and “Free trial — ends DATE · £X/month after”
- * - Else show fill based on days from start->currentPeriodEnd and caption “Next charge on DATE · £X”
- */
+/** Subscription progress */
 function SubscriptionProgress({ trialEnd, currentPeriodEnd, amountTotal, currency }) {
     const now = new Date();
     const inTrial = trialEnd && new Date(trialEnd) > now;
@@ -124,7 +121,6 @@ function SubscriptionProgress({ trialEnd, currentPeriodEnd, amountTotal, currenc
     let percent = 0;
     if (!inTrial) {
         const start = new Date(end);
-        // assume monthly period — go back one month from the period end
         start.setMonth(start.getMonth() - 1);
         percent =
             now <= start ? 0 : now >= end ? 100 : Math.round(((now - start) / (end - start)) * 100);
@@ -153,6 +149,7 @@ export default function MyOrders() {
 
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    the
     const [err, setErr] = useState("");
     const [actionMsg, setActionMsg] = useState("");
     const [confirmingCancelId, setConfirmingCancelId] = useState(null);
@@ -223,7 +220,6 @@ export default function MyOrders() {
     }
 
     function renderSubscription(o) {
-        // prefer explicit stamp from backend; fallback to updatedAt if missing
         const cancelledAt =
             (o.metadata && o.metadata.cancelledAt) ? o.metadata.cancelledAt : (o.status === 'canceled' ? o.updatedAt : null);
 
@@ -233,7 +229,6 @@ export default function MyOrders() {
                     <strong>Status:</strong> {o.status}
                 </div>
 
-                {/* Show cancellation timestamp if applicable */}
                 {o.status === 'canceled' && cancelledAt && (
                     <div className="order-line">
                         <strong>Canceled on:</strong> {formatDateTimeNoSeconds(cancelledAt)}
@@ -251,7 +246,6 @@ export default function MyOrders() {
             </>
         );
     }
-
 
     function renderCard(o) {
         const amount = formatAmount(o.amountTotal, o.currency);
@@ -324,7 +318,7 @@ export default function MyOrders() {
                                 const canceled = isSub && o.status === "canceled";
 
                                 return (
-                                    <article key={o.id} className="order-card">
+                                    <article key={o.id} className={`order-card ${isSub ? "is-subscription" : ""}`}>
                                         <div className={`order-status-badge ${statusBadgeClass(o)}`}>
                                             {formatFulfillmentStatus(o)}
                                         </div>
@@ -396,9 +390,10 @@ export default function MyOrders() {
                                                     </button>
                                                 )}
 
+                                                {/* Updated: make this a blue CTA and add helper class for sizing */}
                                                 <Link
                                                     to={isSub ? `/SuccessSubscription?id=${o.id}` : `/success?id=${o.id}`}
-                                                    className="cta-outline-button desktop-button"
+                                                    className="view-details desktop-button cta-blue-button"
                                                 >
                                                     View details
                                                 </Link>
