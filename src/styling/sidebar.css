@@ -2,7 +2,6 @@
     --sb-bg: #F7F7F7;
     --sb-divider: #eef1f4;
     --sb-muted: #6b7280;
-    --sb-text: #0f172a;
     --sb-active: #0081FF;
 }
 
@@ -33,10 +32,9 @@
     border: 1px solid rgba(0, 0, 0, .08);
     border-radius: 16px;
     padding: 0 14px 16px;
-    /* no extra left/right padding inside links area */
+    /* no side padding; links will touch edge */
     box-sizing: border-box;
     z-index: 1003;
-    transform: translateX(0);
 }
 
 /* top row */
@@ -45,22 +43,17 @@
     align-items: center;
     gap: 10px;
     padding: 10px 0 8px;
-    /* flush to left/right */
     border-bottom: 1px solid var(--sb-divider);
+    /* hidden on mobile below */
 }
 
 .brand-logo {
     width: 26px;
     height: 26px;
-    /* tint logo blue */
-    filter: invert(33%) sepia(98%) saturate(2566%) hue-rotate(203deg) brightness(96%) contrast(102%);
+    filter: none;
+    /* ✅ black logo */
 }
 
-.spacer {
-    flex: 1
-}
-
-/* mobile close X (hidden on desktop) */
 .mobile-only {
     display: none
 }
@@ -116,17 +109,18 @@
     /* 15 top/bottom, 0 left/right */
     text-decoration: none;
     color: var(--sb-muted);
-    border: 0;
     background: transparent;
+    border: 0;
     cursor: pointer;
 }
 
 .sidebar-button .icon {
     width: 25px;
     height: 25px;
-    /* 25x25 icons */
     filter: grayscale(40%);
     opacity: .9;
+    margin-left: 5px;
+    /* ✅ 5px left padding on icon */
 }
 
 .sidebar-button .label {
@@ -143,10 +137,9 @@
     filter: grayscale(20%)
 }
 
-/* Active: text + icon blue, NO background */
+/* Active: blue text + icon (no background) */
 .sidebar-button.active-sidebar-link {
     color: var(--sb-active);
-    background: transparent;
 }
 
 .sidebar-button.active-sidebar-link .icon {
@@ -193,14 +186,14 @@
     filter: invert(39%) sepia(73%) saturate(1397%) hue-rotate(338deg) brightness(96%) contrast(95%);
 }
 
-/* ===== Mobile (full-width, bigger links, more bottom air) ===== */
+/* ===== Mobile (full width, bigger icons & text, no top divider) ===== */
 @media (max-width:1000px) {
     .sidebar {
         top: 0;
         left: 0;
         height: 100vh;
         width: 100vw;
-        /* full width */
+        /* ✅ full width drawer */
         border-radius: 0;
         transform: translateX(-100%);
         transition: transform .3s ease;
@@ -215,28 +208,34 @@
         display: block
     }
 
+    /* remove gray line above Home on mobile */
     .brand-header {
-        border-bottom: 1px solid var(--sb-divider);
-        padding: 14px 0 12px;
+        border-bottom: none;
+        /* ✅ no divider on mobile */
+        padding: 14px 0 10px;
+    }
+
+    /* bigger targets on mobile */
+    .sidebar-button {
+        padding: 20px 0;
+    }
+
+    .sidebar-button .icon {
+        width: 28px;
+        height: 28px;
     }
 
     .sidebar-button .label {
-        font-size: 17px
+        font-size: 18px;
     }
 
-    .sidebar-button {
-        padding: 18px 0
-    }
-
-    /* larger hit area */
+    /* more space from bottom for Settings/Help */
     .sidebar-footer {
-        padding-bottom: 48px
+        padding-bottom: 56px;
     }
-
-    /* 20–40px extra space from bottom */
 }
 
-/* Accessibility: remove outline suppression if any global rule exists */
+/* focus styles */
 .sidebar-button:focus-visible,
 .close-sidebar-button:focus-visible,
 .logout-icon-btn:focus-visible {
