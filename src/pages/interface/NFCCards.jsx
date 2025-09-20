@@ -72,6 +72,26 @@ export default function NFCCards() {
     }
   };
 
+  /** Open Stripe Checkout for the physical card order */
+  const handleOrderCard = async () => {
+    // if user must be logged in, redirect to login first
+    if (!authUser) {
+      navigate('/login', { state: { from: location.pathname, checkoutType: 'card' } });
+      return;
+    }
+    try {
+      // Adjust endpoint to your backend route that creates the Checkout Session
+      const res = await api.post('/buy-card', {
+        returnUrl: window.location.origin + '/success',
+      });
+      const { url } = res.data || {};
+      if (url) window.location.href = url;
+      else toast.error('Could not start checkout. Please try again.');
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Checkout failed. Please try again.');
+    }
+  };
+
   const handleShareCard = () => {
     if (!authUser?.isVerified) {
       toast.error('Please verify your email to share your card.');
@@ -139,7 +159,7 @@ export default function NFCCards() {
 
         <div className="profile-page-wrapper">
           <div className="pricing-grid">
-            {/* Subscription card (blue) — same bullets as Home; blue button becomes Plan active if subscribed */}
+            {/* Subscription card (blue) */}
             <div className="pricing-card pricing-card--subscription" style={{ borderRadius: 16 }}>
               <div className="pricing-inner">
                 <div className="pricing-head">
@@ -181,14 +201,14 @@ export default function NFCCards() {
                       style={{ marginTop: 20, width: '100%' }}
                       type="button"
                     >
-                      Start Your 14-Day Free Trial
+                      Subscribe now
                     </button>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Physical card (black) — add same thumbnail gallery as Home */}
+            {/* Physical card (black) — gallery + “Order now” */}
             <div className="pricing-card pricing-card--product" style={{ borderRadius: 16 }}>
               <div className="pricing-inner">
                 <div className="pricing-head">
@@ -222,13 +242,14 @@ export default function NFCCards() {
                 </div>
 
                 <div className="pricing-bottom">
-                  <Link
-                    to="/productandplan/konarcard"
+                  <button
+                    onClick={handleOrderCard}
                     className="cta-black-button desktop-button"
                     style={{ marginTop: 20, width: '100%' }}
+                    type="button"
                   >
-                    View Card Details
-                  </Link>
+                    Order now
+                  </button>
                 </div>
               </div>
             </div>

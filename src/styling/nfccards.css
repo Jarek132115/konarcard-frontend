@@ -138,13 +138,14 @@
   /* stretch equal heights */
 }
 
-/* Desktop: split exactly 50/50 */
+/* Desktop: give each card ~50px extra width (split across both) */
 .pricing-card {
-  flex: 1 1 0;
-  /* equal flex share along the row */
+  flex: 1 1 calc(50% + 50px);
+  /* equal flex share but allow ~50px extra total width per card on large screens */
   min-width: 0;
   /* prevent overflow from long content */
-  max-width: none;
+  max-width: 760px;
+  /* sensible cap so it doesn’t blow out on ultrawide */
 }
 
 /* Inner wrapper */
@@ -171,8 +172,10 @@
 
   .pricing-card {
     flex: 0 1 auto;
-    /* natural height, no vertical collapse */
+    /* natural height */
     width: 100%;
+    max-width: none;
+    /* remove desktop cap */
   }
 
   .pricing-card .pricing-inner {
