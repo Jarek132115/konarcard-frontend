@@ -61,6 +61,10 @@ function ProgressBar({ status }) {
 
 export default function SuccessCard() {
   const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const orderIdParam = params.get('id');
+  const sid = params.get('session_id');
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
@@ -70,7 +74,6 @@ export default function SuccessCard() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState('');
 
-  // NEW: state for instant confirmation result
   const [confirming, setConfirming] = useState(false);
   const [confirmedOrder, setConfirmedOrder] = useState(null);
   const [confirmErr, setConfirmErr] = useState('');
@@ -92,12 +95,9 @@ export default function SuccessCard() {
     else document.body.classList.remove('body-no-scroll');
   }, [sidebarOpen, isMobile]);
 
-  // 1) Try to confirm the Checkout session immediately (freshest data)
+  // 1) Try to confirm the Checkout session immediately
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const sid = params.get('session_id');
     if (!sid) return;
-
     let mounted = true;
     (async () => {
       try {
@@ -113,9 +113,9 @@ export default function SuccessCard() {
       }
     })();
     return () => { mounted = false; };
-  }, [location.search]);
+  }, [sid]);
 
-  // 2) Fallback: fetch orders list (used if confirm not available, or for older orders)
+  // 2) Fetch all orders
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -134,32 +134,32 @@ export default function SuccessCard() {
     return () => { mounted = false; };
   }, [authUser]);
 
-  const latestCardOrder = useMemo(() => {
+  // Pick correct order
+  const selectedOrder = useMemo(() => {
+    if (confirmedOrder) return confirmedOrder;
+    if (orderIdParam) {
+      return (orders || []).find((o) => String(o.id) === String(orderIdParam)) || null;
+    }
     const cards = (orders || []).filter((o) => (o.type || '').toLowerCase() === 'card');
     if (!cards.length) return null;
     return cards.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
-  }, [orders]);
+  }, [confirmedOrder, orderIdParam, orders]);
 
-  // Prefer the freshly-confirmed order, fall back to the latest from list
-  const order = confirmedOrder || latestCardOrder;
+  const order = selectedOrder;
 
   const amountPaid = useMemo(() => {
     if (!order) return '—';
-    return formatAmount(
-      typeof order.amountTotal === 'number' ? order.amountTotal : 0,
-      order.currency || 'gbp'
-    );
+    return formatAmount(order.amountTotal ?? 0, order.currency || 'gbp');
   }, [order]);
 
   const quantity = order?.quantity ?? order?.metadata?.quantity ?? 1;
   const status = (order?.status || 'paid').toLowerCase();
-  const orderId = order?._id || order?.id || '—';
+  const orderId = order?.id || '—';
   const estimatedDelivery = order?.deliveryWindow || order?.metadata?.estimatedDelivery || '—';
 
   const deliveryName = order?.deliveryName || order?.metadata?.deliveryName || '';
   const deliveryAddress = order?.deliveryAddress || order?.metadata?.deliveryAddress || '';
 
-  // Fulfilment & tracking
   const fulfillmentStatus = order?.fulfillmentStatus || 'order_placed';
   const trackingUrl = order?.trackingUrl || order?.metadata?.trackingUrl || '';
 
@@ -170,26 +170,6 @@ export default function SuccessCard() {
       toast('Your card is still being processed. We’ll email you when tracking is available.', { icon: '⏳' });
     }
   }
-
-  const chip = {
-    display: 'inline-block',
-    padding: '6px 10px',
-    borderRadius: 999,
-    fontSize: 12,
-    fontWeight: 700,
-    letterSpacing: 0.2,
-    border: '1px solid rgba(0,0,0,0.08)',
-    background:
-      fulfillmentStatus === 'shipped' ? '#e8f5e9' :
-        fulfillmentStatus === 'packaged' ? '#fff7ed' :
-          fulfillmentStatus === 'designing_card' ? '#eff6ff' :
-            '#f3f4f6',
-    color:
-      fulfillmentStatus === 'shipped' ? '#166534' :
-        fulfillmentStatus === 'packaged' ? '#9a3412' :
-          fulfillmentStatus === 'designing_card' ? '#1d4ed8' :
-            '#374151',
-  };
 
   const isBusy = loading || confirming;
 
@@ -222,12 +202,12 @@ export default function SuccessCard() {
           ) : confirmErr && !order ? (
             <p style={{ color: '#b91c1c' }}>{confirmErr}</p>
           ) : !order ? (
-            <p>No recent card order found.</p>
+            <p>No order found.</p>
           ) : (
             <div className="success-box">
               {/* Status chip + Track button */}
               <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
-                <span style={chip}>{statusLabel(fulfillmentStatus)}</span>
+                <span>{statusLabel(fulfillmentStatus)}</span>
                 <button
                   type="button"
                   onClick={handleTrack}
@@ -239,7 +219,6 @@ export default function SuccessCard() {
                 </button>
               </div>
 
-              {/* Compact progress bar */}
               <ProgressBar status={fulfillmentStatus} />
 
               <h2 className="desktop-h4 success-header" style={{ marginTop: 12 }}>Payment Successful!</h2>
@@ -256,15 +235,6 @@ export default function SuccessCard() {
                   <p className="desktop-body-s label">Estimated delivery date</p>
                   <p className="desktop-h5 value">{estimatedDelivery}</p>
                 </div>
-              </div>
-
-              <div className="success-buttons" style={{ display: 'grid', gap: 12 }}>
-                <Link to="/myprofile" className="cta-blue-button desktop-button" style={{ width: '100%' }}>
-                  Go to Your Dashboard
-                </Link>
-                <Link to="/myorders" className="cta-black-button desktop-button" style={{ width: '100%' }}>
-                  View Orders
-                </Link>
               </div>
 
               <hr className="divider" />
@@ -291,17 +261,6 @@ export default function SuccessCard() {
                     </span>
                   </div>
                 )}
-
-                <div className="kv-row">
-                  <span className="desktop-body-s kv-label">Created</span>
-                  <span className="desktop-body-s kv-value">
-                    {order?.createdAt ? new Date(order.createdAt).toLocaleString() : '—'}
-                  </span>
-                </div>
-                <div className="kv-row">
-                  <span className="desktop-body-s kv-label">Status</span>
-                  <span className="desktop-body-s kv-value status-text">{status}</span>
-                </div>
               </div>
             </div>
           )}

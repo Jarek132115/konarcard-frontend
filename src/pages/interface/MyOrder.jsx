@@ -101,6 +101,7 @@ export default function MyOrders() {
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState("");
     const [actionMsg, setActionMsg] = useState("");
+    const [confirmingCancel, setConfirmingCancel] = useState(false);
 
     useEffect(() => {
         const handleResize = () => {
@@ -143,13 +144,13 @@ export default function MyOrders() {
         setActionMsg("");
         try {
             await api.post("/cancel-subscription");
-            setActionMsg(
-                "Subscription will cancel at the end of the current billing period."
-            );
+            setActionMsg("Subscription will cancel at the end of the current billing period.");
             const res = await api.get("/me/orders", { params: { ts: Date.now() } });
             setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
         } catch (e) {
             setActionMsg(e?.response?.data?.error || "Failed to cancel subscription");
+        } finally {
+            setConfirmingCancel(false);
         }
     }
 
@@ -244,8 +245,6 @@ export default function MyOrders() {
                         <div className="orders-list">
                             {orders.map((o) => {
                                 const isSub = (o.type || "").toLowerCase() === "subscription";
-                                const deliveryName = o.deliveryName || o?.metadata?.deliveryName || "—";
-                                const deliveryAddress = o.deliveryAddress || o?.metadata?.deliveryAddress || "—";
 
                                 return (
                                     <article key={o.id} className="order-card">
@@ -269,30 +268,37 @@ export default function MyOrders() {
                                             <div className="order-fields">
                                                 {isSub ? renderSubscription(o) : renderCard(o)}
 
-                                                <div className="order-line order-info">
-                                                    <span className="dot" aria-hidden="true" />
-                                                    <div className="reason">
-                                                        <div className="desktop-body-s"><strong>Delivery name:</strong></div>
-                                                        <div className="desktop-body-xs">{deliveryName}</div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="order-line order-info">
-                                                    <span className="dot" aria-hidden="true" />
-                                                    <div className="reason">
-                                                        <div className="desktop-body-s"><strong>Delivery address:</strong></div>
-                                                        <div className="desktop-body-xs">{deliveryAddress}</div>
-                                                    </div>
-                                                </div>
+                                                {!isSub && (
+                                                    <>
+                                                        <div className="order-line order-info">
+                                                            <span className="dot" aria-hidden="true" />
+                                                            <div className="reason">
+                                                                <div className="desktop-body-s"><strong>Delivery name:</strong></div>
+                                                                <div className="desktop-body-xs">{o.deliveryName || "—"}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="order-line order-info">
+                                                            <span className="dot" aria-hidden="true" />
+                                                            <div className="reason">
+                                                                <div className="desktop-body-s"><strong>Delivery address:</strong></div>
+                                                                <div className="desktop-body-xs">{o.deliveryAddress || "—"}</div>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
                                             </div>
 
                                             <div className="order-actions">
                                                 {isSub ? (
                                                     <button
-                                                        onClick={cancelSubscription}
+                                                        onClick={() =>
+                                                            confirmingCancel
+                                                                ? cancelSubscription()
+                                                                : setConfirmingCancel(true)
+                                                        }
                                                         className="cta-black-button desktop-button"
                                                     >
-                                                        Cancel subscription
+                                                        {confirmingCancel ? "Confirm cancel" : "Cancel subscription"}
                                                     </button>
                                                 ) : (
                                                     <button
@@ -304,7 +310,7 @@ export default function MyOrders() {
                                                 )}
 
                                                 <Link
-                                                    to={isSub ? "/SuccessSubscription" : "/success"}
+                                                    to={isSub ? `/SuccessSubscription?id=${o.id}` : `/success?id=${o.id}`}
                                                     className="cta-blue-button desktop-button"
                                                 >
                                                     View details

@@ -1,5 +1,6 @@
+// src/pages/interface/SuccessSubscription.jsx
 import React, { useEffect, useMemo, useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
@@ -19,6 +20,10 @@ function formatAmount(amount, currency = 'gbp') {
 }
 
 export default function SuccessSubscription() {
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const orderIdParam = params.get('id'); // 👈 support direct subscription ID
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
     const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
@@ -60,32 +65,36 @@ export default function SuccessSubscription() {
             }
         })();
         return () => { mounted = false; };
-    }, []);
+    }, [authUser]);
 
-    const latestSub = useMemo(() => {
+    // Pick correct subscription
+    const selectedSub = useMemo(() => {
         const subs = (orders || []).filter((o) => (o.type || '').toLowerCase() === 'subscription');
         if (!subs.length) return null;
+        if (orderIdParam) {
+            return subs.find((s) => String(s.id) === String(orderIdParam)) || null;
+        }
         return subs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
-    }, [orders]);
+    }, [orders, orderIdParam]);
 
-    const subStatus = latestSub?.status || 'inactive';
+    const subStatus = selectedSub?.status || 'inactive';
 
     const amountToday = useMemo(() => {
-        if (!latestSub) return '—';
-        if (latestSub.trialEnd && new Date(latestSub.trialEnd) > new Date()) {
+        if (!selectedSub) return '—';
+        if (selectedSub.trialEnd && new Date(selectedSub.trialEnd) > new Date()) {
             return 'Free trial — no charge today';
         }
-        return formatAmount(latestSub.amountTotal ?? 495, latestSub.currency || 'gbp');
-    }, [latestSub]);
+        return formatAmount(selectedSub.amountTotal ?? 495, selectedSub.currency || 'gbp');
+    }, [selectedSub]);
 
     const nextChargeDate = useMemo(() => {
-        if (!latestSub) return null;
-        if (latestSub.trialEnd && new Date(latestSub.trialEnd) > new Date()) {
-            return new Date(latestSub.trialEnd);
+        if (!selectedSub) return null;
+        if (selectedSub.trialEnd && new Date(selectedSub.trialEnd) > new Date()) {
+            return new Date(selectedSub.trialEnd);
         }
-        if (latestSub.currentPeriodEnd) return new Date(latestSub.currentPeriodEnd);
+        if (selectedSub.currentPeriodEnd) return new Date(selectedSub.currentPeriodEnd);
         return null;
-    }, [latestSub]);
+    }, [selectedSub]);
 
     return (
         <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -113,7 +122,7 @@ export default function SuccessSubscription() {
                         <p>Activating your subscription…</p>
                     ) : err ? (
                         <p style={{ color: '#b91c1c' }}>{err}</p>
-                    ) : !latestSub ? (
+                    ) : !selectedSub ? (
                         <p>No subscription found.</p>
                     ) : (
                         <div className="success-box">
@@ -129,14 +138,14 @@ export default function SuccessSubscription() {
                                 </div>
                                 <div className="info-tile">
                                     <p className="desktop-body-s label">
-                                        {latestSub.trialEnd && new Date(latestSub.trialEnd) > new Date()
+                                        {selectedSub.trialEnd && new Date(selectedSub.trialEnd) > new Date()
                                             ? 'Free trial active until'
                                             : 'Next charge on'}
                                     </p>
                                     <p className="desktop-h5 value">
                                         {nextChargeDate ? nextChargeDate.toLocaleString() : '—'}
-                                        {nextChargeDate && latestSub && !latestSub.trialEnd
-                                            ? ` · ${formatAmount(latestSub.amountTotal ?? 495, latestSub.currency)}`
+                                        {nextChargeDate && selectedSub && !selectedSub.trialEnd
+                                            ? ` · ${formatAmount(selectedSub.amountTotal ?? 495, selectedSub.currency)}`
                                             : ''}
                                     </p>
                                 </div>
@@ -157,7 +166,7 @@ export default function SuccessSubscription() {
                                 <div className="kv-row">
                                     <span className="desktop-body-s kv-label">Created</span>
                                     <span className="desktop-body-s kv-value">
-                                        {latestSub?.createdAt ? new Date(latestSub.createdAt).toLocaleString() : '—'}
+                                        {selectedSub?.createdAt ? new Date(selectedSub.createdAt).toLocaleString() : '—'}
                                     </span>
                                 </div>
                                 <div className="kv-row">
