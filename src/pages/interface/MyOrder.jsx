@@ -149,7 +149,6 @@ export default function MyOrders() {
 
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
-    the
     const [err, setErr] = useState("");
     const [actionMsg, setActionMsg] = useState("");
     const [confirmingCancelId, setConfirmingCancelId] = useState(null);
@@ -390,7 +389,6 @@ export default function MyOrders() {
                                                     </button>
                                                 )}
 
-                                                {/* Updated: make this a blue CTA and add helper class for sizing */}
                                                 <Link
                                                     to={isSub ? `/SuccessSubscription?id=${o.id}` : `/success?id=${o.id}`}
                                                     className="view-details desktop-button cta-blue-button"
