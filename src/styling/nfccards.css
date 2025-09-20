@@ -294,3 +294,44 @@
   border-radius: 999px;
   white-space: nowrap;
 }
+
+/* --- Thumbnails: 5 across, perfect squares --- */
+.nfc-pricing-page .pricing-media-thumbs.tight {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  /* 5 equal columns */
+  gap: var(--media-gap);
+  margin-top: 0;
+}
+
+/* Each thumb is a square that stretches with the grid cell */
+.nfc-pricing-page .pricing-media-thumb {
+  display: block;
+  /* buttons behave like blocks */
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  /* ← square */
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, .12);
+  background: #fff;
+  padding: 0;
+  line-height: 0;
+}
+
+/* Image fills the square, stays cropped nicely */
+.nfc-pricing-page .pricing-media-thumb img {
+  width: 100% !important;
+  /* override old fixed px rules */
+  height: 100% !important;
+  /* override old fixed px rules */
+  object-fit: cover;
+  display: block;
+}
+
+/* Active outline stays the same */
+.nfc-pricing-page .pricing-media-thumb.is-active {
+  outline: 2px solid #0081FF;
+  outline-offset: -2px;
+  border-color: rgba(0, 0, 0, .12);
+}
