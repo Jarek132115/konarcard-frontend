@@ -167,7 +167,10 @@ export default function MyOrders() {
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
             {sidebarOpen && isMobile && (
-                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
+                <div
+                    className="sidebar-overlay active"
+                    onClick={() => setSidebarOpen(false)}
+                />
             )}
 
             <main className="main-content-container">
@@ -177,7 +180,6 @@ export default function MyOrders() {
                     isSmallMobile={isSmallMobile}
                 />
 
-                {/* outer container now has no background/border—just spacing */}
                 <section className="orders-container">
                     {loading ? (
                         <p className="orders-hint">Loading orders…</p>
@@ -199,9 +201,7 @@ export default function MyOrders() {
                             {orders.map((o) => {
                                 const isSub = (o.type || "").toLowerCase() === "subscription";
                                 const amount = formatAmount(o.amountTotal, o.currency);
-                                const delivery =
-                                    o.deliveryWindow || o.metadata?.estimatedDelivery || "—";
-                                const qty = isSub ? "—" : o.quantity || 1;
+                                const qty = o.quantity || 1;
 
                                 const deliveryName =
                                     o.deliveryName || o?.metadata?.deliveryName || "—";
@@ -211,62 +211,119 @@ export default function MyOrders() {
 
                                 return (
                                     <article key={o.id} className="order-card">
-                                        {/* TOP STATUS PILL ONLY */}
-                                        <div className={`order-status-badge ${statusBadgeClass(fulfillRaw)}`}>
+                                        <div
+                                            className={`order-status-badge ${statusBadgeClass(
+                                                fulfillRaw
+                                            )}`}
+                                        >
                                             {formatFulfillmentStatus(fulfillRaw)}
                                         </div>
 
                                         <div className="order-thumb">
-                                            <img src={ProductThumb} alt="Product" className="order-thumb-img" />
+                                            <img
+                                                src={ProductThumb}
+                                                alt="Product"
+                                                className="order-thumb-img"
+                                            />
                                         </div>
 
                                         <div className="order-details">
-                                            {/* Meta: Card · Paid · DD/MM/YYYY, HH:MM (no seconds) */}
                                             <header className="order-meta">
-                                                <span className="type">{(o.type || "").toLowerCase()}</span>
+                                                <span className="type">
+                                                    {(o.type || "").toLowerCase()}
+                                                </span>
                                                 <span aria-hidden="true">•</span>
-                                                <span className="status">{(o.status || "").toLowerCase()}</span>
+                                                <span className="status">
+                                                    {(o.status || "").toLowerCase()}
+                                                </span>
                                                 <span aria-hidden="true">•</span>
                                                 <time>{formatDateTimeNoSeconds(o.createdAt)}</time>
                                             </header>
 
-                                            {/* Fields */}
                                             <div className="order-fields">
-                                                <div className="order-line">
-                                                    <strong>Quantity:</strong> {qty}
-                                                </div>
-                                                <div className="order-line">
-                                                    <strong>Amount:</strong> {amount}
-                                                </div>
-
-                                                <div className="order-line">
-                                                    <strong>Estimated delivery:</strong> {delivery}
-                                                </div>
-
-                                                {/* Progress (spans full row) */}
-                                                <div className="order-line order-progress-wrap">
-                                                    <ProgressBar status={fulfillRaw} />
-                                                </div>
-
-                                                {/* “Dot + two-line” info */}
-                                                <div className="order-line order-info">
-                                                    <span className="dot" aria-hidden="true" />
-                                                    <div className="reason">
-                                                        <div className="desktop-body-s"><strong>Delivery name:</strong></div>
-                                                        <div className="desktop-body-xs">{deliveryName}</div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="order-line order-info">
-                                                    <span className="dot" aria-hidden="true" />
-                                                    <div className="reason">
-                                                        <div className="desktop-body-s"><strong>Delivery address:</strong></div>
-                                                        <div className="desktop-body-xs">{deliveryAddress}</div>
-                                                    </div>
-                                                </div>
+                                                {isSub ? (
+                                                    <>
+                                                        <div className="order-line">
+                                                            <strong>Plan status:</strong> {o.status || "—"}
+                                                        </div>
+                                                        <div className="order-line">
+                                                            <strong>Trial ends:</strong>{" "}
+                                                            {o.trialEnd
+                                                                ? formatDateTimeNoSeconds(o.trialEnd)
+                                                                : "—"}
+                                                        </div>
+                                                        <div className="order-line">
+                                                            <strong>Next billing:</strong>{" "}
+                                                            {o.nextBillingDate
+                                                                ? formatDateTimeNoSeconds(o.nextBillingDate)
+                                                                : "—"}
+                                                        </div>
+                                                        <div className="order-line order-info">
+                                                            <span className="dot" aria-hidden="true" />
+                                                            <div className="reason">
+                                                                <div className="desktop-body-s">
+                                                                    <strong>Subscriber name:</strong>
+                                                                </div>
+                                                                <div className="desktop-body-xs">
+                                                                    {deliveryName}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="order-line order-info">
+                                                            <span className="dot" aria-hidden="true" />
+                                                            <div className="reason">
+                                                                <div className="desktop-body-s">
+                                                                    <strong>Subscriber email:</strong>
+                                                                </div>
+                                                                <div className="desktop-body-xs">
+                                                                    {o.subscriberEmail || "—"}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="order-line">
+                                                            <strong>Quantity:</strong> {qty}
+                                                        </div>
+                                                        <div className="order-line">
+                                                            <strong>Amount:</strong> {amount}
+                                                        </div>
+                                                        <div className="order-line">
+                                                            <strong>Estimated delivery:</strong>{" "}
+                                                            {o.deliveryWindow ||
+                                                                o.metadata?.estimatedDelivery ||
+                                                                "—"}
+                                                        </div>
+                                                        <div className="order-line order-progress-wrap">
+                                                            <ProgressBar status={fulfillRaw} />
+                                                        </div>
+                                                        <div className="order-line order-info">
+                                                            <span className="dot" aria-hidden="true" />
+                                                            <div className="reason">
+                                                                <div className="desktop-body-s">
+                                                                    <strong>Delivery name:</strong>
+                                                                </div>
+                                                                <div className="desktop-body-xs">
+                                                                    {deliveryName}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="order-line order-info">
+                                                            <span className="dot" aria-hidden="true" />
+                                                            <div className="reason">
+                                                                <div className="desktop-body-s">
+                                                                    <strong>Delivery address:</strong>
+                                                                </div>
+                                                                <div className="desktop-body-xs">
+                                                                    {deliveryAddress}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
                                             </div>
 
-                                            {/* Actions */}
                                             <div className="order-actions">
                                                 {isSub ? (
                                                     <button
