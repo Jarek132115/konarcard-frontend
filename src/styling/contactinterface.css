@@ -33,7 +33,6 @@
     padding: 24px;
     border-radius: 16px;
     border: 1px solid rgba(0, 0, 0, .08);
-    max-width: 720px;
     /* roomier than 550, same vibe as Profile */
     width: 100%;
     box-sizing: border-box;
