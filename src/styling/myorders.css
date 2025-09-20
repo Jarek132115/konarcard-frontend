@@ -66,6 +66,7 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 18px;
+    margin-bottom: 20px;
 }
 
 /* Order card */
