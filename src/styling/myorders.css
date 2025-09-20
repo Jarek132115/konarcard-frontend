@@ -88,6 +88,8 @@
     border-radius: 999px;
     border: 1px solid rgba(0, 0, 0, .06);
     box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
+    background: #e9eef6;
+    color: #1e3a8a;
 }
 
 .order-status-badge.status-placed {
@@ -120,11 +122,6 @@
     color: #b91c1c;
 }
 
-.order-status-badge.status-trial {
-    background: #fef9c3;
-    color: #92400e;
-}
-
 /* Thumbnail */
 .order-thumb {
     width: 250px;
@@ -143,10 +140,12 @@
     object-fit: cover;
 }
 
-/* Details */
+/* Details: make CTAs hug the bottom */
 .order-details {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 10px;
+    min-height: 250px;
 }
 
 .order-meta {
@@ -235,20 +234,28 @@
     gap: 2px;
 }
 
-/* Actions */
+/* Actions: at bottom with even spacing */
 .order-actions {
+    margin-top: auto;
     display: flex;
     gap: 10px;
-    margin-top: 10px;
+    justify-content: space-between;
     flex-wrap: wrap;
 }
 
-/* Cancelled button */
+/* Cancelled button style fallback (unused now) */
 .cta-red-button {
     background: #fee2e2;
     color: #b91c1c;
     border: 1px solid #fca5a5;
     cursor: not-allowed;
+}
+
+/* Outline "View details" to create two-tone CTA row */
+.cta-outline-button {
+    background: #fff;
+    color: #0b6bdc;
+    border: 1px solid #cfe2ff;
 }
 
 /* Responsive */
