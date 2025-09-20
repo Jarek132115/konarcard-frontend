@@ -1,7 +1,7 @@
 /* ===== My Orders page ===== */
 :root {
-    --card-cta-gap: 10px;
-    /* unified spacing above CTAs */
+    --card-cta-gap: 12px;
+    /* space between content and CTA row */
 }
 
 .orders-container {
@@ -82,7 +82,7 @@
     align-items: start
 }
 
-/* Status badges */
+/* Status pills */
 .order-status-badge {
     position: absolute;
     top: 12px;
@@ -149,11 +149,10 @@
     object-fit: cover
 }
 
-/* Details */
+/* Details / content column */
 .order-details {
     display: flex;
     flex-direction: column;
-    gap: var(--card-cta-gap);
     min-height: 250px
 }
 
@@ -243,39 +242,28 @@
     gap: 2px
 }
 
-/* Actions */
+/* CTA row: always pinned to bottom with spacing above */
 .order-actions {
     margin-top: auto;
+    /* pin row to bottom */
+    padding-top: var(--card-cta-gap);
+    /* consistent space from content */
     display: flex;
     gap: 10px;
     justify-content: space-between;
-    flex-wrap: wrap
+    flex-wrap: wrap;
 }
 
-/* Subscription card: reduce gap so CTA sits closer to last line (not pinned) */
+/* Subscription cards use the same bottom pinning */
 .order-card.is-subscription .order-actions {
-    margin-top: var(--card-cta-gap) !important
+    margin-top: auto;
 }
 
-/* Buttons */
-.cta-red-button {
-    background: #fee2e2;
-    color: #b91c1c;
-    border: 1px solid #fca5a5;
-    cursor: not-allowed
-}
-
-.cta-outline-button {
-    background: #fff;
-    color: #0b6bdc;
-    border: 1px solid #cfe2ff
-}
-
-/* View details button: full width with cap */
+/* "View details" full width with 400px cap and enforced block display */
 .view-details.desktop-button.cta-blue-button {
-    width: 100%;
+    width: 100% !important;
     max-width: 400px;
-    display: block;
+    display: block !important;
     margin-left: auto;
     margin-right: auto;
 }
@@ -296,7 +284,7 @@
         grid-template-columns: 1fr
     }
 
-    /* Make chip fit-content and stop grid stretching */
+    /* chips stay compact */
     .order-status-badge {
         position: static;
         margin-bottom: 8px;
@@ -305,6 +293,10 @@
         max-width: 100%;
         white-space: nowrap;
         place-self: start;
-        /* <- key: prevents full-width stretch */
+    }
+
+    /* Stack CTAs nicely on mobile */
+    .order-actions {
+        justify-content: stretch
     }
 }

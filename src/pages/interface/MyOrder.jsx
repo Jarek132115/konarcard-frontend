@@ -21,27 +21,18 @@ function formatAmount(amount, currency = "gbp") {
 function formatFulfillmentStatus(order) {
     if ((order.type || "").toLowerCase() === "subscription") {
         switch ((order.status || "").toLowerCase()) {
-            case "active":
-                return "Subscription active";
-            case "canceled":
-                return "Subscription canceled";
-            case "trialing":
-                return "Trial active";
-            default:
-                return "Subscription";
+            case "active": return "Subscription active";
+            case "canceled": return "Subscription canceled";
+            case "trialing": return "Trial active";
+            default: return "Subscription";
         }
     }
     switch ((order.fulfillmentStatus || "").toLowerCase()) {
-        case "order_placed":
-            return "Order placed";
-        case "designing_card":
-            return "Designing card";
-        case "packaged":
-            return "Packaged";
-        case "shipped":
-            return "Shipped";
-        default:
-            return "Order placed";
+        case "order_placed": return "Order placed";
+        case "designing_card": return "Designing card";
+        case "packaged": return "Packaged";
+        case "shipped": return "Shipped";
+        default: return "Order placed";
     }
 }
 
@@ -49,25 +40,17 @@ function statusBadgeClass(order) {
     if ((order.type || "").toLowerCase() === "subscription") {
         switch ((order.status || "").toLowerCase()) {
             case "active":
-            case "trialing":
-                return "status-active";
-            case "canceled":
-                return "status-canceled";
-            default:
-                return "status-active";
+            case "trialing": return "status-active";
+            case "canceled": return "status-canceled";
+            default: return "status-active";
         }
     }
     switch ((order.fulfillmentStatus || "").toLowerCase()) {
-        case "order_placed":
-            return "status-placed";
-        case "designing_card":
-            return "status-designing";
-        case "packaged":
-            return "status-packaged";
-        case "shipped":
-            return "status-shipped";
-        default:
-            return "status-placed";
+        case "order_placed": return "status-placed";
+        case "designing_card": return "status-designing";
+        case "packaged": return "status-packaged";
+        case "shipped": return "status-shipped";
+        default: return "status-placed";
     }
 }
 
@@ -80,16 +63,11 @@ function formatDateTimeNoSeconds(iso) {
     if (!iso) return "—";
     const d = new Date(iso);
     return d.toLocaleString(undefined, {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
+        year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false,
     });
 }
 
-/** Card fulfilment progress 1–4 */
+/* Card fulfilment progress 1–4 */
 function CardProgress({ status }) {
     const map = { order_placed: 0, designing_card: 1, packaged: 2, shipped: 3 };
     const idx = map[(status || "").toLowerCase()] ?? 0;
@@ -106,7 +84,7 @@ function CardProgress({ status }) {
     );
 }
 
-/** Subscription progress */
+/* Subscription progress */
 function SubscriptionProgress({ trialEnd, currentPeriodEnd, amountTotal, currency }) {
     const now = new Date();
     const inTrial = trialEnd && new Date(trialEnd) > now;
@@ -184,9 +162,7 @@ export default function MyOrders() {
                 if (mounted) setLoading(false);
             }
         })();
-        return () => {
-            mounted = false;
-        };
+        return () => { mounted = false; };
     }, []);
 
     async function cancelSubscription(orderId) {
@@ -214,20 +190,14 @@ export default function MyOrders() {
 
     function renderSubscription(o) {
         const cancelledAt =
-            o.metadata && o.metadata.cancelledAt ? o.metadata.cancelledAt : o.status === "canceled" ? o.updatedAt : null;
+            (o.metadata && o.metadata.cancelledAt) ? o.metadata.cancelledAt : (o.status === "canceled" ? o.updatedAt : null);
 
         return (
             <>
-                <div className="order-line">
-                    <strong>Status:</strong> {o.status}
-                </div>
-
+                <div className="order-line"><strong>Status:</strong> {o.status}</div>
                 {o.status === "canceled" && cancelledAt && (
-                    <div className="order-line">
-                        <strong>Canceled on:</strong> {formatDateTimeNoSeconds(cancelledAt)}
-                    </div>
+                    <div className="order-line"><strong>Canceled on:</strong> {formatDateTimeNoSeconds(cancelledAt)}</div>
                 )}
-
                 <div className="order-line order-progress-wrap">
                     <SubscriptionProgress
                         trialEnd={o.trialEnd}
@@ -248,18 +218,10 @@ export default function MyOrders() {
 
         return (
             <>
-                <div className="order-line">
-                    <strong>Quantity:</strong> {qty}
-                </div>
-                <div className="order-line">
-                    <strong>Amount:</strong> {amount}
-                </div>
-                <div className="order-line">
-                    <strong>Estimated delivery:</strong> {delivery}
-                </div>
-                <div className="order-line order-progress-wrap">
-                    <CardProgress status={fulfillRaw} />
-                </div>
+                <div className="order-line"><strong>Quantity:</strong> {qty}</div>
+                <div className="order-line"><strong>Amount:</strong> {amount}</div>
+                <div className="order-line"><strong>Estimated delivery:</strong> {delivery}</div>
+                <div className="order-line order-progress-wrap"><CardProgress status={fulfillRaw} /></div>
             </>
         );
     }
@@ -270,13 +232,8 @@ export default function MyOrders() {
                 <Link to="/myprofile" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
                 </Link>
-                <div
-                    className={`sidebar-menu-toggle ${sidebarOpen ? "active" : ""}`}
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                >
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <div className={`sidebar-menu-toggle ${sidebarOpen ? "active" : ""}`} onClick={() => setSidebarOpen(!sidebarOpen)}>
+                    <span></span><span></span><span></span>
                 </div>
             </div>
 
@@ -296,9 +253,7 @@ export default function MyOrders() {
                             <div className="orders-empty-badge">Orders</div>
                             <h3 className="orders-empty-title">No orders yet</h3>
                             <p className="orders-empty-sub">Your purchases will appear here once you’ve checked out.</p>
-                            <Link to="/productandplan" className="cta-blue-button desktop-button">
-                                Browse products
-                            </Link>
+                            <Link to="/productandplan" className="cta-blue-button desktop-button">Browse products</Link>
                         </div>
                     ) : (
                         <div className="orders-list">
@@ -308,9 +263,7 @@ export default function MyOrders() {
 
                                 return (
                                     <article key={o.id} className={`order-card ${isSub ? "is-subscription" : ""}`}>
-                                        <div className={`order-status-badge ${statusBadgeClass(o)}`}>
-                                            {formatFulfillmentStatus(o)}
-                                        </div>
+                                        <div className={`order-status-badge ${statusBadgeClass(o)}`}>{formatFulfillmentStatus(o)}</div>
 
                                         <div className="order-thumb">
                                             <img src={ProductThumb} alt="Product" className="order-thumb-img" />
@@ -327,24 +280,19 @@ export default function MyOrders() {
 
                                             <div className="order-fields">
                                                 {isSub ? renderSubscription(o) : renderCard(o)}
-
                                                 {!isSub && (
                                                     <>
                                                         <div className="order-line order-info">
                                                             <span className="dot" aria-hidden="true" />
                                                             <div className="reason">
-                                                                <div className="desktop-body-s">
-                                                                    <strong>Delivery name:</strong>
-                                                                </div>
+                                                                <div className="desktop-body-s"><strong>Delivery name:</strong></div>
                                                                 <div className="desktop-body-xs">{o.deliveryName || "—"}</div>
                                                             </div>
                                                         </div>
                                                         <div className="order-line order-info">
                                                             <span className="dot" aria-hidden="true" />
                                                             <div className="reason">
-                                                                <div className="desktop-body-s">
-                                                                    <strong>Delivery address:</strong>
-                                                                </div>
+                                                                <div className="desktop-body-s"><strong>Delivery address:</strong></div>
                                                                 <div className="desktop-body-xs">{o.deliveryAddress || "—"}</div>
                                                             </div>
                                                         </div>
@@ -355,9 +303,7 @@ export default function MyOrders() {
                                             <div className="order-actions">
                                                 {isSub ? (
                                                     canceled ? (
-                                                        <button onClick={resubscribeNow} className="cta-black-button desktop-button">
-                                                            Resubscribe now
-                                                        </button>
+                                                        <button onClick={resubscribeNow} className="cta-black-button desktop-button">Resubscribe now</button>
                                                     ) : (
                                                         <button
                                                             onClick={() =>
