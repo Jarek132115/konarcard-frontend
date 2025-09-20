@@ -212,7 +212,7 @@
 .nfc-pricing-page .pricing-media-main.fixed-43 {
   width: 100%;
   aspect-ratio: auto;
-  height: var(--gallery-h);
+  height: 100%;
   border-radius: 12px;
   overflow: hidden;
   background: #f9f9f9;
