@@ -1,4 +1,3 @@
-// src/pages/interface/MyOrders.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -19,8 +18,21 @@ function formatAmount(amount, currency = "gbp") {
     }).format(value);
 }
 
-function formatFulfillmentStatus(s) {
-    switch ((s || "").toLowerCase()) {
+function formatFulfillmentStatus(order) {
+    if ((order.type || "").toLowerCase() === "subscription") {
+        switch ((order.status || "").toLowerCase()) {
+            case "active":
+                return "Subscription active";
+            case "canceled":
+                return "Subscription canceled";
+            case "trialing":
+                return "Trial active";
+            default:
+                return "Subscription active";
+        }
+    }
+
+    switch ((order.fulfillmentStatus || "").toLowerCase()) {
         case "order_placed":
             return "Order placed";
         case "designing_card":
@@ -34,23 +46,21 @@ function formatFulfillmentStatus(s) {
     }
 }
 
-function statusIndex(s) {
-    switch ((s || "").toLowerCase()) {
-        case "order_placed":
-            return 0;
-        case "designing_card":
-            return 1;
-        case "packaged":
-            return 2;
-        case "shipped":
-            return 3;
-        default:
-            return 0;
+function statusBadgeClass(order) {
+    if ((order.type || "").toLowerCase() === "subscription") {
+        switch ((order.status || "").toLowerCase()) {
+            case "active":
+                return "status-active";
+            case "canceled":
+                return "status-canceled";
+            case "trialing":
+                return "status-trial";
+            default:
+                return "status-active";
+        }
     }
-}
 
-function statusBadgeClass(s) {
-    switch ((s || "").toLowerCase()) {
+    switch ((order.fulfillmentStatus || "").toLowerCase()) {
         case "order_placed":
             return "status-placed";
         case "designing_card":
@@ -78,7 +88,13 @@ function formatDateTimeNoSeconds(iso) {
 }
 
 function ProgressBar({ status }) {
-    const idx = statusIndex(status);
+    const map = {
+        order_placed: 0,
+        designing_card: 1,
+        packaged: 2,
+        shipped: 3,
+    };
+    const idx = map[(status || "").toLowerCase()] ?? 0;
     const percent = Math.max(0, Math.min(100, (idx / 3) * 100));
     return (
         <div className="order-progress">
@@ -89,7 +105,7 @@ function ProgressBar({ status }) {
                 />
             </div>
             <div className="order-progress-caption">
-                {idx + 1} / 4 · {formatFulfillmentStatus(status)}
+                {idx + 1} / 4 · {formatFulfillmentStatus({ fulfillmentStatus: status })}
             </div>
         </div>
     );
@@ -105,7 +121,7 @@ export default function MyOrders() {
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState("");
     const [actionMsg, setActionMsg] = useState("");
-    const [confirmingId, setConfirmingId] = useState(null);
+    const [confirmingCancelId, setConfirmingCancelId] = useState(null);
 
     useEffect(() => {
         const handleResize = () => {
@@ -148,24 +164,23 @@ export default function MyOrders() {
     async function cancelSubscription(orderId) {
         setActionMsg("");
         try {
-            await api.post(`/cancel-subscription`, { id: orderId });
-            setOrders((prev) =>
-                prev.map((o) =>
-                    o.id === orderId ? { ...o, status: "canceled" } : o
-                )
-            );
-            setActionMsg("Subscription cancelled successfully.");
+            await api.post("/cancel-subscription", { id: orderId });
+            setActionMsg("Subscription canceled.");
+            const res = await api.get("/me/orders", { params: { ts: Date.now() } });
+            setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
         } catch (e) {
             setActionMsg(
                 e?.response?.data?.error || "Failed to cancel subscription"
             );
         } finally {
-            setConfirmingId(null);
+            setConfirmingCancelId(null);
         }
     }
 
     function renderSubscription(o) {
-        const trialEnd = o.trialEnd ? formatDateTimeNoSeconds(o.trialEnd) : "—";
+        const trialEnd = o.trialEnd
+            ? formatDateTimeNoSeconds(o.trialEnd)
+            : "—";
         const periodEnd = o.currentPeriodEnd
             ? formatDateTimeNoSeconds(o.currentPeriodEnd)
             : "—";
@@ -263,16 +278,17 @@ export default function MyOrders() {
                     ) : (
                         <div className="orders-list">
                             {orders.map((o) => {
-                                const isSub = (o.type || "").toLowerCase() === "subscription";
+                                const isSub =
+                                    (o.type || "").toLowerCase() === "subscription";
+
+                                const canceled = isSub && o.status === "canceled";
 
                                 return (
                                     <article key={o.id} className="order-card">
                                         <div
-                                            className={`order-status-badge ${statusBadgeClass(
-                                                o.fulfillmentStatus
-                                            )}`}
+                                            className={`order-status-badge ${statusBadgeClass(o)}`}
                                         >
-                                            {formatFulfillmentStatus(o.fulfillmentStatus)}
+                                            {formatFulfillmentStatus(o)}
                                         </div>
 
                                         <div className="order-thumb">
@@ -325,23 +341,23 @@ export default function MyOrders() {
 
                                             <div className="order-actions">
                                                 {isSub ? (
-                                                    o.status === "canceled" ? (
+                                                    canceled ? (
                                                         <button
-                                                            className="cta-red-button desktop-button"
                                                             disabled
+                                                            className="cta-red-button desktop-button"
                                                         >
                                                             Cancelled
                                                         </button>
                                                     ) : (
                                                         <button
                                                             onClick={() =>
-                                                                confirmingId === o.id
+                                                                confirmingCancelId === o.id
                                                                     ? cancelSubscription(o.id)
-                                                                    : setConfirmingId(o.id)
+                                                                    : setConfirmingCancelId(o.id)
                                                             }
                                                             className="cta-black-button desktop-button"
                                                         >
-                                                            {confirmingId === o.id
+                                                            {confirmingCancelId === o.id
                                                                 ? "Confirm cancel"
                                                                 : "Cancel subscription"}
                                                         </button>
