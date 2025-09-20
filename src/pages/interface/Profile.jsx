@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
@@ -9,24 +10,25 @@ import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 
-/** Inline lock icon to avoid extra imports */
-const LockIcon = ({ className = '' }) => (
-  <svg
-    viewBox="0 0 24 24"
-    width="18"
-    height="18"
-    aria-hidden="true"
-    className={className}
-  >
-    <path
+/* inline lock icon so we can position/style it easily */
+function LockIcon({ className = 'lock-icon' }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      width="16"
+      height="16"
       fill="currentColor"
-      d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm3 8H9V7a3 3 0 1 1 6 0v3Z"
-    />
-  </svg>
-);
+      aria-hidden="true"
+    >
+      <path d="M12 1a5 5 0 00-5 5v3H6a3 3 0 00-3 3v6a3 3 0 003 3h12a3 3 0 003-3v-6a3 3 0 00-3-3h-1V6a5 5 0 00-5-5zm-3 8V6a3 3 0 116 0v3H9zm3 4a2 2 0 110 4 2 2 0 010-4z" />
+    </svg>
+  );
+}
 
 export default function Profile() {
   const { user: authUser, fetchUser, setUser } = useContext(AuthContext);
+
   const [updatedName, setUpdatedName] = useState('');
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [deleteCountdown, setDeleteCountdown] = useState(3);
@@ -37,7 +39,8 @@ export default function Profile() {
   const [showShareModal, setShowShareModal] = useState(false);
 
   const userId = authUser?._id;
-  const userUsername = authUser?.username;
+  const userUsername = authUser?.username || '';
+
   const { data: businessCard } = useFetchBusinessCard(userId);
 
   useEffect(() => {
@@ -63,7 +66,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (isConfirmingDelete && deleteCountdown > 0) {
-      const t = setTimeout(() => setDeleteCountdown(c => c - 1), 1000);
+      const t = setTimeout(() => setDeleteCountdown((n) => n - 1), 1000);
       return () => clearTimeout(t);
     }
   }, [isConfirmingDelete, deleteCountdown]);
@@ -86,32 +89,38 @@ export default function Profile() {
   };
 
   const handleDelete = async () => {
-    if (!isConfirmingDelete) return setIsConfirmingDelete(true);
-    if (deleteCountdown !== 0) return;
-
-    try {
-      const res = await api.delete('/profile');
-      if (res?.data?.success) {
-        toast.success('Your account has been deleted');
-        try {
-          localStorage.removeItem('token');
-          localStorage.removeItem('authUser');
-        } catch { }
-        setUser?.(null);
-        window.location.href = '/';
-      } else {
-        toast.error(res?.data?.error || 'Failed to delete account');
+    if (!isConfirmingDelete) {
+      setIsConfirmingDelete(true);
+      return;
+    }
+    if (deleteCountdown === 0) {
+      try {
+        const res = await api.delete('/profile');
+        if (res?.data?.success) {
+          toast.success('Your account has been deleted');
+          try {
+            localStorage.removeItem('token');
+            localStorage.removeItem('authUser');
+          } catch { }
+          setUser?.(null);
+          window.location.href = '/';
+        } else {
+          toast.error(res?.data?.error || 'Failed to delete account');
+        }
+      } catch (err) {
+        toast.error(err.response?.data?.error || 'Server error deleting account');
+      } finally {
+        setIsConfirmingDelete(false);
+        setDeleteCountdown(3);
       }
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Server error deleting account');
-    } finally {
-      setIsConfirmingDelete(false);
-      setDeleteCountdown(3);
     }
   };
 
   const handleResetPassword = async () => {
-    if (!authUser?.email) return toast.error('Your email is not available.');
+    if (!authUser?.email) {
+      toast.error('Your email is not available to send a reset link.');
+      return;
+    }
     try {
       const res = await api.post('/forgot-password', { email: authUser.email });
       if (res.data.error) toast.error(res.data.error);
@@ -122,9 +131,14 @@ export default function Profile() {
   };
 
   const handleShareCard = () => {
-    if (!authUser?.isVerified) return toast.error('Please verify your email to share your card.');
+    if (!authUser?.isVerified) {
+      toast.error('Please verify your email to share your card.');
+      return;
+    }
     setShowShareModal(true);
   };
+
+  const handleCloseShareModal = () => setShowShareModal(false);
 
   const contactDetailsForVCard = {
     full_name: businessCard?.full_name || '',
@@ -133,14 +147,14 @@ export default function Profile() {
     bio: businessCard?.bio || '',
     contact_email: businessCard?.contact_email || authUser?.email || '',
     phone_number: businessCard?.phone_number || '',
-    username: userUsername || '',
+    username: userUsername,
   };
 
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
-      {/* mobile header */}
+      {/* Mobile header */}
       <div className="myprofile-mobile-header">
         <Link to="/myprofile" className="myprofile-logo-link">
           <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -167,102 +181,98 @@ export default function Profile() {
           isSmallMobile={isSmallMobile}
         />
 
-        {/* Account page wrapper (matching your new white-card look) */}
-        <div className="account-page">
-          <div className="account-card">
-            <div className="account-head">
+        {/* Desktop-only subtle frame, like Product & Plan */}
+        <div className="account-frame">
+          <div className="settings-card">
+            <div className="settings-head">
               <div>
                 <h3 className="desktop-h5">Profile settings</h3>
                 <p className="desktop-body-xs">Manage your account details and security.</p>
               </div>
-              <span className="pill-blue-solid">Account</span>
+              <span className="pricing-badge pill-blue">Account</span>
             </div>
 
-            <div className="account-divider" />
+            <div className="settings-divider" />
 
-            {/* Name (editable) */}
-            <div className="account-field">
-              <label className="desktop-body-s black">Display Name</label>
+            {/* Display Name (editable) */}
+            <label className="profile-label desktop-body-s black">Display Name</label>
+            <div className="input-shell">
               <input
                 type="text"
                 value={updatedName}
                 onChange={(e) => setUpdatedName(e.target.value)}
                 autoComplete="name"
-                className="input edit"
-                placeholder="Your name"
+                className="text-input"
               />
             </div>
 
-            {/* Email (locked) */}
-            <div className="account-field">
-              <label className="desktop-body-s black">Email Address</label>
-              <div className="field-with-lock">
-                <input
-                  type="email"
-                  value={authUser?.email || ''}
-                  readOnly
-                  className="input display"
-                />
-                <span className="field-lock" title="This field is locked">
-                  <LockIcon />
-                </span>
-              </div>
+            {/* Email (locked, left icon) */}
+            <label className="profile-label desktop-body-s black">Email Address</label>
+            <div className="input-shell locked">
+              <LockIcon />
+              <input
+                type="email"
+                readOnly
+                value={authUser?.email || ''}
+                className="text-input readonly"
+                aria-readonly="true"
+              />
             </div>
 
-            {/* URL (locked) */}
-            <div className="account-field">
-              <label className="desktop-body-s black">Business Card Page URL</label>
-              <div className="field-with-lock url-wrap">
-                <span className="url-prefix desktop-body">www.konarcard.com/u/</span>
-                <input
-                  type="text"
-                  value={userUsername || ''}
-                  readOnly
-                  className="input display url-input"
-                />
-                <span className="field-lock" title="This field is locked">
-                  <LockIcon />
-                </span>
-              </div>
+            {/* Full URL (one string, locked, left icon) */}
+            <label className="profile-label desktop-body-s black">Business Card Page URL</label>
+            <div className="input-shell locked">
+              <LockIcon />
+              <input
+                type="text"
+                readOnly
+                value={`www.konarcard.com/u/${userUsername}`}
+                className="text-input readonly"
+                aria-readonly="true"
+              />
             </div>
 
-            {/* Password (locked, with action) */}
-            <div className="account-field">
-              <label className="desktop-body-s black">Password</label>
-              <div className="password-wrap with-action">
-                <input
-                  type="password"
-                  value="********"
-                  readOnly
-                  className="input display"
-                />
-                <span className="field-lock" title="This field is locked">
-                  <LockIcon />
-                </span>
-                <button
-                  onClick={handleResetPassword}
-                  className="black-button reset-btn desktop-button"
-                >
-                  Reset
-                </button>
-              </div>
+            {/* Password (locked input + Reset button) */}
+            <label className="profile-label desktop-body-s black">Password</label>
+            <div className="input-with-button locked">
+              <LockIcon />
+              <input
+                type="password"
+                value="********"
+                readOnly
+                className="text-input readonly with-btn"
+                aria-readonly="true"
+                tabIndex={-1}
+              />
+              <button
+                onClick={handleResetPassword}
+                className="inline-btn desktop-button"
+                type="button"
+                aria-label="Send reset password email"
+              >
+                Reset
+              </button>
             </div>
 
-            <div className="account-divider" />
+            <div className="settings-divider" />
 
-            {/* CTAs (20px gap above is handled by spacing) */}
-            <div className="account-actions">
+            <div className="settings-actions">
               <button
                 onClick={handleDelete}
                 className="cta-black-button desktop-button"
                 disabled={isConfirmingDelete && deleteCountdown > 0}
+                type="button"
               >
                 {isConfirmingDelete
                   ? (deleteCountdown > 0 ? `Delete in ${deleteCountdown}...` : 'Confirm Delete')
                   : 'Delete Your Account'}
               </button>
 
-              <button onClick={handleSave} className="cta-blue-button desktop-button">
+              <button
+                onClick={handleSave}
+                className="cta-blue-button desktop-button"
+                type="button"
+              >
                 Save Updates
               </button>
             </div>
@@ -272,10 +282,10 @@ export default function Profile() {
 
       <ShareProfile
         isOpen={showShareModal}
-        onClose={() => setShowShareModal(false)}
+        onClose={handleCloseShareModal}
         profileUrl={currentProfileUrl}
         contactDetails={contactDetailsForVCard}
-        username={userUsername || ''}
+        username={userUsername}
       />
     </div>
   );
