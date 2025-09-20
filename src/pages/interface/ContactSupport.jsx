@@ -26,44 +26,42 @@ export default function ContactSupport() {
     const { user: authUser } = useContext(AuthContext);
     const userId = authUser?._id;
     const userUsername = authUser?.username;
+
     const { data: businessCard } = useFetchBusinessCard(userId);
 
-    // Prefill name/email if available
+    // Prefill name/email if logged in
     useEffect(() => {
-        setFormData((p) => ({
-            ...p,
-            name: p.name || authUser?.name || '',
-            email: p.email || authUser?.email || '',
-        }));
+        if (authUser) {
+            setFormData((p) => ({
+                ...p,
+                name: p.name || authUser.name || '',
+                email: p.email || authUser.email || '',
+            }));
+        }
     }, [authUser]);
 
-    // Auto-open chat if flagged
+    // Optional: open chat via flag
     useEffect(() => {
-        if (localStorage.getItem('openChatOnLoad') !== '1') return;
+        const key = 'openChatOnLoad';
+        if (localStorage.getItem(key) !== '1') return;
         const started = Date.now();
-        const tryOpen = () => {
-            const ready =
-                typeof window !== 'undefined' &&
-                window.tidioChatApi &&
-                typeof window.tidioChatApi.open === 'function';
-            if (ready) {
-                try { localStorage.removeItem('openChatOnLoad'); } catch { }
+        const loop = () => {
+            if (window.tidioChatApi?.open) {
+                try { localStorage.removeItem(key); } catch { }
                 window.tidioChatApi.open();
-            } else if (Date.now() - started < 5000) {
-                setTimeout(tryOpen, 200);
-            } else {
-                try { localStorage.removeItem('openChatOnLoad'); } catch { }
+                return;
             }
+            if (Date.now() - started < 5000) setTimeout(loop, 200);
+            else try { localStorage.removeItem(key); } catch { }
         };
-        tryOpen();
+        loop();
     }, []);
 
     useEffect(() => {
         const onResize = () => {
             const m = window.innerWidth <= 1000;
             const sm = window.innerWidth <= 600;
-            setIsMobile(m);
-            setIsSmallMobile(sm);
+            setIsMobile(m); setIsSmallMobile(sm);
             if (!m && sidebarOpen) setSidebarOpen(false);
         };
         window.addEventListener('resize', onResize);
@@ -82,17 +80,18 @@ export default function ContactSupport() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.name || !formData.email || !formData.reason || !formData.message) {
+        const { name, email, reason, message } = formData;
+        if (!name || !email || !reason || !message) {
             toast.error('Please fill in all required fields.');
             return;
         }
         try {
             const res = await api.post('/contact', formData);
-            if (res.data.success) {
+            if (res.data?.success) {
                 toast.success('Message sent!');
                 setFormData({ name: '', email: '', reason: '', message: '', agree: true });
             } else {
-                toast.error(res.data.error || 'Something went wrong');
+                toast.error(res.data?.error || 'Something went wrong');
             }
         } catch (err) {
             toast.error(err.response?.data?.error || 'Failed to send message.');
@@ -100,13 +99,10 @@ export default function ContactSupport() {
     };
 
     const handleShareCard = () => {
-        if (!authUser?.isVerified) {
-            toast.error('Please verify your email to share your card.');
-            return;
-        }
+        if (!authUser?.isVerified) return toast.error('Please verify your email to share your card.');
         setShowShareModal(true);
     };
-    const handleCloseShareModal = () => setShowShareModal(false);
+    const closeShare = () => setShowShareModal(false);
 
     const contactDetailsForVCard = {
         full_name: businessCard?.full_name || authUser?.name || '',
@@ -123,7 +119,7 @@ export default function ContactSupport() {
 
     return (
         <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
-            {/* mobile header */}
+            {/* Mobile header */}
             <div className="myprofile-mobile-header">
                 <Link to="/" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -150,74 +146,92 @@ export default function ContactSupport() {
                     isSmallMobile={isSmallMobile}
                 />
 
-                {/* same desktop wrapper look as Profile page */}
+                {/* Full-width grey panel wrapper (desktop) */}
                 <div className="profile-page-wrapper contact">
-                    <div className="settings-card">
-                        <p className="desktop-body light-black contact-intro-text">
-                            Want to talk to us right now?{' '}
-                            <span
-                                className="support-live-chat-link"
-                                onClick={() => window.tidioChatApi && window.tidioChatApi.open()}
-                            >
-                                Start a live chat.
-                            </span>
-                        </p>
+                    <div className="profile-settings-card">
+                        {/* Head like Profile page */}
+                        <div className="contact-card-head">
+                            <div>
+                                <h3 className="desktop-h5">Contact Support</h3>
+                                <p className="desktop-body-xs light-black contact-sub">
+                                    We typically reply within 24 hours. For urgent issues,&nbsp;
+                                    <span
+                                        className="support-live-chat-link"
+                                        onClick={() => window.tidioChatApi?.open?.()}
+                                    >
+                                        start a live chat
+                                    </span>.
+                                </p>
+                            </div>
+                            <span className="pill-blue-solid">Support</span>
+                        </div>
 
+                        <div className="card-divider" />
+
+                        {/* Form with tight label→input and bigger group gaps */}
                         <form onSubmit={handleSubmit} className="support-form">
-                            <label htmlFor="name" className="profile-label desktop-body-s black">Your Name</label>
-                            <input
-                                id="name"
-                                name="name"
-                                type="text"
-                                placeholder="Enter your name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                required
-                                className="profile-input-field desktop-body"
-                            />
+                            <div className="support-field">
+                                <label htmlFor="name" className="profile-label desktop-body-s black">Your Name</label>
+                                <input
+                                    id="name"
+                                    name="name"
+                                    type="text"
+                                    placeholder="Enter your name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="support-input desktop-body"
+                                    required
+                                />
+                            </div>
 
-                            <label htmlFor="email" className="profile-label desktop-body-s black">Your Email</label>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                placeholder="Enter your email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                                className="profile-input-field desktop-body"
-                            />
+                            <div className="support-field">
+                                <label htmlFor="email" className="profile-label desktop-body-s black">Your Email</label>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    className="support-input desktop-body"
+                                    required
+                                />
+                            </div>
 
-                            <label htmlFor="reason" className="profile-label desktop-body-s black">Reason for contact</label>
-                            <select
-                                id="reason"
-                                name="reason"
-                                value={formData.reason}
-                                onChange={handleChange}
-                                required
-                                className="profile-input-field desktop-body"
-                            >
-                                <option value="">Select a reason</option>
-                                <option value="Card not working">My card isn’t working</option>
-                                <option value="Card damaged">My card is damaged</option>
-                                <option value="Profile issue">I can’t see my profile</option>
-                                <option value="Setup help">Help setting up profile</option>
-                                <option value="Other">Other</option>
-                            </select>
+                            <div className="support-field">
+                                <label htmlFor="reason" className="profile-label desktop-body-s black">Reason for contact</label>
+                                <select
+                                    id="reason"
+                                    name="reason"
+                                    value={formData.reason}
+                                    onChange={handleChange}
+                                    className="support-select desktop-body"
+                                    required
+                                >
+                                    <option value="">Select a reason</option>
+                                    <option value="Card not working">My card isn’t working</option>
+                                    <option value="Card damaged">My card is damaged</option>
+                                    <option value="Profile issue">I can’t see my profile</option>
+                                    <option value="Setup help">Help setting up profile</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
 
-                            <label htmlFor="message" className="profile-label desktop-body-s black">Your Message</label>
-                            <textarea
-                                id="message"
-                                name="message"
-                                placeholder="Enter your message..."
-                                value={formData.message}
-                                onChange={handleChange}
-                                required
-                                rows="3"
-                                className="profile-input-field desktop-body"
-                            />
+                            <div className="support-field">
+                                <label htmlFor="message" className="profile-label desktop-body-s black">Your Message</label>
+                                <textarea
+                                    id="message"
+                                    name="message"
+                                    placeholder="Enter your message..."
+                                    value={formData.message}
+                                    onChange={handleChange}
+                                    className="support-textarea desktop-body"
+                                    rows={4}
+                                    required
+                                />
+                            </div>
 
-                            <button type="submit" className="cta-blue-button desktop-button" style={{ width: '100%' }}>
+                            <button type="submit" className="cta-blue-button desktop-button support-submit-button">
                                 Submit
                             </button>
                         </form>
@@ -227,7 +241,7 @@ export default function ContactSupport() {
 
             <ShareProfile
                 isOpen={showShareModal}
-                onClose={handleCloseShareModal}
+                onClose={closeShare}
                 profileUrl={currentProfileUrl}
                 qrCodeUrl={currentQrCodeUrl}
                 contactDetails={contactDetailsForVCard}
