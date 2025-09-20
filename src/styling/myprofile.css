@@ -1268,11 +1268,7 @@
     overflow: hidden;
 }
 
-/* used when sidebar open */
-
-/* ===============================================
-   Desktop split sizing safeguards
-   =============================================== */
+/* Desktop split sizing safeguards */
 @media (min-width:1001px) {
 
     .myprofile-content,
@@ -1303,13 +1299,9 @@
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    padding: 0;
     margin: 0 0 12px 0;
     background: transparent;
     transition: opacity .2s ease, transform .2s ease, margin .2s ease;
-    will-change: transform;
-    backface-visibility: hidden;
-    transform: translateZ(0);
     width: 100%;
 }
 
@@ -1331,16 +1323,6 @@
     margin-bottom: 0;
 }
 
-.app-layout.sidebar-active .mp-mobile-controls,
-.share-profile-open .mp-mobile-controls,
-.modal-open .mp-mobile-controls,
-.ReactModal__Overlay--after-open~* .mp-mobile-controls {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    margin: 0 !important;
-    transform: translateY(-2px) !important;
-}
-
 .mp-pill {
     display: flex;
     border: 1px solid rgba(0, 0, 0, .12);
@@ -1358,18 +1340,8 @@
     box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
 }
 
-.mp-mobile-controls.is-collapsed .mp-pill {
-    border-bottom: 1px solid rgba(0, 0, 0, .12);
-    border-radius: 16px;
-}
-
-.dark-mode .mp-mobile-controls.is-collapsed .mp-pill {
-    border-bottom-color: rgba(255, 255, 255, .12);
-}
-
 .mp-tab {
     appearance: none;
-    text-decoration: none;
     border: 0;
     background: #f7f7f7;
     color: #111;
@@ -1379,7 +1351,6 @@
     text-align: center;
     cursor: pointer;
     transition: background-color .2s ease, color .2s ease, transform .06s ease, opacity .2s ease;
-    border-radius: 0;
 }
 
 .mp-tab:first-child {
@@ -1423,21 +1394,13 @@
     color: #fff;
 }
 
-.mp-mobile-controls.is-collapsed .mp-tab:not(.active) {
-    opacity: .9;
-}
-
-/* Collapsing pane under the pill */
 .mp-preview-wrap {
     overflow: hidden;
     transition: max-height .3s ease, opacity .2s ease, transform .2s ease, margin .2s ease;
     max-height: none !important;
-    /* >>> allow full preview height when open */
     opacity: 1;
     transform: scale(1);
     margin: 0;
-    position: relative;
-    z-index: 0;
 }
 
 .mp-mobile-controls.is-collapsed .mp-preview-wrap {
@@ -1448,40 +1411,7 @@
     pointer-events: none;
 }
 
-/* Attach phone flush to pill when open */
-.mock-phone.mobile-preview {
-    border-top: 0 !important;
-    border-top-left-radius: 0 !important;
-    border-top-right-radius: 0 !important;
-}
-
-/* Tiny screens */
-@media (max-width:400px) {
-    .mp-mobile-controls {
-        top: 60px;
-    }
-
-    .mp-tab {
-        padding: 10px 12px;
-        font-size: .9rem;
-    }
-}
-
-/* iOS sticky/opacity flicker guard */
-@supports (-webkit-touch-callout:none) {
-    .mp-mobile-controls {
-        transition: none;
-    }
-}
-
-/* Safety: ancestors shouldn’t break sticky */
-.myprofile-content,
-.myprofile-flex-container {
-    transform: none !important;
-    will-change: auto;
-}
-
-/* Stack controls ABOVE the phone and keep centered column layout on mobile */
+/* Mobile split: half preview, half editor */
 @media (max-width:1000px) {
     .myprofile-mock-phone-mobile-container {
         width: 100%;
@@ -1491,13 +1421,10 @@
         gap: 10px;
         min-width: 0;
         height: 50%;
-        /* give preview half the space by default */
         max-height: none;
         overflow: hidden;
-        /* inner scroll manages */
     }
 
-    /* let the phone itself absorb the scroll */
     .mock-phone {
         height: 100%;
     }
@@ -1510,12 +1437,9 @@
         height: 50%;
     }
 
-    /* editor gets the other half, scrolls inside */
     .myprofile-editor {
         overflow-y: auto !important;
     }
-
-    /* ensure editor scrolls on mobile */
 }
 
 /* Grid for work images in editor */
@@ -1537,7 +1461,6 @@
     height: 100%;
     aspect-ratio: 4/3;
     object-fit: cover;
-    display: block;
 }
 
 .editor-work-image-grid .remove-image-button {
@@ -1558,11 +1481,6 @@
     box-sizing: border-box;
 }
 
-.content-card-box.loading-state {
-    font-size: 1.2rem;
-    color: #666;
-}
-
 .content-card-box.error-state {
     color: #b91c1c;
     border: 1px solid #fecaca;
@@ -1572,18 +1490,6 @@
 .content-card-box.verification-prompt {
     background-color: #fffbe6;
     border: 1px solid #ffe58f;
-}
-
-.content-card-box.verification-prompt p {
-    font-size: 16px;
-    margin-bottom: 15px;
-    color: #555;
-}
-
-.content-card-box.verification-prompt p:first-child {
-    font-size: 18px;
-    font-weight: 600;
-    color: #ffcc00;
 }
 
 .content-card-box.verification-prompt form {
@@ -1614,13 +1520,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
 }
 
-.content-card-box.verification-prompt button[type="button"]:disabled {
-    background-color: #e0e0e0;
-    color: #999;
-    cursor: not-allowed;
-}
-
-/* Blue text link button */
+/* Blue link button */
 .blue-trial {
     color: #007bff;
     font-weight: 600;
@@ -1634,7 +1534,7 @@
     scale: 1.01;
 }
 
-/* A11y focus states for key buttons */
+/* Focus outlines */
 .display-button:focus-visible,
 .theme-button:focus-visible,
 .font-button:focus-visible,
@@ -1644,7 +1544,3 @@
     outline: 2px solid var(--brand-blue);
     outline-offset: 2px;
 }
-
-/* ---------------------------------
-   End of MyProfile.css
-   --------------------------------- */
