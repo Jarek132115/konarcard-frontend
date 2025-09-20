@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
@@ -18,7 +19,7 @@ import ProductImage2 from '../../assets/images/Product-Image-2.png';
 import ProductImage3 from '../../assets/images/Product-Image-3.png';
 import ProductImage4 from '../../assets/images/Product-Image-4.png';
 
-/* ---- Helpers for Stripe ---- */
+/* ---- Stripe helper ---- */
 async function getStripePublishableKey() {
   const envKey =
     process.env.REACT_APP_STRIPE_PK ||
@@ -51,7 +52,7 @@ export default function NFCCards() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  /** Home-like product gallery */
+  /** Product gallery */
   const [cardMainImage, setCardMainImage] = useState(CardCover);
   const cardThumbs = [CardCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4];
 
@@ -72,6 +73,7 @@ export default function NFCCards() {
     else document.body.classList.remove('body-no-scroll');
   }, [sidebarOpen, isMobile]);
 
+  /* Subscription checkout */
   const handleSubscribe = async () => {
     if (!authUser) {
       navigate('/login', { state: { from: location.pathname, checkoutType: 'subscription' } });
@@ -89,7 +91,7 @@ export default function NFCCards() {
     }
   };
 
-  /** Open Stripe Checkout for the physical card order */
+  /* Physical card checkout */
   const handleOrderCard = async () => {
     if (ordering) return;
     if (!authUser) {
@@ -135,8 +137,7 @@ export default function NFCCards() {
 
       toast.error('Could not start checkout. Please try again.');
     } catch (err) {
-      const msg = err?.response?.data?.error || err?.message || 'Checkout failed. Please try again.';
-      toast.error(msg);
+      toast.error(err?.response?.data?.error || err?.message || 'Checkout failed. Please try again.');
     } finally {
       setOrdering(false);
     }
@@ -164,17 +165,18 @@ export default function NFCCards() {
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
-  const homeFeatureBullets = [
-    'Simple editor; no tech skills.',
-    'Show what you do, fast.',
-    'Unlimited images — show all your work.',
-    'Unlimited services — list every job.',
-    'Unlimited reviews — build instant trust.',
-    'Custom branding — logo, colours, layout.',
-    'Share everywhere — link, QR, NFC tap.',
-    'Update anytime — changes live instantly.',
-    'No app needed — iPhone, Android.',
-    'Cancel Anytime',
+  /* New: 2-line features (title + sub) */
+  const featureBlocks = [
+    { t: 'Simple editor', s: 'Get set up quickly — no tech skills required.' },
+    { t: 'Show what you do', s: 'Share your services and work in seconds.' },
+    { t: 'Unlimited images', s: 'Upload every project — no limits on galleries.' },
+    { t: 'Unlimited services', s: 'List each job you offer with clear pricing.' },
+    { t: 'Unlimited reviews', s: 'Build instant trust with social proof.' },
+    { t: 'Custom branding', s: 'Your logo, colours and layout — make it yours.' },
+    { t: 'Share everywhere', s: 'Link, QR code, and NFC tap for instant contacts.' },
+    { t: 'Instant updates', s: 'Edit once — changes go live across your profile.' },
+    { t: 'No app needed', s: 'Works on iPhone & Android, right in the browser.' },
+    { t: 'Cancel anytime', s: 'Stay flexible — no long contracts.' },
   ];
 
   return (
@@ -221,17 +223,23 @@ export default function NFCCards() {
                       </div>
                       <span className="pricing-badge pill-blue">14-Day Free Trial</span>
                     </div>
+
                     <div className="pricing-divider" />
+
                     <div className="pricing-price-row">
                       <span className="desktop-h3" style={{ paddingRight: 5 }}>£4.95</span>
                       <span className="desktop-button" style={{ padding: 0 }}>/Month - After 14 Days</span>
                     </div>
 
-                    <ul className="pricing-features">
-                      {homeFeatureBullets.map((text, i) => (
-                        <li className="pricing-feature" key={i}>
+                    {/* Two-column bullets on desktop, 1 on mobile */}
+                    <ul className="feature-grid">
+                      {featureBlocks.map((f, i) => (
+                        <li key={i} className="feature-item">
                           <span className="blue-dot" aria-hidden="true" />
-                          <span className="desktop-body-x">{text}</span>
+                          <div className="feature-copy">
+                            <div className="feature-title">{f.t}</div>
+                            <div className="feature-sub">{f.s}</div>
+                          </div>
                         </li>
                       ))}
                     </ul>
@@ -272,7 +280,9 @@ export default function NFCCards() {
                       </div>
                       <span className="pricing-badge pill-blue">12 Month Warranty</span>
                     </div>
+
                     <div className="pricing-divider" />
+
                     <div className="pricing-price-row">
                       <span className="desktop-h3">£24.95</span>
                     </div>
@@ -288,6 +298,7 @@ export default function NFCCards() {
                             key={i}
                             className={`pricing-media-thumb ${cardMainImage === src ? 'is-active' : ''}`}
                             onClick={() => setCardMainImage(src)}
+                            type="button"
                           >
                             <img src={src} alt={`Konar Card thumbnail ${i + 1}`} />
                           </button>
