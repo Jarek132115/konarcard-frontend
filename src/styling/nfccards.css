@@ -272,3 +272,27 @@
     max-width: 820px;
   }
 }
+
+/* Solid blue pill (like the Product & Plan page) */
+.pill-blue-solid {
+  background: #0a66ff;
+  color: #fff;
+  border: 1px solid #0a66ff;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Solid black pill option */
+.pill-black {
+  background: #111;
+  color: #fff;
+  border: 1px solid #111;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}

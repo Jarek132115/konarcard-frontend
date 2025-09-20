@@ -165,7 +165,7 @@ export default function NFCCards() {
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
-  /* New: 2-line features (title + sub) */
+  /* Two-line features (title + sub) */
   const featureBlocks = [
     { t: 'Simple editor', s: 'Get set up quickly — no tech skills required.' },
     { t: 'Show what you do', s: 'Share your services and work in seconds.' },
@@ -221,7 +221,8 @@ export default function NFCCards() {
                         <h3 className="desktop-h5">Konar Profile</h3>
                         <p className="desktop-body-xs">Win more work with a power profile</p>
                       </div>
-                      <span className="pricing-badge pill-blue">14-Day Free Trial</span>
+                      {/* solid BLUE pill */}
+                      <span className="pricing-badge pill-blue-solid">14-Day Free Trial</span>
                     </div>
 
                     <div className="pricing-divider" />
@@ -237,8 +238,8 @@ export default function NFCCards() {
                         <li key={i} className="feature-item">
                           <span className="blue-dot" aria-hidden="true" />
                           <div className="feature-copy">
-                            <div className="feature-title">{f.t}</div>
-                            <div className="feature-sub">{f.s}</div>
+                            <div className="feature-title desktop-body-s">{f.t}</div>
+                            <div className="feature-sub desktop-body-xs">{f.s}</div>
                           </div>
                         </li>
                       ))}
@@ -278,7 +279,8 @@ export default function NFCCards() {
                         <h3 className="desktop-h5">Konar Card - White Edition</h3>
                         <p className="desktop-body-xs">Tap to share your profile instantly.</p>
                       </div>
-                      <span className="pricing-badge pill-blue">12 Month Warranty</span>
+                      {/* solid BLACK pill */}
+                      <span className="pricing-badge pill-black">12 Month Warranty</span>
                     </div>
 
                     <div className="pricing-divider" />
@@ -331,7 +333,15 @@ export default function NFCCards() {
         onClose={handleCloseShareModal}
         profileUrl={currentProfileUrl}
         qrCodeUrl={currentQrCodeUrl}
-        contactDetails={contactDetailsForVCard}
+        contactDetails={{
+          full_name: businessCard?.full_name || authUser?.name || '',
+          job_title: businessCard?.job_title || '',
+          business_card_name: businessCard?.business_card_name || '',
+          bio: businessCard?.bio || '',
+          contact_email: businessCard?.contact_email || authUser?.email || '',
+          phone_number: businessCard?.phone_number || '',
+          username: userUsername || '',
+        }}
         username={userUsername || ''}
       />
     </div>
