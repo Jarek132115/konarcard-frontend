@@ -188,6 +188,23 @@ export default function MyOrders() {
         }
     }
 
+    /** Reorder a physical card: create a Stripe Checkout session and redirect */
+    async function reorderNow(orderId) {
+        setActionMsg("");
+        try {
+            // Adjust the endpoint/payload if your backend expects different keys.
+            const res = await api.post("/reorder", { orderId });
+            const url = res?.data?.url;
+            if (url) {
+                window.location.href = url; // Stripe Checkout
+                return;
+            }
+            setActionMsg("Could not start checkout.");
+        } catch (e) {
+            setActionMsg(e?.response?.data?.error || "Could not start checkout.");
+        }
+    }
+
     function renderSubscription(o) {
         const cancelledAt =
             (o.metadata && o.metadata.cancelledAt) ? o.metadata.cancelledAt : (o.status === "canceled" ? o.updatedAt : null);
@@ -315,8 +332,11 @@ export default function MyOrders() {
                                                         </button>
                                                     )
                                                 ) : (
-                                                    <button onClick={() => navigate("/contactus")} className="cta-black-button desktop-button">
-                                                        Order Another
+                                                    <button
+                                                        onClick={() => reorderNow(o.id)}
+                                                        className="cta-black-button desktop-button"
+                                                    >
+                                                        Reorder now
                                                     </button>
                                                 )}
 
