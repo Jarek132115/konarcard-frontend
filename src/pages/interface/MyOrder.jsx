@@ -105,7 +105,7 @@ export default function MyOrders() {
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState("");
     const [actionMsg, setActionMsg] = useState("");
-    const [confirmingCancel, setConfirmingCancel] = useState(false);
+    const [confirmingId, setConfirmingId] = useState(null);
 
     useEffect(() => {
         const handleResize = () => {
@@ -145,19 +145,22 @@ export default function MyOrders() {
         };
     }, []);
 
-    async function cancelSubscription() {
+    async function cancelSubscription(orderId) {
         setActionMsg("");
         try {
-            await api.post("/cancel-subscription");
-            setActionMsg(
-                "Subscription will cancel at the end of the current billing period."
+            await api.post(`/cancel-subscription`, { id: orderId });
+            setOrders((prev) =>
+                prev.map((o) =>
+                    o.id === orderId ? { ...o, status: "canceled" } : o
+                )
             );
-            const res = await api.get("/me/orders", { params: { ts: Date.now() } });
-            setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
+            setActionMsg("Subscription cancelled successfully.");
         } catch (e) {
-            setActionMsg(e?.response?.data?.error || "Failed to cancel subscription");
+            setActionMsg(
+                e?.response?.data?.error || "Failed to cancel subscription"
+            );
         } finally {
-            setConfirmingCancel(false);
+            setConfirmingId(null);
         }
     }
 
@@ -322,18 +325,27 @@ export default function MyOrders() {
 
                                             <div className="order-actions">
                                                 {isSub ? (
-                                                    <button
-                                                        onClick={() =>
-                                                            confirmingCancel
-                                                                ? cancelSubscription()
-                                                                : setConfirmingCancel(true)
-                                                        }
-                                                        className="cta-black-button desktop-button"
-                                                    >
-                                                        {confirmingCancel
-                                                            ? "Confirm cancel"
-                                                            : "Cancel subscription"}
-                                                    </button>
+                                                    o.status === "canceled" ? (
+                                                        <button
+                                                            className="cta-red-button desktop-button"
+                                                            disabled
+                                                        >
+                                                            Cancelled
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() =>
+                                                                confirmingId === o.id
+                                                                    ? cancelSubscription(o.id)
+                                                                    : setConfirmingId(o.id)
+                                                            }
+                                                            className="cta-black-button desktop-button"
+                                                        >
+                                                            {confirmingId === o.id
+                                                                ? "Confirm cancel"
+                                                                : "Cancel subscription"}
+                                                        </button>
+                                                    )
                                                 ) : (
                                                     <button
                                                         onClick={() => navigate("/contactus")}
