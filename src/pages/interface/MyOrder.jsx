@@ -363,7 +363,7 @@ export default function MyOrders() {
                                                         onClick={() => reorderNow(o.id)}
                                                         className="cta-black-button desktop-button"
                                                     >
-                                                        Reorder now
+                                                        Buy Again
                                                     </button>
                                                 )}
 
