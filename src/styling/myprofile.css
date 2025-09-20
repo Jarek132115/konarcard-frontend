@@ -1,30 +1,37 @@
 /* ===============================================
-   MyProfile.css — full file (updated for Sidebar gap)
-   - Ensures 4px gap next to fixed Sidebar on desktop
-   - Mobile (≤1000px): full width, no left offset
+   MyProfile.css — COMPLETE (redesigned editor + fixed scrolling)
+   - Desktop: only the PREVIEW and the EDITOR scroll
+   - Mobile: only the PREVIEW and the EDITOR scroll, preview not cut off
+   - Includes shared design tokens & utilities used elsewhere
    =============================================== */
 
+/* -------------------------
+   Design Tokens
+   ------------------------- */
 :root {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
     --text-color: #000000;
     --subtle-text-color: #555;
     --card-bg: #F7F7F7;
-    --button-bg: black;
-    --button-text: white;
-    --border-color: #ccc;
-    --input-border: #ccc;
-    --placeholder-bg: #f0f0f0;
+    --button-bg: #111;
+    --button-text: #fff;
+    --border-color: #e5e7eb;
+    /* light gray */
+    --input-border: #d1d5db;
+    --placeholder-bg: #f3f4f6;
     --page-header-color: #000000;
-    --main-font-family: 'Inter', sans-serif;
+    --main-font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     --page-gutter: 20px;
     --sb-w: 268px;
     /* keep in sync with Sidebar */
     --sb-gutter: 20px;
-    /* gutter used by Sidebar */
+    /* sidebar outer gutter */
     --workspace-max: 1200px;
+    --brand-blue: #0081FF;
 }
 
+/* light/dark variants (kept for theme toggles) */
 .light-mode.pure-light {
     --primary-bg: #FFFFFF;
     --secondary-bg: #F9F9F9;
@@ -45,16 +52,16 @@
     --text-color: #FFFFFF;
     --subtle-text-color: #BBB;
     --card-bg: #333333;
-    --button-bg: white;
-    --button-text: black;
-    --border-color: #555;
+    --button-bg: #fff;
+    --button-text: #111;
+    --border-color: #444;
     --input-border: #666;
-    --placeholder-bg: #444;
+    --placeholder-bg: #2a2a2a;
     --page-header-color: #FFFFFF;
 }
 
 .dark-mode.pure-dark {
-    --primary-bg: #000;
+    --primary-bg: #000000;
     --secondary-bg: #1F1F1F;
     --card-bg: #2C2C2C;
     --input-border: #333;
@@ -67,24 +74,113 @@
     --input-border: #666;
 }
 
-/* SAFE global layout */
+/* -------------------------
+   Typography utilities (used by other pages too)
+   ------------------------- */
+.desktop-h1 {
+    font: 800 clamp(24px, 3.8vw, 32px)/1.2 var(--main-font-family);
+    margin: 0;
+}
+
+.desktop-h2 {
+    font: 800 clamp(20px, 3.2vw, 28px)/1.25 var(--main-font-family);
+    margin: 0;
+}
+
+.desktop-h3 {
+    font: 800 clamp(18px, 2.6vw, 22px)/1.25 var(--main-font-family);
+    margin: 0;
+}
+
+.desktop-h4 {
+    font: 700 clamp(16px, 2.2vw, 20px)/1.25 var(--main-font-family);
+    margin: 0;
+}
+
+.desktop-h5 {
+    font: 700 clamp(15px, 2vw, 18px)/1.25 var(--main-font-family);
+    margin: 0;
+}
+
+.desktop-h6 {
+    font: 600 clamp(14px, 1.8vw, 16px)/1.25 var(--main-font-family);
+    margin: 0;
+}
+
+.desktop-body {
+    font: 400 15px/1.6 var(--main-font-family);
+}
+
+.desktop-body-s {
+    font: 500 13px/1.5 var(--main-font-family);
+}
+
+/* Shared CTA styles */
+.cta-blue-button,
+.blue-button {
+    background: var(--brand-blue);
+    color: #fff;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: .95rem;
+    cursor: pointer;
+    transition: transform .06s ease, opacity .2s ease, box-shadow .2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+}
+
+.cta-blue-button:hover,
+.blue-button:hover {
+    opacity: .92;
+}
+
+.cta-blue-button:active,
+.blue-button:active {
+    transform: translateY(1px);
+}
+
+.cta-black-button {
+    background: #111;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid #111;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .06s ease, opacity .2s ease, box-shadow .2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+}
+
+.cta-black-button:hover {
+    opacity: .94;
+}
+
+.cta-black-button:active {
+    transform: translateY(1px);
+}
+
+/* =========================
+   SAFE global layout — ONLY preview & editor scroll
+   ========================= */
 .app-layout {
     display: flex;
     flex-direction: row;
-    min-height: 100vh;
-    /* let pages grow */
-    height: auto;
-    /* don't cap to viewport */
-    overflow: visible;
-    /* let the document own the scroll */
+    height: 100vh;
+    /* fill the viewport */
+    overflow: hidden;
+    /* prevent page/body scroll */
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .app-layout {
         flex-direction: column;
+        height: 100vh;
+        /* fixed viewport on mobile too */
+        overflow: hidden;
+        /* page itself won't scroll */
     }
 }
-
 
 .main-content-container {
     flex: 1;
@@ -97,7 +193,23 @@
     margin-left: calc(var(--sb-w) + var(--sb-gutter) + 10px);
     color: var(--text-color);
     transition: margin-left .3s ease-in-out;
-    overflow-x: visible;
+    overflow: hidden;
+    /* kill container scroll */
+}
+
+@media (max-width:1000px) {
+    .main-content-container {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 20px;
+        padding-top: 92px;
+        /* room for fixed mobile header (56px) + breathing */
+        height: calc(100vh - 56px);
+        /* account for the fixed header */
+        margin: 0;
+        overflow: hidden;
+        /* page doesn't scroll */
+    }
 }
 
 /* ===== Page header ===== */
@@ -185,7 +297,6 @@
     margin: 0 0 16px 0;
     color: var(--page-header-color);
     white-space: nowrap;
-    flex-shrink: 1;
     min-width: 0;
 }
 
@@ -194,93 +305,85 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex-shrink: 1;
     min-width: 0;
 }
 
-/* ===== Workspace ===== */
+/* ===== Workspace (the area below the header) ===== */
 .myprofile-main-content {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 5px;
+    gap: 8px;
     flex: 1;
     min-height: 0;
     box-sizing: border-box;
-    overflow-x: visible;
+    overflow: hidden;
+    /* important: this wrapper won't scroll */
 }
 
-.myprofile-workspace {
-    width: 100%;
-    max-width: calc(var(--workspace-max) + 2*var(--page-gutter));
-    margin: 0 auto;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, .08);
-    border-radius: 16px;
-    padding: var(--page-gutter);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
-}
-
-.dark-mode .myprofile-workspace {
-    background: #202020;
-    border-color: rgba(255, 255, 255, .08);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
-}
-
+/* container that holds preview + editor */
 .myprofile-flex-container {
     display: flex;
-    height: 100%;
     gap: 60px;
     min-height: 0;
     align-items: flex-start;
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
-    overflow: visible;
     justify-content: center;
     background: #F7F7F7;
     border: 1px solid rgba(0, 0, 0, .08);
     border-radius: 16px;
     padding: 14px 18px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
+    flex: 1;
+    /* take remaining height */
+    overflow: hidden;
+    /* children manage their own scroll */
 }
 
-@media (max-width: 1000px) {
+.dark-mode .myprofile-flex-container {
+    background: #202020;
+    border-color: rgba(255, 255, 255, .08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+}
+
+@media (max-width:1000px) {
     .myprofile-flex-container {
         border: none;
         padding: 0;
+        gap: 24px;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        /* keep no page scroll */
     }
 }
 
 /* ===== Phone preview column ===== */
 .myprofile-content {
-    flex-shrink: 0;
-    flex-grow: 0;
+    flex: 1 1 50%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     position: relative;
-    height: 100%;
-    max-height: 100%;
-    aspect-ratio: 3/4;
-    overflow: visible;
+    min-width: 0;
+    overflow: hidden;
+    /* its inner scrollable will scroll */
 }
 
-.mock-phone-wrapper {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-    border-radius: 2.5rem;
-    box-sizing: border-box;
-    overflow: visible;
+@media (min-width:1001px) {
+    .myprofile-content {
+        max-width: 500px;
+    }
 }
 
 .mock-phone {
     width: 100%;
     max-width: 350px;
     height: 100%;
-    aspect-ratio: 9/17;
     background: var(--primary-bg);
     border: .1px solid rgba(0, 0, 0, .08);
     border-radius: 16px;
@@ -292,6 +395,7 @@
     font-family: var(--main-font-family);
     color: var(--text-color);
     overflow: hidden;
+    /* the inner scroll content will scroll */
     position: relative;
 }
 
@@ -303,7 +407,7 @@
 }
 
 .mock-phone-scrollable-content {
-    flex-grow: 1;
+    flex: 1 1 auto;
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -311,7 +415,8 @@
     gap: 0;
     padding: 0;
     overflow-y: auto;
-    padding-right: 5px;
+    /* THIS scrolls for preview */
+    padding-right: 6px;
 }
 
 .mock-phone-scrollable-content::-webkit-scrollbar {
@@ -328,12 +433,12 @@
 }
 
 .dark-mode .mock-phone-scrollable-content::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, .2);
+    background-color: rgba(255, 255, 255, .25);
 }
 
 .mock-cover {
     width: 100%;
-    aspect-ratio: 4/3;
+    aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: 14px;
     margin-bottom: 1.5rem;
@@ -362,7 +467,7 @@
 }
 
 .mock-button {
-    background: #0081FF;
+    background: var(--brand-blue);
     color: #fff;
     padding: .9rem 1.2rem;
     border-radius: 12px;
@@ -373,7 +478,7 @@
     width: 100%;
     box-sizing: border-box;
     font-family: var(--main-font-family);
-    transition: transform .06s ease, box-shadow .2s ease, opacity .2s ease;
+    transition: transform .06s ease, opacity .2s ease;
 }
 
 .mock-button:hover {
@@ -448,7 +553,7 @@
     font-size: .9375rem;
     margin: 0;
     color: #333;
-    font-weight: normal;
+    font-weight: 400;
 }
 
 .mock-bio-text {
@@ -490,7 +595,7 @@
     gap: .75rem;
     width: 100%;
     padding: 0;
-    background-color: transparent;
+    background: transparent;
     border-radius: 0;
 }
 
@@ -523,9 +628,7 @@
 .mock-work-gallery.carousel .mock-work-image-item-wrapper,
 .mock-services-list.carousel .mock-service-item,
 .mock-reviews-list.carousel .mock-review-card {
-    flex-shrink: 0;
-    flex-grow: 0;
-    flex-basis: 100%;
+    flex: 0 0 100%;
     max-width: 100%;
     scroll-snap-align: start;
     height: auto;
@@ -641,7 +744,7 @@
 
 .mock-contact-value {
     font-size: 12px;
-    font-weight: normal;
+    font-weight: 400;
     margin: 0;
     color: #111;
 }
@@ -649,39 +752,20 @@
 /* ===== Editor column ===== */
 .myprofile-editor-wrapper {
     position: relative;
+    flex: 1 1 50%;
     max-width: 500px;
-    width: 100%;
-    min-width: 350px;
-    flex: 1;
+    min-width: 0;
     display: flex;
     height: 100%;
-    overflow: visible;
+    overflow: hidden;
+    /* this wrapper not scrollable */
 }
 
-.editor-work-image-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    width: 100%;
-}
-
-.editor-work-image-grid .editor-item-card.work-image-item-wrapper,
-.editor-work-image-grid .add-work-image-placeholder {
-    width: 100%;
-    height: auto;
-}
-
-.editor-work-image-grid .work-image-preview {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 4/3;
-    object-fit: cover;
-    display: block;
-}
-
-.editor-work-image-grid .remove-image-button {
-    top: 6px;
-    right: 6px;
+@media (max-width:1000px) {
+    .myprofile-editor-wrapper {
+        width: 100%;
+        max-width: 100%;
+    }
 }
 
 .editor-content-wrapper {
@@ -704,12 +788,12 @@
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
+    /* THIS scrolls for editor */
     -webkit-overflow-scrolling: touch;
     box-sizing: border-box;
     width: 100%;
     color: var(--text-color);
     height: 100%;
-    overflow-x: visible;
 }
 
 .editor-title {
@@ -740,16 +824,6 @@
     justify-content: center;
 }
 
-.toggle-button img {
-    width: 20px;
-    height: 20px;
-    filter: var(--dark-mode-filter, brightness(0) invert(0));
-}
-
-.dark-mode .toggle-button img {
-    filter: brightness(0) invert(1);
-}
-
 .input-block {
     display: flex;
     flex-direction: column;
@@ -775,7 +849,7 @@
     color: var(--text-color);
     width: 100%;
     box-sizing: border-box;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
 }
 
 .input-block input::placeholder,
@@ -799,18 +873,17 @@
     color: var(--text-color);
     cursor: pointer;
     font-size: 13px;
-    font-weight: 500;
-    transition: background-color .2s, color .2s, border-color .2s;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-    width: 100%;
+    font-weight: 600;
+    transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
 }
 
 .display-button.is-active,
 .theme-button.is-active,
 .font-button.is-active {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
+    background-color: var(--brand-blue);
+    color: #fff;
+    border-color: var(--brand-blue);
 }
 
 /* Uploaders */
@@ -825,7 +898,7 @@
     overflow: hidden;
     position: relative;
     border: 1px solid var(--border-color);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
 }
 
 .image-upload-area .upload-text {
@@ -890,7 +963,7 @@
     border-radius: .5rem;
     border: 1px solid var(--border-color);
     box-sizing: border-box;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
 }
 
 .work-image-preview {
@@ -898,13 +971,10 @@
     height: 100%;
     aspect-ratio: 4/3;
     border-radius: 0;
-    min-width: unset;
-    min-height: unset;
     background-color: var(--placeholder-bg);
     object-fit: cover;
 }
 
-/* NEW: Cover photo matches the gray work image card */
 .cover-photo-card {
     width: 100%;
     height: 180px;
@@ -921,13 +991,13 @@
 
 .remove-image-button {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 6px;
+    right: 6px;
     width: 24px;
     height: 24px;
     font-size: 16px;
     background-color: #dc3545;
-    color: white;
+    color: #fff;
     border-radius: 50%;
     cursor: pointer;
     border: none;
@@ -936,7 +1006,7 @@
     justify-content: center;
     align-items: center;
     transition: background-color .2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
 }
 
 .remove-image-button:hover {
@@ -955,7 +1025,7 @@
     background-color: var(--placeholder-bg);
     box-sizing: border-box;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
 }
 
 .add-work-image-placeholder .upload-text {
@@ -965,11 +1035,6 @@
     white-space: nowrap;
 }
 
-.add-work-image-placeholder img {
-    display: none;
-}
-
-.add-work-image-button,
 .add-item-button {
     margin-top: 8px;
     padding: 8px 14px;
@@ -980,12 +1045,11 @@
     cursor: pointer;
     transition: background .2s;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
 }
 
-.add-work-image-button:hover,
 .add-item-button:hover {
-    background-color: #eee;
+    background: #eee;
 }
 
 .editor-item-card {
@@ -997,12 +1061,8 @@
     flex-direction: column;
     gap: 6px;
     position: relative;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
     justify-content: center;
-}
-
-.editor-item-card:hover {
-    cursor: pointer;
 }
 
 .editor-item-card input,
@@ -1020,46 +1080,18 @@
     border-radius: 8px;
     cursor: pointer;
     transition: background-color .2s, border-color .2s;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
 }
 
 .remove-item-button:hover {
     background-color: #c82333;
 }
 
-.submit-button {
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 16px;
-    border: none;
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
     margin-top: auto;
-    background-color: var(--button-bg);
-    color: var(--button-text);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-}
-
-/* Common buttons used by the app */
-.blue-button {
-    background: #0081FF;
-    color: #fff;
-    padding: 10px 16px;
-    border: none;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: .95rem;
-    cursor: pointer;
-    transition: transform .06s ease, opacity .2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-}
-
-.blue-button:hover {
-    opacity: .92;
-}
-
-.blue-button:active {
-    transform: translateY(1px);
 }
 
 .desktop-button {
@@ -1070,8 +1102,7 @@
 /* ===== Subscription overlays & banners ===== */
 .subscription-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(255, 255, 255, .9);
@@ -1099,127 +1130,30 @@
     align-items: center;
     gap: 15px;
     margin: 0 auto;
-    overflow: visible;
 }
 
-.start-trial-button {
-    background-color: #007bff;
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color .3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-}
-
-.start-trial-button:hover {
-    background-color: #0056b3;
-}
-
-.subscription-overlay-mobile {
-    display: none;
-    width: 100%;
-    box-sizing: border-box;
-    overflow: visible;
-}
-
-.content-card-box {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-    padding: 20px;
-    border-radius: 8px;
-    background-color: var(--primary-bg);
-    color: var(--text-color);
+.trial-banner {
+    background: #007bff15;
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 16px;
+    padding: 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    max-width: 600px;
-    width: 100%;
-    box-sizing: border-box;
-    overflow: visible;
+    gap: 12px;
 }
 
-.content-card-box.loading-state {
-    font-size: 1.2rem;
-    color: #666;
+.dark-mode .trial-banner {
+    background: #202020;
+    border-color: rgba(255, 255, 255, .08);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
 }
 
-.content-card-box.error-state {
-    color: red;
-    border: 1px solid red;
-    background-color: #ffe6e6;
-}
-
-.content-card-box.verification-prompt {
-    background-color: #fffbe6;
-    border: 1px solid #ffe58f;
-}
-
-.content-card-box.verification-prompt p {
-    font-size: 16px;
-    margin-bottom: 15px;
-    color: #555;
-}
-
-.content-card-box.verification-prompt p:first-child {
-    font-size: 18px;
-    font-weight: 600;
-    color: #ffcc00;
-}
-
-.content-card-box.verification-prompt form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 300px;
-    margin: 0 auto;
-}
-
-.content-card-box.verification-prompt input[type="text"] {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-}
-
-.content-card-box.verification-prompt button[type="submit"] {
-    padding: 10px 15px;
-    border-radius: 8px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-}
-
-.content-card-box.verification-prompt button[type="button"]:disabled {
-    background-color: #e0e0e0;
-    color: #999;
-    cursor: not-allowed;
-}
-
-.trial-not-started-banner {
-    width: 100%;
-}
-
-.button-group {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: auto;
-}
-
-.button-group .black-button {
-    background-color: var(--button-bg);
-    color: var(--button-text);
-    border: 1px solid var(--button-bg);
-}
-
-.trial-countdown-banner,
 .trial-ended-banner {
+    background-color: #fff0f0;
+    color: #dc3545;
     padding: 15px;
     text-align: center;
     border-radius: 8px;
@@ -1227,17 +1161,7 @@
     font-weight: 500;
 }
 
-.trial-countdown-banner {
-    background-color: #e6f7ff;
-    color: #007bff;
-}
-
-.trial-ended-banner {
-    background-color: #fff0f0;
-    color: #dc3545;
-}
-
-/* ===== Mobile header (fixed top bar on ≤1000px) ===== */
+/* ===== Mobile header (fixed) ===== */
 .myprofile-mobile-header {
     position: fixed;
     top: 0;
@@ -1344,298 +1268,10 @@
     overflow: hidden;
 }
 
-/* =========================
-   RESPONSIVE: ≤ 1000px
-   - Switch to top navbar
-   - Remove desktop left offset
-   ========================= */
-@media (max-width:1000px) {
-    .app-layout {
-        height: auto;
-        overflow-y: visible;
-        flex-direction: column;
-    }
-
-    .main-content-container {
-        width: 100%;
-        max-width: 100%;
-        padding: 0 20px;
-        padding-top: 100px;
-        /* room for mobile header */
-        height: auto !important;
-        overflow-x: visible;
-        margin: auto;
-    }
-
-    .myprofile-main-content {
-        padding-bottom: 50px;
-    }
-
-    .page-title-under {
-        margin-bottom: 16px;
-    }
-
-    .subscription-overlay-mobile {
-        display: block;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    .subscription-overlay-mobile .subscription-message {
-        width: 100%;
-    }
-
-    .myprofile-workspace {
-        padding: 16px;
-    }
-
-    .myprofile-flex-container {
-        flex-direction: column;
-        gap: 40px;
-        align-items: center;
-        height: auto !important;
-        max-width: 100%;
-        width: 100%;
-        padding-bottom: 0;
-        margin: 0;
-        box-sizing: border-box;
-        justify-content: normal;
-        overflow: visible;
-    }
-
-    .myprofile-mock-phone-mobile-container {
-        width: 100%;
-        min-width: unset;
-        height: auto !important;
-        flex-shrink: 0;
-        flex-grow: 0;
-        position: relative;
-        aspect-ratio: unset !important;
-        max-height: unset !important;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-    }
-
-    .mock-phone-wrapper {
-        width: 100%;
-        max-width: 350px;
-        aspect-ratio: unset !important;
-        height: fit-content !important;
-        margin-bottom: 20px;
-        margin-top: 0;
-        display: flex;
-        flex-direction: column;
-        overflow: visible;
-    }
-
-    .mock-phone {
-        padding: 20px;
-        border-width: 6px;
-        border-radius: 20px;
-        height: fit-content;
-        overflow: visible;
-        max-width: 100%;
-    }
-
-    .mock-cover {
-        aspect-ratio: 4/3 !important;
-        height: auto !important;
-    }
-
-    .myprofile-editor-wrapper {
-        width: 100%;
-        max-width: 100%;
-        min-width: unset;
-        height: auto !important;
-        flex-shrink: 1;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .editor-content-wrapper {
-        width: 100%;
-        height: auto !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-        display: flex;
-        flex-direction: column;
-        overflow: visible;
-    }
-
-    .myprofile-editor {
-        padding: 16px;
-        padding-bottom: 30px;
-        gap: 15px;
-        height: auto !important;
-        background: var(--primary-bg);
-        overflow-y: visible !important;
-    }
-
-    .button-group {
-        flex-direction: column;
-    }
-}
-
-/* Extra small refinements */
-@media (max-width:600px) {
-    .page-header-right .desktop-button {
-        padding: 10px 15px;
-        width: auto;
-    }
-
-    .page-header-right .desktop-button .share-icon {
-        height: 20px;
-        width: auto;
-        filter: invert(38%) sepia(91%) saturate(2303%) hue-rotate(201deg) brightness(96%) contrast(99%);
-    }
-
-
-    .main-content-container {
-        padding: 80px 20px 0;
-    }
-
-}
-
-@media (max-width:400px) {
-    .main-content-container {
-        padding: 15px;
-        margin-top: 60px;
-    }
-
-    .subscription-overlay-mobile .subscription-message {
-        padding: 20px;
-        gap: 10px;
-    }
-
-    .start-trial-button {
-        padding: 10px 20px;
-        font-size: 14px;
-    }
-
-    .mock-phone {
-        padding: 20px;
-        border-width: 6px;
-        border-radius: 20px;
-    }
-}
-
-/* ===== About layouts ===== */
-.mock-about-container.stacked {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.mock-about-container.stacked .mock-about-content-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: .75rem;
-    width: 100%;
-}
-
-.mock-about-container.stacked .mock-about-header-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: .5rem;
-    width: 100%;
-}
-
-.mock-about-container.stacked .mock-avatar {
-    width: 100%;
-    max-width: 340px;
-    height: auto;
-    aspect-ratio: 1/1;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    object-fit: cover;
-}
-
-.mock-about-container.stacked .mock-profile-name,
-.mock-about-container.stacked .mock-profile-role,
-.mock-about-container.stacked .mock-bio-text {
-    text-align: center;
-}
-
-.mock-about-container.side-by-side .mock-about-header-group {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: .75rem;
-}
-
-.mock-about-container.side-by-side .mock-avatar {
-    width: 50px;
-    height: 50px;
-    aspect-ratio: auto;
-    border-radius: 10px;
-    margin: 0;
-    object-fit: cover;
-}
-
-/* ===== Trial banner & CTAs ===== */
-.trial-banner {
-    background: #007bff15;
-    border: 1px solid rgba(0, 0, 0, .08);
-    border-radius: 16px;
-    padding: 8px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 12px;
-}
-
-.dark-mode .trial-banner {
-    background: #202020;
-    border-color: rgba(255, 255, 255, .08);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
-}
-
-.cta-blue-button {
-    background: #0081FF;
-    color: #fff;
-    padding: 10px 22px;
-    border: none;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: transform .06s ease, opacity .2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-}
-
-.cta-blue-button:hover {
-    opacity: 0.92;
-}
-
-.cta-blue-button:active {
-    transform: translateY(1px);
-}
-
-.blue-trial {
-    color: #007bff;
-    font-weight: 600;
-    background: none;
-    border: none;
-}
-
-.blue-trial:hover {
-    cursor: pointer;
-    font-weight: 700;
-    scale: 1.01;
-}
-
-/* End of MyProfile.css */
-
+/* used when sidebar open */
 
 /* ===============================================
-   OVERRIDES FOR PREVIEW + EDITOR SPLIT (Desktop)
+   Desktop split sizing safeguards
    =============================================== */
 @media (min-width:1001px) {
 
@@ -1648,27 +1284,24 @@
 
     .myprofile-content {
         flex-shrink: 1 !important;
-        aspect-ratio: unset !important;
     }
 
     .myprofile-editor-wrapper {
         min-width: 0 !important;
-        /* remove old min-width:350px restriction */
     }
 }
 
-/* ===== Mobile Preview Controls (full-width pill, no bottom piece) ===== */
+/* ===============================================
+   Mobile Preview Controls (tabs pill)
+   =============================================== */
 .mp-mobile-controls {
     position: sticky;
     top: 64px;
-    /* under the fixed mobile header */
+    /* below the fixed mobile header */
     z-index: 400;
-    /* LOWER than overlays/modals */
     display: flex;
     flex-direction: column;
-    /* pill on top, preview below */
     align-items: stretch;
-    /* pill spans the container width */
     gap: 0;
     padding: 0;
     margin: 0 0 12px 0;
@@ -1676,7 +1309,6 @@
     transition: opacity .2s ease, transform .2s ease, margin .2s ease;
     will-change: transform;
     backface-visibility: hidden;
-    -webkit-transform: translateZ(0);
     transform: translateZ(0);
     width: 100%;
 }
@@ -1691,17 +1323,14 @@
     opacity: 1;
     transform: translateY(0);
     margin-bottom: 12px;
-    /* normal gap under open preview */
 }
 
 .mp-mobile-controls.is-collapsed {
     opacity: .96;
     transform: translateY(-2px);
     margin-bottom: 0;
-    /* remove extra whitespace when closed */
 }
 
-/* --- Hide/disable controls while overlays are open --- */
 .app-layout.sidebar-active .mp-mobile-controls,
 .share-profile-open .mp-mobile-controls,
 .modal-open .mp-mobile-controls,
@@ -1712,14 +1341,11 @@
     transform: translateY(-2px) !important;
 }
 
-/* --- Pill (tabs track) --- */
 .mp-pill {
     display: flex;
     border: 1px solid rgba(0, 0, 0, .12);
     border-bottom: 0;
-    /* preview sits flush under the pill */
     border-radius: 16px 16px 0 0;
-    /* top rounded, flat bottom */
     overflow: hidden;
     background: #fff;
     box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
@@ -1732,33 +1358,28 @@
     box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
 }
 
-/* When the preview is closed, make the pill a chip (rounded all around) */
 .mp-mobile-controls.is-collapsed .mp-pill {
     border-bottom: 1px solid rgba(0, 0, 0, .12);
     border-radius: 16px;
-    /* 16px on all corners */
 }
 
 .dark-mode .mp-mobile-controls.is-collapsed .mp-pill {
     border-bottom-color: rgba(255, 255, 255, .12);
 }
 
-/* --- Tabs (flat where they meet; only outer top corners rounded) --- */
 .mp-tab {
     appearance: none;
-    -webkit-appearance: none;
     text-decoration: none;
     border: 0;
     background: #f7f7f7;
     color: #111;
-    font: 700 .95rem/1 var(--main-font-family, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif);
+    font: 700 .95rem/1 var(--main-font-family);
     padding: 12px 16px;
     flex: 1 1 0;
     text-align: center;
     cursor: pointer;
     transition: background-color .2s ease, color .2s ease, transform .06s ease, opacity .2s ease;
     border-radius: 0;
-    /* flat by default */
 }
 
 .mp-tab:first-child {
@@ -1769,7 +1390,6 @@
     border-top-right-radius: 16px;
 }
 
-/* Divider between tabs */
 .mp-tab+.mp-tab {
     border-left: 1px solid rgba(0, 0, 0, .12);
 }
@@ -1789,11 +1409,10 @@
 
 .mp-tab.active,
 .mp-tab[aria-selected="true"] {
-    background: #0081FF;
+    background: var(--brand-blue);
     color: #fff;
 }
 
-/* Visit Page base state when not selected */
 .mp-tab.visit {
     background: #fff;
     color: #111;
@@ -1804,28 +1423,23 @@
     color: #fff;
 }
 
-/* Slight deemphasis for unselected tab while collapsed */
 .mp-mobile-controls.is-collapsed .mp-tab:not(.active) {
     opacity: .9;
 }
 
-/* --- Preview collapsing pane right under the pill --- */
+/* Collapsing pane under the pill */
 .mp-preview-wrap {
     overflow: hidden;
-    /* hides during collapse */
     transition: max-height .3s ease, opacity .2s ease, transform .2s ease, margin .2s ease;
-    max-height: 2000px;
-    /* roomy when open */
+    max-height: none !important;
+    /* >>> allow full preview height when open */
     opacity: 1;
     transform: scale(1);
     margin: 0;
-    /* no extra gap; pill handles spacing */
     position: relative;
     z-index: 0;
-    /* keep under overlays */
 }
 
-/* Closed state fallback (mirrors your inline styles) */
 .mp-mobile-controls.is-collapsed .mp-preview-wrap {
     max-height: 0 !important;
     opacity: 0 !important;
@@ -1834,17 +1448,11 @@
     pointer-events: none;
 }
 
-/* Phone attaches to pill: no top border/radius */
+/* Attach phone flush to pill when open */
 .mock-phone.mobile-preview {
     border-top: 0 !important;
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
-}
-
-/* Ensure preview content can fully scroll (no cut-off) */
-.mock-phone-scrollable-content {
-    overflow-y: auto;
-    max-height: none;
 }
 
 /* Tiny screens */
@@ -1876,11 +1484,167 @@
 /* Stack controls ABOVE the phone and keep centered column layout on mobile */
 @media (max-width:1000px) {
     .myprofile-mock-phone-mobile-container {
+        width: 100%;
         display: flex;
         flex-direction: column;
-        /* controls then phone */
         align-items: stretch;
-        /* pill spans width */
         gap: 10px;
+        min-width: 0;
+        height: 50%;
+        /* give preview half the space by default */
+        max-height: none;
+        overflow: hidden;
+        /* inner scroll manages */
     }
+
+    /* let the phone itself absorb the scroll */
+    .mock-phone {
+        height: 100%;
+    }
+
+    .mock-phone-scrollable-content {
+        height: 100%;
+    }
+
+    .myprofile-editor-wrapper {
+        height: 50%;
+    }
+
+    /* editor gets the other half, scrolls inside */
+    .myprofile-editor {
+        overflow-y: auto !important;
+    }
+
+    /* ensure editor scrolls on mobile */
 }
+
+/* Grid for work images in editor */
+.editor-work-image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+}
+
+.editor-work-image-grid .editor-item-card.work-image-item-wrapper,
+.editor-work-image-grid .add-work-image-placeholder {
+    width: 100%;
+    height: auto;
+}
+
+.editor-work-image-grid .work-image-preview {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+}
+
+.editor-work-image-grid .remove-image-button {
+    top: 6px;
+    right: 6px;
+}
+
+/* Misc content cards / prompts */
+.content-card-box {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    padding: 20px;
+    border-radius: 12px;
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.content-card-box.loading-state {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.content-card-box.error-state {
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    background-color: #fff5f5;
+}
+
+.content-card-box.verification-prompt {
+    background-color: #fffbe6;
+    border: 1px solid #ffe58f;
+}
+
+.content-card-box.verification-prompt p {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+.content-card-box.verification-prompt p:first-child {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffcc00;
+}
+
+.content-card-box.verification-prompt form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.content-card-box.verification-prompt input[type="text"] {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
+}
+
+.content-card-box.verification-prompt button[type="submit"] {
+    padding: 10px 15px;
+    border-radius: 8px;
+    background-color: var(--brand-blue);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
+}
+
+.content-card-box.verification-prompt button[type="button"]:disabled {
+    background-color: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* Blue text link button */
+.blue-trial {
+    color: #007bff;
+    font-weight: 600;
+    background: none;
+    border: none;
+}
+
+.blue-trial:hover {
+    cursor: pointer;
+    font-weight: 700;
+    scale: 1.01;
+}
+
+/* A11y focus states for key buttons */
+.display-button:focus-visible,
+.theme-button:focus-visible,
+.font-button:focus-visible,
+.cta-blue-button:focus-visible,
+.cta-black-button:focus-visible,
+.mock-button:focus-visible {
+    outline: 2px solid var(--brand-blue);
+    outline-offset: 2px;
+}
+
+/* ---------------------------------
+   End of MyProfile.css
+   --------------------------------- */
