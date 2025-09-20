@@ -1,4 +1,3 @@
-// src/pages/interface/MyOrders.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -29,10 +28,9 @@ function formatFulfillmentStatus(order) {
             case "trialing":
                 return "Trial active";
             default:
-                return "Subscription active";
+                return "Subscription";
         }
     }
-
     switch ((order.fulfillmentStatus || "").toLowerCase()) {
         case "order_placed":
             return "Order placed";
@@ -51,16 +49,14 @@ function statusBadgeClass(order) {
     if ((order.type || "").toLowerCase() === "subscription") {
         switch ((order.status || "").toLowerCase()) {
             case "active":
+            case "trialing":
                 return "status-active";
             case "canceled":
                 return "status-canceled";
-            case "trialing":
-                return "status-trial";
             default:
                 return "status-active";
         }
     }
-
     switch ((order.fulfillmentStatus || "").toLowerCase()) {
         case "order_placed":
             return "status-placed";
@@ -98,22 +94,15 @@ function formatDateTimeNoSeconds(iso) {
     });
 }
 
+/** Card fulfilment progress 1–4 */
 function CardProgress({ status }) {
-    const map = {
-        order_placed: 0,
-        designing_card: 1,
-        packaged: 2,
-        shipped: 3,
-    };
+    const map = { order_placed: 0, designing_card: 1, packaged: 2, shipped: 3 };
     const idx = map[(status || "").toLowerCase()] ?? 0;
     const percent = Math.max(0, Math.min(100, (idx / 3) * 100));
     return (
         <div className="order-progress">
             <div className="order-progress-track">
-                <div
-                    className="order-progress-fill"
-                    style={{ width: `${percent}%` }}
-                />
+                <div className="order-progress-fill" style={{ width: `${percent}%` }} />
             </div>
             <div className="order-progress-caption">
                 {idx + 1} / 4 · {formatFulfillmentStatus({ fulfillmentStatus: status })}
@@ -122,33 +111,34 @@ function CardProgress({ status }) {
     );
 }
 
+/** Subscription progress
+ * - If in trial => show a neutral bar (0%) and “Free trial — ends DATE · £X/month after”
+ * - Else show fill based on days from start->currentPeriodEnd and caption “Next charge on DATE · £X”
+ */
 function SubscriptionProgress({ trialEnd, currentPeriodEnd, amountTotal, currency }) {
     const now = new Date();
-    const end = trialEnd ? new Date(trialEnd) : currentPeriodEnd ? new Date(currentPeriodEnd) : null;
+    const inTrial = trialEnd && new Date(trialEnd) > now;
+    const end = inTrial ? new Date(trialEnd) : currentPeriodEnd ? new Date(currentPeriodEnd) : null;
     if (!end) return null;
 
-    const start = new Date(end);
-    start.setMonth(start.getMonth() - 1);
+    let percent = 0;
+    if (!inTrial) {
+        const start = new Date(end);
+        // assume monthly period — go back one month from the period end
+        start.setMonth(start.getMonth() - 1);
+        percent =
+            now <= start ? 0 : now >= end ? 100 : Math.round(((now - start) / (end - start)) * 100);
+    }
 
-    const percent =
-        now <= start
-            ? 0
-            : now >= end
-                ? 100
-                : Math.round(((now - start) / (end - start)) * 100);
-
-    const caption =
-        trialEnd && new Date(trialEnd) > now
-            ? `Trial active until ${formatDate(end)}`
-            : `Next charge on ${formatDate(end)} · ${formatAmount(amountTotal ?? 495, currency)}`;
+    const amountStr = formatAmount(amountTotal ?? 495, currency);
+    const caption = inTrial
+        ? `Free trial — ends ${formatDate(end)} · ${amountStr}/month after`
+        : `Next charge on ${formatDate(end)} · ${amountStr}`;
 
     return (
         <div className="order-progress">
             <div className="order-progress-track">
-                <div
-                    className="order-progress-fill"
-                    style={{ width: `${percent}%` }}
-                />
+                <div className="order-progress-fill" style={{ width: `${percent}%` }} />
             </div>
             <div className="order-progress-caption">{caption}</div>
         </div>
@@ -180,10 +170,14 @@ export default function MyOrders() {
     }, [sidebarOpen]);
 
     useEffect(() => {
-        if (sidebarOpen && isMobile)
-            document.body.classList.add("body-no-scroll");
+        if (sidebarOpen && isMobile) document.body.classList.add("body-no-scroll");
         else document.body.classList.remove("body-no-scroll");
     }, [sidebarOpen, isMobile]);
+
+    async function reload() {
+        const res = await api.get("/me/orders", { params: { ts: Date.now() } });
+        setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
+    }
 
     useEffect(() => {
         let mounted = true;
@@ -209,15 +203,22 @@ export default function MyOrders() {
         setActionMsg("");
         try {
             await api.post("/cancel-subscription", { id: orderId });
-            setActionMsg("Subscription canceled.");
-            const res = await api.get("/me/orders", { params: { ts: Date.now() } });
-            setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
+            setActionMsg("Subscription will cancel at the end of the current billing period.");
+            await reload();
         } catch (e) {
-            setActionMsg(
-                e?.response?.data?.error || "Failed to cancel subscription"
-            );
+            setActionMsg(e?.response?.data?.error || "Failed to cancel subscription");
         } finally {
             setConfirmingCancelId(null);
+        }
+    }
+
+    async function resubscribeNow() {
+        try {
+            const res = await api.post("/subscribe");
+            const url = res?.data?.url;
+            if (url) window.location.href = url;
+        } catch (e) {
+            setActionMsg(e?.response?.data?.error || "Could not start checkout.");
         }
     }
 
@@ -241,8 +242,7 @@ export default function MyOrders() {
 
     function renderCard(o) {
         const amount = formatAmount(o.amountTotal, o.currency);
-        const delivery =
-            o.deliveryWindow || o.metadata?.estimatedDelivery || "—";
+        const delivery = o.deliveryWindow || o.metadata?.estimatedDelivery || "—";
         const qty = o.quantity || 1;
         const fulfillRaw = o.fulfillmentStatus || "order_placed";
 
@@ -282,18 +282,11 @@ export default function MyOrders() {
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
             {sidebarOpen && isMobile && (
-                <div
-                    className="sidebar-overlay active"
-                    onClick={() => setSidebarOpen(false)}
-                />
+                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
             )}
 
             <main className="main-content-container">
-                <PageHeader
-                    title="My Orders"
-                    isMobile={isMobile}
-                    isSmallMobile={isSmallMobile}
-                />
+                <PageHeader title="My Orders" isMobile={isMobile} isSmallMobile={isSmallMobile} />
 
                 <section className="orders-container">
                     {loading ? (
@@ -307,35 +300,24 @@ export default function MyOrders() {
                             <p className="orders-empty-sub">
                                 Your purchases will appear here once you’ve checked out.
                             </p>
-                            <Link
-                                to="/productandplan"
-                                className="cta-blue-button desktop-button"
-                            >
+                            <Link to="/productandplan" className="cta-blue-button desktop-button">
                                 Browse products
                             </Link>
                         </div>
                     ) : (
                         <div className="orders-list">
                             {orders.map((o) => {
-                                const isSub =
-                                    (o.type || "").toLowerCase() === "subscription";
-
+                                const isSub = (o.type || "").toLowerCase() === "subscription";
                                 const canceled = isSub && o.status === "canceled";
 
                                 return (
                                     <article key={o.id} className="order-card">
-                                        <div
-                                            className={`order-status-badge ${statusBadgeClass(o)}`}
-                                        >
+                                        <div className={`order-status-badge ${statusBadgeClass(o)}`}>
                                             {formatFulfillmentStatus(o)}
                                         </div>
 
                                         <div className="order-thumb">
-                                            <img
-                                                src={ProductThumb}
-                                                alt="Product"
-                                                className="order-thumb-img"
-                                            />
+                                            <img src={ProductThumb} alt="Product" className="order-thumb-img" />
                                         </div>
 
                                         <div className="order-details">
@@ -358,9 +340,7 @@ export default function MyOrders() {
                                                                 <div className="desktop-body-s">
                                                                     <strong>Delivery name:</strong>
                                                                 </div>
-                                                                <div className="desktop-body-xs">
-                                                                    {o.deliveryName || "—"}
-                                                                </div>
+                                                                <div className="desktop-body-xs">{o.deliveryName || "—"}</div>
                                                             </div>
                                                         </div>
                                                         <div className="order-line order-info">
@@ -369,9 +349,7 @@ export default function MyOrders() {
                                                                 <div className="desktop-body-s">
                                                                     <strong>Delivery address:</strong>
                                                                 </div>
-                                                                <div className="desktop-body-xs">
-                                                                    {o.deliveryAddress || "—"}
-                                                                </div>
+                                                                <div className="desktop-body-xs">{o.deliveryAddress || "—"}</div>
                                                             </div>
                                                         </div>
                                                     </>
@@ -381,11 +359,8 @@ export default function MyOrders() {
                                             <div className="order-actions">
                                                 {isSub ? (
                                                     canceled ? (
-                                                        <button
-                                                            disabled
-                                                            className="cta-red-button desktop-button"
-                                                        >
-                                                            Cancelled
+                                                        <button onClick={resubscribeNow} className="cta-blue-button desktop-button">
+                                                            Resubscribe now
                                                         </button>
                                                     ) : (
                                                         <button
@@ -396,9 +371,7 @@ export default function MyOrders() {
                                                             }
                                                             className="cta-black-button desktop-button"
                                                         >
-                                                            {confirmingCancelId === o.id
-                                                                ? "Confirm cancel"
-                                                                : "Cancel subscription"}
+                                                            {confirmingCancelId === o.id ? "Confirm cancel" : "Cancel subscription"}
                                                         </button>
                                                     )
                                                 ) : (
@@ -411,12 +384,8 @@ export default function MyOrders() {
                                                 )}
 
                                                 <Link
-                                                    to={
-                                                        isSub
-                                                            ? `/SuccessSubscription?id=${o.id}`
-                                                            : `/success?id=${o.id}`
-                                                    }
-                                                    className="cta-blue-button desktop-button"
+                                                    to={isSub ? `/SuccessSubscription?id=${o.id}` : `/success?id=${o.id}`}
+                                                    className="cta-outline-button desktop-button"
                                                 >
                                                     View details
                                                 </Link>
