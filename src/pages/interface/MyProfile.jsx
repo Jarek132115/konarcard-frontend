@@ -78,7 +78,6 @@ export default function MyProfile() {
       const sm = window.innerWidth <= 600;
       setIsMobile(m);
       setIsSmallMobile(sm);
-      // Close sidebar if window goes back to desktop
       if (window.innerWidth > 1000 && sidebarOpen) setSidebarOpen(false);
     };
     window.addEventListener("resize", onResize);
@@ -465,7 +464,7 @@ export default function MyProfile() {
       .filter(Boolean);
 
     const formData = buildBusinessCardFormData({
-      business_card_name: state.businessName, // still sent to backend, just hidden in UI
+      business_card_name: state.businessName,
       page_theme: state.pageTheme,
       font: state.font,
       main_heading: state.mainHeading,
@@ -512,49 +511,73 @@ export default function MyProfile() {
       toast.error(err?.response?.data?.error || "Something went wrong while saving.");
     }
   };
-  /* =========================
-     RENDER — HEADER + PREVIEW
-     ========================= */
+
   return (
     <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
-      {/* quick scoped styles to satisfy the UI tweaks */}
+      {/* Scoped fixes */}
       <style>{`
-        .myprofile-flex-container { display: grid; grid-template-columns: 1fr minmax(380px, 520px); gap: 24px; }
-        @media (max-width: 1000px){ .myprofile-flex-container{ grid-template-columns: 1fr; } }
-        .myprofile-content { overflow: visible; }
-        .mock-phone { width: 100%; border-radius: 16px; background: var(--panel, #fff); overflow: visible; }
-        .mock-cover { width: 100%; height: auto; display:block; border-radius: 16px 16px 0 0; }
-        .mock-title { margin: 16px 20px 6px; text-align:center; font-weight: 700; font-size: clamp(20px, 2.6vw, 32px); }
-        .mock-subtitle { margin: 0 20px 16px; text-align:center; opacity:.8; }
-        .mock-section-title{ margin: 20px 20px 10px; font-weight:600; }
-        .mock-about-container.side-by-side{ display:grid; grid-template-columns: 1fr; gap:12px; margin: 0 20px 12px; }
-        .mock-about-header-group{ display:flex; align-items:center; gap:12px; }
-        .mock-avatar{ width:64px; height:64px; border-radius:50%; object-fit:cover; }
-        .mock-bio-text{ margin:12px 0 0; opacity:.9; }
-        .mock-work-gallery.list, .mock-services-list.list, .mock-reviews-list.list { display:flex; gap:12px; overflow-x:auto; padding: 0 20px 16px; }
-        .mock-work-image-item{ display:block; height:160px; width:auto; border-radius:10px; }
-        .myprofile-editor-container { overflow: visible; }
-        .settings-card{ overflow: visible; }
-        .editor-form.compact .profile-label{ margin: 10px 0 6px; font-weight:600; }
-        .editor-form.compact .text-input, .editor-form.compact textarea{ margin:0 0 10px; }
-        .section-toggle{ border:1px solid #d0d7e2; background:#f7f9fc; padding:6px 10px; border-radius:999px; font-weight:600; font-size:13px; }
-        .editor-section-header{ display:flex; justify-content:space-between; align-items:center; margin:8px 0 6px; }
-        .segmented{ display:inline-flex; gap:4px; padding:4px; background:#f2f4f7; border-radius:12px; }
-        .segmented .display-button{ padding:8px 12px; border-radius:10px; border:0; background:transparent; font-weight:600; cursor:pointer; }
-        .segmented .display-button.is-active{ background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.06); }
-        .upload-tile{ display:flex; align-items:center; justify-content:center; border:1px dashed #c7ced9; background:#fafbff; border-radius:14px; min-height:132px; cursor:pointer; transition:.15s; }
-        .upload-tile:hover{ border-color:#8aa1ff; background:#f4f7ff; }
-        .upload-tile img.work-image-preview{ width:100%; height:180px; object-fit:cover; border-radius:12px; }
-        .cover-photo-card.upload-tile img.work-image-preview{ height:auto; max-height:280px; }
-        .remove-image-button{ position:absolute; top:8px; right:8px; background:#fff; border:1px solid #e2e6ef; border-radius:999px; width:28px; height:28px; line-height:26px; text-align:center; font-weight:700; cursor:pointer; }
-        .editor-item-card{ position:relative; }
-        .avatar-upload{ display:flex; align-items:center; justify-content:center; width:112px; height:112px; border-radius:999px; background:#f7f9fc; border:1px dashed #c7ced9; }
-        .avatar-preview{ width:112px; height:112px; border-radius:999px; object-fit:cover; }
-        textarea.no-resize{ resize:none; }
-        .mp-mobile-controls{ padding:0 0 8px; }
-        .mp-pill{ display:flex; gap:12px; }
-        .mp-tab{ display:inline-block; padding:8px 14px; border-radius:999px; border:1px solid #d0d7e2; background:#fff; font-weight:600; }
-        .mp-tab.active{ background:#1a73e8; color:#fff; border-color:#1a73e8; }
+        /* 50/50 split (desktop) */
+        .myprofile-flex-container{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+        @media (max-width:1000px){.myprofile-flex-container{grid-template-columns:1fr}}
+
+        /* Page scroll (no fixed heights) */
+        .myprofile-content{overflow:visible}
+        .myprofile-editor-container{overflow:visible}
+
+        /* Preview look */
+        .mock-phone{width:100%;border-radius:16px;background:var(--panel,#fff)}
+        .mock-cover{width:100%;display:block;border-radius:16px 16px 0 0}
+        .mock-title{margin:16px 20px 6px;text-align:center;font-weight:700;font-size:clamp(20px,2.6vw,32px)}
+        .mock-subtitle{margin:0 20px 16px;text-align:center;opacity:.8}
+        .mock-section-title{margin:20px 20px 10px;font-weight:600}
+        .mock-about-container.side-by-side{display:grid;grid-template-columns:1fr;gap:12px;margin:0 20px 12px}
+        .mock-about-header-group{display:flex;align-items:center;gap:12px}
+        .mock-avatar{width:64px;height:64px;border-radius:10px;object-fit:cover}
+        .mock-bio-text{margin:12px 0 0;opacity:.9}
+        .mock-work-gallery.list,.mock-services-list.list,.mock-reviews-list.list{display:flex;gap:12px;overflow-x:auto;padding:0 20px 16px}
+        .mock-work-image-item{display:block;height:160px;width:auto;border-radius:10px}
+
+        /* Editor header: button above title on mobile */
+        .editor-section-header{display:flex;justify-content:space-between;align-items:center;margin:8px 0 6px}
+        @media (max-width:1000px){
+          .editor-section-header{flex-direction:column;align-items:flex-start;gap:6px}
+        }
+
+        /* Compact spacing */
+        .editor-form.compact .profile-label{margin:6px 0 4px;font-weight:600}
+        .editor-form.compact .text-input,.editor-form.compact textarea{margin:0 0 8px}
+
+        /* Segmented control fit-content */
+        .segmented{display:inline-flex;gap:4px;padding:4px;background:#f2f4f7;border-radius:12px;width:auto}
+        .segmented .display-button{padding:8px 12px;border-radius:10px;border:0;background:transparent;font-weight:600;cursor:pointer}
+        .segmented .display-button.is-active{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+
+        /* Upload tiles (used for avatar & work) */
+        .upload-tile{display:flex;align-items:center;justify-content:center;border:1px dashed #c7ced9;background:#fafbff;border-radius:14px;min-height:132px;cursor:pointer;transition:.15s;position:relative}
+        .upload-tile:hover{border-color:#8aa1ff;background:#f4f7ff}
+        .upload-tile img.work-image-preview{width:100%;height:180px;object-fit:cover;border-radius:12px}
+        .cover-photo-card.upload-tile img.work-image-preview{height:auto;max-height:280px}
+
+        /* Inputs inside row cards */
+        .editor-item-card{position:relative;background:#fff;border:1px solid #eef1f6;border-radius:12px;padding:10px}
+        .editor-item-card input,.editor-item-card textarea{
+          border:1px solid #e5e7eb;border-radius:10px;padding:10px;font-size:14px;outline:none
+        }
+        .editor-item-card input:focus,.editor-item-card textarea:focus{box-shadow:0 0 0 3px rgba(13,110,253,.15);border-color:#c7d7ff}
+
+        /* Remove buttons */
+        .remove-image-button{position:absolute;top:8px;right:8px;background:#fff;border:1px solid #e2e6ef;border-radius:999px;width:28px;height:28px;line-height:26px;text-align:center;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:2}
+
+        /* Appearance pills */
+        .theme-pills,.font-pills{display:flex;gap:6px;flex-wrap:wrap}
+        .toggle-pill{border:1px solid #d0d7e2;background:#f7f9fc;padding:6px 10px;border-radius:999px;font-weight:600;font-size:13px;cursor:pointer}
+        .toggle-pill.is-active{background:#0b5cff;color:#fff;border-color:#0b5cff}
+
+        /* Mobile preview controls */
+        .mp-mobile-controls{padding:0 0 8px}
+        .mp-pill{display:flex;gap:12px}
+        .mp-tab{display:inline-block;padding:8px 14px;border-radius:999px;border:1px solid #d0d7e2;background:#fff;font-weight:600}
+        .mp-tab.active{background:#1a73e8;color:#fff;border-color:#1a73e8}
       `}</style>
 
       {/* Mobile header */}
@@ -637,7 +660,7 @@ export default function MyProfile() {
               )}
 
               <div className="myprofile-flex-container">
-                {/* ===== PREVIEW COLUMN (no inner scroll) ===== */}
+                {/* ===== PREVIEW ===== */}
                 <div className="myprofile-content">
                   {isMobile && (
                     <div className={`mp-mobile-controls ${previewOpen ? "is-open" : "is-collapsed"}`} role="tablist" aria-label="Preview controls">
@@ -668,8 +691,10 @@ export default function MyProfile() {
                   )}
 
                   {(!isMobile || previewOpen) && (
-                    <div className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`} style={{ fontFamily: state.font || previewPlaceholders.font }}>
-                      {/* NO inner scroll — just render content */}
+                    <div
+                      className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
+                      style={{ fontFamily: state.font || previewPlaceholders.font }}
+                    >
                       {/* MAIN */}
                       {showMainSection && (
                         <>
@@ -818,7 +843,7 @@ export default function MyProfile() {
                   )}
                 </div>
 
-                {/* ===== EDITOR COLUMN (no inner scroll) ===== */}
+                {/* ===== EDITOR ===== */}
                 <div className="myprofile-editor-container">
                   <div className="settings-card">
                     <div className="settings-head">
@@ -831,17 +856,52 @@ export default function MyProfile() {
 
                     <div className="settings-divider" />
 
+                    {/* ===== Appearance ===== */}
+                    <div className="editor-form compact" style={{ marginBottom: 6 }}>
+                      <div className="editor-section-header">
+                        <button
+                          type="button"
+                          className={`toggle-pill ${state.pageTheme === "light" ? "is-active" : ""}`}
+                          onClick={() => updateState({ pageTheme: "light" })}
+                        >
+                          Light
+                        </button>
+                        <button
+                          type="button"
+                          className={`toggle-pill ${state.pageTheme === "dark" ? "is-active" : ""}`}
+                          onClick={() => updateState({ pageTheme: "dark" })}
+                        >
+                          Dark
+                        </button>
+                        <div style={{ flex: 1 }} />
+                        <div className="font-pills">
+                          <label className="profile-label" style={{ margin: 0, alignSelf: "center" }}>Font</label>
+                          <select
+                            className="text-input"
+                            style={{ width: "auto", minWidth: 160, marginLeft: 8 }}
+                            value={state.font || "Inter"}
+                            onChange={(e) => updateState({ font: e.target.value })}
+                          >
+                            <option>Inter</option>
+                            <option>system-ui</option>
+                            <option>Roboto</option>
+                            <option>Georgia</option>
+                            <option>Arial</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
                     <form onSubmit={handleSubmit} className="editor-form compact">
                       {/* ====== Main Section ====== */}
                       <div className="editor-section-header">
-                        <h3 className="editor-subtitle">Main Section</h3>
                         <button type="button" onClick={() => setShowMainSection(!showMainSection)} className="section-toggle">
                           {showMainSection ? "Hide Section" : "Show Section"}
                         </button>
+                        <h3 className="editor-subtitle">Main Section</h3>
                       </div>
                       {showMainSection && (
                         <>
-                          {/* Headings moved here */}
                           <label className="profile-label">Main Heading</label>
                           <input
                             type="text"
@@ -880,10 +940,10 @@ export default function MyProfile() {
 
                       {/* ====== About Me Section ====== */}
                       <div className="editor-section-header">
-                        <h3 className="editor-subtitle">About Me Section</h3>
                         <button type="button" onClick={() => setShowAboutMeSection(!showAboutMeSection)} className="section-toggle">
                           {showAboutMeSection ? "Hide Section" : "Show Section"}
                         </button>
+                        <h3 className="editor-subtitle">About Me Section</h3>
                       </div>
                       {showAboutMeSection && (
                         <>
@@ -897,7 +957,6 @@ export default function MyProfile() {
                             </button>
                           </div>
 
-                          {/* Name / Title / Bio moved here */}
                           <label className="profile-label">Full Name</label>
                           <input
                             type="text"
@@ -927,9 +986,9 @@ export default function MyProfile() {
 
                           <label className="profile-label">Profile Photo</label>
                           <input ref={avatarInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleAvatarUpload} />
-                          <div className="image-upload-area avatar-upload" onClick={() => avatarInputRef.current?.click()}>
-                            {!state.avatar && <span className="upload-text">Add Profile Photo</span>}
-                            {state.avatar && <img src={state.avatar || ""} alt="Avatar preview" className="avatar-preview" />}
+                          <div className="editor-item-card upload-tile" onClick={() => avatarInputRef.current?.click()}>
+                            {!state.avatar && <span className="upload-text">+ Add Profile Photo</span>}
+                            {state.avatar && <img src={state.avatar || ""} alt="Avatar preview" className="work-image-preview" />}
                             {state.avatar && (
                               <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}>
                                 &times;
@@ -943,10 +1002,10 @@ export default function MyProfile() {
 
                       {/* ====== My Work ====== */}
                       <div className="editor-section-header">
-                        <h3 className="editor-subtitle">My Work Section</h3>
                         <button type="button" onClick={() => setShowWorkSection(!showWorkSection)} className="section-toggle">
                           {showWorkSection ? "Hide Section" : "Show Section"}
                         </button>
+                        <h3 className="editor-subtitle">My Work Section</h3>
                       </div>
                       {showWorkSection && (
                         <>
@@ -987,10 +1046,10 @@ export default function MyProfile() {
 
                       {/* ====== Services ====== */}
                       <div className="editor-section-header">
-                        <h3 className="editor-subtitle">My Services Section</h3>
                         <button type="button" onClick={() => setShowServicesSection(!showServicesSection)} className="section-toggle">
                           {showServicesSection ? "Hide Section" : "Show Section"}
                         </button>
+                        <h3 className="editor-subtitle">My Services Section</h3>
                       </div>
                       {showServicesSection && (
                         <>
@@ -1005,9 +1064,9 @@ export default function MyProfile() {
                           </div>
 
                           <label className="profile-label">Services</label>
-                          <div className="editor-service-list">
+                          <div className="editor-service-list" style={{ display: "grid", gap: 8 }}>
                             {(state.services || []).map((s, i) => (
-                              <div key={i} className="editor-item-card mock-service-item-wrapper" style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 8, alignItems: "center", padding: 10, border: "1px solid #eef1f6", borderRadius: 12 }}>
+                              <div key={i} className="editor-item-card" style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 8, alignItems: "center" }}>
                                 <input type="text" placeholder="Service Name" value={s.name || ""} onChange={(e) => handleServiceChange(i, "name", e.target.value)} />
                                 <input type="text" placeholder="Service Price/Detail" value={s.price || ""} onChange={(e) => handleServiceChange(i, "price", e.target.value)} />
                                 <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
@@ -1022,10 +1081,10 @@ export default function MyProfile() {
 
                       {/* ====== Reviews ====== */}
                       <div className="editor-section-header">
-                        <h3 className="editor-subtitle">Reviews Section</h3>
                         <button type="button" onClick={() => setShowReviewsSection(!showReviewsSection)} className="section-toggle">
                           {showReviewsSection ? "Hide Section" : "Show Section"}
                         </button>
+                        <h3 className="editor-subtitle">Reviews Section</h3>
                       </div>
                       {showReviewsSection && (
                         <>
@@ -1042,7 +1101,7 @@ export default function MyProfile() {
                           <label className="profile-label">Reviews</label>
                           <div className="editor-reviews-list" style={{ display: "grid", gap: 8 }}>
                             {(state.reviews || []).map((r, i) => (
-                              <div key={i} className="editor-item-card mock-review-card-wrapper" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 120px auto", gap: 8, alignItems: "center", padding: 10, border: "1px solid #eef1f6", borderRadius: 12 }}>
+                              <div key={i} className="editor-item-card" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 120px auto", gap: 8, alignItems: "center" }}>
                                 <input type="text" placeholder="Reviewer Name" value={r.name || ""} onChange={(e) => handleReviewChange(i, "name", e.target.value)} />
                                 <textarea placeholder="Review text" rows={2} value={r.text || ""} onChange={(e) => handleReviewChange(i, "text", e.target.value)} className="no-resize" />
                                 <input type="number" placeholder="Rating (1-5)" min="1" max="5" value={r.rating || ""} onChange={(e) => handleReviewChange(i, "rating", e.target.value)} />
@@ -1058,10 +1117,10 @@ export default function MyProfile() {
 
                       {/* ====== Contact Details ====== */}
                       <div className="editor-section-header">
-                        <h3 className="editor-subtitle">My Contact Details</h3>
                         <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="section-toggle">
                           {showContactSection ? "Hide Section" : "Show Section"}
                         </button>
+                        <h3 className="editor-subtitle">My Contact Details</h3>
                       </div>
                       {showContactSection && (
                         <>
