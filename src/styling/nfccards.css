@@ -239,7 +239,7 @@
 }
 
 .nfc-pricing-page .pricing-media-thumb {
-  border-radius: 10px;
+  border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(0, 0, 0, .12);
   /* light gray border line */
