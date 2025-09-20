@@ -332,6 +332,51 @@ export default function MyProfile() {
     }
   };
 
+  // --- helpers you’re missing ---
+
+  // Resets the editor + local files/blobs
+  const handleResetPage = () => {
+    // reset store-managed fields
+    resetState();
+
+    // reset local UI state
+    setServicesDisplayMode("list");
+    setReviewsDisplayMode("list");
+    setAboutMeLayout("side-by-side");
+
+    setShowMainSection(true);
+    setShowAboutMeSection(true);
+    setShowWorkSection(true);
+    setShowServicesSection(true);
+    setShowReviewsSection(true);
+    setShowContactSection(true);
+
+    // clear any selected files + removal flags
+    setCoverPhotoFile(null);
+    setAvatarFile(null);
+    setWorkImageFiles([]);
+    setCoverPhotoRemoved(false);
+    setIsAvatarRemoved(false);
+
+    // revoke any blob URLs we created
+    activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    activeBlobUrlsRef.current = [];
+
+    toast.success("Editor reset.");
+  };
+
+  // Smooth-scroll the horizontal carousels in the preview
+  const scrollCarousel = (ref, direction) => {
+    const el = ref?.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.9; // ~one “page”
+    el.scrollBy({
+      left: direction === "left" ? -amount : amount,
+      behavior: "smooth",
+    });
+  };
+
+
   const hasProfileChanges = () => {
     if (coverPhotoFile || avatarFile || workImageFiles.length || coverPhotoRemoved || isAvatarRemoved) return true;
 
