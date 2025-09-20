@@ -322,6 +322,5 @@
     .order-actions .view-details.desktop-button.cta-blue-button {
         width: 100% !important;
         max-width: none;
-        display: block !important;
     }
 }
