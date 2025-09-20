@@ -1,3 +1,4 @@
+// src/pages/interface/MyOrders.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -74,6 +75,16 @@ function statusBadgeClass(order) {
     }
 }
 
+function formatDate(iso) {
+    if (!iso) return "—";
+    const d = new Date(iso);
+    return d.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    });
+}
+
 function formatDateTimeNoSeconds(iso) {
     if (!iso) return "—";
     const d = new Date(iso);
@@ -87,7 +98,7 @@ function formatDateTimeNoSeconds(iso) {
     });
 }
 
-function ProgressBar({ status }) {
+function CardProgress({ status }) {
     const map = {
         order_placed: 0,
         designing_card: 1,
@@ -107,6 +118,39 @@ function ProgressBar({ status }) {
             <div className="order-progress-caption">
                 {idx + 1} / 4 · {formatFulfillmentStatus({ fulfillmentStatus: status })}
             </div>
+        </div>
+    );
+}
+
+function SubscriptionProgress({ trialEnd, currentPeriodEnd, amountTotal, currency }) {
+    const now = new Date();
+    const end = trialEnd ? new Date(trialEnd) : currentPeriodEnd ? new Date(currentPeriodEnd) : null;
+    if (!end) return null;
+
+    const start = new Date(end);
+    start.setMonth(start.getMonth() - 1);
+
+    const percent =
+        now <= start
+            ? 0
+            : now >= end
+                ? 100
+                : Math.round(((now - start) / (end - start)) * 100);
+
+    const caption =
+        trialEnd && new Date(trialEnd) > now
+            ? `Trial active until ${formatDate(end)}`
+            : `Next charge on ${formatDate(end)} · ${formatAmount(amountTotal ?? 495, currency)}`;
+
+    return (
+        <div className="order-progress">
+            <div className="order-progress-track">
+                <div
+                    className="order-progress-fill"
+                    style={{ width: `${percent}%` }}
+                />
+            </div>
+            <div className="order-progress-caption">{caption}</div>
         </div>
     );
 }
@@ -178,23 +222,18 @@ export default function MyOrders() {
     }
 
     function renderSubscription(o) {
-        const trialEnd = o.trialEnd
-            ? formatDateTimeNoSeconds(o.trialEnd)
-            : "—";
-        const periodEnd = o.currentPeriodEnd
-            ? formatDateTimeNoSeconds(o.currentPeriodEnd)
-            : "—";
-
         return (
             <>
                 <div className="order-line">
                     <strong>Status:</strong> {o.status}
                 </div>
-                <div className="order-line">
-                    <strong>Trial ends:</strong> {trialEnd}
-                </div>
-                <div className="order-line">
-                    <strong>Next billing date:</strong> {periodEnd}
+                <div className="order-line order-progress-wrap">
+                    <SubscriptionProgress
+                        trialEnd={o.trialEnd}
+                        currentPeriodEnd={o.currentPeriodEnd}
+                        amountTotal={o.amountTotal}
+                        currency={o.currency}
+                    />
                 </div>
             </>
         );
@@ -219,7 +258,7 @@ export default function MyOrders() {
                     <strong>Estimated delivery:</strong> {delivery}
                 </div>
                 <div className="order-line order-progress-wrap">
-                    <ProgressBar status={fulfillRaw} />
+                    <CardProgress status={fulfillRaw} />
                 </div>
             </>
         );

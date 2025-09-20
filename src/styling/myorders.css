@@ -1,6 +1,4 @@
-/* ===== My Orders page (cards carry the visual container) ===== */
-
-/* outer container now only provides spacing; no background/border */
+/* ===== My Orders page ===== */
 .orders-container {
     width: 100%;
     margin-top: 6px;
@@ -10,7 +8,6 @@
     box-shadow: none;
 }
 
-/* empty / hint states */
 .orders-hint {
     opacity: .8;
 }
@@ -23,6 +20,7 @@
     margin-top: 12px;
 }
 
+/* Empty state */
 .orders-empty {
     text-align: center;
     padding: 26px 12px;
@@ -58,14 +56,14 @@
     opacity: .9;
 }
 
-/* list */
+/* List */
 .orders-list {
     display: grid;
     grid-template-columns: 1fr;
     gap: 18px;
 }
 
-/* ===== Individual card (now same look as old outer container) ===== */
+/* Order card */
 .order-card {
     position: relative;
     display: grid;
@@ -79,20 +77,17 @@
     align-items: start;
 }
 
-/* top status pill (only shown here; removed duplicate field) */
+/* Status badges */
 .order-status-badge {
     position: absolute;
     top: 12px;
     left: 12px;
     font-weight: 700;
     font-size: .78rem;
-    letter-spacing: .02em;
     padding: 6px 10px;
     border-radius: 999px;
     border: 1px solid rgba(0, 0, 0, .06);
     box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
-    background: #e9eef6;
-    color: #1e3a8a;
 }
 
 .order-status-badge.status-placed {
@@ -115,7 +110,22 @@
     color: #0f766e;
 }
 
-/* media */
+.order-status-badge.status-active {
+    background: #e9fbf2;
+    color: #166534;
+}
+
+.order-status-badge.status-canceled {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.order-status-badge.status-trial {
+    background: #fef9c3;
+    color: #92400e;
+}
+
+/* Thumbnail */
 .order-thumb {
     width: 250px;
     height: 250px;
@@ -133,7 +143,7 @@
     object-fit: cover;
 }
 
-/* content */
+/* Details */
 .order-details {
     display: grid;
     gap: 10px;
@@ -142,7 +152,6 @@
 .order-meta {
     display: flex;
     gap: 8px;
-    align-items: baseline;
     flex-wrap: wrap;
     font-size: 14px;
     color: #6b7280;
@@ -162,7 +171,7 @@
     font-size: 14px;
 }
 
-/* fields layout */
+/* Fields */
 .order-fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -170,11 +179,11 @@
     align-items: start;
 }
 
-/* progress */
 .order-progress-wrap {
     grid-column: 1 / -1;
 }
 
+/* Progress */
 .order-progress {
     width: 100%;
     margin-top: 2px;
@@ -199,7 +208,7 @@
     color: #6b7280;
 }
 
-/* “dot + two-line” blocks */
+/* Info blocks */
 .order-info {
     display: grid;
     grid-template-columns: 12px 1fr;
@@ -226,16 +235,7 @@
     gap: 2px;
 }
 
-.order-info .desktop-body-s {
-    color: #111;
-}
-
-.order-info .desktop-body-xs {
-    color: #333;
-}
-
-/* actions */
-
+/* Actions */
 .order-actions {
     display: flex;
     gap: 10px;
@@ -243,7 +243,15 @@
     flex-wrap: wrap;
 }
 
-/* responsive */
+/* Cancelled button */
+.cta-red-button {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+    cursor: not-allowed;
+}
+
+/* Responsive */
 @media (max-width: 900px) {
     .order-card {
         grid-template-columns: 1fr;
@@ -263,22 +271,4 @@
         position: static;
         margin-bottom: 8px;
     }
-}
-
-/* dark theme parity */
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .orders-empty,
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .order-card {
-    background: #151515;
-    color: #fff;
-    border-color: rgba(255, 255, 255, .08);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
-}
-
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .order-progress-track {
-    background: #2a2a2a;
-}
-
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .order-info {
-    background: #1b1b1b;
-    border-color: rgba(255, 255, 255, .08);
 }
