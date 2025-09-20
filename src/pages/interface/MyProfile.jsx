@@ -57,6 +57,7 @@ export default function MyProfile() {
      ========================= */
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState("");
+  the
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
 
@@ -181,7 +182,6 @@ export default function MyProfile() {
       try { localStorage.removeItem('scrollToEditorOnLoad'); } catch { }
     }
   }, []);
-
 
   useEffect(() => {
     if (isCardLoading) return;
@@ -617,9 +617,10 @@ export default function MyProfile() {
      ========================= */
   const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
 
+  // ❗ Remove the artificial 2000px cap so the mobile preview can grow fully
   const collapsibleStyle = {
     transition: "all .3s ease",
-    maxHeight: previewOpen ? 2000 : 0,
+    maxHeight: previewOpen ? "none" : 0, // was 2000
     opacity: previewOpen ? 1 : 0,
     overflow: "hidden",
     transform: previewOpen ? "scale(1)" : "scale(.98)",
@@ -939,7 +940,8 @@ export default function MyProfile() {
                           <>
                             <p className="mock-section-title">My Services</p>
                             <div className="work-preview-row-container">
-                              {reviewsDisplayMode === "carousel" && (
+                              {/* ✅ bug fix: use servicesDisplayMode here (was reviewsDisplayMode) */}
+                              {servicesDisplayMode === "carousel" && (
                                 <div className="carousel-nav-buttons">
                                   <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>&#9664;</button>
                                   <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}>&#9654;</button>
