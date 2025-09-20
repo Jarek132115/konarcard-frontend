@@ -21,23 +21,17 @@ import ProductImage4 from '../../assets/images/Product-Image-4.png';
 
 /* ---- Helpers for Stripe ---- */
 async function getStripePublishableKey() {
-  // 1) Try env (CRA / Vite)
   const envKey =
     process.env.REACT_APP_STRIPE_PK ||
     process.env.VITE_STRIPE_PK ||
     process.env.NEXT_PUBLIC_STRIPE_PK;
-
   if (envKey) return envKey;
 
-  // 2) Try backend endpoint (return { publishableKey: 'pk_...' })
   try {
     const res = await api.get('/stripe-pk', { params: { ts: Date.now() } });
     const key = res?.data?.publishableKey || res?.data?.key || res?.data?.pk;
     if (key) return key;
-  } catch {
-    /* ignore here; we'll show a toast below */
-  }
-
+  } catch { }
   return null;
 }
 
@@ -64,11 +58,11 @@ export default function NFCCards() {
 
   useEffect(() => {
     const handleResize = () => {
-      const currentIsMobile = window.innerWidth <= 1000;
-      const currentIsSmallMobile = window.innerWidth <= 600;
-      setIsMobile(currentIsMobile);
-      setIsSmallMobile(currentIsSmallMobile);
-      if (!currentIsMobile && sidebarOpen) setSidebarOpen(false);
+      const m = window.innerWidth <= 1000;
+      const sm = window.innerWidth <= 600;
+      setIsMobile(m);
+      setIsSmallMobile(sm);
+      if (!m && sidebarOpen) setSidebarOpen(false);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -89,11 +83,8 @@ export default function NFCCards() {
         returnUrl: window.location.origin + '/SuccessSubscription',
       });
       const { url } = res.data || {};
-      if (url) {
-        window.location.assign(url);
-      } else {
-        toast.error('Could not start subscription. Please try again.');
-      }
+      if (url) window.location.assign(url);
+      else toast.error('Could not start subscription. Please try again.');
     } catch (err) {
       toast.error(err.response?.data?.error || 'Subscription failed. Please try again.');
     }
@@ -101,7 +92,7 @@ export default function NFCCards() {
 
   /** Open Stripe Checkout for the physical card order */
   const handleOrderCard = async () => {
-    if (ordering) return; // prevent double-submit
+    if (ordering) return;
     if (!authUser) {
       navigate('/login', { state: { from: location.pathname, checkoutType: 'card' } });
       return;
@@ -110,28 +101,23 @@ export default function NFCCards() {
     setOrdering(true);
     try {
       const origin = window.location.origin;
-
-      // Adjust payload to whatever your backend expects.
       const payload = {
-        productId: 'konar-card-white', // keep in sync with backend catalog
+        productId: 'konar-card-white',
         quantity: 1,
         successUrl: `${origin}/success`,
         cancelUrl: `${origin}/productandplan`,
-        // Some servers still use 'returnUrl':
         returnUrl: `${origin}/success`,
       };
 
       const res = await api.post('/buy-card', payload);
       const data = res?.data || {};
 
-      // 1) Preferred: backend returns a direct URL to the hosted Checkout page.
       const redirectUrl = data.url || data.sessionUrl;
       if (redirectUrl) {
         window.location.assign(redirectUrl);
         return;
       }
 
-      // 2) Alternate: backend returns a sessionId — use Stripe.js client redirect.
       if (data.sessionId) {
         const pk = await getStripePublishableKey();
         if (!pk) {
@@ -144,13 +130,10 @@ export default function NFCCards() {
           return;
         }
         const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
-        if (error) {
-          toast.error(error.message || 'Stripe redirect failed. Please try again.');
-        }
+        if (error) toast.error(error.message || 'Stripe redirect failed. Please try again.');
         return;
       }
 
-      // If we got here, backend response didn’t include anything usable.
       toast.error('Could not start checkout. Please try again.');
     } catch (err) {
       const msg = err?.response?.data?.error || err?.message || 'Checkout failed. Please try again.';
@@ -182,7 +165,6 @@ export default function NFCCards() {
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
   const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
-  // SAME feature bullets as Home for subscription card
   const homeFeatureBullets = [
     'Simple editor; no tech skills.',
     'Show what you do, fast.',
@@ -198,7 +180,24 @@ export default function NFCCards() {
 
   return (
     <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
-      {/* mobile header, sidebar, etc. unchanged */}
+      {/* mobile header */}
+      <div className="myprofile-mobile-header">
+        <Link to="/myprofile" className="myprofile-logo-link">
+          <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
+        </Link>
+        <div
+          className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      {/* ✅ Sidebar back in */}
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      {sidebarOpen && isMobile && (
+        <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
+      )}
 
       <main className="main-content-container">
         <PageHeader
@@ -209,60 +208,44 @@ export default function NFCCards() {
           isSmallMobile={isSmallMobile}
         />
 
-        {/* ✅ Scoped wrapper for page-specific card styles */}
+        {/* Scoped wrapper */}
         <div className="nfc-pricing-page">
           <div className="profile-page-wrapper">
             <div className="pricing-grid">
               {/* Subscription card */}
-              <div
-                className="pricing-card nfc-pricing-subscription"
-                style={{ borderRadius: 16 }}
-              >
+              <div className="pricing-card nfc-pricing-subscription" style={{ borderRadius: 16 }}>
                 <div className="pricing-inner">
-                  <div className="pricing-head">
-                    <div>
-                      <h3 className="desktop-h5">Konar Profile</h3>
-                      <p className="desktop-body-xs">
-                        Win more work with a power profile
-                      </p>
+                  {/* content block grows; CTA stays bottom */}
+                  <div className="pricing-content">
+                    <div className="pricing-head">
+                      <div>
+                        <h3 className="desktop-h5">Konar Profile</h3>
+                        <p className="desktop-body-xs">Win more work with a power profile</p>
+                      </div>
+                      <span className="pricing-badge pill-blue">14-Day Free Trial</span>
                     </div>
-                    <span className="pricing-badge">14-Day Free Trial</span>
-                  </div>
-                  <div className="pricing-divider" />
-                  <div className="pricing-price-row">
-                    <span
-                      style={{ paddingRight: 5 }}
-                      className="desktop-h3"
-                    >
-                      £4.95
-                    </span>
-                    <span
-                      style={{ padding: 0 }}
-                      className="desktop-button"
-                    >
-                      /Month - After 14 Days
-                    </span>
+                    <div className="pricing-divider" />
+                    <div className="pricing-price-row">
+                      <span className="desktop-h3" style={{ paddingRight: 5 }}>£4.95</span>
+                      <span className="desktop-button" style={{ padding: 0 }}>/Month - After 14 Days</span>
+                    </div>
+
+                    <ul className="pricing-features">
+                      {homeFeatureBullets.map((text, i) => (
+                        <li className="pricing-feature" key={i}>
+                          <img src={TickIcon} alt="" className="pricing-check" />
+                          <span className="desktop-body-x">{text}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
-                  <ul className="pricing-features">
-                    {homeFeatureBullets.map((text, i) => (
-                      <li className="pricing-feature" key={i}>
-                        <img src={TickIcon} alt="" className="pricing-check" />
-                        <span className="desktop-body-x">{text}</span>
-                      </li>
-                    ))}
-                  </ul>
-
+                  {/* CTA (20px gap above; sticks to bottom) */}
                   <div className="pricing-bottom">
                     {isSubscribed ? (
                       <button
                         className="cta-blue-button desktop-button"
-                        style={{
-                          marginTop: 20,
-                          width: '100%',
-                          opacity: 0.7,
-                          cursor: 'not-allowed',
-                        }}
+                        style={{ width: '100%', opacity: 0.7, cursor: 'not-allowed' }}
                         disabled
                         type="button"
                       >
@@ -272,7 +255,7 @@ export default function NFCCards() {
                       <button
                         onClick={handleSubscribe}
                         className="cta-blue-button desktop-button"
-                        style={{ marginTop: 20, width: '100%' }}
+                        style={{ width: '100%' }}
                         type="button"
                       >
                         Subscribe now
@@ -283,57 +266,46 @@ export default function NFCCards() {
               </div>
 
               {/* Physical card */}
-              <div
-                className="pricing-card nfc-pricing-product"
-                style={{ borderRadius: 16 }}
-              >
+              <div className="pricing-card nfc-pricing-product" style={{ borderRadius: 16 }}>
                 <div className="pricing-inner">
-                  <div className="pricing-head">
-                    <div>
-                      <h3 className="desktop-h5">
-                        Konar Card - White Edition
-                      </h3>
-                      <p className="desktop-body-xs">
-                        Tap to share your profile instantly.
-                      </p>
+                  <div className="pricing-content">
+                    <div className="pricing-head">
+                      <div>
+                        <h3 className="desktop-h5">Konar Card - White Edition</h3>
+                        <p className="desktop-body-xs">Tap to share your profile instantly.</p>
+                      </div>
+                      <span className="pricing-badge pill-blue">12 Month Warranty</span>
                     </div>
-                    <span className="pricing-badge">12 Month Warranty</span>
-                  </div>
-                  <div className="pricing-divider" />
-                  <div className="pricing-price-row">
-                    <span className="desktop-h3">£24.95</span>
-                  </div>
+                    <div className="pricing-divider" />
+                    <div className="pricing-price-row">
+                      <span className="desktop-h3">£24.95</span>
+                    </div>
 
-                  {/* Gallery */}
-                  <div className="pricing-media-tray">
-                    <div className="pricing-media-main">
-                      <img
-                        src={cardMainImage}
-                        alt="Konar Card - White Edition"
-                      />
-                    </div>
-                    <div className="pricing-media-thumbs">
-                      {cardThumbs.map((src, i) => (
-                        <button
-                          key={i}
-                          className={`pricing-media-thumb ${cardMainImage === src ? 'is-active' : ''
-                            }`}
-                          onClick={() => setCardMainImage(src)}
-                        >
-                          <img
-                            src={src}
-                            alt={`Konar Card thumbnail ${i + 1}`}
-                          />
-                        </button>
-                      ))}
+                    {/* Gallery */}
+                    <div className="pricing-media-tray">
+                      <div className="pricing-media-main fixed-43">
+                        <img src={cardMainImage} alt="Konar Card - White Edition" />
+                      </div>
+                      <div className="pricing-media-thumbs tight">
+                        {cardThumbs.map((src, i) => (
+                          <button
+                            key={i}
+                            className={`pricing-media-thumb ${cardMainImage === src ? 'is-active' : ''}`}
+                            onClick={() => setCardMainImage(src)}
+                          >
+                            <img src={src} alt={`Konar Card thumbnail ${i + 1}`} />
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
+                  {/* CTA (20px gap above; sticks to bottom) */}
                   <div className="pricing-bottom">
                     <button
                       onClick={handleOrderCard}
                       className="cta-black-button desktop-button"
-                      style={{ marginTop: 20, width: '100%' }}
+                      style={{ width: '100%' }}
                       type="button"
                       disabled={ordering}
                     >
@@ -342,6 +314,7 @@ export default function NFCCards() {
                   </div>
                 </div>
               </div>
+              {/* end product card */}
             </div>
           </div>
         </div>

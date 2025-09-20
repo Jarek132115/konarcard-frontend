@@ -1,17 +1,15 @@
 /* =========================
-   PAGE WRAPPER (fix sidebar clipping)
+   PAGE WRAPPER (keeps sidebar visible)
    ========================= */
 .nfc-page-wrapper {
   display: flex;
   min-height: 100vh;
-  /* was height:100vh */
   overflow: visible;
-  /* was overflow:hidden (clipped sidebar/overlay) */
   background-color: #f9f9f9;
 }
 
 /* =========================
-   PROFILE WRAPPER (container around the two cards)
+   PROFILE WRAPPER
    ========================= */
 .profile-page-wrapper {
   background: #F7F7F7;
@@ -29,152 +27,43 @@
 }
 
 /* =========================
-   (misc existing styles)
-   ========================= */
-.nfc-main-content {
-  flex: 1;
-  padding: 40px;
-  overflow-y: auto;
-}
-
-.nfc-header {
-  margin-bottom: 40px;
-}
-
-.nfc-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-.nfc-subtitle {
-  font-size: 16px;
-  color: #555;
-}
-
-.nfc-card-grid {
-  display: flex;
-  gap: 40px;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-  overflow-x: auto;
-}
-
-.nfc-card {
-  flex-shrink: 0;
-  width: 260px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 20px;
-  text-align: center;
-}
-
-.nfc-card-img {
-  width: 100%;
-  border-radius: 12px;
-}
-
-.nfc-card-tag {
-  background: #eaeaea;
-  font-size: 12px;
-  color: #333;
-  padding: 4px 8px;
-  margin: 8px 0;
-  border-radius: 6px;
-}
-
-.nfc-card-name {
-  font-size: 16px;
-  font-weight: 600;
-  margin-top: 8px;
-}
-
-.nfc-card-desc {
-  font-size: 14px;
-  color: #555;
-  margin: 4px 0 12px;
-}
-
-.nfc-card-price {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.nfc-buy-button {
-  background: black;
-  color: white;
-  text-decoration: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 500;
-  display: inline-block;
-  transition: background 0.2s ease;
-}
-
-.nfc-buy-button:hover {
-  background: #333;
-}
-
-.Product-Image {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.Prouct-Image-Section img {
-  width: 50%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 10px;
-}
-
-.Prouct-Image-Section {
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 40px;
-}
-
-/* =========================
-   Pricing grid for plans/cards
+   GRID & CARD BASE
    ========================= */
 .pricing-grid {
   display: flex;
   gap: 20px;
   justify-content: center;
   align-items: stretch;
-  /* stretch equal heights */
+  /* equal heights */
 }
 
-/* Desktop: give each card ~50px extra width (split across both) */
 .pricing-card {
   flex: 1 1 calc(50% + 50px);
-  /* slightly wider cards */
   min-width: 0;
-  /* prevent overflow from long content */
   max-width: 760px;
-  /* sensible cap */
 }
 
-/* Inner wrapper */
 .pricing-card .pricing-inner {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  /* NOTE: padding is set in scoped overrides below for consistent rounding */
+  min-height: 100%;
+  padding: 0;
+  /* padding handled in scoped section */
 }
 
-/* Make media responsive inside product card */
-.pricing-media img {
-  width: 100%;
-  height: 100%;
-  display: block;
+/* content grows; CTA stays pinned */
+.pricing-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ---------- Mobile (<1000px) ---------- */
+/* CTA area: 20px gap above; sits at bottom */
+.pricing-bottom {
+  margin-top: 20px;
+}
+
+/* ---------- Mobile ---------- */
 @media (max-width: 1000px) {
   .pricing-grid {
     flex-direction: column;
@@ -188,100 +77,128 @@
   }
 
   .pricing-card .pricing-inner {
-    height: auto;
+    min-height: 0;
   }
 }
 
-/* =========================================================
-   NFC PRICING PAGE – WHITE CARDS (scoped so other pages unaffected)
-   Wrap the page content in a <div class="nfc-pricing-page">…
-   ========================================================= */
+/* =========================
+   NFC PRICING PAGE – WHITE CARDS (scoped)
+   ========================= */
 .nfc-pricing-page .nfc-pricing-subscription,
 .nfc-pricing-page .nfc-pricing-product {
   background: #fff;
-  /* White cards */
   color: #111;
-  /* Dark text */
   border: 1px solid rgba(0, 0, 0, .08);
   border-radius: 16px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
   overflow: hidden;
-  /* Ensures inner content respects radius */
 }
 
-/* Ensure the content sits inside the rounded corners */
+/* inner padding so borders/rounding look clean */
 .nfc-pricing-page .nfc-pricing-subscription .pricing-inner,
 .nfc-pricing-page .nfc-pricing-product .pricing-inner {
-  padding: 22px;
+  padding: 22px 22px 18px;
+  /* bottom small so CTA feels attached */
   background: #fff;
 }
 
-/* Divider line */
-.nfc-pricing-page .nfc-pricing-subscription .pricing-divider,
-.nfc-pricing-page .nfc-pricing-product .pricing-divider {
+/* head + divider */
+.nfc-pricing-page .pricing-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+@media (max-width:600px) {
+  .nfc-pricing-page .pricing-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.nfc-pricing-page .pricing-divider {
   background: rgba(0, 0, 0, .08);
   margin: 10px 0 14px;
   height: 1px;
   opacity: 1;
 }
 
-/* Pricing badge */
-.nfc-pricing-page .nfc-pricing-subscription .pricing-badge,
-.nfc-pricing-page .nfc-pricing-product .pricing-badge {
-  background: #f3f4f6;
-  color: #111;
-  border: 1px solid #e6e6e6;
-  box-shadow: none;
+/* ✅ Blue pill badges (as requested) */
+.nfc-pricing-page .pill-blue {
+  background: #e9eef6;
+  color: #1e3a8a;
+  border: 1px solid rgba(0, 0, 0, .06);
   font-weight: 700;
   font-size: 12px;
   padding: 6px 10px;
   border-radius: 999px;
   white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .05);
 }
 
-/* Feature text & check icons (non-inverted) */
-.nfc-pricing-page .nfc-pricing-subscription .pricing-feature span,
-.nfc-pricing-page .nfc-pricing-product .pricing-feature span {
+/* features */
+.nfc-pricing-page .pricing-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.nfc-pricing-page .pricing-feature {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.nfc-pricing-page .pricing-feature span {
   color: #333;
 }
 
-.nfc-pricing-page .nfc-pricing-subscription .pricing-check,
-.nfc-pricing-page .nfc-pricing-product .pricing-check {
+.nfc-pricing-page .pricing-check {
+  width: 22px;
+  height: 22px;
   filter: none;
 }
 
-/* ===== Product gallery (inside the white product card) ===== */
-.nfc-pricing-page .nfc-pricing-product .pricing-media-tray {
+/* =========================
+   PRODUCT GALLERY
+   ========================= */
+.nfc-pricing-page .pricing-media-tray {
   margin-top: 10px;
   display: grid;
-  gap: 12px;
-  /* Give the tray breathing room from the card edge to avoid clipping */
-  padding-bottom: 8px;
+  gap: 8px;
+  /* tighter gap */
 }
 
-.nfc-pricing-page .nfc-pricing-product .pricing-media-main {
+/* fixed 4:3 aspect for main image; consistent height */
+.nfc-pricing-page .pricing-media-main.fixed-43 {
   width: 100%;
+  aspect-ratio: 4 / 3;
   border-radius: 12px;
   overflow: hidden;
   background: #f9f9f9;
   border: 1px solid rgba(0, 0, 0, .06);
 }
 
-.nfc-pricing-page .nfc-pricing-product .pricing-media-main img {
+.nfc-pricing-page .pricing-media-main.fixed-43 img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.nfc-pricing-page .nfc-pricing-product .pricing-media-thumbs {
+/* thumbnails row (tighter) */
+.nfc-pricing-page .pricing-media-thumbs.tight {
   display: grid;
   grid-auto-flow: column;
-  gap: 10px;
+  gap: 8px;
+  /* closer to main image */
   justify-content: start;
 }
 
-.nfc-pricing-page .nfc-pricing-product .pricing-media-thumb {
+.nfc-pricing-page .pricing-media-thumb {
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid rgba(0, 0, 0, .08);
@@ -289,23 +206,18 @@
   padding: 0;
 }
 
-.nfc-pricing-page .nfc-pricing-product .pricing-media-thumb img {
+.nfc-pricing-page .pricing-media-thumb img {
   width: 72px;
   height: 48px;
+  /* same across all images */
   object-fit: cover;
   display: block;
 }
 
-/* Use an inner outline so it never bleeds past the card radius */
-.nfc-pricing-page .nfc-pricing-product .pricing-media-thumb.is-active {
-  outline: 2px solid #0a66ff;
+/* inner outline so it never gets clipped */
+.nfc-pricing-page .pricing-media-thumb.is-active {
+  outline: 2px solid #0081FF;
   outline-offset: -2px;
-  box-shadow: none;
   border-color: rgba(0, 0, 0, .08);
-}
-
-/* Footer/CTA spacing */
-.nfc-pricing-page .nfc-pricing-subscription .pricing-bottom,
-.nfc-pricing-page .nfc-pricing-product .pricing-bottom {
-  margin-top: 14px;
+  box-shadow: none;
 }
