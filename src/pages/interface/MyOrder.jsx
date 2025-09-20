@@ -113,6 +113,16 @@ function SubscriptionProgress({ trialEnd, currentPeriodEnd, amountTotal, currenc
     );
 }
 
+/* --------- New: simple label-over-value block --------- */
+function KV({ label, children }) {
+    return (
+        <div className="order-kv">
+            <div className="kv-label">{label}</div>
+            <div className="kv-value">{children}</div>
+        </div>
+    );
+}
+
 export default function MyOrders() {
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -192,7 +202,6 @@ export default function MyOrders() {
     async function reorderNow(orderId) {
         setActionMsg("");
         try {
-            // Adjust endpoint/payload to match your backend.
             const res = await api.post("/reorder", { orderId });
             const url = res?.data?.url;
             if (url) {
@@ -222,11 +231,11 @@ export default function MyOrders() {
 
         return (
             <>
-                <div className="order-line"><strong>Status:</strong> {o.status}</div>
+                <KV label="Status">{o.status}</KV>
                 {o.status === "canceled" && cancelledAt && (
-                    <div className="order-line"><strong>Canceled on:</strong> {formatDateTimeNoSeconds(cancelledAt)}</div>
+                    <KV label="Canceled on">{formatDateTimeNoSeconds(cancelledAt)}</KV>
                 )}
-                <div className="order-line order-progress-wrap">
+                <div className="order-progress-wrap">
                     <SubscriptionProgress
                         trialEnd={o.trialEnd}
                         currentPeriodEnd={o.currentPeriodEnd}
@@ -246,10 +255,14 @@ export default function MyOrders() {
 
         return (
             <>
-                <div className="order-line"><strong>Quantity:</strong> {qty}</div>
-                <div className="order-line"><strong>Amount:</strong> {amount}</div>
-                <div className="order-line"><strong>Estimated delivery:</strong> {delivery}</div>
-                <div className="order-line order-progress-wrap"><CardProgress status={fulfillRaw} /></div>
+                <KV label="Quantity">{qty}</KV>
+                <KV label="Amount">{amount}</KV>
+                <KV label="Estimated delivery">{delivery}</KV>
+                <KV label="Delivery name">{o.deliveryName || "—"}</KV>
+                <KV label="Delivery address">{o.deliveryAddress || "—"}</KV>
+                <div className="order-progress-wrap">
+                    <CardProgress status={fulfillRaw} />
+                </div>
             </>
         );
     }
@@ -308,24 +321,6 @@ export default function MyOrders() {
 
                                             <div className="order-fields">
                                                 {isSub ? renderSubscription(o) : renderCard(o)}
-                                                {!isSub && (
-                                                    <>
-                                                        <div className="order-line order-info">
-                                                            <span className="dot" aria-hidden="true" />
-                                                            <div className="reason">
-                                                                <div className="desktop-body-s"><strong>Delivery name:</strong></div>
-                                                                <div className="desktop-body-xs">{o.deliveryName || "—"}</div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="order-line order-info">
-                                                            <span className="dot" aria-hidden="true" />
-                                                            <div className="reason">
-                                                                <div className="desktop-body-s"><strong>Delivery address:</strong></div>
-                                                                <div className="desktop-body-xs">{o.deliveryAddress || "—"}</div>
-                                                            </div>
-                                                        </div>
-                                                    </>
-                                                )}
                                             </div>
 
                                             <div className="order-actions">

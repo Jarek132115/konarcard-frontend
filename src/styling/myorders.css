@@ -180,16 +180,41 @@
     font-size: 14px;
 }
 
-/* Fields */
+/* ---------- Key/Value blocks (label on top, value underneath) ---------- */
+.order-kv {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0;
+    border: 0;
+}
+
+.order-kv .kv-label {
+    font-weight: 800;
+    /* bold black heading */
+    color: #000;
+    font-size: 14px;
+    line-height: 1.1;
+}
+
+.order-kv .kv-value {
+    font-size: 13px;
+    color: #6b7280;
+    /* same muted grey used elsewhere */
+    line-height: 1.3;
+    word-break: break-word;
+}
+
+/* Fields container: 2 columns on desktop, 1 column on mobile */
 .order-fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px 18px;
+    gap: 12px 18px;
     align-items: start;
     margin-bottom: var(--card-cta-gap);
-    /* space before CTAs */
 }
 
+/* Progress rows span full width */
 .order-progress-wrap {
     grid-column: 1 / -1;
 }
@@ -219,37 +244,9 @@
     color: #6b7280;
 }
 
-/* Info blocks */
-.order-info {
-    display: grid;
-    grid-template-columns: 12px 1fr;
-    gap: 10px 12px;
-    align-items: start;
-    padding: 10px 12px;
-    border: 1px solid rgba(0, 0, 0, .06);
-    border-radius: 12px;
-    background: #f9f9f9;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
-}
-
-.order-info .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #0081FF;
-    margin-top: 7px;
-}
-
-.order-info .reason {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
 /* CTA row: pinned to bottom with spacing above */
 .order-actions {
     margin-top: auto;
-    /* pin row to bottom */
     padding-top: var(--card-cta-gap);
     display: flex;
     gap: 10px;
@@ -270,8 +267,6 @@
 }
 
 /* ---------- Responsive rules *for this page only* ---------- */
-
-/* Under 900px: blue button = fit-content (no full-width) */
 @media (max-width:900px) {
     .order-card {
         grid-template-columns: 1fr;
@@ -285,6 +280,7 @@
 
     .order-fields {
         grid-template-columns: 1fr;
+        /* 1 per row on mobile */
     }
 
     .order-status-badge {
@@ -295,15 +291,12 @@
         max-width: 100%;
         white-space: nowrap;
         place-self: start;
-        /* prevent grid stretch */
     }
 
-    /* keep CTAs inline with gap; don't stretch */
     .order-actions {
         justify-content: flex-start;
     }
 
-    /* key: fit-content for blue button */
     .view-details.desktop-button.cta-blue-button {
         width: auto !important;
         max-width: 100%;
