@@ -1,3 +1,4 @@
+// src/components/AuthContext.jsx
 import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import api from '../services/api';
 
@@ -9,12 +10,15 @@ const USER_KEY = 'authUser';
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [initialized, setInitialized] = useState(false);  // app bootstrapped
-    const [hydrating, setHydrating] = useState(false);  // in-flight /profile fetch
+    const [hydrating, setHydrating] = useState(false);      // in-flight /profile fetch
     const bootstrappedRef = useRef(false);
 
     const attachAuthHeader = (token) => {
-        if (token) api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        else delete api.defaults.headers.common.Authorization;
+        if (token) {
+            api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        } else {
+            delete api.defaults.headers.common.Authorization;
+        }
     };
 
     const fetchUser = async () => {
@@ -32,15 +36,18 @@ export const AuthProvider = ({ children }) => {
             const res = await api.get('/profile');
             const fresh = res?.data?.data || null;
             setUser(fresh);
+
             try {
-                fresh
-                    ? localStorage.setItem(USER_KEY, JSON.stringify(fresh))
-                    : localStorage.removeItem(USER_KEY);
+                if (fresh) {
+                    localStorage.setItem(USER_KEY, JSON.stringify(fresh));
+                } else {
+                    localStorage.removeItem(USER_KEY);
+                }
             } catch { }
             return fresh;
         } catch (err) {
             const status = err?.response?.status;
-            if (status === 401 || 403 === status) {
+            if (status === 401 || status === 403) {
                 try {
                     localStorage.removeItem(TOKEN_KEY);
                     localStorage.removeItem(USER_KEY);
@@ -60,16 +67,18 @@ export const AuthProvider = ({ children }) => {
 
         const token = localStorage.getItem(TOKEN_KEY);
         let cached = null;
-        try { cached = JSON.parse(localStorage.getItem(USER_KEY) || 'null'); } catch { }
+        try {
+            cached = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+        } catch { }
 
         if (token) attachAuthHeader(token);
         if (cached) setUser(cached);
 
-        // signal app is ready to render immediately with whatever we have
+        // app ready to render immediately
         setInitialized(true);
 
-        // do a background revalidation if we have a token
-        if (token) { void fetchUser(); }
+        // background refresh
+        if (token) void fetchUser();
     }, []);
 
     const login = (token, userData) => {
@@ -91,14 +100,17 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
-    const value = useMemo(() => ({
-        user,
-        login,
-        logout,
-        fetchUser,
-        initialized,
-        hydrating,
-    }), [user, initialized, hydrating]);
+    const value = useMemo(
+        () => ({
+            user,
+            login,
+            logout,
+            fetchUser,
+            initialized,
+            hydrating,
+        }),
+        [user, initialized, hydrating]
+    );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
