@@ -1,7 +1,7 @@
 /* ===== My Orders page ===== */
 :root {
     --card-cta-gap: 12px;
-    /* space between content and CTA row */
+    /* default space between content and CTA row */
 }
 
 .orders-container {
@@ -155,7 +155,6 @@
     flex-direction: column;
     min-height: 250px;
     gap: 10px;
-    /* breathing room */
 }
 
 .order-meta {
@@ -200,7 +199,7 @@
 .order-kv .kv-value {
     font-size: 13px;
     color: #6b7280;
-    /* same muted grey used elsewhere */
+    /* muted grey */
     line-height: 1.3;
     word-break: break-word;
 }
@@ -266,6 +265,14 @@
     margin-right: auto;
 }
 
+/* Disabled state for "Cancelled" button */
+.cta-black-button.disabled,
+.cta-black-button[disabled] {
+    opacity: .5;
+    pointer-events: none;
+    cursor: default;
+}
+
 /* ---------- Responsive rules *for this page only* ---------- */
 @media (max-width:900px) {
     .order-card {
@@ -280,8 +287,9 @@
 
     .order-fields {
         grid-template-columns: 1fr;
-        /* 1 per row on mobile */
     }
+
+    /* 1 per row on mobile */
 
     .order-status-badge {
         position: static;
@@ -302,6 +310,16 @@
         max-width: 100%;
         margin-left: 0;
         margin-right: 0;
+    }
+
+    /* EXACT mobile spacing for subscription cards:
+       20px between last text block and CTA row (active & canceled) */
+    .order-card.is-subscription .order-fields {
+        margin-bottom: 20px;
+    }
+
+    .order-card.is-subscription .order-actions {
+        padding-top: 0;
     }
 }
 
