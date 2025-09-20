@@ -1,339 +1,205 @@
-/* New wrapper for the entire page content to enable centering */
-.profile-page-wrapper {
+/* =========================
+   ACCOUNT PAGE – matches white card look used elsewhere
+   ========================= */
+.account-page {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    /* Center horizontally */
     justify-content: center;
-    padding: 0px;
-    gap: 40px;
-    box-sizing: border-box;
+    padding: 0;
 }
 
-@media (max-width: 1000px) {
-    .profile-page-wrapper {
-        flex-direction: column;
-        margin-bottom: 40px;
-    }
-}
-
-/* The actual card box that holds the form */
-.profile-settings-card {
-    background: #ffffff;
-    padding: 24px;
-    border-radius: 16px;
+.account-card {
+    width: 100%;
+    max-width: 720px;
+    background: #fff;
     border: 1px solid rgba(0, 0, 0, .08);
-    max-width: 550px;
-    width: 100%;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+    padding: 22px;
 }
 
-/* Styling for individual input blocks */
-.profile-setting-block {
-    width: 100%;
+.account-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.account-divider {
+    height: 1px;
+    background: rgba(0, 0, 0, .08);
+    margin: 12px 0 18px;
+    opacity: 1;
+}
+
+/* fields */
+.account-field {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    /* Space between label and input */
+    margin-bottom: 14px;
 }
 
-/* Styling for labels */
-.profile-label {
-    color: #000;
-    font-size: 14px;
-    font-weight: 500;
-    display: block;
-}
-
-/* Styling for editable text inputs */
-.profile-input-field {
+.input {
     width: 100%;
-    padding: 12px 15px;
-    border: none;
-    border-radius: 6px;
-    background-color: #f8f8f8;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, .08);
+    background: #f8f8f8;
     color: #000;
     font-size: 16px;
     outline: none;
-    box-sizing: border-box;
+    transition: box-shadow .15s ease, border-color .15s ease, background .15s ease;
 }
 
-.profile-input-field::placeholder {
-    color: #888;
+.input.edit {
+    background: #fff;
 }
 
-.profile-input-field:focus {
-    box-shadow: 0 0 0 2px #007bff;
+.input.edit:focus {
+    box-shadow: 0 0 0 2px rgba(10, 102, 255, .25);
+    border-color: #0a66ff;
 }
 
-/* Styling for non-editable display fields (email, masked password) */
-.profile-display-field {
-    background-color: #e9ecef;
-    /* Slightly darker background for non-editable fields */
+.input.display {
+    background: #eef1f4;
     color: #555;
-    /* Greyer text to indicate non-editable */
     cursor: default;
-    /* Indicate it's not clickable/editable */
 }
 
-/* Styling for the URL display group */
-.profile-url-display-group {
+/* URL group */
+.field-with-lock {
+    position: relative;
     display: flex;
     align-items: center;
-    width: 100%;
-    background-color: #e9ecef;
-    /* Match display field background */
-    border-radius: 6px;
-    padding: 12px 15px;
-    /* Match input padding */
-    box-sizing: border-box;
+    gap: 8px;
+    background: #eef1f4;
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 8px;
+    padding: 0 14px;
 }
 
-.profile-url-prefix {
+.field-with-lock .url-input,
+.field-with-lock .input {
+    border: 0;
+    background: transparent;
+    padding-left: 0;
+}
+
+.url-wrap {
+    padding-left: 12px;
+}
+
+.url-prefix {
     color: #555;
-    /* Match display field text color */
     white-space: nowrap;
-    /* Prevent wrapping */
     margin-right: 4px;
-    /* Space between prefix and username */
-    font-size: 16px;
-    /* Ensure font size consistency */
 }
 
-.profile-url-display-group .profile-input-field {
-    background-color: transparent;
-    /* Make input background transparent within the group */
-    border: none;
-    /* Remove border from input within the group */
-    padding: 0;
-    /* Remove internal padding from input within the group */
-    color: #000;
-    /* Ensure username text is black */
-    font-weight: 500;
-    /* Make username slightly bolder */
-}
-
-/* New: Wrapper for password display input and inline button */
-.profile-password-display-group {
+/* password row with action button */
+.password-wrap {
+    position: relative;
     display: flex;
     align-items: center;
-    width: 100%;
-    background-color: #e9ecef;
-    /* Match display field background */
-    border-radius: 6px;
-    padding: 0 0 0 15px;
-    /* Padding only on left, button handles right */
-    box-sizing: border-box;
+    gap: 0;
+    background: #eef1f4;
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 8px;
+    padding-left: 14px;
 }
 
-.profile-password-display-group .profile-input-field {
-    flex-grow: 1;
-    /* Input takes all available space */
-    background-color: transparent;
-    /* Transparent background */
-    border: none;
-    /* No border */
-    padding: 12px 0;
-    /* Vertical padding, no horizontal */
-    color: #555;
-    /* Match display field text color */
-    cursor: default;
+.password-wrap .input {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    padding-left: 0;
 }
 
-/* New: Inline Reset Password button */
-.profile-reset-password-inline-btn {
-    flex-shrink: 0;
-    /* Prevent button from shrinking below its content */
-    padding: 6px;
-    /* Match input padding for height */
-    border-radius: 0 6px 6px 0;
-    /* Rounded only on right side */
-    font-size: 14px;
-    /* Adjust font size for button */
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    background-color: black;
-    /* Default black button style */
-    color: white;
-    border: none;
+.reset-btn {
+    border-radius: 0 8px 8px 0;
     height: 100%;
-    /* Make button fill height of its parent group */
-    display: flex;
-    /* Use flex to center text */
-    align-items: center;
-    justify-content: center;
+    padding: 0 16px;
+    border-left: 1px solid rgba(0, 0, 0, .08);
 }
 
-.profile-reset-password-inline-btn:hover {
-    background-color: #333;
-    /* Darker black on hover */
+/* Lock icon */
+.field-lock {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8a8f98;
+    pointer-events: none;
 }
 
+.password-wrap.with-action .field-lock {
+    right: 70px;
+    /* space for the Reset button */
+}
 
-/* Action buttons group (Save and Delete) */
-.profile-action-buttons-group {
+/* Actions */
+.account-actions {
     display: flex;
     flex-direction: column;
-    /* ALWAYS COLUMN (STACKED) */
     gap: 10px;
-    /* Space between buttons */
-    width: 100%;
     margin-top: 10px;
-    /* Space above buttons */
+    /* keeps ~20px to CTAs when combined with previous margin */
 }
 
-/* Removed specific styling from profile-action-button to let black-button/blue-button define it */
-.profile-action-button {
-    width: 100%;
-    /* Full width for buttons */
-    cursor: pointer;
-    /* No flex-grow, flex-basis as they are not relevant in column layout for equal width */
+/* Pills to match other pages */
+.pill-blue-solid {
+    background: #0a66ff;
+    color: #fff;
+    border: 1px solid #0a66ff;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
 }
 
+/* Responsive */
+@media (max-width: 600px) {
+    .account-card {
+        padding: 18px;
+    }
 
-/* Dark mode adjustments */
-body.dark-mode .profile-settings-card {
+    .reset-btn {
+        padding: 0 14px;
+    }
+
+    .password-wrap.with-action .field-lock {
+        right: 66px;
+    }
+}
+
+/* Dark mode tweaks (optional if you keep dark mode elsewhere) */
+body.dark-mode .account-card {
     background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
     color: #e0e0e0;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     border-color: #3a3a3a;
 }
 
-body.dark-mode .profile-label {
-    color: #f0f0f0;
+body.dark-mode .account-divider {
+    background: #3a3a3a;
 }
 
-body.dark-mode .profile-input-field {
-    background-color: #3a3a3a;
+body.dark-mode .input.edit {
+    background: #2c2c2c;
     color: #eee;
-    border-color: #555;
+    border-color: #444;
 }
 
-body.dark-mode .profile-input-field::placeholder {
-    color: #aaa;
+body.dark-mode .input.display,
+body.dark-mode .field-with-lock,
+body.dark-mode .password-wrap {
+    background: #3a3a3a;
+    border-color: #444;
 }
 
-body.dark-mode .profile-input-field:focus {
-    box-shadow: 0 0 0 2px #0056b3;
-}
-
-body.dark-mode .profile-display-field {
-    background-color: #444;
-    /* Darker background for non-editable in dark mode */
-    color: #bbb;
-    /* Lighter text for non-editable in dark mode */
-}
-
-body.dark-mode .profile-url-display-group {
-    background-color: #444;
-    /* Match display field background */
-}
-
-body.dark-mode .profile-url-prefix {
+body.dark-mode .url-prefix {
     color: #bbb;
 }
 
-body.dark-mode .profile-url-display-group .profile-input-field {
-    color: #eee;
-    /* Ensure username text is light in dark mode */
-}
-
-/* Dark mode for new inline reset button */
-body.dark-mode .profile-password-display-group {
-    background-color: #444;
-    /* Match display field background */
-}
-
-body.dark-mode .profile-password-display-group .profile-input-field {
-    color: #bbb;
-    /* Lighter text for non-editable in dark mode */
-}
-
-body.dark-mode .profile-reset-password-inline-btn {
-    background-color: #555;
-    /* Darker background for button in dark mode */
-    color: #eee;
-}
-
-body.dark-mode .profile-reset-password-inline-btn:hover {
-    background-color: #666;
-}
-
-/* Responsive adjustments for screens <= 1000px (Desktop breakpoint) */
-/* This media query covers both tablet and mobile as a general "smaller screen" rule */
-@media (max-width: 1000px) {
-
-    /* Fix for Reset button size on Tablet and Mobile */
-    .profile-reset-password-inline-btn {
-        padding: 4px;
-        font-size: 13px;
-        min-width: 60px;
-        /* Still provide a minimum */
-        width: auto;
-        /* Allow it to shrink to fit text + padding */
-        flex-grow: 0;
-        /* Prevent it from taking extra space */
-        flex-shrink: 0;
-        /* Ensure it doesn't shrink unnecessarily */
-        box-sizing: border-box;
-        /* Important for consistent sizing */
-        white-space: nowrap;
-        /* Prevent text wrapping */
-    }
-
-    /* Action buttons group (Save and Delete) - No change needed here, it inherits default column layout */
-}
-
-
-/* Responsive adjustments for smaller screens (mobile breakpoint <= 600px) */
-@media (max-width: 600px) {
-    .profile-page-wrapper {
-        padding: 0px;
-            justify-content: normal;
-    }
-
-    .profile-settings-card {
-        padding: 20px;
-        border-radius: 12px;
-        gap: 15px;
-    }
-
-    .profile-setting-block {
-        gap: 6px;
-    }
-
-    .profile-input-field {
-        padding: 10px 12px;
-        font-size: 15px;
-    }
-
-    .profile-label {
-        font-size: 13px;
-    }
-
-    .profile-url-display-group {
-        padding: 10px 12px;
-    }
-
-    .profile-url-prefix {
-        font-size: 15px;
-    }
-
-    /* Mobile adjustments for inline reset button */
-    .profile-password-display-group {
-        padding: 0 0 0 12px;
-    }
-
-    .profile-password-display-group .profile-input-field {
-        padding: 10px 0;
-    }
-
-    /* The .profile-reset-password-inline-btn rules from @media(max-width: 1000px) still apply here */
-
-    /* The .profile-action-buttons-group already defaults to column, so no override here. */
+body.dark-mode .field-lock {
+    color: #a1a6ad;
 }
