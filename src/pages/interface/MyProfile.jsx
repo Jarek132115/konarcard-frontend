@@ -12,32 +12,12 @@ import { toast } from "react-hot-toast";
 import { AuthContext } from "../../components/AuthContext";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 
-/* inline lock icon so we can position/style it easily */
-function LockIcon({ className = "lock-icon" }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      width="16"
-      height="16"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 1a5 5 0 00-5 5v3H6a3 3 0 00-3 3v6a3 3 0 003 3h12a3 3 0 003-3v-6a3 3 0 00-3-3h-1V6a5 5 0 00-5-5zm-3 8V6a3 3 0 116 0v3H9zm3 4a2 2 0 110 4 2 2 0 010-4z" />
-    </svg>
-  );
-}
-
 export default function MyProfile() {
-  /* =========================
-     STORES / HOOKS / CONTEXT
-     ========================= */
   const { state, updateState, resetState } = useBusinessCardStore();
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
   const location = useLocation();
-
-  const { user: authUser, fetchUser, setUser } = useContext(AuthContext);
+  const { user: authUser, fetchUser } = useContext(AuthContext);
 
   const userId = authUser?._id;
   const userEmail = authUser?.email;
@@ -47,51 +27,60 @@ export default function MyProfile() {
 
   const { data: businessCard } = useFetchBusinessCard(userId);
 
-  /* =========================
-     LOCAL STATE
-     ========================= */
+  /* Local State */
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(true);
 
-  const [updatedName, setUpdatedName] = useState("");
-  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
-  const [deleteCountdown, setDeleteCountdown] = useState(3);
+  const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
+  const [verificationCodeInput, setVerificationCodeInput] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
 
-  useEffect(() => {
-    if (authUser) setUpdatedName(authUser.name || "");
-  }, [authUser]);
+  const [coverPhotoFile, setCoverPhotoFile] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [workImageFiles, setWorkImageFiles] = useState([]);
+  const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
+  const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
 
+  /* Section toggles */
+  const [showMainSection, setShowMainSection] = useState(true);
+  const [showAboutMeSection, setShowAboutMeSection] = useState(true);
+  const [showWorkSection, setShowWorkSection] = useState(true);
+  const [showServicesSection, setShowServicesSection] = useState(true);
+  const [showReviewsSection, setShowReviewsSection] = useState(true);
+  const [showContactSection, setShowContactSection] = useState(true);
+
+  const [servicesDisplayMode, setServicesDisplayMode] = useState("list");
+  const [reviewsDisplayMode, setReviewsDisplayMode] = useState("list");
+  const [aboutMeLayout, setAboutMeLayout] = useState("side-by-side");
+
+  /* Refs */
+  const fileInputRef = useRef(null);
+  const avatarInputRef = useRef(null);
+  const workImageInputRef = useRef(null);
+  const previewWorkCarouselRef = useRef(null);
+  const previewServicesCarouselRef = useRef(null);
+  const previewReviewsCarouselRef = useRef(null);
+  const activeBlobUrlsRef = useRef([]);
+
+  /* Trial */
+  const isTrialActive =
+    !!(authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date());
+  const hasTrialEnded =
+    !!(authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date());
+
+  /* Effects */
   useEffect(() => {
     const onResize = () => {
-      const m = window.innerWidth <= 1000;
-      const sm = window.innerWidth <= 600;
-      setIsMobile(m);
-      setIsSmallMobile(sm);
-      if (!m && sidebarOpen) setSidebarOpen(false);
+      setIsMobile(window.innerWidth <= 1000);
+      setIsSmallMobile(window.innerWidth <= 600);
+      if (!window.innerWidth <= 1000 && sidebarOpen) setSidebarOpen(false);
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, [sidebarOpen]);
-
-  useEffect(() => {
-    if (sidebarOpen && isMobile) document.body.classList.add("body-no-scroll");
-    else document.body.classList.remove("body-no-scroll");
-  }, [sidebarOpen, isMobile]);
-
-  useEffect(() => {
-    if (isConfirmingDelete && deleteCountdown > 0) {
-      const t = setTimeout(() => setDeleteCountdown((n) => n - 1), 1000);
-      return () => clearTimeout(t);
-    }
-  }, [isConfirmingDelete, deleteCountdown]);
-  /* =========================
-     VERIFICATION / TRIAL
-     ========================= */
-  const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
-  const [verificationCodeInput, setVerificationCodeInput] = useState("");
-  const [resendCooldown, setResendCooldown] = useState(0);
 
   useEffect(() => {
     if (!authUser) return;
@@ -103,45 +92,6 @@ export default function MyProfile() {
     const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
     return () => clearTimeout(t);
   }, [resendCooldown]);
-
-  const isTrialActive =
-    !!(authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date());
-  const hasTrialEnded =
-    !!(authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date());
-
-  /* =========================
-     IMAGE REFS & PREVIEW REFS
-     ========================= */
-  const fileInputRef = useRef(null);
-  const avatarInputRef = useRef(null);
-  const workImageInputRef = useRef(null);
-  const previewWorkCarouselRef = useRef(null);
-  const previewServicesCarouselRef = useRef(null);
-  const previewReviewsCarouselRef = useRef(null);
-  const activeBlobUrlsRef = useRef([]);
-
-  /* =========================
-     EDITOR SECTION TOGGLES
-     ========================= */
-  const [previewOpen, setPreviewOpen] = useState(true);
-  const [showMainSection, setShowMainSection] = useState(true);
-  const [showAboutMeSection, setShowAboutMeSection] = useState(true);
-  const [showWorkSection, setShowWorkSection] = useState(true);
-  const [showServicesSection, setShowServicesSection] = useState(true);
-  const [showReviewsSection, setShowReviewsSection] = useState(true);
-  const [showContactSection, setShowContactSection] = useState(true);
-
-  /* display modes */
-  const [servicesDisplayMode, setServicesDisplayMode] = useState("list");
-  const [reviewsDisplayMode, setReviewsDisplayMode] = useState("list");
-  const [aboutMeLayout, setAboutMeLayout] = useState("side-by-side");
-
-  /* upload state */
-  const [coverPhotoFile, setCoverPhotoFile] = useState(null);
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [workImageFiles, setWorkImageFiles] = useState([]);
-  const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
-  const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
 
   useEffect(() => {
     if (!businessCard) return;
@@ -163,34 +113,62 @@ export default function MyProfile() {
       phone_number: businessCard.phone_number || "",
       workDisplayMode: businessCard.work_display_mode || "list",
     });
-
     setServicesDisplayMode(businessCard.services_display_mode || "list");
     setReviewsDisplayMode(businessCard.reviews_display_mode || "list");
     setAboutMeLayout(businessCard.about_me_layout || "side-by-side");
-
     setShowMainSection(businessCard.show_main_section !== false);
     setShowAboutMeSection(businessCard.show_about_me_section !== false);
     setShowWorkSection(businessCard.show_work_section !== false);
     setShowServicesSection(businessCard.show_services_section !== false);
     setShowReviewsSection(businessCard.show_reviews_section !== false);
     setShowContactSection(businessCard.show_contact_section !== false);
-
-    setCoverPhotoFile(null);
-    setAvatarFile(null);
-    setWorkImageFiles([]);
-    setCoverPhotoRemoved(false);
-    setIsAvatarRemoved(false);
   }, [businessCard, updateState]);
 
   useEffect(() => {
     return () => {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
-      activeBlobUrlsRef.current = [];
     };
   }, []);
 
+  /* Preview Computed */
+  const hasSavedData = !!businessCard;
+  const shouldShowPlaceholders = !hasSavedData;
+  const previewFullName =
+    state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
+  const previewJobTitle =
+    state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : "");
+  const previewBio = state.bio || (shouldShowPlaceholders ? previewPlaceholders.bio : "");
+  const previewEmail =
+    state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : "");
+  const previewPhone =
+    state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : "");
+  const previewCoverPhotoSrc = state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
+  const previewAvatarSrc = state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
+  const previewWorkImages =
+    state.workImages && state.workImages.length > 0
+      ? state.workImages
+      : shouldShowPlaceholders
+        ? previewPlaceholders.workImages
+        : [];
+  const servicesForPreview =
+    state.services && state.services.length > 0
+      ? state.services
+      : shouldShowPlaceholders
+        ? previewPlaceholders.services
+        : [];
+  const reviewsForPreview =
+    state.reviews && state.reviews.length > 0
+      ? state.reviews
+      : shouldShowPlaceholders
+        ? previewPlaceholders.reviews
+        : [];
+  const hasExchangeContact =
+    (state.contact_email && state.contact_email.trim()) ||
+    (state.phone_number && state.phone_number.trim());
+  const isDarkMode = state.pageTheme === "dark";
+  const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
   /* =========================
-     HELPERS
+     HELPERS / ACTIONS
      ========================= */
   const createAndTrackBlobUrl = (file) => {
     const url = URL.createObjectURL(file);
@@ -222,7 +200,6 @@ export default function MyProfile() {
     const isLocalBlob = state.coverPhoto && state.coverPhoto.startsWith("blob:");
     if (!isLocalBlob && state.coverPhoto) setCoverPhotoRemoved(true);
     else setCoverPhotoRemoved(false);
-
     if (isLocalBlob) URL.revokeObjectURL(state.coverPhoto);
     updateState({ coverPhoto: null });
     setCoverPhotoFile(null);
@@ -232,7 +209,6 @@ export default function MyProfile() {
     const isLocalBlob = state.avatar && state.avatar.startsWith("blob:");
     if (!isLocalBlob && state.avatar) setIsAvatarRemoved(true);
     else setIsAvatarRemoved(false);
-
     if (isLocalBlob) URL.revokeObjectURL(state.avatar);
     updateState({ avatar: null });
     setAvatarFile(null);
@@ -242,7 +218,6 @@ export default function MyProfile() {
     e.preventDefault();
     const files = Array.from(e.target.files || []).filter((f) => f && f.type.startsWith("image/"));
     if (!files.length) return;
-
     const previewItems = files.map((file) => ({ file, preview: createAndTrackBlobUrl(file) }));
     updateState({ workImages: [...(state.workImages || []), ...previewItems] });
     setWorkImageFiles((prev) => [...prev, ...files]);
@@ -432,12 +407,6 @@ export default function MyProfile() {
     }
   };
 
-  const handleShareCard = () => {
-    if (!isVerified) return toast.error("Please verify your email to share your card.");
-    setShowShareModal(true);
-  };
-  const handleCloseShareModal = () => setShowShareModal(false);
-
   const handleResetPage = async () => {
     if (
       !window.confirm(
@@ -457,7 +426,6 @@ export default function MyProfile() {
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
 
-      // clear store
       updateState({
         businessName: "",
         pageTheme: "light",
@@ -549,64 +517,7 @@ export default function MyProfile() {
   };
 
   /* =========================
-     PREVIEW COMPUTED
-     ========================= */
-  const hasSavedData = !!businessCard;
-  const shouldShowPlaceholders = !hasSavedData;
-  const previewFullName =
-    state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
-  const previewJobTitle =
-    state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : "");
-  const previewBio = state.bio || (shouldShowPlaceholders ? previewPlaceholders.bio : "");
-  const previewEmail =
-    state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : "");
-  const previewPhone =
-    state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : "");
-  const previewCoverPhotoSrc = state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
-  const previewAvatarSrc = state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
-  const previewWorkImages =
-    state.workImages && state.workImages.length > 0
-      ? state.workImages
-      : shouldShowPlaceholders
-        ? previewPlaceholders.workImages
-        : [];
-
-  const servicesForPreview =
-    state.services && state.services.length > 0
-      ? state.services
-      : shouldShowPlaceholders
-        ? previewPlaceholders.services
-        : [];
-
-  const reviewsForPreview =
-    state.reviews && state.reviews.length > 0
-      ? state.reviews
-      : shouldShowPlaceholders
-        ? previewPlaceholders.reviews
-        : [];
-
-  const hasExchangeContact =
-    (state.contact_email && state.contact_email.trim()) ||
-    (state.phone_number && state.phone_number.trim());
-
-  const currentQrCodeUrl = businessCard?.qrCodeUrl || "";
-  const getEditorImageSrc = (img, ph) => img || (shouldShowPlaceholders ? ph : "");
-  const showAddImageText = (img) => !img;
-  const isDarkMode = state.pageTheme === "dark";
-
-  /* collapsible style for mobile preview holder */
-  const collapsibleStyle = {
-    transition: "all .3s ease",
-    maxHeight: previewOpen ? "none" : 0,
-    opacity: previewOpen ? 1 : 0,
-    overflow: "hidden",
-    transform: previewOpen ? "scale(1)" : "scale(.98)",
-  };
-
-  const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
-
-  /* =========================
-     RENDER
+     RENDER — HEADER + PREVIEW
      ========================= */
   return (
     <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
@@ -627,11 +538,10 @@ export default function MyProfile() {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <main className="main-content-container">
-        <PageHeader
-          onShareCard={handleShareCard}
-          isMobile={isMobile}
-          isSmallMobile={isSmallMobile}
-        />
+        <PageHeader onShareCard={() => {
+          if (!isVerified) return toast.error("Please verify your email to share your card.");
+          setShowShareModal(true);
+        }} isMobile={isMobile} isSmallMobile={isSmallMobile} />
 
         <div className="myprofile-main-content">
           {!authUser && (
@@ -645,9 +555,10 @@ export default function MyProfile() {
             <>
               {showVerificationPrompt && (
                 <div className="content-card-box verification-prompt">
-                  <p><span role="img" aria-label="warning">⚠️</span> Your email is not verified!</p>
+                  <p>⚠️ Your email is not verified!</p>
                   <p>
-                    Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to your business card.
+                    Please verify your email address (<strong>{userEmail}</strong>) to unlock all features,
+                    including saving changes to your business card.
                   </p>
                   <form onSubmit={handleVerifyCode}>
                     <input
@@ -680,22 +591,18 @@ export default function MyProfile() {
               {hasTrialEnded && !isSubscribed && (
                 <div className="trial-ended-banner">
                   <p>
-                    Your free trial has ended. <Link to="/subscription">Subscribe now</Link> to prevent your profile from being deleted.
+                    Your free trial has ended. <Link to="/subscription">Subscribe now</Link> to prevent your
+                    profile from being deleted.
                   </p>
                 </div>
               )}
 
               <div className="myprofile-flex-container">
-                {/* Phone preview column */}
-                <div className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`}>
-                  {/* ===== MOBILE: pill (top) + preview (center) + holder (bottom) ===== */}
-                  {isMobile ? (
-                    <div
-                      className={`mp-mobile-controls desktop-h6 ${previewOpen ? "is-open" : "is-collapsed"}`}
-                      role="tablist"
-                      aria-label="Preview controls"
-                    >
-                      {/* Top half of the pill */}
+                {/* ===== PREVIEW COLUMN (full-width on mobile, NO inner scrolling) ===== */}
+                <div className="myprofile-content">
+                  {/* Always-visible control ABOVE the preview on mobile */}
+                  {isMobile && (
+                    <div className={`mp-mobile-controls ${previewOpen ? "is-open" : "is-collapsed"}`} role="tablist" aria-label="Preview controls">
                       <div className="mp-pill">
                         <button
                           type="button"
@@ -704,12 +611,12 @@ export default function MyProfile() {
                           className={`mp-tab ${previewOpen ? "active" : ""}`}
                           onClick={() => setPreviewOpen((s) => !s)}
                         >
-                          {previewOpen ? "Close Preview" : "Show Preview"}
+                          {previewOpen ? "Hide Preview" : "Show Preview"}
                         </button>
                         <a
                           role="tab"
                           aria-selected={!previewOpen}
-                          className={`mp-tab visit ${!previewOpen ? "active" : ""}`}
+                          className="mp-tab visit"
                           href={visitUrl}
                           target="_blank"
                           rel="noreferrer"
@@ -718,424 +625,210 @@ export default function MyProfile() {
                           Visit Page
                         </a>
                       </div>
-
-                      {/* Phone preview */}
-                      <div className="mp-preview-wrap" style={collapsibleStyle}>
-                        <div
-                          className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
-                          style={{ fontFamily: state.font || previewPlaceholders.font }}
-                        >
-                          <div className="mock-phone-scrollable-content">
-                            {/* MAIN */}
-                            {showMainSection && (
-                              <>
-                                {(shouldShowPlaceholders || !!state.coverPhoto) && (
-                                  <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
-                                )}
-                                <h2 className="mock-title">
-                                  {state.mainHeading ||
-                                    (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
-                                </h2>
-                                <p className="mock-subtitle">
-                                  {state.subHeading ||
-                                    (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
-                                </p>
-                                {(shouldShowPlaceholders || hasExchangeContact) && (
-                                  <button type="button" className="mock-button">Save My Number</button>
-                                )}
-                              </>
-                            )}
-
-                            {/* ABOUT */}
-                            {showAboutMeSection &&
-                              (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
-                                <>
-                                  <p className="mock-section-title">About me</p>
-                                  <div className={`mock-about-container ${aboutMeLayout}`}>
-                                    <div className="mock-about-content-group">
-                                      <div className="mock-about-header-group">
-                                        {previewAvatarSrc && (
-                                          <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
-                                        )}
-                                        <div>
-                                          <p className="mock-profile-name">{previewFullName}</p>
-                                          <p className="mock-profile-role">{previewJobTitle}</p>
-                                        </div>
-                                      </div>
-                                      <p className="mock-bio-text">{previewBio}</p>
-                                    </div>
-                                  </div>
-                                </>
-                              )}
-
-                            {/* WORK */}
-                            {showWorkSection && previewWorkImages.length > 0 && (
-                              <>
-                                <p className="mock-section-title">My Work</p>
-                                <div className="work-preview-row-container">
-                                  {state.workDisplayMode === "carousel" && (
-                                    <div className="carousel-nav-buttons">
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button left-arrow"
-                                        onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
-                                      >
-                                        &#9664;
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button right-arrow"
-                                        onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
-                                      >
-                                        &#9654;
-                                      </button>
-                                    </div>
-                                  )}
-                                  <div
-                                    ref={previewWorkCarouselRef}
-                                    className={`mock-work-gallery ${state.workDisplayMode}`}
-                                  >
-                                    {previewWorkImages.map((item, i) => (
-                                      <div key={i} className="mock-work-image-item-wrapper">
-                                        <img
-                                          src={item.preview || item}
-                                          alt={`work-${i}`}
-                                          className="mock-work-image-item"
-                                        />
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </>
-                            )}
-
-                            {/* SERVICES */}
-                            {showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) && (
-                              <>
-                                <p className="mock-section-title">My Services</p>
-                                <div className="work-preview-row-container">
-                                  {servicesDisplayMode === "carousel" && (
-                                    <div className="carousel-nav-buttons">
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button left-arrow"
-                                        onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}
-                                      >
-                                        &#9664;
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button right-arrow"
-                                        onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}
-                                      >
-                                        &#9654;
-                                      </button>
-                                    </div>
-                                  )}
-                                  <div
-                                    ref={previewServicesCarouselRef}
-                                    className={`mock-services-list ${servicesDisplayMode}`}
-                                  >
-                                    {servicesForPreview.map((s, i) => (
-                                      <div key={i} className="mock-service-item">
-                                        <p className="mock-service-name">{s.name}</p>
-                                        <span className="mock-service-price">{s.price}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </>
-                            )}
-
-                            {/* REVIEWS */}
-                            {showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) && (
-                              <>
-                                <p className="mock-section-title">Reviews</p>
-                                <div className="work-preview-row-container">
-                                  {reviewsDisplayMode === "carousel" && (
-                                    <div className="carousel-nav-buttons">
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button left-arrow"
-                                        onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}
-                                      >
-                                        &#9664;
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button right-arrow"
-                                        onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}
-                                      >
-                                        &#9654;
-                                      </button>
-                                    </div>
-                                  )}
-                                  <div
-                                    ref={previewReviewsCarouselRef}
-                                    className={`mock-reviews-list ${reviewsDisplayMode}`}
-                                  >
-                                    {reviewsForPreview.map((r, i) => (
-                                      <div key={i} className="mock-review-card">
-                                        <div className="mock-star-rating">
-                                          {Array(r.rating || 0)
-                                            .fill()
-                                            .map((_, idx) => (
-                                              <span key={`f-${idx}`}>★</span>
-                                            ))}
-                                          {Array(Math.max(0, 5 - (r.rating || 0)))
-                                            .fill()
-                                            .map((_, idx) => (
-                                              <span key={`e-${idx}`} className="empty-star">
-                                                ★
-                                              </span>
-                                            ))}
-                                        </div>
-                                        <p className="mock-review-text">{`"${r.text}"`}</p>
-                                        <p className="mock-reviewer-name">{r.name}</p>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </>
-                            )}
-
-                            {/* CONTACT */}
-                            {showContactSection && (previewEmail || previewPhone) && (
-                              <>
-                                <p className="mock-section-title">Contact Details</p>
-                                <div className="mock-contact-details">
-                                  <div className="mock-contact-item">
-                                    <p className="mock-contact-label">Email:</p>
-                                    <p className="mock-contact-value">{previewEmail}</p>
-                                  </div>
-                                  <div className="mock-contact-item">
-                                    <p className="mock-contact-label">Phone:</p>
-                                    <p className="mock-contact-value">{previewPhone}</p>
-                                  </div>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Bottom grey holder */}
+                      {/* keep pill bottom for subtle separation */}
                       <div className="mp-pill-bottom" aria-hidden="true" />
                     </div>
-                  ) : (
-                    // ===== DESKTOP: plain phone preview (no mobile pill UI) =====
+                  )}
+
+                  {/* PREVIEW (on mobile: hidden when toggled off; on desktop: always shown) */}
+                  {(!isMobile || previewOpen) && (
                     <div
                       className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
                       style={{ fontFamily: state.font || previewPlaceholders.font }}
                     >
                       <div className="mock-phone-scrollable-content">
-                        {/* (Desktop preview content identical to mobile; kept unchanged) */}
-                        {(showMainSection || showAboutMeSection || showWorkSection || showServicesSection || showReviewsSection || showContactSection) && (
+                        {/* MAIN */}
+                        {showMainSection && (
                           <>
-                            {/* MAIN */}
-                            {showMainSection && (
-                              <>
-                                {(shouldShowPlaceholders || !!state.coverPhoto) && (
-                                  <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
-                                )}
-                                <h2 className="mock-title">
-                                  {state.mainHeading ||
-                                    (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
-                                </h2>
-                                <p className="mock-subtitle">
-                                  {state.subHeading ||
-                                    (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
-                                </p>
-                                {(shouldShowPlaceholders || hasExchangeContact) && (
-                                  <button type="button" className="mock-button">Save My Number</button>
-                                )}
-                              </>
+                            {(shouldShowPlaceholders || !!state.coverPhoto) && (
+                              <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
                             )}
+                            <h2 className="mock-title">
+                              {state.mainHeading ||
+                                (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
+                            </h2>
+                            <p className="mock-subtitle">
+                              {state.subHeading ||
+                                (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
+                            </p>
+                            {(shouldShowPlaceholders || hasExchangeContact) && (
+                              <button type="button" className="mock-button">Save My Number</button>
+                            )}
+                          </>
+                        )}
 
-                            {/* ABOUT */}
-                            {showAboutMeSection &&
-                              (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
-                                <>
-                                  <p className="mock-section-title">About me</p>
-                                  <div className={`mock-about-container ${aboutMeLayout}`}>
-                                    <div className="mock-about-content-group">
-                                      <div className="mock-about-header-group">
-                                        {previewAvatarSrc && (
-                                          <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
-                                        )}
-                                        <div>
-                                          <p className="mock-profile-name">{previewFullName}</p>
-                                          <p className="mock-profile-role">{previewJobTitle}</p>
-                                        </div>
-                                      </div>
-                                      <p className="mock-bio-text">{previewBio}</p>
+                        {/* ABOUT */}
+                        {showAboutMeSection &&
+                          (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
+                            <>
+                              <p className="mock-section-title">About me</p>
+                              <div className={`mock-about-container ${aboutMeLayout}`}>
+                                <div className="mock-about-content-group">
+                                  <div className="mock-about-header-group">
+                                    {previewAvatarSrc && (
+                                      <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
+                                    )}
+                                    <div>
+                                      <p className="mock-profile-name">{previewFullName}</p>
+                                      <p className="mock-profile-role">{previewJobTitle}</p>
                                     </div>
                                   </div>
-                                </>
+                                  <p className="mock-bio-text">{previewBio}</p>
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                        {/* WORK */}
+                        {showWorkSection && previewWorkImages.length > 0 && (
+                          <>
+                            <p className="mock-section-title">My Work</p>
+                            <div className="work-preview-row-container">
+                              {state.workDisplayMode === "carousel" && (
+                                <div className="carousel-nav-buttons">
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
+                                  >
+                                    &#9664;
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
+                                  >
+                                    &#9654;
+                                  </button>
+                                </div>
                               )}
+                              <div
+                                ref={previewWorkCarouselRef}
+                                className={`mock-work-gallery ${state.workDisplayMode}`}
+                              >
+                                {previewWorkImages.map((item, i) => (
+                                  <div key={i} className="mock-work-image-item-wrapper">
+                                    <img
+                                      src={item.preview || item}
+                                      alt={`work-${i}`}
+                                      className="mock-work-image-item"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        )}
 
-                            {/* WORK */}
-                            {showWorkSection && previewWorkImages.length > 0 && (
-                              <>
-                                <p className="mock-section-title">My Work</p>
-                                <div className="work-preview-row-container">
-                                  {state.workDisplayMode === "carousel" && (
-                                    <div className="carousel-nav-buttons">
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button left-arrow"
-                                        onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
-                                      >
-                                        &#9664;
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button right-arrow"
-                                        onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
-                                      >
-                                        &#9654;
-                                      </button>
-                                    </div>
-                                  )}
-                                  <div
-                                    ref={previewWorkCarouselRef}
-                                    className={`mock-work-gallery ${state.workDisplayMode}`}
+                        {/* SERVICES */}
+                        {showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) && (
+                          <>
+                            <p className="mock-section-title">My Services</p>
+                            <div className="work-preview-row-container">
+                              {servicesDisplayMode === "carousel" && (
+                                <div className="carousel-nav-buttons">
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}
                                   >
-                                    {previewWorkImages.map((item, i) => (
-                                      <div key={i} className="mock-work-image-item-wrapper">
-                                        <img
-                                          src={item.preview || item}
-                                          alt={`work-${i}`}
-                                          className="mock-work-image-item"
-                                        />
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </>
-                            )}
-
-                            {/* SERVICES */}
-                            {showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) && (
-                              <>
-                                <p className="mock-section-title">My Services</p>
-                                <div className="work-preview-row-container">
-                                  {servicesDisplayMode === "carousel" && (
-                                    <div className="carousel-nav-buttons">
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button left-arrow"
-                                        onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}
-                                      >
-                                        &#9664;
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button right-arrow"
-                                        onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}
-                                      >
-                                        &#9654;
-                                      </button>
-                                    </div>
-                                  )}
-                                  <div
-                                    ref={previewServicesCarouselRef}
-                                    className={`mock-services-list ${servicesDisplayMode}`}
+                                    &#9664;
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}
                                   >
-                                    {servicesForPreview.map((s, i) => (
-                                      <div key={i} className="mock-service-item">
-                                        <p className="mock-service-name">{s.name}</p>
-                                        <span className="mock-service-price">{s.price}</span>
-                                      </div>
-                                    ))}
-                                  </div>
+                                    &#9654;
+                                  </button>
                                 </div>
-                              </>
-                            )}
+                              )}
+                              <div
+                                ref={previewServicesCarouselRef}
+                                className={`mock-services-list ${servicesDisplayMode}`}
+                              >
+                                {servicesForPreview.map((s, i) => (
+                                  <div key={i} className="mock-service-item">
+                                    <p className="mock-service-name">{s.name}</p>
+                                    <span className="mock-service-price">{s.price}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        )}
 
-                            {/* REVIEWS */}
-                            {showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) && (
-                              <>
-                                <p className="mock-section-title">Reviews</p>
-                                <div className="work-preview-row-container">
-                                  {reviewsDisplayMode === "carousel" && (
-                                    <div className="carousel-nav-buttons">
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button left-arrow"
-                                        onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}
-                                      >
-                                        &#9664;
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button right-arrow"
-                                        onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}
-                                      >
-                                        &#9654;
-                                      </button>
-                                    </div>
-                                  )}
-                                  <div
-                                    ref={previewReviewsCarouselRef}
-                                    className={`mock-reviews-list ${reviewsDisplayMode}`}
+                        {/* REVIEWS */}
+                        {showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) && (
+                          <>
+                            <p className="mock-section-title">Reviews</p>
+                            <div className="work-preview-row-container">
+                              {reviewsDisplayMode === "carousel" && (
+                                <div className="carousel-nav-buttons">
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}
                                   >
-                                    {reviewsForPreview.map((r, i) => (
-                                      <div key={i} className="mock-review-card">
-                                        <div className="mock-star-rating">
-                                          {Array(r.rating || 0)
-                                            .fill()
-                                            .map((_, idx) => (
-                                              <span key={`f-${idx}`}>★</span>
-                                            ))}
-                                          {Array(Math.max(0, 5 - (r.rating || 0)))
-                                            .fill()
-                                            .map((_, idx) => (
-                                              <span key={`e-${idx}`} className="empty-star">
-                                                ★
-                                              </span>
-                                            ))}
-                                        </div>
-                                        <p className="mock-review-text">{`"${r.text}"`}</p>
-                                        <p className="mock-reviewer-name">{r.name}</p>
-                                      </div>
-                                    ))}
-                                  </div>
+                                    &#9664;
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}
+                                  >
+                                    &#9654;
+                                  </button>
                                 </div>
-                              </>
-                            )}
+                              )}
+                              <div
+                                ref={previewReviewsCarouselRef}
+                                className={`mock-reviews-list ${reviewsDisplayMode}`}
+                              >
+                                {reviewsForPreview.map((r, i) => (
+                                  <div key={i} className="mock-review-card">
+                                    <div className="mock-star-rating">
+                                      {Array(r.rating || 0).fill().map((_, idx) => <span key={`f-${idx}`}>★</span>)}
+                                      {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, idx) => (
+                                        <span key={`e-${idx}`} className="empty-star">★</span>
+                                      ))}
+                                    </div>
+                                    <p className="mock-review-text">{`"${r.text}"`}</p>
+                                    <p className="mock-reviewer-name">{r.name}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        )}
 
-                            {/* CONTACT */}
-                            {showContactSection && (previewEmail || previewPhone) && (
-                              <>
-                                <p className="mock-section-title">Contact Details</p>
-                                <div className="mock-contact-details">
-                                  <div className="mock-contact-item">
-                                    <p className="mock-contact-label">Email:</p>
-                                    <p className="mock-contact-value">{previewEmail}</p>
-                                  </div>
-                                  <div className="mock-contact-item">
-                                    <p className="mock-contact-label">Phone:</p>
-                                    <p className="mock-contact-value">{previewPhone}</p>
-                                  </div>
-                                </div>
-                              </>
-                            )}
+                        {/* CONTACT */}
+                        {showContactSection && (previewEmail || previewPhone) && (
+                          <>
+                            <p className="mock-section-title">Contact Details</p>
+                            <div className="mock-contact-details">
+                              <div className="mock-contact-item">
+                                <p className="mock-contact-label">Email:</p>
+                                <p className="mock-contact-value">{previewEmail}</p>
+                              </div>
+                              <div className="mock-contact-item">
+                                <p className="mock-contact-label">Phone:</p>
+                                <p className="mock-contact-value">{previewPhone}</p>
+                              </div>
+                            </div>
                           </>
                         )}
                       </div>
                     </div>
                   )}
                 </div>
-                {/* ===== EDITOR COLUMN ===== */}
+                {/* ===== EDITOR COLUMN (full-width on mobile; page scrolls) ===== */}
                 <div className="myprofile-editor-container">
                   <div className="settings-card">
                     <div className="settings-head">
                       <div>
                         <h3 className="desktop-h5">Profile Editor</h3>
-                        <p className="desktop-body-xs">
-                          Edit your card details below and preview them instantly.
-                        </p>
+                        <p className="desktop-body-s">Edit your card details below and preview them instantly.</p>
                       </div>
                       <span className="pricing-badge pill-blue">Editor</span>
                     </div>
@@ -1148,7 +841,7 @@ export default function MyProfile() {
                       <input
                         type="text"
                         className="text-input"
-                        value={state.businessName}
+                        value={state.businessName || ""}
                         onChange={(e) => updateState({ businessName: e.target.value })}
                         placeholder="Enter your business name"
                       />
@@ -1158,7 +851,7 @@ export default function MyProfile() {
                       <input
                         type="text"
                         className="text-input"
-                        value={state.mainHeading}
+                        value={state.mainHeading || ""}
                         onChange={(e) => updateState({ mainHeading: e.target.value })}
                         placeholder="Main headline for your page"
                       />
@@ -1168,7 +861,7 @@ export default function MyProfile() {
                       <input
                         type="text"
                         className="text-input"
-                        value={state.subHeading}
+                        value={state.subHeading || ""}
                         onChange={(e) => updateState({ subHeading: e.target.value })}
                         placeholder="Tagline or slogan"
                       />
@@ -1178,7 +871,7 @@ export default function MyProfile() {
                       <input
                         type="text"
                         className="text-input"
-                        value={state.job_title}
+                        value={state.job_title || ""}
                         onChange={(e) => updateState({ job_title: e.target.value })}
                         placeholder="e.g. Web Developer"
                       />
@@ -1188,7 +881,7 @@ export default function MyProfile() {
                       <input
                         type="text"
                         className="text-input"
-                        value={state.full_name}
+                        value={state.full_name || ""}
                         onChange={(e) => updateState({ full_name: e.target.value })}
                         placeholder="Your name"
                       />
@@ -1198,7 +891,7 @@ export default function MyProfile() {
                       <textarea
                         className="text-input"
                         rows={4}
-                        value={state.bio}
+                        value={state.bio || ""}
                         onChange={(e) => updateState({ bio: e.target.value })}
                         placeholder="Tell people about yourself..."
                       />
@@ -1208,7 +901,7 @@ export default function MyProfile() {
                       <input
                         type="email"
                         className="text-input"
-                        value={state.contact_email}
+                        value={state.contact_email || ""}
                         onChange={(e) => updateState({ contact_email: e.target.value })}
                         placeholder="your@email.com"
                       />
@@ -1218,27 +911,316 @@ export default function MyProfile() {
                       <input
                         type="tel"
                         className="text-input"
-                        value={state.phone_number}
+                        value={state.phone_number || ""}
                         onChange={(e) => updateState({ phone_number: e.target.value })}
                         placeholder="e.g. +44 7000 000000"
                       />
 
+                      {/* ====== Sections ====== */}
                       <div className="settings-divider" />
+
+                      {/* Main Section controls (cover + headings already above) */}
+                      <div className="editor-section-header">
+                        <h3 className="editor-subtitle">Main Section</h3>
+                        <button type="button" onClick={() => setShowMainSection(!showMainSection)} className="toggle-button">
+                          {showMainSection ? "Hide Section" : "Show Section"}
+                        </button>
+                      </div>
+                      {showMainSection && (
+                        <>
+                          <label className="profile-label">Cover Photo</label>
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            onChange={handleImageUpload}
+                          />
+                          <div
+                            className="editor-item-card work-image-item-wrapper cover-photo-card"
+                            onClick={() => fileInputRef.current?.click()}
+                          >
+                            {state.coverPhoto ? (
+                              <img
+                                src={state.coverPhoto}
+                                alt="Cover"
+                                className="work-image-preview"
+                              />
+                            ) : (
+                              <span className="upload-text">Add Cover Photo</span>
+                            )}
+                            {state.coverPhoto && (
+                              <button
+                                type="button"
+                                className="remove-image-button"
+                                onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}
+                              >
+                                &times;
+                              </button>
+                            )}
+                          </div>
+                        </>
+                      )}
+
+                      <div className="settings-divider" />
+
+                      {/* About Me */}
+                      <div className="editor-section-header">
+                        <h3 className="editor-subtitle">About Me Section</h3>
+                        <button type="button" onClick={() => setShowAboutMeSection(!showAboutMeSection)} className="toggle-button">
+                          {showAboutMeSection ? "Hide Section" : "Show Section"}
+                        </button>
+                      </div>
+                      {showAboutMeSection && (
+                        <>
+                          <label className="profile-label">Display Layout</label>
+                          <div className="option-row">
+                            <button
+                              type="button"
+                              className={`display-button ${aboutMeLayout === "side-by-side" ? "is-active" : ""}`}
+                              onClick={() => setAboutMeLayout("side-by-side")}
+                            >
+                              Side by Side
+                            </button>
+                            <button
+                              type="button"
+                              className={`display-button ${aboutMeLayout === "stacked" ? "is-active" : ""}`}
+                              onClick={() => setAboutMeLayout("stacked")}
+                            >
+                              Stacked
+                            </button>
+                          </div>
+
+                          <label className="profile-label">Profile Photo</label>
+                          <input
+                            ref={avatarInputRef}
+                            type="file"
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            onChange={handleAvatarUpload}
+                          />
+                          <div className="image-upload-area avatar-upload" onClick={() => avatarInputRef.current?.click()}>
+                            {!state.avatar && <span className="upload-text">Add Profile Photo</span>}
+                            <img src={state.avatar || ""} alt="Avatar preview" className="avatar-preview" />
+                            {state.avatar && (
+                              <button
+                                type="button"
+                                className="remove-image-button"
+                                onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}
+                              >
+                                &times;
+                              </button>
+                            )}
+                          </div>
+                        </>
+                      )}
+
+                      <div className="settings-divider" />
+
+                      {/* Work */}
+                      <div className="editor-section-header">
+                        <h3 className="editor-subtitle">My Work Section</h3>
+                        <button type="button" onClick={() => setShowWorkSection(!showWorkSection)} className="toggle-button">
+                          {showWorkSection ? "Hide Section" : "Show Section"}
+                        </button>
+                      </div>
+                      {showWorkSection && (
+                        <>
+                          <label className="profile-label">Display Layout</label>
+                          <div className="option-row">
+                            <button
+                              type="button"
+                              className={`display-button ${state.workDisplayMode === "list" ? "is-active" : ""}`}
+                              onClick={() => updateState({ workDisplayMode: "list" })}
+                            >
+                              List
+                            </button>
+                            <button
+                              type="button"
+                              className={`display-button ${state.workDisplayMode === "grid" ? "is-active" : ""}`}
+                              onClick={() => updateState({ workDisplayMode: "grid" })}
+                            >
+                              Grid
+                            </button>
+                            <button
+                              type="button"
+                              className={`display-button ${state.workDisplayMode === "carousel" ? "is-active" : ""}`}
+                              onClick={() => updateState({ workDisplayMode: "carousel" })}
+                            >
+                              Carousel
+                            </button>
+                          </div>
+
+                          <label className="profile-label">Work Images</label>
+                          <div className="editor-work-image-grid">
+                            {(state.workImages || []).map((item, i) => (
+                              <div key={i} className="editor-item-card work-image-item-wrapper">
+                                <img src={item.preview || item} alt={`work-${i}`} className="work-image-preview" />
+                                <button
+                                  type="button"
+                                  className="remove-image-button"
+                                  onClick={(e) => { e.stopPropagation(); handleRemoveWorkImage(i); }}
+                                >
+                                  &times;
+                                </button>
+                              </div>
+                            ))}
+                            {(state.workImages || []).length < 10 && (
+                              <div className="add-work-image-placeholder" onClick={() => workImageInputRef.current?.click()}>
+                                <span className="upload-text">Add Work Image(s)</span>
+                              </div>
+                            )}
+                          </div>
+                          <input
+                            ref={workImageInputRef}
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            onChange={handleAddWorkImage}
+                          />
+                        </>
+                      )}
+
+                      <div className="settings-divider" />
+
+                      {/* Services */}
+                      <div className="editor-section-header">
+                        <h3 className="editor-subtitle">My Services Section</h3>
+                        <button type="button" onClick={() => setShowServicesSection(!showServicesSection)} className="toggle-button">
+                          {showServicesSection ? "Hide Section" : "Show Section"}
+                        </button>
+                      </div>
+                      {showServicesSection && (
+                        <>
+                          <label className="profile-label">Display Layout</label>
+                          <div className="option-row">
+                            <button
+                              type="button"
+                              className={`display-button ${servicesDisplayMode === "list" ? "is-active" : ""}`}
+                              onClick={() => setServicesDisplayMode("list")}
+                            >
+                              List
+                            </button>
+                            <button
+                              type="button"
+                              className={`display-button ${servicesDisplayMode === "carousel" ? "is-active" : ""}`}
+                              onClick={() => setServicesDisplayMode("carousel")}
+                            >
+                              Carousel
+                            </button>
+                          </div>
+
+                          <label className="profile-label">Services</label>
+                          <div className="editor-service-list">
+                            {(state.services || []).map((s, i) => (
+                              <div key={i} className="editor-item-card mock-service-item-wrapper">
+                                <input
+                                  type="text"
+                                  placeholder="Service Name"
+                                  value={s.name || ""}
+                                  onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Service Price/Detail"
+                                  value={s.price || ""}
+                                  onChange={(e) => handleServiceChange(i, "price", e.target.value)}
+                                />
+                                <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">
+                                  Remove
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                          <button type="button" onClick={handleAddService} className="add-item-button">
+                            + Add Service
+                          </button>
+                        </>
+                      )}
+
+                      <div className="settings-divider" />
+
+                      {/* Reviews */}
+                      <div className="editor-section-header">
+                        <h3 className="editor-subtitle">Reviews Section</h3>
+                        <button type="button" onClick={() => setShowReviewsSection(!showReviewsSection)} className="toggle-button">
+                          {showReviewsSection ? "Hide Section" : "Show Section"}
+                        </button>
+                      </div>
+                      {showReviewsSection && (
+                        <>
+                          <label className="profile-label">Display Layout</label>
+                          <div className="option-row">
+                            <button
+                              type="button"
+                              className={`display-button ${reviewsDisplayMode === "list" ? "is-active" : ""}`}
+                              onClick={() => setReviewsDisplayMode("list")}
+                            >
+                              List
+                            </button>
+                            <button
+                              type="button"
+                              className={`display-button ${reviewsDisplayMode === "carousel" ? "is-active" : ""}`}
+                              onClick={() => setReviewsDisplayMode("carousel")}
+                            >
+                              Carousel
+                            </button>
+                          </div>
+
+                          <label className="profile-label">Reviews</label>
+                          <div className="editor-reviews-list">
+                            {(state.reviews || []).map((r, i) => (
+                              <div key={i} className="editor-item-card mock-review-card-wrapper">
+                                <input
+                                  type="text"
+                                  placeholder="Reviewer Name"
+                                  value={r.name || ""}
+                                  onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                                />
+                                <textarea
+                                  placeholder="Review text"
+                                  rows={2}
+                                  value={r.text || ""}
+                                  onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                                />
+                                <input
+                                  type="number"
+                                  placeholder="Rating (1-5)"
+                                  min="1"
+                                  max="5"
+                                  value={r.rating || ""}
+                                  onChange={(e) => handleReviewChange(i, "rating", e.target.value)}
+                                />
+                                <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">
+                                  Remove
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                          <button type="button" onClick={handleAddReview} className="add-item-button">
+                            + Add Review
+                          </button>
+                        </>
+                      )}
+
+                      <div className="settings-divider" />
+
+                      {/* Contact toggler (fields already at top) */}
+                      <div className="editor-section-header">
+                        <h3 className="editor-subtitle">My Contact Details</h3>
+                        <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="toggle-button">
+                          {showContactSection ? "Hide Section" : "Show Section"}
+                        </button>
+                      </div>
 
                       {/* Actions */}
                       <div className="settings-actions">
-                        <button
-                          type="submit"
-                          className="cta-blue-button desktop-button"
-                        >
-                          Publish Changes
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleResetPage}
-                          className="cta-black-button desktop-button"
-                        >
+                        <button type="button" onClick={handleResetPage} className="cta-black-button desktop-button">
                           Reset to Default
+                        </button>
+                        <button type="submit" className="cta-blue-button desktop-button">
+                          Publish Changes
                         </button>
                       </div>
                     </form>
@@ -1253,7 +1235,7 @@ export default function MyProfile() {
       {/* Share modal */}
       <ShareProfile
         isOpen={showShareModal}
-        onClose={handleCloseShareModal}
+        onClose={() => setShowShareModal(false)}
         profileUrl={visitUrl}
         contactDetails={{
           full_name: state.full_name,
