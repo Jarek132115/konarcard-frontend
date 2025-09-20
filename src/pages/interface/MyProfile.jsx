@@ -13,7 +13,7 @@ import { AuthContext } from "../../components/AuthContext";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 
 export default function MyProfile() {
-  const { state, updateState, resetState } = useBusinessCardStore();
+  const { state, updateState } = useBusinessCardStore();
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
   const location = useLocation();
@@ -78,21 +78,17 @@ export default function MyProfile() {
       const sm = window.innerWidth <= 600;
       setIsMobile(m);
       setIsSmallMobile(sm);
-
-      // Fix condition: close sidebar if window grows above desktop breakpoint
+      // Close sidebar if window goes back to desktop
       if (window.innerWidth > 1000 && sidebarOpen) setSidebarOpen(false);
     };
-
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, [sidebarOpen]);
-
 
   useEffect(() => {
     if (sidebarOpen && isMobile) document.body.classList.add("body-no-scroll");
     else document.body.classList.remove("body-no-scroll");
   }, [sidebarOpen, isMobile]);
-
 
   useEffect(() => {
     if (!authUser) return;
@@ -154,7 +150,8 @@ export default function MyProfile() {
     state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : "");
   const previewPhone =
     state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : "");
-  const previewCoverPhotoSrc = state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
+  const previewCoverPhotoSrc =
+    state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
   const previewAvatarSrc = state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
   const previewWorkImages =
     state.workImages && state.workImages.length > 0
@@ -179,9 +176,8 @@ export default function MyProfile() {
     (state.phone_number && state.phone_number.trim());
   const isDarkMode = state.pageTheme === "dark";
   const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
-  /* =========================
-     HELPERS / ACTIONS
-     ========================= */
+
+  /* Helpers */
   const createAndTrackBlobUrl = (file) => {
     const url = URL.createObjectURL(file);
     activeBlobUrlsRef.current.push(url);
@@ -241,8 +237,7 @@ export default function MyProfile() {
     updateState({ workImages: state.workImages.filter((_, i) => i !== idx) });
   };
 
-  const handleAddService = () =>
-    updateState({ services: [...(state.services || []), { name: "", price: "" }] });
+  const handleAddService = () => updateState({ services: [...(state.services || []), { name: "", price: "" }] });
 
   const handleServiceChange = (i, field, value) => {
     const arr = [...state.services];
@@ -250,8 +245,7 @@ export default function MyProfile() {
     updateState({ services: arr });
   };
 
-  const handleRemoveService = (i) =>
-    updateState({ services: state.services.filter((_, x) => x !== i) });
+  const handleRemoveService = (i) => updateState({ services: state.services.filter((_, x) => x !== i) });
 
   const handleAddReview = () =>
     updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
@@ -267,8 +261,7 @@ export default function MyProfile() {
     updateState({ reviews: arr });
   };
 
-  const handleRemoveReview = (i) =>
-    updateState({ reviews: state.reviews.filter((_, x) => x !== i) });
+  const handleRemoveReview = (i) => updateState({ reviews: state.reviews.filter((_, x) => x !== i) });
 
   const scrollCarousel = (ref, dir) => {
     const el = ref.current;
@@ -334,7 +327,6 @@ export default function MyProfile() {
       if (!/already started/i.test(msg)) console.error("Failed to auto-start trial:", msg);
     }
   };
-
   const hasProfileChanges = () => {
     if (coverPhotoFile || avatarFile || workImageFiles.length || coverPhotoRemoved || isAvatarRemoved)
       return true;
@@ -342,8 +334,7 @@ export default function MyProfile() {
     const original = businessCard || {};
     const norm = (v) => (v ?? "").toString().trim();
 
-    const normalizeServices = (arr) =>
-      (arr || []).map((s) => ({ name: norm(s.name), price: norm(s.price) }));
+    const normalizeServices = (arr) => (arr || []).map((s) => ({ name: norm(s.name), price: norm(s.price) }));
     const normalizeReviews = (arr) =>
       (arr || []).map((r) => ({ name: norm(r.name), text: norm(r.text), rating: Number(r.rating) || 0 }));
 
@@ -383,7 +374,6 @@ export default function MyProfile() {
     const origShowContact = original.show_contact_section !== false;
 
     return (
-      state.businessName !== (original.business_card_name || "") ||
       state.pageTheme !== (original.page_theme || "light") ||
       state.font !== (original.style || "Inter") ||
       state.mainHeading !== (original.main_heading || "") ||
@@ -420,12 +410,7 @@ export default function MyProfile() {
   };
 
   const handleResetPage = async () => {
-    if (
-      !window.confirm(
-        "Are you sure you want to reset everything? This will delete your published profile and restore the default template."
-      )
-    )
-      return;
+    if (!window.confirm("Are you sure you want to reset everything? This will delete your published profile and restore the default template.")) return;
     try {
       await api.delete("/api/business-card/my_card");
 
@@ -480,7 +465,7 @@ export default function MyProfile() {
       .filter(Boolean);
 
     const formData = buildBusinessCardFormData({
-      business_card_name: state.businessName,
+      business_card_name: state.businessName, // still sent to backend, just hidden in UI
       page_theme: state.pageTheme,
       font: state.font,
       main_heading: state.mainHeading,
@@ -527,12 +512,51 @@ export default function MyProfile() {
       toast.error(err?.response?.data?.error || "Something went wrong while saving.");
     }
   };
-
   /* =========================
      RENDER — HEADER + PREVIEW
      ========================= */
   return (
     <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
+      {/* quick scoped styles to satisfy the UI tweaks */}
+      <style>{`
+        .myprofile-flex-container { display: grid; grid-template-columns: 1fr minmax(380px, 520px); gap: 24px; }
+        @media (max-width: 1000px){ .myprofile-flex-container{ grid-template-columns: 1fr; } }
+        .myprofile-content { overflow: visible; }
+        .mock-phone { width: 100%; border-radius: 16px; background: var(--panel, #fff); overflow: visible; }
+        .mock-cover { width: 100%; height: auto; display:block; border-radius: 16px 16px 0 0; }
+        .mock-title { margin: 16px 20px 6px; text-align:center; font-weight: 700; font-size: clamp(20px, 2.6vw, 32px); }
+        .mock-subtitle { margin: 0 20px 16px; text-align:center; opacity:.8; }
+        .mock-section-title{ margin: 20px 20px 10px; font-weight:600; }
+        .mock-about-container.side-by-side{ display:grid; grid-template-columns: 1fr; gap:12px; margin: 0 20px 12px; }
+        .mock-about-header-group{ display:flex; align-items:center; gap:12px; }
+        .mock-avatar{ width:64px; height:64px; border-radius:50%; object-fit:cover; }
+        .mock-bio-text{ margin:12px 0 0; opacity:.9; }
+        .mock-work-gallery.list, .mock-services-list.list, .mock-reviews-list.list { display:flex; gap:12px; overflow-x:auto; padding: 0 20px 16px; }
+        .mock-work-image-item{ display:block; height:160px; width:auto; border-radius:10px; }
+        .myprofile-editor-container { overflow: visible; }
+        .settings-card{ overflow: visible; }
+        .editor-form.compact .profile-label{ margin: 10px 0 6px; font-weight:600; }
+        .editor-form.compact .text-input, .editor-form.compact textarea{ margin:0 0 10px; }
+        .section-toggle{ border:1px solid #d0d7e2; background:#f7f9fc; padding:6px 10px; border-radius:999px; font-weight:600; font-size:13px; }
+        .editor-section-header{ display:flex; justify-content:space-between; align-items:center; margin:8px 0 6px; }
+        .segmented{ display:inline-flex; gap:4px; padding:4px; background:#f2f4f7; border-radius:12px; }
+        .segmented .display-button{ padding:8px 12px; border-radius:10px; border:0; background:transparent; font-weight:600; cursor:pointer; }
+        .segmented .display-button.is-active{ background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.06); }
+        .upload-tile{ display:flex; align-items:center; justify-content:center; border:1px dashed #c7ced9; background:#fafbff; border-radius:14px; min-height:132px; cursor:pointer; transition:.15s; }
+        .upload-tile:hover{ border-color:#8aa1ff; background:#f4f7ff; }
+        .upload-tile img.work-image-preview{ width:100%; height:180px; object-fit:cover; border-radius:12px; }
+        .cover-photo-card.upload-tile img.work-image-preview{ height:auto; max-height:280px; }
+        .remove-image-button{ position:absolute; top:8px; right:8px; background:#fff; border:1px solid #e2e6ef; border-radius:999px; width:28px; height:28px; line-height:26px; text-align:center; font-weight:700; cursor:pointer; }
+        .editor-item-card{ position:relative; }
+        .avatar-upload{ display:flex; align-items:center; justify-content:center; width:112px; height:112px; border-radius:999px; background:#f7f9fc; border:1px dashed #c7ced9; }
+        .avatar-preview{ width:112px; height:112px; border-radius:999px; object-fit:cover; }
+        textarea.no-resize{ resize:none; }
+        .mp-mobile-controls{ padding:0 0 8px; }
+        .mp-pill{ display:flex; gap:12px; }
+        .mp-tab{ display:inline-block; padding:8px 14px; border-radius:999px; border:1px solid #d0d7e2; background:#fff; font-weight:600; }
+        .mp-tab.active{ background:#1a73e8; color:#fff; border-color:#1a73e8; }
+      `}</style>
+
       {/* Mobile header */}
       <div className="myprofile-mobile-header">
         <div className="myprofile-brand">
@@ -550,10 +574,14 @@ export default function MyProfile() {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <main className="main-content-container">
-        <PageHeader onShareCard={() => {
-          if (!isVerified) return toast.error("Please verify your email to share your card.");
-          setShowShareModal(true);
-        }} isMobile={isMobile} isSmallMobile={isSmallMobile} />
+        <PageHeader
+          onShareCard={() => {
+            if (!isVerified) return toast.error("Please verify your email to share your card.");
+            setShowShareModal(true);
+          }}
+          isMobile={isMobile}
+          isSmallMobile={isSmallMobile}
+        />
 
         <div className="myprofile-main-content">
           {!authUser && (
@@ -591,8 +619,7 @@ export default function MyProfile() {
               {isTrialActive && (
                 <div className="trial-banner">
                   <p className="desktop-body-s">
-                    Your free trial ends on{" "}
-                    <strong>{new Date(authUser.trialExpires).toLocaleDateString()}</strong>.
+                    Your free trial ends on <strong>{new Date(authUser.trialExpires).toLocaleDateString()}</strong>.
                   </p>
                   <button className="blue-trial desktop-body-s" onClick={handleStartSubscription}>
                     Subscribe Now
@@ -610,9 +637,8 @@ export default function MyProfile() {
               )}
 
               <div className="myprofile-flex-container">
-                {/* ===== PREVIEW COLUMN (full-width on mobile, NO inner scrolling) ===== */}
+                {/* ===== PREVIEW COLUMN (no inner scroll) ===== */}
                 <div className="myprofile-content">
-                  {/* Always-visible control ABOVE the preview on mobile */}
                   {isMobile && (
                     <div className={`mp-mobile-controls ${previewOpen ? "is-open" : "is-collapsed"}`} role="tablist" aria-label="Preview controls">
                       <div className="mp-pill">
@@ -637,204 +663,162 @@ export default function MyProfile() {
                           Visit Page
                         </a>
                       </div>
-                      {/* keep pill bottom for subtle separation */}
                       <div className="mp-pill-bottom" aria-hidden="true" />
                     </div>
                   )}
 
-                  {/* PREVIEW (on mobile: hidden when toggled off; on desktop: always shown) */}
                   {(!isMobile || previewOpen) && (
-                    <div
-                      className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
-                      style={{ fontFamily: state.font || previewPlaceholders.font }}
-                    >
-                      <div className="mock-phone-scrollable-content">
-                        {/* MAIN */}
-                        {showMainSection && (
-                          <>
-                            {(shouldShowPlaceholders || !!state.coverPhoto) && (
-                              <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
-                            )}
-                            <h2 className="mock-title">
-                              {state.mainHeading ||
-                                (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
-                            </h2>
-                            <p className="mock-subtitle">
-                              {state.subHeading ||
-                                (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
-                            </p>
-                            {(shouldShowPlaceholders || hasExchangeContact) && (
-                              <button type="button" className="mock-button">Save My Number</button>
-                            )}
-                          </>
-                        )}
-
-                        {/* ABOUT */}
-                        {showAboutMeSection &&
-                          (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
-                            <>
-                              <p className="mock-section-title">About me</p>
-                              <div className={`mock-about-container ${aboutMeLayout}`}>
-                                <div className="mock-about-content-group">
-                                  <div className="mock-about-header-group">
-                                    {previewAvatarSrc && (
-                                      <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
-                                    )}
-                                    <div>
-                                      <p className="mock-profile-name">{previewFullName}</p>
-                                      <p className="mock-profile-role">{previewJobTitle}</p>
-                                    </div>
-                                  </div>
-                                  <p className="mock-bio-text">{previewBio}</p>
-                                </div>
-                              </div>
-                            </>
+                    <div className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`} style={{ fontFamily: state.font || previewPlaceholders.font }}>
+                      {/* NO inner scroll — just render content */}
+                      {/* MAIN */}
+                      {showMainSection && (
+                        <>
+                          {(shouldShowPlaceholders || !!state.coverPhoto) && (
+                            <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
                           )}
+                          <h2 className="mock-title">
+                            {state.mainHeading ||
+                              (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
+                          </h2>
+                          <p className="mock-subtitle">
+                            {state.subHeading ||
+                              (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
+                          </p>
+                          {(shouldShowPlaceholders || hasExchangeContact) && (
+                            <p style={{ textAlign: "center", marginBottom: 16 }}>
+                              <button type="button" className="mock-button">Save My Number</button>
+                            </p>
+                          )}
+                        </>
+                      )}
 
-                        {/* WORK */}
-                        {showWorkSection && previewWorkImages.length > 0 && (
+                      {/* ABOUT */}
+                      {showAboutMeSection &&
+                        (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
                           <>
-                            <p className="mock-section-title">My Work</p>
-                            <div className="work-preview-row-container">
-                              {state.workDisplayMode === "carousel" && (
-                                <div className="carousel-nav-buttons">
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
-                                  >
-                                    &#9664;
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
-                                  >
-                                    &#9654;
-                                  </button>
-                                </div>
-                              )}
-                              <div
-                                ref={previewWorkCarouselRef}
-                                className={`mock-work-gallery ${state.workDisplayMode}`}
-                              >
-                                {previewWorkImages.map((item, i) => (
-                                  <div key={i} className="mock-work-image-item-wrapper">
-                                    <img
-                                      src={item.preview || item}
-                                      alt={`work-${i}`}
-                                      className="mock-work-image-item"
-                                    />
+                            <p className="mock-section-title">About me</p>
+                            <div className={`mock-about-container ${aboutMeLayout}`}>
+                              <div className="mock-about-content-group">
+                                <div className="mock-about-header-group">
+                                  {previewAvatarSrc && <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />}
+                                  <div>
+                                    <p className="mock-profile-name">{previewFullName}</p>
+                                    <p className="mock-profile-role">{previewJobTitle}</p>
                                   </div>
-                                ))}
-                              </div>
-                            </div>
-                          </>
-                        )}
-
-                        {/* SERVICES */}
-                        {showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) && (
-                          <>
-                            <p className="mock-section-title">My Services</p>
-                            <div className="work-preview-row-container">
-                              {servicesDisplayMode === "carousel" && (
-                                <div className="carousel-nav-buttons">
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}
-                                  >
-                                    &#9664;
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}
-                                  >
-                                    &#9654;
-                                  </button>
                                 </div>
-                              )}
-                              <div
-                                ref={previewServicesCarouselRef}
-                                className={`mock-services-list ${servicesDisplayMode}`}
-                              >
-                                {servicesForPreview.map((s, i) => (
-                                  <div key={i} className="mock-service-item">
-                                    <p className="mock-service-name">{s.name}</p>
-                                    <span className="mock-service-price">{s.price}</span>
-                                  </div>
-                                ))}
+                                <p className="mock-bio-text">{previewBio}</p>
                               </div>
                             </div>
                           </>
                         )}
 
-                        {/* REVIEWS */}
-                        {showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) && (
-                          <>
-                            <p className="mock-section-title">Reviews</p>
-                            <div className="work-preview-row-container">
-                              {reviewsDisplayMode === "carousel" && (
-                                <div className="carousel-nav-buttons">
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}
-                                  >
-                                    &#9664;
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}
-                                  >
-                                    &#9654;
-                                  </button>
+                      {/* WORK */}
+                      {showWorkSection && previewWorkImages.length > 0 && (
+                        <>
+                          <p className="mock-section-title">My Work</p>
+                          <div className="work-preview-row-container">
+                            {state.workDisplayMode === "carousel" && (
+                              <div className="carousel-nav-buttons">
+                                <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}>
+                                  &#9664;
+                                </button>
+                                <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}>
+                                  &#9654;
+                                </button>
+                              </div>
+                            )}
+                            <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
+                              {previewWorkImages.map((item, i) => (
+                                <div key={i} className="mock-work-image-item-wrapper">
+                                  <img src={item.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
                                 </div>
-                              )}
-                              <div
-                                ref={previewReviewsCarouselRef}
-                                className={`mock-reviews-list ${reviewsDisplayMode}`}
-                              >
-                                {reviewsForPreview.map((r, i) => (
-                                  <div key={i} className="mock-review-card">
-                                    <div className="mock-star-rating">
-                                      {Array(r.rating || 0).fill().map((_, idx) => <span key={`f-${idx}`}>★</span>)}
-                                      {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, idx) => (
-                                        <span key={`e-${idx}`} className="empty-star">★</span>
-                                      ))}
-                                    </div>
-                                    <p className="mock-review-text">{`"${r.text}"`}</p>
-                                    <p className="mock-reviewer-name">{r.name}</p>
-                                  </div>
-                                ))}
-                              </div>
+                              ))}
                             </div>
-                          </>
-                        )}
+                          </div>
+                        </>
+                      )}
 
-                        {/* CONTACT */}
-                        {showContactSection && (previewEmail || previewPhone) && (
-                          <>
-                            <p className="mock-section-title">Contact Details</p>
-                            <div className="mock-contact-details">
-                              <div className="mock-contact-item">
-                                <p className="mock-contact-label">Email:</p>
-                                <p className="mock-contact-value">{previewEmail}</p>
+                      {/* SERVICES */}
+                      {showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) && (
+                        <>
+                          <p className="mock-section-title">My Services</p>
+                          <div className="work-preview-row-container">
+                            {servicesDisplayMode === "carousel" && (
+                              <div className="carousel-nav-buttons">
+                                <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>
+                                  &#9664;
+                                </button>
+                                <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}>
+                                  &#9654;
+                                </button>
                               </div>
-                              <div className="mock-contact-item">
-                                <p className="mock-contact-label">Phone:</p>
-                                <p className="mock-contact-value">{previewPhone}</p>
-                              </div>
+                            )}
+                            <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
+                              {servicesForPreview.map((s, i) => (
+                                <div key={i} className="mock-service-item">
+                                  <p className="mock-service-name">{s.name}</p>
+                                  <span className="mock-service-price">{s.price}</span>
+                                </div>
+                              ))}
                             </div>
-                          </>
-                        )}
-                      </div>
+                          </div>
+                        </>
+                      )}
+
+                      {/* REVIEWS */}
+                      {showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) && (
+                        <>
+                          <p className="mock-section-title">Reviews</p>
+                          <div className="work-preview-row-container">
+                            {reviewsDisplayMode === "carousel" && (
+                              <div className="carousel-nav-buttons">
+                                <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}>
+                                  &#9664;
+                                </button>
+                                <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}>
+                                  &#9654;
+                                </button>
+                              </div>
+                            )}
+                            <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
+                              {reviewsForPreview.map((r, i) => (
+                                <div key={i} className="mock-review-card">
+                                  <div className="mock-star-rating">
+                                    {Array(r.rating || 0).fill().map((_, idx) => <span key={`f-${idx}`}>★</span>)}
+                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, idx) => (
+                                      <span key={`e-${idx}`} className="empty-star">★</span>
+                                    ))}
+                                  </div>
+                                  <p className="mock-review-text">{`"${r.text}"`}</p>
+                                  <p className="mock-reviewer-name">{r.name}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {/* CONTACT */}
+                      {showContactSection && (previewEmail || previewPhone) && (
+                        <>
+                          <p className="mock-section-title">Contact Details</p>
+                          <div className="mock-contact-details" style={{ padding: "0 20px 20px" }}>
+                            <div className="mock-contact-item">
+                              <p className="mock-contact-label">Email:</p>
+                              <p className="mock-contact-value">{previewEmail}</p>
+                            </div>
+                            <div className="mock-contact-item">
+                              <p className="mock-contact-label">Phone:</p>
+                              <p className="mock-contact-value">{previewPhone}</p>
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
-                {/* ===== EDITOR COLUMN (full-width on mobile; page scrolls) ===== */}
+
+                {/* ===== EDITOR COLUMN (no inner scroll) ===== */}
                 <div className="myprofile-editor-container">
                   <div className="settings-card">
                     <div className="settings-head">
@@ -847,126 +831,44 @@ export default function MyProfile() {
 
                     <div className="settings-divider" />
 
-                    <form onSubmit={handleSubmit} className="editor-form">
-                      {/* Business Name */}
-                      <label className="profile-label">Business Name</label>
-                      <input
-                        type="text"
-                        className="text-input"
-                        value={state.businessName || ""}
-                        onChange={(e) => updateState({ businessName: e.target.value })}
-                        placeholder="Enter your business name"
-                      />
-
-                      {/* Main Heading */}
-                      <label className="profile-label">Main Heading</label>
-                      <input
-                        type="text"
-                        className="text-input"
-                        value={state.mainHeading || ""}
-                        onChange={(e) => updateState({ mainHeading: e.target.value })}
-                        placeholder="Main headline for your page"
-                      />
-
-                      {/* Sub Heading */}
-                      <label className="profile-label">Sub Heading</label>
-                      <input
-                        type="text"
-                        className="text-input"
-                        value={state.subHeading || ""}
-                        onChange={(e) => updateState({ subHeading: e.target.value })}
-                        placeholder="Tagline or slogan"
-                      />
-
-                      {/* Job Title */}
-                      <label className="profile-label">Job Title</label>
-                      <input
-                        type="text"
-                        className="text-input"
-                        value={state.job_title || ""}
-                        onChange={(e) => updateState({ job_title: e.target.value })}
-                        placeholder="e.g. Web Developer"
-                      />
-
-                      {/* Full Name */}
-                      <label className="profile-label">Full Name</label>
-                      <input
-                        type="text"
-                        className="text-input"
-                        value={state.full_name || ""}
-                        onChange={(e) => updateState({ full_name: e.target.value })}
-                        placeholder="Your name"
-                      />
-
-                      {/* Bio */}
-                      <label className="profile-label">Bio</label>
-                      <textarea
-                        className="text-input"
-                        rows={4}
-                        value={state.bio || ""}
-                        onChange={(e) => updateState({ bio: e.target.value })}
-                        placeholder="Tell people about yourself..."
-                      />
-
-                      {/* Email */}
-                      <label className="profile-label">Contact Email</label>
-                      <input
-                        type="email"
-                        className="text-input"
-                        value={state.contact_email || ""}
-                        onChange={(e) => updateState({ contact_email: e.target.value })}
-                        placeholder="your@email.com"
-                      />
-
-                      {/* Phone */}
-                      <label className="profile-label">Phone Number</label>
-                      <input
-                        type="tel"
-                        className="text-input"
-                        value={state.phone_number || ""}
-                        onChange={(e) => updateState({ phone_number: e.target.value })}
-                        placeholder="e.g. +44 7000 000000"
-                      />
-
-                      {/* ====== Sections ====== */}
-                      <div className="settings-divider" />
-
-                      {/* Main Section controls (cover + headings already above) */}
+                    <form onSubmit={handleSubmit} className="editor-form compact">
+                      {/* ====== Main Section ====== */}
                       <div className="editor-section-header">
                         <h3 className="editor-subtitle">Main Section</h3>
-                        <button type="button" onClick={() => setShowMainSection(!showMainSection)} className="toggle-button">
+                        <button type="button" onClick={() => setShowMainSection(!showMainSection)} className="section-toggle">
                           {showMainSection ? "Hide Section" : "Show Section"}
                         </button>
                       </div>
                       {showMainSection && (
                         <>
-                          <label className="profile-label">Cover Photo</label>
+                          {/* Headings moved here */}
+                          <label className="profile-label">Main Heading</label>
                           <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/*"
-                            style={{ display: "none" }}
-                            onChange={handleImageUpload}
+                            type="text"
+                            className="text-input"
+                            value={state.mainHeading || ""}
+                            onChange={(e) => updateState({ mainHeading: e.target.value })}
+                            placeholder="Main headline for your page"
                           />
-                          <div
-                            className="editor-item-card work-image-item-wrapper cover-photo-card"
-                            onClick={() => fileInputRef.current?.click()}
-                          >
+                          <label className="profile-label">Sub Heading</label>
+                          <input
+                            type="text"
+                            className="text-input"
+                            value={state.subHeading || ""}
+                            onChange={(e) => updateState({ subHeading: e.target.value })}
+                            placeholder="Tagline or slogan"
+                          />
+
+                          <label className="profile-label">Cover Photo</label>
+                          <input ref={fileInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleImageUpload} />
+                          <div className="editor-item-card upload-tile cover-photo-card" onClick={() => fileInputRef.current?.click()}>
                             {state.coverPhoto ? (
-                              <img
-                                src={state.coverPhoto}
-                                alt="Cover"
-                                className="work-image-preview"
-                              />
+                              <img src={state.coverPhoto} alt="Cover" className="work-image-preview" />
                             ) : (
-                              <span className="upload-text">Add Cover Photo</span>
+                              <span className="upload-text">Click to upload cover</span>
                             )}
                             {state.coverPhoto && (
-                              <button
-                                type="button"
-                                className="remove-image-button"
-                                onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}
-                              >
+                              <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}>
                                 &times;
                               </button>
                             )}
@@ -976,50 +878,60 @@ export default function MyProfile() {
 
                       <div className="settings-divider" />
 
-                      {/* About Me */}
+                      {/* ====== About Me Section ====== */}
                       <div className="editor-section-header">
                         <h3 className="editor-subtitle">About Me Section</h3>
-                        <button type="button" onClick={() => setShowAboutMeSection(!showAboutMeSection)} className="toggle-button">
+                        <button type="button" onClick={() => setShowAboutMeSection(!showAboutMeSection)} className="section-toggle">
                           {showAboutMeSection ? "Hide Section" : "Show Section"}
                         </button>
                       </div>
                       {showAboutMeSection && (
                         <>
                           <label className="profile-label">Display Layout</label>
-                          <div className="option-row">
-                            <button
-                              type="button"
-                              className={`display-button ${aboutMeLayout === "side-by-side" ? "is-active" : ""}`}
-                              onClick={() => setAboutMeLayout("side-by-side")}
-                            >
+                          <div className="segmented">
+                            <button type="button" className={`display-button ${aboutMeLayout === "side-by-side" ? "is-active" : ""}`} onClick={() => setAboutMeLayout("side-by-side")}>
                               Side by Side
                             </button>
-                            <button
-                              type="button"
-                              className={`display-button ${aboutMeLayout === "stacked" ? "is-active" : ""}`}
-                              onClick={() => setAboutMeLayout("stacked")}
-                            >
+                            <button type="button" className={`display-button ${aboutMeLayout === "stacked" ? "is-active" : ""}`} onClick={() => setAboutMeLayout("stacked")}>
                               Stacked
                             </button>
                           </div>
 
-                          <label className="profile-label">Profile Photo</label>
+                          {/* Name / Title / Bio moved here */}
+                          <label className="profile-label">Full Name</label>
                           <input
-                            ref={avatarInputRef}
-                            type="file"
-                            accept="image/*"
-                            style={{ display: "none" }}
-                            onChange={handleAvatarUpload}
+                            type="text"
+                            className="text-input"
+                            value={state.full_name || ""}
+                            onChange={(e) => updateState({ full_name: e.target.value })}
+                            placeholder="Your name"
                           />
+
+                          <label className="profile-label">Job Title</label>
+                          <input
+                            type="text"
+                            className="text-input"
+                            value={state.job_title || ""}
+                            onChange={(e) => updateState({ job_title: e.target.value })}
+                            placeholder="e.g. Web Developer"
+                          />
+
+                          <label className="profile-label">Bio</label>
+                          <textarea
+                            className="text-input no-resize"
+                            style={{ minHeight: isMobile ? "22vh" : "28vh" }}
+                            value={state.bio || ""}
+                            onChange={(e) => updateState({ bio: e.target.value })}
+                            placeholder="Tell people about yourself..."
+                          />
+
+                          <label className="profile-label">Profile Photo</label>
+                          <input ref={avatarInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleAvatarUpload} />
                           <div className="image-upload-area avatar-upload" onClick={() => avatarInputRef.current?.click()}>
                             {!state.avatar && <span className="upload-text">Add Profile Photo</span>}
-                            <img src={state.avatar || ""} alt="Avatar preview" className="avatar-preview" />
+                            {state.avatar && <img src={state.avatar || ""} alt="Avatar preview" className="avatar-preview" />}
                             {state.avatar && (
-                              <button
-                                type="button"
-                                className="remove-image-button"
-                                onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}
-                              >
+                              <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}>
                                 &times;
                               </button>
                             )}
@@ -1029,96 +941,65 @@ export default function MyProfile() {
 
                       <div className="settings-divider" />
 
-                      {/* Work */}
+                      {/* ====== My Work ====== */}
                       <div className="editor-section-header">
                         <h3 className="editor-subtitle">My Work Section</h3>
-                        <button type="button" onClick={() => setShowWorkSection(!showWorkSection)} className="toggle-button">
+                        <button type="button" onClick={() => setShowWorkSection(!showWorkSection)} className="section-toggle">
                           {showWorkSection ? "Hide Section" : "Show Section"}
                         </button>
                       </div>
                       {showWorkSection && (
                         <>
                           <label className="profile-label">Display Layout</label>
-                          <div className="option-row">
-                            <button
-                              type="button"
-                              className={`display-button ${state.workDisplayMode === "list" ? "is-active" : ""}`}
-                              onClick={() => updateState({ workDisplayMode: "list" })}
-                            >
+                          <div className="segmented">
+                            <button type="button" className={`display-button ${state.workDisplayMode === "list" ? "is-active" : ""}`} onClick={() => updateState({ workDisplayMode: "list" })}>
                               List
                             </button>
-                            <button
-                              type="button"
-                              className={`display-button ${state.workDisplayMode === "grid" ? "is-active" : ""}`}
-                              onClick={() => updateState({ workDisplayMode: "grid" })}
-                            >
+                            <button type="button" className={`display-button ${state.workDisplayMode === "grid" ? "is-active" : ""}`} onClick={() => updateState({ workDisplayMode: "grid" })}>
                               Grid
                             </button>
-                            <button
-                              type="button"
-                              className={`display-button ${state.workDisplayMode === "carousel" ? "is-active" : ""}`}
-                              onClick={() => updateState({ workDisplayMode: "carousel" })}
-                            >
+                            <button type="button" className={`display-button ${state.workDisplayMode === "carousel" ? "is-active" : ""}`} onClick={() => updateState({ workDisplayMode: "carousel" })}>
                               Carousel
                             </button>
                           </div>
 
                           <label className="profile-label">Work Images</label>
-                          <div className="editor-work-image-grid">
+                          <div className="editor-work-image-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px,1fr))", gap: 12 }}>
                             {(state.workImages || []).map((item, i) => (
-                              <div key={i} className="editor-item-card work-image-item-wrapper">
+                              <div key={i} className="editor-item-card upload-tile">
                                 <img src={item.preview || item} alt={`work-${i}`} className="work-image-preview" />
-                                <button
-                                  type="button"
-                                  className="remove-image-button"
-                                  onClick={(e) => { e.stopPropagation(); handleRemoveWorkImage(i); }}
-                                >
+                                <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveWorkImage(i); }}>
                                   &times;
                                 </button>
                               </div>
                             ))}
                             {(state.workImages || []).length < 10 && (
-                              <div className="add-work-image-placeholder" onClick={() => workImageInputRef.current?.click()}>
-                                <span className="upload-text">Add Work Image(s)</span>
+                              <div className="upload-tile" onClick={() => workImageInputRef.current?.click()}>
+                                <span className="upload-text">+ Add image(s)</span>
                               </div>
                             )}
                           </div>
-                          <input
-                            ref={workImageInputRef}
-                            type="file"
-                            multiple
-                            accept="image/*"
-                            style={{ display: "none" }}
-                            onChange={handleAddWorkImage}
-                          />
+                          <input ref={workImageInputRef} type="file" multiple accept="image/*" style={{ display: "none" }} onChange={handleAddWorkImage} />
                         </>
                       )}
 
                       <div className="settings-divider" />
 
-                      {/* Services */}
+                      {/* ====== Services ====== */}
                       <div className="editor-section-header">
                         <h3 className="editor-subtitle">My Services Section</h3>
-                        <button type="button" onClick={() => setShowServicesSection(!showServicesSection)} className="toggle-button">
+                        <button type="button" onClick={() => setShowServicesSection(!showServicesSection)} className="section-toggle">
                           {showServicesSection ? "Hide Section" : "Show Section"}
                         </button>
                       </div>
                       {showServicesSection && (
                         <>
                           <label className="profile-label">Display Layout</label>
-                          <div className="option-row">
-                            <button
-                              type="button"
-                              className={`display-button ${servicesDisplayMode === "list" ? "is-active" : ""}`}
-                              onClick={() => setServicesDisplayMode("list")}
-                            >
+                          <div className="segmented">
+                            <button type="button" className={`display-button ${servicesDisplayMode === "list" ? "is-active" : ""}`} onClick={() => setServicesDisplayMode("list")}>
                               List
                             </button>
-                            <button
-                              type="button"
-                              className={`display-button ${servicesDisplayMode === "carousel" ? "is-active" : ""}`}
-                              onClick={() => setServicesDisplayMode("carousel")}
-                            >
+                            <button type="button" className={`display-button ${servicesDisplayMode === "carousel" ? "is-active" : ""}`} onClick={() => setServicesDisplayMode("carousel")}>
                               Carousel
                             </button>
                           </div>
@@ -1126,108 +1007,85 @@ export default function MyProfile() {
                           <label className="profile-label">Services</label>
                           <div className="editor-service-list">
                             {(state.services || []).map((s, i) => (
-                              <div key={i} className="editor-item-card mock-service-item-wrapper">
-                                <input
-                                  type="text"
-                                  placeholder="Service Name"
-                                  value={s.name || ""}
-                                  onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                                />
-                                <input
-                                  type="text"
-                                  placeholder="Service Price/Detail"
-                                  value={s.price || ""}
-                                  onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                                />
-                                <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">
-                                  Remove
-                                </button>
+                              <div key={i} className="editor-item-card mock-service-item-wrapper" style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 8, alignItems: "center", padding: 10, border: "1px solid #eef1f6", borderRadius: 12 }}>
+                                <input type="text" placeholder="Service Name" value={s.name || ""} onChange={(e) => handleServiceChange(i, "name", e.target.value)} />
+                                <input type="text" placeholder="Service Price/Detail" value={s.price || ""} onChange={(e) => handleServiceChange(i, "price", e.target.value)} />
+                                <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
                               </div>
                             ))}
                           </div>
-                          <button type="button" onClick={handleAddService} className="add-item-button">
-                            + Add Service
-                          </button>
+                          <button type="button" onClick={handleAddService} className="add-item-button">+ Add Service</button>
                         </>
                       )}
 
                       <div className="settings-divider" />
 
-                      {/* Reviews */}
+                      {/* ====== Reviews ====== */}
                       <div className="editor-section-header">
                         <h3 className="editor-subtitle">Reviews Section</h3>
-                        <button type="button" onClick={() => setShowReviewsSection(!showReviewsSection)} className="toggle-button">
+                        <button type="button" onClick={() => setShowReviewsSection(!showReviewsSection)} className="section-toggle">
                           {showReviewsSection ? "Hide Section" : "Show Section"}
                         </button>
                       </div>
                       {showReviewsSection && (
                         <>
                           <label className="profile-label">Display Layout</label>
-                          <div className="option-row">
-                            <button
-                              type="button"
-                              className={`display-button ${reviewsDisplayMode === "list" ? "is-active" : ""}`}
-                              onClick={() => setReviewsDisplayMode("list")}
-                            >
+                          <div className="segmented">
+                            <button type="button" className={`display-button ${reviewsDisplayMode === "list" ? "is-active" : ""}`} onClick={() => setReviewsDisplayMode("list")}>
                               List
                             </button>
-                            <button
-                              type="button"
-                              className={`display-button ${reviewsDisplayMode === "carousel" ? "is-active" : ""}`}
-                              onClick={() => setReviewsDisplayMode("carousel")}
-                            >
+                            <button type="button" className={`display-button ${reviewsDisplayMode === "carousel" ? "is-active" : ""}`} onClick={() => setReviewsDisplayMode("carousel")}>
                               Carousel
                             </button>
                           </div>
 
                           <label className="profile-label">Reviews</label>
-                          <div className="editor-reviews-list">
+                          <div className="editor-reviews-list" style={{ display: "grid", gap: 8 }}>
                             {(state.reviews || []).map((r, i) => (
-                              <div key={i} className="editor-item-card mock-review-card-wrapper">
-                                <input
-                                  type="text"
-                                  placeholder="Reviewer Name"
-                                  value={r.name || ""}
-                                  onChange={(e) => handleReviewChange(i, "name", e.target.value)}
-                                />
-                                <textarea
-                                  placeholder="Review text"
-                                  rows={2}
-                                  value={r.text || ""}
-                                  onChange={(e) => handleReviewChange(i, "text", e.target.value)}
-                                />
-                                <input
-                                  type="number"
-                                  placeholder="Rating (1-5)"
-                                  min="1"
-                                  max="5"
-                                  value={r.rating || ""}
-                                  onChange={(e) => handleReviewChange(i, "rating", e.target.value)}
-                                />
-                                <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">
-                                  Remove
-                                </button>
+                              <div key={i} className="editor-item-card mock-review-card-wrapper" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 120px auto", gap: 8, alignItems: "center", padding: 10, border: "1px solid #eef1f6", borderRadius: 12 }}>
+                                <input type="text" placeholder="Reviewer Name" value={r.name || ""} onChange={(e) => handleReviewChange(i, "name", e.target.value)} />
+                                <textarea placeholder="Review text" rows={2} value={r.text || ""} onChange={(e) => handleReviewChange(i, "text", e.target.value)} className="no-resize" />
+                                <input type="number" placeholder="Rating (1-5)" min="1" max="5" value={r.rating || ""} onChange={(e) => handleReviewChange(i, "rating", e.target.value)} />
+                                <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
                               </div>
                             ))}
                           </div>
-                          <button type="button" onClick={handleAddReview} className="add-item-button">
-                            + Add Review
-                          </button>
+                          <button type="button" onClick={handleAddReview} className="add-item-button">+ Add Review</button>
                         </>
                       )}
 
                       <div className="settings-divider" />
 
-                      {/* Contact toggler (fields already at top) */}
+                      {/* ====== Contact Details ====== */}
                       <div className="editor-section-header">
                         <h3 className="editor-subtitle">My Contact Details</h3>
-                        <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="toggle-button">
+                        <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="section-toggle">
                           {showContactSection ? "Hide Section" : "Show Section"}
                         </button>
                       </div>
+                      {showContactSection && (
+                        <>
+                          <label className="profile-label">Contact Email</label>
+                          <input
+                            type="email"
+                            className="text-input"
+                            value={state.contact_email || ""}
+                            onChange={(e) => updateState({ contact_email: e.target.value })}
+                            placeholder="your@email.com"
+                          />
+                          <label className="profile-label">Phone Number</label>
+                          <input
+                            type="tel"
+                            className="text-input"
+                            value={state.phone_number || ""}
+                            onChange={(e) => updateState({ phone_number: e.target.value })}
+                            placeholder="e.g. +44 7000 000000"
+                          />
+                        </>
+                      )}
 
                       {/* Actions */}
-                      <div className="settings-actions">
+                      <div className="settings-actions" style={{ display: "flex", gap: 12, marginTop: 12 }}>
                         <button type="button" onClick={handleResetPage} className="cta-black-button desktop-button">
                           Reset to Default
                         </button>
