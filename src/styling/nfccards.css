@@ -337,3 +337,34 @@
   align-items: center;
   gap: 40px;
 }
+
+/* ---------- Bigger main image + tighter spacing (NFC page only) ---------- */
+.nfc-pricing-page {
+  /* main gallery height scales with viewport but stays sensible */
+  --gallery-h: clamp(320px, 34vw, 480px);
+  --media-gap: 6px;
+  /* small, crisp gap */
+}
+
+/* keep the tray compact */
+.nfc-pricing-page .pricing-media-tray {
+  gap: var(--media-gap);
+  margin-top: var(--media-gap);
+}
+
+/* use a fixed height instead of pure aspect-ratio so it feels bigger */
+.nfc-pricing-page .pricing-media-main.fixed-43 {
+  aspect-ratio: auto;
+  /* override previous 4/3 */
+  height: var(--gallery-h);
+  /* bigger! */
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* thumbnails sit close under the image */
+.nfc-pricing-page .pricing-media-thumbs.tight {
+  gap: var(--media-gap);
+  margin-top: 0;
+  /* remove extra separation */
+}
