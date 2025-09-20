@@ -192,7 +192,7 @@ export default function MyOrders() {
     async function reorderNow(orderId) {
         setActionMsg("");
         try {
-            // Adjust the endpoint/payload if your backend expects different keys.
+            // Adjust endpoint/payload to match your backend.
             const res = await api.post("/reorder", { orderId });
             const url = res?.data?.url;
             if (url) {
@@ -204,6 +204,17 @@ export default function MyOrders() {
             setActionMsg(e?.response?.data?.error || "Could not start checkout.");
         }
     }
+
+    /** Hide subscription orders in non-final states (pending/incomplete) */
+    const visibleOrders = React.useMemo(() => {
+        const HIDE = new Set(["pending", "incomplete", "incomplete_expired"]);
+        return (orders || []).filter((o) => {
+            const type = (o.type || "").toLowerCase();
+            const status = (o.status || "").toLowerCase();
+            if (type === "subscription" && HIDE.has(status)) return false;
+            return true;
+        });
+    }, [orders]);
 
     function renderSubscription(o) {
         const cancelledAt =
@@ -265,7 +276,7 @@ export default function MyOrders() {
                         <p className="orders-hint">Loading orders…</p>
                     ) : err ? (
                         <p className="error-text">{err}</p>
-                    ) : orders.length === 0 ? (
+                    ) : visibleOrders.length === 0 ? (
                         <div className="orders-empty">
                             <div className="orders-empty-badge">Orders</div>
                             <h3 className="orders-empty-title">No orders yet</h3>
@@ -274,7 +285,7 @@ export default function MyOrders() {
                         </div>
                     ) : (
                         <div className="orders-list">
-                            {orders.map((o) => {
+                            {visibleOrders.map((o) => {
                                 const isSub = (o.type || "").toLowerCase() === "subscription";
                                 const canceled = isSub && o.status === "canceled";
 
