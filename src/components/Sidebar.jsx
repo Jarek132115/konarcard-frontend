@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
@@ -12,51 +12,57 @@ import helpInterface from '../assets/icons/Help-Interface.svg';
 import logoutInterface from '../assets/icons/Logout-Interface.svg';
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
-    const navigate = useNavigate();
     const { logout } = useContext(AuthContext);
+    const navigate = useNavigate();
     const location = useLocation();
+
+    const closeSidebar = () => setSidebarOpen(false);
 
     const handleLogout = async () => {
         await logout();
         navigate('/');
     };
 
-    const closeSidebar = () => setSidebarOpen(false);
-    const isActive = (path) => location.pathname === path;
+    // Prefix-aware matcher so nested routes highlight (e.g. /productandplan/…)
+    const isActive = (paths) => {
+        const list = Array.isArray(paths) ? paths : [paths];
+        return list.some((p) => location.pathname === p || location.pathname.startsWith(p + '/'));
+    };
 
     return (
         <>
-            {/* Dim background on mobile */}
+            {/* Mobile dim overlay */}
             <div
                 className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`}
                 onClick={closeSidebar}
+                aria-hidden="true"
             />
 
-            <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                {/* ===== Desktop brand header (hidden on mobile) ===== */}
+            <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`} aria-label="Main navigation">
+                {/* Desktop brand header */}
                 <div className="brand-header desktop-only">
-                    <img src={LogoIcon} alt="Konar logo" className="brand-logo" />
+                    <img src={LogoIcon} alt="" className="brand-logo" />
                     <span className="brand-wordmark">KONAR</span>
                 </div>
 
-                {/* ===== Mobile drawer top row (X button) ===== */}
+                {/* Mobile drawer header (close button) */}
                 <div className="sidebar-mobile-top-row mobile-only">
                     <button
                         className="close-sidebar-button"
                         onClick={closeSidebar}
                         aria-label="Close menu"
+                        type="button"
                     >
                         <span></span><span></span><span></span>
                     </button>
                 </div>
 
                 <div className="sidebar-content-wrapper">
-                    {/* MAIN */}
-                    <div className="top-links-group">
+                    <nav className="top-links-group" role="navigation" aria-label="Sidebar">
+                        {/* MAIN */}
                         <div className="main-links-container">
-                            <p style={{ marginTop: 40 }} className="section-title">MAIN</p>
+                            <p className="section-title" aria-hidden="true">MAIN</p>
 
-                            {/* Home */}
                             <Link
                                 to="/myprofile"
                                 onClick={closeSidebar}
@@ -66,7 +72,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <p className="desktop-body-s">Home</p>
                             </Link>
 
-                            {/* My Orders */}
                             <Link
                                 to="/myorders"
                                 onClick={closeSidebar}
@@ -76,13 +81,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <p className="desktop-body-s">My Orders</p>
                             </Link>
 
-                            {/* Products & Plans */}
                             <Link
                                 to="/nfccards"
                                 onClick={closeSidebar}
-                                className={`sidebar-button ${isActive('/products-and-plans') ||
-                                        isActive('/nfccards') ||
-                                        isActive('/subscription')
+                                className={`sidebar-button ${isActive(['/products-and-plans', '/productandplan', '/nfccards', '/subscription'])
                                         ? 'active-sidebar-link'
                                         : ''
                                     }`}
@@ -96,7 +98,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                         {/* GENERAL */}
                         <div className="account-links-container">
-                            <p className="section-title">GENERAL</p>
+                            <p className="section-title" aria-hidden="true">GENERAL</p>
 
                             <Link
                                 to="/profile"
@@ -116,7 +118,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <p className="desktop-body-s">Contact Us</p>
                             </Link>
 
-                            {/* Help Centre */}
                             <Link
                                 to="/helpcentreinterface"
                                 onClick={closeSidebar}
@@ -126,8 +127,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <p className="desktop-body-s">Help Centre</p>
                             </Link>
 
-                            {/* Logout */}
                             <button
+                                type="button"
                                 className="sidebar-button logout-button"
                                 onClick={() => {
                                     handleLogout();
@@ -138,7 +139,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 <p className="desktop-body-s">Logout Account</p>
                             </button>
                         </div>
-                    </div>
+                    </nav>
                 </div>
             </aside>
         </>
