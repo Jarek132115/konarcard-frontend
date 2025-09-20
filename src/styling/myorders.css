@@ -10,19 +10,19 @@
     padding: 0;
     background: transparent;
     border: none;
-    box-shadow: none
+    box-shadow: none;
 }
 
 .orders-hint {
-    opacity: .8
+    opacity: .8;
 }
 
 .error-text {
-    color: #b91c1c
+    color: #b91c1c;
 }
 
 .action-message {
-    margin-top: 12px
+    margin-top: 12px;
 }
 
 /* Empty state */
@@ -32,7 +32,7 @@
     border: 1px solid rgba(0, 0, 0, .08);
     border-radius: 16px;
     background: #fff;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .06)
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
 }
 
 .orders-empty-badge {
@@ -44,7 +44,7 @@
     background: #e9eef6;
     color: #1e3a8a;
     border: 1px solid rgba(0, 0, 0, .06);
-    margin-bottom: 10px
+    margin-bottom: 10px;
 }
 
 .orders-empty-title {
@@ -52,20 +52,20 @@
     font-size: clamp(1.2rem, 3.2vw, 1.6rem);
     font-weight: 800;
     line-height: 1.2;
-    color: #000
+    color: #000;
 }
 
 .orders-empty-sub {
     margin: 0 0 14px;
     color: #333;
-    opacity: .9
+    opacity: .9;
 }
 
 /* List */
 .orders-list {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 18px
+    gap: 18px;
 }
 
 /* Order card */
@@ -79,7 +79,7 @@
     padding: 16px;
     background: #fff;
     box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
-    align-items: start
+    align-items: start;
 }
 
 /* Status pills */
@@ -103,32 +103,32 @@
 
 .order-status-badge.status-placed {
     background: #e8f1ff;
-    color: #0b6bdc
+    color: #0b6bdc;
 }
 
 .order-status-badge.status-designing {
     background: #efe9ff;
-    color: #6b21a8
+    color: #6b21a8;
 }
 
 .order-status-badge.status-packaged {
     background: #fff4e5;
-    color: #b45309
+    color: #b45309;
 }
 
 .order-status-badge.status-shipped {
     background: #e9fbf2;
-    color: #0f766e
+    color: #0f766e;
 }
 
 .order-status-badge.status-active {
     background: #e9fbf2;
-    color: #166534
+    color: #166534;
 }
 
 .order-status-badge.status-canceled {
     background: #fee2e2;
-    color: #b91c1c
+    color: #b91c1c;
 }
 
 /* Thumbnail */
@@ -140,20 +140,22 @@
     background: #f9f9f9;
     display: flex;
     align-items: center;
-    justify-content: center
+    justify-content: center;
 }
 
 .order-thumb-img {
     width: 100%;
     height: 100%;
-    object-fit: cover
+    object-fit: cover;
 }
 
 /* Details / content column */
 .order-details {
     display: flex;
     flex-direction: column;
-    min-height: 250px
+    min-height: 250px;
+    gap: 10px;
+    /* restore breathing room so content isn't squished */
 }
 
 .order-meta {
@@ -161,21 +163,21 @@
     gap: 8px;
     flex-wrap: wrap;
     font-size: 14px;
-    color: #6b7280
+    color: #6b7280;
 }
 
 .order-meta .type {
     text-transform: capitalize;
     color: #111;
-    font-weight: 700
+    font-weight: 700;
 }
 
 .order-meta .status {
-    text-transform: capitalize
+    text-transform: capitalize;
 }
 
 .order-line {
-    font-size: 14px
+    font-size: 14px;
 }
 
 /* Fields */
@@ -183,17 +185,19 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px 18px;
-    align-items: start
+    align-items: start;
+    margin-bottom: var(--card-cta-gap);
+    /* consistent space before CTAs */
 }
 
 .order-progress-wrap {
-    grid-column: 1 / -1
+    grid-column: 1 / -1;
 }
 
 /* Progress */
 .order-progress {
     width: 100%;
-    margin-top: 2px
+    margin-top: 2px;
 }
 
 .order-progress-track {
@@ -201,18 +205,18 @@
     width: 100%;
     border-radius: 999px;
     background: #e9edf3;
-    overflow: hidden
+    overflow: hidden;
 }
 
 .order-progress-fill {
     height: 100%;
-    background: #0081FF
+    background: #0081FF;
 }
 
 .order-progress-caption {
     margin-top: 4px;
     font-size: 12px;
-    color: #6b7280
+    color: #6b7280;
 }
 
 /* Info blocks */
@@ -225,7 +229,7 @@
     border: 1px solid rgba(0, 0, 0, .06);
     border-radius: 12px;
     background: #f9f9f9;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .06)
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
 }
 
 .order-info .dot {
@@ -233,13 +237,13 @@
     height: 8px;
     border-radius: 50%;
     background: #0081FF;
-    margin-top: 7px
+    margin-top: 7px;
 }
 
 .order-info .reason {
     display: flex;
     flex-direction: column;
-    gap: 2px
+    gap: 2px;
 }
 
 /* CTA row: always pinned to bottom with spacing above */
@@ -252,11 +256,12 @@
     gap: 10px;
     justify-content: space-between;
     flex-wrap: wrap;
+    align-items: center;
 }
 
-/* Subscription cards use the same bottom pinning */
-.order-card.is-subscription .order-actions {
-    margin-top: auto;
+/* Make sure black CTAs never stretch */
+.order-actions .cta-black-button.desktop-button {
+    width: auto !important;
 }
 
 /* "View details" full width with 400px cap and enforced block display */
@@ -271,17 +276,17 @@
 /* Responsive */
 @media (max-width:900px) {
     .order-card {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
     }
 
     .order-thumb {
         width: 100%;
         height: auto;
-        max-height: 260px
+        max-height: 260px;
     }
 
     .order-fields {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
     }
 
     /* chips stay compact */
@@ -293,10 +298,11 @@
         max-width: 100%;
         white-space: nowrap;
         place-self: start;
+        /* prevent grid stretch */
     }
 
     /* Stack CTAs nicely on mobile */
     .order-actions {
-        justify-content: stretch
+        justify-content: stretch;
     }
 }
