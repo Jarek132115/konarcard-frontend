@@ -1,8 +1,17 @@
 :root {
+    /* Colors */
     --sb-bg: #F7F7F7;
     --sb-divider: #eef1f4;
     --sb-muted: #6b7280;
     --sb-active: #0081FF;
+
+    /* Layout (keep these in sync with your main layout CSS) */
+    --sb-left: 16px;
+    /* desktop offset from the left edge */
+    --sb-top: 16px;
+    /* desktop offset from the top edge */
+    --sb-w: 268px;
+    /* desktop sidebar width */
 }
 
 /* overlay */
@@ -18,21 +27,22 @@
 
 .sidebar-overlay.active {
     opacity: 1;
-    visibility: visible
+    visibility: visible;
 }
 
 /* shell */
 .sidebar {
     position: fixed;
-    top: 16px;
-    left: 16px;
-    height: calc(100vh - 32px);
-    width: clamp(232px, 17vw, 280px);
+    top: var(--sb-top);
+    left: var(--sb-left);
+    height: calc(100vh - (var(--sb-top) * 2));
+    width: var(--sb-w);
+    /* fixed width for precise layout math */
     background: var(--sb-bg);
     border: 1px solid rgba(0, 0, 0, .08);
     border-radius: 16px;
     padding: 0 14px 16px;
-    /* no side padding; links will touch edge */
+    /* no side padding; links touch the edge */
     box-sizing: border-box;
     z-index: 1003;
 }
@@ -51,11 +61,11 @@
     width: 26px;
     height: 26px;
     filter: none;
-    /* ✅ black logo */
+    /* black logo */
 }
 
 .mobile-only {
-    display: none
+    display: none;
 }
 
 .close-sidebar-button {
@@ -76,15 +86,15 @@
 }
 
 .close-sidebar-button span:nth-child(1) {
-    transform: rotate(45deg)
+    transform: rotate(45deg);
 }
 
 .close-sidebar-button span:nth-child(2) {
-    opacity: 0
+    opacity: 0;
 }
 
 .close-sidebar-button span:nth-child(3) {
-    transform: rotate(-45deg)
+    transform: rotate(-45deg);
 }
 
 .sidebar-content-wrapper {
@@ -95,12 +105,12 @@
     padding: 4px 0 0;
 }
 
+/* links */
 .links-stack {
     display: flex;
-    flex-direction: column
+    flex-direction: column;
 }
 
-/* links */
 .sidebar-button {
     display: flex;
     align-items: center;
@@ -120,7 +130,7 @@
     filter: grayscale(40%);
     opacity: .9;
     margin-left: 5px;
-    /* ✅ 5px left padding on icon */
+    /* small left inset for the icon */
 }
 
 .sidebar-button .label {
@@ -130,11 +140,11 @@
 }
 
 .sidebar-button:hover {
-    color: #425366
+    color: #425366;
 }
 
 .sidebar-button:hover .icon {
-    filter: grayscale(20%)
+    filter: grayscale(20%);
 }
 
 /* Active: blue text + icon (no background) */
@@ -158,11 +168,11 @@
 .settings-row {
     display: flex;
     align-items: center;
-    gap: 8px
+    gap: 8px;
 }
 
 .settings-link {
-    flex: 1
+    flex: 1;
 }
 
 .logout-icon-btn {
@@ -179,7 +189,7 @@
 
 .logout-icon-btn:hover {
     background: #fff1f0;
-    border-color: #ffe0de
+    border-color: #ffe0de;
 }
 
 .icon-red {
@@ -193,7 +203,7 @@
         left: 0;
         height: 100vh;
         width: 100vw;
-        /* ✅ full width drawer */
+        /* full-width drawer */
         border-radius: 0;
         transform: translateX(-100%);
         transition: transform .3s ease;
@@ -201,17 +211,16 @@
     }
 
     .sidebar.open {
-        transform: translateX(0)
+        transform: translateX(0);
     }
 
     .mobile-only {
-        display: block
+        display: block;
     }
 
     /* remove gray line above Home on mobile */
     .brand-header {
         border-bottom: none;
-        /* ✅ no divider on mobile */
         padding: 14px 0 10px;
     }
 
