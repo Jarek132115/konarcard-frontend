@@ -302,6 +302,7 @@
   /* 5 equal columns */
   gap: var(--media-gap);
   margin-top: 0;
+  height: fit-content;
 }
 
 /* Each thumb is a square that stretches with the grid cell */
