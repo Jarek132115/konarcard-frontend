@@ -266,10 +266,7 @@
 
 /* "View details" full width with 400px cap and enforced block display */
 .view-details.desktop-button.cta-blue-button {
-    width: 100% !important;
     max-width: 400px;
-    display: block !important;
-    margin-left: auto;
     margin-right: auto;
 }
 
