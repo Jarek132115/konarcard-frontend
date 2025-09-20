@@ -17,19 +17,13 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const { logout } = useContext(AuthContext);
     const location = useLocation();
 
-    const [collapsed, setCollapsed] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
 
     useEffect(() => {
-        const onResize = () => {
-            const mob = window.innerWidth <= 1000;
-            setIsMobile(mob);
-            // Don’t keep collapsed mode on mobile
-            if (mob && collapsed) setCollapsed(false);
-        };
+        const onResize = () => setIsMobile(window.innerWidth <= 1000);
         window.addEventListener('resize', onResize);
         return () => window.removeEventListener('resize', onResize);
-    }, [collapsed]);
+    }, []);
 
     const closeSidebar = () => setSidebarOpen(false);
     const isActive = (path) => location.pathname === path;
@@ -47,39 +41,15 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 onClick={closeSidebar}
             />
 
-            <aside
-                className={`sidebar ${sidebarOpen ? 'open' : ''} ${collapsed ? 'collapsed' : ''
-                    }`}
-            >
-                {/* Top row (desktop): logo + collapse button */}
-                <div className="brand-header desktop-only">
+            <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+                {/* Top row */}
+                <div className="brand-header">
                     <img src={LogoIcon} alt="Konar" className="brand-logo" />
+                    {/* no collapse button */}
+                    <div className="spacer" />
+                    {/* mobile close X */}
                     <button
-                        className="collapse-toggle"
-                        onClick={() => setCollapsed((v) => !v)}
-                        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                        title={collapsed ? 'Expand' : 'Collapse'}
-                    >
-                        {/* tiny inline chevron */}
-                        <svg
-                            viewBox="0 0 24 24"
-                            width="18"
-                            height="18"
-                            aria-hidden="true"
-                            style={{ transform: collapsed ? 'rotate(180deg)' : 'none' }}
-                        >
-                            <path
-                                d="M14.5 6l-1.4 1.4 3.2 3.1H6v2h10.3l-3.2 3.1 1.4 1.4L20 12z"
-                                fill="currentColor"
-                            />
-                        </svg>
-                    </button>
-                </div>
-
-                {/* Mobile drawer top row (close button) */}
-                <div className="sidebar-mobile-top-row mobile-only">
-                    <button
-                        className="close-sidebar-button"
+                        className="close-sidebar-button mobile-only"
                         onClick={closeSidebar}
                         aria-label="Close menu"
                     >
@@ -90,10 +60,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 </div>
 
                 <div className="sidebar-content-wrapper">
-                    {/* MAIN group */}
-                    <div className="top-links-group">
-                        <p className="section-title">MAIN</p>
-
+                    {/* LINKS */}
+                    <nav className="links-stack">
                         <Link
                             to="/myprofile"
                             onClick={closeSidebar}
@@ -124,9 +92,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="label">Product &amp; Plan</span>
                         </Link>
 
-                        <hr className="divider" />
-
-                        {/* Keep Contact in the top cluster */}
+                        {/* Directly under product & plan (no divider) */}
                         <Link
                             to="/contact-support"
                             onClick={closeSidebar}
@@ -135,11 +101,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <img src={contactInterface} alt="" className="icon" />
                             <span className="label">Contact Us</span>
                         </Link>
-                    </div>
+                    </nav>
 
-                    {/* FOOTER cluster pinned to bottom:
-              Help Centre (above), then Settings + logout icon on the right.
-              In collapsed mode these become stacked icons. */}
+                    {/* Bottom cluster */}
                     <div className="sidebar-footer">
                         <Link
                             to="/helpcentreinterface"
