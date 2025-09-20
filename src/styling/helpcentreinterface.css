@@ -1,195 +1,185 @@
-.app-layout {
-  display: flex;
-  height: 100vh;
-  overflow: auto;
-  flex-direction: row;
-}
-
-.help-videos-page-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  height: auto;
-  padding: 0;
-  box-sizing: border-box;
+/* ===== Help Centre (maintenance cards) ===== */
+.help-container {
   width: 100%;
-  margin-bottom: 40px;
+  margin-top: 6px;
 }
 
-.help-videos-grid {
+.help-list {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 30px;
-  width: 100%;
-  max-width: 550px;
-}
-
-.help-video-item {
-  background: #ffffff;
-  padding: 25px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  border: 1px solid #e0e0e0;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  gap: 25px;
-  flex-direction: row;
-}
-
-.help-video-item.video-item-reversed {
-  flex-direction: row-reverse;
-}
-
-.video-thumb {
-  width: 40%;
-  height: auto;
-  border-radius: 12px;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.video-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  text-align: left;
-}
-
-.video-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.video-desc {
-  font-size: 15px;
-  color: #555;
-  margin-bottom: 15px;
-  line-height: 1.5;
-}
-
-.video-time {
-  font-size: 13px;
-  color: #777;
-  font-style: italic;
+  gap: 18px;
   margin-bottom: 20px;
 }
 
-.video-button {
-  align-self: flex-start;
-  padding: 10px 20px;
-  border-radius: 8px;
+.help-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 18px;
+  border: 1px solid rgba(0, 0, 0, .08);
+  border-radius: 16px;
+  padding: 16px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+  align-items: start;
+}
+
+/* Badge */
+.help-status-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-weight: 700;
+  font-size: .78rem;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, .06);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
+  background: #fff4e5;
+  /* amber-ish */
+  color: #b45309;
+}
+
+.help-status-badge.status-maintenance {
+  background: #efe9ff;
+  /* violet tint like variants on orders */
+  color: #6b21a8;
+}
+
+/* Thumbnail */
+.help-thumb {
+  width: 250px;
+  height: 250px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.help-thumb-mark {
+  font-size: 58px;
+  line-height: 1;
+}
+
+/* Details */
+.help-details {
+  display: flex;
+  flex-direction: column;
+  min-height: 250px;
+  gap: 10px;
+}
+
+.help-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
   font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  width: auto;
-  min-width: 120px;
+  color: #6b7280;
 }
 
-body.dark-mode .help-video-item {
-  background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
-  color: #e0e0e0;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  border-color: #3a3a3a;
+.help-meta .type {
+  text-transform: none;
+  color: #111;
+  font-weight: 800;
 }
 
-body.dark-mode .video-title {
-  color: #f0f0f0;
+.help-meta .status {
+  text-transform: none;
 }
 
-body.dark-mode .video-desc {
-  color: #bbb;
+/* Fields (2 cols desktop, 1 col mobile) */
+.help-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 18px;
+  align-items: start;
+  margin-bottom: 12px;
 }
 
-body.dark-mode .video-time {
-  color: #999;
+.help-kv {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-body.dark-mode .video-button.black-button {
-  background-color: #333;
-  color: white;
+.help-kv .kv-label {
+  font-weight: 800;
+  color: #000;
+  font-size: 14px;
+  line-height: 1.1;
 }
 
-body.dark-mode .video-button.black-button:hover {
-  background-color: #555;
+.help-kv .kv-value {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.35;
 }
 
-@media (max-width: 1000px) {
-  .app-layout {
-    flex-direction: column;
+/* CTA row */
+.help-actions {
+  margin-top: auto;
+  padding-top: 12px;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.help-actions .cta-black-button.desktop-button {
+  width: auto !important;
+}
+
+/* Link-style button inside text */
+.link-like {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #0a66ff;
+  cursor: pointer;
+  text-decoration: underline;
+  font: inherit;
+}
+
+/* Responsive (match orders page behaviour) */
+@media (max-width:900px) {
+  .help-card {
+    grid-template-columns: 1fr;
   }
 
-  .help-videos-page-wrapper {
-    padding: 0;
-    gap: 20px;
-  }
-
-  .help-videos-grid {
-    gap: 20px;
-  }
-
-  .help-video-item,
-  .help-video-item.video-item-reversed {
-    flex-direction: column;
-    padding: 20px;
-    gap: 15px;
-    text-align: center;
-  }
-
-  .video-thumb {
+  .help-thumb {
     width: 100%;
-    max-width: 300px;
-    margin: 0 auto;
+    height: auto;
+    max-height: 260px;
   }
 
-  .video-content {
-    align-items: center;
+  .help-fields {
+    grid-template-columns: 1fr;
   }
 
-  .video-title {
-    font-size: 20px;
+  .help-status-badge {
+    position: static;
     margin-bottom: 8px;
+    display: inline-flex;
+    place-self: start;
   }
 
-  .video-desc {
-    font-size: 14px;
-    margin-bottom: 12px;
-  }
-
-  .video-time {
-    font-size: 12px;
-    margin-bottom: 15px;
-  }
-
-  .video-button {
-    align-self: center;
-    width: 100%;
-    max-width: 180px;
-    font-size: 13px;
-    padding: 8px 12px;
+  .help-actions {
+    justify-content: flex-start;
   }
 }
 
-@media (max-width: 400px) {
-  .main-content-container {
-    padding: 10px;
+@media (max-width:500px) {
+  .help-actions {
+    justify-content: stretch;
   }
 
-  .help-video-item {
-    padding: 15px;
-  }
-
-  .video-title {
-    font-size: 18px;
-  }
-
-  .video-desc {
-    font-size: 13px;
+  .help-actions .cta-black-button.desktop-button,
+  .help-actions .cta-blue-button.desktop-button {
+    width: 100% !important;
+    max-width: none;
   }
 }
