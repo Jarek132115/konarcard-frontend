@@ -206,3 +206,51 @@ body.dark-mode .inline-btn:hover {
 body.dark-mode .settings-divider {
     background: rgba(255, 255, 255, .12);
 }
+
+/* Card container */
+.settings-card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    /* ← remove uniform gaps so we can control field spacing precisely */
+}
+
+/* --- Field spacing (label close to its input, bigger gap before next label) --- */
+.settings-card .profile-label {
+    margin: 16px 0 6px;
+    /* top space from previous field, small gap to input */
+    line-height: 1.2;
+    font-weight: 600;
+}
+
+.settings-card .profile-label:first-of-type {
+    margin-top: 4px;
+    /* keep the very first label closer to the header */
+}
+
+.settings-card .profile-label+.input-shell,
+.settings-card .profile-label+.input-with-button {
+    margin-top: 0;
+    /* label already adds the 6px; keep this tight */
+}
+
+/* Bigger gap after each input before the next label */
+.settings-card .input-shell,
+.settings-card .input-with-button {
+    margin-bottom: 18px;
+    /* field → next label spacing */
+}
+
+@media (min-width: 800px) {
+
+    .settings-card .input-shell,
+    .settings-card .input-with-button {
+        margin-bottom: 20px;
+        /* a touch more breathing room on desktop */
+    }
+}
