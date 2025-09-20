@@ -150,6 +150,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    border-radius: 0 10px 10px 0;
 }
 
 .inline-btn:hover {
