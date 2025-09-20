@@ -155,7 +155,7 @@
     flex-direction: column;
     min-height: 250px;
     gap: 10px;
-    /* restore breathing room so content isn't squished */
+    /* breathing room */
 }
 
 .order-meta {
@@ -187,7 +187,7 @@
     gap: 10px 18px;
     align-items: start;
     margin-bottom: var(--card-cta-gap);
-    /* consistent space before CTAs */
+    /* space before CTAs */
 }
 
 .order-progress-wrap {
@@ -246,12 +246,11 @@
     gap: 2px;
 }
 
-/* CTA row: always pinned to bottom with spacing above */
+/* CTA row: pinned to bottom with spacing above */
 .order-actions {
     margin-top: auto;
     /* pin row to bottom */
     padding-top: var(--card-cta-gap);
-    /* consistent space from content */
     display: flex;
     gap: 10px;
     justify-content: space-between;
@@ -259,18 +258,20 @@
     align-items: center;
 }
 
-/* Make sure black CTAs never stretch */
+/* Make sure black CTAs never stretch by default */
 .order-actions .cta-black-button.desktop-button {
     width: auto !important;
 }
 
-/* "View details" full width with 400px cap and enforced block display */
+/* Blue button default cap on desktop */
 .view-details.desktop-button.cta-blue-button {
     max-width: 400px;
     margin-right: auto;
 }
 
-/* Responsive */
+/* ---------- Responsive rules *for this page only* ---------- */
+
+/* Under 900px: blue button = fit-content (no full-width) */
 @media (max-width:900px) {
     .order-card {
         grid-template-columns: 1fr;
@@ -286,7 +287,6 @@
         grid-template-columns: 1fr;
     }
 
-    /* chips stay compact */
     .order-status-badge {
         position: static;
         margin-bottom: 8px;
@@ -298,8 +298,30 @@
         /* prevent grid stretch */
     }
 
-    /* Stack CTAs nicely on mobile */
+    /* keep CTAs inline with gap; don't stretch */
+    .order-actions {
+        justify-content: flex-start;
+    }
+
+    /* key: fit-content for blue button */
+    .view-details.desktop-button.cta-blue-button {
+        width: auto !important;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+/* Under 500px: BOTH CTAs go 100% width */
+@media (max-width:500px) {
     .order-actions {
         justify-content: stretch;
+    }
+
+    .order-actions .cta-black-button.desktop-button,
+    .order-actions .view-details.desktop-button.cta-blue-button {
+        width: 100% !important;
+        max-width: none;
+        display: block !important;
     }
 }
