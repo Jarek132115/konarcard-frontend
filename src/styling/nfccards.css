@@ -368,3 +368,13 @@
   margin-top: 0;
   /* remove extra separation */
 }
+
+/* ---------- Wider cards on desktop (NFC page only) ---------- */
+@media (min-width: 1000px) {
+  .nfc-pricing-page .pricing-card {
+    flex: 1 1 calc(50% + 110px);
+    /* 50px → 110px = ~60px extra width */
+    max-width: 820px;
+    /* lift the cap to match the new flex */
+  }
+}
