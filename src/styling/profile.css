@@ -207,7 +207,7 @@ body.dark-mode .settings-divider {
     background: rgba(255, 255, 255, .12);
 }
 
-/* Card container */
+/* Card container keeps no global gap */
 .settings-card {
     background: #fff;
     border: 1px solid rgba(0, 0, 0, .08);
@@ -217,40 +217,39 @@ body.dark-mode .settings-divider {
     display: flex;
     flex-direction: column;
     gap: 0;
-    /* ← remove uniform gaps so we can control field spacing precisely */
 }
 
-/* --- Field spacing (label close to its input, bigger gap before next label) --- */
+/* Label sticks close to its input */
 .settings-card .profile-label {
-    margin: 16px 0 6px;
-    /* top space from previous field, small gap to input */
+    margin: 12px 0 6px;
+    /* top = distance from previous field, bottom = label→input */
     line-height: 1.2;
     font-weight: 600;
 }
 
+/* Extra space for the very first label (away from the divider) */
 .settings-card .profile-label:first-of-type {
-    margin-top: 4px;
-    /* keep the very first label closer to the header */
+    margin-top: 16px;
 }
 
-.settings-card .profile-label+.input-shell,
-.settings-card .profile-label+.input-with-button {
-    margin-top: 0;
-    /* label already adds the 6px; keep this tight */
+/* If you have a divider element inside the card, ensure space below it */
+.settings-card .card-divider,
+.settings-card .section-divider {
+    margin: 12px 0 8px;
+    /* breathing room around divider */
 }
 
-/* Bigger gap after each input before the next label */
+/* Field (input) → next label spacing: tighter than before */
 .settings-card .input-shell,
 .settings-card .input-with-button {
-    margin-bottom: 18px;
-    /* field → next label spacing */
+    margin-bottom: 12px;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 1000px) {
 
     .settings-card .input-shell,
     .settings-card .input-with-button {
-        margin-bottom: 20px;
-        /* a touch more breathing room on desktop */
+        margin-bottom: 14px;
+        /* slightly more room on desktop */
     }
 }
