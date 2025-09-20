@@ -26,41 +26,48 @@ export default function ContactSupport() {
     const { user: authUser } = useContext(AuthContext);
     const userId = authUser?._id;
     const userUsername = authUser?.username;
-
     const { data: businessCard } = useFetchBusinessCard(userId);
 
-    // --- Auto-open chat if navigation carried the flag ---
+    // Prefill name/email if available
     useEffect(() => {
-        const openIfFlag = () => {
-            if (localStorage.getItem('openChatOnLoad') !== '1') return;
+        setFormData((p) => ({
+            ...p,
+            name: p.name || authUser?.name || '',
+            email: p.email || authUser?.email || '',
+        }));
+    }, [authUser]);
 
-            const started = Date.now();
-            const tryOpen = () => {
-                const ready = typeof window !== 'undefined' && window.tidioChatApi && typeof window.tidioChatApi.open === 'function';
-                if (ready) {
-                    try { localStorage.removeItem('openChatOnLoad'); } catch { }
-                    window.tidioChatApi.open();
-                } else if (Date.now() - started < 5000) {
-                    setTimeout(tryOpen, 200);
-                } else {
-                    try { localStorage.removeItem('openChatOnLoad'); } catch { }
-                }
-            };
-            tryOpen();
+    // Auto-open chat if flagged
+    useEffect(() => {
+        if (localStorage.getItem('openChatOnLoad') !== '1') return;
+        const started = Date.now();
+        const tryOpen = () => {
+            const ready =
+                typeof window !== 'undefined' &&
+                window.tidioChatApi &&
+                typeof window.tidioChatApi.open === 'function';
+            if (ready) {
+                try { localStorage.removeItem('openChatOnLoad'); } catch { }
+                window.tidioChatApi.open();
+            } else if (Date.now() - started < 5000) {
+                setTimeout(tryOpen, 200);
+            } else {
+                try { localStorage.removeItem('openChatOnLoad'); } catch { }
+            }
         };
-        openIfFlag();
+        tryOpen();
     }, []);
 
     useEffect(() => {
-        const handleResize = () => {
-            const currentIsMobile = window.innerWidth <= 1000;
-            const currentIsSmallMobile = window.innerWidth <= 600;
-            setIsMobile(currentIsMobile);
-            setIsSmallMobile(currentIsSmallMobile);
-            if (!currentIsMobile && sidebarOpen) setSidebarOpen(false);
+        const onResize = () => {
+            const m = window.innerWidth <= 1000;
+            const sm = window.innerWidth <= 600;
+            setIsMobile(m);
+            setIsSmallMobile(sm);
+            if (!m && sidebarOpen) setSidebarOpen(false);
         };
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
     }, [sidebarOpen]);
 
     useEffect(() => {
@@ -116,7 +123,7 @@ export default function ContactSupport() {
 
     return (
         <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
-            {/* Mobile header */}
+            {/* mobile header */}
             <div className="myprofile-mobile-header">
                 <Link to="/" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -143,9 +150,9 @@ export default function ContactSupport() {
                     isSmallMobile={isSmallMobile}
                 />
 
-                {/* Reuse same structure classes for consistent look */}
+                {/* same desktop wrapper look as Profile page */}
                 <div className="profile-page-wrapper contact">
-                    <div className="profile-settings-card">
+                    <div className="settings-card">
                         <p className="desktop-body light-black contact-intro-text">
                             Want to talk to us right now?{' '}
                             <span
