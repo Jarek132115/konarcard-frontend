@@ -19,6 +19,7 @@ import LinkIcon from '../../assets/icons/Link-Icon.svg';
 import TapIcon from '../../assets/icons/Tap-Icon.svg';
 import MoneyIcon from '../../assets/icons/Money-Icon.svg';
 import ShareIcon from '../../assets/icons/Share-Icon.svg';
+import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
 
 import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 import ScanQRCode from '../../assets/images/ScanQR-Code.jpg';
