@@ -1273,3 +1273,36 @@ body {
 .nfc-pricing-page .pricing-head {
     gap: 12px;
 }
+
+/* =========================
+   FIX: Main image square + full width, thumbs stable, CTA gap = 20px
+   ========================= */
+.nfc-pricing-page .pricing-media-main {
+    aspect-ratio: 1 / 1 !important;
+    /* square main image */
+    width: 100% !important;
+    height: auto !important;
+    /* let aspect-ratio control height */
+    border-radius: 16px;
+}
+
+.nfc-pricing-page .pricing-media-main img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+/* Keep the 5 thumbnails equal height at all times */
+.nfc-pricing-page .pricing-media-thumbs.tight {
+    --thumb-h: clamp(50px, 6.5vw, 64px);
+    height: var(--thumb-h) !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+/* Ensure a constant 20px gap between gallery/features and the CTA,
+   and keep CTAs pinned to the bottom of each card */
+.nfc-pricing-page .pricing-card .pricing-bottom {
+    margin-top: 20px !important;
+}
