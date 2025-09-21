@@ -150,179 +150,119 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ---------- 3 STEPS GROUP ---------- */}
-      <div className="section steps-section">
+      {/* ---------- 3 STEPS (Redesigned) ---------- */}
+      <div className="section steps-v2">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
             Get Set Up in <span className='blue'>3 Quick</span> <span className='blue'>& Easy</span> Steps
           </h2>
-          <h3 className="desktop-h6 text-center">From sign-up to booked jobs—in minutes.</h3>
+          <h3 className="desktop-h6 text-center">From sign-up to booked jobs — in minutes.</h3>
         </div>
 
-        <div className="steps-stack">
+        {/* Timeline rail (desktop) */}
+        <div className="steps-rail" aria-hidden="true">
+          <span className="dot">1</span>
+          <span className="dot">2</span>
+          <span className="dot">3</span>
+        </div>
+
+        {/* Cards — snap carousel on mobile/tablet */}
+        <div className="steps-cards" role="list">
           {/* Step 1 */}
-          <div className="step-section">
-            <div className="step-badge">Step 1</div>
-            <div className="step-card">
-              <div className="step-media">
-                <img src={EditProfile} alt="Create your profile" />
-              </div>
-              <div className="step-text">
-                <h3 className="desktop-h5">Sign Up & Build Your Profile</h3>
+          <article className="step-card-v2" role="listitem">
+            <div className="step-media-v2">
+              <img src={EditProfile} alt="Create your profile" />
+            </div>
+            <div className="step-body-v2">
+              <div className="step-chip">Step 1</div>
+              <h3 className="desktop-h5">Sign Up &amp; Build Your Profile</h3>
 
-                <div className="step-bullets">
-                  <div className="section-list">
-                    <div className="icon-white">
-                      <img src={BoltIcon} className="icon icon-img" alt="Icon" />
-                    </div>
-                    <div className="section-list-info">
-                      <p className="desktop-h6">Go live in minutes</p>
-                      <p className="desktop-body-xs gray">Create your account, pick a layout, publish.</p>
-                    </div>
-                  </div>
+              <ul className="step-bullets-v2">
+                <li>
+                  <div className="icon-white"><img src={BoltIcon} alt="" className="icon" /></div>
+                  <div><p className="desktop-h6">Go live in minutes</p><p className="desktop-body-xs gray">Create your account, pick a layout, publish.</p></div>
+                </li>
+                <li>
+                  <div className="icon-white"><img src={CustomizationIcon} alt="" className="icon" /></div>
+                  <div><p className="desktop-h6">Make it yours</p><p className="desktop-body-xs gray">Add logo, photos, brand colours, and services.</p></div>
+                </li>
+                <li>
+                  <div className="icon-white"><img src={FormCustomizationIcon} alt="" className="icon" /></div>
+                  <div><p className="desktop-h6">Enable “Save My Number”</p><p className="desktop-body-xs gray">One tap and your details are in their phone.</p></div>
+                </li>
+              </ul>
 
-                  <div className="section-list">
-                    <div className="icon-white">
-                      <img src={CustomizationIcon} className="icon icon-img" alt="Icon" />
-                    </div>
-                    <div className="section-list-info">
-                      <p className="desktop-h6">Make it yours</p>
-                      <p className="desktop-body-xs gray">Add logo, photos, brand colours, and services.</p>
-                    </div>
-                  </div>
-
-                  <div className="section-list">
-                    <div className="icon-white">
-                      <img src={FormCustomizationIcon} className="icon icon-img" alt="Icon" />
-                    </div>
-                    <div className="section-list-info">
-                      <p className="desktop-h6">Enable “Save My Number”</p>
-                      <p className="desktop-body-xs gray">One tap and your details are in their phone.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="step-cta">
-                  <p style={{ fontStyle: 'italic' }} className="desktop-body-xs gray step-note">
-                    No credit card required*
-                  </p>
-                  <Link to="/register" className="cta-blue-button desktop-button">
-                    Start Your 14-Day Free Trial
-                  </Link>
-                </div>
+              <div className="step-footer-v2">
+                <p className="desktop-body-xs gray" style={{ fontStyle: 'italic' }}>No credit card required*</p>
+                <Link to="/register" className="cta-blue-button desktop-button">Start Your 14-Day Free Trial</Link>
               </div>
             </div>
-          </div>
+          </article>
 
-          {/* Step 2 (reversed) */}
-          <div className="step-section">
-            <div className="step-badge">Step 2</div>
-            <div className="step-card reverse">
-              <div className="step-media">
-                <img src={Section1Image} alt="Order your NFC card" />
-              </div>
-              <div className="step-text">
-                <h3 className="desktop-h5">Order Your Own Konar Card</h3>
+          {/* Step 2 */}
+          <article className="step-card-v2" role="listitem">
+            <div className="step-media-v2">
+              <img src={Section1Image} alt="Order your NFC card" />
+            </div>
+            <div className="step-body-v2">
+              <div className="step-chip">Step 2</div>
+              <h3 className="desktop-h5">Order Your Own Konar Card</h3>
 
-                <div className="step-bullets">
-                  <div className="section-list">
-                    <div className="icon-white">
-                      <img src={NFCIcon} className="icon icon-img" alt="Icon" />
-                    </div>
-                    <div className="section-list-info">
-                      <p className="desktop-h6">One card, unlimited shares</p>
-                      <p className="desktop-body-xs gray">NFC card linked to your live profile.</p>
-                    </div>
-                  </div>
+              <ul className="step-bullets-v2">
+                <li>
+                  <div className="icon-white"><img src={NFCIcon} alt="" className="icon" /></div>
+                  <div><p className="desktop-h6">One card, unlimited shares</p><p className="desktop-body-xs gray">NFC card linked to your live profile.</p></div>
+                </li>
+                <li>
+                  <div className="icon-white"><img src={DeliveryIcon} alt="" className="icon" /></div>
+                  <div><p className="desktop-h6">Printed &amp; shipped fast</p><p className="desktop-body-xs gray">Fast turnaround. Premium finish.</p></div>
+                </li>
+                <li>
+                  <div className="icon-white"><img src={LinkIcon} alt="" className="icon" /></div>
+                  <div><p className="desktop-h6">Always up to date</p><p className="desktop-body-xs gray">Change your profile anytime; the card stays current.</p></div>
+                </li>
+              </ul>
 
-                  <div className="section-list">
-                    <div className="icon-white">
-                      <img src={DeliveryIcon} className="icon icon-img" alt="Icon" />
-                    </div>
-                    <div className="section-list-info">
-                      <p className="desktop-h6">Printed & shipped fast</p>
-                      <p className="desktop-body-xs gray">Fast turnaround. Premium finish.</p>
-                    </div>
-                  </div>
-
-                  <div className="section-list">
-                    <div className="icon-white">
-                      <img src={LinkIcon} className="icon icon-img" alt="Icon" />
-                    </div>
-                    <div className="section-list-info">
-                      <p className="desktop-h6">Always up to date</p>
-                      <p className="desktop-body-xs gray">Change your profile anytime; the card stays current.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="step-cta">
-                  <p style={{ fontStyle: 'italic' }} className="desktop-body-xs gray step-note">
-                    No credit card required*
-                  </p>
-                  <Link to="/register" className="cta-blue-button desktop-button">
-                    Start Your 14-Day Free Trial
-                  </Link>
-                </div>
+              <div className="step-footer-v2">
+                <p className="desktop-body-xs gray" style={{ fontStyle: 'italic' }}>No credit card required*</p>
+                <Link to="/register" className="cta-blue-button desktop-button">Start Your 14-Day Free Trial</Link>
               </div>
             </div>
-          </div>
+          </article>
 
           {/* Step 3 */}
-          <div className="step-section">
-            <div className="step-badge">Step 3</div>
-            <div className="step-card">
-              <div className="step-media">
-                <img src={WhyYouNeedThis} alt="Share your page" />
-              </div>
-              <div className="step-text">
-                <h3 className="desktop-h5">Share Everywhere & Win More Work</h3>
+          <article className="step-card-v2" role="listitem">
+            <div className="step-media-v2">
+              <img src={WhyYouNeedThis} alt="Share your page" />
+            </div>
+            <div className="step-body-v2">
+              <div className="step-chip">Step 3</div>
+              <h3 className="desktop-h5">Share Everywhere &amp; Win More Work</h3>
 
-                <div className="step-bullets">
-                  <div className="section-list">
-                    <div className="icon-white">
-                      <img src={TapIcon} className="icon icon-img" alt="Icon" />
-                    </div>
-                    <div className="section-list-info">
-                      <p className="desktop-h6">Tap or scan</p>
-                      <p className="desktop-body-xs gray">NFC + QR open your profile instantly.</p>
-                    </div>
-                  </div>
+              <ul className="step-bullets-v2">
+                <li>
+                  <div className="icon-white"><img src={TapIcon} alt="" className="icon" /></div>
+                  <div><p className="desktop-h6">Tap or scan</p><p className="desktop-body-xs gray">NFC + QR open your profile instantly.</p></div>
+                </li>
+                <li>
+                  <div className="icon-white"><img src={ShareIcon} alt="" className="icon" /></div>
+                  <div><p className="desktop-h6">Send your link</p><p className="desktop-body-xs gray">Text, WhatsApp, socials, email — or add to your bio.</p></div>
+                </li>
+                <li>
+                  <div className="icon-white"><img src={MoneyIcon} alt="" className="icon" /></div>
+                  <div><p className="desktop-h6">Get booked faster</p><p className="desktop-body-xs gray">Photos, services, reviews — plus “Save my number”.</p></div>
+                </li>
+              </ul>
 
-                  <div className="section-list">
-                    <div className="icon-white">
-                      <img src={ShareIcon} className="icon icon-img" alt="Icon" />
-                    </div>
-                    <div className="section-list-info">
-                      <p className="desktop-h6">Send your link</p>
-                      <p className="desktop-body-xs gray">Text, WhatsApp, socials, email, or add to your bio.</p>
-                    </div>
-                  </div>
-
-                  <div className="section-list">
-                    <div className="icon-white">
-                      <img src={MoneyIcon} className="icon icon-img" alt="Icon" />
-                    </div>
-                    <div className="section-list-info">
-                      <p className="desktop-h6">Get booked faster</p>
-                      <p className="desktop-body-xs gray">Show photos, services, and reviews; clients save your number in one click.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="step-cta">
-                  <p style={{ fontStyle: 'italic' }} className="desktop-body-xs gray step-note">
-                    No credit card required*
-                  </p>
-                  <Link to="/register" className="cta-blue-button desktop-button">
-                    Start Your 14-Day Free Trial
-                  </Link>
-                </div>
+              <div className="step-footer-v2">
+                <p className="desktop-body-xs gray" style={{ fontStyle: 'italic' }}>No credit card required*</p>
+                <Link to="/register" className="cta-blue-button desktop-button">Start Your 14-Day Free Trial</Link>
               </div>
             </div>
-          </div>
+          </article>
         </div>
       </div>
+
 
       {/* ---------- HOW TO SHARE ---------- */}
       <div className="section">
