@@ -677,7 +677,7 @@ export default function MyProfile() {
                           target="_blank"
                           rel="noreferrer"
                           onClick={() => setPreviewOpen(false)}
-                          style={{ width: "100%", textAlign: "center" }}
+                          style={{ width: "100%", textAlign: "center", justifyContent: 'center' }}
                         >
                           Visit Page
                         </a>
