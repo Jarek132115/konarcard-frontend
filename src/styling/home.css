@@ -1275,14 +1275,16 @@ body {
 }
 
 /* =========================
-   FIX: Main image square + full width, thumbs stable, CTA gap = 20px
+   FIX OVERRIDES – Main 4:3, thumbs 1:1, CTA gap
    ========================= */
+
+/* Main product image: full width, 4:3 */
 .nfc-pricing-page .pricing-media-main {
-    aspect-ratio: 1 / 1 !important;
-    /* square main image */
+    aspect-ratio: 4 / 3 !important;
+    /* ← not square anymore */
     width: 100% !important;
     height: auto !important;
-    /* let aspect-ratio control height */
+    /* aspect-ratio controls height */
     border-radius: 16px;
 }
 
@@ -1294,15 +1296,21 @@ body {
     display: block;
 }
 
-/* Keep the 5 thumbnails equal height at all times */
+/* Thumbnails: 5 equal squares, stable strip height */
 .nfc-pricing-page .pricing-media-thumbs.tight {
     --thumb-h: clamp(50px, 6.5vw, 64px);
     height: var(--thumb-h) !important;
     grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-/* Ensure a constant 20px gap between gallery/features and the CTA,
-   and keep CTAs pinned to the bottom of each card */
+.nfc-pricing-page .pricing-media-thumb {
+    aspect-ratio: 1 / 1 !important;
+    /* force squares */
+    width: 100%;
+    height: 100%;
+}
+
+/* Keep constant 20px gap above CTA and pin CTAs to bottom */
 .nfc-pricing-page .pricing-card .pricing-bottom {
     margin-top: 20px !important;
 }
