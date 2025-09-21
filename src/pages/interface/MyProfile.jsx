@@ -656,7 +656,8 @@ export default function MyProfile() {
                           gap: 8,
                           width: "min(420px, 100%)",
                           justifyItems: "stretch",
-                          width: '100%'
+                          width: '100%',
+                          marginBottom: '20px'
                         }}
                       >
                         <button
