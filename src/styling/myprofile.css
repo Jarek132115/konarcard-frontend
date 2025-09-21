@@ -347,28 +347,43 @@
     min-width: 0;
 }
 
-/* ===== Phone preview (no inner scroll) ===== */
+/* Make the whole preview column the card */
 .myprofile-content {
     display: flex;
     justify-content: center;
     align-items: stretch;
-}
 
-.mock-phone {
-    width: 100%;
-    max-width: 100%;
+    /* card chrome moved here */
     background: var(--primary-bg);
     border: .1px solid rgba(0, 0, 0, .08);
     border-radius: 16px;
     padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+    /* clip rounded corners */
+}
+
+@media (max-width:1000px) {
+    .myprofile-content {
+        border-radius: 16px;
+        padding: 16px;
+    }
+}
+
+
+/* Inside the card, just be a normal container */
+.mock-phone {
+    width: 100%;
+    max-width: 100%;
+    background: transparent;
+    /* no card background here anymore */
+    border: 0;
+    padding: 0;
     text-align: center;
     box-sizing: border-box;
 
-    /* ✅ fixes */
     display: flow-root;
-    /* contain margins so About/Services aren’t cut */
-    flex-direction: column;
-    /* still stacks children vertically */
+    /* contain margins/clear floats */
     color: var(--text-color);
 }
 
