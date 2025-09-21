@@ -1144,15 +1144,12 @@ export default function MyProfile() {
                           <label htmlFor="bio">About Me Description</label>
                           <textarea
                             id="bio"
-                            ref={bioRef}
                             rows={4}
                             className="text-input"
                             value={state.bio || ""}
-                            onChange={(e) => { updateState({ bio: e.target.value }); }}
-                            onInput={(e) => autosizeTextarea(e.currentTarget)}  // grow as you type
+                            onChange={(e) => updateState({ bio: e.target.value })}
                             placeholder={previewPlaceholders.bio}
                           />
-
                         </div>
                       </>
                     )}
