@@ -1596,5 +1596,33 @@ textarea.no-resize {
     }
 }
 
+/* force white text when the right tab is active */
+.mp-tab.visit.active,
+.mp-tab.visit.active:link,
+.mp-tab.visit.active:visited {
+    color: #fff !important;
+}
+
+/* full-bleed sticky controls on mobile */
+@media (max-width: 1000px) {
+    .myprofile-content {
+        padding: 16px;
+    }
+
+    /* (you already have this) */
+
+    .mp-mobile-controls {
+        margin-left: -16px;
+        margin-right: -16px;
+        padding-left: 16px;
+        /* keep the visual padding inside */
+        padding-right: 16px;
+        /* keep the visual padding inside */
+    }
+
+    .mp-pill {
+        width: 100%;
+    }
+}
 
 /* end of file */
