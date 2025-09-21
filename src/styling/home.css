@@ -1386,25 +1386,31 @@ body {
 /* === Steps v1 spacing fine-tune === */
 .steps-v1 .step-card-right {
     gap: 0;
-    /* kill auto spacing so we control it exactly */
 }
 
+/* manual control */
 .steps-v1 .step-card-right .step-pill {
     margin: 0 0 10px 0;
-    /* 10px to the title */
 }
 
+/* Step → Title: 10px */
 .steps-v1 .step-card-right h3.desktop-h5 {
-    margin: 0 0 20px 0;
-    /* 20px to the bullets */
+    margin: 0 0 8px 0;
 }
 
+/* Title → Subtitle: 8px */
+.steps-v1 .step-card-right .step-subtitle {
+    margin: 0 0 20px 0;
+}
+
+/* Subtitle → Bullets: 20px */
 .steps-v1 .step-card-right .step-bullet-list {
     margin: 0 0 20px 0;
-    /* 20px to the CTA */
 }
 
+/* Bullets → CTA: 20px */
 .steps-v1 .step-card-right .section-1-cta {
     margin-top: 0;
-    /* spacing already handled above */
 }
+
+/* already handled */
