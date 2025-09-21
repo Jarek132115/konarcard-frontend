@@ -5,7 +5,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    text-decoration: none
+    text-decoration: none;
 }
 
 html,
@@ -13,10 +13,9 @@ body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    width: 100%
+    width: 100%;
 }
 
-/* Shared animation timing for hero badge + headline */
 :root {
     --breath-dur: 5s;
     --breath-delay: 0s;
@@ -33,7 +32,7 @@ body {
     margin-bottom: 100px;
     display: flex;
     flex-direction: column;
-    justify-content: center
+    justify-content: center;
 }
 
 .hero-image {
@@ -42,7 +41,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: 1
+    z-index: 1;
 }
 
 .hero-container {
@@ -57,7 +56,7 @@ body {
     max-width: 1040px;
     margin: 0 auto;
     padding: 0 20px;
-    overflow: hidden
+    overflow: hidden;
 }
 
 .hero-left {
@@ -69,7 +68,7 @@ body {
     max-width: 500px;
     z-index: 2;
     align-self: stretch;
-    min-height: 0
+    min-height: 0;
 }
 
 .hero-right {
@@ -81,7 +80,7 @@ body {
     min-width: 300px;
     height: 100%;
     align-self: stretch;
-    min-height: 0
+    min-height: 0;
 }
 
 .hero-video-element {
@@ -92,66 +91,66 @@ body {
     margin-left: 0 !important;
     visibility: visible !important;
     opacity: 1 !important;
-    overflow: visible
+    overflow: visible;
 }
 
 .hero-subtitle {
-    margin-bottom: 10px
+    margin-bottom: 10px;
 }
 
 .hero-cta {
     display: flex;
     gap: 12px;
     margin: 20px 0;
-    flex-wrap: nowrap
+    flex-wrap: nowrap;
 }
 
 .hero-heading {
     width: 540px;
     max-width: none;
     overflow: visible;
-    margin-bottom: 10px
+    margin-bottom: 10px;
 }
 
 .hero-tick-wrap {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    margin-top: 20px
+    margin-top: 20px;
 }
 
 .hero-tick-row {
     display: flex;
     gap: 40px;
-    white-space: nowrap
+    white-space: nowrap;
 }
 
 .hero-tick {
     display: flex;
     align-items: start;
     gap: 10px;
-    flex-shrink: 0
+    flex-shrink: 0;
 }
 
 .hero-tick img.icon {
     width: 20px;
-    height: 20px
+    height: 20px;
 }
 
 @media (max-width:1200px) {
     .hero-container {
-        max-width: 940px
+        max-width: 940px;
     }
 }
 
 @media (max-width:1000px) {
     .home-hero {
-        height: auto
+        height: auto;
     }
 
     .hero-heading {
         width: 100%;
-        max-width: 640px
+        max-width: 640px;
     }
 
     .hero-container {
@@ -160,54 +159,54 @@ body {
         padding: 20px;
         height: auto;
         align-items: center;
-        justify-content: center
+        justify-content: center;
     }
 
     .hero-left,
     .hero-right {
         max-width: 100%;
         width: 100%;
-        align-self: auto
+        align-self: auto;
     }
 
     .hero-right {
         order: -1;
         margin: 60px 0 20px;
         height: auto;
-        justify-content: center
+        justify-content: center;
     }
 
     .hero-video-element {
         position: relative;
         width: 100% !important;
-        height: 450px !important
+        height: 450px !important;
     }
 
     .hero-left {
         order: 1;
-        align-items: center
+        align-items: center;
     }
 
     .hero-cta {
         justify-content: center;
-        width: 100%
+        width: 100%;
     }
 
     .hero-tick-wrap {
         align-items: center;
         gap: 12px;
-        margin-top: 0
+        margin-top: 0;
     }
 
     .hero-tick-row {
         flex-direction: column;
         align-items: center;
         gap: 12px;
-        white-space: normal
+        white-space: normal;
     }
 
     .hero-tick {
-        text-align: center
+        text-align: center;
     }
 }
 
@@ -216,21 +215,21 @@ body {
         flex-direction: column;
         gap: 8px;
         width: 100%;
-        padding: 0 10px
+        padding: 0 10px;
     }
 
     .hero-cta .black-button,
     .cta-black-button {
         width: 100%;
-        text-align: center
+        text-align: center;
     }
 
     .hero-tick-wrap {
-        display: none
+        display: none;
     }
 
     .hero-video-element {
-        height: 300px !important
+        height: 300px !important;
     }
 }
 
@@ -239,17 +238,17 @@ body {
     align-items: center;
     gap: 14px;
     margin-bottom: 10px;
-    flex-wrap: wrap
+    flex-wrap: wrap;
 }
 
 .hero-avatars {
     display: flex;
-    position: relative
+    position: relative;
 }
 
 .avatar-text {
     display: flex;
-    flex-direction: column
+    flex-direction: column;
 }
 
 .hero-avatars .avatar {
@@ -258,26 +257,26 @@ body {
     border-radius: 50%;
     border: 4px solid #fff;
     object-fit: cover;
-    margin-left: -10px
+    margin-left: -10px;
 }
 
 .hero-avatars .avatar:first-child {
-    margin-left: 0
+    margin-left: 0;
 }
 
 .hero-rating {
     font-size: 14px;
     color: #000;
-    font-weight: 700
+    font-weight: 700;
 }
 
 @media (max-width:600px) {
     .hero-social-proof {
-        text-align: start
+        text-align: start;
     }
 
     .hero-rating {
-        font-weight: 600
+        font-weight: 600;
     }
 }
 
@@ -287,19 +286,19 @@ body {
 .section {
     max-width: 1040px;
     margin: 100px auto;
-    box-sizing: border-box
+    box-sizing: border-box;
 }
 
 .first-section-after-hero {
-    margin-top: 0 !important
+    margin-top: 0 !important;
 }
 
 .full-width-bg-container>.section {
-    margin: 0
+    margin: 0;
 }
 
 .section-1-left {
-    flex: 1
+    flex: 1;
 }
 
 .icon {
@@ -313,44 +312,44 @@ body {
     border-radius: 10px;
     padding: 10px;
     display: flex;
-    align-items: center
+    align-items: center;
 }
 
 .section-1-left img {
     height: 400px;
     width: 100%;
     object-fit: cover;
-    border-radius: 20px
+    border-radius: 20px;
 }
 
 .section-1-title {
-    margin-bottom: 40px
+    margin-bottom: 40px;
 }
 
 .section-1-content {
     display: flex;
     align-items: center;
-    gap: 40px
+    gap: 40px;
 }
 
 .section-1-right {
-    flex: 1
+    flex: 1;
 }
 
 .section-list {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 20px
+    margin-top: 20px;
 }
 
 .section-list-info {
     display: flex;
-    flex-direction: column
+    flex-direction: column;
 }
 
 .margin-top-10 {
-    margin-top: 10px
+    margin-top: 10px;
 }
 
 .section-1-cta,
@@ -359,12 +358,12 @@ body {
     margin-top: 20px;
     width: 100%;
     display: flex;
-    flex-direction: column
+    flex-direction: column;
 }
 
 @media (max-width:1200px) {
     .section {
-        max-width: 900px
+        max-width: 900px;
     }
 }
 
@@ -373,50 +372,50 @@ body {
         flex-direction: column;
         align-items: flex-start;
         text-align: left;
-        gap: 20px
+        gap: 20px;
     }
 
     .section {
         width: 100%;
         max-width: 90%;
         margin: 80px auto 0;
-        padding: 0 20px
+        padding: 0 20px;
     }
 
     .section-1-title {
         margin-bottom: 20px;
         display: flex;
         gap: 4px;
-        flex-direction: column
+        flex-direction: column;
     }
 
     .section-1-title h2,
     .section-1-title h3 {
-        text-align: left !important
+        text-align: left !important;
     }
 
     .section-1-left,
     .section-1-right {
-        width: 100%
+        width: 100%;
     }
 
     .section-1-left img {
         width: 100%;
         height: auto;
-        aspect-ratio: 1/1
+        aspect-ratio: 1/1;
     }
 
     .section-1-cta,
     .cta-center-text.review-cta,
     .faq-cta {
-        align-items: center
+        align-items: center;
     }
 }
 
 @media (max-width:800px) {
     .section-1-left img {
         height: auto;
-        aspect-ratio: 1/1
+        aspect-ratio: 1/1;
     }
 }
 
@@ -425,7 +424,7 @@ body {
         width: 90%;
         max-width: 90%;
         margin-top: 60px;
-        padding: 0
+        padding: 0;
     }
 }
 
@@ -433,13 +432,13 @@ body {
    STEPS
    ========================= */
 .step-section {
-    margin-top: 0
+    margin-top: 0;
 }
 
 .steps-stack {
     display: flex;
     flex-direction: column;
-    gap: 40px
+    gap: 40px;
 }
 
 .step-badge {
@@ -451,7 +450,7 @@ body {
     border-radius: 999px;
     color: #333;
     margin-bottom: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .06)
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
 }
 
 .step-card {
@@ -463,27 +462,27 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas: "media text";
-    align-items: stretch
+    align-items: stretch;
 }
 
 .step-card .step-media {
     grid-area: media;
-    padding: 10px
+    padding: 10px;
 }
 
 .step-card .step-text {
     grid-area: text;
     padding: 30px;
     display: flex;
-    flex-direction: column
+    flex-direction: column;
 }
 
 .step-card.reverse {
-    grid-template-areas: "text media"
+    grid-template-areas: "text media";
 }
 
 .step-card .step-text h3 {
-    margin: 0 0 20px
+    margin: 0 0 20px;
 }
 
 .step-card .step-media img {
@@ -491,29 +490,29 @@ body {
     height: 100%;
     object-fit: cover;
     border-radius: 12px;
-    display: block
+    display: block;
 }
 
 .step-bullets {
     display: flex;
     flex-direction: column;
-    gap: 20px
+    gap: 20px;
 }
 
 .step-bullets .section-list {
-    margin-top: 0
+    margin-top: 0;
 }
 
 .step-cta {
     margin-top: 20px;
     display: flex;
     flex-direction: column;
-    gap: 5px
+    gap: 5px;
 }
 
 .step-note {
     margin: 0;
-    color: #666
+    color: #666;
 }
 
 @media (max-width:1000px) {
@@ -521,20 +520,20 @@ body {
     .step-card,
     .step-card.reverse {
         grid-template-columns: 1fr;
-        grid-template-areas: "media" "text"
+        grid-template-areas: "media" "text";
     }
 
     .step-card .step-media {
-        padding: 10px
+        padding: 10px;
     }
 
     .step-card .step-text {
-        padding: 10px 20px 20px
+        padding: 10px 20px 20px;
     }
 
     .step-card .step-media img {
         height: auto;
-        max-height: 260px
+        max-height: 260px;
     }
 }
 
@@ -544,7 +543,7 @@ body {
 .share-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px
+    gap: 10px;
 }
 
 .share-card {
@@ -554,14 +553,14 @@ body {
     box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
     padding: 10px;
     display: flex;
-    flex-direction: column
+    flex-direction: column;
 }
 
 .share-card-media {
     border-radius: 18px;
     width: 100%;
     aspect-ratio: 1/1;
-    overflow: hidden
+    overflow: hidden;
 }
 
 .share-card-media img {
@@ -569,40 +568,40 @@ body {
     height: 100%;
     object-fit: cover;
     border-radius: inherit;
-    display: block
+    display: block;
 }
 
 .share-card h4 {
-    margin: 10px 10px 0
+    margin: 10px 10px 0;
 }
 
 .share-card p {
     margin: 0 10px 10px;
-    color: #555
+    color: #555;
 }
 
 @media (max-width:1200px) {
     .share-grid {
-        grid-template-columns: repeat(3, 1fr)
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
 @media (max-width:1000px) {
     .share-grid {
-        grid-template-columns: repeat(2, 1fr)
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width:600px) {
     .share-grid {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
     }
 }
 
 /* =========================
    PEOPLE GRID
    ========================= */
-@media (min-width: 1000px) {
+@media (min-width:1000px) {
     .people-grid {
         display: grid;
         grid-template-columns: repeat(10, 1fr);
@@ -637,7 +636,7 @@ body {
     }
 }
 
-@media (max-width: 999px) {
+@media (max-width:999px) {
     .people-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -664,7 +663,7 @@ body {
 }
 
 /* =========================
-   PRICING (Base)
+   PRICING (base layout)
    ========================= */
 .pricing-grid {
     display: grid;
@@ -672,7 +671,6 @@ body {
     gap: 24px;
 }
 
-/* Card + equal-height + CTA pinned bottom */
 .pricing-card {
     border-radius: 24px;
     overflow: hidden;
@@ -690,7 +688,6 @@ body {
 
 .pricing-content {
     flex: 1 1 auto;
-    /* take remaining space */
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -698,20 +695,21 @@ body {
 
 .pricing-bottom {
     margin-top: 20px;
-    /* <-- constant 20px gap above CTA */
 }
+
+/* constant gap above CTA */
 
 .pricing-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px
+    gap: 12px;
 }
 
 @media (max-width:600px) {
     .pricing-head {
         align-items: start;
-        flex-direction: column
+        flex-direction: column;
     }
 }
 
@@ -723,59 +721,56 @@ body {
     padding: 8px 12px;
     border-radius: 6px;
     white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .15)
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
 }
 
 .pricing-divider {
     margin: 14px 0;
     height: 1px;
-    opacity: .6
+    opacity: .6;
 }
 
 .pricing-price-row {
     display: flex;
     align-items: baseline;
-    gap: 0
+    gap: 0;
 }
 
 @media (max-width:1000px) {
     .pricing-grid {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
     }
 }
 
 /* =========================
-   PRICING – Color themes
+   PRICING – themes
    ========================= */
 .pricing-card--subscription {
     background: #006FE6;
-    /* blue */
     color: #fff;
-    border: 1px solid rgba(255, 255, 255, .25)
+    border: 1px solid rgba(255, 255, 255, .25);
 }
 
 .pricing-card--subscription .pricing-divider {
-    background: rgba(255, 255, 255, .6)
+    background: rgba(255, 255, 255, .6);
 }
 
 .pricing-card--product {
     background: #333;
-    /* dark grey */
     color: #fff;
-    border: 1px solid #2a2a2a
+    border: 1px solid #2a2a2a;
 }
 
 .pricing-card--product .pricing-divider {
-    background: rgba(255, 255, 255, .22)
+    background: rgba(255, 255, 255, .22);
 }
 
 /* =========================
-   PRICING – Gallery (no jumping; thumbs constant)
+   PRICING – gallery (main 4:3, thumbs 1:1)
    ========================= */
 .nfc-pricing-page {
     --media-gap: 6px;
     --thumb-h: 64px;
-    /* uniform thumbnail height */
 }
 
 .pricing-media-tray {
@@ -787,7 +782,6 @@ body {
     gap: var(--media-gap);
 }
 
-/* Main media keeps a stable aspect on desktop */
 .pricing-media-main {
     width: 100%;
     border-radius: 16px;
@@ -795,7 +789,6 @@ body {
     background: #0b0b0b;
     border: 1px solid rgba(255, 255, 255, .08);
     aspect-ratio: 4 / 3;
-    /* <-- stable height relative to width */
 }
 
 .pricing-media-main img {
@@ -805,13 +798,11 @@ body {
     display: block;
 }
 
-/* Thumbs: 5 equal squares, fixed strip height */
 .pricing-media-thumbs.tight {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: var(--media-gap);
     height: var(--thumb-h);
-    /* <-- fixed strip height */
 }
 
 .pricing-media-thumb {
@@ -842,7 +833,6 @@ body {
     box-shadow: none;
 }
 
-/* Mobile tweaks */
 @media (max-width:1000px) {
     .pricing-media-main {
         aspect-ratio: 4 / 3;
@@ -859,7 +849,6 @@ body {
         aspect-ratio: 1 / 1;
     }
 
-    /* square on small phones */
     .pricing-media-thumbs.tight {
         --thumb-h: 50px;
         height: var(--thumb-h);
@@ -869,37 +858,12 @@ body {
 
 @media (max-width:430px) {
     .pricing-media-thumbs.tight {
-        gap: 2px
+        gap: 2px;
     }
 }
 
 /* =========================
-   PRICING – Pills
-   ========================= */
-.pill-blue-solid {
-    background: #0a66ff;
-    color: #fff;
-    border: 1px solid #0a66ff;
-    font-weight: 700;
-    font-size: 12px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    white-space: nowrap;
-}
-
-.pill-black {
-    background: #111;
-    color: #fff;
-    border: 1px solid #111;
-    font-weight: 700;
-    font-size: 12px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    white-space: nowrap;
-}
-
-/* =========================
-   PRICING – Feature grid
+   PRICING – features
    ========================= */
 .feature-grid {
     list-style: none;
@@ -910,9 +874,9 @@ body {
     padding: 0;
 }
 
-@media (max-width: 900px) {
+@media (max-width:900px) {
     .feature-grid {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
     }
 }
 
@@ -938,7 +902,6 @@ body {
     gap: 2px;
 }
 
-/* Text colours for dark cards */
 .pricing-card--subscription .feature-title,
 .pricing-card--product .feature-title {
     font-weight: 800;
@@ -957,12 +920,12 @@ body {
 .review-container-box {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 20px
+    gap: 20px;
 }
 
 .review-container,
 .review-pair {
-    display: contents
+    display: contents;
 }
 
 .review-div {
@@ -982,7 +945,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px
+    gap: 10px;
 }
 
 .review-div-person>img {
@@ -993,12 +956,12 @@ body {
     object-position: center;
     flex: 0 0 40px;
     display: block;
-    border: 1px solid #e6e6e6
+    border: 1px solid #e6e6e6;
 }
 
 .stars {
     width: 120px;
-    margin: 0 auto
+    margin: 0 auto;
 }
 
 .cta-center-text.review-cta {
@@ -1007,45 +970,45 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    width: 100%
+    width: 100%;
 }
 
 @media (max-width:1000px) {
     .review-container-box {
         grid-template-columns: repeat(2, 1fr);
-        gap: 16px
+        gap: 16px;
     }
 
     .cta-center-text.review-cta .desktop-button {
         width: 100%;
-        max-width: 100%
+        max-width: 100%;
     }
 
     .review-btn {
         width: 100%;
         text-align: center;
-        display: block
+        display: block;
     }
 
     .cta-center-text.review-cta {
         margin-top: 40px;
-        gap: 5px
+        gap: 5px;
     }
 }
 
 @media (max-width:600px) {
     .review-container-box {
         grid-template-columns: 1fr;
-        gap: 12px
+        gap: 12px;
     }
 
     .review-div {
-        padding: 20px
+        padding: 20px;
     }
 
     .cta-center-text.review-cta {
         margin-top: 20px;
-        gap: 5px
+        gap: 5px;
     }
 }
 
@@ -1054,14 +1017,14 @@ body {
    ========================= */
 .faq-container {
     display: flex;
-    gap: 20px
+    gap: 20px;
 }
 
 .faq-column {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 20px
+    gap: 20px;
 }
 
 .faq-cta {
@@ -1071,16 +1034,18 @@ body {
     align-items: center;
     gap: 10px;
     width: 100%;
-    margin-bottom: 0
+    margin-bottom: 0;
 }
 
 @media (max-width:900px) {
     .faq-container {
-        flex-direction: column
+        flex-direction: column;
     }
 }
 
-/* Buttons used elsewhere on page */
+/* =========================
+   Buttons
+   ========================= */
 .black-button {
     background: #000;
     color: #fff;
@@ -1091,11 +1056,11 @@ body {
     display: inline-block;
     cursor: pointer;
     transition: background-color .3s ease;
-    box-sizing: border-box
+    box-sizing: border-box;
 }
 
 .black-button:hover {
-    background: #333
+    background: #333;
 }
 
 .combined-section-button {
@@ -1110,34 +1075,34 @@ body {
     text-decoration: none;
     cursor: pointer;
     transition: background-color .3s ease;
-    box-sizing: border-box
+    box-sizing: border-box;
 }
 
 /* =========================
-   HERO BADGE + HEADLINE SYNCED ANIMATIONS
+   HERO BADGE + HEADLINE ANIM
    ========================= */
 .home-hero .hero-badge {
     position: relative;
     animation: badgeBlueBreath var(--breath-dur) ease-in-out var(--breath-delay) infinite both;
     will-change: transform, background, color, box-shadow, border-color;
-    transform-origin: center
+    transform-origin: center;
 }
 
 @media (max-width:1000px) {
     .home-hero .hero-badge {
         margin-left: auto;
-        margin-right: auto
+        margin-right: auto;
     }
 }
 
 .home-hero .hero-badge:hover,
 .home-hero .hero-badge:focus {
-    animation-play-state: paused
+    animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion:reduce) {
     .home-hero .hero-badge {
-        animation: none
+        animation: none;
     }
 }
 
@@ -1145,23 +1110,22 @@ body {
     position: relative;
     text-shadow: none;
     animation: heroBlueBreathe var(--breath-dur) ease-in-out var(--breath-delay) infinite both;
-    will-change: text-shadow
+    will-change: text-shadow;
 }
 
 @media (prefers-reduced-motion:reduce) {
     .hero-glow {
-        animation: none
+        animation: none;
     }
 }
 
-/* Badge pulse */
 @keyframes badgeBlueBreath {
     0% {
         transform: scale(1);
         background: #f3f4f6;
         color: #333;
         border-color: #e6e6e6;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, .06)
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
     }
 
     50% {
@@ -1169,7 +1133,7 @@ body {
         background: #006FE6;
         color: #fff;
         border-color: #006FE6;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, .12)
+        box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
     }
 
     100% {
@@ -1177,29 +1141,24 @@ body {
         background: #f3f4f6;
         color: #333;
         border-color: #e6e6e6;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, .06)
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
     }
 }
 
-/* Headline glow */
 @keyframes heroBlueBreathe {
 
     0%,
     100% {
-        text-shadow: none
+        text-shadow: none;
     }
 
     50% {
-        text-shadow:
-            0 0 10px rgba(0, 129, 255, .65),
-            0 0 24px rgba(0, 129, 255, .50),
-            0 0 48px rgba(0, 129, 255, .35),
-            0 0 80px rgba(0, 129, 255, .22)
+        text-shadow: 0 0 10px rgba(0, 129, 255, .65), 0 0 24px rgba(0, 129, 255, .50), 0 0 48px rgba(0, 129, 255, .35), 0 0 80px rgba(0, 129, 255, .22);
     }
 }
 
 /* =========================
-   HOW IT WORKS – MODAL
+   MODAL
    ========================= */
 .video-modal-overlay {
     position: fixed;
@@ -1236,11 +1195,11 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background .2s ease;
 }
 
 .video-close:hover {
-    background: rgba(255, 255, 255, 0.35)
+    background: rgba(255, 255, 255, 0.35);
 }
 
 .video-frame {
@@ -1268,49 +1227,8 @@ body {
 }
 
 /* =========================
-   MATCHING THE REFERENCE SCOPE
+   SCOPE TWEAKS
    ========================= */
 .nfc-pricing-page .pricing-head {
     gap: 12px;
-}
-
-/* =========================
-   FIX OVERRIDES – Main 4:3, thumbs 1:1, CTA gap
-   ========================= */
-
-/* Main product image: full width, 4:3 */
-.nfc-pricing-page .pricing-media-main {
-    aspect-ratio: 4 / 3 !important;
-    /* ← not square anymore */
-    width: 100% !important;
-    height: auto !important;
-    /* aspect-ratio controls height */
-    border-radius: 16px;
-}
-
-.nfc-pricing-page .pricing-media-main img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-}
-
-/* Thumbnails: 5 equal squares, stable strip height */
-.nfc-pricing-page .pricing-media-thumbs.tight {
-    --thumb-h: clamp(50px, 6.5vw, 64px);
-    height: var(--thumb-h) !important;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-}
-
-.nfc-pricing-page .pricing-media-thumb {
-    aspect-ratio: 1 / 1 !important;
-    /* force squares */
-    width: 100%;
-    height: 100%;
-}
-
-/* Keep constant 20px gap above CTA and pin CTAs to bottom */
-.nfc-pricing-page .pricing-card .pricing-bottom {
-    margin-top: 20px !important;
 }
