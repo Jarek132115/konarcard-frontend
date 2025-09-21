@@ -704,7 +704,6 @@
     top: 64px;
     z-index: 5;
     background: transparent;
-    margin-bottom: 8px;
 }
 
 @media (min-width:1001px) {
@@ -1606,17 +1605,6 @@ textarea.no-resize {
 @media (max-width: 1000px) {
     .myprofile-content {
         padding: 16px;
-    }
-
-    /* (you already have this) */
-
-    .mp-mobile-controls {
-        margin-left: -16px;
-        margin-right: -16px;
-        padding-left: 16px;
-        /* keep the visual padding inside */
-        padding-right: 16px;
-        /* keep the visual padding inside */
     }
 
     .mp-pill {
