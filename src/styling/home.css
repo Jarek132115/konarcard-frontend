@@ -1282,3 +1282,55 @@ body {
 .nfc-pricing-page .pricing-head {
     gap: 12px
 }
+
+/* =========================
+   STEPS v1 — Old Layout (with Blue Dot Bullets)
+   ========================= */
+.steps-v1 .section-1-content {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 60px;
+}
+
+.steps-v1 .section-1-left img {
+    border-radius: 16px;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+}
+
+.step-bullet-list {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.step-bullet-list li {
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    gap: 12px;
+    align-items: start;
+}
+
+.step-bullet-list .blue-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #0081FF;
+    margin-top: 7px;
+}
+
+@media (max-width: 1000px) {
+    .steps-v1 .section-1-content {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .steps-v1 .section-1-left img {
+        aspect-ratio: 1/1;
+    }
+}

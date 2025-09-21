@@ -150,116 +150,127 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ---------- 3 STEPS (Redesigned) ---------- */}
-      <div className="section steps-v2">
+      {/* ---------- 3 STEPS (Old Layout, Redesigned Content) ---------- */}
+      <div className="section steps-v1">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
             Get Set Up in <span className='blue'>3 Quick</span> <span className='blue'>& Easy</span> Steps
           </h2>
-          <h3 className="desktop-h6 text-center">From sign-up to booked jobs — in minutes.</h3>
+          <h3 className="desktop-h6 text-center">From sign-up to sharing — it only takes minutes.</h3>
         </div>
 
-        {/* Timeline rail (desktop) */}
-        <div className="steps-rail" aria-hidden="true">
-          <span className="dot">1</span>
-          <span className="dot">2</span>
-          <span className="dot">3</span>
+        {/* Step 1 */}
+        <div className="section-1-content">
+          <div className="section-1-left">
+            <img src={EditProfile} alt="Create your profile" />
+          </div>
+          <div className="section-1-right">
+            <h3 className="desktop-h5">Step 1 — Create Your Profile</h3>
+            <ul className="step-bullet-list">
+              <li>
+                <span className="blue-dot"></span>
+                <div>
+                  <p className="desktop-h6">Go live in minutes</p>
+                  <p className="desktop-body-xs gray">Sign up, choose your layout, and publish instantly.</p>
+                </div>
+              </li>
+              <li>
+                <span className="blue-dot"></span>
+                <div>
+                  <p className="desktop-h6">Make it yours</p>
+                  <p className="desktop-body-xs gray">Add your logo, photos, brand colours, and services.</p>
+                </div>
+              </li>
+              <li>
+                <span className="blue-dot"></span>
+                <div>
+                  <p className="desktop-h6">Save my number</p>
+                  <p className="desktop-body-xs gray">One tap saves your contact to their phone.</p>
+                </div>
+              </li>
+            </ul>
+            <div className="section-1-cta">
+              <Link to="/register" className="cta-blue-button desktop-button">
+                Start Your 14-Day Free Trial
+              </Link>
+            </div>
+          </div>
         </div>
 
-        {/* Cards — snap carousel on mobile/tablet */}
-        <div className="steps-cards" role="list">
-          {/* Step 1 */}
-          <article className="step-card-v2" role="listitem">
-            <div className="step-media-v2">
-              <img src={EditProfile} alt="Create your profile" />
+        {/* Step 2 */}
+        <div className="section-1-content">
+          <div className="section-1-left">
+            <img src={Section1Image} alt="Order your Konar card" />
+          </div>
+          <div className="section-1-right">
+            <h3 className="desktop-h5">Step 2 — Order Your Konar Card</h3>
+            <ul className="step-bullet-list">
+              <li>
+                <span className="blue-dot"></span>
+                <div>
+                  <p className="desktop-h6">One card, unlimited shares</p>
+                  <p className="desktop-body-xs gray">NFC card linked to your live profile.</p>
+                </div>
+              </li>
+              <li>
+                <span className="blue-dot"></span>
+                <div>
+                  <p className="desktop-h6">Fast turnaround</p>
+                  <p className="desktop-body-xs gray">Premium quality, shipped quickly.</p>
+                </div>
+              </li>
+              <li>
+                <span className="blue-dot"></span>
+                <div>
+                  <p className="desktop-h6">Always current</p>
+                  <p className="desktop-body-xs gray">Update your profile anytime — your card stays in sync.</p>
+                </div>
+              </li>
+            </ul>
+            <div className="section-1-cta">
+              <Link to="/register" className="cta-blue-button desktop-button">
+                Start Your 14-Day Free Trial
+              </Link>
             </div>
-            <div className="step-body-v2">
-              <div className="step-chip">Step 1</div>
-              <h3 className="desktop-h5">Sign Up &amp; Build Your Profile</h3>
+          </div>
+        </div>
 
-              <ul className="step-bullets-v2">
-                <li>
-                  <div className="icon-white"><img src={BoltIcon} alt="" className="icon" /></div>
-                  <div><p className="desktop-h6">Go live in minutes</p><p className="desktop-body-xs gray">Create your account, pick a layout, publish.</p></div>
-                </li>
-                <li>
-                  <div className="icon-white"><img src={CustomizationIcon} alt="" className="icon" /></div>
-                  <div><p className="desktop-h6">Make it yours</p><p className="desktop-body-xs gray">Add logo, photos, brand colours, and services.</p></div>
-                </li>
-                <li>
-                  <div className="icon-white"><img src={FormCustomizationIcon} alt="" className="icon" /></div>
-                  <div><p className="desktop-h6">Enable “Save My Number”</p><p className="desktop-body-xs gray">One tap and your details are in their phone.</p></div>
-                </li>
-              </ul>
-
-              <div className="step-footer-v2">
-                <p className="desktop-body-xs gray" style={{ fontStyle: 'italic' }}>No credit card required*</p>
-                <Link to="/register" className="cta-blue-button desktop-button">Start Your 14-Day Free Trial</Link>
-              </div>
+        {/* Step 3 */}
+        <div className="section-1-content">
+          <div className="section-1-left">
+            <img src={WhyYouNeedThis} alt="Share your page" />
+          </div>
+          <div className="section-1-right">
+            <h3 className="desktop-h5">Step 3 — Share & Win More Work</h3>
+            <ul className="step-bullet-list">
+              <li>
+                <span className="blue-dot"></span>
+                <div>
+                  <p className="desktop-h6">Tap or scan</p>
+                  <p className="desktop-body-xs gray">Share your profile instantly via NFC or QR code.</p>
+                </div>
+              </li>
+              <li>
+                <span className="blue-dot"></span>
+                <div>
+                  <p className="desktop-h6">Send your link</p>
+                  <p className="desktop-body-xs gray">Text, WhatsApp, socials, email — share it everywhere.</p>
+                </div>
+              </li>
+              <li>
+                <span className="blue-dot"></span>
+                <div>
+                  <p className="desktop-h6">Get booked faster</p>
+                  <p className="desktop-body-xs gray">Photos, reviews, and services make the sale for you.</p>
+                </div>
+              </li>
+            </ul>
+            <div className="section-1-cta">
+              <Link to="/register" className="cta-blue-button desktop-button">
+                Start Your 14-Day Free Trial
+              </Link>
             </div>
-          </article>
-
-          {/* Step 2 */}
-          <article className="step-card-v2" role="listitem">
-            <div className="step-media-v2">
-              <img src={Section1Image} alt="Order your NFC card" />
-            </div>
-            <div className="step-body-v2">
-              <div className="step-chip">Step 2</div>
-              <h3 className="desktop-h5">Order Your Own Konar Card</h3>
-
-              <ul className="step-bullets-v2">
-                <li>
-                  <div className="icon-white"><img src={NFCIcon} alt="" className="icon" /></div>
-                  <div><p className="desktop-h6">One card, unlimited shares</p><p className="desktop-body-xs gray">NFC card linked to your live profile.</p></div>
-                </li>
-                <li>
-                  <div className="icon-white"><img src={DeliveryIcon} alt="" className="icon" /></div>
-                  <div><p className="desktop-h6">Printed &amp; shipped fast</p><p className="desktop-body-xs gray">Fast turnaround. Premium finish.</p></div>
-                </li>
-                <li>
-                  <div className="icon-white"><img src={LinkIcon} alt="" className="icon" /></div>
-                  <div><p className="desktop-h6">Always up to date</p><p className="desktop-body-xs gray">Change your profile anytime; the card stays current.</p></div>
-                </li>
-              </ul>
-
-              <div className="step-footer-v2">
-                <p className="desktop-body-xs gray" style={{ fontStyle: 'italic' }}>No credit card required*</p>
-                <Link to="/register" className="cta-blue-button desktop-button">Start Your 14-Day Free Trial</Link>
-              </div>
-            </div>
-          </article>
-
-          {/* Step 3 */}
-          <article className="step-card-v2" role="listitem">
-            <div className="step-media-v2">
-              <img src={WhyYouNeedThis} alt="Share your page" />
-            </div>
-            <div className="step-body-v2">
-              <div className="step-chip">Step 3</div>
-              <h3 className="desktop-h5">Share Everywhere &amp; Win More Work</h3>
-
-              <ul className="step-bullets-v2">
-                <li>
-                  <div className="icon-white"><img src={TapIcon} alt="" className="icon" /></div>
-                  <div><p className="desktop-h6">Tap or scan</p><p className="desktop-body-xs gray">NFC + QR open your profile instantly.</p></div>
-                </li>
-                <li>
-                  <div className="icon-white"><img src={ShareIcon} alt="" className="icon" /></div>
-                  <div><p className="desktop-h6">Send your link</p><p className="desktop-body-xs gray">Text, WhatsApp, socials, email — or add to your bio.</p></div>
-                </li>
-                <li>
-                  <div className="icon-white"><img src={MoneyIcon} alt="" className="icon" /></div>
-                  <div><p className="desktop-h6">Get booked faster</p><p className="desktop-body-xs gray">Photos, services, reviews — plus “Save my number”.</p></div>
-                </li>
-              </ul>
-
-              <div className="step-footer-v2">
-                <p className="desktop-body-xs gray" style={{ fontStyle: 'italic' }}>No credit card required*</p>
-                <Link to="/register" className="cta-blue-button desktop-button">Start Your 14-Day Free Trial</Link>
-              </div>
-            </div>
-          </article>
+          </div>
         </div>
       </div>
 
