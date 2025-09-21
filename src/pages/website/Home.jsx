@@ -167,7 +167,7 @@ export default function Home() {
           <div className="step-card-right">
             <span className="step-pill">Step 1</span>
             <h3 className="desktop-h5">Create Your Profile</h3>
-            <p className="desktop-body-xs gray step-subtitle">
+            <p className="desktop-body-s gray step-subtitle">
               Set up your page, brand it, and publish in minutes.
             </p>
 
@@ -217,7 +217,7 @@ export default function Home() {
           <div className="step-card-right">
             <span className="step-pill">Step 2</span>
             <h3 className="desktop-h5">Order Your Konar Card</h3>
-            <p className="desktop-body-xs gray step-subtitle">
+            <p className="desktop-body-s gray step-subtitle">
               Get a sleek NFC card linked to your live profile.
             </p>
 
@@ -261,7 +261,7 @@ export default function Home() {
           <div className="step-card-right">
             <span className="step-pill">Step 3</span>
             <h3 className="desktop-h5">Share & Win More Work</h3>
-            <p className="desktop-body-xs gray step-subtitle">
+            <p className="desktop-body-s gray step-subtitle">
               Share anywhere and turn new contacts into jobs.
             </p>
 
