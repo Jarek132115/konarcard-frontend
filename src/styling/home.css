@@ -425,7 +425,7 @@ body {
         width: 90%;
         max-width: 90%;
         margin-top: 60px;
-        padding: 0;
+        padding: 0
     }
 }
 
@@ -669,28 +669,36 @@ body {
 .pricing-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 24px
+    gap: 24px;
 }
 
+/* Card + equal-height + CTA pinned bottom */
 .pricing-card {
     border-radius: 24px;
     overflow: hidden;
     position: relative;
-    display: flex
+    display: flex;
 }
 
 .pricing-inner {
-    padding: 20px;
     display: flex;
     flex-direction: column;
-    width: 100%
+    width: 100%;
+    padding: 20px;
+    min-height: 100%;
+}
+
+.pricing-content {
+    flex: 1 1 auto;
+    /* take remaining space */
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .pricing-bottom {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px
+    margin-top: 20px;
+    /* <-- constant 20px gap above CTA */
 }
 
 .pricing-head {
@@ -737,7 +745,7 @@ body {
 }
 
 /* =========================
-   PRICING – Color themes (keep your blue & dark grey)
+   PRICING – Color themes
    ========================= */
 .pricing-card--subscription {
     background: #006FE6;
@@ -762,62 +770,55 @@ body {
 }
 
 /* =========================
-   PRICING – Gallery (fixed heights; no jumping)
+   PRICING – Gallery (no jumping; thumbs constant)
    ========================= */
-
-/* Desktop constants (total tray height, gaps, thumb height) */
 .nfc-pricing-page {
-    --gallery-h: clamp(360px, 35vw, 520px);
     --media-gap: 6px;
     --thumb-h: 64px;
+    /* uniform thumbnail height */
 }
 
-/* The tray keeps a constant height so thumbs never change size */
 .pricing-media-tray {
     margin-top: 14px;
     border-radius: 16px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: var(--gallery-h);
+    gap: var(--media-gap);
 }
 
-/* Main image takes the remaining space (gallery - thumbs - gap) */
+/* Main media keeps a stable aspect on desktop */
 .pricing-media-main {
-    border-radius: 12px;
-    overflow: hidden;
-    background: #000
-}
-
-.pricing-media-main.fixed-43 {
     width: 100%;
-    height: calc(var(--gallery-h) - var(--thumb-h) - var(--media-gap));
     border-radius: 16px;
     overflow: hidden;
     background: #0b0b0b;
     border: 1px solid rgba(255, 255, 255, .08);
+    aspect-ratio: 4 / 3;
+    /* <-- stable height relative to width */
 }
 
 .pricing-media-main img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block
+    display: block;
 }
 
-/* Five square thumbs, fixed strip height */
+/* Thumbs: 5 equal squares, fixed strip height */
 .pricing-media-thumbs.tight {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: var(--media-gap);
-    margin-top: var(--media-gap);
     height: var(--thumb-h);
+    /* <-- fixed strip height */
 }
 
 .pricing-media-thumb {
     display: block;
     width: 100%;
     height: 100%;
+    aspect-ratio: 1 / 1;
     border-radius: 16px;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, .14);
@@ -841,15 +842,10 @@ body {
     box-shadow: none;
 }
 
-/* Responsive tweaks for gallery */
+/* Mobile tweaks */
 @media (max-width:1000px) {
-    .pricing-media-tray {
-        height: auto;
-    }
-
-    .pricing-media-main.fixed-43 {
-        height: auto;
-        aspect-ratio: 4/3;
+    .pricing-media-main {
+        aspect-ratio: 4 / 3;
     }
 
     .pricing-media-thumbs.tight {
@@ -859,6 +855,11 @@ body {
 }
 
 @media (max-width:600px) {
+    .pricing-media-main {
+        aspect-ratio: 1 / 1;
+    }
+
+    /* square on small phones */
     .pricing-media-thumbs.tight {
         --thumb-h: 50px;
         height: var(--thumb-h);
@@ -868,12 +869,12 @@ body {
 
 @media (max-width:430px) {
     .pricing-media-thumbs.tight {
-        gap: 2px;
+        gap: 2px
     }
 }
 
 /* =========================
-   PRICING – Pills (match reference)
+   PRICING – Pills
    ========================= */
 .pill-blue-solid {
     background: #0a66ff;
@@ -898,7 +899,7 @@ body {
 }
 
 /* =========================
-   PRICING – Feature grid (same layout as reference, adapted for dark cards)
+   PRICING – Feature grid
    ========================= */
 .feature-grid {
     list-style: none;
@@ -911,7 +912,7 @@ body {
 
 @media (max-width: 900px) {
     .feature-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr
     }
 }
 
@@ -937,12 +938,11 @@ body {
     gap: 2px;
 }
 
-/* Text colors adapt to blue/dark backgrounds */
+/* Text colours for dark cards */
 .pricing-card--subscription .feature-title,
 .pricing-card--product .feature-title {
     font-weight: 800;
     color: #fff;
-    /* white on dark */
     line-height: 1.2;
 }
 
@@ -1240,7 +1240,7 @@ body {
 }
 
 .video-close:hover {
-    background: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.35)
 }
 
 .video-frame {
