@@ -1382,3 +1382,29 @@ body {
         aspect-ratio: 4/3;
     }
 }
+
+/* === Steps v1 spacing fine-tune === */
+.steps-v1 .step-card-right {
+    gap: 0;
+    /* kill auto spacing so we control it exactly */
+}
+
+.steps-v1 .step-card-right .step-pill {
+    margin: 0 0 10px 0;
+    /* 10px to the title */
+}
+
+.steps-v1 .step-card-right h3.desktop-h5 {
+    margin: 0 0 20px 0;
+    /* 20px to the bullets */
+}
+
+.steps-v1 .step-card-right .step-bullet-list {
+    margin: 0 0 20px 0;
+    /* 20px to the CTA */
+}
+
+.steps-v1 .step-card-right .section-1-cta {
+    margin-top: 0;
+    /* spacing already handled above */
+}
