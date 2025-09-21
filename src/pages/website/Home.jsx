@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import Section1Image from '../../assets/images/Section-1-Image.png';
-import TickIcon from '../../assets/icons/Tick-Icon.svg';
+import TickIcon from '../../assets/icons/Tick-Icon.svg'; // (kept, though not used in new grid)
 import FormCustomizationIcon from '../../assets/icons/FormCustomization-Icon.svg';
 import CustomizationIcon from '../../assets/icons/Customization-Icon.svg';
 import BoltIcon from '../../assets/icons/Bolt-Icon.svg';
@@ -12,16 +12,16 @@ import NFCIcon from '../../assets/icons/NFC-Icon.svg';
 import EditProfile from '../../assets/images/Edit-Profile.jpg';
 import WhyYouNeedThis from '../../assets/images/WhyYouNeedThis.png';
 import People from '../../assets/images/People.png';
-import PlasticCard from '../../assets/images/PlasticCard.png';
+import PlasticCard from '../../assets/images/PlasticCard.png'; // (kept in case used elsewhere)
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
-import SetupIcon from '../../assets/icons/Setup-Icon.svg';
-import BoxIcon from '../../assets/icons/Box-Icon.svg';
-import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
-import HatIcon from '../../assets/icons/Hat-Icon.svg';
-import LockIcon from '../../assets/icons/Lock-Icon.svg';
+import SetupIcon from '../../assets/icons/Setup-Icon.svg'; // (kept)
+import BoxIcon from '../../assets/icons/Box-Icon.svg'; // (kept)
+import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'; // (kept)
+import HatIcon from '../../assets/icons/Hat-Icon.svg'; // (kept)
+import LockIcon from '../../assets/icons/Lock-Icon.svg'; // (kept)
 import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
-import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
-import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
+import PhoneIcon from '../../assets/icons/Phone-Icon.svg'; // (kept)
+import WalletIcon from '../../assets/icons/Wallet-Icon.svg'; // (kept)
 import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
 import LinkIcon from '../../assets/icons/Link-Icon.svg';
 import TapIcon from '../../assets/icons/Tap-Icon.svg';
@@ -58,7 +58,7 @@ export default function Home() {
 
   const isSubscribed = user ? user.isSubscribed : false;
 
-  // gallery state (kept for future use even if not shown here)
+  // gallery state
   const [cardMainImage, setCardMainImage] = useState(ProductCover);
   const cardThumbs = [ProductCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4];
 
@@ -102,6 +102,20 @@ export default function Home() {
     }
   };
 
+  // Two-line feature blocks (same structure as Product & Plan page)
+  const featureBlocks = [
+    { t: 'Simple editor', s: 'Get set up quickly — no tech skills required.' },
+    { t: 'Show what you do', s: 'Share your services and work in seconds.' },
+    { t: 'Unlimited images', s: 'Upload every project — no limits on galleries.' },
+    { t: 'Unlimited services', s: 'List each job you offer with clear pricing.' },
+    { t: 'Unlimited reviews', s: 'Build instant trust with social proof.' },
+    { t: 'Custom branding', s: 'Your logo, colours and layout — make it yours.' },
+    { t: 'Share everywhere', s: 'Link, QR code, and NFC tap for instant contacts.' },
+    { t: 'Instant updates', s: 'Edit once — changes go live across your profile.' },
+    { t: 'No app needed', s: 'Works on iPhone & Android, right in the browser.' },
+    { t: 'Cancel anytime', s: 'Stay flexible — no long contracts.' },
+  ];
+
   return (
     <>
       <Navbar />
@@ -127,7 +141,7 @@ export default function Home() {
                 Start Your Free Trial
               </Link>
 
-              {/* NEW: Watch video button toggles modal */}
+              {/* Watch video button toggles modal */}
               <button
                 type="button"
                 className="cta-black-button desktop-button hero-watch-btn"
@@ -147,9 +161,7 @@ export default function Home() {
                 <img src={pp3} alt="User 3" className="avatar" />
               </div>
               <div className="avatar-text">
-                <p style={{ fontWeight: 900 }} className="desktop-h6">
-                  1k+
-                </p>
+                <p style={{ fontWeight: 900 }} className="desktop-h6">1k+</p>
                 <p className="desktop-body-xs light-black">Trusted by 1,000+ tradies</p>
               </div>
             </div>
@@ -175,7 +187,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ---------- 3 STEPS GROUP (with heading + 40px gaps) ---------- */}
+      {/* ---------- 3 STEPS GROUP ---------- */}
       <div className="section steps-section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
@@ -350,7 +362,7 @@ export default function Home() {
       </div>
 
 
-      {/* ---------- HOW TO SHARE (new section after steps) ---------- */}
+      {/* ---------- HOW TO SHARE ---------- */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">One Profile. <span className='blue'>Shared</span> Every Way.</h2>
@@ -392,102 +404,105 @@ export default function Home() {
         </div>
       </div>
 
-      {/* --- PRICING (redesigned) --- */}
+      {/* --- PRICING (updated to match the two-card design while keeping colors) --- */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">One <span className='blue'>Plan</span>. One <span className='blue'>Card</span>. Endless <span className='blue'>Opportunities</span>.</h2>
           <h3 className="desktop-h6 text-center">Start your Power Profile free for 14 days. Add the Konar Card when you’re ready.</h3>
         </div>
 
-        <div className="pricing-grid">
-          {/* Subscription card (blue) */}
-          <div className="pricing-card pricing-card--subscription">
+        {/* Scoped like the Product & Plan page so styles match */}
+        <div className="pricing-grid nfc-pricing-page">
+          {/* Subscription card (blue background, white text) */}
+          <div className="pricing-card pricing-card--subscription nfc-pricing-subscription" style={{ borderRadius: 16 }}>
             <div className="pricing-inner">
-              <div className="pricing-head">
-                <div>
-                  <h3 className="desktop-h5">Konar Profile</h3>
-                  <p className="desktop-body-xs">Win more work with a power profile</p>
+              <div className="pricing-content">
+                <div className="pricing-head">
+                  <div>
+                    <h3 className="desktop-h5">Konar Profile</h3>
+                    <p className="desktop-body-xs">Win more work with a power profile</p>
+                  </div>
+                  <span className="pricing-badge pill-blue-solid">14-Day Free Trial</span>
                 </div>
-                <span className="pricing-badge dark-blue">14-Day Free Trial</span>
-              </div>
-              <div className="pricing-divider" />
-              <div className="pricing-price-row">
-                <span style={{ paddingRight: 5 }} className="desktop-h3">£4.95</span>
-                <span style={{ padding: 0 }} className="desktop-button">/Month - After 14 Days</span>
-              </div>
 
-              <ul className="pricing-features">
-                {[
-                  'Simple editor; no tech skills.',
-                  'Show what you do, fast.',
-                  'Unlimited images — show all your work.',
-                  'Unlimited services — list every job.',
-                  'Unlimited reviews — build instant trust.',
-                  'Custom branding — logo, colours, layout.',
-                  'Share everywhere — link, QR, NFC tap.',
-                  'Update anytime — changes live instantly.',
-                  'No app needed — iPhone, Android.',
-                  'Cancel Anytime',
-                ].map((text, i) => (
-                  <li className="pricing-feature" key={i}>
-                    <img src={TickIcon} alt="" className="pricing-check invert-for-blue" />
-                    <span className="white desktop-body-x">{text}</span>
-                  </li>
-                ))}
-              </ul>
+                <div className="pricing-divider" />
+
+                <div className="pricing-price-row">
+                  <span className="desktop-h3" style={{ paddingRight: 5 }}>£4.95</span>
+                  <span className="desktop-button" style={{ padding: 0 }}>/Month - After 14 Days</span>
+                </div>
+
+                {/* Two-column feature grid (title + sub) */}
+                <ul className="feature-grid">
+                  {featureBlocks.map((f, i) => (
+                    <li key={i} className="feature-item">
+                      <span className="blue-dot" aria-hidden="true" />
+                      <div className="feature-copy">
+                        <div className="feature-title desktop-body-s">{f.t}</div>
+                        <div className="feature-sub desktop-body-xs">{f.s}</div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
               <div className="pricing-bottom">
-                <Link
-                  to="/productandplan/konarsubscription"
+                {/* Keep CTA full width; keep your route */}
+                <button
+                  onClick={handleSubscribe}
                   className="cta-blue-button desktop-button"
-                  style={{ marginTop: 20, width: '100%' }}
+                  style={{ width: '100%' }}
+                  type="button"
                 >
-                  View Subscription Details
-                </Link>
+                  Start Free Trial
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Physical card (black) */}
-          {/* Physical card (black) */}
-          <div className="pricing-card pricing-card--product">
+          {/* Physical card (dark grey background, white text) */}
+          <div className="pricing-card pricing-card--product nfc-pricing-product" style={{ borderRadius: 16 }}>
             <div className="pricing-inner">
-              <div className="pricing-head">
-                <div>
-                  <h3 className="desktop-h5">Konar Card - White Edition</h3>
-                  <p className="desktop-body-xs">Tap to share your profile instantly.</p>
+              <div className="pricing-content">
+                <div className="pricing-head">
+                  <div>
+                    <h3 className="desktop-h5">Konar Card - White Edition</h3>
+                    <p className="desktop-body-xs">Tap to share your profile instantly.</p>
+                  </div>
+                  <span className="pricing-badge pill-black">12 Month Warranty</span>
                 </div>
-                <span className="pricing-badge">12 Month Warranty</span>
-              </div>
-              <div className="pricing-divider" />
-              <div className="pricing-price-row">
-                <span className="desktop-h3">£24.95</span>
-              </div>
 
-              {/* === GALLERY WITH THUMBNAILS === */}
-              <div className="pricing-media-tray">
-                <div className="pricing-media-main">
-                  <img src={cardMainImage} alt="Konar Card - White Edition" />
+                <div className="pricing-divider" />
+
+                <div className="pricing-price-row">
+                  <span className="desktop-h3">£24.95</span>
                 </div>
-                <div className="pricing-media-thumbs">
-                  {cardThumbs.map((src, i) => (
-                    <button
-                      key={i}
-                      className={`pricing-media-thumb ${cardMainImage === src ? 'is-active' : ''}`}
-                      onClick={() => setCardMainImage(src)}
-                    >
-                      <img src={src} alt={`Konar Card thumbnail ${i + 1}`} />
-                    </button>
-                  ))}
+
+                {/* Gallery matches reference: large main + 5 tight square thumbs */}
+                <div className="pricing-media-tray">
+                  <div className="pricing-media-main fixed-43">
+                    <img src={cardMainImage} alt="Konar Card - White Edition" />
+                  </div>
+                  <div className="pricing-media-thumbs tight">
+                    {cardThumbs.map((src, i) => (
+                      <button
+                        key={i}
+                        className={`pricing-media-thumb ${cardMainImage === src ? 'is-active' : ''}`}
+                        onClick={() => setCardMainImage(src)}
+                        type="button"
+                      >
+                        <img src={src} alt={`Konar Card thumbnail ${i + 1}`} />
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
-              {/* === END GALLERY === */}
 
               <div className="pricing-bottom">
                 <Link
                   to="/productandplan/konarcard"
                   className="cta-black-button desktop-button"
-                  style={{ marginTop: 20, width: '100%' }}
+                  style={{ width: '100%' }}
                 >
                   View Card Details
                 </Link>
@@ -499,35 +514,28 @@ export default function Home() {
       </div>
 
       {/* People, Reviews, FAQ */}
-      {/* People, Reviews, FAQ */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Tradies Are Making the <span className="blue">Switch.</span></h2>
           <h3 className="desktop-h6 text-center">See how Konar is used every day by real tradespeople.</h3>
         </div>
 
-        {/* NEW: 4-image grid (1-2-1 on <1000px) */}
+        {/* 4-image grid */}
         <div className="people-grid">
-          {/* Row 1 (mobile: spans 2 columns) */}
           <div className="pg-item span-2">
             <img src={People} alt="Tradies using Konar on the job site" />
           </div>
-
-          {/* Row 2 (two side-by-side) */}
           <div className="pg-item">
             <img src={People} alt="Konar card being shared with a client" />
           </div>
           <div className="pg-item">
             <img src={People} alt="Tradie showing Konar card close-up" />
           </div>
-
-          {/* Row 3 (mobile: spans 2 columns) */}
           <div className="pg-item span-2">
             <img src={People} alt="Team on site showing Konar cards" />
           </div>
         </div>
       </div>
-
 
       {/* Reviews */}
       <div className="section">
@@ -682,10 +690,7 @@ export default function Home() {
 
       <Footer />
 
-      {/* =========================
-          HOW IT WORKS - MODAL
-          (no video wired yet; just drop your src later)
-         ========================= */}
+      {/* HOW IT WORKS - MODAL */}
       {isVideoOpen && (
         <div
           id="how-it-works-modal"
@@ -707,14 +712,7 @@ export default function Home() {
               ✕
             </button>
 
-            {/* 16:9 responsive frame; replace the placeholder with your video later */}
             <div className="video-frame">
-              {/* EXAMPLE to add later:
-                  <video controls playsInline>
-                    <source src="/videos/how-it-works.mp4" type="video/mp4" />
-                  </video>
-                 or an iframe embed
-              */}
               <div className="video-placeholder">
                 <p className="desktop-body-s">Video coming soon</p>
               </div>

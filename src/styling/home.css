@@ -19,9 +19,7 @@ body {
 /* Shared animation timing for hero badge + headline */
 :root {
     --breath-dur: 5s;
-    /* keep these in sync */
     --breath-delay: 0s;
-    /* tweak if you want a slight offset */
 }
 
 /* =========================
@@ -604,7 +602,6 @@ body {
 /* =========================
    PEOPLE GRID
    ========================= */
-/* ---- Desktop: 10x8 grid, max 450px tall ---- */
 @media (min-width: 1000px) {
     .people-grid {
         display: grid;
@@ -612,34 +609,25 @@ body {
         grid-template-rows: repeat(8, 1fr);
         gap: 10px;
         height: 450px;
-        /* hard cap */
         max-height: 450px;
-        /* safety */
     }
 
-    /* place the 4 tiles exactly like your generator */
     .people-grid .pg-item:nth-child(1) {
         grid-area: 1 / 1 / 9 / 5;
     }
 
-    /* tall left */
     .people-grid .pg-item:nth-child(2) {
         grid-area: 1 / 5 / 5 / 8;
     }
 
-    /* top middle */
     .people-grid .pg-item:nth-child(3) {
         grid-area: 1 / 8 / 5 / 11;
     }
 
-    /* top right */
     .people-grid .pg-item:nth-child(4) {
         grid-area: 5 / 5 / 9 / 11;
     }
 
-    /* bottom right */
-
-    /* make images perfectly fill their cells */
     .people-grid .pg-item img {
         width: 100%;
         height: 100%;
@@ -649,22 +637,18 @@ body {
     }
 }
 
-/* ---- Tablet & below: keep your simpler 1|2|1 pattern ---- */
 @media (max-width: 999px) {
     .people-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
         height: auto;
-        /* no cap on small screens */
     }
 
-    /* remove explicit placement from desktop */
     .people-grid .pg-item {
         grid-area: auto !important;
     }
 
-    /* first and fourth span both columns (your current pattern) */
     .people-grid .pg-item:nth-child(1),
     .people-grid .pg-item:nth-child(4) {
         grid-column: 1 / -1;
@@ -673,27 +657,19 @@ body {
     .people-grid .pg-item img {
         width: 100%;
         height: auto;
-        /* keep natural aspect on small screens */
         object-fit: cover;
         border-radius: 10px;
         display: block;
     }
 }
 
-
 /* =========================
-   PRICING
+   PRICING (Base)
    ========================= */
 .pricing-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px
-}
-
-.pricing-grid-new {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 4px
 }
 
 .pricing-card {
@@ -754,77 +730,18 @@ body {
     gap: 0
 }
 
-.pricing-price {
-    font-size: 64px;
-    line-height: .95;
-    font-weight: 900;
-    letter-spacing: -.5px
+@media (max-width:1000px) {
+    .pricing-grid {
+        grid-template-columns: 1fr
+    }
 }
 
-.pricing-price-sub {
-    font-weight: 800;
-    font-size: 18px
-}
-
-.pricing-features {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 16px
-}
-
-.invert-for-blue {
-    filter: brightness(0) invert(1)
-}
-
-.pricing-feature {
-    display: flex;
-    gap: 10px;
-    align-items: center
-}
-
-.pricing-check {
-    width: 25px;
-    height: 25px;
-    flex: 0 0 20px
-}
-
-.pricing-quote {
-    font-style: italic;
-    opacity: .95
-}
-
-.pricing-cta {
-    display: block;
-    width: 100%;
-    text-align: center;
-    margin-top: 18px;
-    padding: 16px 22px;
-    border-radius: 9999px;
-    font-weight: 800;
-    text-decoration: none;
-    transition: transform .06s ease, box-shadow .15s ease;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, .2)
-}
-
-.pricing-cta--white {
-    background: #fff;
-    color: #0a66ff;
-    border: none
-}
-
-.pricing-cta--white:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, .28)
-}
-
-.pricing-cta--darktext {
-    color: #111
-}
-
+/* =========================
+   PRICING – Color themes (keep your blue & dark grey)
+   ========================= */
 .pricing-card--subscription {
     background: #006FE6;
+    /* blue */
     color: #fff;
     border: 1px solid rgba(255, 255, 255, .25)
 }
@@ -833,60 +750,31 @@ body {
     background: rgba(255, 255, 255, .6)
 }
 
-.pricing-card--subscription .pricing-price-sub {
-    color: #fff
-}
-
 .pricing-card--product {
     background: #333;
+    /* dark grey */
     color: #fff;
     border: 1px solid #2a2a2a
-}
-
-.pricing-card--product .pricing-badge {
-    color: #111
 }
 
 .pricing-card--product .pricing-divider {
     background: rgba(255, 255, 255, .22)
 }
 
-.pricing-media {
-    margin-top: 14px;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #111;
-    border: 1px solid #2a2a2a;
-    height: 100%
-}
-
-.pricing-media img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover
-}
-
-@media (max-width:1000px) {
-    .pricing-grid {
-        grid-template-columns: 1fr
-    }
-}
-
-/* Gallery tray */
+/* =========================
+   PRICING – Gallery (match reference: main + 5 square thumbs tight)
+   ========================= */
 .pricing-media-tray {
     margin-top: 14px;
     border-radius: 16px;
     overflow: hidden;
     --thumb-h: 56px;
     --thumb-gap: 10px;
-    height: clamp(260px, 32vw, 380px);
     display: flex;
     flex-direction: column
 }
 
 .pricing-media-main {
-    height: calc(100% - var(--thumb-h) - var(--thumb-gap));
     border-radius: 12px;
     overflow: hidden;
     background: #000
@@ -899,89 +787,149 @@ body {
     display: block
 }
 
-.pricing-media-thumbs {
-    height: var(--thumb-h);
+/* Reference-specific: large main area with fixed-43 option */
+.pricing-media-main.fixed-43 {
+    width: 100%;
+    aspect-ratio: auto;
+    height: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #0b0b0b;
+    border: 1px solid rgba(255, 255, 255, .08);
+}
+
+/* Thumbs: 5 across, perfect squares, tight gap */
+.pricing-media-thumbs.tight {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: var(--thumb-gap);
-    margin-top: var(--thumb-gap)
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 6px;
+    height: fit-content;
 }
 
 .pricing-media-thumb {
-    border: 1px solid #2a2a2a;
-    background: #000;
-    border-radius: 10px;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 16px;
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .14);
+    background: #111;
     padding: 0;
+    line-height: 0;
     cursor: pointer;
-    transition: transform .06s ease, box-shadow .15s ease, border-color .15s ease
 }
 
 .pricing-media-thumb img {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 1/1;
+    width: 100% !important;
+    height: 100% !important;
     object-fit: cover;
-    display: block
-}
-
-.pricing-media-thumb:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, .3)
+    display: block;
 }
 
 .pricing-media-thumb.is-active {
-    border-color: #0a66ff;
-    box-shadow: 0 0 0 3px rgba(10, 102, 255, .25)
+    outline: 2px solid #0081FF;
+    outline-offset: -2px;
+    border-color: rgba(255, 255, 255, .14);
+    box-shadow: none;
 }
 
+/* Responsive tweaks for gallery */
 @media (max-width:1000px) {
-    .pricing-media-tray {
-        height: auto;
-        --thumb-h: 60px;
-        --thumb-gap: 10px
-    }
-
     .pricing-media-main {
-        height: auto;
         aspect-ratio: 4/3;
-        border-radius: 12px;
-        overflow: hidden
     }
 }
 
 @media (max-width:600px) {
-    .pricing-media-tray {
-        --thumb-h: 54px
-    }
-
-    .pricing-media-main {
-        aspect-ratio: 1/1
-    }
-
-    .pricing-media-thumbs {
-        gap: 4px
+    .pricing-media-thumbs.tight {
+        gap: 4px;
     }
 }
 
 @media (max-width:430px) {
-    .pricing-media-thumbs {
-        gap: 2px
+    .pricing-media-thumbs.tight {
+        gap: 2px;
     }
 }
 
-/* Only the SUBSCRIPTION features shrink under 500px */
-@media (max-width:500px) {
-    .pricing-card--subscription .pricing-features .pricing-check {
-        width: 20px;
-        height: 20px;
-        flex: 0 0 20px
-    }
+/* =========================
+   PRICING – Pills (match reference)
+   ========================= */
+.pill-blue-solid {
+    background: #0a66ff;
+    color: #fff;
+    border: 1px solid #0a66ff;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
 
-    .pricing-card--subscription .pricing-features .pricing-feature span {
-        font-size: 12px;
-        line-height: 1.35
+.pill-black {
+    background: #111;
+    color: #fff;
+    border: 1px solid #111;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+/* =========================
+   PRICING – Feature grid (same layout as reference, adapted for dark cards)
+   ========================= */
+.feature-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 20px;
+    margin: 16px 0 0;
+    padding: 0;
+}
+
+@media (max-width: 900px) {
+    .feature-grid {
+        grid-template-columns: 1fr;
     }
+}
+
+.feature-item {
+    display: grid;
+    grid-template-columns: 12px 1fr;
+    gap: 10px;
+    align-items: start;
+}
+
+.blue-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #0081FF;
+    margin-top: 6px;
+    flex: 0 0 10px;
+}
+
+.feature-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Text colors adapt to blue/dark backgrounds */
+.pricing-card--subscription .feature-title,
+.pricing-card--product .feature-title {
+    font-weight: 800;
+    color: #fff;
+    /* white on dark */
+    line-height: 1.2;
+}
+
+.pricing-card--subscription .feature-sub,
+.pricing-card--product .feature-sub {
+    color: rgba(255, 255, 255, .85);
 }
 
 /* =========================
@@ -1214,7 +1162,7 @@ body {
     }
 }
 
-/* Headline glow (peaks at 50% to match the badge) */
+/* Headline glow */
 @keyframes heroBlueBreathe {
 
     0%,
@@ -1234,21 +1182,16 @@ body {
 /* =========================
    HOW IT WORKS – MODAL
    ========================= */
-
-/* Full-screen overlay */
 .video-modal-overlay {
     position: fixed;
     inset: 0;
-    /* top/right/bottom/left: 0 */
     background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    /* above nav, footer, widgets */
 }
 
-/* Modal panel */
 .video-modal {
     position: relative;
     width: min(900px, 92vw);
@@ -1258,55 +1201,6 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
-/* Close button */
-.video-close {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 36px;
-    height: 36px;
-    border: 0;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    cursor: pointer;
-}
-
-/* 16:9 responsive frame */
-.video-frame {
-    position: relative;
-    width: 100%;
-    padding-top: 56.25%;
-    /* 16:9 */
-    background: #000;
-}
-
-/* Make the media fill the frame */
-.video-frame>video,
-.video-frame>iframe,
-.video-placeholder {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-/* Placeholder styling (until real video is added) */
-.video-placeholder {
-    display: grid;
-    place-items: center;
-    color: #fff;
-    opacity: 0.85;
-}
-
-/* Optional: prevent the overlay from being hidden by any positioned parents */
-body .video-modal-overlay {
-    isolation: isolate;
-    /* creates a new stacking context */
-}
-
-/* Close button (X in the corner) */
 .video-close {
     position: absolute;
     top: 12px;
@@ -1328,4 +1222,36 @@ body .video-modal-overlay {
 
 .video-close:hover {
     background: rgba(255, 255, 255, 0.35);
+}
+
+.video-frame {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #000;
+}
+
+.video-frame>video,
+.video-frame>iframe,
+.video-placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.video-placeholder {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    opacity: 0.85;
+}
+
+/* =========================
+   MATCHING THE REFERENCE SCOPE
+   ========================= */
+/* Keep the reference class on the pricing container for predictable scoping */
+.nfc-pricing-page .pricing-head {
+    gap: 12px;
 }
