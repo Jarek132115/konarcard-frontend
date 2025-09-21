@@ -41,6 +41,20 @@ export default function MyProfile() {
 
   const activeBlobUrlsRef = useRef([]);
   const mpWrapRef = useRef(null); // mobile preview wrapper for dynamic height
+  // at the top of MyProfile.jsx (with other refs)
+  const bioRef = useRef(null);
+
+  // helper
+  const autosizeTextarea = (el) => {
+    if (!el) return;
+    el.style.height = 'auto';                  // reset
+    el.style.height = `${el.scrollHeight}px`;  // grow to fit
+  };
+
+  // ensure correct height on load and whenever the text changes
+  useEffect(() => {
+    autosizeTextarea(bioRef.current);
+  }, [state.bio, isMobile]); // re-run on value/theme/layout changes
 
   // Local state
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
@@ -1144,12 +1158,15 @@ export default function MyProfile() {
                           <label htmlFor="bio">About Me Description</label>
                           <textarea
                             id="bio"
+                            ref={bioRef}
                             rows={4}
                             className="text-input"
                             value={state.bio || ""}
-                            onChange={(e) => updateState({ bio: e.target.value })}
+                            onChange={(e) => { updateState({ bio: e.target.value }); }}
+                            onInput={(e) => autosizeTextarea(e.currentTarget)}  // grow as you type
                             placeholder={previewPlaceholders.bio}
                           />
+
                         </div>
                       </>
                     )}

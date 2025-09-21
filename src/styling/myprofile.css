@@ -1649,5 +1649,11 @@ textarea.no-resize {
     }
 }
 
+/* no scrollbar inside the bio textarea */
+#bio.text-input {
+    overflow-y: hidden;
+    /* important */
+}
+
 
 /* end of file */
