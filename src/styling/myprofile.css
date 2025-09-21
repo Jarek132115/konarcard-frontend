@@ -363,10 +363,15 @@
     padding: 20px;
     text-align: center;
     box-sizing: border-box;
-    display: flex;
+
+    /* ✅ fixes */
+    display: flow-root;
+    /* contain margins so About/Services aren’t cut */
     flex-direction: column;
+    /* still stacks children vertically */
     color: var(--text-color);
 }
+
 
 @media (max-width:1000px) {
     .mock-phone {
