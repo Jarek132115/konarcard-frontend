@@ -1135,7 +1135,9 @@ body {
     position: relative;
     animation: badgeBlueBreath var(--breath-dur) ease-in-out var(--breath-delay) infinite both;
     will-change: transform, background, color, box-shadow, border-color;
-    transform-origin: center
+    transform-origin: center;
+    padding: 4px 8px;
+    border-radius: 20px;
 }
 
 @media (max-width:1000px) {
