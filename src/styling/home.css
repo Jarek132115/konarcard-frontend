@@ -1393,11 +1393,6 @@ body {
     margin: 0 0 10px 0;
 }
 
-/* Step → Title: 10px */
-.steps-v1 .step-card-right h3.desktop-h5 {
-    margin: 0 0 8px 0;
-}
-
 /* Title → Subtitle: 8px */
 .steps-v1 .step-card-right .step-subtitle {
     margin: 0 0 20px 0;
