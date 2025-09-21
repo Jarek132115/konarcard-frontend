@@ -1585,7 +1585,6 @@ textarea.no-resize {
 .mock-phone-scrollable-content {
     overflow: visible;
     max-height: none;
-    padding-bottom: 24px;
     /* <— add this line (tweak to taste) */
 }
 
