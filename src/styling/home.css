@@ -762,22 +762,40 @@ body {
 }
 
 /* =========================
-   PRICING – Gallery (match reference: main + 5 square thumbs tight)
+   PRICING – Gallery (fixed heights; no jumping)
    ========================= */
+
+/* Desktop constants (total tray height, gaps, thumb height) */
+.nfc-pricing-page {
+    --gallery-h: clamp(360px, 35vw, 520px);
+    --media-gap: 6px;
+    --thumb-h: 64px;
+}
+
+/* The tray keeps a constant height so thumbs never change size */
 .pricing-media-tray {
     margin-top: 14px;
     border-radius: 16px;
     overflow: hidden;
-    --thumb-h: 56px;
-    --thumb-gap: 10px;
     display: flex;
-    flex-direction: column
+    flex-direction: column;
+    height: var(--gallery-h);
 }
 
+/* Main image takes the remaining space (gallery - thumbs - gap) */
 .pricing-media-main {
     border-radius: 12px;
     overflow: hidden;
     background: #000
+}
+
+.pricing-media-main.fixed-43 {
+    width: 100%;
+    height: calc(var(--gallery-h) - var(--thumb-h) - var(--media-gap));
+    border-radius: 16px;
+    overflow: hidden;
+    background: #0b0b0b;
+    border: 1px solid rgba(255, 255, 255, .08);
 }
 
 .pricing-media-main img {
@@ -787,30 +805,19 @@ body {
     display: block
 }
 
-/* Reference-specific: large main area with fixed-43 option */
-.pricing-media-main.fixed-43 {
-    width: 100%;
-    aspect-ratio: auto;
-    height: 100%;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #0b0b0b;
-    border: 1px solid rgba(255, 255, 255, .08);
-}
-
-/* Thumbs: 5 across, perfect squares, tight gap */
+/* Five square thumbs, fixed strip height */
 .pricing-media-thumbs.tight {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 6px;
-    margin-top: 6px;
-    height: fit-content;
+    gap: var(--media-gap);
+    margin-top: var(--media-gap);
+    height: var(--thumb-h);
 }
 
 .pricing-media-thumb {
     display: block;
     width: 100%;
-    aspect-ratio: 1/1;
+    height: 100%;
     border-radius: 16px;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, .14);
@@ -836,13 +843,25 @@ body {
 
 /* Responsive tweaks for gallery */
 @media (max-width:1000px) {
-    .pricing-media-main {
+    .pricing-media-tray {
+        height: auto;
+    }
+
+    .pricing-media-main.fixed-43 {
+        height: auto;
         aspect-ratio: 4/3;
+    }
+
+    .pricing-media-thumbs.tight {
+        --thumb-h: 54px;
+        height: var(--thumb-h);
     }
 }
 
 @media (max-width:600px) {
     .pricing-media-thumbs.tight {
+        --thumb-h: 50px;
+        height: var(--thumb-h);
         gap: 4px;
     }
 }
@@ -1251,7 +1270,6 @@ body {
 /* =========================
    MATCHING THE REFERENCE SCOPE
    ========================= */
-/* Keep the reference class on the pricing container for predictable scoping */
 .nfc-pricing-page .pricing-head {
     gap: 12px;
 }
