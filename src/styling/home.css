@@ -1139,6 +1139,7 @@ body {
     padding: 4px 8px;
     border-radius: 20px;
     font-size: 12px;
+    margin-bottom: 10px;
 }
 
 @media (max-width:1000px) {
