@@ -48,8 +48,6 @@ import ProductImage3 from '../../assets/images/Product-Image-3.png';
 import ProductImage4 from '../../assets/images/Product-Image-4.png';
 
 import { AuthContext } from '../../components/AuthContext';
-import api from '../../services/api';
-import { toast } from 'react-hot-toast';
 
 export default function Home() {
   const { user } = useContext(AuthContext);
@@ -80,27 +78,6 @@ export default function Home() {
       };
     }
   }, [isVideoOpen]);
-
-  const handleSubscribe = async () => {
-    if (!user) {
-      navigate('/login', { state: { from: location.pathname, checkoutType: 'subscription' } });
-      return;
-    }
-    if (isSubscribed) {
-      toast.info('You are already subscribed to the Power Profile.');
-      return;
-    }
-    try {
-      const res = await api.post('/subscribe', {
-        returnUrl: window.location.origin + '/SuccessSubscription',
-      });
-      const { url } = res.data;
-      if (url) window.location.href = url;
-      else toast.error('Could not start subscription. Please try again.');
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Subscription failed. Please try again.');
-    }
-  };
 
   // Two-line feature blocks (same structure as Product & Plan page)
   const featureBlocks = [
@@ -447,15 +424,14 @@ export default function Home() {
               </div>
 
               <div className="pricing-bottom">
-                {/* Keep CTA full width; keep your route */}
-                <button
-                  onClick={handleSubscribe}
+                {/* NEW: View details instead of starting trial */}
+                <Link
+                  to="/productandplan/konarsubscription"
                   className="cta-blue-button desktop-button"
                   style={{ width: '100%' }}
-                  type="button"
                 >
-                  Start Free Trial
-                </button>
+                  View Subscription Details
+                </Link>
               </div>
             </div>
           </div>
