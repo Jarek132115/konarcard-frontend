@@ -150,28 +150,30 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ---------- 3 STEPS (Old Layout, Redesigned Content) ---------- */}
+      {/* ---------- 3 STEPS (Final Polished Version) ---------- */}
       <div className="section steps-v1">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
-            Get Set Up in <span className='blue'>3 Quick</span> <span className='blue'>& Easy</span> Steps
+            Get Set Up in <span className="blue">3 Quick</span> <span className="blue">& Easy</span> Steps
           </h2>
           <h3 className="desktop-h6 text-center">From sign-up to sharing — it only takes minutes.</h3>
         </div>
 
         {/* Step 1 */}
-        <div className="section-1-content">
-          <div className="section-1-left">
+        <div className="step-card">
+          <div className="step-card-left">
             <img src={EditProfile} alt="Create your profile" />
           </div>
-          <div className="section-1-right">
-            <h3 className="desktop-h5">Step 1 — Create Your Profile</h3>
+          <div className="step-card-right">
+            <span className="step-pill">Step 1</span>
+            <h3 className="desktop-h5">Create Your Profile</h3>
+
             <ul className="step-bullet-list">
               <li>
                 <span className="blue-dot"></span>
                 <div>
                   <p className="desktop-h6">Go live in minutes</p>
-                  <p className="desktop-body-xs gray">Sign up, choose your layout, and publish instantly.</p>
+                  <p className="desktop-body-xs gray">Sign up, choose a layout, and publish instantly.</p>
                 </div>
               </li>
               <li>
@@ -189,21 +191,30 @@ export default function Home() {
                 </div>
               </li>
             </ul>
+
             <div className="section-1-cta">
-              <Link to="/register" className="cta-blue-button desktop-button">
-                Start Your 14-Day Free Trial
-              </Link>
+              {user ? (
+                <Link to="/dashboard" className="cta-blue-button desktop-button">
+                  Go to My Dashboard
+                </Link>
+              ) : (
+                <Link to="/register" className="cta-blue-button desktop-button">
+                  Create My Profile
+                </Link>
+              )}
             </div>
           </div>
         </div>
 
         {/* Step 2 */}
-        <div className="section-1-content">
-          <div className="section-1-left">
+        <div className="step-card">
+          <div className="step-card-left">
             <img src={Section1Image} alt="Order your Konar card" />
           </div>
-          <div className="section-1-right">
-            <h3 className="desktop-h5">Step 2 — Order Your Konar Card</h3>
+          <div className="step-card-right">
+            <span className="step-pill">Step 2</span>
+            <h3 className="desktop-h5">Order Your Konar Card</h3>
+
             <ul className="step-bullet-list">
               <li>
                 <span className="blue-dot"></span>
@@ -227,21 +238,24 @@ export default function Home() {
                 </div>
               </li>
             </ul>
+
             <div className="section-1-cta">
-              <Link to="/register" className="cta-blue-button desktop-button">
-                Start Your 14-Day Free Trial
+              <Link to="/productandplan/konarcard" className="cta-blue-button desktop-button">
+                Order My Konar Card
               </Link>
             </div>
           </div>
         </div>
 
         {/* Step 3 */}
-        <div className="section-1-content">
-          <div className="section-1-left">
+        <div className="step-card">
+          <div className="step-card-left">
             <img src={WhyYouNeedThis} alt="Share your page" />
           </div>
-          <div className="section-1-right">
-            <h3 className="desktop-h5">Step 3 — Share & Win More Work</h3>
+          <div className="step-card-right">
+            <span className="step-pill">Step 3</span>
+            <h3 className="desktop-h5">Share & Win More Work</h3>
+
             <ul className="step-bullet-list">
               <li>
                 <span className="blue-dot"></span>
@@ -265,9 +279,10 @@ export default function Home() {
                 </div>
               </li>
             </ul>
+
             <div className="section-1-cta">
-              <Link to="/register" className="cta-blue-button desktop-button">
-                Start Your 14-Day Free Trial
+              <Link to="/share" className="cta-blue-button desktop-button">
+                Learn How to Share
               </Link>
             </div>
           </div>
