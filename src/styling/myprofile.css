@@ -1582,4 +1582,20 @@ textarea.no-resize {
     color: #ddd;
 }
 
+/* give consistent bottom space no matter which section ends last */
+.mock-phone-scrollable-content {
+    overflow: visible;
+    max-height: none;
+    padding-bottom: 24px;
+    /* <— add this line (tweak to taste) */
+}
+
+/* optional: if you want extra room only on desktop */
+@media (min-width: 1001px) {
+    .mock-phone-scrollable-content {
+        padding-bottom: 32px;
+    }
+}
+
+
 /* end of file */
