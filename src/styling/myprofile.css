@@ -1624,4 +1624,30 @@ textarea.no-resize {
     }
 }
 
+/* Desktop (≥1001px): fixed 100px tall */
+@media (min-width: 1001px) {
+    #bio.text-input {
+        height: 100px;
+        min-height: 100px;
+        /* lock it in */
+        resize: vertical;
+        /* allow manual grow if you want */
+        line-height: 1.45;
+        /* nicer readability */
+    }
+}
+
+/* Mobile (≤1000px): scale with screen, but never tiny/huge */
+@media (max-width: 1000px) {
+    #bio.text-input {
+        height: auto;
+        /* let content/viewport drive it */
+        min-height: clamp(140px, 28vh, 260px);
+        resize: vertical;
+        /* user can still expand */
+        line-height: 1.5;
+    }
+}
+
+
 /* end of file */
