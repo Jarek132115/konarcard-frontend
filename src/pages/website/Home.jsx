@@ -1,9 +1,9 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+
 import Section1Image from '../../assets/images/Section-1-Image.png';
-import TickIcon from '../../assets/icons/Tick-Icon.svg'; // (kept, though not used in new grid)
 import FormCustomizationIcon from '../../assets/icons/FormCustomization-Icon.svg';
 import CustomizationIcon from '../../assets/icons/Customization-Icon.svg';
 import BoltIcon from '../../assets/icons/Bolt-Icon.svg';
@@ -12,25 +12,19 @@ import NFCIcon from '../../assets/icons/NFC-Icon.svg';
 import EditProfile from '../../assets/images/Edit-Profile.jpg';
 import WhyYouNeedThis from '../../assets/images/WhyYouNeedThis.png';
 import People from '../../assets/images/People.png';
-import PlasticCard from '../../assets/images/PlasticCard.png'; // (kept in case used elsewhere)
+
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
-import SetupIcon from '../../assets/icons/Setup-Icon.svg'; // (kept)
-import BoxIcon from '../../assets/icons/Box-Icon.svg'; // (kept)
-import PalletteIcon from '../../assets/icons/Pallette-Icon.svg'; // (kept)
-import HatIcon from '../../assets/icons/Hat-Icon.svg'; // (kept)
-import LockIcon from '../../assets/icons/Lock-Icon.svg'; // (kept)
-import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
-import PhoneIcon from '../../assets/icons/Phone-Icon.svg'; // (kept)
-import WalletIcon from '../../assets/icons/Wallet-Icon.svg'; // (kept)
 import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
 import LinkIcon from '../../assets/icons/Link-Icon.svg';
 import TapIcon from '../../assets/icons/Tap-Icon.svg';
 import MoneyIcon from '../../assets/icons/Money-Icon.svg';
 import ShareIcon from '../../assets/icons/Share-Icon.svg';
+
 import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
 import ScanQRCode from '../../assets/images/ScanQR-Code.jpg';
 import LinkInBio from '../../assets/images/LinkInBio.jpg';
 import SMSSend from '../../assets/images/SMSSend.jpg';
+
 import QRCode from '../../assets/icons/QR-Code-Icon.svg';
 import ProfileIcon from '../../assets/icons/Profile-Icon.svg';
 import TimeIcon from '../../assets/icons/Time-Icon.svg';
@@ -51,12 +45,8 @@ import { AuthContext } from '../../components/AuthContext';
 
 export default function Home() {
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const location = useLocation();
 
-  const isSubscribed = user ? user.isSubscribed : false;
-
-  // gallery state
+  // product gallery
   const [cardMainImage, setCardMainImage] = useState(ProductCover);
   const cardThumbs = [ProductCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4];
 
@@ -64,22 +54,18 @@ export default function Home() {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   useEffect(() => {
-    // lock scroll when modal is open
-    if (isVideoOpen) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      const onKey = (e) => {
-        if (e.key === 'Escape') setIsVideoOpen(false);
-      };
-      window.addEventListener('keydown', onKey);
-      return () => {
-        document.body.style.overflow = prev;
-        window.removeEventListener('keydown', onKey);
-      };
-    }
+    if (!isVideoOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => e.key === 'Escape' && setIsVideoOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
   }, [isVideoOpen]);
 
-  // Two-line feature blocks (same structure as Product & Plan page)
+  // subscription features
   const featureBlocks = [
     { t: 'Simple editor', s: 'Get set up quickly — no tech skills required.' },
     { t: 'Show what you do', s: 'Share your services and work in seconds.' },
@@ -118,7 +104,6 @@ export default function Home() {
                 Start Your Free Trial
               </Link>
 
-              {/* Watch video button toggles modal */}
               <button
                 type="button"
                 className="cta-black-button desktop-button hero-watch-btn"
@@ -338,7 +323,6 @@ export default function Home() {
         </div>
       </div>
 
-
       {/* ---------- HOW TO SHARE ---------- */}
       <div className="section">
         <div className="section-1-title">
@@ -381,16 +365,15 @@ export default function Home() {
         </div>
       </div>
 
-      {/* --- PRICING (updated to match the two-card design while keeping colors) --- */}
+      {/* --- PRICING --- */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">One <span className='blue'>Plan</span>. One <span className='blue'>Card</span>. Endless <span className='blue'>Opportunities</span>.</h2>
           <h3 className="desktop-h6 text-center">Start your Power Profile free for 14 days. Add the Konar Card when you’re ready.</h3>
         </div>
 
-        {/* Scoped like the Product & Plan page so styles match */}
         <div className="pricing-grid nfc-pricing-page">
-          {/* Subscription card (blue background, white text) */}
+          {/* Subscription */}
           <div className="pricing-card pricing-card--subscription nfc-pricing-subscription" style={{ borderRadius: 16 }}>
             <div className="pricing-inner">
               <div className="pricing-content">
@@ -409,7 +392,6 @@ export default function Home() {
                   <span className="desktop-button" style={{ padding: 0 }}>/Month - After 14 Days</span>
                 </div>
 
-                {/* Two-column feature grid (title + sub) */}
                 <ul className="feature-grid">
                   {featureBlocks.map((f, i) => (
                     <li key={i} className="feature-item">
@@ -424,7 +406,6 @@ export default function Home() {
               </div>
 
               <div className="pricing-bottom">
-                {/* NEW: View details instead of starting trial */}
                 <Link
                   to="/productandplan/konarsubscription"
                   className="cta-blue-button desktop-button"
@@ -436,7 +417,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Physical card (dark grey background, white text) */}
+          {/* Physical card */}
           <div className="pricing-card pricing-card--product nfc-pricing-product" style={{ borderRadius: 16 }}>
             <div className="pricing-inner">
               <div className="pricing-content">
@@ -454,9 +435,9 @@ export default function Home() {
                   <span className="desktop-h3">£24.95</span>
                 </div>
 
-                {/* Gallery matches reference: large main + 5 tight square thumbs */}
+                {/* Gallery */}
                 <div className="pricing-media-tray">
-                  <div className="pricing-media-main fixed-43">
+                  <div className="pricing-media-main">
                     <img src={cardMainImage} alt="Konar Card - White Edition" />
                   </div>
                   <div className="pricing-media-thumbs tight">
@@ -496,7 +477,6 @@ export default function Home() {
           <h3 className="desktop-h6 text-center">See how Konar is used every day by real tradespeople.</h3>
         </div>
 
-        {/* 4-image grid */}
         <div className="people-grid">
           <div className="pg-item span-2">
             <img src={People} alt="Tradies using Konar on the job site" />
