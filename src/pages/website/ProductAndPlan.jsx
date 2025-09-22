@@ -40,7 +40,7 @@ export default function ProductAndPlan() {
             {/* --- PRICING (same markup/classes as Home) --- */}
             <div className="section">
                 <div className="section-1-title">
-                    <h2 className="desktop-h3 text-center">
+                    <h2 className="desktop-h2 text-center">
                         One <span className="blue">Plan</span>. One <span className="blue">Card</span>. Endless <span className="blue">Opportunities</span>.
                     </h2>
                     <h3 className="desktop-h6 text-center">
