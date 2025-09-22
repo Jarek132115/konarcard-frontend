@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-// ⛔️ removed: import { loadStripe } from '@stripe/stripe-js';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Footer from '../../components/Footer';
@@ -20,30 +19,21 @@ import ProductImage3 from '../../assets/images/Product-Image-3.png';
 import ProductImage4 from '../../assets/images/Product-Image-4.png';
 
 import NFCIcon from '../../assets/icons/NFC-Icon.svg';
-import HowItWorks1 from '../../assets/images/HowItWorks-1.png';
-import HowItWorks2 from '../../assets/images/HowItWorks-2.png';
-import HowItWorks3 from '../../assets/images/HowItWorks-3.png';
 import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
 import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg';
 import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
-import SetupIcon from '../../assets/icons/Setup-Icon.svg';
 import BoxIcon from '../../assets/icons/Box-Icon.svg';
-import HatIcon from '../../assets/icons/Hat-Icon.svg';
 import LockIcon from '../../assets/icons/Lock-Icon.svg';
-import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
-import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
+
 import QRCode from '../../assets/icons/QR-Code-Icon.svg';
 import NFCChipIcon from '../../assets/icons/NFCChip-Icon.svg';
-import TimeIcon from '../../assets/icons/Time-Icon.svg'
+import TimeIcon from '../../assets/icons/Time-Icon.svg';
 
-// NEW: auth + api
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 
-/* -------------------------------------------
-   STRIPE (lazy): only import when needed
--------------------------------------------- */
+/* Stripe (lazy import) */
 const STRIPE_PK =
   import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ||
   'pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuYbeQ35GbhZEVi3V6DRwriLetAcHc3biiZ6dlfzz1fdvHj2wvj1hS00lHDjoAu8';
@@ -51,7 +41,7 @@ const STRIPE_PK =
 let stripePromiseCache = null;
 async function getStripe() {
   if (!stripePromiseCache) {
-    const { loadStripe } = await import('@stripe/stripe-js'); // ← dynamic import
+    const { loadStripe } = await import('@stripe/stripe-js');
     stripePromiseCache = loadStripe(STRIPE_PK);
   }
   return stripePromiseCache;
@@ -68,19 +58,11 @@ export default function KonarCard() {
   const pricePerCard = 24.95;
   const originalPricePerCard = 29.95;
 
-  const thumbnails = [
-    ProductCover,
-    ProductImage1,
-    ProductImage2,
-    ProductImage3,
-    ProductImage4,
-  ];
+  const thumbnails = [ProductCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4];
 
   const startCheckout = useCallback(async (qty) => {
     try {
-      const stripe = await getStripe(); // ← load only now
-
-      // use api service so auth token is attached
+      const stripe = await getStripe();
       const res = await api.post('/api/checkout/create-checkout-session', { quantity: qty });
       const sessionId = res?.data?.id;
       if (!sessionId) {
@@ -94,60 +76,43 @@ export default function KonarCard() {
     }
   }, []);
 
-  // Buy Now handler w/ auth-gate and post-auth continuation
   const handleBuyNow = async () => {
     if (!user) {
       navigate('/register', {
-        state: {
-          postAuthAction: {
-            type: 'buy_card',
-            payload: { quantity },
-          },
-        },
+        state: { postAuthAction: { type: 'buy_card', payload: { quantity } } },
       });
       return;
     }
     await startCheckout(quantity);
   };
 
-  // If we returned here after login/registration with triggerCheckout flag, auto-run checkout
   useEffect(() => {
     if (location.state?.triggerCheckout) {
       const qty = Number(location.state?.quantity) || quantity;
       setQuantity(qty);
-      // clear the flag on history entry to avoid loops if user navigates back
       navigate(location.pathname, { replace: true });
       startCheckout(qty);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state]);
 
-  // Delivery window text: today+1 to today+4
+  // Delivery window text
   const getDeliveryDates = () => {
     const today = new Date();
-    const start = new Date(today);
-    start.setDate(today.getDate() + 1);
-    const end = new Date(today);
-    end.setDate(today.getDate() + 4);
-
-    const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    const shortMonth = (d) => monthNames[d.getMonth()].slice(0, 3);
-
+    const start = new Date(today); start.setDate(today.getDate() + 1);
+    const end = new Date(today); end.setDate(today.getDate() + 4);
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const short = (d) => monthNames[d.getMonth()].slice(0, 3);
     const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
-
     if (sameMonth) return `${start.getDate()}–${end.getDate()} ${monthNames[start.getMonth()]}`;
-
     const sameYear = start.getFullYear() === end.getFullYear();
-    if (sameYear) return `${start.getDate()} ${shortMonth(start)} – ${end.getDate()} ${shortMonth(end)}`;
-
-    return `${start.getDate()} ${shortMonth(start)} ${start.getFullYear()} – ${end.getDate()} ${shortMonth(end)} ${end.getFullYear()}`;
+    if (sameYear) return `${start.getDate()} ${short(start)} – ${end.getDate()} ${short(end)}`;
+    return `${start.getDate()} ${short(start)} ${start.getFullYear()} – ${end.getDate()} ${short(end)} ${end.getFullYear()}`;
   };
   const deliveryDateText = getDeliveryDates();
 
-  const featurePills = [
+  /* Feature bullets (icon-left + copy) */
+  const featureBullets = [
     { icon: PhoneIcon, title: 'Compatibility', text: 'Compatible with Android & iOS' },
     { icon: NFCIcon, title: 'QR Code Backup', text: 'If NFC doesn’t work, scan the QR' },
     { icon: WarrantyIcon, title: 'Warranty', text: '12-month warranty' },
@@ -165,11 +130,9 @@ export default function KonarCard() {
         <Breadcrumbs />
       </div>
 
-      {/* ============================= */}
-      {/* Product header (redesigned)   */}
-      {/* ============================= */}
+      {/* Product header */}
       <div className="section product-shell">
-        {/* LEFT: product image on tray + thumbnails */}
+        {/* LEFT: product image + thumbs */}
         <div className="pd-left">
           <div className="pd-card-tray">
             <div className="pd-card">
@@ -192,16 +155,17 @@ export default function KonarCard() {
           </div>
         </div>
 
-        {/* RIGHT: copy, features, price, CTA */}
+        {/* RIGHT: copy, bullets, price, CTA */}
         <div className="pd-right">
           <h1 className="pd-title desktop-h4">Konar Card - White Edition</h1>
           <p className="pd-sub desktop-body">
             Stand out and win more jobs — one tap opens your profile with your services, photos, and contact details.
           </p>
 
+          {/* Bullets (icon + copy, no backgrounds) */}
           <div className="pd-feature-grid">
-            {featurePills.map((f, idx) => (
-              <div className="pd-feature-pill" key={idx}>
+            {featureBullets.map((f, idx) => (
+              <div className="pd-feature-item" key={idx}>
                 <span className="pd-feature-icon">
                   <img src={f.icon} alt="" />
                 </span>
@@ -212,8 +176,8 @@ export default function KonarCard() {
               </div>
             ))}
 
-            {/* Full-width Delivery pill (one long row) */}
-            <div className="pd-feature-pill pd-feature-pill--full">
+            {/* Full-width delivery row */}
+            <div className="pd-feature-item pd-feature-item--full">
               <span className="pd-feature-icon">
                 <img src={DeliveryIcon} alt="" />
               </span>
@@ -242,21 +206,35 @@ export default function KonarCard() {
             <div className="pd-qty">
               <span className="desktop-body-xs">Qty</span>
               <div className="pd-qty-ctrl">
-                <button className="pd-qty-btn" onClick={() => setQuantity(q => Math.max(1, q - 1))} aria-label="Decrease quantity">−</button>
+                <button
+                  className="pd-qty-btn"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  aria-label="Decrease quantity"
+                >
+                  −
+                </button>
                 <div className="pd-qty-display">{quantity}</div>
-                <button className="pd-qty-btn" onClick={() => setQuantity(q => q + 1)} aria-label="Increase quantity">+</button>
+                <button
+                  className="pd-qty-btn"
+                  onClick={() => setQuantity((q) => q + 1)}
+                  aria-label="Increase quantity"
+                >
+                  +
+                </button>
               </div>
             </div>
 
-            <button onClick={handleBuyNow} className="cta-blue-button desktop-button">Buy Now</button>
+            <button onClick={handleBuyNow} className="cta-blue-button desktop-button">
+              Buy Now
+            </button>
           </div>
         </div>
       </div>
 
-      {/* ===== Social proof / Reviews ===== */}
+      {/* Reviews */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">See How Tradies Put Konar To Work</h2>
+          <h2 className="desktop-h2 text-center">See How Tradies Put Konar To Work</h2>
           <h3 className="desktop-h6 text-center">
             Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
           </h3>
@@ -326,7 +304,7 @@ export default function KonarCard() {
         </div>
       </div>
 
-      {/* ===== FAQ (Card-specific) ===== */}
+      {/* Product FAQs */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Konar Card — Product FAQs</h2>
@@ -335,9 +313,7 @@ export default function KonarCard() {
         <div className="faq-container">
           <div className="faq-column">
             <div className="section-list">
-              <div className="icon-white">
-                <img src={IDCardIcon} className="icon" />
-              </div>
+              <div className="icon-white"><img src={IDCardIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What is the Konar NFC business card?</p>
                 <p className="desktop-body-s">A reusable card with a tiny NFC chip that opens your Konar profile with a tap—no app, no battery.</p>
@@ -345,9 +321,7 @@ export default function KonarCard() {
             </div>
 
             <div className="section-list">
-              <div className="icon-white">
-                <img src={NFCIcon} className="icon" />
-              </div>
+              <div className="icon-white"><img src={NFCIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How does the tap actually work?</p>
                 <p className="desktop-body-s">The phone’s NFC reader powers the chip and instantly launches your live profile link.</p>
@@ -355,9 +329,7 @@ export default function KonarCard() {
             </div>
 
             <div className="section-list">
-              <div className="icon-white">
-                <img src={QRCode} className="icon" />
-              </div>
+              <div className="icon-white"><img src={QRCode} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What if someone can’t tap?</p>
                 <p className="desktop-body-s">Every card includes a QR code and your profile has a shareable link — there’s always a backup.</p>
@@ -365,9 +337,7 @@ export default function KonarCard() {
             </div>
 
             <div className="section-list">
-              <div className="icon-white">
-                <img src={PhoneIcon} className="icon" />
-              </div>
+              <div className="icon-white"><img src={PhoneIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Will it work with their phone?</p>
                 <p className="desktop-body-s">Works on iPhone 7+ and most Android phones with NFC enabled. QR works on any camera phone.</p>
@@ -377,9 +347,7 @@ export default function KonarCard() {
 
           <div className="faq-column">
             <div className="section-list">
-              <div className="icon-white">
-                <img src={NFCChipIcon} className="icon" />
-              </div>
+              <div className="icon-white"><img src={NFCChipIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Is the NFC chip visible?</p>
                 <p className="desktop-body-s">No — it’s sealed inside the card and doesn’t affect the finish or design.</p>
@@ -387,9 +355,7 @@ export default function KonarCard() {
             </div>
 
             <div className="section-list">
-              <div className="icon-white">
-                <img src={TimeIcon} className="icon" />
-              </div>
+              <div className="icon-white"><img src={TimeIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How long does the card last?</p>
                 <p className="desktop-body-s">Years of everyday use. There’s no battery to die and nothing to charge.</p>
@@ -397,9 +363,7 @@ export default function KonarCard() {
             </div>
 
             <div className="section-list">
-              <div className="icon-white">
-                <img src={DeliveryIcon} className="icon" />
-              </div>
+              <div className="icon-white"><img src={DeliveryIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">When will my card arrive?</p>
                 <p className="desktop-body-s">Production 2–4 business days. Standard delivery 3–7 business days; Express 1–3 business days.</p>
@@ -407,9 +371,7 @@ export default function KonarCard() {
             </div>
 
             <div className="section-list">
-              <div className="icon-white">
-                <img src={WarrantyIcon} className="icon" />
-              </div>
+              <div className="icon-white"><img src={WarrantyIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What’s included in the warranty?</p>
                 <p className="desktop-body-s">12-month limited warranty covering manufacturing defects, faulty chips and printing errors.</p>

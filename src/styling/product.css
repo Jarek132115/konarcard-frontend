@@ -11,7 +11,7 @@
 
 @media (max-width:1200px) {
     .section.product-shell {
-        max-width: 900px;
+        max-width: 900px
     }
 }
 
@@ -20,13 +20,13 @@
         grid-template-columns: 1fr;
         width: 90%;
         padding: 0 10px;
-        margin-bottom: 100px;
+        margin-bottom: 100px
     }
 }
 
 /* LEFT: tray, hero image, thumbnails */
 .pd-left {
-    width: 100%;
+    width: 100%
 }
 
 .pd-card-tray {
@@ -50,17 +50,16 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
+    display: block
 }
 
-/* --- THUMBNAILS: 1/1 squares, full width of main image --- */
+/* Thumbnails */
 .pd-thumbs {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    /* 5 images */
     gap: 12px;
-    margin-top: 12px;
+    margin-top: 12px
 }
 
 .pd-thumb {
@@ -68,9 +67,7 @@
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
-    /* keep image corners clean */
     padding: 0;
-    /* let image fill the square */
     cursor: pointer;
     transition: box-shadow .15s ease, transform .06s ease, border-color .15s ease;
 }
@@ -78,178 +75,155 @@
 .pd-thumb img {
     width: 100%;
     aspect-ratio: 1/1;
-    /* perfect square */
     object-fit: cover;
-    /* fill the square */
-    display: block;
+    display: block
 }
 
 .pd-thumb:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .12)
 }
 
 .pd-thumb.is-active {
     border-color: #0a66ff;
-    box-shadow: 0 0 0 3px rgba(10, 102, 255, .12);
+    box-shadow: 0 0 0 3px rgba(10, 102, 255, .12)
 }
 
-/* RIGHT: copy, pills, price, CTA */
+/* RIGHT: copy, feature bullets, price, CTA */
 .pd-right {
-    width: 100%;
+    width: 100%
 }
 
 .pd-title {
-    margin-bottom: 6px;
+    margin-bottom: 6px
 }
 
 .pd-sub {
     color: #333;
-    margin-bottom: 16px;
+    margin-bottom: 16px
 }
 
-/* Feature grid */
+/* ===== Feature bullets (icon + copy, no bg) ===== */
 .pd-feature-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 12px 20px;
     margin: 8px 0 16px;
 }
 
 @media (max-width:600px) {
     .pd-feature-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr
     }
 }
 
-.pd-feature-pill {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #fff;
-    border: 1px solid #ededed;
-    border-radius: 14px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
-    padding: 6px;
+.pd-feature-item {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    align-items: start;
+    gap: 12px;
+    /* no background / border / padding */
+}
+
+.pd-feature-icon {
+    width: 24px;
+    height: 24px;
+    display: block;
+    line-height: 0;
+    /* no background / border / padding */
+}
+
+.pd-feature-icon img {
+    width: 100%;
+    height: 100%;
+    display: block
 }
 
 .pd-feature-copy {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-}
-
-.pd-feature-icon {
-    flex: 0 0 36px;
-    width: 36px;
-    height: 36px;
-    display: grid;
-    place-items: center;
-    background: #f8f9fb;
-    border-radius: 10px;
-    border: 1px solid #ececec;
-}
-
-.pd-feature-icon img {
-    width: 18px;
-    height: 18px;
-    display: block;
+    gap: 2px
 }
 
 .pd-feature-title {
-    font-weight: 700;
-    line-height: 1.2;
+    font-weight: 800;
+    line-height: 1.2
 }
 
 .pd-feature-text {
     color: #666;
-    line-height: 1.2;
+    line-height: 1.2
 }
 
-/* Full-width pill (Delivery) */
-.pd-feature-pill--full {
-    grid-column: 1 / -1;
+/* Full-width row (Delivery) */
+.pd-feature-item--full {
+    grid-column: 1 / -1
 }
 
 /* Stars + price — STACKED column */
 .pd-meta-row {
     display: flex;
     flex-direction: column;
-    /* stack stars and price */
     align-items: flex-start;
     gap: 8px;
-    margin: 8px 0 6px;
+    margin: 8px 0 6px
 }
 
-/* Stars */
 .pd-stars {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 6px
 }
 
 .pd-stars img {
     width: 110px;
-    height: auto;
+    height: auto
 }
 
 .pd-reviews-count {
     color: #333;
-    font-weight: 600;
+    font-weight: 600
 }
 
 /* Price */
 .pd-price-wrap {
     display: flex;
     align-items: baseline;
-    gap: 10px;
+    gap: 10px
 }
 
 .pd-price-now {
     font-size: 28px;
-    font-weight: 800;
+    font-weight: 800
 }
 
 .pd-price-was {
     font-size: 16px;
     color: #888;
-    text-decoration: line-through;
-}
-
-.pd-onetime {
-    font-size: 14px;
-    color: #444;
-    font-weight: 700;
-    margin-left: 4px;
+    text-decoration: line-through
 }
 
 /* CTA row — STACKED column (Qty -> Button) */
 .pd-cta-row {
     display: flex;
     flex-direction: column;
-    /* stack qty above button */
     align-items: flex-start;
     gap: 10px;
-    margin-top: 8px;
+    margin-top: 8px
 }
 
 .pd-qty {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 8px
 }
 
-@media (max-width: 600px) {
-    .pd-qty {
-        width: 100%;
-    }
+@media (max-width:600px) {
 
-    .pd-qty-ctrl {
-        width: 100%;
-    }
-
+    .pd-qty,
+    .pd-qty-ctrl,
     .pd-qty-display {
-        width: 100%;
+        width: 100%
     }
 }
 
@@ -260,7 +234,7 @@
     background: #fff;
     border: 1px solid #e9e9e9;
     border-radius: 999px;
-    padding: 6px;
+    padding: 6px
 }
 
 .pd-qty-btn {
@@ -271,58 +245,27 @@
     background: #f3f4f6;
     font-size: 18px;
     font-weight: 800;
-    cursor: pointer;
-}
-
-@media (max-width: 600px) {
-    .pd-qty-btn {
-        height: auto;
-    }
-
+    cursor: pointer
 }
 
 .pd-qty-display {
     min-width: 32px;
     text-align: center;
-    font-weight: 700;
+    font-weight: 700
 }
 
-.pd-buy-btn {
-    background: #0081FF;
-    color: #fff;
-    border: none;
-    padding: 12px 22px;
-    border-radius: 999px;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 10px 26px rgba(0, 129, 255, .28);
-    transition: transform .06s ease, box-shadow .15s ease;
-    width: auto;
-    /* not forced full width on desktop */
-}
-
-.pd-buy-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 14px 34px rgba(0, 129, 255, .36);
-}
-
-/* (Old .pd-delivery styles no longer needed; delivery uses full-width pill) */
-
-/* Ensure buy button stretches on small screens if desired */
 @media (max-width:1000px) {
     .pd-buy-btn {
         width: 100%;
-        text-align: center;
+        text-align: center
     }
 }
 
-/* ===== YOUR EXISTING HOW IT WORKS (unchanged) ===== */
-
-/* HOW IT WORKS */
+/* ===== Existing HOW IT WORKS (unchanged) ===== */
 .how-it-works-container {
     display: flex;
     height: auto;
-    gap: 20px;
+    gap: 20px
 }
 
 .white-card-column {
@@ -331,30 +274,30 @@
     justify-content: space-between;
     flex: 1;
     border-radius: 20px;
-    background: var(--White, #FFF);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.10);
-    overflow: hidden;
+    background: #FFF;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .10);
+    overflow: hidden
 }
 
 .hero-tick-box {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin: 10px 0;
+    margin: 10px 0
 }
 
 .white-card-column-image {
     height: 250px;
     width: 100%;
     object-fit: cover;
-    border-radius: 0 0 20px 20px;
+    border-radius: 0 0 20px 20px
 }
 
 .how-it-works-right {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 20px
 }
 
 .white-card {
@@ -362,36 +305,36 @@
     flex: 1 1 0;
     justify-content: space-between;
     border-radius: 20px;
-    background: var(--White, #FFF);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.10);
-    overflow: hidden;
+    background: #FFF;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .10);
+    overflow: hidden
 }
 
 .how-it-works-info {
     flex: 1;
     padding: 30px;
-    align-items: start;
+    align-items: start
 }
 
 .how-it-works-right-image {
     height: 100%;
     max-height: 100%;
     width: auto;
-    object-fit: contain;
+    object-fit: contain
 }
 
 @media (max-width:1000px) {
     .how-it-works-container {
         flex-direction: column;
         gap: 20px;
-        height: auto;
+        height: auto
     }
 
     .white-card-column,
     .white-card {
         flex-direction: column;
         width: 100%;
-        height: auto;
+        height: auto
     }
 
     .white-card-column-image {
@@ -399,18 +342,18 @@
         height: 250px;
         object-fit: contain;
         object-position: bottom right;
-        border-radius: 0 0 20px 20px;
+        border-radius: 0 0 20px 20px
     }
 
     .how-it-works-info {
-        padding: 20px;
+        padding: 20px
     }
 
     .how-it-works-right {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        gap: 20px;
+        gap: 20px
     }
 
     .white-card {
@@ -418,62 +361,60 @@
         align-items: flex-start;
         justify-content: space-between;
         position: relative;
-        flex-direction: row;
+        flex-direction: row
     }
 
     .how-it-works-right-image {
         object-fit: contain !important;
         max-height: 250px;
         align-self: flex-end;
-        margin-left: auto;
+        margin-left: auto
     }
 }
 
 @media (max-width:850px) {
     .how-it-works-right {
-        flex-direction: column;
+        flex-direction: column
     }
 
     .white-card {
-        width: 100%;
+        width: 100%
     }
 
     .white-card-column {
         flex-direction: row;
-        height: 250px;
+        height: 250px
     }
 
     .white-card-column-image {
         width: 50%;
         object-fit: contain;
-        border-radius: 0 20px 20px 0;
+        border-radius: 0 20px 20px 0
     }
 
     .how-it-works-info {
         padding: 20px;
-        flex: 1;
+        flex: 1
     }
 }
 
 @media (max-width:500px) {
     .white-card-column {
         flex-direction: column;
-        align-items: end;
+        align-items: end
     }
 
     .white-card-column-image {
         height: 200px;
-        width: 100%;
+        width: 100%
     }
 
     .white-card {
         flex-direction: column;
-        align-items: end;
+        align-items: end
     }
 
     .how-it-works-right-image {
-        height: 200px;
+        height: 200px
     }
 }
-
-/* HOW IT WORKS */
