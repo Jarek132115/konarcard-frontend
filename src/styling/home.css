@@ -210,7 +210,7 @@ body {
     }
 }
 
-@media (max-width:400px) {
+@media (max-width:450px) {
     .hero-cta {
         flex-direction: column;
         gap: 8px;
