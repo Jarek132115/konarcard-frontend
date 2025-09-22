@@ -92,10 +92,11 @@ export default function ContactUs() {
               className="live-chat-link"
               onClick={() => window.tidioChatApi && window.tidioChatApi.open()}
             >
-              Start a live chat.
+              Start a live chat
             </span>
           </p>
         </div>
+
 
         {/* --- Contact form --- */}
         <form className="contact-form" onSubmit={handleSubmit}>
