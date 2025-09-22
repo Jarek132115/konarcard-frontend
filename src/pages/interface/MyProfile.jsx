@@ -41,6 +41,7 @@ export default function MyProfile() {
 
   const activeBlobUrlsRef = useRef([]);
   const mpWrapRef = useRef(null); // mobile preview wrapper for dynamic height
+  const handledPaymentRef = useRef(false);
 
   // Local state
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
@@ -76,8 +77,19 @@ export default function MyProfile() {
   const [previewOpen, setPreviewOpen] = useState(true);
 
   // Trial/plan
-  const isTrialActive = !!(authUser && authUser.trialExpires && new Date(authUser.trialExpires) > new Date());
-  const hasTrialEnded = !!(authUser && authUser.trialExpires && new Date(authUser.trialExpires) <= new Date());
+  // IMPORTANT: Only consider trial "active" if the user is NOT subscribed.
+  const isTrialActive = !!(
+    authUser &&
+    !authUser.isSubscribed &&
+    authUser.trialExpires &&
+    new Date(authUser.trialExpires) > new Date()
+  );
+
+  const hasTrialEnded = !!(
+    authUser &&
+    authUser.trialExpires &&
+    new Date(authUser.trialExpires) <= new Date()
+  );
 
   const hasSavedData = !!businessCard;
   const hasExchangeContact =
@@ -85,20 +97,21 @@ export default function MyProfile() {
 
   // Effects
   useEffect(() => {
-    let handled = false;
     const run = async () => {
-      if (authLoading || !authUser) return;
+      if (authLoading) return;
       const params = new URLSearchParams(location.search);
       const paymentSuccess = params.get("payment_success");
-      if (paymentSuccess === "true" && !isSubscribed && !handled) {
-        handled = true;
+      if (paymentSuccess === "true" && !handledPaymentRef.current) {
+        handledPaymentRef.current = true;
+        // Always refetch so isSubscribed reflects the latest status after Stripe returns
         if (typeof refetchAuthUser === "function") await refetchAuthUser();
+        // Clean the URL
         window.history.replaceState({}, document.title, location.pathname);
         toast.success("Subscription updated successfully!");
       }
     };
     run();
-  }, [location.search, isSubscribed, authLoading, authUser, refetchAuthUser]);
+  }, [authLoading, location.search, location.pathname, refetchAuthUser]);
 
   useEffect(() => {
     const mm1 = window.matchMedia(mqDesktopToMobile);
@@ -221,7 +234,6 @@ export default function MyProfile() {
     const el = mpWrapRef.current;
     if (!el) return;
     if (previewOpen) {
-      // set to actual scrollHeight so CSS transition can work smoothly
       el.style.maxHeight = el.scrollHeight + "px";
       el.style.opacity = "1";
       el.style.transform = "scale(1)";
@@ -623,7 +635,8 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {isTrialActive && (
+              {/* Show trial banner ONLY if user is NOT subscribed */}
+              {isTrialActive && !isSubscribed && (
                 <div className="trial-banner">
                   <p className="desktop-body-s">
                     Your free trial ends on <strong>{new Date(authUser.trialExpires).toLocaleDateString()}</strong>.
@@ -830,7 +843,7 @@ export default function MyProfile() {
                       style={{ fontFamily: state.font || previewPlaceholders.font }}
                     >
                       <div className="mock-phone-scrollable-content desktop-no-inner-scroll">
-                        {/* (same as mobile content, omitted here for brevity - kept identical) */}
+                        {/* MAIN */}
                         {showMainSection && (
                           <>
                             {(shouldShowPlaceholders || !!state.coverPhoto) && (
@@ -848,6 +861,7 @@ export default function MyProfile() {
                           </>
                         )}
 
+                        {/* ABOUT */}
                         {showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
                           <>
                             <p className="mock-section-title">About me</p>
@@ -866,6 +880,7 @@ export default function MyProfile() {
                           </>
                         )}
 
+                        {/* WORK */}
                         {showWorkSection && previewWorkImages.length > 0 && (
                           <>
                             <p className="mock-section-title">My Work</p>
@@ -887,6 +902,7 @@ export default function MyProfile() {
                           </>
                         )}
 
+                        {/* SERVICES */}
                         {showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) && (
                           <>
                             <p className="mock-section-title">My Services</p>
@@ -909,6 +925,7 @@ export default function MyProfile() {
                           </>
                         )}
 
+                        {/* REVIEWS */}
                         {showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) && (
                           <>
                             <p className="mock-section-title">Reviews</p>
@@ -935,6 +952,7 @@ export default function MyProfile() {
                           </>
                         )}
 
+                        {/* CONTACT */}
                         {showContactSection && (previewEmail || previewPhone) && (
                           <>
                             <p className="mock-section-title">Contact Details</p>
