@@ -79,7 +79,7 @@ export default function ContactUs() {
 
       <div style={{ marginTop: 40 }} className="section">
         <div className="contact-title-container">
-          <p className="desktop-h2 text-center">
+          <p className="desktop-h1 text-center">
             Let’s <span className="blue">Talk!</span>
           </p>
         </div>
