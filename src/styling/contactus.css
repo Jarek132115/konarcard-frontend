@@ -129,3 +129,18 @@
 .live-chat-link:hover {
     color: #0066cc;
 }
+
+/* Mobile alignment fix for title + subtitle */
+@media (max-width: 600px) {
+
+    .contact-title-container .text-center,
+    .live-chat-info .text-center {
+        text-align: left !important;
+    }
+
+    /* Also catch FAQ subtitle alignment if needed */
+    .section-1-title h2.text-center,
+    .section-1-title h3.text-center {
+        text-align: left !important;
+    }
+}
