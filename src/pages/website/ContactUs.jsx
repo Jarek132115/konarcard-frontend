@@ -1,3 +1,4 @@
+// frontend/src/pages/ContactUs/index.jsx
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 
@@ -77,28 +78,25 @@ export default function ContactUs() {
         <Breadcrumbs />
       </div>
 
-      <div style={{ marginTop: 40 }} className="section">
-        <div className="contact-title-container">
-          <p className="desktop-h1 text-center">
-            Let’s <span className="blue">Talk!</span>
-          </p>
-        </div>
+      {/* Match FAQ heading block */}
+      <div className="section section-1-title">
+        <h2 className="desktop-h1 text-center">
+          Let’s <span className="blue">Talk!</span>
+        </h2>
+        <h3 className="desktop-h6 text-center">
+          Have a question or need help? Send us a message — or{' '}
+          <span
+            className="live-chat-link"
+            onClick={() => window.tidioChatApi && window.tidioChatApi.open()}
+          >
+            start a live chat
+          </span>
+          .
+        </h3>
+      </div>
 
-        <div className="live-chat-info">
-          <p className="desktop-body text-center">
-            Want to talk to us right now?
-            <br />
-            <span
-              className="live-chat-link"
-              onClick={() => window.tidioChatApi && window.tidioChatApi.open()}
-            >
-              Start a live chat
-            </span>
-          </p>
-        </div>
-
-
-        {/* --- Contact form --- */}
+      {/* --- Contact form --- */}
+      <div className="section" style={{ marginTop: 10 }}>
         <form className="contact-form" onSubmit={handleSubmit}>
           <div className="contact-input-container">
             <label htmlFor="name" className="form-label">Name</label>
@@ -180,7 +178,7 @@ export default function ContactUs() {
         </form>
       </div>
 
-      {/* --- FAQ section stays unchanged --- */}
+      {/* --- FAQ callouts (unchanged content) --- */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
