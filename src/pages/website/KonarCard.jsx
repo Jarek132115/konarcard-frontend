@@ -234,7 +234,7 @@ export default function KonarCard() {
       {/* Reviews */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h2 text-center">See How Tradies Put Konar To Work</h2>
+          <h2 className="desktop-h3 text-center">See How Tradies Put Konar To Work</h2>
           <h3 className="desktop-h6 text-center">
             Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
           </h3>
