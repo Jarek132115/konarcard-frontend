@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 import Navbar from '../../components/Navbar';
@@ -22,31 +21,28 @@ export default function ContactUs() {
     email: '',
     reason: '',
     message: '',
-    agree: true, // pre-checked
+    agree: true,
   });
 
-  // --- Auto-open chat if UserPage set a flag ---
+  // --- Auto-open chat if flagged ---
   useEffect(() => {
-    const openIfFlag = () => {
-      if (localStorage.getItem('openChatOnLoad') !== '1') return;
-
-      // Try for up to ~5s in case the widget hasn't initialized yet
-      const started = Date.now();
-      const tryOpen = () => {
-        const ready = typeof window !== 'undefined' && window.tidioChatApi && typeof window.tidioChatApi.open === 'function';
-        if (ready) {
-          try { localStorage.removeItem('openChatOnLoad'); } catch { }
-          window.tidioChatApi.open();
-        } else if (Date.now() - started < 5000) {
-          setTimeout(tryOpen, 200);
-        } else {
-          // give up silently
-          try { localStorage.removeItem('openChatOnLoad'); } catch { }
-        }
-      };
-      tryOpen();
+    if (localStorage.getItem('openChatOnLoad') !== '1') return;
+    const started = Date.now();
+    const tryOpen = () => {
+      const ready =
+        typeof window !== 'undefined' &&
+        window.tidioChatApi &&
+        typeof window.tidioChatApi.open === 'function';
+      if (ready) {
+        try { localStorage.removeItem('openChatOnLoad'); } catch { }
+        window.tidioChatApi.open();
+      } else if (Date.now() - started < 5000) {
+        setTimeout(tryOpen, 200);
+      } else {
+        try { localStorage.removeItem('openChatOnLoad'); } catch { }
+      }
     };
-    openIfFlag();
+    tryOpen();
   }, []);
 
   const handleChange = (e) => {
@@ -56,7 +52,8 @@ export default function ContactUs() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.reason || !formData.message || !formData.agree) {
+    const { name, email, reason, message, agree } = formData;
+    if (!name || !email || !reason || !message || !agree) {
       toast.error('Please fill in all fields and agree to the privacy policy.');
       return;
     }
@@ -82,7 +79,9 @@ export default function ContactUs() {
 
       <div style={{ marginTop: 40 }} className="section">
         <div className="contact-title-container">
-          <p className="desktop-h1 text-center">Let’s <span className="blue">Talk!</span></p>
+          <p className="desktop-h1 text-center">
+            Let’s <span className="blue">Talk!</span>
+          </p>
         </div>
 
         <div className="live-chat-info">
@@ -98,13 +97,15 @@ export default function ContactUs() {
           </p>
         </div>
 
+        {/* --- Contact form --- */}
         <form className="contact-form" onSubmit={handleSubmit}>
           <div className="contact-input-container">
-            <label htmlFor="name" className="desktop-body field-label">Name</label>
+            <label htmlFor="name" className="form-label">Name</label>
             <input
               id="name"
               type="text"
               name="name"
+              className="standard-input"
               placeholder="Enter your name"
               value={formData.name}
               onChange={handleChange}
@@ -113,11 +114,12 @@ export default function ContactUs() {
           </div>
 
           <div className="contact-input-container">
-            <label htmlFor="email" className="desktop-body field-label">Email</label>
+            <label htmlFor="email" className="form-label">Email</label>
             <input
               id="email"
               type="email"
               name="email"
+              className="standard-input"
               placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
@@ -126,10 +128,11 @@ export default function ContactUs() {
           </div>
 
           <div className="contact-input-container">
-            <label htmlFor="reason" className="desktop-body field-label">Reason</label>
+            <label htmlFor="reason" className="form-label">Reason</label>
             <select
               id="reason"
               name="reason"
+              className="standard-input"
               value={formData.reason}
               onChange={handleChange}
               required
@@ -144,10 +147,11 @@ export default function ContactUs() {
           </div>
 
           <div className="contact-input-container-message">
-            <label htmlFor="message" className="desktop-body field-label">Message</label>
+            <label htmlFor="message" className="form-label">Message</label>
             <textarea
               id="message"
               name="message"
+              className="standard-input"
               placeholder="Enter your message..."
               value={formData.message}
               onChange={handleChange}
@@ -155,11 +159,11 @@ export default function ContactUs() {
             />
           </div>
 
-          <label className="terms-labels">
+          <label className="terms-label">
             <input
               type="checkbox"
               name="agree"
-              className="terms-checkbox"
+              className="konar-checkbox"
               checked={formData.agree}
               onChange={handleChange}
               required
@@ -169,77 +173,101 @@ export default function ContactUs() {
             </span>
           </label>
 
-          <button type="submit" className="cta-black-button desktop-button">
+          <button type="submit" className="primary-button">
             Submit
           </button>
         </form>
       </div>
 
+      {/* --- FAQ section stays unchanged --- */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Frequently Asked Questions</h2>
-          <h3 className="desktop-h6 text-center">Here are some quick answers before you reach out</h3>
+          <h3 className="desktop-h6 text-center">
+            Here are some quick answers before you reach out
+          </h3>
         </div>
 
         <div className="faq-container">
           <div className="faq-column">
             <div className="section-list">
-              <div className="icon-white"><img src={IDCardIcon} className="icon" /></div>
+              <div className="icon-white"><img src={IDCardIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What is the Konar NFC business card?</p>
-                <p className="desktop-body-xs">A reusable card with an NFC chip that opens your Konar profile with a tap—no app, no battery, no fuss.</p>
+                <p className="desktop-body-xs">
+                  A reusable card with an NFC chip that opens your Konar profile with a tap—no app,
+                  no battery, no fuss.
+                </p>
               </div>
             </div>
             <div className="section-list">
-              <div className="icon-white"><img src={NFCIcon} className="icon" /></div>
+              <div className="icon-white"><img src={NFCIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How does the tap actually work?</p>
-                <p className="desktop-body-xs">The phone’s NFC reader powers the chip and instantly launches your live profile link.</p>
+                <p className="desktop-body-xs">
+                  The phone’s NFC reader powers the chip and instantly launches your live profile
+                  link.
+                </p>
               </div>
             </div>
             <div className="section-list">
-              <div className="icon-white"><img src={QRCode} className="icon" /></div>
+              <div className="icon-white"><img src={QRCode} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What if someone can’t tap?</p>
-                <p className="desktop-body-xs">Every card also has a QR code and a shareable link—so there’s always a backup.</p>
+                <p className="desktop-body-xs">
+                  Every card also has a QR code and a shareable link—so there’s always a backup.
+                </p>
               </div>
             </div>
             <div className="section-list">
-              <div className="icon-white"><img src={ProfileIcon} className="icon" /></div>
+              <div className="icon-white"><img src={ProfileIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What can my profile include?</p>
-                <p className="desktop-body-xs">Your name, job title, bio, photos, services with pricing, reviews, and contact details.</p>
+                <p className="desktop-body-xs">
+                  Your name, job title, bio, photos, services with pricing, reviews, and contact
+                  details.
+                </p>
               </div>
             </div>
           </div>
 
           <div className="faq-column">
             <div className="section-list">
-              <div className="icon-white"><img src={PencilIcon} className="icon" /></div>
+              <div className="icon-white"><img src={PencilIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">Can I edit my page later?</p>
-                <p className="desktop-body-xs">Yes. Update info, images, services, or layout anytime—changes go live instantly.</p>
+                <p className="desktop-body-xs">
+                  Yes. Update info, images, services, or layout anytime—changes go live instantly.
+                </p>
               </div>
             </div>
             <div className="section-list">
-              <div className="icon-white"><img src={BoltIcon} className="icon" /></div>
+              <div className="icon-white"><img src={BoltIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How do I share my page?</p>
-                <p className="desktop-body-xs">Tap your card, show the QR code, or copy your unique link to send anywhere.</p>
+                <p className="desktop-body-xs">
+                  Tap your card, show the QR code, or copy your unique link to send anywhere.
+                </p>
               </div>
             </div>
             <div className="section-list">
-              <div className="icon-white"><img src={TimeIcon} className="icon" /></div>
+              <div className="icon-white"><img src={TimeIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">How does the free trial work?</p>
-                <p className="desktop-body-xs">The free trial includes the same features as the subscription. If it ends and you don’t subscribe, your page will no longer show.</p>
+                <p className="desktop-body-xs">
+                  The free trial includes the same features as the subscription. If it ends and you
+                  don’t subscribe, your page will no longer show.
+                </p>
               </div>
             </div>
             <div className="section-list">
-              <div className="icon-white"><img src={ShieldIcon} className="icon" /></div>
+              <div className="icon-white"><img src={ShieldIcon} className="icon" alt="" /></div>
               <div className="section-list-info">
                 <p className="desktop-h6">What happens if I cancel?</p>
-                <p className="desktop-body-xs">You’ll keep access until the end of the billing period. After that, your page won’t show until you subscribe again.</p>
+                <p className="desktop-body-xs">
+                  You’ll keep access until the end of the billing period. After that, your page
+                  won’t show until you subscribe again.
+                </p>
               </div>
             </div>
           </div>
