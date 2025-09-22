@@ -103,12 +103,11 @@
     margin-bottom: 16px
 }
 
-/* ===== Feature bullets (icon + copy, no bg) ===== */
+/* ===== Feature bullets (blue dot + copy, no bg) ===== */
 .pd-feature-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 18px 28px;
-    /* more room horizontally and vertically */
+    gap: 16px 28px;
     margin: 8px 0 16px;
 }
 
@@ -120,27 +119,20 @@
 
 .pd-feature-item {
     display: grid;
-    grid-template-columns: 28px 1fr;
-    /* bigger icon column */
+    grid-template-columns: 12px 1fr;
+    /* dot + copy */
     align-items: start;
-    gap: 14px;
-    /* space icon↔text */
+    gap: 12px;
 }
 
-/* Make icons BLUE without changing your source files */
-.pd-feature-icon {
-    width: 28px;
-    height: 28px;
-    line-height: 0;
-    display: block;
-}
-
-.pd-feature-icon img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    /* blue filter roughly #0081FF */
-    filter: invert(36%) sepia(98%) saturate(3020%) hue-rotate(193deg) brightness(98%) contrast(102%);
+.pd-dot {
+    width: 10px;
+    height: 10px;
+    margin-top: 6px;
+    /* align with first line of text */
+    border-radius: 50%;
+    background: #0081FF;
+    box-shadow: 0 0 0 3px rgba(0, 129, 255, .12);
 }
 
 .pd-feature-copy {
@@ -211,11 +203,11 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
+    gap: 10px;
     margin-top: 10px
 }
 
-/* Quantity = full width always */
+/* Quantity — smaller & full width */
 .pd-qty {
     display: flex;
     align-items: center;
@@ -232,22 +224,25 @@
     background: #fff;
     border: 1px solid #e9e9e9;
     border-radius: 999px;
-    padding: 8px 10px
+    padding: 6px 10px;
+    /* smaller height */
 }
 
 .pd-qty-btn {
-    width: 40px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
+    /* smaller buttons */
     border: none;
     border-radius: 999px;
     background: #f3f4f6;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 800;
-    cursor: pointer
+    cursor: pointer;
+    line-height: 28px;
 }
 
 .pd-qty-display {
-    min-width: 44px;
+    min-width: 36px;
     text-align: center;
     font-weight: 700
 }

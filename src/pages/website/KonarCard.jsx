@@ -18,14 +18,11 @@ import ProductImage2 from '../../assets/images/Product-Image-2.png';
 import ProductImage3 from '../../assets/images/Product-Image-3.png';
 import ProductImage4 from '../../assets/images/Product-Image-4.png';
 
+/* FAQ icons */
 import NFCIcon from '../../assets/icons/NFC-Icon.svg';
-import PalletteIcon from '../../assets/icons/Pallette-Icon.svg';
 import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg';
 import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
-import BoxIcon from '../../assets/icons/Box-Icon.svg';
-import LockIcon from '../../assets/icons/Lock-Icon.svg';
 import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
-
 import QRCode from '../../assets/icons/QR-Code-Icon.svg';
 import NFCChipIcon from '../../assets/icons/NFCChip-Icon.svg';
 import TimeIcon from '../../assets/icons/Time-Icon.svg';
@@ -111,16 +108,16 @@ export default function KonarCard() {
   };
   const deliveryDateText = getDeliveryDates();
 
-  /* Feature bullets (icon-left + copy) */
+  /* Feature bullets (now blue dots + copy) */
   const featureBullets = [
-    { icon: PhoneIcon, title: 'Compatibility', text: 'Compatible with Android & iPhone' },
-    { icon: NFCIcon, title: 'QR Code Backup', text: 'If NFC doesn’t work, scan the QR' },
-    { icon: WarrantyIcon, title: 'Warranty', text: '12-month warranty' },
-    { icon: NFCIcon, title: 'Fast Transfer', text: 'Share details with one tap' },
-    { icon: IDCardIcon, title: 'Chip & Memory', text: 'NTAG215 chip, 504 bytes' },
-    { icon: LockIcon, title: 'Data Retention', text: 'Stores securely 10+ years' },
-    { icon: BoxIcon, title: 'Size & Material', text: '85.5 × 54 × 0.8 mm, PVC' },
-    { icon: PalletteIcon, title: 'Eco-Friendly', text: 'Made from recyclable materials' },
+    { title: 'Compatibility', text: 'Compatible with Android & iPhone' },
+    { title: 'QR Code Backup', text: 'If NFC doesn’t work, scan the QR' },
+    { title: 'Warranty', text: '12-month warranty' },
+    { title: 'Fast Transfer', text: 'Share details with one tap' },
+    { title: 'Chip & Memory', text: 'NTAG215 chip, 504 bytes' },
+    { title: 'Data Retention', text: 'Stores securely 10+ years' },
+    { title: 'Size & Material', text: '85.5 × 54 × 0.8 mm, PVC' },
+    { title: 'Eco-Friendly', text: 'Made from recyclable materials' },
   ];
 
   return (
@@ -162,13 +159,11 @@ export default function KonarCard() {
             Stand out and win more jobs — one tap opens your profile with your services, photos, and contact details.
           </p>
 
-          {/* Bullets (icon + copy, no backgrounds) */}
+          {/* Bullets (blue dot + copy) */}
           <div className="pd-feature-grid">
             {featureBullets.map((f, idx) => (
               <div className="pd-feature-item" key={idx}>
-                <span className="pd-feature-icon">
-                  <img src={f.icon} alt="" />
-                </span>
+                <span className="pd-dot" aria-hidden="true" />
                 <div className="pd-feature-copy">
                   <p className="pd-feature-title desktop-body-s">{f.title}</p>
                   <p className="pd-feature-text desktop-body-xs">{f.text}</p>
@@ -176,11 +171,9 @@ export default function KonarCard() {
               </div>
             ))}
 
-            {/* Full-width delivery row */}
+            {/* Delivery row (dot style too) */}
             <div className="pd-feature-item pd-feature-item--full">
-              <span className="pd-feature-icon">
-                <img src={DeliveryIcon} alt="" />
-              </span>
+              <span className="pd-dot" aria-hidden="true" />
               <div className="pd-feature-copy">
                 <p className="pd-feature-title desktop-body-s">Ships within 24h</p>
                 <p className="desktop-body-xs" style={{ color: '#666' }}>
@@ -224,7 +217,6 @@ export default function KonarCard() {
               </div>
             </div>
 
-            {/* Force full width */}
             <button onClick={handleBuyNow} className="cta-blue-button desktop-button pd-buy-full">
               Buy Now
             </button>
