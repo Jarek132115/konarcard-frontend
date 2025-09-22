@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Footer from '../../components/Footer';
@@ -224,7 +224,8 @@ export default function KonarCard() {
               </div>
             </div>
 
-            <button onClick={handleBuyNow} className="cta-blue-button desktop-button">
+            {/* Force full width */}
+            <button onClick={handleBuyNow} className="cta-blue-button desktop-button pd-buy-full">
               Buy Now
             </button>
           </div>
@@ -234,7 +235,9 @@ export default function KonarCard() {
       {/* Reviews */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">See How Tradies Put Konar To Work</h2>
+          <h2 className="desktop-h3 text-center">
+            See How <span className="blue">Tradies</span> Put Konar To <span className="blue">Work</span>
+          </h2>
           <h3 className="desktop-h6 text-center">
             Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
           </h3>
@@ -307,7 +310,7 @@ export default function KonarCard() {
       {/* Product FAQs */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Konar Card — Product FAQs</h2>
+          <h2 className="desktop-h3 text-center">Konar Card — Product <span className="blue">FAQs</span></h2>
           <h3 className="desktop-h6 text-center">Everything about the card, tap-to-share, delivery and warranty.</h3>
         </div>
         <div className="faq-container">
