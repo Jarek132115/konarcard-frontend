@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+// src/pages/MyOrders/index.jsx
+import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
@@ -7,7 +8,8 @@ import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import api from "../../services/api";
 import ProductThumb from "../../assets/images/Product-Cover.png";
 
-function formatAmount(amount, currency = "gbp") {
+/* ---------- utils ---------- */
+function fmtAmount(amount, currency = "gbp") {
     if (typeof amount !== "number") return "—";
     const value = amount / 100;
     return new Intl.NumberFormat(undefined, {
@@ -17,103 +19,123 @@ function formatAmount(amount, currency = "gbp") {
         maximumFractionDigits: 2,
     }).format(value);
 }
-
-function formatFulfillmentStatus(order) {
-    if ((order.type || "").toLowerCase() === "subscription") {
-        switch ((order.status || "").toLowerCase()) {
-            case "active": return "Subscription active";
-            case "canceled": return "Subscription canceled";
-            case "trialing": return "Trial active";
-            default: return "Subscription";
-        }
-    }
-    switch ((order.fulfillmentStatus || "").toLowerCase()) {
-        case "order_placed": return "Order placed";
-        case "designing_card": return "Designing card";
-        case "packaged": return "Packaged";
-        case "shipped": return "Shipped";
-        default: return "Order placed";
-    }
-}
-
-function statusBadgeClass(order) {
-    if ((order.type || "").toLowerCase() === "subscription") {
-        switch ((order.status || "").toLowerCase()) {
-            case "active":
-            case "trialing": return "status-active";
-            case "canceled": return "status-canceled";
-            default: return "status-active";
-        }
-    }
-    switch ((order.fulfillmentStatus || "").toLowerCase()) {
-        case "order_placed": return "status-placed";
-        case "designing_card": return "status-designing";
-        case "packaged": return "status-packaged";
-        case "shipped": return "status-shipped";
-        default: return "status-placed";
-    }
-}
-
-function formatDate(iso) {
+function fmtDate(iso) {
     if (!iso) return "—";
     const d = new Date(iso);
     return d.toLocaleDateString(undefined, { year: "numeric", month: "2-digit", day: "2-digit" });
 }
-function formatDateTimeNoSeconds(iso) {
+function fmtDateTime(iso) {
     if (!iso) return "—";
     const d = new Date(iso);
     return d.toLocaleString(undefined, {
-        year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
     });
 }
+const activeStripeStatuses = new Set(["active", "trialing", "past_due", "unpaid"]);
 
-/* Card fulfilment progress 1–4 */
+/* ---------- progress UI ---------- */
 function CardProgress({ status }) {
     const map = { order_placed: 0, designing_card: 1, packaged: 2, shipped: 3 };
     const idx = map[(status || "").toLowerCase()] ?? 0;
-    const percent = Math.max(0, Math.min(100, (idx / 3) * 100));
+    const pct = Math.max(0, Math.min(100, (idx / 3) * 100));
     return (
         <div className="order-progress">
             <div className="order-progress-track">
-                <div className="order-progress-fill" style={{ width: `${percent}%` }} />
+                <div className="order-progress-fill" style={{ width: `${pct}%` }} />
             </div>
             <div className="order-progress-caption">
-                {idx + 1} / 4 · {formatFulfillmentStatus({ fulfillmentStatus: status })}
+                {idx + 1} / 4 · {statusLabel({ fulfillmentStatus: status })}
             </div>
         </div>
     );
 }
-
-/* Subscription progress */
 function SubscriptionProgress({ trialEnd, currentPeriodEnd, amountTotal, currency }) {
     const now = new Date();
     const inTrial = trialEnd && new Date(trialEnd) > now;
     const end = inTrial ? new Date(trialEnd) : currentPeriodEnd ? new Date(currentPeriodEnd) : null;
     if (!end) return null;
 
-    let percent = 0;
+    let pct = 0;
     if (!inTrial) {
         const start = new Date(end);
         start.setMonth(start.getMonth() - 1);
-        percent = now <= start ? 0 : now >= end ? 100 : Math.round(((now - start) / (end - start)) * 100);
+        pct = now <= start ? 0 : now >= end ? 100 : Math.round(((now - start) / (end - start)) * 100);
     }
-
-    const amountStr = formatAmount(amountTotal ?? 495, currency);
+    const amountStr = fmtAmount(amountTotal ?? 495, currency);
     const caption = inTrial
-        ? `Free trial — ends ${formatDate(end)} · ${amountStr}/month after`
-        : `Next charge on ${formatDate(end)} · ${amountStr}`;
+        ? `Free trial — ends ${fmtDate(end)} · ${amountStr}/month after`
+        : `Next charge on ${fmtDate(end)} · ${amountStr}`;
 
     return (
         <div className="order-progress">
             <div className="order-progress-track">
-                <div className="order-progress-fill" style={{ width: `${percent}%` }} />
+                <div className="order-progress-fill" style={{ width: `${pct}%` }} />
             </div>
             <div className="order-progress-caption">{caption}</div>
         </div>
     );
 }
 
-/* --------- Simple label-over-value block --------- */
+/* ---------- labels ---------- */
+function statusLabel(order) {
+    if ((order.type || "").toLowerCase() !== "subscription") {
+        switch ((order.fulfillmentStatus || "").toLowerCase()) {
+            case "designing_card":
+                return "Designing card";
+            case "packaged":
+                return "Packaged";
+            case "shipped":
+                return "Shipped";
+            default:
+                return "Order placed";
+        }
+    }
+    const s = (order.status || "").toLowerCase();
+    if (order.cancel_at_period_end && (s === "active" || s === "trialing"))
+        return "Cancels at end of period";
+    switch (s) {
+        case "active":
+            return "Subscription active";
+        case "trialing":
+            return "Trial active";
+        case "canceled":
+            return "Subscription canceled";
+        default:
+            return "Subscription";
+    }
+}
+function statusBadgeClass(order) {
+    if ((order.type || "").toLowerCase() !== "subscription") {
+        switch ((order.fulfillmentStatus || "").toLowerCase()) {
+            case "designing_card":
+                return "status-designing";
+            case "packaged":
+                return "status-packaged";
+            case "shipped":
+                return "status-shipped";
+            default:
+                return "status-placed";
+        }
+    }
+    const s = (order.status || "").toLowerCase();
+    if (order.cancel_at_period_end && (s === "active" || s === "trialing")) return "status-canceled";
+    switch (s) {
+        case "active":
+        case "trialing":
+            return "status-active";
+        case "canceled":
+            return "status-canceled";
+        default:
+            return "status-active";
+    }
+}
+
+/* ---------- key/value block ---------- */
 function KV({ label, children }) {
     return (
         <div className="order-kv">
@@ -124,7 +146,6 @@ function KV({ label, children }) {
 }
 
 export default function MyOrders() {
-    const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
     const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
@@ -133,18 +154,17 @@ export default function MyOrders() {
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState("");
     const [actionMsg, setActionMsg] = useState("");
-    const [confirmingCancelId, setConfirmingCancelId] = useState(null);
 
     useEffect(() => {
-        const handleResize = () => {
+        const onResize = () => {
             const m = window.innerWidth <= 1000;
             const sm = window.innerWidth <= 600;
             setIsMobile(m);
             setIsSmallMobile(sm);
             if (!m && sidebarOpen) setSidebarOpen(false);
         };
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
     }, [sidebarOpen]);
 
     useEffect(() => {
@@ -152,10 +172,17 @@ export default function MyOrders() {
         else document.body.classList.remove("body-no-scroll");
     }, [sidebarOpen, isMobile]);
 
-    async function reload() {
+    const fetchOrders = async () => {
         const res = await api.get("/me/orders", { params: { ts: Date.now() } });
-        setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
-    }
+        const raw = Array.isArray(res?.data?.data) ? res.data.data : [];
+        // Ensure each order has a stable `id`
+        setOrders(
+            raw.map((o) => ({
+                ...o,
+                id: o.id || o._id, // normalize
+            }))
+        );
+    };
 
     useEffect(() => {
         let mounted = true;
@@ -163,59 +190,19 @@ export default function MyOrders() {
             try {
                 setLoading(true);
                 setErr("");
-                const res = await api.get("/me/orders", { params: { ts: Date.now() } });
-                if (!mounted) return;
-                setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
+                await fetchOrders();
             } catch (e) {
                 setErr(e?.response?.data?.error || "Failed to load orders");
             } finally {
                 if (mounted) setLoading(false);
             }
         })();
-        return () => { mounted = false; };
+        return () => {
+            mounted = false;
+        };
     }, []);
 
-    async function cancelSubscription(orderId) {
-        setActionMsg("");
-        try {
-            await api.post("/cancel-subscription", { id: orderId });
-            setActionMsg("Subscription will cancel at the end of the current billing period.");
-            await reload();
-        } catch (e) {
-            setActionMsg(e?.response?.data?.error || "Failed to cancel subscription");
-        } finally {
-            setConfirmingCancelId(null);
-        }
-    }
-
-    async function resubscribeNow() {
-        try {
-            const res = await api.post("/subscribe");
-            const url = res?.data?.url;
-            if (url) window.location.href = url;
-        } catch (e) {
-            setActionMsg(e?.response?.data?.error || "Could not start checkout.");
-        }
-    }
-
-    /** Reorder a physical card: create a Stripe Checkout session and redirect */
-    async function reorderNow(orderId) {
-        setActionMsg("");
-        try {
-            const res = await api.post("/reorder", { orderId });
-            const url = res?.data?.url;
-            if (url) {
-                window.location.href = url; // Stripe Checkout
-                return;
-            }
-            setActionMsg("Could not start checkout.");
-        } catch (e) {
-            setActionMsg(e?.response?.data?.error || "Could not start checkout.");
-        }
-    }
-
-    /** Hide subscription orders in non-final states (pending/incomplete) */
-    const visibleOrders = React.useMemo(() => {
+    const visibleOrders = useMemo(() => {
         const HIDE = new Set(["pending", "incomplete", "incomplete_expired"]);
         return (orders || []).filter((o) => {
             const type = (o.type || "").toLowerCase();
@@ -225,25 +212,79 @@ export default function MyOrders() {
         });
     }, [orders]);
 
-    /** Do we currently have any active subscription? */
-    const hasActiveSubscription = React.useMemo(() => {
-        return (visibleOrders || []).some(
-            (o) =>
-                (o.type || "").toLowerCase() === "subscription" &&
-                (o.status || "").toLowerCase() === "active"
-        );
-    }, [visibleOrders]);
+    const hasAnyActiveSub = useMemo(
+        () =>
+            (visibleOrders || []).some(
+                (o) => (o.type || "").toLowerCase() === "subscription" && activeStripeStatuses.has((o.status || "").toLowerCase())
+            ),
+        [visibleOrders]
+    );
+
+    async function syncStripeOrders() {
+        // Safe to call; backend will noop if not configured
+        try {
+            await api.post("/me/sync-subscriptions", { ts: Date.now() });
+        } catch { }
+    }
+
+    async function handleCancelSubscription(order) {
+        setActionMsg("");
+        const ok = window.confirm("Cancel this subscription at the end of the current period?");
+        if (!ok) return;
+
+        try {
+            // Send both: order id and (if we have it) the Stripe sub id.
+            await api.post("/cancel-subscription", {
+                id: order.id || order._id,
+                stripeSubscriptionId: order.stripeSubscriptionId || order.subscriptionId,
+            });
+
+            setActionMsg("Subscription will cancel at the end of the current billing period.");
+            // Sync with Stripe so manual changes / flags reflect immediately
+            await syncStripeOrders();
+            await fetchOrders();
+        } catch (e) {
+            setActionMsg(e?.response?.data?.error || "Failed to cancel subscription");
+        }
+    }
+
+    async function resubscribeNow() {
+        setActionMsg("");
+        try {
+            const res = await api.post("/subscribe");
+            const url = res?.data?.url;
+            if (url) window.location.href = url;
+            else setActionMsg("Could not start checkout.");
+        } catch (e) {
+            setActionMsg(e?.response?.data?.error || "Could not start checkout.");
+        }
+    }
+
+    async function reorderNow(orderId) {
+        setActionMsg("");
+        try {
+            const res = await api.post("/reorder", { orderId });
+            const url = res?.data?.url;
+            if (url) window.location.href = url;
+            else setActionMsg("Could not start checkout.");
+        } catch (e) {
+            setActionMsg(e?.response?.data?.error || "Could not start checkout.");
+        }
+    }
 
     function renderSubscription(o) {
-        const cancelledAt =
-            (o.metadata && o.metadata.cancelledAt) ? o.metadata.cancelledAt : (o.status === "canceled" ? o.updatedAt : null);
+        const cancelledOn =
+            o.status?.toLowerCase() === "canceled"
+                ? o.metadata?.cancelledAt || o.updatedAt
+                : null;
 
         return (
             <>
-                <KV label="Status">{o.status}</KV>
-                {o.status === "canceled" && cancelledAt && (
-                    <KV label="Canceled on">{formatDateTimeNoSeconds(cancelledAt)}</KV>
-                )}
+                <KV label="Status">
+                    {o.status}
+                    {o.cancel_at_period_end && o.status !== "canceled" ? " (cancelling at period end)" : ""}
+                </KV>
+                {cancelledOn && <KV label="Canceled on">{fmtDateTime(cancelledOn)}</KV>}
                 <div className="order-progress-wrap">
                     <SubscriptionProgress
                         trialEnd={o.trialEnd}
@@ -257,20 +298,15 @@ export default function MyOrders() {
     }
 
     function renderCard(o) {
-        const amount = formatAmount(o.amountTotal, o.currency);
-        const delivery = o.deliveryWindow || o.metadata?.estimatedDelivery || "—";
-        const qty = o.quantity || 1;
-        const fulfillRaw = o.fulfillmentStatus || "order_placed";
-
         return (
             <>
-                <KV label="Quantity">{qty}</KV>
-                <KV label="Amount">{amount}</KV>
-                <KV label="Estimated delivery">{delivery}</KV>
+                <KV label="Quantity">{o.quantity || 1}</KV>
+                <KV label="Amount">{fmtAmount(o.amountTotal, o.currency)}</KV>
+                <KV label="Estimated delivery">{o.deliveryWindow || o.metadata?.estimatedDelivery || "—"}</KV>
                 <KV label="Delivery name">{o.deliveryName || "—"}</KV>
                 <KV label="Delivery address">{o.deliveryAddress || "—"}</KV>
                 <div className="order-progress-wrap">
-                    <CardProgress status={fulfillRaw} />
+                    <CardProgress status={o.fulfillmentStatus || "order_placed"} />
                 </div>
             </>
         );
@@ -282,7 +318,10 @@ export default function MyOrders() {
                 <Link to="/myprofile" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
                 </Link>
-                <div className={`sidebar-menu-toggle ${sidebarOpen ? "active" : ""}`} onClick={() => setSidebarOpen(!sidebarOpen)}>
+                <div
+                    className={`sidebar-menu-toggle ${sidebarOpen ? "active" : ""}`}
+                    onClick={() => setSidebarOpen((s) => !s)}
+                >
                     <span></span><span></span><span></span>
                 </div>
             </div>
@@ -309,11 +348,12 @@ export default function MyOrders() {
                         <div className="orders-list">
                             {visibleOrders.map((o) => {
                                 const isSub = (o.type || "").toLowerCase() === "subscription";
-                                const canceled = isSub && (o.status || "").toLowerCase() === "canceled";
+                                const cancelled = isSub && (o.status || "").toLowerCase() === "canceled";
+                                const id = o.id || o._id;
 
                                 return (
-                                    <article key={o.id} className={`order-card ${isSub ? "is-subscription" : ""}`}>
-                                        <div className={`order-status-badge ${statusBadgeClass(o)}`}>{formatFulfillmentStatus(o)}</div>
+                                    <article key={id} className={`order-card ${isSub ? "is-subscription" : ""}`}>
+                                        <div className={`order-status-badge ${statusBadgeClass(o)}`}>{statusLabel(o)}</div>
 
                                         <div className="order-thumb">
                                             <img src={ProductThumb} alt="Product" className="order-thumb-img" />
@@ -325,7 +365,7 @@ export default function MyOrders() {
                                                 <span aria-hidden="true">•</span>
                                                 <span className="status">{o.status}</span>
                                                 <span aria-hidden="true">•</span>
-                                                <time>{formatDateTimeNoSeconds(o.createdAt)}</time>
+                                                <time>{fmtDateTime(o.createdAt)}</time>
                                             </header>
 
                                             <div className="order-fields">
@@ -334,13 +374,9 @@ export default function MyOrders() {
 
                                             <div className="order-actions">
                                                 {isSub ? (
-                                                    canceled ? (
-                                                        hasActiveSubscription ? (
-                                                            <button
-                                                                className="cta-black-button desktop-button disabled"
-                                                                disabled
-                                                                aria-disabled="true"
-                                                            >
+                                                    cancelled ? (
+                                                        hasAnyActiveSub ? (
+                                                            <button className="cta-black-button desktop-button disabled" disabled>
                                                                 Cancelled
                                                             </button>
                                                         ) : (
@@ -350,25 +386,20 @@ export default function MyOrders() {
                                                         )
                                                     ) : (
                                                         <button
-                                                            onClick={() =>
-                                                                confirmingCancelId === o.id ? cancelSubscription(o.id) : setConfirmingCancelId(o.id)
-                                                            }
+                                                            onClick={() => handleCancelSubscription(o)}
                                                             className="cta-black-button desktop-button"
                                                         >
-                                                            {confirmingCancelId === o.id ? "Confirm cancel" : "Cancel subscription"}
+                                                            Cancel subscription
                                                         </button>
                                                     )
                                                 ) : (
-                                                    <button
-                                                        onClick={() => reorderNow(o.id)}
-                                                        className="cta-black-button desktop-button"
-                                                    >
+                                                    <button onClick={() => reorderNow(id)} className="cta-black-button desktop-button">
                                                         Buy Again
                                                     </button>
                                                 )}
 
                                                 <Link
-                                                    to={isSub ? `/SuccessSubscription?id=${o.id}` : `/success?id=${o.id}`}
+                                                    to={isSub ? `/SuccessSubscription?id=${id}` : `/success?id=${id}`}
                                                     className="view-details desktop-button cta-blue-button"
                                                 >
                                                     View details
