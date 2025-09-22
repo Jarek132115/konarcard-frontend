@@ -1413,3 +1413,52 @@ body {
 }
 
 /* already handled */
+
+/* =========================
+   HERO — mobile square & full-width fixes
+   Paste this at the very end of your CSS.
+   ========================= */
+
+/* avoid 100vw scrollbar wiggle; keep full width of page */
+.home-hero {
+    width: 100%;
+    /* was 100vw */
+}
+
+/* under 1000px, make the media area a square that fills width */
+@media (max-width: 1000px) {
+    .hero-right {
+        position: relative;
+        width: 100%;
+        max-width: 640px;
+        /* optional cap so it doesn’t look too huge on tablets */
+        aspect-ratio: 1 / 1;
+        /* <- perfect square */
+        margin: 40px 0 20px;
+        /* keep your existing spacing vibe */
+        height: auto;
+        /* ensure height is driven by aspect-ratio */
+        justify-content: center;
+    }
+
+    /* make the video/image fill that square and cover it */
+    .hero-video-element {
+        position: absolute !important;
+        inset: 0;
+        width: 100% !important;
+        height: 100% !important;
+        /* overrides earlier 450px/300px rules */
+        object-fit: cover !important;
+        /* no letterboxing; no cropping of container */
+        display: block !important;
+        margin: 0 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+/* tiniest phones can keep square; if you prefer a little shorter, you can tweak here
+@media (max-width: 450px) {
+  .hero-right { max-width: 100%; }
+}
+*/
