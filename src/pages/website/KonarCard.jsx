@@ -113,7 +113,7 @@ export default function KonarCard() {
 
   /* Feature bullets (icon-left + copy) */
   const featureBullets = [
-    { icon: PhoneIcon, title: 'Compatibility', text: 'Compatible with Android & iOS' },
+    { icon: PhoneIcon, title: 'Compatibility', text: 'Compatible with Android & iPhone' },
     { icon: NFCIcon, title: 'QR Code Backup', text: 'If NFC doesn’t work, scan the QR' },
     { icon: WarrantyIcon, title: 'Warranty', text: '12-month warranty' },
     { icon: NFCIcon, title: 'Fast Transfer', text: 'Share details with one tap' },
