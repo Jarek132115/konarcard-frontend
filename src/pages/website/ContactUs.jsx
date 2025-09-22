@@ -183,9 +183,11 @@ export default function ContactUs() {
       {/* --- FAQ section stays unchanged --- */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Frequently Asked Questions</h2>
+          <h2 className="desktop-h3 text-center">
+            Here are some <span className="blue">questions</span> you might have
+          </h2>
           <h3 className="desktop-h6 text-center">
-            Here are some quick answers before you reach out
+            Common problems and answers before you reach out
           </h3>
         </div>
 
