@@ -1,3 +1,4 @@
+// frontend/src/pages/NFCCards/index.jsx
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
@@ -19,19 +20,25 @@ import ProductImage2 from '../../assets/images/Product-Image-2.png';
 import ProductImage3 from '../../assets/images/Product-Image-3.png';
 import ProductImage4 from '../../assets/images/Product-Image-4.png';
 
-/* ---- Stripe helper ---- */
+/* ---- Stripe publishable key helper (Vite-friendly) ---- */
+let __stripePkCache = null;
 async function getStripePublishableKey() {
-  const envKey =
-    process.env.REACT_APP_STRIPE_PK ||
-    process.env.VITE_STRIPE_PK ||
-    process.env.NEXT_PUBLIC_STRIPE_PK;
+  // Vite exposes envs on import.meta.env
+  const envKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
   if (envKey) return envKey;
+
+  if (__stripePkCache) return __stripePkCache;
 
   try {
     const res = await api.get('/stripe-pk', { params: { ts: Date.now() } });
     const key = res?.data?.publishableKey || res?.data?.key || res?.data?.pk;
-    if (key) return key;
-  } catch { }
+    if (key) {
+      __stripePkCache = key;
+      return key;
+    }
+  } catch {
+    /* ignore */
+  }
   return null;
 }
 
@@ -113,16 +120,19 @@ export default function NFCCards() {
       const res = await api.post('/buy-card', payload);
       const data = res?.data || {};
 
+      // 1) Backend gave us a direct session URL
       const redirectUrl = data.url || data.sessionUrl;
       if (redirectUrl) {
         window.location.assign(redirectUrl);
         return;
       }
 
-      if (data.sessionId) {
+      // 2) Backend gave us a session id (handle both keys)
+      const sessionId = data.sessionId || data.id;
+      if (sessionId) {
         const pk = await getStripePublishableKey();
         if (!pk) {
-          toast.error('Missing Stripe publishable key. Set REACT_APP_STRIPE_PK or add /stripe-pk endpoint.');
+          toast.error('Missing Stripe publishable key. Set VITE_STRIPE_PUBLISHABLE_KEY or expose /stripe-pk.');
           return;
         }
         const stripe = await loadStripe(pk);
@@ -130,11 +140,12 @@ export default function NFCCards() {
           toast.error('Could not load Stripe. Please refresh and try again.');
           return;
         }
-        const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+        const { error } = await stripe.redirectToCheckout({ sessionId });
         if (error) toast.error(error.message || 'Stripe redirect failed. Please try again.');
         return;
       }
 
+      // 3) Nothing usable returned
       toast.error('Could not start checkout. Please try again.');
     } catch (err) {
       toast.error(err?.response?.data?.error || err?.message || 'Checkout failed. Please try again.');
@@ -152,18 +163,8 @@ export default function NFCCards() {
   };
   const handleCloseShareModal = () => setShowShareModal(false);
 
-  const contactDetailsForVCard = {
-    full_name: businessCard?.full_name || authUser?.name || '',
-    job_title: businessCard?.job_title || '',
-    business_card_name: businessCard?.business_card_name || '',
-    bio: businessCard?.bio || '',
-    contact_email: businessCard?.contact_email || authUser?.email || '',
-    phone_number: businessCard?.phone_number || '',
-    username: userUsername || '',
-  };
-
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
-  const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
+  const currentQrCodeUrl = (businessCard && businessCard.qrCodeUrl) || '';
 
   /* Two-line features (title + sub) */
   const featureBlocks = [
