@@ -23,10 +23,13 @@ import ProductImage4 from '../../assets/images/Product-Image-4.png';
 /* ---- Stripe publishable key helper (Vite-friendly) ---- */
 let __stripePkCache = null;
 async function getStripePublishableKey() {
-  // Vite exposes envs on import.meta.env
-  const envKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-  if (envKey) return envKey;
+  const envKey =
+    import.meta.env?.VITE_STRIPE_PUBLISHABLE_KEY ||
+    process.env?.REACT_APP_STRIPE_PK ||
+    process.env?.VITE_STRIPE_PK ||
+    process.env?.NEXT_PUBLIC_STRIPE_PK;
 
+  if (envKey) return envKey;
   if (__stripePkCache) return __stripePkCache;
 
   try {
@@ -98,7 +101,7 @@ export default function NFCCards() {
     }
   };
 
-  /* Physical card checkout */
+  /* Physical card checkout — FIXED to use working route */
   const handleOrderCard = async () => {
     if (ordering) return;
     if (!authUser) {
@@ -108,45 +111,37 @@ export default function NFCCards() {
 
     setOrdering(true);
     try {
-      const origin = window.location.origin;
-      const payload = {
-        productId: 'konar-card-white',
-        quantity: 1,
-        successUrl: `${origin}/success`,
-        cancelUrl: `${origin}/productandplan`,
-        returnUrl: `${origin}/success`,
-      };
-
-      const res = await api.post('/buy-card', payload);
+      // Use the same working endpoint as the product page:
+      const res = await api.post('/api/checkout/create-checkout-session', { quantity: 1 });
       const data = res?.data || {};
 
-      // 1) Backend gave us a direct session URL
-      const redirectUrl = data.url || data.sessionUrl;
-      if (redirectUrl) {
-        window.location.assign(redirectUrl);
+      // 1) If backend returns a direct URL, go there
+      if (data.url) {
+        window.location.assign(data.url);
         return;
       }
 
-      // 2) Backend gave us a session id (handle both keys)
+      // 2) Otherwise, use session id with Stripe.js
       const sessionId = data.sessionId || data.id;
-      if (sessionId) {
-        const pk = await getStripePublishableKey();
-        if (!pk) {
-          toast.error('Missing Stripe publishable key. Set VITE_STRIPE_PUBLISHABLE_KEY or expose /stripe-pk.');
-          return;
-        }
-        const stripe = await loadStripe(pk);
-        if (!stripe) {
-          toast.error('Could not load Stripe. Please refresh and try again.');
-          return;
-        }
-        const { error } = await stripe.redirectToCheckout({ sessionId });
-        if (error) toast.error(error.message || 'Stripe redirect failed. Please try again.');
+      if (!sessionId) {
+        toast.error(data.error || 'Could not start checkout. Please try again.');
         return;
       }
 
-      // 3) Nothing usable returned
-      toast.error('Could not start checkout. Please try again.');
+      const pk = await getStripePublishableKey();
+      if (!pk) {
+        toast.error('Missing Stripe publishable key. Set VITE_STRIPE_PUBLISHABLE_KEY or expose /stripe-pk.');
+        return;
+      }
+
+      const stripe = await loadStripe(pk);
+      if (!stripe) {
+        toast.error('Could not load Stripe. Please refresh and try again.');
+        return;
+      }
+
+      const { error } = await stripe.redirectToCheckout({ sessionId });
+      if (error) toast.error(error.message || 'Stripe redirect failed. Please try again.');
     } catch (err) {
       toast.error(err?.response?.data?.error || err?.message || 'Checkout failed. Please try again.');
     } finally {
