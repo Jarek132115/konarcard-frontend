@@ -35,7 +35,7 @@
     color: #333;
     font-family: inherit;
     outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
     margin-bottom: 4px;
     /* reduce gap before next label */
 }
@@ -118,20 +118,14 @@
     transform: translateY(-1px);
 }
 
-/* Live chat button style */
+/* Live chat text (blue link style only) */
 .live-chat-link {
-    display: inline-block;
-    background: #0081FF;
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 8px;
+    color: #0081FF;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s ease, transform 0.06s ease;
-    margin-top: 10px;
+    text-decoration: underline;
 }
 
 .live-chat-link:hover {
-    background: #0066cc;
-    transform: translateY(-1px);
+    color: #0066cc;
 }
