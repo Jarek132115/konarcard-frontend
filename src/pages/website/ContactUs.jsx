@@ -14,9 +14,6 @@ import BoltIcon from '../../assets/icons/Bolt-Icon.svg';
 import TimeIcon from '../../assets/icons/Time-Icon.svg';
 import ShieldIcon from '../../assets/icons/Shield-Icon.svg';
 
-// Page CSS (adds a few Contact-specific tweaks on top of login.css)
-import '../../styling/contact.css';
-
 export default function ContactUs() {
   const [formData, setFormData] = useState({
     name: '',
