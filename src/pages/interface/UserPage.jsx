@@ -12,7 +12,6 @@ const PLACEHOLDER_HINTS = [
     "stock",
     "default",
     "template",
-    "konar",
     "card-mock",
 ];
 
@@ -133,8 +132,7 @@ export default function UserPage() {
 
     // ---------- Derive ONLY real, user-filled content ----------
     const realCover =
-        nonEmpty(businessCard.cover_photo) &&
-        !looksLikePlaceholderUrl(businessCard.cover_photo);
+        nonEmpty(businessCard.cover_photo) && !looksLikePlaceholderUrl(businessCard.cover_photo);
     const realMainHeading = nonEmpty(businessCard.main_heading);
     const realSubHeading = nonEmpty(businessCard.sub_heading);
 
