@@ -1,5 +1,5 @@
 /* ===============================================
-   MyProfile.css — UPDATED (no inner scroll; page scrolls)
+   MyProfile.css — UPDATED with container queries for preview
    =============================================== */
 
 /* -------------------------
@@ -320,6 +320,10 @@
     box-sizing: border-box;
     overflow: hidden;
     /* clip rounded corners */
+
+    /* Container Query: treat preview as a query container */
+    container-type: inline-size;
+    container-name: preview;
 }
 
 @media (max-width:1000px) {
@@ -344,13 +348,6 @@
     display: flow-root;
     /* contain margins/clear floats */
     color: var(--text-color);
-}
-
-
-@media (max-width:1000px) {
-    .mock-phone {
-        border-radius: 16px;
-    }
 }
 
 .mock-phone-scrollable-content {
@@ -656,6 +653,62 @@
     font-weight: 400;
     margin: 0;
     color: #111;
+}
+
+/* =============================
+   Container queries for PREVIEW
+   ============================= */
+
+/* Mobile preview (<=600px wide container) */
+@container preview (max-width: 600px) {
+    .mock-title {
+        font-size: clamp(18px, 6vw, 24px);
+    }
+
+    .mock-about-container {
+        padding: 12px;
+    }
+
+    .mock-avatar {
+        width: 56px;
+        height: 56px;
+    }
+
+    .mock-work-gallery.grid {
+        grid-template-columns: 1fr;
+        /* single column grid on small preview */
+        gap: 10px;
+    }
+
+    .mock-section-title {
+        margin-top: 36px;
+    }
+
+    .mock-service-item,
+    .mock-review-card,
+    .mock-contact-details {
+        border-radius: 14px;
+        padding: 12px;
+    }
+
+    .mock-work-image-item-wrapper {
+        aspect-ratio: 4/3;
+    }
+}
+
+/* Larger preview (>=601px container) */
+@container preview (min-width: 601px) {
+    .mock-title {
+        font-size: clamp(22px, 2.2vw, 32px);
+    }
+
+    .mock-work-gallery.grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mock-section-title {
+        margin-top: 48px;
+    }
 }
 
 /* Mobile Preview Controls (sticky pill) */
@@ -1544,11 +1597,10 @@ textarea.no-resize {
 .mock-phone-scrollable-content {
     overflow: visible;
     max-height: none;
-    /* <— add this line (tweak to taste) */
 }
 
-/* optional: if you want extra room only on desktop */
-@media (min-width: 1001px) {
+/* optional extra room when preview is wider */
+@container preview (min-width: 601px) {
     .mock-phone-scrollable-content {
         padding-bottom: 32px;
     }
@@ -1572,16 +1624,13 @@ textarea.no-resize {
     }
 }
 
-/* Desktop (≥1001px): fixed 100px tall */
+/* Desktop (≥1001px): fixed 100px tall for BIO input in the editor (not preview) */
 @media (min-width: 1001px) {
     #bio.text-input {
         height: 100px;
         min-height: 100px;
-        /* lock it in */
         resize: vertical;
-        /* allow manual grow if you want */
         line-height: 1.45;
-        /* nicer readability */
     }
 }
 
@@ -1589,13 +1638,8 @@ textarea.no-resize {
 @media (max-width: 1000px) {
     #bio.text-input {
         height: auto;
-        /* let content/viewport drive it */
         min-height: clamp(140px, 28vh, 260px);
         resize: vertical;
-        /* user can still expand */
         line-height: 1.5;
     }
 }
-
-
-/* end of file */
