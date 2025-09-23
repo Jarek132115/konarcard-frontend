@@ -1548,3 +1548,21 @@ textarea.no-resize {
         line-height: 1.5;
     }
 }
+
+/* ===== Highlight active/default option buttons ===== */
+.theme-button.is-active,
+.font-button.is-active,
+.display-button.is-active {
+    background: #0081FF;
+    /* brand blue */
+    color: #fff !important;
+    border-color: #0081FF;
+    box-shadow: 0 0 0 2px rgba(0, 129, 255, 0.2);
+}
+
+.theme-button.is-default,
+.font-button.is-default,
+.display-button.is-default {
+    border: 2px dashed #0081FF;
+    font-weight: 700;
+}
