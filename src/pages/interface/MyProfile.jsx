@@ -820,7 +820,7 @@ export default function MyProfile() {
                             {showContactSection && (previewEmail || previewPhone) && (
                               <>
                                 <p className="mock-section-title">Contact Details</p>
-                                <div style={{marginBottom: 20}} className="mock-contact-details">
+                                <div className="mock-contact-details">
                                   <div className="mock-contact-item">
                                     <p className="mock-contact-label">Email:</p>
                                     <p className="mock-contact-value">{previewEmail}</p>
@@ -956,7 +956,7 @@ export default function MyProfile() {
                         {showContactSection && (previewEmail || previewPhone) && (
                           <>
                             <p className="mock-section-title">Contact Details</p>
-                            <div className="mock-contact-details">
+                            <div style={{ marginBottom: 20 }} className="mock-contact-details">
                               <div className="mock-contact-item">
                                 <p className="mock-contact-label">Email:</p>
                                 <p className="mock-contact-value">{previewEmail}</p>
