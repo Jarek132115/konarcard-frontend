@@ -1615,3 +1615,29 @@ textarea.no-resize {
     object-fit: cover;
     border-radius: 12px;
 }
+
+/* Stack Services & Reviews editor rows into a single column */
+.editor-item-card.mock-service-item-wrapper,
+.editor-item-card.mock-review-card-wrapper {
+    display: flex !important;
+    /* beats the inline grid */
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+/* Make inputs/textarea stretch full width (they already do, but be explicit) */
+.editor-item-card.mock-service-item-wrapper .text-input,
+.editor-item-card.mock-review-card-wrapper .text-input,
+.editor-item-card.mock-review-card-wrapper textarea.text-input {
+    width: 100%;
+}
+
+/* Keep Remove button on the right and only as wide as its label */
+.editor-item-card .remove-item-button {
+    align-self: flex-end;
+    /* push to the right */
+    width: auto;
+    /* fit content */
+    white-space: nowrap;
+    /* prevent wrap */
+}
