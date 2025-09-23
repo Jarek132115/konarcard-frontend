@@ -1566,3 +1566,52 @@ textarea.no-resize {
     border: 2px dashed #0081FF;
     font-weight: 700;
 }
+
+/* Make cover + avatar uploads use the same style as work image placeholders */
+.cover-photo-card,
+.avatar-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #c7ced9;
+    background: #fafbff;
+    border-radius: 14px;
+    min-height: 132px;
+    cursor: pointer;
+    transition: .15s;
+    position: relative;
+    overflow: hidden;
+}
+
+.cover-photo-card:hover,
+.avatar-tile:hover {
+    border-color: #8aa1ff;
+    background: #f4f7ff;
+}
+
+.cover-photo-card .upload-text,
+.avatar-tile .upload-text {
+    font-weight: 700;
+    color: #5b6b86;
+}
+
+/* Cover photo should always be full width */
+.cover-photo-card {
+    width: 100% !important;
+    min-height: 180px;
+}
+
+.cover-photo-card img.work-image-preview {
+    width: 100%;
+    height: auto;
+    max-height: 280px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.avatar-tile img.work-image-preview {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+}
