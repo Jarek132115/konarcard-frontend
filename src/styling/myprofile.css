@@ -1,5 +1,5 @@
 /* ===============================================
-   MyProfile.css — UPDATED with container queries for preview
+   MyProfile.css — FINAL (container queries + correct dark preview)
    =============================================== */
 
 /* -------------------------
@@ -25,7 +25,8 @@
     --brand-blue: #0081FF;
 }
 
-/* light/dark variants */
+/* Optional root themes if your app toggles them globally.
+   The preview also supports a LOCAL dark mode using .mock-phone.dark-mode */
 .light-mode.pure-light {
     --primary-bg: #fff;
     --secondary-bg: #F9F9F9;
@@ -311,19 +312,22 @@
     display: flex;
     justify-content: center;
     align-items: stretch;
-
-    /* card chrome moved here */
     background: var(--primary-bg);
     border: .1px solid rgba(0, 0, 0, .08);
     border-radius: 16px;
     padding: 20px;
     box-sizing: border-box;
     overflow: hidden;
-    /* clip rounded corners */
-
     /* Container Query: treat preview as a query container */
     container-type: inline-size;
     container-name: preview;
+}
+
+/* If the inner preview is dark, make the preview card mimic the UserPage dark surface */
+.myprofile-content:has(.mock-phone.dark-mode) {
+    background: #1F1F1F;
+    color: #fff;
+    border-color: rgba(255, 255, 255, .08);
 }
 
 @media (max-width:1000px) {
@@ -333,29 +337,27 @@
     }
 }
 
-
-/* Inside the card, just be a normal container */
+/* =============================
+   PREVIEW (mock site) styles
+   ============================= */
 .mock-phone {
     width: 100%;
     max-width: 100%;
     background: transparent;
-    /* no card background here anymore */
     border: 0;
     padding: 0;
     text-align: center;
     box-sizing: border-box;
-
     display: flow-root;
-    /* contain margins/clear floats */
     color: var(--text-color);
 }
 
-.mock-phone-scrollable-content {
-    overflow: visible;
-    max-height: none;
+/* local dark mode just for the preview */
+.mock-phone.dark-mode {
+    color: #fff;
 }
 
-/* Preview content */
+/* Head section */
 .mock-cover {
     width: 100%;
     aspect-ratio: 4/3;
@@ -373,8 +375,12 @@
     font-weight: 800;
     margin: 0;
     line-height: 1.2;
-    color: var(--text-color);
+    color: #000;
     text-align: center;
+}
+
+.mock-phone.dark-mode .mock-title {
+    color: #fff;
 }
 
 .mock-subtitle {
@@ -385,7 +391,7 @@
     text-align: center;
 }
 
-.dark-mode .mock-subtitle {
+.mock-phone.dark-mode .mock-subtitle {
     color: #fff;
 }
 
@@ -416,20 +422,109 @@
     font-weight: 700;
     margin: 60px 0 10px;
     text-align: left;
-    color: var(--text-color);
+    color: #000;
 }
 
-/* About */
+.mock-phone.dark-mode .mock-section-title {
+    color: #fff;
+}
+
+/* Cards — keep WHITE in dark mode (like UserPage) */
 .mock-about-container,
 .mock-service-item,
 .mock-review-card,
 .mock-contact-details {
-    background: #f9f9f9;
+    background: #fff;
     border-radius: 16px;
     border: 1px solid rgba(0, 0, 0, .06);
     color: #111;
 }
 
+/* Body text inside cards */
+.mock-profile-name {
+    font-weight: 800;
+    margin: 0;
+    font-size: 1rem;
+    color: #111;
+}
+
+.mock-profile-role {
+    font-size: .9375rem;
+    margin: 0;
+    color: #333;
+    font-weight: 400;
+}
+
+.mock-bio-text {
+    font-size: .95rem;
+    line-height: 1.55;
+    margin: 0;
+    color: #111;
+}
+
+.mock-service-name {
+    font-size: .95rem;
+    font-weight: 700;
+    margin: 0;
+    color: #111;
+}
+
+.mock-service-price {
+    font-size: .85rem;
+    margin: 2px 0 0;
+    color: #000;
+}
+
+.mock-star-rating {
+    color: #111;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    letter-spacing: .06rem;
+}
+
+.mock-star-rating .empty-star {
+    color: #D1D5DB;
+}
+
+.mock-review-text {
+    font-size: .95rem;
+    color: #111;
+    margin: 0 0 10px;
+    line-height: 1.5;
+}
+
+.mock-reviewer-name {
+    font-size: .9rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.mock-contact-label {
+    font-size: .95rem;
+    font-weight: 700;
+    margin: 0;
+    color: #333;
+}
+
+.mock-contact-value {
+    font-size: 12px;
+    font-weight: 400;
+    margin: 0;
+    color: #111;
+}
+
+/* Dark mode for cards: STILL WHITE */
+.mock-phone.dark-mode .mock-about-container,
+.mock-phone.dark-mode .mock-service-item,
+.mock-phone.dark-mode .mock-review-card,
+.mock-phone.dark-mode .mock-contact-details {
+    background: #fff;
+    color: #111;
+    border-color: rgba(0, 0, 0, .06);
+}
+
+/* About card layout */
 .mock-about-container {
     padding: 1rem;
     display: flex;
@@ -456,30 +551,9 @@
 .mock-avatar {
     width: 64px;
     height: 64px;
-    border-radius: 50%;
+    border-radius: 10px;
     object-fit: cover;
     box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
-}
-
-.mock-profile-name {
-    font-weight: 800;
-    margin: 0;
-    font-size: 1rem;
-    color: #111;
-}
-
-.mock-profile-role {
-    font-size: .9375rem;
-    margin: 0;
-    color: #333;
-    font-weight: 400;
-}
-
-.mock-bio-text {
-    font-size: .95rem;
-    line-height: 1.55;
-    margin: 0;
-    color: #111;
 }
 
 /* Work/Services/Reviews previews */
@@ -548,6 +622,7 @@
     margin-right: 12px;
 }
 
+/* Carousel buttons */
 .carousel-nav-buttons {
     position: absolute;
     top: 50%;
@@ -579,82 +654,6 @@
     background-color: rgba(0, 0, 0, .6);
 }
 
-.mock-service-item {
-    padding: .75rem 1rem;
-}
-
-.mock-service-name {
-    font-size: .95rem;
-    font-weight: 700;
-    margin: 0;
-    color: #111;
-}
-
-.mock-service-price {
-    font-size: .85rem;
-    margin: 2px 0 0;
-    color: #000;
-}
-
-.mock-review-card {
-    padding: .75rem 1rem;
-}
-
-.mock-star-rating {
-    color: #111;
-    font-size: 1.1rem;
-    margin-bottom: 6px;
-    letter-spacing: .06rem;
-}
-
-.mock-star-rating .empty-star {
-    color: #D1D5DB;
-}
-
-.mock-review-text {
-    font-size: .95rem;
-    color: #111;
-    margin: 0 0 10px;
-    line-height: 1.5;
-}
-
-.mock-reviewer-name {
-    font-size: .9rem;
-    font-weight: 700;
-    color: #333;
-    margin: 0;
-}
-
-.mock-contact-details {
-    display: flex;
-    flex-direction: column;
-    gap: .75rem;
-    padding: 14px 16px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.mock-contact-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.mock-contact-label {
-    font-size: .95rem;
-    font-weight: 700;
-    margin: 0;
-    color: #333;
-}
-
-.mock-contact-value {
-    font-size: 12px;
-    font-weight: 400;
-    margin: 0;
-    color: #111;
-}
-
 /* =============================
    Container queries for PREVIEW
    ============================= */
@@ -676,7 +675,6 @@
 
     .mock-work-gallery.grid {
         grid-template-columns: 1fr;
-        /* single column grid on small preview */
         gap: 10px;
     }
 
@@ -709,6 +707,10 @@
     .mock-section-title {
         margin-top: 48px;
     }
+
+    .mock-phone-scrollable-content {
+        padding-bottom: 32px;
+    }
 }
 
 /* Mobile Preview Controls (sticky pill) */
@@ -735,7 +737,8 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
 }
 
-.dark-mode .mp-pill {
+/* Darken the pill when preview is dark */
+.myprofile-content:has(.mock-phone.dark-mode) .mp-pill {
     background: #202020;
     border-color: rgba(255, 255, 255, .12);
 }
@@ -747,6 +750,7 @@
     border-radius: 999px;
     cursor: pointer;
     font-weight: 600;
+    color: inherit;
 }
 
 .mp-tab.active {
@@ -825,7 +829,7 @@
     border-color: rgba(255, 255, 255, .08);
 }
 
-/* Compact form spacing (smaller gaps) */
+/* Compact form spacing */
 .editor-form {
     display: flex;
     flex-direction: column;
@@ -896,7 +900,8 @@
 }
 
 /* Upload tiles (cover, work, AND avatar) */
-.upload-tile {
+.upload-tile,
+.avatar-upload {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -907,9 +912,11 @@
     cursor: pointer;
     transition: .15s;
     position: relative;
+    width: 100%;
 }
 
-.upload-tile:hover {
+.upload-tile:hover,
+.avatar-upload:hover {
     border-color: #8aa1ff;
     background: #f4f7ff;
 }
@@ -926,26 +933,6 @@
     max-height: 280px;
 }
 
-/* Avatar tile identical to work tile */
-.avatar-upload {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px dashed #c7ced9;
-    background: #fafbff;
-    border-radius: 14px;
-    min-height: 132px;
-    cursor: pointer;
-    transition: .15s;
-    position: relative;
-    width: 100%;
-}
-
-.avatar-upload:hover {
-    border-color: #8aa1ff;
-    background: #f4f7ff;
-}
-
 .avatar-preview {
     width: 100%;
     height: 180px;
@@ -953,7 +940,7 @@
     object-fit: cover;
 }
 
-/* Editor list grids + row cards */
+/* Editor grids */
 .editor-work-image-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -1307,15 +1294,12 @@ textarea.no-resize {
     z-index: 2;
 }
 
-/* ========= EXTRA: classes used by the JSX editor form ========= */
-
-/* wrapper that holds the form (for overlay positioning) */
+/* ========= Editor form ========= */
 .myprofile-editor-wrapper {
     position: relative;
     min-width: 0;
 }
 
-/* the form element itself */
 .myprofile-editor {
     background: var(--primary-bg);
     border: 1px solid rgba(0, 0, 0, .08);
@@ -1333,14 +1317,12 @@ textarea.no-resize {
     box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
 }
 
-/* title in the editor */
 .editor-title {
     font-weight: 800;
     font-size: clamp(18px, 2.6vw, 22px);
     margin: 4px 0 6px;
 }
 
-/* generic input section */
 .input-block {
     display: flex;
     flex-direction: column;
@@ -1358,7 +1340,6 @@ textarea.no-resize {
     color: var(--text-color);
 }
 
-/* small divider line */
 .divider {
     height: 1px;
     width: 100%;
@@ -1367,7 +1348,6 @@ textarea.no-resize {
     margin: 8px 0;
 }
 
-/* header row with toggle chip */
 .editor-section-header {
     display: flex;
     align-items: center;
@@ -1379,7 +1359,6 @@ textarea.no-resize {
     flex-wrap: wrap;
 }
 
-/* toggle button + chip */
 .toggle-button.section-chip,
 .section-chip {
     border: 1px solid #d0d7e2;
@@ -1397,7 +1376,6 @@ textarea.no-resize {
     border-color: #c8d6ff;
 }
 
-/* row of options (theme/font/display) */
 .option-row {
     display: flex;
     gap: 8px;
@@ -1409,41 +1387,8 @@ textarea.no-resize {
     width: max-content;
 }
 
-/* theme toggle */
-.theme-button {
-    padding: 8px 12px;
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-    background: var(--secondary-bg);
-    color: var(--text-color);
-    font-weight: 700;
-    cursor: pointer;
-    transition: background .15s, box-shadow .15s;
-}
-
-.theme-button.is-active {
-    background: #fff;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
-}
-
-/* font selector buttons */
-.font-button {
-    padding: 10px 12px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    background: var(--secondary-bg);
-    color: var(--text-color);
-    font-weight: 800;
-    cursor: pointer;
-    transition: background .15s, box-shadow .15s;
-}
-
-.font-button.is-active {
-    background: #fff;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
-}
-
-/* display buttons (list / grid / carousel) */
+.theme-button,
+.font-button,
 .display-button {
     padding: 8px 12px;
     border-radius: 10px;
@@ -1455,12 +1400,17 @@ textarea.no-resize {
     transition: background .15s, box-shadow .15s;
 }
 
+.font-button {
+    font-weight: 800;
+}
+
+.theme-button.is-active,
+.font-button.is-active,
 .display-button.is-active {
     background: #fff;
     box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
 }
 
-/* image tiles in editor */
 .work-image-item-wrapper {
     position: relative;
     overflow: hidden;
@@ -1480,7 +1430,6 @@ textarea.no-resize {
     border-radius: 10px;
 }
 
-/* “add image(s)” placeholder tile */
 .add-work-image-placeholder {
     display: flex;
     align-items: center;
@@ -1504,7 +1453,6 @@ textarea.no-resize {
     color: #5b6b86;
 }
 
-/* service & review editor grids */
 .editor-service-list,
 .editor-reviews-list {
     display: grid;
@@ -1517,23 +1465,19 @@ textarea.no-resize {
     width: 100%;
 }
 
-/* preview wrapper used with collapsibleStyle (mobile) */
 .mp-preview-wrap {
     will-change: max-height, opacity, transform;
     transition: max-height .3s ease, opacity .3s ease, transform .3s ease;
 }
 
-/* mobile container class used in JSX (no special styling but kept for hooks) */
 .myprofile-mock-phone-mobile-container {
     width: 100%;
 }
 
-/* visit page link inside pill (inherit color) */
 .mp-tab.visit {
     color: inherit;
 }
 
-/* button group at the end of the form */
 .button-group {
     display: flex;
     gap: 10px;
@@ -1541,7 +1485,6 @@ textarea.no-resize {
     flex-wrap: wrap;
 }
 
-/* Link styles inside banners */
 .trial-ended-banner a {
     color: #0b5cff;
     font-weight: 700;
@@ -1552,13 +1495,11 @@ textarea.no-resize {
     text-decoration: underline;
 }
 
-/* Desktop-only buttons in JSX */
 .desktop-button.cta-blue-button,
 .desktop-button.cta-black-button {
     font-size: .95rem;
 }
 
-/* Helpers */
 .hidden {
     display: none !important;
 }
@@ -1571,50 +1512,14 @@ textarea.no-resize {
     max-width: 100vw !important;
 }
 
-/* ensure text colors adapt in dark preview cards */
-.dark-mode .mock-about-container,
-.dark-mode .mock-service-item,
-.dark-mode .mock-review-card,
-.dark-mode .mock-contact-details {
-    background: #1f1f1f;
-    color: #fff;
-    border-color: rgba(255, 255, 255, .12);
-}
-
-.dark-mode .mock-service-price {
-    color: #fff;
-}
-
-.dark-mode .mock-profile-role {
-    color: #bbb;
-}
-
-.dark-mode .mock-reviewer-name {
-    color: #ddd;
-}
-
-/* give consistent bottom space no matter which section ends last */
+/* give consistent bottom space */
 .mock-phone-scrollable-content {
     overflow: visible;
     max-height: none;
 }
 
-/* optional extra room when preview is wider */
-@container preview (min-width: 601px) {
-    .mock-phone-scrollable-content {
-        padding-bottom: 32px;
-    }
-}
-
-/* force white text when the right tab is active */
-.mp-tab.visit.active,
-.mp-tab.visit.active:link,
-.mp-tab.visit.active:visited {
-    color: #fff !important;
-}
-
 /* full-bleed sticky controls on mobile */
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .myprofile-content {
         padding: 16px;
     }
@@ -1624,7 +1529,7 @@ textarea.no-resize {
     }
 }
 
-/* Desktop (≥1001px): fixed 100px tall for BIO input in the editor (not preview) */
+/* Desktop (≥1001px): fixed 100px tall for BIO input */
 @media (min-width: 1001px) {
     #bio.text-input {
         height: 100px;
@@ -1634,7 +1539,7 @@ textarea.no-resize {
     }
 }
 
-/* Mobile (≤1000px): scale with screen, but never tiny/huge */
+/* Mobile (≤1000px): scale with screen */
 @media (max-width: 1000px) {
     #bio.text-input {
         height: auto;
