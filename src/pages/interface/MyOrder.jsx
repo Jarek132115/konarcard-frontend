@@ -54,18 +54,54 @@ function CardProgress({ status }) {
         </div>
     );
 }
-function SubscriptionProgress({ trialEnd, currentPeriodEnd, amountTotal, currency }) {
+function SubscriptionProgress({
+    trialEnd,
+    currentPeriodEnd,
+    currentPeriodStart, // pass if you have it
+    createdAt,          // fallback if you don’t have trialStart/currentPeriodStart
+    amountTotal,
+    currency,
+    trialDurationDays = 14,
+}) {
     const now = new Date();
-    const inTrial = trialEnd && new Date(trialEnd) > now;
-    const end = inTrial ? new Date(trialEnd) : currentPeriodEnd ? new Date(currentPeriodEnd) : null;
-    if (!end) return null;
 
-    let pct = 0;
-    if (!inTrial) {
-        const start = new Date(end);
-        start.setMonth(start.getMonth() - 1);
-        pct = now <= start ? 0 : now >= end ? 100 : Math.round(((now - start) / (end - start)) * 100);
+    const trialEndDate = trialEnd ? new Date(trialEnd) : null;
+    const inTrial = !!(trialEndDate && trialEndDate > now);
+
+    // Decide our window [start, end)
+    let start, end;
+
+    if (inTrial) {
+        end = trialEndDate;
+        if (currentPeriodStart) {
+            start = new Date(currentPeriodStart);
+        } else if (createdAt) {
+            start = new Date(createdAt);
+        } else {
+            // Best-effort fallback: 14 days before trialEnd
+            start = new Date(end.getTime() - trialDurationDays * 24 * 60 * 60 * 1000);
+        }
+    } else if (currentPeriodEnd) {
+        end = new Date(currentPeriodEnd);
+        if (currentPeriodStart) {
+            start = new Date(currentPeriodStart);
+        } else {
+            // Fallback: subtract 1 month from end (handles 28/30/31 day months)
+            start = new Date(end);
+            start.setMonth(start.getMonth() - 1);
+        }
+    } else {
+        return null; // nothing to show
     }
+
+    // Clamp % safely
+    const pct =
+        now <= start
+            ? 0
+            : now >= end
+                ? 100
+                : Math.round(((now - start) / (end - start)) * 100);
+
     const amountStr = fmtAmount(amountTotal ?? 495, currency);
     const caption = inTrial
         ? `Free trial — ends ${fmtDate(end)} · ${amountStr}/month after`
@@ -80,6 +116,7 @@ function SubscriptionProgress({ trialEnd, currentPeriodEnd, amountTotal, currenc
         </div>
     );
 }
+
 
 /* ---------- labels ---------- */
 function statusLabel(order) {
@@ -289,9 +326,12 @@ export default function MyOrders() {
                     <SubscriptionProgress
                         trialEnd={o.trialEnd}
                         currentPeriodEnd={o.currentPeriodEnd}
+                        currentPeriodStart={o.currentPeriodStart} // if present
+                        createdAt={o.createdAt}                   // fallback for trial start
                         amountTotal={o.amountTotal}
                         currency={o.currency}
                     />
+
                 </div>
             </>
         );
