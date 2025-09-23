@@ -1050,7 +1050,7 @@ export default function MyProfile() {
                             {state.coverPhoto ? (
                               <img src={state.coverPhoto || previewPlaceholders.coverPhoto} alt="Cover" className="work-image-preview" />
                             ) : (
-                              <span className="upload-text">Click to upload cover</span>
+                              <span className="upload-text">+ Upload Cover Image</span>
                             )}
                             {state.coverPhoto && (
                               <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}>
@@ -1123,7 +1123,7 @@ export default function MyProfile() {
                             {state.avatar ? (
                               <img src={state.avatar || ""} alt="Avatar preview" className="work-image-preview" />
                             ) : (
-                              <span className="upload-text">Add Profile Photo</span>
+                              <span className="upload-text">+ Add a Profile Picture/Logo</span>
                             )}
                             {state.avatar && (
                               <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}>
