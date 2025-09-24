@@ -43,6 +43,9 @@ export default function MyProfile() {
   const mpWrapRef = useRef(null); // mobile preview wrapper for dynamic height
   const handledPaymentRef = useRef(false);
 
+  // Gate/throttle for Stripe sync -> auth refresh
+  const syncGate = useRef({ inFlight: false, lastRun: 0 });
+
   // Local state
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeCode] = useState("");
@@ -102,61 +105,69 @@ export default function MyProfile() {
   const hasExchangeContact =
     (state.contact_email && state.contact_email.trim()) || (state.phone_number && state.phone_number.trim());
 
-  // ---- Effects
+  // ---- Helpers ----
 
-  // Helper: sync Stripe subscriptions from backend, then refresh auth user
-  const syncStripeAndRefresh = async () => {
+  // sync Stripe -> refresh auth user, but throttle and avoid overlap
+  const syncStripeAndRefresh = async (opts = {}) => {
+    const now = Date.now();
+    const minIntervalMs = opts.minIntervalMs ?? 20000; // throttle window
+    if (syncGate.current.inFlight) return;
+    if (now - syncGate.current.lastRun < minIntervalMs) return;
+
+    syncGate.current.inFlight = true;
     try {
-      await api.post("/me/sync-subscriptions", { ts: Date.now() });
-    } catch {
-      /* ignore network errors here */
-    }
-    if (typeof refetchAuthUser === "function") {
-      try {
+      await api.post("/me/sync-subscriptions", { ts: now });
+      if (typeof refetchAuthUser === "function") {
         await refetchAuthUser();
-      } catch {
-        /* ignore */
       }
+      syncGate.current.lastRun = Date.now();
+    } catch {
+      // ignore network errors
+    } finally {
+      syncGate.current.inFlight = false;
     }
   };
 
-  // Detect Stripe return: support both ?session_id=... and ?payment_success=true
+  // ---- Effects
+
+  // Stripe return handler — run once, independent of authLoading
   useEffect(() => {
-    const run = async () => {
-      if (authLoading) return;
+    const params = new URLSearchParams(location.search);
+    const sessionId = params.get("session_id");
+    const paymentSuccess = params.get("payment_success");
 
-      const params = new URLSearchParams(location.search);
-      const sessionId = params.get("session_id");
-      const paymentSuccess = params.get("payment_success");
+    if ((sessionId || paymentSuccess === "true") && !handledPaymentRef.current) {
+      handledPaymentRef.current = true;
+      (async () => {
+        await syncStripeAndRefresh({ minIntervalMs: 0 });
+        toast.success("Subscription updated successfully!");
+        // Clean the URL
+        window.history.replaceState({}, document.title, location.pathname);
+      })();
+    }
+  }, [location.search, location.pathname]); // deliberate: no authLoading here
 
-      // If we came back from Checkout, sync + refresh
-      if ((sessionId || paymentSuccess === "true") && !handledPaymentRef.current) {
-        handledPaymentRef.current = true;
-        try {
-          await syncStripeAndRefresh();
-          toast.success("Subscription updated successfully!");
-        } finally {
-          // Clean the URL
-          window.history.replaceState({}, document.title, location.pathname);
-        }
-      }
-    };
-    run();
-  }, [authLoading, location.search, location.pathname]); // refetchAuthUser called via helper
-
-  // Also refresh + sync on window focus (covers Billing Portal return, manual Stripe changes)
+  // Debounced window focus sync (covers Billing Portal / manual Stripe changes)
   useEffect(() => {
-    const onFocus = async () => {
-      await syncStripeAndRefresh();
+    let t = null;
+    const onFocus = () => {
+      if (document.visibilityState !== "visible") return;
+      if (t) clearTimeout(t);
+      t = setTimeout(() => {
+        syncStripeAndRefresh();
+      }, 350);
     };
     window.addEventListener("focus", onFocus);
-    return () => window.removeEventListener("focus", onFocus);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      if (t) clearTimeout(t);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Initial sync on mount so profile banner reflects latest status even after long idle
+  // One initial sync on mount so banner reflects latest status after long idle
   useEffect(() => {
-    syncStripeAndRefresh();
+    syncStripeAndRefresh({ minIntervalMs: 0 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -172,7 +183,6 @@ export default function MyProfile() {
       try {
         const res = await api.get("/me/orders", { params: { ts: Date.now() } });
         const rows = Array.isArray(res?.data?.data) ? res.data.data : [];
-        // pick latest subscription
         const subs = rows.filter((o) => (o.type || "").toLowerCase() === "subscription");
         if (!subs.length) {
           setSubWillCancel(false);
@@ -242,19 +252,26 @@ export default function MyProfile() {
         const el = document.getElementById("myprofile-editor") || document.querySelector(".myprofile-editor-anchor");
         if (el) {
           el.scrollIntoView({ behavior: "smooth", block: "start" });
-          try { localStorage.removeItem("scrollToEditorOnLoad"); } catch { }
+          try {
+            localStorage.removeItem("scrollToEditorOnLoad");
+          } catch { }
         } else if (tries < 20) {
           tries += 1;
           setTimeout(tick, 150);
         } else {
-          try { localStorage.removeItem("scrollToEditorOnLoad"); } catch { }
+          try {
+            localStorage.removeItem("scrollToEditorOnLoad");
+          } catch { }
         }
       };
       tick();
     } else {
-      try { localStorage.removeItem("scrollToEditorOnLoad"); } catch { }
+      try {
+        localStorage.removeItem("scrollToEditorOnLoad");
+      } catch { }
     }
   }, []);
+
   useEffect(() => {
     if (isCardLoading) return;
 
