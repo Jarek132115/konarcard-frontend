@@ -40,11 +40,8 @@ export default function MyProfile() {
   const previewReviewsCarouselRef = useRef(null);
 
   const activeBlobUrlsRef = useRef([]);
-  const mpWrapRef = useRef(null); // mobile preview wrapper for dynamic height
+  const mpWrapRef = useRef(null);
   const handledPaymentRef = useRef(false);
-
-  // Gate/throttle for Stripe sync -> auth refresh
-  const syncGate = useRef({ inFlight: false, lastRun: 0 });
 
   // Local state
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
@@ -79,11 +76,7 @@ export default function MyProfile() {
 
   const [previewOpen, setPreviewOpen] = useState(true);
 
-  // ---- Cancel-at-period-end notice state (derived from /me/orders)
-  const [subWillCancel, setSubWillCancel] = useState(false);
-  const [subPeriodEnd, setSubPeriodEnd] = useState(null);
-
-  // ---- Trial helpers
+  // ---- Trial helpers (purely derived from authUser) ----
   const trialEndDate = useMemo(() => {
     if (!authUser?.trialExpires) return null;
     const d = new Date(authUser.trialExpires);
@@ -97,119 +90,40 @@ export default function MyProfile() {
     return Math.max(0, days);
   }, [trialEndDate]);
 
-  // IMPORTANT: Only consider trial "active" if NOT subscribed.
   const isTrialActive = !!(!isSubscribed && trialEndDate && trialEndDate.getTime() > Date.now());
-  const hasTrialEnded = !!(trialEndDate && trialEndDate.getTime() <= Date.now());
+  const hasTrialEnded = !!(!isSubscribed && trialEndDate && trialEndDate.getTime() <= Date.now());
 
   const hasSavedData = !!businessCard;
   const hasExchangeContact =
     (state.contact_email && state.contact_email.trim()) || (state.phone_number && state.phone_number.trim());
 
-  // ---- Helpers ----
+  // ---------- Effects (super minimal) ----------
 
-  // sync Stripe -> refresh auth user, but throttle and avoid overlap
-  const syncStripeAndRefresh = async (opts = {}) => {
-    const now = Date.now();
-    const minIntervalMs = opts.minIntervalMs ?? 20000; // throttle window
-    if (syncGate.current.inFlight) return;
-    if (now - syncGate.current.lastRun < minIntervalMs) return;
-
-    syncGate.current.inFlight = true;
-    try {
-      await api.post("/me/sync-subscriptions", { ts: now });
-      if (typeof refetchAuthUser === "function") {
-        await refetchAuthUser();
-      }
-      syncGate.current.lastRun = Date.now();
-    } catch {
-      // ignore network errors
-    } finally {
-      syncGate.current.inFlight = false;
-    }
-  };
-
-  // ---- Effects
-
-  // Stripe return handler — run once, independent of authLoading
+  // 1) Handle Stripe return ONCE, then clear URL. No timers, no focus listeners, no polling.
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const sessionId = params.get("session_id");
     const paymentSuccess = params.get("payment_success");
-
     if ((sessionId || paymentSuccess === "true") && !handledPaymentRef.current) {
       handledPaymentRef.current = true;
       (async () => {
-        await syncStripeAndRefresh({ minIntervalMs: 0 });
+        try {
+          // Ask backend to sync Stripe -> DB, then refresh local auth user once.
+          await api.post("/me/sync-subscriptions", { ts: Date.now() });
+        } catch {
+          /* ignore */
+        }
+        try {
+          await refetchAuthUser?.();
+        } catch {/* ignore */ }
         toast.success("Subscription updated successfully!");
-        // Clean the URL
+        // Clean the URL so it doesn't trigger again
         window.history.replaceState({}, document.title, location.pathname);
       })();
     }
-  }, [location.search, location.pathname]); // deliberate: no authLoading here
+  }, [location.search, location.pathname, refetchAuthUser]);
 
-  // Debounced window focus sync (covers Billing Portal / manual Stripe changes)
-  useEffect(() => {
-    let t = null;
-    const onFocus = () => {
-      if (document.visibilityState !== "visible") return;
-      if (t) clearTimeout(t);
-      t = setTimeout(() => {
-        syncStripeAndRefresh();
-      }, 350);
-    };
-    window.addEventListener("focus", onFocus);
-    return () => {
-      window.removeEventListener("focus", onFocus);
-      if (t) clearTimeout(t);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // One initial sync on mount so banner reflects latest status after long idle
-  useEffect(() => {
-    syncStripeAndRefresh({ minIntervalMs: 0 });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // When subscribed, fetch orders to see if cancel_at_period_end is set and pull period end date for notice.
-  useEffect(() => {
-    let cancelled = false;
-    const fetchSubFlags = async () => {
-      if (!isSubscribed) {
-        setSubWillCancel(false);
-        setSubPeriodEnd(null);
-        return;
-      }
-      try {
-        const res = await api.get("/me/orders", { params: { ts: Date.now() } });
-        const rows = Array.isArray(res?.data?.data) ? res.data.data : [];
-        const subs = rows.filter((o) => (o.type || "").toLowerCase() === "subscription");
-        if (!subs.length) {
-          setSubWillCancel(false);
-          setSubPeriodEnd(null);
-          return;
-        }
-        subs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-        const s = subs[0];
-        const willCancel = !!s.cancel_at_period_end;
-        const periodEnd = s.currentPeriodEnd ? new Date(s.currentPeriodEnd) : null;
-        if (!cancelled) {
-          setSubWillCancel(willCancel);
-          setSubPeriodEnd(periodEnd);
-        }
-      } catch {
-        if (!cancelled) {
-          setSubWillCancel(false);
-          setSubPeriodEnd(null);
-        }
-      }
-    };
-    fetchSubFlags();
-    return () => {
-      cancelled = true;
-    };
-  }, [isSubscribed]);
-
+  // 2) Media query handlers (unchanged)
   useEffect(() => {
     const mm1 = window.matchMedia(mqDesktopToMobile);
     const mm2 = window.matchMedia(mqSmallMobile);
@@ -242,7 +156,7 @@ export default function MyProfile() {
     else if (!authLoading && isUserVerified) setShowVerificationPrompt(false);
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // optional scroll-to-editor hook for mobile
+  // optional scroll-to-editor hook for mobile (unchanged)
   useEffect(() => {
     const wantScroll = localStorage.getItem("scrollToEditorOnLoad") === "1";
     if (!wantScroll) return;
@@ -252,26 +166,21 @@ export default function MyProfile() {
         const el = document.getElementById("myprofile-editor") || document.querySelector(".myprofile-editor-anchor");
         if (el) {
           el.scrollIntoView({ behavior: "smooth", block: "start" });
-          try {
-            localStorage.removeItem("scrollToEditorOnLoad");
-          } catch { }
+          try { localStorage.removeItem("scrollToEditorOnLoad"); } catch { }
         } else if (tries < 20) {
           tries += 1;
           setTimeout(tick, 150);
         } else {
-          try {
-            localStorage.removeItem("scrollToEditorOnLoad");
-          } catch { }
+          try { localStorage.removeItem("scrollToEditorOnLoad"); } catch { }
         }
       };
       tick();
     } else {
-      try {
-        localStorage.removeItem("scrollToEditorOnLoad");
-      } catch { }
+      try { localStorage.removeItem("scrollToEditorOnLoad"); } catch { }
     }
   }, []);
 
+  // hydrate editor from loaded card
   useEffect(() => {
     if (isCardLoading) return;
 
@@ -331,7 +240,7 @@ export default function MyProfile() {
     };
   }, []);
 
-  // Keep mobile preview expanded to its content height (no cutting off)
+  // keep mobile preview height comfy
   useEffect(() => {
     if (!isMobile) return;
     const el = mpWrapRef.current;
@@ -347,7 +256,7 @@ export default function MyProfile() {
     }
   }, [isMobile, previewOpen, state, servicesDisplayMode, reviewsDisplayMode, aboutMeLayout]);
 
-  // Helpers
+  // ---------- Handlers ----------
   const createAndTrackBlobUrl = (file) => {
     const url = URL.createObjectURL(file);
     activeBlobUrlsRef.current.push(url);
@@ -465,7 +374,6 @@ export default function MyProfile() {
     }
   };
 
-  // Reset editor + files/blobs
   const handleResetPage = () => {
     resetState();
     setServicesDisplayMode("list");
@@ -487,7 +395,6 @@ export default function MyProfile() {
     toast.success("Editor reset.");
   };
 
-  // Smooth-scroll horizontal carousels
   const scrollCarousel = (ref, direction) => {
     const el = ref?.current;
     if (!el) return;
@@ -569,7 +476,6 @@ export default function MyProfile() {
     try {
       const response = await api.post("/subscribe", {});
       if (response.data?.url) {
-        // Send user to Stripe; on return we detect ?session_id=... and refresh
         window.location.href = response.data.url;
       } else {
         toast.error("Failed to start subscription. Please try again.");
@@ -591,7 +497,7 @@ export default function MyProfile() {
       const res = await startTrial();
       if (res?.data?.trialExpires) toast.success("Your 14-day trial started!");
       else toast.success("Trial activated!");
-      if (typeof refetchAuthUser === "function") await refetchAuthUser();
+      await refetchAuthUser?.();
     } catch (err) {
       const msg = err?.response?.data?.error || "";
       if (!/already started/i.test(msg)) console.error("Failed to auto-start trial:", msg);
@@ -663,7 +569,6 @@ export default function MyProfile() {
   // Render
   const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
 
-  // Desktop column scroll (preview + editor) — inside-column scroll only
   const columnScrollStyle = !isMobile
     ? { maxHeight: "calc(100vh - 140px)", overflow: "auto" }
     : undefined;
@@ -742,21 +647,10 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {/* Cancellation notice if sub is set to end at period end */}
-              {isSubscribed && subWillCancel && (
-                <div className="trial-ended-banner" style={{ background: "#fff7ed", border: "1px solid #fed7aa" }}>
-                  <p className="desktop-body-s" style={{ margin: 0 }}>
-                    Your subscription is active but set to cancel at the end of the current period
-                    {subPeriodEnd ? (
-                      <> — <strong>{subPeriodEnd.toLocaleDateString()} {subPeriodEnd.toLocaleTimeString()}</strong></>
-                    ) : null}
-                    .
-                  </p>
-                </div>
-              )}
-
-              {/* Show trial banner ONLY if user is NOT subscribed */}
-              {isTrialActive && !isSubscribed && (
+              {/* SUBSCRIPTION / TRIAL BANNERS — SIMPLE RULES: 
+                  If subscribed => show nothing.
+                  If NOT subscribed: show trial banner (if active) else trial-ended. */}
+              {!isSubscribed && isTrialActive && (
                 <div className="trial-banner">
                   <p className="desktop-body-s">
                     Your free trial ends on{" "}
@@ -772,7 +666,7 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {hasTrialEnded && !isSubscribed && (
+              {!isSubscribed && hasTrialEnded && (
                 <div className="trial-ended-banner">
                   <p>
                     Your free trial has ended. <Link to="/subscription">Subscribe now</Link> to prevent your profile from being deleted.
@@ -792,7 +686,6 @@ export default function MyProfile() {
                       role="tablist"
                       aria-label="Preview controls"
                     >
-                      {/* 2-up pill controls, 50% each, left aligned */}
                       <div
                         className="mp-pill"
                         style={{
@@ -818,7 +711,7 @@ export default function MyProfile() {
                           role="tab"
                           aria-selected={!previewOpen}
                           className={`mp-tab visit ${!previewOpen ? "active" : ""}`}
-                          href={visitUrl}
+                          href={userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#"}
                           target="_blank"
                           rel="noreferrer"
                           onClick={() => setPreviewOpen(false)}
@@ -841,7 +734,6 @@ export default function MyProfile() {
                           className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
                           style={{ fontFamily: state.font || previewPlaceholders.font }}
                         >
-                          {/* allow inner scroll on mobile phone only */}
                           <div className="mock-phone-scrollable-content">
                             {/* MAIN */}
                             {showMainSection && (
@@ -1039,7 +931,7 @@ export default function MyProfile() {
                       </div>
                     </div>
                   ) : (
-                    // Desktop phone preview — column scroll only
+                    // Desktop preview
                     <div
                       className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
                       style={{ fontFamily: state.font || previewPlaceholders.font }}
@@ -1128,7 +1020,7 @@ export default function MyProfile() {
                           <>
                             <p className="mock-section-title">My Services</p>
                             <div className="work-preview-row-container">
-                              {servicesDisplayMode === "carousel" && (
+                              {reviewsDisplayMode === "carousel" && (
                                 <div className="carousel-nav-buttons">
                                   <button
                                     type="button"
@@ -1233,6 +1125,8 @@ export default function MyProfile() {
 
                 {/* Editor column */}
                 <div className="myprofile-editor-wrapper" id="myprofile-editor" style={columnScrollStyle}>
+                  {/* If subscribed: no banner and editor is enabled.
+                      If not subscribed and trial ended: overlay locks editor. */}
                   {!isSubscribed && hasTrialEnded && (
                     <div className="subscription-overlay">
                       <div className="subscription-message">
@@ -1420,7 +1314,6 @@ export default function MyProfile() {
                             onChange={handleAvatarUpload}
                             style={{ display: "none" }}
                           />
-                          {/* Avatar tile identical to work image tile */}
                           <div
                             className="editor-item-card work-image-item-wrapper avatar-tile"
                             onClick={() => avatarInputRef.current?.click()}
