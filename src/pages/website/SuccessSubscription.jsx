@@ -22,7 +22,8 @@ function formatAmount(amount, currency = 'gbp') {
 export default function SuccessSubscription() {
     const location = useLocation();
     const params = new URLSearchParams(location.search);
-    const orderIdParam = params.get('id'); // 👈 support direct subscription ID
+    const orderIdParam = params.get('id');            // optional: pick a specific order
+    const sessionIdParam = params.get('session_id');  // Stripe return
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
@@ -32,7 +33,9 @@ export default function SuccessSubscription() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState('');
+    const [syncedOnce, setSyncedOnce] = useState(false);
 
+    // ---------- layout listeners ----------
     useEffect(() => {
         const onResize = () => {
             const m = window.innerWidth <= 1000;
@@ -50,30 +53,60 @@ export default function SuccessSubscription() {
         else document.body.classList.remove('body-no-scroll');
     }, [sidebarOpen, isMobile]);
 
+    // ---------- data fetchers ----------
+    const syncStripe = async () => {
+        try {
+            await api.post('/me/sync-subscriptions', { ts: Date.now() });
+        } catch {
+            // non-fatal
+        } finally {
+            setSyncedOnce(true);
+        }
+    };
+
+    const fetchOrders = async () => {
+        const res = await api.get('/me/orders', { params: { ts: Date.now() } });
+        return Array.isArray(res?.data?.data) ? res.data.data : [];
+    };
+
+    // Do an initial sync if we just returned from Stripe, then fetch orders
     useEffect(() => {
         let mounted = true;
+
         (async () => {
             try {
                 setLoading(true);
                 setErr('');
-                const res = await api.get('/me/orders', { params: { ts: Date.now() } });
-                if (mounted) setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
+
+                // If Stripe sent us back, try to sync first for fresher status
+                if (sessionIdParam || !syncedOnce) {
+                    await syncStripe();
+                    // Clean URL (drop session_id)
+                    if (sessionIdParam) {
+                        const clean = new URL(window.location.href);
+                        clean.searchParams.delete('session_id');
+                        window.history.replaceState({}, document.title, clean.toString());
+                    }
+                }
+
+                const list = await fetchOrders();
+                if (mounted) setOrders(list);
             } catch (e) {
                 if (mounted) setErr(e?.response?.data?.error || 'Could not load your subscription details.');
             } finally {
                 if (mounted) setLoading(false);
             }
         })();
-        return () => { mounted = false; };
-    }, [authUser]);
 
-    // Pick correct subscription
+        return () => { mounted = false; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [authUser]); // re-run when auth user changes
+
+    // ---------- pick the subscription to display ----------
     const selectedSub = useMemo(() => {
         const subs = (orders || []).filter((o) => (o.type || '').toLowerCase() === 'subscription');
         if (!subs.length) return null;
-        if (orderIdParam) {
-            return subs.find((s) => String(s.id) === String(orderIdParam)) || null;
-        }
+        if (orderIdParam) return subs.find((s) => String(s.id) === String(orderIdParam)) || null;
         return subs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
     }, [orders, orderIdParam]);
 
@@ -95,6 +128,8 @@ export default function SuccessSubscription() {
         if (selectedSub.currentPeriodEnd) return new Date(selectedSub.currentPeriodEnd);
         return null;
     }, [selectedSub]);
+
+    const willCancel = !!selectedSub?.cancel_at_period_end;
 
     return (
         <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
@@ -127,6 +162,20 @@ export default function SuccessSubscription() {
                     ) : (
                         <div className="success-box">
                             <h2 className="desktop-h4 success-header">Konar Profile Plan</h2>
+
+                            {/* cancellation notice */}
+                            {willCancel && (
+                                <div className="trial-ended-banner" style={{ background: '#fff7ed', border: '1px solid #fed7aa', marginBottom: 12 }}>
+                                    <p className="desktop-body-s" style={{ margin: 0 }}>
+                                        Your subscription is active but set to cancel at the end of the current period
+                                        {selectedSub.currentPeriodEnd
+                                            ? ` — ${new Date(selectedSub.currentPeriodEnd).toLocaleString()}`
+                                            : ''}
+                                        .
+                                    </p>
+                                </div>
+                            )}
+
                             <p className="desktop-body" style={{ margin: 0, color: '#555' }}>
                                 Your subscription is <strong className="status-text">{subStatus}</strong>.
                             </p>
