@@ -76,6 +76,10 @@ export default function MyProfile() {
 
   const [previewOpen, setPreviewOpen] = useState(true);
 
+  // ---- Cancel-at-period-end notice state (derived from /me/orders)
+  const [subWillCancel, setSubWillCancel] = useState(false);
+  const [subPeriodEnd, setSubPeriodEnd] = useState(null);
+
   // ---- Trial helpers
   const trialEndDate = useMemo(() => {
     if (!authUser?.trialExpires) return null;
@@ -100,6 +104,22 @@ export default function MyProfile() {
 
   // ---- Effects
 
+  // Helper: sync Stripe subscriptions from backend, then refresh auth user
+  const syncStripeAndRefresh = async () => {
+    try {
+      await api.post("/me/sync-subscriptions", { ts: Date.now() });
+    } catch {
+      /* ignore network errors here */
+    }
+    if (typeof refetchAuthUser === "function") {
+      try {
+        await refetchAuthUser();
+      } catch {
+        /* ignore */
+      }
+    }
+  };
+
   // Detect Stripe return: support both ?session_id=... and ?payment_success=true
   useEffect(() => {
     const run = async () => {
@@ -109,11 +129,11 @@ export default function MyProfile() {
       const sessionId = params.get("session_id");
       const paymentSuccess = params.get("payment_success");
 
-      // If we came back from Checkout, refresh user to pull latest Stripe state
+      // If we came back from Checkout, sync + refresh
       if ((sessionId || paymentSuccess === "true") && !handledPaymentRef.current) {
         handledPaymentRef.current = true;
         try {
-          if (typeof refetchAuthUser === "function") await refetchAuthUser();
+          await syncStripeAndRefresh();
           toast.success("Subscription updated successfully!");
         } finally {
           // Clean the URL
@@ -122,20 +142,63 @@ export default function MyProfile() {
       }
     };
     run();
-  }, [authLoading, location.search, location.pathname, refetchAuthUser]);
+  }, [authLoading, location.search, location.pathname]); // refetchAuthUser called via helper
 
-  // Also refresh on window focus (covers Stripe Billing Portal returning, etc.)
+  // Also refresh + sync on window focus (covers Billing Portal return, manual Stripe changes)
   useEffect(() => {
     const onFocus = async () => {
-      try {
-        if (typeof refetchAuthUser === "function") await refetchAuthUser();
-      } catch {
-        /* ignore */
-      }
+      await syncStripeAndRefresh();
     };
     window.addEventListener("focus", onFocus);
     return () => window.removeEventListener("focus", onFocus);
-  }, [refetchAuthUser]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Initial sync on mount so profile banner reflects latest status even after long idle
+  useEffect(() => {
+    syncStripeAndRefresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // When subscribed, fetch orders to see if cancel_at_period_end is set and pull period end date for notice.
+  useEffect(() => {
+    let cancelled = false;
+    const fetchSubFlags = async () => {
+      if (!isSubscribed) {
+        setSubWillCancel(false);
+        setSubPeriodEnd(null);
+        return;
+      }
+      try {
+        const res = await api.get("/me/orders", { params: { ts: Date.now() } });
+        const rows = Array.isArray(res?.data?.data) ? res.data.data : [];
+        // pick latest subscription
+        const subs = rows.filter((o) => (o.type || "").toLowerCase() === "subscription");
+        if (!subs.length) {
+          setSubWillCancel(false);
+          setSubPeriodEnd(null);
+          return;
+        }
+        subs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        const s = subs[0];
+        const willCancel = !!s.cancel_at_period_end;
+        const periodEnd = s.currentPeriodEnd ? new Date(s.currentPeriodEnd) : null;
+        if (!cancelled) {
+          setSubWillCancel(willCancel);
+          setSubPeriodEnd(periodEnd);
+        }
+      } catch {
+        if (!cancelled) {
+          setSubWillCancel(false);
+          setSubPeriodEnd(null);
+        }
+      }
+    };
+    fetchSubFlags();
+    return () => {
+      cancelled = true;
+    };
+  }, [isSubscribed]);
 
   useEffect(() => {
     const mm1 = window.matchMedia(mqDesktopToMobile);
@@ -378,7 +441,7 @@ export default function MyProfile() {
         toast.success("Email verified successfully!");
         setShowVerificationPrompt(false);
         setVerificationCodeCode("");
-        refetchAuthUser();
+        refetchAuthUser?.();
       }
     } catch (err) {
       toast.error(err.response?.data?.error || "Verification failed.");
@@ -659,6 +722,19 @@ export default function MyProfile() {
                       {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend Code"}
                     </button>
                   </form>
+                </div>
+              )}
+
+              {/* Cancellation notice if sub is set to end at period end */}
+              {isSubscribed && subWillCancel && (
+                <div className="trial-ended-banner" style={{ background: "#fff7ed", border: "1px solid #fed7aa" }}>
+                  <p className="desktop-body-s" style={{ margin: 0 }}>
+                    Your subscription is active but set to cancel at the end of the current period
+                    {subPeriodEnd ? (
+                      <> — <strong>{subPeriodEnd.toLocaleDateString()} {subPeriodEnd.toLocaleTimeString()}</strong></>
+                    ) : null}
+                    .
+                  </p>
                 </div>
               )}
 
