@@ -1,5 +1,5 @@
 // src/pages/MyProfile/MyProfile.jsx
-import React, { useRef, useEffect, useState, useContext } from "react";
+import React, { useRef, useEffect, useState, useContext, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
@@ -59,8 +59,8 @@ export default function MyProfile() {
 
   const mqDesktopToMobile = "(max-width: 1000px)";
   const mqSmallMobile = "(max-width: 600px)";
-  const [isMobile, setIsMobile] = useState(window.matchMedia(mqDesktopToMobile).matches);
-  const [isSmallMobile, setIsSmallMobile] = useState(window.matchMedia(mqSmallMobile).matches);
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia(mqDesktopToMobile).matches);
+  const [isSmallMobile, setIsSmallMobile] = useState(() => window.matchMedia(mqSmallMobile).matches);
 
   // Editor display toggles
   const [servicesDisplayMode, setServicesDisplayMode] = useState("list");
@@ -76,42 +76,66 @@ export default function MyProfile() {
 
   const [previewOpen, setPreviewOpen] = useState(true);
 
-  // Trial/plan
-  // IMPORTANT: Only consider trial "active" if the user is NOT subscribed.
-  const isTrialActive = !!(
-    authUser &&
-    !authUser.isSubscribed &&
-    authUser.trialExpires &&
-    new Date(authUser.trialExpires) > new Date()
-  );
+  // ---- Trial helpers
+  const trialEndDate = useMemo(() => {
+    if (!authUser?.trialExpires) return null;
+    const d = new Date(authUser.trialExpires);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }, [authUser?.trialExpires]);
 
-  const hasTrialEnded = !!(
-    authUser &&
-    authUser.trialExpires &&
-    new Date(authUser.trialExpires) <= new Date()
-  );
+  const trialDaysLeft = useMemo(() => {
+    if (!trialEndDate) return null;
+    const ms = trialEndDate.getTime() - Date.now();
+    const days = Math.ceil(ms / (1000 * 60 * 60 * 24));
+    return Math.max(0, days);
+  }, [trialEndDate]);
+
+  // IMPORTANT: Only consider trial "active" if NOT subscribed.
+  const isTrialActive = !!(!isSubscribed && trialEndDate && trialEndDate.getTime() > Date.now());
+  const hasTrialEnded = !!(trialEndDate && trialEndDate.getTime() <= Date.now());
 
   const hasSavedData = !!businessCard;
   const hasExchangeContact =
     (state.contact_email && state.contact_email.trim()) || (state.phone_number && state.phone_number.trim());
 
-  // Effects
+  // ---- Effects
+
+  // Detect Stripe return: support both ?session_id=... and ?payment_success=true
   useEffect(() => {
     const run = async () => {
       if (authLoading) return;
+
       const params = new URLSearchParams(location.search);
+      const sessionId = params.get("session_id");
       const paymentSuccess = params.get("payment_success");
-      if (paymentSuccess === "true" && !handledPaymentRef.current) {
+
+      // If we came back from Checkout, refresh user to pull latest Stripe state
+      if ((sessionId || paymentSuccess === "true") && !handledPaymentRef.current) {
         handledPaymentRef.current = true;
-        // Always refetch so isSubscribed reflects the latest status after Stripe returns
-        if (typeof refetchAuthUser === "function") await refetchAuthUser();
-        // Clean the URL
-        window.history.replaceState({}, document.title, location.pathname);
-        toast.success("Subscription updated successfully!");
+        try {
+          if (typeof refetchAuthUser === "function") await refetchAuthUser();
+          toast.success("Subscription updated successfully!");
+        } finally {
+          // Clean the URL
+          window.history.replaceState({}, document.title, location.pathname);
+        }
       }
     };
     run();
   }, [authLoading, location.search, location.pathname, refetchAuthUser]);
+
+  // Also refresh on window focus (covers Stripe Billing Portal returning, etc.)
+  useEffect(() => {
+    const onFocus = async () => {
+      try {
+        if (typeof refetchAuthUser === "function") await refetchAuthUser();
+      } catch {
+        /* ignore */
+      }
+    };
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [refetchAuthUser]);
 
   useEffect(() => {
     const mm1 = window.matchMedia(mqDesktopToMobile);
@@ -168,7 +192,6 @@ export default function MyProfile() {
       try { localStorage.removeItem("scrollToEditorOnLoad"); } catch { }
     }
   }, []);
-
   useEffect(() => {
     if (isCardLoading) return;
 
@@ -465,8 +488,12 @@ export default function MyProfile() {
   const handleStartSubscription = async () => {
     try {
       const response = await api.post("/subscribe", {});
-      if (response.data?.url) window.location.href = response.data.url;
-      else toast.error("Failed to start subscription. Please try again.");
+      if (response.data?.url) {
+        // Send user to Stripe; on return we detect ?session_id=... and refresh
+        window.location.href = response.data.url;
+      } else {
+        toast.error("Failed to start subscription. Please try again.");
+      }
     } catch (err) {
       toast.error(err.response?.data?.error || "Failed to start subscription.");
     }
@@ -639,7 +666,12 @@ export default function MyProfile() {
               {isTrialActive && !isSubscribed && (
                 <div className="trial-banner">
                   <p className="desktop-body-s">
-                    Your free trial ends on <strong>{new Date(authUser.trialExpires).toLocaleDateString()}</strong>.
+                    Your free trial ends on{" "}
+                    <strong>{trialEndDate?.toLocaleDateString()}</strong>
+                    {typeof trialDaysLeft === "number" ? (
+                      <> — <strong>{trialDaysLeft} day{trialDaysLeft === 1 ? "" : "s"}</strong> left</>
+                    ) : null}
+                    .
                   </p>
                   <button className="blue-trial desktop-body-s" onClick={handleStartSubscription}>
                     Subscribe Now
@@ -657,9 +689,16 @@ export default function MyProfile() {
 
               <div className="myprofile-flex-container">
                 {/* Preview column */}
-                <div className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`} style={columnScrollStyle}>
+                <div
+                  className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`}
+                  style={columnScrollStyle}
+                >
                   {isMobile ? (
-                    <div className={`mp-mobile-controls desktop-h6 ${previewOpen ? "is-open" : "is-collapsed"}`} role="tablist" aria-label="Preview controls">
+                    <div
+                      className={`mp-mobile-controls desktop-h6 ${previewOpen ? "is-open" : "is-collapsed"}`}
+                      role="tablist"
+                      aria-label="Preview controls"
+                    >
                       {/* 2-up pill controls, 50% each, left aligned */}
                       <div
                         className="mp-pill"
@@ -669,7 +708,7 @@ export default function MyProfile() {
                           gap: 8,
                           width: "min(420px, 100%)",
                           justifyItems: "stretch",
-                          width: '100%',
+                          width: "100%",
                         }}
                       >
                         <button
@@ -690,7 +729,7 @@ export default function MyProfile() {
                           target="_blank"
                           rel="noreferrer"
                           onClick={() => setPreviewOpen(false)}
-                          style={{ width: "100%", textAlign: "center", justifyContent: 'center' }}
+                          style={{ width: "100%", textAlign: "center", justifyContent: "center" }}
                         >
                           Visit Page
                         </a>
@@ -699,7 +738,11 @@ export default function MyProfile() {
                       <div
                         className="mp-preview-wrap"
                         ref={mpWrapRef}
-                        style={{ maxHeight: previewOpen ? undefined : 0, overflow: "hidden", transition: "max-height .3s ease, opacity .3s ease, transform .3s ease" }}
+                        style={{
+                          maxHeight: previewOpen ? undefined : 0,
+                          overflow: "hidden",
+                          transition: "max-height .3s ease, opacity .3s ease, transform .3s ease",
+                        }}
                       >
                         <div
                           className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
@@ -714,35 +757,42 @@ export default function MyProfile() {
                                   <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
                                 )}
                                 <h2 className="mock-title">
-                                  {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
+                                  {state.mainHeading ||
+                                    (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
                                 </h2>
                                 <p className="mock-subtitle">
-                                  {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
+                                  {state.subHeading ||
+                                    (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
                                 </p>
                                 {(shouldShowPlaceholders || hasExchangeContact) && (
-                                  <button type="button" className="mock-button">Save My Number</button>
+                                  <button type="button" className="mock-button">
+                                    Save My Number
+                                  </button>
                                 )}
                               </>
                             )}
 
                             {/* ABOUT */}
-                            {showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
-                              <>
-                                <p className="mock-section-title">About me</p>
-                                <div className={`mock-about-container ${aboutMeLayout}`}>
-                                  <div className="mock-about-content-group">
-                                    <div className="mock-about-header-group">
-                                      {previewAvatarSrc && <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />}
-                                      <div>
-                                        <p className="mock-profile-name">{previewFullName}</p>
-                                        <p className="mock-profile-role">{previewJobTitle}</p>
+                            {showAboutMeSection &&
+                              (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
+                                <>
+                                  <p className="mock-section-title">About me</p>
+                                  <div className={`mock-about-container ${aboutMeLayout}`}>
+                                    <div className="mock-about-content-group">
+                                      <div className="mock-about-header-group">
+                                        {previewAvatarSrc && (
+                                          <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
+                                        )}
+                                        <div>
+                                          <p className="mock-profile-name">{previewFullName}</p>
+                                          <p className="mock-profile-role">{previewJobTitle}</p>
+                                        </div>
                                       </div>
+                                      <p className="mock-bio-text">{previewBio}</p>
                                     </div>
-                                    <p className="mock-bio-text">{previewBio}</p>
                                   </div>
-                                </div>
-                              </>
-                            )}
+                                </>
+                              )}
 
                             {/* WORK */}
                             {showWorkSection && previewWorkImages.length > 0 && (
@@ -751,14 +801,33 @@ export default function MyProfile() {
                                 <div className="work-preview-row-container">
                                   {state.workDisplayMode === "carousel" && (
                                     <div className="carousel-nav-buttons">
-                                      <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}>&#9664;</button>
-                                      <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}>&#9654;</button>
+                                      <button
+                                        type="button"
+                                        className="carousel-nav-button left-arrow"
+                                        onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
+                                      >
+                                        &#9664;
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="carousel-nav-button right-arrow"
+                                        onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
+                                      >
+                                        &#9654;
+                                      </button>
                                     </div>
                                   )}
-                                  <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
+                                  <div
+                                    ref={previewWorkCarouselRef}
+                                    className={`mock-work-gallery ${state.workDisplayMode}`}
+                                  >
                                     {previewWorkImages.map((item, i) => (
                                       <div key={i} className="mock-work-image-item-wrapper">
-                                        <img src={item.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
+                                        <img
+                                          src={item.preview || item}
+                                          alt={`work-${i}`}
+                                          className="mock-work-image-item"
+                                        />
                                       </div>
                                     ))}
                                   </div>
@@ -773,11 +842,26 @@ export default function MyProfile() {
                                 <div className="work-preview-row-container">
                                   {servicesDisplayMode === "carousel" && (
                                     <div className="carousel-nav-buttons">
-                                      <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>&#9664;</button>
-                                      <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}>&#9654;</button>
+                                      <button
+                                        type="button"
+                                        className="carousel-nav-button left-arrow"
+                                        onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}
+                                      >
+                                        &#9664;
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="carousel-nav-button right-arrow"
+                                        onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}
+                                      >
+                                        &#9654;
+                                      </button>
                                     </div>
                                   )}
-                                  <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
+                                  <div
+                                    ref={previewServicesCarouselRef}
+                                    className={`mock-services-list ${servicesDisplayMode}`}
+                                  >
                                     {servicesForPreview.map((s, i) => (
                                       <div key={i} className="mock-service-item">
                                         <p className="mock-service-name">{s.name}</p>
@@ -796,16 +880,41 @@ export default function MyProfile() {
                                 <div className="work-preview-row-container">
                                   {reviewsDisplayMode === "carousel" && (
                                     <div className="carousel-nav-buttons">
-                                      <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}>&#9664;</button>
-                                      <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}>&#9654;</button>
+                                      <button
+                                        type="button"
+                                        className="carousel-nav-button left-arrow"
+                                        onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}
+                                      >
+                                        &#9664;
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="carousel-nav-button right-arrow"
+                                        onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}
+                                      >
+                                        &#9654;
+                                      </button>
                                     </div>
                                   )}
-                                  <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
+                                  <div
+                                    ref={previewReviewsCarouselRef}
+                                    className={`mock-reviews-list ${reviewsDisplayMode}`}
+                                  >
                                     {reviewsForPreview.map((r, i) => (
                                       <div key={i} className="mock-review-card">
                                         <div className="mock-star-rating">
-                                          {Array(r.rating || 0).fill().map((_, idx) => <span key={`f-${idx}`}>★</span>)}
-                                          {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, idx) => <span key={`e-${idx}`} className="empty-star">★</span>)}
+                                          {Array(r.rating || 0)
+                                            .fill()
+                                            .map((_, idx) => (
+                                              <span key={`f-${idx}`}>★</span>
+                                            ))}
+                                          {Array(Math.max(0, 5 - (r.rating || 0)))
+                                            .fill()
+                                            .map((_, idx) => (
+                                              <span key={`e-${idx}`} className="empty-star">
+                                                ★
+                                              </span>
+                                            ))}
                                         </div>
                                         <p className="mock-review-text">{`"${r.text}"`}</p>
                                         <p className="mock-reviewer-name">{r.name}</p>
@@ -850,35 +959,42 @@ export default function MyProfile() {
                               <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
                             )}
                             <h2 className="mock-title">
-                              {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
+                              {state.mainHeading ||
+                                (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
                             </h2>
                             <p className="mock-subtitle">
-                              {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
+                              {state.subHeading ||
+                                (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
                             </p>
                             {(shouldShowPlaceholders || hasExchangeContact) && (
-                              <button type="button" className="mock-button">Save My Number</button>
+                              <button type="button" className="mock-button">
+                                Save My Number
+                              </button>
                             )}
                           </>
                         )}
 
                         {/* ABOUT */}
-                        {showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
-                          <>
-                            <p className="mock-section-title">About me</p>
-                            <div className={`mock-about-container ${aboutMeLayout}`}>
-                              <div className="mock-about-content-group">
-                                <div className="mock-about-header-group">
-                                  {previewAvatarSrc && <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />}
-                                  <div>
-                                    <p className="mock-profile-name">{previewFullName}</p>
-                                    <p className="mock-profile-role">{previewJobTitle}</p>
+                        {showAboutMeSection &&
+                          (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
+                            <>
+                              <p className="mock-section-title">About me</p>
+                              <div className={`mock-about-container ${aboutMeLayout}`}>
+                                <div className="mock-about-content-group">
+                                  <div className="mock-about-header-group">
+                                    {previewAvatarSrc && (
+                                      <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
+                                    )}
+                                    <div>
+                                      <p className="mock-profile-name">{previewFullName}</p>
+                                      <p className="mock-profile-role">{previewJobTitle}</p>
+                                    </div>
                                   </div>
+                                  <p className="mock-bio-text">{previewBio}</p>
                                 </div>
-                                <p className="mock-bio-text">{previewBio}</p>
                               </div>
-                            </div>
-                          </>
-                        )}
+                            </>
+                          )}
 
                         {/* WORK */}
                         {showWorkSection && previewWorkImages.length > 0 && (
@@ -887,8 +1003,20 @@ export default function MyProfile() {
                             <div className="work-preview-row-container">
                               {state.workDisplayMode === "carousel" && (
                                 <div className="carousel-nav-buttons">
-                                  <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}>&#9664;</button>
-                                  <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}>&#9654;</button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
+                                  >
+                                    &#9664;
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
+                                  >
+                                    &#9654;
+                                  </button>
                                 </div>
                               )}
                               <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
@@ -909,11 +1037,26 @@ export default function MyProfile() {
                             <div className="work-preview-row-container">
                               {servicesDisplayMode === "carousel" && (
                                 <div className="carousel-nav-buttons">
-                                  <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}>&#9664;</button>
-                                  <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}>&#9654;</button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}
+                                  >
+                                    &#9664;
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}
+                                  >
+                                    &#9654;
+                                  </button>
                                 </div>
                               )}
-                              <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
+                              <div
+                                ref={previewServicesCarouselRef}
+                                className={`mock-services-list ${servicesDisplayMode}`}
+                              >
                                 {servicesForPreview.map((s, i) => (
                                   <div key={i} className="mock-service-item">
                                     <p className="mock-service-name">{s.name}</p>
@@ -932,16 +1075,38 @@ export default function MyProfile() {
                             <div className="work-preview-row-container">
                               {reviewsDisplayMode === "carousel" && (
                                 <div className="carousel-nav-buttons">
-                                  <button type="button" className="carousel-nav-button left-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}>&#9664;</button>
-                                  <button type="button" className="carousel-nav-button right-arrow" onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}>&#9654;</button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button left-arrow"
+                                    onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}
+                                  >
+                                    &#9664;
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="carousel-nav-button right-arrow"
+                                    onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}
+                                  >
+                                    &#9654;
+                                  </button>
                                 </div>
                               )}
                               <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
                                 {reviewsForPreview.map((r, i) => (
                                   <div key={i} className="mock-review-card">
                                     <div className="mock-star-rating">
-                                      {Array(r.rating || 0).fill().map((_, idx) => <span key={`f-${idx}`}>★</span>)}
-                                      {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, idx) => <span key={`e-${idx}`} className="empty-star">★</span>)}
+                                      {Array(r.rating || 0)
+                                        .fill()
+                                        .map((_, idx) => (
+                                          <span key={`f-${idx}`}>★</span>
+                                        ))}
+                                      {Array(Math.max(0, 5 - (r.rating || 0)))
+                                        .fill()
+                                        .map((_, idx) => (
+                                          <span key={`e-${idx}`} className="empty-star">
+                                            ★
+                                          </span>
+                                        ))}
                                     </div>
                                     <p className="mock-review-text">{`"${r.text}"`}</p>
                                     <p className="mock-reviewer-name">{r.name}</p>
@@ -975,12 +1140,16 @@ export default function MyProfile() {
 
                 {/* Editor column */}
                 <div className="myprofile-editor-wrapper" id="myprofile-editor" style={columnScrollStyle}>
-                  {(!isSubscribed && hasTrialEnded) && (
+                  {!isSubscribed && hasTrialEnded && (
                     <div className="subscription-overlay">
                       <div className="subscription-message">
                         <p className="desktop-h4">Subscription Required</p>
-                        <p className="desktop-h6">Your free trial has ended. Please subscribe to continue editing your profile.</p>
-                        <button className="blue-button" onClick={handleStartSubscription}>Go to Subscription</button>
+                        <p className="desktop-h6">
+                          Your free trial has ended. Please subscribe to continue editing your profile.
+                        </p>
+                        <button className="blue-button" onClick={handleStartSubscription}>
+                          Go to Subscription
+                        </button>
                       </div>
                     </div>
                   )}
@@ -1026,7 +1195,11 @@ export default function MyProfile() {
                             key={font}
                             className={`font-button ${state.font === font ? "is-active" : ""}`}
                             onClick={() => updateState({ font })}
-                            style={{ fontFamily: `'${font}', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`, fontWeight: 700 }}
+                            style={{
+                              fontFamily:
+                                `'${font}', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`,
+                              fontWeight: 700,
+                            }}
                           >
                             {font}
                           </button>
@@ -1037,7 +1210,11 @@ export default function MyProfile() {
                     <hr className="divider" />
                     <div className="editor-section-header stacked">
                       <h3 className="editor-subtitle">Main Section</h3>
-                      <button type="button" onClick={() => setShowMainSection(!showMainSection)} className="toggle-button section-chip">
+                      <button
+                        type="button"
+                        onClick={() => setShowMainSection(!showMainSection)}
+                        className="toggle-button section-chip"
+                      >
                         {showMainSection ? "Hide Section" : "Show Section"}
                       </button>
                     </div>
@@ -1045,15 +1222,36 @@ export default function MyProfile() {
                       <>
                         <div className="input-block">
                           <label htmlFor="coverPhoto">Cover Photo</label>
-                          <input ref={fileInputRef} id="coverPhoto" type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
-                          <div className="editor-item-card work-image-item-wrapper cover-photo-card" onClick={() => fileInputRef.current?.click()}>
+                          <input
+                            ref={fileInputRef}
+                            id="coverPhoto"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            style={{ display: "none" }}
+                          />
+                          <div
+                            className="editor-item-card work-image-item-wrapper cover-photo-card"
+                            onClick={() => fileInputRef.current?.click()}
+                          >
                             {state.coverPhoto ? (
-                              <img src={state.coverPhoto || previewPlaceholders.coverPhoto} alt="Cover" className="work-image-preview" />
+                              <img
+                                src={state.coverPhoto || previewPlaceholders.coverPhoto}
+                                alt="Cover"
+                                className="work-image-preview"
+                              />
                             ) : (
                               <span className="upload-text">+ Upload Cover Image</span>
                             )}
                             {state.coverPhoto && (
-                              <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveCoverPhoto(); }}>
+                              <button
+                                type="button"
+                                className="remove-image-button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveCoverPhoto();
+                                }}
+                              >
                                 &times;
                               </button>
                             )}
@@ -1089,7 +1287,11 @@ export default function MyProfile() {
                     <hr className="divider" />
                     <div className="editor-section-header stacked">
                       <h3 className="editor-subtitle">About Me Section</h3>
-                      <button type="button" onClick={() => setShowAboutMeSection(!showAboutMeSection)} className="toggle-button section-chip">
+                      <button
+                        type="button"
+                        onClick={() => setShowAboutMeSection(!showAboutMeSection)}
+                        className="toggle-button section-chip"
+                      >
                         {showAboutMeSection ? "Hide Section" : "Show Section"}
                       </button>
                     </div>
@@ -1117,16 +1319,33 @@ export default function MyProfile() {
 
                         <div className="input-block">
                           <label htmlFor="avatar">Profile Photo</label>
-                          <input ref={avatarInputRef} id="avatar" type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
+                          <input
+                            ref={avatarInputRef}
+                            id="avatar"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleAvatarUpload}
+                            style={{ display: "none" }}
+                          />
                           {/* Avatar tile identical to work image tile */}
-                          <div className="editor-item-card work-image-item-wrapper avatar-tile" onClick={() => avatarInputRef.current?.click()}>
+                          <div
+                            className="editor-item-card work-image-item-wrapper avatar-tile"
+                            onClick={() => avatarInputRef.current?.click()}
+                          >
                             {state.avatar ? (
                               <img src={state.avatar || ""} alt="Avatar preview" className="work-image-preview" />
                             ) : (
                               <span className="upload-text">+ Add a Profile Picture/Logo</span>
                             )}
                             {state.avatar && (
-                              <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveAvatar(); }}>
+                              <button
+                                type="button"
+                                className="remove-image-button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveAvatar();
+                                }}
+                              >
                                 &times;
                               </button>
                             )}
@@ -1174,7 +1393,11 @@ export default function MyProfile() {
                     <hr className="divider" />
                     <div className="editor-section-header stacked">
                       <h3 className="editor-subtitle">My Work Section</h3>
-                      <button type="button" onClick={() => setShowWorkSection(!showWorkSection)} className="toggle-button section-chip">
+                      <button
+                        type="button"
+                        onClick={() => setShowWorkSection(!showWorkSection)}
+                        className="toggle-button section-chip"
+                      >
                         {showWorkSection ? "Hide Section" : "Show Section"}
                       </button>
                     </div>
@@ -1213,18 +1436,35 @@ export default function MyProfile() {
                             {state.workImages.map((item, i) => (
                               <div key={i} className="editor-item-card work-image-item-wrapper">
                                 <img src={item.preview || item} alt={`work-${i}`} className="work-image-preview" />
-                                <button type="button" className="remove-image-button" onClick={(e) => { e.stopPropagation(); handleRemoveWorkImage(i); }}>
+                                <button
+                                  type="button"
+                                  className="remove-image-button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveWorkImage(i);
+                                  }}
+                                >
                                   &times;
                                 </button>
                               </div>
                             ))}
                             {state.workImages.length < 10 && (
-                              <div className="add-work-image-placeholder" onClick={() => workImageInputRef.current?.click()}>
+                              <div
+                                className="add-work-image-placeholder"
+                                onClick={() => workImageInputRef.current?.click()}
+                              >
                                 <span className="upload-text">+ Add image(s)</span>
                               </div>
                             )}
                           </div>
-                          <input ref={workImageInputRef} type="file" multiple accept="image/*" style={{ display: "none" }} onChange={handleAddWorkImage} />
+                          <input
+                            ref={workImageInputRef}
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            onChange={handleAddWorkImage}
+                          />
                         </div>
                       </>
                     )}
@@ -1232,7 +1472,11 @@ export default function MyProfile() {
                     <hr className="divider" />
                     <div className="editor-section-header stacked">
                       <h3 className="editor-subtitle">My Services Section</h3>
-                      <button type="button" onClick={() => setShowServicesSection(!showServicesSection)} className="toggle-button section-chip">
+                      <button
+                        type="button"
+                        onClick={() => setShowServicesSection(!showServicesSection)}
+                        className="toggle-button section-chip"
+                      >
                         {showServicesSection ? "Hide Section" : "Show Section"}
                       </button>
                     </div>
@@ -1265,15 +1509,40 @@ export default function MyProfile() {
                               <div
                                 key={i}
                                 className="editor-item-card mock-service-item-wrapper"
-                                style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 8, alignItems: "center" }}
+                                style={{
+                                  display: "grid",
+                                  gridTemplateColumns: "1fr 1fr auto",
+                                  gap: 8,
+                                  alignItems: "center",
+                                }}
                               >
-                                <input type="text" className="text-input" placeholder="Service Name" value={s.name || ""} onChange={(e) => handleServiceChange(i, "name", e.target.value)} />
-                                <input type="text" className="text-input" placeholder="Service Price/Detail" value={s.price || ""} onChange={(e) => handleServiceChange(i, "price", e.target.value)} />
-                                <button type="button" onClick={() => handleRemoveService(i)} className="remove-item-button">Remove</button>
+                                <input
+                                  type="text"
+                                  className="text-input"
+                                  placeholder="Service Name"
+                                  value={s.name || ""}
+                                  onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                                />
+                                <input
+                                  type="text"
+                                  className="text-input"
+                                  placeholder="Service Price/Detail"
+                                  value={s.price || ""}
+                                  onChange={(e) => handleServiceChange(i, "price", e.target.value)}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveService(i)}
+                                  className="remove-item-button"
+                                >
+                                  Remove
+                                </button>
                               </div>
                             ))}
                           </div>
-                          <button type="button" onClick={handleAddService} className="add-item-button">+ Add Service</button>
+                          <button type="button" onClick={handleAddService} className="add-item-button">
+                            + Add Service
+                          </button>
                         </div>
                       </>
                     )}
@@ -1281,7 +1550,11 @@ export default function MyProfile() {
                     <hr className="divider" />
                     <div className="editor-section-header stacked">
                       <h3 className="editor-subtitle">Reviews Section</h3>
-                      <button type="button" onClick={() => setShowReviewsSection(!showReviewsSection)} className="toggle-button section-chip">
+                      <button
+                        type="button"
+                        onClick={() => setShowReviewsSection(!showReviewsSection)}
+                        className="toggle-button section-chip"
+                      >
                         {showReviewsSection ? "Hide Section" : "Show Section"}
                       </button>
                     </div>
@@ -1314,16 +1587,49 @@ export default function MyProfile() {
                               <div
                                 key={i}
                                 className="editor-item-card mock-review-card-wrapper"
-                                style={{ display: "grid", gridTemplateColumns: "1fr 1fr 110px auto", gap: 8, alignItems: "center" }}
+                                style={{
+                                  display: "grid",
+                                  gridTemplateColumns: "1fr 1fr 110px auto",
+                                  gap: 8,
+                                  alignItems: "center",
+                                }}
                               >
-                                <input type="text" className="text-input" placeholder="Reviewer Name" value={r.name || ""} onChange={(e) => handleReviewChange(i, "name", e.target.value)} />
-                                <textarea className="text-input" placeholder="Review text" rows={2} value={r.text || ""} onChange={(e) => handleReviewChange(i, "text", e.target.value)} />
-                                <input type="number" className="text-input" placeholder="Rating (1-5)" min="1" max="5" value={r.rating || ""} onChange={(e) => handleReviewChange(i, "rating", e.target.value)} />
-                                <button type="button" onClick={() => handleRemoveReview(i)} className="remove-item-button">Remove</button>
+                                <input
+                                  type="text"
+                                  className="text-input"
+                                  placeholder="Reviewer Name"
+                                  value={r.name || ""}
+                                  onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                                />
+                                <textarea
+                                  className="text-input"
+                                  placeholder="Review text"
+                                  rows={2}
+                                  value={r.text || ""}
+                                  onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                                />
+                                <input
+                                  type="number"
+                                  className="text-input"
+                                  placeholder="Rating (1-5)"
+                                  min="1"
+                                  max="5"
+                                  value={r.rating || ""}
+                                  onChange={(e) => handleReviewChange(i, "rating", e.target.value)}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveReview(i)}
+                                  className="remove-item-button"
+                                >
+                                  Remove
+                                </button>
                               </div>
                             ))}
                           </div>
-                          <button type="button" onClick={handleAddReview} className="add-item-button">+ Add Review</button>
+                          <button type="button" onClick={handleAddReview} className="add-item-button">
+                            + Add Review
+                          </button>
                         </div>
                       </>
                     )}
@@ -1331,7 +1637,11 @@ export default function MyProfile() {
                     <hr className="divider" />
                     <div className="editor-section-header stacked">
                       <h3 className="editor-subtitle">My Contact Details</h3>
-                      <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="toggle-button section-chip">
+                      <button
+                        type="button"
+                        onClick={() => setShowContactSection(!showContactSection)}
+                        className="toggle-button section-chip"
+                      >
                         {showContactSection ? "Hide Section" : "Show Section"}
                       </button>
                     </div>
@@ -1364,7 +1674,11 @@ export default function MyProfile() {
                     )}
 
                     <div className="button-group">
-                      <button type="button" onClick={handleResetPage} className="cta-black-button desktop-button">
+                      <button
+                        type="button"
+                        onClick={handleResetPage}
+                        className="cta-black-button desktop-button"
+                      >
                         Reset Page
                       </button>
                       <button type="submit" className="cta-blue-button desktop-button">
