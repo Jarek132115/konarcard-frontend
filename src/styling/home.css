@@ -26,7 +26,7 @@ body {
    ========================= */
 .home-hero {
     position: relative;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     overflow: hidden;
     margin-bottom: 100px;
@@ -112,6 +112,7 @@ body {
     margin-bottom: 10px
 }
 
+/* ... hero ticks ... */
 .hero-tick-wrap {
     display: flex;
     flex-direction: column;
@@ -177,9 +178,11 @@ body {
     }
 
     .hero-video-element {
-        position: relative;
+        position: absolute !important;
+        inset: 0;
         width: 100% !important;
-        height: 450px !important
+        height: 100% !important;
+        object-fit: cover !important
     }
 
     .hero-left {
@@ -226,10 +229,6 @@ body {
 
     .hero-tick-wrap {
         display: none
-    }
-
-    .hero-video-element {
-        height: 300px !important
     }
 }
 
@@ -488,7 +487,6 @@ body {
     gap: 16px
 }
 
-/* desktop: two-column media/text within the card */
 .step-card-v2 {
     background: #fff;
     border: 1px solid #e9e9e9;
@@ -552,7 +550,6 @@ body {
     margin-top: auto
 }
 
-/* tablets & below: horizontal snap carousel */
 @media (max-width:1000px) {
     .steps-rail {
         display: none
@@ -571,8 +568,7 @@ body {
         min-width: 86%;
         scroll-snap-align: center;
         border-radius: 18px;
-        grid-template-columns: 1fr;
-        /* stack */
+        grid-template-columns: 1fr
     }
 
     .step-media-v2 img {
@@ -585,7 +581,6 @@ body {
     }
 }
 
-/* phones: a bit tighter */
 @media (max-width:600px) {
     .step-card-v2 {
         min-width: 92%
@@ -1164,7 +1159,7 @@ body {
     position: relative;
     text-shadow: none;
     animation: heroBlueBreathe var(--breath-dur) ease-in-out var(--breath-delay) infinite both;
-    will-change: text-shadow
+    will-change: text-shadow;
 }
 
 @media (prefers-reduced-motion:reduce) {
@@ -1179,7 +1174,7 @@ body {
         background: #f3f4f6;
         color: #333;
         border-color: #e6e6e6;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, .06)
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
     }
 
     50% {
@@ -1187,7 +1182,7 @@ body {
         background: #006FE6;
         color: #fff;
         border-color: #006FE6;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, .12)
+        box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
     }
 
     100% {
@@ -1195,7 +1190,7 @@ body {
         background: #f3f4f6;
         color: #333;
         border-color: #e6e6e6;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, .06)
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
     }
 }
 
@@ -1207,7 +1202,11 @@ body {
     }
 
     50% {
-        text-shadow: 0 0 10px rgba(0, 129, 255, .65), 0 0 24px rgba(0, 129, 255, .5), 0 0 48px rgba(0, 129, 255, .35), 0 0 80px rgba(0, 129, 255, .22)
+        text-shadow:
+            0 0 10px rgba(0, 129, 255, .65),
+            0 0 24px rgba(0, 129, 255, .5),
+            0 0 48px rgba(0, 129, 255, .35),
+            0 0 80px rgba(0, 129, 255, .22);
     }
 }
 
@@ -1221,7 +1220,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999
+    z-index: 9999;
 }
 
 .video-modal {
@@ -1230,7 +1229,7 @@ body {
     background: #000;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, .35)
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
 }
 
 .video-close {
@@ -1249,7 +1248,7 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background .2s ease
+    transition: background .2s ease;
 }
 
 .video-close:hover {
@@ -1270,7 +1269,7 @@ body {
     inset: 0;
     width: 100%;
     height: 100%;
-    display: block
+    display: block;
 }
 
 .video-placeholder {
@@ -1328,17 +1327,18 @@ body {
     margin-top: 7px;
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .steps-v1 .section-1-content {
         flex-direction: column;
-        gap: 20px;
+        gap: 20px
     }
 
     .steps-v1 .section-1-left img {
-        aspect-ratio: 1/1;
+        aspect-ratio: 1/1
     }
 }
 
+/* step cards (media left / text right; stacks on mobile) */
 .step-card {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1354,7 +1354,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
+    display: block
 }
 
 .step-card-right {
@@ -1377,79 +1377,63 @@ body {
     width: fit-content;
 }
 
-@media (max-width: 1000px) {
+@media (max-width:1000px) {
     .step-card {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr
     }
 
     .step-card-left img {
-        aspect-ratio: 4/3;
+        aspect-ratio: 4/3
     }
 }
 
-/* === Steps v1 spacing fine-tune === */
+/* fine-tune spacing in steps v1 */
 .steps-v1 .step-card-right {
-    gap: 0;
+    gap: 0
 }
 
-/* manual control */
 .steps-v1 .step-card-right .step-pill {
-    margin: 0 0 10px 0;
+    margin: 0 0 10px 0
 }
 
-/* Title → Subtitle: 8px */
 .steps-v1 .step-card-right .step-subtitle {
-    margin: 0 0 20px 0;
+    margin: 0 0 20px 0
 }
 
-/* Subtitle → Bullets: 20px */
 .steps-v1 .step-card-right .step-bullet-list {
-    margin: 0 0 20px 0;
+    margin: 0 0 20px 0
 }
 
-/* Bullets → CTA: 20px */
 .steps-v1 .step-card-right .section-1-cta {
-    margin-top: 0;
+    margin-top: 0
 }
-
-/* already handled */
 
 /* =========================
    HERO — mobile square & full-width fixes
-   Paste this at the very end of your CSS.
    ========================= */
-
-/* avoid 100vw scrollbar wiggle; keep full width of page */
 .home-hero {
-    width: 100%;
-    /* was 100vw */
+    width: 100%
 }
 
-/* under 1000px, make the media area a square that fills width */
-@media (max-width: 1000px) {
+/* avoid 100vw scrollbar wiggle */
+
+@media (max-width:1000px) {
     .hero-right {
         position: relative;
         width: 100%;
         max-width: 640px;
-        /* optional cap so it doesn’t look too huge on tablets */
-        aspect-ratio: 1 / 1;
-        /* <- perfect square */
+        aspect-ratio: 1/1;
         margin: 40px 0 20px;
-        /* keep your existing spacing vibe */
         height: auto;
-        /* ensure height is driven by aspect-ratio */
         justify-content: center;
     }
 
-    /* make the video/image fill that square and cover it */
     .hero-video-element {
         position: absolute !important;
         inset: 0;
         width: 100% !important;
         height: 100% !important;
-        /* overrides earlier 450px/300px rules */
         object-fit: cover !important;
-        /* no letterboxing; no cropping of container */
         display: block !important;
         margin: 0 !important;
         visibility: visible !important;
@@ -1457,8 +1441,4 @@ body {
     }
 }
 
-/* tiniest phones can keep square; if you prefer a little shorter, you can tweak here
-@media (max-width: 450px) {
-  .hero-right { max-width: 100%; }
-}
-*/
+/* end of Part 4/4 */
