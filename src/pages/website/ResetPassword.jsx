@@ -1,3 +1,4 @@
+// src/pages/ResetPassword/ResetPassword.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -9,16 +10,19 @@ import redCross from '../../assets/icons/Red-Cross-Icon.svg';
 export default function ResetPassword() {
     const navigate = useNavigate();
     const { token } = useParams();
+
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
-    const blurTimeoutRef = React.useRef(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const togglePassword = () => setShowPassword(!showPassword);
-    const toggleConfirm = () => setShowConfirm(!showConfirm);
+    const blurTimeoutRef = useRef(null);
+
+    const togglePassword = () => setShowPassword((s) => !s);
+    const toggleConfirm = () => setShowConfirm((s) => !s);
 
     const passwordChecks = {
         minLength: password.length >= 8,
@@ -28,45 +32,19 @@ export default function ResetPassword() {
     };
 
     const handlePasswordFocus = () => {
-        if (blurTimeoutRef.current) {
-            clearTimeout(blurTimeoutRef.current);
-        }
+        if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
         setShowPasswordFeedback(true);
     };
 
     const handlePasswordBlur = () => {
-        blurTimeoutRef.current = setTimeout(() => {
-            setShowPasswordFeedback(false);
-        }, 100);
+        blurTimeoutRef.current = setTimeout(() => setShowPasswordFeedback(false), 100);
     };
 
-    const resetPassword = async (e) => {
-        e.preventDefault();
-        if (!Object.values(passwordChecks).every(Boolean)) {
-            toast.error('Please meet all password requirements.');
-            return;
-        }
-
-        if (!token) {
-            toast.error('Invalid reset link. Token missing.');
-            return;
-        }
-
-        try {
-            const res = await axios.post(`/reset-password/${token}`, {
-                password: password,
-            });
-
-            if (res.data.error) {
-                toast.error(res.data.error);
-            } else {
-                toast.success('Password reset successful! You can now log in.');
-                navigate('/login');
-            }
-        } catch (err) {
-            toast.error(err.response?.data?.error || 'Could not reset password. Please check the link and try again.');
-        }
-    };
+    useEffect(() => {
+        return () => {
+            if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+        };
+    }, []);
 
     useEffect(() => {
         if (!token) {
@@ -75,10 +53,55 @@ export default function ResetPassword() {
         }
     }, [token, navigate]);
 
+    const resetPassword = async (e) => {
+        e.preventDefault();
+
+        // Client-side requirements
+        if (!Object.values(passwordChecks).every(Boolean)) {
+            toast.error('Please meet all password requirements.');
+            return;
+        }
+        if (!token) {
+            toast.error('Invalid reset link. Token missing.');
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+
+            const API = import.meta.env.VITE_API_URL; // e.g., https://api.yourapp.com
+            const url = `${API}/reset-password/${encodeURIComponent(token)}`;
+
+            // Backend only needs { password }
+            const res = await axios.post(
+                url,
+                { password },
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+
+            if (res.data?.error) {
+                toast.error(res.data.error);
+                return;
+            }
+
+            toast.success('Password reset successful! You can now log in.');
+            navigate('/login');
+        } catch (err) {
+            const msg =
+                err.response?.data?.error ||
+                err.response?.data?.message ||
+                err.message ||
+                'Could not reset password. Please check the link and try again.';
+            toast.error(msg);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <div className="login-wrapper">
             <div className="close-button" onClick={() => navigate('/')}>×</div>
+
             <div className="login-left">
                 <img src={backgroundImg} alt="Visual" className="login-visual" />
                 <div className="login-quote">
@@ -87,9 +110,11 @@ export default function ResetPassword() {
                     <p className="quote-author">Liam Turner – Electrical Contractor</p>
                 </div>
             </div>
+
             <div className="login-right">
                 <div className="login-card">
                     <h2 className="login-title">Reset Your Password</h2>
+
                     <form onSubmit={resetPassword} className="login-form">
                         <label htmlFor="newPassword" className="form-label">New Password</label>
                         <div className="password-wrapper">
@@ -130,26 +155,56 @@ export default function ResetPassword() {
                         {showPasswordFeedback && (
                             <div className="password-feedback">
                                 <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
-                                    <img src={passwordChecks.minLength ? greenTick : redCross} alt="" className="feedback-icon" />
+                                    <img
+                                        src={passwordChecks.minLength ? greenTick : redCross}
+                                        alt=""
+                                        className="feedback-icon"
+                                    />
                                     Minimum 8 characters
                                 </p>
                                 <p className={passwordChecks.hasUppercase ? 'valid' : 'invalid'}>
-                                    <img src={passwordChecks.hasUppercase ? greenTick : redCross} alt="" className="feedback-icon" />
+                                    <img
+                                        src={passwordChecks.hasUppercase ? greenTick : redCross}
+                                        alt=""
+                                        className="feedback-icon"
+                                    />
                                     One uppercase letter
                                 </p>
                                 <p className={passwordChecks.hasNumber ? 'valid' : 'invalid'}>
-                                    <img src={passwordChecks.hasNumber ? greenTick : redCross} alt="" className="feedback-icon" />
+                                    <img
+                                        src={passwordChecks.hasNumber ? greenTick : redCross}
+                                        alt=""
+                                        className="feedback-icon"
+                                    />
                                     One number
                                 </p>
                                 <p className={passwordChecks.passwordsMatch ? 'valid' : 'invalid'}>
-                                    <img src={passwordChecks.passwordsMatch ? greenTick : redCross} alt="" className="feedback-icon" />
+                                    <img
+                                        src={passwordChecks.passwordsMatch ? greenTick : redCross}
+                                        alt=""
+                                        className="feedback-icon"
+                                    />
                                     Passwords match
                                 </p>
                             </div>
                         )}
 
-                        <button type="submit" className="primary-button verify-email-button">Reset Password</button>
-                        <button type="button" className="secondary-button back-to-login-button" onClick={() => navigate('/login')}>Back to Login</button>
+                        <button
+                            type="submit"
+                            className="primary-button verify-email-button"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Resetting…' : 'Reset Password'}
+                        </button>
+
+                        <button
+                            type="button"
+                            className="secondary-button back-to-login-button"
+                            onClick={() => navigate('/login')}
+                            disabled={isSubmitting}
+                        >
+                            Back to Login
+                        </button>
                     </form>
                 </div>
             </div>
