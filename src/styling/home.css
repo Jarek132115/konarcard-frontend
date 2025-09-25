@@ -1443,14 +1443,15 @@ body {
 
 /* end of Part 4/4 */
 
-/* === 3-step tiles: one row on desktop (inside .section.steps-v1) === */
+/* === 3-step tiles: 3 across → 1 down (no 2-col state) === */
 .steps-v1 .steps-grid-3 {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    /* ← 10px gap as requested */
 }
 
-/* card */
+/* tile */
 .steps-v1 .step-tile {
     background: #fff;
     border: 1px solid #e9e9e9;
@@ -1458,7 +1459,11 @@ body {
     box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
     padding: 20px;
     display: flex;
+    /* so we can pin CTA */
     flex-direction: column;
+    /* image → copy → CTA */
+    height: 100%;
+    /* consistent heights */
 }
 
 /* media */
@@ -1472,37 +1477,30 @@ body {
 .steps-v1 .step-media img {
     width: 100%;
     height: 260px;
-    /* desktop height */
     object-fit: cover;
     display: block;
 }
 
-/* copy */
+/* copy area grows to fill; CTA sticks to bottom */
 .steps-v1 .step-copy {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    flex: 1;
+    /* ← fill remaining height */
 }
 
 .steps-v1 .step-copy .step-subtitle {
     color: #666
 }
 
-/* bullets inside tile reuse your .step-bullet-list styles */
-
-/* CTA inside tile */
 .steps-v1 .step-tile .section-1-cta {
-    margin-top: 12px
+    margin-top: auto;
+    /* ← pin CTA to bottom of tile */
 }
 
-/* responsive: 3 → 2 → 1 columns */
-@media (max-width:1100px) {
-    .steps-v1 .steps-grid-3 {
-        grid-template-columns: repeat(2, minmax(0, 1fr))
-    }
-}
-
-@media (max-width:700px) {
+/* responsive: keep 3 until it's tight, then jump to 1 */
+@media (max-width:900px) {
     .steps-v1 .steps-grid-3 {
         grid-template-columns: 1fr
     }
@@ -1511,6 +1509,4 @@ body {
         height: auto;
         aspect-ratio: 4/3
     }
-
-    /* nicer on mobile */
 }
