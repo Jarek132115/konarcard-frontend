@@ -1442,3 +1442,75 @@ body {
 }
 
 /* end of Part 4/4 */
+
+/* === 3-step tiles: one row on desktop (inside .section.steps-v1) === */
+.steps-v1 .steps-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+/* card */
+.steps-v1 .step-tile {
+    background: #fff;
+    border: 1px solid #e9e9e9;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* media */
+.steps-v1 .step-media {
+    width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.steps-v1 .step-media img {
+    width: 100%;
+    height: 260px;
+    /* desktop height */
+    object-fit: cover;
+    display: block;
+}
+
+/* copy */
+.steps-v1 .step-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.steps-v1 .step-copy .step-subtitle {
+    color: #666
+}
+
+/* bullets inside tile reuse your .step-bullet-list styles */
+
+/* CTA inside tile */
+.steps-v1 .step-tile .section-1-cta {
+    margin-top: 12px
+}
+
+/* responsive: 3 → 2 → 1 columns */
+@media (max-width:1100px) {
+    .steps-v1 .steps-grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+}
+
+@media (max-width:700px) {
+    .steps-v1 .steps-grid-3 {
+        grid-template-columns: 1fr
+    }
+
+    .steps-v1 .step-media img {
+        height: auto;
+        aspect-ratio: 4/3
+    }
+
+    /* nicer on mobile */
+}
