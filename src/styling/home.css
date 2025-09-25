@@ -1510,3 +1510,35 @@ body {
         aspect-ratio: 4/3
     }
 }
+
+/* --- Steps tile spacing tweaks --- */
+.steps-v1 .step-tile .step-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    /* remove global gaps */
+}
+
+/* spacing item-by-item */
+.steps-v1 .step-tile .step-copy .step-pill {
+    margin-bottom: 10px;
+}
+
+/* keep pill spacing */
+.steps-v1 .step-tile .step-copy h3 {
+    margin-bottom: 2px;
+}
+
+/* title → subtitle = 2px */
+.steps-v1 .step-tile .step-copy .step-subtitle {
+    margin-bottom: 20px;
+}
+
+/* subtitle → bullets = 20px */
+
+/* ensure the bullet list doesn't add extra margin on top */
+.steps-v1 .step-tile .step-copy .step-bullet-list {
+    margin-top: 0;
+}
+
+/* we control it via subtitle margin */
