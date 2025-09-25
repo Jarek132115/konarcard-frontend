@@ -1542,3 +1542,18 @@ body {
 }
 
 /* we control it via subtitle margin */
+
+/* Fix: ensure consistent gap above CTA in step tiles */
+.steps-v1 .step-tile .section-1-cta {
+    margin-top: auto;
+    /* stays pinned to bottom */
+    padding-top: 16px;
+    /* ← guaranteed gap above CTA */
+}
+
+/* If you want a touch more room on small screens */
+@media (max-width:900px) {
+    .steps-v1 .step-tile .section-1-cta {
+        padding-top: 20px;
+    }
+}
