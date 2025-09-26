@@ -101,13 +101,13 @@ export default function Home() {
             </p>
 
             <div className="hero-cta">
-              <Link to="/register" className="cta-blue-button desktop-button">
+              <Link to="/register" className="orange-button desktop-button">
                 Start Your Free Trial
               </Link>
 
               <button
                 type="button"
-                className="cta-black-button desktop-button hero-watch-btn"
+                className="navy-button desktop-button hero-watch-btn"
                 onClick={() => setIsVideoOpen(true)}
                 aria-haspopup="dialog"
                 aria-expanded={isVideoOpen}

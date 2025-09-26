@@ -1,4 +1,71 @@
 /* Buttons */
+.orange-button {
+  display: flex;
+  padding: 12px 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+
+  /* Orange border */
+  border: 2px solid var(--Orange, #FF7B00);
+
+  /* Orange background */
+  background: var(--Orange, #FF7B00);
+
+  /* Orange shadow */
+  box-shadow: 0px 4px 12px rgba(255, 107, 0, 0.3);
+
+  /* White text */
+  color: #FFFFFF;
+
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Optional hover effect */
+.orange-button:hover {
+  background: #e66f00;
+  /* slightly darker orange */
+  box-shadow: 0px 6px 16px rgba(255, 107, 0, 0.4);
+}
+
+
+.navy-button {
+  display: flex;
+  padding: 12px 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+
+  /* Navy border */
+  border: 2px solid var(--Dark-Navy, #1E2A38);
+
+  /* Navy background */
+  background: var(--Dark-Navy, #1E2A38);
+
+  /* Navy shadow */
+  box-shadow: 0px 4px 12px rgba(30, 42, 56, 0.3);
+
+  /* White text */
+  color: #FFFFFF;
+
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Optional hover */
+.navy-button:hover {
+  background: #233447;
+  /* slightly lighter navy */
+  box-shadow: 0px 6px 16px rgba(30, 42, 56, 0.4);
+}
+
+
+
 .blue-button-login {
   background-color: #0081FF;
   color: white;
