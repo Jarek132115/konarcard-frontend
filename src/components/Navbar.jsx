@@ -215,10 +215,10 @@ export default function Navbar() {
           <div className="auth-links">
             {!isAuthed ? (
               <>
-                <Link to="/login" state={{ from: location.pathname }} className="desktop-button cta-blue-button">
+                <Link to="/login" state={{ from: location.pathname }} className="desktop-button orange-button">
                   Login
                 </Link>
-                <Link to="/register" state={{ from: location.pathname }} className="desktop-button cta-black-button">
+                <Link to="/register" state={{ from: location.pathname }} className="desktop-button navy-button">
                   Sign up
                 </Link>
               </>

@@ -1,55 +1,41 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import Navbar from '../../components/Navbar';
-import Footer from '../../components/Footer';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 
-import Section1Image from '../../assets/images/Section-1-Image.png';
-import FormCustomizationIcon from '../../assets/icons/FormCustomization-Icon.svg';
-import CustomizationIcon from '../../assets/icons/Customization-Icon.svg';
-import BoltIcon from '../../assets/icons/Bolt-Icon.svg';
-import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
-import NFCIcon from '../../assets/icons/NFC-Icon.svg';
-import EditProfile from '../../assets/images/Edit-Profile.jpg';
-import WhyYouNeedThis from '../../assets/images/WhyYouNeedThis.png';
-import People from '../../assets/images/People.png';
+import Section1Image from "../../assets/images/Section-1-Image.png";
+import EditProfile from "../../assets/images/Edit-Profile.jpg";
+import WhyYouNeedThis from "../../assets/images/WhyYouNeedThis.png";
+import People from "../../assets/images/People.png";
 
-import ReviewStars from '../../assets/icons/Stars-Icon.svg';
-import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
-import LinkIcon from '../../assets/icons/Link-Icon.svg';
-import TapIcon from '../../assets/icons/Tap-Icon.svg';
-import MoneyIcon from '../../assets/icons/Money-Icon.svg';
-import ShareIcon from '../../assets/icons/Share-Icon.svg';
-import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
+import ReviewStars from "../../assets/icons/Stars-Icon.svg";
 
-import NFCBusinessCard from '../../assets/images/NFC-Business-Card.jpg';
-import ScanQRCode from '../../assets/images/ScanQR-Code.jpg';
-import LinkInBio from '../../assets/images/LinkInBio.jpg';
-import SMSSend from '../../assets/images/SMSSend.jpg';
+import NFCBusinessCard from "../../assets/images/NFC-Business-Card.jpg";
+import ScanQRCode from "../../assets/images/ScanQR-Code.jpg";
+import LinkInBio from "../../assets/images/LinkInBio.jpg";
+import SMSSend from "../../assets/images/SMSSend.jpg";
 
-import QRCode from '../../assets/icons/QR-Code-Icon.svg';
-import ProfileIcon from '../../assets/icons/Profile-Icon.svg';
-import TimeIcon from '../../assets/icons/Time-Icon.svg';
-import ShieldIcon from '../../assets/icons/Shield-Icon.svg';
+import pp1 from "../../assets/images/pp1.png";
+import pp2 from "../../assets/images/pp2.png";
+import pp3 from "../../assets/images/pp3.png";
+import pp4 from "../../assets/images/pp4.png";
 
-import pp1 from '../../assets/images/pp1.png';
-import pp2 from '../../assets/images/pp2.png';
-import pp3 from '../../assets/images/pp3.png';
-import pp4 from '../../assets/images/pp4.png';
-
-import ProductCover from '../../assets/images/Product-Cover.png';
-import ProductImage1 from '../../assets/images/Product-Image-1.png';
-import ProductImage2 from '../../assets/images/Product-Image-2.png';
-import ProductImage3 from '../../assets/images/Product-Image-3.png';
-import ProductImage4 from '../../assets/images/Product-Image-4.png';
-
-import { AuthContext } from '../../components/AuthContext';
+import ProductCover from "../../assets/images/Product-Cover.png";
+import ProductImage1 from "../../assets/images/Product-Image-1.png";
+import ProductImage2 from "../../assets/images/Product-Image-2.png";
+import ProductImage3 from "../../assets/images/Product-Image-3.png";
+import ProductImage4 from "../../assets/images/Product-Image-4.png";
 
 export default function Home() {
-  const { user } = useContext(AuthContext);
-
   // product gallery
   const [cardMainImage, setCardMainImage] = useState(ProductCover);
-  const cardThumbs = [ProductCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4];
+  const cardThumbs = [
+    ProductCover,
+    ProductImage1,
+    ProductImage2,
+    ProductImage3,
+    ProductImage4,
+  ];
 
   // video modal
   const [isVideoOpen, setIsVideoOpen] = useState(false);
@@ -57,38 +43,55 @@ export default function Home() {
   useEffect(() => {
     if (!isVideoOpen) return;
     const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    const onKey = (e) => e.key === 'Escape' && setIsVideoOpen(false);
-    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = "hidden";
+    const onKey = (e) => e.key === "Escape" && setIsVideoOpen(false);
+    window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
-      window.removeEventListener('keydown', onKey);
+      window.removeEventListener("keydown", onKey);
     };
   }, [isVideoOpen]);
 
   // subscription features
   const featureBlocks = [
-    { t: 'Simple editor', s: 'Get set up quickly — no tech skills required.' },
-    { t: 'Show what you do', s: 'Share your services and work in seconds.' },
-    { t: 'Unlimited images', s: 'Upload every project — no limits on galleries.' },
-    { t: 'Unlimited services', s: 'List each job you offer with clear pricing.' },
-    { t: 'Unlimited reviews', s: 'Build instant trust with social proof.' },
-    { t: 'Custom branding', s: 'Your logo, colours and layout — make it yours.' },
-    { t: 'Share everywhere', s: 'Link, QR code, and NFC tap for instant contacts.' },
-    { t: 'Instant updates', s: 'Edit once — changes go live across your profile.' },
-    { t: 'No app needed', s: 'Works on iPhone & Android, right in the browser.' },
-    { t: 'Cancel anytime', s: 'Stay flexible — no long contracts.' },
+    { t: "Simple editor", s: "Get set up quickly — no tech skills required." },
+    { t: "Show what you do", s: "Share your services and work in seconds." },
+    {
+      t: "Unlimited images",
+      s: "Upload every project — no limits on galleries.",
+    },
+    {
+      t: "Unlimited services",
+      s: "List each job you offer with clear pricing.",
+    },
+    { t: "Unlimited reviews", s: "Build instant trust with social proof." },
+    {
+      t: "Custom branding",
+      s: "Your logo, colours and layout — make it yours.",
+    },
+    {
+      t: "Share everywhere",
+      s: "Link, QR code, and NFC tap for instant contacts.",
+    },
+    {
+      t: "Instant updates",
+      s: "Edit once — changes go live across your profile.",
+    },
+    {
+      t: "No app needed",
+      s: "Works on iPhone & Android, right in the browser.",
+    },
+    { t: "Cancel anytime", s: "Stay flexible — no long contracts." },
   ];
 
   return (
     <>
-      <Navbar />
-
       {/* HERO */}
+      <Navbar />
       <div className="home-hero">
         <div className="hero-container">
           <div className="hero-left">
-            <div style={{ width: 'fit-content' }} className="step-badge hero-badge">
+            <div style={{ width: "fit-content" }} className="step-badge hero-badge">
               14 Day <span style={{ fontWeight: 600 }}>Free Trial</span> Now Available
             </div>
 
@@ -96,7 +99,7 @@ export default function Home() {
               Your Business Card. <span className="orange hero-glow">Supercharged</span> to Win More Jobs.
             </h1>
 
-            <p className="desktop-body desktop-body">
+            <p className="desktop-body">
               One tap opens your full profile—photos, services, reviews—and saves your details to their phone. No app. Just jobs.
             </p>
 
@@ -124,7 +127,9 @@ export default function Home() {
                 <img src={pp3} alt="User 3" className="avatar" />
               </div>
               <div className="avatar-text">
-                <p style={{ fontWeight: 900 }} className="desktop-h6">520+</p>
+                <p style={{ fontWeight: 900 }} className="desktop-h6">
+                  520+
+                </p>
                 <p className="desktop-body-xs light-black">Using Daily</p>
               </div>
             </div>
@@ -150,7 +155,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ---------- 3 STEPS (clean: title, subtitle, image bottom) ---------- */}
+      {/* 3 STEPS */}
       <div className="section steps-v1">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
@@ -162,7 +167,6 @@ export default function Home() {
         </div>
 
         <div className="steps-grid-3">
-          {/* Step 1 */}
           <div className="step-tile">
             <div className="step-copy">
               <span className="step-pill">Step 1</span>
@@ -171,13 +175,11 @@ export default function Home() {
                 Set up your profile in minutes by adding details, photos, and branding, then save so it’s always ready to share.
               </p>
             </div>
-
             <div className="step-media">
               <img src={EditProfile} alt="Create your profile" />
             </div>
           </div>
 
-          {/* Step 2 */}
           <div className="step-tile">
             <div className="step-copy">
               <span className="step-pill">Step 2</span>
@@ -186,13 +188,11 @@ export default function Home() {
                 Get your sleek NFC card to share unlimited times, delivered fast and always current with your updated profile.
               </p>
             </div>
-
             <div className="step-media">
               <img src={Section1Image} alt="Order your Konar card" />
             </div>
           </div>
 
-          {/* Step 3 */}
           <div className="step-tile">
             <div className="step-copy">
               <span className="step-pill">Step 3</span>
@@ -201,7 +201,6 @@ export default function Home() {
                 Tap or scan your card to instantly send details, making it easier for clients to save, get in touch, and book faster.
               </p>
             </div>
-
             <div className="step-media">
               <img src={WhyYouNeedThis} alt="Share your page" />
             </div>
@@ -215,19 +214,24 @@ export default function Home() {
         </div>
       </div>
 
-
-
-      {/* ---------- HOW TO SHARE ---------- */}
+      {/* HOW TO SHARE */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">One Profile. <span className='orange'>Shared</span> Every Way.</h2>
-          <h3 className="desktop-body-xs text-center">Four simple ways to get your details in front of clients.</h3>
+          <h2 className="desktop-h3 text-center">
+            One Profile. <span className="orange">Shared</span> Every Way.
+          </h2>
+          <h3 className="desktop-body-xs text-center">
+            Four simple ways to get your details in front of clients.
+          </h3>
         </div>
 
         <div className="share-grid">
           <div className="share-card">
             <div className="share-card-media">
-              <img src={NFCBusinessCard} alt="NFC business card being tapped to share details" />
+              <img
+                src={NFCBusinessCard}
+                alt="NFC business card being tapped to share details"
+              />
             </div>
             <h4 className="desktop-h6">NFC Business Card</h4>
             <p className="desktop-body-xs">Tap to Instantly Share Details With Anyone</p>
@@ -254,24 +258,33 @@ export default function Home() {
               <img src={LinkInBio} alt="Link in bio on social profile" />
             </div>
             <h4 className="desktop-h6">Link In Bio</h4>
-            <p className="desktop-body-xs">Add to Instagram, Facebook, TikTok, or your website.</p>
+            <p className="desktop-body-xs">
+              Add to Instagram, Facebook, TikTok, or your website.
+            </p>
           </div>
         </div>
       </div>
 
-      {/* --- PRICING --- */}
+      {/* PRICING */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">One <span className='orange'>Plan</span>. One <span className='orange'>Card</span>. Endless <span className='orange'>Opportunities</span>.</h2>
-          <h3 className="desktop-body-xs text-center">Start your Power Profile free for 14 days. Add the Konar Card when you’re ready.</h3>
+          <h2 className="desktop-h3 text-center">
+            One <span className="orange">Plan</span>. One <span className="orange">Card</span>. Endless{" "}
+            <span className="orange">Opportunities</span>.
+          </h2>
+          <h3 className="desktop-body-xs text-center">
+            Start your Power Profile free for 14 days. Add the Konar Card when you’re ready.
+          </h3>
         </div>
 
         <div className="pricing-grid nfc-pricing-page">
-          {/* Subscription */}
-          <div className="pricing-card pricing-card--subscription nfc-pricing-subscription" style={{
-            borderRadius: 16,
-            boxShadow: "0px 0px 8px rgba(255, 107, 0, 0.3)",
-          }}>
+          <div
+            className="pricing-card pricing-card--subscription nfc-pricing-subscription"
+            style={{
+              borderRadius: 16,
+              boxShadow: "0px 0px 8px rgba(255, 107, 0, 0.3)",
+            }}
+          >
             <div className="pricing-inner">
               <div className="pricing-content">
                 <div className="pricing-head">
@@ -285,8 +298,12 @@ export default function Home() {
                 <div className="pricing-divider" />
 
                 <div className="pricing-price-row">
-                  <span className="desktop-h1" style={{ paddingRight: 5 }}>£4.95</span>
-                  <span className="desktop-button" style={{ padding: 0 }}>/Month</span>
+                  <span className="desktop-h1" style={{ paddingRight: 5 }}>
+                    £4.95
+                  </span>
+                  <span className="desktop-button" style={{ padding: 0 }}>
+                    /Month
+                  </span>
                 </div>
 
                 <ul className="feature-grid">
@@ -306,7 +323,7 @@ export default function Home() {
                 <Link
                   to="/productandplan/konarsubscription"
                   className="orange-button desktop-button"
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
                 >
                   View Subscription Details
                 </Link>
@@ -314,11 +331,13 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Physical card */}
-          <div className="pricing-card pricing-card--product nfc-pricing-product" style={{
-            borderRadius: 16,
-            boxShadow: "0px 0px 8px rgba(30, 42, 56, 0.3)",
-          }}>
+          <div
+            className="pricing-card pricing-card--product nfc-pricing-product"
+            style={{
+              borderRadius: 16,
+              boxShadow: "0px 0px 8px rgba(30, 42, 56, 0.3)",
+            }}
+          >
             <div className="pricing-inner">
               <div className="pricing-content">
                 <div className="pricing-head">
@@ -335,7 +354,6 @@ export default function Home() {
                   <span className="desktop-h1">£24.95</span>
                 </div>
 
-                {/* Gallery */}
                 <div className="pricing-media-tray">
                   <div className="pricing-media-main">
                     <img src={cardMainImage} alt="Konar Card - White Edition" />
@@ -344,7 +362,7 @@ export default function Home() {
                     {cardThumbs.map((src, i) => (
                       <button
                         key={i}
-                        className={`pricing-media-thumb ${cardMainImage === src ? 'is-active' : ''}`}
+                        className={`pricing-media-thumb ${cardMainImage === src ? "is-active" : ""}`}
                         onClick={() => setCardMainImage(src)}
                         type="button"
                       >
@@ -356,25 +374,24 @@ export default function Home() {
               </div>
 
               <div className="pricing-bottom">
-                <Link
-                  to="/productandplan/konarcard"
-                  className="navy-button desktop-button"
-                  style={{ width: '100%' }}
-                >
+                <Link to="/productandplan/konarcard" className="navy-button desktop-button" style={{ width: "100%" }}>
                   View Card Details
                 </Link>
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
-      {/* People, Reviews, FAQ */}
+      {/* PEOPLE */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Tradies Are Making the <span className="orange">Switch.</span></h2>
-          <h3 className="desktop-body-xs text-center">See how Konar is used every day by real tradespeople.</h3>
+          <h2 className="desktop-h3 text-center">
+            Tradies Are Making the <span className="orange">Switch.</span>
+          </h2>
+          <h3 className="desktop-body-xs text-center">
+            See how Konar is used every day by real tradespeople.
+          </h3>
         </div>
 
         <div className="people-grid">
@@ -393,14 +410,17 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Reviews */}
+      {/* REVIEWS */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">The <span className='orange'>#1 Tool</span> Tradies Are Talking About</h2>
+          <h2 className="desktop-h3 text-center">
+            The <span className="orange">#1 Tool</span> Tradies Are Talking About
+          </h2>
           <h3 className="desktop-body-xs text-center">
             Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
           </h3>
         </div>
+
         <div className="review-container-box">
           <div className="review-container">
             <div className="review-pair">
@@ -412,7 +432,9 @@ export default function Home() {
                 <div className="review-div-person">
                   <img src={pp1} alt="Reviewer" />
                   <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: '#333' }}>Plumber</p>
+                    <p className="desktop-body-xs" style={{ color: "#333" }}>
+                      Plumber
+                    </p>
                     <p className="desktop-body-s">Mark B</p>
                   </div>
                 </div>
@@ -426,7 +448,9 @@ export default function Home() {
                 <div className="review-div-person">
                   <img src={pp2} alt="Reviewer" />
                   <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: '#333' }}>Electrician</p>
+                    <p className="desktop-body-xs" style={{ color: "#333" }}>
+                      Electrician
+                    </p>
                     <p className="desktop-body-s">Jake C</p>
                   </div>
                 </div>
@@ -442,7 +466,9 @@ export default function Home() {
                 <div className="review-div-person">
                   <img src={pp3} alt="Reviewer" />
                   <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: '#333' }}>Builder</p>
+                    <p className="desktop-body-xs" style={{ color: "#333" }}>
+                      Builder
+                    </p>
                     <p className="desktop-body-s">Tom G</p>
                   </div>
                 </div>
@@ -456,7 +482,9 @@ export default function Home() {
                 <div className="review-div-person">
                   <img src={pp4} alt="Reviewer" />
                   <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: '#333' }}>Roofer</p>
+                    <p className="desktop-body-xs" style={{ color: "#333" }}>
+                      Roofer
+                    </p>
                     <p className="desktop-body-s">Sam H</p>
                   </div>
                 </div>
@@ -466,7 +494,9 @@ export default function Home() {
         </div>
 
         <div className="faq-cta">
-          <Link to="/reviews" className="navy-button desktop-button">Read More Reviews</Link>
+          <Link to="/reviews" className="navy-button desktop-button">
+            Read More Reviews
+          </Link>
         </div>
       </div>
 
@@ -568,10 +598,8 @@ export default function Home() {
         </div>
       </div>
 
-
-      <Footer />
-
       {/* HOW IT WORKS - MODAL */}
+      <Footer />
       {isVideoOpen && (
         <div
           id="how-it-works-modal"
@@ -580,7 +608,7 @@ export default function Home() {
           aria-modal="true"
           aria-label="How it works video"
           onClick={(e) => {
-            if (e.target.classList.contains('video-modal-overlay')) setIsVideoOpen(false);
+            if (e.target.classList.contains("video-modal-overlay")) setIsVideoOpen(false);
           }}
         >
           <div className="video-modal" role="document">

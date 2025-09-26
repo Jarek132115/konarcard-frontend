@@ -1,7 +1,7 @@
 /* Buttons */
 .orange-button {
   display: flex;
-  padding: 12px 24px;
+  padding: 10px 20px;
   justify-content: center;
   align-items: center;
   gap: 10px;
@@ -34,7 +34,7 @@
 
 .navy-button {
   display: flex;
-  padding: 12px 24px;
+  padding: 10px 20px;
   justify-content: center;
   align-items: center;
   gap: 10px;
