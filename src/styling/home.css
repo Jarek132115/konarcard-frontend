@@ -1675,15 +1675,17 @@ body {
 /* the horizontal scroller */
 .profiles-scroller {
     --gap: 14px;
-    /* space between cards */
     --h: 350px;
-    /* band height */
+    /* desktop height */
     height: var(--h);
-    overflow: hidden;
     cursor: grab;
     user-select: none;
     touch-action: pan-x;
     width: 100%;
+    overflow-y: visible;
+    /* allow shadows top/bottom */
+    overflow-x: hidden;
+    /* keep only horizontal scroll hidden */
 }
 
 .profiles-scroller.dragging {
@@ -1711,33 +1713,29 @@ body {
 
 /* Pastel pill (outer card) */
 .phone-pill.v4 {
-    --pad: 20px;
-    /* uniform 20px padding */
+    --pad: 15px;
     background: var(--pill, #FFECD2);
     border-radius: 10px;
-    /* smaller radius */
-    box-shadow: 0 10px 22px rgba(30, 42, 56, .10);
     height: calc(100% - 8px);
     padding: var(--pad);
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    /* width derived from height via phone aspect ratio */
-    min-width: calc(((var(--h) - 8px - (var(--pad)*2)) * (9 / 19.5)) + (var(--pad)*2));
+    /* width = phone aspect ratio + padding */
+    min-width: calc((var(--h) - 8px) * (9 / 19.5));
 }
 
 /* White phone viewport */
 .phone-viewport.v4 {
-    height: calc(100% - (var(--pad)*2));
+    height: 100%;
     aspect-ratio: 9 / 19.5;
     width: auto;
     background: #fff;
     border-radius: 10px;
-    /* match request */
     box-shadow:
         inset 0 0 0 1px rgba(30, 42, 56, .08),
-        0 6px 14px rgba(30, 42, 56, .08);
+        0 4px 10px rgba(30, 42, 56, .08);
 }
 
 /* responsive tweaks */
