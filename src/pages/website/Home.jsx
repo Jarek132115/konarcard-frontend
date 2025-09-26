@@ -466,7 +466,7 @@ export default function Home() {
         </div>
 
         <div className="faq-cta">
-          <Link to="/reviews" className="black-button desktop-button">Read More Reviews</Link>
+          <Link to="/reviews" className="navy-button desktop-button">Read More Reviews</Link>
         </div>
       </div>
 
@@ -540,7 +540,7 @@ export default function Home() {
         </div>
 
         <div className="faq-cta">
-          <Link to="/faq" className="black-button desktop-button">Read More Q&A</Link>
+          <Link to="/faq" className="navy-button desktop-button">Read More Q&A</Link>
         </div>
       </div>
 

@@ -344,7 +344,8 @@ body {
 
 .section-list-info {
     display: flex;
-    flex-direction: column
+    flex-direction: column;
+    gap: 5px;
 }
 
 .margin-top-10 {
@@ -1007,7 +1008,9 @@ body {
 
 .stars {
     width: 120px;
-    margin: 0 auto
+    margin: 0 auto;
+    height: 20px;
+    object-fit: cover;
 }
 
 .cta-center-text.review-cta {
