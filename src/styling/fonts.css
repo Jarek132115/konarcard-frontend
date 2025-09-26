@@ -37,38 +37,48 @@ body {
 }
 
 .desktop-h2 {
+  font-family: "Cal Sans", sans-serif;
+  color: #1E2A38;
   font-size: 44px;
   font-weight: bold;
-  line-height: 52px;
-  letter-spacing: -0.5px;
+  line-height: normal;
 }
 
 .desktop-h3 {
+  font-family: "Cal Sans", sans-serif;
+  color: #1E2A38;
   font-size: 36px;
   font-weight: 600;
-  line-height: 44px;
-  letter-spacing: -0.25px;
+  line-height: normal;
+  letter-spacing: 1px;
 }
 
 .desktop-h4 {
+  font-family: "Cal Sans", sans-serif;
+  color: #1E2A38;
   font-size: 28px;
   font-weight: 600;
-  line-height: 36px;
-  letter-spacing: 0;
+  line-height: normal;
+  letter-spacing: 1px;
+
 }
 
 .desktop-h5 {
+  font-family: "Cal Sans", sans-serif;
+  color: #1E2A38;
   font-size: 22px;
   font-weight: 600;
-  line-height: 30px;
-  letter-spacing: 0;
+  line-height: normal;
+  letter-spacing: 1px;
 }
 
 .desktop-h6 {
+  font-family: "Cal Sans", sans-serif;
+  color: #1E2A38;
   font-size: 18px;
   font-weight: 600;
-  line-height: 26px;
-  letter-spacing: 0;
+  line-height: normal;
+  letter-spacing: 1px;
 }
 
 .desktop-body {

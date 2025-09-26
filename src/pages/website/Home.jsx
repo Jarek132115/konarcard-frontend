@@ -96,7 +96,7 @@ export default function Home() {
               Your Business Card. <span className="orange hero-glow">Supercharged</span> to Win More Jobs.
             </h1>
 
-            <p className="desktop-h6 desktop-body">
+            <p className="desktop-body desktop-body">
               One tap opens your full profile—photos, services, reviews—and saves your details to their phone. No app. Just jobs.
             </p>
 
@@ -124,8 +124,8 @@ export default function Home() {
                 <img src={pp3} alt="User 3" className="avatar" />
               </div>
               <div className="avatar-text">
-                <p style={{ fontWeight: 900 }} className="desktop-h6">1k+</p>
-                <p className="desktop-body-xs light-black">Trusted by 1,000+ tradies</p>
+                <p style={{ fontWeight: 900 }} className="desktop-h6">520+</p>
+                <p className="desktop-body-xs light-black">Using Daily</p>
               </div>
             </div>
           </div>
@@ -150,162 +150,78 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ---------- 3 STEPS (redesigned to 3-in-a-row on desktop) ---------- */}
+      {/* ---------- 3 STEPS (clean: title, subtitle, image bottom) ---------- */}
       <div className="section steps-v1">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
-            Get Set Up in <span className="blue">3 Quick</span> <span className="blue">& Easy</span> Steps
+            Get Set Up in <span className="orange">3 Quick</span> <span className="orange">& Easy</span> Steps
           </h2>
-          <h3 className="desktop-h6 text-center">From sign-up to sharing — it only takes minutes.</h3>
+          <h3 className="desktop-body-xs text-center">
+            From sign-up to sharing — it only takes minutes.
+          </h3>
         </div>
 
-        {/* New grid – one row of three on desktop */}
         <div className="steps-grid-3">
           {/* Step 1 */}
           <div className="step-tile">
-            <div className="step-media">
-              <img src={EditProfile} alt="Create your profile" />
-            </div>
             <div className="step-copy">
               <span className="step-pill">Step 1</span>
               <h3 className="desktop-h5">Create Your Profile</h3>
               <p className="desktop-body-s gray step-subtitle">
-                Set up your page, brand it, and publish in minutes.
+                Set up your profile in minutes by adding details, photos, and branding, then save so it’s always ready to share.
               </p>
+            </div>
 
-              <ul className="step-bullet-list">
-                <li>
-                  <span className="blue-dot"></span>
-                  <div>
-                    <p className="desktop-h6">Go live in minutes</p>
-                    <p className="desktop-body-xs gray">Sign up, choose a layout, and publish instantly.</p>
-                  </div>
-                </li>
-                <li>
-                  <span className="blue-dot"></span>
-                  <div>
-                    <p className="desktop-h6">Make it yours</p>
-                    <p className="desktop-body-xs gray">Add your logo, photos, brand colours, and services.</p>
-                  </div>
-                </li>
-                <li>
-                  <span className="blue-dot"></span>
-                  <div>
-                    <p className="desktop-h6">Save my number</p>
-                    <p className="desktop-body-xs gray">One tap saves your contact to their phone.</p>
-                  </div>
-                </li>
-              </ul>
-
-              <div className="section-1-cta">
-                {user ? (
-                  <Link to="/dashboard" className="cta-blue-button desktop-button">
-                    Go to My Dashboard
-                  </Link>
-                ) : (
-                  <Link to="/register" className="cta-blue-button desktop-button">
-                    Create My Profile
-                  </Link>
-                )}
-              </div>
+            <div className="step-media">
+              <img src={EditProfile} alt="Create your profile" />
             </div>
           </div>
 
           {/* Step 2 */}
           <div className="step-tile">
-            <div className="step-media">
-              <img src={Section1Image} alt="Order your Konar card" />
-            </div>
             <div className="step-copy">
               <span className="step-pill">Step 2</span>
               <h3 className="desktop-h5">Order Your Konar Card</h3>
               <p className="desktop-body-s gray step-subtitle">
-                Get a sleek NFC card linked to your live profile.
+                Get your sleek NFC card to share unlimited times, delivered fast and always current with your updated profile.
               </p>
+            </div>
 
-              <ul className="step-bullet-list">
-                <li>
-                  <span className="blue-dot"></span>
-                  <div>
-                    <p className="desktop-h6">One card, unlimited shares</p>
-                    <p className="desktop-body-xs gray">NFC card linked to your live profile.</p>
-                  </div>
-                </li>
-                <li>
-                  <span className="blue-dot"></span>
-                  <div>
-                    <p className="desktop-h6">Fast turnaround</p>
-                    <p className="desktop-body-xs gray">Premium quality, shipped quickly.</p>
-                  </div>
-                </li>
-                <li>
-                  <span className="blue-dot"></span>
-                  <div>
-                    <p className="desktop-h6">Always current</p>
-                    <p className="desktop-body-xs gray">Update your profile anytime — your card stays in sync.</p>
-                  </div>
-                </li>
-              </ul>
-
-              <div className="section-1-cta">
-                <Link to="/productandplan/konarcard" className="cta-blue-button desktop-button">
-                  Order My Konar Card
-                </Link>
-              </div>
+            <div className="step-media">
+              <img src={Section1Image} alt="Order your Konar card" />
             </div>
           </div>
 
           {/* Step 3 */}
           <div className="step-tile">
-            <div className="step-media">
-              <img src={WhyYouNeedThis} alt="Share your page" />
-            </div>
             <div className="step-copy">
               <span className="step-pill">Step 3</span>
               <h3 className="desktop-h5">Share & Win More Work</h3>
               <p className="desktop-body-s gray step-subtitle">
-                Share anywhere and turn new contacts into jobs.
+                Tap or scan your card to instantly send details, making it easier for clients to save, get in touch, and book faster.
               </p>
+            </div>
 
-              <ul className="step-bullet-list">
-                <li>
-                  <span className="blue-dot"></span>
-                  <div>
-                    <p className="desktop-h6">Tap or scan</p>
-                    <p className="desktop-body-xs gray">Share your profile instantly via NFC or QR code.</p>
-                  </div>
-                </li>
-                <li>
-                  <span className="blue-dot"></span>
-                  <div>
-                    <p className="desktop-h6">Send your link</p>
-                    <p className="desktop-body-xs gray">Text, WhatsApp, socials, email — share it everywhere.</p>
-                  </div>
-                </li>
-                <li>
-                  <span className="blue-dot"></span>
-                  <div>
-                    <p className="desktop-h6">Get booked faster</p>
-                    <p className="desktop-body-xs gray">Photos, reviews, and services make the sale for you.</p>
-                  </div>
-                </li>
-              </ul>
-
-              <div className="section-1-cta">
-                <Link to="/share" className="cta-blue-button desktop-button">
-                  Learn How to Share
-                </Link>
-              </div>
+            <div className="step-media">
+              <img src={WhyYouNeedThis} alt="Share your page" />
             </div>
           </div>
         </div>
+
+        <div className="faq-cta">
+          <Link to="/reviews" className="navy-button desktop-button">
+            Read More Reviews
+          </Link>
+        </div>
       </div>
+
+
 
       {/* ---------- HOW TO SHARE ---------- */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">One Profile. <span className='blue'>Shared</span> Every Way.</h2>
-          <h3 className="desktop-h6 text-center">Four simple ways to get your details in front of clients.</h3>
+          <h2 className="desktop-h3 text-center">One Profile. <span className='orange'>Shared</span> Every Way.</h2>
+          <h3 className="desktop-body-xs text-center">Four simple ways to get your details in front of clients.</h3>
         </div>
 
         <div className="share-grid">
@@ -346,8 +262,8 @@ export default function Home() {
       {/* --- PRICING --- */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">One <span className='blue'>Plan</span>. One <span className='blue'>Card</span>. Endless <span className='blue'>Opportunities</span>.</h2>
-          <h3 className="desktop-h6 text-center">Start your Power Profile free for 14 days. Add the Konar Card when you’re ready.</h3>
+          <h2 className="desktop-h3 text-center">One <span className='orange'>Plan</span>. One <span className='orange'>Card</span>. Endless <span className='orange'>Opportunities</span>.</h2>
+          <h3 className="desktop-body-xs text-center">Start your Power Profile free for 14 days. Add the Konar Card when you’re ready.</h3>
         </div>
 
         <div className="pricing-grid nfc-pricing-page">
@@ -452,7 +368,7 @@ export default function Home() {
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Tradies Are Making the <span className="blue">Switch.</span></h2>
-          <h3 className="desktop-h6 text-center">See how Konar is used every day by real tradespeople.</h3>
+          <h3 className="desktop-body-xs text-center">See how Konar is used every day by real tradespeople.</h3>
         </div>
 
         <div className="people-grid">
@@ -475,7 +391,7 @@ export default function Home() {
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">The <span className='blue'>#1 Tool</span> Tradies Are Talking About</h2>
-          <h3 className="desktop-h6 text-center">
+          <h3 className="desktop-body-xs text-center">
             Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
           </h3>
         </div>
@@ -552,7 +468,7 @@ export default function Home() {
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">Frequently <span className='blue'>Asked</span> Questions</h2>
-          <h3 className="desktop-h6 text-center">For any other questions, feel free to reach out.</h3>
+          <h3 className="desktop-body-xs text-center">For any other questions, feel free to reach out.</h3>
         </div>
         <div className="faq-container">
           <div className="faq-column">
