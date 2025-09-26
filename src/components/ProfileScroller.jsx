@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function ProfilesScroller() {
-    // 10 light tones derived from #FFECD2 (same vibe, subtle hue shifts)
+    // 10 light variations around #FFECD2
     const colors = [
         "#FFECD2", "#FFE6C7", "#FFE1BC", "#FFEDDA", "#FFF2E4",
         "#FFDCC2", "#FFE8CE", "#FFF4E6", "#FFE3C6", "#FFEFDB",
@@ -10,10 +10,21 @@ export default function ProfilesScroller() {
     const containerRef = React.useRef(null);
     const trackRef = React.useRef(null);
     const rafRef = React.useRef(null);
-    const hoveringOrPressing = React.useRef(false);
-    const speedPxPerSec = 22; // tweak speed here
 
-    // Auto-scroll + seamless wrap
+    const isPressingRef = React.useRef(false);
+    const allowHoverPauseRef = React.useRef(false); // armed after first real mouse move
+    const hoverPausedRef = React.useRef(false);
+
+    const speedPxPerSec = 26; // a little faster so it feels alive
+
+    // arm hover only after the user actually moves the mouse
+    React.useEffect(() => {
+        const arm = () => (allowHoverPauseRef.current = true);
+        window.addEventListener("mousemove", arm, { once: true });
+        return () => window.removeEventListener("mousemove", arm);
+    }, []);
+
+    // Auto-scroll + wrap
     React.useEffect(() => {
         const el = containerRef.current;
         const track = trackRef.current;
@@ -22,25 +33,24 @@ export default function ProfilesScroller() {
         const half = () => track.scrollWidth / 2;
         let prev = performance.now();
 
-        const frame = (now) => {
+        const tick = (now) => {
             const dt = (now - prev) / 1000;
             prev = now;
 
-            if (!hoveringOrPressing.current) {
+            if (!isPressingRef.current && !hoverPausedRef.current) {
                 el.scrollLeft += speedPxPerSec * dt;
             }
-
             if (el.scrollLeft >= half()) el.scrollLeft -= half();
             if (el.scrollLeft <= 0) el.scrollLeft += half();
 
-            rafRef.current = requestAnimationFrame(frame);
+            rafRef.current = requestAnimationFrame(tick);
         };
 
-        rafRef.current = requestAnimationFrame(frame);
+        rafRef.current = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(rafRef.current);
     }, []);
 
-    // Drag / touch to scroll, hover to pause
+    // press/drag & hover pause
     React.useEffect(() => {
         const el = containerRef.current;
         if (!el) return;
@@ -49,24 +59,26 @@ export default function ProfilesScroller() {
         let startScroll = 0;
 
         const onDown = (e) => {
-            hoveringOrPressing.current = true;
+            isPressingRef.current = true;
             el.classList.add("dragging");
             startX = (e.touches ? e.touches[0].pageX : e.pageX);
             startScroll = el.scrollLeft;
         };
         const onMove = (e) => {
-            if (!hoveringOrPressing.current) return;
+            if (!isPressingRef.current) return;
             const x = (e.touches ? e.touches[0].pageX : e.pageX);
             el.scrollLeft = startScroll - (x - startX);
             e.preventDefault();
         };
         const onUp = () => {
-            hoveringOrPressing.current = false;
+            isPressingRef.current = false;
             el.classList.remove("dragging");
         };
 
-        const onEnter = () => (hoveringOrPressing.current = true);
-        const onLeave = () => (hoveringOrPressing.current = false);
+        const onEnter = () => {
+            if (allowHoverPauseRef.current) hoverPausedRef.current = true;
+        };
+        const onLeave = () => (hoverPausedRef.current = false);
 
         el.addEventListener("mousedown", onDown);
         window.addEventListener("mousemove", onMove, { passive: false });
@@ -101,14 +113,10 @@ export default function ProfilesScroller() {
     return (
         <section className="profiles-edge">
             <div className="profiles-scroller-outer">
-                <div
-                    className="profiles-scroller"
-                    ref={containerRef}
-                    aria-label="Scrolling example profiles"
-                >
+                <div className="profiles-scroller" ref={containerRef} aria-label="Scrolling example profiles">
                     <div className="profiles-track" ref={trackRef}>
                         {renderItems("a")}
-                        {renderItems("b") /* duplicate for seamless loop */}
+                        {renderItems("b")}
                     </div>
                 </div>
             </div>

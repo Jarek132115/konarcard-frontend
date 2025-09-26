@@ -28,6 +28,7 @@ body {
     position: relative;
     width: 100%;
     height: 100vh;
+    max-height: 750px;
     overflow: hidden;
     margin-bottom: 100px;
     display: flex;
@@ -1659,98 +1660,95 @@ body {
     gap: 20px;
 }
 
-/* --- Full-bleed + no vertical clipping just for this section --- */
-.section.profiles-edge {
-    /* ignore the default container width */
-    max-width: 100vw;
-    width: 100vw;
-    padding: 0;
-    /* remove left/right padding from the section */
-    margin: 60px 0;
-    /* keep vertical rhythm */
-    overflow: visible;
-    /* DO NOT clip top/bottom */
-}
+/* ========= Edge-to-edge draggable profile marquee ========= */
 
-/* true edge-to-edge, independent of any parent padding */
+/* make the scroller truly edge-to-edge regardless of parent padding */
 .profiles-scroller-outer {
     position: relative;
     left: 50%;
     right: 50%;
-    width: 100svw;
-    /* use small-viewport width to avoid scrollbar math */
-    margin-left: -50svw;
-    margin-right: -50svw;
-    overflow: visible;
-    /* show shadows above/below */
+    width: 100vw;
+    margin-left: -50vw;
+    margin-right: -50vw;
 }
 
-/* scroller: only hide horizontal overflow (we animate scrollLeft) */
+/* the horizontal scroller */
 .profiles-scroller {
-    --gap: 10px;
-    --card-w: 280px;
-    overflow-x: hidden;
-    /* hide only sideways (we loop it) */
-    overflow-y: visible;
-    /* let the pill/phone + shadows show */
-    white-space: nowrap;
+    --gap: 14px;
+    /* space between cards */
+    --h: 350px;
+    /* band height */
+    height: var(--h);
+    overflow: hidden;
     cursor: grab;
     user-select: none;
     touch-action: pan-x;
+    width: 100%;
 }
 
-/* track + cards (unchanged, but ensure no clipping) */
+.profiles-scroller.dragging {
+    cursor: grabbing;
+}
+
+/* hide scrollbars */
+.profiles-scroller::-webkit-scrollbar {
+    display: none;
+}
+
+.profiles-scroller {
+    scrollbar-width: none;
+}
+
+/* track that moves/loops */
 .profiles-track {
     display: inline-flex;
     gap: var(--gap);
-    padding: 8px 0 16px;
-    /* bit more bottom breathing room for shadow */
-    will-change: transform;
+    white-space: nowrap;
+    height: 100%;
+    align-items: center;
+    padding: 4px 0;
 }
 
+/* Pastel pill (outer card) */
 .phone-pill.v4 {
+    --pad: 20px;
+    /* uniform 20px padding */
     background: var(--pill, #FFECD2);
-    border-radius: 28px;
-    padding: 18px;
-    box-shadow: 0 12px 24px rgba(30, 42, 56, .10);
+    border-radius: 10px;
+    /* smaller radius */
+    box-shadow: 0 10px 22px rgba(30, 42, 56, .10);
+    height: calc(100% - 8px);
+    padding: var(--pad);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: calc(var(--card-w) + 36px);
-    min-width: calc(var(--card-w) + 36px);
+
+    /* width derived from height via phone aspect ratio */
+    min-width: calc(((var(--h) - 8px - (var(--pad)*2)) * (9 / 19.5)) + (var(--pad)*2));
 }
 
-/* keep the height cap without clipping the section */
-.profiles-edge {
-    max-height: 500px;
-}
-
-.phone-pill.v4,
+/* White phone viewport */
 .phone-viewport.v4 {
-    max-height: 460px;
+    height: calc(100% - (var(--pad)*2));
+    aspect-ratio: 9 / 19.5;
+    width: auto;
+    background: #fff;
+    border-radius: 10px;
+    /* match request */
+    box-shadow:
+        inset 0 0 0 1px rgba(30, 42, 56, .08),
+        0 6px 14px rgba(30, 42, 56, .08);
 }
 
-/* responsive so 4–5 are visible on tablet/phone */
-@media (max-width: 1100px) {
+/* responsive tweaks */
+@media (max-width: 1000px) {
     .profiles-scroller {
-        --card-w: 220px;
+        --h: 300px;
     }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 600px) {
     .profiles-scroller {
-        --card-w: 190px;
-    }
-}
-
-@media (max-width: 640px) {
-    .profiles-scroller {
-        --card-w: 160px;
-    }
-}
-
-@media (max-width: 420px) {
-    .profiles-scroller {
-        --card-w: 145px;
+        --h: 260px;
     }
 }
