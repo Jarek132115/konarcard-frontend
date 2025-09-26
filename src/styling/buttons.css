@@ -64,6 +64,12 @@
   box-shadow: 0px 6px 16px rgba(30, 42, 56, 0.4);
 }
 
+@media (max-width: 1000px) {
+  .navy-button {
+    width: 100%;
+  }
+}
+
 
 
 .blue-button-login {

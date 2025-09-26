@@ -210,7 +210,7 @@ export default function Home() {
 
         <div className="faq-cta">
           <Link to="/reviews" className="navy-button desktop-button">
-            Read More Reviews
+            Watch How It Works
           </Link>
         </div>
       </div>
