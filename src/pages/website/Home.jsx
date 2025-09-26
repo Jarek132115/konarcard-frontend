@@ -247,18 +247,37 @@ export default function Home() {
         <div className="realworld-comparison">
           <div className="comparison-box">
             <span className="comparison-badge old">The old way</span>
-            <ul>
-              <li>Type your phone & email into their phone</li>
-              <li>Scroll your camera roll for examples</li>
-              <li>Hope they don’t lose your details</li>
+            <ul className="dot-list">
+              <li>
+                <span className="blue-dot bullet-dot" aria-hidden="true" />
+                <span>Type your phone &amp; email into their phone</span>
+              </li>
+              <li>
+                <span className="blue-dot bullet-dot" aria-hidden="true" />
+                <span>Scroll your camera roll for examples</span>
+              </li>
+              <li>
+                <span className="blue-dot bullet-dot" aria-hidden="true" />
+                <span>Hope they don’t lose your details</span>
+              </li>
             </ul>
           </div>
+
           <div className="comparison-box">
             <span className="comparison-badge new">The Konar way</span>
-            <ul>
-              <li>Tap once — they get your full profile</li>
-              <li>Photos, services, reviews, and contact — saved</li>
-              <li>Follow-ups are faster and more professional</li>
+            <ul className="dot-list">
+              <li>
+                <span className="blue-dot bullet-dot" aria-hidden="true" />
+                <span>Tap once — they get your full profile</span>
+              </li>
+              <li>
+                <span className="blue-dot bullet-dot" aria-hidden="true" />
+                <span>Photos, services, reviews, and contact — saved</span>
+              </li>
+              <li>
+                <span className="blue-dot bullet-dot" aria-hidden="true" />
+                <span>Follow-ups are faster and more professional</span>
+              </li>
             </ul>
           </div>
         </div>
@@ -269,7 +288,9 @@ export default function Home() {
             <div className="realworld-card-icon">👷</div>
             <div className="realworld-card-text">
               <h4>On Site, With a Client</h4>
-              <p>Tap your KonarCard. Their phone opens your profile and saves your details instantly.</p>
+              <p className="equal">
+                Tap your KonarCard. Their phone opens your profile and saves your details instantly.
+              </p>
             </div>
           </div>
 
@@ -277,7 +298,9 @@ export default function Home() {
             <div className="realworld-card-icon">📄</div>
             <div className="realworld-card-text">
               <h4>After a Quote</h4>
-              <p>Send the link in messages so they can revisit your services and reviews while deciding.</p>
+              <p className="equal">
+                Send the link in messages so they can revisit your services and reviews while deciding.
+              </p>
             </div>
           </div>
 
@@ -285,23 +308,29 @@ export default function Home() {
             <div className="realworld-card-icon">🤝</div>
             <div className="realworld-card-text">
               <h4>Networking / Trade Counter</h4>
-              <p>No stacks of cards. One tap per person, unlimited times.</p>
+              <p className="equal">
+                No stacks of cards. One tap per person, unlimited times.
+              </p>
             </div>
           </div>
 
           <div className="realworld-card">
             <div className="realworld-card-icon">🚐</div>
             <div className="realworld-card-text">
-              <h4>Van QR & Site Board</h4>
-              <p>Print your QR. Passers-by scan to view your work and save your number.</p>
+              <h4>Van QR &amp; Site Board</h4>
+              <p className="equal">
+                Print your QR. Passers-by scan to view your work and save your number.
+              </p>
             </div>
           </div>
 
           <div className="realworld-card">
             <div className="realworld-card-icon">📱</div>
             <div className="realworld-card-text">
-              <h4>Social & Link In Bio</h4>
-              <p>Add your Konar link to Instagram, Facebook, and TikTok to convert views into enquiries.</p>
+              <h4>Social &amp; Link In Bio</h4>
+              <p className="equal">
+                Add your Konar link to Instagram, Facebook, and TikTok to convert views into enquiries.
+              </p>
             </div>
           </div>
 
@@ -309,7 +338,9 @@ export default function Home() {
             <div className="realworld-card-icon">⚡</div>
             <div className="realworld-card-text">
               <h4>Updates in Seconds</h4>
-              <p>Change prices or photos once — your card shares the latest version everywhere.</p>
+              <p className="equal">
+                Change prices or photos once — your card shares the latest version everywhere.
+              </p>
             </div>
           </div>
         </div>
@@ -320,7 +351,6 @@ export default function Home() {
           </Link>
         </div>
       </div>
-
 
       {/* WHY KONARCARD VS PAPER */}
       <div className="section why-vs-paper">
