@@ -322,7 +322,7 @@ body {
 }
 
 .section-1-title {
-    margin-bottom: 40px
+    margin-bottom: 20px
 }
 
 .section-1-content {
@@ -766,9 +766,9 @@ body {
 }
 
 .pricing-badge {
+    font-family: "Cal Sans", sans-serif;
     background: #fff;
     color: #111;
-    font-weight: 700;
     font-size: 12px;
     padding: 8px 12px;
     border-radius: 6px;
@@ -835,7 +835,7 @@ body {
     overflow: hidden;
     background: #0b0b0b;
     border: 1px solid rgba(255, 255, 255, .08);
-    aspect-ratio: 4/3
+    aspect-ratio: 4/2.5
 }
 
 .pricing-media-main img {
@@ -914,7 +914,7 @@ body {
     list-style: none;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px 20px;
+    gap: 20px 20px;
     margin: 16px 0 0;
     padding: 0
 }

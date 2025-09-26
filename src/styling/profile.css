@@ -48,15 +48,14 @@
 
 /* Blue pill (same style used elsewhere) */
 .pricing-badge.pill-blue {
+    font-family: "Cal Sans", sans-serif;
     background: #e9eef6;
     color: #1e3a8a;
     border: 1px solid rgba(0, 0, 0, .06);
-    font-weight: 700;
     font-size: 12px;
-    padding: 6px 10px;
+    padding: 6px 12px;
     border-radius: 999px;
     white-space: nowrap;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .05);
 }
 
 /* Dividers (top and between sections) */

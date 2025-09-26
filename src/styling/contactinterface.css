@@ -72,12 +72,12 @@
 }
 
 .pill-blue-solid {
-    background: #0a66ff;
+    font-family: "Cal Sans", sans-serif;
+    background: #e66f00;
     color: #fff;
-    border: 1px solid #0a66ff;
-    font-weight: 700;
+    border: 1px solid #e66f00;
     font-size: 12px;
-    padding: 6px 10px;
+    padding: 6px 12x;
     border-radius: 999px;
     white-space: nowrap;
 }

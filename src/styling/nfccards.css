@@ -116,12 +116,10 @@
   background: #e9eef6;
   color: #1e3a8a;
   border: 1px solid rgba(0, 0, 0, .06);
-  font-weight: 700;
   font-size: 12px;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 999px;
   white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, .05);
 }
 
 .nfc-pricing-page .pricing-divider {
@@ -271,24 +269,24 @@
 
 /* Solid blue pill (like the Product & Plan page) */
 .pill-blue-solid {
-  background: #0a66ff;
+  font-family: "Cal Sans", sans-serif;
+  background: #e66f00;
   color: #fff;
-  border: 1px solid #0a66ff;
-  font-weight: 700;
+  border: 1px solid #e66f00;
   font-size: 12px;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 999px;
   white-space: nowrap;
 }
 
 /* Solid black pill option */
 .pill-black {
-  background: #111;
+  font-family: "Cal Sans", sans-serif;
+  background: #1E2A38;
   color: #fff;
-  border: 1px solid #111;
-  font-weight: 700;
+  border: 1px solid #1E2A38;
   font-size: 12px;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 999px;
   white-space: nowrap;
 }

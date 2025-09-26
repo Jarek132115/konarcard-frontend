@@ -282,8 +282,8 @@ export default function Home() {
                 <div className="pricing-divider" />
 
                 <div className="pricing-price-row">
-                  <span className="desktop-h3" style={{ paddingRight: 5 }}>£4.95</span>
-                  <span className="desktop-button" style={{ padding: 0 }}>/Month - After 14 Days</span>
+                  <span className="desktop-h1" style={{ paddingRight: 5 }}>£4.95</span>
+                  <span className="desktop-button" style={{ padding: 0 }}>/Month</span>
                 </div>
 
                 <ul className="feature-grid">
@@ -326,7 +326,7 @@ export default function Home() {
                 <div className="pricing-divider" />
 
                 <div className="pricing-price-row">
-                  <span className="desktop-h3">£24.95</span>
+                  <span className="desktop-h1">£24.95</span>
                 </div>
 
                 {/* Gallery */}
