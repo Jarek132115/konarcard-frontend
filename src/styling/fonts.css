@@ -29,10 +29,10 @@ body {
 
 /* Typography Base – Desktop (default) */
 .desktop-h1 {
+  font-family: "Cal Sans", sans-serif;
   font-size: 48px;
   font-weight: bold;
   line-height: 54px;
-  letter-spacing: -2px;
 }
 
 .desktop-h2 {
