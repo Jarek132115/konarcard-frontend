@@ -8,22 +8,21 @@
   <meta name="description"
     content="Build a professional digital profile with an NFC business card. Konar Card lets tradespeople share services, reviews and contact details in one tap." />
 
-  <!-- Google Fonts: preconnect + async load to avoid render blocking -->
+  <!-- Google Fonts: preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- Preload the stylesheet as a non-blocking resource -->
+  <!-- Existing async-loaded families -->
   <link rel="preload" as="style"
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@100..900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Cal+Sans&display=swap" />
-
-  <!-- Load it asynchronously, then switch to 'all' -->
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@100..900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" />
   <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@100..900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Cal+Sans&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@100..900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
     media="print" onload="this.media='all'" />
-
-  <!-- No-JS fallback -->
   <noscript>
     <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@100..900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Cal+Sans&display=swap" />
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@100..900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" />
   </noscript>
+
+  <!-- Add Cal Sans in a standard, blocking stylesheet to avoid onload issues -->
+  <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet" />
 </head>
