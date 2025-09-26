@@ -1750,3 +1750,251 @@ body {
         --h: 260px;
     }
 }
+
+/* ===== Why KonarCard vs Paper ===== */
+.why-vs-paper {
+    margin-top: 60px;
+}
+
+.why-vs-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+    align-items: center;
+}
+
+@media (max-width: 1000px) {
+    .why-vs-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+/* Split visual container */
+.vs-media {
+    width: 100%;
+}
+
+.vs-split {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #eee;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .08);
+    min-height: 280px;
+}
+
+/* Left = “paper stack” (CSS illustration) */
+.vs-pane.vs-left {
+    background:
+        repeating-linear-gradient(to bottom,
+            #ffffff 0 28px,
+            #f6f6f6 28px 29px);
+    position: relative;
+}
+
+.vs-pane.vs-left::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, .05), transparent 30%),
+        radial-gradient(120% 40% at 50% 120%, rgba(0, 0, 0, .10), transparent 60%);
+    pointer-events: none;
+}
+
+/* Right = KonarCard image */
+.vs-pane.vs-right {
+    background: #FAFBFF;
+    display: grid;
+    place-items: center;
+}
+
+.vs-pane.vs-right img {
+    width: 86%;
+    height: auto;
+    display: block;
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(30, 42, 56, .18);
+}
+
+/* Center "VS" badge */
+.vs-badge {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    letter-spacing: .5px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .18);
+    border: 2px solid #fff;
+    z-index: 2;
+}
+
+@media (max-width: 600px) {
+    .vs-badge {
+        width: 46px;
+        height: 46px;
+        font-size: 14px;
+    }
+}
+
+/* Copy + bullets */
+.vs-copy {
+    width: 100%;
+}
+
+.vs-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.vs-bullets li {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 12px;
+    align-items: start;
+}
+
+.vs-ico {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .10);
+}
+
+.vs-ico.vs-neg {
+    background: #FFE5D6;
+    color: #D14A00;
+}
+
+.vs-ico.vs-pos {
+    background: #DFF7DF;
+    color: #0F7A0F;
+}
+
+.vs-cta {
+    margin-top: 16px;
+}
+
+/* ===========================
+   REAL WORLD SECTION
+   =========================== */
+.realworld-section {
+    padding: 60px 20px;
+    background: #fff8f5;
+}
+
+.realworld-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+/* Comparison row */
+.realworld-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.comparison-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 14px rgba(30, 42, 56, .08);
+}
+
+.comparison-box ul {
+    margin: 10px 0 0;
+    padding-left: 18px;
+    color: #444;
+}
+
+.comparison-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+}
+
+.comparison-badge.old {
+    background: #ffe2d2;
+    color: #c43b00;
+}
+
+.comparison-badge.new {
+    background: #d7f6df;
+    color: #117733;
+}
+
+/* Grid of use cases */
+.realworld-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+.realworld-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 14px rgba(30, 42, 56, .08);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.realworld-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(30, 42, 56, .12);
+}
+
+.realworld-card-icon {
+    flex-shrink: 0;
+    font-size: 28px;
+    line-height: 1;
+}
+
+.realworld-card-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.realworld-card-text h4 {
+    margin: 0 0 6px;
+    font-weight: 700;
+    color: #1E2A38;
+}
+
+.realworld-card-text p {
+    margin: 0;
+    color: #555;
+    line-height: 1.4;
+}
+
+.realworld-cta {
+    text-align: center;
+}

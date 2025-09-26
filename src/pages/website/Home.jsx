@@ -231,6 +231,160 @@ export default function Home() {
         </div>
       </div>
 
+      {/* REAL WORLD USE CASES */}
+      <div className="section realworld-section">
+        <div className="realworld-header">
+          <h2 className="desktop-h3 text-center">
+            How You’ll Use It <span className="orange">In The Real World</span>
+          </h2>
+          <h3 className="desktop-body-xs text-center">
+            No more typing your number, digging for photos, or swapping paper.
+            It’s 2026 — time for a change.
+          </h3>
+        </div>
+
+        {/* Comparison Row */}
+        <div className="realworld-comparison">
+          <div className="comparison-box">
+            <span className="comparison-badge old">The old way</span>
+            <ul>
+              <li>Type your phone & email into their phone</li>
+              <li>Scroll your camera roll for examples</li>
+              <li>Hope they don’t lose your details</li>
+            </ul>
+          </div>
+          <div className="comparison-box">
+            <span className="comparison-badge new">The Konar way</span>
+            <ul>
+              <li>Tap once — they get your full profile</li>
+              <li>Photos, services, reviews, and contact — saved</li>
+              <li>Follow-ups are faster and more professional</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Use Case Grid */}
+        <div className="realworld-grid">
+          <div className="realworld-card">
+            <div className="realworld-card-icon">👷</div>
+            <div className="realworld-card-text">
+              <h4>On Site, With a Client</h4>
+              <p>Tap your KonarCard. Their phone opens your profile and saves your details instantly.</p>
+            </div>
+          </div>
+
+          <div className="realworld-card">
+            <div className="realworld-card-icon">📄</div>
+            <div className="realworld-card-text">
+              <h4>After a Quote</h4>
+              <p>Send the link in messages so they can revisit your services and reviews while deciding.</p>
+            </div>
+          </div>
+
+          <div className="realworld-card">
+            <div className="realworld-card-icon">🤝</div>
+            <div className="realworld-card-text">
+              <h4>Networking / Trade Counter</h4>
+              <p>No stacks of cards. One tap per person, unlimited times.</p>
+            </div>
+          </div>
+
+          <div className="realworld-card">
+            <div className="realworld-card-icon">🚐</div>
+            <div className="realworld-card-text">
+              <h4>Van QR & Site Board</h4>
+              <p>Print your QR. Passers-by scan to view your work and save your number.</p>
+            </div>
+          </div>
+
+          <div className="realworld-card">
+            <div className="realworld-card-icon">📱</div>
+            <div className="realworld-card-text">
+              <h4>Social & Link In Bio</h4>
+              <p>Add your Konar link to Instagram, Facebook, and TikTok to convert views into enquiries.</p>
+            </div>
+          </div>
+
+          <div className="realworld-card">
+            <div className="realworld-card-icon">⚡</div>
+            <div className="realworld-card-text">
+              <h4>Updates in Seconds</h4>
+              <p>Change prices or photos once — your card shares the latest version everywhere.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="faq-cta">
+          <Link to="/register" className="navy-button desktop-button">
+            Get Your KonarCard
+          </Link>
+        </div>
+      </div>
+
+
+      {/* WHY KONARCARD VS PAPER */}
+      <div className="section why-vs-paper">
+        <div className="section-1-title">
+          <h2 className="desktop-h3 text-center">
+            Stop <span className="orange">Wasting Money</span> on Paper Business Cards
+          </h2>
+          <h3 className="desktop-body-xs text-center">
+            KonarCard is a smarter, up-to-date, eco-friendly way to share your details.
+          </h3>
+        </div>
+
+        <div className="why-vs-grid">
+          {/* Split visual */}
+          <div className="vs-media" aria-hidden="true">
+            <div className="vs-split">
+              <div className="vs-pane vs-left" role="img" aria-label="Pile of paper business cards"></div>
+
+              <div className="vs-pane vs-right">
+                <img
+                  src={NFCBusinessCard}
+                  alt="KonarCard — tap to share instantly"
+                  loading="lazy"
+                />
+              </div>
+
+              <div className="vs-badge" aria-hidden="true">VS</div>
+            </div>
+          </div>
+
+          {/* Copy & bullets */}
+          <div className="vs-copy">
+            <ul className="vs-bullets">
+              <li>
+                <span className="vs-ico vs-neg" aria-hidden="true">✖</span>
+                <div>
+                  <p className="desktop-body-s"><strong>Paper cards get lost or binned.</strong></p>
+                  <p className="desktop-body-xs gray">Most never make it into contacts.</p>
+                </div>
+              </li>
+              <li>
+                <span className="vs-ico vs-neg" aria-hidden="true">✖</span>
+                <div>
+                  <p className="desktop-body-s"><strong>Updating details means reprinting.</strong></p>
+                  <p className="desktop-body-xs gray">Wasted time and ongoing costs.</p>
+                </div>
+              </li>
+              <li>
+                <span className="vs-ico vs-pos" aria-hidden="true">✓</span>
+                <div>
+                  <p className="desktop-body-s"><strong>KonarCard is eco-friendly & always up-to-date.</strong></p>
+                  <p className="desktop-body-xs gray">One tap, share forever — no app needed.</p>
+                </div>
+              </li>
+            </ul>
+
+            <div className="vs-cta">
+              <Link to="/register" className="orange-button desktop-button">Make the Switch</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
       {/* HOW TO SHARE */}
       <div className="section">
         <div className="section-1-title">
