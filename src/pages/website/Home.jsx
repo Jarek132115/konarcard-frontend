@@ -270,7 +270,7 @@ export default function Home() {
           {/* Subscription */}
           <div className="pricing-card pricing-card--subscription nfc-pricing-subscription" style={{
             borderRadius: 16,
-            boxShadow: "0px 4px 12px rgba(255, 107, 0, 0.3)",
+            boxShadow: "0px 0px 8px rgba(255, 107, 0, 0.3)",
           }}>
             <div className="pricing-inner">
               <div className="pricing-content">
@@ -317,7 +317,7 @@ export default function Home() {
           {/* Physical card */}
           <div className="pricing-card pricing-card--product nfc-pricing-product" style={{
             borderRadius: 16,
-            boxShadow: "0px 4px 12px rgba(30, 42, 56, 0.3)",
+            boxShadow: "0px 0px 8px rgba(30, 42, 56, 0.3)",
           }}>
             <div className="pricing-inner">
               <div className="pricing-content">
