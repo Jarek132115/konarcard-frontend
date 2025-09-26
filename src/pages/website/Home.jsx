@@ -268,7 +268,10 @@ export default function Home() {
 
         <div className="pricing-grid nfc-pricing-page">
           {/* Subscription */}
-          <div className="pricing-card pricing-card--subscription nfc-pricing-subscription" style={{ borderRadius: 16 }}>
+          <div className="pricing-card pricing-card--subscription nfc-pricing-subscription" style={{
+            borderRadius: 16,
+            boxShadow: "0px 4px 12px rgba(255, 107, 0, 0.3)",
+          }}>
             <div className="pricing-inner">
               <div className="pricing-content">
                 <div className="pricing-head">
@@ -302,7 +305,7 @@ export default function Home() {
               <div className="pricing-bottom">
                 <Link
                   to="/productandplan/konarsubscription"
-                  className="cta-blue-button desktop-button"
+                  className="orange-button desktop-button"
                   style={{ width: '100%' }}
                 >
                   View Subscription Details
@@ -312,7 +315,10 @@ export default function Home() {
           </div>
 
           {/* Physical card */}
-          <div className="pricing-card pricing-card--product nfc-pricing-product" style={{ borderRadius: 16 }}>
+          <div className="pricing-card pricing-card--product nfc-pricing-product" style={{
+            borderRadius: 16,
+            boxShadow: "0px 4px 12px rgba(30, 42, 56, 0.3)",
+          }}>
             <div className="pricing-inner">
               <div className="pricing-content">
                 <div className="pricing-head">
@@ -352,7 +358,7 @@ export default function Home() {
               <div className="pricing-bottom">
                 <Link
                   to="/productandplan/konarcard"
-                  className="cta-black-button desktop-button"
+                  className="navy-button desktop-button"
                   style={{ width: '100%' }}
                 >
                   View Card Details
@@ -367,7 +373,7 @@ export default function Home() {
       {/* People, Reviews, FAQ */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Tradies Are Making the <span className="blue">Switch.</span></h2>
+          <h2 className="desktop-h3 text-center">Tradies Are Making the <span className="orange">Switch.</span></h2>
           <h3 className="desktop-body-xs text-center">See how Konar is used every day by real tradespeople.</h3>
         </div>
 
@@ -390,7 +396,7 @@ export default function Home() {
       {/* Reviews */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">The <span className='blue'>#1 Tool</span> Tradies Are Talking About</h2>
+          <h2 className="desktop-h3 text-center">The <span className='orange'>#1 Tool</span> Tradies Are Talking About</h2>
           <h3 className="desktop-body-xs text-center">
             Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
           </h3>
@@ -467,7 +473,7 @@ export default function Home() {
       {/* FAQ */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Frequently <span className='blue'>Asked</span> Questions</h2>
+          <h2 className="desktop-h3 text-center">Frequently <span className='orange'>Asked</span> Questions</h2>
           <h3 className="desktop-body-xs text-center">For any other questions, feel free to reach out.</h3>
         </div>
         <div className="faq-container">
