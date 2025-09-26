@@ -936,7 +936,7 @@ body {
 .blue-dot {
     width: 10px;
     height: 10px;
-    border-radius: 999px;
+    border-radius: 2px;
     background: #e66f00;
     margin-top: 6px;
     flex: 0 0 10px
@@ -1650,4 +1650,11 @@ body {
         border-color: #1E2A38;
         box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
     }
+}
+
+.section-list {
+    display: flex;
+    align-items: flex-start;
+    /* so text aligns from top */
+    gap: 20px;
 }

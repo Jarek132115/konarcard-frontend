@@ -7,6 +7,10 @@
     justify-content: center;
 }
 
+.footer-container {
+    background-color: #fff;
+}
+
 .footer-info-right {
     display: flex;
     gap: 60px;

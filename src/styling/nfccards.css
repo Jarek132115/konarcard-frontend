@@ -157,7 +157,7 @@
 .nfc-pricing-page .blue-dot {
   width: 10px;
   height: 10px;
-  border-radius: 999px;
+  border-radius: 2px;
   background: #e66f00;
   margin-top: 6px;
   /* align to first line */

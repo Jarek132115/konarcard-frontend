@@ -473,76 +473,101 @@ export default function Home() {
       {/* FAQ */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Frequently <span className='orange'>Asked</span> Questions</h2>
-          <h3 className="desktop-body-xs text-center">For any other questions, feel free to reach out.</h3>
+          <h2 className="desktop-h3 text-center">
+            Frequently <span className="orange">Asked</span> Questions
+          </h2>
+          <h3 className="desktop-body-xs text-center">
+            For any other questions, feel free to reach out.
+          </h3>
         </div>
+
         <div className="faq-container">
           <div className="faq-column">
             <div className="section-list">
-              <div className=" icon-white"><img src={IDCardIcon} className="icon" alt='icon' /></div>
+              <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">What is the Konar NFC business card?</p>
-                <p className="desktop-body-xs">A reusable card with an NFC chip that opens your Konar profile with a tap—no app, no battery, no fuss.</p>
+                <p className="desktop-body-xs">
+                  A reusable card with an NFC chip that opens your Konar profile with a tap—no app, no battery, no fuss.
+                </p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={NFCIcon} className="icon" alt='icon' /></div>
+              <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">How does the tap actually work?</p>
-                <p className="desktop-body-xs">The phone’s NFC reader powers the chip and instantly launches your live profile link.</p>
-              </div>
-            </div >
-            <div className="section-list">
-              <div className=" icon-white"><img src={QRCode} className="icon" alt='icon' /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">What if someone can’t tap?</p>
-                <p className="desktop-body-xs">Every card also has a QR code and a shareable link—so there’s always a backup.</p>
+                <p className="desktop-body-xs">
+                  The phone’s NFC reader powers the chip and instantly launches your live profile link.
+                </p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={ProfileIcon} className="icon" alt='icon' /></div>
+              <span className="blue-dot" aria-hidden="true"></span>
+              <div className="section-list-info">
+                <p className="desktop-h6">What if someone can’t tap?</p>
+                <p className="desktop-body-xs">
+                  Every card also has a QR code and a shareable link—so there’s always a backup.
+                </p>
+              </div>
+            </div>
+            <div className="section-list">
+              <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">What can my profile include?</p>
-                <p className="desktop-body-xs">Your name, job title, bio, photos, services with pricing, reviews, and contact details.</p>
+                <p className="desktop-body-xs">
+                  Your name, job title, bio, photos, services with pricing, reviews, and contact details.
+                </p>
               </div>
             </div>
           </div>
+
           <div className="faq-column">
             <div className="section-list">
-              <div className=" icon-white"><img src={PencilIcon} className="icon" alt='icon' /></div>
+              <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">Can I edit my page later?</p>
-                <p className="desktop-body-xs">Yes. Update info, images, services, or layout anytime—changes go live instantly.</p>
+                <p className="desktop-body-xs">
+                  Yes. Update info, images, services, or layout anytime—changes go live instantly.
+                </p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={BoltIcon} className="icon" alt='icon' /></div>
+              <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">How do I share my page?</p>
-                <p className="desktop-body-xs">Tap your card, show the QR code, or copy your unique link to send anywhere.</p>
+                <p className="desktop-body-xs">
+                  Tap your card, show the QR code, or copy your unique link to send anywhere.
+                </p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={TimeIcon} className="icon" alt='icon' /></div>
+              <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">How does the free trial work?</p>
-                <p className="desktop-body-xs">The free trial includes the same features as the subscription. If it ends and you don’t subscribe, your page will no longer show.</p>
+                <p className="desktop-body-xs">
+                  The free trial includes the same features as the subscription. If it ends and you don’t subscribe, your page will no longer show.
+                </p>
               </div>
             </div>
             <div className="section-list">
-              <div className=" icon-white"><img src={ShieldIcon} className="icon" alt='icon' /></div>
+              <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">What happens if I cancel?</p>
-                <p className="desktop-body-xs">You’ll keep access until the end of the billing period. After that, your page won’t show until you subscribe again.</p>
+                <p className="desktop-body-xs">
+                  You’ll keep access until the end of the billing period. After that, your page won’t show until you subscribe again.
+                </p>
               </div>
             </div>
           </div>
         </div>
 
         <div className="faq-cta">
-          <Link to="/faq" className="navy-button desktop-button">Read More Q&A</Link>
+          <Link to="/faq" className="navy-button desktop-button">
+            Read More Q&amp;A
+          </Link>
         </div>
       </div>
+
 
       <Footer />
 
