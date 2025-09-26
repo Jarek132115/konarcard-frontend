@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import ProfileScroller from "../../components/ProfileScroller";
 
 import Section1Image from "../../assets/images/Section-1-Image.png";
 import EditProfile from "../../assets/images/Edit-Profile.jpg";
@@ -154,6 +155,22 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* PROFILES — EDGE-TO-EDGE, DRAGGABLE, LOOPING SCROLLER */}
+      <div className="section profiles-edge">
+        <div className="section-1-title">
+          <h2 className="desktop-h3 text-center">
+            Real <span className="orange">Profiles</span> In Action
+          </h2>
+          <h3 className="desktop-body-xs text-center">
+            A snapshot of how tradies present their work.
+          </h3>
+        </div>
+
+        {/* Edge-to-edge scroller */}
+        <ProfileScroller />
+      </div>
+
 
       {/* 3 STEPS */}
       <div className="section steps-v1">
