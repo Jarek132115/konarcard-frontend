@@ -35,22 +35,15 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     return (
         <>
-            {/* Mobile overlay (matches navbar) */}
             <div
                 className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`}
                 onClick={closeSidebar}
             />
 
             <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                {/* Header row — desktop shows text brand, mobile shows logo + ✕ with grey divider */}
                 <div className="brand-header">
-                    {/* Desktop brand text (Cal Sans) */}
                     <span className="brand-text">KonarCard</span>
-
-                    {/* Mobile logo */}
                     <img src={LogoIcon} alt="Konar" className="brand-logo" />
-
-                    {/* Mobile close button — exact same as navbar (✕) */}
                     <button
                         className="mobile-close mobile-only"
                         aria-label="Close menu"
@@ -61,84 +54,95 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     </button>
                 </div>
 
-                {/* Scroll area / content */}
                 <div className="sidebar-content-wrapper">
+                    {/* Divider ABOVE Home */}
+                    <div className="mobile-divider mobile-only" aria-hidden="true" />
+
                     <nav className="links-stack">
                         <Link
                             to="/myprofile"
                             onClick={closeSidebar}
-                            className={`sidebar-button ${isActive('/myprofile') ? 'active-sidebar-link' : ''}`}
+                            className={`sidebar-button desktop-h4 ${isActive('/myprofile') ? 'active' : ''
+                                }`}
                         >
-                            <img src={homeInterface} alt="" className="icon" />
-                            <span className="label">Home</span>
+                            Home
                         </Link>
 
                         <Link
                             to="/myorders"
                             onClick={closeSidebar}
-                            className={`sidebar-button ${isActive('/myorders') ? 'active-sidebar-link' : ''}`}
+                            className={`sidebar-button desktop-h4 ${isActive('/myorders') ? 'active' : ''
+                                }`}
                         >
-                            <img src={orderIcon} alt="" className="icon" />
-                            <span className="label">My Orders</span>
+                            My Orders
                         </Link>
 
                         <Link
                             to="/nfccards"
                             onClick={closeSidebar}
-                            className={`sidebar-button ${isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription')
-                                    ? 'active-sidebar-link'
+                            className={`sidebar-button desktop-h4 ${isActive('/products-and-plans') ||
+                                    isActive('/nfccards') ||
+                                    isActive('/subscription')
+                                    ? 'active'
                                     : ''
                                 }`}
                         >
-                            <img src={cardInterface} alt="" className="icon" />
-                            <span className="label">Product &amp; Plan</span>
+                            Product &amp; Plan
                         </Link>
 
-                        {/* Divider (mobile only) exactly like navbar */}
-                        {isMobile && <div className="mobile-divider" aria-hidden="true" />}
+                        {/* Divider between Product & Plan and Contact Us */}
+                        <div className="mobile-divider mobile-only" aria-hidden="true" />
 
                         <Link
                             to="/contact-support"
                             onClick={closeSidebar}
-                            className={`sidebar-button ${isActive('/contact-support') ? 'active-sidebar-link' : ''}`}
+                            className={`sidebar-button desktop-h4 ${isActive('/contact-support') ? 'active' : ''
+                                }`}
                         >
-                            <img src={contactInterface} alt="" className="icon" />
-                            <span className="label">Contact Us</span>
+                            Contact Us
                         </Link>
 
                         <Link
                             to="/helpcentreinterface"
                             onClick={closeSidebar}
-                            className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`}
+                            className={`sidebar-button desktop-h4 ${isActive('/helpcentreinterface') ? 'active' : ''
+                                }`}
                         >
-                            <img src={helpInterface} alt="" className="icon" />
-                            <span className="label">Help Centre</span>
+                            Help Centre
                         </Link>
 
                         <Link
                             to="/profile"
                             onClick={closeSidebar}
-                            className={`sidebar-button ${isActive('/profile') ? 'active-sidebar-link' : ''}`}
+                            className={`sidebar-button desktop-h4 ${isActive('/profile') ? 'active' : ''
+                                }`}
                         >
-                            <img src={settingsInterface} alt="" className="icon" />
-                            <span className="label">Settings</span>
+                            Settings
                         </Link>
 
-                        {/* Mobile: red text Logout under Settings (no icon) */}
+                        {/* Divider above Logout */}
+                        <div className="mobile-divider mobile-only" aria-hidden="true" />
+
+                        {/* Logout full-width red link */}
                         {isMobile ? (
                             <button
                                 type="button"
                                 className="desktop-h4 logout-link mobile-only"
-                                onClick={() => { handleLogout(); closeSidebar(); }}
+                                onClick={() => {
+                                    handleLogout();
+                                    closeSidebar();
+                                }}
                             >
                                 Logout
                             </button>
                         ) : (
-                            /* Desktop: keep the small logout icon button row */
                             <div className="settings-row desktop-only">
                                 <button
                                     className="logout-icon-btn"
-                                    onClick={() => { handleLogout(); closeSidebar(); }}
+                                    onClick={() => {
+                                        handleLogout();
+                                        closeSidebar();
+                                    }}
                                     aria-label="Logout"
                                     title="Logout"
                                     type="button"
