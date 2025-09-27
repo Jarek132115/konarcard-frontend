@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 
-/* Icons (desktop shows them, mobile hides via CSS) */
+/* Icons (desktop shows them, mobile hides via CSS if you want) */
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import homeInterface from '../assets/icons/Home-Interface.svg';
 import orderIcon from '../assets/icons/MyOrder-Icon.svg';
@@ -35,14 +35,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     return (
         <>
-            {/* Mobile overlay */}
             <div
                 className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`}
                 onClick={closeSidebar}
             />
 
             <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                {/* Header: desktop shows KonarCard text; mobile shows logo + close (✕) */}
                 <div className="brand-header">
                     <span className="brand-text">KonarCard</span>
                     <img src={LogoIcon} alt="Konar" className="brand-logo" />
@@ -58,10 +56,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                 <div className="sidebar-content-wrapper">
                     <nav className="links-stack">
-                        {/* MOBILE: single top divider, exactly like navbar */}
-                        <div className="mobile-divider mobile-only" aria-hidden="true" />
+                        {/* Top divider — render only on mobile */}
+                        {isMobile && <div className="mobile-divider" aria-hidden="true" />}
 
-                        {/* Main links (icons visible on desktop only) */}
                         <Link
                             to="/myprofile"
                             onClick={closeSidebar}
@@ -92,8 +89,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="label">Product &amp; Plan</span>
                         </Link>
 
-                        {/* MOBILE: divider between groups */}
-                        <div className="mobile-divider mobile-only" aria-hidden="true" />
+                        {/* Group divider — mobile only */}
+                        {isMobile && <div className="mobile-divider" aria-hidden="true" />}
 
                         <Link
                             to="/contact-support"
@@ -104,74 +101,79 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="label">Contact Us</span>
                         </Link>
 
-                        {/* MOBILE-ONLY inline items (same typography as other links) */}
-                        <Link
-                            to="/helpcentreinterface"
-                            onClick={closeSidebar}
-                            className={`sidebar-button mobile-only ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''
-                                }`}
-                        >
-                            <img src={helpInterface} alt="" className="icon" />
-                            <span className="label">Help Centre</span>
-                        </Link>
+                        {/* ===== MOBILE-ONLY items (not rendered at all on desktop) ===== */}
+                        {isMobile && (
+                            <>
+                                <Link
+                                    to="/helpcentreinterface"
+                                    onClick={closeSidebar}
+                                    className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`}
+                                >
+                                    <img src={helpInterface} alt="" className="icon" />
+                                    <span className="label">Help Centre</span>
+                                </Link>
 
-                        <Link
-                            to="/profile"
-                            onClick={closeSidebar}
-                            className={`sidebar-button mobile-only ${isActive('/profile') ? 'active-sidebar-link' : ''}`}
-                        >
-                            <img src={settingsInterface} alt="" className="icon" />
-                            <span className="label">Settings</span>
-                        </Link>
+                                <Link
+                                    to="/profile"
+                                    onClick={closeSidebar}
+                                    className={`sidebar-button ${isActive('/profile') ? 'active-sidebar-link' : ''}`}
+                                >
+                                    <img src={settingsInterface} alt="" className="icon" />
+                                    <span className="label">Settings</span>
+                                </Link>
 
-                        {/* MOBILE: Logout (styled same font/spacing as other links via .sidebar-button) */}
-                        <button
-                            type="button"
-                            className="sidebar-button logout-link mobile-only"
-                            onClick={() => {
-                                handleLogout();
-                                closeSidebar();
-                            }}
-                        >
-                            Logout
-                        </button>
+                                <button
+                                    type="button"
+                                    className="sidebar-button logout-link"
+                                    // same font/spacing as the other links on mobile
+                                    onClick={() => {
+                                        handleLogout();
+                                        closeSidebar();
+                                    }}
+                                >
+                                    Logout
+                                </button>
+                            </>
+                        )}
                     </nav>
 
-                    {/* DESKTOP FOOTER: Help Centre, Settings, Logout (icon on the right) */}
-                    <div className="sidebar-footer desktop-only">
-                        <Link
-                            to="/helpcentreinterface"
-                            onClick={closeSidebar}
-                            className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`}
-                        >
-                            <img src={helpInterface} alt="" className="icon" />
-                            <span className="label">Help Centre</span>
-                        </Link>
-
-                        <div className="settings-row">
+                    {/* ===== DESKTOP FOOTER (bottom) ===== */}
+                    {!isMobile && (
+                        <div className="sidebar-footer">
                             <Link
-                                to="/profile"
+                                to="/helpcentreinterface"
                                 onClick={closeSidebar}
-                                className={`sidebar-button settings-link ${isActive('/profile') ? 'active-sidebar-link' : ''}`}
+                                className={`sidebar-button ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`}
                             >
-                                <img src={settingsInterface} alt="" className="icon" />
-                                <span className="label">Settings</span>
+                                <img src={helpInterface} alt="" className="icon" />
+                                <span className="label">Help Centre</span>
                             </Link>
 
-                            <button
-                                className="logout-icon-btn"
-                                onClick={() => {
-                                    handleLogout();
-                                    closeSidebar();
-                                }}
-                                aria-label="Logout"
-                                title="Logout"
-                                type="button"
-                            >
-                                <img src={logoutInterface} alt="" className="icon icon-red" />
-                            </button>
+                            <div className="settings-row">
+                                <Link
+                                    to="/profile"
+                                    onClick={closeSidebar}
+                                    className={`sidebar-button settings-link ${isActive('/profile') ? 'active-sidebar-link' : ''}`}
+                                >
+                                    <img src={settingsInterface} alt="" className="icon" />
+                                    <span className="label">Settings</span>
+                                </Link>
+
+                                <button
+                                    className="logout-icon-btn"
+                                    onClick={() => {
+                                        handleLogout();
+                                        closeSidebar();
+                                    }}
+                                    aria-label="Logout"
+                                    title="Logout"
+                                    type="button"
+                                >
+                                    <img src={logoutInterface} alt="" className="icon icon-red" />
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </aside>
         </>
