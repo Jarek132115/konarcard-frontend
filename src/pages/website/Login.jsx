@@ -31,7 +31,8 @@ export default function Login() {
     const [isSendingReset, setIsSendingReset] = useState(false);
 
     // --- helpers ---
-    const isAdminEmail = (email) => ADMIN_EMAILS_UI.includes((email || '').toLowerCase());
+    const isAdminEmail = (email) =>
+        ADMIN_EMAILS_UI.includes((email || '').toLowerCase());
 
     // bring back remembered email
     useEffect(() => {
@@ -49,7 +50,9 @@ export default function Login() {
     useEffect(() => {
         const action = location.state?.postAuthAction;
         if (action) {
-            try { localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action)); } catch { }
+            try {
+                localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action));
+            } catch { }
         }
     }, [location.state]);
 
@@ -67,7 +70,9 @@ export default function Login() {
             const saved = localStorage.getItem(POST_AUTH_KEY);
             if (saved) action = JSON.parse(saved);
         } catch { }
-        try { localStorage.removeItem(POST_AUTH_KEY); } catch { }
+        try {
+            localStorage.removeItem(POST_AUTH_KEY);
+        } catch { }
 
         if (!action) {
             navigate('/myprofile');
@@ -80,11 +85,16 @@ export default function Login() {
                     returnUrl: window.location.origin + '/SuccessSubscription',
                 });
                 const url = res?.data?.url;
-                if (url) { window.location.href = url; return; }
+                if (url) {
+                    window.location.href = url;
+                    return;
+                }
                 toast.error('Could not start subscription. Please try again.');
                 navigate('/subscription');
             } catch (err) {
-                toast.error(err?.response?.data?.error || 'Subscription failed. Please try again.');
+                toast.error(
+                    err?.response?.data?.error || 'Subscription failed. Please try again.'
+                );
                 navigate('/subscription');
             }
             return;
@@ -109,7 +119,10 @@ export default function Login() {
         try {
             if (rememberMe) {
                 localStorage.setItem(REMEMBER_KEY, 'true');
-                localStorage.setItem(REMEMBERED_EMAIL_KEY, data.email.trim().toLowerCase());
+                localStorage.setItem(
+                    REMEMBERED_EMAIL_KEY,
+                    data.email.trim().toLowerCase()
+                );
             } else {
                 localStorage.removeItem(REMEMBER_KEY);
                 localStorage.removeItem(REMEMBERED_EMAIL_KEY);
@@ -124,7 +137,10 @@ export default function Login() {
             });
 
             if (res.data?.error) {
-                if (res.data.error.toLowerCase().includes('verify your email') || res.data.resend) {
+                if (
+                    res.data.error.toLowerCase().includes('verify your email') ||
+                    res.data.resend
+                ) {
                     toast.error('Email not verified. New code sent!');
                     setVerificationStep(true);
                     setCooldown(30);
@@ -198,7 +214,10 @@ export default function Login() {
                 email: data.email.trim().toLowerCase(),
             });
             if (res.data?.error) toast.error(res.data.error);
-            else { toast.success('New code sent!'); setCooldown(30); }
+            else {
+                toast.success('New code sent!');
+                setCooldown(30);
+            }
         } catch (err) {
             toast.error(err.message || 'Could not resend code');
         }
@@ -222,10 +241,7 @@ export default function Login() {
 
     return (
         <div className="auth-page">
-            {/* Real navbar */}
             <Navbar />
-
-            {/* Page-level close button that sits at the right end of the navbar */}
             <button
                 className="auth-nav-close"
                 onClick={() => navigate('/')}
@@ -234,18 +250,25 @@ export default function Login() {
                 ×
             </button>
 
-            {/* Content */}
             <div className="login-wrapper">
                 <div className="login-right">
                     <div className="login-card" role="form" aria-labelledby="login-title">
-                        <h1 id="login-title" className="desktop-h3 text-center" style={{ marginBottom: 8 }}>Welcome Back</h1>
-                        <p className="desktop-body-text text-center" style={{ marginBottom: 24 }}>
+                        <h1
+                            id="login-title"
+                            className="desktop-h3 text-center"
+                            style={{ marginBottom: 8 }}
+                        >
+                            Welcome Back
+                        </h1>
+                        <p
+                            className="desktop-body-text text-center"
+                            style={{ marginBottom: 24 }}
+                        >
                             Enter your email and password to access your account.
                         </p>
 
                         {forgotPasswordStep ? (
                             <form onSubmit={sendResetLink} className="login-form">
-                                <label htmlFor="resetEmail" className="form-label">Email</label>
                                 <input
                                     type="email"
                                     id="resetEmail"
@@ -258,9 +281,9 @@ export default function Login() {
                                     required
                                 />
                                 <button
-                                    style={{ margin: '20px 0 10px 0' }}
+                                    style={{ margin: '10px 0 0 0' }}
                                     type="submit"
-                                    className="desktop-button cta-blue-button"
+                                    className="desktop-button orange-button"
                                     disabled={isSendingReset}
                                     aria-busy={isSendingReset}
                                 >
@@ -269,56 +292,81 @@ export default function Login() {
                                 <button
                                     type="button"
                                     onClick={() => setForgotPasswordStep(false)}
-                                    className="cta-black-button desktop-button"
+                                    className="navy-button desktop-button"
                                 >
                                     Back to Login
                                 </button>
                             </form>
                         ) : !verificationStep ? (
                             <form className="login-form" onSubmit={loginUser}>
-                                <label htmlFor="loginEmail" className="form-label">Email</label>
                                 <input
                                     type="email"
                                     id="loginEmail"
                                     name="email"
-                                    placeholder="you@example.com"
+                                    placeholder="Enter your email"
                                     value={data.email}
-                                    onChange={(e) => setData({ ...data, email: e.target.value })}
+                                    onChange={(e) =>
+                                        setData({ ...data, email: e.target.value })
+                                    }
                                     className="standard-input"
                                     autoComplete="username"
                                     inputMode="email"
                                     required
                                 />
 
-                                <label htmlFor="loginPassword" className="form-label">Password</label>
                                 <div className="password-wrapper">
                                     <input
                                         type={showPassword ? 'text' : 'password'}
                                         id="loginPassword"
                                         name="password"
-                                        placeholder="Your password"
+                                        placeholder="Enter your password"
                                         value={data.password}
-                                        onChange={(e) => setData({ ...data, password: e.target.value })}
+                                        onChange={(e) =>
+                                            setData({ ...data, password: e.target.value })
+                                        }
                                         autoComplete="current-password"
                                         required
                                     />
-                                    <button type="button" onClick={togglePassword} aria-label="Toggle password visibility">
+                                    <button
+                                        type="button"
+                                        onClick={togglePassword}
+                                        aria-label="Toggle password visibility"
+                                    >
                                         {showPassword ? 'Hide' : 'Show'}
                                     </button>
                                 </div>
 
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 0 12px' }}>
-                                    <label className="terms-label" style={{ margin: 0, cursor: 'pointer' }}>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        margin: '8px 0 12px',
+                                    }}
+                                >
+                                    <label
+                                        className="terms-label"
+                                        style={{ margin: 0, cursor: 'pointer' }}
+                                    >
                                         <input
                                             type="checkbox"
                                             className="konar-checkbox"
                                             checked={rememberMe}
                                             onChange={(e) => setRememberMe(e.target.checked)}
                                         />
-                                        <span className="desktop-body-xs" style={{ color: '#666' }}>Remember me</span>
+                                        <span
+                                            className="desktop-body-xs"
+                                            style={{ color: '#666' }}
+                                        >
+                                            Remember me
+                                        </span>
                                     </label>
 
-                                    <button type="button" className="link-button desktop-body-xs" onClick={() => setForgotPasswordStep(true)}>
+                                    <button
+                                        type="button"
+                                        className="link-button desktop-body-xs"
+                                        onClick={() => setForgotPasswordStep(true)}
+                                    >
                                         Forgot your password?
                                     </button>
                                 </div>
@@ -335,9 +383,9 @@ export default function Login() {
                         ) : (
                             <form onSubmit={verifyCode} className="login-form">
                                 <p className="verification-instruction">
-                                    Enter the 6-digit code sent to <strong>{data.email.trim().toLowerCase()}</strong>
+                                    Enter the 6-digit code sent to{' '}
+                                    <strong>{data.email.trim().toLowerCase()}</strong>
                                 </p>
-                                <label htmlFor="verificationCode" className="form-label">Verification Code</label>
                                 <input
                                     type="text"
                                     id="verificationCode"
@@ -353,7 +401,7 @@ export default function Login() {
                                 />
                                 <button
                                     type="submit"
-                                    className="cta-blue-button desktop-button"
+                                    className="desktop-button orange-button"
                                     disabled={isVerifying}
                                     aria-busy={isVerifying}
                                 >
@@ -366,7 +414,9 @@ export default function Login() {
                                     disabled={cooldown > 0}
                                     style={{ marginTop: '1rem' }}
                                 >
-                                    {cooldown > 0 ? `Resend available in ${cooldown}s` : 'Resend Code'}
+                                    {cooldown > 0
+                                        ? `Resend available in ${cooldown}s`
+                                        : 'Resend Code'}
                                 </button>
                             </form>
                         )}

@@ -36,6 +36,12 @@ body {
     justify-content: center
 }
 
+@media (max-width: 1000px) {
+    .home-hero {
+        max-height: none;
+    }
+}
+
 .hero-image {
     position: absolute;
     inset: 0;
@@ -93,6 +99,12 @@ body {
     visibility: visible !important;
     opacity: 1 !important;
     overflow: visible
+}
+
+@media (max-width: 1200px) {
+    .hero-video-element {
+        object-fit: contain !important;
+    }
 }
 
 .hero-subtitle {

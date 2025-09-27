@@ -174,7 +174,7 @@ export default function Register() {
             {/* Real navbar */}
             <Navbar />
 
-            {/* Page-level close button that sits at the right end of the navbar */}
+            {/* Page-level close button at right end of navbar */}
             <button
                 className="auth-nav-close"
                 onClick={() => navigate('/')}
@@ -187,7 +187,7 @@ export default function Register() {
             <div className="login-wrapper">
                 <div className="login-right">
                     <div className="login-card" role="form" aria-labelledby="register-title">
-                        <h1 id="register-title" className="desktop-h3 text-center" style={{ marginBottom: 8 }}>
+                        <h1 id="register-title" className="desktop-h3 text-center" style={{ marginBottom: 8,}}>
                             Create Your Account
                         </h1>
                         <p className="desktop-body-text text-center" style={{ marginBottom: 24 }}>
@@ -196,7 +196,7 @@ export default function Register() {
 
                         {!verificationStep ? (
                             <form onSubmit={registerUser} className="login-form">
-                                <label htmlFor="name" className="form-label">Name</label>
+                                {/* Name */}
                                 <input
                                     type="text"
                                     id="name"
@@ -208,7 +208,7 @@ export default function Register() {
                                     required
                                 />
 
-                                <label htmlFor="email" className="form-label">Email</label>
+                                {/* Email */}
                                 <input
                                     type="email"
                                     id="email"
@@ -221,11 +221,7 @@ export default function Register() {
                                     required
                                 />
 
-                                <label htmlFor="username" className="form-label">
-                                    Username <span className="desktop-body-xs" style={{ color: '#666' }}>(cannot be changed)</span>
-                                </label>
-
-                                {/* Click anywhere focuses input; username text touches the domain */}
+                                {/* Username with site prefix */}
                                 <div
                                     className="username-input-wrapper"
                                     onClick={() => usernameInputRef.current?.focus()}
@@ -246,7 +242,7 @@ export default function Register() {
                                     />
                                 </div>
 
-                                <label htmlFor="password" className="form-label">Password</label>
+                                {/* Password + toggle */}
                                 <div className="password-wrapper">
                                     <input
                                         type={showPassword ? 'text' : 'password'}
@@ -264,6 +260,7 @@ export default function Register() {
                                     </button>
                                 </div>
 
+                                {/* Password rules (on focus) */}
                                 {showPasswordFeedback && (
                                     <div className="password-feedback">
                                         <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
@@ -287,15 +284,17 @@ export default function Register() {
                                     </div>
                                 )}
 
-                                <label className="terms-label">
+                                {/* Terms (keep clickable text; no <label> tag) */}
+                                <div className="terms-label" style={{ marginTop: 4 }}>
                                     <input type="checkbox" className="terms-checkbox konar-checkbox" required />
                                     <span className="desktop-body-xs">
                                         I agree to the <a href="/policies">Terms of Service</a> & <a href="/policies">Privacy Policy</a>
                                     </span>
-                                </label>
+                                </div>
 
                                 <button
                                     type="submit"
+                                    style={{marginTop: 10}}
                                     className="primary-button sign-in-button"
                                     disabled={isSubmitting}
                                     aria-busy={isSubmitting}
@@ -308,7 +307,7 @@ export default function Register() {
                                 <p className="verification-instruction">
                                     Enter the 6-digit code sent to <strong>{data.email.trim().toLowerCase()}</strong>
                                 </p>
-                                <label htmlFor="verificationCode" className="form-label">Verification Code</label>
+
                                 <input
                                     type="text"
                                     id="verificationCode"
@@ -321,17 +320,19 @@ export default function Register() {
                                     required
                                     style={{ marginBottom: 20 }}
                                 />
+
                                 <button
                                     type="submit"
-                                    className="cta-blue-button desktop-button"
+                                    className="primary-button desktop-button"
                                     disabled={isVerifying}
                                     aria-busy={isVerifying}
                                 >
                                     {isVerifying ? 'Verifying…' : 'Verify Email'}
                                 </button>
+
                                 <button
                                     type="button"
-                                    className="cta-black-button desktop-button"
+                                    className="secondary-button desktop-button"
                                     onClick={resendCode}
                                     disabled={cooldown > 0}
                                     style={{ marginTop: '1rem' }}
