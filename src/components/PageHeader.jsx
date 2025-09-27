@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { AuthContext } from './AuthContext';
-import ShareProfileIcon from '../assets/icons/ShareProfile-Icon.svg';
-import Avatar from '../assets/images/pp10.png'; // static avatar used for all users in header
+import React, { useContext } from "react";
+import { AuthContext } from "./AuthContext";
+import ShareProfileIcon from "../assets/icons/ShareProfile-Icon.svg";
+import Avatar from "../assets/images/pp10.png";
 
 export default function PageHeader({
   onShareCard,
@@ -10,11 +10,10 @@ export default function PageHeader({
 }) {
   const { user } = useContext(AuthContext);
 
-  const displayName = user?.name || 'Your Name';
-  const displayEmail = user?.email || 'you@example.com';
+  const displayName = user?.name || "Your Name";
+  const displayEmail = user?.email || "you@example.com";
 
   return (
-    // Top header card like the inspiration (rounded, padded, shadow)
     <div className="page-header-card">
       <div className="page-header-left">
         <img src={Avatar} alt="Profile" className="ph-avatar" />
@@ -26,7 +25,8 @@ export default function PageHeader({
 
       <div className="page-header-right">
         <button
-          className="desktop-button cta-blue-button header-share"
+          type="button"
+          className="desktop-button cta-accent-button header-share"
           onClick={onShareCard}
           aria-label="Share your profile"
         >
