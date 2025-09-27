@@ -1,6 +1,6 @@
 /* ===============================================
    MyProfile.css — global layout, tokens & misc
-   (Orange theme + header & workspace wrapper refresh)
+   (Orange theme + sticky header + full-height wrappers)
    =============================================== */
 
 /* -------------------------
@@ -48,6 +48,7 @@
     --sb-gutter: 20px;
     --workspace-max: 1200px;
 
+    /* Peach shell used for headers/wrappers */
     --shell-bg: #FFF1E8;
     --shell-border: rgb(255 123 0 / .20);
 }
@@ -74,7 +75,6 @@
     border-color: var(--border-color);
     box-shadow: var(--soft-shadow);
 }
-
 
 /* -------------------------
    CTA buttons
@@ -153,6 +153,7 @@
     }
 }
 
+/* Fill viewport so wrappers can flex to bottom */
 .main-content-container {
     flex: 1;
     font-family: var(--main-font-family);
@@ -162,6 +163,8 @@
     box-sizing: border-box;
     margin-left: calc(var(--sb-w) + var(--sb-gutter) + 10px);
     color: var(--text-color);
+    min-height: 100dvh;
+    /* key: device viewport height */
 }
 
 @media (max-width:1000px) {
@@ -171,25 +174,32 @@
         padding: 0 20px;
         padding-top: 92px;
         margin: 0;
+        min-height: auto;
+        /* natural flow on mobile */
     }
 }
 
 /* =========================
-   Page header (refreshed)
+   Page header (refreshed + sticky)
    ========================= */
 .page-header-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: var(--shell-bg);
-    /* ← was var(--card-bg) */
+    /* was var(--card-bg) */
     border: 1px solid var(--shell-border);
     border-radius: var(--radius-xl);
     padding: 14px 18px;
     box-shadow: var(--soft-shadow);
     margin-bottom: 12px;
-}
 
+    /* sticky like other pages */
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    backdrop-filter: saturate(1.02);
+}
 
 .page-header-left {
     display: flex;
@@ -271,12 +281,13 @@
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
-    flex: 1;
+    flex: 1 1 auto;
+    /* allow shell below to grow */
     min-height: 0;
     box-sizing: border-box;
 }
 
-/* outer tray card */
+/* outer tray card — peach shell that fills to bottom on desktop */
 .myprofile-flex-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -285,13 +296,16 @@
     width: 100%;
     margin: 0 auto;
     background: var(--shell-bg);
-    /* ← was var(--card-bg) */
+    /* was var(--card-bg) */
     border: 1px solid var(--shell-border);
     border-radius: var(--radius-xl);
     padding: 18px;
     box-shadow: var(--soft-shadow);
-}
 
+    /* fill leftover height & scroll internally if needed */
+    flex: 1 1 auto;
+    overflow: auto;
+}
 
 @media (max-width:1000px) {
     .myprofile-flex-container {
@@ -301,6 +315,8 @@
         grid-template-columns: 1fr;
         background: transparent;
         box-shadow: none;
+        overflow: visible;
+        /* no internal scroll on mobile */
     }
 }
 
