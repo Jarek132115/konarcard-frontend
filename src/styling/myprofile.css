@@ -1,6 +1,6 @@
 /* ===============================================
    MyProfile.css — global layout, tokens & misc
-   (Orange theme + sticky header + 16px outer padding + non-scrolling wrapper)
+   (Orange theme + sticky header + full-height wrappers)
    =============================================== */
 
 /* -------------------------
@@ -35,28 +35,25 @@
     --accent: #FF6B00;
     --accent-rgb: 255 107 0;
 
+    /* Legacy/compat */
+    --button-bg: #111;
+    --button-text: #fff;
+    --brand-blue: var(--accent);
+    /* keep old var name but map to orange */
+
     /* Layout helpers */
     --main-font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     --page-gutter: 20px;
     --sb-w: 268px;
-    /* sidebar width */
     --sb-gutter: 20px;
-    /* gap between sidebar and content */
+    --workspace-max: 1200px;
 
     /* Peach shell used for headers/wrappers */
     --shell-bg: #FFF1E8;
     --shell-border: rgb(255 123 0 / .20);
 }
 
-/* Keep layout width stable when some pages show a scrollbar */
-html,
-body {
-    scrollbar-gutter: stable both-edges;
-}
-
-/* -------------------------
-   Dark mode baseline
-   ------------------------- */
+/* Dark mode baseline */
 .dark-mode {
     --primary-bg: #141414;
     --secondary-bg: #1B1B1B;
@@ -74,13 +71,16 @@ body {
 .dark-mode .page-header-card,
 .dark-mode .myprofile-flex-container {
     background: var(--card-bg);
+    /* dark mode stays neutral */
     border-color: var(--border-color);
     box-shadow: var(--soft-shadow);
 }
 
 /* -------------------------
-   Buttons
+   CTA buttons
    ------------------------- */
+
+/* ORANGE primary (supports both old and new class names) */
 .cta-blue-button,
 .blue-button,
 .cta-accent-button {
@@ -128,6 +128,7 @@ body {
     transform: translateY(1px);
 }
 
+/* A11y focus */
 .cta-blue-button:focus-visible,
 .cta-black-button:focus-visible,
 .blue-button:focus-visible,
@@ -137,7 +138,7 @@ body {
 }
 
 /* =========================
-   App layout
+   App layout (page scroll)
    ========================= */
 .app-layout {
     display: flex;
@@ -152,50 +153,48 @@ body {
     }
 }
 
-/* EXACT alignment with the sidebar & 16px outer padding on desktop */
+/* Fill viewport so wrappers can flex to bottom */
 .main-content-container {
     flex: 1;
     font-family: var(--main-font-family);
-    color: var(--text-color);
+    padding: 16px 16px 16px 0;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-
-    margin-left: calc(var(--sb-w) + var(--sb-gutter));
-    /* align with sidebar edge */
-    padding: 16px;
-    /* 16px all around */
+    margin-left: calc(var(--sb-w) + var(--sb-gutter) + 10px);
+    color: var(--text-color);
     min-height: 100dvh;
-    /* device viewport height */
-    overflow: hidden;
-    /* page itself doesn't scroll */
+    /* key: device viewport height */
 }
 
 @media (max-width:1000px) {
     .main-content-container {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 20px;
+        padding-top: 92px;
         margin: 0;
-        padding: 92px 20px 0;
-        /* mobile header space + standard padding */
         min-height: auto;
-        overflow: visible;
+        /* natural flow on mobile */
     }
 }
 
 /* =========================
-   Page header (sticky)
+   Page header (refreshed + sticky)
    ========================= */
 .page-header-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: var(--shell-bg);
+    /* was var(--card-bg) */
     border: 1px solid var(--shell-border);
     border-radius: var(--radius-xl);
-    padding: 16px;
-    /* exact 16px */
+    padding: 14px 18px;
     box-shadow: var(--soft-shadow);
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 
+    /* sticky like other pages */
     position: sticky;
     top: 0;
     z-index: 3;
@@ -283,60 +282,65 @@ body {
     align-items: stretch;
     gap: 12px;
     flex: 1 1 auto;
-    /* allows the shell to consume remaining height */
+    /* allow shell below to grow */
     min-height: 0;
     box-sizing: border-box;
 }
 
-/* Peach shell — fills remaining height, NEVER scrolls (for now) */
+/* outer tray card — peach shell that fills to bottom on desktop */
 .myprofile-flex-container {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 24px;
     align-items: start;
     width: 100%;
     margin: 0 auto;
-
     background: var(--shell-bg);
+    /* was var(--card-bg) */
     border: 1px solid var(--shell-border);
     border-radius: var(--radius-xl);
-    padding: 16px;
-    /* exact 16px inside the shell */
+    padding: 18px;
     box-shadow: var(--soft-shadow);
 
+    /* fill leftover height & scroll internally if needed */
     flex: 1 1 auto;
-    /* grow to the page bottom */
-    max-height: 100%;
-    /* cap to the page area provided by the main container */
-    overflow: hidden;
-    /* wrapper itself will not scroll */
+    overflow: auto;
+}
+
+@media (max-width:1000px) {
+    .myprofile-flex-container {
+        border: none;
+        padding: 0;
+        gap: 24px;
+        grid-template-columns: 1fr;
+        background: transparent;
+        box-shadow: none;
+        overflow: visible;
+        /* no internal scroll on mobile */
+    }
+}
+
+@media (min-width:1001px) {
+    .myprofile-flex-container {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .myprofile-content,
+    .myprofile-editor-container {
+        min-width: 0;
+        flex: 1;
+    }
 }
 
 .myprofile-content,
 .myprofile-editor-container {
     width: 100%;
     min-width: 0;
-    overflow: hidden;
 }
 
 .myprofile-editor-container {
     display: flex;
     flex-direction: column;
-}
-
-@media (max-width:1000px) {
-    .myprofile-flex-container {
-        grid-template-columns: 1fr;
-        border: none;
-        padding: 0;
-        gap: 24px;
-        background: transparent;
-        box-shadow: none;
-        max-height: none;
-        overflow: visible;
-        /* natural flow on mobile */
-        flex: 0 0 auto;
-    }
 }
 
 /* =========================
@@ -389,7 +393,7 @@ body {
 }
 
 /* =========================
-   Mobile header (unchanged)
+   Mobile header
    ========================= */
 .myprofile-mobile-header {
     position: fixed;
