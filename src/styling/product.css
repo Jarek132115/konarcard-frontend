@@ -1,4 +1,4 @@
-/* PRODUCT — redesigned + tweaks you requested */
+/* PRODUCT — redesigned + ORANGE theme */
 
 .section.product-shell {
     display: grid;
@@ -11,7 +11,7 @@
 
 @media (max-width:1200px) {
     .section.product-shell {
-        max-width: 900px
+        max-width: 900px;
     }
 }
 
@@ -20,13 +20,13 @@
         grid-template-columns: 1fr;
         width: 90%;
         padding: 0 10px;
-        margin-bottom: 100px
+        margin-bottom: 100px;
     }
 }
 
 /* LEFT: tray, hero image, thumbnails */
 .pd-left {
-    width: 100%
+    width: 100%;
 }
 
 .pd-card-tray {
@@ -50,7 +50,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block
+    display: block;
 }
 
 /* Thumbnails */
@@ -59,7 +59,7 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 12px;
-    margin-top: 12px
+    margin-top: 12px;
 }
 
 .pd-thumb {
@@ -74,36 +74,37 @@
 
 .pd-thumb img {
     width: 100%;
-    aspect-ratio: 1/1;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
-    display: block
+    display: block;
 }
 
 .pd-thumb:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, .12)
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
 }
 
+/* ACTIVE thumb -> ORANGE */
 .pd-thumb.is-active {
-    border-color: #0081FF;
-    box-shadow: 0 0 0 3px rgba(0, 129, 255, .14)
+    border-color: var(--Orange, #FF7B00);
+    box-shadow: 0 0 0 3px rgba(255, 123, 0, .16);
 }
 
 /* RIGHT: copy, bullets, price, CTA */
 .pd-right {
-    width: 100%
+    width: 100%;
 }
 
 .pd-title {
-    margin-bottom: 6px
+    margin-bottom: 6px;
 }
 
 .pd-sub {
     color: #333;
-    margin-bottom: 16px
+    margin-bottom: 16px;
 }
 
-/* ===== Feature bullets (blue dot + copy, no bg) ===== */
+/* ===== Feature bullets (orange dot + copy) ===== */
 .pd-feature-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -113,7 +114,7 @@
 
 @media (max-width:600px) {
     .pd-feature-grid {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
     }
 }
 
@@ -131,29 +132,29 @@
     margin-top: 6px;
     /* align with first line of text */
     border-radius: 50%;
-    background: #0081FF;
-    box-shadow: 0 0 0 3px rgba(0, 129, 255, .12);
+    background: var(--Orange, #FF7B00);
+    box-shadow: 0 0 0 3px rgba(255, 123, 0, .16);
 }
 
 .pd-feature-copy {
     display: flex;
     flex-direction: column;
-    gap: 2px
+    gap: 2px;
 }
 
 .pd-feature-title {
     font-weight: 800;
-    line-height: 1.2
+    line-height: 1.2;
 }
 
 .pd-feature-text {
     color: #666;
-    line-height: 1.2
+    line-height: 1.2;
 }
 
-/* Full-width row (Delivery) */
+/* Full-width row (Delivery/Trial line) */
 .pd-feature-item--full {
-    grid-column: 1 / -1
+    grid-column: 1 / -1;
 }
 
 /* Stars + price — STACKED */
@@ -162,40 +163,40 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-    margin: 8px 0 6px
+    margin: 8px 0 6px;
 }
 
 .pd-stars {
     display: inline-flex;
     align-items: center;
-    gap: 6px
+    gap: 6px;
 }
 
 .pd-stars img {
     width: 110px;
-    height: auto
+    height: auto;
 }
 
 .pd-reviews-count {
     color: #333;
-    font-weight: 600
+    font-weight: 600;
 }
 
 .pd-price-wrap {
     display: flex;
     align-items: baseline;
-    gap: 10px
+    gap: 10px;
 }
 
 .pd-price-now {
     font-size: 28px;
-    font-weight: 800
+    font-weight: 800;
 }
 
 .pd-price-was {
     font-size: 16px;
     color: #888;
-    text-decoration: line-through
+    text-decoration: line-through;
 }
 
 /* CTA row — stack qty then button; both full-width */
@@ -204,7 +205,7 @@
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
-    margin-top: 10px
+    margin-top: 10px;
 }
 
 /* Quantity — smaller & full width */
@@ -212,7 +213,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    width: 100%
+    width: 100%;
 }
 
 .pd-qty-ctrl {
@@ -244,12 +245,12 @@
 .pd-qty-display {
     min-width: 36px;
     text-align: center;
-    font-weight: 700
+    font-weight: 700;
 }
 
-/* Buy Now = full width */
+/* Buy Now = full width (orange button) */
 .pd-buy-full,
-.product-shell .cta-blue-button.desktop-button {
+.product-shell .orange-button.desktop-button {
     width: 100% !important;
     text-align: center;
 }

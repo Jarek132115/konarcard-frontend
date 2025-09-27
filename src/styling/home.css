@@ -736,14 +736,14 @@ body {
 .pricing-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 24px
+    gap: 24px;
 }
 
 .pricing-card {
     border-radius: 24px;
     overflow: hidden;
     position: relative;
-    display: flex
+    display: flex;
 }
 
 .pricing-inner {
@@ -751,31 +751,31 @@ body {
     flex-direction: column;
     width: 100%;
     padding: 20px;
-    min-height: 100%
+    min-height: 100%;
 }
 
 .pricing-content {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    min-height: 0
+    min-height: 0;
 }
 
 .pricing-bottom {
-    margin-top: 20px
+    margin-top: 20px;
 }
 
 .pricing-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px
+    gap: 12px;
 }
 
 @media (max-width:600px) {
     .pricing-head {
         align-items: start;
-        flex-direction: column
+        flex-direction: column;
     }
 }
 
@@ -787,51 +787,51 @@ body {
     padding: 8px 12px;
     border-radius: 6px;
     white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .15)
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
 }
 
 .pricing-divider {
     margin: 14px 0;
     height: 1px;
-    opacity: .6
+    opacity: .6;
 }
 
 .pricing-price-row {
     display: flex;
     align-items: baseline;
-    gap: 0
+    gap: 0;
 }
 
 @media (max-width:1000px) {
     .pricing-grid {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
     }
 }
 
 .pricing-card--subscription {
     background: #006FE6;
     color: #fff;
-    border: 1px solid rgba(255, 255, 255, .25)
+    border: 1px solid rgba(255, 255, 255, .25);
 }
 
 .pricing-card--subscription .pricing-divider {
-    background: rgba(255, 255, 255, .6)
+    background: rgba(255, 255, 255, .6);
 }
 
 .pricing-card--product {
     background: #333;
     color: #fff;
-    border: 1px solid #2a2a2a
+    border: 1px solid #2a2a2a;
 }
 
 .pricing-card--product .pricing-divider {
-    background: rgba(255, 255, 255, .22)
+    background: rgba(255, 255, 255, .22);
 }
 
 /* PRICING — gallery (main 4:3, thumbs 1:1) */
 .nfc-pricing-page {
     --media-gap: 6px;
-    --thumb-h: 64px
+    --thumb-h: 64px;
 }
 
 .pricing-media-tray {
@@ -840,32 +840,37 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: var(--media-gap)
+    gap: var(--media-gap);
 }
 
+/* MAIN IMAGE: no border/stroke */
 .pricing-media-main {
     width: 100%;
     border-radius: 16px;
     overflow: hidden;
-    background: #0b0b0b;
-    border: 1px solid rgba(255, 255, 255, .08);
-    aspect-ratio: 4/2.5
+    background: #fff;
+    /* neutral canvas */
+    border: 0 !important;
+    /* remove the previous stroke */
+    box-shadow: none !important;
+    aspect-ratio: 4/2.5;
 }
 
 .pricing-media-main img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block
+    display: block;
 }
 
 .pricing-media-thumbs.tight {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: var(--media-gap);
-    height: var(--thumb-h)
+    height: var(--thumb-h);
 }
 
+/* THUMBS: neutral default border, orange active */
 .pricing-media-thumb {
     display: block;
     width: 100%;
@@ -873,53 +878,56 @@ body {
     aspect-ratio: 1/1;
     border-radius: 16px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, .14);
-    background: #111;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    /* neutral, not white/blue */
+    background: #fff;
     padding: 0;
     line-height: 0;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .pricing-media-thumb img {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover;
-    display: block
+    display: block;
 }
 
 .pricing-media-thumb.is-active {
-    outline: 2px solid #0081FF;
+    outline: 2px solid var(--Orange, #FF7B00) !important;
+    /* ORANGE */
     outline-offset: -2px;
-    border-color: rgba(255, 255, 255, .14);
-    box-shadow: none
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0 0 3px rgba(255, 123, 0, 0.16);
+    /* soft halo */
 }
 
 @media (max-width:1000px) {
     .pricing-media-main {
-        aspect-ratio: 4/3
+        aspect-ratio: 4/3;
     }
 
     .pricing-media-thumbs.tight {
         --thumb-h: 54px;
-        height: var(--thumb-h)
+        height: var(--thumb-h);
     }
 }
 
 @media (max-width:600px) {
     .pricing-media-main {
-        aspect-ratio: 1/1
+        aspect-ratio: 1/1;
     }
 
     .pricing-media-thumbs.tight {
         --thumb-h: 50px;
         height: var(--thumb-h);
-        gap: 4px
+        gap: 4px;
     }
 }
 
 @media (max-width:430px) {
     .pricing-media-thumbs.tight {
-        gap: 2px
+        gap: 2px;
     }
 }
 
@@ -930,12 +938,12 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 20px 20px;
     margin: 16px 0 0;
-    padding: 0
+    padding: 0;
 }
 
 @media (max-width:900px) {
     .feature-grid {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
     }
 }
 
@@ -943,34 +951,35 @@ body {
     display: grid;
     grid-template-columns: 12px 1fr;
     gap: 10px;
-    align-items: start
+    align-items: start;
 }
 
+/* Already orange in your code; keep it */
 .blue-dot {
     width: 10px;
     height: 10px;
     border-radius: 2px;
     background: #e66f00;
     margin-top: 6px;
-    flex: 0 0 10px
+    flex: 0 0 10px;
 }
 
 .feature-copy {
     display: flex;
     flex-direction: column;
-    gap: 2px
+    gap: 2px;
 }
 
 .pricing-card--subscription .feature-title,
 .pricing-card--product .feature-title {
     font-weight: 800;
     color: #fff;
-    line-height: 1.2
+    line-height: 1.2;
 }
 
 .pricing-card--subscription .feature-sub,
 .pricing-card--product .feature-sub {
-    color: rgba(255, 255, 255, .85)
+    color: rgba(255, 255, 255, .85);
 }
 
 /* =========================

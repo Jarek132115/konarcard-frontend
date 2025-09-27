@@ -1,10 +1,10 @@
+// frontend/src/pages/ProductAndPlan/KonarCard.jsx
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Footer from '../../components/Footer';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
-import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
 import { toast } from 'react-hot-toast';
 
 import pp1 from '../../assets/images/pp1.png';
@@ -17,15 +17,6 @@ import ProductImage1 from '../../assets/images/Product-Image-1.png';
 import ProductImage2 from '../../assets/images/Product-Image-2.png';
 import ProductImage3 from '../../assets/images/Product-Image-3.png';
 import ProductImage4 from '../../assets/images/Product-Image-4.png';
-
-/* FAQ icons */
-import NFCIcon from '../../assets/icons/NFC-Icon.svg';
-import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg';
-import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
-import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
-import QRCode from '../../assets/icons/QR-Code-Icon.svg';
-import NFCChipIcon from '../../assets/icons/NFCChip-Icon.svg';
-import TimeIcon from '../../assets/icons/Time-Icon.svg';
 
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
@@ -108,7 +99,7 @@ export default function KonarCard() {
   };
   const deliveryDateText = getDeliveryDates();
 
-  /* Feature bullets (now blue dots + copy) */
+  /* Feature bullets (orange dots + copy) */
   const featureBullets = [
     { title: 'Compatibility', text: 'Compatible with Android & iPhone' },
     { title: 'QR Code Backup', text: 'If NFC doesn’t work, scan the QR' },
@@ -118,6 +109,45 @@ export default function KonarCard() {
     { title: 'Data Retention', text: 'Stores securely 10+ years' },
     { title: 'Size & Material', text: '85.5 × 54 × 0.8 mm, PVC' },
     { title: 'Eco-Friendly', text: 'Made from recyclable materials' },
+  ];
+
+  /* FAQs (rendered as dot items to match subscription page) */
+  const faqsLeft = [
+    {
+      title: 'What is the Konar NFC business card?',
+      text: 'A reusable card with a tiny NFC chip that opens your Konar profile with a tap—no app, no battery.',
+    },
+    {
+      title: 'How does the tap actually work?',
+      text: 'The phone’s NFC reader powers the chip and instantly launches your live profile link.',
+    },
+    {
+      title: 'What if someone can’t tap?',
+      text: 'Every card includes a QR code and your profile has a shareable link — there’s always a backup.',
+    },
+    {
+      title: 'Will it work with their phone?',
+      text: 'Works on iPhone 7+ and most Android phones with NFC enabled. QR works on any camera phone.',
+    },
+  ];
+
+  const faqsRight = [
+    {
+      title: 'Is the NFC chip visible?',
+      text: 'No — it’s sealed inside the card and doesn’t affect the finish or design.',
+    },
+    {
+      title: 'How long does the card last?',
+      text: 'Years of everyday use. There’s no battery to die and nothing to charge.',
+    },
+    {
+      title: 'When will my card arrive?',
+      text: 'Production 2–4 business days. Standard delivery 3–7 business days; Express 1–3 business days.',
+    },
+    {
+      title: 'What’s included in the warranty?',
+      text: '12-month limited warranty covering manufacturing defects, faulty chips and printing errors.',
+    },
   ];
 
   return (
@@ -154,12 +184,12 @@ export default function KonarCard() {
 
         {/* RIGHT: copy, bullets, price, CTA */}
         <div className="pd-right">
-          <h1 className="pd-title desktop-h4">Konar Card - White Edition</h1>
+          <h1 className="pd-title desktop-h4">Konar Card — <span className="orange">White Edition</span></h1>
           <p className="pd-sub desktop-body">
             Stand out and win more jobs — one tap opens your profile with your services, photos, and contact details.
           </p>
 
-          {/* Bullets (blue dot + copy) */}
+          {/* Bullets (orange dot + copy) */}
           <div className="pd-feature-grid">
             {featureBullets.map((f, idx) => (
               <div className="pd-feature-item" key={idx}>
@@ -217,20 +247,20 @@ export default function KonarCard() {
               </div>
             </div>
 
-            <button onClick={handleBuyNow} className="cta-blue-button desktop-button pd-buy-full">
+            <button onClick={handleBuyNow} className="orange-button desktop-button pd-buy-full">
               Buy Now
             </button>
           </div>
         </div>
       </div>
 
-      {/* Reviews */}
+      {/* ===== Reviews (match subscription design) ===== */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
-            See How <span className="blue">Tradies</span> Put Konar To <span className="blue">Work</span>
+            See How <span className="orange">Tradies</span> Put Konar To <span className="orange">Work</span>
           </h2>
-          <h3 className="desktop-h6 text-center">
+          <h3 className="desktop-body-xs text-center">
             Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
           </h3>
         </div>
@@ -299,79 +329,36 @@ export default function KonarCard() {
         </div>
       </div>
 
-      {/* Product FAQs */}
+      {/* ===== Product FAQs (dot style to match subscription page) ===== */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Konar Card — Product <span className="blue">FAQs</span></h2>
-          <h3 className="desktop-h6 text-center">Everything about the card, tap-to-share, delivery and warranty.</h3>
+          <h2 className="desktop-h3 text-center">Konar Card — Product <span className="orange">FAQs</span></h2>
+          <h3 className="desktop-body-xs text-center">Everything about the card, tap-to-share, delivery and warranty.</h3>
         </div>
+
         <div className="faq-container">
           <div className="faq-column">
-            <div className="section-list">
-              <div className="icon-white"><img src={IDCardIcon} className="icon" alt="" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">What is the Konar NFC business card?</p>
-                <p className="desktop-body-s">A reusable card with a tiny NFC chip that opens your Konar profile with a tap—no app, no battery.</p>
+            {faqsLeft.map((f, i) => (
+              <div key={i} className="pd-feature-item pd-feature-item--full" style={{ marginBottom: 16 }}>
+                <span className="pd-dot" aria-hidden="true" />
+                <div className="pd-feature-copy">
+                  <p className="desktop-h6">{f.title}</p>
+                  <p className="desktop-body-s">{f.text}</p>
+                </div>
               </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white"><img src={NFCIcon} className="icon" alt="" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">How does the tap actually work?</p>
-                <p className="desktop-body-s">The phone’s NFC reader powers the chip and instantly launches your live profile link.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white"><img src={QRCode} className="icon" alt="" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">What if someone can’t tap?</p>
-                <p className="desktop-body-s">Every card includes a QR code and your profile has a shareable link — there’s always a backup.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white"><img src={PhoneIcon} className="icon" alt="" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Will it work with their phone?</p>
-                <p className="desktop-body-s">Works on iPhone 7+ and most Android phones with NFC enabled. QR works on any camera phone.</p>
-              </div>
-            </div>
+            ))}
           </div>
 
           <div className="faq-column">
-            <div className="section-list">
-              <div className="icon-white"><img src={NFCChipIcon} className="icon" alt="" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">Is the NFC chip visible?</p>
-                <p className="desktop-body-s">No — it’s sealed inside the card and doesn’t affect the finish or design.</p>
+            {faqsRight.map((f, i) => (
+              <div key={i} className="pd-feature-item pd-feature-item--full" style={{ marginBottom: 16 }}>
+                <span className="pd-dot" aria-hidden="true" />
+                <div className="pd-feature-copy">
+                  <p className="desktop-h6">{f.title}</p>
+                  <p className="desktop-body-s">{f.text}</p>
+                </div>
               </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white"><img src={TimeIcon} className="icon" alt="" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">How long does the card last?</p>
-                <p className="desktop-body-s">Years of everyday use. There’s no battery to die and nothing to charge.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white"><img src={DeliveryIcon} className="icon" alt="" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">When will my card arrive?</p>
-                <p className="desktop-body-s">Production 2–4 business days. Standard delivery 3–7 business days; Express 1–3 business days.</p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <div className="icon-white"><img src={WarrantyIcon} className="icon" alt="" /></div>
-              <div className="section-list-info">
-                <p className="desktop-h6">What’s included in the warranty?</p>
-                <p className="desktop-body-s">12-month limited warranty covering manufacturing defects, faulty chips and printing errors.</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

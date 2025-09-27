@@ -17,21 +17,6 @@ import Mockup2 from '../../assets/images/2.png';
 import Mockup3 from '../../assets/images/3.png';
 import Mockup4 from '../../assets/images/4.png';
 
-/** FAQ icons */
-import NFCIcon from '../../assets/icons/NFC-Icon.svg';
-import WarrantyIcon from '../../assets/icons/Warranty-Icon.svg';
-import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
-import SetupIcon from '../../assets/icons/Setup-Icon.svg';
-import HatIcon from '../../assets/icons/Hat-Icon.svg';
-import LockIcon from '../../assets/icons/Lock-Icon.svg';
-import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
-import PhoneIcon from '../../assets/icons/Phone-Icon.svg';
-import WalletIcon from '../../assets/icons/Wallet-Icon.svg';
-import InfoIcon from '../../assets/icons/Info-Icon.svg';
-import TimeIcon from '../../assets/icons/Time-Icon.svg';
-import ShieldIcon from '../../assets/icons/Shield-Icon.svg';
-import ProfilePencil from '../../assets/icons/ProfilePencil-Icon.svg';
-
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import { toast } from 'react-hot-toast';
@@ -59,13 +44,60 @@ export default function KonarSubscription() {
     };
     const freeTrialEndDate = getFreeTrialEndDate();
 
-    // Feature bullets for subscription header (now blue-dot bullets)
+    // Header bullets (orange dots)
     const headerBullets = [
         { title: 'Contact Button', text: 'Save my number' },
         { title: 'Tap to Share', text: 'Works with NFC cards' },
         { title: 'Live Updates', text: 'Edit anytime — goes live' },
         { title: 'About & Services', text: 'Tell your story, list services' },
         { title: 'Branding', text: 'Fonts, colours, layouts' },
+    ];
+
+    // FAQ content (rendered as dot items)
+    const faqsLeft = [
+        {
+            title: 'What do I get with Power Profile?',
+            text:
+                'Unlimited edits, gallery, services with pricing, reviews, themes/fonts, layouts, and easy sharing via QR or link — changes go live instantly.',
+        },
+        {
+            title: 'How does the free trial work?',
+            text:
+                'The 14-day trial includes all the same features as a paid subscription. If your trial ends and you don’t subscribe, your page will be hidden until you subscribe.',
+        },
+        {
+            title: 'Do I need a subscription to use the card?',
+            text:
+                'The card is a one-time purchase, but without an active trial or subscription your page is hidden — so tapping the card won’t show your profile until you subscribe again.',
+        },
+        {
+            title: 'Can I update my page anytime?',
+            text:
+                'Yes — while on an active trial or subscription your changes publish instantly.',
+        },
+    ];
+
+    const faqsRight = [
+        {
+            title: 'What happens if I cancel?',
+            text:
+                'You’ll keep access until the end of the current billing period. After that, your page will be hidden until you resubscribe.',
+        },
+        {
+            title: 'Is there a contract?',
+            text:
+                'No long-term contracts. It’s a simple monthly plan — cancel anytime.',
+        },
+        {
+            title: 'How do I start?',
+            text:
+                'Create your profile, start the free trial, then subscribe to keep your page live.',
+        },
+        {
+            title: 'Who is Power Profile for?',
+            text:
+                'Built for tradies — plumbers, sparkies, builders, tilers, gardeners and more.',
+        },
     ];
 
     const startSubscription = useCallback(async () => {
@@ -132,13 +164,13 @@ export default function KonarSubscription() {
                 {/* RIGHT: subscription copy */}
                 <div className="pd-right">
                     <h1 className="pd-title desktop-h4">
-                        Konar <span className="blue">Power Profile</span>
+                        Konar <span className="orange">Power Profile</span>
                     </h1>
                     <p className="pd-sub desktop-body">
                         Stand out and win more jobs — one tap opens your profile with your services, photos, and contact details.
                     </p>
 
-                    {/* Blue-dot bullets (no icon/pill backgrounds) */}
+                    {/* Orange-dot bullets */}
                     <div className="pd-feature-grid">
                         {headerBullets.map((b, idx) => (
                             <div className="pd-feature-item" key={idx}>
@@ -150,7 +182,7 @@ export default function KonarSubscription() {
                             </div>
                         ))}
 
-                        {/* Full-width row for trial info (kept as dot too) */}
+                        {/* Full-width row for trial info */}
                         <div className="pd-feature-item pd-feature-item--full">
                             <span className="pd-dot" aria-hidden="true" />
                             <div className="pd-feature-copy">
@@ -179,11 +211,19 @@ export default function KonarSubscription() {
                     {/* CTA row (full width) */}
                     <div className="pd-cta-row">
                         {isSubscribed ? (
-                            <button className="cta-blue-button desktop-button" style={{ opacity: 0.7, cursor: 'not-allowed', width: '100%' }} disabled>
+                            <button
+                                className="orange-button desktop-button"
+                                style={{ opacity: 0.7, cursor: 'not-allowed', width: '100%' }}
+                                disabled
+                            >
                                 Plan active
                             </button>
                         ) : (
-                            <button className="cta-blue-button desktop-button" onClick={handleStartTrial} style={{ width: '100%' }}>
+                            <button
+                                className="orange-button desktop-button"
+                                onClick={handleStartTrial}
+                                style={{ width: '100%' }}
+                            >
                                 Start Your Free 14-Day Trial
                             </button>
                         )}
@@ -195,9 +235,9 @@ export default function KonarSubscription() {
             <div className="section">
                 <div className="section-1-title">
                     <h2 className="desktop-h3 text-center">
-                        See How <span className="blue">Tradies</span> Put Konar To <span className="blue">Work</span>
+                        See How <span className="orange">Tradies</span> Put Konar To <span className="orange">Work</span>
                     </h2>
-                    <h3 className="desktop-h6 text-center">
+                    <h3 className="desktop-body-xs text-center">
                         Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
                     </h3>
                 </div>
@@ -266,88 +306,38 @@ export default function KonarSubscription() {
                 </div>
             </div>
 
-            {/* ===== FAQ ===== */}
+            {/* ===== FAQ (dot style) ===== */}
             <div className="section">
                 <div className="section-1-title">
                     <h2 className="desktop-h3 text-center">
-                        Power Profile — Subscription <span className="blue">FAQs</span>
+                        Power Profile — Subscription <span className="orange">FAQs</span>
                     </h2>
-                    <h3 className="desktop-h6 text-center">Free trial, what’s included, and what happens after.</h3>
+                    <h3 className="desktop-body-xs text-center">Free trial, what’s included, and what happens after.</h3>
                 </div>
 
                 <div className="faq-container">
                     <div className="faq-column">
-                        <div className="section-list">
-                            <div className="icon-white"><img src={ProfilePencil} className="icon" alt="" /></div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">What do I get with Power Profile?</p>
-                                <p className="desktop-body-s">
-                                    Unlimited edits, gallery, services with pricing, reviews, themes/fonts, layouts, and easy sharing via QR or link — changes go live instantly.
-                                </p>
+                        {faqsLeft.map((f, i) => (
+                            <div key={i} className="pd-feature-item pd-feature-item--full" style={{ marginBottom: 16 }}>
+                                <span className="pd-dot" aria-hidden="true" />
+                                <div className="pd-feature-copy">
+                                    <p className="desktop-h6">{f.title}</p>
+                                    <p className="desktop-body-s">{f.text}</p>
+                                </div>
                             </div>
-                        </div>
-
-                        <div className="section-list">
-                            <div className="icon-white"><img src={InfoIcon} className="icon" alt="" /></div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">How does the free trial work?</p>
-                                <p className="desktop-body-s">
-                                    The 14-day trial includes all the same features as a paid subscription. If your trial ends and you don’t subscribe, your page will be hidden until you subscribe.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="section-list">
-                            <div className="icon-white"><img src={WalletIcon} className="icon" alt="" /></div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">Do I need a subscription to use the card?</p>
-                                <p className="desktop-body-s">
-                                    The card is a one-time purchase, but without an active trial or subscription your page is hidden — so tapping the card won’t show your profile until you subscribe again.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="section-list">
-                            <div className="icon-white"><img src={PencilIcon} className="icon" alt="" /></div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">Can I update my page anytime?</p>
-                                <p className="desktop-body-s">Yes — while on an active trial or subscription your changes publish instantly.</p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
 
                     <div className="faq-column">
-                        <div className="section-list">
-                            <div className="icon-white"><img src={TimeIcon} className="icon" alt="" /></div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">What happens if I cancel?</p>
-                                <p className="desktop-body-s">You’ll keep access until the end of the current billing period. After that, your page will be hidden until you resubscribe.</p>
+                        {faqsRight.map((f, i) => (
+                            <div key={i} className="pd-feature-item pd-feature-item--full" style={{ marginBottom: 16 }}>
+                                <span className="pd-dot" aria-hidden="true" />
+                                <div className="pd-feature-copy">
+                                    <p className="desktop-h6">{f.title}</p>
+                                    <p className="desktop-body-s">{f.text}</p>
+                                </div>
                             </div>
-                        </div>
-
-                        <div className="section-list">
-                            <div className="icon-white"><img src={ShieldIcon} className="icon" alt="" /></div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">Is there a contract?</p>
-                                <p className="desktop-body-s">No long-term contracts. It’s a simple monthly plan — cancel anytime.</p>
-                            </div>
-                        </div>
-
-                        <div className="section-list">
-                            <div className="icon-white"><img src={SetupIcon} className="icon" alt="" /></div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">How do I start?</p>
-                                <p className="desktop-body-s">Create your profile, start the free trial, then subscribe to keep your page live.</p>
-                            </div>
-                        </div>
-
-                        <div className="section-list">
-                            <div className="icon-white"><img src={HatIcon} className="icon" alt="" /></div>
-                            <div className="section-list-info">
-                                <p className="desktop-h6">Who is Power Profile for?</p>
-                                <p className="desktop-body-s">Built for tradies — plumbers, sparkies, builders, tilers, gardeners and more.</p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>

@@ -1,9 +1,9 @@
-// src/pages/MyProfile/MyProfile.jsx  — PART 1/3
-import React, { useRef, useEffect, useState, useContext, useMemo } from "react";
+// src/pages/MyProfile/MyProfile.jsx  — UPDATED
+import React, { useEffect, useState, useContext, useMemo, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
-import useBusinessCardStore, { previewPlaceholders } from "../../store/businessCardStore";
+import useBusinessCardStore from "../../store/businessCardStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import { useCreateBusinessCard, buildBusinessCardFormData } from "../../hooks/useCreateBiz";
@@ -13,6 +13,10 @@ import ShareProfile from "../../components/ShareProfile";
 import { AuthContext } from "../../components/AuthContext";
 import api, { startTrial } from "../../services/api";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
+
+// NEW: extracted components
+import Preview from "../../components/Preview";
+import Editor from "../../components/Editor";
 
 export default function MyProfile() {
   const { state, updateState, resetState } = useBusinessCardStore();
@@ -31,16 +35,7 @@ export default function MyProfile() {
   const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
 
   // Refs
-  const fileInputRef = useRef(null);
-  const avatarInputRef = useRef(null);
-  const workImageInputRef = useRef(null);
-
-  const previewWorkCarouselRef = useRef(null);
-  const previewServicesCarouselRef = useRef(null);
-  const previewReviewsCarouselRef = useRef(null);
-
   const activeBlobUrlsRef = useRef([]);
-  const mpWrapRef = useRef(null);
   const handledPaymentRef = useRef(false);
 
   // Local state
@@ -73,8 +68,6 @@ export default function MyProfile() {
   const [showServicesSection, setShowServicesSection] = useState(true);
   const [showReviewsSection, setShowReviewsSection] = useState(true);
   const [showContactSection, setShowContactSection] = useState(true);
-
-  const [previewOpen, setPreviewOpen] = useState(true);
 
   // ---- Trial helpers (derived strictly from authUser; never poll here)
   const trialEndDate = useMemo(() => {
@@ -233,27 +226,13 @@ export default function MyProfile() {
     }
   }, [businessCard, isCardLoading, resetState, updateState]);
 
-  // 6) Cleanup & mobile preview height nicety
+  // 6) Cleanup
   useEffect(() => {
     return () => {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
 
-  useEffect(() => {
-    if (!isMobile) return;
-    const el = mpWrapRef.current;
-    if (!el) return;
-    if (previewOpen) {
-      el.style.maxHeight = el.scrollHeight + "px";
-      el.style.opacity = "1";
-      el.style.transform = "scale(1)";
-    } else {
-      el.style.maxHeight = "0px";
-      el.style.opacity = "0";
-      el.style.transform = "scale(.98)";
-    }
-  }, [isMobile, previewOpen, state, servicesDisplayMode, reviewsDisplayMode, aboutMeLayout]);
   // ================= HANDLERS & HELPERS =================
 
   const createAndTrackBlobUrl = (file) => {
@@ -262,24 +241,27 @@ export default function MyProfile() {
     return url;
   };
 
-  const handleImageUpload = (e) => {
-    e.preventDefault();
-    const file = e.target.files?.[0];
-    if (file && file.type.startsWith("image/")) {
-      updateState({ coverPhoto: createAndTrackBlobUrl(file) });
-      setCoverPhotoFile(file);
-      setCoverPhotoRemoved(false);
-    }
+  // New: file handlers adapted for <Editor />
+  const onCoverUpload = (file) => {
+    if (!file || !file.type?.startsWith("image/")) return;
+    updateState({ coverPhoto: createAndTrackBlobUrl(file) });
+    setCoverPhotoFile(file);
+    setCoverPhotoRemoved(false);
   };
 
-  const handleAvatarUpload = (e) => {
-    e.preventDefault();
-    const file = e.target.files?.[0];
-    if (file && file.type.startsWith("image/")) {
-      updateState({ avatar: createAndTrackBlobUrl(file) });
-      setAvatarFile(file);
-      setIsAvatarRemoved(false);
-    }
+  const onAvatarUpload = (file) => {
+    if (!file || !file.type?.startsWith("image/")) return;
+    updateState({ avatar: createAndTrackBlobUrl(file) });
+    setAvatarFile(file);
+    setIsAvatarRemoved(false);
+  };
+
+  const onAddWorkImages = (files) => {
+    const valid = Array.from(files || []).filter((f) => f && f.type.startsWith("image/"));
+    if (!valid.length) return;
+    const previewItems = valid.map((file) => ({ file, preview: createAndTrackBlobUrl(file) }));
+    updateState({ workImages: [...(state.workImages || []), ...previewItems] });
+    setWorkImageFiles((prev) => [...prev, ...valid]);
   };
 
   const handleRemoveCoverPhoto = () => {
@@ -300,16 +282,6 @@ export default function MyProfile() {
     if (isLocalBlob) URL.revokeObjectURL(state.avatar);
     updateState({ avatar: null });
     setAvatarFile(null);
-  };
-
-  const handleAddWorkImage = (e) => {
-    e.preventDefault();
-    const files = Array.from(e.target.files || []).filter((f) => f && f.type.startsWith("image/"));
-    if (!files.length) return;
-
-    const previewItems = files.map((file) => ({ file, preview: createAndTrackBlobUrl(file) }));
-    updateState({ workImages: [...state.workImages, ...previewItems] });
-    setWorkImageFiles((prev) => [...prev, ...files]);
   };
 
   const handleRemoveWorkImage = (idx) => {
@@ -392,13 +364,6 @@ export default function MyProfile() {
     activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     activeBlobUrlsRef.current = [];
     toast.success("Editor reset.");
-  };
-
-  const scrollCarousel = (ref, direction) => {
-    const el = ref?.current;
-    if (!el) return;
-    const amount = el.clientWidth * 0.9;
-    el.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
   };
 
   const hasProfileChanges = () => {
@@ -565,6 +530,7 @@ export default function MyProfile() {
       toast.error(err.response?.data?.error || "Something went wrong while saving.");
     }
   };
+
   // ================= RENDER =================
 
   const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
@@ -572,26 +538,6 @@ export default function MyProfile() {
   const columnScrollStyle = !isMobile
     ? { maxHeight: "calc(100vh - 140px)", overflow: "auto" }
     : undefined;
-
-  const shouldShowPlaceholders = !hasSavedData;
-  const previewFullName = state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
-  const previewJobTitle = state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : "");
-  const previewBio = state.bio || (shouldShowPlaceholders ? previewPlaceholders.bio : "");
-  const previewEmail = state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : "");
-  const previewPhone = state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : "");
-  const previewCoverPhotoSrc = state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
-  const previewAvatarSrc = state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
-  const previewWorkImages =
-    state.workImages && state.workImages.length > 0
-      ? state.workImages
-      : shouldShowPlaceholders
-        ? previewPlaceholders.workImages
-        : [];
-  const servicesForPreview =
-    state.services && state.services.length > 0 ? state.services : shouldShowPlaceholders ? previewPlaceholders.services : [];
-  const reviewsForPreview =
-    state.reviews && state.reviews.length > 0 ? state.reviews : shouldShowPlaceholders ? previewPlaceholders.reviews : [];
-  const isDarkMode = state.pageTheme === "dark";
 
   return (
     <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
@@ -647,9 +593,7 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {/* SUBSCRIPTION / TRIAL BANNERS (authoritative, no polling)
-                 If subscribed => show nothing.
-                 If NOT subscribed: show trial banner (if active) else trial-ended. */}
+              {/* SUBSCRIPTION / TRIAL BANNERS (authoritative, no polling) */}
               {!isSubscribed && isTrialActive && (
                 <div className="trial-banner">
                   <p className="desktop-body-s">
@@ -676,998 +620,60 @@ export default function MyProfile() {
 
               <div className="myprofile-flex-container">
                 {/* Preview column */}
-                <div
-                  className={`myprofile-content ${isMobile ? "myprofile-mock-phone-mobile-container" : ""}`}
-                  style={columnScrollStyle}
-                >
-                  {isMobile ? (
-                    <div
-                      className={`mp-mobile-controls desktop-h6 ${previewOpen ? "is-open" : "is-collapsed"}`}
-                      role="tablist"
-                      aria-label="Preview controls"
-                    >
-                      <div
-                        className="mp-pill"
-                        style={{
-                          display: "grid",
-                          gridTemplateColumns: "1fr 1fr",
-                          gap: 8,
-                          justifyItems: "stretch",
-                          width: "100%",
-                        }}
-                      >
-                        <button
-                          type="button"
-                          role="tab"
-                          aria-selected={previewOpen}
-                          className={`mp-tab ${previewOpen ? "active" : ""}`}
-                          onClick={() => setPreviewOpen((s) => !s)}
-                          style={{ width: "100%" }}
-                        >
-                          {previewOpen ? "Hide Preview" : "Show Preview"}
-                        </button>
-                        <a
-                          role="tab"
-                          aria-selected={!previewOpen}
-                          className={`mp-tab visit ${!previewOpen ? "active" : ""}`}
-                          href={visitUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          onClick={() => setPreviewOpen(false)}
-                          style={{ width: "100%", textAlign: "center", justifyContent: "center" }}
-                        >
-                          Visit Page
-                        </a>
-                      </div>
-
-                      <div
-                        className="mp-preview-wrap"
-                        ref={mpWrapRef}
-                        style={{
-                          maxHeight: previewOpen ? undefined : 0,
-                          overflow: "hidden",
-                          transition: "max-height .3s ease, opacity .3s ease, transform .3s ease",
-                        }}
-                      >
-                        <div
-                          className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
-                          style={{ fontFamily: state.font || previewPlaceholders.font }}
-                        >
-                          <div className="mock-phone-scrollable-content">
-                            {/* MAIN */}
-                            {showMainSection && (
-                              <>
-                                {(shouldShowPlaceholders || !!state.coverPhoto) && (
-                                  <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
-                                )}
-                                <h2 className="mock-title">
-                                  {state.mainHeading ||
-                                    (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
-                                </h2>
-                                <p className="mock-subtitle">
-                                  {state.subHeading ||
-                                    (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
-                                </p>
-                                {(shouldShowPlaceholders || hasExchangeContact) && (
-                                  <button type="button" className="mock-button">
-                                    Save My Number
-                                  </button>
-                                )}
-                              </>
-                            )}
-
-                            {/* ABOUT */}
-                            {showAboutMeSection &&
-                              (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
-                                <>
-                                  <p className="mock-section-title">About me</p>
-                                  <div className={`mock-about-container ${aboutMeLayout}`}>
-                                    <div className="mock-about-content-group">
-                                      <div className="mock-about-header-group">
-                                        {previewAvatarSrc && (
-                                          <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
-                                        )}
-                                        <div>
-                                          <p className="mock-profile-name">{previewFullName}</p>
-                                          <p className="mock-profile-role">{previewJobTitle}</p>
-                                        </div>
-                                      </div>
-                                      <p className="mock-bio-text">{previewBio}</p>
-                                    </div>
-                                  </div>
-                                </>
-                              )}
-
-                            {/* WORK */}
-                            {showWorkSection && previewWorkImages.length > 0 && (
-                              <>
-                                <p className="mock-section-title">My Work</p>
-                                <div className="work-preview-row-container">
-                                  {state.workDisplayMode === "carousel" && (
-                                    <div className="carousel-nav-buttons">
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button left-arrow"
-                                        onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
-                                      >
-                                        &#9664;
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button right-arrow"
-                                        onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
-                                      >
-                                        &#9654;
-                                      </button>
-                                    </div>
-                                  )}
-                                  <div
-                                    ref={previewWorkCarouselRef}
-                                    className={`mock-work-gallery ${state.workDisplayMode}`}
-                                  >
-                                    {previewWorkImages.map((item, i) => (
-                                      <div key={i} className="mock-work-image-item-wrapper">
-                                        <img
-                                          src={item.preview || item}
-                                          alt={`work-${i}`}
-                                          className="mock-work-image-item"
-                                        />
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </>
-                            )}
-
-                            {/* SERVICES */}
-                            {showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) && (
-                              <>
-                                <p className="mock-section-title">My Services</p>
-                                <div className="work-preview-row-container">
-                                  {servicesDisplayMode === "carousel" && (
-                                    <div className="carousel-nav-buttons">
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button left-arrow"
-                                        onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}
-                                      >
-                                        &#9664;
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button right-arrow"
-                                        onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}
-                                      >
-                                        &#9654;
-                                      </button>
-                                    </div>
-                                  )}
-                                  <div
-                                    ref={previewServicesCarouselRef}
-                                    className={`mock-services-list ${servicesDisplayMode}`}
-                                  >
-                                    {servicesForPreview.map((s, i) => (
-                                      <div key={i} className="mock-service-item">
-                                        <p className="mock-service-name">{s.name}</p>
-                                        <span className="mock-service-price">{s.price}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </>
-                            )}
-
-                            {/* REVIEWS */}
-                            {showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) && (
-                              <>
-                                <p className="mock-section-title">Reviews</p>
-                                <div className="work-preview-row-container">
-                                  {reviewsDisplayMode === "carousel" && (
-                                    <div className="carousel-nav-buttons">
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button left-arrow"
-                                        onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}
-                                      >
-                                        &#9664;
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="carousel-nav-button right-arrow"
-                                        onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}
-                                      >
-                                        &#9654;
-                                      </button>
-                                    </div>
-                                  )}
-                                  <div className={`mock-reviews-list ${reviewsDisplayMode}`} ref={previewReviewsCarouselRef}>
-                                    {reviewsForPreview.map((r, i) => (
-                                      <div key={i} className="mock-review-card">
-                                        <div className="mock-star-rating">
-                                          {Array(r.rating || 0)
-                                            .fill()
-                                            .map((_, idx) => (
-                                              <span key={`f-${idx}`}>★</span>
-                                            ))}
-                                          {Array(Math.max(0, 5 - (r.rating || 0)))
-                                            .fill()
-                                            .map((_, idx) => (
-                                              <span key={`e-${idx}`} className="empty-star">
-                                                ★
-                                              </span>
-                                            ))}
-                                        </div>
-                                        <p className="mock-review-text">{`"${r.text}"`}</p>
-                                        <p className="mock-reviewer-name">{r.name}</p>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </>
-                            )}
-
-                            {/* CONTACT */}
-                            {showContactSection && (previewEmail || previewPhone) && (
-                              <>
-                                <p className="mock-section-title">Contact Details</p>
-                                <div className="mock-contact-details">
-                                  <div className="mock-contact-item">
-                                    <p className="mock-contact-label">Email:</p>
-                                    <p className="mock-contact-value">{previewEmail}</p>
-                                  </div>
-                                  <div className="mock-contact-item">
-                                    <p className="mock-contact-label">Phone:</p>
-                                    <p className="mock-contact-value">{previewPhone}</p>
-                                  </div>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    // Desktop preview
-                    <div
-                      className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
-                      style={{ fontFamily: state.font || previewPlaceholders.font }}
-                    >
-                      <div className="mock-phone-scrollable-content desktop-no-inner-scroll">
-                        {/* MAIN */}
-                        {showMainSection && (
-                          <>
-                            {(shouldShowPlaceholders || !!state.coverPhoto) && (
-                              <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
-                            )}
-                            <h2 className="mock-title">
-                              {state.mainHeading ||
-                                (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
-                            </h2>
-                            <p className="mock-subtitle">
-                              {state.subHeading ||
-                                (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
-                            </p>
-                            {(shouldShowPlaceholders || hasExchangeContact) && (
-                              <button type="button" className="mock-button">
-                                Save My Number
-                              </button>
-                            )}
-                          </>
-                        )}
-
-                        {/* ABOUT */}
-                        {showAboutMeSection &&
-                          (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) && (
-                            <>
-                              <p className="mock-section-title">About me</p>
-                              <div className={`mock-about-container ${aboutMeLayout}`}>
-                                <div className="mock-about-content-group">
-                                  <div className="mock-about-header-group">
-                                    {previewAvatarSrc && (
-                                      <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
-                                    )}
-                                    <div>
-                                      <p className="mock-profile-name">{previewFullName}</p>
-                                      <p className="mock-profile-role">{previewJobTitle}</p>
-                                    </div>
-                                  </div>
-                                  <p className="mock-bio-text">{previewBio}</p>
-                                </div>
-                              </div>
-                            </>
-                          )}
-
-                        {/* WORK */}
-                        {showWorkSection && previewWorkImages.length > 0 && (
-                          <>
-                            <p className="mock-section-title">My Work</p>
-                            <div className="work-preview-row-container">
-                              {state.workDisplayMode === "carousel" && (
-                                <div className="carousel-nav-buttons">
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
-                                  >
-                                    &#9664;
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
-                                  >
-                                    &#9654;
-                                  </button>
-                                </div>
-                              )}
-                              <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
-                                {previewWorkImages.map((item, i) => (
-                                  <div key={i} className="mock-work-image-item-wrapper">
-                                    <img src={item.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </>
-                        )}
-
-                        {/* SERVICES */}
-                        {showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) && (
-                          <>
-                            <p className="mock-section-title">My Services</p>
-                            <div className="work-preview-row-container">
-                              {servicesDisplayMode === "carousel" && (
-                                <div className="carousel-nav-buttons">
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}
-                                  >
-                                    &#9664;
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}
-                                  >
-                                    &#9654;
-                                  </button>
-                                </div>
-                              )}
-                              <div
-                                ref={previewServicesCarouselRef}
-                                className={`mock-services-list ${servicesDisplayMode}`}
-                              >
-                                {servicesForPreview.map((s, i) => (
-                                  <div key={i} className="mock-service-item">
-                                    <p className="mock-service-name">{s.name}</p>
-                                    <span className="mock-service-price">{s.price}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </>
-                        )}
-
-                        {/* REVIEWS */}
-                        {showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) && (
-                          <>
-                            <p className="mock-section-title">Reviews</p>
-                            <div className="work-preview-row-container">
-                              {reviewsDisplayMode === "carousel" && (
-                                <div className="carousel-nav-buttons">
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}
-                                  >
-                                    &#9664;
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}
-                                  >
-                                    &#9654;
-                                  </button>
-                                </div>
-                              )}
-                              <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
-                                {reviewsForPreview.map((r, i) => (
-                                  <div key={i} className="mock-review-card">
-                                    <div className="mock-star-rating">
-                                      {Array(r.rating || 0)
-                                        .fill()
-                                        .map((_, idx) => (
-                                          <span key={`f-${idx}`}>★</span>
-                                        ))}
-                                      {Array(Math.max(0, 5 - (r.rating || 0)))
-                                        .fill()
-                                        .map((_, idx) => (
-                                          <span key={`e-${idx}`} className="empty-star">
-                                            ★
-                                          </span>
-                                        ))}
-                                    </div>
-                                    <p className="mock-review-text">{`"${r.text}"`}</p>
-                                    <p className="mock-reviewer-name">{r.name}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </>
-                        )}
-
-                        {/* CONTACT */}
-                        {showContactSection && (previewEmail || previewPhone) && (
-                          <>
-                            <p className="mock-section-title">Contact Details</p>
-                            <div style={{ marginBottom: 20 }} className="mock-contact-details">
-                              <div className="mock-contact-item">
-                                <p className="mock-contact-label">Email:</p>
-                                <p className="mock-contact-value">{previewEmail}</p>
-                              </div>
-                              <div className="mock-contact-item">
-                                <p className="mock-contact-label">Phone:</p>
-                                <p className="mock-contact-value">{previewPhone}</p>
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  )}
+                <div style={columnScrollStyle}>
+                  <Preview
+                    state={state}
+                    isMobile={isMobile}
+                    hasSavedData={hasSavedData}
+                    servicesDisplayMode={servicesDisplayMode}
+                    reviewsDisplayMode={reviewsDisplayMode}
+                    aboutMeLayout={aboutMeLayout}
+                    showMainSection={showMainSection}
+                    showAboutMeSection={showAboutMeSection}
+                    showWorkSection={showWorkSection}
+                    showServicesSection={showServicesSection}
+                    showReviewsSection={showReviewsSection}
+                    showContactSection={showContactSection}
+                    hasExchangeContact={hasExchangeContact}
+                    visitUrl={visitUrl}
+                  />
                 </div>
 
                 {/* Editor column */}
-                <div className="myprofile-editor-wrapper" id="myprofile-editor" style={columnScrollStyle}>
-                  {/* If subscribed: no banner and editor is enabled. If not subscribed and trial ended: lock editor. */}
-                  {!isSubscribed && hasTrialEnded && (
-                    <div className="subscription-overlay">
-                      <div className="subscription-message">
-                        <p className="desktop-h4">Subscription Required</p>
-                        <p className="desktop-h6">
-                          Your free trial has ended. Please subscribe to continue editing your profile.
-                        </p>
-                        <button className="blue-button" onClick={handleStartSubscription}>
-                          Go to Subscription
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  <form
-                    onSubmit={handleSubmit}
-                    className="myprofile-editor"
-                    style={{
-                      filter: !isSubscribed && hasTrialEnded ? "blur(5px)" : "none",
-                      pointerEvents: !isSubscribed && hasTrialEnded ? "none" : "auto",
-                    }}
-                  >
-                    <h2 className="editor-title">Edit Your Digital Business Card</h2>
-
-                    {/* Theme */}
-                    <div className="input-block">
-                      <label>Page Theme</label>
-                      <div className="option-row fit">
-                        <button
-                          type="button"
-                          className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
-                          onClick={() => updateState({ pageTheme: "light" })}
-                        >
-                          Light Mode
-                        </button>
-                        <button
-                          type="button"
-                          className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
-                          onClick={() => updateState({ pageTheme: "dark" })}
-                        >
-                          Dark Mode
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Fonts */}
-                    <div className="input-block">
-                      <label>Font</label>
-                      <div className="option-row fit">
-                        {["Inter", "Montserrat", "Poppins"].map((font) => (
-                          <button
-                            type="button"
-                            key={font}
-                            className={`font-button ${state.font === font ? "is-active" : ""}`}
-                            onClick={() => updateState({ font })}
-                            style={{
-                              fontFamily:
-                                `'${font}', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`,
-                              fontWeight: 700,
-                            }}
-                          >
-                            {font}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <hr className="divider" />
-                    <div className="editor-section-header stacked">
-                      <h3 className="editor-subtitle">Main Section</h3>
-                      <button
-                        type="button"
-                        onClick={() => setShowMainSection(!showMainSection)}
-                        className="toggle-button section-chip"
-                      >
-                        {showMainSection ? "Hide Section" : "Show Section"}
-                      </button>
-                    </div>
-                    {showMainSection && (
-                      <>
-                        <div className="input-block">
-                          <label htmlFor="coverPhoto">Cover Photo</label>
-                          <input
-                            ref={fileInputRef}
-                            id="coverPhoto"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            style={{ display: "none" }}
-                          />
-                          <div
-                            className="editor-item-card work-image-item-wrapper cover-photo-card"
-                            onClick={() => fileInputRef.current?.click()}
-                          >
-                            {state.coverPhoto ? (
-                              <img
-                                src={state.coverPhoto || previewPlaceholders.coverPhoto}
-                                alt="Cover"
-                                className="work-image-preview"
-                              />
-                            ) : (
-                              <span className="upload-text">+ Upload Cover Image</span>
-                            )}
-                            {state.coverPhoto && (
-                              <button
-                                type="button"
-                                className="remove-image-button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleRemoveCoverPhoto();
-                                }}
-                              >
-                                &times;
-                              </button>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="input-block tight">
-                          <label htmlFor="mainHeading">Main Heading</label>
-                          <input
-                            id="mainHeading"
-                            type="text"
-                            className="text-input"
-                            value={state.mainHeading || ""}
-                            onChange={(e) => updateState({ mainHeading: e.target.value })}
-                            placeholder={previewPlaceholders.main_heading}
-                          />
-                        </div>
-
-                        <div className="input-block tight">
-                          <label htmlFor="subHeading">Subheading</label>
-                          <input
-                            id="subHeading"
-                            type="text"
-                            className="text-input"
-                            value={state.subHeading || ""}
-                            onChange={(e) => updateState({ subHeading: e.target.value })}
-                            placeholder={previewPlaceholders.sub_heading}
-                          />
-                        </div>
-                      </>
-                    )}
-
-                    <hr className="divider" />
-                    <div className="editor-section-header stacked">
-                      <h3 className="editor-subtitle">About Me Section</h3>
-                      <button
-                        type="button"
-                        onClick={() => setShowAboutMeSection(!showAboutMeSection)}
-                        className="toggle-button section-chip"
-                      >
-                        {showAboutMeSection ? "Hide Section" : "Show Section"}
-                      </button>
-                    </div>
-                    {showAboutMeSection && (
-                      <>
-                        <div className="input-block">
-                          <label>Display Layout</label>
-                          <div className="option-row fit">
-                            <button
-                              type="button"
-                              className={`display-button ${aboutMeLayout === "side-by-side" ? "is-active" : ""}`}
-                              onClick={() => setAboutMeLayout("side-by-side")}
-                            >
-                              Side by Side
-                            </button>
-                            <button
-                              type="button"
-                              className={`display-button ${aboutMeLayout === "stacked" ? "is-active" : ""}`}
-                              onClick={() => setAboutMeLayout("stacked")}
-                            >
-                              Stacked
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="input-block">
-                          <label htmlFor="avatar">Profile Photo</label>
-                          <input
-                            ref={avatarInputRef}
-                            id="avatar"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleAvatarUpload}
-                            style={{ display: "none" }}
-                          />
-                          <div
-                            className="editor-item-card work-image-item-wrapper avatar-tile"
-                            onClick={() => avatarInputRef.current?.click()}
-                          >
-                            {state.avatar ? (
-                              <img src={state.avatar || ""} alt="Avatar preview" className="work-image-preview" />
-                            ) : (
-                              <span className="upload-text">+ Add a Profile Picture/Logo</span>
-                            )}
-                            {state.avatar && (
-                              <button
-                                type="button"
-                                className="remove-image-button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleRemoveAvatar();
-                                }}
-                              >
-                                &times;
-                              </button>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="input-block tight">
-                          <label htmlFor="fullName">Full Name</label>
-                          <input
-                            id="fullName"
-                            type="text"
-                            className="text-input"
-                            value={state.full_name || ""}
-                            onChange={(e) => updateState({ full_name: e.target.value })}
-                            placeholder={previewPlaceholders.full_name}
-                          />
-                        </div>
-
-                        <div className="input-block tight">
-                          <label htmlFor="jobTitle">Job Title</label>
-                          <input
-                            id="jobTitle"
-                            type="text"
-                            className="text-input"
-                            value={state.job_title || ""}
-                            onChange={(e) => updateState({ job_title: e.target.value })}
-                            placeholder={previewPlaceholders.job_title}
-                          />
-                        </div>
-
-                        <div className="input-block tight">
-                          <label htmlFor="bio">About Me Description</label>
-                          <textarea
-                            id="bio"
-                            rows={4}
-                            className="text-input"
-                            value={state.bio || ""}
-                            onChange={(e) => updateState({ bio: e.target.value })}
-                            placeholder={previewPlaceholders.bio}
-                          />
-                        </div>
-                      </>
-                    )}
-
-                    <hr className="divider" />
-                    <div className="editor-section-header stacked">
-                      <h3 className="editor-subtitle">My Work Section</h3>
-                      <button
-                        type="button"
-                        onClick={() => setShowWorkSection(!showWorkSection)}
-                        className="toggle-button section-chip"
-                      >
-                        {showWorkSection ? "Hide Section" : "Show Section"}
-                      </button>
-                    </div>
-                    {showWorkSection && (
-                      <>
-                        <div className="input-block">
-                          <label>Display Layout</label>
-                          <div className="option-row fit">
-                            <button
-                              type="button"
-                              className={`display-button ${state.workDisplayMode === "list" ? "is-active" : ""}`}
-                              onClick={() => updateState({ workDisplayMode: "list" })}
-                            >
-                              List
-                            </button>
-                            <button
-                              type="button"
-                              className={`display-button ${state.workDisplayMode === "grid" ? "is-active" : ""}`}
-                              onClick={() => updateState({ workDisplayMode: "grid" })}
-                            >
-                              Grid
-                            </button>
-                            <button
-                              type="button"
-                              className={`display-button ${state.workDisplayMode === "carousel" ? "is-active" : ""}`}
-                              onClick={() => updateState({ workDisplayMode: "carousel" })}
-                            >
-                              Carousel
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="input-block">
-                          <label>Work Images</label>
-                          <div className="editor-work-image-grid">
-                            {state.workImages.map((item, i) => (
-                              <div key={i} className="editor-item-card work-image-item-wrapper">
-                                <img src={item.preview || item} alt={`work-${i}`} className="work-image-preview" />
-                                <button
-                                  type="button"
-                                  className="remove-image-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleRemoveWorkImage(i);
-                                  }}
-                                >
-                                  &times;
-                                </button>
-                              </div>
-                            ))}
-                            {state.workImages.length < 10 && (
-                              <div
-                                className="add-work-image-placeholder"
-                                onClick={() => workImageInputRef.current?.click()}
-                              >
-                                <span className="upload-text">+ Add image(s)</span>
-                              </div>
-                            )}
-                          </div>
-                          <input
-                            ref={workImageInputRef}
-                            type="file"
-                            multiple
-                            accept="image/*"
-                            style={{ display: "none" }}
-                            onChange={handleAddWorkImage}
-                          />
-                        </div>
-                      </>
-                    )}
-
-                    <hr className="divider" />
-                    <div className="editor-section-header stacked">
-                      <h3 className="editor-subtitle">My Services Section</h3>
-                      <button
-                        type="button"
-                        onClick={() => setShowServicesSection(!showServicesSection)}
-                        className="toggle-button section-chip"
-                      >
-                        {showServicesSection ? "Hide Section" : "Show Section"}
-                      </button>
-                    </div>
-                    {showServicesSection && (
-                      <>
-                        <div className="input-block">
-                          <label>Display Layout</label>
-                          <div className="option-row fit">
-                            <button
-                              type="button"
-                              className={`display-button ${servicesDisplayMode === "list" ? "is-active" : ""}`}
-                              onClick={() => setServicesDisplayMode("list")}
-                            >
-                              List
-                            </button>
-                            <button
-                              type="button"
-                              className={`display-button ${servicesDisplayMode === "carousel" ? "is-active" : ""}`}
-                              onClick={() => setServicesDisplayMode("carousel")}
-                            >
-                              Carousel
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="input-block">
-                          <label>Services</label>
-                          <div className="editor-service-list">
-                            {state.services.map((s, i) => (
-                              <div
-                                key={i}
-                                className="editor-item-card mock-service-item-wrapper"
-                                style={{
-                                  display: "grid",
-                                  gridTemplateColumns: "1fr 1fr auto",
-                                  gap: 8,
-                                  alignItems: "center",
-                                }}
-                              >
-                                <input
-                                  type="text"
-                                  className="text-input"
-                                  placeholder="Service Name"
-                                  value={s.name || ""}
-                                  onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                                />
-                                <input
-                                  type="text"
-                                  className="text-input"
-                                  placeholder="Service Price/Detail"
-                                  value={s.price || ""}
-                                  onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveService(i)}
-                                  className="remove-item-button"
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                          <button type="button" onClick={handleAddService} className="add-item-button">
-                            + Add Service
-                          </button>
-                        </div>
-                      </>
-                    )}
-
-                    <hr className="divider" />
-                    <div className="editor-section-header stacked">
-                      <h3 className="editor-subtitle">Reviews Section</h3>
-                      <button
-                        type="button"
-                        onClick={() => setShowReviewsSection(!showReviewsSection)}
-                        className="toggle-button section-chip"
-                      >
-                        {showReviewsSection ? "Hide Section" : "Show Section"}
-                      </button>
-                    </div>
-                    {showReviewsSection && (
-                      <>
-                        <div className="input-block">
-                          <label>Display Layout</label>
-                          <div className="option-row fit">
-                            <button
-                              type="button"
-                              className={`display-button ${reviewsDisplayMode === "list" ? "is-active" : ""}`}
-                              onClick={() => setReviewsDisplayMode("list")}
-                            >
-                              List
-                            </button>
-                            <button
-                              type="button"
-                              className={`display-button ${reviewsDisplayMode === "carousel" ? "is-active" : ""}`}
-                              onClick={() => setReviewsDisplayMode("carousel")}
-                            >
-                              Carousel
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="input-block">
-                          <label>Reviews</label>
-                          <div className="editor-reviews-list" style={{ display: "grid", gap: 8 }}>
-                            {state.reviews.map((r, i) => (
-                              <div
-                                key={i}
-                                className="editor-item-card mock-review-card-wrapper"
-                                style={{
-                                  display: "grid",
-                                  gridTemplateColumns: "1fr 1fr 110px auto",
-                                  gap: 8,
-                                  alignItems: "center",
-                                }}
-                              >
-                                <input
-                                  type="text"
-                                  className="text-input"
-                                  placeholder="Reviewer Name"
-                                  value={r.name || ""}
-                                  onChange={(e) => handleReviewChange(i, "name", e.target.value)}
-                                />
-                                <textarea
-                                  className="text-input"
-                                  placeholder="Review text"
-                                  rows={2}
-                                  value={r.text || ""}
-                                  onChange={(e) => handleReviewChange(i, "text", e.target.value)}
-                                />
-                                <input
-                                  type="number"
-                                  className="text-input"
-                                  placeholder="Rating (1-5)"
-                                  min="1"
-                                  max="5"
-                                  value={r.rating || ""}
-                                  onChange={(e) => handleReviewChange(i, "rating", e.target.value)}
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveReview(i)}
-                                  className="remove-item-button"
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                          <button type="button" onClick={handleAddReview} className="add-item-button">
-                            + Add Review
-                          </button>
-                        </div>
-                      </>
-                    )}
-
-                    <hr className="divider" />
-                    <div className="editor-section-header stacked">
-                      <h3 className="editor-subtitle">My Contact Details</h3>
-                      <button
-                        type="button"
-                        onClick={() => setShowContactSection(!showContactSection)}
-                        className="toggle-button section-chip"
-                      >
-                        {showContactSection ? "Hide Section" : "Show Section"}
-                      </button>
-                    </div>
-                    {showContactSection && (
-                      <>
-                        <div className="input-block tight">
-                          <label htmlFor="contactEmail">Email Address</label>
-                          <input
-                            id="contactEmail"
-                            type="email"
-                            className="text-input"
-                            value={state.contact_email || ""}
-                            onChange={(e) => updateState({ contact_email: e.target.value })}
-                            placeholder={previewPlaceholders.contact_email}
-                          />
-                        </div>
-
-                        <div className="input-block tight">
-                          <label htmlFor="phoneNumber">Phone Number</label>
-                          <input
-                            id="phoneNumber"
-                            type="tel"
-                            className="text-input"
-                            value={state.phone_number || ""}
-                            onChange={(e) => updateState({ phone_number: e.target.value })}
-                            placeholder={previewPlaceholders.phone_number}
-                          />
-                        </div>
-                      </>
-                    )}
-
-                    <div className="button-group">
-                      <button
-                        type="button"
-                        onClick={handleResetPage}
-                        className="cta-black-button desktop-button"
-                      >
-                        Reset Page
-                      </button>
-                      <button type="submit" className="cta-blue-button desktop-button">
-                        Publish Now
-                      </button>
-                    </div>
-                  </form>
-                </div>
+                <Editor
+                  state={state}
+                  updateState={updateState}
+                  isSubscribed={isSubscribed}
+                  hasTrialEnded={hasTrialEnded}
+                  onStartSubscription={handleStartSubscription}
+                  onResetPage={handleResetPage}
+                  onSubmit={handleSubmit}
+                  servicesDisplayMode={servicesDisplayMode}
+                  setServicesDisplayMode={setServicesDisplayMode}
+                  reviewsDisplayMode={reviewsDisplayMode}
+                  setReviewsDisplayMode={setReviewsDisplayMode}
+                  aboutMeLayout={aboutMeLayout}
+                  setAboutMeLayout={setAboutMeLayout}
+                  showMainSection={showMainSection}
+                  setShowMainSection={setShowMainSection}
+                  showAboutMeSection={showAboutMeSection}
+                  setShowAboutMeSection={setShowAboutMeSection}
+                  showWorkSection={showWorkSection}
+                  setShowWorkSection={setShowWorkSection}
+                  showServicesSection={showServicesSection}
+                  setShowServicesSection={setShowServicesSection}
+                  showReviewsSection={showReviewsSection}
+                  setShowReviewsSection={setShowReviewsSection}
+                  showContactSection={showContactSection}
+                  setShowContactSection={setShowContactSection}
+                  onCoverUpload={onCoverUpload}
+                  onRemoveCover={handleRemoveCoverPhoto}
+                  onAvatarUpload={onAvatarUpload}
+                  onRemoveAvatar={handleRemoveAvatar}
+                  onAddWorkImages={onAddWorkImages}
+                  onRemoveWorkImage={handleRemoveWorkImage}
+                  columnScrollStyle={columnScrollStyle}
+                />
               </div>
             </>
           )}
