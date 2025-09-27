@@ -595,3 +595,31 @@
         overflow: hidden !important;
     }
 }
+
+.page-header-right button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    /* space between icon + text */
+}
+
+.page-header-right .share-icon {
+    height: 18px;
+    width: 18px;
+    display: inline-block;
+}
+
+/* On small mobile (icon only), center the icon */
+@media (max-width: 600px) {
+    .page-header-right button span {
+        display: none;
+    }
+
+    .page-header-right button {
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border-radius: 50%;
+    }
+}
