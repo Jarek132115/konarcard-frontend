@@ -3,8 +3,6 @@ import { previewPlaceholders } from "../store/businessCardStore";
 
 /**
  * Orange-themed Editor (scoped styles via .editor-scope)
- *
- * Props: see previous version — unchanged API
  */
 export default function Editor({
     state,
@@ -14,13 +12,6 @@ export default function Editor({
     onStartSubscription,
     onResetPage,
     onSubmit,
-
-    servicesDisplayMode,
-    setServicesDisplayMode,
-    reviewsDisplayMode,
-    setReviewsDisplayMode,
-    aboutMeLayout,
-    setAboutMeLayout,
 
     showMainSection,
     setShowMainSection,
@@ -101,7 +92,7 @@ export default function Editor({
 
                 {/* Theme */}
                 <div className="input-block">
-                    <label>Page Theme</label>
+                    <div className="choice-label">Page Theme</div>
                     <div className="option-row split-2">
                         <button
                             type="button"
@@ -122,7 +113,7 @@ export default function Editor({
 
                 {/* Fonts */}
                 <div className="input-block">
-                    <label>Font</label>
+                    <div className="choice-label">Font</div>
                     <div className="option-row split-3">
                         {["Inter", "Montserrat", "Poppins"].map((font) => (
                             <button
@@ -235,26 +226,6 @@ export default function Editor({
                 {showAboutMeSection && (
                     <>
                         <div className="input-block">
-                            <label>Display Layout</label>
-                            <div className="option-row split-2">
-                                <button
-                                    type="button"
-                                    className={`chip ${aboutMeLayout === "side-by-side" ? "is-active" : ""}`}
-                                    onClick={() => setAboutMeLayout("side-by-side")}
-                                >
-                                    Side by Side
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`chip ${aboutMeLayout === "stacked" ? "is-active" : ""}`}
-                                    onClick={() => setAboutMeLayout("stacked")}
-                                >
-                                    Stacked
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="input-block">
                             <label htmlFor="avatar">Profile Photo</label>
                             <input
                                 ref={avatarInputRef}
@@ -341,71 +312,42 @@ export default function Editor({
                     </button>
                 </div>
                 {showWorkSection && (
-                    <>
-                        <div className="input-block">
-                            <label>Display Layout</label>
-                            <div className="option-row split-3">
-                                <button
-                                    type="button"
-                                    className={`chip ${state.workDisplayMode === "list" ? "is-active" : ""}`}
-                                    onClick={() => updateState({ workDisplayMode: "list" })}
-                                >
-                                    List
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`chip ${state.workDisplayMode === "grid" ? "is-active" : ""}`}
-                                    onClick={() => updateState({ workDisplayMode: "grid" })}
-                                >
-                                    Grid
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`chip ${state.workDisplayMode === "carousel" ? "is-active" : ""}`}
-                                    onClick={() => updateState({ workDisplayMode: "carousel" })}
-                                >
-                                    Carousel
-                                </button>
-                            </div>
+                    <div className="input-block">
+                        <label>Work Images</label>
+                        <div className="editor-work-image-grid">
+                            {(state.workImages || []).map((item, i) => (
+                                <div key={i} className="editor-item-card work-image-item-wrapper">
+                                    <img src={item.preview || item} alt={`work-${i}`} className="work-image-preview" />
+                                    <button
+                                        type="button"
+                                        className="remove-image-button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onRemoveWorkImage?.(i);
+                                        }}
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+                            ))}
+                            {(state.workImages || []).length < 10 && (
+                                <div className="add-work-image-placeholder" onClick={() => workImageInputRef.current?.click()}>
+                                    <span className="upload-text">+ Add image(s)</span>
+                                </div>
+                            )}
                         </div>
-
-                        <div className="input-block">
-                            <label>Work Images</label>
-                            <div className="editor-work-image-grid">
-                                {(state.workImages || []).map((item, i) => (
-                                    <div key={i} className="editor-item-card work-image-item-wrapper">
-                                        <img src={item.preview || item} alt={`work-${i}`} className="work-image-preview" />
-                                        <button
-                                            type="button"
-                                            className="remove-image-button"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                onRemoveWorkImage?.(i);
-                                            }}
-                                        >
-                                            &times;
-                                        </button>
-                                    </div>
-                                ))}
-                                {(state.workImages || []).length < 10 && (
-                                    <div className="add-work-image-placeholder" onClick={() => workImageInputRef.current?.click()}>
-                                        <span className="upload-text">+ Add image(s)</span>
-                                    </div>
-                                )}
-                            </div>
-                            <input
-                                ref={workImageInputRef}
-                                type="file"
-                                multiple
-                                accept="image/*"
-                                style={{ display: "none" }}
-                                onChange={(e) => {
-                                    const files = Array.from(e.target.files || []).filter((f) => f && f.type.startsWith("image/"));
-                                    if (files.length) onAddWorkImages?.(files);
-                                }}
-                            />
-                        </div>
-                    </>
+                        <input
+                            ref={workImageInputRef}
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            onChange={(e) => {
+                                const files = Array.from(e.target.files || []).filter((f) => f && f.type.startsWith("image/"));
+                                if (files.length) onAddWorkImages?.(files);
+                            }}
+                        />
+                    </div>
                 )}
 
                 <hr className="divider" />
@@ -421,26 +363,6 @@ export default function Editor({
                 </div>
                 {showServicesSection && (
                     <>
-                        <div className="input-block">
-                            <label>Display Layout</label>
-                            <div className="option-row split-2">
-                                <button
-                                    type="button"
-                                    className={`chip ${servicesDisplayMode === "list" ? "is-active" : ""}`}
-                                    onClick={() => setServicesDisplayMode("list")}
-                                >
-                                    List
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`chip ${servicesDisplayMode === "carousel" ? "is-active" : ""}`}
-                                    onClick={() => setServicesDisplayMode("carousel")}
-                                >
-                                    Carousel
-                                </button>
-                            </div>
-                        </div>
-
                         <div className="input-block">
                             <label>Services</label>
                             <div className="editor-service-list">
@@ -486,26 +408,6 @@ export default function Editor({
                 </div>
                 {showReviewsSection && (
                     <>
-                        <div className="input-block">
-                            <label>Display Layout</label>
-                            <div className="option-row split-2">
-                                <button
-                                    type="button"
-                                    className={`chip ${reviewsDisplayMode === "list" ? "is-active" : ""}`}
-                                    onClick={() => setReviewsDisplayMode("list")}
-                                >
-                                    List
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`chip ${reviewsDisplayMode === "carousel" ? "is-active" : ""}`}
-                                    onClick={() => setReviewsDisplayMode("carousel")}
-                                >
-                                    Carousel
-                                </button>
-                            </div>
-                        </div>
-
                         <div className="input-block">
                             <label>Reviews</label>
                             <div className="editor-reviews-list" style={{ display: "grid", gap: 8 }}>

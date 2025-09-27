@@ -2,11 +2,9 @@
    EDITOR (scoped, orange theme)
    ========================= */
 .editor-scope {
-    /* site accent pulled from home.css */
     --accent: #FF6B00;
     --accent-rgb: 255 107 0;
     --accent-ink: #1E2A38;
-    /* deep navy you use elsewhere */
     --neutral-50: #fafbff;
     --neutral-100: #f3f4f6;
     --neutral-200: #e9e9e9;
@@ -15,25 +13,20 @@
     --chip-stroke: #e7ebf2;
 }
 
-/* Ensure wrapper keeps position for overlay and allows the card to fill height */
 .editor-scope.myprofile-editor-wrapper {
     position: relative;
     height: 100%;
 }
 
-/* Base card */
+/* Card */
 .editor-scope .myprofile-editor {
     background: #fff;
     border: 1px solid rgba(0, 0, 0, .06);
     border-radius: 20px;
     box-shadow: 0 10px 24px rgba(30, 42, 56, .08);
     padding: 18px;
-
-    /* new constraints */
     max-width: 500px;
     margin: 0 auto;
-
-    /* make the content inside scroll while the card stays put */
     height: 100%;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -47,14 +40,12 @@
     color: var(--accent-ink);
 }
 
-/* Labels & inputs */
+/* Labels & choice labels */
 .editor-scope .input-block {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    /* 10px between label and its control(s) */
     margin: 20px 0;
-    /* 20px to the next block */
 }
 
 .editor-scope .input-block.tight {
@@ -67,6 +58,12 @@
     color: #111;
 }
 
+.editor-scope .choice-label {
+    font: 800 14px/1.3 var(--main-font-family, Inter, system-ui);
+    color: #111;
+}
+
+/* Inputs */
 .editor-scope .text-input,
 .editor-scope textarea.text-input {
     padding: 11px 12px;
@@ -89,10 +86,9 @@
 /* Divider */
 .editor-scope .divider {
     height: 1px;
-    width: 100%;
-    border: 0;
     background: rgba(30, 42, 56, .08);
     margin: 10px 0;
+    border: 0;
 }
 
 /* Section header */
@@ -128,14 +124,13 @@
     box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .12);
 }
 
-/* Choice rows */
+/* Option rows */
 .editor-scope .option-row {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
 }
 
-/* New: split rows that always divide the width evenly */
 .editor-scope .option-row.split-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -148,7 +143,7 @@
     gap: 8px;
 }
 
-/* Chip buttons */
+/* Chips */
 .editor-scope .chip {
     padding: 12px 14px;
     border-radius: 12px;
@@ -160,7 +155,6 @@
     transition: transform .04s ease, box-shadow .15s, border-color .15s, color .15s, background .15s;
     box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
     width: 100%;
-    /* make grid cells fill full width */
     text-align: center;
 }
 
@@ -179,7 +173,7 @@
     box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .18);
 }
 
-/* Upload tiles & grid */
+/* Upload & images */
 .editor-scope .editor-work-image-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -245,7 +239,7 @@
     color: #c34e00;
 }
 
-/* Remove image button */
+/* Remove image */
 .editor-scope .remove-image-button {
     position: absolute;
     top: 8px;
@@ -263,7 +257,7 @@
     z-index: 2;
 }
 
-/* Services / Reviews lists */
+/* Lists */
 .editor-scope .editor-service-list,
 .editor-scope .editor-reviews-list {
     display: grid;
@@ -271,13 +265,8 @@
     width: 100%;
 }
 
-.editor-scope .mock-service-item-wrapper,
-.editor-scope .mock-review-card-wrapper {
-    width: 100%;
-}
-
 .editor-scope .editor-item-card.mock-service-item-wrapper,
-editor-scope .editor-item-card.mock-review-card-wrapper {
+.editor-scope .editor-item-card.mock-review-card-wrapper {
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important;
@@ -292,7 +281,6 @@ editor-scope .editor-item-card.mock-review-card-wrapper {
 }
 
 .editor-scope .btn {
-    appearance: none;
     border: 0;
     border-radius: 12px;
     padding: 12px 18px;
@@ -334,11 +322,8 @@ editor-scope .editor-item-card.mock-review-card-wrapper {
     border: 1px solid #111;
 }
 
-/* Danger */
 .editor-scope .btn-danger {
     align-self: flex-end;
-    width: auto;
-    white-space: nowrap;
     padding: 8px 12px;
     border-radius: 10px;
     background: #dc3545;
@@ -351,7 +336,7 @@ editor-scope .editor-item-card.mock-review-card-wrapper {
     background: #c82333;
 }
 
-/* Subscription overlay (unchanged visuals) */
+/* Subscription overlay */
 .editor-scope .subscription-overlay {
     position: absolute;
     inset: 0;
@@ -372,7 +357,7 @@ editor-scope .editor-item-card.mock-review-card-wrapper {
     box-shadow: 0 10px 24px rgba(30, 42, 56, .12);
 }
 
-/* Focus states */
+/* Focus */
 .editor-scope .chip:focus-visible,
 .editor-scope .section-chip:focus-visible,
 .editor-scope .btn:focus-visible {
@@ -380,7 +365,7 @@ editor-scope .editor-item-card.mock-review-card-wrapper {
     outline-offset: 2px;
 }
 
-/* BIO field sizing (keep your previous responsive behavior) */
+/* Bio responsive */
 @media (min-width:1001px) {
     .editor-scope #bio.text-input {
         height: 100px;
@@ -399,7 +384,7 @@ editor-scope .editor-item-card.mock-review-card-wrapper {
     }
 }
 
-/* Utilities */
+/* Utility */
 .editor-scope .w-full {
     width: 100% !important;
 }
