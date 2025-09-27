@@ -1,5 +1,5 @@
 :root {
-    /* read global tokens; don’t override site variables */
+    /* pulls from global tokens */
     --sb-accent: var(--accent, #FF6B00);
     --sb-accent-rgb: var(--accent-rgb, 255 107 0);
 
@@ -17,7 +17,7 @@
     --sb-pill-shadow: 0 6px 12px rgb(var(--sb-accent-rgb) / .18);
 }
 
-/* ===== Overlay (shared with navbar) */
+/* ===== Overlay */
 .sidebar-overlay {
     position: fixed;
     inset: 0;
@@ -33,7 +33,7 @@
     visibility: visible;
 }
 
-/* ===== DESKTOP SIDEBAR (unchanged) */
+/* ===== DESKTOP (unchanged shell) */
 .sidebar {
     position: fixed;
     top: var(--sb-top);
@@ -47,6 +47,8 @@
     box-sizing: border-box;
     z-index: 1003;
     box-shadow: var(--sb-shadow);
+    display: flex;
+    flex-direction: column;
 }
 
 .brand-header {
@@ -82,6 +84,7 @@
     flex-direction: column;
 }
 
+/* Desktop link look (with icons) */
 .sidebar-button {
     display: flex;
     align-items: center;
@@ -115,6 +118,7 @@
     color: var(--sb-ink);
 }
 
+/* Active pill + icon tint */
 .sidebar-button.active-sidebar-link {
     background: rgb(var(--sb-accent-rgb) / .12);
     border: 1px solid rgb(var(--sb-accent-rgb) / .25);
@@ -127,12 +131,23 @@
     filter: invert(61%) sepia(83%) saturate(2338%) hue-rotate(359deg) brightness(102%) contrast(101%);
 }
 
-/* Desktop logout icon button */
+/* Desktop footer pinned to bottom */
+.sidebar-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 6px;
+}
+
 .settings-row {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-top: 6px;
+}
+
+.settings-link {
+    flex: 1;
 }
 
 .logout-icon-btn {
@@ -161,12 +176,8 @@
     display: none;
 }
 
-/* ===========================================================
-   MOBILE: EXACTLY MATCH NAVBAR MOBILE OVERLAY STYLES
-   =========================================================== */
+/* ===== MOBILE: clone navbar mobile exactly (white panel + typography) */
 @media (max-width:1000px) {
-
-    /* Panel */
     .sidebar {
         top: 0;
         left: 0;
@@ -176,28 +187,17 @@
         transform: translateX(-100%);
         transition: transform .35s cubic-bezier(.22, .9, .24, 1);
         padding: 0 20px;
+        box-shadow: none;
         background: #fff;
         /* pure white */
-        box-shadow: none;
-        border-right: 1px solid rgba(0, 0, 0, .06);
     }
 
     .sidebar.open {
         transform: translateX(0);
     }
 
-    /* Header — logo + ✕ plus grey line */
     .brand-header {
         padding: 20px 0;
-        border-bottom: 1px solid rgba(0, 0, 0, .08);
-    }
-
-    .brand-text {
-        display: none;
-    }
-
-    .brand-logo {
-        display: block;
     }
 
     .mobile-only {
@@ -206,6 +206,14 @@
 
     .desktop-only {
         display: none;
+    }
+
+    .brand-text {
+        display: none;
+    }
+
+    .brand-logo {
+        display: block;
     }
 
     .mobile-close {
@@ -229,39 +237,34 @@
         transform: scale(.96);
     }
 
-    /* Scroll area */
     .sidebar-content-wrapper {
         height: calc(100vh - 69px);
-        /* header height */
-        overflow-y: auto;
+        overflow: auto;
         padding: 12px 0 4px 0;
     }
 
-    /* List links — identical to navbar’s .desktop-h4 in mobile */
     .links-stack {
         gap: 8px;
     }
 
+    /* Mobile links = same style as navbar mobile list */
     .sidebar-button {
-        all: unset;
-        display: block;
         padding: 14px 6px;
-        font-size: 22px;
-        font-family: 'Cal Sans', sans-serif;
+        margin: 0;
+        gap: 0;
+        border-radius: 12px;
         font-weight: 700;
+        font-size: 22px;
         line-height: 1.35;
         letter-spacing: -0.01em;
         color: #111;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: background-color .15s ease, color .15s ease, transform .08s ease;
     }
 
-    /* No icons on mobile */
     .sidebar-button .icon {
         display: none;
     }
 
+    /* no icons on mobile */
     .sidebar-button:hover {
         background: rgba(0, 0, 0, .05);
         color: #000;
@@ -271,41 +274,33 @@
         transform: translateY(1px);
     }
 
-    /* Active = orange (same as navbar) */
-    .sidebar-button.active,
+    /* Active = orange text, no pill */
     .sidebar-button.active-sidebar-link {
+        background: transparent;
+        border: 0;
         color: var(--Orange, #FF7B00) !important;
         font-weight: 700 !important;
-        background: transparent !important;
-        border: 0 !important;
-        box-shadow: none !important;
+        box-shadow: none;
     }
 
-    /* Dividers (above Home, between groups, above Logout) */
+    /* Grey dividers – one above Home, one between groups */
     .mobile-divider {
         height: 1px;
         background: rgba(0, 0, 0, .08);
-        margin: 10px 0 0 0;
+        margin: 0 0 8px 0;
     }
 
-    .mobile-divider.first {
-        margin-top: 0;
-    }
-
-    /* Logout — same font/spacing, just red text */
+    /* Red logout text matches navbar */
     .logout-link {
         all: unset;
+        cursor: pointer;
         display: block;
         padding: 14px 6px;
-        font-size: 22px;
-        font-family: 'Cal Sans', sans-serif;
+        border-radius: 12px;
+        color: #ff4444 !important;
         font-weight: 700;
         line-height: 1.35;
         letter-spacing: -0.01em;
-        color: #ff4444 !important;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: background-color .15s ease, transform .08s ease;
     }
 
     .logout-link:hover {
@@ -317,7 +312,7 @@
     }
 }
 
-/* ===== Focus states (keyboard a11y) */
+/* Focus states */
 .sidebar-button:focus-visible,
 .mobile-close:focus-visible,
 .logout-icon-btn:focus-visible,
@@ -326,7 +321,7 @@
     outline-offset: 2px;
 }
 
-/* ===== Dark mode tweaks (desktop only) */
+/* Dark mode (keep mobile white per request) */
 .dark-mode .sidebar {
     background: #fff;
 }
