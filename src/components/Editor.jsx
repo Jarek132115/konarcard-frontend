@@ -496,10 +496,10 @@ export default function Editor({
                 )}
 
                 <div className="button-group">
-                    <button type="button" onClick={onResetPage} className="btn btn-neutral">
+                    <button type="button" onClick={onResetPage} className="desktop-button navy-button">
                         Reset Page
                     </button>
-                    <button type="submit" className="btn btn-accent">
+                    <button type="submit" className="desktop-button orange-button">
                         Publish Now
                     </button>
                 </div>
