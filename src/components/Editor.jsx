@@ -89,6 +89,7 @@ export default function Editor({
                 }}
             >
                 <h2 className="editor-title">Edit Your Digital Business Card</h2>
+                <hr className="title-divider" />
 
                 {/* Theme */}
                 <div className="input-block">
@@ -96,14 +97,14 @@ export default function Editor({
                     <div className="option-row split-2">
                         <button
                             type="button"
-                            className={`chip ${state.pageTheme === "light" ? "is-active" : ""}`}
+                            className={`chip theme-chip ${state.pageTheme === "light" ? "is-active" : ""}`}
                             onClick={() => updateState({ pageTheme: "light" })}
                         >
                             Light Mode
                         </button>
                         <button
                             type="button"
-                            className={`chip ${state.pageTheme === "dark" ? "is-active" : ""}`}
+                            className={`chip theme-chip ${state.pageTheme === "dark" ? "is-active" : ""}`}
                             onClick={() => updateState({ pageTheme: "dark" })}
                         >
                             Dark Mode
@@ -132,6 +133,7 @@ export default function Editor({
                     </div>
                 </div>
 
+                {/* Main Section */}
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">Main Section</h3>
@@ -212,6 +214,7 @@ export default function Editor({
                     </>
                 )}
 
+                {/* About Me */}
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">About Me Section</h3>
@@ -300,6 +303,7 @@ export default function Editor({
                     </>
                 )}
 
+                {/* Work */}
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">My Work Section</h3>
@@ -350,6 +354,7 @@ export default function Editor({
                     </div>
                 )}
 
+                {/* Services */}
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">My Services Section</h3>
@@ -395,6 +400,7 @@ export default function Editor({
                     </>
                 )}
 
+                {/* Reviews */}
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">Reviews Section</h3>
@@ -449,6 +455,7 @@ export default function Editor({
                     </>
                 )}
 
+                {/* Contact */}
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">My Contact Details</h3>
