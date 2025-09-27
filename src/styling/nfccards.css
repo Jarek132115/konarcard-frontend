@@ -1,5 +1,5 @@
 /* =========================
-   PAGE BEHAVIOR
+   NFC CARDS — PAGE BEHAVIOR
    ========================= */
 
 /* Make the main column fill the viewport; the shell can flex to bottom */
@@ -136,7 +136,7 @@
 }
 
 /* =========================================================
-   PILL BADGES
+   PILL BADGES (orange + black)
    ========================================================= */
 .pill-blue-solid {
   font-family: "Cal Sans", sans-serif;
@@ -190,7 +190,6 @@
   height: 10px;
   border-radius: 2px;
   background: var(--accent, #FF6B00);
-  /* orange bullet */
   margin-top: 6px;
   flex: 0 0 10px;
 }
