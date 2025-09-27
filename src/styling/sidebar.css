@@ -362,3 +362,20 @@
     font-family: 'Cal Sans', sans-serif;
     /* ← add this line */
 }
+
+@media (max-width:1000px) {
+    .sidebar-button {
+        padding: 14px 6px;
+        margin: 0;
+        gap: 0;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 22px;
+        /* restore large font */
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+        color: #111;
+        font-family: 'Cal Sans', sans-serif;
+        /* ensure consistency */
+    }
+}

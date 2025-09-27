@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 
-/* Icons (desktop shows them, mobile hides them via CSS) */
+/* Icons (desktop shows them, mobile hides via CSS) */
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import homeInterface from '../assets/icons/Home-Interface.svg';
 import orderIcon from '../assets/icons/MyOrder-Icon.svg';
@@ -92,7 +92,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="label">Product &amp; Plan</span>
                         </Link>
 
-                        {/* MOBILE: divider between groups (no extra one at bottom) */}
+                        {/* MOBILE: divider between groups */}
                         <div className="mobile-divider mobile-only" aria-hidden="true" />
 
                         <Link
@@ -108,7 +108,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         <Link
                             to="/helpcentreinterface"
                             onClick={closeSidebar}
-                            className={`sidebar-button mobile-only ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''}`}
+                            className={`sidebar-button mobile-only ${isActive('/helpcentreinterface') ? 'active-sidebar-link' : ''
+                                }`}
                         >
                             <img src={helpInterface} alt="" className="icon" />
                             <span className="label">Help Centre</span>
@@ -123,7 +124,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="label">Settings</span>
                         </Link>
 
-                        {/* MOBILE: red Logout link styled exactly like the others (same font/spacing) */}
+                        {/* MOBILE: Logout (styled same font/spacing as other links via .sidebar-button) */}
                         <button
                             type="button"
                             className="sidebar-button logout-link mobile-only"
@@ -136,7 +137,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         </button>
                     </nav>
 
-                    {/* DESKTOP FOOTER pinned bottom: Help Centre, Settings, Logout icon (right) */}
+                    {/* DESKTOP FOOTER: Help Centre, Settings, Logout (icon on the right) */}
                     <div className="sidebar-footer desktop-only">
                         <Link
                             to="/helpcentreinterface"
