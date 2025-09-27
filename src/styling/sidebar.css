@@ -342,3 +342,23 @@
         background: rgb(255 255 255 / .06);
     }
 }
+
+/* Desktop link look (with icons) */
+.sidebar-button {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    margin: 2px 0;
+    text-decoration: none;
+    color: var(--sb-muted);
+    background: transparent;
+    border: 0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background .2s, color .2s, filter .2s;
+    font-weight: 600;
+    font-size: 15px;
+    font-family: 'Cal Sans', sans-serif;
+    /* ← add this line */
+}
