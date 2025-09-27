@@ -1,28 +1,24 @@
 :root {
-    /* KONAR orange system */
-    --sb-accent: #FF6B00;
-    --sb-accent-rgb: 255 107 0;
+    /* Reuse global tokens if present (from MyProfile.css); fallbacks keep it working if not loaded yet */
+    --accent: var(--accent, #FF6B00);
+    --accent-rgb: var(--accent-rgb, 255 107 0);
 
-    /* Ink & neutrals */
+    --shell-bg: var(--shell-bg, #FFF1E8);
+    /* same peach as header/wrapper */
+    --shell-border: var(--shell-border, rgb(255 123 0 / .20));
+
+    /* Sidebar-specific ink & neutrals */
     --sb-ink: #1E2A38;
     --sb-muted: #6B7280;
-    --sb-divider: #EEF1F4;
 
-    /* Surfaces */
-    --sb-bg: #FFF7F1;
-    /* sidebar tray (peachy, not pink) */
-    --sb-surface: #FFFFFF;
-    /* inner surface for pills/buttons */
-
-    /* Layout (align with app) */
+    /* Layout (keep in sync with app) */
     --sb-left: 16px;
     --sb-top: 16px;
     --sb-w: 268px;
 
     /* Effects */
-    --sb-border: 1px solid rgba(30, 42, 56, .10);
     --sb-shadow: 0 10px 24px rgba(30, 42, 56, .08);
-    --sb-pill-shadow: 0 6px 12px rgb(var(--sb-accent-rgb) / .18);
+    --sb-pill-shadow: 0 6px 12px rgb(var(--accent-rgb) / .18);
 }
 
 /* ===== Overlay */
@@ -38,7 +34,7 @@
 
 .sidebar-overlay.active {
     opacity: 1;
-    visibility: visible;
+    visibility: visible
 }
 
 /* ===== Shell */
@@ -48,8 +44,10 @@
     left: var(--sb-left);
     height: calc(100vh - (var(--sb-top) * 2));
     width: var(--sb-w);
-    background: var(--sb-bg);
-    border: var(--sb-border);
+    background: var(--shell-bg);
+    /* ← same as header/wrapper */
+    border: 1px solid var(--shell-border);
+    /* light orange stroke */
     border-radius: 18px;
     padding: 0 14px 16px;
     box-sizing: border-box;
@@ -63,17 +61,16 @@
     align-items: center;
     gap: 10px;
     padding: 18px 0 14px;
-    border-bottom: 1px dashed rgba(30, 42, 56, .10);
+    border-bottom: 1px dashed rgb(30 42 56 / .10);
 }
 
 .brand-logo {
     width: 26px;
-    height: 26px;
-    filter: none;
+    height: 26px
 }
 
 .mobile-only {
-    display: none;
+    display: none
 }
 
 .close-sidebar-button {
@@ -87,27 +84,27 @@
 }
 
 .close-sidebar-button:hover {
-    background: rgba(0, 0, 0, .06);
+    background: rgba(0, 0, 0, .06)
 }
 
 .close-sidebar-button span {
     position: absolute;
     width: 22px;
     height: 2.5px;
-    background: var(--sb-ink);
+    background: #1E2A38;
     border-radius: 2px;
 }
 
 .close-sidebar-button span:nth-child(1) {
-    transform: rotate(45deg);
+    transform: rotate(45deg)
 }
 
 .close-sidebar-button span:nth-child(2) {
-    opacity: 0;
+    opacity: 0
 }
 
 .close-sidebar-button span:nth-child(3) {
-    transform: rotate(-45deg);
+    transform: rotate(-45deg)
 }
 
 /* ===== Scrollable area */
@@ -119,10 +116,10 @@
     padding: 6px 0 0;
 }
 
-/* ===== Links stack */
+/* ===== Links */
 .links-stack {
     display: flex;
-    flex-direction: column;
+    flex-direction: column
 }
 
 .sidebar-button {
@@ -151,28 +148,27 @@
 .sidebar-button .label {
     font-size: 15px;
     font-weight: 700;
-    color: inherit;
+    color: inherit
 }
 
 .sidebar-button:hover {
-    background: rgba(30, 42, 56, .05);
-    color: #425366;
+    background: rgb(30 42 56 / .05);
+    color: #425366
 }
 
 .sidebar-button:hover .icon {
-    filter: grayscale(20%);
+    filter: grayscale(20%)
 }
 
-/* ===== Active (orange pill) */
+/* Active = orange pill */
 .sidebar-button.active-sidebar-link {
-    background: rgb(var(--sb-accent-rgb) / .10);
-    border: 1px solid rgb(var(--sb-accent-rgb) / .25);
+    background: rgb(var(--accent-rgb) / .10);
+    border: 1px solid rgb(var(--accent-rgb) / .25);
     color: var(--sb-ink);
     box-shadow: var(--sb-pill-shadow);
 }
 
 .sidebar-button.active-sidebar-link .icon {
-    /* orange tint for monochrome icons */
     filter: invert(61%) sepia(83%) saturate(2338%) hue-rotate(359deg) brightness(102%) contrast(101%);
 }
 
@@ -182,20 +178,19 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding-bottom: 10px;
+    padding-bottom: 10px
 }
 
 .settings-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 8px
 }
 
 .settings-link {
-    flex: 1;
+    flex: 1
 }
 
-/* Logout */
 .logout-icon-btn {
     width: 44px;
     height: 44px;
@@ -203,22 +198,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgb(var(--sb-accent-rgb) / .28);
-    background: var(--sb-surface);
+    border: 1px solid rgb(var(--accent-rgb) / .28);
+    background: #fff;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0, 0, 0, .06);
 }
 
 .logout-icon-btn:hover {
-    background: rgb(var(--sb-accent-rgb) / .08);
+    background: rgb(var(--accent-rgb) / .08)
 }
 
 .icon-red {
-    /* keep red hue but softer; if icon is mono, this is a warm accent */
     filter: invert(39%) sepia(73%) saturate(1397%) hue-rotate(338deg) brightness(96%) contrast(95%);
 }
 
-/* ===== Mobile (full drawer) */
+/* ===== Mobile drawer */
 @media (max-width:1000px) {
     .sidebar {
         top: 0;
@@ -230,45 +224,59 @@
         transition: transform .3s ease;
         padding: 0 16px 0;
         box-shadow: none;
-        background: var(--sb-surface);
-        /* cleaner full-bleed */
+        background: #fff;
     }
 
     .sidebar.open {
-        transform: translateX(0);
+        transform: translateX(0)
     }
 
     .mobile-only {
-        display: block;
+        display: block
     }
 
     .brand-header {
         border-bottom: none;
-        padding: 14px 0 10px;
+        padding: 14px 0 10px
     }
 
     .sidebar-button {
-        padding: 18px 10px;
+        padding: 18px 10px
     }
 
     .sidebar-button .icon {
         width: 28px;
-        height: 28px;
+        height: 28px
     }
 
     .sidebar-button .label {
-        font-size: 18px;
+        font-size: 18px
     }
 
     .sidebar-footer {
-        padding-bottom: 56px;
+        padding-bottom: 56px
     }
 }
 
-/* ===== Focus states */
+/* ===== Focus */
 .sidebar-button:focus-visible,
 .close-sidebar-button:focus-visible,
 .logout-icon-btn:focus-visible {
-    outline: 2px solid rgb(var(--sb-accent-rgb) / .9);
+    outline: 2px solid rgb(var(--accent-rgb) / .9);
     outline-offset: 2px;
+}
+
+/* ===== Dark mode */
+.dark-mode .sidebar {
+    background: var(--card-bg, #1E1E1E);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, .10));
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .45);
+}
+
+.dark-mode .sidebar-button:hover {
+    background: rgb(255 255 255 / .06)
+}
+
+.dark-mode .close-sidebar-button span {
+    background: #fff
 }
