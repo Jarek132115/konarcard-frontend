@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
@@ -26,7 +27,6 @@ export default function ContactSupport() {
     const { user: authUser } = useContext(AuthContext);
     const userId = authUser?._id;
     const userUsername = authUser?.username;
-
     const { data: businessCard } = useFetchBusinessCard(userId);
 
     // Prefill name/email if logged in
@@ -61,7 +61,8 @@ export default function ContactSupport() {
         const onResize = () => {
             const m = window.innerWidth <= 1000;
             const sm = window.innerWidth <= 600;
-            setIsMobile(m); setIsSmallMobile(sm);
+            setIsMobile(m);
+            setIsSmallMobile(sm);
             if (!m && sidebarOpen) setSidebarOpen(false);
         };
         window.addEventListener('resize', onResize);
@@ -118,7 +119,7 @@ export default function ContactSupport() {
     const currentQrCodeUrl = businessCard?.qrCodeUrl || '';
 
     return (
-        <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
+        <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''} contact-page`}>
             {/* Mobile header */}
             <div className="myprofile-mobile-header">
                 <Link to="/" className="myprofile-logo-link">
@@ -137,7 +138,7 @@ export default function ContactSupport() {
                 <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
             )}
 
-            <main className="main-content-container">
+            <main className="main-content-container contact-main">
                 <PageHeader
                     title="Contact Support"
                     onActivateCard={() => { }}
@@ -146,10 +147,9 @@ export default function ContactSupport() {
                     isSmallMobile={isSmallMobile}
                 />
 
-                {/* Full-width grey panel wrapper (desktop) */}
+                {/* Peach shell wrapper (desktop) that scrolls internally */}
                 <div className="profile-page-wrapper contact">
                     <div className="profile-settings-card">
-                        {/* Head like Profile page */}
                         <div className="contact-card-head">
                             <div>
                                 <h3 className="desktop-h5">Contact Support</h3>
@@ -168,15 +168,14 @@ export default function ContactSupport() {
 
                         <div className="card-divider" />
 
-                        {/* Form with tight label→input and bigger group gaps */}
+                        {/* Label-less form with 10px gaps */}
                         <form onSubmit={handleSubmit} className="support-form">
                             <div className="support-field">
-                                <label htmlFor="name" className="profile-label desktop-body-s black">Your Name</label>
                                 <input
                                     id="name"
                                     name="name"
                                     type="text"
-                                    placeholder="Enter your name"
+                                    placeholder="Your name"
                                     value={formData.name}
                                     onChange={handleChange}
                                     className="support-input desktop-body"
@@ -185,12 +184,11 @@ export default function ContactSupport() {
                             </div>
 
                             <div className="support-field">
-                                <label htmlFor="email" className="profile-label desktop-body-s black">Your Email</label>
                                 <input
                                     id="email"
                                     name="email"
                                     type="email"
-                                    placeholder="Enter your email"
+                                    placeholder="Your email"
                                     value={formData.email}
                                     onChange={handleChange}
                                     className="support-input desktop-body"
@@ -199,7 +197,6 @@ export default function ContactSupport() {
                             </div>
 
                             <div className="support-field">
-                                <label htmlFor="reason" className="profile-label desktop-body-s black">Reason for contact</label>
                                 <select
                                     id="reason"
                                     name="reason"
@@ -208,7 +205,7 @@ export default function ContactSupport() {
                                     className="support-select desktop-body"
                                     required
                                 >
-                                    <option value="">Select a reason</option>
+                                    <option value="">Reason for contact</option>
                                     <option value="Card not working">My card isn’t working</option>
                                     <option value="Card damaged">My card is damaged</option>
                                     <option value="Profile issue">I can’t see my profile</option>
@@ -218,11 +215,10 @@ export default function ContactSupport() {
                             </div>
 
                             <div className="support-field">
-                                <label htmlFor="message" className="profile-label desktop-body-s black">Your Message</label>
                                 <textarea
                                     id="message"
                                     name="message"
-                                    placeholder="Enter your message..."
+                                    placeholder="Your message…"
                                     value={formData.message}
                                     onChange={handleChange}
                                     className="support-textarea desktop-body"
@@ -231,7 +227,10 @@ export default function ContactSupport() {
                                 />
                             </div>
 
-                            <button type="submit" className="cta-blue-button desktop-button support-submit-button">
+                            <button
+                                type="submit"
+                                className="cta-accent-button desktop-button support-submit-button"
+                            >
                                 Submit
                             </button>
                         </form>
