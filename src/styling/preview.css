@@ -1,0 +1,507 @@
+/* =========================
+   Preview column (container)
+   ========================= */
+
+.myprofile-content {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    background: var(--primary-bg);
+    border: .1px solid rgba(0, 0, 0, .08);
+    border-radius: 16px;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    /* Container Query: treat preview as a query container */
+    container-type: inline-size;
+    container-name: preview;
+}
+
+/* If the inner preview is dark, match the UserPage dark surface */
+.myprofile-content:has(.mock-phone.dark-mode) {
+    background: #1F1F1F;
+    color: #fff;
+    border-color: rgba(255, 255, 255, .08);
+}
+
+@media (max-width:1000px) {
+    .myprofile-content {
+        border-radius: 16px;
+        padding: 16px;
+    }
+}
+
+/* Mobile wrapper helper */
+.myprofile-mock-phone-mobile-container {
+    width: 100%;
+}
+
+/* Sticky preview controls on mobile */
+.mp-mobile-controls {
+    position: sticky;
+    top: 64px;
+    z-index: 5;
+    background: transparent;
+}
+
+@media (min-width:1001px) {
+    .mp-mobile-controls {
+        display: none;
+    }
+}
+
+.mp-pill {
+    display: flex;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #E8E8E8;
+    border-radius: 999px;
+    padding: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
+}
+
+/* Darken the pill when preview is dark */
+.myprofile-content:has(.mock-phone.dark-mode) .mp-pill {
+    background: #202020;
+    border-color: rgba(255, 255, 255, .12);
+}
+
+.mp-tab {
+    border: 0;
+    background: transparent;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+    color: inherit;
+}
+
+.mp-tab.active {
+    background: #0b5cff;
+    color: #fff;
+}
+
+.mp-tab.visit {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.mp-pill-bottom {
+    height: 6px;
+}
+
+.app-layout.sidebar-active .mp-mobile-controls,
+.share-profile-open .mp-mobile-controls,
+.modal-open .mp-mobile-controls {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Smooth expand/collapse wrapper for mobile preview */
+.mp-preview-wrap {
+    will-change: max-height, opacity, transform;
+    transition: max-height .3s ease, opacity .3s ease, transform .3s ease;
+}
+
+/* =============================
+   PREVIEW (mock site) styles
+   ============================= */
+
+.mock-phone {
+    width: 100%;
+    max-width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    text-align: center;
+    box-sizing: border-box;
+    display: flow-root;
+    color: var(--text-color);
+}
+
+/* local dark mode just for the preview */
+.mock-phone.dark-mode {
+    color: #fff;
+}
+
+/* Scrollable content area inside the preview (no inner scroll on desktop layout) */
+.mock-phone-scrollable-content {
+    overflow: visible;
+    max-height: none;
+}
+
+/* Head section */
+.mock-cover {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: 14px;
+    margin-bottom: 1.5rem;
+    margin-top: 10px;
+    background-color: var(--placeholder-bg);
+    background-size: cover;
+    background-position: center;
+}
+
+.mock-title {
+    font-size: clamp(20px, 2.6vw, 32px);
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.2;
+    color: #000;
+    text-align: center;
+}
+
+.mock-phone.dark-mode .mock-title {
+    color: #fff;
+}
+
+.mock-subtitle {
+    font-size: .95rem;
+    font-weight: 600;
+    margin: 8px 0 0;
+    color: #000;
+    text-align: center;
+}
+
+.mock-phone.dark-mode .mock-subtitle {
+    color: #fff;
+}
+
+.mock-button {
+    background: var(--brand-blue);
+    color: #fff;
+    padding: .9rem 1.2rem;
+    border-radius: 12px;
+    border: none;
+    font-weight: 800;
+    font-size: .95rem;
+    margin-top: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: transform .06s, opacity .2s;
+}
+
+.mock-button:hover {
+    opacity: .92;
+}
+
+.mock-button:active {
+    transform: translateY(1px);
+}
+
+.mock-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 60px 0 10px;
+    text-align: left;
+    color: #000;
+}
+
+.mock-phone.dark-mode .mock-section-title {
+    color: #fff;
+}
+
+/* Cards — keep WHITE in dark mode (like UserPage) */
+.mock-about-container,
+.mock-service-item,
+.mock-review-card,
+.mock-contact-details {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, .06);
+    color: #111;
+}
+
+/* Body text inside cards */
+.mock-profile-name {
+    font-weight: 800;
+    margin: 0;
+    font-size: 1rem;
+    color: #111;
+}
+
+.mock-profile-role {
+    font-size: .9375rem;
+    margin: 0;
+    color: #333;
+    font-weight: 400;
+}
+
+.mock-bio-text {
+    font-size: .95rem;
+    line-height: 1.55;
+    margin: 0;
+    color: #111;
+}
+
+.mock-service-name {
+    font-size: .95rem;
+    font-weight: 700;
+    margin: 0;
+    color: #111;
+}
+
+.mock-service-price {
+    font-size: .85rem;
+    margin: 2px 0 0;
+    color: #000;
+}
+
+.mock-star-rating {
+    color: #111;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    letter-spacing: .06rem;
+}
+
+.mock-star-rating .empty-star {
+    color: #D1D5DB;
+}
+
+.mock-review-text {
+    font-size: .95rem;
+    color: #111;
+    margin: 0 0 10px;
+    line-height: 1.5;
+}
+
+.mock-reviewer-name {
+    font-size: .9rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.mock-contact-label {
+    font-size: .95rem;
+    font-weight: 700;
+    margin: 0;
+    color: #333;
+}
+
+.mock-contact-value {
+    font-size: 12px;
+    font-weight: 400;
+    margin: 0;
+    color: #111;
+}
+
+/* Dark mode for cards: STILL WHITE */
+.mock-phone.dark-mode .mock-about-container,
+.mock-phone.dark-mode .mock-service-item,
+.mock-phone.dark-mode .mock-review-card,
+.mock-phone.dark-mode .mock-contact-details {
+    background: #fff;
+    color: #111;
+    border-color: rgba(0, 0, 0, .06);
+}
+
+/* About card layout */
+.mock-about-container {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.mock-about-content-group {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    min-width: 0;
+}
+
+.mock-about-header-group {
+    display: flex;
+    gap: .75rem;
+    align-items: flex-start;
+}
+
+.mock-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+}
+
+/* Work/Services/Reviews previews */
+.work-preview-row-container {
+    position: relative;
+    width: 100%;
+}
+
+.mock-work-image-item-wrapper {
+    width: 100%;
+    aspect-ratio: 4/2.5;
+    overflow: hidden;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+}
+
+.mock-work-image-item {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mock-work-gallery,
+.mock-services-list,
+.mock-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    width: 100%;
+    padding: 0;
+    background: transparent;
+}
+
+.mock-work-gallery.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.mock-work-gallery.carousel,
+.mock-services-list.carousel,
+.mock-reviews-list.carousel {
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    scroll-snap-type: x mandatory;
+}
+
+.mock-work-gallery.carousel::-webkit-scrollbar,
+.mock-services-list.carousel::-webkit-scrollbar,
+.mock-reviews-list.carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.mock-work-gallery.carousel .mock-work-image-item-wrapper,
+.mock-services-list.carousel .mock-service-item,
+.mock-reviews-list.carousel .mock-review-card {
+    flex: 0 0 100%;
+    max-width: 100%;
+    scroll-snap-align: start;
+    margin-right: 12px;
+}
+
+/* Carousel buttons */
+.carousel-nav-buttons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    z-index: 5;
+    pointer-events: none;
+    width: 100%;
+}
+
+.carousel-nav-button {
+    background-color: rgba(0, 0, 0, .4);
+    color: #fff;
+    border: 0;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    transition: background-color .2s;
+}
+
+.carousel-nav-button:hover {
+    background-color: rgba(0, 0, 0, .6);
+}
+
+/* =============================
+   Container queries for PREVIEW
+   ============================= */
+
+/* Mobile preview (<=600px wide container) */
+@container preview (max-width: 600px) {
+    .mock-title {
+        font-size: clamp(18px, 6vw, 24px);
+    }
+
+    .mock-about-container {
+        padding: 12px;
+    }
+
+    .mock-avatar {
+        width: 56px;
+        height: 56px;
+    }
+
+    .mock-work-gallery.grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .mock-section-title {
+        margin-top: 36px;
+    }
+
+    .mock-service-item,
+    .mock-review-card,
+    .mock-contact-details {
+        border-radius: 14px;
+        padding: 12px;
+    }
+
+    .mock-work-image-item-wrapper {
+        aspect-ratio: 4/3;
+    }
+}
+
+/* Larger preview (>=601px container) */
+@container preview (min-width: 601px) {
+    .mock-title {
+        font-size: clamp(22px, 2.2vw, 32px);
+    }
+
+    .mock-work-gallery.grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mock-section-title {
+        margin-top: 48px;
+    }
+
+    .mock-phone-scrollable-content {
+        padding-bottom: 32px;
+    }
+}
+
+/* full-bleed sticky controls on mobile */
+@media (max-width:1000px) {
+    .myprofile-content {
+        padding: 16px;
+    }
+
+    .mp-pill {
+        width: 100%;
+    }
+}
+
+/* A11y focus states for buttons inside preview */
+.mock-button:focus-visible,
+.mp-tab:focus-visible {
+    outline: 2px solid var(--brand-blue);
+    outline-offset: 2px;
+}
