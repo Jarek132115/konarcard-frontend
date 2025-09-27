@@ -1,6 +1,6 @@
 /* ===============================================
    MyProfile.css — global layout, tokens & misc
-   (Orange theme + sticky header + full-height wrappers)
+   (Orange theme + fixed-height wrapper to match sidebar)
    =============================================== */
 
 /* -------------------------
@@ -10,7 +10,6 @@
     /* Base surfaces */
     --primary-bg: #FFFFFF;
     --secondary-bg: #FFF7F1;
-    /* soft peach page bg to match sidebar */
     --card-bg: #FFFFFF;
     --placeholder-bg: #F3F4F6;
 
@@ -35,11 +34,6 @@
     --accent: #FF6B00;
     --accent-rgb: 255 107 0;
 
-    /* Legacy/compat */
-    --button-bg: #111;
-    --button-text: #fff;
-    --brand-blue: var(--accent);
-
     /* Layout helpers */
     --main-font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     --page-gutter: 20px;
@@ -47,7 +41,7 @@
     --sb-gutter: 20px;
     --workspace-max: 1200px;
 
-    /* Page inset to match sidebar offsets */
+    /* Page inset to match sidebar offsets (16px) */
     --inset: 16px;
 
     /* Peach shell used for headers/wrappers */
@@ -280,7 +274,7 @@
     box-sizing: border-box;
 }
 
-/* outer tray card — peach shell that stretches to the page inset on desktop */
+/* Peach shell tray */
 .myprofile-flex-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -294,26 +288,43 @@
     padding: 18px;
     box-shadow: var(--soft-shadow);
 
-    /* fill leftover height & scroll internally if needed */
-    flex: 1 1 auto;
-    overflow: auto;
+    /* No internal scroll by default */
+    overflow: hidden;
+    flex: 0 0 auto;
 }
 
+/* DESKTOP: lock the wrapper height to match the sidebar area
+   (viewport minus 16px inset on top & bottom).
+   No scroll; content inside must fit. */
 @media (min-width:1001px) {
-
-    /* Stretch to match the 16px page inset like the sidebar:
-       top/bottom distance from viewport edges equals var(--inset). */
     .myprofile-flex-container {
         height: calc(100dvh - (var(--inset) * 2));
+        min-height: calc(100dvh - (var(--inset) * 2));
         max-height: calc(100dvh - (var(--inset) * 2));
     }
 
-    /* Ensure grid children can shrink/scroll within the tray */
+    /* Ensure children don’t create scrollbars inside */
     .myprofile-flex-container>* {
         min-height: 0;
+        overflow: hidden;
+    }
+
+    .myprofile-flex-container {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .myprofile-content,
+    .myprofile-editor-container {
+        min-width: 0;
+        height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        /* no scrolling in columns */
+        flex: 1;
     }
 }
 
+/* MOBILE: natural flow, scroll allowed by page */
 @media (max-width:1000px) {
     .myprofile-flex-container {
         border: none;
@@ -323,25 +334,9 @@
         background: transparent;
         box-shadow: none;
         overflow: visible;
-        /* no internal scroll on mobile */
         height: auto;
+        min-height: auto;
         max-height: none;
-    }
-}
-
-@media (min-width:1001px) {
-    .myprofile-flex-container {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    }
-
-    .myprofile-content,
-    .myprofile-editor-container {
-        min-width: 0;
-        flex: 1;
-        overflow: auto;
-        /* each column scrolls inside the tray */
-        height: 100%;
-        max-height: 100%;
     }
 }
 
