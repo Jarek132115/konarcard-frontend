@@ -623,3 +623,20 @@
         border-radius: 50%;
     }
 }
+
+/* Base orange button */
+.orange-button {
+    border-radius: var(--radius-md);
+    /* default desktop radius */
+}
+
+/* Mobile tweak: make orange button 10px radius */
+@media (max-width: 1000px) {
+    .orange-button {
+        border-radius: 10px !important;
+        padding: 8px 14px;
+        /* make it a little tighter */
+        font-size: 14px;
+        font-weight: 700;
+    }
+}

@@ -39,17 +39,21 @@ export default function PageHeader({ onShareCard, onVisitPage, isMobile, isSmall
           type="button"
           className="desktop-button orange-button header-share"
           onClick={onShareCard}
-          aria-label="Share your page"
+          aria-label="Share your profile"
         >
           {isSmallMobile ? (
-            <img src={ShareProfileIcon} alt="Share" className="share-icon" />
+            <>
+              <img src={ShareProfileIcon} alt="Share" className="share-icon" />
+              <span>Share</span> {/* Show icon + short text */}
+            </>
           ) : (
             <>
               <img src={ShareProfileIcon} alt="Share" className="share-icon" />
-              <span>Share Your Page</span>
+              <span>Share Your Page</span> {/* Full text on desktop */}
             </>
           )}
         </button>
+
       </div>
     </div>
   );
