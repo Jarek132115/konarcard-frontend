@@ -25,7 +25,7 @@ export default function PageHeader({ onShareCard, onVisitPage, isMobile, isSmall
         {!isMobile && (
           <button
             type="button"
-            className="desktop-button orange-button"
+            className="desktop-button navy-button"
             onClick={onVisitPage}
             aria-label="Visit your page"
           >
@@ -37,7 +37,7 @@ export default function PageHeader({ onShareCard, onVisitPage, isMobile, isSmall
         {/* Share Page button */}
         <button
           type="button"
-          className="desktop-button navy-button header-share"
+          className="desktop-button orange-button header-share"
           onClick={onShareCard}
           aria-label="Share your profile"
         >
