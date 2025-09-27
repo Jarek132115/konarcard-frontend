@@ -1,23 +1,12 @@
-/* Contact form aligned with Login page fields but tighter spacing */
+/* Contact form layout */
 .contact-form {
     max-width: 600px;
     margin: 0 auto;
     padding-top: 40px;
     display: flex;
     flex-direction: column;
-    /* smaller vertical spacing between groups */
-}
-
-/* Label */
-.field-label,
-.contact-form .form-label {
-    display: block;
-    text-align: left;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 6px;
-    /* closer to input */
+    gap: 10px;
+    /* 10px gap between inputs */
 }
 
 /* Inputs / Select / Textarea */
@@ -36,35 +25,37 @@
     font-family: inherit;
     outline: none;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    margin-bottom: 4px;
-    /* reduce gap before next label */
+}
+
+/* Make the message box 4x taller and only vertical resize */
+.contact-form .message-input {
+    min-height: calc(44px * 4);
+    /* 176px */
+    resize: vertical;
+    /* allow vertical only */
+    max-width: 100%;
+    /* stop horizontal growth */
 }
 
 .contact-form input:focus,
 .contact-form select:focus,
 .contact-form textarea:focus {
-    border-color: #0081FF;
-    box-shadow: 0 0 0 3px rgba(0, 129, 255, 0.12);
+    border-color: var(--Orange, #FF7B00);
+    box-shadow: 0 0 0 3px rgba(255, 123, 0, 0.16);
 }
 
-/* Textarea tweak */
-.contact-form textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-/* Checkbox */
+/* Checkbox (orange) */
 .terms-label {
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 12px;
     line-height: 1.4;
-    margin: 8px 0 4px;
+    margin: 4px 0 2px;
     color: #333;
 }
 
-.terms-label input[type="checkbox"].konar-checkbox {
+.terms-label .konar-checkbox {
     width: 20px;
     height: 20px;
     border: 1px solid #CFCFCF;
@@ -75,12 +66,12 @@
     position: relative;
 }
 
-.terms-label input[type="checkbox"].konar-checkbox:checked {
-    background: #0081FF;
-    border-color: #0081FF;
+.terms-label .konar-checkbox:checked {
+    background: var(--Orange, #FF7B00);
+    border-color: var(--Orange, #FF7B00);
 }
 
-.terms-label input[type="checkbox"].konar-checkbox::before {
+.terms-label .konar-checkbox::before {
     content: '';
     position: absolute;
     top: 50%;
@@ -94,53 +85,18 @@
     opacity: 0;
 }
 
-.terms-label input[type="checkbox"].konar-checkbox:checked::before {
+.terms-label .konar-checkbox:checked::before {
     opacity: 1;
 }
 
-/* Submit button */
-.contact-form .primary-button {
-    width: 100%;
-    height: 44px;
-    padding: 12px;
-    border-radius: 10px;
-    font-weight: 800;
-    font-size: 14px;
-    border: 0;
-    cursor: pointer;
-    background: #0081FF;
-    color: #fff;
-    transition: transform 0.06s ease, background 0.15s ease;
-}
-
-.contact-form .primary-button:hover {
-    background: #0066cc;
-    transform: translateY(-1px);
-}
-
-/* Live chat text (blue link style only) */
+/* Link styling */
 .live-chat-link {
-    color: #0081FF;
-    font-weight: 600;
+    color: var(--Orange, #FF7B00);
+    font-weight: 700;
     cursor: pointer;
     text-decoration: underline;
 }
 
 .live-chat-link:hover {
-    color: #0066cc;
-}
-
-/* Mobile alignment fix for title + subtitle */
-@media (max-width: 600px) {
-
-    .contact-title-container .text-center,
-    .live-chat-info .text-center {
-        text-align: left !important;
-    }
-
-    /* Also catch FAQ subtitle alignment if needed */
-    .section-1-title h2.text-center,
-    .section-1-title h3.text-center {
-        text-align: left !important;
-    }
+    opacity: .9;
 }

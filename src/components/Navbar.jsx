@@ -17,9 +17,7 @@ export default function Navbar() {
   };
 
   // helper: check if path matches
-  const isActive = (path) => {
-    return location.pathname === path;
-  };
+  const isActive = (path) => location.pathname === path;
 
   return (
     <nav className="navbar">

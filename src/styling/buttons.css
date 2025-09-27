@@ -320,11 +320,13 @@
 }
 
 .breadcrumb-link {
-  color: #0081FF;
+  color: var(--Orange, #FF7B00);
   text-decoration: none;
 }
 
 .breadcrumb-link:hover {
+  color: #e66f00;
+  /* slightly darker orange on hover */
   text-decoration: underline;
 }
 

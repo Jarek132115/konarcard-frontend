@@ -329,7 +329,7 @@ export default function Home() {
             <div className="realworld-card-text">
               <h4>Social &amp; Link In Bio</h4>
               <p className="equal">
-                Add your Konar link to Instagram, Facebook, and TikTok to convert views into enquiries.
+                Add your link to Instagram, Facebook, and TikTok to convert views into enquiries.
               </p>
             </div>
           </div>

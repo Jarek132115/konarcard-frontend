@@ -51,9 +51,9 @@
   font-weight: 600;
 }
 
-/* Desktop active */
+/* Desktop active -> ORANGE */
 .nav-links a.active {
-  color: #0081FF;
+  color: var(--Orange, #FF7B00);
   font-weight: 700;
 }
 
@@ -201,16 +201,13 @@
   transform: translateY(1px);
 }
 
-/* Mobile active — match desktop look */
-/* Force mobile active links to match desktop look */
+/* Mobile active — ORANGE (matching desktop) */
 .mobile-list li a.desktop-h4.active,
 .mobile-actions .desktop-h4.active {
-  color: #0081FF !important;
-  /* override black */
+  color: var(--Orange, #FF7B00) !important;
   font-weight: 700 !important;
   background: transparent !important;
 }
-
 
 /* Divider above auth links */
 .mobile-divider {

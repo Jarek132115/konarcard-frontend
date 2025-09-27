@@ -41,16 +41,22 @@ export default function ProductAndPlan() {
             <div className="section">
                 <div className="section-1-title">
                     <h2 className="desktop-h2 text-center">
-                        One <span className="blue">Plan</span>. One <span className="blue">Card</span>. Endless <span className="blue">Opportunities</span>.
+                        One <span className="orange">Plan</span>. One <span className="orange">Card</span>. Endless{" "}
+                        <span className="orange">Opportunities</span>.
                     </h2>
-                    <h3 className="desktop-h6 text-center">
+                    <h3 className="desktop-body-xs text-center">
                         Start your Power Profile free for 14 days. Add the Konar Card when you’re ready.
                     </h3>
                 </div>
 
                 <div className="pricing-grid nfc-pricing-page">
-                    {/* Subscription (blue) */}
-                    <div className="pricing-card pricing-card--subscription nfc-pricing-subscription" style={{ borderRadius: 16 }}>
+                    <div
+                        className="pricing-card pricing-card--subscription nfc-pricing-subscription"
+                        style={{
+                            borderRadius: 16,
+                            boxShadow: "0px 0px 8px rgba(255, 107, 0, 0.3)",
+                        }}
+                    >
                         <div className="pricing-inner">
                             <div className="pricing-content">
                                 <div className="pricing-head">
@@ -64,11 +70,14 @@ export default function ProductAndPlan() {
                                 <div className="pricing-divider" />
 
                                 <div className="pricing-price-row">
-                                    <span className="desktop-h3" style={{ paddingRight: 5 }}>£4.95</span>
-                                    <span className="desktop-button" style={{ padding: 0 }}>/Month - After 14 Days</span>
+                                    <span className="desktop-h1" style={{ paddingRight: 5 }}>
+                                        £4.95
+                                    </span>
+                                    <span className="desktop-button" style={{ padding: 0 }}>
+                                        /Month
+                                    </span>
                                 </div>
 
-                                {/* Features (same grid + copy as Home) */}
                                 <ul className="feature-grid">
                                     {featureBlocks.map((f, i) => (
                                         <li key={i} className="feature-item">
@@ -85,8 +94,8 @@ export default function ProductAndPlan() {
                             <div className="pricing-bottom">
                                 <Link
                                     to="/productandplan/konarsubscription"
-                                    className="cta-blue-button desktop-button"
-                                    style={{ width: '100%' }}
+                                    className="orange-button desktop-button"
+                                    style={{ width: "100%" }}
                                 >
                                     View Subscription Details
                                 </Link>
@@ -94,8 +103,13 @@ export default function ProductAndPlan() {
                         </div>
                     </div>
 
-                    {/* Physical card (black) */}
-                    <div className="pricing-card pricing-card--product nfc-pricing-product" style={{ borderRadius: 16 }}>
+                    <div
+                        className="pricing-card pricing-card--product nfc-pricing-product"
+                        style={{
+                            borderRadius: 16,
+                            boxShadow: "0px 0px 8px rgba(30, 42, 56, 0.3)",
+                        }}
+                    >
                         <div className="pricing-inner">
                             <div className="pricing-content">
                                 <div className="pricing-head">
@@ -109,10 +123,9 @@ export default function ProductAndPlan() {
                                 <div className="pricing-divider" />
 
                                 <div className="pricing-price-row">
-                                    <span className="desktop-h3">£24.95</span>
+                                    <span className="desktop-h1">£24.95</span>
                                 </div>
 
-                                {/* Gallery (same classes as Home for styling) */}
                                 <div className="pricing-media-tray">
                                     <div className="pricing-media-main">
                                         <img src={cardMainImage} alt="Konar Card - White Edition" />
@@ -121,10 +134,9 @@ export default function ProductAndPlan() {
                                         {cardThumbs.map((src, i) => (
                                             <button
                                                 key={i}
-                                                className={`pricing-media-thumb ${cardMainImage === src ? 'is-active' : ''}`}
+                                                className={`pricing-media-thumb ${cardMainImage === src ? "is-active" : ""}`}
                                                 onClick={() => setCardMainImage(src)}
                                                 type="button"
-                                                aria-label={`Show product image ${i + 1}`}
                                             >
                                                 <img src={src} alt={`Konar Card thumbnail ${i + 1}`} />
                                             </button>
@@ -134,17 +146,12 @@ export default function ProductAndPlan() {
                             </div>
 
                             <div className="pricing-bottom">
-                                <Link
-                                    to="/productandplan/konarcard"
-                                    className="cta-black-button desktop-button"
-                                    style={{ width: '100%' }}
-                                >
+                                <Link to="/productandplan/konarcard" className="navy-button desktop-button" style={{ width: "100%" }}>
                                     View Card Details
                                 </Link>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
 
