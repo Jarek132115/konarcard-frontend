@@ -9,13 +9,13 @@
 :root {
     /* Base surfaces */
     --primary-bg: #FFFFFF;
-    --secondary-bg: #F9F9F9;
+    --secondary-bg: #FFF7F1;
+    /* soft peach page bg to match sidebar */
     --card-bg: #FFFFFF;
     --placeholder-bg: #F3F4F6;
 
     /* Text */
     --text-color: #1E2A38;
-    /* richer ink */
     --subtle-text-color: #6B7280;
     --page-header-color: #1E2A38;
 
@@ -39,7 +39,7 @@
     --button-bg: #111;
     --button-text: #fff;
     --brand-blue: var(--accent);
-    /* keep old var name but point to orange */
+    /* keep old var name but map to orange */
 
     /* Layout helpers */
     --main-font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -47,21 +47,6 @@
     --sb-w: 268px;
     --sb-gutter: 20px;
     --workspace-max: 1200px;
-}
-
-/* Optional root themes if your app toggles them globally */
-.light-mode.pure-light {
-    --primary-bg: #fff;
-    --secondary-bg: #FAFAFA;
-    --card-bg: #fff;
-    --input-border: #DADDE2;
-}
-
-.light-mode.subtle-light {
-    --primary-bg: #FAFAFA;
-    --secondary-bg: #F5F6F8;
-    --card-bg: #fff;
-    --input-border: #E0E4EA;
 }
 
 /* Dark mode baseline */
@@ -79,27 +64,14 @@
     --soft-shadow-strong: 0 14px 28px rgba(0, 0, 0, .55);
 }
 
-.dark-mode.pure-dark {
-    --primary-bg: #0E0E0E;
-    --secondary-bg: #161616;
-    --card-bg: #1B1B1B;
-    --input-border: #303030;
-}
-
-.dark-mode.subtle-dark {
-    --primary-bg: #141414;
-    --secondary-bg: #1B1B1B;
-    --card-bg: #1E1E1E;
-    --input-border: #3A3A3A;
-}
-
 /* -------------------------
    CTA buttons
    ------------------------- */
 
-/* Your existing class names now render in orange */
+/* ORANGE primary (supports both old and new class names) */
 .cta-blue-button,
-.blue-button {
+.blue-button,
+.cta-accent-button {
     background: var(--accent);
     color: #fff;
     padding: 10px 16px;
@@ -113,12 +85,14 @@
 }
 
 .cta-blue-button:hover,
-.blue-button:hover {
+.blue-button:hover,
+.cta-accent-button:hover {
     opacity: .94;
 }
 
 .cta-blue-button:active,
-.blue-button:active {
+.blue-button:active,
+.cta-accent-button:active {
     transform: translateY(1px);
 }
 
@@ -145,7 +119,8 @@
 /* A11y focus */
 .cta-blue-button:focus-visible,
 .cta-black-button:focus-visible,
-.blue-button:focus-visible {
+.blue-button:focus-visible,
+.cta-accent-button:focus-visible {
     outline: 2px solid rgb(var(--accent-rgb) / .9);
     outline-offset: 2px;
 }
@@ -255,7 +230,6 @@
     height: 18px;
     width: auto;
     filter: invert(100%);
-    /* white icon on orange button for compact mode */
 }
 
 .page-title-under {
@@ -273,13 +247,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     min-width: 0;
-}
-
-/* Dark shadows */
-.dark-mode .page-header-card {
-    background: var(--card-bg);
-    border-color: var(--border-color);
-    box-shadow: var(--soft-shadow);
 }
 
 /* =========================
@@ -321,7 +288,6 @@
     }
 }
 
-/* enforce 50/50 on desktop */
 @media (min-width:1001px) {
     .myprofile-flex-container {
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -340,8 +306,6 @@
     min-width: 0;
 }
 
-/* Column container (no visual card here; the actual preview/editor
-   components render their own cards) */
 .myprofile-editor-container {
     display: flex;
     flex-direction: column;
