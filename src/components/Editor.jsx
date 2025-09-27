@@ -102,7 +102,7 @@ export default function Editor({
                 {/* Theme */}
                 <div className="input-block">
                     <label>Page Theme</label>
-                    <div className="option-row fit">
+                    <div className="option-row split-2">
                         <button
                             type="button"
                             className={`chip ${state.pageTheme === "light" ? "is-active" : ""}`}
@@ -123,7 +123,7 @@ export default function Editor({
                 {/* Fonts */}
                 <div className="input-block">
                     <label>Font</label>
-                    <div className="option-row fit">
+                    <div className="option-row split-3">
                         {["Inter", "Montserrat", "Poppins"].map((font) => (
                             <button
                                 type="button"
@@ -236,7 +236,7 @@ export default function Editor({
                     <>
                         <div className="input-block">
                             <label>Display Layout</label>
-                            <div className="option-row fit">
+                            <div className="option-row split-2">
                                 <button
                                     type="button"
                                     className={`chip ${aboutMeLayout === "side-by-side" ? "is-active" : ""}`}
@@ -344,7 +344,7 @@ export default function Editor({
                     <>
                         <div className="input-block">
                             <label>Display Layout</label>
-                            <div className="option-row fit">
+                            <div className="option-row split-3">
                                 <button
                                     type="button"
                                     className={`chip ${state.workDisplayMode === "list" ? "is-active" : ""}`}
@@ -423,7 +423,7 @@ export default function Editor({
                     <>
                         <div className="input-block">
                             <label>Display Layout</label>
-                            <div className="option-row fit">
+                            <div className="option-row split-2">
                                 <button
                                     type="button"
                                     className={`chip ${servicesDisplayMode === "list" ? "is-active" : ""}`}
@@ -488,7 +488,7 @@ export default function Editor({
                     <>
                         <div className="input-block">
                             <label>Display Layout</label>
-                            <div className="option-row fit">
+                            <div className="option-row split-2">
                                 <button
                                     type="button"
                                     className={`chip ${reviewsDisplayMode === "list" ? "is-active" : ""}`}
