@@ -215,3 +215,14 @@ body.dark-mode .inline-btn:hover {
 body.dark-mode .settings-divider {
     background: rgba(255, 255, 255, .12);
 }
+
+.inline-btn {
+    border: 1px solid rgb(var(--accent-rgb, 255 107 0) / .25);
+    border-left: none;
+    background: var(--accent, #FF6B00);
+    color: #fff;
+}
+
+.inline-btn:hover {
+    filter: brightness(.95);
+}
