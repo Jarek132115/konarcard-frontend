@@ -199,7 +199,6 @@
     border: 1px solid rgba(0, 0, 0, .08);
     border-radius: 12px;
     padding: 10px 16px;
-    font-weight: 800;
 }
 
 .orange-button {
@@ -208,7 +207,6 @@
     border: 1px solid rgb(var(--accent-rgb, 255 107 0) / .25);
     border-radius: 12px;
     padding: 10px 16px;
-    font-weight: 800;
     box-shadow: 0 4px 12px rgb(var(--accent-rgb, 255 107 0) / .28);
 }
 
