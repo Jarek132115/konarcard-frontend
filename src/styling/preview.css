@@ -505,3 +505,24 @@
     outline: 2px solid var(--brand-blue);
     outline-offset: 2px;
 }
+
+/* Preview column (container) */
+.myprofile-content {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    background: var(--primary-bg);
+    border: .1px solid rgba(0, 0, 0, .08);
+    border-radius: 16px;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    /* Container Query: treat preview as a query container */
+    container-type: inline-size;
+    container-name: preview;
+
+    /* NEW: constrain width & center */
+    max-width: 500px;
+    margin: 0 auto;
+}
