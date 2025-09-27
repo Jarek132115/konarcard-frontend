@@ -281,3 +281,98 @@
 .dark-mode .close-sidebar-button span {
     background: #fff;
 }
+
+/* ===== Brand Header (Desktop vs Mobile) */
+.brand-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0 14px;
+    border-bottom: 1px dashed rgb(30 42 56 / .08);
+}
+
+.brand-text {
+    font-family: 'Cal Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--sb-ink);
+    letter-spacing: -0.02em;
+}
+
+@media (max-width:1000px) {
+    .brand-text {
+        display: none;
+    }
+
+    .brand-logo {
+        display: block;
+    }
+}
+
+@media (min-width:1001px) {
+    .brand-logo {
+        display: none;
+    }
+
+    .brand-text {
+        display: block;
+    }
+}
+
+/* ===== Links refinement */
+.sidebar-button {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    margin: 2px 0;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 12px;
+    transition: background .2s, color .2s;
+}
+
+.sidebar-button .icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+}
+
+.sidebar-button:hover {
+    background: rgb(var(--sb-accent-rgb) / .05);
+    color: var(--sb-ink);
+}
+
+/* Active pill */
+.sidebar-button.active-sidebar-link {
+    background: rgb(var(--sb-accent-rgb) / .12);
+    border: 1px solid rgb(var(--sb-accent-rgb) / .25);
+    color: var(--sb-ink);
+    font-weight: 700;
+    box-shadow: var(--sb-pill-shadow);
+}
+
+.sidebar-button.active-sidebar-link .icon {
+    filter: invert(61%) sepia(83%) saturate(2338%) hue-rotate(359deg) brightness(102%) contrast(101%);
+}
+
+/* ===== Footer (Settings + Logout) */
+.settings-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.logout-icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid rgb(var(--sb-accent-rgb) / .25);
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+    transition: background .2s;
+}
+
+.logout-icon-btn:hover {
+    background: rgb(var(--sb-accent-rgb) / .08);
+}

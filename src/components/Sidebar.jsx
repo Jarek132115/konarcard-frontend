@@ -1,3 +1,4 @@
+// src/components/Sidebar.jsx
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
@@ -17,8 +18,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const { logout } = useContext(AuthContext);
     const location = useLocation();
 
+    // Kept in case you need it elsewhere (e.g., conditional render tweaks)
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
-
     useEffect(() => {
         const onResize = () => setIsMobile(window.innerWidth <= 1000);
         window.addEventListener('resize', onResize);
@@ -44,8 +45,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
                 {/* Top row */}
                 <div className="brand-header">
+                    {/* Desktop: text logo (Cal Sans) / Mobile: icon */}
+                    <span className="brand-text">KonarCard</span>
                     <img src={LogoIcon} alt="Konar" className="brand-logo" />
-                    <div className="spacer" />
                     <button
                         className="close-sidebar-button mobile-only"
                         onClick={closeSidebar}
@@ -82,8 +84,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             to="/nfccards"
                             onClick={closeSidebar}
                             className={`sidebar-button ${isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription')
-                                ? 'active-sidebar-link'
-                                : ''}`}
+                                    ? 'active-sidebar-link'
+                                    : ''
+                                }`}
                         >
                             <img src={cardInterface} alt="" className="icon" />
                             <span className="label">Product &amp; Plan</span>
