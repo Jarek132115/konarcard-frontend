@@ -1,12 +1,13 @@
 /* =========================
-   Desktop frame wrapper (matches Product & Plan)
+   Desktop frame wrapper — peach shell like editor tray
    ========================= */
 .account-frame {
-    background: #F7F7F7;
-    border: 1px solid rgba(0, 0, 0, .08);
+    background: var(--shell-bg, #FFF1E8);
+    border: 1px solid var(--shell-border, rgb(255 123 0 / .20));
     border-radius: 16px;
     padding: 14px 18px;
     margin-bottom: 20px;
+    box-shadow: var(--soft-shadow, 0 10px 24px rgba(30, 42, 56, .08));
 }
 
 @media (max-width: 1000px) {
@@ -14,6 +15,7 @@
         background: none;
         border: none;
         padding: 0;
+        box-shadow: none;
     }
 }
 
@@ -28,7 +30,8 @@
     padding: 22px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 0;
+    /* tighter, as requested */
 }
 
 /* Header with pill */
@@ -46,19 +49,20 @@
     }
 }
 
-/* Blue pill (same style used elsewhere) */
+/* Orange pill (replaces the old 'pill-blue') */
 .pricing-badge.pill-blue {
+    /* keep the class name but style it orange to avoid JSX changes */
     font-family: "Cal Sans", sans-serif;
-    background: #e9eef6;
-    color: #1e3a8a;
-    border: 1px solid rgba(0, 0, 0, .06);
+    background: rgb(var(--accent-rgb, 255 107 0) / .10);
+    color: var(--accent, #FF6B00);
+    border: 1px solid rgb(var(--accent-rgb, 255 107 0) / .25);
     font-size: 12px;
     padding: 6px 12px;
     border-radius: 999px;
     white-space: nowrap;
+    box-shadow: 0 4px 10px rgb(var(--accent-rgb, 255 107 0) / .10);
 }
 
-/* Dividers (top and between sections) */
 .settings-divider {
     height: 1px;
     background: rgba(0, 0, 0, .08);
@@ -70,11 +74,21 @@
     color: #000;
     font-size: 14px;
     font-weight: 600;
+    margin: 12px 0 6px;
+    line-height: 1.2;
 }
 
-/* =========================
-   Inputs
-   ========================= */
+.settings-card .profile-label:first-of-type {
+    margin-top: 16px;
+}
+
+/* If you use an extra divider inside the card */
+.settings-card .card-divider,
+.settings-card .section-divider {
+    margin: 12px 0 8px;
+}
+
+/* Inputs */
 .input-shell {
     position: relative;
 }
@@ -92,12 +106,13 @@
     box-sizing: border-box;
 }
 
+/* Orange focus states */
 .text-input:focus {
-    border-color: #0a66ff;
-    box-shadow: 0 0 0 2px rgba(10, 102, 255, .15);
+    border-color: var(--accent, #FF6B00);
+    box-shadow: 0 0 0 2px rgb(var(--accent-rgb, 255 107 0) / .20);
 }
 
-/* Readonly look (grey like other pages) */
+/* Readonly look */
 .text-input.readonly {
     background: #eef1f5;
     color: #4a5568;
@@ -107,7 +122,6 @@
 .input-shell.locked .text-input,
 .input-with-button.locked .text-input {
     padding-left: 36px;
-    /* leave space for left lock */
 }
 
 /* Left lock icon */
@@ -120,9 +134,7 @@
     pointer-events: none;
 }
 
-/* =========================
-   Input with right-side button (Password)
-   ========================= */
+/* Input with right-side button (Password) */
 .input-with-button {
     position: relative;
     display: flex;
@@ -135,6 +147,7 @@
     border-right: none;
 }
 
+/* Keep this neutral (black) unless you want it orange too */
 .inline-btn {
     border: 1px solid rgba(0, 0, 0, .12);
     border-left: none;
@@ -156,9 +169,7 @@
     background: #333;
 }
 
-/* =========================
-   Actions
-   ========================= */
+/* Actions */
 .settings-actions {
     display: flex;
     flex-direction: column;
@@ -169,12 +180,11 @@
 @media (min-width: 700px) {
     .settings-actions {
         flex-direction: column;
-        /* keep stacked as requested previously */
     }
 }
 
 /* =========================
-   Dark mode tweaks (optional support)
+   Dark mode
    ========================= */
 body.dark-mode .settings-card {
     background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
@@ -204,51 +214,4 @@ body.dark-mode .inline-btn:hover {
 
 body.dark-mode .settings-divider {
     background: rgba(255, 255, 255, .12);
-}
-
-/* Card container keeps no global gap */
-.settings-card {
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, .08);
-    border-radius: 16px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
-    padding: 22px;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
-
-/* Label sticks close to its input */
-.settings-card .profile-label {
-    margin: 12px 0 6px;
-    /* top = distance from previous field, bottom = label→input */
-    line-height: 1.2;
-    font-weight: 600;
-}
-
-/* Extra space for the very first label (away from the divider) */
-.settings-card .profile-label:first-of-type {
-    margin-top: 16px;
-}
-
-/* If you have a divider element inside the card, ensure space below it */
-.settings-card .card-divider,
-.settings-card .section-divider {
-    margin: 12px 0 8px;
-    /* breathing room around divider */
-}
-
-/* Field (input) → next label spacing: tighter than before */
-.settings-card .input-shell,
-.settings-card .input-with-button {
-    margin-bottom: 12px;
-}
-
-@media (min-width: 1000px) {
-
-    .settings-card .input-shell,
-    .settings-card .input-with-button {
-        margin-bottom: 14px;
-        /* slightly more room on desktop */
-    }
 }
