@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 
-/* Icons (desktop only; hidden on mobile via CSS) */
+/* Icons (desktop only) */
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import homeInterface from '../assets/icons/Home-Interface.svg';
 import orderIcon from '../assets/icons/MyOrder-Icon.svg';
@@ -35,39 +35,35 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     return (
         <>
-            {/* Mobile overlay */}
+            {/* Mobile overlay (matches navbar) */}
             <div
                 className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`}
                 onClick={closeSidebar}
             />
 
-            <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`} aria-label="Side navigation">
-                {/* Header row (white on mobile, brand text on desktop) */}
+            <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+                {/* Header row — desktop shows text brand, mobile shows logo + ✕ with grey divider */}
                 <div className="brand-header">
-                    {/* Desktop text brand (Cal Sans) */}
+                    {/* Desktop brand text (Cal Sans) */}
                     <span className="brand-text">KonarCard</span>
 
                     {/* Mobile logo */}
-                    <img src={LogoIcon} alt="KonarCard" className="brand-logo" />
+                    <img src={LogoIcon} alt="Konar" className="brand-logo" />
 
-                    {/* Close (mobile only) */}
+                    {/* Mobile close button — exact same as navbar (✕) */}
                     <button
-                        className="close-sidebar-button mobile-only"
-                        onClick={closeSidebar}
+                        className="mobile-close mobile-only"
                         aria-label="Close menu"
+                        onClick={closeSidebar}
                         type="button"
                     >
-                        <span />
-                        <span />
-                        <span />
+                        ✕
                     </button>
                 </div>
 
-                {/* Content (beige) */}
+                {/* Scroll area / content */}
                 <div className="sidebar-content-wrapper">
-                    {/* LINKS */}
-                    <nav className="links-stack" role="navigation">
-                        {/* Group 1 */}
+                    <nav className="links-stack">
                         <Link
                             to="/myprofile"
                             onClick={closeSidebar}
@@ -98,10 +94,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="label">Product &amp; Plan</span>
                         </Link>
 
-                        {/* Divider between groups (mobile look like navbar) */}
-                        <hr className="mobile-section-divider" aria-hidden="true" />
+                        {/* Divider (mobile only) exactly like navbar */}
+                        {isMobile && <div className="mobile-divider" aria-hidden="true" />}
 
-                        {/* Group 2 */}
                         <Link
                             to="/contact-support"
                             onClick={closeSidebar}
@@ -129,36 +124,30 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="label">Settings</span>
                         </Link>
 
-                        {/* Logout (text link on mobile, icon button on desktop) */}
-                        <button
-                            type="button"
-                            className="logout-link-mobile"
-                            onClick={() => {
-                                handleLogout();
-                                closeSidebar();
-                            }}
-                        >
-                            Logout
-                        </button>
-                    </nav>
-
-                    {/* Desktop-only footer icon button row (unchanged) */}
-                    <div className="sidebar-footer desktop-only">
-                        <div className="settings-row">
+                        {/* Mobile: red text Logout under Settings (no icon) */}
+                        {isMobile ? (
                             <button
-                                className="logout-icon-btn"
-                                onClick={() => {
-                                    handleLogout();
-                                    closeSidebar();
-                                }}
-                                aria-label="Logout"
-                                title="Logout"
                                 type="button"
+                                className="desktop-h4 logout-link mobile-only"
+                                onClick={() => { handleLogout(); closeSidebar(); }}
                             >
-                                <img src={logoutInterface} alt="" className="icon icon-red" />
+                                Logout
                             </button>
-                        </div>
-                    </div>
+                        ) : (
+                            /* Desktop: keep the small logout icon button row */
+                            <div className="settings-row desktop-only">
+                                <button
+                                    className="logout-icon-btn"
+                                    onClick={() => { handleLogout(); closeSidebar(); }}
+                                    aria-label="Logout"
+                                    title="Logout"
+                                    type="button"
+                                >
+                                    <img src={logoutInterface} alt="" className="icon icon-red" />
+                                </button>
+                            </div>
+                        )}
+                    </nav>
                 </div>
             </aside>
         </>
