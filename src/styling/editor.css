@@ -458,9 +458,9 @@
     width: 100% !important;
 }
 
-/* 2) Solid orange border */
 .editor-scope .myprofile-editor {
-    border: 2px solid #FF6B00;
-    box-shadow: 0 12px 28px rgba(255, 107, 0, .18);
-    /* soft orange drop shadow */
+    border: 1px solid rgba(255, 107, 0, 0.25);
+    box-shadow: 0 4px 16px rgba(255, 107, 0, 0.35);
+    border-radius: 20px;
+    /* keep smooth corners */
 }
