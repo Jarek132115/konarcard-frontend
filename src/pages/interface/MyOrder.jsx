@@ -57,8 +57,8 @@ function CardProgress({ status }) {
 function SubscriptionProgress({
     trialEnd,
     currentPeriodEnd,
-    currentPeriodStart, // pass if you have it
-    createdAt,          // fallback if you don’t have trialStart/currentPeriodStart
+    currentPeriodStart,
+    createdAt,
     amountTotal,
     currency,
     trialDurationDays = 14,
@@ -68,7 +68,6 @@ function SubscriptionProgress({
     const trialEndDate = trialEnd ? new Date(trialEnd) : null;
     const inTrial = !!(trialEndDate && trialEndDate > now);
 
-    // Decide our window [start, end)
     let start, end;
 
     if (inTrial) {
@@ -78,7 +77,6 @@ function SubscriptionProgress({
         } else if (createdAt) {
             start = new Date(createdAt);
         } else {
-            // Best-effort fallback: 14 days before trialEnd
             start = new Date(end.getTime() - trialDurationDays * 24 * 60 * 60 * 1000);
         }
     } else if (currentPeriodEnd) {
@@ -86,21 +84,15 @@ function SubscriptionProgress({
         if (currentPeriodStart) {
             start = new Date(currentPeriodStart);
         } else {
-            // Fallback: subtract 1 month from end (handles 28/30/31 day months)
             start = new Date(end);
             start.setMonth(start.getMonth() - 1);
         }
     } else {
-        return null; // nothing to show
+        return null;
     }
 
-    // Clamp % safely
     const pct =
-        now <= start
-            ? 0
-            : now >= end
-                ? 100
-                : Math.round(((now - start) / (end - start)) * 100);
+        now <= start ? 0 : now >= end ? 100 : Math.round(((now - start) / (end - start)) * 100);
 
     const amountStr = fmtAmount(amountTotal ?? 495, currency);
     const caption = inTrial
@@ -116,7 +108,6 @@ function SubscriptionProgress({
         </div>
     );
 }
-
 
 /* ---------- labels ---------- */
 function statusLabel(order) {
@@ -212,11 +203,10 @@ export default function MyOrders() {
     const fetchOrders = async () => {
         const res = await api.get("/me/orders", { params: { ts: Date.now() } });
         const raw = Array.isArray(res?.data?.data) ? res.data.data : [];
-        // Ensure each order has a stable `id`
         setOrders(
             raw.map((o) => ({
                 ...o,
-                id: o.id || o._id, // normalize
+                id: o.id || o._id,
             }))
         );
     };
@@ -252,13 +242,14 @@ export default function MyOrders() {
     const hasAnyActiveSub = useMemo(
         () =>
             (visibleOrders || []).some(
-                (o) => (o.type || "").toLowerCase() === "subscription" && activeStripeStatuses.has((o.status || "").toLowerCase())
+                (o) =>
+                    (o.type || "").toLowerCase() === "subscription" &&
+                    activeStripeStatuses.has((o.status || "").toLowerCase())
             ),
         [visibleOrders]
     );
 
     async function syncStripeOrders() {
-        // Safe to call; backend will noop if not configured
         try {
             await api.post("/me/sync-subscriptions", { ts: Date.now() });
         } catch { }
@@ -266,18 +257,18 @@ export default function MyOrders() {
 
     async function handleCancelSubscription(order) {
         setActionMsg("");
-        const ok = window.confirm("Cancel this subscription at the end of the current period?");
+        const ok = window.confirm(
+            "Cancel this subscription at the end of the current period?"
+        );
         if (!ok) return;
 
         try {
-            // Send both: order id and (if we have it) the Stripe sub id.
             await api.post("/cancel-subscription", {
                 id: order.id || order._id,
                 stripeSubscriptionId: order.stripeSubscriptionId || order.subscriptionId,
             });
 
             setActionMsg("Subscription will cancel at the end of the current billing period.");
-            // Sync with Stripe so manual changes / flags reflect immediately
             await syncStripeOrders();
             await fetchOrders();
         } catch (e) {
@@ -319,19 +310,20 @@ export default function MyOrders() {
             <>
                 <KV label="Status">
                     {o.status}
-                    {o.cancel_at_period_end && o.status !== "canceled" ? " (cancelling at period end)" : ""}
+                    {o.cancel_at_period_end && o.status !== "canceled"
+                        ? " (cancelling at period end)"
+                        : ""}
                 </KV>
                 {cancelledOn && <KV label="Canceled on">{fmtDateTime(cancelledOn)}</KV>}
                 <div className="order-progress-wrap">
                     <SubscriptionProgress
                         trialEnd={o.trialEnd}
                         currentPeriodEnd={o.currentPeriodEnd}
-                        currentPeriodStart={o.currentPeriodStart} // if present
-                        createdAt={o.createdAt}                   // fallback for trial start
+                        currentPeriodStart={o.currentPeriodStart}
+                        createdAt={o.createdAt}
                         amountTotal={o.amountTotal}
                         currency={o.currency}
                     />
-
                 </div>
             </>
         );
@@ -342,7 +334,9 @@ export default function MyOrders() {
             <>
                 <KV label="Quantity">{o.quantity || 1}</KV>
                 <KV label="Amount">{fmtAmount(o.amountTotal, o.currency)}</KV>
-                <KV label="Estimated delivery">{o.deliveryWindow || o.metadata?.estimatedDelivery || "—"}</KV>
+                <KV label="Estimated delivery">
+                    {o.deliveryWindow || o.metadata?.estimatedDelivery || "—"}
+                </KV>
                 <KV label="Delivery name">{o.deliveryName || "—"}</KV>
                 <KV label="Delivery address">{o.deliveryAddress || "—"}</KV>
                 <div className="order-progress-wrap">
@@ -353,7 +347,8 @@ export default function MyOrders() {
     }
 
     return (
-        <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
+        <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""} orders-page`}>
+            {/* Mobile header */}
             <div className="myprofile-mobile-header">
                 <Link to="/myprofile" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
@@ -367,92 +362,110 @@ export default function MyOrders() {
             </div>
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-            {sidebarOpen && isMobile && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />}
+            {sidebarOpen && isMobile && (
+                <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
+            )}
 
-            <main className="main-content-container">
+            {/* Fill viewport; header sticky; wrapper scrolls */}
+            <main className="main-content-container orders-main">
                 <PageHeader title="My Orders" isMobile={isMobile} isSmallMobile={isSmallMobile} />
 
-                <section className="orders-container">
-                    {loading ? (
-                        <p className="orders-hint">Loading orders…</p>
-                    ) : err ? (
-                        <p className="error-text">{err}</p>
-                    ) : visibleOrders.length === 0 ? (
-                        <div className="orders-empty">
-                            <div className="orders-empty-badge">Orders</div>
-                            <h3 className="orders-empty-title">No orders yet</h3>
-                            <p className="orders-empty-sub">Your purchases will appear here once you’ve checked out.</p>
-                            <Link to="/productandplan" className="cta-blue-button desktop-button">Browse products</Link>
-                        </div>
-                    ) : (
-                        <div className="orders-list">
-                            {visibleOrders.map((o) => {
-                                const isSub = (o.type || "").toLowerCase() === "subscription";
-                                const cancelled = isSub && (o.status || "").toLowerCase() === "canceled";
-                                const id = o.id || o._id;
+                {/* Peach shell wrapper (scrolls internally on desktop) */}
+                <div className="profile-page-wrapper">
+                    <section className="orders-container">
+                        {loading ? (
+                            <p className="orders-hint">Loading orders…</p>
+                        ) : err ? (
+                            <p className="error-text">{err}</p>
+                        ) : visibleOrders.length === 0 ? (
+                            <div className="orders-empty">
+                                <div className="orders-empty-badge">Orders</div>
+                                <h3 className="orders-empty-title">No orders yet</h3>
+                                <p className="orders-empty-sub">
+                                    Your purchases will appear here once you’ve checked out.
+                                </p>
+                                <Link to="/productandplan" className="cta-accent-button desktop-button">
+                                    Browse products
+                                </Link>
+                            </div>
+                        ) : (
+                            <div className="orders-list">
+                                {visibleOrders.map((o) => {
+                                    const isSub = (o.type || "").toLowerCase() === "subscription";
+                                    const cancelled = isSub && (o.status || "").toLowerCase() === "canceled";
+                                    const id = o.id || o._id;
 
-                                return (
-                                    <article key={id} className={`order-card ${isSub ? "is-subscription" : ""}`}>
-                                        <div className={`order-status-badge ${statusBadgeClass(o)}`}>{statusLabel(o)}</div>
-
-                                        <div className="order-thumb">
-                                            <img src={ProductThumb} alt="Product" className="order-thumb-img" />
-                                        </div>
-
-                                        <div className="order-details">
-                                            <header className="order-meta">
-                                                <span className="type">{o.type}</span>
-                                                <span aria-hidden="true">•</span>
-                                                <span className="status">{o.status}</span>
-                                                <span aria-hidden="true">•</span>
-                                                <time>{fmtDateTime(o.createdAt)}</time>
-                                            </header>
-
-                                            <div className="order-fields">
-                                                {isSub ? renderSubscription(o) : renderCard(o)}
+                                    return (
+                                        <article key={id} className={`order-card ${isSub ? "is-subscription" : ""}`}>
+                                            <div className={`order-status-badge ${statusBadgeClass(o)}`}>
+                                                {statusLabel(o)}
                                             </div>
 
-                                            <div className="order-actions">
-                                                {isSub ? (
-                                                    cancelled ? (
-                                                        hasAnyActiveSub ? (
-                                                            <button className="cta-black-button desktop-button disabled" disabled>
-                                                                Cancelled
-                                                            </button>
+                                            <div className="order-thumb">
+                                                <img src={ProductThumb} alt="Product" className="order-thumb-img" />
+                                            </div>
+
+                                            <div className="order-details">
+                                                <header className="order-meta">
+                                                    <span className="type">{o.type}</span>
+                                                    <span aria-hidden="true">•</span>
+                                                    <span className="status">{o.status}</span>
+                                                    <span aria-hidden="true">•</span>
+                                                    <time>{fmtDateTime(o.createdAt)}</time>
+                                                </header>
+
+                                                <div className="order-fields">
+                                                    {isSub ? renderSubscription(o) : renderCard(o)}
+                                                </div>
+
+                                                <div className="order-actions">
+                                                    {isSub ? (
+                                                        cancelled ? (
+                                                            hasAnyActiveSub ? (
+                                                                <button className="cta-black-button desktop-button disabled" disabled>
+                                                                    Cancelled
+                                                                </button>
+                                                            ) : (
+                                                                <button
+                                                                    onClick={resubscribeNow}
+                                                                    className="cta-black-button desktop-button"
+                                                                >
+                                                                    Resubscribe now
+                                                                </button>
+                                                            )
                                                         ) : (
-                                                            <button onClick={resubscribeNow} className="cta-black-button desktop-button">
-                                                                Resubscribe now
+                                                            <button
+                                                                onClick={() => handleCancelSubscription(o)}
+                                                                className="cta-black-button desktop-button"
+                                                            >
+                                                                Cancel subscription
                                                             </button>
                                                         )
                                                     ) : (
                                                         <button
-                                                            onClick={() => handleCancelSubscription(o)}
+                                                            onClick={() => reorderNow(id)}
                                                             className="cta-black-button desktop-button"
                                                         >
-                                                            Cancel subscription
+                                                            Buy Again
                                                         </button>
-                                                    )
-                                                ) : (
-                                                    <button onClick={() => reorderNow(id)} className="cta-black-button desktop-button">
-                                                        Buy Again
-                                                    </button>
-                                                )}
+                                                    )}
 
-                                                <Link
-                                                    to={isSub ? `/SuccessSubscription?id=${id}` : `/success?id=${id}`}
-                                                    className="view-details desktop-button cta-blue-button"
-                                                >
-                                                    View details
-                                                </Link>
+                                                    <Link
+                                                        to={isSub ? `/SuccessSubscription?id=${id}` : `/success?id=${id}`}
+                                                        className="view-details desktop-button cta-accent-button"
+                                                    >
+                                                        View details
+                                                    </Link>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </article>
-                                );
-                            })}
-                        </div>
-                    )}
-                    {actionMsg && <p className="action-message">{actionMsg}</p>}
-                </section>
+                                        </article>
+                                    );
+                                })}
+                            </div>
+                        )}
+                        {actionMsg && <p className="action-message">{actionMsg}</p>}
+                    </section>
+                </div>
             </main>
         </div>
     );

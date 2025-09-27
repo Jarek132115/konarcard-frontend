@@ -1,7 +1,44 @@
 /* ===== My Orders page ===== */
 :root {
     --card-cta-gap: 12px;
-    /* default space between content and CTA row */
+}
+
+/* Make the main column fill the viewport so the shell can flex to the bottom */
+.orders-main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+}
+
+/* Sticky header on this page (like Help/Profile) */
+.orders-page .page-header-card {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    margin-bottom: 10px;
+    backdrop-filter: saturate(1.05);
+}
+
+/* Peach shell wrapper that scrolls internally on desktop */
+.orders-page .profile-page-wrapper {
+    background: var(--shell-bg, #FFF1E8);
+    border: 1px solid var(--shell-border, rgb(255 123 0 / .20));
+    border-radius: 16px;
+    padding: 14px 18px;
+    box-shadow: var(--soft-shadow, 0 10px 24px rgba(30, 42, 56, .08));
+    flex: 1 1 auto;
+    overflow: auto;
+    box-sizing: border-box;
+}
+
+@media (max-width:1000px) {
+    .orders-page .profile-page-wrapper {
+        background: none;
+        border: none;
+        padding: 0;
+        box-shadow: none;
+        overflow: visible;
+    }
 }
 
 .orders-container {
@@ -40,9 +77,9 @@
     font-size: .8rem;
     padding: 6px 10px;
     border-radius: 999px;
-    background: #e9eef6;
-    color: #1e3a8a;
-    border: 1px solid rgba(0, 0, 0, .06);
+    background: rgb(var(--accent-rgb, 255 107 0) / .12);
+    color: var(--accent, #FF6B00);
+    border: 1px solid rgb(var(--accent-rgb, 255 107 0) / .25);
     margin-bottom: 10px;
 }
 
@@ -179,7 +216,7 @@
     font-size: 14px;
 }
 
-/* ---------- Key/Value blocks (label on top, value underneath) ---------- */
+/* Key/Value blocks */
 .order-kv {
     display: flex;
     flex-direction: column;
@@ -190,7 +227,6 @@
 
 .order-kv .kv-label {
     font-weight: 800;
-    /* bold black heading */
     color: #000;
     font-size: 14px;
     line-height: 1.1;
@@ -199,12 +235,11 @@
 .order-kv .kv-value {
     font-size: 13px;
     color: #6b7280;
-    /* muted grey */
     line-height: 1.3;
     word-break: break-word;
 }
 
-/* Fields container: 2 columns on desktop, 1 column on mobile */
+/* Fields container */
 .order-fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -234,7 +269,7 @@
 
 .order-progress-fill {
     height: 100%;
-    background: #0081FF;
+    background: var(--accent, #FF6B00);
 }
 
 .order-progress-caption {
@@ -243,7 +278,7 @@
     color: #6b7280;
 }
 
-/* CTA row: pinned to bottom with spacing above */
+/* CTA row */
 .order-actions {
     margin-top: auto;
     padding-top: var(--card-cta-gap);
@@ -254,18 +289,17 @@
     align-items: center;
 }
 
-/* Make sure black CTAs never stretch by default */
 .order-actions .cta-black-button.desktop-button {
     width: auto !important;
 }
 
-/* Blue button default cap on desktop */
-.view-details.desktop-button.cta-blue-button {
+/* Orange primary buttons on this page */
+.view-details.desktop-button.cta-accent-button {
     max-width: 400px;
     margin-right: auto;
 }
 
-/* Disabled state for "Cancelled" button */
+/* Disabled state */
 .cta-black-button.disabled,
 .cta-black-button[disabled] {
     opacity: .5;
@@ -273,7 +307,7 @@
     cursor: default;
 }
 
-/* ---------- Responsive rules *for this page only* ---------- */
+/* Responsive rules */
 @media (max-width:900px) {
     .order-card {
         grid-template-columns: 1fr;
@@ -289,8 +323,6 @@
         grid-template-columns: 1fr;
     }
 
-    /* 1 per row on mobile */
-
     .order-status-badge {
         position: static;
         margin-bottom: 8px;
@@ -305,15 +337,13 @@
         justify-content: flex-start;
     }
 
-    .view-details.desktop-button.cta-blue-button {
+    .view-details.desktop-button.cta-accent-button {
         width: auto !important;
         max-width: 100%;
         margin-left: 0;
         margin-right: 0;
     }
 
-    /* EXACT mobile spacing for subscription cards:
-       20px between last text block and CTA row (active & canceled) */
     .order-card.is-subscription .order-fields {
         margin-bottom: 20px;
     }
@@ -323,14 +353,14 @@
     }
 }
 
-/* Under 500px: BOTH CTAs go 100% width */
+/* Under 500px: both CTAs full width */
 @media (max-width:500px) {
     .order-actions {
         justify-content: stretch;
     }
 
     .order-actions .cta-black-button.desktop-button,
-    .order-actions .view-details.desktop-button.cta-blue-button {
+    .order-actions .view-details.desktop-button.cta-accent-button {
         width: 100% !important;
         max-width: none;
     }
