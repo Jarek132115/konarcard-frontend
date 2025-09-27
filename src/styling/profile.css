@@ -219,7 +219,7 @@ body.dark-mode .settings-divider {
 .inline-btn {
     border: 1px solid rgb(var(--accent-rgb, 255 107 0) / .25);
     border-left: none;
-    background: var(--accent, #FF6B00);
+    background: var(--accent, #1E2A38);
     color: #fff;
 }
 
