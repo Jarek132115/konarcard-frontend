@@ -287,7 +287,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 0 14px;
+    padding: 20px 10px 14px;
     border-bottom: 1px dashed rgb(30 42 56 / .08);
 }
 
