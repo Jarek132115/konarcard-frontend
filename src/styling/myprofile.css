@@ -411,12 +411,10 @@
     height: 56px;
     padding: 0 14px;
     background: var(--card-bg);
-    border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: space-between;
     z-index: 1100;
-    box-shadow: var(--soft-shadow);
 }
 
 @media (min-width:1001px) {
