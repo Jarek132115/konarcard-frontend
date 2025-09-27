@@ -571,7 +571,7 @@
 
 /* Tune this if still too tall/short (includes sticky header + gaps) */
 :root {
-    --workspace-offset: 140px;
+    --workspace-offset: 116px;
 }
 
 @media (min-width:1001px) {
