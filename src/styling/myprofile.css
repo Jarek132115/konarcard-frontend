@@ -640,3 +640,10 @@
         font-weight: 700;
     }
 }
+
+/* Force icons inside header buttons to render white */
+.page-header-right .orange-button img,
+.page-header-right .desktop-button img {
+    filter: brightness(0) invert(1);
+    /* makes dark icons white */
+}
