@@ -67,6 +67,15 @@
     --soft-shadow-strong: 0 14px 28px rgba(0, 0, 0, .55);
 }
 
+.dark-mode .page-header-card,
+.dark-mode .myprofile-flex-container {
+    background: var(--card-bg);
+    /* dark mode stays neutral */
+    border-color: var(--border-color);
+    box-shadow: var(--soft-shadow);
+}
+
+
 /* -------------------------
    CTA buttons
    ------------------------- */
@@ -172,13 +181,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background: var(--shell-bg);
+    /* ← was var(--card-bg) */
+    border: 1px solid var(--shell-border);
     border-radius: var(--radius-xl);
     padding: 14px 18px;
     box-shadow: var(--soft-shadow);
     margin-bottom: 12px;
 }
+
 
 .page-header-left {
     display: flex;
@@ -273,12 +284,14 @@
     align-items: start;
     width: 100%;
     margin: 0 auto;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background: var(--shell-bg);
+    /* ← was var(--card-bg) */
+    border: 1px solid var(--shell-border);
     border-radius: var(--radius-xl);
     padding: 18px;
     box-shadow: var(--soft-shadow);
 }
+
 
 @media (max-width:1000px) {
     .myprofile-flex-container {
