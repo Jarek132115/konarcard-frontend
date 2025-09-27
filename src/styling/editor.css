@@ -458,9 +458,51 @@
     width: 100% !important;
 }
 
+/* --- Editor card: centered orange glow, not cut off --- */
+.editor-scope.myprofile-editor-wrapper {
+    overflow: visible;
+    /* let outer glow show on all sides */
+}
+
 .editor-scope .myprofile-editor {
-    border: 1px solid rgba(255, 107, 0, 0.25);
-    box-shadow: 0 4px 16px rgba(255, 107, 0, 0.35);
+    border: 1px solid rgba(255, 107, 0, .22);
+    /* centered soft glow (no vertical offset) */
+    box-shadow:
+        0 0 0 2px rgba(255, 107, 0, .12),
+        0 0 22px rgba(255, 107, 0, .28);
     border-radius: 20px;
-    /* keep smooth corners */
+    padding-right: 10px;
+    /* tiny gutter so rounded scrollbar doesn't hug text */
+}
+
+/* --- Pretty rounded scrollbar (WebKit/Chromium) --- */
+.editor-scope .myprofile-editor::-webkit-scrollbar {
+    width: 10px;
+}
+
+.editor-scope .myprofile-editor::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 14px;
+}
+
+.editor-scope .myprofile-editor::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg,
+            rgba(30, 42, 56, .55),
+            rgba(30, 42, 56, .75));
+    border-radius: 14px;
+    /* rounded right edge look */
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.editor-scope .myprofile-editor::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg,
+            rgba(30, 42, 56, .7),
+            rgba(30, 42, 56, .9));
+}
+
+/* --- Pretty scrollbar (Firefox) --- */
+.editor-scope .myprofile-editor {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(30, 42, 56, .6) transparent;
 }
