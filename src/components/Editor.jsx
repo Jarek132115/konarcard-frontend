@@ -1,39 +1,10 @@
-// src/components/Editor.jsx
 import React, { useRef } from "react";
 import { previewPlaceholders } from "../store/businessCardStore";
 
 /**
- * Editor component
+ * Orange-themed Editor (scoped styles via .editor-scope)
  *
- * Expected props:
- * - state: the business card state from your store
- * - updateState: fn(partial) to update the store
- * - isSubscribed: boolean
- * - hasTrialEnded: boolean
- * - onStartSubscription: fn() to navigate/launch checkout
- * - onResetPage: fn() to reset everything (you already have this in the page)
- * - onSubmit: fn(event) parent handles create/mutate (build formdata, trial, etc.)
- *
- * - UI layout toggles + setters:
- *   servicesDisplayMode, setServicesDisplayMode
- *   reviewsDisplayMode, setReviewsDisplayMode
- *   aboutMeLayout, setAboutMeLayout
- *   showMainSection, setShowMainSection
- *   showAboutMeSection, setShowAboutMeSection
- *   showWorkSection, setShowWorkSection
- *   showServicesSection, setShowServicesSection
- *   showReviewsSection, setShowReviewsSection
- *   showContactSection, setShowContactSection
- *
- * - File/image handlers that parent uses to manage files, blob URLs, flags, etc.:
- *   onCoverUpload(file)
- *   onRemoveCover()
- *   onAvatarUpload(file)
- *   onRemoveAvatar()
- *   onAddWorkImages(files[])      // array of File
- *   onRemoveWorkImage(index)
- *
- * - Optional style for sticky scrolling column: columnScrollStyle
+ * Props: see previous version — unchanged API
  */
 export default function Editor({
     state,
@@ -73,18 +44,17 @@ export default function Editor({
 
     columnScrollStyle,
 }) {
-    // Hidden file inputs
     const coverInputRef = useRef(null);
     const avatarInputRef = useRef(null);
     const workImageInputRef = useRef(null);
 
-    // ---- Local helpers (array edits that just call updateState) ----
     const handleServiceChange = (i, field, value) => {
         const next = [...(state.services || [])];
         next[i] = { ...(next[i] || {}), [field]: value };
         updateState({ services: next });
     };
-    const handleAddService = () => updateState({ services: [...(state.services || []), { name: "", price: "" }] });
+    const handleAddService = () =>
+        updateState({ services: [...(state.services || []), { name: "", price: "" }] });
     const handleRemoveService = (i) =>
         updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
 
@@ -104,8 +74,7 @@ export default function Editor({
         updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
     return (
-        <div className="myprofile-editor-wrapper" id="myprofile-editor" style={columnScrollStyle}>
-            {/* Lock overlay if trial ended */}
+        <div className="myprofile-editor-wrapper editor-scope" id="myprofile-editor" style={columnScrollStyle}>
             {!isSubscribed && hasTrialEnded && (
                 <div className="subscription-overlay">
                     <div className="subscription-message">
@@ -113,7 +82,7 @@ export default function Editor({
                         <p className="desktop-h6">
                             Your free trial has ended. Please subscribe to continue editing your profile.
                         </p>
-                        <button className="blue-button" onClick={onStartSubscription}>
+                        <button className="btn btn-accent" onClick={onStartSubscription}>
                             Go to Subscription
                         </button>
                     </div>
@@ -136,14 +105,14 @@ export default function Editor({
                     <div className="option-row fit">
                         <button
                             type="button"
-                            className={`theme-button ${state.pageTheme === "light" ? "is-active" : ""}`}
+                            className={`chip ${state.pageTheme === "light" ? "is-active" : ""}`}
                             onClick={() => updateState({ pageTheme: "light" })}
                         >
                             Light Mode
                         </button>
                         <button
                             type="button"
-                            className={`theme-button ${state.pageTheme === "dark" ? "is-active" : ""}`}
+                            className={`chip ${state.pageTheme === "dark" ? "is-active" : ""}`}
                             onClick={() => updateState({ pageTheme: "dark" })}
                         >
                             Dark Mode
@@ -159,11 +128,11 @@ export default function Editor({
                             <button
                                 type="button"
                                 key={font}
-                                className={`font-button ${state.font === font ? "is-active" : ""}`}
+                                className={`chip ${state.font === font ? "is-active" : ""}`}
                                 onClick={() => updateState({ font })}
                                 style={{
                                     fontFamily: `'${font}', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`,
-                                    fontWeight: 700,
+                                    fontWeight: 800,
                                 }}
                             >
                                 {font}
@@ -270,14 +239,14 @@ export default function Editor({
                             <div className="option-row fit">
                                 <button
                                     type="button"
-                                    className={`display-button ${aboutMeLayout === "side-by-side" ? "is-active" : ""}`}
+                                    className={`chip ${aboutMeLayout === "side-by-side" ? "is-active" : ""}`}
                                     onClick={() => setAboutMeLayout("side-by-side")}
                                 >
                                     Side by Side
                                 </button>
                                 <button
                                     type="button"
-                                    className={`display-button ${aboutMeLayout === "stacked" ? "is-active" : ""}`}
+                                    className={`chip ${aboutMeLayout === "stacked" ? "is-active" : ""}`}
                                     onClick={() => setAboutMeLayout("stacked")}
                                 >
                                     Stacked
@@ -378,21 +347,21 @@ export default function Editor({
                             <div className="option-row fit">
                                 <button
                                     type="button"
-                                    className={`display-button ${state.workDisplayMode === "list" ? "is-active" : ""}`}
+                                    className={`chip ${state.workDisplayMode === "list" ? "is-active" : ""}`}
                                     onClick={() => updateState({ workDisplayMode: "list" })}
                                 >
                                     List
                                 </button>
                                 <button
                                     type="button"
-                                    className={`display-button ${state.workDisplayMode === "grid" ? "is-active" : ""}`}
+                                    className={`chip ${state.workDisplayMode === "grid" ? "is-active" : ""}`}
                                     onClick={() => updateState({ workDisplayMode: "grid" })}
                                 >
                                     Grid
                                 </button>
                                 <button
                                     type="button"
-                                    className={`display-button ${state.workDisplayMode === "carousel" ? "is-active" : ""}`}
+                                    className={`chip ${state.workDisplayMode === "carousel" ? "is-active" : ""}`}
                                     onClick={() => updateState({ workDisplayMode: "carousel" })}
                                 >
                                     Carousel
@@ -419,10 +388,7 @@ export default function Editor({
                                     </div>
                                 ))}
                                 {(state.workImages || []).length < 10 && (
-                                    <div
-                                        className="add-work-image-placeholder"
-                                        onClick={() => workImageInputRef.current?.click()}
-                                    >
+                                    <div className="add-work-image-placeholder" onClick={() => workImageInputRef.current?.click()}>
                                         <span className="upload-text">+ Add image(s)</span>
                                     </div>
                                 )}
@@ -460,14 +426,14 @@ export default function Editor({
                             <div className="option-row fit">
                                 <button
                                     type="button"
-                                    className={`display-button ${servicesDisplayMode === "list" ? "is-active" : ""}`}
+                                    className={`chip ${servicesDisplayMode === "list" ? "is-active" : ""}`}
                                     onClick={() => setServicesDisplayMode("list")}
                                 >
                                     List
                                 </button>
                                 <button
                                     type="button"
-                                    className={`display-button ${servicesDisplayMode === "carousel" ? "is-active" : ""}`}
+                                    className={`chip ${servicesDisplayMode === "carousel" ? "is-active" : ""}`}
                                     onClick={() => setServicesDisplayMode("carousel")}
                                 >
                                     Carousel
@@ -479,16 +445,7 @@ export default function Editor({
                             <label>Services</label>
                             <div className="editor-service-list">
                                 {(state.services || []).map((s, i) => (
-                                    <div
-                                        key={i}
-                                        className="editor-item-card mock-service-item-wrapper"
-                                        style={{
-                                            display: "grid",
-                                            gridTemplateColumns: "1fr 1fr auto",
-                                            gap: 8,
-                                            alignItems: "center",
-                                        }}
-                                    >
+                                    <div key={i} className="editor-item-card mock-service-item-wrapper">
                                         <input
                                             type="text"
                                             className="text-input"
@@ -503,17 +460,13 @@ export default function Editor({
                                             value={s.price || ""}
                                             onChange={(e) => handleServiceChange(i, "price", e.target.value)}
                                         />
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRemoveService(i)}
-                                            className="remove-item-button"
-                                        >
+                                        <button type="button" onClick={() => handleRemoveService(i)} className="btn btn-danger">
                                             Remove
                                         </button>
                                     </div>
                                 ))}
                             </div>
-                            <button type="button" onClick={handleAddService} className="add-item-button">
+                            <button type="button" onClick={handleAddService} className="btn btn-outline-accent w-full">
                                 + Add Service
                             </button>
                         </div>
@@ -538,14 +491,14 @@ export default function Editor({
                             <div className="option-row fit">
                                 <button
                                     type="button"
-                                    className={`display-button ${reviewsDisplayMode === "list" ? "is-active" : ""}`}
+                                    className={`chip ${reviewsDisplayMode === "list" ? "is-active" : ""}`}
                                     onClick={() => setReviewsDisplayMode("list")}
                                 >
                                     List
                                 </button>
                                 <button
                                     type="button"
-                                    className={`display-button ${reviewsDisplayMode === "carousel" ? "is-active" : ""}`}
+                                    className={`chip ${reviewsDisplayMode === "carousel" ? "is-active" : ""}`}
                                     onClick={() => setReviewsDisplayMode("carousel")}
                                 >
                                     Carousel
@@ -557,16 +510,7 @@ export default function Editor({
                             <label>Reviews</label>
                             <div className="editor-reviews-list" style={{ display: "grid", gap: 8 }}>
                                 {(state.reviews || []).map((r, i) => (
-                                    <div
-                                        key={i}
-                                        className="editor-item-card mock-review-card-wrapper"
-                                        style={{
-                                            display: "grid",
-                                            gridTemplateColumns: "1fr 1fr 110px auto",
-                                            gap: 8,
-                                            alignItems: "center",
-                                        }}
-                                    >
+                                    <div key={i} className="editor-item-card mock-review-card-wrapper">
                                         <input
                                             type="text"
                                             className="text-input"
@@ -590,17 +534,13 @@ export default function Editor({
                                             value={r.rating || ""}
                                             onChange={(e) => handleReviewChange(i, "rating", e.target.value)}
                                         />
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRemoveReview(i)}
-                                            className="remove-item-button"
-                                        >
+                                        <button type="button" onClick={() => handleRemoveReview(i)} className="btn btn-danger">
                                             Remove
                                         </button>
                                     </div>
                                 ))}
                             </div>
-                            <button type="button" onClick={handleAddReview} className="add-item-button">
+                            <button type="button" onClick={handleAddReview} className="btn btn-outline-accent w-full">
                                 + Add Review
                             </button>
                         </div>
@@ -647,10 +587,10 @@ export default function Editor({
                 )}
 
                 <div className="button-group">
-                    <button type="button" onClick={onResetPage} className="cta-black-button desktop-button">
+                    <button type="button" onClick={onResetPage} className="btn btn-neutral">
                         Reset Page
                     </button>
-                    <button type="submit" className="cta-blue-button desktop-button">
+                    <button type="submit" className="btn btn-accent">
                         Publish Now
                     </button>
                 </div>
