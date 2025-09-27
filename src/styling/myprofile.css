@@ -570,3 +570,63 @@ body {
 .max-w-screen {
     max-width: 100vw !important;
 }
+
+/* ---------- MyProfile alignment + height cap ---------- */
+
+/* Keep layout width stable across pages when scrollbars appear */
+html,
+body {
+    scrollbar-gutter: stable both-edges;
+}
+
+/* Align content exactly with the sidebar edge (remove the +10px) */
+.main-content-container {
+    margin-left: calc(var(--sb-w) + var(--sb-gutter));
+    /* keep your existing padding scheme but ensure no page overflow comes from the shell */
+    padding: 16px 16px 16px 0;
+    min-height: 100dvh;
+    overflow: hidden;
+    /* the page itself won't scroll because of the wrapper */
+}
+
+/* Header stays sticky like other pages */
+.page-header-card {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+
+/* Shell (wrapper): fill the remaining space, but never exceed the page height */
+.myprofile-flex-container {
+    /* visual style unchanged */
+    flex: 1 1 auto;
+    /* grow to bottom */
+    max-height: 100%;
+    /* cap to page area provided by the main container */
+    overflow: hidden;
+    /* <-- no internal scrollbars on the wrapper */
+}
+
+/* (Temporary) prevent inner panes from introducing scrollbars until you adjust content */
+.myprofile-content,
+.myprofile-editor-container {
+    overflow: hidden;
+}
+
+@media (max-width:1000px) {
+
+    /* Mobile keeps natural flow */
+    .main-content-container {
+        margin-left: 0;
+        padding: 0 20px;
+        padding-top: 92px;
+        min-height: auto;
+        overflow: visible;
+    }
+
+    .myprofile-flex-container {
+        max-height: none;
+        overflow: visible;
+        flex: 0 0 auto;
+    }
+}
