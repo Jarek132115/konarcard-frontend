@@ -2,12 +2,23 @@
    Desktop frame wrapper — peach shell like editor tray
    ========================= */
 .account-frame {
+    /* peach shell */
     background: var(--shell-bg, #FFF1E8);
     border: 1px solid var(--shell-border, rgb(255 123 0 / .20));
     border-radius: 16px;
     padding: 14px 18px;
     margin-bottom: 20px;
     box-shadow: var(--soft-shadow, 0 10px 24px rgba(30, 42, 56, .08));
+
+    /* NEW: let the shell reach the bottom even if content is short */
+    /* header + gutter approximations; tweak if you change header size */
+    --header-approx: 80px;
+    /* your PageHeader height + its margin */
+    --outer-gutters: 32px;
+    /* top/bottom breathing space */
+    min-height: calc(100vh - var(--header-approx) - var(--outer-gutters));
+    display: block;
+    /* do NOT flex the inner card; keep its natural height */
 }
 
 @media (max-width: 1000px) {
@@ -16,6 +27,8 @@
         border: none;
         padding: 0;
         box-shadow: none;
+        min-height: auto;
+        /* mobile keeps the natural height */
     }
 }
 
@@ -31,7 +44,11 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    /* tighter, as requested */
+    /* tight as you wanted */
+    max-width: 1100px;
+    /* optional: avoid ultra-wide cards on very large screens */
+    margin-inline: auto;
+    /* center inside the peach shell */
 }
 
 /* Header with pill */
@@ -49,9 +66,8 @@
     }
 }
 
-/* Orange pill (replaces the old 'pill-blue') */
+/* Orange pill (keep class name) */
 .pricing-badge.pill-blue {
-    /* keep the class name but style it orange to avoid JSX changes */
     font-family: "Cal Sans", sans-serif;
     background: rgb(var(--accent-rgb, 255 107 0) / .10);
     color: var(--accent, #FF6B00);
@@ -63,6 +79,7 @@
     box-shadow: 0 4px 10px rgb(var(--accent-rgb, 255 107 0) / .10);
 }
 
+/* Divider */
 .settings-divider {
     height: 1px;
     background: rgba(0, 0, 0, .08);
@@ -80,12 +97,6 @@
 
 .settings-card .profile-label:first-of-type {
     margin-top: 16px;
-}
-
-/* If you use an extra divider inside the card */
-.settings-card .card-divider,
-.settings-card .section-divider {
-    margin: 12px 0 8px;
 }
 
 /* Inputs */
@@ -106,13 +117,11 @@
     box-sizing: border-box;
 }
 
-/* Orange focus states */
 .text-input:focus {
     border-color: var(--accent, #FF6B00);
     box-shadow: 0 0 0 2px rgb(var(--accent-rgb, 255 107 0) / .20);
 }
 
-/* Readonly look */
 .text-input.readonly {
     background: #eef1f5;
     color: #4a5568;
@@ -134,7 +143,7 @@
     pointer-events: none;
 }
 
-/* Input with right-side button (Password) */
+/* Password (input + right button) */
 .input-with-button {
     position: relative;
     display: flex;
@@ -147,13 +156,12 @@
     border-right: none;
 }
 
-/* Keep this neutral (black) unless you want it orange too */
 .inline-btn {
-    border: 1px solid rgba(0, 0, 0, .12);
+    border: 1px solid rgb(var(--accent-rgb, 255 107 0) / .25);
     border-left: none;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
-    background: #111;
+    background: var(--accent, #FF6B00);
     color: #fff;
     padding: 0 14px;
     min-width: 88px;
@@ -166,25 +174,65 @@
 }
 
 .inline-btn:hover {
-    background: #333;
+    filter: brightness(.95);
 }
 
-/* Actions */
+/* =========================
+   Actions (CTAs)
+   ========================= */
+/* Desktop: side-by-side, auto width, right-aligned */
 .settings-actions {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 6px;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    /* wrap if space is tight */
 }
 
-@media (min-width: 700px) {
+.settings-actions .desktop-button {
+    width: auto;
+    /* fit content on desktop */
+    min-width: 220px;
+    /* optional comfort width */
+}
+
+/* Button skins (if not already defined) */
+.navy-button {
+    background: #1E2A38;
+    color: #fff;
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-weight: 800;
+}
+
+.orange-button {
+    background: var(--accent, #FF6B00);
+    color: #fff;
+    border: 1px solid rgb(var(--accent-rgb, 255 107 0) / .25);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgb(var(--accent-rgb, 255 107 0) / .28);
+}
+
+/* Mobile/tablet: stacked, full width */
+@media (max-width: 1000px) {
     .settings-actions {
         flex-direction: column;
+        justify-content: stretch;
+    }
+
+    .settings-actions .desktop-button {
+        width: 100%;
+        min-width: 0;
     }
 }
 
 /* =========================
-   Dark mode
+   Dark mode tweaks (optional)
    ========================= */
 body.dark-mode .settings-card {
     background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
@@ -204,25 +252,10 @@ body.dark-mode .text-input.readonly {
 }
 
 body.dark-mode .inline-btn {
-    background: #555;
-    color: #eee;
-}
-
-body.dark-mode .inline-btn:hover {
-    background: #666;
+    background: var(--accent, #FF6B00);
+    color: #fff;
 }
 
 body.dark-mode .settings-divider {
     background: rgba(255, 255, 255, .12);
-}
-
-.inline-btn {
-    border: 1px solid rgb(var(--accent-rgb, 255 107 0) / .25);
-    border-left: none;
-    background: var(--accent, #1E2A38);
-    color: #fff;
-}
-
-.inline-btn:hover {
-    filter: brightness(.95);
 }
