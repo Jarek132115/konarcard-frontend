@@ -13,7 +13,7 @@ import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import { loadStripe } from '@stripe/stripe-js';
 
-/** Product gallery (same as Home) */
+/** Product gallery assets */
 import CardCover from '../../assets/images/Product-Cover.png';
 import ProductImage1 from '../../assets/images/Product-Image-1.png';
 import ProductImage2 from '../../assets/images/Product-Image-2.png';
@@ -101,7 +101,7 @@ export default function NFCCards() {
     }
   };
 
-  /* Physical card checkout — FIXED to use working route */
+  /* Physical card checkout — uses the working route */
   const handleOrderCard = async () => {
     if (ordering) return;
     if (!authUser) {
@@ -111,17 +111,16 @@ export default function NFCCards() {
 
     setOrdering(true);
     try {
-      // Use the same working endpoint as the product page:
       const res = await api.post('/api/checkout/create-checkout-session', { quantity: 1 });
       const data = res?.data || {};
 
-      // 1) If backend returns a direct URL, go there
+      // 1) Backend gives a URL → go there
       if (data.url) {
         window.location.assign(data.url);
         return;
       }
 
-      // 2) Otherwise, use session id with Stripe.js
+      // 2) Otherwise, redirect via Stripe.js using session id
       const sessionId = data.sessionId || data.id;
       if (!sessionId) {
         toast.error(data.error || 'Could not start checkout. Please try again.');
@@ -176,7 +175,7 @@ export default function NFCCards() {
   ];
 
   return (
-    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
+    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''} nfc-page`}>
       {/* mobile header */}
       <div className="myprofile-mobile-header">
         <Link to="/myprofile" className="myprofile-logo-link">
@@ -195,7 +194,8 @@ export default function NFCCards() {
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
       )}
 
-      <main className="main-content-container">
+      {/* Make this main fill the viewport so shell can flex to bottom */}
+      <main className="main-content-container nfc-main">
         <PageHeader
           title="Our Plans & Cards"
           onActivateCard={() => { }}
@@ -204,7 +204,7 @@ export default function NFCCards() {
           isSmallMobile={isSmallMobile}
         />
 
-        {/* Scoped wrapper */}
+        {/* Peach shell that scrolls internally */}
         <div className="nfc-pricing-page">
           <div className="profile-page-wrapper">
             <div className="pricing-grid">
@@ -217,7 +217,6 @@ export default function NFCCards() {
                         <h3 className="desktop-h5">Konar Profile</h3>
                         <p className="desktop-body-xs">Win more work with a power profile</p>
                       </div>
-                      {/* solid BLUE pill */}
                       <span className="pricing-badge pill-blue-solid">14-Day Free Trial</span>
                     </div>
 
@@ -245,7 +244,7 @@ export default function NFCCards() {
                   <div className="pricing-bottom">
                     {isSubscribed ? (
                       <button
-                        className="cta-blue-button desktop-button"
+                        className="cta-accent-button desktop-button"
                         style={{ width: '100%', opacity: 0.7, cursor: 'not-allowed' }}
                         disabled
                         type="button"
@@ -255,7 +254,7 @@ export default function NFCCards() {
                     ) : (
                       <button
                         onClick={handleSubscribe}
-                        className="cta-blue-button desktop-button"
+                        className="cta-accent-button desktop-button"
                         style={{ width: '100%' }}
                         type="button"
                       >
@@ -275,7 +274,6 @@ export default function NFCCards() {
                         <h3 className="desktop-h5">Konar Card - White Edition</h3>
                         <p className="desktop-body-xs">Tap to share your profile instantly.</p>
                       </div>
-                      {/* solid BLACK pill */}
                       <span className="pricing-badge pill-black">12 Month Warranty</span>
                     </div>
 
