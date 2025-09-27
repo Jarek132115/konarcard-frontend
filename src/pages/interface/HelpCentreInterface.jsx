@@ -36,7 +36,7 @@ export default function HelpCentreInterface() {
   ];
 
   return (
-    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
+    <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''} help-page`}>
       {/* Mobile header */}
       <div className="myprofile-mobile-header">
         <Link to="/myprofile" className="myprofile-logo-link">
@@ -55,78 +55,82 @@ export default function HelpCentreInterface() {
         <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />
       )}
 
-      <main className="main-content-container">
+      <main className="main-content-container help-main">
+        {/* Sticky page header (scoped to help page only) */}
         <PageHeader
           title="Help Centre"
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}
         />
 
-        {/* Cards list (same shell as My Orders) */}
-        <section className="help-container">
-          <div className="help-list">
-            {sections.map((s) => (
-              <article key={s.id} className="help-card">
-                <div className="help-status-badge status-maintenance">Under maintenance</div>
-
-                <div className="help-thumb" aria-hidden="true">
-                  {/* Simple placeholder mark */}
-                  <div className="help-thumb-mark">🎬</div>
-                </div>
-
-                <div className="help-details">
-                  <header className="help-meta">
-                    <span className="type">{s.title}</span>
-                    <span aria-hidden="true">•</span>
-                    <span className="status">Temporarily unavailable</span>
-                  </header>
-
-                  <div className="help-fields">
-                    <div className="help-kv">
-                      <div className="kv-label">What’s happening</div>
-                      <div className="kv-value">
-                        Sorry — this section is under maintenance. We’re polishing the
-                        tutorials for a smoother experience.
-                      </div>
-                    </div>
-
-                    <div className="help-kv">
-                      <div className="kv-label">What you’ll get</div>
-                      <div className="kv-value">
-                        Short videos with step-by-step guidance, tips, and best practices.
-                      </div>
-                    </div>
-
-                    <div className="help-kv">
-                      <div className="kv-label">Need help now?</div>
-                      <div className="kv-value">
-                        Try the Help Centre or{" "}
-                        <button
-                          type="button"
-                          className="link-like"
-                          onClick={() => window.tidioChatApi?.open?.()}
-                        >
-                          start a live chat
-                        </button>.
-                      </div>
-                    </div>
+        {/* Peach shell that fills remaining height; only this scrolls */}
+        <section className="help-frame">
+          <div className="help-container">
+            <div className="help-list">
+              {sections.map((s) => (
+                <article key={s.id} className="help-card">
+                  <div className="help-status-badge status-maintenance">
+                    Under maintenance
                   </div>
 
-                  <div className="help-actions">
-                    <button
-                      type="button"
-                      onClick={() => window.tidioChatApi?.open?.()}
-                      className="cta-black-button desktop-button"
-                    >
-                      Live chat
-                    </button>
-                    <Link to="/contact" className="cta-blue-button desktop-button">
-                      Contact support
-                    </Link>
+                  <div className="help-thumb" aria-hidden="true">
+                    <div className="help-thumb-mark">🎬</div>
                   </div>
-                </div>
-              </article>
-            ))}
+
+                  <div className="help-details">
+                    <header className="help-meta">
+                      <span className="type">{s.title}</span>
+                      <span aria-hidden="true">•</span>
+                      <span className="status">Temporarily unavailable</span>
+                    </header>
+
+                    <div className="help-fields">
+                      <div className="help-kv">
+                        <div className="kv-label">What’s happening</div>
+                        <div className="kv-value">
+                          Sorry — this section is under maintenance. We’re polishing the
+                          tutorials for a smoother experience.
+                        </div>
+                      </div>
+
+                      <div className="help-kv">
+                        <div className="kv-label">What you’ll get</div>
+                        <div className="kv-value">
+                          Short videos with step-by-step guidance, tips, and best practices.
+                        </div>
+                      </div>
+
+                      <div className="help-kv">
+                        <div className="kv-label">Need help now?</div>
+                        <div className="kv-value">
+                          Try the Help Centre or{' '}
+                          <button
+                            type="button"
+                            className="link-like"
+                            onClick={() => window.tidioChatApi?.open?.()}
+                          >
+                            start a live chat
+                          </button>.
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="help-actions">
+                      <button
+                        type="button"
+                        onClick={() => window.tidioChatApi?.open?.()}
+                        className="cta-black-button desktop-button"
+                      >
+                        Live chat
+                      </button>
+                      <Link to="/contact" className="cta-accent-button desktop-button">
+                        Contact support
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
       </main>

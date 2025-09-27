@@ -1,14 +1,57 @@
+/* ===== Make main column full-height; help shell will flex to bottom ===== */
+.help-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* ===== Keep the PageHeader stuck at the top on this page only ===== */
+.help-page .page-header-card {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  /* ensure it visually sits above the shell */
+  backdrop-filter: saturate(1.1);
+  margin-bottom: 10px;
+}
+
+/* ===== Peach shell wrapper that fills remaining height & scrolls inside ===== */
+.help-frame {
+  background: var(--shell-bg, #FFF1E8);
+  border: 1px solid var(--shell-border, rgb(255 123 0 / .20));
+  border-radius: 16px;
+  box-shadow: var(--soft-shadow, 0 10px 24px rgba(30, 42, 56, .08));
+  padding: 14px 18px;
+
+  /* flex-fill to the bottom of viewport; only this area can scroll */
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+@media (max-width: 1000px) {
+  .help-main {
+    min-height: auto;
+  }
+
+  .help-frame {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    overflow: visible;
+  }
+}
+
 /* ===== Help Centre (maintenance cards) ===== */
 .help-container {
   width: 100%;
-  margin-top: 6px;
 }
 
 .help-list {
   display: grid;
   grid-template-columns: 1fr;
   gap: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 6px;
 }
 
 .help-card {
@@ -29,20 +72,18 @@
   position: absolute;
   top: 12px;
   left: 12px;
-  font-weight: 700;
+  font-weight: 800;
   font-size: .78rem;
   padding: 6px 10px;
   border-radius: 999px;
   border: 1px solid rgba(0, 0, 0, .06);
   box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
-  background: #fff4e5;
-  /* amber-ish */
-  color: #b45309;
+  background: rgb(var(--accent-rgb, 255 107 0) / .10);
+  color: var(--accent, #FF6B00);
 }
 
 .help-status-badge.status-maintenance {
   background: #efe9ff;
-  /* violet tint like variants on orders */
   color: #6b21a8;
 }
 
@@ -80,16 +121,10 @@
 }
 
 .help-meta .type {
-  text-transform: none;
   color: #111;
   font-weight: 800;
 }
 
-.help-meta .status {
-  text-transform: none;
-}
-
-/* Fields (2 cols desktop, 1 col mobile) */
 .help-fields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -128,23 +163,19 @@
   align-items: center;
 }
 
-.help-actions .cta-black-button.desktop-button {
-  width: auto !important;
-}
-
-/* Link-style button inside text */
+/* Make link-like button orange */
 .link-like {
   background: none;
   border: none;
   padding: 0;
   margin: 0;
-  color: #0a66ff;
+  color: var(--accent, #FF6B00);
   cursor: pointer;
   text-decoration: underline;
   font: inherit;
 }
 
-/* Responsive (match orders page behaviour) */
+/* Responsive */
 @media (max-width:900px) {
   .help-card {
     grid-template-columns: 1fr;
@@ -178,7 +209,7 @@
   }
 
   .help-actions .cta-black-button.desktop-button,
-  .help-actions .cta-blue-button.desktop-button {
+  .help-actions .cta-accent-button.desktop-button {
     width: 100% !important;
     max-width: none;
   }
