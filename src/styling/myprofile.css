@@ -51,6 +51,10 @@
     /* Peach shell used for headers/wrappers */
     --shell-bg: #FFF1E8;
     --shell-border: rgb(255 123 0 / .20);
+
+    /* NEW: height clamp for the editor/preview tray on desktop.
+       This should roughly equal sticky header + vertical paddings/gaps. */
+    --workspace-offset: 140px;
 }
 
 /* Dark mode baseline */
@@ -307,6 +311,20 @@
     overflow: auto;
 }
 
+/* NEW: clamp the wrapper to the viewport height on desktop so it
+   never grows past the sidebar. Children scroll inside. */
+@media (min-width:1001px) {
+    .myprofile-flex-container {
+        /* 100dvh accounts for mobile address bars on supported browsers */
+        max-height: calc(100dvh - var(--workspace-offset));
+    }
+
+    /* Make sure grid children can actually shrink within the max-height */
+    .myprofile-flex-container>* {
+        min-height: 0;
+    }
+}
+
 @media (max-width:1000px) {
     .myprofile-flex-container {
         border: none;
@@ -317,6 +335,8 @@
         box-shadow: none;
         overflow: visible;
         /* no internal scroll on mobile */
+        max-height: none;
+        /* natural flow */
     }
 }
 
@@ -329,6 +349,9 @@
     .myprofile-editor-container {
         min-width: 0;
         flex: 1;
+        /* NEW: let each column scroll within the clamped wrapper */
+        overflow: auto;
+        max-height: inherit;
     }
 }
 
