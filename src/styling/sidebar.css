@@ -1,5 +1,5 @@
 :root {
-    /* pulls from global tokens */
+    /* from global tokens */
     --sb-accent: var(--accent, #FF6B00);
     --sb-accent-rgb: var(--accent-rgb, 255 107 0);
 
@@ -33,7 +33,7 @@
     visibility: visible;
 }
 
-/* ===== DESKTOP (unchanged shell) */
+/* ===== DESKTOP SHELL */
 .sidebar {
     position: fixed;
     top: var(--sb-top);
@@ -66,6 +66,27 @@
     letter-spacing: -0.02em;
 }
 
+/* hide the K icon on desktop when KonarCard text is shown */
+@media (min-width:1001px) {
+    .brand-logo {
+        display: none;
+    }
+
+    .brand-text {
+        display: block;
+    }
+}
+
+@media (max-width:1000px) {
+    .brand-logo {
+        display: block;
+    }
+
+    .brand-text {
+        display: none;
+    }
+}
+
 .brand-logo {
     width: 26px;
     height: 26px;
@@ -84,7 +105,7 @@
     flex-direction: column;
 }
 
-/* Desktop link look (with icons) */
+/* ===== Desktop link look (icons visible) */
 .sidebar-button {
     display: flex;
     align-items: center;
@@ -97,7 +118,7 @@
     border: 0;
     border-radius: 12px;
     cursor: pointer;
-    transition: background .2s, color .2s;
+    transition: background .2s, color .2s, filter .2s;
     font-weight: 600;
     font-size: 15px;
 }
@@ -105,8 +126,9 @@
 .sidebar-button .icon {
     width: 20px;
     height: 20px;
-    opacity: .8;
+    opacity: .85;
     margin-left: 1px;
+    filter: grayscale(35%) brightness(95%);
 }
 
 .sidebar-button .label {
@@ -116,6 +138,10 @@
 .sidebar-button:hover {
     background: rgb(var(--sb-accent-rgb) / .05);
     color: var(--sb-ink);
+}
+
+.sidebar-button:hover .icon {
+    filter: grayscale(10%) brightness(100%);
 }
 
 /* Active pill + icon tint */
@@ -131,7 +157,7 @@
     filter: invert(61%) sepia(83%) saturate(2338%) hue-rotate(359deg) brightness(102%) contrast(101%);
 }
 
-/* Desktop footer pinned to bottom */
+/* Desktop footer pinned bottom */
 .sidebar-footer {
     margin-top: auto;
     display: flex;
@@ -176,7 +202,7 @@
     display: none;
 }
 
-/* ===== MOBILE: clone navbar mobile exactly (white panel + typography) */
+/* ===== MOBILE: EXACT navbar style (pure white, Cal Sans sizing, no icons) */
 @media (max-width:1000px) {
     .sidebar {
         top: 0;
@@ -206,14 +232,6 @@
 
     .desktop-only {
         display: none;
-    }
-
-    .brand-text {
-        display: none;
-    }
-
-    .brand-logo {
-        display: block;
     }
 
     .mobile-close {
@@ -247,7 +265,7 @@
         gap: 8px;
     }
 
-    /* Mobile links = same style as navbar mobile list */
+    /* Mobile links: match navbar mobile list exactly */
     .sidebar-button {
         padding: 14px 6px;
         margin: 0;
@@ -258,6 +276,8 @@
         line-height: 1.35;
         letter-spacing: -0.01em;
         color: #111;
+        font-family: 'Cal Sans', sans-serif;
+        /* ensure exact font */
     }
 
     .sidebar-button .icon {
@@ -265,6 +285,7 @@
     }
 
     /* no icons on mobile */
+
     .sidebar-button:hover {
         background: rgba(0, 0, 0, .05);
         color: #000;
@@ -283,32 +304,16 @@
         box-shadow: none;
     }
 
-    /* Grey dividers – one above Home, one between groups */
+    /* Grey dividers – only two: top and between groups */
     .mobile-divider {
         height: 1px;
         background: rgba(0, 0, 0, .08);
         margin: 0 0 8px 0;
     }
 
-    /* Red logout text matches navbar */
+    /* Logout link: same metrics as other links, red ink */
     .logout-link {
-        all: unset;
-        cursor: pointer;
-        display: block;
-        padding: 14px 6px;
-        border-radius: 12px;
         color: #ff4444 !important;
-        font-weight: 700;
-        line-height: 1.35;
-        letter-spacing: -0.01em;
-    }
-
-    .logout-link:hover {
-        background: rgba(255, 68, 68, .12);
-    }
-
-    .logout-link:active {
-        transform: translateY(1px);
     }
 }
 
@@ -321,7 +326,7 @@
     outline-offset: 2px;
 }
 
-/* Dark mode (keep mobile white per request) */
+/* Dark mode (keep mobile white) */
 .dark-mode .sidebar {
     background: #fff;
 }

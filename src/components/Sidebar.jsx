@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 
-/* Icons */
+/* Icons (desktop shows them, mobile hides them via CSS) */
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import homeInterface from '../assets/icons/Home-Interface.svg';
 import orderIcon from '../assets/icons/MyOrder-Icon.svg';
@@ -42,7 +42,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             />
 
             <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                {/* Header: desktop brand text / mobile logo + close */}
+                {/* Header: desktop shows KonarCard text; mobile shows logo + close (✕) */}
                 <div className="brand-header">
                     <span className="brand-text">KonarCard</span>
                     <img src={LogoIcon} alt="Konar" className="brand-logo" />
@@ -58,10 +58,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                 <div className="sidebar-content-wrapper">
                     <nav className="links-stack">
-                        {/* ---- MOBILE: top grey line to match navbar ---- */}
+                        {/* MOBILE: single top divider, exactly like navbar */}
                         <div className="mobile-divider mobile-only" aria-hidden="true" />
 
-                        {/* PRIMARY LINKS (desktop + mobile) */}
+                        {/* Main links (icons visible on desktop only) */}
                         <Link
                             to="/myprofile"
                             onClick={closeSidebar}
@@ -83,16 +83,18 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         <Link
                             to="/nfccards"
                             onClick={closeSidebar}
-                            className={`sidebar-button ${(isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription')) ? 'active-sidebar-link' : ''}`}
+                            className={`sidebar-button ${isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription')
+                                    ? 'active-sidebar-link'
+                                    : ''
+                                }`}
                         >
                             <img src={cardInterface} alt="" className="icon" />
                             <span className="label">Product &amp; Plan</span>
                         </Link>
 
-                        {/* ---- MOBILE: middle grey divider ONLY ---- */}
+                        {/* MOBILE: divider between groups (no extra one at bottom) */}
                         <div className="mobile-divider mobile-only" aria-hidden="true" />
 
-                        {/* Contact Us stays in the main stack on desktop + mobile */}
                         <Link
                             to="/contact-support"
                             onClick={closeSidebar}
@@ -102,7 +104,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="label">Contact Us</span>
                         </Link>
 
-                        {/* MOBILE: Help Centre + Settings inline list (keep as-is) */}
+                        {/* MOBILE-ONLY inline items (same typography as other links) */}
                         <Link
                             to="/helpcentreinterface"
                             onClick={closeSidebar}
@@ -121,17 +123,20 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="label">Settings</span>
                         </Link>
 
-                        {/* MOBILE: red Logout text under Settings */}
+                        {/* MOBILE: red Logout link styled exactly like the others (same font/spacing) */}
                         <button
                             type="button"
-                            className="logout-link mobile-only"
-                            onClick={() => { handleLogout(); closeSidebar(); }}
+                            className="sidebar-button logout-link mobile-only"
+                            onClick={() => {
+                                handleLogout();
+                                closeSidebar();
+                            }}
                         >
                             Logout
                         </button>
                     </nav>
 
-                    {/* DESKTOP FOOTER (bottom): Help Centre + Settings + Logout icon */}
+                    {/* DESKTOP FOOTER pinned bottom: Help Centre, Settings, Logout icon (right) */}
                     <div className="sidebar-footer desktop-only">
                         <Link
                             to="/helpcentreinterface"
@@ -154,7 +159,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                             <button
                                 className="logout-icon-btn"
-                                onClick={() => { handleLogout(); closeSidebar(); }}
+                                onClick={() => {
+                                    handleLogout();
+                                    closeSidebar();
+                                }}
                                 aria-label="Logout"
                                 title="Logout"
                                 type="button"
