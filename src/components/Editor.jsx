@@ -367,37 +367,35 @@ export default function Editor({
                     </button>
                 </div>
                 {showServicesSection && (
-                    <>
-                        <div className="input-block">
-                            <label>Services</label>
-                            <div className="editor-service-list">
-                                {(state.services || []).map((s, i) => (
-                                    <div key={i} className="editor-item-card mock-service-item-wrapper">
-                                        <input
-                                            type="text"
-                                            className="text-input"
-                                            placeholder="Service Name"
-                                            value={s.name || ""}
-                                            onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                                        />
-                                        <input
-                                            type="text"
-                                            className="text-input"
-                                            placeholder="Service Price/Detail"
-                                            value={s.price || ""}
-                                            onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                                        />
-                                        <button type="button" onClick={() => handleRemoveService(i)} className="btn btn-danger">
-                                            Remove
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                            <button type="button" onClick={handleAddService} className="btn btn-outline-accent w-full">
-                                + Add Service
-                            </button>
+                    <div className="input-block">
+                        <label>Services</label>
+                        <div className="editor-service-list">
+                            {(state.services || []).map((s, i) => (
+                                <div key={i} className="editor-item-card mock-service-item-wrapper">
+                                    <input
+                                        type="text"
+                                        className="text-input"
+                                        placeholder="Service Name"
+                                        value={s.name || ""}
+                                        onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                                    />
+                                    <input
+                                        type="text"
+                                        className="text-input"
+                                        placeholder="Service Price/Detail"
+                                        value={s.price || ""}
+                                        onChange={(e) => handleServiceChange(i, "price", e.target.value)}
+                                    />
+                                    <button type="button" onClick={() => handleRemoveService(i)} className="btn btn-danger">
+                                        Remove
+                                    </button>
+                                </div>
+                            ))}
                         </div>
-                    </>
+                        <button type="button" onClick={handleAddService} className="desktop-button navy-button w-full">
+                            + Add Service
+                        </button>
+                    </div>
                 )}
 
                 {/* Reviews */}
@@ -413,46 +411,44 @@ export default function Editor({
                     </button>
                 </div>
                 {showReviewsSection && (
-                    <>
-                        <div className="input-block">
-                            <label>Reviews</label>
-                            <div className="editor-reviews-list" style={{ display: "grid", gap: 8 }}>
-                                {(state.reviews || []).map((r, i) => (
-                                    <div key={i} className="editor-item-card mock-review-card-wrapper">
-                                        <input
-                                            type="text"
-                                            className="text-input"
-                                            placeholder="Reviewer Name"
-                                            value={r.name || ""}
-                                            onChange={(e) => handleReviewChange(i, "name", e.target.value)}
-                                        />
-                                        <textarea
-                                            className="text-input"
-                                            placeholder="Review text"
-                                            rows={2}
-                                            value={r.text || ""}
-                                            onChange={(e) => handleReviewChange(i, "text", e.target.value)}
-                                        />
-                                        <input
-                                            type="number"
-                                            className="text-input"
-                                            placeholder="Rating (1-5)"
-                                            min="1"
-                                            max="5"
-                                            value={r.rating || ""}
-                                            onChange={(e) => handleReviewChange(i, "rating", e.target.value)}
-                                        />
-                                        <button type="button" onClick={() => handleRemoveReview(i)} className="btn btn-danger">
-                                            Remove
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                            <button type="button" onClick={handleAddReview} className="btn btn-outline-accent w-full">
-                                + Add Review
-                            </button>
+                    <div className="input-block">
+                        <label>Reviews</label>
+                        <div className="editor-reviews-list" style={{ display: "grid", gap: 8 }}>
+                            {(state.reviews || []).map((r, i) => (
+                                <div key={i} className="editor-item-card mock-review-card-wrapper">
+                                    <input
+                                        type="text"
+                                        className="text-input"
+                                        placeholder="Reviewer Name"
+                                        value={r.name || ""}
+                                        onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                                    />
+                                    <textarea
+                                        className="text-input"
+                                        placeholder="Review text"
+                                        rows={2}
+                                        value={r.text || ""}
+                                        onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                                    />
+                                    <input
+                                        type="number"
+                                        className="text-input"
+                                        placeholder="Rating (1-5)"
+                                        min="1"
+                                        max="5"
+                                        value={r.rating || ""}
+                                        onChange={(e) => handleReviewChange(i, "rating", e.target.value)}
+                                    />
+                                    <button type="button" onClick={() => handleRemoveReview(i)} className="btn btn-danger">
+                                        Remove
+                                    </button>
+                                </div>
+                            ))}
                         </div>
-                    </>
+                        <button type="button" onClick={handleAddReview} className="desktop-button navy-button w-full">
+                            + Add Review
+                        </button>
+                    </div>
                 )}
 
                 {/* Contact */}

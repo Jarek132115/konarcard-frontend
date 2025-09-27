@@ -412,3 +412,48 @@
 .editor-scope .w-full {
     width: 100% !important;
 }
+
+/* Theme chip override */
+.editor-scope .theme-chip {
+    font-family: "Cal Sans", Inter, system-ui, sans-serif;
+    letter-spacing: 1px;
+    /* added */
+}
+
+/* Work image aspect ratio 4:3 */
+.editor-scope .work-image-preview {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    /* enforce 4:3 */
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* Upload placeholders use navy instead of orange */
+.editor-scope .cover-photo-card,
+.editor-scope .avatar-tile,
+.editor-scope .add-work-image-placeholder {
+    border: 2px dashed #1E2A38;
+    /* navy */
+    background: #f3f6fb;
+    /* light navy tint */
+}
+
+.editor-scope .cover-photo-card:hover,
+.editor-scope .avatar-tile:hover,
+.editor-scope .add-work-image-placeholder:hover {
+    border-color: #001f54;
+    /* darker navy */
+    background: #e9eff9;
+}
+
+.editor-scope .upload-text {
+    font-weight: 800;
+    color: #1E2A38;
+    /* navy */
+}
+
+/* Scoped full-width override for Add buttons */
+.editor-scope .desktop-button.navy-button.w-full {
+    width: 100% !important;
+}
