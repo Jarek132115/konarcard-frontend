@@ -18,7 +18,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const { logout } = useContext(AuthContext);
     const location = useLocation();
 
-    // Kept in case you need it elsewhere (e.g., conditional render tweaks)
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
     useEffect(() => {
         const onResize = () => setIsMobile(window.innerWidth <= 1000);
@@ -100,10 +99,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <img src={contactInterface} alt="" className="icon" />
                             <span className="label">Contact Us</span>
                         </Link>
-                    </nav>
 
-                    {/* Bottom cluster */}
-                    <div className="sidebar-footer">
+                        {/* Moved into main stack (right under Contact Us) */}
                         <Link
                             to="/helpcentreinterface"
                             onClick={closeSidebar}
@@ -113,31 +110,41 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="label">Help Centre</span>
                         </Link>
 
-                        <div className="settings-row">
-                            <Link
-                                to="/profile"
-                                onClick={closeSidebar}
-                                className={`sidebar-button settings-link ${isActive('/profile') ? 'active-sidebar-link' : ''}`}
-                            >
-                                <img src={settingsInterface} alt="" className="icon" />
-                                <span className="label">Settings</span>
-                            </Link>
+                        <Link
+                            to="/profile"
+                            onClick={closeSidebar}
+                            className={`sidebar-button ${isActive('/profile') ? 'active-sidebar-link' : ''}`}
+                        >
+                            <img src={settingsInterface} alt="" className="icon" />
+                            <span className="label">Settings</span>
+                        </Link>
+                    </nav>
 
-                            <button
-                                className="logout-icon-btn"
-                                onClick={() => {
-                                    handleLogout();
-                                    closeSidebar();
-                                }}
-                                aria-label="Logout"
-                                title="Logout"
-                            >
-                                <img src={logoutInterface} alt="" className="icon icon-red" />
-                            </button>
-                        </div>
+                    {/* Bottom: logout only */}
+                    <div className="sidebar-footer">
+                        <button
+                            className="logout-icon-btn"
+                            onClick={() => {
+                                handleLogout();
+                                closeSidebar();
+                            }}
+                            aria-label="Logout"
+                            title="Logout"
+                        >
+                            <img src={logoutInterface} alt="" className="icon icon-red" />
+                        </button>
                     </div>
                 </div>
             </aside>
+
+            {/* Inline mobile-only style tweak to hide icons on small screens, if you
+          don’t want to touch the main CSS file. Remove if you’ve added this rule there. */}
+            <style>{`
+        @media (max-width: 1000px) {
+          .sidebar-button .icon { display: none !important; }
+          .sidebar-button { gap: 0 !important; padding-left: 12px !important; }
+        }
+      `}</style>
         </>
     );
 }
