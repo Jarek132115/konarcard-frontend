@@ -259,7 +259,7 @@ export default function Profile() {
             <div className="settings-actions">
               <button
                 onClick={handleDelete}
-                className="cta-black-button desktop-button"
+                className="navy-button desktop-button"
                 disabled={isConfirmingDelete && deleteCountdown > 0}
                 type="button"
               >
@@ -270,7 +270,7 @@ export default function Profile() {
 
               <button
                 onClick={handleSave}
-                className="cta-blue-button desktop-button"
+                className="orange-button desktop-button"
                 type="button"
               >
                 Save Updates
