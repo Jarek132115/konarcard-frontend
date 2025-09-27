@@ -1,5 +1,5 @@
 :root {
-    /* reads global tokens; don’t override site variables */
+    /* read global tokens; don’t override site variables */
     --sb-accent: var(--accent, #FF6B00);
     --sb-accent-rgb: var(--accent-rgb, 255 107 0);
 
@@ -17,7 +17,7 @@
     --sb-pill-shadow: 0 6px 12px rgb(var(--sb-accent-rgb) / .18);
 }
 
-/* ===== Overlay (shared) */
+/* ===== Overlay (shared with navbar) */
 .sidebar-overlay {
     position: fixed;
     inset: 0;
@@ -33,7 +33,7 @@
     visibility: visible;
 }
 
-/* ===== DESKTOP SIDEBAR (unchanged visual) */
+/* ===== DESKTOP SIDEBAR (unchanged) */
 .sidebar {
     position: fixed;
     top: var(--sb-top);
@@ -127,7 +127,7 @@
     filter: invert(61%) sepia(83%) saturate(2338%) hue-rotate(359deg) brightness(102%) contrast(101%);
 }
 
-/* Desktop logout row */
+/* Desktop logout icon button */
 .settings-row {
     display: flex;
     align-items: center;
@@ -161,10 +161,12 @@
     display: none;
 }
 
-/* ===== MOBILE: mimic navbar mobile overlay EXACTLY */
+/* ===========================================================
+   MOBILE: EXACTLY MATCH NAVBAR MOBILE OVERLAY STYLES
+   =========================================================== */
 @media (max-width:1000px) {
 
-    /* Panel like navbar.mobile-panel */
+    /* Panel */
     .sidebar {
         top: 0;
         left: 0;
@@ -174,22 +176,30 @@
         transform: translateX(-100%);
         transition: transform .35s cubic-bezier(.22, .9, .24, 1);
         padding: 0 20px;
-        box-shadow: none;
         background: #fff;
-        /* PURE WHITE */
-        /* thin grey border like navbar */
+        /* pure white */
+        box-shadow: none;
+        border-right: 1px solid rgba(0, 0, 0, .06);
     }
 
     .sidebar.open {
         transform: translateX(0);
     }
 
-    /* Header: logo + ✕ and grey line (same spacing) */
+    /* Header — logo + ✕ plus grey line */
     .brand-header {
         padding: 20px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, .08);
     }
 
-    /* show mobile bits / hide desktop bits */
+    .brand-text {
+        display: none;
+    }
+
+    .brand-logo {
+        display: block;
+    }
+
     .mobile-only {
         display: block;
     }
@@ -198,18 +208,6 @@
         display: none;
     }
 
-    .brand-text {
-        display: none;
-    }
-
-    /* no Cal Sans text on mobile */
-    .brand-logo {
-        display: block;
-    }
-
-    /* keep icon like navbar */
-
-    /* Close button (same as navbar) */
     .mobile-close {
         -webkit-tap-highlight-color: transparent;
         appearance: none;
@@ -231,36 +229,39 @@
         transform: scale(.96);
     }
 
-    /* Content scroll area like navbar */
+    /* Scroll area */
     .sidebar-content-wrapper {
         height: calc(100vh - 69px);
-        /* approx header height */
-        overflow: auto;
+        /* header height */
+        overflow-y: auto;
         padding: 12px 0 4px 0;
     }
 
-    /* Links — same font/spacing as navbar mobile list */
+    /* List links — identical to navbar’s .desktop-h4 in mobile */
     .links-stack {
         gap: 8px;
     }
 
     .sidebar-button {
+        all: unset;
+        display: block;
         padding: 14px 6px;
-        margin: 0;
-        gap: 0;
-        border-radius: 12px;
-        font-weight: 700;
         font-size: 22px;
+        font-family: 'Cal Sans', sans-serif;
+        font-weight: 700;
         line-height: 1.35;
         letter-spacing: -0.01em;
         color: #111;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background-color .15s ease, color .15s ease, transform .08s ease;
     }
 
+    /* No icons on mobile */
     .sidebar-button .icon {
         display: none;
     }
 
-    /* no icons on mobile */
     .sidebar-button:hover {
         background: rgba(0, 0, 0, .05);
         color: #000;
@@ -270,34 +271,41 @@
         transform: translateY(1px);
     }
 
-    /* Active color = ORANGE exactly like navbar */
+    /* Active = orange (same as navbar) */
+    .sidebar-button.active,
     .sidebar-button.active-sidebar-link {
-        background: transparent;
-        border: 0;
         color: var(--Orange, #FF7B00) !important;
         font-weight: 700 !important;
-        box-shadow: none;
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
     }
 
-    /* Divider after Product & Plan — identical to navbar */
+    /* Dividers (above Home, between groups, above Logout) */
     .mobile-divider {
         height: 1px;
         background: rgba(0, 0, 0, .08);
-        margin-top: 10px;
-        margin-bottom: 0;
+        margin: 10px 0 0 0;
     }
 
-    /* Logout text link (red) under Settings — same as navbar */
+    .mobile-divider.first {
+        margin-top: 0;
+    }
+
+    /* Logout — same font/spacing, just red text */
     .logout-link {
         all: unset;
-        cursor: pointer;
         display: block;
         padding: 14px 6px;
-        border-radius: 12px;
-        color: #ff4444 !important;
+        font-size: 22px;
+        font-family: 'Cal Sans', sans-serif;
         font-weight: 700;
         line-height: 1.35;
         letter-spacing: -0.01em;
+        color: #ff4444 !important;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background-color .15s ease, transform .08s ease;
     }
 
     .logout-link:hover {
@@ -309,7 +317,7 @@
     }
 }
 
-/* ===== Focus states */
+/* ===== Focus states (keyboard a11y) */
 .sidebar-button:focus-visible,
 .mobile-close:focus-visible,
 .logout-icon-btn:focus-visible,
@@ -318,10 +326,9 @@
     outline-offset: 2px;
 }
 
-/* ===== Dark mode tweaks */
+/* ===== Dark mode tweaks (desktop only) */
 .dark-mode .sidebar {
     background: #fff;
-    /* keep white on mobile per request */
 }
 
 @media (min-width:1001px) {
