@@ -53,6 +53,12 @@
     --shell-border: rgb(255 123 0 / .20);
 }
 
+/* Stabilize layout when pages have/avoid scrollbars */
+html,
+body {
+    scrollbar-gutter: stable both-edges;
+}
+
 /* Dark mode baseline */
 .dark-mode {
     --primary-bg: #141414;
@@ -164,7 +170,7 @@
     margin-left: calc(var(--sb-w) + var(--sb-gutter) + 10px);
     color: var(--text-color);
     min-height: 100dvh;
-    /* key: device viewport height */
+    /* device viewport height */
 }
 
 @media (max-width:1000px) {
@@ -287,7 +293,8 @@
     box-sizing: border-box;
 }
 
-/* outer tray card — peach shell that fills to bottom on desktop */
+/* outer tray card — peach shell that fills to bottom on desktop
+   CAPPED to page height — no internal scroll (prevents width shift) */
 .myprofile-flex-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -302,9 +309,12 @@
     padding: 18px;
     box-shadow: var(--soft-shadow);
 
-    /* fill leftover height & scroll internally if needed */
     flex: 1 1 auto;
-    overflow: auto;
+    /* fill remaining height */
+    max-height: 100%;
+    /* cap to the page area */
+    overflow: hidden;
+    /* <- no internal scrollbar */
 }
 
 @media (max-width:1000px) {
@@ -316,7 +326,9 @@
         background: transparent;
         box-shadow: none;
         overflow: visible;
-        /* no internal scroll on mobile */
+        /* natural flow on mobile */
+        max-height: none;
+        flex: 0 0 auto;
     }
 }
 
