@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 
-/* Icons */
+/* Icons (desktop only; hidden on mobile via CSS) */
 import LogoIcon from '../assets/icons/Logo-Icon.svg';
 import homeInterface from '../assets/icons/Home-Interface.svg';
 import orderIcon from '../assets/icons/MyOrder-Icon.svg';
@@ -41,16 +41,21 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 onClick={closeSidebar}
             />
 
-            <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                {/* Top row */}
+            <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`} aria-label="Side navigation">
+                {/* Header row (white on mobile, brand text on desktop) */}
                 <div className="brand-header">
-                    {/* Desktop: text logo (Cal Sans) / Mobile: icon */}
+                    {/* Desktop text brand (Cal Sans) */}
                     <span className="brand-text">KonarCard</span>
-                    <img src={LogoIcon} alt="Konar" className="brand-logo" />
+
+                    {/* Mobile logo */}
+                    <img src={LogoIcon} alt="KonarCard" className="brand-logo" />
+
+                    {/* Close (mobile only) */}
                     <button
                         className="close-sidebar-button mobile-only"
                         onClick={closeSidebar}
                         aria-label="Close menu"
+                        type="button"
                     >
                         <span />
                         <span />
@@ -58,9 +63,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     </button>
                 </div>
 
+                {/* Content (beige) */}
                 <div className="sidebar-content-wrapper">
                     {/* LINKS */}
-                    <nav className="links-stack">
+                    <nav className="links-stack" role="navigation">
+                        {/* Group 1 */}
                         <Link
                             to="/myprofile"
                             onClick={closeSidebar}
@@ -91,6 +98,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="label">Product &amp; Plan</span>
                         </Link>
 
+                        {/* Divider between groups (mobile look like navbar) */}
+                        <hr className="mobile-section-divider" aria-hidden="true" />
+
+                        {/* Group 2 */}
                         <Link
                             to="/contact-support"
                             onClick={closeSidebar}
@@ -100,7 +111,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="label">Contact Us</span>
                         </Link>
 
-                        {/* Moved into main stack (right under Contact Us) */}
                         <Link
                             to="/helpcentreinterface"
                             onClick={closeSidebar}
@@ -118,33 +128,39 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <img src={settingsInterface} alt="" className="icon" />
                             <span className="label">Settings</span>
                         </Link>
-                    </nav>
 
-                    {/* Bottom: logout only */}
-                    <div className="sidebar-footer">
+                        {/* Logout (text link on mobile, icon button on desktop) */}
                         <button
-                            className="logout-icon-btn"
+                            type="button"
+                            className="logout-link-mobile"
                             onClick={() => {
                                 handleLogout();
                                 closeSidebar();
                             }}
-                            aria-label="Logout"
-                            title="Logout"
                         >
-                            <img src={logoutInterface} alt="" className="icon icon-red" />
+                            Logout
                         </button>
+                    </nav>
+
+                    {/* Desktop-only footer icon button row (unchanged) */}
+                    <div className="sidebar-footer desktop-only">
+                        <div className="settings-row">
+                            <button
+                                className="logout-icon-btn"
+                                onClick={() => {
+                                    handleLogout();
+                                    closeSidebar();
+                                }}
+                                aria-label="Logout"
+                                title="Logout"
+                                type="button"
+                            >
+                                <img src={logoutInterface} alt="" className="icon icon-red" />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </aside>
-
-            {/* Inline mobile-only style tweak to hide icons on small screens, if you
-          don’t want to touch the main CSS file. Remove if you’ve added this rule there. */}
-            <style>{`
-        @media (max-width: 1000px) {
-          .sidebar-button .icon { display: none !important; }
-          .sidebar-button { gap: 0 !important; padding-left: 12px !important; }
-        }
-      `}</style>
         </>
     );
 }
