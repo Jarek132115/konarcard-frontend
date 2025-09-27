@@ -52,7 +52,9 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    /* gap between label and control(s) */
     margin: 20px 0;
+    /* gap to next block */
 }
 
 .editor-scope .input-block.tight {
@@ -148,12 +150,14 @@
 .editor-scope .option-row.split-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    /* 50% each */
     gap: 8px;
 }
 
 .editor-scope .option-row.split-3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    /* always split in thirds */
     gap: 8px;
 }
 
@@ -254,7 +258,7 @@
     color: #c34e00;
 }
 
-/* Remove image */
+/* Remove image (×) */
 .editor-scope .remove-image-button {
     position: absolute;
     top: 8px;
