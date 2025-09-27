@@ -45,9 +45,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 {/* Top row */}
                 <div className="brand-header">
                     <img src={LogoIcon} alt="Konar" className="brand-logo" />
-                    {/* no collapse button */}
                     <div className="spacer" />
-                    {/* mobile close X */}
                     <button
                         className="close-sidebar-button mobile-only"
                         onClick={closeSidebar}
@@ -84,15 +82,13 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             to="/nfccards"
                             onClick={closeSidebar}
                             className={`sidebar-button ${isActive('/products-and-plans') || isActive('/nfccards') || isActive('/subscription')
-                                    ? 'active-sidebar-link'
-                                    : ''
-                                }`}
+                                ? 'active-sidebar-link'
+                                : ''}`}
                         >
                             <img src={cardInterface} alt="" className="icon" />
                             <span className="label">Product &amp; Plan</span>
                         </Link>
 
-                        {/* Directly under product & plan (no divider) */}
                         <Link
                             to="/contact-support"
                             onClick={closeSidebar}
