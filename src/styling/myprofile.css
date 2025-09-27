@@ -39,7 +39,6 @@
     --button-bg: #111;
     --button-text: #fff;
     --brand-blue: var(--accent);
-    /* keep old var name but map to orange */
 
     /* Layout helpers */
     --main-font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -48,13 +47,12 @@
     --sb-gutter: 20px;
     --workspace-max: 1200px;
 
+    /* Page inset to match sidebar offsets */
+    --inset: 16px;
+
     /* Peach shell used for headers/wrappers */
     --shell-bg: #FFF1E8;
     --shell-border: rgb(255 123 0 / .20);
-
-    /* NEW: height clamp for the editor/preview tray on desktop.
-       This should roughly equal sticky header + vertical paddings/gaps. */
-    --workspace-offset: 140px;
 }
 
 /* Dark mode baseline */
@@ -75,7 +73,6 @@
 .dark-mode .page-header-card,
 .dark-mode .myprofile-flex-container {
     background: var(--card-bg);
-    /* dark mode stays neutral */
     border-color: var(--border-color);
     box-shadow: var(--soft-shadow);
 }
@@ -83,8 +80,6 @@
 /* -------------------------
    CTA buttons
    ------------------------- */
-
-/* ORANGE primary (supports both old and new class names) */
 .cta-blue-button,
 .blue-button,
 .cta-accent-button {
@@ -132,7 +127,6 @@
     transform: translateY(1px);
 }
 
-/* A11y focus */
 .cta-blue-button:focus-visible,
 .cta-black-button:focus-visible,
 .blue-button:focus-visible,
@@ -161,14 +155,14 @@
 .main-content-container {
     flex: 1;
     font-family: var(--main-font-family);
-    padding: 16px 16px 16px 0;
+    padding: var(--inset) var(--inset) var(--inset) 0;
+    /* match 16px page inset */
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
     margin-left: calc(var(--sb-w) + var(--sb-gutter) + 10px);
     color: var(--text-color);
     min-height: 100dvh;
-    /* key: device viewport height */
 }
 
 @media (max-width:1000px) {
@@ -179,7 +173,6 @@
         padding-top: 92px;
         margin: 0;
         min-height: auto;
-        /* natural flow on mobile */
     }
 }
 
@@ -191,14 +184,11 @@
     align-items: center;
     justify-content: space-between;
     background: var(--shell-bg);
-    /* was var(--card-bg) */
     border: 1px solid var(--shell-border);
     border-radius: var(--radius-xl);
     padding: 14px 18px;
     box-shadow: var(--soft-shadow);
     margin-bottom: 12px;
-
-    /* sticky like other pages */
     position: sticky;
     top: 0;
     z-index: 3;
@@ -286,12 +276,11 @@
     align-items: stretch;
     gap: 12px;
     flex: 1 1 auto;
-    /* allow shell below to grow */
     min-height: 0;
     box-sizing: border-box;
 }
 
-/* outer tray card — peach shell that fills to bottom on desktop */
+/* outer tray card — peach shell that stretches to the page inset on desktop */
 .myprofile-flex-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -300,7 +289,6 @@
     width: 100%;
     margin: 0 auto;
     background: var(--shell-bg);
-    /* was var(--card-bg) */
     border: 1px solid var(--shell-border);
     border-radius: var(--radius-xl);
     padding: 18px;
@@ -311,15 +299,16 @@
     overflow: auto;
 }
 
-/* NEW: clamp the wrapper to the viewport height on desktop so it
-   never grows past the sidebar. Children scroll inside. */
 @media (min-width:1001px) {
+
+    /* Stretch to match the 16px page inset like the sidebar:
+       top/bottom distance from viewport edges equals var(--inset). */
     .myprofile-flex-container {
-        /* 100dvh accounts for mobile address bars on supported browsers */
-        max-height: calc(100dvh - var(--workspace-offset));
+        height: calc(100dvh - (var(--inset) * 2));
+        max-height: calc(100dvh - (var(--inset) * 2));
     }
 
-    /* Make sure grid children can actually shrink within the max-height */
+    /* Ensure grid children can shrink/scroll within the tray */
     .myprofile-flex-container>* {
         min-height: 0;
     }
@@ -335,8 +324,8 @@
         box-shadow: none;
         overflow: visible;
         /* no internal scroll on mobile */
+        height: auto;
         max-height: none;
-        /* natural flow */
     }
 }
 
@@ -349,9 +338,10 @@
     .myprofile-editor-container {
         min-width: 0;
         flex: 1;
-        /* NEW: let each column scroll within the clamped wrapper */
         overflow: auto;
-        max-height: inherit;
+        /* each column scrolls inside the tray */
+        height: 100%;
+        max-height: 100%;
     }
 }
 
