@@ -47,6 +47,9 @@
     --sb-w: 268px;
     --sb-gutter: 20px;
     --workspace-max: 1200px;
+
+    --shell-bg: #FFF1E8;
+    --shell-border: rgb(255 123 0 / .20);
 }
 
 /* Dark mode baseline */
