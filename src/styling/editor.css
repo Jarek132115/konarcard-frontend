@@ -507,29 +507,34 @@
     scrollbar-color: rgba(30, 42, 56, .6) transparent;
 }
 
-/* Let the glow breathe above & below the card */
+/* don't let the parent clip the glow */
 .editor-scope.myprofile-editor-wrapper {
     overflow: visible;
-    /* don’t clip descendants */
-    padding-block: 12px;
-    /* space for the shadow at top & bottom */
+    padding-block: 0;
+    /* keep original height */
 }
 
-/* Keep the card the same visual size, but inside the new padding */
+/* keep card height the same but render glow outside using drop-shadow */
 .editor-scope .myprofile-editor {
-    height: calc(100% - 24px);
-    /* 24px = 12px top + 12px bottom */
-    border: 1px solid rgba(255, 107, 0, .22);
-    box-shadow:
-        0 0 0 2px rgba(255, 107, 0, .12),
-        0 0 22px rgba(255, 107, 0, .28);
-    /* centered glow */
+    height: 100%;
+    overflow-y: auto;
     border-radius: 20px;
+
+    /* thin orange edge */
+    outline: 1px solid rgba(255, 107, 0, .22);
+    outline-offset: 0;
+
+    /* centered halo that doesn't affect size and isn't clipped by the card */
+    box-shadow: none;
+    filter:
+        drop-shadow(0 0 6px rgba(255, 107, 0, .22)) drop-shadow(0 0 20px rgba(255, 107, 0, .26));
 }
 
-/* (optional) if any ancestor still clips, force it not to) */
-#myprofile-editor {
-    isolation: isolate;
+/* fallback for very old browsers without drop-shadow */
+@supports not (filter: drop-shadow(0 0 1px #000)) {
+    .editor-scope .myprofile-editor {
+        box-shadow:
+            0 0 0 2px rgba(255, 107, 0, .12),
+            0 0 22px rgba(255, 107, 0, .28);
+    }
 }
-
-/* prevents ancestor clipping artifacts */
