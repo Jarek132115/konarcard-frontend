@@ -25,7 +25,7 @@
     border-radius: 20px;
     border: 1px solid rgba(255, 107, 0, .22);
     /* thin orange like editor */
-    width: min(680px, 100%);
+    width: min(720px, 100%);
     max-height: 90vh;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
@@ -59,7 +59,7 @@
 
 .share-link-title {
     font-family: "Cal Sans", Inter, system-ui, sans-serif;
-    /* requirement */
+    /* match app chip titles */
     letter-spacing: .2px;
 }
 
@@ -83,26 +83,37 @@
     color: #111;
 }
 
-/* Buttons row */
+/* CTA buttons layout: 2-up on desktop, stack under 600px */
 .share-action-buttons {
     margin-top: 12px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
-    flex-wrap: wrap;
 }
 
+@media (max-width: 600px) {
+    .share-action-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* CTA buttons visuals */
 .share-button-custom {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     text-decoration: none;
+    width: 100%;
+    /* fill grid cell */
 }
 
-/* Icon sizing */
-.share-button-icon {
+/* Force icons white regardless of original color */
+.share-button-icon.make-white {
     width: 18px;
     height: 18px;
     display: inline-block;
+    filter: brightness(0) invert(1);
 }
 
 /* QR section */
@@ -112,19 +123,19 @@
     padding-top: 16px;
 }
 
-.qr-code-image-container {
+/* Clean container: no bg, no border */
+.qr-code-image-container.clean {
     display: grid;
     place-items: center;
-    background: #fff8f5;
-    border: 1px dashed rgba(255, 107, 0, .35);
-    border-radius: 16px;
-    padding: 16px;
-    margin: 8px 0 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
 }
 
+/* Exact size for the QR image */
 .share-qr-code-image {
-    width: 220px;
-    height: 220px;
+    width: 200px;
+    height: 200px;
     object-fit: contain;
 }
 
@@ -132,10 +143,6 @@
 @media (max-width: 520px) {
     .share-modal-content {
         padding: 18px;
-    }
-
-    .share-action-buttons {
-        gap: 8px;
     }
 
     .share-modal-title {
