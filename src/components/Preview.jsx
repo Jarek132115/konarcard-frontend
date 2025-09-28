@@ -1,12 +1,6 @@
-// src/components/Preview.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { previewPlaceholders } from "../store/businessCardStore";
 
-/**
- * Preview component
- * - Matches Editor card styling/scrolling via CSS and `columnScrollStyle`.
- * - Keeps 4:3 for work images on all sizes.
- */
 export default function Preview({
     state,
     isMobile,
@@ -22,7 +16,7 @@ export default function Preview({
     showContactSection,
     hasExchangeContact,
     visitUrl,
-    /** Pass the same style object you use for Editor (height/overflow sizing). */
+    // pass the SAME style object you use for the Editor column
     columnScrollStyle,
 }) {
     const [previewOpen, setPreviewOpen] = useState(true);
@@ -63,7 +57,7 @@ export default function Preview({
         return shouldShowPlaceholders ? previewPlaceholders.reviews : [];
     }, [state.reviews, shouldShowPlaceholders]);
 
-    // Smooth expand/collapse for mobile preview area.
+    // Smooth open/close on mobile
     useEffect(() => {
         if (!isMobile) return;
         const el = mpWrapRef.current;
@@ -260,12 +254,10 @@ export default function Preview({
             </>
         ) : null;
 
+    // ---------- Mobile ----------
     if (isMobile) {
         return (
-            <div
-                className="myprofile-content myprofile-mock-phone-mobile-container"
-                style={columnScrollStyle}
-            >
+            <div className="myprofile-content myprofile-mock-phone-mobile-container" style={columnScrollStyle}>
                 <div
                     className={`mp-mobile-controls desktop-h6 ${previewOpen ? "is-open" : "is-collapsed"}`}
                     role="tablist"
@@ -333,7 +325,7 @@ export default function Preview({
         );
     }
 
-    // Desktop
+    // ---------- Desktop ----------
     return (
         <div className="myprofile-content" style={columnScrollStyle}>
             <div
