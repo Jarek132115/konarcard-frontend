@@ -1,93 +1,79 @@
 /* =========================
-   Preview column (container)
+   Preview (scoped like editor)
    ========================= */
-
-.myprofile-content {
-    /* layout & sizing (scroll like editor) */
-    display: flex;
-    justify-content: flex-start;
-    /* hug left edge */
-    align-items: stretch;
-    flex: 1 1 auto;
-    height: 100%;
-    min-height: 0;
-    /* critical for flex-child scrolling */
-    overflow-y: auto;
-    /* the preview column scrolls */
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-
-    /* card look — EXACTLY like editor */
-    background: #fff;
-    border-radius: 20px;
-    padding: 18px;
-    /* same inner padding as editor */
-    outline: 1px solid rgba(255, 107, 0, .22);
-    /* thin orange edge */
-    filter:
-        drop-shadow(0 0 6px rgba(255, 107, 0, .22)) drop-shadow(0 0 20px rgba(255, 107, 0, .26));
-    /* centered halo */
-
-    /* width cap like editor (but no auto-centering) */
-    width: 100%;
-    max-width: 500px;
-    margin: 0;
-    /* do NOT center */
-    box-sizing: border-box;
-
-    /* container queries */
-    container-type: inline-size;
-    container-name: preview;
+.preview-scope {
+    --accent: #FF6B00;
+    --accent-rgb: 255 107 0;
 }
 
-/* If the inner preview is dark, keep same orange edge/glow */
-.myprofile-content:has(.mock-phone.dark-mode) {
+/* Wrapper matches editor wrapper: fills column, lets the card handle scroll */
+.preview-scope.myprofile-preview-wrapper {
+    position: relative;
+    height: 100%;
+}
+
+/* Card matches editor card: centered, max-width, inner scroll */
+.preview-scope .myprofile-preview {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, .06);
+    border-radius: 20px;
+    padding: 18px;
+    max-width: 500px;
+    margin: 0 auto;
+    /* center like editor */
+    height: 100%;
+    /* same height as editor card */
+    overflow-y: auto;
+    /* inner scroll like editor */
+    -webkit-overflow-scrolling: touch;
+
+    /* thin orange edge + centered glow (same as editor) */
+    outline: 1px solid rgba(255, 107, 0, .22);
+    outline-offset: 0;
+    filter:
+        drop-shadow(0 0 6px rgba(255, 107, 0, .22)) drop-shadow(0 0 20px rgba(255, 107, 0, .26));
+}
+
+/* Dark background for the card (keep glow) */
+.preview-scope .myprofile-preview.dark {
     background: #1F1F1F;
     color: #fff;
-    outline-color: rgba(255, 107, 0, .22);
 }
 
 /* --- Pretty rounded scrollbar (WebKit/Chromium) --- */
-.myprofile-content::-webkit-scrollbar {
+.preview-scope .myprofile-preview::-webkit-scrollbar {
     width: 10px;
 }
 
-.myprofile-content::-webkit-scrollbar-track {
+.preview-scope .myprofile-preview::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 14px;
 }
 
-.myprofile-content::-webkit-scrollbar-thumb {
+.preview-scope .myprofile-preview::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, rgba(30, 42, 56, .55), rgba(30, 42, 56, .75));
     border-radius: 14px;
     border: 2px solid transparent;
     background-clip: padding-box;
 }
 
-.myprofile-content::-webkit-scrollbar-thumb:hover {
+.preview-scope .myprofile-preview::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, rgba(30, 42, 56, .7), rgba(30, 42, 56, .9));
 }
 
 /* --- Pretty scrollbar (Firefox) --- */
-.myprofile-content {
+.preview-scope .myprofile-preview {
     scrollbar-width: thin;
     scrollbar-color: rgba(30, 42, 56, .6) transparent;
 }
 
-@media (max-width:1000px) {
-    .myprofile-content {
-        padding: 18px;
-        border-radius: 20px;
-    }
-}
-
 /* Mobile wrapper helper */
-.myprofile-mock-phone-mobile-container {
+.preview-scope .myprofile-mock-phone-mobile-container {
     width: 100%;
 }
 
 /* Sticky preview controls on mobile */
-.mp-mobile-controls {
+.preview-scope .mp-mobile-controls {
     position: sticky;
     top: 64px;
     z-index: 5;
@@ -95,12 +81,12 @@
 }
 
 @media (min-width:1001px) {
-    .mp-mobile-controls {
+    .preview-scope .mp-mobile-controls {
         display: none;
     }
 }
 
-.mp-pill {
+.preview-scope .mp-pill {
     display: flex;
     gap: 8px;
     background: #fff;
@@ -110,12 +96,12 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
 }
 
-.myprofile-content:has(.mock-phone.dark-mode) .mp-pill {
+.preview-scope .myprofile-preview.dark .mp-pill {
     background: #202020;
     border-color: rgba(255, 255, 255, .12);
 }
 
-.mp-tab {
+.preview-scope .mp-tab {
     border: 0;
     background: transparent;
     padding: 8px 14px;
@@ -125,18 +111,18 @@
     color: inherit;
 }
 
-.mp-tab.active {
+.preview-scope .mp-tab.active {
     background: #0b5cff;
     color: #fff;
 }
 
-.mp-tab.visit {
+.preview-scope .mp-tab.visit {
     text-decoration: none;
     display: inline-flex;
     align-items: center;
 }
 
-.mp-pill-bottom {
+.preview-scope .mp-pill-bottom {
     height: 6px;
 }
 
@@ -148,7 +134,7 @@
 }
 
 /* Smooth expand/collapse wrapper for mobile preview */
-.mp-preview-wrap {
+.preview-scope .mp-preview-wrap {
     will-change: max-height, opacity, transform;
     transition: max-height .3s ease, opacity .3s ease, transform .3s ease;
 }
@@ -169,11 +155,11 @@
     color: var(--text-color);
 }
 
-.mock-phone.dark-mode {
+.preview-scope .myprofile-preview.dark .mock-phone {
     color: #fff;
 }
 
-/* On desktop, the outer column handles scrolling */
+/* On desktop, the outer card handles scrolling */
 .mock-phone-scrollable-content.desktop-no-inner-scroll {
     overflow: visible;
 }
@@ -200,7 +186,7 @@
     text-align: center;
 }
 
-.mock-phone.dark-mode .mock-title {
+.preview-scope .myprofile-preview.dark .mock-title {
     color: #fff;
 }
 
@@ -212,7 +198,7 @@
     text-align: center;
 }
 
-.mock-phone.dark-mode .mock-subtitle {
+.preview-scope .myprofile-preview.dark .mock-subtitle {
     color: #fff;
 }
 
@@ -246,7 +232,7 @@
     color: #000;
 }
 
-.mock-phone.dark-mode .mock-section-title {
+.preview-scope .myprofile-preview.dark .mock-section-title {
     color: #fff;
 }
 
@@ -333,16 +319,6 @@
     font-weight: 400;
     margin: 0;
     color: #111;
-}
-
-/* Dark mode for cards: still white */
-.mock-phone.dark-mode .mock-about-container,
-.mock-phone.dark-mode .mock-service-item,
-.mock-phone.dark-mode .mock-review-card,
-.mock-phone.dark-mode .mock-contact-details {
-    background: #fff;
-    color: #111;
-    border-color: rgba(0, 0, 0, .06);
 }
 
 /* About card layout */
@@ -480,7 +456,7 @@
    Container queries for PREVIEW
    ============================= */
 
-/* Mobile preview (<=600px wide container) */
+/* Mobile preview (<=600px wide container of the card) */
 @container preview (max-width: 600px) {
     .mock-title {
         font-size: clamp(18px, 6vw, 24px);
@@ -512,7 +488,7 @@
     }
 }
 
-/* Larger preview (>=601px container) */
+/* Larger preview (>=601px) */
 @container preview (min-width: 601px) {
     .mock-title {
         font-size: clamp(22px, 2.2vw, 32px);

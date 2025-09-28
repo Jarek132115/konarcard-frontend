@@ -225,7 +225,8 @@ export default function Preview({
                     {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
                 </h2>
                 <p className="mock-subtitle">
-                    {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
+                    {state.subHeading ||
+                        (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
                 </p>
                 {(shouldShowPlaceholders || hasExchangeContact) && (
                     <button type="button" className="mock-button">
@@ -257,7 +258,7 @@ export default function Preview({
     // ---------- Mobile ----------
     if (isMobile) {
         return (
-            <div className="myprofile-content myprofile-mock-phone-mobile-container" style={columnScrollStyle}>
+            <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
                 <div
                     className={`mp-mobile-controls desktop-h6 ${previewOpen ? "is-open" : "is-collapsed"}`}
                     role="tablist"
@@ -307,16 +308,18 @@ export default function Preview({
                         }}
                     >
                         <div
-                            className={`mock-phone mobile-preview ${isDarkMode ? "dark-mode" : ""}`}
+                            className={`myprofile-preview ${isDarkMode ? "dark" : ""}`}
                             style={{ fontFamily: state.font || previewPlaceholders.font }}
                         >
-                            <div className="mock-phone-scrollable-content">
-                                <MainSection />
-                                <AboutSection />
-                                <WorkSection />
-                                <ServicesSection />
-                                <ReviewsSection />
-                                <ContactSection />
+                            <div className="mock-phone mobile-preview">
+                                <div className="mock-phone-scrollable-content">
+                                    <MainSection />
+                                    <AboutSection />
+                                    <WorkSection />
+                                    <ServicesSection />
+                                    <ReviewsSection />
+                                    <ContactSection />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -327,32 +330,34 @@ export default function Preview({
 
     // ---------- Desktop ----------
     return (
-        <div className="myprofile-content" style={columnScrollStyle}>
+        <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
             <div
-                className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
+                className={`myprofile-preview ${isDarkMode ? "dark" : ""}`}
                 style={{ fontFamily: state.font || previewPlaceholders.font }}
             >
-                <div className="mock-phone-scrollable-content desktop-no-inner-scroll">
-                    <MainSection />
-                    <AboutSection />
-                    <WorkSection />
-                    <ServicesSection />
-                    <ReviewsSection />
-                    {showContactSection && (previewEmail || previewPhone) ? (
-                        <>
-                            <p className="mock-section-title">Contact Details</p>
-                            <div style={{ marginBottom: 20 }} className="mock-contact-details">
-                                <div className="mock-contact-item">
-                                    <p className="mock-contact-label">Email:</p>
-                                    <p className="mock-contact-value">{previewEmail}</p>
+                <div className="mock-phone">
+                    <div className="mock-phone-scrollable-content desktop-no-inner-scroll">
+                        <MainSection />
+                        <AboutSection />
+                        <WorkSection />
+                        <ServicesSection />
+                        <ReviewsSection />
+                        {showContactSection && (previewEmail || previewPhone) ? (
+                            <>
+                                <p className="mock-section-title">Contact Details</p>
+                                <div style={{ marginBottom: 20 }} className="mock-contact-details">
+                                    <div className="mock-contact-item">
+                                        <p className="mock-contact-label">Email:</p>
+                                        <p className="mock-contact-value">{previewEmail}</p>
+                                    </div>
+                                    <div className="mock-contact-item">
+                                        <p className="mock-contact-label">Phone:</p>
+                                        <p className="mock-contact-value">{previewPhone}</p>
+                                    </div>
                                 </div>
-                                <div className="mock-contact-item">
-                                    <p className="mock-contact-label">Phone:</p>
-                                    <p className="mock-contact-value">{previewPhone}</p>
-                                </div>
-                            </div>
-                        </>
-                    ) : null}
+                            </>
+                        ) : null}
+                    </div>
                 </div>
             </div>
         </div>
