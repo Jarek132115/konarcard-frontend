@@ -3,32 +3,77 @@
    ========================= */
 
 .myprofile-content {
+    /* layout */
     display: flex;
     justify-content: center;
     align-items: stretch;
-    background: var(--primary-bg);
-    border: .1px solid rgba(0, 0, 0, .08);
-    border-radius: 16px;
-    padding: 20px;
+
+    /* card look (match editor) */
+    background: #fff;
+    border-radius: 20px;
+    outline: 1px solid rgba(255, 107, 0, .22);
+    /* thin orange edge */
+    /* centered halo that doesn't get clipped */
+    filter:
+        drop-shadow(0 0 6px rgba(255, 107, 0, .22)) drop-shadow(0 0 20px rgba(255, 107, 0, .26));
+
+    /* spacing */
+    padding: 20px 10px 20px 20px;
+    /* tiny right gutter so rounded scrollbar doesn't hug text */
     box-sizing: border-box;
-    overflow: hidden;
+
+    /* size + scrolling like editor */
+    max-width: 500px;
+    margin: 0 auto;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: visible;
+    /* let the glow show on the sides */
+    -webkit-overflow-scrolling: touch;
 
     /* Container Query: treat preview as a query container */
     container-type: inline-size;
     container-name: preview;
 }
 
-/* If the inner preview is dark, match the UserPage dark surface */
+/* If the inner preview is dark, match the UserPage dark surface (keep orange edge) */
 .myprofile-content:has(.mock-phone.dark-mode) {
     background: #1F1F1F;
     color: #fff;
-    border-color: rgba(255, 255, 255, .08);
+    outline-color: rgba(255, 107, 0, .22);
+}
+
+/* --- Pretty rounded scrollbar (WebKit/Chromium) --- */
+.myprofile-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.myprofile-content::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 14px;
+}
+
+.myprofile-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(30, 42, 56, .55), rgba(30, 42, 56, .75));
+    border-radius: 14px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.myprofile-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(30, 42, 56, .7), rgba(30, 42, 56, .9));
+}
+
+/* --- Pretty scrollbar (Firefox) --- */
+.myprofile-content {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(30, 42, 56, .6) transparent;
 }
 
 @media (max-width:1000px) {
     .myprofile-content {
-        border-radius: 16px;
-        padding: 16px;
+        padding: 16px 10px 16px 16px;
+        border-radius: 20px;
     }
 }
 
@@ -61,7 +106,6 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
 }
 
-/* Darken the pill when preview is dark */
 .myprofile-content:has(.mock-phone.dark-mode) .mp-pill {
     background: #202020;
     border-color: rgba(255, 255, 255, .12);
@@ -121,21 +165,19 @@
     color: var(--text-color);
 }
 
-/* local dark mode just for the preview */
 .mock-phone.dark-mode {
     color: #fff;
 }
 
-/* Scrollable content area inside the preview (no inner scroll on desktop layout) */
-.mock-phone-scrollable-content {
+/* Make the panel itself do the scrolling on desktop */
+.mock-phone-scrollable-content.desktop-no-inner-scroll {
     overflow: visible;
-    max-height: none;
 }
 
 /* Head section */
 .mock-cover {
     width: 100%;
-    aspect-ratio: 4/3;
+    aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: 14px;
     margin-bottom: 1.5rem;
@@ -337,9 +379,10 @@
     width: 100%;
 }
 
+/* Always 4:3 aspect ratio for preview work images */
 .mock-work-image-item-wrapper {
     width: 100%;
-    aspect-ratio: 4/2.5;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
     border-radius: 14px;
     border: 1px solid var(--border-color);
@@ -464,9 +507,7 @@
         padding: 12px;
     }
 
-    .mock-work-image-item-wrapper {
-        aspect-ratio: 4/3;
-    }
+    /* still 4:3 on mobile (already set globally) */
 }
 
 /* Larger preview (>=601px container) */
@@ -491,7 +532,7 @@
 /* full-bleed sticky controls on mobile */
 @media (max-width:1000px) {
     .myprofile-content {
-        padding: 16px;
+        padding: 16px 10px 16px 16px;
     }
 
     .mp-pill {
@@ -504,25 +545,4 @@
 .mp-tab:focus-visible {
     outline: 2px solid var(--brand-blue);
     outline-offset: 2px;
-}
-
-/* Preview column (container) */
-.myprofile-content {
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    background: var(--primary-bg);
-    border: .1px solid rgba(0, 0, 0, .08);
-    border-radius: 16px;
-    padding: 20px;
-    box-sizing: border-box;
-    overflow: hidden;
-
-    /* Container Query: treat preview as a query container */
-    container-type: inline-size;
-    container-name: preview;
-
-    /* NEW: constrain width & center */
-    max-width: 500px;
-    margin: 0 auto;
 }

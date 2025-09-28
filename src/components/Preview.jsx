@@ -5,21 +5,8 @@ import { previewPlaceholders } from "../store/businessCardStore";
 /**
  * Preview component
  *
- * Props:
- * - state: {
- *     pageTheme, font, coverPhoto, mainHeading, subHeading,
- *     workImages, workDisplayMode, avatar, full_name, job_title,
- *     bio, contact_email, phone_number
- *   }
- * - isMobile: boolean
- * - hasSavedData: boolean
- * - servicesDisplayMode: "list" | "carousel"
- * - reviewsDisplayMode: "list" | "carousel"
- * - aboutMeLayout: "side-by-side" | "stacked"
- * - showMainSection, showAboutMeSection, showWorkSection,
- *   showServicesSection, showReviewsSection, showContactSection: booleans
- * - hasExchangeContact: boolean  (derived in parent: email/phone present)
- * - visitUrl: string (public profile URL)
+ * (unchanged logic — styles now make the myprofile panel match the editor:
+ * rounded corners, orange border/glow, and pretty scrollbars)
  */
 export default function Preview({
     state,
@@ -37,25 +24,27 @@ export default function Preview({
     hasExchangeContact,
     visitUrl,
 }) {
-    // Local: mobile preview open/close
     const [previewOpen, setPreviewOpen] = useState(true);
 
-    // Refs for carousels + mobile wrapper
     const previewWorkCarouselRef = useRef(null);
     const previewServicesCarouselRef = useRef(null);
     const previewReviewsCarouselRef = useRef(null);
     const mpWrapRef = useRef(null);
 
-    // Derived flags + placeholder decisions
     const shouldShowPlaceholders = !hasSavedData;
     const isDarkMode = state.pageTheme === "dark";
 
-    const previewFullName = state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
-    const previewJobTitle = state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : "");
+    const previewFullName =
+        state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
+    const previewJobTitle =
+        state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : "");
     const previewBio = state.bio || (shouldShowPlaceholders ? previewPlaceholders.bio : "");
-    const previewEmail = state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : "");
-    const previewPhone = state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : "");
-    const previewCoverPhotoSrc = state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
+    const previewEmail =
+        state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : "");
+    const previewPhone =
+        state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : "");
+    const previewCoverPhotoSrc =
+        state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
     const previewAvatarSrc = state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
 
     const previewWorkImages = useMemo(() => {
@@ -73,7 +62,6 @@ export default function Preview({
         return shouldShowPlaceholders ? previewPlaceholders.reviews : [];
     }, [state.reviews, shouldShowPlaceholders]);
 
-    // Mobile preview expand/collapse nicety
     useEffect(() => {
         if (!isMobile) return;
         const el = mpWrapRef.current;
@@ -89,7 +77,6 @@ export default function Preview({
         }
     }, [isMobile, previewOpen, state, servicesDisplayMode, reviewsDisplayMode, aboutMeLayout]);
 
-    // Helpers
     const scrollCarousel = (ref, direction) => {
         const el = ref?.current;
         if (!el) return;
@@ -97,7 +84,6 @@ export default function Preview({
         el.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
     };
 
-    // Reusable blocks
     const WorkSection = () =>
         showWorkSection && previewWorkImages.length > 0 ? (
             <>
@@ -243,7 +229,8 @@ export default function Preview({
                     {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
                 </h2>
                 <p className="mock-subtitle">
-                    {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
+                    {state.subHeading ||
+                        (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
                 </p>
                 {(shouldShowPlaceholders || hasExchangeContact) && (
                     <button type="button" className="mock-button">
@@ -272,7 +259,6 @@ export default function Preview({
             </>
         ) : null;
 
-    // Render
     if (isMobile) {
         return (
             <div className="myprofile-content myprofile-mock-phone-mobile-container">
@@ -283,13 +269,7 @@ export default function Preview({
                 >
                     <div
                         className="mp-pill"
-                        style={{
-                            display: "grid",
-                            gridTemplateColumns: "1fr 1fr",
-                            gap: 8,
-                            justifyItems: "stretch",
-                            width: "100%",
-                        }}
+                        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, justifyItems: "stretch", width: "100%" }}
                     >
                         <button
                             type="button"
