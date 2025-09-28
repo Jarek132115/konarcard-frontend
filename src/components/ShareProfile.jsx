@@ -36,11 +36,9 @@ export default function ShareProfile({
     }, [profileUrl]);
 
     const displayUrl = useMemo(() => {
-        // Show "www.konarcard/u/username" (no protocol, no .com)
         try {
             const u = new URL(profileUrl);
             const host = u.host.replace(/\.com$/i, "");
-            // if it's the expected domain, ensure "www.konarcard"
             const prettyHost = host === "www.konarcard" ? host : host;
             return `${prettyHost}${u.pathname}`;
         } catch {
@@ -63,7 +61,6 @@ export default function ShareProfile({
                 });
             return;
         }
-        // Fallback
         const textArea = document.createElement("textarea");
         textArea.value = text;
         document.body.appendChild(textArea);
@@ -86,7 +83,6 @@ export default function ShareProfile({
                     ×
                 </button>
 
-                {/* Cal Sans title */}
                 <h3 className="share-modal-title share-link-title">Share Your Link</h3>
 
                 <div className="profile-link-section">
@@ -100,7 +96,6 @@ export default function ShareProfile({
                         />
                     </div>
 
-                    {/* 50/50 on desktop, stack under 600px */}
                     <div className="share-action-buttons">
                         <button
                             onClick={() => copyToClipboard(profileUrl, "Profile link copied!")}
@@ -125,20 +120,17 @@ export default function ShareProfile({
 
                 {qrCodeImage && (
                     <div className="qr-code-section">
-                        {/* Same styling as the top title (Cal Sans) */}
                         <h3 className="share-modal-title share-link-title">Scan QR Code</h3>
 
-                        <div className="qr-code-image-container clean">
+                        <div className="qr-code-image-container">
                             <img
                                 src={qrCodeImage}
                                 alt="Profile QR Code"
                                 className="share-qr-code-image"
-                                width="200"
-                                height="200"
                             />
                         </div>
 
-                        <div className="share-action-buttons">
+                        <div className="share-action-buttons single">
                             <a
                                 href={qrCodeImage}
                                 download={`${username || "konarcard"}-qrcode.png`}
