@@ -202,6 +202,7 @@ export default function NFCCards() {
           onShareCard={handleShareCard}
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}
+          visitUrl={currentProfileUrl}
         />
 
         {/* Peach shell that scrolls internally */}

@@ -1,14 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 import Sidebar from '../../components/Sidebar';
 import PageHeader from '../../components/PageHeader';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
+import { AuthContext } from '../../components/AuthContext';
+import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 
 export default function HelpCentreInterface() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
+
+  const { user: authUser } = useContext(AuthContext);
+  const userId = authUser?._id;
+  const userUsername = authUser?.username;
+  useFetchBusinessCard(userId); // not directly used here, but ensures consistency
+
+  const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : '';
 
   useEffect(() => {
     const handleResize = () => {
@@ -61,6 +70,7 @@ export default function HelpCentreInterface() {
           title="Help Centre"
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}
+          visitUrl={currentProfileUrl} 
         />
 
         {/* Peach shell that fills remaining height; only this scrolls */}

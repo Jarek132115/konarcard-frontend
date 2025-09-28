@@ -145,6 +145,7 @@ export default function ContactSupport() {
                     onShareCard={handleShareCard}
                     isMobile={isMobile}
                     isSmallMobile={isSmallMobile}
+                    visitUrl={currentProfileUrl} 
                 />
 
                 {/* Peach shell wrapper (desktop) that scrolls internally */}

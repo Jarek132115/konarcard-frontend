@@ -77,7 +77,9 @@ export default function Profile() {
       if (res?.data?.success) {
         const fresh = res.data.data;
         setUser?.(fresh);
-        try { localStorage.setItem('authUser', JSON.stringify(fresh)); } catch { }
+        try {
+          localStorage.setItem('authUser', JSON.stringify(fresh));
+        } catch { }
         fetchUser?.();
         toast.success('Profile updated successfully!');
       } else {
@@ -179,6 +181,7 @@ export default function Profile() {
           onShareCard={handleShareCard}
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}
+          visitUrl={currentProfileUrl}  
         />
 
         {/* Desktop-only subtle frame, like Product & Plan */}

@@ -1,5 +1,5 @@
 // src/pages/MyOrders/index.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 
 import Sidebar from "../../components/Sidebar";
@@ -7,6 +7,7 @@ import PageHeader from "../../components/PageHeader";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import api from "../../services/api";
 import ProductThumb from "../../assets/images/Product-Cover.png";
+import { AuthContext } from "../../components/AuthContext"; // ✅ add auth for username
 
 /* ---------- utils ---------- */
 function fmtAmount(amount, currency = "gbp") {
@@ -182,6 +183,10 @@ export default function MyOrders() {
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState("");
     const [actionMsg, setActionMsg] = useState("");
+
+    const { user } = useContext(AuthContext); // ✅ get user
+    const username = user?.username;
+    const visitUrl = username ? `https://www.konarcard.com/u/${username}` : "#"; // ✅ generate visit url
 
     useEffect(() => {
         const onResize = () => {
@@ -368,7 +373,12 @@ export default function MyOrders() {
 
             {/* Fill viewport; header sticky; wrapper scrolls */}
             <main className="main-content-container orders-main">
-                <PageHeader title="My Orders" isMobile={isMobile} isSmallMobile={isSmallMobile} />
+                <PageHeader
+                    title="My Orders"
+                    isMobile={isMobile}
+                    isSmallMobile={isSmallMobile}
+                    visitUrl={visitUrl} // ✅ now Visit Page button works
+                />
 
                 {/* Peach shell wrapper (scrolls internally on desktop) */}
                 <div className="profile-page-wrapper">
