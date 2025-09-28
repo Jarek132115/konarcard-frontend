@@ -1,4 +1,4 @@
-// src/pages/MyProfile/MyProfile.jsx  — UPDATED
+// src/pages/MyProfile/MyProfile.jsx  — FULL FILE PART 1/2
 import React, { useEffect, useState, useContext, useMemo, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
@@ -232,6 +232,7 @@ export default function MyProfile() {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
+  // src/pages/MyProfile/MyProfile.jsx  — FULL FILE PART 2/2
 
   // ================= HANDLERS & HELPERS =================
 
@@ -561,8 +562,8 @@ export default function MyProfile() {
         <PageHeader
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}
-          onShareCard={() => setShareOpen(true)}
-          visitUrl={`https://www.konarcard.com/u/${username}`}   // 👈 add this
+          onShareCard={handleShareCard}
+          visitUrl={visitUrl}
         />
 
         <div className="myprofile-main-content">
@@ -598,7 +599,7 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {/* SUBSCRIPTION / TRIAL BANNERS (authoritative, no polling) */}
+              {/* SUBSCRIPTION / TRIAL BANNERS */}
               {!isSubscribed && isTrialActive && (
                 <div className="trial-banner">
                   <p className="desktop-body-s">
