@@ -57,7 +57,7 @@ export default function Preview({
         return shouldShowPlaceholders ? previewPlaceholders.reviews : [];
     }, [state.reviews, shouldShowPlaceholders]);
 
-    // Smooth open/close on mobile
+    // Smooth open/close (mobile only; the toolbar now sits INSIDE the preview card)
     useEffect(() => {
         if (!isMobile) return;
         const el = mpWrapRef.current;
@@ -260,19 +260,14 @@ export default function Preview({
         return (
             <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
                 <div
-                    className={`mp-mobile-controls desktop-h6 ${previewOpen ? "is-open" : "is-collapsed"}`}
-                    role="tablist"
-                    aria-label="Preview controls"
+                    className={`myprofile-preview ${isDarkMode ? "dark" : ""}`}
+                    style={{ fontFamily: state.font || previewPlaceholders.font }}
                 >
+                    {/* ORANGE toolbar INSIDE the preview, above cover */}
                     <div
-                        className="mp-pill"
-                        style={{
-                            display: "grid",
-                            gridTemplateColumns: "1fr 1fr",
-                            gap: 8,
-                            justifyItems: "stretch",
-                            width: "100%",
-                        }}
+                        className={`mp-toolbar ${previewOpen ? "is-open" : "is-collapsed"}`}
+                        role="tablist"
+                        aria-label="Preview controls"
                     >
                         <button
                             type="button"
@@ -280,7 +275,6 @@ export default function Preview({
                             aria-selected={previewOpen}
                             className={`mp-tab ${previewOpen ? "active" : ""}`}
                             onClick={() => setPreviewOpen((s) => !s)}
-                            style={{ width: "100%" }}
                         >
                             {previewOpen ? "Hide Preview" : "Show Preview"}
                         </button>
@@ -292,7 +286,6 @@ export default function Preview({
                             target="_blank"
                             rel="noreferrer"
                             onClick={() => setPreviewOpen(false)}
-                            style={{ width: "100%", textAlign: "center", justifyContent: "center" }}
                         >
                             Visit Page
                         </a>
@@ -307,19 +300,14 @@ export default function Preview({
                             transition: "max-height .3s ease, opacity .3s ease, transform .3s ease",
                         }}
                     >
-                        <div
-                            className={`myprofile-preview ${isDarkMode ? "dark" : ""}`}
-                            style={{ fontFamily: state.font || previewPlaceholders.font }}
-                        >
-                            <div className="mock-phone mobile-preview">
-                                <div className="mock-phone-scrollable-content">
-                                    <MainSection />
-                                    <AboutSection />
-                                    <WorkSection />
-                                    <ServicesSection />
-                                    <ReviewsSection />
-                                    <ContactSection />
-                                </div>
+                        <div className="mock-phone mobile-preview">
+                            <div className="mock-phone-scrollable-content">
+                                <MainSection />
+                                <AboutSection />
+                                <WorkSection />
+                                <ServicesSection />
+                                <ReviewsSection />
+                                <ContactSection />
                             </div>
                         </div>
                     </div>
