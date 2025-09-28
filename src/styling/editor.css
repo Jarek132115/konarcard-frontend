@@ -538,3 +538,57 @@
             0 0 22px rgba(255, 107, 0, .28);
     }
 }
+
+/* --- Work images & Add tile: always 4:3 --- */
+.editor-scope .work-image-item-wrapper,
+.editor-scope .add-work-image-placeholder {
+    aspect-ratio: 4 / 3;
+    height: auto;
+    /* override any fixed height */
+    min-height: 0;
+    /* prevent older min-height rules from fighting */
+    overflow: hidden;
+    /* keep corners clean */
+}
+
+/* Image fills the 4:3 box */
+.editor-scope .work-image-preview {
+    width: 100%;
+    height: 100%;
+    /* override the old 180px */
+    aspect-ratio: auto;
+    /* let the container control ratio */
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* Center the + Add image(s) text nicely inside its 4:3 box */
+.editor-scope .add-work-image-placeholder {
+    display: grid;
+    place-items: center;
+}
+
+/* Fallback for browsers without aspect-ratio support (older Safari, etc.) */
+@supports not (aspect-ratio: 4 / 3) {
+
+    .editor-scope .work-image-item-wrapper,
+    .editor-scope .add-work-image-placeholder {
+        position: relative;
+    }
+
+    .editor-scope .work-image-item-wrapper::before,
+    .editor-scope .add-work-image-placeholder::before {
+        content: "";
+        display: block;
+        padding-top: 75%;
+        /* 4:3 = 3/4 = 75% */
+    }
+
+    .editor-scope .work-image-item-wrapper>.work-image-preview,
+    .editor-scope .add-work-image-placeholder>* {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
+}
