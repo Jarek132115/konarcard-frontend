@@ -546,3 +546,79 @@
     outline: 2px solid var(--brand-blue);
     outline-offset: 2px;
 }
+
+/* =========================
+   Preview column (container)
+   ========================= */
+
+.myprofile-content {
+    /* layout & sizing (scroll like editor) */
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    /* crucial for flex-child scrolling */
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+
+    /* card look — EXACTLY like editor */
+    background: #fff;
+    border-radius: 20px;
+    padding: 18px;
+    /* same inner padding as editor */
+    outline: 1px solid rgba(255, 107, 0, .22);
+    filter:
+        drop-shadow(0 0 6px rgba(255, 107, 0, .22)) drop-shadow(0 0 20px rgba(255, 107, 0, .26));
+
+    /* width caps to mirror editor */
+    max-width: 500px;
+    box-sizing: border-box;
+
+    /* container queries */
+    container-type: inline-size;
+    container-name: preview;
+}
+
+/* Dark preview surface (keep same orange edge/glow) */
+.myprofile-content:has(.mock-phone.dark-mode) {
+    background: #1F1F1F;
+    color: #fff;
+    outline-color: rgba(255, 107, 0, .22);
+}
+
+/* --- Pretty rounded scrollbar (WebKit/Chromium) --- */
+.myprofile-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.myprofile-content::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 14px;
+}
+
+.myprofile-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(30, 42, 56, .55), rgba(30, 42, 56, .75));
+    border-radius: 14px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.myprofile-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(30, 42, 56, .7), rgba(30, 42, 56, .9));
+}
+
+/* --- Pretty scrollbar (Firefox) --- */
+.myprofile-content {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(30, 42, 56, .6) transparent;
+}
+
+@media (max-width:1000px) {
+    .myprofile-content {
+        padding: 18px;
+        border-radius: 20px;
+    }
+}
