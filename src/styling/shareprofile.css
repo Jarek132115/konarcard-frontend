@@ -59,7 +59,6 @@
 
 .share-link-title {
     font-family: "Cal Sans", Inter, system-ui, sans-serif;
-    /* match app chip titles */
     letter-spacing: .2px;
 }
 
@@ -110,7 +109,6 @@
     gap: 10px;
     text-decoration: none;
     width: 100%;
-    /* fill grid cell */
 }
 
 /* Force icons white regardless of original color */
@@ -128,8 +126,9 @@
     padding-top: 16px;
 }
 
-/* QR container: same chrome as the input */
+/* QR container: full width, styled like input */
 .qr-code-image-container {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -137,19 +136,14 @@
     border: 1px solid var(--neutral-300);
     border-radius: 12px;
     padding: 16px;
-    /* 10–20px padding */
     margin: 12px 0;
-    max-height: 200px;
-    /* cap height */
-    aspect-ratio: 1 / 1;
-    /* square frame */
     box-sizing: border-box;
 }
 
-/* QR fills container height, stays square and centered */
+/* QR fills fixed 200x200, centered */
 .share-qr-code-image {
-    height: 100%;
-    width: auto;
+    width: 200px;
+    height: 200px;
     aspect-ratio: 1 / 1;
     object-fit: contain;
     display: block;
