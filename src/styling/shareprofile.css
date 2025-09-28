@@ -8,15 +8,19 @@
     --neutral-300: #dfe3ea;
 }
 
-/* Overlay */
+/* Overlay: blur everything behind + high z-index so it covers sidebar */
 .share-modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, .45);
     display: grid;
     place-items: center;
-    z-index: 1000;
+    z-index: 9999;
     padding: 18px;
+
+    /* Blur the backdrop (desktop + mobile) */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 /* Card */
@@ -82,7 +86,7 @@
     color: #111;
 }
 
-/* CTA buttons layout: 2-up on desktop, stack under 600px */
+/* CTA layout: 2-up desktop, stack <600px */
 .share-action-buttons {
     margin-top: 12px;
     display: grid;
@@ -96,12 +100,12 @@
     }
 }
 
-/* allow a single full-width CTA row (used under QR) */
+/* single full-width row (under QR) */
 .share-action-buttons.single {
     grid-template-columns: 1fr !important;
 }
 
-/* CTA buttons visuals */
+/* CTA visuals */
 .share-button-custom {
     display: inline-flex;
     align-items: center;
@@ -111,7 +115,7 @@
     width: 100%;
 }
 
-/* Force icons white regardless of original color */
+/* Make the CTA icons white */
 .share-button-icon.make-white {
     width: 18px;
     height: 18px;
@@ -126,7 +130,7 @@
     padding-top: 16px;
 }
 
-/* QR container: full width, styled like input */
+/* QR container: full width, matches input chrome */
 .qr-code-image-container {
     width: 100%;
     display: flex;
@@ -140,13 +144,20 @@
     box-sizing: border-box;
 }
 
-/* QR fills fixed 200x200, centered */
+/* QR: fixed 200x200, centered */
 .share-qr-code-image {
     width: 200px;
     height: 200px;
     aspect-ratio: 1 / 1;
     object-fit: contain;
     display: block;
+}
+
+/* Optional: dim/disable page behind when class is set (extra safety) */
+body.share-profile-open .app-layout,
+body.share-profile-open #root,
+body.share-profile-open .app-root {
+    pointer-events: none;
 }
 
 /* Small screens */

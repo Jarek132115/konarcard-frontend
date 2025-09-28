@@ -16,6 +16,7 @@ export default function ShareProfile({
     const profileLinkRef = useRef(null);
     const [qrCodeImage, setQrCodeImage] = useState("");
 
+    // Close on ESC
     useEffect(() => {
         const handleEscape = (event) => {
             if (event.key === "Escape") onClose();
@@ -24,6 +25,7 @@ export default function ShareProfile({
         return () => document.removeEventListener("keydown", handleEscape);
     }, [isOpen, onClose]);
 
+    // Generate QR
     useEffect(() => {
         if (profileUrl) {
             QRCode.toDataURL(profileUrl, { errorCorrectionLevel: "H", width: 200, margin: 0 })
@@ -35,6 +37,7 @@ export default function ShareProfile({
         }
     }, [profileUrl]);
 
+    // Show pretty URL (no protocol, no .com)
     const displayUrl = useMemo(() => {
         try {
             const u = new URL(profileUrl);
@@ -47,6 +50,18 @@ export default function ShareProfile({
                 .replace("www.konarcard.com", "www.konarcard");
         }
     }, [profileUrl]);
+
+    // Lock scroll + add body class while open
+    useEffect(() => {
+        if (!isOpen) return;
+        const prevOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        document.body.classList.add("share-profile-open");
+        return () => {
+            document.body.style.overflow = prevOverflow || "";
+            document.body.classList.remove("share-profile-open");
+        };
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
