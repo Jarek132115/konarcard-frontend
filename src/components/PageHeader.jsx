@@ -1,14 +1,36 @@
 import React, { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import ShareProfileIcon from "../assets/icons/ShareProfile-Icon.svg";
-import ExternalLinkIcon from "../assets/icons/ExternalLink-Icon.svg"; // <- add a simple external link style icon
+import ExternalLinkIcon from "../assets/icons/ExternalLink-Icon.svg";
 import Avatar from "../assets/images/pp10.png";
 
-export default function PageHeader({ onShareCard, onVisitPage, isMobile, isSmallMobile }) {
+/**
+ * Props:
+ * - onShareCard: () => void
+ * - onVisitPage?: () => void    // optional fallback
+ * - visitUrl?: string           // preferred – same behavior as ShareProfile "Visit Profile"
+ * - isMobile: boolean
+ * - isSmallMobile: boolean
+ */
+export default function PageHeader({
+  onShareCard,
+  onVisitPage,
+  visitUrl,           // <-- new
+  isMobile,
+  isSmallMobile,
+}) {
   const { user } = useContext(AuthContext);
 
   const displayName = user?.name || "Your Name";
   const displayEmail = user?.email || "you@example.com";
+
+  // if no visitUrl, we’ll use onVisitPage handler as a fallback
+  const handleVisitClick = (e) => {
+    if (!visitUrl && typeof onVisitPage === "function") {
+      e.preventDefault(); // prevent '#' navigation if we used it
+      onVisitPage();
+    }
+  };
 
   return (
     <div className="page-header-card">
@@ -21,17 +43,20 @@ export default function PageHeader({ onShareCard, onVisitPage, isMobile, isSmall
       </div>
 
       <div className="page-header-right">
-        {/* Visit Page button (desktop only) */}
+        {/* Visit Page (desktop only) — anchor for real link behavior */}
         {!isMobile && (
-          <button
-            type="button"
-            className="desktop-button navy-button"
-            onClick={onVisitPage}
+          <a
+            href={visitUrl || "#"}
+            target={visitUrl ? "_blank" : undefined}
+            rel={visitUrl ? "noopener noreferrer" : undefined}
+            onClick={handleVisitClick}
             aria-label="Visit your page"
+            className="desktop-button navy-button"
+            style={{ textDecoration: "none" }}
           >
             <img src={ExternalLinkIcon} alt="Visit" className="share-icon" />
             <span>Visit Page</span>
-          </button>
+          </a>
         )}
 
         {/* Share Page button */}
@@ -41,19 +66,9 @@ export default function PageHeader({ onShareCard, onVisitPage, isMobile, isSmall
           onClick={onShareCard}
           aria-label="Share your profile"
         >
-          {isSmallMobile ? (
-            <>
-              <img src={ShareProfileIcon} alt="Share" className="share-icon" />
-              <span>Share</span> {/* Show icon + short text */}
-            </>
-          ) : (
-            <>
-              <img src={ShareProfileIcon} alt="Share" className="share-icon" />
-              <span>Share Your Page</span> {/* Full text on desktop */}
-            </>
-          )}
+          <img src={ShareProfileIcon} alt="Share" className="share-icon" />
+          <span>{isSmallMobile ? "Share" : "Share Your Page"}</span>
         </button>
-
       </div>
     </div>
   );

@@ -558,7 +558,12 @@ export default function MyProfile() {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <main className="main-content-container">
-        <PageHeader onShareCard={handleShareCard} isMobile={isMobile} isSmallMobile={isSmallMobile} />
+        <PageHeader
+          isMobile={isMobile}
+          isSmallMobile={isSmallMobile}
+          onShareCard={() => setShareOpen(true)}
+          visitUrl={`https://www.konarcard.com/u/${username}`}   // 👈 add this
+        />
 
         <div className="myprofile-main-content">
           {!authLoading && !authUser && (
