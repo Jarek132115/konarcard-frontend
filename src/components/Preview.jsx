@@ -4,9 +4,8 @@ import { previewPlaceholders } from "../store/businessCardStore";
 
 /**
  * Preview component
- *
- * (unchanged logic — styles now make the myprofile panel match the editor:
- * rounded corners, orange border/glow, and pretty scrollbars)
+ * - Matches Editor card styling/scrolling via CSS and `columnScrollStyle`.
+ * - Keeps 4:3 for work images on all sizes.
  */
 export default function Preview({
     state,
@@ -23,6 +22,8 @@ export default function Preview({
     showContactSection,
     hasExchangeContact,
     visitUrl,
+    /** Pass the same style object you use for Editor (height/overflow sizing). */
+    columnScrollStyle,
 }) {
     const [previewOpen, setPreviewOpen] = useState(true);
 
@@ -62,6 +63,7 @@ export default function Preview({
         return shouldShowPlaceholders ? previewPlaceholders.reviews : [];
     }, [state.reviews, shouldShowPlaceholders]);
 
+    // Smooth expand/collapse for mobile preview area.
     useEffect(() => {
         if (!isMobile) return;
         const el = mpWrapRef.current;
@@ -229,8 +231,7 @@ export default function Preview({
                     {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
                 </h2>
                 <p className="mock-subtitle">
-                    {state.subHeading ||
-                        (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
+                    {state.subHeading || (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
                 </p>
                 {(shouldShowPlaceholders || hasExchangeContact) && (
                     <button type="button" className="mock-button">
@@ -261,7 +262,10 @@ export default function Preview({
 
     if (isMobile) {
         return (
-            <div className="myprofile-content myprofile-mock-phone-mobile-container">
+            <div
+                className="myprofile-content myprofile-mock-phone-mobile-container"
+                style={columnScrollStyle}
+            >
                 <div
                     className={`mp-mobile-controls desktop-h6 ${previewOpen ? "is-open" : "is-collapsed"}`}
                     role="tablist"
@@ -269,7 +273,13 @@ export default function Preview({
                 >
                     <div
                         className="mp-pill"
-                        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, justifyItems: "stretch", width: "100%" }}
+                        style={{
+                            display: "grid",
+                            gridTemplateColumns: "1fr 1fr",
+                            gap: 8,
+                            justifyItems: "stretch",
+                            width: "100%",
+                        }}
                     >
                         <button
                             type="button"
@@ -325,8 +335,11 @@ export default function Preview({
 
     // Desktop
     return (
-        <div className="myprofile-content">
-            <div className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`} style={{ fontFamily: state.font || previewPlaceholders.font }}>
+        <div className="myprofile-content" style={columnScrollStyle}>
+            <div
+                className={`mock-phone ${isDarkMode ? "dark-mode" : ""}`}
+                style={{ fontFamily: state.font || previewPlaceholders.font }}
+            >
                 <div className="mock-phone-scrollable-content desktop-no-inner-scroll">
                     <MainSection />
                     <AboutSection />
