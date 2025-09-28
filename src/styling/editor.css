@@ -506,3 +506,30 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(30, 42, 56, .6) transparent;
 }
+
+/* Let the glow breathe above & below the card */
+.editor-scope.myprofile-editor-wrapper {
+    overflow: visible;
+    /* don’t clip descendants */
+    padding-block: 12px;
+    /* space for the shadow at top & bottom */
+}
+
+/* Keep the card the same visual size, but inside the new padding */
+.editor-scope .myprofile-editor {
+    height: calc(100% - 24px);
+    /* 24px = 12px top + 12px bottom */
+    border: 1px solid rgba(255, 107, 0, .22);
+    box-shadow:
+        0 0 0 2px rgba(255, 107, 0, .12),
+        0 0 22px rgba(255, 107, 0, .28);
+    /* centered glow */
+    border-radius: 20px;
+}
+
+/* (optional) if any ancestor still clips, force it not to) */
+#myprofile-editor {
+    isolation: isolate;
+}
+
+/* prevents ancestor clipping artifacts */
