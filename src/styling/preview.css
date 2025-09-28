@@ -5,15 +5,15 @@
 .myprofile-content {
     /* layout & sizing (scroll like editor) */
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    /* hug left edge */
     align-items: stretch;
     flex: 1 1 auto;
     height: 100%;
     min-height: 0;
-    /* crucial for flex-child scrolling */
-    max-height: 100dvh;
-    /* fallback so it scrolls even without inline height */
+    /* critical for flex-child scrolling */
     overflow-y: auto;
+    /* the preview column scrolls */
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
 
@@ -23,11 +23,16 @@
     padding: 18px;
     /* same inner padding as editor */
     outline: 1px solid rgba(255, 107, 0, .22);
+    /* thin orange edge */
     filter:
         drop-shadow(0 0 6px rgba(255, 107, 0, .22)) drop-shadow(0 0 20px rgba(255, 107, 0, .26));
+    /* centered halo */
 
-    /* width cap to mirror editor */
+    /* width cap like editor (but no auto-centering) */
+    width: 100%;
     max-width: 500px;
+    margin: 0;
+    /* do NOT center */
     box-sizing: border-box;
 
     /* container queries */
@@ -35,7 +40,7 @@
     container-name: preview;
 }
 
-/* Dark preview surface (keep same orange edge/glow) */
+/* If the inner preview is dark, keep same orange edge/glow */
 .myprofile-content:has(.mock-phone.dark-mode) {
     background: #1F1F1F;
     color: #fff;
@@ -63,7 +68,7 @@
     background: linear-gradient(180deg, rgba(30, 42, 56, .7), rgba(30, 42, 56, .9));
 }
 
-/* Firefox */
+/* --- Pretty scrollbar (Firefox) --- */
 .myprofile-content {
     scrollbar-width: thin;
     scrollbar-color: rgba(30, 42, 56, .6) transparent;
@@ -142,6 +147,7 @@
     pointer-events: none !important;
 }
 
+/* Smooth expand/collapse wrapper for mobile preview */
 .mp-preview-wrap {
     will-change: max-height, opacity, transform;
     transition: max-height .3s ease, opacity .3s ease, transform .3s ease;
@@ -167,7 +173,7 @@
     color: #fff;
 }
 
-/* Make the panel itself do the scrolling on desktop */
+/* On desktop, the outer column handles scrolling */
 .mock-phone-scrollable-content.desktop-no-inner-scroll {
     overflow: visible;
 }
@@ -244,7 +250,7 @@
     color: #fff;
 }
 
-/* Cards — keep WHITE in dark mode */
+/* Cards — white even in dark mode */
 .mock-about-container,
 .mock-service-item,
 .mock-review-card,
@@ -327,6 +333,16 @@
     font-weight: 400;
     margin: 0;
     color: #111;
+}
+
+/* Dark mode for cards: still white */
+.mock-phone.dark-mode .mock-about-container,
+.mock-phone.dark-mode .mock-service-item,
+.mock-phone.dark-mode .mock-review-card,
+.mock-phone.dark-mode .mock-contact-details {
+    background: #fff;
+    color: #111;
+    border-color: rgba(0, 0, 0, .06);
 }
 
 /* About card layout */
@@ -464,6 +480,7 @@
    Container queries for PREVIEW
    ============================= */
 
+/* Mobile preview (<=600px wide container) */
 @container preview (max-width: 600px) {
     .mock-title {
         font-size: clamp(18px, 6vw, 24px);
@@ -495,6 +512,7 @@
     }
 }
 
+/* Larger preview (>=601px container) */
 @container preview (min-width: 601px) {
     .mock-title {
         font-size: clamp(22px, 2.2vw, 32px);
@@ -513,18 +531,7 @@
     }
 }
 
-/* full-bleed sticky controls on mobile */
-@media (max-width:1000px) {
-    .myprofile-content {
-        padding: 18px;
-    }
-
-    .mp-pill {
-        width: 100%;
-    }
-}
-
-/* A11y focus states for buttons inside preview */
+/* A11y focus */
 .mock-button:focus-visible,
 .mp-tab:focus-visible {
     outline: 2px solid var(--brand-blue);
