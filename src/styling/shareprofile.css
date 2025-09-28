@@ -18,9 +18,9 @@
     z-index: 9999;
     padding: 18px;
 
-    /* Blur the backdrop (desktop + mobile) */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    cursor: default;
 }
 
 /* Card */
@@ -35,6 +35,8 @@
     -webkit-overflow-scrolling: touch;
     padding: 22px;
     position: relative;
+    pointer-events: auto;
+    /* ensure clickable even if parent uses pointer-events tweaks */
 }
 
 /* Close */
@@ -151,13 +153,6 @@
     aspect-ratio: 1 / 1;
     object-fit: contain;
     display: block;
-}
-
-/* Optional: dim/disable page behind when class is set (extra safety) */
-body.share-profile-open .app-layout,
-body.share-profile-open #root,
-body.share-profile-open .app-root {
-    pointer-events: none;
 }
 
 /* Small screens */

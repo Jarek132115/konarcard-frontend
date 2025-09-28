@@ -37,13 +37,12 @@ export default function ShareProfile({
         }
     }, [profileUrl]);
 
-    // Show pretty URL (no protocol, no .com)
+    // Pretty display URL (no protocol, no .com)
     const displayUrl = useMemo(() => {
         try {
             const u = new URL(profileUrl);
             const host = u.host.replace(/\.com$/i, "");
-            const prettyHost = host === "www.konarcard" ? host : host;
-            return `${prettyHost}${u.pathname}`;
+            return `${host}${u.pathname}`;
         } catch {
             return profileUrl
                 .replace(/^https?:\/\//i, "")
@@ -51,7 +50,7 @@ export default function ShareProfile({
         }
     }, [profileUrl]);
 
-    // Lock scroll + add body class while open
+    // Lock page scroll & add a body class while open
     useEffect(() => {
         if (!isOpen) return;
         const prevOverflow = document.body.style.overflow;
@@ -93,8 +92,21 @@ export default function ShareProfile({
 
     return (
         <div className="share-modal-overlay" onClick={onClose}>
-            <div className="share-modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="share-modal-close-button" onClick={onClose} aria-label="Close">
+            <div
+                className="share-modal-content"
+                onClick={(e) => e.stopPropagation()} // keep clicks inside from closing
+                role="dialog"
+                aria-modal="true"
+            >
+                <button
+                    className="share-modal-close-button"
+                    onClick={(e) => {
+                        e.stopPropagation(); // ensure it doesn't bubble to overlay
+                        onClose();
+                    }}
+                    aria-label="Close"
+                    type="button"
+                >
                     ×
                 </button>
 
