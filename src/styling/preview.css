@@ -4,6 +4,13 @@
 .preview-scope {
     --accent: #FF6B00;
     --accent-rgb: 255 107 0;
+
+    /* card backgrounds */
+    --card-bg-light: #F6F8FC;
+    /* slightly darker than pure white (LIGHT MODE) */
+    --card-bg-dark: #FAFAFB;
+    /* very light white for cards on dark mode */
+
     --pill-bg-light: #fff;
     --pill-bg-dark: #202020;
     --pill-stroke-light: #E8E8E8;
@@ -19,7 +26,6 @@
 .preview-scope .myprofile-preview {
     background: #fff;
     border: 1px solid rgba(255, 107, 0, .22);
-    /* thin orange border like editor */
     border-radius: 20px;
     padding: 18px;
     max-width: 500px;
@@ -28,7 +34,7 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 
-    /* IMPORTANT: enable container queries used below */
+    /* container queries */
     container-type: inline-size;
     container-name: preview;
 }
@@ -71,7 +77,6 @@
     padding: 6px;
     border-radius: 999px;
     position: sticky;
-    /* keeps visible at top of the card while scrolling */
     top: 0;
     z-index: 2;
     background: var(--pill-bg-light);
@@ -85,7 +90,6 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, .18);
 }
 
-/* Normalize BOTH buttons (button + link) to look identical */
 .preview-scope .mp-tab,
 .preview-scope .mp-tab.visit {
     border: 0;
@@ -99,7 +103,6 @@
     text-align: center;
     color: inherit;
     text-decoration: none;
-    /* remove underline on link */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -111,12 +114,11 @@
     transform: translateY(1px);
 }
 
-/* ORANGE active state (both buttons) */
 .preview-scope .mp-tab.active,
 .preview-scope .mp-tab.visit.active {
     background: var(--accent);
     color: #fff;
-    box-shadow: 0 8px 18px rgb(var(--accent-rgb) / .25);
+    box-shadow: 0 8px 18px rgb(var(--accent-rgb)/.25);
 }
 
 /* Hide the toolbar on desktop */
@@ -135,7 +137,6 @@
 /* =============================
    PREVIEW (mock site) styles
    ============================= */
-
 .mock-phone {
     width: 100%;
     max-width: 100%;
@@ -151,7 +152,7 @@
     color: #fff;
 }
 
-/* On desktop, the outer card handles scrolling */
+/* Desktop: outer card handles scrolling */
 .mock-phone-scrollable-content.desktop-no-inner-scroll {
     overflow: visible;
 }
@@ -160,9 +161,10 @@
 .mock-cover {
     width: 100%;
     aspect-ratio: 4 / 3;
+    /* keep 4:3 for cover */
     object-fit: cover;
     border-radius: 14px;
-    margin-bottom: 10px;
+    margin-bottom: 1.5rem;
     margin-top: 10px;
     background-color: var(--placeholder-bg);
     background-size: cover;
@@ -175,8 +177,8 @@
     margin: 0;
     line-height: 1.2;
     color: #000;
-    text-align: center;
-    /* headings stay centered per spec */
+    text-align: inherit;
+    /* controlled inline */
 }
 
 .preview-scope .myprofile-preview.dark .mock-title {
@@ -185,21 +187,21 @@
 
 .mock-subtitle {
     font-size: .95rem;
-    font-weight: 500;
+    font-weight: 600;
     margin: 8px 0 0;
     color: #000;
-    text-align: center;
-    /* will be overridden inline for content alignment */
+    text-align: inherit;
+    /* controlled inline */
 }
 
 .preview-scope .myprofile-preview.dark .mock-subtitle {
     color: #fff;
 }
 
-/* Primary CTA for the preview page */
+/* Primary CTA */
 .mock-button {
     background: var(--accent);
-    /* inline style from React will override for custom color */
+    /* inline style may override color */
     color: #fff;
     padding: .9rem 1.2rem;
     border-radius: 12px;
@@ -210,6 +212,8 @@
     width: 100%;
     box-sizing: border-box;
     transition: transform .06s, opacity .2s;
+    font-family: inherit;
+    /* inherit chosen font */
 }
 
 .mock-button:hover {
@@ -220,12 +224,12 @@
     transform: translateY(1px);
 }
 
+/* Section titles */
 .mock-section-title {
     font-size: 1rem;
     font-weight: 700;
     margin: 60px 0 10px;
     text-align: left;
-    /* keep section headings unchanged */
     color: #000;
 }
 
@@ -233,17 +237,35 @@
     color: #fff;
 }
 
-/* Cards — white even in dark mode */
+/* Cards — backgrounds depend on mode */
 .mock-about-container,
 .mock-service-item,
-.mock-review-card,
+.mock-review-card {
+    background: var(--card-bg-light);
+    /* LIGHT MODE: slightly darker */
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, .06);
+    color: #111;
+    padding: 14px;
+}
+
+.preview-scope .myprofile-preview.dark .mock-about-container,
+.preview-scope .myprofile-preview.dark .mock-service-item,
+.preview-scope .myprofile-preview.dark .mock-review-card {
+    background: var(--card-bg-dark);
+    /* DARK MODE: very light white */
+    color: #111;
+}
+
+/* Contact card keeps its original white background */
 .mock-contact-details {
     background: #fff;
     border-radius: 16px;
     border: 1px solid rgba(0, 0, 0, .06);
     color: #111;
     padding: 14px;
-    /* add padding for consistent look */
+    display: grid;
+    gap: 10px;
 }
 
 /* Body text inside cards */
@@ -357,10 +379,11 @@
     width: 100%;
 }
 
-/* Always 4:3 aspect ratio for preview work images */
+/* My Work items: 4 / 2.5 */
 .mock-work-image-item-wrapper {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 4 / 2.5;
+    /* ← updated */
     overflow: hidden;
     border-radius: 14px;
     border: 1px solid var(--border-color, rgba(0, 0, 0, .06));
@@ -450,9 +473,7 @@
     background-color: rgba(0, 0, 0, .6);
 }
 
-/* =============================
-   Social row (icons/labels under contact)
-   ============================= */
+/* Social row (legacy, outside contact card) */
 .preview-scope .social-row {
     display: flex;
     gap: 12px;
@@ -481,23 +502,58 @@
 
 .preview-scope .social-icon:hover {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .12);
+    box-shadow: 0 0 0 3px rgb(var(--accent-rgb)/.12);
 }
 
 .preview-scope .social-fallback-label {
     font-size: 12px;
 }
 
-/* If you later add real icon fonts/svgs, you can hide the fallback text:
-   .preview-scope .social-icon i, .preview-scope .social-icon svg { display:block; }
-   .preview-scope .social-fallback-label { display:none; }
-*/
+/* Socials inside Contact card */
+.mock-contact-socials {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.contact-social-chip {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, .08);
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
+}
+
+.contact-social-glyph {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+.preview-scope .myprofile-preview.dark .contact-social-chip {
+    background: #111;
+    border-color: #111;
+}
+
+.preview-scope .myprofile-preview.dark .contact-social-glyph {
+    filter: invert(1);
+}
+
+.contact-social-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .10);
+}
 
 /* =============================
    Container queries for PREVIEW
    ============================= */
-
-/* Mobile preview (<=600px wide container of the card) */
+/* Mobile preview (<=600px container) */
 @container preview (max-width: 600px) {
     .mock-title {
         font-size: clamp(18px, 6vw, 24px);
@@ -551,199 +607,6 @@
 /* A11y focus */
 .mock-button:focus-visible,
 .mp-tab:focus-visible {
-    outline: 2px solid rgb(var(--accent-rgb) / .5);
+    outline: 2px solid rgb(var(--accent-rgb)/.5);
     outline-offset: 2px;
 }
-
-.mock-title {
-    font-size: clamp(20px, 2.6vw, 32px);
-    font-weight: 800;
-    margin: 0;
-    line-height: 1.2;
-    color: #000;
-    text-align: inherit;
-    /* was center — let inline style control it */
-}
-
-.preview-scope .myprofile-preview.dark .mock-title {
-    color: #fff;
-}
-
-.mock-subtitle {
-    font-size: .95rem;
-    font-weight: 600;
-    margin: 8px 0 0;
-    color: #000;
-    text-align: inherit;
-    /* align with chosen content alignment */
-}
-
-.preview-scope .myprofile-preview.dark .mock-subtitle {
-    color: #fff;
-}
-
-/* … other rules unchanged … */
-
-/* Contact card — fixed two-column layout like your screenshot */
-.mock-contact-details {
-    background: #fff;
-    border-radius: 16px;
-    border: 1px solid rgba(0, 0, 0, .06);
-    color: #111;
-    padding: 14px;
-    display: grid;
-    gap: 10px;
-}
-
-.mock-contact-item {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    column-gap: 12px;
-}
-
-.mock-contact-label {
-    font-size: .95rem;
-    font-weight: 700;
-    margin: 0;
-    color: #333;
-}
-
-.mock-contact-value {
-    margin: 0;
-    text-align: right;
-    /* value on the right */
-    color: #111;
-    font-weight: 500;
-    font-size: .95rem;
-}
-
-/* About card etc. remain as in your sheet */
-
-/* keep your existing variables & base rules */
-
-/* Headings now align by inline style */
-.mock-title {
-    text-align: inherit;
-}
-
-.mock-subtitle {
-    text-align: inherit;
-}
-
-/* Contact card – same look */
-.mock-contact-details {
-    background: #fff;
-    border-radius: 16px;
-    border: 1px solid rgba(0, 0, 0, .06);
-    color: #111;
-    padding: 14px;
-    display: grid;
-    gap: 10px;
-}
-
-.mock-contact-item {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    column-gap: 12px;
-}
-
-.mock-contact-value {
-    margin: 0;
-    text-align: right;
-    color: #111;
-    font-weight: 500;
-    font-size: .95rem;
-}
-
-/* --- NEW: social icons INSIDE the contact card --- */
-.mock-contact-socials {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 20px;
-    /* 20px gap from phone row */
-}
-
-.contact-social-chip {
-    width: 36px;
-    height: 36px;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(0, 0, 0, .08);
-    background: #fff;
-    /* light mode bg */
-    box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
-}
-
-.contact-social-glyph {
-    width: 18px;
-    height: 18px;
-    display: block;
-}
-
-/* Dark mode inversion: card stays white, but chips are dark w/ white icons */
-.preview-scope .myprofile-preview.dark .contact-social-chip {
-    background: #111;
-    border-color: #111;
-}
-
-.preview-scope .myprofile-preview.dark .contact-social-glyph {
-    filter: invert(1);
-}
-
-/* Optional hover */
-.contact-social-chip:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, .10);
-}
-
-/* --- UPDATED: social icons INSIDE the contact card --- */
-.mock-contact-socials {
-    display: flex;
-    justify-content: space-around;
-    /* evenly space icons */
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 10px;
-    /* smaller gap */
-}
-
-.contact-social-chip {
-    width: 36px;
-    height: 36px;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(0, 0, 0, .08);
-    background: #fff;
-    /* light mode */
-    box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
-}
-
-.contact-social-glyph {
-    width: 18px;
-    height: 18px;
-    display: block;
-}
-
-/* Dark mode inversion */
-.preview-scope .myprofile-preview.dark .contact-social-chip {
-    background: #111;
-    border-color: #111;
-}
-
-.preview-scope .myprofile-preview.dark .contact-social-glyph {
-    filter: invert(1);
-}
-
-/* Make the CTA use the page’s chosen font */
-.preview-scope .mock-button {
-    font-family: inherit;
-}
-
-/* or: font: inherit; */ 
