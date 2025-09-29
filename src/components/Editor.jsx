@@ -246,37 +246,77 @@ export default function Editor({
                             return (
                                 <li key={key} className="sortable-item">
                                     <span className="drag-label">⋮⋮</span>
-                                    <span className="section-name">
-                                        {readableSectionName(key)}
-                                        {isMain ? " (Locked)" : ""}
-                                    </span>
+
+                                    {/* no "(Locked)" label anymore */}
+                                    <span className="section-name">{readableSectionName(key)}</span>
+
                                     <div className="order-buttons">
-                                        <button
-                                            type="button"
-                                            className="btn btn-ghost"
-                                            disabled={!canMoveUp}
-                                            onClick={() => moveSectionUp(idx)}
-                                            aria-label={`Move ${readableSectionName(key)} up`}
-                                            title={isMain ? "Main is locked at top" : ""}
-                                        >
-                                            ↑
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn btn-ghost"
-                                            disabled={!canMoveDown}
-                                            onClick={() => moveSectionDown(idx)}
-                                            aria-label={`Move ${readableSectionName(key)} down`}
-                                            title={isMain ? "Main is locked at top" : ""}
-                                        >
-                                            ↓
-                                        </button>
+                                        {isMain ? (
+                                            // Single lock icon instead of arrows
+                                            <button
+                                                type="button"
+                                                className="btn btn-ghost"
+                                                disabled
+                                                aria-label="Main section is locked at the top"
+                                                title="Main section is locked at the top"
+                                                style={{ cursor: "not-allowed", opacity: 0.6 }}
+                                            >
+                                                {/* Inline lock SVG so you don't need an asset */}
+                                                <svg
+                                                    width="18"
+                                                    height="18"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path
+                                                        d="M7 10V7a5 5 0 0 1 10 0v3"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                    <rect
+                                                        x="5"
+                                                        y="10"
+                                                        width="14"
+                                                        height="11"
+                                                        rx="2"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-ghost"
+                                                    disabled={!canMoveUp}
+                                                    onClick={() => moveSectionUp(idx)}
+                                                    aria-label={`Move ${readableSectionName(key)} up`}
+                                                >
+                                                    ↑
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-ghost"
+                                                    disabled={!canMoveDown}
+                                                    onClick={() => moveSectionDown(idx)}
+                                                    aria-label={`Move ${readableSectionName(key)} down`}
+                                                >
+                                                    ↓
+                                                </button>
+                                            </>
+                                        )}
                                     </div>
                                 </li>
                             );
                         })}
                     </ul>
                 </div>
+
 
                 {/* Main Section */}
                 <hr className="divider" />
