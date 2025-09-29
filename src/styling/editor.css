@@ -139,7 +139,7 @@
 
 /* 20px gap between color stacks */
 .editor-scope .input-block .stack+.stack {
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 /* Divider */
