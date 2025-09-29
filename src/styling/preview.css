@@ -700,3 +700,43 @@
     transform: translateY(-1px);
     box-shadow: 0 3px 10px rgba(0, 0, 0, .10);
 }
+
+/* --- UPDATED: social icons INSIDE the contact card --- */
+.mock-contact-socials {
+    display: flex;
+    justify-content: space-around;
+    /* evenly space icons */
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    /* smaller gap */
+}
+
+.contact-social-chip {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, .08);
+    background: #fff;
+    /* light mode */
+    box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
+}
+
+.contact-social-glyph {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+/* Dark mode inversion */
+.preview-scope .myprofile-preview.dark .contact-social-chip {
+    background: #111;
+    border-color: #111;
+}
+
+.preview-scope .myprofile-preview.dark .contact-social-glyph {
+    filter: invert(1);
+}
