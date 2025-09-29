@@ -57,10 +57,46 @@
   font-weight: 700;
 }
 
-/* Desktop auth pills come from your existing button classes */
+/* Desktop auth pills */
 .auth-links {
   display: flex;
   gap: 12px;
+}
+
+/* If your project already has .desktop-button, we just color-override here.
+   Keeping specificity high enough to win without !important. */
+.auth-links .desktop-button.orange-button {
+  background: #FF7B00;
+  border: 1px solid #FF7B00;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(255, 123, 0, 0.18);
+}
+
+.auth-links .desktop-button.orange-button:hover {
+  filter: brightness(0.96);
+  box-shadow: 0 10px 24px rgba(255, 123, 0, 0.24);
+}
+
+.auth-links .desktop-button.orange-button:active {
+  transform: translateY(1px);
+}
+
+/* New red style for Logout */
+.auth-links .desktop-button.red-button {
+  background: #EF4444;
+  /* Tailwind-ish red-500 */
+  border: 1px solid #EF4444;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.18);
+}
+
+.auth-links .desktop-button.red-button:hover {
+  filter: brightness(0.96);
+  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.24);
+}
+
+.auth-links .desktop-button.red-button:active {
+  transform: translateY(1px);
 }
 
 /* =========================
@@ -225,7 +261,7 @@
   flex-direction: column;
 }
 
-/* Logout styled like a link but red */
+/* Logout styled like a link but red (mobile) */
 .logout-link {
   all: unset;
   cursor: pointer;

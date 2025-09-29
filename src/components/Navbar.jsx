@@ -222,10 +222,12 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link to="/myprofile" className="desktop-button cta-blue-button">
+                {/* CHANGED: orange Dashboard */}
+                <Link to="/myprofile" className="desktop-button orange-button">
                   Dashboard
                 </Link>
-                <button onClick={handleLogout} className="desktop-button cta-black-button">
+                {/* CHANGED: red Logout */}
+                <button onClick={handleLogout} className="desktop-button red-button">
                   Logout
                 </button>
               </>
