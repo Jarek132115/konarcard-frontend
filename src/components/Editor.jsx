@@ -13,14 +13,13 @@ import TikTokIcon from "../assets/icons/icons8-tiktok.svg";
 const getContrastColor = (hex = "#000000") => {
     const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec((hex || "").trim());
     if (!m) return "#111";
-    const r = parseInt(m[1], 16), g = parseInt(m[2], 16), b = parseInt(m[3], 16);
+    const r = parseInt(m[1], 16),
+        g = parseInt(m[2], 16),
+        b = parseInt(m[3], 16);
     const L = 0.2126 * (r / 255) + 0.7152 * (g / 255) + 0.0722 * (b / 255);
     return L > 0.6 ? "#111" : "#fff";
 };
 
-/**
- * Orange-themed Editor (scoped styles via .editor-scope)
- */
 export default function Editor({
     state,
     updateState,
@@ -70,7 +69,10 @@ export default function Editor({
         const next = [...(state.reviews || [])];
         if (field === "rating") {
             const n = parseInt(value, 10);
-            next[i] = { ...(next[i] || {}), rating: Number.isFinite(n) ? Math.min(5, Math.max(1, n)) : "" };
+            next[i] = {
+                ...(next[i] || {}),
+                rating: Number.isFinite(n) ? Math.min(5, Math.max(1, n)) : "",
+            };
         } else {
             next[i] = { ...(next[i] || {}), [field]: value };
         }
@@ -83,7 +85,16 @@ export default function Editor({
 
     // ===== Section Order (Main locked at top) =====
     const readableSectionName = (key) =>
-        ({ main: "Main", about: "About Me", work: "My Work", services: "My Services", reviews: "Reviews", contact: "Contact" }[key] || key);
+    (
+        {
+            main: "Main",
+            about: "About Me",
+            work: "My Work",
+            services: "My Services",
+            reviews: "Reviews",
+            contact: "Contact",
+        }[key] || key
+    );
 
     const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
 
@@ -119,11 +130,16 @@ export default function Editor({
         updateState({ sectionOrder: sanitizeOrder(next) });
     };
 
-    const pickedBg = state.buttonBgColor || "#F47629";
+    // Default the button background to your navy
+    const pickedBg = state.buttonBgColor || "#1E2A38";
     const pickedInk = getContrastColor(pickedBg);
 
     return (
-        <div className="myprofile-editor-wrapper editor-scope" id="myprofile-editor" style={columnScrollStyle}>
+        <div
+            className="myprofile-editor-wrapper editor-scope"
+            id="myprofile-editor"
+            style={columnScrollStyle}
+        >
             {!isSubscribed && hasTrialEnded && (
                 <div className="subscription-overlay">
                     <div className="subscription-message">
@@ -182,7 +198,7 @@ export default function Editor({
                                 onClick={() => updateState({ font })}
                                 style={{
                                     fontFamily: `'${font}', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`,
-                                    fontWeight: 700, // keep their face, adopt 12px/700 via CSS
+                                    fontWeight: 700,
                                 }}
                             >
                                 {font}
@@ -191,20 +207,17 @@ export default function Editor({
                     </div>
                 </div>
 
-                {/* Button Style (stacked, 12px controls) */}
+                {/* Button Style */}
                 <hr className="divider" />
                 <div className="input-block">
                     <div className="choice-label">Button Style</div>
 
-                    {/* Background - looks like a chip, full width */}
+                    {/* Background */}
                     <div className="stack">
                         <label className="mini-label">Button Background</label>
                         <div
                             className="chip color-chip w-full"
-                            style={{
-                                "--picked-color": pickedBg,
-                                "--picked-ink": pickedInk,
-                            }}
+                            style={{ "--picked-color": pickedBg, "--picked-ink": pickedInk }}
                         >
                             <span className="color-chip-label">Choose colour</span>
                             <input
@@ -215,9 +228,17 @@ export default function Editor({
                                 aria-label="Choose button background colour"
                             />
                         </div>
+
+                        {/* Hex input under the chip (keeps layout tidy) */}
+                        <input
+                            className="text-input hex-input"
+                            value={state.buttonBgColor || "#1E2A38"}
+                            onChange={(e) => updateState({ buttonBgColor: e.target.value })}
+                            placeholder="#1E2A38"
+                        />
                     </div>
 
-                    {/* Text Colour — two chips in one row */}
+                    {/* Text Colour */}
                     <div className="stack">
                         <label className="mini-label">Button Text Colour</label>
                         <div className="option-row split-2">
@@ -235,7 +256,7 @@ export default function Editor({
                     </div>
                 </div>
 
-                {/* Text Alignment (content only) */}
+                {/* Text Alignment */}
                 <div className="input-block">
                     <div className="choice-label">Text Alignment</div>
                     <div className="option-row split-3">
@@ -252,26 +273,23 @@ export default function Editor({
                     </div>
                 </div>
 
-                {/* Section Order (Main locked) */}
+                {/* Section Order */}
                 <hr className="divider" />
                 <div className="input-block">
                     <div className="choice-label">Section Order</div>
                     <ul className="sortable-list">
                         {currentOrder.map((key, idx) => {
                             const isMain = key === "main";
-                            const canMoveUp = !isMain && idx > 1; // never swap with index 0 (“main”)
+                            const canMoveUp = !isMain && idx > 1; // never above index 1 (main fixed at 0)
                             const canMoveDown = !isMain && idx < currentOrder.length - 1;
 
                             return (
                                 <li key={key} className="sortable-item">
                                     <span className="drag-label">⋮⋮</span>
-
-                                    {/* no "(Locked)" label anymore */}
                                     <span className="section-name">{readableSectionName(key)}</span>
 
                                     <div className="order-buttons">
                                         {isMain ? (
-                                            // Single lock icon instead of arrows
                                             <button
                                                 type="button"
                                                 className="btn btn-ghost"
@@ -279,7 +297,6 @@ export default function Editor({
                                                 aria-label="Main section is locked at the top"
                                                 title="Main section is locked at the top"
                                             >
-                                                {/* Inline lock SVG so you don't need an asset */}
                                                 <svg
                                                     width="18"
                                                     height="18"
@@ -537,7 +554,10 @@ export default function Editor({
                                 </div>
                             ))}
                             {(state.workImages || []).length < 10 && (
-                                <div className="add-work-image-placeholder" onClick={() => workImageInputRef.current?.click()}>
+                                <div
+                                    className="add-work-image-placeholder"
+                                    onClick={() => workImageInputRef.current?.click()}
+                                >
                                     <span className="upload-text">+ Add image(s)</span>
                                 </div>
                             )}
@@ -549,7 +569,9 @@ export default function Editor({
                             accept="image/*"
                             style={{ display: "none" }}
                             onChange={(e) => {
-                                const files = Array.from(e.target.files || []).filter((f) => f && f.type.startsWith("image/"));
+                                const files = Array.from(e.target.files || []).filter(
+                                    (f) => f && f.type.startsWith("image/")
+                                );
                                 if (files.length) onAddWorkImages?.(files);
                             }}
                         />
@@ -696,7 +718,7 @@ export default function Editor({
                             />
                         </div>
 
-                        {/* Social Links — one per row with icons */}
+                        {/* Social Links */}
                         <div className="input-block">
                             <div className="choice-label">Social Links</div>
 
