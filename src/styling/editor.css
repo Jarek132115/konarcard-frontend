@@ -699,3 +699,11 @@
     width: 100%;
     min-height: 44px;
 }
+
+/* Use the same navy as the header for all CTA states */
+.editor-scope {
+    --accent: #1E2A38;
+    /* header navy */
+    --accent-rgb: 30 42 56;
+    /* rgb for focus/halo/shadows */
+}
