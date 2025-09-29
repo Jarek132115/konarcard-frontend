@@ -8,6 +8,9 @@ import LinkedInIcon from "../assets/icons/icons8-linkedin.svg";
 import XIcon from "../assets/icons/icons8-x.svg";
 import TikTokIcon from "../assets/icons/icons8-tiktok.svg";
 
+/**
+ * Orange-themed Editor (scoped styles via .editor-scope)
+ */
 export default function Editor({
     state,
     updateState,
@@ -68,7 +71,7 @@ export default function Editor({
     const handleRemoveReview = (i) =>
         updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
-    // section order helpers (unchanged)
+    // helpers for Section Order control
     const readableSectionName = (key) =>
         ({ main: "Main", about: "About Me", work: "My Work", services: "My Services", reviews: "Reviews", contact: "Contact" }[key] || key);
 
@@ -176,10 +179,10 @@ export default function Editor({
                         </div>
                     </div>
 
-                    {/* Text Colour - small chips, full width, stacked */}
+                    {/* Text Colour — two chips in one row */}
                     <div className="stack">
                         <label className="mini-label">Button Text Colour</label>
-                        <div className="option-row">
+                        <div className="option-row split-2">
                             {["white", "black"].map((c) => (
                                 <button
                                     key={c}
@@ -584,6 +587,8 @@ export default function Editor({
                                 id="contactEmail"
                                 type="email"
                                 className="text-input"
+                                autoComplete="email"
+                                inputMode="email"
                                 value={state.contact_email || ""}
                                 onChange={(e) => updateState({ contact_email: e.target.value })}
                                 placeholder={previewPlaceholders.contact_email}
@@ -595,6 +600,9 @@ export default function Editor({
                             <input
                                 id="phoneNumber"
                                 type="tel"
+                                inputMode="tel"
+                                autoComplete="tel"
+                                pattern="[0-9+()\\s-]*"
                                 className="text-input"
                                 value={state.phone_number || ""}
                                 onChange={(e) => updateState({ phone_number: e.target.value })}
@@ -611,6 +619,8 @@ export default function Editor({
                                     <img src={FacebookIcon} alt="" className="social-icon" />
                                     <input
                                         className="text-input"
+                                        inputMode="url"
+                                        autoComplete="url"
                                         placeholder="Facebook URL"
                                         value={state.facebook_url || ""}
                                         onChange={(e) => updateState({ facebook_url: e.target.value })}
@@ -621,6 +631,8 @@ export default function Editor({
                                     <img src={InstagramIcon} alt="" className="social-icon" />
                                     <input
                                         className="text-input"
+                                        inputMode="url"
+                                        autoComplete="url"
                                         placeholder="Instagram URL"
                                         value={state.instagram_url || ""}
                                         onChange={(e) => updateState({ instagram_url: e.target.value })}
@@ -631,6 +643,8 @@ export default function Editor({
                                     <img src={LinkedInIcon} alt="" className="social-icon" />
                                     <input
                                         className="text-input"
+                                        inputMode="url"
+                                        autoComplete="url"
                                         placeholder="LinkedIn URL"
                                         value={state.linkedin_url || ""}
                                         onChange={(e) => updateState({ linkedin_url: e.target.value })}
@@ -641,6 +655,8 @@ export default function Editor({
                                     <img src={XIcon} alt="" className="social-icon" />
                                     <input
                                         className="text-input"
+                                        inputMode="url"
+                                        autoComplete="url"
                                         placeholder="X (Twitter) URL"
                                         value={state.x_url || ""}
                                         onChange={(e) => updateState({ x_url: e.target.value })}
@@ -651,13 +667,14 @@ export default function Editor({
                                     <img src={TikTokIcon} alt="" className="social-icon" />
                                     <input
                                         className="text-input"
+                                        inputMode="url"
+                                        autoComplete="url"
                                         placeholder="TikTok URL"
                                         value={state.tiktok_url || ""}
                                         onChange={(e) => updateState({ tiktok_url: e.target.value })}
                                     />
                                 </div>
                             </div>
-                            {/* removed the “icons will show…” text */}
                         </div>
                     </>
                 )}

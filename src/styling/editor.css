@@ -17,9 +17,7 @@
     position: relative;
     height: 100%;
     overflow: visible;
-    /* let outer glow show on all sides */
     padding-block: 0;
-    /* keep original height */
 }
 
 /* Card */
@@ -39,16 +37,13 @@
     box-shadow: none;
     filter: drop-shadow(0 0 6px rgba(255, 107, 0, .22)) drop-shadow(0 0 20px rgba(255, 107, 0, .26));
     padding-right: 10px;
-    /* tiny gutter so rounded scrollbar doesn't hug text */
 }
 
 /* fallback for very old browsers without drop-shadow */
 @supports not (filter: drop-shadow(0 0 1px #000)) {
     .editor-scope .myprofile-editor {
         border: 1px solid rgba(255, 107, 0, .22);
-        box-shadow:
-            0 0 0 2px rgba(255, 107, 0, .12),
-            0 0 22px rgba(255, 107, 0, .28);
+        box-shadow: 0 0 0 2px rgba(255, 107, 0, .12), 0 0 22px rgba(255, 107, 0, .28);
     }
 }
 
@@ -72,9 +67,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    /* gap between label and control(s) */
     margin: 20px 0;
-    /* gap to next block */
 }
 
 .editor-scope .input-block.tight {
@@ -87,26 +80,7 @@
     color: #111;
 }
 
-/* Small vertical stack helper (used in Button Style) */
-.editor-scope .stack {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-/* Choice labels */
-.editor-scope .choice-label {
-    font: 800 14px/1.3 var(--main-font-family, Inter, system-ui);
-    color: #111;
-}
-
-/* Theme chip override (Cal Sans) */
-.editor-scope .theme-chip {
-    font-family: "Cal Sans", Inter, system-ui, sans-serif;
-    letter-spacing: 1px;
-}
-
-/* Inputs */
+/* caret always visible */
 .editor-scope .text-input,
 .editor-scope textarea.text-input {
     padding: 11px 12px;
@@ -117,6 +91,11 @@
     font: 500 14px/1.35 var(--main-font-family, Inter, system-ui);
     box-shadow: 0 2px 8px rgba(30, 42, 56, .05);
     width: 100%;
+    caret-color: #111;
+}
+
+.editor-scope .text-input::placeholder {
+    color: #9aa3ad;
 }
 
 .editor-scope .text-input:focus,
@@ -124,6 +103,25 @@
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .18);
+}
+
+/* Choice labels */
+.editor-scope .choice-label {
+    font: 800 14px/1.3 var(--main-font-family, Inter, system-ui);
+    color: #111;
+}
+
+/* Small vertical stack helper (used in Button Style) */
+.editor-scope .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Theme chip override (Cal Sans) */
+.editor-scope .theme-chip {
+    font-family: "Cal Sans", Inter, system-ui, sans-serif;
+    letter-spacing: 1px;
 }
 
 /* Divider */
@@ -186,13 +184,6 @@
     gap: 8px;
 }
 
-/* Simple 2-col grid utility */
-.editor-scope .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-}
-
 /* Chips */
 .editor-scope .chip {
     padding: 12px 14px;
@@ -223,11 +214,61 @@
     box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .18);
 }
 
+/* Smaller text inside chips for Button Style */
+.editor-scope .mini-label {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1.2;
+    color: #111;
+}
+
+.editor-scope .chip-sm {
+    font-size: 12px;
+    padding: 10px 12px;
+}
+
+/* Color input styled like a chip (full width, no gaps) */
+.editor-scope .color-chip {
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--chip-stroke);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
+}
+
+.editor-scope .color-chip.is-active,
+.editor-scope .color-chip:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .18);
+}
+
+.editor-scope .color-input {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    outline: none;
+    width: 100%;
+    height: 44px;
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    border-radius: 12px;
+}
+
+.editor-scope .color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.editor-scope .color-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 10px;
+}
+
 /* Upload & images */
 .editor-scope .editor-work-image-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    /* fixed 2 per row */
     gap: 12px;
     width: 100%;
 }
@@ -275,9 +316,7 @@
     align-items: center;
     justify-content: center;
     border: 2px dashed #1E2A38;
-    /* navy */
     background: #f3f6fb;
-    /* light navy tint */
     border-radius: 16px;
     min-height: 132px;
     cursor: pointer;
@@ -294,14 +333,12 @@
 .editor-scope .avatar-tile:hover,
 .editor-scope .add-work-image-placeholder:hover {
     border-color: #001f54;
-    /* darker navy */
     background: #e9eff9;
 }
 
 .editor-scope .upload-text {
     font-weight: 800;
     color: #1E2A38;
-    /* navy */
 }
 
 /* Remove image (×) */
@@ -507,7 +544,7 @@
     width: 100% !important;
 }
 
-/* --- Pretty rounded scrollbar (WebKit/Chromium) --- */
+/* Scrollbars */
 .editor-scope .myprofile-editor::-webkit-scrollbar {
     width: 10px;
 }
@@ -518,93 +555,22 @@
 }
 
 .editor-scope .myprofile-editor::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg,
-            rgba(30, 42, 56, .55),
-            rgba(30, 42, 56, .75));
+    background: linear-gradient(180deg, rgba(30, 42, 56, .55), rgba(30, 42, 56, .75));
     border-radius: 14px;
     border: 2px solid transparent;
     background-clip: padding-box;
 }
 
 .editor-scope .myprofile-editor::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg,
-            rgba(30, 42, 56, .7),
-            rgba(30, 42, 56, .9));
+    background: linear-gradient(180deg, rgba(30, 42, 56, .7), rgba(30, 42, 56, .9));
 }
 
-/* --- Pretty scrollbar (Firefox) --- */
 .editor-scope .myprofile-editor {
     scrollbar-width: thin;
     scrollbar-color: rgba(30, 42, 56, .6) transparent;
 }
 
-/* Fallback for browsers without aspect-ratio support */
-@supports not (aspect-ratio: 4 / 3) {
-
-    .editor-scope .work-image-item-wrapper,
-    .editor-scope .add-work-image-placeholder {
-        position: relative;
-    }
-
-    .editor-scope .work-image-item-wrapper::before,
-    .editor-scope .add-work-image-placeholder::before {
-        content: "";
-        display: block;
-        padding-top: 75%;
-    }
-
-    .editor-scope .work-image-item-wrapper>.work-image-preview,
-    .editor-scope .add-work-image-placeholder>* {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-    }
-}
-
-/* —— small label + small chip text for Button Style —— */
-.editor-scope .mini-label {
-    font-weight: 700;
-    font-size: 12px;
-    line-height: 1.2;
-    color: #111;
-}
-
-.editor-scope .chip-sm {
-    font-size: 12px;
-    padding: 10px 12px;
-}
-
-/* Color input styled like a chip (full width, no inner text) */
-.editor-scope .color-chip {
-    padding: 0;
-    overflow: hidden;
-    border: 1px solid var(--chip-stroke);
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
-}
-
-.editor-scope .color-chip.is-active,
-.editor-scope .color-chip:focus-within {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .18);
-}
-
-.editor-scope .color-input {
-    appearance: none;
-    -webkit-appearance: none;
-    border: none;
-    outline: none;
-    width: 100%;
-    height: 44px;
-    padding: 0;
-    cursor: pointer;
-    background: transparent;
-    border-radius: 12px;
-}
-
-/* Social links: one per row with an icon */
+/* Social links layout */
 .editor-scope .social-list {
     display: grid;
     grid-template-columns: 1fr;
@@ -627,10 +593,4 @@
     height: 22px;
     object-fit: contain;
     filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .1));
-}
-
-/* Shrink the control text in Button Style area */
-.editor-scope .choice-label+.stack .chip,
-.editor-scope .choice-label+.stack .chip-sm {
-    font-size: 12px;
 }
