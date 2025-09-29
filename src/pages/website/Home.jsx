@@ -426,7 +426,7 @@ export default function Home() {
             How You’ll Use It <span className="orange">In The Real World</span>
           </h2>
           <h3 className="desktop-body-xs text-center">
-            No more typing your number, digging for photos, or swapping paper. It’s 2026 — time for a change.
+            No more typing your number, digging for photos, or swapping paper. It’s almost 2026 — time for a change.
           </h3>
         </div>
 
