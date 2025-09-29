@@ -9,6 +9,15 @@ import LinkedInIcon from "../assets/icons/icons8-linkedin.svg";
 import XIcon from "../assets/icons/icons8-x.svg";
 import TikTokIcon from "../assets/icons/icons8-tiktok.svg";
 
+// Pick black/white text for a given hex background
+const getContrastColor = (hex = "#000000") => {
+    const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec((hex || "").trim());
+    if (!m) return "#111";
+    const r = parseInt(m[1], 16), g = parseInt(m[2], 16), b = parseInt(m[3], 16);
+    const L = 0.2126 * (r / 255) + 0.7152 * (g / 255) + 0.0722 * (b / 255);
+    return L > 0.6 ? "#111" : "#fff";
+};
+
 /**
  * Orange-themed Editor (scoped styles via .editor-scope)
  */
@@ -95,7 +104,7 @@ export default function Editor({
     const currentOrder = sanitizeOrder(state.sectionOrder?.length ? state.sectionOrder : defaultOrder);
 
     const moveSectionUp = (idx) => {
-        // Prevent moving anything above index 1 if that would push "main" down
+        // Prevent moving anything above index 1 (index 0 is "main")
         if (idx <= 1) return;
         const next = [...currentOrder];
         [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
@@ -109,6 +118,9 @@ export default function Editor({
         [next[idx + 1], next[idx]] = [next[idx], next[idx + 1]];
         updateState({ sectionOrder: sanitizeOrder(next) });
     };
+
+    const pickedBg = state.buttonBgColor || "#F47629";
+    const pickedInk = getContrastColor(pickedBg);
 
     return (
         <div className="myprofile-editor-wrapper editor-scope" id="myprofile-editor" style={columnScrollStyle}>
@@ -170,7 +182,7 @@ export default function Editor({
                                 onClick={() => updateState({ font })}
                                 style={{
                                     fontFamily: `'${font}', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`,
-                                    fontWeight: 800,
+                                    fontWeight: 700, // keep their face, adopt 12px/700 via CSS
                                 }}
                             >
                                 {font}
@@ -187,11 +199,18 @@ export default function Editor({
                     {/* Background - looks like a chip, full width */}
                     <div className="stack">
                         <label className="mini-label">Button Background</label>
-                        <div className="chip color-chip w-full">
+                        <div
+                            className="chip color-chip w-full"
+                            style={{
+                                "--picked-color": pickedBg,
+                                "--picked-ink": pickedInk,
+                            }}
+                        >
+                            <span className="color-chip-label">Choose colour</span>
                             <input
                                 type="color"
                                 className="color-input"
-                                value={state.buttonBgColor || "#F47629"}
+                                value={pickedBg}
                                 onChange={(e) => updateState({ buttonBgColor: e.target.value })}
                                 aria-label="Choose button background colour"
                             />
@@ -259,7 +278,6 @@ export default function Editor({
                                                 disabled
                                                 aria-label="Main section is locked at the top"
                                                 title="Main section is locked at the top"
-                                                style={{ cursor: "not-allowed", opacity: 0.6 }}
                                             >
                                                 {/* Inline lock SVG so you don't need an asset */}
                                                 <svg
@@ -316,7 +334,6 @@ export default function Editor({
                         })}
                     </ul>
                 </div>
-
 
                 {/* Main Section */}
                 <hr className="divider" />
