@@ -16,20 +16,40 @@
 .editor-scope.myprofile-editor-wrapper {
     position: relative;
     height: 100%;
+    overflow: visible;
+    /* let outer glow show on all sides */
+    padding-block: 0;
+    /* keep original height */
 }
 
 /* Card */
 .editor-scope .myprofile-editor {
     background: #fff;
-    border: 1px solid rgba(0, 0, 0, .06);
     border-radius: 20px;
-    box-shadow: 0 10px 24px rgba(30, 42, 56, .08);
     padding: 18px;
     max-width: 500px;
     margin: 0 auto;
     height: 100%;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+
+    /* thin orange edge + outside halo (not clipped) */
+    outline: 1px solid rgba(255, 107, 0, .22);
+    outline-offset: 0;
+    box-shadow: none;
+    filter: drop-shadow(0 0 6px rgba(255, 107, 0, .22)) drop-shadow(0 0 20px rgba(255, 107, 0, .26));
+    padding-right: 10px;
+    /* tiny gutter so rounded scrollbar doesn't hug text */
+}
+
+/* fallback for very old browsers without drop-shadow */
+@supports not (filter: drop-shadow(0 0 1px #000)) {
+    .editor-scope .myprofile-editor {
+        border: 1px solid rgba(255, 107, 0, .22);
+        box-shadow:
+            0 0 0 2px rgba(255, 107, 0, .12),
+            0 0 22px rgba(255, 107, 0, .28);
+    }
 }
 
 /* Title */
@@ -67,6 +87,13 @@
     color: #111;
 }
 
+/* Small vertical stack helper (used in Button Style) */
+.editor-scope .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 /* Choice labels */
 .editor-scope .choice-label {
     font: 800 14px/1.3 var(--main-font-family, Inter, system-ui);
@@ -76,6 +103,7 @@
 /* Theme chip override (Cal Sans) */
 .editor-scope .theme-chip {
     font-family: "Cal Sans", Inter, system-ui, sans-serif;
+    letter-spacing: 1px;
 }
 
 /* Inputs */
@@ -125,7 +153,6 @@
 .editor-scope .section-chip {
     border: 1px solid var(--chip-stroke);
     background: #e5e7eb;
-    /* darker gray */
     padding: 7px 12px;
     border-radius: 999px;
     font-weight: 700;
@@ -150,14 +177,19 @@
 .editor-scope .option-row.split-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    /* 50% each */
     gap: 8px;
 }
 
 .editor-scope .option-row.split-3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    /* always split in thirds */
+    gap: 8px;
+}
+
+/* Simple 2-col grid utility */
+.editor-scope .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
 }
 
@@ -219,9 +251,19 @@
     background: #fff;
 }
 
+/* Work image aspect ratio 4:3 */
+.editor-scope .work-image-item-wrapper,
+.editor-scope .add-work-image-placeholder {
+    aspect-ratio: 4 / 3;
+    height: auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
 .editor-scope .work-image-preview {
     width: 100%;
-    height: 180px;
+    height: 100%;
+    aspect-ratio: auto;
     object-fit: cover;
     border-radius: 12px;
 }
@@ -232,8 +274,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px dashed rgb(var(--accent-rgb) / .35);
-    background: #fff8f5;
+    border: 2px dashed #1E2A38;
+    /* navy */
+    background: #f3f6fb;
+    /* light navy tint */
     border-radius: 16px;
     min-height: 132px;
     cursor: pointer;
@@ -249,13 +293,15 @@
 .editor-scope .cover-photo-card:hover,
 .editor-scope .avatar-tile:hover,
 .editor-scope .add-work-image-placeholder:hover {
-    border-color: var(--accent);
-    background: #fff3ea;
+    border-color: #001f54;
+    /* darker navy */
+    background: #e9eff9;
 }
 
 .editor-scope .upload-text {
     font-weight: 800;
-    color: #c34e00;
+    color: #1E2A38;
+    /* navy */
 }
 
 /* Remove image (×) */
@@ -271,9 +317,7 @@
     line-height: 26px;
     text-align: center;
     font-size: 10px;
-    /* smaller */
     font-weight: 500;
-    /* lighter */
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(30, 42, 56, .2);
     z-index: 2;
@@ -314,6 +358,20 @@
 
 .editor-scope .btn:active {
     transform: translateY(1px);
+}
+
+.editor-scope .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--chip-stroke);
+    color: #111;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-weight: 700;
+}
+
+.editor-scope .btn-ghost:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .12);
 }
 
 .editor-scope .btn-accent {
@@ -358,6 +416,42 @@
 
 .editor-scope .btn-danger:hover {
     background: #b10012;
+}
+
+/* Section Order list */
+.editor-scope .sortable-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.editor-scope .sortable-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid var(--chip-stroke);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
+}
+
+.editor-scope .drag-label {
+    font-weight: 800;
+    color: #9ca3af;
+    user-select: none;
+}
+
+.editor-scope .section-name {
+    font-weight: 700;
+}
+
+.editor-scope .order-buttons {
+    display: flex;
+    gap: 6px;
 }
 
 /* Subscription overlay */
@@ -413,68 +507,6 @@
     width: 100% !important;
 }
 
-/* Theme chip override */
-.editor-scope .theme-chip {
-    font-family: "Cal Sans", Inter, system-ui, sans-serif;
-    letter-spacing: 1px;
-    /* added */
-}
-
-/* Work image aspect ratio 4:3 */
-.editor-scope .work-image-preview {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    /* enforce 4:3 */
-    object-fit: cover;
-    border-radius: 12px;
-}
-
-/* Upload placeholders use navy instead of orange */
-.editor-scope .cover-photo-card,
-.editor-scope .avatar-tile,
-.editor-scope .add-work-image-placeholder {
-    border: 2px dashed #1E2A38;
-    /* navy */
-    background: #f3f6fb;
-    /* light navy tint */
-}
-
-.editor-scope .cover-photo-card:hover,
-.editor-scope .avatar-tile:hover,
-.editor-scope .add-work-image-placeholder:hover {
-    border-color: #001f54;
-    /* darker navy */
-    background: #e9eff9;
-}
-
-.editor-scope .upload-text {
-    font-weight: 800;
-    color: #1E2A38;
-    /* navy */
-}
-
-/* Scoped full-width override for Add buttons */
-.editor-scope .desktop-button.navy-button.w-full {
-    width: 100% !important;
-}
-
-/* --- Editor card: centered orange glow, not cut off --- */
-.editor-scope.myprofile-editor-wrapper {
-    overflow: visible;
-    /* let outer glow show on all sides */
-}
-
-.editor-scope .myprofile-editor {
-    border: 1px solid rgba(255, 107, 0, .22);
-    /* centered soft glow (no vertical offset) */
-    box-shadow:
-        0 0 0 2px rgba(255, 107, 0, .12),
-        0 0 22px rgba(255, 107, 0, .28);
-    border-radius: 20px;
-    padding-right: 10px;
-    /* tiny gutter so rounded scrollbar doesn't hug text */
-}
-
 /* --- Pretty rounded scrollbar (WebKit/Chromium) --- */
 .editor-scope .myprofile-editor::-webkit-scrollbar {
     width: 10px;
@@ -490,7 +522,6 @@
             rgba(30, 42, 56, .55),
             rgba(30, 42, 56, .75));
     border-radius: 14px;
-    /* rounded right edge look */
     border: 2px solid transparent;
     background-clip: padding-box;
 }
@@ -507,68 +538,7 @@
     scrollbar-color: rgba(30, 42, 56, .6) transparent;
 }
 
-/* don't let the parent clip the glow */
-.editor-scope.myprofile-editor-wrapper {
-    overflow: visible;
-    padding-block: 0;
-    /* keep original height */
-}
-
-/* keep card height the same but render glow outside using drop-shadow */
-.editor-scope .myprofile-editor {
-    height: 100%;
-    overflow-y: auto;
-    border-radius: 20px;
-
-    /* thin orange edge */
-    outline: 1px solid rgba(255, 107, 0, .22);
-    outline-offset: 0;
-
-    /* centered halo that doesn't affect size and isn't clipped by the card */
-    box-shadow: none;
-    filter:
-        drop-shadow(0 0 6px rgba(255, 107, 0, .22)) drop-shadow(0 0 20px rgba(255, 107, 0, .26));
-}
-
-/* fallback for very old browsers without drop-shadow */
-@supports not (filter: drop-shadow(0 0 1px #000)) {
-    .editor-scope .myprofile-editor {
-        box-shadow:
-            0 0 0 2px rgba(255, 107, 0, .12),
-            0 0 22px rgba(255, 107, 0, .28);
-    }
-}
-
-/* --- Work images & Add tile: always 4:3 --- */
-.editor-scope .work-image-item-wrapper,
-.editor-scope .add-work-image-placeholder {
-    aspect-ratio: 4 / 3;
-    height: auto;
-    /* override any fixed height */
-    min-height: 0;
-    /* prevent older min-height rules from fighting */
-    overflow: hidden;
-    /* keep corners clean */
-}
-
-/* Image fills the 4:3 box */
-.editor-scope .work-image-preview {
-    width: 100%;
-    height: 100%;
-    /* override the old 180px */
-    aspect-ratio: auto;
-    /* let the container control ratio */
-    object-fit: cover;
-    border-radius: 12px;
-}
-
-/* Center the + Add image(s) text nicely inside its 4:3 box */
-.editor-scope .add-work-image-placeholder {
-    display: grid;
-    place-items: center;
-}
-
-/* Fallback for browsers without aspect-ratio support (older Safari, etc.) */
+/* Fallback for browsers without aspect-ratio support */
 @supports not (aspect-ratio: 4 / 3) {
 
     .editor-scope .work-image-item-wrapper,
@@ -581,7 +551,6 @@
         content: "";
         display: block;
         padding-top: 75%;
-        /* 4:3 = 3/4 = 75% */
     }
 
     .editor-scope .work-image-item-wrapper>.work-image-preview,
