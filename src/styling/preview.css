@@ -619,3 +619,84 @@
 }
 
 /* About card etc. remain as in your sheet */
+
+/* keep your existing variables & base rules */
+
+/* Headings now align by inline style */
+.mock-title {
+    text-align: inherit;
+}
+
+.mock-subtitle {
+    text-align: inherit;
+}
+
+/* Contact card – same look */
+.mock-contact-details {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, .06);
+    color: #111;
+    padding: 14px;
+    display: grid;
+    gap: 10px;
+}
+
+.mock-contact-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 12px;
+}
+
+.mock-contact-value {
+    margin: 0;
+    text-align: right;
+    color: #111;
+    font-weight: 500;
+    font-size: .95rem;
+}
+
+/* --- NEW: social icons INSIDE the contact card --- */
+.mock-contact-socials {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    /* 20px gap from phone row */
+}
+
+.contact-social-chip {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, .08);
+    background: #fff;
+    /* light mode bg */
+    box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
+}
+
+.contact-social-glyph {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+/* Dark mode inversion: card stays white, but chips are dark w/ white icons */
+.preview-scope .myprofile-preview.dark .contact-social-chip {
+    background: #111;
+    border-color: #111;
+}
+
+.preview-scope .myprofile-preview.dark .contact-social-glyph {
+    filter: invert(1);
+}
+
+/* Optional hover */
+.contact-social-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .10);
+}

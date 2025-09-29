@@ -1,6 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { previewPlaceholders } from "../store/businessCardStore";
 
+// use the same svg assets as in the editor
+import FacebookIcon from "../assets/icons/icons8-facebook.svg";
+import InstagramIcon from "../assets/icons/icons8-instagram.svg";
+import LinkedInIcon from "../assets/icons/icons8-linkedin.svg";
+import XIcon from "../assets/icons/icons8-x.svg";
+import TikTokIcon from "../assets/icons/icons8-tiktok.svg";
+
 export default function Preview({
     state,
     isMobile,
@@ -28,7 +35,6 @@ export default function Preview({
     const shouldShowPlaceholders = !hasSavedData;
     const isDarkMode = state.pageTheme === "dark";
 
-    // Button + alignment
     const ctaStyle = {
         backgroundColor: state.buttonBgColor || "#F47629",
         color: state.buttonTextColor === "black" ? "#000000" : "#FFFFFF",
@@ -37,15 +43,22 @@ export default function Preview({
 
     const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
     const sectionOrder =
-        (Array.isArray(state.sectionOrder) && state.sectionOrder.length && state.sectionOrder) || defaultOrder;
+        (Array.isArray(state.sectionOrder) && state.sectionOrder.length && state.sectionOrder) ||
+        defaultOrder;
 
-    const previewFullName = state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
-    const previewJobTitle = state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : "");
+    const previewFullName =
+        state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
+    const previewJobTitle =
+        state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : "");
     const previewBio = state.bio || (shouldShowPlaceholders ? previewPlaceholders.bio : "");
-    const previewEmail = state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : "");
-    const previewPhone = state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : "");
-    const previewCoverPhotoSrc = state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
-    const previewAvatarSrc = state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
+    const previewEmail =
+        state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : "");
+    const previewPhone =
+        state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : "");
+    const previewCoverPhotoSrc =
+        state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
+    const previewAvatarSrc =
+        state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
 
     const previewWorkImages = useMemo(() => {
         if (state.workImages && state.workImages.length > 0) return state.workImages;
@@ -62,7 +75,7 @@ export default function Preview({
         return shouldShowPlaceholders ? previewPlaceholders.reviews : [];
     }, [state.reviews, shouldShowPlaceholders]);
 
-    // Mobile expand/collapse
+    // smooth open/close of mobile preview
     useEffect(() => {
         if (!isMobile) return;
         const el = mpWrapRef.current;
@@ -85,30 +98,30 @@ export default function Preview({
         el.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
     };
 
-    // Social row (unchanged)
-    const SocialRow = () => {
+    // icons inside the Contact card
+    const ContactSocials = () => {
         const links = [
-            { key: "facebook_url", label: "Facebook", className: "icon-facebook", url: state.facebook_url },
-            { key: "instagram_url", label: "Instagram", className: "icon-instagram", url: state.instagram_url },
-            { key: "linkedin_url", label: "LinkedIn", className: "icon-linkedin", url: state.linkedin_url },
-            { key: "x_url", label: "X", className: "icon-x", url: state.x_url },
-            { key: "tiktok_url", label: "TikTok", className: "icon-tiktok", url: state.tiktok_url },
-        ].filter((x) => typeof x.url === "string" && x.url.trim().length > 0);
+            { key: "facebook_url", label: "Facebook", href: state.facebook_url, icon: FacebookIcon },
+            { key: "instagram_url", label: "Instagram", href: state.instagram_url, icon: InstagramIcon },
+            { key: "linkedin_url", label: "LinkedIn", href: state.linkedin_url, icon: LinkedInIcon },
+            { key: "x_url", label: "X", href: state.x_url, icon: XIcon },
+            { key: "tiktok_url", label: "TikTok", href: state.tiktok_url, icon: TikTokIcon },
+        ].filter((x) => typeof x.href === "string" && x.href.trim());
 
         if (!links.length) return null;
+
         return (
-            <div className="social-row" style={{ display: "flex", gap: 12, justifyContent: "space-around", marginTop: 8 }}>
+            <div className="mock-contact-socials">
                 {links.map((l) => (
                     <a
                         key={l.key}
-                        href={l.url}
+                        href={l.href}
                         target="_blank"
                         rel="noreferrer"
                         aria-label={l.label}
-                        className={`social-icon ${l.className}`}
-                        style={{ textDecoration: "none" }}
+                        className="contact-social-chip"
                     >
-                        <span className="social-fallback-label">{l.label}</span>
+                        <img src={l.icon} alt="" className="contact-social-glyph" />
                     </a>
                 ))}
             </div>
@@ -249,7 +262,7 @@ export default function Preview({
         showContactSection && (previewEmail || previewPhone) ? (
             <>
                 <p className="mock-section-title">Contact Details</p>
-                {/* DO NOT pass contentAlign here — fixed layout */}
+                {/* keep layout fixed; no contentAlign here */}
                 <div className="mock-contact-details">
                     <div className="mock-contact-item">
                         <p className="mock-contact-label">Email:</p>
@@ -259,8 +272,10 @@ export default function Preview({
                         <p className="mock-contact-label">Phone:</p>
                         <p className="mock-contact-value">{previewPhone}</p>
                     </div>
+
+                    {/* social icons inside the same white card */}
+                    <ContactSocials />
                 </div>
-                <SocialRow />
             </>
         ) : null;
 
@@ -270,9 +285,10 @@ export default function Preview({
                 {(shouldShowPlaceholders || !!state.coverPhoto) && (
                     <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
                 )}
-                {/* Heading now respects alignment */}
+                {/* headings honor the chosen alignment */}
                 <h2 className="mock-title" style={contentAlign}>
-                    {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
+                    {state.mainHeading ||
+                        (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
                 </h2>
                 <p className="mock-subtitle" style={contentAlign}>
                     {state.subHeading ||
@@ -287,10 +303,11 @@ export default function Preview({
         ) : null;
 
     const AboutSection = () =>
-        showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) ? (
+        showAboutMeSection &&
+            (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) ? (
             <>
                 <p className="mock-section-title">About me</p>
-                {/* No contentAlign on container so name/title unaffected */}
+                {/* name/title unaffected by alignment; bio follows it */}
                 <div className={`mock-about-container ${aboutMeLayout}`}>
                     <div className="mock-about-content-group">
                         <div className="mock-about-header-group">
@@ -300,7 +317,6 @@ export default function Preview({
                                 <p className="mock-profile-role">{previewJobTitle}</p>
                             </div>
                         </div>
-                        {/* Only bio follows alignment */}
                         <p className="mock-bio-text" style={contentAlign}>{previewBio}</p>
                     </div>
                 </div>
