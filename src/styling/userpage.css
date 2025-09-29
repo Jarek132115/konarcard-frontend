@@ -686,3 +686,13 @@
     border-color: rgba(255, 255, 255, .08);
     color: #fff;
 }
+
+/* Make headings take the full column width inside the centered flex container */
+.landing-main-heading,
+.landing-sub-heading {
+    width: 100%;
+    max-width: 800px;
+    /* keep your cap */
+    align-self: stretch;
+    /* optional: ensures stretching even with other alignments */
+}
