@@ -561,3 +561,76 @@
         height: 100%;
     }
 }
+
+/* —— small label + small chip text for Button Style —— */
+.editor-scope .mini-label {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1.2;
+    color: #111;
+}
+
+.editor-scope .chip-sm {
+    font-size: 12px;
+    padding: 10px 12px;
+}
+
+/* Color input styled like a chip (full width, no inner text) */
+.editor-scope .color-chip {
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--chip-stroke);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
+}
+
+.editor-scope .color-chip.is-active,
+.editor-scope .color-chip:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .18);
+}
+
+.editor-scope .color-input {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    outline: none;
+    width: 100%;
+    height: 44px;
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    border-radius: 12px;
+}
+
+/* Social links: one per row with an icon */
+.editor-scope .social-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+.editor-scope .social-row-input {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    align-items: center;
+    gap: 10px;
+}
+
+.editor-scope .social-row-input .text-input {
+    width: 100%;
+}
+
+.editor-scope .social-icon {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .1));
+}
+
+/* Shrink the control text in Button Style area */
+.editor-scope .choice-label+.stack .chip,
+.editor-scope .choice-label+.stack .chip-sm {
+    font-size: 12px;
+}

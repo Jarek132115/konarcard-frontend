@@ -1,9 +1,13 @@
 import React, { useRef } from "react";
 import { previewPlaceholders } from "../store/businessCardStore";
 
-/**
- * Orange-themed Editor (scoped styles via .editor-scope)
- */
+// Social icons
+import FacebookIcon from "../assets/icons/icons8-facebook.svg";
+import InstagramIcon from "../assets/icons/icons8-instagram.svg";
+import LinkedInIcon from "../assets/icons/icons8-linkedin.svg";
+import XIcon from "../assets/icons/icons8-x.svg";
+import TikTokIcon from "../assets/icons/icons8-tiktok.svg";
+
 export default function Editor({
     state,
     updateState,
@@ -64,11 +68,11 @@ export default function Editor({
     const handleRemoveReview = (i) =>
         updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
-    // helpers for Section Order control
+    // section order helpers (unchanged)
     const readableSectionName = (key) =>
         ({ main: "Main", about: "About Me", work: "My Work", services: "My Services", reviews: "Reviews", contact: "Contact" }[key] || key);
 
-    const defaultOrder = ['main', 'about', 'work', 'services', 'reviews', 'contact'];
+    const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
     const currentOrder = Array.isArray(state.sectionOrder) && state.sectionOrder.length ? state.sectionOrder : defaultOrder;
 
     const moveSectionUp = (idx) => {
@@ -153,37 +157,39 @@ export default function Editor({
                     </div>
                 </div>
 
-                {/* Button Style */}
+                {/* Button Style (stacked, 12px controls) */}
                 <hr className="divider" />
                 <div className="input-block">
                     <div className="choice-label">Button Style</div>
 
-                    <div className="option-row split-2">
-                        <div className="stack">
-                            <label>Button Background</label>
+                    {/* Background - looks like a chip, full width */}
+                    <div className="stack">
+                        <label className="mini-label">Button Background</label>
+                        <div className="chip color-chip w-full">
                             <input
                                 type="color"
+                                className="color-input"
                                 value={state.buttonBgColor || "#F47629"}
                                 onChange={(e) => updateState({ buttonBgColor: e.target.value })}
                                 aria-label="Choose button background colour"
-                                style={{ width: 56, height: 40, padding: 0, border: "none", background: "transparent" }}
                             />
                         </div>
+                    </div>
 
-                        <div className="stack">
-                            <label>Button Text Colour</label>
-                            <div className="option-row split-2">
-                                {["white", "black"].map((c) => (
-                                    <button
-                                        key={c}
-                                        type="button"
-                                        className={`chip ${state.buttonTextColor === c ? "is-active" : ""}`}
-                                        onClick={() => updateState({ buttonTextColor: c })}
-                                    >
-                                        {c[0].toUpperCase() + c.slice(1)}
-                                    </button>
-                                ))}
-                            </div>
+                    {/* Text Colour - small chips, full width, stacked */}
+                    <div className="stack">
+                        <label className="mini-label">Button Text Colour</label>
+                        <div className="option-row">
+                            {["white", "black"].map((c) => (
+                                <button
+                                    key={c}
+                                    type="button"
+                                    className={`chip chip-sm ${state.buttonTextColor === c ? "is-active" : ""}`}
+                                    onClick={() => updateState({ buttonTextColor: c })}
+                                >
+                                    {c[0].toUpperCase() + c.slice(1)}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -203,7 +209,7 @@ export default function Editor({
                             </button>
                         ))}
                     </div>
-                    <p className="hint">Aligns the content inside sections (section titles stay unchanged).</p>
+                    {/* removed the long hint */}
                 </div>
 
                 {/* Section Order */}
@@ -596,42 +602,62 @@ export default function Editor({
                             />
                         </div>
 
-                        {/* Social Links */}
+                        {/* Social Links — one per row with icons */}
                         <div className="input-block">
                             <div className="choice-label">Social Links</div>
-                            <div className="grid-2">
-                                <input
-                                    className="text-input"
-                                    placeholder="Facebook URL"
-                                    value={state.facebook_url || ""}
-                                    onChange={(e) => updateState({ facebook_url: e.target.value })}
-                                />
-                                <input
-                                    className="text-input"
-                                    placeholder="Instagram URL"
-                                    value={state.instagram_url || ""}
-                                    onChange={(e) => updateState({ instagram_url: e.target.value })}
-                                />
-                                <input
-                                    className="text-input"
-                                    placeholder="LinkedIn URL"
-                                    value={state.linkedin_url || ""}
-                                    onChange={(e) => updateState({ linkedin_url: e.target.value })}
-                                />
-                                <input
-                                    className="text-input"
-                                    placeholder="X (Twitter) URL"
-                                    value={state.x_url || ""}
-                                    onChange={(e) => updateState({ x_url: e.target.value })}
-                                />
-                                <input
-                                    className="text-input"
-                                    placeholder="TikTok URL"
-                                    value={state.tiktok_url || ""}
-                                    onChange={(e) => updateState({ tiktok_url: e.target.value })}
-                                />
+
+                            <div className="social-list">
+                                <div className="social-row-input">
+                                    <img src={FacebookIcon} alt="" className="social-icon" />
+                                    <input
+                                        className="text-input"
+                                        placeholder="Facebook URL"
+                                        value={state.facebook_url || ""}
+                                        onChange={(e) => updateState({ facebook_url: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="social-row-input">
+                                    <img src={InstagramIcon} alt="" className="social-icon" />
+                                    <input
+                                        className="text-input"
+                                        placeholder="Instagram URL"
+                                        value={state.instagram_url || ""}
+                                        onChange={(e) => updateState({ instagram_url: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="social-row-input">
+                                    <img src={LinkedInIcon} alt="" className="social-icon" />
+                                    <input
+                                        className="text-input"
+                                        placeholder="LinkedIn URL"
+                                        value={state.linkedin_url || ""}
+                                        onChange={(e) => updateState({ linkedin_url: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="social-row-input">
+                                    <img src={XIcon} alt="" className="social-icon" />
+                                    <input
+                                        className="text-input"
+                                        placeholder="X (Twitter) URL"
+                                        value={state.x_url || ""}
+                                        onChange={(e) => updateState({ x_url: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="social-row-input">
+                                    <img src={TikTokIcon} alt="" className="social-icon" />
+                                    <input
+                                        className="text-input"
+                                        placeholder="TikTok URL"
+                                        value={state.tiktok_url || ""}
+                                        onChange={(e) => updateState({ tiktok_url: e.target.value })}
+                                    />
+                                </div>
                             </div>
-                            <p className="hint">Icons will show as a single row under your contact info on the public page.</p>
+                            {/* removed the “icons will show…” text */}
                         </div>
                     </>
                 )}
