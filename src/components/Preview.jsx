@@ -75,21 +75,78 @@ export default function Preview({
         return shouldShowPlaceholders ? previewPlaceholders.reviews : [];
     }, [state.reviews, shouldShowPlaceholders]);
 
-    // smooth open/close of mobile preview
+    // Smooth open/close of mobile preview — WITHOUT capping height after open
     useEffect(() => {
         if (!isMobile) return;
         const el = mpWrapRef.current;
         if (!el) return;
+
+        let ro; // ResizeObserver
+        const onEnd = (e) => {
+            if (e.propertyName !== "max-height") return;
+            if (previewOpen) {
+                // unlock after the open transition so content can grow naturally
+                el.style.maxHeight = "none";
+            }
+            el.removeEventListener("transitionend", onEnd);
+        };
+
+        // ensure predictable base styles
+        el.style.willChange = "max-height, opacity, transform";
+        el.style.overflow = "hidden";
+
         if (previewOpen) {
-            el.style.maxHeight = el.scrollHeight + "px";
-            el.style.opacity = "1";
-            el.style.transform = "scale(1)";
-        } else {
-            el.style.maxHeight = "0px";
+            // measure natural height
+            el.style.maxHeight = "none";
+            const target = el.scrollHeight;
+
+            // set to 0 to start the animation
             el.style.opacity = "0";
             el.style.transform = "scale(.98)";
+            el.style.maxHeight = "0px";
+
+            requestAnimationFrame(() => {
+                el.style.opacity = "1";
+                el.style.transform = "scale(1)";
+                el.style.maxHeight = `${target}px`;
+            });
+
+            el.addEventListener("transitionend", onEnd);
+
+            // while opening, keep adjusting to late content (images/fonts)
+            if ("ResizeObserver" in window) {
+                ro = new ResizeObserver(() => {
+                    if (el.style.maxHeight !== "none") {
+                        el.style.maxHeight = `${el.scrollHeight}px`;
+                    }
+                });
+                ro.observe(el);
+            }
+        } else {
+            // closing: animate from current natural height to 0
+            const current = el.scrollHeight; // if unlocked (none), this still returns the pixels
+            el.style.maxHeight = `${current}px`;
+            requestAnimationFrame(() => {
+                el.style.opacity = "0";
+                el.style.transform = "scale(.98)";
+                el.style.maxHeight = "0px";
+            });
         }
-    }, [isMobile, previewOpen, state, servicesDisplayMode, reviewsDisplayMode, aboutMeLayout]);
+
+        return () => {
+            if (ro) ro.disconnect();
+            el.removeEventListener("transitionend", onEnd);
+        };
+    }, [
+        isMobile,
+        previewOpen,
+
+        // re-run the effect if content structure changes while collapsed/opening
+        state,
+        servicesDisplayMode,
+        reviewsDisplayMode,
+        aboutMeLayout,
+    ]);
 
     const scrollCarousel = (ref, direction) => {
         const el = ref?.current;
@@ -317,7 +374,9 @@ export default function Preview({
                                 <p className="mock-profile-role">{previewJobTitle}</p>
                             </div>
                         </div>
-                        <p className="mock-bio-text" style={contentAlign}>{previewBio}</p>
+                        <p className="mock-bio-text" style={contentAlign}>
+                            {previewBio}
+                        </p>
                     </div>
                 </div>
             </>
@@ -367,13 +426,8 @@ export default function Preview({
                     </div>
 
                     <div
-                        className="mp-preview-wrap"
+                        className={`mp-preview-wrap ${previewOpen ? "open" : "closed"}`}
                         ref={mpWrapRef}
-                        style={{
-                            maxHeight: previewOpen ? undefined : 0,
-                            overflow: "hidden",
-                            transition: "max-height .3s ease, opacity .3s ease, transform .3s ease",
-                        }}
                     >
                         <div className="mock-phone mobile-preview">
                             <div className="mock-phone-scrollable-content">

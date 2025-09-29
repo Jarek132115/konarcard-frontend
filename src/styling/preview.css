@@ -134,6 +134,19 @@
     transition: max-height .3s ease, opacity .3s ease, transform .3s ease;
 }
 
+/* state classes (JS toggles open/closed) */
+.preview-scope .mp-preview-wrap.closed {
+    max-height: 0;
+    opacity: 0;
+    transform: scale(.98);
+}
+
+.preview-scope .mp-preview-wrap.open {
+    /* opacity/transform handled by JS during animation; left here for steady-state */
+    opacity: 1;
+    transform: scale(1);
+}
+
 /* =============================
    PREVIEW (mock site) styles
    ============================= */
@@ -383,7 +396,7 @@
 .mock-work-image-item-wrapper {
     width: 100%;
     aspect-ratio: 4 / 2.5;
-    /* ← updated */
+    /* updated */
     overflow: hidden;
     border-radius: 14px;
     border: 1px solid var(--border-color, rgba(0, 0, 0, .06));
