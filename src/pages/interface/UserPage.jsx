@@ -1,3 +1,4 @@
+// src/pages/UserPage/UserPage.jsx
 import React, { useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -68,17 +69,34 @@ export default function UserPage() {
     };
 
     const goEditProfile = () => {
-        try { localStorage.setItem("scrollToEditorOnLoad", "1"); } catch { }
+        try {
+            localStorage.setItem("scrollToEditorOnLoad", "1");
+        } catch { }
         window.location.href = "/myprofile";
     };
     const goContactSupportSmart = () => {
-        try { localStorage.setItem("openChatOnLoad", "1"); } catch { }
+        try {
+            localStorage.setItem("openChatOnLoad", "1");
+        } catch { }
         window.location.href = authUser ? "/contact-support" : "/contactus";
     };
 
-    if (isLoading) return <div className="user-landing-page" style={centerPage}><p>Loading business card...</p></div>;
-    if (isError) { console.error(error); return unavailable(username, goEditProfile, goContactSupportSmart); }
-    if (!businessCard) return <div className="user-landing-page" style={centerPage}><p>No business card found for “{username}”.</p></div>;
+    if (isLoading)
+        return (
+            <div className="user-landing-page" style={centerPage}>
+                <p>Loading business card...</p>
+            </div>
+        );
+    if (isError) {
+        console.error(error);
+        return unavailable(username, goEditProfile, goContactSupportSmart);
+    }
+    if (!businessCard)
+        return (
+            <div className="user-landing-page" style={centerPage}>
+                <p>No business card found for “{username}”.</p>
+            </div>
+        );
 
     /* ---------------------------
        Robust field fallbacks
@@ -108,9 +126,10 @@ export default function UserPage() {
     // Section order
     const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
     const savedOrderRaw = read(businessCard, ["section_order", "sectionOrder"], []);
-    const sectionOrder = Array.isArray(savedOrderRaw) && savedOrderRaw.length
-        ? savedOrderRaw.filter((k) => defaultOrder.includes(k))
-        : defaultOrder;
+    const sectionOrder =
+        Array.isArray(savedOrderRaw) && savedOrderRaw.length
+            ? savedOrderRaw.filter((k) => defaultOrder.includes(k))
+            : defaultOrder;
 
     // Core data
     const cover = read(businessCard, ["cover_photo", "coverPhoto"], "");
@@ -133,15 +152,22 @@ export default function UserPage() {
     if (!(isSubscribed || isTrialActive)) return unavailable(username, goEditProfile, goContactSupportSmart);
 
     // Decide what to render
-    const showMainSection = showMain && (nonEmpty(cover) || nonEmpty(mainHeading) || nonEmpty(subHeading) || hasContact);
-    const showAboutMeSection = showAbout && (nonEmpty(avatar) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(bio));
+    const showMainSection =
+        showMain && (nonEmpty(cover) || nonEmpty(mainHeading) || nonEmpty(subHeading) || hasContact);
+    const showAboutMeSection =
+        showAbout && (nonEmpty(avatar) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(bio));
     const showWorkSection = showWork && works.length > 0;
     const showServicesSection = showServices && services.length > 0;
     const showReviewsSection = showReviews && reviews.length > 0;
     const showContactSection = showContact && hasContact;
 
-    const nothingToShow = !showMainSection && !showAboutMeSection && !showWorkSection &&
-        !showServicesSection && !showReviewsSection && !showContactSection;
+    const nothingToShow =
+        !showMainSection &&
+        !showAboutMeSection &&
+        !showWorkSection &&
+        !showServicesSection &&
+        !showReviewsSection &&
+        !showContactSection;
 
     const themeStyles = {
         backgroundColor: pageTheme === "dark" ? "#1F1F1F" : "#FFFFFF",
@@ -150,6 +176,9 @@ export default function UserPage() {
     };
     const contentAlign = { textAlign: textAlign || "left" };
     const ctaStyle = { backgroundColor: buttonBg, color: buttonTxt === "black" ? "#000000" : "#FFFFFF" };
+
+    // For star row alignment in reviews
+    const flexJustify = textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : "flex-start";
 
     const socialLinks = [
         { key: "facebook_url", url: read(businessCard, ["facebook_url", "facebookUrl"]), icon: FacebookIcon, label: "Facebook" },
@@ -194,8 +223,12 @@ export default function UserPage() {
         return (
             <div className="user-landing-page" style={{ ...themeStyles, ...centerPage, padding: 24 }}>
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
-                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>This profile isn’t set up yet</h2>
-                    <p style={{ marginTop: 10, opacity: 0.8 }}>@{username} hasn’t published any content here yet.</p>
+                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>
+                        This profile isn’t set up yet
+                    </h2>
+                    <p style={{ marginTop: 10, opacity: 0.8 }}>
+                        @{username} hasn’t published any content here yet.
+                    </p>
                 </div>
             </div>
         );
@@ -208,10 +241,23 @@ export default function UserPage() {
         showMainSection ? (
             <>
                 {nonEmpty(cover) && <img src={cover} alt="Cover" className="landing-cover-photo" />}
-                {nonEmpty(mainHeading) && <h2 className="landing-main-heading" style={contentAlign}>{mainHeading}</h2>}
-                {nonEmpty(subHeading) && <p className="landing-sub-heading" style={contentAlign}>{subHeading}</p>}
+                {nonEmpty(mainHeading) && (
+                    <h2 className="landing-main-heading" style={contentAlign}>
+                        {mainHeading}
+                    </h2>
+                )}
+                {nonEmpty(subHeading) && (
+                    <p className="landing-sub-heading" style={contentAlign}>
+                        {subHeading}
+                    </p>
+                )}
                 {hasContact && (
-                    <button type="button" onClick={handleExchangeContact} className="landing-action-button" style={ctaStyle}>
+                    <button
+                        type="button"
+                        onClick={handleExchangeContact}
+                        className="landing-action-button"
+                        style={ctaStyle}
+                    >
                         Save My Number
                     </button>
                 )}
@@ -228,7 +274,11 @@ export default function UserPage() {
                         {nonEmpty(fullName) && <p className="landing-profile-name">{fullName}</p>}
                         {nonEmpty(jobTitle) && <p className="landing-profile-role">{jobTitle}</p>}
                     </div>
-                    {nonEmpty(bio) && <p className="landing-bio-text" style={contentAlign}>{bio}</p>}
+                    {nonEmpty(bio) && (
+                        <p className="landing-bio-text" style={contentAlign}>
+                            {bio}
+                        </p>
+                    )}
                 </div>
             </>
         ) : null;
@@ -239,17 +289,33 @@ export default function UserPage() {
                 <p className="landing-section-title">My Work</p>
                 {(workMode === "list" || workMode === "grid") && (
                     <div className={`landing-work-gallery ${workMode}`}>
-                        {works.map((url, i) => <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />)}
+                        {works.map((url, i) => (
+                            <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />
+                        ))}
                     </div>
                 )}
                 {workMode === "carousel" && (
                     <div className="user-carousel-container">
                         <div className="user-carousel-nav-buttons">
-                            <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(workCarouselRef, "left")}>&#9664;</button>
-                            <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(workCarouselRef, "right")}>&#9654;</button>
+                            <button
+                                type="button"
+                                className="user-carousel-nav-button left-arrow"
+                                onClick={() => scrollCarousel(workCarouselRef, "left")}
+                            >
+                                &#9664;
+                            </button>
+                            <button
+                                type="button"
+                                className="user-carousel-nav-button right-arrow"
+                                onClick={() => scrollCarousel(workCarouselRef, "right")}
+                            >
+                                &#9654;
+                            </button>
                         </div>
                         <div ref={workCarouselRef} className="user-work-gallery-carousel">
-                            {works.map((url, i) => <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />)}
+                            {works.map((url, i) => (
+                                <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />
+                            ))}
                         </div>
                     </div>
                 )}
@@ -263,11 +329,27 @@ export default function UserPage() {
                 <div className="user-carousel-container">
                     {servicesMode === "carousel" && (
                         <div className="user-carousel-nav-buttons">
-                            <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(servicesCarouselRef, "left")}>&#9664;</button>
-                            <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(servicesCarouselRef, "right")}>&#9654;</button>
+                            <button
+                                type="button"
+                                className="user-carousel-nav-button left-arrow"
+                                onClick={() => scrollCarousel(servicesCarouselRef, "left")}
+                            >
+                                &#9664;
+                            </button>
+                            <button
+                                type="button"
+                                className="user-carousel-nav-button right-arrow"
+                                onClick={() => scrollCarousel(servicesCarouselRef, "right")}
+                            >
+                                &#9654;
+                            </button>
                         </div>
                     )}
-                    <div ref={servicesCarouselRef} className={`user-services-list-carousel ${servicesMode === "carousel" ? "" : "list"}`}>
+                    <div
+                        ref={servicesCarouselRef}
+                        className={`user-services-list-carousel ${servicesMode === "carousel" ? "" : "list"}`}
+                        style={contentAlign}
+                    >
                         {services.map((s, i) => (
                             <div key={i} className="landing-service-item">
                                 {nonEmpty(s.name) && <p className="landing-service-name">{s.name}</p>}
@@ -286,18 +368,44 @@ export default function UserPage() {
                 <div className="user-carousel-container">
                     {reviewsMode === "carousel" && (
                         <div className="user-carousel-nav-buttons">
-                            <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(reviewsCarouselRef, "left")}>&#9664;</button>
-                            <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(reviewsCarouselRef, "right")}>&#9654;</button>
+                            <button
+                                type="button"
+                                className="user-carousel-nav-button left-arrow"
+                                onClick={() => scrollCarousel(reviewsCarouselRef, "left")}
+                            >
+                                &#9664;
+                            </button>
+                            <button
+                                type="button"
+                                className="user-carousel-nav-button right-arrow"
+                                onClick={() => scrollCarousel(reviewsCarouselRef, "right")}
+                            >
+                                &#9654;
+                            </button>
                         </div>
                     )}
-                    <div ref={reviewsCarouselRef} className={`user-reviews-list-carousel ${reviewsMode === "carousel" ? "" : "list"}`}>
+                    <div
+                        ref={reviewsCarouselRef}
+                        className={`user-reviews-list-carousel ${reviewsMode === "carousel" ? "" : "list"}`}
+                        style={contentAlign}
+                    >
                         {reviews.map((r, i) => (
-                            <div key={i} className="landing-review-card">
-                                <div className="landing-star-rating">
-                                    {Array(r.rating || 0).fill().map((_, j) => <span key={`f-${j}`}>★</span>)}
-                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, j) => <span key={`e-${j}`} className="empty-star">★</span>)}
+                            <div key={i} className="landing-review-card" style={contentAlign}>
+                                <div className="landing-star-rating" style={{ justifyContent: flexJustify }}>
+                                    {Array(r.rating || 0)
+                                        .fill()
+                                        .map((_, j) => (
+                                            <span key={`f-${j}`}>★</span>
+                                        ))}
+                                    {Array(Math.max(0, 5 - (r.rating || 0)))
+                                        .fill()
+                                        .map((_, j) => (
+                                            <span key={`e-${j}`} className="empty-star">
+                                                ★
+                                            </span>
+                                        ))}
                                 </div>
-                                {nonEmpty(r.text) && <p className="landing-review-text">"{r.text}"</p>}
+                                {nonEmpty(r.text) && <p className="landing-review-text">{`"${r.text}"`}</p>}
                                 {nonEmpty(r.name) && <p className="landing-reviewer-name">{r.name}</p>}
                             </div>
                         ))}
@@ -326,7 +434,14 @@ export default function UserPage() {
                     {socialLinks.length > 0 && (
                         <div className="landing-contact-socials" aria-label="Social links">
                             {socialLinks.map((s) => (
-                                <a key={s.key} href={s.url} target="_blank" rel="noreferrer" className="landing-contact-social-chip" aria-label={s.label}>
+                                <a
+                                    key={s.key}
+                                    href={s.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="landing-contact-social-chip"
+                                    aria-label={s.label}
+                                >
                                     <img src={s.icon} alt="" className="landing-contact-social-glyph" />
                                 </a>
                             ))}
@@ -346,11 +461,7 @@ export default function UserPage() {
         contact: <ContactSection key="contact" />,
     };
 
-    return (
-        <div className="user-landing-page" style={themeStyles}>
-            {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}
-        </div>
-    );
+    return <div className="user-landing-page" style={themeStyles}>{sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}</div>;
 
     /* Unavailable */
     function unavailable(username, onEdit, onContact) {
@@ -364,21 +475,31 @@ export default function UserPage() {
                         <li className="unavailable-item">
                             <span className="dot" />
                             <div className="reason">
-                                <div className="desktop-body-s"><strong>No content published yet.</strong></div>
+                                <div className="desktop-body-s">
+                                    <strong>No content published yet.</strong>
+                                </div>
                                 <div className="desktop-body-xs">The owner might not have created their page.</div>
                             </div>
                         </li>
                         <li className="unavailable-item">
                             <span className="dot" />
                             <div className="reason">
-                                <div className="desktop-body-s"><strong>Access expired.</strong></div>
-                                <div className="desktop-body-xs">The free trial may have ended or a subscription is required.</div>
+                                <div className="desktop-body-s">
+                                    <strong>Access expired.</strong>
+                                </div>
+                                <div className="desktop-body-xs">
+                                    The free trial may have ended or a subscription is required.
+                                </div>
                             </div>
                         </li>
                     </ul>
                     <div className="unavailable-actions">
-                        <button className="desktop-button cta-blue-button" onClick={onEdit}>Create / Edit My Profile</button>
-                        <button className="desktop-button cta-black-button" onClick={onContact}>Contact us</button>
+                        <button className="desktop-button cta-blue-button" onClick={onEdit}>
+                            Create / Edit My Profile
+                        </button>
+                        <button className="desktop-button cta-black-button" onClick={onContact}>
+                            Contact us
+                        </button>
                     </div>
                 </div>
             </div>

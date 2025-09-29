@@ -1,3 +1,5 @@
+/* src/pages/UserPage/userPage.css */
+
 /* Main container */
 .user-landing-page {
     --card-bg-light: #F6F8FC;
@@ -351,13 +353,21 @@
     scroll-snap-type: none;
 }
 
-/* My Work images: 4 / 2.5 (Preview match) */
+/* My Work images: 4 / 2.5 (with card-like border to match sections) */
 .landing-work-gallery img.landing-work-image,
 .user-work-gallery-carousel .landing-work-image {
     width: 100%;
     aspect-ratio: 4 / 2.5;
     object-fit: cover;
     border-radius: 14px;
+    background: var(--card-bg-light);
+    border: 1px solid rgba(0, 0, 0, .06);
+}
+
+/* Dark mode border/background for work images */
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-work-image {
+    background: var(--card-bg-dark);
+    border-color: rgba(255, 255, 255, .12);
 }
 
 /* ---------- Services ---------- */
@@ -372,7 +382,8 @@
 
 .landing-service-item {
     padding: 14px 16px;
-    text-align: left;
+    text-align: inherit;
+    /* respect chosen alignment */
     display: flex;
     flex-direction: column;
     background: var(--card-bg-light);
@@ -405,6 +416,8 @@
 .landing-review-card {
     padding: 14px 16px;
     background: var(--card-bg-light);
+    text-align: inherit;
+    /* respect chosen alignment */
 }
 
 .landing-star-rating {
@@ -413,7 +426,7 @@
     margin-bottom: 6px;
     letter-spacing: .06rem;
     display: flex;
-    justify-content: center;
+    /* justify-content set inline per chosen alignment */
 }
 
 .landing-star-rating .empty-star {
@@ -425,7 +438,8 @@
     color: #111;
     margin: 0 0 10px 0;
     line-height: 1.5;
-    text-align: center;
+    text-align: inherit;
+    /* respect chosen alignment */
 }
 
 .landing-reviewer-name {
@@ -433,7 +447,8 @@
     font-weight: 700;
     color: #333;
     margin: 0;
-    text-align: center;
+    text-align: inherit;
+    /* respect chosen alignment */
 }
 
 /* DARK mode variants for services/reviews list rows */
