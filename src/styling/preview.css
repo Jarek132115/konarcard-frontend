@@ -740,3 +740,10 @@
 .preview-scope .myprofile-preview.dark .contact-social-glyph {
     filter: invert(1);
 }
+
+/* Make the CTA use the page’s chosen font */
+.preview-scope .mock-button {
+    font-family: inherit;
+}
+
+/* or: font: inherit; */
