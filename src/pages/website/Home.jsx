@@ -1,44 +1,54 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+
+/* Layout */
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import ProfileScroller from "../../components/ProfileScroller";
 
+/* Media */
 import Section1Image from "../../assets/images/Section-1-Image.png";
 import EditProfile from "../../assets/images/Edit-Profile.jpg";
 import WhyYouNeedThis from "../../assets/images/WhyYouNeedThis.png";
 import People from "../../assets/images/People.png";
 
+/* Icons */
 import ReviewStars from "../../assets/icons/Stars-Icon.svg";
 
+/* “How to share” */
 import NFCBusinessCard from "../../assets/images/NFC-Business-Card.jpg";
 import ScanQRCode from "../../assets/images/ScanQR-Code.jpg";
 import LinkInBio from "../../assets/images/LinkInBio.jpg";
 import SMSSend from "../../assets/images/SMSSend.jpg";
 
+/* Avatars */
 import pp1 from "../../assets/images/pp1.png";
 import pp2 from "../../assets/images/pp2.png";
 import pp3 from "../../assets/images/pp3.png";
 import pp4 from "../../assets/images/pp4.png";
 
+/* Product gallery */
 import ProductCover from "../../assets/images/Product-Cover.png";
 import ProductImage1 from "../../assets/images/Product-Image-1.png";
 import ProductImage2 from "../../assets/images/Product-Image-2.png";
 import ProductImage3 from "../../assets/images/Product-Image-3.png";
 import ProductImage4 from "../../assets/images/Product-Image-4.png";
 
-export default function Home() {
-  // product gallery
-  const [cardMainImage, setCardMainImage] = useState(ProductCover);
-  const cardThumbs = [
-    ProductCover,
-    ProductImage1,
-    ProductImage2,
-    ProductImage3,
-    ProductImage4,
-  ];
+/* NEW: Real profile mockups (UP1–UP8) */
+import UP1 from "../../assets/images/UP1.jpg";
+import UP2 from "../../assets/images/UP2.jpg";
+import UP3 from "../../assets/images/UP3.jpg";
+import UP4 from "../../assets/images/UP4.jpg";
+import UP5 from "../../assets/images/UP5.jpg";
+import UP6 from "../../assets/images/UP6.jpg";
+import UP7 from "../../assets/images/UP7.jpg";
+import UP8 from "../../assets/images/UP8.jpg";
 
-  // video modal
+export default function Home() {
+  /* product gallery */
+  const [cardMainImage, setCardMainImage] = useState(ProductCover);
+  const cardThumbs = [ProductCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4];
+
+  /* video modal */
   const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   useEffect(() => {
@@ -53,37 +63,39 @@ export default function Home() {
     };
   }, [isVideoOpen]);
 
-  // subscription features
+  /* subscription features */
   const featureBlocks = [
     { t: "Simple editor", s: "Get set up quickly — no tech skills required." },
     { t: "Show what you do", s: "Share your services and work in seconds." },
-    {
-      t: "Unlimited images",
-      s: "Upload every project — no limits on galleries.",
-    },
-    {
-      t: "Unlimited services",
-      s: "List each job you offer with clear pricing.",
-    },
+    { t: "Unlimited images", s: "Upload every project — no limits on galleries." },
+    { t: "Unlimited services", s: "List each job you offer with clear pricing." },
     { t: "Unlimited reviews", s: "Build instant trust with social proof." },
-    {
-      t: "Custom branding",
-      s: "Your logo, colours and layout — make it yours.",
-    },
-    {
-      t: "Share everywhere",
-      s: "Link, QR code, and NFC tap for instant contacts.",
-    },
-    {
-      t: "Instant updates",
-      s: "Edit once — changes go live across your profile.",
-    },
-    {
-      t: "No app needed",
-      s: "Works on iPhone & Android, right in the browser.",
-    },
+    { t: "Custom branding", s: "Your logo, colours and layout — make it yours." },
+    { t: "Share everywhere", s: "Link, QR code, and NFC tap for instant contacts." },
+    { t: "Instant updates", s: "Edit once — changes go live across your profile." },
+    { t: "No app needed", s: "Works on iPhone & Android, right in the browser." },
     { t: "Cancel anytime", s: "Stay flexible — no long contracts." },
   ];
+
+  /* ===== NEW: Real profiles scroller (UP1–UP8) =====
+     - exact order
+     - each gets a soft background tone (pastel) aligned to the button vibe
+     - 10px gap (handled via CSS var)
+     - infinite, seamless marquee (duplicated set)
+  */
+  const profiles = [
+    { id: "UP1", src: UP1, tone: "#E9F7E9" }, // soft green
+    { id: "UP2", src: UP2, tone: "#E7ECF9" }, // soft blue
+    { id: "UP3", src: UP3, tone: "#FFF0E3" }, // soft orange/peach
+    { id: "UP4", src: UP4, tone: "#E8F0EE" }, // soft teal/grey
+    { id: "UP5", src: UP5, tone: "#EEF2FA" }, // soft cold blue
+    { id: "UP6", src: UP6, tone: "#E9F7E9" }, // soft green
+    { id: "UP7", src: UP7, tone: "#FFF3E8" }, // soft orange
+    { id: "UP8", src: UP8, tone: "#E7ECF9" }, // soft blue
+  ];
+
+  /* we duplicate so the marquee can translate -50% seamlessly */
+  const looped = [...profiles, ...profiles];
 
   return (
     <>
@@ -156,7 +168,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* PROFILES — EDGE-TO-EDGE, DRAGGABLE, LOOPING SCROLLER */}
+      {/* PROFILES — EDGE-TO-EDGE, LOOPING SCROLLER (UP1–UP8) */}
       <div className="section profiles-edge">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
@@ -167,10 +179,32 @@ export default function Home() {
           </h3>
         </div>
 
-        {/* Edge-to-edge scroller */}
-        <ProfileScroller />
+        {/* Edge-to-edge container */}
+        <div className="profiles-scroller-outer" aria-label="Customer profile previews">
+          <div className="profiles-scroller">
+            {/* The track is duplicated so the marquee can loop seamlessly */}
+            <div className="profiles-track marquee">
+              {looped.map((p, i) => (
+                <div
+                  key={`${p.id}-${i}`}
+                  className="phone-pill v4"
+                  style={{ ["--pill"]: p.tone }}
+                  aria-hidden={i >= profiles.length ? "true" : "false"}
+                >
+                  <div className="phone-viewport v4" role="img" aria-label={`Profile preview ${p.id}`}>
+                    <img
+                      src={p.src}
+                      alt={`Real profile preview ${p.id}`}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "10px" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
-
 
       {/* 3 STEPS */}
       <div className="section steps-v1">
@@ -178,9 +212,6 @@ export default function Home() {
           <h2 className="desktop-h3 text-center">
             Get Set Up in <span className="orange">3 Quick</span> <span className="orange">& Easy</span> Steps
           </h2>
-          <h3 className="desktop-body-xs text-center">
-            From sign-up to sharing — it only takes minutes.
-          </h3>
         </div>
 
         <div className="steps-grid-3">
@@ -243,54 +274,32 @@ export default function Home() {
           </h3>
         </div>
 
-        {/* Comparison Row */}
         <div className="realworld-comparison">
           <div className="comparison-box">
             <span className="comparison-badge old">The old way</span>
             <ul className="dot-list">
-              <li>
-                <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span>Type your phone &amp; email into their phone</span>
-              </li>
-              <li>
-                <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span>Scroll your camera roll for examples</span>
-              </li>
-              <li>
-                <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span>Hope they don’t lose your details</span>
-              </li>
+              <li><span className="blue-dot bullet-dot" aria-hidden="true" /><span>Type your phone &amp; email into their phone</span></li>
+              <li><span className="blue-dot bullet-dot" aria-hidden="true" /><span>Scroll your camera roll for examples</span></li>
+              <li><span className="blue-dot bullet-dot" aria-hidden="true" /><span>Hope they don’t lose your details</span></li>
             </ul>
           </div>
 
           <div className="comparison-box">
             <span className="comparison-badge new">The Konar way</span>
             <ul className="dot-list">
-              <li>
-                <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span>Tap once — they get your full profile</span>
-              </li>
-              <li>
-                <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span>Photos, services, reviews, and contact — saved</span>
-              </li>
-              <li>
-                <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span>Follow-ups are faster and more professional</span>
-              </li>
+              <li><span className="blue-dot bullet-dot" aria-hidden="true" /><span>Tap once — they get your full profile</span></li>
+              <li><span className="blue-dot bullet-dot" aria-hidden="true" /><span>Photos, services, reviews, and contact — saved</span></li>
+              <li><span className="blue-dot bullet-dot" aria-hidden="true" /><span>Follow-ups are faster and more professional</span></li>
             </ul>
           </div>
         </div>
 
-        {/* Use Case Grid */}
         <div className="realworld-grid">
           <div className="realworld-card">
             <div className="realworld-card-icon">👷</div>
             <div className="realworld-card-text">
               <h4>On Site, With a Client</h4>
-              <p className="equal">
-                Tap your KonarCard. Their phone opens your profile and saves your details instantly.
-              </p>
+              <p className="equal">Tap your KonarCard. Their phone opens your profile and saves your details instantly.</p>
             </div>
           </div>
 
@@ -298,9 +307,7 @@ export default function Home() {
             <div className="realworld-card-icon">📄</div>
             <div className="realworld-card-text">
               <h4>After a Quote</h4>
-              <p className="equal">
-                Send the link in messages so they can revisit your services and reviews while deciding.
-              </p>
+              <p className="equal">Send the link in messages so they can revisit your services and reviews while deciding.</p>
             </div>
           </div>
 
@@ -308,9 +315,7 @@ export default function Home() {
             <div className="realworld-card-icon">🤝</div>
             <div className="realworld-card-text">
               <h4>Networking / Trade Counter</h4>
-              <p className="equal">
-                No stacks of cards. One tap per person, unlimited times.
-              </p>
+              <p className="equal">No stacks of cards. One tap per person, unlimited times.</p>
             </div>
           </div>
 
@@ -318,9 +323,7 @@ export default function Home() {
             <div className="realworld-card-icon">🚐</div>
             <div className="realworld-card-text">
               <h4>Van QR &amp; Site Board</h4>
-              <p className="equal">
-                Print your QR. Passers-by scan to view your work and save your number.
-              </p>
+              <p className="equal">Print your QR. Passers-by scan to view your work and save your number.</p>
             </div>
           </div>
 
@@ -328,9 +331,7 @@ export default function Home() {
             <div className="realworld-card-icon">📱</div>
             <div className="realworld-card-text">
               <h4>Social &amp; Link In Bio</h4>
-              <p className="equal">
-                Add your link to Instagram, Facebook, and TikTok to convert views into enquiries.
-              </p>
+              <p className="equal">Add your link to Instagram, Facebook, TikTok to convert views into enquiries.</p>
             </div>
           </div>
 
@@ -338,9 +339,7 @@ export default function Home() {
             <div className="realworld-card-icon">⚡</div>
             <div className="realworld-card-text">
               <h4>Updates in Seconds</h4>
-              <p className="equal">
-                Change prices or photos once — your card shares the latest version everywhere.
-              </p>
+              <p className="equal">Change prices or photos once — your card shares the latest version everywhere.</p>
             </div>
           </div>
         </div>
@@ -364,24 +363,16 @@ export default function Home() {
         </div>
 
         <div className="why-vs-grid">
-          {/* Split visual */}
           <div className="vs-media" aria-hidden="true">
             <div className="vs-split">
-              <div className="vs-pane vs-left" role="img" aria-label="Pile of paper business cards"></div>
-
+              <div className="vs-pane vs-left" role="img" aria-label="Pile of paper business cards" />
               <div className="vs-pane vs-right">
-                <img
-                  src={NFCBusinessCard}
-                  alt="KonarCard — tap to share instantly"
-                  loading="lazy"
-                />
+                <img src={NFCBusinessCard} alt="KonarCard — tap to share instantly" loading="lazy" />
               </div>
-
               <div className="vs-badge" aria-hidden="true">VS</div>
             </div>
           </div>
 
-          {/* Copy & bullets */}
           <div className="vs-copy">
             <ul className="vs-bullets">
               <li>
@@ -414,54 +405,38 @@ export default function Home() {
         </div>
       </div>
 
-
       {/* HOW TO SHARE */}
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
             One Profile. <span className="orange">Shared</span> Every Way.
           </h2>
-          <h3 className="desktop-body-xs text-center">
-            Four simple ways to get your details in front of clients.
-          </h3>
+          <h3 className="desktop-body-xs text-center">Four simple ways to get your details in front of clients.</h3>
         </div>
 
         <div className="share-grid">
           <div className="share-card">
-            <div className="share-card-media">
-              <img
-                src={NFCBusinessCard}
-                alt="NFC business card being tapped to share details"
-              />
-            </div>
+            <div className="share-card-media"><img src={NFCBusinessCard} alt="NFC tap to share details" /></div>
             <h4 className="desktop-h6">NFC Business Card</h4>
             <p className="desktop-body-xs">Tap to Instantly Share Details With Anyone</p>
           </div>
 
           <div className="share-card">
-            <div className="share-card-media">
-              <img src={ScanQRCode} alt="Scanning a QR code to open profile" />
-            </div>
+            <div className="share-card-media"><img src={ScanQRCode} alt="Scan a QR code to open profile" /></div>
             <h4 className="desktop-h6">Scan QR Code</h4>
             <p className="desktop-body-xs">Scan the QR Code To Open Your Profile</p>
           </div>
 
           <div className="share-card">
-            <div className="share-card-media">
-              <img src={SMSSend} alt="Sharing your link via message apps" />
-            </div>
+            <div className="share-card-media"><img src={SMSSend} alt="Share your link via message apps" /></div>
             <h4 className="desktop-h6">Share via Message</h4>
             <p className="desktop-body-xs">WhatsApp, SMS, Messenger &amp; More</p>
           </div>
 
           <div className="share-card">
-            <div className="share-card-media">
-              <img src={LinkInBio} alt="Link in bio on social profile" />
-            </div>
+            <div className="share-card-media"><img src={LinkInBio} alt="Link in bio on social profile" /></div>
             <h4 className="desktop-h6">Link In Bio</h4>
-            <p className="desktop-body-xs">
-              Add to Instagram, Facebook, TikTok, or your website.
-            </p>
+            <p className="desktop-body-xs">Add to Instagram, Facebook, TikTok, or your website.</p>
           </div>
         </div>
       </div>
@@ -470,8 +445,7 @@ export default function Home() {
       <div className="section">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
-            One <span className="orange">Plan</span>. One <span className="orange">Card</span>. Endless{" "}
-            <span className="orange">Opportunities</span>.
+            One <span className="orange">Plan</span>. One <span className="orange">Card</span>. Endless <span className="orange">Opportunities</span>.
           </h2>
           <h3 className="desktop-body-xs text-center">
             Start your Power Profile free for 14 days. Add the Konar Card when you’re ready.
@@ -479,13 +453,8 @@ export default function Home() {
         </div>
 
         <div className="pricing-grid nfc-pricing-page">
-          <div
-            className="pricing-card pricing-card--subscription nfc-pricing-subscription"
-            style={{
-              borderRadius: 16,
-              boxShadow: "0px 0px 8px rgba(255, 107, 0, 0.3)",
-            }}
-          >
+          <div className="pricing-card pricing-card--subscription nfc-pricing-subscription"
+            style={{ borderRadius: 16, boxShadow: "0px 0px 8px rgba(255, 107, 0, 0.3)" }}>
             <div className="pricing-inner">
               <div className="pricing-content">
                 <div className="pricing-head">
@@ -499,12 +468,8 @@ export default function Home() {
                 <div className="pricing-divider" />
 
                 <div className="pricing-price-row">
-                  <span className="desktop-h1" style={{ paddingRight: 5 }}>
-                    £4.95
-                  </span>
-                  <span className="desktop-button" style={{ padding: 0 }}>
-                    /Month
-                  </span>
+                  <span className="desktop-h1" style={{ paddingRight: 5 }}>£4.95</span>
+                  <span className="desktop-button" style={{ padding: 0 }}>/Month</span>
                 </div>
 
                 <ul className="feature-grid">
@@ -521,24 +486,15 @@ export default function Home() {
               </div>
 
               <div className="pricing-bottom">
-                <Link
-                  to="/productandplan/konarsubscription"
-                  className="orange-button desktop-button"
-                  style={{ width: "100%" }}
-                >
+                <Link to="/productandplan/konarsubscription" className="orange-button desktop-button" style={{ width: "100%" }}>
                   View Subscription Details
                 </Link>
               </div>
             </div>
           </div>
 
-          <div
-            className="pricing-card pricing-card--product nfc-pricing-product"
-            style={{
-              borderRadius: 16,
-              boxShadow: "0px 0px 8px rgba(30, 42, 56, 0.3)",
-            }}
-          >
+          <div className="pricing-card pricing-card--product nfc-pricing-product"
+            style={{ borderRadius: 16, boxShadow: "0px 0px 8px rgba(30, 42, 56, 0.3)" }}>
             <div className="pricing-inner">
               <div className="pricing-content">
                 <div className="pricing-head">
@@ -587,36 +543,22 @@ export default function Home() {
       {/* PEOPLE */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">
-            Tradies Are Making the <span className="orange">Switch.</span>
-          </h2>
-          <h3 className="desktop-body-xs text-center">
-            See how Konar is used every day by real tradespeople.
-          </h3>
+          <h2 className="desktop-h3 text-center">Tradies Are Making the <span className="orange">Switch.</span></h2>
+          <h3 className="desktop-body-xs text-center">See how Konar is used every day by real tradespeople.</h3>
         </div>
 
         <div className="people-grid">
-          <div className="pg-item span-2">
-            <img src={People} alt="Tradies using Konar on the job site" />
-          </div>
-          <div className="pg-item">
-            <img src={People} alt="Konar card being shared with a client" />
-          </div>
-          <div className="pg-item">
-            <img src={People} alt="Tradie showing Konar card close-up" />
-          </div>
-          <div className="pg-item span-2">
-            <img src={People} alt="Team on site showing Konar cards" />
-          </div>
+          <div className="pg-item span-2"><img src={People} alt="Tradies using Konar on the job site" /></div>
+          <div className="pg-item"><img src={People} alt="Konar card being shared with a client" /></div>
+          <div className="pg-item"><img src={People} alt="Tradie showing Konar card close-up" /></div>
+          <div className="pg-item span-2"><img src={People} alt="Team on site showing Konar cards" /></div>
         </div>
       </div>
 
       {/* REVIEWS */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">
-            The <span className="orange">#1 Tool</span> Tradies Are Talking About
-          </h2>
+          <h2 className="desktop-h3 text-center">The <span className="orange">#1 Tool</span> Tradies Are Talking About</h2>
           <h3 className="desktop-body-xs text-center">
             Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
           </h3>
@@ -633,9 +575,7 @@ export default function Home() {
                 <div className="review-div-person">
                   <img src={pp1} alt="Reviewer" />
                   <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: "#333" }}>
-                      Plumber
-                    </p>
+                    <p className="desktop-body-xs" style={{ color: "#333" }}>Plumber</p>
                     <p className="desktop-body-s">Mark B</p>
                   </div>
                 </div>
@@ -649,9 +589,7 @@ export default function Home() {
                 <div className="review-div-person">
                   <img src={pp2} alt="Reviewer" />
                   <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: "#333" }}>
-                      Electrician
-                    </p>
+                    <p className="desktop-body-xs" style={{ color: "#333" }}>Electrician</p>
                     <p className="desktop-body-s">Jake C</p>
                   </div>
                 </div>
@@ -667,9 +605,7 @@ export default function Home() {
                 <div className="review-div-person">
                   <img src={pp3} alt="Reviewer" />
                   <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: "#333" }}>
-                      Builder
-                    </p>
+                    <p className="desktop-body-xs" style={{ color: "#333" }}>Builder</p>
                     <p className="desktop-body-s">Tom G</p>
                   </div>
                 </div>
@@ -683,9 +619,7 @@ export default function Home() {
                 <div className="review-div-person">
                   <img src={pp4} alt="Reviewer" />
                   <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: "#333" }}>
-                      Roofer
-                    </p>
+                    <p className="desktop-body-xs" style={{ color: "#333" }}>Roofer</p>
                     <p className="desktop-body-s">Sam H</p>
                   </div>
                 </div>
@@ -695,21 +629,15 @@ export default function Home() {
         </div>
 
         <div className="faq-cta">
-          <Link to="/reviews" className="navy-button desktop-button">
-            Read More Reviews
-          </Link>
+          <Link to="/reviews" className="navy-button desktop-button">Read More Reviews</Link>
         </div>
       </div>
 
       {/* FAQ */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">
-            Frequently <span className="orange">Asked</span> Questions
-          </h2>
-          <h3 className="desktop-body-xs text-center">
-            For any other questions, feel free to reach out.
-          </h3>
+          <h2 className="desktop-h3 text-center">Frequently <span className="orange">Asked</span> Questions</h2>
+          <h3 className="desktop-body-xs text-center">For any other questions, feel free to reach out.</h3>
         </div>
 
         <div className="faq-container">
@@ -718,36 +646,28 @@ export default function Home() {
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">What is the Konar NFC business card?</p>
-                <p className="desktop-body-xs">
-                  A reusable card with an NFC chip that opens your Konar profile with a tap—no app, no battery, no fuss.
-                </p>
+                <p className="desktop-body-xs">A reusable card with an NFC chip that opens your Konar profile with a tap—no app, no battery, no fuss.</p>
               </div>
             </div>
             <div className="section-list">
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">How does the tap actually work?</p>
-                <p className="desktop-body-xs">
-                  The phone’s NFC reader powers the chip and instantly launches your live profile link.
-                </p>
+                <p className="desktop-body-xs">The phone’s NFC reader powers the chip and instantly launches your live profile link.</p>
               </div>
             </div>
             <div className="section-list">
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">What if someone can’t tap?</p>
-                <p className="desktop-body-xs">
-                  Every card also has a QR code and a shareable link—so there’s always a backup.
-                </p>
+                <p className="desktop-body-xs">Every card also has a QR code and a shareable link—so there’s always a backup.</p>
               </div>
             </div>
             <div className="section-list">
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">What can my profile include?</p>
-                <p className="desktop-body-xs">
-                  Your name, job title, bio, photos, services with pricing, reviews, and contact details.
-                </p>
+                <p className="desktop-body-xs">Your name, job title, bio, photos, services with pricing, reviews, and contact details.</p>
               </div>
             </div>
           </div>
@@ -757,45 +677,35 @@ export default function Home() {
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">Can I edit my page later?</p>
-                <p className="desktop-body-xs">
-                  Yes. Update info, images, services, or layout anytime—changes go live instantly.
-                </p>
+                <p className="desktop-body-xs">Yes. Update info, images, services, or layout anytime—changes go live instantly.</p>
               </div>
             </div>
             <div className="section-list">
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">How do I share my page?</p>
-                <p className="desktop-body-xs">
-                  Tap your card, show the QR code, or copy your unique link to send anywhere.
-                </p>
+                <p className="desktop-body-xs">Tap your card, show the QR code, or copy your unique link to send anywhere.</p>
               </div>
             </div>
             <div className="section-list">
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">How does the free trial work?</p>
-                <p className="desktop-body-xs">
-                  The free trial includes the same features as the subscription. If it ends and you don’t subscribe, your page will no longer show.
-                </p>
+                <p className="desktop-body-xs">The free trial includes the same features as the subscription. If it ends and you don’t subscribe, your page will no longer show.</p>
               </div>
             </div>
             <div className="section-list">
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
                 <p className="desktop-h6">What happens if I cancel?</p>
-                <p className="desktop-body-xs">
-                  You’ll keep access until the end of the billing period. After that, your page won’t show until you subscribe again.
-                </p>
+                <p className="desktop-body-xs">You’ll keep access until the end of the billing period. After that, your page won’t show until you subscribe again.</p>
               </div>
             </div>
           </div>
         </div>
 
         <div className="faq-cta">
-          <Link to="/faq" className="navy-button desktop-button">
-            Read More Q&amp;A
-          </Link>
+          <Link to="/faq" className="navy-button desktop-button">Read More Q&amp;A</Link>
         </div>
       </div>
 
@@ -813,12 +723,7 @@ export default function Home() {
           }}
         >
           <div className="video-modal" role="document">
-            <button
-              className="video-close"
-              aria-label="Close video"
-              onClick={() => setIsVideoOpen(false)}
-              autoFocus
-            >
+            <button className="video-close" aria-label="Close video" onClick={() => setIsVideoOpen(false)} autoFocus>
               ✕
             </button>
 

@@ -2061,3 +2061,109 @@ body {
 .realworld-cta {
     text-align: center;
 }
+
+/* … everything you already had … */
+
+/* ========= Edge-to-edge draggable profile marquee ========= */
+.profiles-scroller-outer {
+    position: relative;
+    left: 50%;
+    right: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+.profiles-scroller {
+    --gap: 10px;
+    /* ← fixed 10px gap */
+    --h: 350px;
+    height: var(--h);
+    cursor: grab;
+    user-select: none;
+    touch-action: pan-x;
+    width: 100%;
+    overflow-y: visible;
+    overflow-x: hidden;
+}
+
+.profiles-scroller.dragging {
+    cursor: grabbing;
+}
+
+.profiles-scroller::-webkit-scrollbar {
+    display: none;
+}
+
+.profiles-scroller {
+    scrollbar-width: none;
+}
+
+.profiles-track {
+    display: inline-flex;
+    gap: var(--gap);
+    white-space: nowrap;
+    height: 100%;
+    align-items: center;
+    padding: 4px 0;
+}
+
+/* NEW: continuous marquee animation */
+.profiles-track.marquee {
+    animation: profile-marquee 40s linear infinite;
+}
+
+.profiles-scroller:hover .profiles-track.marquee {
+    animation-play-state: paused;
+}
+
+@keyframes profile-marquee {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+
+    /* second copy takes over */
+}
+
+/* Pastel pill (outer card) */
+.phone-pill.v4 {
+    --pad: 15px;
+    background: var(--pill, #FFECD2);
+    border-radius: 10px;
+    height: calc(100% - 8px);
+    padding: var(--pad);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: calc((var(--h) - 8px) * (9 / 19.5));
+}
+
+/* White phone viewport */
+.phone-viewport.v4 {
+    height: 100%;
+    aspect-ratio: 9 / 19.5;
+    width: auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow:
+        inset 0 0 0 1px rgba(30, 42, 56, .08),
+        0 4px 10px rgba(30, 42, 56, .08);
+}
+
+@media (max-width: 1000px) {
+    .profiles-scroller {
+        --h: 300px;
+    }
+}
+
+@media (max-width: 600px) {
+    .profiles-scroller {
+        --h: 260px;
+    }
+}
+
+/* … keep the rest of your CSS exactly as-is … */
