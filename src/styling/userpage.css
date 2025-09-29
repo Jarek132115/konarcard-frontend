@@ -693,6 +693,6 @@
     width: 100%;
     max-width: 800px;
     /* keep your cap */
-    align-self: stretch;
     /* optional: ensures stretching even with other alignments */
 }
+
