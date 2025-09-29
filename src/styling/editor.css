@@ -13,6 +13,7 @@
     --chip-stroke: #e7ebf2;
 }
 
+/* Card */
 .editor-scope.myprofile-editor-wrapper {
     position: relative;
     height: 100%;
@@ -20,7 +21,6 @@
     padding-block: 0;
 }
 
-/* Card */
 .editor-scope .myprofile-editor {
     background: #fff;
     border-radius: 20px;
@@ -80,7 +80,7 @@
     color: #111;
 }
 
-/* caret always visible */
+/* Inputs / Textareas: caret visible, clear focus */
 .editor-scope .text-input,
 .editor-scope textarea.text-input {
     padding: 11px 12px;
@@ -91,7 +91,8 @@
     font: 500 14px/1.35 var(--main-font-family, Inter, system-ui);
     box-shadow: 0 2px 8px rgba(30, 42, 56, .05);
     width: 100%;
-    caret-color: #111;
+    caret-color: currentColor;
+    cursor: text;
 }
 
 .editor-scope .text-input::placeholder {
@@ -118,12 +119,6 @@
     gap: 8px;
 }
 
-/* Theme chip override (Cal Sans) */
-.editor-scope .theme-chip {
-    font-family: "Cal Sans", Inter, system-ui, sans-serif;
-    letter-spacing: 1px;
-}
-
 /* Divider */
 .editor-scope .divider {
     height: 1px;
@@ -147,41 +142,17 @@
     margin: 0;
 }
 
-/* Section toggle chip */
+/* =========================
+   Unified chip/ghost/toggle typography
+   (Cal Sans, 12px, 700)
+   ========================= */
+.editor-scope .chip,
+.editor-scope .btn-ghost,
 .editor-scope .section-chip {
-    border: 1px solid var(--chip-stroke);
-    background: #e5e7eb;
-    padding: 7px 12px;
-    border-radius: 999px;
+    font-family: "Cal Sans", Inter, system-ui, sans-serif;
+    font-size: 12px;
     font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
-}
-
-.editor-scope .section-chip:hover {
-    background: #fff;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .12);
-}
-
-/* Option rows */
-.editor-scope .option-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.editor-scope .option-row.split-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-}
-
-.editor-scope .option-row.split-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    letter-spacing: .2px;
 }
 
 /* Chips */
@@ -191,7 +162,6 @@
     border: 1px solid var(--chip-stroke);
     background: #fff;
     color: #111;
-    font-weight: 800;
     cursor: pointer;
     transition: transform .04s ease, box-shadow .15s, border-color .15s, color .15s, background .15s;
     box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
@@ -214,7 +184,23 @@
     box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .18);
 }
 
-/* Smaller text inside chips for Button Style */
+/* Section toggle chip (visuals only; typography unified above) */
+.editor-scope .section-chip {
+    border: 1px solid var(--chip-stroke);
+    background: #e5e7eb;
+    padding: 7px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+}
+
+.editor-scope .section-chip:hover {
+    background: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .12);
+}
+
+/* Smaller text helper for tight chips when desired */
 .editor-scope .mini-label {
     font-weight: 700;
     font-size: 12px;
@@ -227,42 +213,75 @@
     padding: 10px 12px;
 }
 
-/* Color input styled like a chip (full width, no gaps) */
+/* ============
+   Color input styled as a full-width chip
+   ============ */
 .editor-scope .color-chip {
+    position: relative;
     padding: 0;
     overflow: hidden;
     border: 1px solid var(--chip-stroke);
-    background: #fff;
     border-radius: 12px;
+    background: var(--picked-color, #ffffff);
+    /* set from inline style */
     box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
 }
 
-.editor-scope .color-chip.is-active,
+.editor-scope .color-chip:hover,
 .editor-scope .color-chip:focus-within {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .18);
 }
 
+/* Center overlay label */
+.editor-scope .color-chip-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    font-family: "Cal Sans", Inter, system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--picked-ink, #111);
+    /* computed via inline style */
+    text-shadow: 0 1px 1px rgb(0 0 0 / .08);
+}
+
+/* Invisible but interactive color input covering the chip */
 .editor-scope .color-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    border: 0;
+    outline: 0;
     appearance: none;
     -webkit-appearance: none;
-    border: none;
-    outline: none;
-    width: 100%;
-    height: 44px;
-    padding: 0;
-    cursor: pointer;
     background: transparent;
     border-radius: 12px;
 }
 
-.editor-scope .color-input::-webkit-color-swatch-wrapper {
-    padding: 0;
+/* Option rows */
+.editor-scope .option-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
-.editor-scope .color-input::-webkit-color-swatch {
-    border: none;
-    border-radius: 10px;
+.editor-scope .option-row.split-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.editor-scope .option-row.split-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
 }
 
 /* Upload & images */
@@ -375,7 +394,7 @@
     gap: 8px !important;
 }
 
-/* Buttons */
+/* Buttons (small) */
 .editor-scope .button-group {
     display: flex;
     gap: 10px;
@@ -403,12 +422,17 @@
     color: #111;
     border-radius: 10px;
     padding: 6px 10px;
-    font-weight: 700;
 }
 
 .editor-scope .btn-ghost:hover {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .12);
+}
+
+/* Softer look for disabled lock button */
+.editor-scope .order-buttons .btn-ghost[disabled] {
+    opacity: .6;
+    cursor: not-allowed;
 }
 
 .editor-scope .btn-accent {
