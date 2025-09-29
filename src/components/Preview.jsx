@@ -75,78 +75,55 @@ export default function Preview({
         return shouldShowPlaceholders ? previewPlaceholders.reviews : [];
     }, [state.reviews, shouldShowPlaceholders]);
 
-    // Smooth open/close of mobile preview — WITHOUT capping height after open
+    /** Smooth open/close on mobile without re-running for every content change */
     useEffect(() => {
         if (!isMobile) return;
         const el = mpWrapRef.current;
         if (!el) return;
 
-        let ro; // ResizeObserver
-        const onEnd = (e) => {
+        // ensure predictable base styles
+        el.style.overflow = "hidden";
+        el.style.willChange = "max-height, opacity, transform";
+
+        const handleEnd = (e) => {
             if (e.propertyName !== "max-height") return;
             if (previewOpen) {
-                // unlock after the open transition so content can grow naturally
+                // once opened, unlock to natural height so content changes don't animate
                 el.style.maxHeight = "none";
             }
-            el.removeEventListener("transitionend", onEnd);
+            el.removeEventListener("transitionend", handleEnd);
         };
 
-        // ensure predictable base styles
-        el.style.willChange = "max-height, opacity, transform";
-        el.style.overflow = "hidden";
-
         if (previewOpen) {
-            // measure natural height
-            el.style.maxHeight = "none";
-            const target = el.scrollHeight;
-
-            // set to 0 to start the animation
+            // animate open only when toggled from closed
+            // 1) start from 0
+            el.style.maxHeight = "0px";
             el.style.opacity = "0";
             el.style.transform = "scale(.98)";
-            el.style.maxHeight = "0px";
-
+            // 2) measure target
+            const target = el.scrollHeight;
+            // 3) to target
             requestAnimationFrame(() => {
+                el.style.maxHeight = `${target}px`;
                 el.style.opacity = "1";
                 el.style.transform = "scale(1)";
-                el.style.maxHeight = `${target}px`;
             });
-
-            el.addEventListener("transitionend", onEnd);
-
-            // while opening, keep adjusting to late content (images/fonts)
-            if ("ResizeObserver" in window) {
-                ro = new ResizeObserver(() => {
-                    if (el.style.maxHeight !== "none") {
-                        el.style.maxHeight = `${el.scrollHeight}px`;
-                    }
-                });
-                ro.observe(el);
-            }
+            el.addEventListener("transitionend", handleEnd);
         } else {
-            // closing: animate from current natural height to 0
-            const current = el.scrollHeight; // if unlocked (none), this still returns the pixels
+            // animate close from current natural height to 0
+            const current = el.scrollHeight;
             el.style.maxHeight = `${current}px`;
-            requestAnimationFrame(() => {
-                el.style.opacity = "0";
-                el.style.transform = "scale(.98)";
-                el.style.maxHeight = "0px";
-            });
+            // force reflow
+            void el.offsetHeight;
+            el.style.maxHeight = "0px";
+            el.style.opacity = "0";
+            el.style.transform = "scale(.98)";
         }
 
         return () => {
-            if (ro) ro.disconnect();
-            el.removeEventListener("transitionend", onEnd);
+            el.removeEventListener("transitionend", handleEnd);
         };
-    }, [
-        isMobile,
-        previewOpen,
-
-        // re-run the effect if content structure changes while collapsed/opening
-        state,
-        servicesDisplayMode,
-        reviewsDisplayMode,
-        aboutMeLayout,
-    ]);
+    }, [isMobile, previewOpen]); // <-- only toggling matters
 
     const scrollCarousel = (ref, direction) => {
         const el = ref?.current;
@@ -319,7 +296,6 @@ export default function Preview({
         showContactSection && (previewEmail || previewPhone) ? (
             <>
                 <p className="mock-section-title">Contact Details</p>
-                {/* keep layout fixed; no contentAlign here */}
                 <div className="mock-contact-details">
                     <div className="mock-contact-item">
                         <p className="mock-contact-label">Email:</p>
@@ -329,8 +305,6 @@ export default function Preview({
                         <p className="mock-contact-label">Phone:</p>
                         <p className="mock-contact-value">{previewPhone}</p>
                     </div>
-
-                    {/* social icons inside the same white card */}
                     <ContactSocials />
                 </div>
             </>
@@ -342,7 +316,6 @@ export default function Preview({
                 {(shouldShowPlaceholders || !!state.coverPhoto) && (
                     <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
                 )}
-                {/* headings honor the chosen alignment */}
                 <h2 className="mock-title" style={contentAlign}>
                     {state.mainHeading ||
                         (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
@@ -364,7 +337,6 @@ export default function Preview({
             (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) ? (
             <>
                 <p className="mock-section-title">About me</p>
-                {/* name/title unaffected by alignment; bio follows it */}
                 <div className={`mock-about-container ${aboutMeLayout}`}>
                     <div className="mock-about-content-group">
                         <div className="mock-about-header-group">
@@ -425,10 +397,7 @@ export default function Preview({
                         </a>
                     </div>
 
-                    <div
-                        className={`mp-preview-wrap ${previewOpen ? "open" : "closed"}`}
-                        ref={mpWrapRef}
-                    >
+                    <div className={`mp-preview-wrap ${previewOpen ? "open" : "closed"}`} ref={mpWrapRef}>
                         <div className="mock-phone mobile-preview">
                             <div className="mock-phone-scrollable-content">
                                 {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}

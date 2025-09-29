@@ -128,13 +128,13 @@
     }
 }
 
-/* Smooth expand/collapse wrapper for mobile preview body */
+/* Smooth expand/collapse wrapper for mobile body */
 .preview-scope .mp-preview-wrap {
+    overflow: hidden;
     will-change: max-height, opacity, transform;
-    transition: max-height .3s ease, opacity .3s ease, transform .3s ease;
+    transition: max-height .28s ease, opacity .2s ease, transform .2s ease;
 }
 
-/* state classes (JS toggles open/closed) */
 .preview-scope .mp-preview-wrap.closed {
     max-height: 0;
     opacity: 0;
@@ -142,7 +142,7 @@
 }
 
 .preview-scope .mp-preview-wrap.open {
-    /* opacity/transform handled by JS during animation; left here for steady-state */
+    /* when open we let JS set max-height:none after transition */
     opacity: 1;
     transform: scale(1);
 }
@@ -191,7 +191,6 @@
     line-height: 1.2;
     color: #000;
     text-align: inherit;
-    /* controlled inline */
 }
 
 .preview-scope .myprofile-preview.dark .mock-title {
@@ -204,7 +203,6 @@
     margin: 8px 0 0;
     color: #000;
     text-align: inherit;
-    /* controlled inline */
 }
 
 .preview-scope .myprofile-preview.dark .mock-subtitle {
@@ -214,7 +212,6 @@
 /* Primary CTA */
 .mock-button {
     background: var(--accent);
-    /* inline style may override color */
     color: #fff;
     padding: .9rem 1.2rem;
     border-radius: 12px;
@@ -226,7 +223,6 @@
     box-sizing: border-box;
     transition: transform .06s, opacity .2s;
     font-family: inherit;
-    /* inherit chosen font */
 }
 
 .mock-button:hover {
@@ -396,7 +392,6 @@
 .mock-work-image-item-wrapper {
     width: 100%;
     aspect-ratio: 4 / 2.5;
-    /* updated */
     overflow: hidden;
     border-radius: 14px;
     border: 1px solid var(--border-color, rgba(0, 0, 0, .06));
