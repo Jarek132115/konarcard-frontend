@@ -314,6 +314,14 @@
     gap: 8px;
 }
 
+@media (max-width: 500px) {
+    .editor-scope .option-row.split-3 {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
 /* Upload & images */
 .editor-scope .editor-work-image-grid {
     display: grid;
