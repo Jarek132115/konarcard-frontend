@@ -624,3 +624,41 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(30, 42, 56, .6) transparent;
 }
+
+/* ---- Kill phantom horizontal scrolling on narrow devices ---- */
+.editor-scope .myprofile-editor {
+    /* keep vertical scroll, block horizontal */
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Allow grid/flex children to actually shrink inside their tracks */
+.editor-scope .option-row,
+.editor-scope .sortable-item,
+.editor-scope .editor-item-card,
+.editor-scope .social-row-input {
+    min-width: 0;
+}
+
+.editor-scope .chip,
+.editor-scope .text-input,
+.editor-scope .btn-ghost {
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Safe images/SVGs */
+.editor-scope img,
+.editor-scope svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* If you’re using the color wheel popover, keep it inside the card */
+.editor-scope .color-popover {
+    left: auto;
+    right: 0;
+    /* anchor to the right so it doesn’t hang off screen */
+    max-width: min(92vw, 260px);
+    overflow: hidden;
+}
