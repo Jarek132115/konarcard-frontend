@@ -10,7 +10,6 @@
     --pill-stroke-dark: rgba(255, 255, 255, .12);
 }
 
-/* Wrapper fills the column */
 .preview-scope.myprofile-preview-wrapper {
     position: relative;
     height: 100%;
@@ -28,6 +27,10 @@
     height: 100%;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+
+    /* IMPORTANT: enable container queries used below */
+    container-type: inline-size;
+    container-name: preview;
 }
 
 .preview-scope .myprofile-preview.dark {
@@ -92,7 +95,6 @@
     cursor: pointer;
     font-family: "Cal Sans", sans-serif;
     font-size: 12px;
-    /* same size */
     line-height: normal;
     text-align: center;
     color: inherit;
@@ -174,6 +176,7 @@
     line-height: 1.2;
     color: #000;
     text-align: center;
+    /* headings stay centered per spec */
 }
 
 .preview-scope .myprofile-preview.dark .mock-title {
@@ -186,6 +189,7 @@
     margin: 8px 0 0;
     color: #000;
     text-align: center;
+    /* will be overridden inline for content alignment */
 }
 
 .preview-scope .myprofile-preview.dark .mock-subtitle {
@@ -195,6 +199,7 @@
 /* Primary CTA for the preview page */
 .mock-button {
     background: var(--accent);
+    /* inline style from React will override for custom color */
     color: #fff;
     padding: .9rem 1.2rem;
     border-radius: 12px;
@@ -220,6 +225,7 @@
     font-weight: 700;
     margin: 60px 0 10px;
     text-align: left;
+    /* keep section headings unchanged */
     color: #000;
 }
 
@@ -236,6 +242,8 @@
     border-radius: 16px;
     border: 1px solid rgba(0, 0, 0, .06);
     color: #111;
+    padding: 14px;
+    /* add padding for consistent look */
 }
 
 /* Body text inside cards */
@@ -314,7 +322,6 @@
 
 /* About card layout */
 .mock-about-container {
-    padding: 1rem;
     display: flex;
     flex-direction: column;
     gap: .75rem;
@@ -356,7 +363,7 @@
     aspect-ratio: 4 / 3;
     overflow: hidden;
     border-radius: 14px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color, rgba(0, 0, 0, .06));
 }
 
 .mock-work-image-item {
@@ -442,6 +449,49 @@
 .carousel-nav-button:hover {
     background-color: rgba(0, 0, 0, .6);
 }
+
+/* =============================
+   Social row (icons/labels under contact)
+   ============================= */
+.preview-scope .social-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.preview-scope .social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, .08);
+    background: #fff;
+    color: #111;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
+    transition: transform .05s, box-shadow .15s, border-color .15s, background .15s;
+}
+
+.preview-scope .social-icon:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .12);
+}
+
+.preview-scope .social-fallback-label {
+    font-size: 12px;
+}
+
+/* If you later add real icon fonts/svgs, you can hide the fallback text:
+   .preview-scope .social-icon i, .preview-scope .social-icon svg { display:block; }
+   .preview-scope .social-fallback-label { display:none; }
+*/
 
 /* =============================
    Container queries for PREVIEW
