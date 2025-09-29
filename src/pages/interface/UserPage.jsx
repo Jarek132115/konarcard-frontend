@@ -4,28 +4,32 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
 import { AuthContext } from "../../components/AuthContext";
 
-// Social icons (same set as editor/preview)
 import FacebookIcon from "../../assets/icons/icons8-facebook.svg";
 import InstagramIcon from "../../assets/icons/icons8-instagram.svg";
 import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
 import XIcon from "../../assets/icons/icons8-x.svg";
 import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
 
+/* ---------------------------
+   Helpers
+--------------------------- */
 const PLACEHOLDER_HINTS = ["placeholder", "sample", "demo", "stock", "default", "template", "card-mock"];
 const looksLikePlaceholderUrl = (url = "") =>
     typeof url === "string" && PLACEHOLDER_HINTS.some((h) => url.toLowerCase().includes(h));
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
+const arr = (v) => (Array.isArray(v) ? v : []);
 
-const filterRealImages = (arr) =>
-    (Array.isArray(arr) ? arr : []).filter((u) => nonEmpty(u) && !looksLikePlaceholderUrl(u));
+/** read(obj, ["keyA","key_b"], fallback) -> first present value */
+const read = (o, keys, fb = undefined) => {
+    for (const k of keys) {
+        if (o?.[k] !== undefined && o?.[k] !== null) return o[k];
+    }
+    return fb;
+};
 
-const filterRealServices = (arr) =>
-    (Array.isArray(arr) ? arr : []).filter((s) => s && (nonEmpty(s.name) || nonEmpty(s.price)));
-
-const filterRealReviews = (arr) =>
-    (Array.isArray(arr) ? arr : []).filter(
-        (r) => r && (nonEmpty(r.name) || nonEmpty(r.text) || (r.rating ?? 0) > 0)
-    );
+const filterRealImages = (xs) => arr(xs).filter((u) => nonEmpty(u) && !looksLikePlaceholderUrl(u));
+const filterRealServices = (xs) => arr(xs).filter((s) => s && (nonEmpty(s.name) || nonEmpty(s.price)));
+const filterRealReviews = (xs) => arr(xs).filter((r) => r && (nonEmpty(r.name) || nonEmpty(r.text) || (r.rating ?? 0) > 0));
 
 const centerPage = {
     textAlign: "center",
@@ -39,141 +43,139 @@ export default function UserPage() {
     const { username } = useParams();
     const { user: authUser } = useContext(AuthContext);
 
-    // Refs for carousels
     const workCarouselRef = useRef(null);
     const servicesCarouselRef = useRef(null);
     const reviewsCarouselRef = useRef(null);
 
     const { data: businessCard, isLoading, isError, error } = useQuery({
         queryKey: ["public-business-card", username],
-        queryFn: async () => {
-            const response = await api.get(`/api/business-card/by_username/${username}`);
-            return response.data;
-        },
+        queryFn: async () => (await api.get(`/api/business-card/by_username/${username}`)).data,
         enabled: !!username,
         staleTime: 5 * 60 * 1000,
         cacheTime: 10 * 60 * 1000,
         retry: 1,
     });
 
-    const scrollCarousel = (ref, direction) => {
-        if (ref.current && ref.current.children.length > 0) {
-            const carousel = ref.current;
-            const itemWidth = carousel.children[0].offsetWidth;
-            const currentScroll = carousel.scrollLeft;
-            const maxScroll = carousel.scrollWidth - carousel.offsetWidth;
-            let next = direction === "left" ? currentScroll - itemWidth : currentScroll + itemWidth;
-            if (next < 0) next = maxScroll;
-            if (next >= maxScroll) next = 0;
-            carousel.scrollTo({ left: next, behavior: "smooth" });
-        }
+    const scrollCarousel = (ref, dir) => {
+        if (!ref.current || !ref.current.children.length) return;
+        const el = ref.current;
+        const w = el.children[0].offsetWidth;
+        const max = el.scrollWidth - el.offsetWidth;
+        let next = dir === "left" ? el.scrollLeft - w : el.scrollLeft + w;
+        if (next < 0) next = max;
+        if (next >= max) next = 0;
+        el.scrollTo({ left: next, behavior: "smooth" });
     };
 
-    // CTAs
     const goEditProfile = () => {
-        try {
-            localStorage.setItem("scrollToEditorOnLoad", "1");
-        } catch { }
+        try { localStorage.setItem("scrollToEditorOnLoad", "1"); } catch { }
         window.location.href = "/myprofile";
     };
-
     const goContactSupportSmart = () => {
-        try {
-            localStorage.setItem("openChatOnLoad", "1");
-        } catch { }
+        try { localStorage.setItem("openChatOnLoad", "1"); } catch { }
         window.location.href = authUser ? "/contact-support" : "/contactus";
     };
 
-    // Loading / error
     if (isLoading) return <div className="user-landing-page" style={centerPage}><p>Loading business card...</p></div>;
-    if (isError) {
-        console.error("Error fetching business card:", error);
-        return unavailable(username, goEditProfile, goContactSupportSmart);
-    }
-    if (!businessCard) {
-        return (
-            <div className="user-landing-page" style={centerPage}>
-                <p>No business card found for username “{username}”.</p>
-            </div>
-        );
-    }
+    if (isError) { console.error(error); return unavailable(username, goEditProfile, goContactSupportSmart); }
+    if (!businessCard) return <div className="user-landing-page" style={centerPage}><p>No business card found for “{username}”.</p></div>;
 
-    const hasActiveSubscription = !!businessCard.isSubscribed;
+    /* ---------------------------
+       Robust field fallbacks
+    --------------------------- */
+
+    // Theme, font, alignment, CTA colors
+    const pageTheme = read(businessCard, ["page_theme", "pageTheme"], "light");
+    const font = read(businessCard, ["style", "font"], "Inter");
+    const textAlign = read(businessCard, ["text_alignment", "textAlignment"], "left");
+
+    const buttonBg = read(businessCard, ["button_bg_color", "buttonBgColor"], "#F47629");
+    const buttonTxt = read(businessCard, ["button_text_color", "buttonTextColor"], "white");
+
+    const aboutLayout = read(businessCard, ["about_me_layout", "aboutMeLayout"], "side-by-side");
+    const workMode = read(businessCard, ["work_display_mode", "workDisplayMode"], "list");
+    const servicesMode = read(businessCard, ["services_display_mode", "servicesDisplayMode"], "list");
+    const reviewsMode = read(businessCard, ["reviews_display_mode", "reviewsDisplayMode"], "list");
+
+    // Section toggles (default true)
+    const showMain = read(businessCard, ["show_main_section", "showMainSection"], true);
+    const showAbout = read(businessCard, ["show_about_me_section", "showAboutMeSection"], true);
+    const showWork = read(businessCard, ["show_work_section", "showWorkSection"], true);
+    const showServices = read(businessCard, ["show_services_section", "showServicesSection"], true);
+    const showReviews = read(businessCard, ["show_reviews_section", "showReviewsSection"], true);
+    const showContact = read(businessCard, ["show_contact_section", "showContactSection"], true);
+
+    // Section order
+    const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
+    const savedOrderRaw = read(businessCard, ["section_order", "sectionOrder"], []);
+    const sectionOrder = Array.isArray(savedOrderRaw) && savedOrderRaw.length
+        ? savedOrderRaw.filter((k) => defaultOrder.includes(k))
+        : defaultOrder;
+
+    // Core data
+    const cover = read(businessCard, ["cover_photo", "coverPhoto"], "");
+    const avatar = read(businessCard, ["avatar"], "");
+    const mainHeading = read(businessCard, ["main_heading", "mainHeading"], "");
+    const subHeading = read(businessCard, ["sub_heading", "subHeading"], "");
+    const fullName = read(businessCard, ["full_name", "fullName"], "");
+    const jobTitle = read(businessCard, ["job_title", "jobTitle"], "");
+    const bio = read(businessCard, ["bio"], "");
+    const works = filterRealImages(read(businessCard, ["works", "workImages"], []));
+    const services = filterRealServices(read(businessCard, ["services"], []));
+    const reviews = filterRealReviews(read(businessCard, ["reviews"], []));
+    const email = read(businessCard, ["contact_email", "contactEmail"], "");
+    const phone = read(businessCard, ["phone_number", "phoneNumber"], "");
+
+    const hasContact = nonEmpty(email) || nonEmpty(phone);
+
+    const isSubscribed = !!businessCard.isSubscribed;
     const isTrialActive = businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
-    const isProfileActive = hasActiveSubscription || isTrialActive;
-    if (!isProfileActive) return unavailable(username, goEditProfile, goContactSupportSmart);
+    if (!(isSubscribed || isTrialActive)) return unavailable(username, goEditProfile, goContactSupportSmart);
 
-    // Real content flags
-    const realCover = nonEmpty(businessCard.cover_photo) && !looksLikePlaceholderUrl(businessCard.cover_photo);
-    const realMainHeading = nonEmpty(businessCard.main_heading);
-    const realSubHeading = nonEmpty(businessCard.sub_heading);
+    // Decide what to render
+    const showMainSection = showMain && (nonEmpty(cover) || nonEmpty(mainHeading) || nonEmpty(subHeading) || hasContact);
+    const showAboutMeSection = showAbout && (nonEmpty(avatar) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(bio));
+    const showWorkSection = showWork && works.length > 0;
+    const showServicesSection = showServices && services.length > 0;
+    const showReviewsSection = showReviews && reviews.length > 0;
+    const showContactSection = showContact && hasContact;
 
-    const realAvatar = nonEmpty(businessCard.avatar) && !looksLikePlaceholderUrl(businessCard.avatar);
-    const realFullName = nonEmpty(businessCard.full_name);
-    const realJobTitle = nonEmpty(businessCard.job_title);
-    const realBio = nonEmpty(businessCard.bio);
+    const nothingToShow = !showMainSection && !showAboutMeSection && !showWorkSection &&
+        !showServicesSection && !showReviewsSection && !showContactSection;
 
-    const works = filterRealImages(businessCard.works);
-    const services = filterRealServices(businessCard.services);
-    const reviews = filterRealReviews(businessCard.reviews);
-
-    const hasContact = nonEmpty(businessCard.contact_email) || nonEmpty(businessCard.phone_number);
-
-    const showMainSection =
-        businessCard.show_main_section !== false && (realCover || realMainHeading || realSubHeading || hasContact);
-    const showAboutMeSection =
-        businessCard.show_about_me_section !== false && (realAvatar || realFullName || realJobTitle || realBio);
-    const showWorkSection = businessCard.show_work_section !== false && works.length > 0;
-    const showServicesSection = businessCard.show_services_section !== false && services.length > 0;
-    const showReviewsSection = businessCard.show_reviews_section !== false && reviews.length > 0;
-    const showContactSection = businessCard.show_contact_section !== false && hasContact;
-
-    const nothingToShow =
-        !showMainSection && !showAboutMeSection && !showWorkSection && !showServicesSection && !showReviewsSection && !showContactSection;
-
-    const aboutMeLayout = businessCard.about_me_layout || "side-by-side";
-    const workDisplayMode = businessCard.work_display_mode || "list";
-    const servicesDisplayMode = businessCard.services_display_mode || "list";
-    const reviewsDisplayMode = businessCard.reviews_display_mode || "list";
-
-    // Theme + alignment + CTA styles (match Preview)
     const themeStyles = {
-        backgroundColor: businessCard.page_theme === "dark" ? "#1F1F1F" : "#FFFFFF",
-        color: businessCard.page_theme === "dark" ? "#FFFFFF" : "#000000",
-        fontFamily: businessCard.style || "Inter",
+        backgroundColor: pageTheme === "dark" ? "#1F1F1F" : "#FFFFFF",
+        color: pageTheme === "dark" ? "#FFFFFF" : "#000000",
+        fontFamily: font,
     };
-    const contentAlign = { textAlign: businessCard.text_alignment || "left" };
-    const ctaStyle = {
-        backgroundColor: businessCard.button_bg_color || "#F47629",
-        color: businessCard.button_text_color === "black" ? "#000000" : "#FFFFFF",
-    };
+    const contentAlign = { textAlign: textAlign || "left" };
+    const ctaStyle = { backgroundColor: buttonBg, color: buttonTxt === "black" ? "#000000" : "#FFFFFF" };
+
+    const socialLinks = [
+        { key: "facebook_url", url: read(businessCard, ["facebook_url", "facebookUrl"]), icon: FacebookIcon, label: "Facebook" },
+        { key: "instagram_url", url: read(businessCard, ["instagram_url", "instagramUrl"]), icon: InstagramIcon, label: "Instagram" },
+        { key: "linkedin_url", url: read(businessCard, ["linkedin_url", "linkedinUrl"]), icon: LinkedInIcon, label: "LinkedIn" },
+        { key: "x_url", url: read(businessCard, ["x_url", "xUrl", "twitter_url", "twitterUrl"]), icon: XIcon, label: "X" },
+        { key: "tiktok_url", url: read(businessCard, ["tiktok_url", "tiktokUrl"]), icon: TikTokIcon, label: "TikTok" },
+    ].filter((x) => nonEmpty(x.url));
 
     const handleExchangeContact = () => {
         if (!hasContact) return;
-        const {
-            full_name,
-            job_title,
-            business_card_name,
-            bio,
-            contact_email,
-            phone_number,
-            publicProfileUrl,
-        } = businessCard;
-        const landingPageUrl = publicProfileUrl || `${window.location.origin}/u/${username}`;
-
-        const nameParts = (full_name || "").split(" ");
+        const publicUrl = read(businessCard, ["publicProfileUrl"], `${window.location.origin}/u/${username}`);
+        const nameParts = (fullName || "").split(" ");
         const firstName = nameParts[0] || "";
         const lastName = nameParts.slice(1).join(" ") || "";
-        const middleNames = nameParts.slice(1, -1).join(" ") || "";
+        const middle = nameParts.slice(1, -1).join(" ") || "";
 
         let vCard = "BEGIN:VCARD\nVERSION:3.0\n";
-        vCard += `FN:${full_name || ""}\n`;
-        vCard += `N:${lastName};${firstName};${middleNames};;\n`;
-        if (business_card_name) vCard += `ORG:${business_card_name}\n`;
-        if (job_title) vCard += `TITLE:${job_title}\n`;
-        if (phone_number) vCard += `TEL;TYPE=CELL,VOICE:${phone_number}\n`;
-        if (contact_email) vCard += `EMAIL;TYPE=PREF,INTERNET:${contact_email}\n`;
-        if (landingPageUrl) vCard += `URL:${landingPageUrl}\n`;
+        vCard += `FN:${fullName || ""}\n`;
+        vCard += `N:${lastName};${firstName};${middle};;\n`;
+        const org = read(businessCard, ["business_card_name", "businessCardName"], "");
+        if (org) vCard += `ORG:${org}\n`;
+        if (jobTitle) vCard += `TITLE:${jobTitle}\n`;
+        if (phone) vCard += `TEL;TYPE=CELL,VOICE:${phone}\n`;
+        if (email) vCard += `EMAIL;TYPE=PREF,INTERNET:${email}\n`;
+        if (publicUrl) vCard += `URL:${publicUrl}\n`;
         if (bio) vCard += `NOTE:${bio.replace(/\n/g, "\\n")}\n`;
         vCard += "END:VCARD\n";
 
@@ -181,7 +183,7 @@ export default function UserPage() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${(full_name || username || "contact").replace(/\s/g, "_")}.vcf`;
+        a.download = `${(fullName || username || "contact").replace(/\s/g, "_")}.vcf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -199,195 +201,158 @@ export default function UserPage() {
         );
     }
 
-    // Social links to show (icons only)
-    const socialLinks = [
-        { key: "facebook_url", url: businessCard.facebook_url, icon: FacebookIcon, label: "Facebook" },
-        { key: "instagram_url", url: businessCard.instagram_url, icon: InstagramIcon, label: "Instagram" },
-        { key: "linkedin_url", url: businessCard.linkedin_url, icon: LinkedInIcon, label: "LinkedIn" },
-        { key: "x_url", url: businessCard.x_url, icon: XIcon, label: "X" },
-        { key: "tiktok_url", url: businessCard.tiktok_url, icon: TikTokIcon, label: "TikTok" },
-    ].filter((x) => nonEmpty(x.url));
+    /* ---------------------------
+       Section components
+    --------------------------- */
+    const MainSection = () =>
+        showMainSection ? (
+            <>
+                {nonEmpty(cover) && <img src={cover} alt="Cover" className="landing-cover-photo" />}
+                {nonEmpty(mainHeading) && <h2 className="landing-main-heading" style={contentAlign}>{mainHeading}</h2>}
+                {nonEmpty(subHeading) && <p className="landing-sub-heading" style={contentAlign}>{subHeading}</p>}
+                {hasContact && (
+                    <button type="button" onClick={handleExchangeContact} className="landing-action-button" style={ctaStyle}>
+                        Save My Number
+                    </button>
+                )}
+            </>
+        ) : null;
+
+    const AboutSection = () =>
+        showAboutMeSection ? (
+            <>
+                <p className="landing-section-title">About Me</p>
+                <div className={`landing-about-section ${aboutLayout}`}>
+                    {nonEmpty(avatar) && <img src={avatar} alt="Avatar" className="landing-avatar" />}
+                    <div className="landing-about-header">
+                        {nonEmpty(fullName) && <p className="landing-profile-name">{fullName}</p>}
+                        {nonEmpty(jobTitle) && <p className="landing-profile-role">{jobTitle}</p>}
+                    </div>
+                    {nonEmpty(bio) && <p className="landing-bio-text" style={contentAlign}>{bio}</p>}
+                </div>
+            </>
+        ) : null;
+
+    const WorkSection = () =>
+        showWorkSection ? (
+            <>
+                <p className="landing-section-title">My Work</p>
+                {(workMode === "list" || workMode === "grid") && (
+                    <div className={`landing-work-gallery ${workMode}`}>
+                        {works.map((url, i) => <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />)}
+                    </div>
+                )}
+                {workMode === "carousel" && (
+                    <div className="user-carousel-container">
+                        <div className="user-carousel-nav-buttons">
+                            <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(workCarouselRef, "left")}>&#9664;</button>
+                            <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(workCarouselRef, "right")}>&#9654;</button>
+                        </div>
+                        <div ref={workCarouselRef} className="user-work-gallery-carousel">
+                            {works.map((url, i) => <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />)}
+                        </div>
+                    </div>
+                )}
+            </>
+        ) : null;
+
+    const ServicesSection = () =>
+        showServicesSection ? (
+            <>
+                <p className="landing-section-title">My Services</p>
+                <div className="user-carousel-container">
+                    {servicesMode === "carousel" && (
+                        <div className="user-carousel-nav-buttons">
+                            <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(servicesCarouselRef, "left")}>&#9664;</button>
+                            <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(servicesCarouselRef, "right")}>&#9654;</button>
+                        </div>
+                    )}
+                    <div ref={servicesCarouselRef} className={`user-services-list-carousel ${servicesMode === "carousel" ? "" : "list"}`}>
+                        {services.map((s, i) => (
+                            <div key={i} className="landing-service-item">
+                                {nonEmpty(s.name) && <p className="landing-service-name">{s.name}</p>}
+                                {nonEmpty(s.price) && <span className="landing-service-price">{s.price}</span>}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </>
+        ) : null;
+
+    const ReviewsSection = () =>
+        showReviewsSection ? (
+            <>
+                <p className="landing-section-title">Reviews</p>
+                <div className="user-carousel-container">
+                    {reviewsMode === "carousel" && (
+                        <div className="user-carousel-nav-buttons">
+                            <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(reviewsCarouselRef, "left")}>&#9664;</button>
+                            <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(reviewsCarouselRef, "right")}>&#9654;</button>
+                        </div>
+                    )}
+                    <div ref={reviewsCarouselRef} className={`user-reviews-list-carousel ${reviewsMode === "carousel" ? "" : "list"}`}>
+                        {reviews.map((r, i) => (
+                            <div key={i} className="landing-review-card">
+                                <div className="landing-star-rating">
+                                    {Array(r.rating || 0).fill().map((_, j) => <span key={`f-${j}`}>★</span>)}
+                                    {Array(Math.max(0, 5 - (r.rating || 0))).fill().map((_, j) => <span key={`e-${j}`} className="empty-star">★</span>)}
+                                </div>
+                                {nonEmpty(r.text) && <p className="landing-review-text">"{r.text}"</p>}
+                                {nonEmpty(r.name) && <p className="landing-reviewer-name">{r.name}</p>}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </>
+        ) : null;
+
+    const ContactSection = () =>
+        showContactSection ? (
+            <>
+                <p className="landing-section-title">Contact Details</p>
+                <div className="landing-contact-details">
+                    {nonEmpty(email) && (
+                        <div className="landing-contact-item">
+                            <p className="landing-contact-label">Email:</p>
+                            <p className="landing-contact-value">{email}</p>
+                        </div>
+                    )}
+                    {nonEmpty(phone) && (
+                        <div className="landing-contact-item">
+                            <p className="landing-contact-label">Phone:</p>
+                            <p className="landing-contact-value">{phone}</p>
+                        </div>
+                    )}
+                    {socialLinks.length > 0 && (
+                        <div className="landing-contact-socials" aria-label="Social links">
+                            {socialLinks.map((s) => (
+                                <a key={s.key} href={s.url} target="_blank" rel="noreferrer" className="landing-contact-social-chip" aria-label={s.label}>
+                                    <img src={s.icon} alt="" className="landing-contact-social-glyph" />
+                                </a>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </>
+        ) : null;
+
+    /* Render in the SAVED order */
+    const sectionMap = {
+        main: <MainSection key="main" />,
+        about: <AboutSection key="about" />,
+        work: <WorkSection key="work" />,
+        services: <ServicesSection key="services" />,
+        reviews: <ReviewsSection key="reviews" />,
+        contact: <ContactSection key="contact" />,
+    };
 
     return (
         <div className="user-landing-page" style={themeStyles}>
-            {/* Main Section */}
-            {showMainSection && (
-                <>
-                    {realCover && <img src={businessCard.cover_photo} alt="Cover" className="landing-cover-photo" />}
-                    {realMainHeading && (
-                        <h2 className="landing-main-heading" style={contentAlign}>
-                            {businessCard.main_heading}
-                        </h2>
-                    )}
-                    {realSubHeading && (
-                        <p className="landing-sub-heading" style={contentAlign}>
-                            {businessCard.sub_heading}
-                        </p>
-                    )}
-                    {hasContact && (
-                        <button type="button" onClick={handleExchangeContact} className="landing-action-button" style={ctaStyle}>
-                            Save My Number
-                        </button>
-                    )}
-                </>
-            )}
-
-            {/* About Me Section */}
-            {showAboutMeSection && (
-                <>
-                    <p className="landing-section-title">About Me</p>
-                    <div className={`landing-about-section ${aboutMeLayout}`}>
-                        {realAvatar && <img src={businessCard.avatar} alt="Avatar" className="landing-avatar" />}
-                        <div className="landing-about-header">
-                            {realFullName && <p className="landing-profile-name">{businessCard.full_name}</p>}
-                            {realJobTitle && <p className="landing-profile-role">{businessCard.job_title}</p>}
-                        </div>
-                        {realBio && (
-                            <p className="landing-bio-text" style={contentAlign}>
-                                {businessCard.bio}
-                            </p>
-                        )}
-                    </div>
-                </>
-            )}
-
-            {/* My Work Section */}
-            {showWorkSection && (
-                <>
-                    <p className="landing-section-title">My Work</p>
-                    {(workDisplayMode === "list" || workDisplayMode === "grid") && (
-                        <div className={`landing-work-gallery ${workDisplayMode}`}>
-                            {filterRealImages(businessCard.works).map((url, i) => (
-                                <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />
-                            ))}
-                        </div>
-                    )}
-                    {workDisplayMode === "carousel" && (
-                        <div className="user-carousel-container">
-                            <div className="user-carousel-nav-buttons">
-                                <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(workCarouselRef, "left")}>
-                                    &#9664;
-                                </button>
-                                <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(workCarouselRef, "right")}>
-                                    &#9654;
-                                </button>
-                            </div>
-                            <div ref={workCarouselRef} className="user-work-gallery-carousel">
-                                {filterRealImages(businessCard.works).map((url, i) => (
-                                    <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </>
-            )}
-
-            {/* My Services Section */}
-            {showServicesSection && (
-                <>
-                    <p className="landing-section-title">My Services</p>
-                    <div className="user-carousel-container">
-                        {servicesDisplayMode === "carousel" && (
-                            <div className="user-carousel-nav-buttons">
-                                <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(servicesCarouselRef, "left")}>
-                                    &#9664;
-                                </button>
-                                <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(servicesCarouselRef, "right")}>
-                                    &#9654;
-                                </button>
-                            </div>
-                        )}
-                        <div
-                            ref={servicesCarouselRef}
-                            className={`user-services-list-carousel ${servicesDisplayMode === "carousel" ? "" : "list"}`}
-                        >
-                            {services.map((s, i) => (
-                                <div key={i} className="landing-service-item">
-                                    {nonEmpty(s.name) && <p className="landing-service-name">{s.name}</p>}
-                                    {nonEmpty(s.price) && <span className="landing-service-price">{s.price}</span>}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </>
-            )}
-
-            {/* Reviews Section */}
-            {showReviewsSection && (
-                <>
-                    <p className="landing-section-title">Reviews</p>
-                    <div className="user-carousel-container">
-                        {reviewsDisplayMode === "carousel" && (
-                            <div className="user-carousel-nav-buttons">
-                                <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(reviewsCarouselRef, "left")}>
-                                    &#9664;
-                                </button>
-                                <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(reviewsCarouselRef, "right")}>
-                                    &#9654;
-                                </button>
-                            </div>
-                        )}
-                        <div ref={reviewsCarouselRef} className={`user-reviews-list-carousel ${reviewsDisplayMode === "carousel" ? "" : "list"}`}>
-                            {reviews.map((r, i) => (
-                                <div key={i} className="landing-review-card">
-                                    <div className="landing-star-rating">
-                                        {Array(r.rating || 0)
-                                            .fill()
-                                            .map((_, j) => (
-                                                <span key={`f-${j}`}>★</span>
-                                            ))}
-                                        {Array(Math.max(0, 5 - (r.rating || 0)))
-                                            .fill()
-                                            .map((_, j) => (
-                                                <span key={`e-${j}`} className="empty-star">
-                                                    ★
-                                                </span>
-                                            ))}
-                                    </div>
-                                    {nonEmpty(r.text) && <p className="landing-review-text">"{r.text}"</p>}
-                                    {nonEmpty(r.name) && <p className="landing-reviewer-name">{r.name}</p>}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </>
-            )}
-
-            {/* Contact Details Section */}
-            {showContactSection && (
-                <>
-                    <p className="landing-section-title">Contact Details</p>
-                    <div className="landing-contact-details">
-                        {nonEmpty(businessCard.contact_email) && (
-                            <div className="landing-contact-item">
-                                <p className="landing-contact-label">Email:</p>
-                                <p className="landing-contact-value">{businessCard.contact_email}</p>
-                            </div>
-                        )}
-                        {nonEmpty(businessCard.phone_number) && (
-                            <div className="landing-contact-item">
-                                <p className="landing-contact-label">Phone:</p>
-                                <p className="landing-contact-value">{businessCard.phone_number}</p>
-                            </div>
-                        )}
-
-                        {/* Icons inside the card (10px gap, space-around, icons only) */}
-                        {socialLinks.length > 0 && (
-                            <div className="landing-contact-socials" aria-label="Social links">
-                                {socialLinks.map((s) => (
-                                    <a key={s.key} href={s.url} target="_blank" rel="noreferrer" className="landing-contact-social-chip" aria-label={s.label}>
-                                        <img src={s.icon} alt="" className="landing-contact-social-glyph" />
-                                    </a>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </>
-            )}
+            {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}
         </div>
     );
 
-    // Unavailable
+    /* Unavailable */
     function unavailable(username, onEdit, onContact) {
         return (
             <div className="user-landing-page unavailable-wrap">
