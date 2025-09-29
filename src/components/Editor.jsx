@@ -1,5 +1,5 @@
 // src/components/Editor.jsx
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { previewPlaceholders } from "../store/businessCardStore";
 
 // Social icons
@@ -8,6 +8,9 @@ import InstagramIcon from "../assets/icons/icons8-instagram.svg";
 import LinkedInIcon from "../assets/icons/icons8-linkedin.svg";
 import XIcon from "../assets/icons/icons8-x.svg";
 import TikTokIcon from "../assets/icons/icons8-tiktok.svg";
+
+// Color wheel lib
+import iro from "@jaames/iro";
 
 // Pick black/white text for a given hex background
 const getContrastColor = (hex = "#000000") => {
@@ -55,6 +58,57 @@ export default function Editor({
     const avatarInputRef = useRef(null);
     const workImageInputRef = useRef(null);
 
+    // ---- Color wheel popover ----
+    const [wheelOpen, setWheelOpen] = useState(false);
+    const triggerRef = useRef(null);
+    const popoverRef = useRef(null);
+    const wheelMountRef = useRef(null);
+
+    // Init / update iro.js color wheel when popover opens
+    useEffect(() => {
+        if (!wheelOpen || !wheelMountRef.current) return;
+
+        // Clear any previous instance
+        wheelMountRef.current.innerHTML = "";
+
+        const picker = new iro.ColorPicker(wheelMountRef.current, {
+            width: 210,
+            color: state.buttonBgColor || "#1E2A38",
+            layout: [
+                { component: iro.ui.Wheel },
+                { component: iro.ui.Slider, options: { sliderType: "value" } },
+            ],
+        });
+
+        const onChange = (color) => {
+            updateState({ buttonBgColor: color.hexString });
+        };
+        picker.on("color:change", onChange);
+
+        return () => {
+            picker.off("color:change", onChange);
+            // allow GC by clearing DOM
+            if (wheelMountRef.current) wheelMountRef.current.innerHTML = "";
+        };
+    }, [wheelOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Close popover when clicking outside
+    useEffect(() => {
+        if (!wheelOpen) return;
+        const onDocClick = (e) => {
+            const t = e.target;
+            if (
+                popoverRef.current?.contains(t) ||
+                triggerRef.current?.contains(t)
+            ) {
+                return;
+            }
+            setWheelOpen(false);
+        };
+        document.addEventListener("mousedown", onDocClick);
+        return () => document.removeEventListener("mousedown", onDocClick);
+    }, [wheelOpen]);
+
     const handleServiceChange = (i, field, value) => {
         const next = [...(state.services || [])];
         next[i] = { ...(next[i] || {}), [field]: value };
@@ -98,7 +152,6 @@ export default function Editor({
 
     const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
 
-    // Keep only known keys, unique, and force "main" to index 0
     const sanitizeOrder = (order) => {
         const KNOWN = new Set(defaultOrder);
         const seen = new Set();
@@ -107,7 +160,6 @@ export default function Editor({
             .filter((k) => (seen.has(k) ? false : seen.add(k)));
 
         const rest = cleaned.filter((k) => k !== "main");
-        // Make sure all keys exist once (append any missing)
         const missing = defaultOrder.filter((k) => !cleaned.includes(k) && k !== "main");
         return ["main", ...rest, ...missing];
     };
@@ -115,7 +167,6 @@ export default function Editor({
     const currentOrder = sanitizeOrder(state.sectionOrder?.length ? state.sectionOrder : defaultOrder);
 
     const moveSectionUp = (idx) => {
-        // Prevent moving anything above index 1 (index 0 is "main")
         if (idx <= 1) return;
         const next = [...currentOrder];
         [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
@@ -123,7 +174,6 @@ export default function Editor({
     };
 
     const moveSectionDown = (idx) => {
-        // Never move "main" itself, and regular bounds check
         if (currentOrder[idx] === "main" || idx >= currentOrder.length - 1) return;
         const next = [...currentOrder];
         [next[idx + 1], next[idx]] = [next[idx], next[idx + 1]];
@@ -212,30 +262,71 @@ export default function Editor({
                 <div className="input-block">
                     <div className="choice-label">Button Style</div>
 
-                    {/* Background */}
+                    {/* Background: chip that opens the COLOR WHEEL (iro.js) */}
                     <div className="stack">
                         <label className="mini-label">Button Background</label>
-                        <div
-                            className="chip color-chip w-full"
-                            style={{ "--picked-color": pickedBg, "--picked-ink": pickedInk }}
-                        >
-                            <span className="color-chip-label">Choose colour</span>
-                            <input
-                                type="color"
-                                className="color-input"
-                                value={pickedBg}
-                                onChange={(e) => updateState({ buttonBgColor: e.target.value })}
-                                aria-label="Choose button background colour"
-                            />
-                        </div>
 
-                        {/* Hex input under the chip (keeps layout tidy) */}
-                        <input
-                            className="text-input hex-input"
-                            value={state.buttonBgColor || "#1E2A38"}
-                            onChange={(e) => updateState({ buttonBgColor: e.target.value })}
-                            placeholder="#1E2A38"
-                        />
+                        <div className="color-control" style={{ position: "relative" }}>
+                            <div
+                                ref={triggerRef}
+                                role="button"
+                                tabIndex={0}
+                                className="chip color-chip w-full"
+                                style={{
+                                    "--picked-color": pickedBg,
+                                    "--picked-ink": pickedInk,
+                                    cursor: "pointer",
+                                }}
+                                onClick={() => setWheelOpen((v) => !v)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        e.preventDefault();
+                                        setWheelOpen((v) => !v);
+                                    }
+                                }}
+                                aria-label="Choose button background colour"
+                            >
+                                <span className="color-chip-label">Choose colour</span>
+                            </div>
+
+                            {wheelOpen && (
+                                <div
+                                    ref={popoverRef}
+                                    className="color-popover"
+                                    style={{
+                                        position: "absolute",
+                                        zIndex: 50,
+                                        marginTop: 8,
+                                        background: "#fff",
+                                        border: "1px solid var(--chip-stroke)",
+                                        borderRadius: 12,
+                                        boxShadow: "0 8px 24px rgba(0,0,0,.12)",
+                                        padding: 12,
+                                        width: 240,
+                                    }}
+                                >
+                                    <div ref={wheelMountRef} />
+                                    <div
+                                        style={{
+                                            height: 8,
+                                            borderRadius: 6,
+                                            background: state.buttonBgColor || "#1E2A38",
+                                            marginTop: 10,
+                                        }}
+                                        aria-hidden
+                                    />
+                                    <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 10 }}>
+                                        <button
+                                            type="button"
+                                            className="btn btn-accent"
+                                            onClick={() => setWheelOpen(false)}
+                                        >
+                                            Done
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Text Colour */}
@@ -280,7 +371,7 @@ export default function Editor({
                     <ul className="sortable-list">
                         {currentOrder.map((key, idx) => {
                             const isMain = key === "main";
-                            const canMoveUp = !isMain && idx > 1; // never above index 1 (main fixed at 0)
+                            const canMoveUp = !isMain && idx > 1;
                             const canMoveDown = !isMain && idx < currentOrder.length - 1;
 
                             return (
