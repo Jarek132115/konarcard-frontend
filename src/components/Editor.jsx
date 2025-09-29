@@ -64,6 +64,26 @@ export default function Editor({
     const handleRemoveReview = (i) =>
         updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
+    // helpers for Section Order control
+    const readableSectionName = (key) =>
+        ({ main: "Main", about: "About Me", work: "My Work", services: "My Services", reviews: "Reviews", contact: "Contact" }[key] || key);
+
+    const defaultOrder = ['main', 'about', 'work', 'services', 'reviews', 'contact'];
+    const currentOrder = Array.isArray(state.sectionOrder) && state.sectionOrder.length ? state.sectionOrder : defaultOrder;
+
+    const moveSectionUp = (idx) => {
+        if (idx <= 0) return;
+        const next = [...currentOrder];
+        [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
+        updateState({ sectionOrder: next });
+    };
+    const moveSectionDown = (idx) => {
+        if (idx >= currentOrder.length - 1) return;
+        const next = [...currentOrder];
+        [next[idx + 1], next[idx]] = [next[idx], next[idx + 1]];
+        updateState({ sectionOrder: next });
+    };
+
     return (
         <div className="myprofile-editor-wrapper editor-scope" id="myprofile-editor" style={columnScrollStyle}>
             {!isSubscribed && hasTrialEnded && (
@@ -131,6 +151,93 @@ export default function Editor({
                             </button>
                         ))}
                     </div>
+                </div>
+
+                {/* Button Style */}
+                <hr className="divider" />
+                <div className="input-block">
+                    <div className="choice-label">Button Style</div>
+
+                    <div className="option-row split-2">
+                        <div className="stack">
+                            <label>Button Background</label>
+                            <input
+                                type="color"
+                                value={state.buttonBgColor || "#F47629"}
+                                onChange={(e) => updateState({ buttonBgColor: e.target.value })}
+                                aria-label="Choose button background colour"
+                                style={{ width: 56, height: 40, padding: 0, border: "none", background: "transparent" }}
+                            />
+                        </div>
+
+                        <div className="stack">
+                            <label>Button Text Colour</label>
+                            <div className="option-row split-2">
+                                {["white", "black"].map((c) => (
+                                    <button
+                                        key={c}
+                                        type="button"
+                                        className={`chip ${state.buttonTextColor === c ? "is-active" : ""}`}
+                                        onClick={() => updateState({ buttonTextColor: c })}
+                                    >
+                                        {c[0].toUpperCase() + c.slice(1)}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Text Alignment (content only) */}
+                <div className="input-block">
+                    <div className="choice-label">Text Alignment</div>
+                    <div className="option-row split-3">
+                        {["left", "center", "right"].map((a) => (
+                            <button
+                                key={a}
+                                type="button"
+                                className={`chip ${state.textAlignment === a ? "is-active" : ""}`}
+                                onClick={() => updateState({ textAlignment: a })}
+                            >
+                                {a[0].toUpperCase() + a.slice(1)}
+                            </button>
+                        ))}
+                    </div>
+                    <p className="hint">Aligns the content inside sections (section titles stay unchanged).</p>
+                </div>
+
+                {/* Section Order */}
+                <hr className="divider" />
+                <div className="input-block">
+                    <div className="choice-label">Section Order</div>
+                    <ul className="sortable-list">
+                        {currentOrder.map((key, idx) => (
+                            <li key={key} className="sortable-item">
+                                <span className="drag-label">⋮⋮</span>
+                                <span className="section-name">{readableSectionName(key)}</span>
+                                <div className="order-buttons">
+                                    <button
+                                        type="button"
+                                        className="btn btn-ghost"
+                                        disabled={idx === 0}
+                                        onClick={() => moveSectionUp(idx)}
+                                        aria-label={`Move ${readableSectionName(key)} up`}
+                                    >
+                                        ↑
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-ghost"
+                                        disabled={idx === currentOrder.length - 1}
+                                        onClick={() => moveSectionDown(idx)}
+                                        aria-label={`Move ${readableSectionName(key)} down`}
+                                    >
+                                        ↓
+                                    </button>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
 
                 {/* Main Section */}
@@ -487,6 +594,44 @@ export default function Editor({
                                 onChange={(e) => updateState({ phone_number: e.target.value })}
                                 placeholder={previewPlaceholders.phone_number}
                             />
+                        </div>
+
+                        {/* Social Links */}
+                        <div className="input-block">
+                            <div className="choice-label">Social Links</div>
+                            <div className="grid-2">
+                                <input
+                                    className="text-input"
+                                    placeholder="Facebook URL"
+                                    value={state.facebook_url || ""}
+                                    onChange={(e) => updateState({ facebook_url: e.target.value })}
+                                />
+                                <input
+                                    className="text-input"
+                                    placeholder="Instagram URL"
+                                    value={state.instagram_url || ""}
+                                    onChange={(e) => updateState({ instagram_url: e.target.value })}
+                                />
+                                <input
+                                    className="text-input"
+                                    placeholder="LinkedIn URL"
+                                    value={state.linkedin_url || ""}
+                                    onChange={(e) => updateState({ linkedin_url: e.target.value })}
+                                />
+                                <input
+                                    className="text-input"
+                                    placeholder="X (Twitter) URL"
+                                    value={state.x_url || ""}
+                                    onChange={(e) => updateState({ x_url: e.target.value })}
+                                />
+                                <input
+                                    className="text-input"
+                                    placeholder="TikTok URL"
+                                    value={state.tiktok_url || ""}
+                                    onChange={(e) => updateState({ tiktok_url: e.target.value })}
+                                />
+                            </div>
+                            <p className="hint">Icons will show as a single row under your contact info on the public page.</p>
                         </div>
                     </>
                 )}

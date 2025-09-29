@@ -29,6 +29,18 @@ export default function Preview({
     const shouldShowPlaceholders = !hasSavedData;
     const isDarkMode = state.pageTheme === "dark";
 
+    // --- NEW: derived styles for CTA and content alignment ---
+    const ctaStyle = {
+        backgroundColor: state.buttonBgColor || "#F47629",
+        color: state.buttonTextColor === "black" ? "#000000" : "#FFFFFF",
+    };
+    const contentAlign = { textAlign: state.textAlignment || "left" };
+
+    // Default/fallback section order
+    const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
+    const sectionOrder =
+        (Array.isArray(state.sectionOrder) && state.sectionOrder.length && state.sectionOrder) || defaultOrder;
+
     const previewFullName =
         state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
     const previewJobTitle =
@@ -80,11 +92,46 @@ export default function Preview({
         el.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
     };
 
+    // --- NEW: Social icons row (under contact info) ---
+    const SocialRow = () => {
+        const links = [
+            { key: "facebook_url", label: "Facebook", className: "icon-facebook", url: state.facebook_url },
+            { key: "instagram_url", label: "Instagram", className: "icon-instagram", url: state.instagram_url },
+            { key: "linkedin_url", label: "LinkedIn", className: "icon-linkedin", url: state.linkedin_url },
+            { key: "x_url", label: "X", className: "icon-x", url: state.x_url },
+            { key: "tiktok_url", label: "TikTok", className: "icon-tiktok", url: state.tiktok_url },
+        ].filter(x => typeof x.url === "string" && x.url.trim().length > 0);
+
+        if (!links.length) return null;
+        return (
+            <div
+                className="social-row"
+                style={{ display: "flex", gap: 12, justifyContent: "space-around", marginTop: 8, ...contentAlign }}
+            >
+                {links.map(l => (
+                    <a
+                        key={l.key}
+                        href={l.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={l.label}
+                        className={`social-icon ${l.className}`}
+                        // If you don't have icon fonts, at least render label for now:
+                        style={{ textDecoration: "none" }}
+                    >
+                        {/* Replace with actual <i> or <svg> icons in your CSS system */}
+                        <span className="social-fallback-label">{l.label}</span>
+                    </a>
+                ))}
+            </div>
+        );
+    };
+
     const WorkSection = () =>
         showWorkSection && previewWorkImages.length > 0 ? (
             <>
                 <p className="mock-section-title">My Work</p>
-                <div className="work-preview-row-container">
+                <div className="work-preview-row-container" style={contentAlign}>
                     {state.workDisplayMode === "carousel" && (
                         <div className="carousel-nav-buttons">
                             <button
@@ -103,7 +150,7 @@ export default function Preview({
                             </button>
                         </div>
                     )}
-                    <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`}>
+                    <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`} style={contentAlign}>
                         {previewWorkImages.map((item, i) => (
                             <div key={i} className="mock-work-image-item-wrapper">
                                 <img src={item.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
@@ -118,7 +165,7 @@ export default function Preview({
         showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) ? (
             <>
                 <p className="mock-section-title">My Services</p>
-                <div className="work-preview-row-container">
+                <div className="work-preview-row-container" style={contentAlign}>
                     {servicesDisplayMode === "carousel" && (
                         <div className="carousel-nav-buttons">
                             <button
@@ -137,7 +184,7 @@ export default function Preview({
                             </button>
                         </div>
                     )}
-                    <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`}>
+                    <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`} style={contentAlign}>
                         {servicesForPreview.map((s, i) => (
                             <div key={i} className="mock-service-item">
                                 <p className="mock-service-name">{s.name}</p>
@@ -153,7 +200,7 @@ export default function Preview({
         showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) ? (
             <>
                 <p className="mock-section-title">Reviews</p>
-                <div className="work-preview-row-container">
+                <div className="work-preview-row-container" style={contentAlign}>
                     {reviewsDisplayMode === "carousel" && (
                         <div className="carousel-nav-buttons">
                             <button
@@ -172,7 +219,7 @@ export default function Preview({
                             </button>
                         </div>
                     )}
-                    <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`}>
+                    <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`} style={contentAlign}>
                         {reviewsForPreview.map((r, i) => (
                             <div key={i} className="mock-review-card">
                                 <div className="mock-star-rating">
@@ -202,7 +249,7 @@ export default function Preview({
         showContactSection && (previewEmail || previewPhone) ? (
             <>
                 <p className="mock-section-title">Contact Details</p>
-                <div className="mock-contact-details">
+                <div className="mock-contact-details" style={contentAlign}>
                     <div className="mock-contact-item">
                         <p className="mock-contact-label">Email:</p>
                         <p className="mock-contact-value">{previewEmail}</p>
@@ -212,6 +259,8 @@ export default function Preview({
                         <p className="mock-contact-value">{previewPhone}</p>
                     </div>
                 </div>
+                {/* Social icons row under contact values */}
+                <SocialRow />
             </>
         ) : null;
 
@@ -224,12 +273,12 @@ export default function Preview({
                 <h2 className="mock-title">
                     {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
                 </h2>
-                <p className="mock-subtitle">
+                <p className="mock-subtitle" style={contentAlign}>
                     {state.subHeading ||
                         (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
                 </p>
                 {(shouldShowPlaceholders || hasExchangeContact) && (
-                    <button type="button" className="mock-button">
+                    <button type="button" className="mock-button" style={ctaStyle}>
                         Save My Number
                     </button>
                 )}
@@ -240,7 +289,7 @@ export default function Preview({
         showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) ? (
             <>
                 <p className="mock-section-title">About me</p>
-                <div className={`mock-about-container ${aboutMeLayout}`}>
+                <div className={`mock-about-container ${aboutMeLayout}`} style={contentAlign}>
                     <div className="mock-about-content-group">
                         <div className="mock-about-header-group">
                             {previewAvatarSrc && <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />}
@@ -254,6 +303,16 @@ export default function Preview({
                 </div>
             </>
         ) : null;
+
+    // Map keys to rendered components (respect section order)
+    const sectionMap = {
+        main: <MainSection key="main" />,
+        about: <AboutSection key="about" />,
+        work: <WorkSection key="work" />,
+        services: <ServicesSection key="services" />,
+        reviews: <ReviewsSection key="reviews" />,
+        contact: <ContactSection key="contact" />,
+    };
 
     // ---------- Mobile ----------
     if (isMobile) {
@@ -302,12 +361,7 @@ export default function Preview({
                     >
                         <div className="mock-phone mobile-preview">
                             <div className="mock-phone-scrollable-content">
-                                <MainSection />
-                                <AboutSection />
-                                <WorkSection />
-                                <ServicesSection />
-                                <ReviewsSection />
-                                <ContactSection />
+                                {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}
                             </div>
                         </div>
                     </div>
@@ -325,26 +379,7 @@ export default function Preview({
             >
                 <div className="mock-phone">
                     <div className="mock-phone-scrollable-content desktop-no-inner-scroll">
-                        <MainSection />
-                        <AboutSection />
-                        <WorkSection />
-                        <ServicesSection />
-                        <ReviewsSection />
-                        {showContactSection && (previewEmail || previewPhone) ? (
-                            <>
-                                <p className="mock-section-title">Contact Details</p>
-                                <div style={{ marginBottom: 20 }} className="mock-contact-details">
-                                    <div className="mock-contact-item">
-                                        <p className="mock-contact-label">Email:</p>
-                                        <p className="mock-contact-value">{previewEmail}</p>
-                                    </div>
-                                    <div className="mock-contact-item">
-                                        <p className="mock-contact-label">Phone:</p>
-                                        <p className="mock-contact-value">{previewPhone}</p>
-                                    </div>
-                                </div>
-                            </>
-                        ) : null}
+                        {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}
                     </div>
                 </div>
             </div>

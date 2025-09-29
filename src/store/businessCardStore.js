@@ -7,6 +7,21 @@ const template = {
   pageThemeVariant: "subtle-light",
   font: "Inter",
 
+  // NEW: styling controls
+  buttonBgColor: "#F47629",     // CTA/button background colour
+  buttonTextColor: "white",     // "white" | "black"
+  textAlignment: "left",        // "left" | "center" | "right"
+
+  // NEW: social links
+  facebook_url: "",
+  instagram_url: "",
+  linkedin_url: "",
+  x_url: "",
+  tiktok_url: "",
+
+  // NEW: section order (rendering sequence)
+  sectionOrder: ["main", "about", "work", "services", "reviews", "contact"],
+
   coverPhoto: null,
   avatar: null,
   workImages: [],
@@ -52,6 +67,11 @@ export const previewPlaceholders = {
   businessName: "Elite Bathrooms & Renovations",
   pageTheme: "light",
   pageThemeVariant: "subtle-light",
+
+  // Optional preview defaults for styling (used if needed in Preview)
+  buttonBgColor: "#F47629",
+  buttonTextColor: "white",
+  textAlignment: "left",
 
   coverPhoto: "/Interface-Preview/Cover-Photo1.png",
   avatar: "/Interface-Preview/Profile-Pic.png",
@@ -103,4 +123,14 @@ export const previewPlaceholders = {
 
   contact_email: "info@elitebathrooms.co.uk",
   phone_number: "+44 7700 900123",
+
+  // Optional placeholder order
+  sectionOrder: ["main", "about", "work", "services", "reviews", "contact"],
+
+  // Optional placeholder socials (left empty so they don't render unless user adds)
+  facebook_url: "",
+  instagram_url: "",
+  linkedin_url: "",
+  x_url: "",
+  tiktok_url: "",
 };

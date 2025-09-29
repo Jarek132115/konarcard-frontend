@@ -1,4 +1,4 @@
-// src/pages/MyProfile/MyProfile.jsx  — FULL FILE PART 1/2
+// src/pages/MyProfile/MyProfile.jsx
 import React, { useEffect, useState, useContext, useMemo, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
@@ -17,6 +17,9 @@ import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 // NEW: extracted components
 import Preview from "../../components/Preview";
 import Editor from "../../components/Editor";
+
+const DEFAULT_SECTION_ORDER = ["main", "about", "work", "services", "reviews", "contact"];
+const norm = (v) => (v ?? "").toString().trim();
 
 export default function MyProfile() {
   const { state, updateState, resetState } = useBusinessCardStore();
@@ -180,20 +183,45 @@ export default function MyProfile() {
       updateState({
         businessName: businessCard.business_card_name || "",
         pageTheme: businessCard.page_theme || "light",
+        pageThemeVariant: businessCard.page_theme_variant || "subtle-light",
         font: businessCard.style || "Inter",
+
         mainHeading: businessCard.main_heading || "",
         subHeading: businessCard.sub_heading || "",
         job_title: businessCard.job_title || "",
         full_name: businessCard.full_name || "",
         bio: businessCard.bio || "",
+
         avatar: businessCard.avatar || null,
         coverPhoto: businessCard.cover_photo || null,
         workImages: (businessCard.works || []).map((url) => ({ file: null, preview: url })),
+        workDisplayMode: businessCard.work_display_mode || "list",
+
         services: businessCard.services || [],
+        servicesDisplayMode: businessCard.services_display_mode || "list",
         reviews: businessCard.reviews || [],
+        reviewsDisplayMode: businessCard.reviews_display_mode || "list",
+        aboutMeLayout: businessCard.about_me_layout || "side-by-side",
+
         contact_email: businessCard.contact_email || "",
         phone_number: businessCard.phone_number || "",
-        workDisplayMode: businessCard.work_display_mode || "list",
+
+        // NEW: design controls + alignment + socials + ordering
+        buttonBgColor: businessCard.button_bg_color || "#F47629",
+        buttonTextColor: (businessCard.button_text_color || "white").toLowerCase() === "black" ? "black" : "white",
+        textAlignment: ["left", "center", "right"].includes((businessCard.text_alignment || "").toLowerCase())
+          ? businessCard.text_alignment
+          : "left",
+
+        facebook_url: businessCard.facebook_url || "",
+        instagram_url: businessCard.instagram_url || "",
+        linkedin_url: businessCard.linkedin_url || "",
+        x_url: businessCard.x_url || "",
+        tiktok_url: businessCard.tiktok_url || "",
+
+        sectionOrder: Array.isArray(businessCard.section_order) && businessCard.section_order.length
+          ? businessCard.section_order
+          : DEFAULT_SECTION_ORDER,
       });
 
       setServicesDisplayMode(businessCard.services_display_mode || "list");
@@ -223,6 +251,18 @@ export default function MyProfile() {
       setShowServicesSection(true);
       setShowReviewsSection(true);
       setShowContactSection(true);
+      // ensure sensible defaults for new fields
+      updateState({
+        buttonBgColor: "#F47629",
+        buttonTextColor: "white",
+        textAlignment: "left",
+        facebook_url: "",
+        instagram_url: "",
+        linkedin_url: "",
+        x_url: "",
+        tiktok_url: "",
+        sectionOrder: DEFAULT_SECTION_ORDER,
+      });
     }
   }, [businessCard, isCardLoading, resetState, updateState]);
 
@@ -232,7 +272,6 @@ export default function MyProfile() {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
-  // src/pages/MyProfile/MyProfile.jsx  — FULL FILE PART 2/2
 
   // ================= HANDLERS & HELPERS =================
 
@@ -364,13 +403,32 @@ export default function MyProfile() {
     setIsAvatarRemoved(false);
     activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     activeBlobUrlsRef.current = [];
+
+    // reset new fields
+    updateState({
+      buttonBgColor: "#F47629",
+      buttonTextColor: "white",
+      textAlignment: "left",
+      facebook_url: "",
+      instagram_url: "",
+      linkedin_url: "",
+      x_url: "",
+      tiktok_url: "",
+      sectionOrder: DEFAULT_SECTION_ORDER,
+    });
+
     toast.success("Editor reset.");
+  };
+
+  const arraysEqual = (a = [], b = []) => {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+    return true;
   };
 
   const hasProfileChanges = () => {
     if (coverPhotoFile || avatarFile || workImageFiles.length || coverPhotoRemoved || isAvatarRemoved) return true;
     const original = businessCard || {};
-    const norm = (v) => (v ?? "").toString().trim();
 
     const normalizeServices = (arr) => (arr || []).map((s) => ({ name: norm(s.name), price: norm(s.price) }));
     const normalizeReviews = (arr) =>
@@ -410,6 +468,16 @@ export default function MyProfile() {
     const origShowReviews = original.show_reviews_section !== false;
     const origShowContact = original.show_contact_section !== false;
 
+    // NEW compares
+    const origButtonBg = original.button_bg_color || "#F47629";
+    const origButtonText = (original.button_text_color || "white").toLowerCase() === "black" ? "black" : "white";
+    const origAlign = ["left", "center", "right"].includes((original.text_alignment || "").toLowerCase())
+      ? original.text_alignment
+      : "left";
+    const origSectionOrder = Array.isArray(original.section_order) && original.section_order.length
+      ? original.section_order
+      : DEFAULT_SECTION_ORDER;
+
     return (
       state.businessName !== (original.business_card_name || "") ||
       state.pageTheme !== (original.page_theme || "light") ||
@@ -433,7 +501,17 @@ export default function MyProfile() {
       showWorkSection !== origShowWork ||
       showServicesSection !== origShowServices ||
       showReviewsSection !== origShowReviews ||
-      showContactSection !== origShowContact
+      showContactSection !== origShowContact ||
+      // NEW diffs:
+      state.buttonBgColor !== origButtonBg ||
+      state.buttonTextColor !== origButtonText ||
+      state.textAlignment !== origAlign ||
+      state.facebook_url !== (original.facebook_url || "") ||
+      state.instagram_url !== (original.instagram_url || "") ||
+      state.linkedin_url !== (original.linkedin_url || "") ||
+      state.x_url !== (original.x_url || "") ||
+      state.tiktok_url !== (original.tiktok_url || "") ||
+      !arraysEqual(state.sectionOrder || [], origSectionOrder)
     );
   };
 
@@ -486,6 +564,7 @@ export default function MyProfile() {
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
+      page_theme_variant: state.pageThemeVariant,
       font: state.font,
       main_heading: state.mainHeading,
       sub_heading: state.subHeading,
@@ -512,6 +591,17 @@ export default function MyProfile() {
       show_services_section: showServicesSection,
       show_reviews_section: showReviewsSection,
       show_contact_section: showContactSection,
+
+      // NEW payload fields
+      button_bg_color: state.buttonBgColor,
+      button_text_color: state.buttonTextColor, // 'white'|'black'
+      text_alignment: state.textAlignment, // 'left'|'center'|'right'
+      facebook_url: state.facebook_url,
+      instagram_url: state.instagram_url,
+      linkedin_url: state.linkedin_url,
+      x_url: state.x_url,
+      tiktok_url: state.tiktok_url,
+      section_order: JSON.stringify(state.sectionOrder || DEFAULT_SECTION_ORDER),
     });
 
     try {
