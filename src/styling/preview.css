@@ -162,7 +162,7 @@
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: 14px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 10px;
     margin-top: 10px;
     background-color: var(--placeholder-bg);
     background-size: cover;
@@ -185,7 +185,7 @@
 
 .mock-subtitle {
     font-size: .95rem;
-    font-weight: 600;
+    font-weight: 500;
     margin: 8px 0 0;
     color: #000;
     text-align: center;
@@ -746,4 +746,4 @@
     font-family: inherit;
 }
 
-/* or: font: inherit; */
+/* or: font: inherit; */ 
