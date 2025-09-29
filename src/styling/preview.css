@@ -555,13 +555,6 @@
     outline-offset: 2px;
 }
 
-/* Card … (unchanged) */
-
-/* Head section */
-.mock-cover {
-    /* unchanged */
-}
-
 .mock-title {
     font-size: clamp(20px, 2.6vw, 32px);
     font-weight: 800;
