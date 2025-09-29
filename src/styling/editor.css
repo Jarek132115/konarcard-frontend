@@ -662,3 +662,9 @@
     max-width: min(92vw, 260px);
     overflow: hidden;
 }
+
+@media (max-width: 1000px) {
+    .editor-scope .myprofile-editor {
+        padding-bottom: calc(18px + 20px + env(safe-area-inset-bottom));
+    }
+}
