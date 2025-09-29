@@ -336,3 +336,40 @@
     display: flex;
   }
 }
+
+/* --- Fix: Desktop Logout (red pill, matches Dashboard size/shape) --- */
+.auth-links .desktop-button.red-button,
+.desktop-button.red-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 2px solid #EF4444;
+  background: #EF4444;
+  color: #fff;
+  font-weight: 700;
+  line-height: 1.1;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.30);
+  transition: background-color .15s, box-shadow .15s, transform .05s, filter .15s;
+}
+
+.auth-links .desktop-button.red-button:hover,
+.desktop-button.red-button:hover {
+  filter: brightness(0.96);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.40);
+}
+
+.auth-links .desktop-button.red-button:active,
+.desktop-button.red-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.45);
+}
+
+@media (max-width: 1000px) {
+  .desktop-button.red-button {
+    width: 100%;
+  }
+}
