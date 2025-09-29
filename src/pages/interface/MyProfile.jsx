@@ -272,6 +272,7 @@ export default function MyProfile() {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
+  // (continued) src/pages/MyProfile/MyProfile.jsx
 
   // ================= HANDLERS & HELPERS =================
 
@@ -281,7 +282,7 @@ export default function MyProfile() {
     return url;
   };
 
-  // New: file handlers adapted for <Editor />
+  // File handlers
   const onCoverUpload = (file) => {
     if (!file || !file.type?.startsWith("image/")) return;
     updateState({ coverPhoto: createAndTrackBlobUrl(file) });
@@ -330,27 +331,33 @@ export default function MyProfile() {
     updateState({ workImages: state.workImages.filter((_, i) => i !== idx) });
   };
 
-  const handleAddService = () => updateState({ services: [...state.services, { name: "", price: "" }] });
+  // Services handlers
+  const handleAddService = () => updateState({ services: [...(state.services || []), { name: "", price: "" }] });
   const handleServiceChange = (i, field, value) => {
-    const arr = [...state.services];
-    arr[i] = { ...arr[i], [field]: value };
+    const arr = [...(state.services || [])];
+    arr[i] = { ...(arr[i] || {}), [field]: value };
     updateState({ services: arr });
   };
-  const handleRemoveService = (i) => updateState({ services: state.services.filter((_, x) => x !== i) });
+  const handleRemoveService = (i) =>
+    updateState({ services: (state.services || []).filter((_, x) => x !== i) });
 
-  const handleAddReview = () => updateState({ reviews: [...state.reviews, { name: "", text: "", rating: 5 }] });
+  // Reviews handlers
+  const handleAddReview = () =>
+    updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
   const handleReviewChange = (i, field, value) => {
-    const arr = [...state.reviews];
+    const arr = [...(state.reviews || [])];
     if (field === "rating") {
       const n = parseInt(value, 10);
-      arr[i] = { ...arr[i], rating: Number.isFinite(n) ? Math.min(5, Math.max(0, n)) : 0 };
+      arr[i] = { ...(arr[i] || {}), rating: Number.isFinite(n) ? Math.min(5, Math.max(0, n)) : 0 };
     } else {
-      arr[i] = { ...arr[i], [field]: value };
+      arr[i] = { ...(arr[i] || {}), [field]: value };
     }
     updateState({ reviews: arr });
   };
-  const handleRemoveReview = (i) => updateState({ reviews: state.reviews.filter((_, x) => x !== i) });
+  const handleRemoveReview = (i) =>
+    updateState({ reviews: (state.reviews || []).filter((_, x) => x !== i) });
 
+  // Verification helpers
   const sendVerificationCode = async () => {
     if (!userEmail) return toast.error("Email not found. Please log in again.");
     try {
@@ -385,6 +392,7 @@ export default function MyProfile() {
     }
   };
 
+  // Reset page
   const handleResetPage = () => {
     resetState();
     setServicesDisplayMode("list");
@@ -404,7 +412,7 @@ export default function MyProfile() {
     activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     activeBlobUrlsRef.current = [];
 
-    // reset new fields
+    // Defaults for new fields
     updateState({
       buttonBgColor: "#F47629",
       buttonTextColor: "white",
@@ -420,6 +428,7 @@ export default function MyProfile() {
     toast.success("Editor reset.");
   };
 
+  // Deep compare helpers
   const arraysEqual = (a = [], b = []) => {
     if (a.length !== b.length) return false;
     for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
@@ -429,6 +438,7 @@ export default function MyProfile() {
   const hasProfileChanges = () => {
     if (coverPhotoFile || avatarFile || workImageFiles.length || coverPhotoRemoved || isAvatarRemoved) return true;
     const original = businessCard || {};
+    const norm = (v) => (v ?? "").toString().trim();
 
     const normalizeServices = (arr) => (arr || []).map((s) => ({ name: norm(s.name), price: norm(s.price) }));
     const normalizeReviews = (arr) =>
@@ -468,7 +478,6 @@ export default function MyProfile() {
     const origShowReviews = original.show_reviews_section !== false;
     const origShowContact = original.show_contact_section !== false;
 
-    // NEW compares
     const origButtonBg = original.button_bg_color || "#F47629";
     const origButtonText = (original.button_text_color || "white").toLowerCase() === "black" ? "black" : "white";
     const origAlign = ["left", "center", "right"].includes((original.text_alignment || "").toLowerCase())
@@ -502,7 +511,6 @@ export default function MyProfile() {
       showServicesSection !== origShowServices ||
       showReviewsSection !== origShowReviews ||
       showContactSection !== origShowContact ||
-      // NEW diffs:
       state.buttonBgColor !== origButtonBg ||
       state.buttonTextColor !== origButtonText ||
       state.textAlignment !== origAlign ||
@@ -548,12 +556,14 @@ export default function MyProfile() {
     }
   };
 
+  // ===== SAVE (with real array section_order) =====
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
     if (!isSubscribed && !isTrialActive) await ensureTrialIfNeeded();
 
-    const worksToUpload = state.workImages
+    const worksToUpload = (state.workImages || [])
       .map((item) => {
         if (item.file) return { file: item.file };
         if (item.preview && !item.preview.startsWith("blob:")) return item.preview;
@@ -577,8 +587,8 @@ export default function MyProfile() {
       cover_photo_removed: coverPhotoRemoved,
       avatar_removed: isAvatarRemoved,
       works: worksToUpload,
-      services: state.services.filter((s) => s.name || s.price),
-      reviews: state.reviews.filter((r) => r.name || r.text),
+      services: (state.services || []).filter((s) => s.name || s.price),
+      reviews: (state.reviews || []).filter((r) => r.name || r.text),
       contact_email: state.contact_email,
       phone_number: state.phone_number,
       work_display_mode: state.workDisplayMode,
@@ -592,16 +602,20 @@ export default function MyProfile() {
       show_reviews_section: showReviewsSection,
       show_contact_section: showContactSection,
 
-      // NEW payload fields
+      // ✅ Save new fields
       button_bg_color: state.buttonBgColor,
       button_text_color: state.buttonTextColor, // 'white'|'black'
-      text_alignment: state.textAlignment, // 'left'|'center'|'right'
+      text_alignment: state.textAlignment,      // 'left'|'center'|'right'
       facebook_url: state.facebook_url,
       instagram_url: state.instagram_url,
       linkedin_url: state.linkedin_url,
       x_url: state.x_url,
       tiktok_url: state.tiktok_url,
-      section_order: JSON.stringify(state.sectionOrder || DEFAULT_SECTION_ORDER),
+
+      // ✅ IMPORTANT: save as array (not JSON string)
+      section_order: state.sectionOrder && state.sectionOrder.length
+        ? state.sectionOrder
+        : DEFAULT_SECTION_ORDER,
     });
 
     try {
@@ -672,7 +686,7 @@ export default function MyProfile() {
                   <p>
                     Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to your business card.
                   </p>
-                  <form onSubmit={handleVerifyCode}>
+                  <form onSubmit={handleVerifyCode} className="verification-form">
                     <input
                       type="text"
                       className="text-input"
@@ -680,11 +694,20 @@ export default function MyProfile() {
                       value={verificationCodeInput}
                       onChange={(e) => setVerificationCodeCode(e.target.value)}
                       maxLength={6}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                     />
-                    <button type="submit">Verify Email</button>
-                    <button type="button" onClick={sendVerificationCode} disabled={resendCooldown > 0}>
-                      {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend Code"}
-                    </button>
+                    <div className="verification-actions">
+                      <button type="submit" className="desktop-button navy-button">Verify Email</button>
+                      <button
+                        type="button"
+                        className="desktop-button orange-button"
+                        onClick={sendVerificationCode}
+                        disabled={resendCooldown > 0}
+                      >
+                        {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend Code"}
+                      </button>
+                    </div>
                   </form>
                 </div>
               )}
@@ -732,6 +755,7 @@ export default function MyProfile() {
                     showContactSection={showContactSection}
                     hasExchangeContact={hasExchangeContact}
                     visitUrl={visitUrl}
+                    columnScrollStyle={columnScrollStyle}
                   />
                 </div>
 
@@ -779,7 +803,7 @@ export default function MyProfile() {
       <ShareProfile
         isOpen={showShareModal}
         onClose={handleCloseShareModal}
-        profileUrl={userUsername ? `https://www.konarcard.com/u/${userUsername}` : ""}
+        profileUrl={visitUrl}
         qrCodeUrl={businessCard?.qrCodeUrl || ""}
         contactDetails={{
           full_name: businessCard?.full_name || "",
