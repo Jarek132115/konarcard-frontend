@@ -697,11 +697,6 @@
     letter-spacing: .2px;
 }
 
-/* Keep larger section subtitles as-is (no change) */
-.editor-scope .editor-subtitle {
-    /* intentionally unchanged */
-}
-
 /* === Color chip height fix === */
 .editor-scope .color-chip {
     min-height: 44px;
