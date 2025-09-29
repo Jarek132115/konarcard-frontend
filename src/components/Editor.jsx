@@ -1,3 +1,4 @@
+// src/components/Editor.jsx
 import React, { useRef } from "react";
 import { previewPlaceholders } from "../store/businessCardStore";
 
@@ -71,24 +72,42 @@ export default function Editor({
     const handleRemoveReview = (i) =>
         updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
-    // helpers for Section Order control
+    // ===== Section Order (Main locked at top) =====
     const readableSectionName = (key) =>
         ({ main: "Main", about: "About Me", work: "My Work", services: "My Services", reviews: "Reviews", contact: "Contact" }[key] || key);
 
     const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
-    const currentOrder = Array.isArray(state.sectionOrder) && state.sectionOrder.length ? state.sectionOrder : defaultOrder;
+
+    // Keep only known keys, unique, and force "main" to index 0
+    const sanitizeOrder = (order) => {
+        const KNOWN = new Set(defaultOrder);
+        const seen = new Set();
+        const cleaned = (Array.isArray(order) ? order : defaultOrder)
+            .filter((k) => KNOWN.has(k))
+            .filter((k) => (seen.has(k) ? false : seen.add(k)));
+
+        const rest = cleaned.filter((k) => k !== "main");
+        // Make sure all keys exist once (append any missing)
+        const missing = defaultOrder.filter((k) => !cleaned.includes(k) && k !== "main");
+        return ["main", ...rest, ...missing];
+    };
+
+    const currentOrder = sanitizeOrder(state.sectionOrder?.length ? state.sectionOrder : defaultOrder);
 
     const moveSectionUp = (idx) => {
-        if (idx <= 0) return;
+        // Prevent moving anything above index 1 if that would push "main" down
+        if (idx <= 1) return;
         const next = [...currentOrder];
         [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
-        updateState({ sectionOrder: next });
+        updateState({ sectionOrder: sanitizeOrder(next) });
     };
+
     const moveSectionDown = (idx) => {
-        if (idx >= currentOrder.length - 1) return;
+        // Never move "main" itself, and regular bounds check
+        if (currentOrder[idx] === "main" || idx >= currentOrder.length - 1) return;
         const next = [...currentOrder];
         [next[idx + 1], next[idx]] = [next[idx], next[idx + 1]];
-        updateState({ sectionOrder: next });
+        updateState({ sectionOrder: sanitizeOrder(next) });
     };
 
     return (
@@ -212,40 +231,50 @@ export default function Editor({
                             </button>
                         ))}
                     </div>
-                    {/* removed the long hint */}
                 </div>
 
-                {/* Section Order */}
+                {/* Section Order (Main locked) */}
                 <hr className="divider" />
                 <div className="input-block">
                     <div className="choice-label">Section Order</div>
                     <ul className="sortable-list">
-                        {currentOrder.map((key, idx) => (
-                            <li key={key} className="sortable-item">
-                                <span className="drag-label">⋮⋮</span>
-                                <span className="section-name">{readableSectionName(key)}</span>
-                                <div className="order-buttons">
-                                    <button
-                                        type="button"
-                                        className="btn btn-ghost"
-                                        disabled={idx === 0}
-                                        onClick={() => moveSectionUp(idx)}
-                                        aria-label={`Move ${readableSectionName(key)} up`}
-                                    >
-                                        ↑
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-ghost"
-                                        disabled={idx === currentOrder.length - 1}
-                                        onClick={() => moveSectionDown(idx)}
-                                        aria-label={`Move ${readableSectionName(key)} down`}
-                                    >
-                                        ↓
-                                    </button>
-                                </div>
-                            </li>
-                        ))}
+                        {currentOrder.map((key, idx) => {
+                            const isMain = key === "main";
+                            const canMoveUp = !isMain && idx > 1; // never swap with index 0 (“main”)
+                            const canMoveDown = !isMain && idx < currentOrder.length - 1;
+
+                            return (
+                                <li key={key} className="sortable-item">
+                                    <span className="drag-label">⋮⋮</span>
+                                    <span className="section-name">
+                                        {readableSectionName(key)}
+                                        {isMain ? " (Locked)" : ""}
+                                    </span>
+                                    <div className="order-buttons">
+                                        <button
+                                            type="button"
+                                            className="btn btn-ghost"
+                                            disabled={!canMoveUp}
+                                            onClick={() => moveSectionUp(idx)}
+                                            aria-label={`Move ${readableSectionName(key)} up`}
+                                            title={isMain ? "Main is locked at top" : ""}
+                                        >
+                                            ↑
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-ghost"
+                                            disabled={!canMoveDown}
+                                            onClick={() => moveSectionDown(idx)}
+                                            aria-label={`Move ${readableSectionName(key)} down`}
+                                            title={isMain ? "Main is locked at top" : ""}
+                                        >
+                                            ↓
+                                        </button>
+                                    </div>
+                                </li>
+                            );
+                        })}
                     </ul>
                 </div>
 
