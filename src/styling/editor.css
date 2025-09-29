@@ -652,3 +652,50 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(30, 42, 56, .6) transparent;
 }
+
+/* ==== Full-bleed navy header (title) ==== */
+.editor-scope .editor-title {
+    /* make the bar fill to card edges */
+    background: #1E2A38;
+    color: #fff;
+    padding: 14px 18px;
+    /* inner spacing for the text */
+    margin: -18px -18px 16px;
+    /* cancel card padding on top/left/right */
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+/* optional: hide the thin divider under the title, since the bar replaces it */
+.editor-scope .title-divider {
+    display: none;
+}
+
+/* ==== Social Links: 1 per row, icon left / input right ==== */
+.editor-scope .social-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    /* a bit more breathing room */
+}
+
+.editor-scope .social-row-input {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    /* fixed icon column, flexible input */
+    align-items: center;
+    gap: 10px;
+}
+
+.editor-scope .social-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .1));
+}
+
+/* Make sure the text inputs span the full row height nicely */
+.editor-scope .social-row-input .text-input {
+    width: 100%;
+    min-height: 44px;
+}
