@@ -35,7 +35,7 @@
     color: #fff;
 }
 
-/* Do NOT flip card backgrounds in dark mode — keep them white like the design */
+/* Keep cards white in dark mode */
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-about-section,
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-service-item,
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-review-card,
@@ -44,7 +44,7 @@
     color: #111 !important;
 }
 
-/* Body copy readability in any dark card content */
+/* Body copy inside cards in dark mode */
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-bio-text,
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-review-card .landing-review-text {
     color: #111 !important;
@@ -61,26 +61,28 @@
     box-shadow: 0 6px 24px rgba(0, 0, 0, .12);
 }
 
-/* Main Heading */
+/* Main Heading — let inline style control alignment */
 .landing-main-heading {
     font-size: 2rem;
     font-weight: 800;
     margin: 0;
     line-height: 1.2;
-    text-align: center;
+    text-align: inherit;
+    /* was center */
     max-width: 800px;
 }
 
-/* Subheading */
+/* Subheading — alignment controlled inline */
 .landing-sub-heading {
     font-size: 0.95rem;
     font-weight: 600;
     margin-top: 8px;
-    text-align: center;
+    text-align: inherit;
+    /* was center */
     max-width: 800px;
 }
 
-/* Primary CTA */
+/* Primary CTA (colors are overridden inline via style) */
 .landing-action-button {
     background: #0081FF;
     color: #fff;
@@ -107,12 +109,7 @@
     transform: translateY(1px);
 }
 
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-action-button {
-    background: #0081FF;
-    color: #ffffff;
-}
-
-/* Section title */
+/* Section title (unchanged: stays left) */
 .landing-section-title {
     font-size: 1rem;
     font-weight: 700;
@@ -160,7 +157,7 @@
     background: #f9f9f9;
 }
 
-/* Avatar sizes */
+/* Avatar */
 .landing-avatar {
     grid-column: 1;
     grid-row: 1;
@@ -212,11 +209,6 @@
     color: #111;
 }
 
-.landing-about-section.stacked .landing-profile-name,
-.landing-about-section.stacked .landing-profile-role {
-    text-align: center;
-}
-
 /* ---------- Carousels ---------- */
 .user-carousel-container {
     position: relative;
@@ -257,7 +249,7 @@
     background-color: rgba(0, 0, 0, .65);
 }
 
-/* work carousel track */
+/* work carousel */
 .user-work-gallery-carousel {
     display: flex;
     flex-direction: row;
@@ -276,9 +268,7 @@
 }
 
 .user-work-gallery-carousel .landing-work-image {
-    flex-shrink: 0;
-    flex-grow: 0;
-    flex-basis: 100%;
+    flex: 0 0 100%;
     max-width: 100%;
     scroll-snap-align: start;
     box-sizing: border-box;
@@ -306,9 +296,7 @@
 
 .user-services-list-carousel .landing-service-item,
 .user-reviews-list-carousel .landing-review-card {
-    flex-shrink: 0;
-    flex-grow: 0;
-    flex-basis: 100%;
+    flex: 0 0 100%;
     max-width: 100%;
     scroll-snap-align: start;
     box-sizing: border-box;
@@ -375,6 +363,7 @@
     text-align: left;
     display: flex;
     flex-direction: column;
+    background: #f9f9f9;
 }
 
 .landing-service-name {
@@ -402,6 +391,7 @@
 
 .landing-review-card {
     padding: 14px 16px;
+    background: #f9f9f9;
 }
 
 .landing-star-rating {
@@ -409,6 +399,8 @@
     font-size: 1.1rem;
     margin-bottom: 6px;
     letter-spacing: 0.06rem;
+    display: flex;
+    justify-content: center;
 }
 
 .landing-star-rating .empty-star {
@@ -420,6 +412,7 @@
     color: #111;
     margin: 0 0 10px 0;
     line-height: 1.5;
+    text-align: center;
 }
 
 .landing-reviewer-name {
@@ -427,6 +420,7 @@
     font-weight: 700;
     color: #333;
     margin: 0;
+    text-align: center;
 }
 
 /* ---------- Contact Details ---------- */
@@ -451,13 +445,56 @@
     font-size: 0.95rem;
     font-weight: 700;
     margin: 0;
-    color: #cccccc;
+    color: #333;
 }
 
 .landing-contact-value {
     font-size: 0.95rem;
     margin: 0;
     color: #111;
+    text-align: right;
+}
+
+/* --- NEW: Social icons row INSIDE the contact card --- */
+.landing-contact-socials {
+    display: flex;
+    justify-content: space-around;
+    /* evenly spaced */
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    /* (was 20px) smaller gap */
+}
+
+.landing-contact-social-chip {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, .08);
+    background: #fff;
+    /* light mode */
+    box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
+    text-decoration: none;
+}
+
+.landing-contact-social-glyph {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+/* Dark mode inversion: page background is dark but the contact card stays white;
+   we still want *chips* dark with white glyphs to match your Preview */
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-contact-social-chip {
+    background: #111;
+    border-color: #111;
+}
+
+.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .landing-contact-social-glyph {
+    filter: invert(1);
 }
 
 /* ---------- Responsive ---------- */
@@ -478,35 +515,12 @@
     align-items: stretch !important;
 }
 
-/* Ensure cards span the full track width */
 .user-services-list-carousel .landing-service-item,
 .user-reviews-list-carousel .landing-review-card,
 .landing-services-list .landing-service-item,
 .landing-reviews-list .landing-review-card {
     width: 100%;
     max-width: 800px;
-}
-
-/* Center the content inside those cards only */
-.user-services-list-carousel .landing-service-item,
-.user-reviews-list-carousel .landing-review-card,
-.landing-services-list .landing-service-item,
-.landing-reviews-list .landing-review-card {
-    text-align: center;
-    background: #f9f9f9;
-}
-
-.landing-service-name,
-.landing-service-price,
-.landing-review-text,
-.landing-reviewer-name {
-    text-align: center;
-}
-
-/* Center star row */
-.landing-star-rating {
-    display: flex;
-    justify-content: center;
 }
 
 /* ===== Unavailable (empty/disabled) profile ===== */
@@ -557,7 +571,6 @@
     opacity: .9;
 }
 
-/* List -> column with two-line reason */
 .unavailable-list {
     list-style: none;
     margin: 0 auto 18px;
@@ -595,7 +608,6 @@
     gap: 2px;
 }
 
-/* Actions */
 .unavailable-actions {
     display: flex;
     gap: 10px;
@@ -604,7 +616,6 @@
     margin-top: 6px;
 }
 
-/* Helper link under CTA */
 .unavailable-help {
     margin-top: 10px;
 }
@@ -627,7 +638,6 @@
     color: #fff;
 }
 
-/* Stack buttons full width on small screens */
 @media (max-width: 520px) {
     .unavailable-actions {
         flex-direction: column;
@@ -640,7 +650,6 @@
     }
 }
 
-/* Dark theme compatibility */
 .user-landing-page[style*="background-color: rgb(31, 31, 31)"] .unavailable-wrap {
     background: #1F1F1F !important;
 }

@@ -1,35 +1,26 @@
-// src/pages/UserPage/UserPage.jsx
 import React, { useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
 import { AuthContext } from "../../components/AuthContext";
 
-const PLACEHOLDER_HINTS = [
-    "placeholder",
-    "sample",
-    "demo",
-    "stock",
-    "default",
-    "template",
-    "card-mock",
-];
+// Social icons (same set as editor/preview)
+import FacebookIcon from "../../assets/icons/icons8-facebook.svg";
+import InstagramIcon from "../../assets/icons/icons8-instagram.svg";
+import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
+import XIcon from "../../assets/icons/icons8-x.svg";
+import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
 
+const PLACEHOLDER_HINTS = ["placeholder", "sample", "demo", "stock", "default", "template", "card-mock"];
 const looksLikePlaceholderUrl = (url = "") =>
-    typeof url === "string" &&
-    PLACEHOLDER_HINTS.some((hint) => url.toLowerCase().includes(hint));
-
+    typeof url === "string" && PLACEHOLDER_HINTS.some((h) => url.toLowerCase().includes(h));
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 
 const filterRealImages = (arr) =>
-    (Array.isArray(arr) ? arr : []).filter(
-        (u) => nonEmpty(u) && !looksLikePlaceholderUrl(u)
-    );
+    (Array.isArray(arr) ? arr : []).filter((u) => nonEmpty(u) && !looksLikePlaceholderUrl(u));
 
 const filterRealServices = (arr) =>
-    (Array.isArray(arr) ? arr : []).filter(
-        (s) => s && (nonEmpty(s.name) || nonEmpty(s.price))
-    );
+    (Array.isArray(arr) ? arr : []).filter((s) => s && (nonEmpty(s.name) || nonEmpty(s.price)));
 
 const filterRealReviews = (arr) =>
     (Array.isArray(arr) ? arr : []).filter(
@@ -65,7 +56,6 @@ export default function UserPage() {
         retry: 1,
     });
 
-    // Utilities
     const scrollCarousel = (ref, direction) => {
         if (ref.current && ref.current.children.length > 0) {
             const carousel = ref.current;
@@ -79,10 +69,9 @@ export default function UserPage() {
         }
     };
 
-    // ---- CTA handlers (fixed) ----
+    // CTAs
     const goEditProfile = () => {
         try {
-            // Only scroll on mobile; MyProfile effect will check this
             localStorage.setItem("scrollToEditorOnLoad", "1");
         } catch { }
         window.location.href = "/myprofile";
@@ -92,29 +81,15 @@ export default function UserPage() {
         try {
             localStorage.setItem("openChatOnLoad", "1");
         } catch { }
-        if (authUser) {
-            // Logged in -> interface page
-            window.location.href = "/contact-support";
-        } else {
-            // Public page
-            window.location.href = "/contactus";
-        }
+        window.location.href = authUser ? "/contact-support" : "/contactus";
     };
 
-    // ---- Loading / errors ----
-    if (isLoading) {
-        return (
-            <div className="user-landing-page" style={centerPage}>
-                <p>Loading business card...</p>
-            </div>
-        );
-    }
-
+    // Loading / error
+    if (isLoading) return <div className="user-landing-page" style={centerPage}><p>Loading business card...</p></div>;
     if (isError) {
         console.error("Error fetching business card:", error);
         return unavailable(username, goEditProfile, goContactSupportSmart);
     }
-
     if (!businessCard) {
         return (
             <div className="user-landing-page" style={centerPage}>
@@ -124,20 +99,16 @@ export default function UserPage() {
     }
 
     const hasActiveSubscription = !!businessCard.isSubscribed;
-    const isTrialActive =
-        businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
+    const isTrialActive = businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
     const isProfileActive = hasActiveSubscription || isTrialActive;
-
     if (!isProfileActive) return unavailable(username, goEditProfile, goContactSupportSmart);
 
-    // ---------- Derive ONLY real, user-filled content ----------
-    const realCover =
-        nonEmpty(businessCard.cover_photo) && !looksLikePlaceholderUrl(businessCard.cover_photo);
+    // Real content flags
+    const realCover = nonEmpty(businessCard.cover_photo) && !looksLikePlaceholderUrl(businessCard.cover_photo);
     const realMainHeading = nonEmpty(businessCard.main_heading);
     const realSubHeading = nonEmpty(businessCard.sub_heading);
 
-    const realAvatar =
-        nonEmpty(businessCard.avatar) && !looksLikePlaceholderUrl(businessCard.avatar);
+    const realAvatar = nonEmpty(businessCard.avatar) && !looksLikePlaceholderUrl(businessCard.avatar);
     const realFullName = nonEmpty(businessCard.full_name);
     const realJobTitle = nonEmpty(businessCard.job_title);
     const realBio = nonEmpty(businessCard.bio);
@@ -146,41 +117,35 @@ export default function UserPage() {
     const services = filterRealServices(businessCard.services);
     const reviews = filterRealReviews(businessCard.reviews);
 
-    const hasContact =
-        nonEmpty(businessCard.contact_email) || nonEmpty(businessCard.phone_number);
+    const hasContact = nonEmpty(businessCard.contact_email) || nonEmpty(businessCard.phone_number);
 
     const showMainSection =
-        businessCard.show_main_section !== false &&
-        (realCover || realMainHeading || realSubHeading || hasContact);
+        businessCard.show_main_section !== false && (realCover || realMainHeading || realSubHeading || hasContact);
     const showAboutMeSection =
-        businessCard.show_about_me_section !== false &&
-        (realAvatar || realFullName || realJobTitle || realBio);
-    const showWorkSection =
-        businessCard.show_work_section !== false && works.length > 0;
-    const showServicesSection =
-        businessCard.show_services_section !== false && services.length > 0;
-    const showReviewsSection =
-        businessCard.show_reviews_section !== false && reviews.length > 0;
-    const showContactSection =
-        businessCard.show_contact_section !== false && hasContact;
+        businessCard.show_about_me_section !== false && (realAvatar || realFullName || realJobTitle || realBio);
+    const showWorkSection = businessCard.show_work_section !== false && works.length > 0;
+    const showServicesSection = businessCard.show_services_section !== false && services.length > 0;
+    const showReviewsSection = businessCard.show_reviews_section !== false && reviews.length > 0;
+    const showContactSection = businessCard.show_contact_section !== false && hasContact;
 
     const nothingToShow =
-        !showMainSection &&
-        !showAboutMeSection &&
-        !showWorkSection &&
-        !showServicesSection &&
-        !showReviewsSection &&
-        !showContactSection;
+        !showMainSection && !showAboutMeSection && !showWorkSection && !showServicesSection && !showReviewsSection && !showContactSection;
 
     const aboutMeLayout = businessCard.about_me_layout || "side-by-side";
     const workDisplayMode = businessCard.work_display_mode || "list";
     const servicesDisplayMode = businessCard.services_display_mode || "list";
     const reviewsDisplayMode = businessCard.reviews_display_mode || "list";
 
+    // Theme + alignment + CTA styles (match Preview)
     const themeStyles = {
         backgroundColor: businessCard.page_theme === "dark" ? "#1F1F1F" : "#FFFFFF",
         color: businessCard.page_theme === "dark" ? "#FFFFFF" : "#000000",
         fontFamily: businessCard.style || "Inter",
+    };
+    const contentAlign = { textAlign: businessCard.text_alignment || "left" };
+    const ctaStyle = {
+        backgroundColor: businessCard.button_bg_color || "#F47629",
+        color: businessCard.button_text_color === "black" ? "#000000" : "#FFFFFF",
     };
 
     const handleExchangeContact = () => {
@@ -228,26 +193,39 @@ export default function UserPage() {
             <div className="user-landing-page" style={{ ...themeStyles, ...centerPage, padding: 24 }}>
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
                     <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>This profile isn’t set up yet</h2>
-                    <p style={{ marginTop: 10, opacity: 0.8 }}>
-                        @{username} hasn’t published any content here yet.
-                    </p>
+                    <p style={{ marginTop: 10, opacity: 0.8 }}>@{username} hasn’t published any content here yet.</p>
                 </div>
             </div>
         );
     }
+
+    // Social links to show (icons only)
+    const socialLinks = [
+        { key: "facebook_url", url: businessCard.facebook_url, icon: FacebookIcon, label: "Facebook" },
+        { key: "instagram_url", url: businessCard.instagram_url, icon: InstagramIcon, label: "Instagram" },
+        { key: "linkedin_url", url: businessCard.linkedin_url, icon: LinkedInIcon, label: "LinkedIn" },
+        { key: "x_url", url: businessCard.x_url, icon: XIcon, label: "X" },
+        { key: "tiktok_url", url: businessCard.tiktok_url, icon: TikTokIcon, label: "TikTok" },
+    ].filter((x) => nonEmpty(x.url));
 
     return (
         <div className="user-landing-page" style={themeStyles}>
             {/* Main Section */}
             {showMainSection && (
                 <>
-                    {realCover && (
-                        <img src={businessCard.cover_photo} alt="Cover" className="landing-cover-photo" />
+                    {realCover && <img src={businessCard.cover_photo} alt="Cover" className="landing-cover-photo" />}
+                    {realMainHeading && (
+                        <h2 className="landing-main-heading" style={contentAlign}>
+                            {businessCard.main_heading}
+                        </h2>
                     )}
-                    {realMainHeading && <h2 className="landing-main-heading">{businessCard.main_heading}</h2>}
-                    {realSubHeading && <p className="landing-sub-heading">{businessCard.sub_heading}</p>}
+                    {realSubHeading && (
+                        <p className="landing-sub-heading" style={contentAlign}>
+                            {businessCard.sub_heading}
+                        </p>
+                    )}
                     {hasContact && (
-                        <button type="button" onClick={handleExchangeContact} className="landing-action-button">
+                        <button type="button" onClick={handleExchangeContact} className="landing-action-button" style={ctaStyle}>
                             Save My Number
                         </button>
                     )}
@@ -264,7 +242,11 @@ export default function UserPage() {
                             {realFullName && <p className="landing-profile-name">{businessCard.full_name}</p>}
                             {realJobTitle && <p className="landing-profile-role">{businessCard.job_title}</p>}
                         </div>
-                        {realBio && <p className="landing-bio-text">{businessCard.bio}</p>}
+                        {realBio && (
+                            <p className="landing-bio-text" style={contentAlign}>
+                                {businessCard.bio}
+                            </p>
+                        )}
                     </div>
                 </>
             )}
@@ -283,18 +265,10 @@ export default function UserPage() {
                     {workDisplayMode === "carousel" && (
                         <div className="user-carousel-container">
                             <div className="user-carousel-nav-buttons">
-                                <button
-                                    type="button"
-                                    className="user-carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(workCarouselRef, "left")}
-                                >
+                                <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(workCarouselRef, "left")}>
                                     &#9664;
                                 </button>
-                                <button
-                                    type="button"
-                                    className="user-carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(workCarouselRef, "right")}
-                                >
+                                <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(workCarouselRef, "right")}>
                                     &#9654;
                                 </button>
                             </div>
@@ -315,18 +289,10 @@ export default function UserPage() {
                     <div className="user-carousel-container">
                         {servicesDisplayMode === "carousel" && (
                             <div className="user-carousel-nav-buttons">
-                                <button
-                                    type="button"
-                                    className="user-carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(servicesCarouselRef, "left")}
-                                >
+                                <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(servicesCarouselRef, "left")}>
                                     &#9664;
                                 </button>
-                                <button
-                                    type="button"
-                                    className="user-carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(servicesCarouselRef, "right")}
-                                >
+                                <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(servicesCarouselRef, "right")}>
                                     &#9654;
                                 </button>
                             </div>
@@ -353,26 +319,15 @@ export default function UserPage() {
                     <div className="user-carousel-container">
                         {reviewsDisplayMode === "carousel" && (
                             <div className="user-carousel-nav-buttons">
-                                <button
-                                    type="button"
-                                    className="user-carousel-nav-button left-arrow"
-                                    onClick={() => scrollCarousel(reviewsCarouselRef, "left")}
-                                >
+                                <button type="button" className="user-carousel-nav-button left-arrow" onClick={() => scrollCarousel(reviewsCarouselRef, "left")}>
                                     &#9664;
                                 </button>
-                                <button
-                                    type="button"
-                                    className="user-carousel-nav-button right-arrow"
-                                    onClick={() => scrollCarousel(reviewsCarouselRef, "right")}
-                                >
+                                <button type="button" className="user-carousel-nav-button right-arrow" onClick={() => scrollCarousel(reviewsCarouselRef, "right")}>
                                     &#9654;
                                 </button>
                             </div>
                         )}
-                        <div
-                            ref={reviewsCarouselRef}
-                            className={`user-reviews-list-carousel ${reviewsDisplayMode === "carousel" ? "" : "list"}`}
-                        >
+                        <div ref={reviewsCarouselRef} className={`user-reviews-list-carousel ${reviewsDisplayMode === "carousel" ? "" : "list"}`}>
                             {reviews.map((r, i) => (
                                 <div key={i} className="landing-review-card">
                                     <div className="landing-star-rating">
@@ -415,22 +370,31 @@ export default function UserPage() {
                                 <p className="landing-contact-value">{businessCard.phone_number}</p>
                             </div>
                         )}
+
+                        {/* Icons inside the card (10px gap, space-around, icons only) */}
+                        {socialLinks.length > 0 && (
+                            <div className="landing-contact-socials" aria-label="Social links">
+                                {socialLinks.map((s) => (
+                                    <a key={s.key} href={s.url} target="_blank" rel="noreferrer" className="landing-contact-social-chip" aria-label={s.label}>
+                                        <img src={s.icon} alt="" className="landing-contact-social-glyph" />
+                                    </a>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </>
             )}
         </div>
     );
 
-    // ---- Unavailable (inline so we can use handlers above) ----
+    // Unavailable
     function unavailable(username, onEdit, onContact) {
         return (
             <div className="user-landing-page unavailable-wrap">
                 <div className="unavailable-card">
                     <div className="unavailable-badge">Profile status</div>
-
                     <h1 className="unavailable-title">This profile isn’t live yet</h1>
                     <p className="unavailable-sub">There are a couple of common reasons:</p>
-
                     <ul className="unavailable-list">
                         <li className="unavailable-item">
                             <span className="dot" />
@@ -439,7 +403,6 @@ export default function UserPage() {
                                 <div className="desktop-body-xs">The owner might not have created their page.</div>
                             </div>
                         </li>
-
                         <li className="unavailable-item">
                             <span className="dot" />
                             <div className="reason">
@@ -448,14 +411,9 @@ export default function UserPage() {
                             </div>
                         </li>
                     </ul>
-
                     <div className="unavailable-actions">
-                        <button className="desktop-button cta-blue-button" onClick={onEdit}>
-                            Create / Edit My Profile
-                        </button>
-                        <button className="desktop-button cta-black-button" onClick={onContact}>
-                            Contact us
-                        </button>
+                        <button className="desktop-button cta-blue-button" onClick={onEdit}>Create / Edit My Profile</button>
+                        <button className="desktop-button cta-black-button" onClick={onContact}>Contact us</button>
                     </div>
                 </div>
             </div>
