@@ -259,7 +259,7 @@
 
 /* Contact card keeps its original white background */
 .mock-contact-details {
-    background: #fff;
+    background: #f6f8fc;
     border-radius: 16px;
     border: 1px solid rgba(0, 0, 0, .06);
     color: #111;

@@ -131,7 +131,7 @@
 
 /* ---------- Contact stays white (same as Preview) ---------- */
 .landing-contact-details {
-    background: #fff;
+    background: #f6f8fc;
     /* white in both modes */
     border-radius: 16px;
     border: 1px solid rgba(0, 0, 0, .06);
