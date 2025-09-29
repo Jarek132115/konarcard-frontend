@@ -22,6 +22,8 @@
     height: 100%;
     overflow: visible;
     padding-block: 0;
+    min-width: 0;
+    /* allow wrapper to shrink inside flex/grid parents */
 }
 
 /* Card */
@@ -29,7 +31,14 @@
     background: #fff;
     border-radius: 20px;
     padding: 18px;
+    /* Fill available width, cap at 500px, and center */
+    inline-size: 100%;
+    max-inline-size: 500px;
+    width: 100%;
+    /* fallback for older browsers */
     max-width: 500px;
+    box-sizing: border-box;
+
     margin: 0 auto;
     height: 100%;
     overflow-y: auto;
@@ -44,8 +53,7 @@
 @supports not (filter: drop-shadow(0 0 1px #000)) {
     .editor-scope .myprofile-editor {
         border: 1px solid rgb(var(--accent-rgb) /.22);
-        box-shadow: 0 0 0 2px rgb(var(--accent-rgb) /.12),
-            0 0 22px rgb(var(--accent-rgb) /.28);
+        box-shadow: 0 0 0 2px rgb(var(--accent-rgb) /.12), 0 0 22px rgb(var(--accent-rgb) /.28);
     }
 }
 
@@ -85,7 +93,7 @@
     color: #111;
 }
 
-/* Small field labels (e.g., "Button Background", etc.) */
+/* Small field labels */
 .editor-scope .input-block>label {
     font-family: "Cal Sans", Inter, system-ui, sans-serif;
     font-size: 12px;
@@ -105,7 +113,11 @@
     font: 500 14px/1.35 var(--main-font-family, Inter, system-ui);
     box-shadow: 0 2px 8px rgba(30, 42, 56, .05);
     width: 100%;
+    box-sizing: border-box;
     caret-color: currentColor;
+    min-width: 0;
+    /* allow shrink */
+    max-width: 100%;
 }
 
 .editor-scope .text-input::placeholder {
@@ -126,7 +138,7 @@
     gap: 8px;
 }
 
-/* Make the two colour stacks 20px apart */
+/* 20px gap between color stacks */
 .editor-scope .input-block .stack+.stack {
     margin-top: 20px;
 }
@@ -176,6 +188,10 @@
     box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
     width: 100%;
     text-align: center;
+    min-width: 0;
+    /* allow shrink */
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 .editor-scope .chip:hover {
@@ -193,6 +209,7 @@
     box-shadow: 0 0 0 3px rgb(var(--accent-rgb)/.18);
 }
 
+/* Section toggle chip */
 .editor-scope .section-chip {
     border: 1px solid var(--chip-stroke);
     background: #e5e7eb;
@@ -230,6 +247,8 @@
     background: var(--picked-color, #ffffff);
     box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
     min-height: 44px;
+    min-width: 0;
+    /* allow shrink */
 }
 
 .editor-scope .color-chip:hover,
@@ -267,7 +286,7 @@
     border-radius: 12px;
 }
 
-/* hex input below the chip */
+/* If you keep a hex input somewhere */
 .editor-scope .hex-input {
     margin-top: 8px;
     font-family: monospace;
@@ -278,26 +297,31 @@
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+    min-width: 0;
+    /* allow row to shrink */
 }
 
 .editor-scope .option-row.split-2 {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* shrink-safe tracks */
     gap: 8px;
 }
 
 .editor-scope .option-row.split-3 {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* shrink-safe tracks */
     gap: 8px;
 }
 
 /* Upload & images */
 .editor-scope .editor-work-image-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     width: 100%;
+    min-width: 0;
 }
 
 .editor-scope .editor-item-card {
@@ -310,6 +334,8 @@
     gap: 8px;
     align-items: center;
     box-shadow: 0 2px 8px rgba(30, 42, 56, .06);
+    min-width: 0;
+    /* allow shrink */
 }
 
 .editor-scope .work-image-item-wrapper {
@@ -334,6 +360,7 @@
     border-radius: 12px;
 }
 
+/* Upload placeholders */
 .editor-scope .cover-photo-card,
 .editor-scope .avatar-tile,
 .editor-scope .add-work-image-placeholder {
@@ -391,6 +418,7 @@
     display: grid;
     gap: 8px;
     width: 100%;
+    min-width: 0;
 }
 
 .editor-scope .editor-item-card.mock-service-item-wrapper,
@@ -406,6 +434,12 @@
     gap: 10px;
     justify-content: flex-end;
     flex-wrap: wrap;
+    min-width: 0;
+}
+
+.editor-scope .button-group>* {
+    min-width: 0;
+    max-width: 100%;
 }
 
 .editor-scope .btn {
@@ -428,6 +462,8 @@
     color: #111;
     border-radius: 10px;
     padding: 6px 10px;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .editor-scope .btn-ghost:hover {
@@ -452,7 +488,7 @@
     background: #b10012;
 }
 
-/* Make ONLY “+ Add Service/Review” match chip typography (Reset/Publish unaffected) */
+/* Make ONLY “+ Add Service/Review” match chip typography */
 .editor-scope .editor-service-list+.desktop-button.navy-button,
 .editor-scope .editor-reviews-list+.desktop-button.navy-button {
     font-family: "Cal Sans", Inter, system-ui, sans-serif;
@@ -468,11 +504,13 @@
     padding: 0;
     display: grid;
     gap: 8px;
+    min-width: 0;
 }
 
 .editor-scope .sortable-item {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    /* middle track can shrink */
     align-items: center;
     gap: 10px;
     padding: 10px;
@@ -480,6 +518,11 @@
     border-radius: 12px;
     background: #fff;
     box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
+    min-width: 0;
+}
+
+.editor-scope .sortable-item>* {
+    min-width: 0;
 }
 
 .editor-scope .drag-label {
@@ -493,6 +536,8 @@
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .2px;
+    overflow-wrap: anywhere;
+    /* prevent long text from forcing overflow */
 }
 
 .editor-scope .order-buttons {
@@ -554,13 +599,15 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
+    min-width: 0;
 }
 
 .editor-scope .social-row-input {
     display: grid;
-    grid-template-columns: 36px 1fr;
+    grid-template-columns: 36px minmax(0, 1fr);
     align-items: center;
     gap: 10px;
+    min-width: 0;
 }
 
 .editor-scope .social-icon {
@@ -625,28 +672,6 @@
     scrollbar-color: rgba(30, 42, 56, .6) transparent;
 }
 
-/* ---- Kill phantom horizontal scrolling on narrow devices ---- */
-.editor-scope .myprofile-editor {
-    /* keep vertical scroll, block horizontal */
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-}
-
-/* Allow grid/flex children to actually shrink inside their tracks */
-.editor-scope .option-row,
-.editor-scope .sortable-item,
-.editor-scope .editor-item-card,
-.editor-scope .social-row-input {
-    min-width: 0;
-}
-
-.editor-scope .chip,
-.editor-scope .text-input,
-.editor-scope .btn-ghost {
-    min-width: 0;
-    max-width: 100%;
-}
-
 /* Safe images/SVGs */
 .editor-scope img,
 .editor-scope svg {
@@ -654,15 +679,16 @@
     height: auto;
 }
 
-/* If you’re using the color wheel popover, keep it inside the card */
+/* Keep any color popover inside the card */
 .editor-scope .color-popover {
     left: auto;
     right: 0;
-    /* anchor to the right so it doesn’t hang off screen */
+    /* anchor right so it doesn’t hang off screen */
     max-width: min(92vw, 260px);
     overflow: hidden;
 }
 
+/* Mobile: extra breathing room at the bottom */
 @media (max-width: 1000px) {
     .editor-scope .myprofile-editor {
         padding-bottom: calc(18px + 20px + env(safe-area-inset-bottom));
