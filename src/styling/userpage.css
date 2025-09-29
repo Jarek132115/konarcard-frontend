@@ -46,7 +46,7 @@
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: 14px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 10px;
     max-width: 800px;
     box-shadow: 0 6px 24px rgba(0, 0, 0, .12);
 }
