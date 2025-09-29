@@ -16,7 +16,6 @@ export default function Preview({
     showContactSection,
     hasExchangeContact,
     visitUrl,
-    // pass the SAME style object you use for the Editor column
     columnScrollStyle,
 }) {
     const [previewOpen, setPreviewOpen] = useState(true);
@@ -29,29 +28,23 @@ export default function Preview({
     const shouldShowPlaceholders = !hasSavedData;
     const isDarkMode = state.pageTheme === "dark";
 
-    // --- NEW: derived styles for CTA and content alignment ---
+    // Button + alignment
     const ctaStyle = {
         backgroundColor: state.buttonBgColor || "#F47629",
         color: state.buttonTextColor === "black" ? "#000000" : "#FFFFFF",
     };
     const contentAlign = { textAlign: state.textAlignment || "left" };
 
-    // Default/fallback section order
     const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
     const sectionOrder =
         (Array.isArray(state.sectionOrder) && state.sectionOrder.length && state.sectionOrder) || defaultOrder;
 
-    const previewFullName =
-        state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
-    const previewJobTitle =
-        state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : "");
+    const previewFullName = state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
+    const previewJobTitle = state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : "");
     const previewBio = state.bio || (shouldShowPlaceholders ? previewPlaceholders.bio : "");
-    const previewEmail =
-        state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : "");
-    const previewPhone =
-        state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : "");
-    const previewCoverPhotoSrc =
-        state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
+    const previewEmail = state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : "");
+    const previewPhone = state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : "");
+    const previewCoverPhotoSrc = state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
     const previewAvatarSrc = state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
 
     const previewWorkImages = useMemo(() => {
@@ -69,7 +62,7 @@ export default function Preview({
         return shouldShowPlaceholders ? previewPlaceholders.reviews : [];
     }, [state.reviews, shouldShowPlaceholders]);
 
-    // Smooth open/close (mobile only; the toolbar now sits INSIDE the preview card)
+    // Mobile expand/collapse
     useEffect(() => {
         if (!isMobile) return;
         const el = mpWrapRef.current;
@@ -92,7 +85,7 @@ export default function Preview({
         el.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
     };
 
-    // --- NEW: Social icons row (under contact info) ---
+    // Social row (unchanged)
     const SocialRow = () => {
         const links = [
             { key: "facebook_url", label: "Facebook", className: "icon-facebook", url: state.facebook_url },
@@ -100,15 +93,12 @@ export default function Preview({
             { key: "linkedin_url", label: "LinkedIn", className: "icon-linkedin", url: state.linkedin_url },
             { key: "x_url", label: "X", className: "icon-x", url: state.x_url },
             { key: "tiktok_url", label: "TikTok", className: "icon-tiktok", url: state.tiktok_url },
-        ].filter(x => typeof x.url === "string" && x.url.trim().length > 0);
+        ].filter((x) => typeof x.url === "string" && x.url.trim().length > 0);
 
         if (!links.length) return null;
         return (
-            <div
-                className="social-row"
-                style={{ display: "flex", gap: 12, justifyContent: "space-around", marginTop: 8, ...contentAlign }}
-            >
-                {links.map(l => (
+            <div className="social-row" style={{ display: "flex", gap: 12, justifyContent: "space-around", marginTop: 8 }}>
+                {links.map((l) => (
                     <a
                         key={l.key}
                         href={l.url}
@@ -116,10 +106,8 @@ export default function Preview({
                         rel="noreferrer"
                         aria-label={l.label}
                         className={`social-icon ${l.className}`}
-                        // If you don't have icon fonts, at least render label for now:
                         style={{ textDecoration: "none" }}
                     >
-                        {/* Replace with actual <i> or <svg> icons in your CSS system */}
                         <span className="social-fallback-label">{l.label}</span>
                     </a>
                 ))}
@@ -150,7 +138,11 @@ export default function Preview({
                             </button>
                         </div>
                     )}
-                    <div ref={previewWorkCarouselRef} className={`mock-work-gallery ${state.workDisplayMode}`} style={contentAlign}>
+                    <div
+                        ref={previewWorkCarouselRef}
+                        className={`mock-work-gallery ${state.workDisplayMode}`}
+                        style={contentAlign}
+                    >
                         {previewWorkImages.map((item, i) => (
                             <div key={i} className="mock-work-image-item-wrapper">
                                 <img src={item.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
@@ -184,7 +176,11 @@ export default function Preview({
                             </button>
                         </div>
                     )}
-                    <div ref={previewServicesCarouselRef} className={`mock-services-list ${servicesDisplayMode}`} style={contentAlign}>
+                    <div
+                        ref={previewServicesCarouselRef}
+                        className={`mock-services-list ${servicesDisplayMode}`}
+                        style={contentAlign}
+                    >
                         {servicesForPreview.map((s, i) => (
                             <div key={i} className="mock-service-item">
                                 <p className="mock-service-name">{s.name}</p>
@@ -219,7 +215,11 @@ export default function Preview({
                             </button>
                         </div>
                     )}
-                    <div ref={previewReviewsCarouselRef} className={`mock-reviews-list ${reviewsDisplayMode}`} style={contentAlign}>
+                    <div
+                        ref={previewReviewsCarouselRef}
+                        className={`mock-reviews-list ${reviewsDisplayMode}`}
+                        style={contentAlign}
+                    >
                         {reviewsForPreview.map((r, i) => (
                             <div key={i} className="mock-review-card">
                                 <div className="mock-star-rating">
@@ -249,7 +249,8 @@ export default function Preview({
         showContactSection && (previewEmail || previewPhone) ? (
             <>
                 <p className="mock-section-title">Contact Details</p>
-                <div className="mock-contact-details" style={contentAlign}>
+                {/* DO NOT pass contentAlign here — fixed layout */}
+                <div className="mock-contact-details">
                     <div className="mock-contact-item">
                         <p className="mock-contact-label">Email:</p>
                         <p className="mock-contact-value">{previewEmail}</p>
@@ -259,7 +260,6 @@ export default function Preview({
                         <p className="mock-contact-value">{previewPhone}</p>
                     </div>
                 </div>
-                {/* Social icons row under contact values */}
                 <SocialRow />
             </>
         ) : null;
@@ -270,7 +270,8 @@ export default function Preview({
                 {(shouldShowPlaceholders || !!state.coverPhoto) && (
                     <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
                 )}
-                <h2 className="mock-title">
+                {/* Heading now respects alignment */}
+                <h2 className="mock-title" style={contentAlign}>
                     {state.mainHeading || (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
                 </h2>
                 <p className="mock-subtitle" style={contentAlign}>
@@ -289,7 +290,8 @@ export default function Preview({
         showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) ? (
             <>
                 <p className="mock-section-title">About me</p>
-                <div className={`mock-about-container ${aboutMeLayout}`} style={contentAlign}>
+                {/* No contentAlign on container so name/title unaffected */}
+                <div className={`mock-about-container ${aboutMeLayout}`}>
                     <div className="mock-about-content-group">
                         <div className="mock-about-header-group">
                             {previewAvatarSrc && <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />}
@@ -298,13 +300,13 @@ export default function Preview({
                                 <p className="mock-profile-role">{previewJobTitle}</p>
                             </div>
                         </div>
-                        <p className="mock-bio-text">{previewBio}</p>
+                        {/* Only bio follows alignment */}
+                        <p className="mock-bio-text" style={contentAlign}>{previewBio}</p>
                     </div>
                 </div>
             </>
         ) : null;
 
-    // Map keys to rendered components (respect section order)
     const sectionMap = {
         main: <MainSection key="main" />,
         about: <AboutSection key="about" />,
@@ -314,7 +316,6 @@ export default function Preview({
         contact: <ContactSection key="contact" />,
     };
 
-    // ---------- Mobile ----------
     if (isMobile) {
         return (
             <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
@@ -322,7 +323,6 @@ export default function Preview({
                     className={`myprofile-preview ${isDarkMode ? "dark" : ""}`}
                     style={{ fontFamily: state.font || previewPlaceholders.font }}
                 >
-                    {/* ORANGE toolbar INSIDE the preview, above cover */}
                     <div
                         className={`mp-toolbar ${previewOpen ? "is-open" : "is-collapsed"}`}
                         role="tablist"
@@ -370,7 +370,6 @@ export default function Preview({
         );
     }
 
-    // ---------- Desktop ----------
     return (
         <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
             <div
