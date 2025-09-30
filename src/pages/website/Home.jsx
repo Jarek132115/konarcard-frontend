@@ -477,16 +477,16 @@ export default function Home() {
           <div className="realworld-card">
             <div className="realworld-card-icon">👷</div>
             <div className="realworld-card-text">
-              <h4>On Site, With a Client</h4>
-              <p className="equal">Tap your KonarCard. Their phone opens your profile and saves your details instantly.</p>
+              <h4 className="desktop-body-s">On Site, With a Client</h4>
+              <p className="equal desktop-body-xs">Tap your KonarCard. Their phone opens your profile and saves your details instantly.</p>
             </div>
           </div>
 
           <div className="realworld-card">
             <div className="realworld-card-icon">📄</div>
             <div className="realworld-card-text">
-              <h4>After a Quote</h4>
-              <p className="equal">
+              <h4 className="desktop-body-s">After a Quote</h4>
+              <p className="equal desktop-body-xs">
                 Send the link in messages so they can revisit your services and reviews while deciding.
               </p>
             </div>
@@ -495,32 +495,32 @@ export default function Home() {
           <div className="realworld-card">
             <div className="realworld-card-icon">🤝</div>
             <div className="realworld-card-text">
-              <h4>Networking / Trade Counter</h4>
-              <p className="equal">No stacks of cards. One tap per person, unlimited times.</p>
+              <h4 className="desktop-body-s">Networking / Trade Counter</h4>
+              <p className="equal desktop-body-xs">No stacks of cards. One tap per person, unlimited times.</p>
             </div>
           </div>
 
           <div className="realworld-card">
             <div className="realworld-card-icon">🚐</div>
             <div className="realworld-card-text">
-              <h4>Van QR &amp; Site Board</h4>
-              <p className="equal">Print your QR. Passers-by scan to view your work and save your number.</p>
+              <h4 className="desktop-body-s">Van QR &amp; Site Board</h4>
+              <p className="equal desktop-body-xs">Print your QR. Passers-by scan to view your work and save your number.</p>
             </div>
           </div>
 
           <div className="realworld-card">
             <div className="realworld-card-icon">📱</div>
             <div className="realworld-card-text">
-              <h4>Social &amp; Link In Bio</h4>
-              <p className="equal">Add your link to Instagram, Facebook, and TikTok to convert views into enquiries.</p>
+              <h4 className="desktop-body-s">Social &amp; Link In Bio</h4>
+              <p className="equal desktop-body-xs">Add your link to Instagram, Facebook, and TikTok to convert views into enquiries.</p>
             </div>
           </div>
 
           <div className="realworld-card">
             <div className="realworld-card-icon">⚡</div>
             <div className="realworld-card-text">
-              <h4>Updates in Seconds</h4>
-              <p className="equal">
+              <h4 className="desktop-body-s">Updates in Seconds</h4>
+              <p className="equal desktop-body-xs">
                 Change prices or photos once — your card shares the latest version everywhere.
               </p>
             </div>
