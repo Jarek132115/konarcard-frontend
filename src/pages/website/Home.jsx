@@ -440,15 +440,15 @@ export default function Home() {
             <ul className="dot-list">
               <li>
                 <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span>Type your phone &amp; email into their phone</span>
+                <span className="desktop-body-xs">Type your phone &amp; email into their phone</span>
               </li>
               <li>
                 <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span>Scroll your camera roll for examples</span>
+                <span className="desktop-body-xs">Scroll your camera roll for examples</span>
               </li>
               <li>
                 <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span>Hope they don’t lose your details</span>
+                <span className="desktop-body-xs">Hope they don’t lose your details</span>
               </li>
             </ul>
           </div>
