@@ -2040,12 +2040,6 @@ body {
     line-height: 1.4;
 }
 
-/* Normalize descriptions to the same height */
-.realworld-card-text p.equal {
-    line-height: 1.45;
-    min-height: 4.35em;
-    /* ~3 lines; tweak if you want 4 lines: 5.8em */
-}
 
 /* Responsive */
 @media (max-width: 900px) {
@@ -2053,10 +2047,6 @@ body {
         grid-template-columns: 1fr;
     }
 
-    .realworld-card-text p.equal {
-        min-height: 4.06em;
-        /* slight reduction for smaller fonts on mobile */
-    }
 }
 
 .realworld-cta {
