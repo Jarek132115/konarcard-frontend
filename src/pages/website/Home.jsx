@@ -597,7 +597,7 @@ export default function Home() {
             </ul>
 
             <div className="vs-cta">
-              <Link to="/register" className="orange-button desktop-button">
+              <Link to="/register" className="navy-button desktop-button">
                 Make the Switch
               </Link>
             </div>
