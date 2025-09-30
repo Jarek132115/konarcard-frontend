@@ -458,15 +458,15 @@ export default function Home() {
             <ul className="dot-list">
               <li>
                 <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span>Tap once — they get your full profile</span>
+                <span className="desktop-body-xs">Tap once — they get your full profile</span>
               </li>
               <li>
                 <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span>Photos, services, reviews, and contact — saved</span>
+                <span className="desktop-body-xs">Photos, services, reviews, and contact — saved</span>
               </li>
               <li>
                 <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span>Follow-ups are faster and more professional</span>
+                <span className="desktop-body-xs">Follow-ups are faster and more professional</span>
               </li>
             </ul>
           </div>
