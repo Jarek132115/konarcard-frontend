@@ -396,7 +396,7 @@ export default function Home() {
               </p>
             </div>
             <div className="step-media">
-              <img src={StepSection1} alt="Order your Konar card" />
+              <img src={StepSection2} alt="Order your Konar card" />
             </div>
           </div>
 
