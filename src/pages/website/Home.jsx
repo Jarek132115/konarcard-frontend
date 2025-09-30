@@ -5,6 +5,9 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
 import Section1Image from "../../assets/images/Section-1-Image.png";
+import StepSection1 from "../../assets/images/Step-Section-1.jpg";
+import StepSection2 from "../../assets/images/Step-Section-2.jpg";
+
 import EditProfile from "../../assets/images/Edit-Profile.jpg";
 import WhyYouNeedThis from "../../assets/images/WhyYouNeedThis.png";
 import People from "../../assets/images/People.png";
@@ -393,7 +396,7 @@ export default function Home() {
               </p>
             </div>
             <div className="step-media">
-              <img src={Section1Image} alt="Order your Konar card" />
+              <img src={StepSection1} alt="Order your Konar card" />
             </div>
           </div>
 
