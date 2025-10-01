@@ -314,7 +314,6 @@
     max-width: 100%;
     scroll-snap-align: start;
     box-sizing: border-box;
-    padding-right: .5rem;
 }
 
 .user-services-list-carousel.list,
