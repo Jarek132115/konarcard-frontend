@@ -47,6 +47,7 @@ export default function Home() {
 
   // video modal
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const videoRef = useRef(null);
 
   useEffect(() => {
     if (!isVideoOpen) return;
@@ -54,9 +55,21 @@ export default function Home() {
     document.body.style.overflow = "hidden";
     const onKey = (e) => e.key === "Escape" && setIsVideoOpen(false);
     window.addEventListener("keydown", onKey);
+    // auto-play when opened (mobile browsers require user gesture; opening from button counts)
+    const v = videoRef.current;
+    if (v) {
+      // start from the beginning each time it opens
+      try { v.currentTime = 0; } catch { }
+      v.play().catch(() => { });
+    }
     return () => {
       document.body.style.overflow = prev;
       window.removeEventListener("keydown", onKey);
+      // pause & reset on close
+      const vv = videoRef.current;
+      if (vv) {
+        try { vv.pause(); vv.currentTime = 0; } catch { }
+      }
     };
   }, [isVideoOpen]);
 
@@ -174,8 +187,6 @@ export default function Home() {
     let pointerId = null;
 
     const onPointerDown = (e) => {
-      // we *do not* set touch-action: none; we allow vertical scroll (CSS has pan-y/pan-x off),
-      // so only prevent default if we *lock to X* later.
       pointerId = e.pointerId;
       el.setPointerCapture?.(pointerId);
       draggingRef.current = true;
@@ -200,11 +211,9 @@ export default function Home() {
       }
 
       if (axisLockedRef.current === "x") {
-        // horizontal drag → prevent default to stop page from selecting text, etc.
         e.preventDefault();
         el.scrollLeft = startScrollRef.current - (e.clientX - lastXRef.current);
       } else if (axisLockedRef.current === "y") {
-        // vertical gesture → let the page scroll naturally; end drag immediately
         draggingRef.current = false;
         pauseRef.current = false;
         el.releasePointerCapture?.(pointerId);
@@ -245,7 +254,6 @@ export default function Home() {
       el.removeEventListener("mouseleave", onLeave);
     };
   }, []);
-
   return (
     <>
       {/* HERO */}
@@ -332,7 +340,6 @@ export default function Home() {
           <div
             ref={scrollerRef}
             className="profiles-scroller"
-            // IMPORTANT: allow vertical scroll on touch; we’ll lock to X only when needed
             style={{ touchAction: "pan-y" }}
           >
             <div ref={trackRef} className="profiles-track">
@@ -416,9 +423,17 @@ export default function Home() {
         </div>
 
         <div className="faq-cta">
-          <Link to="/reviews" className="navy-button desktop-button">
+          {/* changed from Link to button so it opens the modal */}
+          <button
+            type="button"
+            className="navy-button desktop-button"
+            onClick={() => setIsVideoOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={isVideoOpen}
+            aria-controls="how-it-works-modal"
+          >
             Watch How It Works
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -798,7 +813,7 @@ export default function Home() {
           <h2 className="desktop-h3 text-center">
             The <span className="orange">#1 Tool</span> Tradies Are Talking About
           </h2>
-          <h3 className="desktop-body-xs text-center">
+          <h3 className="desktop-body-xs text center">
             Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
           </h3>
         </div>
@@ -1005,9 +1020,21 @@ export default function Home() {
             </button>
 
             <div className="video-frame">
-              <div className="video-placeholder">
-                <p className="desktop-body-s">Video coming soon</p>
-              </div>
+              {/* REAL VIDEO GOES HERE */}
+              <video
+                ref={videoRef}
+                className="howitworks-video"
+                controls
+                playsInline
+                preload="metadata"
+              // poster can be added if you’ve got a JPG/PNG thumbnail in /public/videos
+              // poster="/videos/howitworks-poster.jpg"
+              >
+                <source src="/videos/HowItWorks.mp4" type="video/mp4" />
+                {/* add a webm if you have it:
+                <source src="/videos/HowItWorks.webm" type="video/webm" /> */}
+                Sorry, your browser doesn’t support embedded videos.
+              </video>
             </div>
 
             <p className="video-caption desktop-body-xs">
