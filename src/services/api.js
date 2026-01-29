@@ -2,36 +2,29 @@
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-// Normalize base URL so it never ends with /api
-function normalizeBaseURL(url) {
-  const raw = (url || '').trim().replace(/\/+$/, '');
-  if (!raw) return '';
-  return raw.replace(/\/api$/i, '');
-}
-
 const api = axios.create({
-  baseURL: normalizeBaseURL(import.meta.env.VITE_API_URL),
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: false,
 });
 
+// Attach token + cache-buster
 api.interceptors.request.use(
   (config) => {
-    // ✅ Allow explicit "no-auth" per request (for claim availability step)
-    const noAuth = config?.headers?.['X-No-Auth'] === '1';
+    const token = localStorage.getItem('token');
 
-    if (!noAuth) {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      } else {
-        delete config.headers.Authorization;
-      }
-    } else {
-      // ensure no Authorization header is sent
+    // NEVER send custom headers like x-no-auth (causes CORS preflight failures)
+    if (config.headers) {
+      delete config.headers['x-no-auth'];
+      delete config.headers['X-No-Auth'];
+    }
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    } else if (config.headers) {
       delete config.headers.Authorization;
     }
 
-    // Cache-buster for profile/orders
+    // cache buster for profile/order endpoints
     if (config.url?.includes('/profile') || config.url?.includes('/me/orders')) {
       const sep = config.url.includes('?') ? '&' : '?';
       config.url = `${config.url}${sep}ts=${Date.now()}`;
@@ -48,7 +41,6 @@ api.interceptors.response.use(
     const { response, config } = error || {};
     const status = response?.status;
 
-    // Clear auth only when profile check explicitly returns 401/403
     if (
       (status === 401 || status === 403) &&
       config?.url &&
@@ -65,7 +57,7 @@ api.interceptors.response.use(
   }
 );
 
-// Keep this export because MyProfile.jsx imports it
+// ✅ keep named export to fix your Vercel build error
 export const startTrial = () => api.post('/trial/start', {});
 
 export default api;
