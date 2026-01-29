@@ -30,8 +30,13 @@ export default function Login() {
     const [isVerifying, setIsVerifying] = useState(false);
     const [isSendingReset, setIsSendingReset] = useState(false);
 
-    // --- helpers ---
     const isAdminEmail = (email) => ADMIN_EMAILS_UI.includes((email || '').toLowerCase());
+
+    // Social auth redirect (backend routes will be added next)
+    const startOAuth = (provider) => {
+        const base = import.meta.env.VITE_API_URL;
+        window.location.href = `${base}/auth/${provider}`;
+    };
 
     // bring back remembered email
     useEffect(() => {
@@ -143,7 +148,6 @@ export default function Login() {
                 toast.success('Login successful!');
                 login(res.data.token, res.data.user);
 
-                // Admin → go straight to admin dashboard
                 const email = res?.data?.user?.email || data.email;
                 if (isAdminEmail(email)) {
                     navigate('/admin', { replace: true });
@@ -184,7 +188,6 @@ export default function Login() {
                 } else {
                     login(loginRes.data.token, loginRes.data.user);
 
-                    // Admin → go straight to admin dashboard
                     const email = loginRes?.data?.user?.email || data.email;
                     if (isAdminEmail(email)) {
                         navigate('/admin', { replace: true });
@@ -237,12 +240,7 @@ export default function Login() {
                     K
                 </Link>
 
-                <button
-                    type="button"
-                    className="kc-close"
-                    onClick={() => navigate('/')}
-                    aria-label="Close"
-                >
+                <button type="button" className="kc-close" onClick={() => navigate('/')} aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </header>
@@ -281,20 +279,11 @@ export default function Login() {
                                 />
                             </div>
 
-                            <button
-                                type="submit"
-                                className="kc-btn kc-btn-primary"
-                                disabled={isSendingReset}
-                                aria-busy={isSendingReset}
-                            >
+                            <button type="submit" className="kc-btn kc-btn-primary" disabled={isSendingReset} aria-busy={isSendingReset}>
                                 {isSendingReset ? 'Sending…' : 'Send reset link'}
                             </button>
 
-                            <button
-                                type="button"
-                                className="kc-btn kc-btn-secondary"
-                                onClick={() => setForgotPasswordStep(false)}
-                            >
+                            <button type="button" className="kc-btn kc-btn-secondary" onClick={() => setForgotPasswordStep(false)}>
                                 Back to login
                             </button>
                         </form>
@@ -323,29 +312,15 @@ export default function Login() {
                                 />
                             </div>
 
-                            <button
-                                type="submit"
-                                className="kc-btn kc-btn-primary"
-                                disabled={isVerifying}
-                                aria-busy={isVerifying}
-                            >
+                            <button type="submit" className="kc-btn kc-btn-primary" disabled={isVerifying} aria-busy={isVerifying}>
                                 {isVerifying ? 'Verifying…' : 'Verify email'}
                             </button>
 
-                            <button
-                                type="button"
-                                className="kc-btn kc-btn-secondary"
-                                onClick={resendCode}
-                                disabled={cooldown > 0}
-                            >
+                            <button type="button" className="kc-btn kc-btn-secondary" onClick={resendCode} disabled={cooldown > 0}>
                                 {cooldown > 0 ? `Resend available in ${cooldown}s` : 'Resend code'}
                             </button>
 
-                            <button
-                                type="button"
-                                className="kc-btn kc-btn-ghost"
-                                onClick={() => setVerificationStep(false)}
-                            >
+                            <button type="button" className="kc-btn kc-btn-ghost" onClick={() => setVerificationStep(false)}>
                                 Back
                             </button>
                         </form>
@@ -387,12 +362,7 @@ export default function Login() {
                                             autoComplete="current-password"
                                             required
                                         />
-                                        <button
-                                            type="button"
-                                            className="kc-password-toggle"
-                                            onClick={togglePassword}
-                                            aria-label="Toggle password visibility"
-                                        >
+                                        <button type="button" className="kc-password-toggle" onClick={togglePassword} aria-label="Toggle password visibility">
                                             {showPassword ? 'Hide' : 'Show'}
                                         </button>
                                     </div>
@@ -400,29 +370,16 @@ export default function Login() {
 
                                 <div className="kc-row">
                                     <label className="kc-remember">
-                                        <input
-                                            type="checkbox"
-                                            checked={rememberMe}
-                                            onChange={(e) => setRememberMe(e.target.checked)}
-                                        />
+                                        <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
                                         <span>Remember me</span>
                                     </label>
 
-                                    <button
-                                        type="button"
-                                        className="kc-text-btn"
-                                        onClick={() => setForgotPasswordStep(true)}
-                                    >
+                                    <button type="button" className="kc-text-btn" onClick={() => setForgotPasswordStep(true)}>
                                         Forgot Password?
                                     </button>
                                 </div>
 
-                                <button
-                                    type="submit"
-                                    className="kc-btn kc-btn-primary kc-btn-wide"
-                                    disabled={isSubmitting}
-                                    aria-busy={isSubmitting}
-                                >
+                                <button type="submit" className="kc-btn kc-btn-primary kc-btn-wide" disabled={isSubmitting} aria-busy={isSubmitting}>
                                     {isSubmitting ? 'Signing in…' : 'Sign in'}
                                 </button>
                             </form>
@@ -432,17 +389,17 @@ export default function Login() {
                             </div>
 
                             <div className="kc-social">
-                                <button type="button" className="kc-social-btn" onClick={() => toast('Google sign-in coming soon')}>
+                                <button type="button" className="kc-social-btn" onClick={() => startOAuth('google')}>
                                     <GoogleIcon />
                                     <span>Sign in with Google</span>
                                 </button>
 
-                                <button type="button" className="kc-social-btn" onClick={() => toast('Facebook sign-in coming soon')}>
+                                <button type="button" className="kc-social-btn" onClick={() => startOAuth('facebook')}>
                                     <FacebookIcon />
                                     <span>Sign in with Facebook</span>
                                 </button>
 
-                                <button type="button" className="kc-social-btn" onClick={() => toast('Apple sign-in coming soon')}>
+                                <button type="button" className="kc-social-btn" onClick={() => startOAuth('apple')}>
                                     <AppleIcon />
                                     <span>Sign in with Apple</span>
                                 </button>
@@ -463,18 +420,9 @@ function GoogleIcon() {
                 d="M44.5 20H24v8.5h11.8C34.2 33.7 29.7 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.5 0 6.4 1.2 8.7 3.2l6-6C35.5 4.7 30.1 2.5 24 2.5 12.1 2.5 2.5 12.1 2.5 24S12.1 45.5 24 45.5 45.5 35.9 45.5 24c0-1.4-.2-2.7-.5-4z"
                 fill="#FFC107"
             />
-            <path
-                d="M6.4 14.7l7 5.1C15.3 15.4 19.3 12 24 12c3.5 0 6.4 1.2 8.7 3.2l6-6C35.5 4.7 30.1 2.5 24 2.5c-8.3 0-15.5 4.7-19.6 12.2z"
-                fill="#FF3D00"
-            />
-            <path
-                d="M24 45.5c5.9 0 11.1-2 15.1-5.5l-6.9-5.7C30.1 35.7 27.2 37 24 37c-5.7 0-10.2-3.3-11.8-8.5l-7.1 5.4C9.2 41 16.1 45.5 24 45.5z"
-                fill="#4CAF50"
-            />
-            <path
-                d="M44.5 20H24v8.5h11.8c-.8 2.2-2.2 4-4 5.2l.1.1 6.9 5.7C41 37.5 45.5 33.4 45.5 24c0-1.4-.2-2.7-.5-4z"
-                fill="#1976D2"
-            />
+            <path d="M6.4 14.7l7 5.1C15.3 15.4 19.3 12 24 12c3.5 0 6.4 1.2 8.7 3.2l6-6C35.5 4.7 30.1 2.5 24 2.5c-8.3 0-15.5 4.7-19.6 12.2z" fill="#FF3D00" />
+            <path d="M24 45.5c5.9 0 11.1-2 15.1-5.5l-6.9-5.7C30.1 35.7 27.2 37 24 37c-5.7 0-10.2-3.3-11.8-8.5l-7.1 5.4C9.2 41 16.1 45.5 24 45.5z" fill="#4CAF50" />
+            <path d="M44.5 20H24v8.5h11.8c-.8 2.2-2.2 4-4 5.2l.1.1 6.9 5.7C41 37.5 45.5 33.4 45.5 24c0-1.4-.2-2.7-.5-4z" fill="#1976D2" />
         </svg>
     );
 }

@@ -1,4 +1,5 @@
-/* frontend/src/styling/login.css */
+/* frontend/src/styling/auth.css
+   Shared auth styling (Login + Register) + Claim-link / Save-card register screens */
 
 :root {
     --kc-orange: #ff7b00;
@@ -6,7 +7,6 @@
     --kc-text: #0f172a;
     --kc-muted: #64748b;
     --kc-border: #e5e7eb;
-    --kc-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
 }
 
 *,
@@ -32,7 +32,6 @@
     background:
         linear-gradient(135deg, rgba(15, 23, 42, 0.03) 0%, rgba(15, 23, 42, 0.00) 55%),
         linear-gradient(315deg, rgba(15, 23, 42, 0.03) 0%, rgba(15, 23, 42, 0.00) 55%);
-    transform: rotate(0deg);
     pointer-events: none;
 }
 
@@ -88,12 +87,13 @@
 
 .kc-auth-inner {
     width: 100%;
-    max-width: 520px;
+    max-width: 640px;
     text-align: center;
 }
 
+/* headings */
 .kc-title {
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     font-size: 56px;
     line-height: 1.05;
     font-weight: 800;
@@ -102,9 +102,10 @@
 }
 
 .kc-subtitle {
-    margin: 0 0 24px;
+    margin: 0 0 26px;
     font-size: 16px;
     color: var(--kc-muted);
+    line-height: 1.5;
 }
 
 .kc-link {
@@ -117,12 +118,21 @@
     text-decoration: underline;
 }
 
+/* form */
 .kc-form {
-    margin-top: 18px;
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
     gap: 14px;
     text-align: left;
+}
+
+.kc-form-claim {
+    margin-top: 18px;
+}
+
+.kc-form-register {
+    margin-top: 18px;
 }
 
 .kc-field {
@@ -141,8 +151,8 @@
     width: 100%;
     height: 52px;
     border: 1px solid var(--kc-border);
-    border-radius: 10px;
-    padding: 0 14px;
+    border-radius: 8px;
+    padding: 0 16px;
     font-size: 15px;
     outline: none;
     background: #fff;
@@ -155,75 +165,126 @@
     box-shadow: 0 0 0 4px rgba(255, 123, 0, 0.14);
 }
 
+/* claim input row (matches screenshot with prefix + | separator) */
+.kc-claim {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--kc-border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.kc-claim:focus-within {
+    border-color: rgba(255, 123, 0, 0.65);
+    box-shadow: 0 0 0 4px rgba(255, 123, 0, 0.14);
+}
+
+.kc-claim-prefix {
+    padding: 0 14px;
+    font-size: 14px;
+    color: var(--kc-muted);
+    white-space: nowrap;
+}
+
+.kc-claim-sep {
+    color: #cbd5e1;
+    font-weight: 700;
+    padding-right: 10px;
+}
+
+.kc-claim-input {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    height: 100% !important;
+    padding-left: 0 !important;
+}
+
+.kc-claim-input:focus {
+    box-shadow: none !important;
+}
+
+/* password toggle */
 .kc-password {
     position: relative;
 }
 
 .kc-input-password {
-    padding-right: 78px;
+    padding-right: 86px;
 }
 
 .kc-password-toggle {
     position: absolute;
-    right: 8px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    height: 38px;
+    height: 36px;
     padding: 0 14px;
     border: 1px solid var(--kc-border);
-    border-radius: 10px;
+    border-radius: 8px;
     background: #f8fafc;
     color: #0b1220;
     font-weight: 700;
     font-size: 13px;
     cursor: pointer;
-    transition: background 0.15s ease, transform 0.12s ease;
 }
 
 .kc-password-toggle:hover {
     background: #eef2f7;
-    transform: translateY(-50%) scale(1.02);
 }
 
-.kc-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 2px;
+/* password rules (optional) */
+.kc-password-rules {
+    margin-top: 10px;
+    display: grid;
+    gap: 8px;
 }
 
-.kc-remember {
+.kc-rule {
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: 13px;
-    color: var(--kc-muted);
-    cursor: pointer;
-    user-select: none;
-}
-
-.kc-remember input {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--kc-orange);
-}
-
-.kc-text-btn {
-    border: none;
-    background: transparent;
-    padding: 0;
-    font-size: 13px;
-    color: var(--kc-muted);
-    cursor: pointer;
     font-weight: 600;
 }
 
-.kc-text-btn:hover {
-    color: #0b1220;
-    text-decoration: underline;
+.kc-rule-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    border: 2px solid var(--kc-border);
+    background: transparent;
 }
 
+.kc-rule.is-ok {
+    color: #1a7f37;
+}
+
+.kc-rule.is-ok .kc-rule-dot {
+    border-color: #1a7f37;
+    background: #1a7f37;
+}
+
+.kc-rule.is-bad {
+    color: #b42318;
+}
+
+.kc-rule.is-bad .kc-rule-dot {
+    border-color: #b42318;
+}
+
+/* microcopy under claim input */
+.kc-microcopy {
+    margin: 2px 0 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--kc-muted);
+    font-style: italic;
+}
+
+/* centered orange pill button (like screenshots) */
 .kc-btn {
     height: 56px;
     border-radius: 999px;
@@ -231,13 +292,7 @@
     font-weight: 800;
     font-size: 15px;
     cursor: pointer;
-    transition: transform 0.12s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
-}
-
-.kc-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .kc-btn-primary {
@@ -251,11 +306,6 @@
     transform: translateY(-1px);
 }
 
-.kc-btn-wide {
-    width: 100%;
-    margin-top: 6px;
-}
-
 .kc-btn-secondary {
     background: #0b1220;
     color: #fff;
@@ -266,24 +316,37 @@
     transform: translateY(-1px);
 }
 
-.kc-btn-ghost {
-    background: transparent;
-    color: var(--kc-muted);
-    border-color: var(--kc-border);
+.kc-btn-center {
+    width: 320px;
+    max-width: 100%;
+    margin: 6px auto 0;
+    display: block;
 }
 
-.kc-btn-ghost:hover {
+.kc-text-back {
+    margin: 10px auto 0;
+    display: inline-block;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--kc-muted);
+    font-weight: 700;
+}
+
+.kc-text-back:hover {
     color: #0b1220;
-    transform: translateY(-1px);
+    text-decoration: underline;
 }
 
-.kc-helper {
-    margin: 6px 0 4px;
-    font-size: 14px;
-    color: var(--kc-muted);
+/* bottom line under button */
+.kc-bottom-line {
+    margin: 10px 0 0;
     text-align: center;
+    font-size: 13px;
+    color: var(--kc-muted);
 }
 
+/* divider + social buttons (like login) */
 .kc-divider {
     margin: 18px 0 14px;
     display: grid;
@@ -319,7 +382,9 @@
 
 .kc-social-btn {
     height: 54px;
-    width: 100%;
+    width: 380px;
+    max-width: 100%;
+    margin: 0 auto;
     border-radius: 999px;
     border: 1px solid var(--kc-border);
     background: #fff;
@@ -330,7 +395,7 @@
     font-weight: 700;
     color: #0b1220;
     cursor: pointer;
-    transition: transform 0.12s ease, box-shadow 0.15s ease, background 0.15s ease;
+    transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.15s ease;
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
 }
 
@@ -359,6 +424,10 @@
     .kc-close span {
         font-size: 46px;
     }
+
+    .kc-auth-inner {
+        max-width: 560px;
+    }
 }
 
 @media (max-width: 520px) {
@@ -367,12 +436,16 @@
         height: 72px;
     }
 
+    .kc-auth-main {
+        min-height: calc(100dvh - 72px);
+        padding-bottom: 42px;
+    }
+
     .kc-title {
         font-size: 38px;
     }
 
-    .kc-auth-main {
-        min-height: calc(100dvh - 72px);
-        padding-bottom: 42px;
+    .kc-btn-center {
+        width: 100%;
     }
 }

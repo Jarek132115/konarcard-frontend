@@ -1,4 +1,4 @@
-// src/App.jsx
+// frontend/src/App.jsx
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useContext } from 'react';
 import { Toaster } from 'react-hot-toast';
@@ -11,8 +11,11 @@ import RouteErrorBoundary from './components/RouteErrorBoundary';
 
 // -------- Public pages --------
 import Home from './pages/website/Home.jsx';
-import Register from './pages/website/Register.jsx';
-import Login from './pages/website/Login.jsx';
+
+// ✅ Use the AUTH pages you edited (not /website)
+import Register from './pages/auth/Register.jsx';
+import Login from './pages/auth/Login.jsx';
+
 import ResetPassword from './pages/website/ResetPassword.jsx';
 import ProductAndPlan from './pages/website/ProductAndPlan.jsx';
 import KonarCard from './pages/website/KonarCard.jsx';
@@ -52,8 +55,7 @@ function TidioWrapper() {
     location.pathname.startsWith('/contact-support') ||
     location.pathname.startsWith('/admin');
 
-  const enableTidio =
-    !isDashboardPath || location.pathname === '/contact-support';
+  const enableTidio = !isDashboardPath || location.pathname === '/contact-support';
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
 }
 
