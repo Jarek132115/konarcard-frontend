@@ -30,7 +30,7 @@ import SuccessSubscription from './pages/website/SuccessSubscription.jsx';
 import UserPage from './pages/interface/UserPage.jsx';
 
 // ✅ OAuth handler page (you said you added it)
-import OAuthSuccess from './pages/auth/OAuthSuccess.jsx';
+import OAuthSuccess from './auth/OAuthSuccess.jsx';
 
 // -------- Interface (protected) --------
 import Billing from './pages/interface/Billing.jsx';
