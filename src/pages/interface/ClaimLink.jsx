@@ -17,6 +17,7 @@ export default function ClaimLink() {
     const sanitizeUsername = (raw) =>
         (raw || '').trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
 
+    
     const submit = async (e) => {
         e.preventDefault();
 
