@@ -34,10 +34,16 @@ export default function Login() {
         ADMIN_EMAILS_UI.includes((email || '').toLowerCase());
 
     // Social auth redirect
+    // inside Login.jsx
     const startOAuth = (provider) => {
+        try {
+            localStorage.setItem('oauthSource', 'login');
+            localStorage.removeItem('pendingClaimUsername');
+        } catch { }
         const base = import.meta.env.VITE_API_URL;
         window.location.href = `${base}/auth/${provider}`;
     };
+
 
     // Restore remembered email
     useEffect(() => {
