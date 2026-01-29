@@ -42,8 +42,7 @@ import NFCCards from './pages/interface/NFCCards.jsx';
 import Notifications from './pages/interface/Notifications.jsx';
 import Profile from './pages/interface/Profile.jsx';
 
-// ✅ Claim link page (PROTECTED)
-// If your claim page file path/name differs, replace this import to match your repo.
+// ✅ Claim link page (NEW FILE)
 import ClaimLink from './pages/interface/ClaimLink.jsx';
 
 // -------- Admin (protected) --------
