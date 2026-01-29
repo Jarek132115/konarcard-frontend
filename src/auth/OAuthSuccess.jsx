@@ -1,25 +1,30 @@
 import { useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../components/AuthContext';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { AuthContext } from '../components/AuthContext';
 
 export default function OAuthSuccess() {
     const navigate = useNavigate();
+    const location = useLocation();
     const { login } = useContext(AuthContext);
 
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(location.search);
         const token = params.get('token');
 
         if (!token) {
+            // No token → something went wrong, send to login
             navigate('/login', { replace: true });
             return;
         }
 
-        // If your AuthContext login expects (token, user), you can decode user later
-        // For now: store token then fetch /profile on app load (common pattern)
-        login(token, null);
-        navigate('/myprofile', { replace: true });
-    }, [login, navigate]);
+        // Save token via AuthContext
+        // AuthContext should store token (localStorage/cookie) and fetch profile
+        login(token);
 
-    return null;
+        // Redirect to dashboard
+        navigate('/myprofile', { replace: true });
+    }, [login, navigate, location.search]);
+
+    // Optional: loading state (prevents blank flash)
+    return <p style={{ textAlign: 'center', marginTop: '4rem' }}>Signing you in…</p>;
 }
