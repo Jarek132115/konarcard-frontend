@@ -12,9 +12,9 @@ import RouteErrorBoundary from './components/RouteErrorBoundary';
 // -------- Public pages --------
 import Home from './pages/website/Home.jsx';
 
-// ✅ Use the AUTH pages you edited (not /website)
-import Register from './pages/auth/Register.jsx';
-import Login from './pages/auth/Login.jsx';
+// ✅ These exist in your repo
+import Register from './pages/website/Register.jsx';
+import Login from './pages/website/Login.jsx';
 
 import ResetPassword from './pages/website/ResetPassword.jsx';
 import ProductAndPlan from './pages/website/ProductAndPlan.jsx';
