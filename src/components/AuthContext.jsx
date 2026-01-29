@@ -84,12 +84,17 @@ export const AuthProvider = ({ children }) => {
     const login = (token, userData) => {
         try {
             localStorage.setItem(TOKEN_KEY, token);
-            localStorage.setItem(USER_KEY, JSON.stringify(userData || {}));
+            if (userData) {
+                localStorage.setItem(USER_KEY, JSON.stringify(userData));
+            } else {
+                localStorage.removeItem(USER_KEY);
+            }
         } catch { }
         attachAuthHeader(token);
         setUser(userData || null);
         setInitialized(true);
     };
+
 
     const logout = () => {
         try {
