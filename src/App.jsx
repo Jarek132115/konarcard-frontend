@@ -29,7 +29,7 @@ import SuccessCard from './pages/website/Success.jsx';
 import SuccessSubscription from './pages/website/SuccessSubscription.jsx';
 import UserPage from './pages/interface/UserPage.jsx';
 
-// ✅ OAuth handler page (you said you added it)
+// ✅ OAuth handler page
 import OAuthSuccess from './auth/OAuthSuccess.jsx';
 
 // -------- Interface (protected) --------
@@ -41,6 +41,10 @@ import MyOrders from './pages/interface/MyOrder.jsx';
 import NFCCards from './pages/interface/NFCCards.jsx';
 import Notifications from './pages/interface/Notifications.jsx';
 import Profile from './pages/interface/Profile.jsx';
+
+// ✅ Claim link page (PROTECTED)
+// If your claim page file path/name differs, replace this import to match your repo.
+import ClaimLink from './pages/interface/ClaimLink.jsx';
 
 // -------- Admin (protected) --------
 import AdminOrders from './pages/admin/AdminDashboard.jsx';
@@ -56,7 +60,8 @@ function TidioWrapper() {
     location.pathname.startsWith('/notifications') ||
     location.pathname.startsWith('/profile') ||
     location.pathname.startsWith('/contact-support') ||
-    location.pathname.startsWith('/admin');
+    location.pathname.startsWith('/admin') ||
+    location.pathname.startsWith('/claim');
 
   const enableTidio = !isDashboardPath || location.pathname === '/contact-support';
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
@@ -112,6 +117,15 @@ export default function App() {
           <Route path="/u/:username" element={<UserPage />} />
 
           {/* PROTECTED */}
+          <Route
+            path="/claim"
+            element={
+              <ProtectedRoute>
+                <ClaimLink />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/billing"
             element={
