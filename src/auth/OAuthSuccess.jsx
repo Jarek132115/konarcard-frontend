@@ -1,4 +1,5 @@
-import { useEffect, useContext } from 'react';
+// frontend/src/auth/OAuthSuccess.jsx
+import { useEffect, useContext, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../components/AuthContext';
 
@@ -6,8 +7,12 @@ export default function OAuthSuccess() {
     const navigate = useNavigate();
     const location = useLocation();
     const { login, fetchUser } = useContext(AuthContext);
+    const ranRef = useRef(false);
 
     useEffect(() => {
+        if (ranRef.current) return;
+        ranRef.current = true;
+
         const params = new URLSearchParams(location.search);
         const token = params.get('token');
 
@@ -21,29 +26,27 @@ export default function OAuthSuccess() {
 
         (async () => {
             try {
-                await fetchUser();
+                const fresh = await fetchUser();
 
-                // read hydrated user (avoids relying on fetchUser return value)
-                let hydrated = null;
-                try {
-                    hydrated = JSON.parse(localStorage.getItem('authUser') || 'null');
-                } catch {
-                    hydrated = null;
-                }
+                const hydrated =
+                    fresh ||
+                    (() => {
+                        try {
+                            return JSON.parse(localStorage.getItem('authUser') || 'null');
+                        } catch {
+                            return null;
+                        }
+                    })();
 
                 const hasClaim = !!(hydrated?.username || hydrated?.slug || hydrated?.profileUrl);
 
-                if (!hasClaim) {
-                    // ✅ change this route if your claim page is different
-                    navigate('/claim', { replace: true });
-                } else {
-                    navigate('/myprofile', { replace: true });
-                }
+                if (!hasClaim) navigate('/claim', { replace: true });
+                else navigate('/myprofile', { replace: true });
             } catch {
                 navigate('/login?oauth=failed', { replace: true });
             }
         })();
-    }, [login, fetchUser, navigate, location.search]);
+    }, [location.search, navigate, login, fetchUser]);
 
     return <p style={{ textAlign: 'center', marginTop: '4rem' }}>Signing you in…</p>;
 }
