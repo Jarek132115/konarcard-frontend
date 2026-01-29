@@ -16,13 +16,32 @@ export default function OAuthSuccess() {
             return;
         }
 
-        // store token immediately (user will be fetched next)
+        // store token immediately
         login(token, null);
 
-        // hydrate user then go dashboard
         (async () => {
-            await fetchUser();
-            navigate('/myprofile', { replace: true });
+            try {
+                await fetchUser();
+
+                // read hydrated user (avoids relying on fetchUser return value)
+                let hydrated = null;
+                try {
+                    hydrated = JSON.parse(localStorage.getItem('authUser') || 'null');
+                } catch {
+                    hydrated = null;
+                }
+
+                const hasClaim = !!(hydrated?.username || hydrated?.slug || hydrated?.profileUrl);
+
+                if (!hasClaim) {
+                    // ✅ change this route if your claim page is different
+                    navigate('/claim', { replace: true });
+                } else {
+                    navigate('/myprofile', { replace: true });
+                }
+            } catch {
+                navigate('/login?oauth=failed', { replace: true });
+            }
         })();
     }, [login, fetchUser, navigate, location.search]);
 
