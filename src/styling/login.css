@@ -35,6 +35,7 @@
     pointer-events: none;
 }
 
+/* header */
 .kc-auth-header {
     position: relative;
     z-index: 2;
@@ -76,6 +77,7 @@
     transform: scale(1.04);
 }
 
+/* layout */
 .kc-auth-main {
     position: relative;
     z-index: 2;
@@ -127,10 +129,7 @@
     text-align: left;
 }
 
-.kc-form-claim {
-    margin-top: 18px;
-}
-
+.kc-form-claim,
 .kc-form-register {
     margin-top: 18px;
 }
@@ -147,6 +146,7 @@
     font-weight: 600;
 }
 
+/* inputs */
 .kc-input {
     width: 100%;
     height: 52px;
@@ -165,7 +165,7 @@
     box-shadow: 0 0 0 4px rgba(255, 123, 0, 0.14);
 }
 
-/* claim input row (matches screenshot with prefix + | separator) */
+/* claim input row (prefix + | separator) */
 .kc-claim {
     height: 52px;
     display: flex;
@@ -200,6 +200,7 @@
     box-shadow: none !important;
     height: 100% !important;
     padding-left: 0 !important;
+    padding-right: 14px !important;
 }
 
 .kc-claim-input:focus {
@@ -235,7 +236,7 @@
     background: #eef2f7;
 }
 
-/* password rules (optional) */
+/* password rules */
 .kc-password-rules {
     margin-top: 10px;
     display: grid;
@@ -284,7 +285,7 @@
     font-style: italic;
 }
 
-/* centered orange pill button (like screenshots) */
+/* primary buttons */
 .kc-btn {
     height: 56px;
     border-radius: 999px;
@@ -293,6 +294,12 @@
     font-size: 15px;
     cursor: pointer;
     transition: transform 0.12s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.kc-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .kc-btn-primary {
@@ -316,6 +323,7 @@
     transform: translateY(-1px);
 }
 
+/* centered buttons like screenshots */
 .kc-btn-center {
     width: 320px;
     max-width: 100%;
@@ -323,6 +331,7 @@
     display: block;
 }
 
+/* small text links/buttons */
 .kc-text-back {
     margin: 10px auto 0;
     display: inline-block;
@@ -346,7 +355,15 @@
     color: var(--kc-muted);
 }
 
-/* divider + social buttons (like login) */
+/* remember checkbox row */
+.kc-remember {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--kc-muted);
+    font-weight: 600;
+}
+
+/* divider + social buttons */
 .kc-divider {
     margin: 18px 0 14px;
     display: grid;
