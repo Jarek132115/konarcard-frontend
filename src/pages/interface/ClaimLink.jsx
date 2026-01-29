@@ -26,7 +26,7 @@ export default function ClaimLink() {
 
         setLoading(true);
         try {
-            const res = await api.post('/claim-link', { username: clean });
+            const res = await api.post('/claim-link', { username: clean }); 
 
             if (res.data?.error) {
                 toast.error(res.data.error);
