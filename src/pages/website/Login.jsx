@@ -30,23 +30,17 @@ export default function Login() {
     const [isVerifying, setIsVerifying] = useState(false);
     const [isSendingReset, setIsSendingReset] = useState(false);
 
-    
-    const isAdminEmail = (email) =>
-        ADMIN_EMAILS_UI.includes((email || '').toLowerCase());
+    const isAdminEmail = (email) => ADMIN_EMAILS_UI.includes((email || '').toLowerCase());
 
-    // Social auth redirect
-    // inside Login.jsx
     const startOAuth = (provider) => {
         try {
             localStorage.setItem('oauthSource', 'login');
-            localStorage.removeItem('pendingClaimUsername');
+            localStorage.removeItem('pendingClaimSlug');
         } catch { }
         const base = import.meta.env.VITE_API_URL;
         window.location.href = `${base}/auth/${provider}`;
     };
 
-
-    // Restore remembered email
     useEffect(() => {
         try {
             const remembered = localStorage.getItem(REMEMBER_KEY) === 'true';
@@ -58,13 +52,10 @@ export default function Login() {
         } catch { }
     }, []);
 
-    // Persist post-auth action
     useEffect(() => {
         const action = location.state?.postAuthAction;
         if (action) {
-            try {
-                localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action));
-            } catch { }
+            try { localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action)); } catch { }
         }
     }, [location.state]);
 
@@ -80,9 +71,7 @@ export default function Login() {
             const saved = localStorage.getItem(POST_AUTH_KEY);
             if (saved) action = JSON.parse(saved);
         } catch { }
-        try {
-            localStorage.removeItem(POST_AUTH_KEY);
-        } catch { }
+        try { localStorage.removeItem(POST_AUTH_KEY); } catch { }
 
         if (!action) {
             navigate('/myprofile');
@@ -127,10 +116,7 @@ export default function Login() {
         try {
             if (rememberMe) {
                 localStorage.setItem(REMEMBER_KEY, 'true');
-                localStorage.setItem(
-                    REMEMBERED_EMAIL_KEY,
-                    data.email.trim().toLowerCase()
-                );
+                localStorage.setItem(REMEMBERED_EMAIL_KEY, data.email.trim().toLowerCase());
             } else {
                 localStorage.removeItem(REMEMBER_KEY);
                 localStorage.removeItem(REMEMBERED_EMAIL_KEY);
@@ -157,14 +143,11 @@ export default function Login() {
                 login(res.data.token, res.data.user);
 
                 const email = res.data.user?.email || data.email;
-                if (isAdminEmail(email)) {
-                    navigate('/admin', { replace: true });
-                } else {
-                    await runPendingActionOrDefault();
-                }
+                if (isAdminEmail(email)) navigate('/admin', { replace: true });
+                else await runPendingActionOrDefault();
             }
-        } catch {
-            toast.error('Login failed.');
+        } catch (err) {
+            toast.error(err?.response?.data?.error || 'Login failed.');
         } finally {
             setIsSubmitting(false);
         }
@@ -190,8 +173,8 @@ export default function Login() {
                 login(loginRes.data.token, loginRes.data.user);
                 await runPendingActionOrDefault();
             }
-        } catch {
-            toast.error('Verification failed.');
+        } catch (err) {
+            toast.error(err?.response?.data?.error || 'Verification failed.');
         } finally {
             setIsVerifying(false);
         }
@@ -199,11 +182,12 @@ export default function Login() {
 
     const resendCode = async () => {
         try {
-            await api.post('/resend-code', {
-                email: data.email.trim().toLowerCase(),
-            });
-            toast.success('New code sent!');
-            setCooldown(30);
+            const res = await api.post('/resend-code', { email: data.email.trim().toLowerCase() });
+            if (res.data?.error) toast.error(res.data.error);
+            else {
+                toast.success('New code sent!');
+                setCooldown(30);
+            }
         } catch {
             toast.error('Could not resend code.');
         }
@@ -213,10 +197,11 @@ export default function Login() {
         e.preventDefault();
         setIsSendingReset(true);
         try {
-            await api.post('/forgot-password', {
+            const res = await api.post('/forgot-password', {
                 email: emailForReset.trim().toLowerCase(),
             });
-            toast.success('Reset link sent!');
+            if (res.data?.error) toast.error(res.data.error);
+            else toast.success('Reset link sent!');
         } catch {
             toast.error('Failed to send reset link.');
         } finally {
@@ -226,25 +211,42 @@ export default function Login() {
 
     return (
         <div className="kc-auth-page">
+            <header className="kc-auth-header">
+                <Link to="/" className="kc-logo" aria-label="KonarCard Home">
+                    K
+                </Link>
+
+                <button type="button" className="kc-close" onClick={() => navigate('/')} aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </header>
+
             <main className="kc-auth-main">
                 <div className="kc-auth-inner">
                     {forgotPasswordStep ? (
                         <form className="kc-form" onSubmit={sendResetLink}>
                             <h1 className="kc-title">Reset password</h1>
-                            <input
-                                className="kc-input"
-                                type="email"
-                                placeholder="Email"
-                                value={emailForReset}
-                                onChange={(e) => setEmailForReset(e.target.value)}
-                                required
-                            />
-                            <button className="kc-btn kc-btn-primary">
+
+                            <div className="kc-field">
+                                <label className="kc-label" htmlFor="resetEmail">Email</label>
+                                <input
+                                    className="kc-input"
+                                    id="resetEmail"
+                                    type="email"
+                                    placeholder="Email"
+                                    value={emailForReset}
+                                    onChange={(e) => setEmailForReset(e.target.value)}
+                                    required
+                                />
+                            </div>
+
+                            <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isSendingReset} aria-busy={isSendingReset}>
                                 {isSendingReset ? 'Sending…' : 'Send reset link'}
                             </button>
+
                             <button
                                 type="button"
-                                className="kc-btn kc-btn-secondary"
+                                className="kc-btn kc-btn-secondary kc-btn-center"
                                 onClick={() => setForgotPasswordStep(false)}
                             >
                                 Back
@@ -253,21 +255,28 @@ export default function Login() {
                     ) : verificationStep ? (
                         <form className="kc-form" onSubmit={verifyCode}>
                             <h1 className="kc-title">Verify email</h1>
-                            <input
-                                className="kc-input"
-                                type="text"
-                                placeholder="Verification code"
-                                value={code}
-                                onChange={(e) => setCode(e.target.value)}
-                                maxLength={6}
-                                required
-                            />
-                            <button className="kc-btn kc-btn-primary">
+
+                            <div className="kc-field">
+                                <label className="kc-label" htmlFor="code">Verification code</label>
+                                <input
+                                    className="kc-input"
+                                    id="code"
+                                    type="text"
+                                    placeholder="123456"
+                                    value={code}
+                                    onChange={(e) => setCode(e.target.value)}
+                                    maxLength={6}
+                                    required
+                                />
+                            </div>
+
+                            <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isVerifying} aria-busy={isVerifying}>
                                 {isVerifying ? 'Verifying…' : 'Verify'}
                             </button>
+
                             <button
                                 type="button"
-                                className="kc-btn kc-btn-secondary"
+                                className="kc-btn kc-btn-secondary kc-btn-center"
                                 onClick={resendCode}
                                 disabled={cooldown > 0}
                             >
@@ -276,26 +285,51 @@ export default function Login() {
                         </form>
                     ) : (
                         <>
-                            <form className="kc-form" onSubmit={loginUser}>
-                                <h1 className="kc-title">Welcome back</h1>
-                                <input
-                                    className="kc-input"
-                                    type="email"
-                                    placeholder="Email"
-                                    value={data.email}
-                                    onChange={(e) => setData({ ...data, email: e.target.value })}
-                                    required
-                                />
-                                <input
-                                    className="kc-input"
-                                    type={showPassword ? 'text' : 'password'}
-                                    placeholder="Password"
-                                    value={data.password}
-                                    onChange={(e) => setData({ ...data, password: e.target.value })}
-                                    required
-                                />
+                            <h1 className="kc-title">Welcome back</h1>
+                            <p className="kc-subtitle">
+                                New to KonarCard?{' '}
+                                <Link className="kc-link" to="/register">
+                                    Create an account
+                                </Link>
+                            </p>
 
-                                <label className="kc-remember">
+                            <form className="kc-form" onSubmit={loginUser}>
+                                <div className="kc-field">
+                                    <label className="kc-label" htmlFor="email">Email</label>
+                                    <input
+                                        className="kc-input"
+                                        id="email"
+                                        type="email"
+                                        placeholder="Email"
+                                        value={data.email}
+                                        onChange={(e) => setData({ ...data, email: e.target.value })}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="kc-field">
+                                    <label className="kc-label" htmlFor="password">Password</label>
+                                    <div className="kc-password">
+                                        <input
+                                            className="kc-input kc-input-password"
+                                            id="password"
+                                            type={showPassword ? 'text' : 'password'}
+                                            placeholder="Password"
+                                            value={data.password}
+                                            onChange={(e) => setData({ ...data, password: e.target.value })}
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            className="kc-password-toggle"
+                                            onClick={() => setShowPassword((s) => !s)}
+                                        >
+                                            {showPassword ? 'Hide' : 'Show'}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <label className="kc-remember" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                     <input
                                         type="checkbox"
                                         checked={rememberMe}
@@ -304,17 +338,27 @@ export default function Login() {
                                     Remember me
                                 </label>
 
-                                <button className="kc-btn kc-btn-primary">
+                                <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isSubmitting} aria-busy={isSubmitting}>
                                     {isSubmitting ? 'Signing in…' : 'Sign in'}
+                                </button>
+
+                                <button type="button" className="kc-text-back" onClick={() => setForgotPasswordStep(true)}>
+                                    Forgot Password?
                                 </button>
                             </form>
 
                             <div className="kc-divider"><span>or</span></div>
 
                             <div className="kc-social">
-                                <button onClick={() => startOAuth('google')}>Sign in with Google</button>
-                                <button onClick={() => startOAuth('facebook')}>Sign in with Facebook</button>
-                                <button onClick={() => startOAuth('apple')}>Sign in with Apple</button>
+                                <button type="button" className="kc-social-btn" onClick={() => startOAuth('google')}>
+                                    <span>Sign in with Google</span>
+                                </button>
+                                <button type="button" className="kc-social-btn" onClick={() => startOAuth('facebook')}>
+                                    <span>Sign in with Facebook</span>
+                                </button>
+                                <button type="button" className="kc-social-btn" onClick={() => startOAuth('apple')}>
+                                    <span>Sign in with Apple</span>
+                                </button>
                             </div>
                         </>
                     )}

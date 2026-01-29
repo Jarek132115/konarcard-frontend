@@ -5,6 +5,8 @@ import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import '../../styling/login.css';
 
+const DOMAIN_PREFIX = 'www.konarcard.com/u/';
+
 export default function ClaimLink() {
     const navigate = useNavigate();
     const inputRef = useRef(null);
@@ -12,14 +14,15 @@ export default function ClaimLink() {
     const [username, setUsername] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const sanitizeUsername = (raw) =>
+        (raw || '').trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
+
     const submit = async (e) => {
         e.preventDefault();
 
-        const clean = username.trim().toLowerCase();
-        if (!clean) {
-            toast.error('Please enter a link name.');
-            return;
-        }
+        const clean = sanitizeUsername(username);
+        if (!clean) return toast.error('Please enter a link name.');
+        if (clean.length < 3) return toast.error('Link name must be at least 3 characters.');
 
         setLoading(true);
         try {
@@ -27,14 +30,14 @@ export default function ClaimLink() {
 
             if (res.data?.error) {
                 toast.error(res.data.error);
-                setLoading(false);
                 return;
             }
 
             toast.success('Link claimed successfully!');
             navigate('/myprofile', { replace: true });
         } catch (err) {
-            toast.error(err?.response?.data?.error || 'Failed to claim link.');
+            toast.error(err?.response?.data?.error || err?.response?.data?.message || 'Failed to claim link.');
+        } finally {
             setLoading(false);
         }
     };
@@ -64,7 +67,7 @@ export default function ClaimLink() {
                             role="group"
                             aria-label="Claim your link input"
                         >
-                            <span className="kc-claim-prefix">www.konarcard.com/u/</span>
+                            <span className="kc-claim-prefix">{DOMAIN_PREFIX}</span>
                             <span className="kc-claim-sep">|</span>
                             <input
                                 ref={inputRef}
