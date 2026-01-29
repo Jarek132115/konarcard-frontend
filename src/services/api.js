@@ -2,26 +2,32 @@
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-// Normalize base URL so it never ends with /api (your Cloud Run routes do NOT use /api)
+// Normalize base URL so it never ends with /api
 function normalizeBaseURL(url) {
   const raw = (url || '').trim().replace(/\/+$/, '');
   if (!raw) return '';
-  // if someone set VITE_API_URL to ".../api", strip it
   return raw.replace(/\/api$/i, '');
 }
 
 const api = axios.create({
   baseURL: normalizeBaseURL(import.meta.env.VITE_API_URL),
-  withCredentials: false, // using Bearer token, not cookies
+  withCredentials: false,
 });
 
-// Attach token + add cache-buster on sensitive routes
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // ✅ Allow explicit "no-auth" per request (for claim availability step)
+    const noAuth = config?.headers?.['X-No-Auth'] === '1';
+
+    if (!noAuth) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      } else {
+        delete config.headers.Authorization;
+      }
     } else {
+      // ensure no Authorization header is sent
       delete config.headers.Authorization;
     }
 
@@ -36,7 +42,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Safer response interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -60,7 +65,7 @@ api.interceptors.response.use(
   }
 );
 
-// ✅ Keep this export because MyProfile.jsx imports it
+// Keep this export because MyProfile.jsx imports it
 export const startTrial = () => api.post('/trial/start', {});
 
 export default api;

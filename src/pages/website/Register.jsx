@@ -120,26 +120,33 @@ export default function Register() {
     };
 
     // STEP 1: claim link (availability check)
+    // claim link (availability check) - MUST be NO-AUTH
     const claimLinkContinue = async (e) => {
         e.preventDefault();
-        const username = sanitizeUsername(data.username);
+        const username = data.username.trim().toLowerCase();
 
-        if (!username) return toast.error('Please enter your link name.');
-        if (username.length < 3) return toast.error('Link name must be at least 3 characters.');
+        if (!username) {
+            toast.error('Please enter a link name');
+            return;
+        }
 
         try {
-            const res = await api.post('/claim-link', { username });
-            const claimed = res?.data?.username || username;
+            await api.post(
+                '/claim-link',
+                { username },
+                { headers: { 'X-No-Auth': '1' } } // ✅ critical
+            );
 
-            try { localStorage.setItem(CLAIM_KEY, claimed); } catch { }
-            setData((d) => ({ ...d, username: claimed }));
+            localStorage.setItem(CLAIM_KEY, username);
+            setData((d) => ({ ...d, username }));
             setClaimStep(false);
-            setTimeout(() => document.getElementById('name')?.focus?.(), 0);
+            setTimeout(() => document.getElementById('name')?.focus(), 0);
         } catch (err) {
-            const msg = err?.response?.data?.error || err?.response?.data?.message || 'Link not available';
+            const msg = err?.response?.data?.error || 'Link not available';
             toast.error(msg);
         }
     };
+
 
     // STEP 2: register (email+password)
     const registerUser = async (e) => {
