@@ -19,8 +19,11 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    else delete config.headers.Authorization;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      delete config.headers.Authorization;
+    }
 
     // Cache-buster for profile/orders
     if (config.url?.includes('/profile') || config.url?.includes('/me/orders')) {
@@ -40,6 +43,7 @@ api.interceptors.response.use(
     const { response, config } = error || {};
     const status = response?.status;
 
+    // Clear auth only when profile check explicitly returns 401/403
     if (
       (status === 401 || status === 403) &&
       config?.url &&
@@ -55,5 +59,8 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// ✅ Keep this export because MyProfile.jsx imports it
+export const startTrial = () => api.post('/trial/start', {});
 
 export default api;
