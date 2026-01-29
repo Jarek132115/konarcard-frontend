@@ -29,6 +29,9 @@ import SuccessCard from './pages/website/Success.jsx';
 import SuccessSubscription from './pages/website/SuccessSubscription.jsx';
 import UserPage from './pages/interface/UserPage.jsx';
 
+// ✅ OAuth handler page (you said you added it)
+import OAuthSuccess from './pages/auth/OAuthSuccess.jsx';
+
 // -------- Interface (protected) --------
 import Billing from './pages/interface/Billing.jsx';
 import ContactSupport from './pages/interface/ContactSupport.jsx';
@@ -75,6 +78,10 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+
+          {/* ✅ OAuth token landing */}
+          <Route path="/oauth" element={<OAuthSuccess />} />
+
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/productandplan" element={<ProductAndPlan />} />
           <Route path="/productandplan/konarcard" element={<KonarCard />} />
