@@ -9,8 +9,8 @@ const USER_KEY = 'authUser';
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [initialized, setInitialized] = useState(false);  // app bootstrapped
-    const [hydrating, setHydrating] = useState(false);      // in-flight /profile fetch
+    const [initialized, setInitialized] = useState(false); // app bootstrapped
+    const [hydrating, setHydrating] = useState(false); // in-flight /profile fetch
     const bootstrappedRef = useRef(false);
 
     const attachAuthHeader = (token) => {
@@ -21,40 +21,61 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const readCachedUser = () => {
+        try {
+            return JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+        } catch {
+            return null;
+        }
+    };
+
+    const writeCachedUser = (fresh) => {
+        try {
+            if (fresh) {
+                localStorage.setItem(USER_KEY, JSON.stringify(fresh));
+            } else {
+                localStorage.removeItem(USER_KEY);
+            }
+        } catch {
+            // ignore
+        }
+    };
+
     const fetchUser = async () => {
         const token = localStorage.getItem(TOKEN_KEY);
+
         if (!token) {
             setUser(null);
-            try { localStorage.removeItem(USER_KEY); } catch { }
+            writeCachedUser(null);
             attachAuthHeader(null);
             return null;
         }
 
         attachAuthHeader(token);
         setHydrating(true);
+
         try {
             const res = await api.get('/profile');
             const fresh = res?.data?.data || null;
-            setUser(fresh);
 
-            try {
-                if (fresh) {
-                    localStorage.setItem(USER_KEY, JSON.stringify(fresh));
-                } else {
-                    localStorage.removeItem(USER_KEY);
-                }
-            } catch { }
+            setUser(fresh);
+            writeCachedUser(fresh);
+
             return fresh;
         } catch (err) {
             const status = err?.response?.status;
+
             if (status === 401 || status === 403) {
                 try {
                     localStorage.removeItem(TOKEN_KEY);
                     localStorage.removeItem(USER_KEY);
-                } catch { }
+                } catch {
+                    // ignore
+                }
                 attachAuthHeader(null);
                 setUser(null);
             }
+
             return null;
         } finally {
             setHydrating(false);
@@ -66,10 +87,7 @@ export const AuthProvider = ({ children }) => {
         bootstrappedRef.current = true;
 
         const token = localStorage.getItem(TOKEN_KEY);
-        let cached = null;
-        try {
-            cached = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
-        } catch { }
+        const cached = readCachedUser();
 
         if (token) attachAuthHeader(token);
         if (cached) setUser(cached);
@@ -81,26 +99,51 @@ export const AuthProvider = ({ children }) => {
         if (token) void fetchUser();
     }, []);
 
+    /**
+     * ✅ FIX: If userData is null/undefined, do NOT delete cached authUser.
+     * OAuth flow does login(token, null) then fetchUser().
+     * Previously you removed authUser, which caused timing bugs in redirects/claim flows.
+     */
     const login = (token, userData) => {
         try {
             localStorage.setItem(TOKEN_KEY, token);
+
             if (userData) {
                 localStorage.setItem(USER_KEY, JSON.stringify(userData));
             } else {
-                localStorage.removeItem(USER_KEY);
+                // keep existing cached user if present (don’t wipe)
+                const cached = readCachedUser();
+                if (cached) {
+                    // keep it
+                } else {
+                    // if none exists, ensure it's empty (optional)
+                    localStorage.removeItem(USER_KEY);
+                }
             }
-        } catch { }
+        } catch {
+            // ignore
+        }
+
         attachAuthHeader(token);
-        setUser(userData || null);
+
+        if (userData) {
+            setUser(userData);
+        } else {
+            // attempt to hydrate from cache immediately (smooth UX)
+            const cached = readCachedUser();
+            if (cached) setUser(cached);
+        }
+
         setInitialized(true);
     };
-
 
     const logout = () => {
         try {
             localStorage.removeItem(TOKEN_KEY);
             localStorage.removeItem(USER_KEY);
-        } catch { }
+        } catch {
+            // ignore
+        }
         attachAuthHeader(null);
         setUser(null);
     };
