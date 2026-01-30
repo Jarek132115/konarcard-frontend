@@ -6,6 +6,7 @@ import Navbar from "../../components/Navbar";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Footer from "../../components/Footer";
 
+import "../../styling/fonts.css";
 import "../../styling/pricing.css";
 
 /* Reuse icons you already have */
@@ -18,8 +19,6 @@ export default function Pricing() {
     const [billing, setBilling] = useState("monthly"); // monthly | quarterly | yearly
 
     const prices = useMemo(() => {
-        // Adjust these values any time.
-        // Keeping it aligned to your design vibe: FREE / PLUS / TEAMS
         return {
             monthly: {
                 free: { label: "FREE", price: "£0", sub: "No monthly cost" },
@@ -59,7 +58,7 @@ export default function Pricing() {
                     "Works on iPhone & Android",
                     "Perfect for trying it out",
                 ],
-                cta: { label: "Start Free Trial", to: "/register", style: "primary" },
+                cta: { label: "Get started free", to: "/register", style: "primary" },
             },
             {
                 key: "plus",
@@ -100,84 +99,19 @@ export default function Pricing() {
 
     const comparisonRows = useMemo(
         () => [
-            {
-                label: "Claim your KonarCard link",
-                free: true,
-                plus: true,
-                teams: true,
-            },
-            {
-                label: "Tap / QR sharing",
-                free: true,
-                plus: true,
-                teams: true,
-            },
-            {
-                label: "Basic profile (contact buttons)",
-                free: true,
-                plus: true,
-                teams: true,
-            },
-            {
-                label: "Custom themes & fonts",
-                free: false,
-                plus: true,
-                teams: true,
-            },
-            {
-                label: "Services + pricing section",
-                free: false,
-                plus: true,
-                teams: true,
-            },
-            {
-                label: "Photo gallery",
-                free: false,
-                plus: true,
-                teams: true,
-            },
-            {
-                label: "Reviews & star ratings",
-                free: false,
-                plus: true,
-                teams: true,
-            },
-            {
-                label: "Unlimited edits (instant updates)",
-                free: true,
-                plus: true,
-                teams: true,
-            },
-            {
-                label: "Remove KonarCard branding",
-                free: false,
-                plus: true,
-                teams: true,
-            },
-            {
-                label: "Multiple profiles (team management)",
-                free: false,
-                plus: false,
-                teams: true,
-            },
-            {
-                label: "Assign staff & manage permissions",
-                free: false,
-                plus: false,
-                teams: true,
-            },
-            {
-                label: "Centralised billing & admin controls",
-                free: false,
-                plus: false,
-                teams: true,
-            },
-            {
-                label: "Support level",
-                free: "Standard",
-                plus: "Priority",
-                teams: "Priority",
-            },
+            { label: "Claim your KonarCard link", free: true, plus: true, teams: true },
+            { label: "Tap / QR sharing", free: true, plus: true, teams: true },
+            { label: "Basic profile (contact buttons)", free: true, plus: true, teams: true },
+            { label: "Custom themes & fonts", free: false, plus: true, teams: true },
+            { label: "Services + pricing section", free: false, plus: true, teams: true },
+            { label: "Photo gallery", free: false, plus: true, teams: true },
+            { label: "Reviews & star ratings", free: false, plus: true, teams: true },
+            { label: "Unlimited edits (instant updates)", free: true, plus: true, teams: true },
+            { label: "Remove KonarCard branding", free: false, plus: true, teams: true },
+            { label: "Multiple profiles (team management)", free: false, plus: false, teams: true },
+            { label: "Assign staff & manage permissions", free: false, plus: false, teams: true },
+            { label: "Centralised billing & admin controls", free: false, plus: false, teams: true },
+            { label: "Support level", free: "Standard", plus: "Priority", teams: "Priority" },
         ],
         []
     );
@@ -266,25 +200,16 @@ export default function Pricing() {
 
             {/* HERO */}
             <section className="pr-hero">
-                <h1 className="pr-h1">
+                <h1 className="desktop-h2 pr-h1">
                     Simple Pricing That Pays
                     <br />
                     For Itself
                 </h1>
-                <p className="pr-sub">
+                <p className="desktop-body pr-sub">
                     One job covers the cost for the year. Real tools. Real results.
                     <br />
                     Start free, then upgrade only when it’s worth it.
                 </p>
-
-                <div className="pr-heroBtns">
-                    <Link to="/register" className="pr-btn pr-btnPrimary">
-                        Start Free Trial
-                    </Link>
-                    <a href="#compare" className="pr-btn pr-btnGhost">
-                        Compare Plans
-                    </a>
-                </div>
             </section>
 
             {/* BILLING TOGGLE */}
@@ -313,42 +238,36 @@ export default function Pricing() {
                     </button>
                 </div>
 
-                <p className="pr-note">{p.note}</p>
+                <p className="desktop-body-s pr-note">{p.note}</p>
             </section>
 
             {/* PLAN CARDS */}
             <section className="pr-plans">
                 <div className="pr-planGrid">
                     {planCards.map((card) => (
-                        <div
-                            key={card.key}
-                            className={`pr-planCard ${card.featured ? "isFeatured" : ""}`}
-                        >
+                        <div key={card.key} className={`pr-planCard ${card.featured ? "isFeatured" : ""}`}>
                             {card.featured && <div className="pr-featuredTag">Most Popular</div>}
 
                             <div className="pr-planTop">
-                                <p className="pr-planTitle">{card.title}</p>
-                                <p className="pr-planBadge">{card.badge}</p>
+                                <p className="desktop-h6 pr-planTitle">{card.title}</p>
+                                <p className="desktop-body-s pr-planBadge">{card.badge}</p>
                             </div>
 
                             <div className="pr-priceRow">
                                 <span className="pr-price">{card.price}</span>
-                                <span className="pr-priceSub">{card.sub}</span>
+                                <span className="desktop-body-s pr-priceSub">{card.sub}</span>
                             </div>
 
                             <ul className="pr-list">
                                 {card.highlights.map((t) => (
-                                    <li key={t}>
+                                    <li key={t} className="desktop-body-s">
                                         <span className="pr-bulletDot" aria-hidden="true" />
                                         <span>{t}</span>
                                     </li>
                                 ))}
                             </ul>
 
-                            <Link
-                                to={card.cta.to}
-                                className={`pr-cta ${card.featured ? "isPrimary" : "isSecondary"}`}
-                            >
+                            <Link to={card.cta.to} className={`pr-cta ${card.featured ? "isPrimary" : "isSecondary"}`}>
                                 {card.cta.label}
                             </Link>
                         </div>
@@ -358,8 +277,8 @@ export default function Pricing() {
 
             {/* COMPARE TABLE */}
             <section id="compare" className="pr-compare">
-                <h2 className="pr-h2">Compare Plans At A Glance</h2>
-                <p className="pr-sub2">
+                <h2 className="desktop-h4 pr-h2">Compare Plans At A Glance</h2>
+                <p className="desktop-body-s pr-sub2">
                     Everything included in each plan — so you can pick what fits your trade.
                 </p>
 
@@ -388,7 +307,7 @@ export default function Pricing() {
 
                 <div className="pr-compareCtas">
                     <Link to="/register" className="pr-btn pr-btnPrimary">
-                        Start Free Trial
+                        Get started
                     </Link>
                     <Link to="/contactus" className="pr-btn pr-btnGhost">
                         Ask a question
@@ -398,31 +317,27 @@ export default function Pricing() {
 
             {/* WHO EACH PLAN IS FOR */}
             <section className="pr-for">
-                <h2 className="pr-h2">Who Each Plan Is For</h2>
-                <p className="pr-sub2">
-                    Quick, real-world examples so you know exactly where you fit.
-                </p>
+                <h2 className="desktop-h4 pr-h2">Who Each Plan Is For</h2>
+                <p className="desktop-body-s pr-sub2">Quick, real-world examples so you know exactly where you fit.</p>
 
                 <div className="pr-forGrid">
                     {planForCards.map((c) => (
                         <div key={c.key} className={`pr-forCard is-${c.key}`}>
                             <div className="pr-forHead">
                                 <span className="pr-forTag">{c.title}</span>
-                                <p className="pr-forHeadline">{c.headline}</p>
+                                <p className="desktop-h6 pr-forHeadline">{c.headline}</p>
                             </div>
 
                             <ul className="pr-forList">
                                 {c.bullets.map((b) => (
-                                    <li key={b}>
-                                        <span className="pr-check" aria-hidden="true">
-                                            ✓
-                                        </span>
+                                    <li key={b} className="desktop-body-s">
+                                        <span className="pr-check" aria-hidden="true">✓</span>
                                         <span>{b}</span>
                                     </li>
                                 ))}
                             </ul>
 
-                            <div className="pr-callout">{c.callout}</div>
+                            <div className="desktop-body-s pr-callout">{c.callout}</div>
 
                             <div className="pr-forActions">
                                 <Link to="/register" className="pr-forBtn">
@@ -436,46 +351,45 @@ export default function Pricing() {
 
             {/* VALUE BLOCK */}
             <section className="pr-value">
-                <h2 className="pr-h2">One Job Pays For The Whole Year</h2>
-                <p className="pr-sub2">
-                    No reprints. No outdated details. The card works, you update your
-                    profile anytime, and it’s everywhere.
+                <h2 className="desktop-h4 pr-h2">One Job Pays For The Whole Year</h2>
+                <p className="desktop-body-s pr-sub2">
+                    No reprints. No outdated details. The card works, you update your profile anytime, and it’s everywhere.
                 </p>
 
                 <div className="pr-valueGrid">
                     <div className="pr-valueCard">
                         <img src={WorksOnEveryPhone} alt="" className="pr-valueIcon" />
-                        <p className="pr-valueTitle">Works everywhere, every time</p>
-                        <p className="pr-valueDesc">No app. Tap or scan. Simple.</p>
+                        <p className="desktop-h6 pr-valueTitle">Works everywhere, every time</p>
+                        <p className="desktop-body-s pr-valueDesc">No app. Tap or scan. Simple.</p>
                     </div>
                     <div className="pr-valueCard">
                         <img src={EasyToUpdateAnytime} alt="" className="pr-valueIcon" />
-                        <p className="pr-valueTitle">Always up-to-date</p>
-                        <p className="pr-valueDesc">No reprints when details change.</p>
+                        <p className="desktop-h6 pr-valueTitle">Always up-to-date</p>
+                        <p className="desktop-body-s pr-valueDesc">No reprints when details change.</p>
                     </div>
                     <div className="pr-valueCard">
                         <img src={NoAppNeeded} alt="" className="pr-valueIcon" />
-                        <p className="pr-valueTitle">No apps needed</p>
-                        <p className="pr-valueDesc">Works instantly on their phone.</p>
+                        <p className="desktop-h6 pr-valueTitle">No apps needed</p>
+                        <p className="desktop-body-s pr-valueDesc">Works instantly on their phone.</p>
                     </div>
                     <div className="pr-valueCard">
                         <img src={BuiltForRealTrades} alt="" className="pr-valueIcon" />
-                        <p className="pr-valueTitle">Built for real jobs</p>
-                        <p className="pr-valueDesc">Designed for on-site, not offices.</p>
+                        <p className="desktop-h6 pr-valueTitle">Built for real jobs</p>
+                        <p className="desktop-body-s pr-valueDesc">Designed for on-site, not offices.</p>
                     </div>
                 </div>
             </section>
 
             {/* PRICING FAQS */}
             <section className="pr-faqs">
-                <h2 className="pr-h2">Pricing FAQs</h2>
-                <p className="pr-sub2">We’ve answered the questions people ask most.</p>
+                <h2 className="desktop-h4 pr-h2">Pricing FAQs</h2>
+                <p className="desktop-body-s pr-sub2">We’ve answered the questions people ask most.</p>
 
                 <div className="pr-faqList">
                     {pricingFaqs.map((x) => (
                         <div className="pr-faqRow" key={x.q}>
-                            <p className="pr-faqQ">{x.q}</p>
-                            <p className="pr-faqA">{x.a}</p>
+                            <p className="desktop-h6 pr-faqQ">{x.q}</p>
+                            <p className="desktop-body-s pr-faqA">{x.a}</p>
                         </div>
                     ))}
                 </div>
