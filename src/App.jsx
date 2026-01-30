@@ -12,33 +12,35 @@ import RouteErrorBoundary from "./components/RouteErrorBoundary";
 // -------- Public pages --------
 import Home from "./pages/website/Home.jsx";
 
-// ✅ These exist in your repo
+// ✅ Auth pages
 import Register from "./pages/website/Register.jsx";
 import Login from "./pages/website/Login.jsx";
-
 import ResetPassword from "./pages/website/ResetPassword.jsx";
+
+// ✅ Legacy product pages (do not remove)
 import ProductAndPlan from "./pages/website/ProductAndPlan.jsx";
 import KonarCard from "./pages/website/KonarCard.jsx";
 import KonarSubscription from "./pages/website/KonarSubscription.jsx";
+
+// ✅ Public website pages
+import Products from "./pages/website/Products.jsx";
+import Example from "./pages/website/Example.jsx";
+import Pricing from "./pages/website/Pricing.jsx";
 import FAQ from "./pages/website/FAQ.jsx";
+import Blog from "./pages/website/Blog.jsx";
 import Reviews from "./pages/website/Reviews.jsx";
 import HelpCentre from "./pages/website/HelpCentre.jsx";
 import ContactUs from "./pages/website/ContactUs.jsx";
 import Policies from "./pages/website/Policies.jsx";
+
+// ✅ Success pages
 import SuccessCard from "./pages/website/Success.jsx";
 import SuccessSubscription from "./pages/website/SuccessSubscription.jsx";
+
+// ✅ Public profile page
 import UserPage from "./pages/interface/UserPage.jsx";
 
-// ✅ Examples page
-import Example from "./pages/website/Example.jsx";
-
-// ✅ Pricing page
-import Pricing from "./pages/website/Pricing.jsx";
-
-// ✅ NEW Products page
-import Products from "./pages/website/Products.jsx";
-
-// ✅ OAuth handler page
+// ✅ OAuth handler
 import OAuthSuccess from "./auth/OAuthSuccess.jsx";
 
 // -------- Interface (protected) --------
@@ -50,15 +52,17 @@ import MyOrders from "./pages/interface/MyOrder.jsx";
 import NFCCards from "./pages/interface/NFCCards.jsx";
 import Notifications from "./pages/interface/Notifications.jsx";
 import Profile from "./pages/interface/Profile.jsx";
-
-// ✅ Claim link page
 import ClaimLink from "./pages/interface/ClaimLink.jsx";
 
 // -------- Admin (protected) --------
 import AdminOrders from "./pages/admin/AdminDashboard.jsx";
 
+/* --------------------------------------------------
+   Tidio chat logic
+-------------------------------------------------- */
 function TidioWrapper() {
   const location = useLocation();
+
   const isDashboardPath =
     location.pathname.startsWith("/myprofile") ||
     location.pathname.startsWith("/myorders") ||
@@ -71,10 +75,15 @@ function TidioWrapper() {
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/claim");
 
-  const enableTidio = !isDashboardPath || location.pathname === "/contact-support";
+  const enableTidio =
+    !isDashboardPath || location.pathname === "/contact-support";
+
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
 }
 
+/* --------------------------------------------------
+   App
+-------------------------------------------------- */
 export default function App() {
   // keep context warm; don’t block render
   useContext(AuthContext);
@@ -87,33 +96,38 @@ export default function App() {
 
       <RouteErrorBoundary>
         <Routes>
-          {/* PUBLIC */}
+          {/* ---------------- PUBLIC ---------------- */}
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
 
-          {/* ✅ OAuth token landing */}
+          {/* OAuth landing */}
           <Route path="/oauth" element={<OAuthSuccess />} />
 
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+          {/* Legacy product routes (keep) */}
           <Route path="/productandplan" element={<ProductAndPlan />} />
           <Route path="/productandplan/konarcard" element={<KonarCard />} />
-          <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
+          <Route
+            path="/productandplan/konarsubscription"
+            element={<KonarSubscription />}
+          />
           <Route path="/whatisnfc" element={<KonarCard />} />
           <Route path="/subscription" element={<KonarSubscription />} />
 
-
-          {/* PUBLIC WEBSITE PAGES */}
+          {/* Public website pages */}
           <Route path="/products" element={<Products />} />
           <Route path="/examples" element={<Example />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/blog" element={<Blog />} />
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/helpcentre" element={<HelpCentre />} />
           <Route path="/contactus" element={<ContactUs />} />
           <Route path="/policies" element={<Policies />} />
 
-          {/* Card checkout success */}
+          {/* Checkout success */}
           <Route
             path="/success"
             element={
@@ -123,14 +137,19 @@ export default function App() {
             }
           />
 
-          {/* Subscription success */}
-          <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
-          <Route path="/successsubscription" element={<SuccessSubscription />} />
+          <Route
+            path="/successsubscription"
+            element={<SuccessSubscription />}
+          />
+          <Route
+            path="/SuccessSubscription"
+            element={<SuccessSubscription />}
+          />
 
           {/* Public profile */}
           <Route path="/u/:username" element={<UserPage />} />
 
-          {/* PROTECTED */}
+          {/* ---------------- PROTECTED ---------------- */}
           <Route
             path="/claim"
             element={
@@ -148,6 +167,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/helpcentreinterface"
             element={
@@ -156,6 +176,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/contact-support"
             element={
@@ -164,6 +185,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/myprofile"
             element={
@@ -172,6 +194,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/myorders"
             element={
@@ -180,6 +203,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/nfccards"
             element={
@@ -188,6 +212,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/notifications"
             element={
@@ -196,6 +221,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/profile"
             element={
@@ -205,7 +231,7 @@ export default function App() {
             }
           />
 
-          {/* ADMIN */}
+          {/* ---------------- ADMIN ---------------- */}
           <Route
             path="/admin"
             element={
