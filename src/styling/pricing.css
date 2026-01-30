@@ -1,20 +1,26 @@
-/* frontend/src/styling/pricing.css
-   Pricing page – aligned with FAQ/Blog/Examples spacing + pill styles
-*/
+/* frontend/src/styling/pricing.css */
+
+/* =========================================================
+   PRICING PAGE — MATCH FAQ HERO + PILL SYSTEM
+   Uses design-system tokens + 8pt spacing
+   ========================================================= */
 
 .kc-pricing {
-    background: #fff;
-    color: #0c1830;
+    background: var(--kc-bg-main);
+    color: var(--kc-text-primary);
 }
 
-/* HERO */
+/* =========================
+   HERO (MATCH FAQ)
+   ========================= */
 .kc-pricing__hero {
-    padding: 112px 20px 24px;
-    /* matches FAQ hero rhythm */
+    padding: 112px 20px 32px;
+    /* same as FAQ */
 }
 
 .kc-pricing__heroInner {
     max-width: 980px;
+    /* same as FAQ */
     margin: 0 auto;
     text-align: center;
 }
@@ -25,77 +31,75 @@
 
 .kc-pricing__subtitle {
     margin: 0 auto;
-    max-width: 760px;
-    color: rgba(12, 24, 48, 0.7);
+    max-width: 560px;
+    /* same as FAQ */
+    color: var(--kc-text-secondary);
 }
 
-/* BILLING pills (same vibe as FAQ/Blog) */
-.kc-pricing__billing {
-    padding: 0 20px 32px;
-    text-align: center;
-}
-
+/* =========================
+   BILLING TABS (PILLS) — SAME AS FAQ
+   ========================= */
 .kc-pricing__tabs {
-    display: inline-flex;
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
     gap: 8px;
     flex-wrap: wrap;
-    justify-content: center;
 }
 
+/* IMPORTANT: pills should NOT inherit global .pill styles */
 .kc-pricing__tab {
     appearance: none;
-    border: 1px solid rgba(12, 24, 48, 0.18);
-    background: #fff;
-    color: rgba(12, 24, 48, 0.82);
-    padding: 10px 16px;
+    background: #ffffff;
+    color: var(--kc-text-primary);
+
+    border: 1px solid rgba(15, 23, 42, 0.30);
     border-radius: 999px;
-    font-family: "Cal Sans", sans-serif;
+
+    padding: 8px 14px;
+    min-height: 32px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
     font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 0.3px;
+    line-height: 1;
+
     cursor: pointer;
-    transition: transform 0.08s ease, border-color 0.15s ease, background-color 0.15s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+        color 0.15s ease, transform 0.08s ease;
 }
 
 .kc-pricing__tab:hover {
-    border-color: rgba(12, 24, 48, 0.32);
+    border-color: rgba(15, 23, 42, 0.48);
 }
 
 .kc-pricing__tab:active {
     transform: translateY(1px);
 }
 
+.kc-pricing__tab:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.18);
+    border-color: rgba(249, 115, 22, 0.65);
+}
+
 .kc-pricing__tab.is-active {
-    background: #ff7b00;
-    border-color: #ff7b00;
-    color: #fff;
+    background: var(--kc-accent-primary);
+    border-color: var(--kc-accent-primary);
+    color: #ffffff;
 }
 
 .kc-pricing__note {
     margin: 12px 0 0;
-    color: rgba(12, 24, 48, 0.65);
+    color: var(--kc-text-secondary);
 }
 
-/* SECTION HEADS */
-.kc-pricing__sectionHead {
-    max-width: 980px;
-    margin: 0 auto 16px;
-    text-align: center;
-}
-
-.kc-pricing__h2 {
-    margin: 0 0 8px;
-}
-
-.kc-pricing__sub2 {
-    margin: 0 auto;
-    max-width: 760px;
-    color: rgba(12, 24, 48, 0.7);
-}
-
-/* PLANS */
+/* =========================
+   PLANS
+   ========================= */
 .kc-pricing__plans {
     padding: 0 20px 56px;
+    /* 7 * 8 */
 }
 
 .kc-pricing__grid {
@@ -113,31 +117,29 @@
     box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     padding: 16px;
     position: relative;
-    overflow: hidden;
 }
 
 .kc-pricing__card.is-featured {
-    border-color: rgba(255, 123, 0, 0.35);
-    box-shadow: 0 14px 30px rgba(255, 123, 0, 0.12);
+    border-color: rgba(249, 115, 22, 0.35);
+    box-shadow: 0 14px 30px rgba(249, 115, 22, 0.12);
 }
 
 .kc-pricing__tag {
     position: absolute;
     top: 12px;
     right: 12px;
-    background: rgba(255, 123, 0, 0.12);
-    color: #ff7b00;
-    border: 1px solid rgba(255, 123, 0, 0.3);
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 600;
+    background: rgba(249, 115, 22, 0.12);
+    color: var(--kc-accent-primary);
+    border: 1px solid rgba(249, 115, 22, 0.3);
+    font-weight: 700;
     font-size: 12px;
     padding: 6px 10px;
     border-radius: 999px;
+    font-family: "Inter", sans-serif;
 }
 
 .kc-pricing__cardTop {
     padding-right: 110px;
-    /* space for tag */
 }
 
 .kc-pricing__cardTitle {
@@ -146,14 +148,14 @@
 
 .kc-pricing__cardBadge {
     margin: 0;
-    color: rgba(12, 24, 48, 0.7);
+    color: var(--kc-text-secondary);
 }
 
 .kc-pricing__priceRow {
     display: flex;
     align-items: baseline;
     gap: 10px;
-    margin: 16px 0 16px;
+    margin: 16px 0;
 }
 
 .kc-pricing__price {
@@ -161,12 +163,12 @@
     font-weight: 600;
     font-size: 34px;
     letter-spacing: -0.02em;
-    color: #0b1220;
+    color: var(--kc-text-primary);
     line-height: 1;
 }
 
 .kc-pricing__priceSub {
-    color: rgba(12, 24, 48, 0.65);
+    color: var(--kc-text-secondary);
 }
 
 .kc-pricing__list {
@@ -188,7 +190,7 @@
     width: 8px;
     height: 8px;
     border-radius: 999px;
-    background: rgba(255, 123, 0, 0.95);
+    background: var(--kc-accent-primary);
     margin-top: 7px;
 }
 
@@ -196,15 +198,18 @@
     display: inline-flex;
     width: 100%;
     justify-content: center;
-    text-decoration: none;
+
     padding: 12px 14px;
     border-radius: 999px;
+
+    text-decoration: none;
     font-family: "Cal Sans", sans-serif;
-    font-weight: 600;
     font-size: 14px;
-    letter-spacing: 0.3px;
-    border: 1px solid rgba(12, 24, 48, 0.16);
-    transition: transform 0.08s ease, opacity 0.15s ease, border-color 0.15s ease;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+
+    border: 1px solid rgba(15, 23, 42, 0.18);
+    transition: transform 0.08s ease, opacity 0.15s ease;
 }
 
 .kc-pricing__cta:hover {
@@ -216,20 +221,32 @@
 }
 
 .kc-pricing__cta.is-primary {
-    background: #ff7b00;
-    border-color: #ff7b00;
+    background: var(--kc-accent-primary);
+    border-color: var(--kc-accent-primary);
     color: #fff;
 }
 
 .kc-pricing__cta.is-secondary {
     background: #fff;
-    color: #0b1220;
+    color: var(--kc-text-primary);
 }
 
-/* COMPARE TABLE */
+/* =========================
+   COMPARE TABLE
+   ========================= */
 .kc-pricing__compare {
     padding: 56px 20px 32px;
     text-align: center;
+}
+
+.kc-pricing__h2 {
+    margin: 0 0 8px;
+}
+
+.kc-pricing__sub2 {
+    margin: 0 auto 18px;
+    max-width: 760px;
+    color: var(--kc-text-secondary);
 }
 
 .kc-pricing__tableWrap {
@@ -253,9 +270,9 @@
     padding: 16px;
     border-bottom: 1px solid rgba(12, 24, 48, 0.08);
     background: #fff;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 600;
-    font-size: 13px;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
 }
 
 .kc-pricing__thFeature {
@@ -268,14 +285,14 @@
 }
 
 .kc-pricing__thPlus {
-    background: rgba(255, 123, 0, 0.06);
+    background: rgba(249, 115, 22, 0.06);
 }
 
 .kc-pricing__table tbody td {
     padding: 14px 16px;
     border-bottom: 1px solid rgba(12, 24, 48, 0.06);
-    font-size: 13px;
-    color: #0b1220;
+    font-size: 12px;
+    color: var(--kc-text-primary);
 }
 
 .kc-pricing__tdVal {
@@ -283,12 +300,12 @@
 }
 
 .kc-pricing__tdPlus {
-    background: rgba(255, 123, 0, 0.04);
+    background: rgba(249, 115, 22, 0.04);
 }
 
 .pr-tick {
     font-weight: 900;
-    color: #ff7b00;
+    color: var(--kc-accent-primary);
 }
 
 .pr-cross {
@@ -296,7 +313,7 @@
 }
 
 .pr-textVal {
-    color: rgba(12, 24, 48, 0.65);
+    color: var(--kc-text-secondary);
     font-weight: 700;
 }
 
@@ -312,14 +329,18 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     padding: 12px 18px;
     border-radius: 999px;
+
     text-decoration: none;
     font-family: "Cal Sans", sans-serif;
     font-weight: 600;
     font-size: 14px;
-    border: 1px solid rgba(12, 24, 48, 0.18);
-    transition: opacity 0.15s ease, transform 0.08s ease;
+    letter-spacing: 0.4px;
+
+    border: 1px solid rgba(15, 23, 42, 0.18);
+    transition: transform 0.08s ease, opacity 0.15s ease;
 }
 
 .kc-pricing__btn:hover {
@@ -331,120 +352,27 @@
 }
 
 .kc-pricing__btnPrimary {
-    background: #ff7b00;
-    border-color: #ff7b00;
+    background: var(--kc-accent-primary);
+    border-color: var(--kc-accent-primary);
     color: #fff;
 }
 
 .kc-pricing__btnGhost {
     background: #fff;
-    color: #0b1220;
+    color: var(--kc-text-primary);
 }
 
-/* WHO IT'S FOR */
-.kc-pricing__for {
-    padding: 56px 20px 32px;
-}
-
-.kc-pricing__forGrid {
-    max-width: 1140px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-}
-
-.kc-pricing__forCard {
-    border: 1px solid rgba(12, 24, 48, 0.08);
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
-    padding: 16px;
-}
-
-.kc-pricing__pill {
-    display: inline-flex;
-    background: rgba(255, 123, 0, 0.12);
-    border: 1px solid rgba(255, 123, 0, 0.3);
-    color: #ff7b00;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 600;
-    font-size: 12px;
-    padding: 6px 10px;
-    border-radius: 999px;
-}
-
-.kc-pricing__forHeadline {
-    margin: 12px 0 12px;
-}
-
-.kc-pricing__forList {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 12px;
-    display: grid;
-    gap: 10px;
-}
-
-.kc-pricing__forList li {
-    display: grid;
-    grid-template-columns: 16px 1fr;
-    gap: 10px;
-    align-items: start;
-}
-
-.kc-pricing__check {
-    width: 16px;
-    height: 16px;
-    border-radius: 999px;
-    display: grid;
-    place-items: center;
-    font-weight: 900;
-    background: rgba(255, 123, 0, 0.12);
-    color: #ff7b00;
-    margin-top: 2px;
-}
-
-.kc-pricing__callout {
-    background: #f8fafc;
-    border: 1px solid #eef2f6;
-    border-radius: 14px;
-    padding: 12px;
-    color: rgba(12, 24, 48, 0.7);
-    margin-bottom: 12px;
-}
-
-.kc-pricing__forBtn {
-    display: inline-flex;
-    width: 100%;
-    justify-content: center;
-    padding: 12px 14px;
-    border-radius: 999px;
-    background: #0b1220;
-    color: #fff;
-    text-decoration: none;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    transition: opacity 0.15s ease, transform 0.08s ease;
-}
-
-.kc-pricing__forBtn:hover {
-    opacity: 0.93;
-}
-
-.kc-pricing__forBtn:active {
-    transform: translateY(1px);
-}
-
-/* VALUE */
+/* =========================
+   VALUE GRID
+   ========================= */
 .kc-pricing__value {
     padding: 56px 20px 32px;
+    text-align: center;
 }
 
 .kc-pricing__valueGrid {
     max-width: 1140px;
-    margin: 0 auto;
+    margin: 18px auto 0;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
@@ -471,12 +399,15 @@
 
 .kc-pricing__valueDesc {
     margin: 0;
-    color: rgba(12, 24, 48, 0.7);
+    color: var(--kc-text-secondary);
 }
 
-/* FAQS */
+/* =========================
+   FAQS
+   ========================= */
 .kc-pricing__faqs {
     padding: 56px 20px 72px;
+    text-align: center;
 }
 
 .kc-pricing__faqList {
@@ -497,19 +428,17 @@
 
 .kc-pricing__faqA {
     margin: 0;
-    color: rgba(12, 24, 48, 0.7);
+    color: var(--kc-text-secondary);
 }
 
-/* RESPONSIVE */
+/* =========================
+   RESPONSIVE
+   ========================= */
 @media (max-width: 980px) {
     .kc-pricing__grid {
         grid-template-columns: 1fr;
         max-width: 520px;
-    }
-
-    .kc-pricing__forGrid {
-        grid-template-columns: 1fr;
-        max-width: 520px;
+        margin: 0 auto;
     }
 
     .kc-pricing__valueGrid {
@@ -521,5 +450,15 @@
 @media (max-width: 640px) {
     .kc-pricing__hero {
         padding-top: 96px;
+    }
+
+    .kc-pricing__tabs {
+        gap: 8px;
+    }
+
+    .kc-pricing__tab {
+        padding: 8px 12px;
+        min-height: 32px;
+        font-size: 12px;
     }
 }

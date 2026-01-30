@@ -116,50 +116,11 @@ export default function Pricing() {
         []
     );
 
-    const planForCards = useMemo(
-        () => [
-            {
-                key: "free",
-                title: "FREE",
-                headline: "Best if you’re just getting started (or want to test KonarCard first).",
-                bullets: [
-                    "You want a clean digital contact page fast",
-                    "You don’t need a gallery/services yet",
-                    "You want to try it before committing",
-                ],
-                callout: "Perfect for side jobs, new businesses, and testing the tap-to-share flow.",
-            },
-            {
-                key: "plus",
-                title: "PLUS",
-                headline: "Best for solo tradies who want a professional profile that wins more work.",
-                bullets: [
-                    "You want services + pricing listed clearly",
-                    "You want to show reviews and photos",
-                    "You want your page to look premium and trustworthy",
-                ],
-                callout: "This is the “I want more jobs” plan — most popular for a reason.",
-            },
-            {
-                key: "teams",
-                title: "TEAMS",
-                headline: "Best for businesses managing multiple tradies under one brand.",
-                bullets: [
-                    "You want multiple profiles for staff",
-                    "You want central control and consistent branding",
-                    "You want to scale leads across the whole crew",
-                ],
-                callout: "Ideal for crews, franchises, and growing trade businesses.",
-            },
-        ],
-        []
-    );
-
     const pricingFaqs = useMemo(
         () => [
             {
                 q: "Can I upgrade or downgrade later?",
-                a: "Yes — change your plan anytime from your dashboard. Your profile stays live while you switch.",
+                a: "Yes — you can change your plan anytime from your dashboard. Your profile stays live while you switch.",
             },
             {
                 q: "Do I need an app for KonarCard to work?",
@@ -167,19 +128,11 @@ export default function Pricing() {
             },
             {
                 q: "What happens if I cancel?",
-                a: "Your profile remains accessible, but premium features (like galleries and branding removal) won’t be active.",
+                a: "Your profile remains accessible, but premium features won’t be active once your plan ends.",
             },
             {
                 q: "Can you help me set up my profile?",
-                a: "Yes. If you want help getting your page looking right, message us and we’ll guide you step by step.",
-            },
-            {
-                q: "Do teams get one login or separate logins?",
-                a: "Teams can manage multiple profiles under one account, with roles and permissions for staff.",
-            },
-            {
-                q: "How do I contact support?",
-                a: "Use live chat or the Contact Us page. We reply quickly and can help with setup or technical issues.",
+                a: "Yes. Message us on live chat and we’ll guide you step by step.",
             },
         ],
         []
@@ -200,55 +153,53 @@ export default function Pricing() {
             </div>
 
             <main className="kc-pricing">
-                {/* HERO */}
+                {/* HERO (MATCH FAQ) */}
                 <section className="kc-pricing__hero">
                     <div className="kc-pricing__heroInner">
-                        <h1 className="desktop-h1 kc-pricing__title">
+                        <h1 className="h2 kc-pricing__title">
                             Simple pricing that pays
                             <br />
                             for itself
                         </h1>
-                        <p className="desktop-body kc-pricing__subtitle">
+                        <p className="body-s kc-pricing__subtitle">
                             One job covers the cost for the year. Real tools. Real results.
                             <br />
                             Start free, then upgrade only when it’s worth it.
                         </p>
-                    </div>
-                </section>
 
-                {/* BILLING */}
-                <section className="kc-pricing__billing">
-                    <div className="kc-pricing__tabs" role="tablist" aria-label="Billing period">
-                        <button
-                            type="button"
-                            className={`kc-pricing__tab ${billing === "monthly" ? "is-active" : ""}`}
-                            onClick={() => setBilling("monthly")}
-                            role="tab"
-                            aria-selected={billing === "monthly"}
-                        >
-                            Monthly
-                        </button>
-                        <button
-                            type="button"
-                            className={`kc-pricing__tab ${billing === "quarterly" ? "is-active" : ""}`}
-                            onClick={() => setBilling("quarterly")}
-                            role="tab"
-                            aria-selected={billing === "quarterly"}
-                        >
-                            Quarterly
-                        </button>
-                        <button
-                            type="button"
-                            className={`kc-pricing__tab ${billing === "yearly" ? "is-active" : ""}`}
-                            onClick={() => setBilling("yearly")}
-                            role="tab"
-                            aria-selected={billing === "yearly"}
-                        >
-                            Yearly
-                        </button>
-                    </div>
+                        {/* BILLING PILLS (MATCH FAQ) */}
+                        <div className="kc-pricing__tabs" role="tablist" aria-label="Billing period">
+                            <button
+                                type="button"
+                                className={`kc-pricing__tab pill ${billing === "monthly" ? "is-active" : ""}`}
+                                onClick={() => setBilling("monthly")}
+                                role="tab"
+                                aria-selected={billing === "monthly"}
+                            >
+                                Monthly plan
+                            </button>
+                            <button
+                                type="button"
+                                className={`kc-pricing__tab pill ${billing === "quarterly" ? "is-active" : ""}`}
+                                onClick={() => setBilling("quarterly")}
+                                role="tab"
+                                aria-selected={billing === "quarterly"}
+                            >
+                                Quarterly plan
+                            </button>
+                            <button
+                                type="button"
+                                className={`kc-pricing__tab pill ${billing === "yearly" ? "is-active" : ""}`}
+                                onClick={() => setBilling("yearly")}
+                                role="tab"
+                                aria-selected={billing === "yearly"}
+                            >
+                                Yearly plan
+                            </button>
+                        </div>
 
-                    <p className="desktop-body-s kc-pricing__note">{p.note}</p>
+                        <p className="body-s kc-pricing__note">{p.note}</p>
+                    </div>
                 </section>
 
                 {/* PLANS */}
@@ -262,18 +213,18 @@ export default function Pricing() {
                                 {card.featured && <div className="kc-pricing__tag">Most popular</div>}
 
                                 <div className="kc-pricing__cardTop">
-                                    <p className="desktop-h6 kc-pricing__cardTitle">{card.title}</p>
-                                    <p className="desktop-body-s kc-pricing__cardBadge">{card.badge}</p>
+                                    <p className="h6 kc-pricing__cardTitle">{card.title}</p>
+                                    <p className="body-s kc-pricing__cardBadge">{card.badge}</p>
                                 </div>
 
                                 <div className="kc-pricing__priceRow">
                                     <span className="kc-pricing__price">{card.price}</span>
-                                    <span className="desktop-body-s kc-pricing__priceSub">{card.sub}</span>
+                                    <span className="body-s kc-pricing__priceSub">{card.sub}</span>
                                 </div>
 
                                 <ul className="kc-pricing__list">
                                     {card.highlights.map((t) => (
-                                        <li className="desktop-body-s" key={t}>
+                                        <li className="body-s" key={t}>
                                             <span className="kc-pricing__dot" aria-hidden="true" />
                                             <span>{t}</span>
                                         </li>
@@ -291,14 +242,12 @@ export default function Pricing() {
                     </div>
                 </section>
 
-                {/* COMPARE */}
+                {/* COMPARE TABLE */}
                 <section id="compare" className="kc-pricing__compare">
-                    <div className="kc-pricing__sectionHead">
-                        <h2 className="desktop-h4 kc-pricing__h2">Compare plans</h2>
-                        <p className="desktop-body-s kc-pricing__sub2">
-                            Everything included in each plan — so you can pick what fits your trade.
-                        </p>
-                    </div>
+                    <h2 className="h3 kc-pricing__h2">Compare plans</h2>
+                    <p className="body-s kc-pricing__sub2">
+                        Everything included in each plan — so you can pick what fits your trade.
+                    </p>
 
                     <div className="kc-pricing__tableWrap" role="region" aria-label="Plan comparison table">
                         <table className="kc-pricing__table">
@@ -333,86 +282,47 @@ export default function Pricing() {
                     </div>
                 </section>
 
-                {/* WHO IT'S FOR */}
-                <section className="kc-pricing__for">
-                    <div className="kc-pricing__sectionHead">
-                        <h2 className="desktop-h4 kc-pricing__h2">Who each plan is for</h2>
-                        <p className="desktop-body-s kc-pricing__sub2">
-                            Quick, real-world examples so you know exactly where you fit.
-                        </p>
-                    </div>
-
-                    <div className="kc-pricing__forGrid">
-                        {planForCards.map((c) => (
-                            <article key={c.key} className="kc-pricing__forCard">
-                                <span className="kc-pricing__pill">{c.title}</span>
-                                <p className="desktop-h6 kc-pricing__forHeadline">{c.headline}</p>
-
-                                <ul className="kc-pricing__forList">
-                                    {c.bullets.map((b) => (
-                                        <li className="desktop-body-s" key={b}>
-                                            <span className="kc-pricing__check" aria-hidden="true">
-                                                ✓
-                                            </span>
-                                            <span>{b}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                <div className="desktop-body-s kc-pricing__callout">{c.callout}</div>
-                                <Link to="/register" className="kc-pricing__forBtn">
-                                    Get started
-                                </Link>
-                            </article>
-                        ))}
-                    </div>
-                </section>
-
                 {/* VALUE */}
                 <section className="kc-pricing__value">
-                    <div className="kc-pricing__sectionHead">
-                        <h2 className="desktop-h4 kc-pricing__h2">One job pays for the whole year</h2>
-                        <p className="desktop-body-s kc-pricing__sub2">
-                            No reprints. No outdated details. Your card works and you update your profile anytime.
-                        </p>
-                    </div>
+                    <h2 className="h3 kc-pricing__h2">One job pays for the whole year</h2>
+                    <p className="body-s kc-pricing__sub2">
+                        No reprints. No outdated details. Your card works and you update your profile anytime.
+                    </p>
 
                     <div className="kc-pricing__valueGrid">
                         <div className="kc-pricing__valueCard">
                             <img src={WorksOnEveryPhone} alt="" className="kc-pricing__icon" />
-                            <p className="desktop-h6 kc-pricing__valueTitle">Works on every phone</p>
-                            <p className="desktop-body-s kc-pricing__valueDesc">No app. Tap or scan. Simple.</p>
+                            <p className="h6 kc-pricing__valueTitle">Works on every phone</p>
+                            <p className="body-s kc-pricing__valueDesc">No app. Tap or scan. Simple.</p>
                         </div>
                         <div className="kc-pricing__valueCard">
                             <img src={EasyToUpdateAnytime} alt="" className="kc-pricing__icon" />
-                            <p className="desktop-h6 kc-pricing__valueTitle">Always up-to-date</p>
-                            <p className="desktop-body-s kc-pricing__valueDesc">No reprints when details change.</p>
+                            <p className="h6 kc-pricing__valueTitle">Always up-to-date</p>
+                            <p className="body-s kc-pricing__valueDesc">No reprints when details change.</p>
                         </div>
                         <div className="kc-pricing__valueCard">
                             <img src={NoAppNeeded} alt="" className="kc-pricing__icon" />
-                            <p className="desktop-h6 kc-pricing__valueTitle">No apps needed</p>
-                            <p className="desktop-body-s kc-pricing__valueDesc">Works instantly on their phone.</p>
+                            <p className="h6 kc-pricing__valueTitle">No apps needed</p>
+                            <p className="body-s kc-pricing__valueDesc">Works instantly on their phone.</p>
                         </div>
                         <div className="kc-pricing__valueCard">
                             <img src={BuiltForRealTrades} alt="" className="kc-pricing__icon" />
-                            <p className="desktop-h6 kc-pricing__valueTitle">Built for real trades</p>
-                            <p className="desktop-body-s kc-pricing__valueDesc">Designed for on-site, not offices.</p>
+                            <p className="h6 kc-pricing__valueTitle">Built for real trades</p>
+                            <p className="body-s kc-pricing__valueDesc">Designed for on-site, not offices.</p>
                         </div>
                     </div>
                 </section>
 
-                {/* FAQS */}
+                {/* PRICING FAQS */}
                 <section className="kc-pricing__faqs">
-                    <div className="kc-pricing__sectionHead">
-                        <h2 className="desktop-h4 kc-pricing__h2">Pricing FAQs</h2>
-                        <p className="desktop-body-s kc-pricing__sub2">We’ve answered the questions people ask most.</p>
-                    </div>
+                    <h2 className="h3 kc-pricing__h2">Pricing FAQs</h2>
+                    <p className="body-s kc-pricing__sub2">We’ve answered the questions people ask most.</p>
 
                     <div className="kc-pricing__faqList">
                         {pricingFaqs.map((x) => (
                             <div className="kc-pricing__faqRow" key={x.q}>
-                                <p className="desktop-h6 kc-pricing__faqQ">{x.q}</p>
-                                <p className="desktop-body-s kc-pricing__faqA">{x.a}</p>
+                                <p className="h6 kc-pricing__faqQ">{x.q}</p>
+                                <p className="body-s kc-pricing__faqA">{x.a}</p>
                             </div>
                         ))}
                     </div>
