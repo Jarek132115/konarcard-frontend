@@ -11,11 +11,8 @@ import RouteErrorBoundary from './components/RouteErrorBoundary';
 
 // -------- Public pages --------
 import Home from './pages/website/Home.jsx';
-
-// ✅ These exist in your repo
 import Register from './pages/website/Register.jsx';
 import Login from './pages/website/Login.jsx';
-
 import ResetPassword from './pages/website/ResetPassword.jsx';
 import ProductAndPlan from './pages/website/ProductAndPlan.jsx';
 import KonarCard from './pages/website/KonarCard.jsx';
@@ -25,11 +22,12 @@ import Reviews from './pages/website/Reviews.jsx';
 import HelpCentre from './pages/website/HelpCentre.jsx';
 import ContactUs from './pages/website/ContactUs.jsx';
 import Policies from './pages/website/Policies.jsx';
+import Blog from './pages/website/Blog.jsx';
 import SuccessCard from './pages/website/Success.jsx';
 import SuccessSubscription from './pages/website/SuccessSubscription.jsx';
 import UserPage from './pages/interface/UserPage.jsx';
 
-// ✅ OAuth handler page
+// -------- OAuth --------
 import OAuthSuccess from './auth/OAuthSuccess.jsx';
 
 // -------- Interface (protected) --------
@@ -41,8 +39,6 @@ import MyOrders from './pages/interface/MyOrder.jsx';
 import NFCCards from './pages/interface/NFCCards.jsx';
 import Notifications from './pages/interface/Notifications.jsx';
 import Profile from './pages/interface/Profile.jsx';
-
-// ✅ Claim link page (NEW FILE)
 import ClaimLink from './pages/interface/ClaimLink.jsx';
 
 // -------- Admin (protected) --------
@@ -50,6 +46,7 @@ import AdminOrders from './pages/admin/AdminDashboard.jsx';
 
 function TidioWrapper() {
   const location = useLocation();
+
   const isDashboardPath =
     location.pathname.startsWith('/myprofile') ||
     location.pathname.startsWith('/myorders') ||
@@ -62,12 +59,14 @@ function TidioWrapper() {
     location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/claim');
 
-  const enableTidio = !isDashboardPath || location.pathname === '/contact-support';
+  const enableTidio =
+    !isDashboardPath || location.pathname === '/contact-support';
+
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
 }
 
 export default function App() {
-  // keep context warm; don’t block render
+  // keep auth context warm
   useContext(AuthContext);
 
   return (
@@ -78,12 +77,10 @@ export default function App() {
 
       <RouteErrorBoundary>
         <Routes>
-          {/* PUBLIC */}
+          {/* ================= PUBLIC ================= */}
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-
-          {/* ✅ OAuth token landing */}
           <Route path="/oauth" element={<OAuthSuccess />} />
 
           <Route path="/reset-password/:token" element={<ResetPassword />} />
@@ -97,6 +94,7 @@ export default function App() {
           <Route path="/helpcentre" element={<HelpCentre />} />
           <Route path="/contactus" element={<ContactUs />} />
           <Route path="/policies" element={<Policies />} />
+          <Route path="/blog" element={<Blog />} />
 
           {/* Card checkout success */}
           <Route
@@ -109,13 +107,13 @@ export default function App() {
           />
 
           {/* Subscription success */}
-          <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
           <Route path="/successsubscription" element={<SuccessSubscription />} />
+          <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
 
           {/* Public profile */}
           <Route path="/u/:username" element={<UserPage />} />
 
-          {/* PROTECTED */}
+          {/* ================= PROTECTED ================= */}
           <Route
             path="/claim"
             element={
@@ -133,6 +131,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/helpcentreinterface"
             element={
@@ -141,6 +140,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/contact-support"
             element={
@@ -149,6 +149,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/myprofile"
             element={
@@ -157,6 +158,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/myorders"
             element={
@@ -165,6 +167,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/nfccards"
             element={
@@ -173,6 +176,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/notifications"
             element={
@@ -181,6 +185,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/profile"
             element={
@@ -190,7 +195,7 @@ export default function App() {
             }
           />
 
-          {/* ADMIN */}
+          {/* ================= ADMIN ================= */}
           <Route
             path="/admin"
             element={
