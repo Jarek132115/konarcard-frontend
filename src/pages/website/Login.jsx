@@ -3,7 +3,6 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
-import '../../styling/login.css';
 
 const POST_AUTH_KEY = 'postAuthAction';
 const REMEMBER_KEY = 'rememberLogin';
