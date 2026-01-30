@@ -1,59 +1,62 @@
 /* frontend/src/styling/contactus.css */
 
+/* =========================================================
+   CONTACT US — FINAL
+   Matches FAQ page (tokens + fonts.css + 8pt spacing)
+   ========================================================= */
+
 .kc-contact {
-    background: #fff;
-    color: #0c1830;
+    background: var(--kc-bg-main);
+    color: var(--kc-text-primary);
 }
 
-/* HERO */
+/* =========================
+   HERO (match FAQ padding)
+   ========================= */
 .kc-contact__hero {
-    padding: 110px 20px 40px;
+    padding: 112px 20px 32px;
 }
 
 .kc-contact__heroInner {
-    max-width: 1140px;
+    max-width: 980px;
     margin: 0 auto;
     text-align: center;
 }
 
 .kc-contact__title {
-    font-size: clamp(34px, 4vw, 54px);
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    margin: 0 0 10px;
+    margin: 0 0 8px;
 }
 
 .kc-contact__subtitle {
     margin: 0 auto;
-    max-width: 520px;
-    color: rgba(12, 24, 48, 0.7);
-    font-size: 14px;
-    line-height: 1.55;
+    max-width: 560px;
+    color: var(--kc-text-secondary);
 }
 
-/* Cards */
+/* =========================
+   CONTACT CARDS
+   ========================= */
 .kc-contact__cards {
-    margin-top: 28px;
+    margin-top: 24px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    gap: 16px;
+    text-align: left;
 }
 
 .kc-contact__card {
-    text-align: left;
-    border: 1px solid rgba(12, 24, 48, 0.08);
-    border-radius: 14px;
-    padding: 18px 18px 16px;
+    border: 1px solid var(--kc-border);
     background: #fff;
-    box-shadow: 0 10px 24px rgba(12, 24, 48, 0.04);
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    padding: 16px;
 }
 
 .kc-contact__cardIcon {
     width: 34px;
     height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
     margin-bottom: 10px;
 }
 
@@ -63,29 +66,26 @@
 }
 
 .kc-contact__cardTitle {
-    font-size: 16px;
-    font-weight: 900;
     margin: 0 0 6px;
 }
 
 .kc-contact__cardText {
     margin: 0 0 10px;
-    color: rgba(12, 24, 48, 0.72);
-    font-size: 12px;
-    line-height: 1.55;
+    color: var(--kc-text-secondary);
 }
 
 .kc-contact__cardLink {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: #ff7b00;
-    font-weight: 800;
-    font-size: 12px;
-    text-decoration: none;
+
     background: transparent;
     border: none;
     padding: 0;
+
+    color: var(--kc-accent-primary);
+    font-weight: 700;
+    text-decoration: none;
     cursor: pointer;
 }
 
@@ -97,10 +97,12 @@
     appearance: none;
 }
 
-/* FORM */
+/* =========================
+   FORM SECTION
+   ========================= */
 .kc-contact__formSection {
-    padding: 64px 20px 78px;
-    background: rgba(12, 24, 48, 0.03);
+    padding: 72px 20px 72px;
+    background: rgba(15, 23, 42, 0.03);
 }
 
 .kc-contact__formWrap {
@@ -110,20 +112,16 @@
 }
 
 .kc-contact__sectionTitle {
-    font-size: 26px;
-    font-weight: 900;
-    letter-spacing: -0.03em;
     margin: 0 0 8px;
 }
 
 .kc-contact__sectionSub {
-    margin: 0 auto 22px;
-    max-width: 520px;
-    color: rgba(12, 24, 48, 0.7);
-    font-size: 13px;
-    line-height: 1.55;
+    margin: 0 auto 24px;
+    max-width: 560px;
+    color: var(--kc-text-secondary);
 }
 
+/* Form */
 .kc-contact__form {
     max-width: 520px;
     margin: 0 auto;
@@ -142,21 +140,22 @@
 
 .kc-contact__label {
     display: block;
-    font-size: 10px;
-    font-weight: 800;
-    color: rgba(12, 24, 48, 0.72);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--kc-text-secondary);
     margin-bottom: 6px;
 }
 
 .kc-contact__input,
 .kc-contact__textarea {
     width: 100%;
-    border: 1px solid rgba(12, 24, 48, 0.12);
-    border-radius: 8px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    border-radius: 10px;
     padding: 10px 12px;
-    font-size: 13px;
+    font-size: 14px;
     outline: none;
     transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    background: #fff;
 }
 
 .kc-contact__textarea {
@@ -166,79 +165,119 @@
 
 .kc-contact__input:focus,
 .kc-contact__textarea:focus {
-    border-color: rgba(255, 123, 0, 0.9);
-    box-shadow: 0 0 0 3px rgba(255, 123, 0, 0.14);
+    border-color: rgba(249, 115, 22, 0.65);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
 }
 
+/* CTA button — match FAQ help button */
 .kc-contact__submit {
-    margin: 10px auto 0;
+    margin: 12px auto 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 190px;
-    height: 44px;
-    border: none;
+
+    padding: 14px 30px;
     border-radius: 999px;
-    background: #ff7b00;
+    border: none;
+
+    background: var(--kc-accent-primary);
     color: #fff;
-    font-weight: 900;
-    font-size: 12px;
-    cursor: pointer;
-    box-shadow: 0 12px 28px rgba(255, 123, 0, 0.25);
+
+    font-family: "Cal Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.25);
     transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    cursor: pointer;
 }
 
 .kc-contact__submit:hover {
     filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(255, 123, 0, 0.32);
+    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.32);
 }
 
 .kc-contact__submit:active {
     transform: translateY(1px);
 }
 
-/* QUICK ANSWERS */
-.kc-contact__qa {
-    padding: 70px 20px 74px;
-    background: #fff;
+.kc-contact__submit:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.20),
+        0 16px 34px rgba(249, 115, 22, 0.32);
 }
 
-.kc-contact__qaInner {
-    max-width: 760px;
+/* =========================
+   QUICK ANSWERS (FAQ STYLE)
+   ========================= */
+.kc-contact__faq {
+    padding: 72px 20px 72px;
+    background: var(--kc-bg-main);
+}
+
+.kc-contact__faqInner {
+    max-width: 920px;
     margin: 0 auto;
     text-align: center;
 }
 
-.kc-contact__qaList {
-    text-align: left;
+.kc-contact__faqList {
     margin-top: 18px;
+    text-align: left;
+    border-top: 1px solid var(--kc-border);
 }
 
-.kc-contact__qaDivider {
-    height: 1px;
-    background: rgba(12, 24, 48, 0.08);
+.kc-contact__faqItem {
+    border-bottom: 1px solid var(--kc-border);
+}
+
+.kc-contact__qRow {
     width: 100%;
+    text-align: left;
+
+    padding: 24px 0;
+    background: transparent;
+    border: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    cursor: pointer;
 }
 
-.kc-contact__qaItem {
-    padding: 16px 0;
+.kc-contact__qRow:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
+    border-radius: 10px;
 }
 
-.kc-contact__qaQ {
-    margin: 0 0 6px;
-    font-size: 12px;
-    font-weight: 900;
-    color: #0c1830;
-}
-
-.kc-contact__qaA {
+.kc-contact__q {
     margin: 0;
-    font-size: 12px;
-    line-height: 1.6;
-    color: rgba(12, 24, 48, 0.72);
+    color: var(--kc-text-primary);
 }
 
-/* Responsive */
+.kc-contact__chev {
+    font-size: 14px;
+    color: var(--kc-text-secondary);
+    transition: transform 0.15s ease;
+}
+
+.kc-contact__chev.is-open {
+    transform: rotate(180deg);
+}
+
+.kc-contact__a {
+    padding: 0 0 24px 0;
+    color: var(--kc-text-secondary);
+    max-width: 860px;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
 @media (max-width: 980px) {
     .kc-contact__cards {
         grid-template-columns: 1fr;
@@ -246,11 +285,19 @@
         margin-left: auto;
         margin-right: auto;
     }
+
+    .kc-contact__qRow {
+        padding: 16px 0;
+    }
+
+    .kc-contact__a {
+        padding-bottom: 16px;
+    }
 }
 
 @media (max-width: 640px) {
     .kc-contact__hero {
-        padding-top: 92px;
+        padding-top: 96px;
     }
 
     .kc-contact__row2 {

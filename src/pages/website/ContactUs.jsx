@@ -1,15 +1,18 @@
 // frontend/src/pages/website/ContactUs.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import api from "../../services/api";
 
+/* Global typography/tokens */
+import "../../styling/fonts.css";
+
+/* Page CSS */
 import "../../styling/contactus.css";
 
-/* Icons (use your existing icon files) */
+/* Icons */
 import ContactIcon from "../../assets/icons/Contact-Icon.svg";
 import ChatIcon from "../../assets/icons/Contact-Interface.svg";
 import ToolsIcon from "../../assets/icons/ToolBox-Icon.svg";
@@ -79,6 +82,8 @@ export default function ContactUs() {
     []
   );
 
+  const [openIndex, setOpenIndex] = useState(0);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
@@ -117,28 +122,25 @@ export default function ContactUs() {
       <Navbar />
 
       <main className="kc-contact">
-        {/* HERO */}
+        {/* HERO (match FAQ spacing/typography) */}
         <section className="kc-contact__hero">
           <div className="kc-contact__heroInner">
-            <h1 className="kc-contact__title">We’re Here To Help</h1>
-            <p className="kc-contact__subtitle">
+            <h1 className="h2 kc-contact__title">We’re Here To Help</h1>
+            <p className="body-s kc-contact__subtitle">
               Questions, support, or partnerships — get in touch.
             </p>
 
-            {/* CARDS */}
+            {/* CONTACT OPTIONS */}
             <div className="kc-contact__cards">
               <div className="kc-contact__card">
                 <div className="kc-contact__cardIcon">
                   <img src={ContactIcon} alt="" aria-hidden="true" />
                 </div>
-                <h3 className="kc-contact__cardTitle">Email Us</h3>
-                <p className="kc-contact__cardText">
-                  Email us, we usually reply within one working day.
+                <p className="h6 kc-contact__cardTitle">Email us</p>
+                <p className="body-s kc-contact__cardText">
+                  Email us — we usually reply within one working day.
                 </p>
-                <a
-                  className="kc-contact__cardLink"
-                  href="mailto:supportteam@konarcard.com"
-                >
+                <a className="kc-contact__cardLink" href="mailto:supportteam@konarcard.com">
                   supportteam@konarcard.com
                 </a>
               </div>
@@ -147,16 +149,14 @@ export default function ContactUs() {
                 <div className="kc-contact__cardIcon">
                   <img src={ChatIcon} alt="" aria-hidden="true" />
                 </div>
-                <h3 className="kc-contact__cardTitle">Live chat</h3>
-                <p className="kc-contact__cardText">
+                <p className="h6 kc-contact__cardTitle">Live chat</p>
+                <p className="body-s kc-contact__cardText">
                   Chat with our team during working hours for quick help.
                 </p>
                 <button
                   type="button"
                   className="kc-contact__cardLink kc-contact__cardButton"
-                  onClick={() =>
-                    window.tidioChatApi && window.tidioChatApi.open()
-                  }
+                  onClick={() => window.tidioChatApi && window.tidioChatApi.open()}
                 >
                   Start Live Chat
                 </button>
@@ -166,10 +166,9 @@ export default function ContactUs() {
                 <div className="kc-contact__cardIcon">
                   <img src={ToolsIcon} alt="" aria-hidden="true" />
                 </div>
-                <h3 className="kc-contact__cardTitle">Support available 24/7</h3>
-                <p className="kc-contact__cardText">
-                  You can email us anytime — we’ll get back to you as soon as
-                  possible.
+                <p className="h6 kc-contact__cardTitle">Support available 24/7</p>
+                <p className="body-s kc-contact__cardText">
+                  You can email us anytime — we’ll get back to you as soon as possible.
                 </p>
                 <button
                   type="button"
@@ -189,8 +188,8 @@ export default function ContactUs() {
         {/* FORM */}
         <section className="kc-contact__formSection" id="kc-contact-form">
           <div className="kc-contact__formWrap">
-            <h2 className="kc-contact__sectionTitle">Or send us a message</h2>
-            <p className="kc-contact__sectionSub">
+            <h2 className="h3 kc-contact__sectionTitle">Or send us a message</h2>
+            <p className="body-s kc-contact__sectionSub">
               Fill in the form below and we’ll get back to you as soon as we can.
             </p>
 
@@ -250,23 +249,35 @@ export default function ContactUs() {
           </div>
         </section>
 
-        {/* QUICK ANSWERS */}
-        <section className="kc-contact__qa">
-          <div className="kc-contact__qaInner">
-            <h2 className="kc-contact__sectionTitle">Quick answers</h2>
-            <p className="kc-contact__sectionSub">
-              Fill in the form below and we’ll get back to you as soon as we can.
+        {/* FAQ STYLE QUICK ANSWERS (same as FAQ page) */}
+        <section className="kc-contact__faq">
+          <div className="kc-contact__faqInner">
+            <h2 className="h3 kc-contact__sectionTitle">Quick answers</h2>
+            <p className="body-s kc-contact__sectionSub">
+              Common questions people ask before they message us.
             </p>
 
-            <div className="kc-contact__qaList">
-              {quickAnswers.map((item, idx) => (
-                <div className="kc-contact__qaItem" key={`${item.q}-${idx}`}>
-                  <div className="kc-contact__qaDivider" aria-hidden="true" />
-                  <h3 className="kc-contact__qaQ">{item.q}</h3>
-                  <p className="kc-contact__qaA">{item.a}</p>
-                </div>
-              ))}
-              <div className="kc-contact__qaDivider" aria-hidden="true" />
+            <div className="kc-contact__faqList" role="region" aria-label="Quick answers">
+              {quickAnswers.map((item, idx) => {
+                const isOpen = idx === openIndex;
+                return (
+                  <div className="kc-contact__faqItem" key={`${item.q}-${idx}`}>
+                    <button
+                      type="button"
+                      className="kc-contact__qRow"
+                      onClick={() => setOpenIndex(isOpen ? -1 : idx)}
+                      aria-expanded={isOpen}
+                    >
+                      <span className="h6 kc-contact__q">{item.q}</span>
+                      <span className={`kc-contact__chev ${isOpen ? "is-open" : ""}`} aria-hidden="true">
+                        ▾
+                      </span>
+                    </button>
+
+                    {isOpen && <div className="body-s kc-contact__a">{item.a}</div>}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
