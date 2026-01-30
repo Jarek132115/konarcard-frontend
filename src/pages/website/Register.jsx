@@ -1,13 +1,14 @@
 // frontend/src/pages/website/Register.jsx
 import React, { useState, useEffect, useRef, useContext, useMemo } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import '../../styling/login.css';
 
-const POST_AUTH_KEY = 'postAuthAction';
 const CLAIM_KEY = 'pendingClaimSlug';
+const OAUTH_SOURCE_KEY = 'oauthSource';
+const FALLBACK_BASE = 'https://konarcard-backend-331608269918.europe-west1.run.app';
 
 export default function Register() {
     const navigate = useNavigate();
@@ -23,10 +24,7 @@ export default function Register() {
         password: '',
     });
 
-    // ✅ Claim step should only show if we have NO claimed username
-    // We allow forcing it open via "Edit".
     const [forceClaimStep, setForceClaimStep] = useState(false);
-
     const [verificationStep, setVerificationStep] = useState(false);
 
     const [showPassword, setShowPassword] = useState(false);
@@ -35,41 +33,29 @@ export default function Register() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
 
-    // ✅ Restore claimed slug from:
-    // 1) localStorage (primary)
-    // 2) location.state (optional helper if something else claimed it)
     useEffect(() => {
         try {
             const savedSlug = localStorage.getItem(CLAIM_KEY);
             const stateSlug = location.state?.claimedUsername;
-
             const finalSlug = (savedSlug || stateSlug || '').trim().toLowerCase();
 
             if (finalSlug) {
                 setData((d) => ({ ...d, username: finalSlug }));
-                // do NOT force claim step open if we already have a username
                 setForceClaimStep(false);
             }
-        } catch {
-            // ignore
-        }
+        } catch { }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const hasClaimedUsername = useMemo(() => {
-        return Boolean((data.username || '').trim());
-    }, [data.username]);
-
+    const hasClaimedUsername = useMemo(() => Boolean((data.username || '').trim()), [data.username]);
     const shouldShowClaimStep = !verificationStep && (forceClaimStep || !hasClaimedUsername);
 
-    // cooldown ticker
     useEffect(() => {
         if (cooldown <= 0) return;
         const t = setTimeout(() => setCooldown((s) => s - 1), 1000);
         return () => clearTimeout(t);
     }, [cooldown]);
 
-    // claim link (availability check)
     const claimLinkContinue = async (e) => {
         e.preventDefault();
         const username = (data.username || '').trim().toLowerCase();
@@ -80,16 +66,14 @@ export default function Register() {
         }
 
         try {
-            // this can be availability-only when not logged in (as per your backend)
+            // availability check only (no auth)
             await api.post('/claim-link', { username });
 
-            // ✅ Persist so we never ask again on this registration flow
             localStorage.setItem(CLAIM_KEY, username);
 
             setData((d) => ({ ...d, username }));
             setForceClaimStep(false);
 
-            // focus next field
             setTimeout(() => document.getElementById('name')?.focus(), 0);
         } catch (err) {
             const msg = err?.response?.data?.error || 'Link not available';
@@ -97,7 +81,6 @@ export default function Register() {
         }
     };
 
-    // register (email + password)
     const registerUser = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -125,7 +108,6 @@ export default function Register() {
         }
     };
 
-    // verify email
     const verifyCode = async (e) => {
         e.preventDefault();
         setIsVerifying(true);
@@ -146,8 +128,9 @@ export default function Register() {
 
                 login(loginRes.data.token, loginRes.data.user);
 
-                // ✅ Only clear after successful verification + login
+                // ✅ Clear claim only once the account exists and is logged in
                 localStorage.removeItem(CLAIM_KEY);
+                localStorage.removeItem(OAUTH_SOURCE_KEY);
 
                 navigate('/myprofile');
             }
@@ -158,9 +141,16 @@ export default function Register() {
         }
     };
 
-    // OAuth
     const startOAuth = (provider) => {
-        const base = import.meta.env.VITE_API_URL;
+        try {
+            localStorage.setItem(OAUTH_SOURCE_KEY, 'register');
+            // ✅ DO NOT clear CLAIM_KEY; OAuthSuccess will use it to finalize claim.
+        } catch { }
+
+        const base = (import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim())
+            ? import.meta.env.VITE_API_URL.trim()
+            : (api?.defaults?.baseURL || FALLBACK_BASE);
+
         window.location.href = `${base}/auth/${provider}`;
     };
 
@@ -208,7 +198,6 @@ export default function Register() {
                                     type="button"
                                     className="kc-link"
                                     onClick={() => {
-                                        // ✅ only show claim step if they explicitly edit
                                         setForceClaimStep(true);
                                         setTimeout(() => usernameInputRef.current?.focus?.(), 0);
                                     }}

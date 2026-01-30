@@ -1,4 +1,4 @@
-// frontend/src/pages/auth/Login.jsx
+// frontend/src/pages/website/Login.jsx
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -12,6 +12,8 @@ const REMEMBERED_EMAIL_KEY = 'rememberedEmail';
 
 // Keep this in sync with Cloud Run ADMIN_EMAILS for UI-side convenience
 const ADMIN_EMAILS_UI = ['supportteam@konarcard.com'];
+
+const FALLBACK_BASE = 'https://konarcard-backend-331608269918.europe-west1.run.app';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -35,9 +37,14 @@ export default function Login() {
     const startOAuth = (provider) => {
         try {
             localStorage.setItem('oauthSource', 'login');
-            localStorage.removeItem('pendingClaimSlug');
+            // ✅ DO NOT clear pendingClaimSlug here.
+            // If user claimed earlier, we want OAuthSuccess to finalize it.
         } catch { }
-        const base = import.meta.env.VITE_API_URL;
+
+        const base = (import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim())
+            ? import.meta.env.VITE_API_URL.trim()
+            : (api?.defaults?.baseURL || FALLBACK_BASE);
+
         window.location.href = `${base}/auth/${provider}`;
     };
 
@@ -55,7 +62,9 @@ export default function Login() {
     useEffect(() => {
         const action = location.state?.postAuthAction;
         if (action) {
-            try { localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action)); } catch { }
+            try {
+                localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action));
+            } catch { }
         }
     }, [location.state]);
 
@@ -71,7 +80,9 @@ export default function Login() {
             const saved = localStorage.getItem(POST_AUTH_KEY);
             if (saved) action = JSON.parse(saved);
         } catch { }
-        try { localStorage.removeItem(POST_AUTH_KEY); } catch { }
+        try {
+            localStorage.removeItem(POST_AUTH_KEY);
+        } catch { }
 
         if (!action) {
             navigate('/myprofile');
@@ -228,7 +239,9 @@ export default function Login() {
                             <h1 className="kc-title">Reset password</h1>
 
                             <div className="kc-field">
-                                <label className="kc-label" htmlFor="resetEmail">Email</label>
+                                <label className="kc-label" htmlFor="resetEmail">
+                                    Email
+                                </label>
                                 <input
                                     className="kc-input"
                                     id="resetEmail"
@@ -244,11 +257,7 @@ export default function Login() {
                                 {isSendingReset ? 'Sending…' : 'Send reset link'}
                             </button>
 
-                            <button
-                                type="button"
-                                className="kc-btn kc-btn-secondary kc-btn-center"
-                                onClick={() => setForgotPasswordStep(false)}
-                            >
+                            <button type="button" className="kc-btn kc-btn-secondary kc-btn-center" onClick={() => setForgotPasswordStep(false)}>
                                 Back
                             </button>
                         </form>
@@ -257,7 +266,9 @@ export default function Login() {
                             <h1 className="kc-title">Verify email</h1>
 
                             <div className="kc-field">
-                                <label className="kc-label" htmlFor="code">Verification code</label>
+                                <label className="kc-label" htmlFor="code">
+                                    Verification code
+                                </label>
                                 <input
                                     className="kc-input"
                                     id="code"
@@ -274,12 +285,7 @@ export default function Login() {
                                 {isVerifying ? 'Verifying…' : 'Verify'}
                             </button>
 
-                            <button
-                                type="button"
-                                className="kc-btn kc-btn-secondary kc-btn-center"
-                                onClick={resendCode}
-                                disabled={cooldown > 0}
-                            >
+                            <button type="button" className="kc-btn kc-btn-secondary kc-btn-center" onClick={resendCode} disabled={cooldown > 0}>
                                 {cooldown > 0 ? `Resend in ${cooldown}s` : 'Resend code'}
                             </button>
                         </form>
@@ -295,7 +301,9 @@ export default function Login() {
 
                             <form className="kc-form" onSubmit={loginUser}>
                                 <div className="kc-field">
-                                    <label className="kc-label" htmlFor="email">Email</label>
+                                    <label className="kc-label" htmlFor="email">
+                                        Email
+                                    </label>
                                     <input
                                         className="kc-input"
                                         id="email"
@@ -308,7 +316,9 @@ export default function Login() {
                                 </div>
 
                                 <div className="kc-field">
-                                    <label className="kc-label" htmlFor="password">Password</label>
+                                    <label className="kc-label" htmlFor="password">
+                                        Password
+                                    </label>
                                     <div className="kc-password">
                                         <input
                                             className="kc-input kc-input-password"
@@ -319,22 +329,14 @@ export default function Login() {
                                             onChange={(e) => setData({ ...data, password: e.target.value })}
                                             required
                                         />
-                                        <button
-                                            type="button"
-                                            className="kc-password-toggle"
-                                            onClick={() => setShowPassword((s) => !s)}
-                                        >
+                                        <button type="button" className="kc-password-toggle" onClick={() => setShowPassword((s) => !s)}>
                                             {showPassword ? 'Hide' : 'Show'}
                                         </button>
                                     </div>
                                 </div>
 
                                 <label className="kc-remember" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={rememberMe}
-                                        onChange={(e) => setRememberMe(e.target.checked)}
-                                    />
+                                    <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
                                     Remember me
                                 </label>
 
@@ -347,7 +349,9 @@ export default function Login() {
                                 </button>
                             </form>
 
-                            <div className="kc-divider"><span>or</span></div>
+                            <div className="kc-divider">
+                                <span>or</span>
+                            </div>
 
                             <div className="kc-social">
                                 <button type="button" className="kc-social-btn" onClick={() => startOAuth('google')}>
