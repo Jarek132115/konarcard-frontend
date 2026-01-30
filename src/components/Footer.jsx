@@ -7,7 +7,7 @@ import CopyrightIcon from "../assets/icons/Copyright-Icon.svg";
 /* ===== Social icons (your exact files) ===== */
 import FooterInstagram from "../assets/icons/Footer_Insta.svg";
 import FooterFacebook from "../assets/icons/Footer_Facebook.svg";
-import FooterLinkedIn from "../assets/icons/Footer_Linkedin.svg";
+import FooterLinkedIn from "../assets/icons/Footer_LinkedIn.svg";
 import FooterTiktok from "../assets/icons/Footer_Tiktok.svg";
 import FooterYoutube from "../assets/icons/Footer_Youtube.svg";
 
