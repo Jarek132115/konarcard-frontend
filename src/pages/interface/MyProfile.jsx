@@ -11,7 +11,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import ShareProfile from "../../components/ShareProfile";
 import { AuthContext } from "../../components/AuthContext";
-import api, { startTrial } from "../../services/api";
+import api from "../../services/api";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 
 // NEW: extracted components
