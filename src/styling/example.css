@@ -72,7 +72,10 @@
     max-width: 1040px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+
+    /* ✅ Change: 3 per row on desktop */
+    grid-template-columns: repeat(3, 1fr);
+
     gap: 18px;
 }
 
@@ -281,6 +284,7 @@
         max-width: 980px;
     }
 
+    /* Keep 3 cols on smaller desktops */
     .ex-gridCards {
         grid-template-columns: repeat(3, 1fr);
     }
@@ -293,10 +297,6 @@
 
     .ex-whyGrid {
         grid-template-columns: 1fr;
-    }
-
-    .ex-whyCard {
-        text-align: left;
     }
 }
 

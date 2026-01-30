@@ -6,20 +6,16 @@ import Navbar from "../../components/Navbar";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Footer from "../../components/Footer";
 
-/* CSS (in styling folder) */
+/* Global typography/tokens */
+import "../../styling/fonts.css";
+
+/* Page CSS */
 import "../../styling/example.css";
 
-/* Reuse icons you already have in /assets/icons */
+/* Icons */
 import WorksOnEveryPhone from "../../assets/icons/Works_On_Every_Phone.svg";
 import BuiltForRealTrades from "../../assets/icons/Built_For_Real_Trades.svg";
 import OneLinkForEverything from "../../assets/icons/One_Link_For_Everything.svg";
-
-/**
- * NOTE:
- * For the example image, we’re using lightweight inline SVG placeholders
- * so you don’t need new assets. If you already have a phone mockup image,
- * replace the `ExampleThumb` component with your asset <img />.
- */
 
 function ExampleThumb({ initials = "K" }) {
     return (
@@ -60,7 +56,6 @@ export default function Example() {
         []
     );
 
-    // ✅ 4 each category (24 total). All are unique names.
     const examples = useMemo(
         () => [
             // Electrician (4)
@@ -76,7 +71,7 @@ export default function Example() {
                 category: "electrician",
                 role: "Electrician",
                 name: "Liam Hughes",
-                desc: "Taps to send a booking link and Google reviews—no paper cards needed.",
+                desc: "Taps to send a booking link and Google reviews — no paper cards needed.",
             },
             {
                 id: "el-3",
@@ -113,7 +108,7 @@ export default function Example() {
                 category: "plumber",
                 role: "Plumber",
                 name: "Ethan Brooks",
-                desc: "Sends invoice email + WhatsApp link in one tap—simple and quick.",
+                desc: "Sends invoice email + WhatsApp link in one tap — simple and quick.",
             },
             {
                 id: "pl-4",
@@ -150,7 +145,7 @@ export default function Example() {
                 category: "builder",
                 role: "Builder",
                 name: "Mason Clarke",
-                desc: "Shares a single link for everything—phone, email, socials and site.",
+                desc: "Shares a single link for everything — phone, email, socials and site.",
             },
 
             // Renovator (4)
@@ -180,7 +175,7 @@ export default function Example() {
                 category: "renovator",
                 role: "Renovator",
                 name: "Finley Green",
-                desc: "Updates photos weekly—no reprinting when branding changes.",
+                desc: "Updates photos weekly — no reprinting when branding changes.",
             },
 
             // Landscaper (4)
@@ -203,7 +198,7 @@ export default function Example() {
                 category: "landscaper",
                 role: "Landscaper",
                 name: "Alfie King",
-                desc: "Sends Instagram + booking link from one profile—easy for customers.",
+                desc: "Sends Instagram + booking link from one profile — easy for customers.",
             },
             {
                 id: "la-4",
@@ -226,7 +221,7 @@ export default function Example() {
                 category: "handyman",
                 role: "Handyman",
                 name: "Leo Phillips",
-                desc: "Uses KonarCard for repeat work—customers always have the right details.",
+                desc: "Uses KonarCard for repeat work — customers always have the right details.",
             },
             {
                 id: "ha-3",
@@ -308,9 +303,6 @@ export default function Example() {
                                         {item.role} — {item.name}
                                     </p>
                                     <p className="ex-cardDesc">{item.desc}</p>
-
-                                    {/* Optional: If you later create real example profiles, link here */}
-                                    {/* <Link className="ex-cardLink" to={`/u/${slug}`}>View profile →</Link> */}
                                 </div>
                             </div>
                         );
@@ -321,7 +313,7 @@ export default function Example() {
             {/* Why this works */}
             <section className="ex-why">
                 <h2 className="ex-h2">Why This Works For Any Trade</h2>
-                <p className="ex-sub2">Popular guides to help you get the most out of KonarCard.</p>
+                <p className="ex-sub2">Popular reasons KonarCard helps you get more work.</p>
 
                 <div className="ex-whyGrid">
                     <div className="ex-whyCard">
