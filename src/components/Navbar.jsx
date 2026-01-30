@@ -18,9 +18,9 @@ export default function Navbar() {
 
   const isActive = (path) => location.pathname === path;
 
-  // New top nav structure (matches screenshot labels)
+  // ✅ Updated: Products now goes to /products
   const navItems = [
-    { label: "Products", to: "/productandplan" },
+    { label: "Products", to: "/products" },
     { label: "Examples", to: "/examples" },
     { label: "Pricing", to: "/pricing" },
     { label: "FAQs", to: "/faq" },
@@ -146,7 +146,7 @@ export default function Navbar() {
         )}
 
         {/* =========================
-            Desktop navbar (matches screenshot)
+            Desktop navbar
             ========================= */}
         <div className="kc-navbar__desktop">
           {/* left: logo */}
