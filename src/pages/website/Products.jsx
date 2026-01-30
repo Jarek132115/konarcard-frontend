@@ -6,6 +6,8 @@ import Navbar from "../../components/Navbar";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Footer from "../../components/Footer";
 
+import "../../styling/products.css";
+
 /**
  * NOTE:
  * This page intentionally uses NO local image imports.
