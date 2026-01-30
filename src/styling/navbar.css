@@ -1,114 +1,154 @@
 /* =========================
-   NAVBAR (base + desktop)
+   KONARCARD NAVBAR (new)
+   Matches screenshot:
+   - White bar
+   - Logo left
+   - Links centered
+   - Login + orange pill CTA right
    ========================= */
-.navbar {
-  position: fixed;
+
+.kc-navbar {
+  position: sticky;
+  /* use fixed if you need it always visible */
   top: 0;
   z-index: 999;
   width: 100%;
-  padding: 20px 0;
+  background: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.navbar-container {
+.kc-navbar__container {
   max-width: 1140px;
   margin: 0 auto;
-  align-items: center;
-  padding: 0 20px;
+  padding: 18px 20px;
 }
 
-/* Desktop bar */
-.navbar-desktop {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.navbar-left {
-  display: flex;
+/* Desktop */
+.kc-navbar__desktop {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  /* left / center / right */
   align-items: center;
 }
 
-.logo {
-  height: 32px;
+.kc-navbar__logo {
+  height: 34px;
+  display: block;
 }
 
-.nav-links {
-  display: flex;
-  gap: 32px;
+.kc-navbar__logoLink {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Center links */
+.kc-navbar__centerLinks {
   list-style: none;
-  margin-left: 32px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 34px;
 }
 
-.nav-links a {
+.kc-navbar__centerLinks a {
   text-decoration: none;
   color: #111;
-  transition: font-weight .2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.15s ease, transform 0.08s ease;
 }
 
-.nav-links a:hover,
-.nav-links a:focus,
-.nav-links a:active {
-  font-weight: 600;
+.kc-navbar__centerLinks a:hover {
+  opacity: 0.8;
 }
 
-/* Desktop active -> ORANGE */
-.nav-links a.active {
-  color: var(--Orange, #FF7B00);
-  font-weight: 700;
-}
-
-/* Desktop auth pills */
-.auth-links {
-  display: flex;
-  gap: 12px;
-}
-
-/* If your project already has .desktop-button, we just color-override here.
-   Keeping specificity high enough to win without !important. */
-.auth-links .desktop-button.orange-button {
-  background: #FF7B00;
-  border: 1px solid #FF7B00;
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(255, 123, 0, 0.18);
-}
-
-.auth-links .desktop-button.orange-button:hover {
-  filter: brightness(0.96);
-  box-shadow: 0 10px 24px rgba(255, 123, 0, 0.24);
-}
-
-.auth-links .desktop-button.orange-button:active {
+.kc-navbar__centerLinks a:active {
   transform: translateY(1px);
 }
 
-/* New red style for Logout */
-.auth-links .desktop-button.red-button {
-  background: #EF4444;
-  /* Tailwind-ish red-500 */
-  border: 1px solid #EF4444;
+.kc-navbar__centerLinks a.active {
+  font-weight: 700;
+}
+
+/* Right actions */
+.kc-navbar__right {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  justify-content: flex-end;
+}
+
+.kc-navbar__login {
+  color: #111;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: opacity 0.15s ease, transform 0.08s ease;
+}
+
+.kc-navbar__login:hover {
+  opacity: 0.8;
+}
+
+.kc-navbar__login:active {
+  transform: translateY(1px);
+}
+
+.kc-navbar__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #ff7b00;
   color: #fff;
-  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.18);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(255, 123, 0, 0.18);
+  transition: filter 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease;
 }
 
-.auth-links .desktop-button.red-button:hover {
-  filter: brightness(0.96);
-  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.24);
+.kc-navbar__cta:hover {
+  filter: brightness(0.97);
+  box-shadow: 0 12px 26px rgba(255, 123, 0, 0.22);
 }
 
-.auth-links .desktop-button.red-button:active {
+.kc-navbar__cta:active {
+  transform: translateY(1px);
+}
+
+/* Authed logout button (keep minimal; you can later redesign) */
+.kc-navbar__logoutBtn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #111;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s ease, transform 0.08s ease;
+}
+
+.kc-navbar__logoutBtn:hover {
+  opacity: 0.8;
+}
+
+.kc-navbar__logoutBtn:active {
   transform: translateY(1px);
 }
 
 /* =========================
-   MOBILE header + hamburger
+   Mobile header + hamburger
    ========================= */
-.navbar-mobile-header {
+.kc-navbar__mobileHeader {
   display: none;
   justify-content: space-between;
   align-items: center;
 }
 
-.hamburger {
+.kc-navbar__hamburger {
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -119,60 +159,51 @@
   padding: 0;
 }
 
-.hamburger span {
+.kc-navbar__hamburger span {
   width: 26px;
   height: 3px;
   background: #111;
   border-radius: 3px;
-  transition: transform .3s ease, opacity .3s ease, background .3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.hamburger.active span:nth-child(1) {
+.kc-navbar__hamburger.active span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
 
-.hamburger.active span:nth-child(2) {
+.kc-navbar__hamburger.active span:nth-child(2) {
   opacity: 0;
 }
 
-.hamburger.active span:nth-child(3) {
+.kc-navbar__hamburger.active span:nth-child(3) {
   transform: rotate(-45deg) translate(6px, -6px);
 }
 
-.hamburger.active span {
-  background: #111;
-}
-
 /* =========================
-   MOBILE OVERLAY MENU
+   Mobile overlay menu
    ========================= */
-.mobile-overlay {
+.kc-navbar__overlay {
   position: fixed;
   inset: 0;
   z-index: 1000;
   background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(3px);
-  animation: overlayFade .25s ease-out;
 }
 
-.mobile-panel {
+.kc-navbar__panel {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
   width: min(520px, 92vw);
-  display: flex;
-  flex-direction: column;
-  color: #111;
   background: #fff;
   border-right: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 10px 0 40px rgba(0, 0, 0, 0.08);
   padding: 0 20px;
-  transform: translateX(-100%);
-  animation: panelInLeft .35s cubic-bezier(.22, .9, .24, 1) forwards;
+  transform: translateX(0);
 }
 
-.mobile-panel-header {
+.kc-navbar__panelHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -180,195 +211,94 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.mobile-close {
-  -webkit-tap-highlight-color: transparent;
-  appearance: none;
+.kc-navbar__close {
   background: transparent;
   border: none;
   color: #111;
   font-size: 28px;
   line-height: 1;
   padding: 0;
-  border-radius: 10px;
-  transition: transform .08s ease, color .15s ease;
+  cursor: pointer;
 }
 
-.mobile-close:hover {
-  color: #444;
-}
-
-.mobile-close:active {
-  transform: scale(0.96);
-}
-
-/* Link list */
-.mobile-list {
+.kc-navbar__mobileList {
   list-style: none;
-  margin: 8px 0 0 0;
-  padding: 12px 0 4px 0;
+  margin: 12px 0 0 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.mobile-list li a.desktop-h4,
-.mobile-actions .desktop-h4,
-.mobile-actions .logout-link.desktop-h4 {
+.kc-navbar__mobileLink {
   display: block;
   padding: 14px 6px;
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1.35;
   font-weight: 700;
-  letter-spacing: -0.01em;
   color: #111;
   text-decoration: none;
   border-radius: 12px;
-  transition: background-color .15s ease, color .15s ease, transform .08s ease;
 }
 
-.mobile-list li a.desktop-h4:hover,
-.mobile-actions .desktop-h4:hover {
+.kc-navbar__mobileLink:hover {
   background: rgba(0, 0, 0, 0.05);
-  color: #000;
 }
 
-.mobile-list li a.desktop-h4:active,
-.mobile-actions .desktop-h4:active {
-  transform: translateY(1px);
+.kc-navbar__mobileLink.active {
+  color: #ff7b00;
+  background: transparent;
 }
 
-/* Mobile active — ORANGE (matching desktop) */
-.mobile-list li a.desktop-h4.active,
-.mobile-actions .desktop-h4.active {
-  color: var(--Orange, #FF7B00) !important;
-  font-weight: 700 !important;
-  background: transparent !important;
-}
-
-/* Divider above auth links */
-.mobile-divider {
+.kc-navbar__divider {
   height: 1px;
   background: rgba(0, 0, 0, 0.08);
-  margin-top: 10px;
-}
-
-/* Auth area */
-.mobile-actions {
   margin-top: 12px;
-  padding-top: 8px;
+}
+
+.kc-navbar__mobileActions {
+  margin-top: 12px;
   display: flex;
-  gap: 8px;
   flex-direction: column;
-}
-
-/* Logout styled like a link but red (mobile) */
-.logout-link {
-  all: unset;
-  cursor: pointer;
-  display: block;
-  padding: 14px 6px;
-  border-radius: 12px;
-  color: #ff4444 !important;
-  font-weight: 700;
-  line-height: 1.35;
-  letter-spacing: -0.01em;
-}
-
-.logout-link:hover {
-  background: rgba(255, 68, 68, 0.12);
-}
-
-.logout-link:active {
-  transform: translateY(1px);
-}
-
-/* =========================
-   “Mobile-only” utility
-   ========================= */
-.mobile-only {
-  display: block;
-}
-
-@media (min-width: 1000px) {
-  .mobile-only {
-    display: none;
-  }
-}
-
-/* =========================
-   Animations
-   ========================= */
-@keyframes overlayFade {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes panelInLeft {
-  from {
-    transform: translateX(-100%);
-  }
-
-  to {
-    transform: translateX(0%);
-  }
-}
-
-/* =========================
-   RESPONSIVE BREAKPOINTS
-   ========================= */
-@media (max-width: 1200px) {
-  .navbar-container {
-    max-width: 1040px;
-  }
-}
-
-@media (max-width: 1000px) {
-  .navbar-desktop {
-    display: none;
-  }
-
-  .navbar-mobile-header {
-    display: flex;
-  }
-}
-
-/* --- Fix: Desktop Logout (red pill, matches Dashboard size/shape) --- */
-.auth-links .desktop-button.red-button,
-.desktop-button.red-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   gap: 10px;
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: 2px solid #EF4444;
-  background: #EF4444;
+}
+
+.kc-navbar__mobileCta {
+  display: inline-flex;
+  justify-content: center;
+  padding: 12px 14px;
+  border-radius: 999px;
+  background: #ff7b00;
   color: #fff;
   text-decoration: none;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.30);
-  transition: background-color .15s, box-shadow .15s, transform .05s, filter .15s;
+  font-weight: 800;
 }
 
-.auth-links .desktop-button.red-button:hover,
-.desktop-button.red-button:hover {
-  filter: brightness(0.96);
+.kc-navbar__mobileLogout {
+  background: transparent;
+  border: none;
+  padding: 14px 6px;
+  text-align: left;
+  font-size: 20px;
+  font-weight: 800;
+  color: #ef4444;
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.40);
+  border-radius: 12px;
 }
 
-.auth-links .desktop-button.red-button:active,
-.desktop-button.red-button:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.45);
+.kc-navbar__mobileLogout:hover {
+  background: rgba(239, 68, 68, 0.12);
 }
 
+/* =========================
+   Responsive
+   ========================= */
 @media (max-width: 1000px) {
-  .desktop-button.red-button {
-    width: 100%;
+  .kc-navbar__desktop {
+    display: none;
+  }
+
+  .kc-navbar__mobileHeader {
+    display: flex;
   }
 }

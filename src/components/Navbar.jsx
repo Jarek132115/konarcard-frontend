@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { AuthContext } from './AuthContext';
-import LogoIcon from '../assets/icons/Logo-Icon.svg';
+import React, { useState, useContext } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { AuthContext } from "./AuthContext";
+import LogoIcon from "../assets/icons/Logo-Icon.svg";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -13,59 +13,69 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/');
+    navigate("/");
   };
 
-  // helper: check if path matches
   const isActive = (path) => location.pathname === path;
 
-  return (
-    <nav className="navbar">
-      <div className="navbar-container">
+  // New top nav structure (matches screenshot labels)
+  const navItems = [
+    { label: "Products", to: "/productandplan" },
+    { label: "Examples", to: "/examples" },
+    { label: "Pricing", to: "/pricing" },
+    { label: "FAQs", to: "/faq" },
+  ];
 
-        {/* ===== Mobile header ===== */}
-        <div className="navbar-mobile-header">
-          <Link to="/" className="logo-link" aria-label="Home">
-            <img src={LogoIcon} alt="Logo" className="logo" />
+  return (
+    <nav className="kc-navbar">
+      <div className="kc-navbar__container">
+        {/* =========================
+            Mobile header
+            ========================= */}
+        <div className="kc-navbar__mobileHeader">
+          <Link to="/" className="kc-navbar__logoLink" aria-label="Home">
+            <img src={LogoIcon} alt="Logo" className="kc-navbar__logo" />
           </Link>
 
           <button
             type="button"
-            className={`hamburger ${mobileOpen ? 'active' : ''}`}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            className={`kc-navbar__hamburger ${mobileOpen ? "active" : ""}`}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen(!mobileOpen)}
           >
-            <span></span>
-            <span></span>
-            <span></span>
+            <span />
+            <span />
+            <span />
           </button>
         </div>
 
-        {/* ===== Mobile overlay menu ===== */}
+        {/* =========================
+            Mobile overlay menu
+            ========================= */}
         {mobileOpen && (
           <div
-            className="mobile-overlay"
+            className="kc-navbar__overlay"
             role="dialog"
             aria-modal="true"
             aria-label="Mobile navigation"
             onClick={(e) => {
-              if (e.target.classList.contains('mobile-overlay')) setMobileOpen(false);
+              if (e.target.classList.contains("kc-navbar__overlay")) setMobileOpen(false);
             }}
           >
-            <div className="mobile-panel" role="document">
-              <div className="mobile-panel-header">
+            <div className="kc-navbar__panel" role="document">
+              <div className="kc-navbar__panelHeader">
                 <Link
                   to="/"
-                  className="logo-link"
+                  className="kc-navbar__logoLink"
                   aria-label="Home"
                   onClick={() => setMobileOpen(false)}
                 >
-                  <img src={LogoIcon} alt="Logo" className="logo" />
+                  <img src={LogoIcon} alt="Logo" className="kc-navbar__logo" />
                 </Link>
 
                 <button
-                  className="mobile-close"
+                  className="kc-navbar__close"
                   aria-label="Close menu"
                   onClick={() => setMobileOpen(false)}
                 >
@@ -73,65 +83,29 @@ export default function Navbar() {
                 </button>
               </div>
 
-              <ul className="mobile-list">
-                {/* Home link highlights on "/" */}
-                <li className="mobile-only">
-                  <Link
-                    to="/"
-                    onClick={() => setMobileOpen(false)}
-                    className={`desktop-h4 ${isActive('/') ? 'active' : ''}`}
-                  >
-                    Home
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/productandplan"
-                    onClick={() => setMobileOpen(false)}
-                    className={`desktop-h4 ${isActive('/productandplan') ? 'active' : ''}`}
-                  >
-                    Product &amp; Plan
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/reviews"
-                    onClick={() => setMobileOpen(false)}
-                    className={`desktop-h4 ${isActive('/reviews') ? 'active' : ''}`}
-                  >
-                    Reviews
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/faq"
-                    onClick={() => setMobileOpen(false)}
-                    className={`desktop-h4 ${isActive('/faq') ? 'active' : ''}`}
-                  >
-                    FAQs
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/contactus"
-                    onClick={() => setMobileOpen(false)}
-                    className={`desktop-h4 ${isActive('/contactus') ? 'active' : ''}`}
-                  >
-                    Contact Us
-                  </Link>
-                </li>
+              <ul className="kc-navbar__mobileList">
+                {navItems.map((item) => (
+                  <li key={item.to}>
+                    <Link
+                      to={item.to}
+                      onClick={() => setMobileOpen(false)}
+                      className={`kc-navbar__mobileLink ${isActive(item.to) ? "active" : ""}`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
 
-              <div className="mobile-divider" aria-hidden="true" />
+              <div className="kc-navbar__divider" aria-hidden="true" />
 
-              <div className="mobile-actions">
+              <div className="kc-navbar__mobileActions">
                 {!isAuthed ? (
                   <>
                     <Link
                       to="/login"
                       state={{ from: location.pathname }}
-                      className="desktop-h4"
+                      className="kc-navbar__mobileLink"
                       onClick={() => setMobileOpen(false)}
                     >
                       Login
@@ -139,25 +113,28 @@ export default function Navbar() {
                     <Link
                       to="/register"
                       state={{ from: location.pathname }}
-                      className="desktop-h4"
+                      className="kc-navbar__mobileCta"
                       onClick={() => setMobileOpen(false)}
                     >
-                      Sign up
+                      Claim Your Link
                     </Link>
                   </>
                 ) : (
                   <>
                     <Link
                       to="/myprofile"
-                      className="desktop-h4"
+                      className="kc-navbar__mobileLink"
                       onClick={() => setMobileOpen(false)}
                     >
                       Dashboard
                     </Link>
                     <button
                       type="button"
-                      onClick={() => { handleLogout(); setMobileOpen(false); }}
-                      className="desktop-h4 logout-link"
+                      onClick={() => {
+                        handleLogout();
+                        setMobileOpen(false);
+                      }}
+                      className="kc-navbar__mobileLogout"
                     >
                       Logout
                     </button>
@@ -168,73 +145,59 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* ===== Desktop navbar ===== */}
-        <div className="navbar-desktop">
-          <div className="navbar-left">
-            <Link to="/" className="logo-link" aria-label="Home">
-              <img src={LogoIcon} alt="Logo" className="logo" />
+        {/* =========================
+            Desktop navbar (matches screenshot)
+            ========================= */}
+        <div className="kc-navbar__desktop">
+          {/* left: logo */}
+          <div className="kc-navbar__left">
+            <Link to="/" className="kc-navbar__logoLink" aria-label="Home">
+              <img src={LogoIcon} alt="Logo" className="kc-navbar__logo" />
             </Link>
-            <ul className="nav-links">
-              <li>
-                <Link
-                  to="/productandplan"
-                  className={isActive('/productandplan') ? 'active' : ''}
-                >
-                  Product &amp; Plan
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/reviews"
-                  className={isActive('/reviews') ? 'active' : ''}
-                >
-                  Reviews
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/faq"
-                  className={isActive('/faq') ? 'active' : ''}
-                >
-                  FAQs
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/contactus"
-                  className={isActive('/contactus') ? 'active' : ''}
-                >
-                  Contact Us
-                </Link>
-              </li>
-            </ul>
           </div>
 
-          <div className="auth-links">
+          {/* center: links */}
+          <ul className="kc-navbar__centerLinks">
+            {navItems.map((item) => (
+              <li key={item.to}>
+                <Link to={item.to} className={isActive(item.to) ? "active" : ""}>
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* right: auth */}
+          <div className="kc-navbar__right">
             {!isAuthed ? (
               <>
-                <Link to="/login" state={{ from: location.pathname }} className="desktop-button orange-button">
+                <Link
+                  to="/login"
+                  state={{ from: location.pathname }}
+                  className="kc-navbar__login"
+                >
                   Login
                 </Link>
-                <Link to="/register" state={{ from: location.pathname }} className="desktop-button navy-button">
-                  Sign up
+                <Link
+                  to="/register"
+                  state={{ from: location.pathname }}
+                  className="kc-navbar__cta"
+                >
+                  Claim Your Link
                 </Link>
               </>
             ) : (
               <>
-                {/* CHANGED: orange Dashboard */}
-                <Link to="/myprofile" className="desktop-button orange-button">
+                <Link to="/myprofile" className="kc-navbar__login">
                   Dashboard
                 </Link>
-                {/* CHANGED: red Logout */}
-                <button onClick={handleLogout} className="desktop-button red-button">
+                <button type="button" onClick={handleLogout} className="kc-navbar__logoutBtn">
                   Logout
                 </button>
               </>
             )}
           </div>
         </div>
-
       </div>
     </nav>
   );
