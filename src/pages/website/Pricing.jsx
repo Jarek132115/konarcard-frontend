@@ -58,7 +58,7 @@ export default function Pricing() {
                     "Works on iPhone & Android",
                     "Perfect for trying it out",
                 ],
-                cta: { label: "Get started free", to: "/register", style: "primary" },
+                cta: { label: "Get started free", to: "/register" },
             },
             {
                 key: "plus",
@@ -74,14 +74,14 @@ export default function Pricing() {
                     "Unlimited edits (changes go live instantly)",
                     "Priority support",
                 ],
-                cta: { label: "Start Plus Plan", to: "/register", style: "primary" },
+                cta: { label: "Start Plus Plan", to: "/register" },
                 featured: true,
             },
             {
                 key: "teams",
                 title: "Teams Plan",
                 badge: "Built for crews and growing businesses",
-                price: `${p.teams.price}`,
+                price: p.teams.price,
                 sub: p.teams.sub,
                 highlights: [
                     "Multiple team profiles under one account",
@@ -91,7 +91,7 @@ export default function Pricing() {
                     "Ideal for 2–20+ tradies",
                     "Priority support",
                 ],
-                cta: { label: "Start Teams Plan", to: "/register", style: "primary" },
+                cta: { label: "Start Teams Plan", to: "/register" },
             },
         ],
         [p]
@@ -158,28 +158,28 @@ export default function Pricing() {
     const pricingFaqs = useMemo(
         () => [
             {
-                q: "How quickly do you reply?",
-                a: "We aim to reply to all messages within one working day. If it’s urgent, live chat during working hours is usually the fastest way to get help.",
+                q: "Can I upgrade or downgrade later?",
+                a: "Yes — change your plan anytime from your dashboard. Your profile stays live while you switch.",
+            },
+            {
+                q: "Do I need an app for KonarCard to work?",
+                a: "No app needed. People tap your card or scan your QR code and your profile opens instantly.",
+            },
+            {
+                q: "What happens if I cancel?",
+                a: "Your profile remains accessible, but premium features (like galleries and branding removal) won’t be active.",
             },
             {
                 q: "Can you help me set up my profile?",
-                a: "Yes. If you’re unsure how to set something up or want us to check you’re doing it right, send a message and we’ll guide you step by step.",
+                a: "Yes. If you want help getting your page looking right, message us and we’ll guide you step by step.",
             },
             {
-                q: "Do I need an account to contact you?",
-                a: "No — you don’t need an account to get in touch. Anyone can send us a message using the contact form on our site.",
+                q: "Do teams get one login or separate logins?",
+                a: "Teams can manage multiple profiles under one account, with roles and permissions for staff.",
             },
             {
-                q: "Is it okay to finish my profile later?",
-                a: "Yes. You can claim your link first and complete your profile later. Your link won’t go anywhere, and you can edit your profile at any time.",
-            },
-            {
-                q: "Is there a phone number I can call?",
-                a: "We don’t offer phone support at the moment. Email and live chat are the quickest and most reliable ways to reach us and get help.",
-            },
-            {
-                q: "What should I do if something isn’t working?",
-                a: "If something doesn’t look right or isn’t working as expected, send us a message and explain what’s happening. Screenshots help if you have them.",
+                q: "How do I contact support?",
+                a: "Use live chat or the Contact Us page. We reply quickly and can help with setup or technical issues.",
             },
         ],
         []
@@ -194,206 +194,230 @@ export default function Pricing() {
     return (
         <>
             <Navbar />
+
             <div style={{ marginTop: 20 }} className="section-breadcrumbs">
                 <Breadcrumbs />
             </div>
 
-            {/* HERO */}
-            <section className="pr-hero">
-                <h1 className="desktop-h2 pr-h1">
-                    Simple Pricing That Pays
-                    <br />
-                    For Itself
-                </h1>
-                <p className="desktop-body pr-sub">
-                    One job covers the cost for the year. Real tools. Real results.
-                    <br />
-                    Start free, then upgrade only when it’s worth it.
-                </p>
-            </section>
+            <main className="kc-pricing">
+                {/* HERO */}
+                <section className="kc-pricing__hero">
+                    <div className="kc-pricing__heroInner">
+                        <h1 className="desktop-h1 kc-pricing__title">
+                            Simple pricing that pays
+                            <br />
+                            for itself
+                        </h1>
+                        <p className="desktop-body kc-pricing__subtitle">
+                            One job covers the cost for the year. Real tools. Real results.
+                            <br />
+                            Start free, then upgrade only when it’s worth it.
+                        </p>
+                    </div>
+                </section>
 
-            {/* BILLING TOGGLE */}
-            <section className="pr-billing">
-                <div className="pr-billingPills" role="tablist" aria-label="Billing period">
-                    <button
-                        type="button"
-                        className={`pr-pill ${billing === "monthly" ? "isActive" : ""}`}
-                        onClick={() => setBilling("monthly")}
-                    >
-                        Monthly Plan
-                    </button>
-                    <button
-                        type="button"
-                        className={`pr-pill ${billing === "quarterly" ? "isActive" : ""}`}
-                        onClick={() => setBilling("quarterly")}
-                    >
-                        Quarterly Plan
-                    </button>
-                    <button
-                        type="button"
-                        className={`pr-pill ${billing === "yearly" ? "isActive" : ""}`}
-                        onClick={() => setBilling("yearly")}
-                    >
-                        Yearly Plan
-                    </button>
-                </div>
+                {/* BILLING */}
+                <section className="kc-pricing__billing">
+                    <div className="kc-pricing__tabs" role="tablist" aria-label="Billing period">
+                        <button
+                            type="button"
+                            className={`kc-pricing__tab ${billing === "monthly" ? "is-active" : ""}`}
+                            onClick={() => setBilling("monthly")}
+                            role="tab"
+                            aria-selected={billing === "monthly"}
+                        >
+                            Monthly
+                        </button>
+                        <button
+                            type="button"
+                            className={`kc-pricing__tab ${billing === "quarterly" ? "is-active" : ""}`}
+                            onClick={() => setBilling("quarterly")}
+                            role="tab"
+                            aria-selected={billing === "quarterly"}
+                        >
+                            Quarterly
+                        </button>
+                        <button
+                            type="button"
+                            className={`kc-pricing__tab ${billing === "yearly" ? "is-active" : ""}`}
+                            onClick={() => setBilling("yearly")}
+                            role="tab"
+                            aria-selected={billing === "yearly"}
+                        >
+                            Yearly
+                        </button>
+                    </div>
 
-                <p className="desktop-body-s pr-note">{p.note}</p>
-            </section>
+                    <p className="desktop-body-s kc-pricing__note">{p.note}</p>
+                </section>
 
-            {/* PLAN CARDS */}
-            <section className="pr-plans">
-                <div className="pr-planGrid">
-                    {planCards.map((card) => (
-                        <div key={card.key} className={`pr-planCard ${card.featured ? "isFeatured" : ""}`}>
-                            {card.featured && <div className="pr-featuredTag">Most Popular</div>}
+                {/* PLANS */}
+                <section className="kc-pricing__plans">
+                    <div className="kc-pricing__grid">
+                        {planCards.map((card) => (
+                            <article
+                                key={card.key}
+                                className={`kc-pricing__card ${card.featured ? "is-featured" : ""}`}
+                            >
+                                {card.featured && <div className="kc-pricing__tag">Most popular</div>}
 
-                            <div className="pr-planTop">
-                                <p className="desktop-h6 pr-planTitle">{card.title}</p>
-                                <p className="desktop-body-s pr-planBadge">{card.badge}</p>
-                            </div>
+                                <div className="kc-pricing__cardTop">
+                                    <p className="desktop-h6 kc-pricing__cardTitle">{card.title}</p>
+                                    <p className="desktop-body-s kc-pricing__cardBadge">{card.badge}</p>
+                                </div>
 
-                            <div className="pr-priceRow">
-                                <span className="pr-price">{card.price}</span>
-                                <span className="desktop-body-s pr-priceSub">{card.sub}</span>
-                            </div>
+                                <div className="kc-pricing__priceRow">
+                                    <span className="kc-pricing__price">{card.price}</span>
+                                    <span className="desktop-body-s kc-pricing__priceSub">{card.sub}</span>
+                                </div>
 
-                            <ul className="pr-list">
-                                {card.highlights.map((t) => (
-                                    <li key={t} className="desktop-body-s">
-                                        <span className="pr-bulletDot" aria-hidden="true" />
-                                        <span>{t}</span>
-                                    </li>
-                                ))}
-                            </ul>
+                                <ul className="kc-pricing__list">
+                                    {card.highlights.map((t) => (
+                                        <li className="desktop-body-s" key={t}>
+                                            <span className="kc-pricing__dot" aria-hidden="true" />
+                                            <span>{t}</span>
+                                        </li>
+                                    ))}
+                                </ul>
 
-                            <Link to={card.cta.to} className={`pr-cta ${card.featured ? "isPrimary" : "isSecondary"}`}>
-                                {card.cta.label}
-                            </Link>
-                        </div>
-                    ))}
-                </div>
-            </section>
+                                <Link
+                                    to={card.cta.to}
+                                    className={`kc-pricing__cta ${card.featured ? "is-primary" : "is-secondary"}`}
+                                >
+                                    {card.cta.label}
+                                </Link>
+                            </article>
+                        ))}
+                    </div>
+                </section>
 
-            {/* COMPARE TABLE */}
-            <section id="compare" className="pr-compare">
-                <h2 className="desktop-h4 pr-h2">Compare Plans At A Glance</h2>
-                <p className="desktop-body-s pr-sub2">
-                    Everything included in each plan — so you can pick what fits your trade.
-                </p>
+                {/* COMPARE */}
+                <section id="compare" className="kc-pricing__compare">
+                    <div className="kc-pricing__sectionHead">
+                        <h2 className="desktop-h4 kc-pricing__h2">Compare plans</h2>
+                        <p className="desktop-body-s kc-pricing__sub2">
+                            Everything included in each plan — so you can pick what fits your trade.
+                        </p>
+                    </div>
 
-                <div className="pr-tableWrap" role="region" aria-label="Plan comparison table">
-                    <table className="pr-table">
-                        <thead>
-                            <tr>
-                                <th className="pr-thFeature">Features</th>
-                                <th className="pr-thPlan">FREE</th>
-                                <th className="pr-thPlan pr-thPlanPlus">PLUS</th>
-                                <th className="pr-thPlan">TEAMS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {comparisonRows.map((r) => (
-                                <tr key={r.label}>
-                                    <td className="pr-tdFeature">{r.label}</td>
-                                    <td className="pr-tdVal">{formatTick(r.free)}</td>
-                                    <td className="pr-tdVal pr-tdPlus">{formatTick(r.plus)}</td>
-                                    <td className="pr-tdVal">{formatTick(r.teams)}</td>
+                    <div className="kc-pricing__tableWrap" role="region" aria-label="Plan comparison table">
+                        <table className="kc-pricing__table">
+                            <thead>
+                                <tr>
+                                    <th className="kc-pricing__thFeature">Features</th>
+                                    <th className="kc-pricing__thPlan">FREE</th>
+                                    <th className="kc-pricing__thPlan kc-pricing__thPlus">PLUS</th>
+                                    <th className="kc-pricing__thPlan">TEAMS</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div className="pr-compareCtas">
-                    <Link to="/register" className="pr-btn pr-btnPrimary">
-                        Get started
-                    </Link>
-                    <Link to="/contactus" className="pr-btn pr-btnGhost">
-                        Ask a question
-                    </Link>
-                </div>
-            </section>
-
-            {/* WHO EACH PLAN IS FOR */}
-            <section className="pr-for">
-                <h2 className="desktop-h4 pr-h2">Who Each Plan Is For</h2>
-                <p className="desktop-body-s pr-sub2">Quick, real-world examples so you know exactly where you fit.</p>
-
-                <div className="pr-forGrid">
-                    {planForCards.map((c) => (
-                        <div key={c.key} className={`pr-forCard is-${c.key}`}>
-                            <div className="pr-forHead">
-                                <span className="pr-forTag">{c.title}</span>
-                                <p className="desktop-h6 pr-forHeadline">{c.headline}</p>
-                            </div>
-
-                            <ul className="pr-forList">
-                                {c.bullets.map((b) => (
-                                    <li key={b} className="desktop-body-s">
-                                        <span className="pr-check" aria-hidden="true">✓</span>
-                                        <span>{b}</span>
-                                    </li>
+                            </thead>
+                            <tbody>
+                                {comparisonRows.map((r) => (
+                                    <tr key={r.label}>
+                                        <td className="kc-pricing__tdFeature">{r.label}</td>
+                                        <td className="kc-pricing__tdVal">{formatTick(r.free)}</td>
+                                        <td className="kc-pricing__tdVal kc-pricing__tdPlus">{formatTick(r.plus)}</td>
+                                        <td className="kc-pricing__tdVal">{formatTick(r.teams)}</td>
+                                    </tr>
                                 ))}
-                            </ul>
+                            </tbody>
+                        </table>
+                    </div>
 
-                            <div className="desktop-body-s pr-callout">{c.callout}</div>
+                    <div className="kc-pricing__compareCtas">
+                        <Link to="/register" className="kc-pricing__btn kc-pricing__btnPrimary">
+                            Get started
+                        </Link>
+                        <Link to="/contactus" className="kc-pricing__btn kc-pricing__btnGhost">
+                            Ask a question
+                        </Link>
+                    </div>
+                </section>
 
-                            <div className="pr-forActions">
-                                <Link to="/register" className="pr-forBtn">
+                {/* WHO IT'S FOR */}
+                <section className="kc-pricing__for">
+                    <div className="kc-pricing__sectionHead">
+                        <h2 className="desktop-h4 kc-pricing__h2">Who each plan is for</h2>
+                        <p className="desktop-body-s kc-pricing__sub2">
+                            Quick, real-world examples so you know exactly where you fit.
+                        </p>
+                    </div>
+
+                    <div className="kc-pricing__forGrid">
+                        {planForCards.map((c) => (
+                            <article key={c.key} className="kc-pricing__forCard">
+                                <span className="kc-pricing__pill">{c.title}</span>
+                                <p className="desktop-h6 kc-pricing__forHeadline">{c.headline}</p>
+
+                                <ul className="kc-pricing__forList">
+                                    {c.bullets.map((b) => (
+                                        <li className="desktop-body-s" key={b}>
+                                            <span className="kc-pricing__check" aria-hidden="true">
+                                                ✓
+                                            </span>
+                                            <span>{b}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                <div className="desktop-body-s kc-pricing__callout">{c.callout}</div>
+                                <Link to="/register" className="kc-pricing__forBtn">
                                     Get started
                                 </Link>
+                            </article>
+                        ))}
+                    </div>
+                </section>
+
+                {/* VALUE */}
+                <section className="kc-pricing__value">
+                    <div className="kc-pricing__sectionHead">
+                        <h2 className="desktop-h4 kc-pricing__h2">One job pays for the whole year</h2>
+                        <p className="desktop-body-s kc-pricing__sub2">
+                            No reprints. No outdated details. Your card works and you update your profile anytime.
+                        </p>
+                    </div>
+
+                    <div className="kc-pricing__valueGrid">
+                        <div className="kc-pricing__valueCard">
+                            <img src={WorksOnEveryPhone} alt="" className="kc-pricing__icon" />
+                            <p className="desktop-h6 kc-pricing__valueTitle">Works on every phone</p>
+                            <p className="desktop-body-s kc-pricing__valueDesc">No app. Tap or scan. Simple.</p>
+                        </div>
+                        <div className="kc-pricing__valueCard">
+                            <img src={EasyToUpdateAnytime} alt="" className="kc-pricing__icon" />
+                            <p className="desktop-h6 kc-pricing__valueTitle">Always up-to-date</p>
+                            <p className="desktop-body-s kc-pricing__valueDesc">No reprints when details change.</p>
+                        </div>
+                        <div className="kc-pricing__valueCard">
+                            <img src={NoAppNeeded} alt="" className="kc-pricing__icon" />
+                            <p className="desktop-h6 kc-pricing__valueTitle">No apps needed</p>
+                            <p className="desktop-body-s kc-pricing__valueDesc">Works instantly on their phone.</p>
+                        </div>
+                        <div className="kc-pricing__valueCard">
+                            <img src={BuiltForRealTrades} alt="" className="kc-pricing__icon" />
+                            <p className="desktop-h6 kc-pricing__valueTitle">Built for real trades</p>
+                            <p className="desktop-body-s kc-pricing__valueDesc">Designed for on-site, not offices.</p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* FAQS */}
+                <section className="kc-pricing__faqs">
+                    <div className="kc-pricing__sectionHead">
+                        <h2 className="desktop-h4 kc-pricing__h2">Pricing FAQs</h2>
+                        <p className="desktop-body-s kc-pricing__sub2">We’ve answered the questions people ask most.</p>
+                    </div>
+
+                    <div className="kc-pricing__faqList">
+                        {pricingFaqs.map((x) => (
+                            <div className="kc-pricing__faqRow" key={x.q}>
+                                <p className="desktop-h6 kc-pricing__faqQ">{x.q}</p>
+                                <p className="desktop-body-s kc-pricing__faqA">{x.a}</p>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* VALUE BLOCK */}
-            <section className="pr-value">
-                <h2 className="desktop-h4 pr-h2">One Job Pays For The Whole Year</h2>
-                <p className="desktop-body-s pr-sub2">
-                    No reprints. No outdated details. The card works, you update your profile anytime, and it’s everywhere.
-                </p>
-
-                <div className="pr-valueGrid">
-                    <div className="pr-valueCard">
-                        <img src={WorksOnEveryPhone} alt="" className="pr-valueIcon" />
-                        <p className="desktop-h6 pr-valueTitle">Works everywhere, every time</p>
-                        <p className="desktop-body-s pr-valueDesc">No app. Tap or scan. Simple.</p>
+                        ))}
                     </div>
-                    <div className="pr-valueCard">
-                        <img src={EasyToUpdateAnytime} alt="" className="pr-valueIcon" />
-                        <p className="desktop-h6 pr-valueTitle">Always up-to-date</p>
-                        <p className="desktop-body-s pr-valueDesc">No reprints when details change.</p>
-                    </div>
-                    <div className="pr-valueCard">
-                        <img src={NoAppNeeded} alt="" className="pr-valueIcon" />
-                        <p className="desktop-h6 pr-valueTitle">No apps needed</p>
-                        <p className="desktop-body-s pr-valueDesc">Works instantly on their phone.</p>
-                    </div>
-                    <div className="pr-valueCard">
-                        <img src={BuiltForRealTrades} alt="" className="pr-valueIcon" />
-                        <p className="desktop-h6 pr-valueTitle">Built for real jobs</p>
-                        <p className="desktop-body-s pr-valueDesc">Designed for on-site, not offices.</p>
-                    </div>
-                </div>
-            </section>
-
-            {/* PRICING FAQS */}
-            <section className="pr-faqs">
-                <h2 className="desktop-h4 pr-h2">Pricing FAQs</h2>
-                <p className="desktop-body-s pr-sub2">We’ve answered the questions people ask most.</p>
-
-                <div className="pr-faqList">
-                    {pricingFaqs.map((x) => (
-                        <div className="pr-faqRow" key={x.q}>
-                            <p className="desktop-h6 pr-faqQ">{x.q}</p>
-                            <p className="desktop-body-s pr-faqA">{x.a}</p>
-                        </div>
-                    ))}
-                </div>
-            </section>
+                </section>
+            </main>
 
             <Footer />
         </>
