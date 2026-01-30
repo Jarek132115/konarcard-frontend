@@ -1,267 +1,276 @@
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-hot-toast';
+// frontend/src/pages/website/ContactUs.jsx
+import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
-import Navbar from '../../components/Navbar';
-import Breadcrumbs from '../../components/Breadcrumbs';
-import Footer from '../../components/Footer';
-import api from '../../services/api';
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import api from "../../services/api";
 
-/* FAQ icons */
-import IDCardIcon from '../../assets/icons/IDCard-Icon.svg';
-import NFCIcon from '../../assets/icons/NFC-Icon.svg';
-import QRCode from '../../assets/icons/QR-Code-Icon.svg';
-import ProfileIcon from '../../assets/icons/Profile-Icon.svg';
-import PencilIcon from '../../assets/icons/Pencil-Icon.svg';
-import BoltIcon from '../../assets/icons/Bolt-Icon.svg';
-import TimeIcon from '../../assets/icons/Time-Icon.svg';
-import ShieldIcon from '../../assets/icons/Shield-Icon.svg';
+import "../../styling/contactus.css";
+
+/* Icons (use your existing icon files) */
+import ContactIcon from "../../assets/icons/Contact-Icon.svg";
+import ChatIcon from "../../assets/icons/Contact-Interface.svg";
+import ToolsIcon from "../../assets/icons/ToolBox-Icon.svg";
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    reason: '',
-    message: '',
-    agree: true,
+    firstName: "",
+    email: "",
+    message: "",
   });
 
   // Auto-open chat if flagged
   useEffect(() => {
-    if (localStorage.getItem('openChatOnLoad') !== '1') return;
+    if (localStorage.getItem("openChatOnLoad") !== "1") return;
+
     const started = Date.now();
     const tryOpen = () => {
       const ready =
-        typeof window !== 'undefined' &&
+        typeof window !== "undefined" &&
         window.tidioChatApi &&
-        typeof window.tidioChatApi.open === 'function';
+        typeof window.tidioChatApi.open === "function";
+
       if (ready) {
-        try { localStorage.removeItem('openChatOnLoad'); } catch { }
+        try {
+          localStorage.removeItem("openChatOnLoad");
+        } catch { }
         window.tidioChatApi.open();
       } else if (Date.now() - started < 5000) {
         setTimeout(tryOpen, 200);
       } else {
-        try { localStorage.removeItem('openChatOnLoad'); } catch { }
+        try {
+          localStorage.removeItem("openChatOnLoad");
+        } catch { }
       }
     };
+
     tryOpen();
   }, []);
 
+  const quickAnswers = useMemo(
+    () => [
+      {
+        q: "How quickly do you reply?",
+        a: "We aim to reply to all messages within one working day. If your message is urgent, live chat during working hours is usually the fastest way to get help.",
+      },
+      {
+        q: "Can you help me set up my profile?",
+        a: "Yes. If you’re unsure how to set something up or want to check you’re doing it right, send us a message and we’ll guide you through it step by step.",
+      },
+      {
+        q: "Do I need an account to contact you?",
+        a: "No — you don’t need an account to get in touch. Anyone can send us a message using the contact form on this page.",
+      },
+      {
+        q: "Is it okay to finish my profile later?",
+        a: "Yes. You can claim your link first and complete your profile later. Your link won’t go anywhere, and you can edit your profile at any time.",
+      },
+      {
+        q: "Is there a phone number I can call?",
+        a: "We don’t offer phone support at the moment. Email and live chat are the quickest and most reliable ways to reach us and get help.",
+      },
+      {
+        q: "What should I do if something isn’t working?",
+        a: "If something doesn’t look right or isn’t working as expected, send us a message and explain what’s happening. Screenshots help if you have them.",
+      },
+    ],
+    []
+  );
+
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    const { name, value } = e.target;
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, reason, message, agree } = formData;
-    if (!name || !email || !reason || !message || !agree) {
-      toast.error('Please fill in all fields and agree to the privacy policy.');
+
+    if (!formData.firstName || !formData.email || !formData.message) {
+      toast.error("Please fill in all fields.");
       return;
     }
+
     try {
-      const res = await api.post('/contact', formData);
-      if (res.data.success) {
-        toast.success('Message sent!');
-        setFormData({ name: '', email: '', reason: '', message: '', agree: true });
+      const res = await api.post("/contact", {
+        name: formData.firstName,
+        email: formData.email,
+        message: formData.message,
+        reason: "Contact Page",
+        agree: true,
+      });
+
+      if (res.data?.success) {
+        toast.success("Message sent!");
+        setFormData({ firstName: "", email: "", message: "" });
       } else {
-        toast.error(res.data.error || 'Something went wrong');
+        toast.error(res.data?.error || "Something went wrong");
       }
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to send message.');
+      toast.error(err.response?.data?.error || "Failed to send message.");
     }
   };
 
   return (
     <>
       <Navbar />
-      <div style={{ marginTop: 20 }} className="section-breadcrumbs">
-        <Breadcrumbs />
-      </div>
 
-      <div className="section section-1-title">
-        <h2 className="desktop-h1 text-center">
-          Let’s <span className="orange">Talk!</span>
-        </h2>
-        <h3 className="desktop-body-xs text-center">
-          Have a question or need help? Send us a message — or{' '}
-          <span
-            className="live-chat-link"
-            onClick={() => window.tidioChatApi && window.tidioChatApi.open()}
-          >
-            start a live chat
-          </span>
-          .
-        </h3>
-      </div>
+      <main className="kc-contact">
+        {/* HERO */}
+        <section className="kc-contact__hero">
+          <div className="kc-contact__heroInner">
+            <h1 className="kc-contact__title">We’re Here To Help</h1>
+            <p className="kc-contact__subtitle">
+              Questions, support, or partnerships — get in touch.
+            </p>
 
-      {/* Contact form */}
-      <div className="section" style={{ marginTop: 10 }}>
-        <form className="contact-form" onSubmit={handleSubmit}>
-          <input
-            id="name"
-            type="text"
-            name="name"
-            className="standard-input"
-            placeholder="Enter your name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            id="email"
-            type="email"
-            name="email"
-            className="standard-input"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-
-          <select
-            id="reason"
-            name="reason"
-            className="standard-input"
-            value={formData.reason}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select a reason</option>
-            <option value="Card not working">My card isn’t working</option>
-            <option value="Card damaged">My card is damaged</option>
-            <option value="Profile issue">I can’t see my profile</option>
-            <option value="Setup help">Help setting up profile</option>
-            <option value="Other">Other</option>
-          </select>
-
-          <textarea
-            id="message"
-            name="message"
-            className="standard-input message-input"
-            placeholder="Enter your message..."
-            value={formData.message}
-            onChange={handleChange}
-            required
-          />
-
-          <label className="terms-label">
-            <input
-              type="checkbox"
-              name="agree"
-              className="konar-checkbox"
-              checked={formData.agree}
-              onChange={handleChange}
-              required
-            />
-            <span className="desktop-body-xs">
-              I understand that Konar will securely hold my data in accordance with their privacy policy.
-            </span>
-          </label>
-
-          <button type="submit" className="desktop-button orange-button">
-            Submit
-          </button>
-        </form>
-      </div>
-
-      {/* FAQs (same pattern as site) */}
-      <div className="section">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">
-            Here are some <span className="orange">questions</span> you might have
-          </h2>
-          <h3 className="desktop-body-xs text-center">
-            Common problems and answers before you reach out
-          </h3>
-        </div>
-
-        <div className="faq-container">
-          <div className="faq-column">
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">What is the Konar NFC business card?</p>
-                <p className="desktop-body-xs">
-                  A reusable card with an NFC chip that opens your Konar profile with a tap—no app, no battery, no fuss.
+            {/* CARDS */}
+            <div className="kc-contact__cards">
+              <div className="kc-contact__card">
+                <div className="kc-contact__cardIcon">
+                  <img src={ContactIcon} alt="" aria-hidden="true" />
+                </div>
+                <h3 className="kc-contact__cardTitle">Email Us</h3>
+                <p className="kc-contact__cardText">
+                  Email us, we usually reply within one working day.
                 </p>
+                <a
+                  className="kc-contact__cardLink"
+                  href="mailto:supportteam@konarcard.com"
+                >
+                  supportteam@konarcard.com
+                </a>
               </div>
-            </div>
 
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">How does the tap actually work?</p>
-                <p className="desktop-body-xs">
-                  The phone’s NFC reader powers the chip and instantly launches your live profile link.
+              <div className="kc-contact__card">
+                <div className="kc-contact__cardIcon">
+                  <img src={ChatIcon} alt="" aria-hidden="true" />
+                </div>
+                <h3 className="kc-contact__cardTitle">Live chat</h3>
+                <p className="kc-contact__cardText">
+                  Chat with our team during working hours for quick help.
                 </p>
+                <button
+                  type="button"
+                  className="kc-contact__cardLink kc-contact__cardButton"
+                  onClick={() =>
+                    window.tidioChatApi && window.tidioChatApi.open()
+                  }
+                >
+                  Start Live Chat
+                </button>
               </div>
-            </div>
 
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">What if someone can’t tap?</p>
-                <p className="desktop-body-xs">
-                  Every card also has a QR code and a shareable link—so there’s always a backup.
+              <div className="kc-contact__card">
+                <div className="kc-contact__cardIcon">
+                  <img src={ToolsIcon} alt="" aria-hidden="true" />
+                </div>
+                <h3 className="kc-contact__cardTitle">Support available 24/7</h3>
+                <p className="kc-contact__cardText">
+                  You can email us anytime — we’ll get back to you as soon as
+                  possible.
                 </p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">What can my profile include?</p>
-                <p className="desktop-body-xs">
-                  Your name, job title, bio, photos, services with pricing, reviews, and contact details.
-                </p>
+                <button
+                  type="button"
+                  className="kc-contact__cardLink kc-contact__cardButton"
+                  onClick={() => {
+                    const el = document.getElementById("kc-contact-form");
+                    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                >
+                  Send Message
+                </button>
               </div>
             </div>
           </div>
+        </section>
 
-          <div className="faq-column">
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">Can I edit my page later?</p>
-                <p className="desktop-body-xs">
-                  Yes. Update info, images, services, or layout anytime—changes go live instantly.
-                </p>
-              </div>
-            </div>
+        {/* FORM */}
+        <section className="kc-contact__formSection" id="kc-contact-form">
+          <div className="kc-contact__formWrap">
+            <h2 className="kc-contact__sectionTitle">Or send us a message</h2>
+            <p className="kc-contact__sectionSub">
+              Fill in the form below and we’ll get back to you as soon as we can.
+            </p>
 
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">How do I share my page?</p>
-                <p className="desktop-body-xs">
-                  Tap your card, show the QR code, or copy your unique link to send anywhere.
-                </p>
-              </div>
-            </div>
+            <form className="kc-contact__form" onSubmit={handleSubmit}>
+              <div className="kc-contact__row2">
+                <div className="kc-contact__field">
+                  <label className="kc-contact__label" htmlFor="firstName">
+                    First name
+                  </label>
+                  <input
+                    id="firstName"
+                    name="firstName"
+                    className="kc-contact__input"
+                    placeholder="Enter your name"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
 
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">How does the free trial work?</p>
-                <p className="desktop-body-xs">
-                  The free trial includes the same features as the subscription. If it ends and you don’t subscribe, your page will no longer show.
-                </p>
+                <div className="kc-contact__field">
+                  <label className="kc-contact__label" htmlFor="email">
+                    Email address
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    className="kc-contact__input"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">What happens if I cancel?</p>
-                <p className="desktop-body-xs">
-                  You’ll keep access until the end of the billing period. After that, your page won’t show until you subscribe again.
-                </p>
+              <div className="kc-contact__field">
+                <label className="kc-contact__label" htmlFor="message">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  className="kc-contact__textarea"
+                  placeholder="Enter your message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                />
               </div>
+
+              <button type="submit" className="kc-contact__submit">
+                Send Message
+              </button>
+            </form>
+          </div>
+        </section>
+
+        {/* QUICK ANSWERS */}
+        <section className="kc-contact__qa">
+          <div className="kc-contact__qaInner">
+            <h2 className="kc-contact__sectionTitle">Quick answers</h2>
+            <p className="kc-contact__sectionSub">
+              Fill in the form below and we’ll get back to you as soon as we can.
+            </p>
+
+            <div className="kc-contact__qaList">
+              {quickAnswers.map((item, idx) => (
+                <div className="kc-contact__qaItem" key={`${item.q}-${idx}`}>
+                  <div className="kc-contact__qaDivider" aria-hidden="true" />
+                  <h3 className="kc-contact__qaQ">{item.q}</h3>
+                  <p className="kc-contact__qaA">{item.a}</p>
+                </div>
+              ))}
+              <div className="kc-contact__qaDivider" aria-hidden="true" />
             </div>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
 
       <Footer />
     </>
