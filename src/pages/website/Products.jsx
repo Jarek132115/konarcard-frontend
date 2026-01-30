@@ -124,10 +124,6 @@ export default function Products() {
         <>
             <Navbar />
 
-            <div style={{ marginTop: 20 }} className="section-breadcrumbs">
-                <Breadcrumbs />
-            </div>
-
             {/* ================= HERO ================= */}
             <section className="kc-products section">
                 <div className="kc-products__hero">
