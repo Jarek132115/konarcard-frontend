@@ -29,8 +29,11 @@ import SuccessCard from "./pages/website/Success.jsx";
 import SuccessSubscription from "./pages/website/SuccessSubscription.jsx";
 import UserPage from "./pages/interface/UserPage.jsx";
 
-// ✅ NEW: Examples page
+// ✅ Examples page
 import Example from "./pages/website/Example.jsx";
+
+// ✅ NEW: Pricing page
+import Pricing from "./pages/website/Pricing.jsx";
 
 // ✅ OAuth handler page
 import OAuthSuccess from "./auth/OAuthSuccess.jsx";
@@ -97,8 +100,11 @@ export default function App() {
           <Route path="/subscription" element={<KonarSubscription />} />
           <Route path="/faq" element={<FAQ />} />
 
-          {/* ✅ NEW Examples route */}
+          {/* Examples */}
           <Route path="/examples" element={<Example />} />
+
+          {/* ✅ Pricing */}
+          <Route path="/pricing" element={<Pricing />} />
 
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/helpcentre" element={<HelpCentre />} />
