@@ -1,5 +1,11 @@
+// Footer.jsx
 import React, { useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
+
+import { gsap } from "gsap";
+import { Draggable } from "gsap/Draggable";
+// If you have InertiaPlugin, you can add it too (optional).
+// import { InertiaPlugin } from "gsap/InertiaPlugin";
 
 import LogoIcon from "../assets/icons/Logo-Icon.svg";
 import CopyrightIcon from "../assets/icons/Copyright-Icon.svg";
@@ -20,6 +26,9 @@ import ShareByTapQR from "../assets/icons/Share_By_Tap_QR.svg";
 import BuiltForRealTrades from "../assets/icons/Built_For_Real_Trades.svg";
 import LooksProfessional from "../assets/icons/Looks_Professional.svg";
 import SetUpInMinutes from "../assets/icons/Set_Up_In_Minutes.svg";
+
+gsap.registerPlugin(Draggable);
+// gsap.registerPlugin(Draggable, InertiaPlugin);
 
 export default function Footer() {
     /* =========================
@@ -71,131 +80,180 @@ export default function Footer() {
         []
     );
 
+    // Duplicate to create a seamless loop
+    const loopItems = useMemo(() => [...carouselItems, ...carouselItems], [carouselItems]);
+
     /* =========================
-       Carousel behavior
+       GSAP marquee + draggable
+       - Always moves left -> right (track x increases)
+       - User can drag horizontally
+       - If user drags vertically, page scroll still works (native scroll)
        ========================= */
+    const viewportRef = useRef(null);
     const trackRef = useRef(null);
-    const draggingRef = useRef(false);
-    const startXRef = useRef(0);
-    const startScrollLeftRef = useRef(0);
-    const rafRef = useRef(null);
 
-    // Auto-scroll left → right
     useEffect(() => {
-        const el = trackRef.current;
-        if (!el) return;
+        const viewport = viewportRef.current;
+        const track = trackRef.current;
+        if (!viewport || !track) return;
 
-        let last = performance.now();
-        const speed = 28; // px/sec
+        // Kill any previous instances (hot reload safety)
+        let draggableInstance = null;
+        let tickerFn = null;
 
-        const tick = (now) => {
-            const dt = now - last;
-            last = now;
+        const setup = () => {
+            gsap.set(track, { x: 0 });
 
-            if (!draggingRef.current) {
-                el.scrollLeft += (speed * dt) / 1000;
-                if (el.scrollLeft >= el.scrollWidth / 2) {
-                    el.scrollLeft = 0;
+            // Half-width is the width of one full set of items (because we duplicated)
+            const totalWidth = track.scrollWidth;
+            const half = totalWidth / 2;
+
+            // Wrap x between [-half, 0]
+            const wrapX = gsap.utils.wrap(-half, 0);
+
+            // Start at -half so content flows in naturally
+            let x = -half;
+            gsap.set(track, { x });
+
+            let paused = false;
+            const speedPxPerSec = 50; // adjust as needed
+            let last = performance.now();
+
+            tickerFn = () => {
+                if (paused) {
+                    last = performance.now();
+                    return;
                 }
-            }
+                const now = performance.now();
+                const dt = (now - last) / 1000;
+                last = now;
 
-            rafRef.current = requestAnimationFrame(tick);
+                x = wrapX(x + speedPxPerSec * dt); // + = move RIGHT
+                gsap.set(track, { x });
+            };
+
+            gsap.ticker.add(tickerFn);
+
+            draggableInstance = Draggable.create(track, {
+                type: "x",
+                // inertia: true, // enable if you add InertiaPlugin
+                allowNativeTouchScrolling: true, // IMPORTANT: vertical drags scroll the page
+                lockAxis: true,
+                onPress() {
+                    paused = true;
+                },
+                onDrag() {
+                    x = wrapX(this.x);
+                    gsap.set(track, { x });
+                },
+                onRelease() {
+                    // Sync x to current transform and resume
+                    x = wrapX(gsap.getProperty(track, "x"));
+                    paused = false;
+                },
+                onThrowUpdate() {
+                    // if inertia is enabled
+                    x = wrapX(this.x);
+                    gsap.set(track, { x });
+                },
+            })?.[0];
         };
 
-        rafRef.current = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(rafRef.current);
-    }, []);
+        // Setup now, and re-setup on resize (width changes)
+        setup();
 
-    // Drag logic (horizontal only)
-    useEffect(() => {
-        const el = trackRef.current;
-        if (!el) return;
-
-        const onPointerDown = (e) => {
-            draggingRef.current = true;
-            startXRef.current = e.clientX;
-            startScrollLeftRef.current = el.scrollLeft;
-            el.setPointerCapture(e.pointerId);
+        const onResize = () => {
+            // teardown & rebuild to recalc widths
+            if (draggableInstance) draggableInstance.kill();
+            if (tickerFn) gsap.ticker.remove(tickerFn);
+            setup();
         };
 
-        const onPointerMove = (e) => {
-            if (!draggingRef.current) return;
-            const dx = e.clientX - startXRef.current;
-            el.scrollLeft = startScrollLeftRef.current - dx;
-        };
-
-        const endDrag = () => {
-            draggingRef.current = false;
-        };
-
-        el.addEventListener("pointerdown", onPointerDown);
-        window.addEventListener("pointermove", onPointerMove);
-        window.addEventListener("pointerup", endDrag);
+        window.addEventListener("resize", onResize);
 
         return () => {
-            el.removeEventListener("pointerdown", onPointerDown);
-            window.removeEventListener("pointermove", onPointerMove);
-            window.removeEventListener("pointerup", endDrag);
+            window.removeEventListener("resize", onResize);
+            if (draggableInstance) draggableInstance.kill();
+            if (tickerFn) gsap.ticker.remove(tickerFn);
         };
-    }, []);
+    }, [loopItems]);
 
     return (
         <footer className="kc-footer">
             {/* =========================
-         Top navy section
+          Top navy section
          ========================= */}
             <section className="kc-footer__hero">
-                <h2 className="kc-footer__heroTitle">
-                    Because Business Cards<br />Should Work Harder
-                </h2>
+                <div className="kc-footer__heroInner">
+                    <h2 className="kc-footer__heroTitle">
+                        Because Business Cards<br />Should Work Harder
+                    </h2>
 
-                <div className="kc-footer__carousel">
-                    <div className="kc-footer__track" ref={trackRef}>
-                        {[...carouselItems, ...carouselItems].map((item, i) => (
-                            <div className="kc-footer__item" key={`${item.title}-${i}`}>
-                                <img src={item.icon} alt="" className="kc-footer__itemIcon" />
-                                <div>
-                                    <p className="kc-footer__itemTitle">{item.title}</p>
-                                    <p className="kc-footer__itemDesc">{item.desc}</p>
-                                </div>
+                    <div className="kc-footer__carouselWrap">
+                        <div className="kc-footer__carouselViewport" ref={viewportRef} aria-label="Benefits carousel">
+                            <div className="kc-footer__track" ref={trackRef}>
+                                {loopItems.map((item, i) => (
+                                    <div className="kc-footer__item" key={`${item.title}-${i}`}>
+                                        <img src={item.icon} alt="" className="kc-footer__itemIcon" aria-hidden="true" />
+                                        <div className="kc-footer__itemText">
+                                            <p className="kc-footer__itemTitle">{item.title}</p>
+                                            <p className="kc-footer__itemDesc">{item.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </div>
+                        </div>
 
-                <Link to="/register" className="kc-footer__heroCta">
-                    Claim Your Link
-                </Link>
+                        {/* edge fades like your design */}
+                        <div className="kc-footer__fade kc-footer__fade--left" aria-hidden="true" />
+                        <div className="kc-footer__fade kc-footer__fade--right" aria-hidden="true" />
+                    </div>
+
+                    <Link to="/register" className="kc-footer__heroCta">
+                        Claim Your Link
+                    </Link>
+                </div>
             </section>
 
             {/* =========================
-         Main footer
+          Main footer (white)
          ========================= */}
             <section className="kc-footer__main">
                 <div className="kc-footer__mainInner">
-                    {/* Brand */}
-                    <div>
+                    {/* Left brand block */}
+                    <div className="kc-footer__left">
                         <div className="kc-footer__brand">
-                            <img src={LogoIcon} alt="KonarCard" />
-                            <span>KonarCard</span>
+                            <img src={LogoIcon} alt="KonarCard" className="kc-footer__brandLogo" />
+                            <span className="kc-footer__brandName">KonarCard</span>
                         </div>
 
                         <p className="kc-footer__desc">
                             Join our newsletter to stay up to date on features and updates.
                         </p>
 
-                        <div className="kc-footer__socials">
-                            <img src={FooterInstagram} alt="Instagram" />
-                            <img src={FooterFacebook} alt="Facebook" />
-                            <img src={FooterLinkedIn} alt="LinkedIn" />
-                            <img src={FooterTiktok} alt="TikTok" />
-                            <img src={FooterYoutube} alt="YouTube" />
+                        <div className="kc-footer__socials" aria-label="Social links">
+                            {/* Keep same links as before (you currently use /# placeholders) */}
+                            <Link to="/#" aria-label="Instagram">
+                                <img src={FooterInstagram} alt="" aria-hidden="true" />
+                            </Link>
+                            <Link to="/#" aria-label="Facebook">
+                                <img src={FooterFacebook} alt="" aria-hidden="true" />
+                            </Link>
+                            <Link to="/#" aria-label="LinkedIn">
+                                <img src={FooterLinkedIn} alt="" aria-hidden="true" />
+                            </Link>
+                            <Link to="/#" aria-label="TikTok">
+                                <img src={FooterTiktok} alt="" aria-hidden="true" />
+                            </Link>
+                            <Link to="/#" aria-label="YouTube">
+                                <img src={FooterYoutube} alt="" aria-hidden="true" />
+                            </Link>
                         </div>
                     </div>
 
-                    {/* Columns */}
+                    {/* Right columns */}
                     <div className="kc-footer__cols">
-                        <div>
+                        <div className="kc-footer__col">
                             <h4>Product</h4>
                             <Link to="/productandplan">How KonarCard Works</Link>
                             <Link to="/productandplan">Digital Business Cards</Link>
@@ -204,15 +262,15 @@ export default function Footer() {
                             <Link to="/examples">Examples</Link>
                         </div>
 
-                        <div>
+                        <div className="kc-footer__col">
                             <h4>Support</h4>
                             <Link to="/contactus">Contact Us</Link>
                             <Link to="/faq">FAQs</Link>
-                            <Link to="/policies">Shipping & Returns</Link>
+                            <Link to="/policies">Shipping &amp; Returns</Link>
                             <Link to="/policies">Warranty</Link>
                         </div>
 
-                        <div>
+                        <div className="kc-footer__col">
                             <h4>Company</h4>
                             <Link to="/about">About KonarCard</Link>
                             <Link to="/reviews">Reviews</Link>
@@ -221,16 +279,19 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="kc-footer__bottom">
-                    <div className="kc-footer__copyright">
-                        <img src={CopyrightIcon} alt="" />
-                        <span>2025 KONARCARD LTD. All Rights Reserved</span>
-                    </div>
+                {/* Styled bottom row (matches your 2nd image) */}
+                <div className="kc-footer__bottomBar">
+                    <div className="kc-footer__bottomInner">
+                        <div className="kc-footer__copyright">
+                            <img src={CopyrightIcon} alt="" aria-hidden="true" />
+                            <span>2025 KONARCARD LTD. All Rights Reserved</span>
+                        </div>
 
-                    <div className="kc-footer__policies">
-                        <Link to="/policies">Terms Of Service</Link>
-                        <Link to="/policies">Privacy Policy</Link>
-                        <Link to="/policies">Cookie Policy</Link>
+                        <div className="kc-footer__policies">
+                            <Link to="/policies">Terms Of Service</Link>
+                            <Link to="/policies">Privacy Policy</Link>
+                            <Link to="/policies">Cookie Policy</Link>
+                        </div>
                     </div>
                 </div>
             </section>
