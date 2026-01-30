@@ -1,6 +1,3 @@
-/* frontend/src/styling/auth.css
-   Shared auth styling (Login + Register) + Claim-link / Save-card register screens */
-
 :root {
     --kc-orange: #ff7b00;
     --kc-orange-hover: #e66f00;
@@ -24,7 +21,6 @@
     color: var(--kc-text);
 }
 
-/* subtle diagonal background */
 .kc-auth-page::before {
     content: "";
     position: absolute;
@@ -35,7 +31,6 @@
     pointer-events: none;
 }
 
-/* header */
 .kc-auth-header {
     position: relative;
     z-index: 2;
@@ -77,7 +72,6 @@
     transform: scale(1.04);
 }
 
-/* layout */
 .kc-auth-main {
     position: relative;
     z-index: 2;
@@ -93,7 +87,6 @@
     text-align: center;
 }
 
-/* headings */
 .kc-title {
     margin: 0 0 10px;
     font-size: 56px;
@@ -120,7 +113,6 @@
     text-decoration: underline;
 }
 
-/* form */
 .kc-form {
     margin-top: 10px;
     display: flex;
@@ -146,7 +138,6 @@
     font-weight: 600;
 }
 
-/* inputs */
 .kc-input {
     width: 100%;
     height: 52px;
@@ -165,7 +156,6 @@
     box-shadow: 0 0 0 4px rgba(255, 123, 0, 0.14);
 }
 
-/* claim input row (prefix + | separator) */
 .kc-claim {
     height: 52px;
     display: flex;
@@ -207,76 +197,6 @@
     box-shadow: none !important;
 }
 
-/* password toggle */
-.kc-password {
-    position: relative;
-}
-
-.kc-input-password {
-    padding-right: 86px;
-}
-
-.kc-password-toggle {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 36px;
-    padding: 0 14px;
-    border: 1px solid var(--kc-border);
-    border-radius: 8px;
-    background: #f8fafc;
-    color: #0b1220;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-}
-
-.kc-password-toggle:hover {
-    background: #eef2f7;
-}
-
-/* password rules */
-.kc-password-rules {
-    margin-top: 10px;
-    display: grid;
-    gap: 8px;
-}
-
-.kc-rule {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.kc-rule-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
-    border: 2px solid var(--kc-border);
-    background: transparent;
-}
-
-.kc-rule.is-ok {
-    color: #1a7f37;
-}
-
-.kc-rule.is-ok .kc-rule-dot {
-    border-color: #1a7f37;
-    background: #1a7f37;
-}
-
-.kc-rule.is-bad {
-    color: #b42318;
-}
-
-.kc-rule.is-bad .kc-rule-dot {
-    border-color: #b42318;
-}
-
-/* microcopy under claim input */
 .kc-microcopy {
     margin: 2px 0 0;
     text-align: center;
@@ -285,7 +205,6 @@
     font-style: italic;
 }
 
-/* primary buttons */
 .kc-btn {
     height: 56px;
     border-radius: 999px;
@@ -323,7 +242,6 @@
     transform: translateY(-1px);
 }
 
-/* centered buttons like screenshots */
 .kc-btn-center {
     width: 320px;
     max-width: 100%;
@@ -331,7 +249,6 @@
     display: block;
 }
 
-/* small text links/buttons */
 .kc-text-back {
     margin: 10px auto 0;
     display: inline-block;
@@ -347,7 +264,6 @@
     text-decoration: underline;
 }
 
-/* bottom line under button */
 .kc-bottom-line {
     margin: 10px 0 0;
     text-align: center;
@@ -355,7 +271,6 @@
     color: var(--kc-muted);
 }
 
-/* remember checkbox row */
 .kc-remember {
     margin-top: 6px;
     font-size: 13px;
@@ -363,7 +278,6 @@
     font-weight: 600;
 }
 
-/* divider + social buttons */
 .kc-divider {
     margin: 18px 0 14px;
     display: grid;
@@ -421,13 +335,6 @@
     transform: translateY(-1px);
 }
 
-.kc-ico {
-    width: 18px;
-    height: 18px;
-    flex: 0 0 18px;
-}
-
-/* responsive */
 @media (max-width: 900px) {
     .kc-title {
         font-size: 44px;

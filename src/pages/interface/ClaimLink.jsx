@@ -1,9 +1,9 @@
-// frontend/src/pages/interface/ClaimLink.jsx
 import React, { useState, useContext, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import { AuthContext } from '../../components/AuthContext';
+import '../../styling/login.css';
 
 export default function ClaimLink() {
     const navigate = useNavigate();
@@ -25,7 +25,6 @@ export default function ClaimLink() {
         if (!cleaned) return toast.error('Please enter a link name.');
         if (cleaned.length < 3) return toast.error('Link name must be at least 3 characters.');
 
-        // ✅ Force attach token (do NOT rely only on interceptor)
         const token = localStorage.getItem('token');
         if (!token) {
             toast.error('You must be logged in.');
@@ -38,11 +37,7 @@ export default function ClaimLink() {
             const res = await api.post(
                 '/claim-link',
                 { username: cleaned },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
             if (res?.data?.error) {
@@ -50,18 +45,14 @@ export default function ClaimLink() {
                 return;
             }
 
-            // ✅ If backend treated it as "availability only", it returns available:true but no user
             if (!res?.data?.user) {
                 toast.error('Claim did not save. Please try again.');
                 return;
             }
 
             toast.success('Link claimed successfully!');
-
-            // refresh user in context/localStorage
             await fetchUser();
 
-            // cleanup any pending keys
             try {
                 localStorage.removeItem('pendingClaimUsername');
                 localStorage.removeItem('oauthSource');
@@ -77,54 +68,47 @@ export default function ClaimLink() {
 
     return (
         <div className="kc-auth-page">
+            <header className="kc-auth-header">
+                <Link to="/" className="kc-logo" aria-label="KonarCard Home">K</Link>
+                <button type="button" className="kc-close" onClick={() => navigate('/myprofile')} aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </header>
+
             <main className="kc-auth-main">
                 <div className="kc-auth-inner">
                     <h1 className="kc-title">Claim Your Link</h1>
-                    <p className="kc-subtitle">This is your unique link.</p>
+                    <p className="kc-subtitle">
+                        This is your unique link. When someone clicks it, they see your digital business card.
+                    </p>
 
-                    <form onSubmit={submit} className="kc-form">
-                        <div style={{ width: '100%', display: 'flex', gap: 12, alignItems: 'center' }}>
-                            <div style={{ flex: 1 }}>
-                                <label className="kc-label" style={{ display: 'block', marginBottom: 8 }}>
-                                    Claim Your Link Name
-                                </label>
+                    <form onSubmit={submit} className="kc-form kc-form-claim">
+                        <div className="kc-field">
+                            <label className="kc-label">Claim Your Link Name</label>
 
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <div
-                                        style={{
-                                            padding: '12px 14px',
-                                            border: '1px solid #e6e6e6',
-                                            borderRight: 'none',
-                                            borderRadius: '10px 0 0 10px',
-                                            background: '#fafafa',
-                                            color: '#666',
-                                            fontSize: 14,
-                                            whiteSpace: 'nowrap',
-                                        }}
-                                    >
-                                        www.konarcard.com/u/
-                                    </div>
-
-                                    <input
-                                        className="kc-input"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                        placeholder="yourname"
-                                        autoComplete="off"
-                                        style={{ borderRadius: '0 10px 10px 0' }}
-                                        required
-                                    />
-                                </div>
-
-                                <p style={{ marginTop: 10, fontSize: 13, color: '#666', textAlign: 'center' }}>
-                                    Free to claim. No payment needed.
-                                </p>
+                            <div className="kc-claim">
+                                <div className="kc-claim-prefix">www.konarcard.com/u/</div>
+                                <div className="kc-claim-sep">|</div>
+                                <input
+                                    className="kc-input kc-claim-input"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    placeholder="yourbusinessname"
+                                    autoComplete="off"
+                                    required
+                                />
                             </div>
+
+                            <p className="kc-microcopy">Free to claim. No payment needed.</p>
                         </div>
 
                         <button className="kc-btn kc-btn-primary kc-btn-center" disabled={loading} aria-busy={loading}>
                             {loading ? 'Claiming…' : 'Claim Link'}
                         </button>
+
+                        <p className="kc-bottom-line">
+                            Already have an account? <Link className="kc-link" to="/login">Sign In</Link>
+                        </p>
                     </form>
                 </div>
             </main>
