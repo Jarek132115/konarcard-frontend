@@ -1,49 +1,60 @@
+/* =========================
+   POLICIES PAGE (Sticky sidebar)
+   ========================= */
+
 /* Main Layout */
 .section-flex {
     display: flex;
     width: 1040px;
-    align-items: flex-start;
+    align-items: stretch;
+    /* ✅ IMPORTANT: makes sidebar container match content height */
     gap: 40px;
     margin: 40px auto;
 }
 
+/* Right content wrapper */
+.policy-content {
+    flex: 3;
+    min-width: 0;
+}
+
+/* Policy content inner */
 .section-policy {
-    max-width: 1040px;
-    margin: auto;
+    width: 100%;
     margin-bottom: 100px;
 }
 
+/* Left sidebar column */
 .policy-sidebar {
-    flex: 1;
+    flex: 0 0 240px;
     max-width: 240px;
-    border-radius: 20px;
-    position: relative;
     align-self: stretch;
+    /* ✅ ensures full height like the content column */
+    position: relative;
+    /* sticky uses this column as its boundary */
 }
 
+/* Sticky wrapper (this is what actually sticks) */
+.policy-sticky-box {
+    position: sticky;
+    top: 110px;
+    /* ✅ set this to navbar height + spacing (adjust if needed) */
+}
+
+/* Boxes */
 .policy-box,
 .contact-box {
     display: flex;
     flex-direction: column;
-    align-items: start;
-    background-color: white;
+    align-items: flex-start;
+    background-color: #fff;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.10);
     padding: 20px;
     border-radius: 20px;
     margin-bottom: 20px;
 }
 
-.policy-box-footer {
-    display: flex;
-    gap: 20px;
-}
-
-.policy-sticky-box {
-    position: sticky;
-    top: 100px;
-    bottom: 40px;
-}
-
+/* Nav */
 .policy-nav {
     list-style: none;
     padding: 0;
@@ -66,24 +77,22 @@
 }
 
 .policy-nav li.active {
-    font-weight: 600;
-    color: black;
+    font-weight: 700;
+    color: #000;
 }
 
-.policy-content {
-    flex: 3;
-}
-
+/* Dots list styling */
 .policy-dot {
     display: flex;
-    align-items: center;
-    margin-bottom: 2px;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 6px;
 }
 
 .icon-10 {
     width: 10px;
-    margin-right: 10px;
-    margin-left: 5px;
+    margin-top: 7px;
+    /* aligns bullet with first line of text */
 }
 
 /* ============ Responsive ============ */
@@ -94,13 +103,6 @@
         width: 100%;
         margin: 40px auto;
     }
-
-    .section-policy {
-        max-width: 900px;
-        width: 100%;
-        margin: auto;
-        margin-bottom: 80px;
-    }
 }
 
 @media (max-width: 1000px) {
@@ -108,14 +110,16 @@
         flex-direction: column;
         width: 90%;
         gap: 30px;
-        margin: 00px auto;
+        margin: 0 auto;
+        align-items: stretch;
     }
 
     .policy-sidebar {
-        max-width: 100%;
         flex: none;
+        max-width: 100%;
     }
 
+    /* On mobile we don't want sticky */
     .policy-sticky-box {
         position: static;
         display: flex;
@@ -130,17 +134,12 @@
         margin-bottom: 0;
     }
 
-    .contact-box {
-        height: fit-content;
-    }
-
     .policy-content {
         width: 100%;
         flex: none;
     }
 
     .section-policy {
-        margin: auto;
         margin-bottom: 80px;
     }
 }
