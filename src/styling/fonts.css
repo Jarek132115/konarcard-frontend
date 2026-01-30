@@ -70,7 +70,7 @@ body {
 .h1 {
   font-family: "Cal Sans", sans-serif;
   font-size: 72px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 80px;
   color: var(--kc-text-primary);
 }
@@ -78,7 +78,7 @@ body {
 .h2 {
   font-family: "Cal Sans", sans-serif;
   font-size: 48px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 56px;
   color: var(--kc-text-primary);
 }
@@ -86,7 +86,7 @@ body {
 .h3 {
   font-family: "Cal Sans", sans-serif;
   font-size: 36px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 44px;
   color: var(--kc-text-primary);
 }
@@ -94,7 +94,7 @@ body {
 .h4 {
   font-family: "Cal Sans", sans-serif;
   font-size: 28px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 36px;
   color: var(--kc-text-primary);
 }
@@ -102,7 +102,7 @@ body {
 .h5 {
   font-family: "Cal Sans", sans-serif;
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 30px;
   color: var(--kc-text-primary);
 }
@@ -110,7 +110,7 @@ body {
 .h6 {
   font-family: "Cal Sans", sans-serif;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 26px;
   color: var(--kc-text-primary);
 }
