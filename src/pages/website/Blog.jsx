@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
+import "../../styling/design-system.css";
 import "../../styling/blog.css";
 
 export default function Blog() {
@@ -19,8 +20,6 @@ export default function Blog() {
         []
     );
 
-    // 12 posts total (4 categories x 3 posts)
-    // "Featured Posts" only shows when filter === "all"
     const posts = useMemo(
         () => [
             // Tips & guides (3)
@@ -59,7 +58,7 @@ export default function Blog() {
                 categoryLabel: "Digital business cards",
                 title: "Do trades really need digital business cards?",
                 excerpt:
-                    "Paper cards get lost. Digital cards give tradies one simple link to share details, work, and contact info instantly.",
+                    "Paper cards get lost. Digital cards give tradies one link to share details, work, and contact info instantly.",
                 featured: true,
             },
             {
@@ -86,7 +85,7 @@ export default function Blog() {
                 id: "g1",
                 category: "getting-more-jobs",
                 categoryLabel: "Getting more jobs",
-                title: "How to set up your KonarCard in under 5 mins.",
+                title: "How to set up your KonarCard in under 5 mins",
                 excerpt:
                     "Claim your link, add your details, and start sharing your card by tap, QR, or link — in a few minutes.",
                 featured: true,
@@ -159,12 +158,12 @@ export default function Blog() {
                 {/* Hero */}
                 <section className="kc-blog__hero">
                     <div className="kc-blog__heroInner">
-                        <h1 className="kc-blog__title">
+                        <h1 className="h2 kc-blog__title">
                             Tips, guides, and ideas to <br />
                             help you win more jobs
                         </h1>
-                        <p className="kc-blog__subtitle">
-                            Practical advice for trades using digital business cards, profiles, <br />
+                        <p className="body-s kc-blog__subtitle">
+                            Practical advice for trades using digital business cards, profiles,
                             and NFC.
                         </p>
 
@@ -193,8 +192,8 @@ export default function Blog() {
                 {activeTab === "all" && (
                     <section className="kc-blog__section">
                         <div className="kc-blog__sectionHead">
-                            <h2 className="kc-blog__sectionTitle">Featured Posts</h2>
-                            <p className="kc-blog__sectionSub">
+                            <h2 className="h4 kc-blog__sectionTitle">Featured posts</h2>
+                            <p className="body-s kc-blog__sectionSub">
                                 Popular guides to help you get the most out of KonarCard.
                             </p>
                         </div>
@@ -208,10 +207,9 @@ export default function Blog() {
 
                                     <div className="kc-blog__cardBody">
                                         <p className="kc-blog__cat">{p.categoryLabel}</p>
-                                        <h3 className="kc-blog__cardTitle">{p.title}</h3>
-                                        <p className="kc-blog__excerpt">{p.excerpt}</p>
+                                        <h3 className="h5 kc-blog__cardTitle">{p.title}</h3>
+                                        <p className="body-s kc-blog__excerpt">{p.excerpt}</p>
 
-                                        {/* Placeholder link for now */}
                                         <Link to="/blog" className="kc-blog__read">
                                             Read article →
                                         </Link>
@@ -225,8 +223,8 @@ export default function Blog() {
                 {/* All Blogs */}
                 <section className="kc-blog__section kc-blog__section--tightTop">
                     <div className="kc-blog__sectionHead">
-                        <h2 className="kc-blog__sectionTitle">All Blogs</h2>
-                        <p className="kc-blog__sectionSub">
+                        <h2 className="h4 kc-blog__sectionTitle">All blogs</h2>
+                        <p className="body-s kc-blog__sectionSub">
                             Everything you need to know about KonarCard, profiles & NFC cards.
                         </p>
                     </div>
@@ -240,10 +238,9 @@ export default function Blog() {
 
                                 <div className="kc-blog__cardBody">
                                     <p className="kc-blog__cat">{p.categoryLabel}</p>
-                                    <h3 className="kc-blog__cardTitle">{p.title}</h3>
-                                    <p className="kc-blog__excerpt">{p.excerpt}</p>
+                                    <h3 className="h5 kc-blog__cardTitle">{p.title}</h3>
+                                    <p className="body-s kc-blog__excerpt">{p.excerpt}</p>
 
-                                    {/* Placeholder link for now */}
                                     <Link to="/blog" className="kc-blog__read">
                                         Read article →
                                     </Link>
