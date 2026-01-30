@@ -17,7 +17,7 @@ export default function ClaimLink() {
     const sanitizeUsername = (raw) =>
         (raw || '').trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
 
-    
+
     const submit = async (e) => {
         e.preventDefault();
 
@@ -27,7 +27,7 @@ export default function ClaimLink() {
 
         setLoading(true);
         try {
-            const res = await api.post('/claim-link', { username: clean }); 
+            const res = await api.post('/claim-link', { username: clean }, { headers: { 'x-no-auth': '1' } });
 
             if (res.data?.error) {
                 toast.error(res.data.error);

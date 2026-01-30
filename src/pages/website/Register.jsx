@@ -131,14 +131,10 @@ export default function Register() {
         }
 
         try {
-            await api.post(
-                '/claim-link',
-                { username },
-                { headers: { 'X-No-Auth': '1' } } // ✅ critical
-            );
+            await api.post('/claim-link', { username }, { headers: { 'x-no-auth': '1' } });
 
             localStorage.setItem(CLAIM_KEY, username);
-            setData((d) => ({ ...d, username }));
+            setData(d => ({ ...d, username }));
             setClaimStep(false);
             setTimeout(() => document.getElementById('name')?.focus(), 0);
         } catch (err) {
@@ -146,6 +142,7 @@ export default function Register() {
             toast.error(msg);
         }
     };
+
 
 
     // STEP 2: register (email+password)
