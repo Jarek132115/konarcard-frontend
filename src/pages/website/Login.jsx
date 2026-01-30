@@ -37,16 +37,12 @@ export default function Login() {
     const startOAuth = (provider) => {
         try {
             localStorage.setItem('oauthSource', 'login');
-            // ✅ DO NOT clear pendingClaimSlug here.
-            // If user claimed earlier, we want OAuthSuccess to finalize it.
+            localStorage.removeItem('pendingClaimUsername'); // ✅ correct key
         } catch { }
-
-        const base = (import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim())
-            ? import.meta.env.VITE_API_URL.trim()
-            : (api?.defaults?.baseURL || FALLBACK_BASE);
-
+        const base = import.meta.env.VITE_API_URL;
         window.location.href = `${base}/auth/${provider}`;
     };
+
 
     useEffect(() => {
         try {

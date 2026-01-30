@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../components/AuthContext';
 import api from '../services/api';
 
-const CLAIM_KEY = 'pendingClaimSlug';
+const PENDING_CLAIM_KEY = 'pendingClaimUsername';
 const OAUTH_SOURCE_KEY = 'oauthSource'; // 'register' | 'login'
 
 export default function OAuthSuccess() {
@@ -25,12 +25,11 @@ export default function OAuthSuccess() {
             return;
         }
 
-        // Store token immediately (api interceptor will attach Bearer automatically)
+        // store token immediately
         login(token, null);
 
         (async () => {
             try {
-                // Pull freshest user
                 const fresh = await fetchUser();
                 const user =
                     fresh ||
@@ -44,39 +43,41 @@ export default function OAuthSuccess() {
 
                 const hasClaim = !!(user?.username || user?.slug || user?.profileUrl);
                 if (hasClaim) {
-                    // ✅ if user already has claim saved in DB, clean up any pending local state
                     try {
-                        localStorage.removeItem(CLAIM_KEY);
+                        localStorage.removeItem(PENDING_CLAIM_KEY);
                         localStorage.removeItem(OAUTH_SOURCE_KEY);
                     } catch { }
                     navigate('/myprofile', { replace: true });
                     return;
                 }
 
-                // No claim yet: try to finalize using pending slug
+                // no claim yet
                 let pending = '';
+                let source = '';
                 try {
-                    pending = (localStorage.getItem(CLAIM_KEY) || '').trim().toLowerCase();
+                    pending = (localStorage.getItem(PENDING_CLAIM_KEY) || '').trim().toLowerCase();
+                    source = localStorage.getItem(OAUTH_SOURCE_KEY) || '';
                 } catch { }
 
-                if (pending) {
+                // ✅ Auto-claim only if they came from REGISTER and we have a pending claim
+                if (source === 'register' && pending) {
                     try {
                         const res = await api.post('/claim-link', { username: pending });
-                        if (!res.data?.error) {
+                        if (res?.data?.user && !res.data?.error) {
                             await fetchUser();
                             try {
-                                localStorage.removeItem(CLAIM_KEY);
+                                localStorage.removeItem(PENDING_CLAIM_KEY);
                                 localStorage.removeItem(OAUTH_SOURCE_KEY);
                             } catch { }
                             navigate('/myprofile', { replace: true });
                             return;
                         }
                     } catch {
-                        // fall through to /claim
+                        // fall through
                     }
                 }
 
-                // Otherwise go to claim page
+                // otherwise go claim manually
                 navigate('/claim', { replace: true });
             } catch {
                 navigate('/login?oauth=failed', { replace: true });

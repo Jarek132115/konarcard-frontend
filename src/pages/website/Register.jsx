@@ -6,9 +6,8 @@ import { AuthContext } from '../../components/AuthContext';
 import api from '../../services/api';
 import '../../styling/login.css';
 
-const CLAIM_KEY = 'pendingClaimSlug';
+const PENDING_CLAIM_KEY = 'pendingClaimUsername';
 const OAUTH_SOURCE_KEY = 'oauthSource';
-const FALLBACK_BASE = 'https://konarcard-backend-331608269918.europe-west1.run.app';
 
 export default function Register() {
     const navigate = useNavigate();
@@ -35,9 +34,9 @@ export default function Register() {
 
     useEffect(() => {
         try {
-            const savedSlug = localStorage.getItem(CLAIM_KEY);
+            const saved = localStorage.getItem(PENDING_CLAIM_KEY);
             const stateSlug = location.state?.claimedUsername;
-            const finalSlug = (savedSlug || stateSlug || '').trim().toLowerCase();
+            const finalSlug = (saved || stateSlug || '').trim().toLowerCase();
 
             if (finalSlug) {
                 setData((d) => ({ ...d, username: finalSlug }));
@@ -60,24 +59,24 @@ export default function Register() {
         e.preventDefault();
         const username = (data.username || '').trim().toLowerCase();
 
-        if (!username) {
-            toast.error('Please enter a link name');
-            return;
-        }
+        if (!username) return toast.error('Please enter a link name');
 
         try {
-            // availability check only (no auth)
-            await api.post('/claim-link', { username });
+            // availability check (not logged in) is fine here
+            const res = await api.post('/claim-link', { username });
 
-            localStorage.setItem(CLAIM_KEY, username);
+            if (res?.data?.error) {
+                toast.error(res.data.error);
+                return;
+            }
 
+            localStorage.setItem(PENDING_CLAIM_KEY, username);
             setData((d) => ({ ...d, username }));
             setForceClaimStep(false);
 
             setTimeout(() => document.getElementById('name')?.focus(), 0);
         } catch (err) {
-            const msg = err?.response?.data?.error || 'Link not available';
-            toast.error(msg);
+            toast.error(err?.response?.data?.error || 'Link not available');
         }
     };
 
@@ -94,9 +93,8 @@ export default function Register() {
                 confirmPassword: data.password,
             });
 
-            if (res.data?.error) {
-                toast.error(res.data.error);
-            } else {
+            if (res.data?.error) toast.error(res.data.error);
+            else {
                 toast.success('Verification code sent');
                 setVerificationStep(true);
                 setCooldown(30);
@@ -120,20 +118,21 @@ export default function Register() {
 
             if (res.data?.error) {
                 toast.error(res.data.error);
-            } else {
-                const loginRes = await api.post('/login', {
-                    email: data.email.toLowerCase(),
-                    password: data.password,
-                });
-
-                login(loginRes.data.token, loginRes.data.user);
-
-                // ✅ Clear claim only once the account exists and is logged in
-                localStorage.removeItem(CLAIM_KEY);
-                localStorage.removeItem(OAUTH_SOURCE_KEY);
-
-                navigate('/myprofile');
+                return;
             }
+
+            const loginRes = await api.post('/login', {
+                email: data.email.toLowerCase(),
+                password: data.password,
+            });
+
+            login(loginRes.data.token, loginRes.data.user);
+
+            // clear after full success
+            localStorage.removeItem(PENDING_CLAIM_KEY);
+            localStorage.removeItem(OAUTH_SOURCE_KEY);
+
+            navigate('/myprofile', { replace: true });
         } catch {
             toast.error('Verification failed');
         } finally {
@@ -144,13 +143,11 @@ export default function Register() {
     const startOAuth = (provider) => {
         try {
             localStorage.setItem(OAUTH_SOURCE_KEY, 'register');
-            // ✅ DO NOT clear CLAIM_KEY; OAuthSuccess will use it to finalize claim.
+            const u = (data.username || '').trim().toLowerCase();
+            if (u) localStorage.setItem(PENDING_CLAIM_KEY, u);
         } catch { }
 
-        const base = (import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim())
-            ? import.meta.env.VITE_API_URL.trim()
-            : (api?.defaults?.baseURL || FALLBACK_BASE);
-
+        const base = import.meta.env.VITE_API_URL;
         window.location.href = `${base}/auth/${provider}`;
     };
 
