@@ -1,21 +1,25 @@
 /* =========================
-   KONARCARD NAVBAR (new)
-   Matches screenshot:
-   - White bar
-   - Logo left
-   - Links centered
-   - Login + orange pill CTA right
+   KONARCARD NAVBAR (FIXED)
    ========================= */
 
 .kc-navbar {
-  position: sticky;
-  /* use fixed if you need it always visible */
+  position: fixed;
   top: 0;
+  left: 0;
   z-index: 999;
   width: 100%;
-  background: #fff;
+  background: #ffffff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
+
+/* Page offset for fixed navbar */
+body {
+  padding-top: 80px;
+}
+
+/* =========================
+   Container
+   ========================= */
 
 .kc-navbar__container {
   max-width: 1140px;
@@ -23,14 +27,17 @@
   padding: 18px 20px;
 }
 
-/* Desktop */
+/* =========================
+   Desktop layout
+   ========================= */
+
 .kc-navbar__desktop {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  /* left / center / right */
   align-items: center;
 }
 
+/* Logo */
 .kc-navbar__logo {
   height: 34px;
   display: block;
@@ -41,7 +48,10 @@
   align-items: center;
 }
 
-/* Center links */
+/* =========================
+   Center links
+   ========================= */
+
 .kc-navbar__centerLinks {
   list-style: none;
   margin: 0;
@@ -53,7 +63,7 @@
 
 .kc-navbar__centerLinks a {
   text-decoration: none;
-  color: #111;
+  color: #111111;
   font-size: 14px;
   font-weight: 500;
   transition: opacity 0.15s ease, transform 0.08s ease;
@@ -71,7 +81,10 @@
   font-weight: 700;
 }
 
-/* Right actions */
+/* =========================
+   Right actions
+   ========================= */
+
 .kc-navbar__right {
   display: inline-flex;
   align-items: center;
@@ -80,7 +93,7 @@
 }
 
 .kc-navbar__login {
-  color: #111;
+  color: #111111;
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
@@ -95,14 +108,15 @@
   transform: translateY(1px);
 }
 
+/* CTA pill */
 .kc-navbar__cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 16px;
+  padding: 10px 18px;
   border-radius: 999px;
   background: #ff7b00;
-  color: #fff;
+  color: #ffffff;
   text-decoration: none;
   font-size: 14px;
   font-weight: 700;
@@ -119,12 +133,13 @@
   transform: translateY(1px);
 }
 
-/* Authed logout button (keep minimal; you can later redesign) */
+/* Logout button (authed) */
 .kc-navbar__logoutBtn {
   appearance: none;
-  border: 0;
   background: transparent;
-  color: #111;
+  border: none;
+  color: #111111;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   padding: 0;
@@ -140,8 +155,9 @@
 }
 
 /* =========================
-   Mobile header + hamburger
+   Mobile header
    ========================= */
+
 .kc-navbar__mobileHeader {
   display: none;
   justify-content: space-between;
@@ -152,17 +168,16 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
   background: transparent;
-  border: 0;
+  border: none;
   padding: 0;
+  cursor: pointer;
 }
 
 .kc-navbar__hamburger span {
   width: 26px;
   height: 3px;
-  background: #111;
+  background: #111111;
   border-radius: 3px;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
@@ -182,6 +197,7 @@
 /* =========================
    Mobile overlay menu
    ========================= */
+
 .kc-navbar__overlay {
   position: fixed;
   inset: 0;
@@ -196,11 +212,10 @@
   left: 0;
   height: 100vh;
   width: min(520px, 92vw);
-  background: #fff;
+  background: #ffffff;
   border-right: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 10px 0 40px rgba(0, 0, 0, 0.08);
   padding: 0 20px;
-  transform: translateX(0);
 }
 
 .kc-navbar__panelHeader {
@@ -214,16 +229,14 @@
 .kc-navbar__close {
   background: transparent;
   border: none;
-  color: #111;
   font-size: 28px;
-  line-height: 1;
-  padding: 0;
   cursor: pointer;
 }
 
+/* Mobile links */
 .kc-navbar__mobileList {
   list-style: none;
-  margin: 12px 0 0 0;
+  margin: 12px 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -234,9 +247,8 @@
   display: block;
   padding: 14px 6px;
   font-size: 20px;
-  line-height: 1.35;
   font-weight: 700;
-  color: #111;
+  color: #111111;
   text-decoration: none;
   border-radius: 12px;
 }
@@ -247,15 +259,16 @@
 
 .kc-navbar__mobileLink.active {
   color: #ff7b00;
-  background: transparent;
 }
 
+/* Divider */
 .kc-navbar__divider {
   height: 1px;
   background: rgba(0, 0, 0, 0.08);
   margin-top: 12px;
 }
 
+/* Mobile actions */
 .kc-navbar__mobileActions {
   margin-top: 12px;
   display: flex;
@@ -264,21 +277,19 @@
 }
 
 .kc-navbar__mobileCta {
-  display: inline-flex;
-  justify-content: center;
-  padding: 12px 14px;
+  padding: 12px;
   border-radius: 999px;
   background: #ff7b00;
-  color: #fff;
-  text-decoration: none;
+  color: #ffffff;
+  text-align: center;
   font-weight: 800;
+  text-decoration: none;
 }
 
 .kc-navbar__mobileLogout {
   background: transparent;
   border: none;
   padding: 14px 6px;
-  text-align: left;
   font-size: 20px;
   font-weight: 800;
   color: #ef4444;
@@ -293,6 +304,7 @@
 /* =========================
    Responsive
    ========================= */
+
 @media (max-width: 1000px) {
   .kc-navbar__desktop {
     display: none;
