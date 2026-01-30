@@ -252,9 +252,6 @@ export default function Example() {
         <>
             <Navbar />
 
-            <div className="ex-breadcrumbs section-breadcrumbs" style={{ marginTop: 20 }}>
-                <Breadcrumbs />
-            </div>
 
             {/* Hero */}
             <section className="ex-hero">
