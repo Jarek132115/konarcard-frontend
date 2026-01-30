@@ -1,0 +1,548 @@
+/* =========================
+   Pricing Page
+   File: frontend/src/styling/pricing.css
+   ========================= */
+
+/* HERO */
+.pr-hero {
+    text-align: center;
+    padding: 48px 20px 10px;
+}
+
+.pr-h1 {
+    margin: 0;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #0b1220;
+    font-size: clamp(30px, 3.8vw, 46px);
+    line-height: 1.05;
+}
+
+.pr-sub {
+    margin: 10px auto 18px;
+    color: #667085;
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 760px;
+}
+
+.pr-heroBtns {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.pr-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 11px 18px;
+    font-weight: 900;
+    font-size: 12px;
+    text-decoration: none;
+    transition: opacity 0.15s ease, transform 0.12s ease;
+}
+
+.pr-btn:hover {
+    opacity: 0.93;
+}
+
+.pr-btnPrimary {
+    background: #ff7b00;
+    color: #fff;
+    border: 1px solid #ff7b00;
+}
+
+.pr-btnGhost {
+    background: #fff;
+    color: #0b1220;
+    border: 1px solid #e6e6e6;
+}
+
+/* BILLING */
+.pr-billing {
+    padding: 14px 20px 20px;
+    text-align: center;
+}
+
+.pr-billingPills {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pr-pill {
+    border: 1px solid #e6e6e6;
+    background: #fff;
+    color: #0b1220;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.pr-pill.isActive {
+    background: #ff7b00;
+    border-color: #ff7b00;
+    color: #fff;
+    font-weight: 900;
+}
+
+.pr-note {
+    margin: 10px 0 0;
+    color: #667085;
+    font-size: 12px;
+}
+
+/* PLAN CARDS */
+.pr-plans {
+    padding: 10px 20px 34px;
+}
+
+.pr-planGrid {
+    width: 1040px;
+    max-width: 1040px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.pr-planCard {
+    border: 1px solid #efefef;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    padding: 16px;
+    position: relative;
+}
+
+.pr-planCard.isFeatured {
+    border-color: rgba(255, 123, 0, 0.35);
+    box-shadow: 0 14px 30px rgba(255, 123, 0, 0.12);
+}
+
+.pr-featuredTag {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 123, 0, 0.12);
+    color: #ff7b00;
+    border: 1px solid rgba(255, 123, 0, 0.3);
+    font-weight: 900;
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 999px;
+}
+
+.pr-planTop {
+    margin-bottom: 12px;
+}
+
+.pr-planTitle {
+    margin: 0 0 4px;
+    font-weight: 900;
+    color: #0b1220;
+    font-size: 14px;
+}
+
+.pr-planBadge {
+    margin: 0;
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.pr-priceRow {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 10px 0 12px;
+}
+
+.pr-price {
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #0b1220;
+    font-size: 26px;
+}
+
+.pr-priceSub {
+    color: #667085;
+    font-size: 12px;
+}
+
+.pr-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 14px;
+    display: grid;
+    gap: 10px;
+}
+
+.pr-list li {
+    display: grid;
+    grid-template-columns: 10px 1fr;
+    gap: 10px;
+    align-items: start;
+    color: #0b1220;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.pr-bulletDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 123, 0, 0.95);
+    margin-top: 6px;
+}
+
+.pr-cta {
+    display: inline-flex;
+    width: 100%;
+    justify-content: center;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 12px;
+    padding: 12px 14px;
+    border-radius: 999px;
+    border: 1px solid #e6e6e6;
+    transition: opacity 0.15s ease;
+}
+
+.pr-cta.isPrimary {
+    background: #ff7b00;
+    color: #fff;
+    border-color: #ff7b00;
+}
+
+.pr-cta.isSecondary {
+    background: #fff;
+    color: #0b1220;
+}
+
+/* COMPARE */
+.pr-compare {
+    padding: 40px 20px 18px;
+    text-align: center;
+}
+
+.pr-h2 {
+    margin: 0;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #0b1220;
+    font-size: clamp(20px, 2.6vw, 26px);
+}
+
+.pr-sub2 {
+    margin: 8px auto 18px;
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.5;
+    max-width: 760px;
+}
+
+.pr-tableWrap {
+    width: 1040px;
+    max-width: 1040px;
+    margin: 0 auto;
+    overflow: auto;
+    border-radius: 14px;
+    border: 1px solid #efefef;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    background: #fff;
+}
+
+.pr-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 820px;
+}
+
+.pr-table thead th {
+    text-align: left;
+    font-size: 12px;
+    padding: 14px 14px;
+    border-bottom: 1px solid #efefef;
+    color: #0b1220;
+    background: #fff;
+}
+
+.pr-thFeature {
+    width: 42%;
+}
+
+.pr-thPlan {
+    width: 19%;
+    text-align: center !important;
+}
+
+.pr-thPlanPlus {
+    background: rgba(255, 123, 0, 0.06);
+}
+
+.pr-table tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 12px;
+    color: #0b1220;
+}
+
+.pr-tdFeature {
+    color: #0b1220;
+}
+
+.pr-tdVal {
+    text-align: center;
+}
+
+.pr-tdPlus {
+    background: rgba(255, 123, 0, 0.04);
+}
+
+.pr-tick {
+    font-weight: 900;
+    color: #ff7b00;
+}
+
+.pr-cross {
+    color: #98a2b3;
+}
+
+.pr-textVal {
+    color: #667085;
+    font-weight: 700;
+}
+
+.pr-compareCtas {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+/* WHO IT'S FOR */
+.pr-for {
+    padding: 40px 20px 10px;
+    text-align: center;
+}
+
+.pr-forGrid {
+    width: 1040px;
+    max-width: 1040px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.pr-forCard {
+    border: 1px solid #efefef;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    padding: 16px;
+    text-align: left;
+}
+
+.pr-forTag {
+    display: inline-flex;
+    background: rgba(255, 123, 0, 0.12);
+    border: 1px solid rgba(255, 123, 0, 0.3);
+    color: #ff7b00;
+    font-weight: 900;
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 999px;
+}
+
+.pr-forHeadline {
+    margin: 10px 0 10px;
+    font-weight: 900;
+    color: #0b1220;
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+.pr-forList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px;
+    display: grid;
+    gap: 10px;
+}
+
+.pr-forList li {
+    display: grid;
+    grid-template-columns: 16px 1fr;
+    gap: 10px;
+    align-items: start;
+    font-size: 12px;
+    color: #0b1220;
+    line-height: 1.45;
+}
+
+.pr-check {
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    background: rgba(255, 123, 0, 0.12);
+    color: #ff7b00;
+    margin-top: 2px;
+}
+
+.pr-callout {
+    background: #f8fafc;
+    border: 1px solid #eef2f6;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 12px;
+    color: #667085;
+    line-height: 1.5;
+}
+
+.pr-forActions {
+    margin-top: 14px;
+}
+
+.pr-forBtn {
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    padding: 12px 14px;
+    border-radius: 999px;
+    background: #0b1220;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 12px;
+    transition: opacity 0.15s ease;
+}
+
+.pr-forBtn:hover {
+    opacity: 0.92;
+}
+
+/* VALUE */
+.pr-value {
+    padding: 40px 20px 10px;
+    text-align: center;
+}
+
+.pr-valueGrid {
+    width: 1040px;
+    max-width: 1040px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.pr-valueCard {
+    border: 1px solid #efefef;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    padding: 16px;
+    text-align: left;
+}
+
+.pr-valueIcon {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 10px;
+}
+
+.pr-valueTitle {
+    margin: 0 0 4px;
+    font-weight: 900;
+    color: #0b1220;
+    font-size: 12px;
+}
+
+.pr-valueDesc {
+    margin: 0;
+    color: #667085;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* FAQS */
+.pr-faqs {
+    padding: 40px 20px 60px;
+    text-align: center;
+}
+
+.pr-faqList {
+    width: 760px;
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: left;
+    border-top: 1px solid #eef2f6;
+}
+
+.pr-faqRow {
+    padding: 16px 0;
+    border-bottom: 1px solid #eef2f6;
+}
+
+.pr-faqQ {
+    margin: 0 0 6px;
+    font-weight: 900;
+    color: #0b1220;
+    font-size: 12px;
+}
+
+.pr-faqA {
+    margin: 0;
+    color: #667085;
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+
+    .pr-planGrid,
+    .pr-tableWrap,
+    .pr-forGrid,
+    .pr-valueGrid {
+        width: 100%;
+        max-width: 980px;
+    }
+}
+
+@media (max-width: 900px) {
+    .pr-planGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .pr-forGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .pr-valueGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pr-faqList {
+        width: 100%;
+        max-width: 760px;
+    }
+}
+
+@media (max-width: 520px) {
+    .pr-valueGrid {
+        grid-template-columns: 1fr;
+    }
+}
