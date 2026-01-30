@@ -1,192 +1,122 @@
 // frontend/src/pages/website/Products.jsx
-import React, { useMemo } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 import Navbar from "../../components/Navbar";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Footer from "../../components/Footer";
 
-import "../../styling/products.css";
-
-/* Icons you already use elsewhere */
-import WorksOnEveryPhone from "../../assets/icons/Works_On_Every_Phone.svg";
-import NoAppNeeded from "../../assets/icons/No_App_Needed.svg";
-import OneLinkForEverything from "../../assets/icons/One_Link_For_Everything.svg";
-import EasyToUpdateAnytime from "../../assets/icons/Easy_To_Update_Anytime.svg";
-import BuiltForRealTrades from "../../assets/icons/Built_For_Real_Trades.svg";
-import LooksProfessional from "../../assets/icons/Looks_Professional.svg";
-
-/* If you have real product images, replace these paths with yours */
-import PlasticCardImg from "../../assets/images/Plastic-Card.png";
-import MetalCardImg from "../../assets/images/Metal-Card.png";
-import TagImg from "../../assets/images/KonarTag.png";
-import BundleImg1 from "../../assets/images/Bundle-1.png";
-import BundleImg2 from "../../assets/images/Bundle-2.png";
-import CompareMetal from "../../assets/images/Compare-Metal.png";
-import ComparePlastic from "../../assets/images/Compare-Plastic.png";
-import CompareCustom from "../../assets/images/Compare-Custom.png";
-
-/* Small UI icons */
-import ToolIcon from "../../assets/icons/Tools-Icon.svg";
-import QuoteIcon from "../../assets/icons/Quote-Icon.svg";
-import CounterIcon from "../../assets/icons/Chat-Icon.svg";
-import QrIcon from "../../assets/icons/QR-Code-Icon.svg";
-import LinkIcon from "../../assets/icons/Link-Icon.svg";
-import BoltIcon from "../../assets/icons/Bolt-Icon.svg";
+/**
+ * NOTE:
+ * This page intentionally uses NO local image imports.
+ * Your deploy was failing because Products.jsx imported missing images.
+ * Use placeholders now (safe for Vercel), then later swap placeholders for real assets.
+ */
 
 export default function Products() {
-    const topFeatures = useMemo(
-        () => [
-            {
-                icon: WorksOnEveryPhone,
-                title: "Works on every phone",
-                desc: "Compatible with iPhone & Android — no issues, no setup.",
-            },
-            {
-                icon: NoAppNeeded,
-                title: "No app needed",
-                desc: "Just tap or scan — nothing to download.",
-            },
-            {
-                icon: OneLinkForEverything,
-                title: "One link for everything",
-                desc: "Details, photos, prices, and contact options in one place.",
-            },
-            {
-                icon: EasyToUpdateAnytime,
-                title: "Easy to update anytime",
-                desc: "Change details instantly without reprinting cards.",
-            },
-            {
-                icon: BuiltForRealTrades,
-                title: "Built for real trades",
-                desc: "Designed for everyday use on real jobs, not offices.",
-            },
-            {
-                icon: LooksProfessional,
-                title: "Looks professional",
-                desc: "Make a strong first impression every time you share.",
-            },
-        ],
-        []
-    );
+    const topPerks = [
+        { title: "One link for everything", desc: "Details, photos, prices and contact options in one place." },
+        { title: "Easy to update anytime", desc: "Change your details instantly without reprinting cards." },
+        { title: "Share by tap or QR", desc: "Works in person, online and anywhere in between." },
+        { title: "Built for real trades", desc: "Designed for on-site, not offices." },
+        { title: "Looks professional", desc: "Make a strong first impression every time." },
+    ];
 
-    const products = useMemo(
-        () => [
-            {
-                badge: "Best seller",
-                image: PlasticCardImg,
-                name: "KonarCard — Plastic Edition",
-                desc:
-                    "Lightweight, durable, and perfect for everyday use. NFC + QR built in.",
-                price: "£29.99",
-            },
-            {
-                badge: null,
-                image: MetalCardImg,
-                name: "KonarCard — Metal Edition",
-                desc:
-                    "Premium feel with a strong first impression. Built to last and look sharp.",
-                price: "£49.99",
-            },
-            {
-                badge: null,
-                image: TagImg,
-                name: "KonarTag",
-                desc:
-                    "Clip it to your keys. Tap-to-share your profile anywhere you go.",
-                price: "£19.99",
-            },
-        ],
-        []
-    );
+    const products = [
+        {
+            tag: "Best seller",
+            name: "KonarCard — Plastic Edition",
+            desc: "Lightweight, affordable and perfect for everyday use.",
+            price: "£29.99",
+            sub: "Includes NFC + QR and your live KonarCard profile.",
+        },
+        {
+            tag: "Premium",
+            name: "KonarCard — Metal Edition",
+            desc: "A premium feel for a stronger first impression.",
+            price: "£49.99",
+            sub: "Matte finish, durable build, NFC + QR included.",
+        },
+        {
+            tag: "Accessory",
+            name: "KonarTag",
+            desc: "Clip it to your keys and tap to share instantly.",
+            price: "£19.99",
+            sub: "Same KonarCard link — always on you.",
+        },
+    ];
 
-    const bundles = useMemo(
-        () => [
-            {
-                badge: "Best value",
-                image: BundleImg1,
-                name: "KonarCard Bundle (2 Pack)",
-                desc:
-                    "Everything you need to share your profile everywhere — at a better price.",
-                price: "£49.99",
-                oldPrice: "£59.98",
-            },
-            {
-                badge: "Best value",
-                image: BundleImg2,
-                name: "KonarCard Bundle (3 Pack)",
-                desc:
-                    "For work van, wallet, and backup. Keep sharing without thinking.",
-                price: "£69.99",
-                oldPrice: "£89.97",
-            },
-        ],
-        []
-    );
+    const bundles = [
+        {
+            tag: "Best value",
+            name: "2x KonarCard — Plastic Edition",
+            desc: "Keep one in the van and one in your wallet.",
+            price: "£49.99",
+            was: "£59.98",
+        },
+        {
+            tag: "Best value",
+            name: "3x KonarCard — Plastic Edition",
+            desc: "Ideal for teams or keeping spares on site.",
+            price: "£69.99",
+            was: "£89.97",
+        },
+    ];
 
-    const realWorld = useMemo(
-        () => [
-            {
-                icon: ToolIcon,
-                title: "On Site, With a Client",
-                desc:
-                    "Tap your KonarCard. Their phone opens your profile and saves your details instantly — no typing, no fuss.",
-            },
-            {
-                icon: QuoteIcon,
-                title: "After a Quote",
-                desc:
-                    "Send your link by WhatsApp/SMS so they can review your services, photos, and reviews later.",
-            },
-            {
-                icon: CounterIcon,
-                title: "Networking / Trade Counter",
-                desc:
-                    "No stacks of cards. One tap per person, as many times as you want.",
-            },
-            {
-                icon: QrIcon,
-                title: "Van QR & Site Boards",
-                desc:
-                    "Add your QR code to your van or boards so people can view your work and contact you fast.",
-            },
-            {
-                icon: LinkIcon,
-                title: "Social & Link in Bio",
-                desc:
-                    "Add your KonarCard link to Instagram, Facebook, or TikTok so new leads land on your best info.",
-            },
-            {
-                icon: BoltIcon,
-                title: "Updates in Seconds",
-                desc:
-                    "Change prices, photos, or details once — your card always shares the latest version everywhere.",
-            },
-        ],
-        []
-    );
+    const realWorldTop = [
+        {
+            tag: "Use it on-site",
+            title: "Tap to swap details on the spot",
+            points: ["Type their phone number and tap their phone", "Works even when you’re busy on a job", "No app needed — just tap or scan"],
+        },
+        {
+            tag: "Win more jobs",
+            title: "Turn taps into customers",
+            points: ["Create a clean, trustworthy profile", "Show photos, services, reviews and contact buttons", "Faster follow-ups and fewer missed calls"],
+        },
+    ];
 
-    const compare = useMemo(
-        () => [
-            {
-                image: CompareMetal,
-                title: "Metal Cards",
-                desc: "Best if you want a premium feel and strong first impression.",
-            },
-            {
-                image: ComparePlastic,
-                title: "Plastic Cards",
-                desc: "Lightweight, affordable, and perfect for everyday use.",
-            },
-            {
-                image: CompareCustom,
-                title: "Custom Logo Cards",
-                desc: "Ideal for established businesses that want branded cards.",
-            },
-        ],
-        []
-    );
+    const realWorldGrid = [
+        {
+            title: "On Site, With a Client",
+            desc: "Tap your KonarCard. Their phone opens your profile and saves your details instantly — no typing, no fuss.",
+        },
+        {
+            title: "After a Quote",
+            desc: "Send your link by WhatsApp so they can review your work, services and reviews while deciding.",
+        },
+        {
+            title: "Networking / Trade Counter",
+            desc: "No stacks of cards. Tap to share your details as many times as you want.",
+        },
+        {
+            title: "Van QR & Site Boards",
+            desc: "Stick the QR on your van or signage so customers can scan and call you straight away.",
+        },
+        {
+            title: "Social & Link in Bio",
+            desc: "Add your KonarCard link to Instagram, Facebook or TikTok so new leads land on your profile.",
+        },
+        {
+            title: "Updates in Seconds",
+            desc: "New number, new prices, new photos — update once and it’s live everywhere instantly.",
+        },
+    ];
+
+    const chooseCards = [
+        {
+            title: "Metal Cards",
+            desc: "Best if you want a premium feel and strong first impressions.",
+        },
+        {
+            title: "Plastic Cards",
+            desc: "Lightweight, affordable, and perfect for everyday use.",
+        },
+        {
+            title: "Custom Logo Cards",
+            desc: "Ideal for established businesses that want branded cards.",
+        },
+    ];
 
     return (
         <>
@@ -196,132 +126,147 @@ export default function Products() {
                 <Breadcrumbs />
             </div>
 
-            {/* HERO */}
-            <section className="pd-hero">
-                <p className="pd-kicker">Cards that are built for real jobs.</p>
-                <h1 className="pd-h1">Shop KonarCards</h1>
-                <p className="pd-sub">
-                    Physical NFC business cards that link directly to your KonarCard
-                    profile.
-                </p>
-            </section>
+            {/* ================= HERO ================= */}
+            <section className="kc-products section">
+                <div className="kc-products__hero">
+                    <p className="desktop-body-xs kc-products__kicker">Cards that link directly to your KonarCard profile</p>
+                    <h1 className="desktop-h1 text-center">Shop KonarCards</h1>
+                    <p className="desktop-body-xs text-center kc-products__sub">
+                        Physical NFC business cards that open your profile instantly — so customers can save your details and contact you fast.
+                    </p>
 
-            {/* FEATURE ROW */}
-            <section className="pd-featureRowWrap">
-                <div className="pd-featureRow">
-                    {topFeatures.map((f) => (
-                        <div className="pd-feature" key={f.title}>
-                            <img className="pd-featureIcon" src={f.icon} alt="" />
-                            <div className="pd-featureText">
-                                <p className="pd-featureTitle">{f.title}</p>
-                                <p className="pd-featureDesc">{f.desc}</p>
+                    <div className="kc-products__perks">
+                        {topPerks.map((p) => (
+                            <div key={p.title} className="kc-products__perk">
+                                <div className="kc-products__perkIcon" aria-hidden="true" />
+                                <div>
+                                    <p className="desktop-h6">{p.title}</p>
+                                    <p className="desktop-body-xs">{p.desc}</p>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-            </section>
 
-            {/* PRODUCTS */}
-            <section className="pd-section">
-                <div className="pd-grid3">
-                    {products.map((p) => (
-                        <div className="pd-card" key={p.name}>
-                            {p.badge && <span className="pd-badge">{p.badge}</span>}
-                            <div className="pd-imgWrap">
-                                <img src={p.image} alt={p.name} className="pd-img" />
+                {/* ================= PRODUCTS GRID ================= */}
+                <div className="kc-products__grid">
+                    {products.map((item) => (
+                        <div key={item.name} className="kc-products__card">
+                            <div className="kc-products__cardTop">
+                                <span className="kc-products__tag">{item.tag}</span>
                             </div>
-                            <div className="pd-cardBody">
-                                <p className="pd-cardTitle">{p.name}</p>
-                                <p className="pd-cardDesc">{p.desc}</p>
-                                <div className="pd-priceRow">
-                                    <span className="pd-price">{p.price}</span>
+
+                            <div className="kc-products__imgWrap" aria-hidden="true">
+                                <div className="kc-products__imgPlaceholder">Image</div>
+                            </div>
+
+                            <div className="kc-products__cardBody">
+                                <p className="desktop-h6">{item.name}</p>
+                                <p className="desktop-body-xs kc-products__muted">{item.desc}</p>
+
+                                <div className="kc-products__priceRow">
+                                    <p className="desktop-h6">{item.price}</p>
                                 </div>
 
-                                <Link to="/register" className="pd-btn pd-btnPrimary">
-                                    Buy now
-                                </Link>
+                                <p className="desktop-body-xs kc-products__muted">{item.sub}</p>
+
+                                <div className="kc-products__ctaRow">
+                                    <Link to="/register" className="desktop-button orange-button kc-products__btn">
+                                        Claim Your Link
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     ))}
                 </div>
-            </section>
 
-            {/* BUNDLES */}
-            <section className="pd-bundles">
-                <h2 className="pd-h2">Save More With KonarCard Bundles</h2>
-                <p className="pd-sub2">
-                    Everything you need to share your profile everywhere — at a better
-                    price.
-                </p>
+                {/* ================= BUNDLES ================= */}
+                <div className="kc-products__sectionTitle">
+                    <h2 className="desktop-h2 text-center">Save More With KonarCard Bundles</h2>
+                    <p className="desktop-body-xs text-center kc-products__sub">
+                        Everything you need to share your profile everywhere — at a better price.
+                    </p>
+                </div>
 
-                <div className="pd-grid2">
+                <div className="kc-products__bundles">
                     {bundles.map((b) => (
-                        <div className="pd-card pd-cardWide" key={b.name}>
-                            {b.badge && <span className="pd-badge">{b.badge}</span>}
-                            <div className="pd-imgWrap pd-imgWrapWide">
-                                <img src={b.image} alt={b.name} className="pd-img" />
+                        <div key={b.name} className="kc-products__bundleCard">
+                            <div className="kc-products__bundleHeader">
+                                <span className="kc-products__tag">{b.tag}</span>
                             </div>
 
-                            <div className="pd-cardBody">
-                                <p className="pd-cardTitle">{b.name}</p>
-                                <p className="pd-cardDesc">{b.desc}</p>
+                            <div className="kc-products__bundleImg" aria-hidden="true">
+                                <div className="kc-products__imgPlaceholder">Image</div>
+                            </div>
 
-                                <div className="pd-priceRow">
-                                    <span className="pd-price">{b.price}</span>
-                                    {b.oldPrice && <span className="pd-oldPrice">{b.oldPrice}</span>}
+                            <div className="kc-products__bundleBody">
+                                <p className="desktop-h6">{b.name}</p>
+                                <p className="desktop-body-xs kc-products__muted">{b.desc}</p>
+
+                                <div className="kc-products__bundlePrice">
+                                    <p className="desktop-h6">{b.price}</p>
+                                    <p className="desktop-body-xs kc-products__strike">{b.was}</p>
                                 </div>
 
-                                <Link to="/register" className="pd-btn pd-btnPrimary">
-                                    Buy bundle
+                                <Link to="/register" className="desktop-button orange-button kc-products__btn">
+                                    Claim Your Link
                                 </Link>
                             </div>
                         </div>
                     ))}
                 </div>
-            </section>
 
-            {/* REAL WORLD */}
-            <section className="pd-real">
-                <h2 className="pd-h2">How you’ll use it in the Real World</h2>
-                <p className="pd-sub2">
-                    Your KonarCard profile puts your work, reviews, and contact details in
-                    one place — so customers can quickly see you’re legit and get in touch
-                    without friction.
-                </p>
+                {/* ================= REAL WORLD ================= */}
+                <div className="kc-products__sectionTitle">
+                    <h2 className="desktop-h2 text-center">How you’ll use it in the Real World</h2>
+                    <p className="desktop-body-xs text-center kc-products__sub">
+                        Your KonarCard profile puts your work, reviews and contact details in one place — so customers can quickly see you’re legit and get in touch without friction.
+                    </p>
+                </div>
 
-                <div className="pd-realGrid">
-                    {realWorld.map((x) => (
-                        <div className="pd-realCard" key={x.title}>
-                            <div className="pd-realTop">
-                                <img className="pd-realIcon" src={x.icon} alt="" />
-                                <p className="pd-realTitle">{x.title}</p>
-                            </div>
-                            <p className="pd-realDesc">{x.desc}</p>
+                <div className="kc-products__twoUp">
+                    {realWorldTop.map((box) => (
+                        <div key={box.title} className="kc-products__twoUpCard">
+                            <span className="kc-products__tag kc-products__tagSoft">{box.tag}</span>
+                            <p className="desktop-h6">{box.title}</p>
+                            <ul className="kc-products__bullets">
+                                {box.points.map((pt) => (
+                                    <li key={pt} className="desktop-body-xs">
+                                        {pt}
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     ))}
                 </div>
-            </section>
 
-            {/* COMPARE */}
-            <section className="pd-compare">
-                <h2 className="pd-h2">Not sure which card to choose?</h2>
-                <p className="pd-sub2">
-                    Pick the card that fits how you work — all cards link to the same
-                    powerful profile.
-                </p>
+                <div className="kc-products__realGrid">
+                    {realWorldGrid.map((g) => (
+                        <div key={g.title} className="kc-products__realCard">
+                            <div className="kc-products__miniIcon" aria-hidden="true" />
+                            <p className="desktop-h6">{g.title}</p>
+                            <p className="desktop-body-xs kc-products__muted">{g.desc}</p>
+                        </div>
+                    ))}
+                </div>
 
-                <div className="pd-grid3">
-                    {compare.map((c) => (
-                        <div className="pd-card" key={c.title}>
-                            <div className="pd-imgWrap">
-                                <img src={c.image} alt={c.title} className="pd-img" />
+                {/* ================= CHOOSE ================= */}
+                <div className="kc-products__sectionTitle">
+                    <h2 className="desktop-h2 text-center">Not sure which card to choose?</h2>
+                    <p className="desktop-body-xs text-center kc-products__sub">
+                        Pick the card that fits how you work — all cards link to the same powerful profile.
+                    </p>
+                </div>
+
+                <div className="kc-products__chooseGrid">
+                    {chooseCards.map((c) => (
+                        <div key={c.title} className="kc-products__chooseCard">
+                            <div className="kc-products__chooseImg" aria-hidden="true">
+                                <div className="kc-products__imgPlaceholder">Image</div>
                             </div>
-                            <div className="pd-cardBody">
-                                <p className="pd-cardTitle">{c.title}</p>
-                                <p className="pd-cardDesc">{c.desc}</p>
-                                <Link to="/contactus" className="pd-btn pd-btnGhost">
-                                    Ask us
-                                </Link>
+                            <div className="kc-products__chooseBody">
+                                <p className="desktop-h6">{c.title}</p>
+                                <p className="desktop-body-xs kc-products__muted">{c.desc}</p>
                             </div>
                         </div>
                     ))}
