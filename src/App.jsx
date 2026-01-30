@@ -32,8 +32,11 @@ import UserPage from "./pages/interface/UserPage.jsx";
 // ✅ Examples page
 import Example from "./pages/website/Example.jsx";
 
-// ✅ NEW: Pricing page
+// ✅ Pricing page
 import Pricing from "./pages/website/Pricing.jsx";
+
+// ✅ NEW Products page
+import Products from "./pages/website/Products.jsx";
 
 // ✅ OAuth handler page
 import OAuthSuccess from "./auth/OAuthSuccess.jsx";
@@ -98,14 +101,12 @@ export default function App() {
           <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
           <Route path="/whatisnfc" element={<KonarCard />} />
           <Route path="/subscription" element={<KonarSubscription />} />
-          <Route path="/faq" element={<FAQ />} />
 
-          {/* Examples */}
+          {/* PUBLIC WEBSITE PAGES */}
+          <Route path="/products" element={<Products />} />
           <Route path="/examples" element={<Example />} />
-
-          {/* ✅ Pricing */}
           <Route path="/pricing" element={<Pricing />} />
-
+          <Route path="/faq" element={<FAQ />} />
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/helpcentre" element={<HelpCentre />} />
           <Route path="/contactus" element={<ContactUs />} />

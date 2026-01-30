@@ -1,0 +1,315 @@
+/* =========================
+   Products Page
+   File: frontend/src/styling/products.css
+   ========================= */
+
+.pd-hero {
+    text-align: center;
+    padding: 52px 20px 10px;
+}
+
+.pd-kicker {
+    margin: 0 0 10px;
+    color: #98a2b3;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.pd-h1 {
+    margin: 0;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #0b1220;
+    font-size: clamp(28px, 3.8vw, 44px);
+    line-height: 1.05;
+}
+
+.pd-sub {
+    margin: 10px auto 0;
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.55;
+    max-width: 720px;
+}
+
+/* Top feature row */
+.pd-featureRowWrap {
+    padding: 14px 20px 20px;
+}
+
+.pd-featureRow {
+    width: 1040px;
+    max-width: 1040px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+    border-top: 1px solid #f0f2f5;
+    padding-top: 18px;
+}
+
+.pd-feature {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.pd-featureIcon {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+}
+
+.pd-featureTitle {
+    margin: 0 0 4px;
+    font-weight: 900;
+    font-size: 11px;
+    color: #0b1220;
+}
+
+.pd-featureDesc {
+    margin: 0;
+    font-size: 10px;
+    color: #667085;
+    line-height: 1.45;
+}
+
+/* Shared sections */
+.pd-section,
+.pd-bundles,
+.pd-real,
+.pd-compare {
+    padding: 18px 20px 10px;
+}
+
+.pd-h2 {
+    margin: 0;
+    text-align: center;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #0b1220;
+    font-size: clamp(18px, 2.6vw, 26px);
+}
+
+.pd-sub2 {
+    margin: 8px auto 18px;
+    text-align: center;
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.55;
+    max-width: 760px;
+}
+
+/* Grids */
+.pd-grid3 {
+    width: 1040px;
+    max-width: 1040px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.pd-grid2 {
+    width: 1040px;
+    max-width: 1040px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+/* Card */
+.pd-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid #efefef;
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    overflow: hidden;
+}
+
+.pd-cardWide {
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+.pd-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255, 123, 0, 0.12);
+    border: 1px solid rgba(255, 123, 0, 0.3);
+    color: #ff7b00;
+    font-weight: 900;
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    z-index: 2;
+}
+
+.pd-imgWrap {
+    width: 100%;
+    height: 240px;
+    display: grid;
+    place-items: center;
+    background: #fbfbfb;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.pd-imgWrapWide {
+    height: 260px;
+}
+
+.pd-img {
+    width: 86%;
+    height: auto;
+    object-fit: contain;
+}
+
+.pd-cardBody {
+    padding: 14px;
+}
+
+.pd-cardTitle {
+    margin: 0 0 6px;
+    font-weight: 900;
+    color: #0b1220;
+    font-size: 12px;
+}
+
+.pd-cardDesc {
+    margin: 0 0 12px;
+    color: #667085;
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.pd-priceRow {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    margin-bottom: 12px;
+}
+
+.pd-price {
+    font-weight: 900;
+    color: #0b1220;
+    font-size: 13px;
+}
+
+.pd-oldPrice {
+    color: #98a2b3;
+    font-size: 11px;
+    text-decoration: line-through;
+}
+
+/* Buttons */
+.pd-btn {
+    display: inline-flex;
+    width: 100%;
+    justify-content: center;
+    padding: 12px 14px;
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: 12px;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+}
+
+.pd-btn:hover {
+    opacity: 0.93;
+}
+
+.pd-btnPrimary {
+    background: #ff7b00;
+    color: #fff;
+    border: 1px solid #ff7b00;
+}
+
+.pd-btnGhost {
+    background: #fff;
+    color: #0b1220;
+    border: 1px solid #e6e6e6;
+}
+
+/* Real world grid */
+.pd-realGrid {
+    width: 1040px;
+    max-width: 1040px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.pd-realCard {
+    background: #fff;
+    border: 1px solid #efefef;
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    padding: 14px;
+}
+
+.pd-realTop {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.pd-realIcon {
+    width: 18px;
+    height: 18px;
+}
+
+.pd-realTitle {
+    margin: 0;
+    font-weight: 900;
+    font-size: 12px;
+    color: #0b1220;
+}
+
+.pd-realDesc {
+    margin: 0;
+    color: #667085;
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+
+    .pd-featureRow,
+    .pd-grid3,
+    .pd-grid2,
+    .pd-realGrid {
+        width: 100%;
+        max-width: 980px;
+    }
+
+    .pd-featureRow {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+
+    .pd-grid3,
+    .pd-realGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .pd-grid2 {
+        grid-template-columns: 1fr;
+    }
+
+    .pd-featureRow {
+        grid-template-columns: 1fr;
+    }
+
+    .pd-imgWrap,
+    .pd-imgWrapWide {
+        height: 220px;
+    }
+}
