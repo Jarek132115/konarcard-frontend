@@ -1,11 +1,10 @@
-// Footer.jsx
 import React, { useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 
 import { gsap } from "gsap";
-import { Draggable } from "gsap/Draggable";
-// If you have InertiaPlugin, you can add it too (optional).
-// import { InertiaPlugin } from "gsap/InertiaPlugin";
+import { Draggable } from "gsap/all";
+gsap.registerPlugin(Draggable);
+
 
 import LogoIcon from "../assets/icons/Logo-Icon.svg";
 import CopyrightIcon from "../assets/icons/Copyright-Icon.svg";
@@ -28,12 +27,8 @@ import LooksProfessional from "../assets/icons/Looks_Professional.svg";
 import SetUpInMinutes from "../assets/icons/Set_Up_In_Minutes.svg";
 
 gsap.registerPlugin(Draggable);
-// gsap.registerPlugin(Draggable, InertiaPlugin);
 
 export default function Footer() {
-    /* =========================
-       Carousel items
-       ========================= */
     const carouselItems = useMemo(
         () => [
             {
@@ -80,15 +75,9 @@ export default function Footer() {
         []
     );
 
-    // Duplicate to create a seamless loop
+    // Duplicate once for seamless looping
     const loopItems = useMemo(() => [...carouselItems, ...carouselItems], [carouselItems]);
 
-    /* =========================
-       GSAP marquee + draggable
-       - Always moves left -> right (track x increases)
-       - User can drag horizontally
-       - If user drags vertically, page scroll still works (native scroll)
-       ========================= */
     const viewportRef = useRef(null);
     const trackRef = useRef(null);
 
@@ -97,84 +86,78 @@ export default function Footer() {
         const track = trackRef.current;
         if (!viewport || !track) return;
 
-        // Kill any previous instances (hot reload safety)
-        let draggableInstance = null;
-        let tickerFn = null;
+        let draggable;
+        let rafId;
+        let running = true;
 
         const setup = () => {
+            gsap.killTweensOf(track);
+            if (draggable) draggable.kill();
+            if (rafId) cancelAnimationFrame(rafId);
+
             gsap.set(track, { x: 0 });
 
-            // Half-width is the width of one full set of items (because we duplicated)
-            const totalWidth = track.scrollWidth;
-            const half = totalWidth / 2;
+            // Width of ONE set (because we duplicated)
+            const half = track.scrollWidth / 2;
 
-            // Wrap x between [-half, 0]
-            const wrapX = gsap.utils.wrap(-half, 0);
-
-            // Start at -half so content flows in naturally
+            // Start at -half so it scrolls "through" the middle
             let x = -half;
+
+            const wrap = gsap.utils.wrap(-half, 0);
+            const speed = 40; // px/sec (tweak)
+
+            let last = performance.now();
+            let paused = false;
+
             gsap.set(track, { x });
 
-            let paused = false;
-            const speedPxPerSec = 50; // adjust as needed
-            let last = performance.now();
-
-            tickerFn = () => {
-                if (paused) {
-                    last = performance.now();
-                    return;
-                }
+            const tick = () => {
+                if (!running) return;
                 const now = performance.now();
                 const dt = (now - last) / 1000;
                 last = now;
 
-                x = wrapX(x + speedPxPerSec * dt); // + = move RIGHT
-                gsap.set(track, { x });
+                if (!paused) {
+                    x = wrap(x + speed * dt); // ✅ left->right motion
+                    gsap.set(track, { x });
+                }
+
+                rafId = requestAnimationFrame(tick);
             };
 
-            gsap.ticker.add(tickerFn);
+            rafId = requestAnimationFrame(tick);
 
-            draggableInstance = Draggable.create(track, {
+            draggable = Draggable.create(track, {
                 type: "x",
-                // inertia: true, // enable if you add InertiaPlugin
-                allowNativeTouchScrolling: true, // IMPORTANT: vertical drags scroll the page
                 lockAxis: true,
+                allowNativeTouchScrolling: true, // ✅ vertical swipe scrolls page
                 onPress() {
                     paused = true;
+                    // sync x with current position when grabbing
+                    x = wrap(gsap.getProperty(track, "x"));
                 },
                 onDrag() {
-                    x = wrapX(this.x);
+                    x = wrap(this.x);
                     gsap.set(track, { x });
                 },
                 onRelease() {
-                    // Sync x to current transform and resume
-                    x = wrapX(gsap.getProperty(track, "x"));
+                    x = wrap(gsap.getProperty(track, "x"));
                     paused = false;
+                    last = performance.now();
                 },
-                onThrowUpdate() {
-                    // if inertia is enabled
-                    x = wrapX(this.x);
-                    gsap.set(track, { x });
-                },
-            })?.[0];
+            })[0];
         };
 
-        // Setup now, and re-setup on resize (width changes)
         setup();
 
-        const onResize = () => {
-            // teardown & rebuild to recalc widths
-            if (draggableInstance) draggableInstance.kill();
-            if (tickerFn) gsap.ticker.remove(tickerFn);
-            setup();
-        };
-
+        const onResize = () => setup();
         window.addEventListener("resize", onResize);
 
         return () => {
+            running = false;
             window.removeEventListener("resize", onResize);
-            if (draggableInstance) draggableInstance.kill();
-            if (tickerFn) gsap.ticker.remove(tickerFn);
+            if (draggable) draggable.kill();
+            if (rafId) cancelAnimationFrame(rafId);
         };
     }, [loopItems]);
 
@@ -190,7 +173,7 @@ export default function Footer() {
                     </h2>
 
                     <div className="kc-footer__carouselWrap">
-                        <div className="kc-footer__carouselViewport" ref={viewportRef} aria-label="Benefits carousel">
+                        <div className="kc-footer__carouselViewport" ref={viewportRef}>
                             <div className="kc-footer__track" ref={trackRef}>
                                 {loopItems.map((item, i) => (
                                     <div className="kc-footer__item" key={`${item.title}-${i}`}>
@@ -204,7 +187,6 @@ export default function Footer() {
                             </div>
                         </div>
 
-                        {/* edge fades like your design */}
                         <div className="kc-footer__fade kc-footer__fade--left" aria-hidden="true" />
                         <div className="kc-footer__fade kc-footer__fade--right" aria-hidden="true" />
                     </div>
@@ -216,11 +198,11 @@ export default function Footer() {
             </section>
 
             {/* =========================
-          Main footer (white)
+          Main footer
          ========================= */}
             <section className="kc-footer__main">
                 <div className="kc-footer__mainInner">
-                    {/* Left brand block */}
+                    {/* Left */}
                     <div className="kc-footer__left">
                         <div className="kc-footer__brand">
                             <img src={LogoIcon} alt="KonarCard" className="kc-footer__brandLogo" />
@@ -231,27 +213,17 @@ export default function Footer() {
                             Join our newsletter to stay up to date on features and updates.
                         </p>
 
-                        <div className="kc-footer__socials" aria-label="Social links">
-                            {/* Keep same links as before (you currently use /# placeholders) */}
-                            <Link to="/#" aria-label="Instagram">
-                                <img src={FooterInstagram} alt="" aria-hidden="true" />
-                            </Link>
-                            <Link to="/#" aria-label="Facebook">
-                                <img src={FooterFacebook} alt="" aria-hidden="true" />
-                            </Link>
-                            <Link to="/#" aria-label="LinkedIn">
-                                <img src={FooterLinkedIn} alt="" aria-hidden="true" />
-                            </Link>
-                            <Link to="/#" aria-label="TikTok">
-                                <img src={FooterTiktok} alt="" aria-hidden="true" />
-                            </Link>
-                            <Link to="/#" aria-label="YouTube">
-                                <img src={FooterYoutube} alt="" aria-hidden="true" />
-                            </Link>
+                        <div className="kc-footer__socials">
+                            {/* keeping your same placeholder links */}
+                            <Link to="/#" aria-label="Instagram"><img src={FooterInstagram} alt="" aria-hidden="true" /></Link>
+                            <Link to="/#" aria-label="Facebook"><img src={FooterFacebook} alt="" aria-hidden="true" /></Link>
+                            <Link to="/#" aria-label="LinkedIn"><img src={FooterLinkedIn} alt="" aria-hidden="true" /></Link>
+                            <Link to="/#" aria-label="TikTok"><img src={FooterTiktok} alt="" aria-hidden="true" /></Link>
+                            <Link to="/#" aria-label="YouTube"><img src={FooterYoutube} alt="" aria-hidden="true" /></Link>
                         </div>
                     </div>
 
-                    {/* Right columns */}
+                    {/* Columns */}
                     <div className="kc-footer__cols">
                         <div className="kc-footer__col">
                             <h4>Product</h4>
@@ -279,7 +251,7 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* Styled bottom row (matches your 2nd image) */}
+                {/* Bottom styled like your 2nd image */}
                 <div className="kc-footer__bottomBar">
                     <div className="kc-footer__bottomInner">
                         <div className="kc-footer__copyright">
