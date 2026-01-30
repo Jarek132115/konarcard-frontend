@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import "../../styling/design-system.css";
 import "../../styling/faq.css";
 
 export default function FAQPage() {
@@ -23,80 +24,100 @@ export default function FAQPage() {
       {
         tab: "getting-started",
         q: "What is KonarCard?",
-        a: "KonarCard is a digital business card that lets you share your contact details, links, and information using one simple link, NFC tap, or QR code. No app required.",
+        a: "KonarCard is a digital business card built for trades and service businesses. Share your details instantly using one link, an NFC tap, or a QR code — no app needed.",
       },
       {
         tab: "getting-started",
         q: "How do I get started?",
-        a: "You can claim your unique KonarCard link in seconds. Once claimed, you can create an account to customise your profile, add details, and start sharing straight away.",
+        a: "Claim your KonarCard link in seconds, create your profile, and start sharing straight away. You can add your contact info, socials, website, reviews, or booking link.",
       },
       {
         tab: "getting-started",
         q: "Do I need to pay to start?",
-        a: "No. You can claim your link and create a basic profile for free. Paid plans are available if you want additional features or physical NFC cards.",
+        a: "No. You can claim your link and create a basic profile for free. Paid plans unlock extra features and physical NFC cards.",
+      },
+      {
+        tab: "getting-started",
+        q: "Who is KonarCard best for?",
+        a: "It’s ideal for electricians, plumbers, builders, landscapers, and any service business that wants more calls, more quotes, and easier referrals.",
       },
 
       // Cards & profiles
       {
         tab: "cards-profiles",
         q: "How does the physical card work?",
-        a: "The KonarCard uses NFC technology. When someone taps it with their phone, your digital profile opens instantly. Phones that don’t support NFC can scan the QR code instead.",
+        a: "KonarCard cards use NFC. When someone taps your card with their phone, your profile opens instantly. If NFC isn’t supported, they can scan the QR code instead.",
       },
       {
         tab: "cards-profiles",
         q: "Can I update my profile anytime?",
-        a: "Yes. You can edit your details at any time, and changes update instantly. There’s no need to reprint or replace your card.",
+        a: "Yes. Edit your details whenever you like and updates show instantly. No reprinting, no waiting.",
       },
       {
         tab: "cards-profiles",
         q: "What happens if I lose my card?",
-        a: "Your profile stays active. You can order a replacement card and link it to the same profile without losing any information.",
+        a: "Your profile stays live. You can order a replacement card and link it to the same profile without losing anything.",
       },
       {
         tab: "cards-profiles",
         q: "Does KonarCard work on all phones?",
-        a: "Yes. KonarCard works on iPhone and Android devices. NFC is supported on most modern phones, and QR codes work on all devices with a camera.",
+        a: "Yes. It works on iPhone and Android. Most modern phones support NFC, and QR scanning works on any phone with a camera.",
+      },
+      {
+        tab: "cards-profiles",
+        q: "Can I add a booking link, WhatsApp, or reviews?",
+        a: "Yes. You can add your preferred contact methods and links — including WhatsApp, website, Google reviews, quote forms, and more.",
       },
 
       // Pricing & plans
       {
         tab: "pricing",
         q: "What plans are available?",
-        a: "KonarCard offers both free and paid plans. Paid plans unlock additional features and physical cards. You can view full pricing on the pricing page.",
+        a: "There’s a free plan to get started, plus paid plans for extra features and physical cards. See full details on the pricing page.",
       },
       {
         tab: "pricing",
         q: "Can I upgrade or downgrade later?",
-        a: "Yes. You can change your plan at any time from your account dashboard.",
+        a: "Yes. You can change your plan anytime from your account dashboard.",
       },
       {
         tab: "pricing",
         q: "What happens if I cancel?",
-        a: "If you cancel a paid plan, your profile remains accessible, but premium features will no longer be available.",
+        a: "If you cancel a paid plan, your profile stays accessible, but premium features will no longer be available.",
+      },
+      {
+        tab: "pricing",
+        q: "Do you offer refunds or replacements for cards?",
+        a: "If there’s a delivery or print issue, we’ll make it right. For order help, message us via live chat or the Contact Us page.",
       },
 
       // Teams
       {
         tab: "teams",
         q: "Can I create cards for my team?",
-        a: "Yes. Team plans allow you to manage multiple profiles under one account — perfect for businesses and crews.",
+        a: "Yes. Team plans let you manage multiple profiles under one account — perfect for companies, crews, and growing businesses.",
+      },
+      {
+        tab: "teams",
+        q: "Can I control what my team members can edit?",
+        a: "Yes. Team setups can be managed from one place so branding and key details stay consistent.",
       },
 
       // Technical & support
       {
         tab: "support",
         q: "Do I need an app?",
-        a: "No app needed. People can tap the card or scan the QR code to open your profile instantly.",
+        a: "No app needed. People tap the card or scan the QR code to open your profile instantly in their browser.",
       },
       {
         tab: "support",
-        q: "I’m having trouble with a tap — what should I do?",
-        a: "Try enabling NFC in your phone settings and tap near the top/back of the phone. If the phone doesn’t support NFC, use the QR code instead.",
+        q: "The tap isn’t working — what should I do?",
+        a: "Make sure NFC is enabled and tap the card near the top/back of the phone. If the phone doesn’t support NFC, use the QR code instead.",
       },
       {
         tab: "support",
         q: "How can I contact support?",
-        a: "Use live chat on the site or contact us via the Contact Us page — our team is here to help.",
+        a: "Use live chat or head to the Contact Us page — we’ll reply as fast as possible.",
       },
     ],
     []
@@ -115,10 +136,11 @@ export default function FAQPage() {
       <Navbar />
 
       <main className="kc-faq">
+        {/* Hero */}
         <section className="kc-faq__hero">
           <div className="kc-faq__heroInner">
-            <h1 className="kc-faq__title">Frequently Asked Questions</h1>
-            <p className="kc-faq__subtitle">
+            <h1 className="h2 kc-faq__title">Frequently Asked Questions</h1>
+            <p className="body-s kc-faq__subtitle">
               Everything you need to know before getting started with KonarCard.
             </p>
 
@@ -129,7 +151,7 @@ export default function FAQPage() {
                   <button
                     key={t.key}
                     type="button"
-                    className={`kc-faq__tab ${isActive ? "is-active" : ""}`}
+                    className={`kc-faq__tab pill ${isActive ? "is-active" : ""}`}
                     onClick={() => {
                       setActiveTab(t.key);
                       setOpenIndex(0);
@@ -145,8 +167,9 @@ export default function FAQPage() {
           </div>
         </section>
 
+        {/* FAQ list */}
         <section className="kc-faq__listSection">
-          <div className="kc-faq__list">
+          <div className="kc-faq__list" role="region" aria-label="FAQs">
             {visibleFaqs.map((item, idx) => {
               const isOpen = idx === openIndex;
               return (
@@ -157,24 +180,26 @@ export default function FAQPage() {
                     onClick={() => setOpenIndex(isOpen ? -1 : idx)}
                     aria-expanded={isOpen}
                   >
-                    <span className="kc-faq__q">{item.q}</span>
+                    <span className="h6 kc-faq__q">{item.q}</span>
                     <span className={`kc-faq__chev ${isOpen ? "is-open" : ""}`} aria-hidden="true">
                       ▾
                     </span>
                   </button>
 
-                  {isOpen && <div className="kc-faq__a">{item.a}</div>}
+                  {isOpen && <div className="body-s kc-faq__a">{item.a}</div>}
                 </div>
               );
             })}
           </div>
         </section>
 
+        {/* Still need help */}
         <section className="kc-faq__help">
-          <h2 className="kc-faq__helpTitle">Still need help?</h2>
-          <p className="kc-faq__helpSub">
+          <h2 className="h3 kc-faq__helpTitle">Still need help?</h2>
+          <p className="body-s kc-faq__helpSub">
             If you can’t find what you’re looking for, our team is here to help.
           </p>
+
           <Link to="/contactus" className="kc-faq__helpCta">
             Start A Live Chat
           </Link>
