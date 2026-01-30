@@ -1,72 +1,76 @@
 // frontend/src/App.jsx
-import { Routes, Route, useLocation } from 'react-router-dom';
-import { useContext } from 'react';
-import { Toaster } from 'react-hot-toast';
+import { Routes, Route, useLocation } from "react-router-dom";
+import { useContext } from "react";
+import { Toaster } from "react-hot-toast";
 
-import { AuthContext } from './components/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import ScrollToTop from './components/ScrollToTop';
-import TidioDelayedLoader from './components/TidioDelayedLoader';
-import RouteErrorBoundary from './components/RouteErrorBoundary';
+import { AuthContext } from "./components/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ScrollToTop from "./components/ScrollToTop";
+import TidioDelayedLoader from "./components/TidioDelayedLoader";
+import RouteErrorBoundary from "./components/RouteErrorBoundary";
 
 // -------- Public pages --------
-import Home from './pages/website/Home.jsx';
-import Register from './pages/website/Register.jsx';
-import Login from './pages/website/Login.jsx';
-import ResetPassword from './pages/website/ResetPassword.jsx';
-import ProductAndPlan from './pages/website/ProductAndPlan.jsx';
-import KonarCard from './pages/website/KonarCard.jsx';
-import KonarSubscription from './pages/website/KonarSubscription.jsx';
-import FAQ from './pages/website/FAQ.jsx';
-import Reviews from './pages/website/Reviews.jsx';
-import HelpCentre from './pages/website/HelpCentre.jsx';
-import ContactUs from './pages/website/ContactUs.jsx';
-import Policies from './pages/website/Policies.jsx';
-import Blog from './pages/website/Blog.jsx';
-import SuccessCard from './pages/website/Success.jsx';
-import SuccessSubscription from './pages/website/SuccessSubscription.jsx';
-import UserPage from './pages/interface/UserPage.jsx';
+import Home from "./pages/website/Home.jsx";
 
-// -------- OAuth --------
-import OAuthSuccess from './auth/OAuthSuccess.jsx';
+// ✅ These exist in your repo
+import Register from "./pages/website/Register.jsx";
+import Login from "./pages/website/Login.jsx";
+
+import ResetPassword from "./pages/website/ResetPassword.jsx";
+import ProductAndPlan from "./pages/website/ProductAndPlan.jsx";
+import KonarCard from "./pages/website/KonarCard.jsx";
+import KonarSubscription from "./pages/website/KonarSubscription.jsx";
+import FAQ from "./pages/website/FAQ.jsx";
+import Reviews from "./pages/website/Reviews.jsx";
+import HelpCentre from "./pages/website/HelpCentre.jsx";
+import ContactUs from "./pages/website/ContactUs.jsx";
+import Policies from "./pages/website/Policies.jsx";
+import SuccessCard from "./pages/website/Success.jsx";
+import SuccessSubscription from "./pages/website/SuccessSubscription.jsx";
+import UserPage from "./pages/interface/UserPage.jsx";
+
+// ✅ NEW: Examples page
+import Example from "./pages/website/Example.jsx";
+
+// ✅ OAuth handler page
+import OAuthSuccess from "./auth/OAuthSuccess.jsx";
 
 // -------- Interface (protected) --------
-import Billing from './pages/interface/Billing.jsx';
-import ContactSupport from './pages/interface/ContactSupport.jsx';
-import HelpCentreInterface from './pages/interface/HelpCentreInterface.jsx';
-import MyProfile from './pages/interface/MyProfile.jsx';
-import MyOrders from './pages/interface/MyOrder.jsx';
-import NFCCards from './pages/interface/NFCCards.jsx';
-import Notifications from './pages/interface/Notifications.jsx';
-import Profile from './pages/interface/Profile.jsx';
-import ClaimLink from './pages/interface/ClaimLink.jsx';
+import Billing from "./pages/interface/Billing.jsx";
+import ContactSupport from "./pages/interface/ContactSupport.jsx";
+import HelpCentreInterface from "./pages/interface/HelpCentreInterface.jsx";
+import MyProfile from "./pages/interface/MyProfile.jsx";
+import MyOrders from "./pages/interface/MyOrder.jsx";
+import NFCCards from "./pages/interface/NFCCards.jsx";
+import Notifications from "./pages/interface/Notifications.jsx";
+import Profile from "./pages/interface/Profile.jsx";
+
+// ✅ Claim link page
+import ClaimLink from "./pages/interface/ClaimLink.jsx";
 
 // -------- Admin (protected) --------
-import AdminOrders from './pages/admin/AdminDashboard.jsx';
+import AdminOrders from "./pages/admin/AdminDashboard.jsx";
 
 function TidioWrapper() {
   const location = useLocation();
-
   const isDashboardPath =
-    location.pathname.startsWith('/myprofile') ||
-    location.pathname.startsWith('/myorders') ||
-    location.pathname.startsWith('/billing') ||
-    location.pathname.startsWith('/helpcentreinterface') ||
-    location.pathname.startsWith('/nfccards') ||
-    location.pathname.startsWith('/notifications') ||
-    location.pathname.startsWith('/profile') ||
-    location.pathname.startsWith('/contact-support') ||
-    location.pathname.startsWith('/admin') ||
-    location.pathname.startsWith('/claim');
+    location.pathname.startsWith("/myprofile") ||
+    location.pathname.startsWith("/myorders") ||
+    location.pathname.startsWith("/billing") ||
+    location.pathname.startsWith("/helpcentreinterface") ||
+    location.pathname.startsWith("/nfccards") ||
+    location.pathname.startsWith("/notifications") ||
+    location.pathname.startsWith("/profile") ||
+    location.pathname.startsWith("/contact-support") ||
+    location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/claim");
 
-  const enableTidio =
-    !isDashboardPath || location.pathname === '/contact-support';
-
+  const enableTidio = !isDashboardPath || location.pathname === "/contact-support";
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
 }
 
 export default function App() {
-  // keep auth context warm
+  // keep context warm; don’t block render
   useContext(AuthContext);
 
   return (
@@ -77,10 +81,12 @@ export default function App() {
 
       <RouteErrorBoundary>
         <Routes>
-          {/* ================= PUBLIC ================= */}
+          {/* PUBLIC */}
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+
+          {/* ✅ OAuth token landing */}
           <Route path="/oauth" element={<OAuthSuccess />} />
 
           <Route path="/reset-password/:token" element={<ResetPassword />} />
@@ -90,11 +96,14 @@ export default function App() {
           <Route path="/whatisnfc" element={<KonarCard />} />
           <Route path="/subscription" element={<KonarSubscription />} />
           <Route path="/faq" element={<FAQ />} />
+
+          {/* ✅ NEW Examples route */}
+          <Route path="/examples" element={<Example />} />
+
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/helpcentre" element={<HelpCentre />} />
           <Route path="/contactus" element={<ContactUs />} />
           <Route path="/policies" element={<Policies />} />
-          <Route path="/blog" element={<Blog />} />
 
           {/* Card checkout success */}
           <Route
@@ -107,13 +116,13 @@ export default function App() {
           />
 
           {/* Subscription success */}
-          <Route path="/successsubscription" element={<SuccessSubscription />} />
           <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
+          <Route path="/successsubscription" element={<SuccessSubscription />} />
 
           {/* Public profile */}
           <Route path="/u/:username" element={<UserPage />} />
 
-          {/* ================= PROTECTED ================= */}
+          {/* PROTECTED */}
           <Route
             path="/claim"
             element={
@@ -131,7 +140,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/helpcentreinterface"
             element={
@@ -140,7 +148,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/contact-support"
             element={
@@ -149,7 +156,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/myprofile"
             element={
@@ -158,7 +164,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/myorders"
             element={
@@ -167,7 +172,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/nfccards"
             element={
@@ -176,7 +180,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/notifications"
             element={
@@ -185,7 +188,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/profile"
             element={
@@ -195,7 +197,7 @@ export default function App() {
             }
           />
 
-          {/* ================= ADMIN ================= */}
+          {/* ADMIN */}
           <Route
             path="/admin"
             element={
