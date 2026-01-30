@@ -1,161 +1,219 @@
 /* =========================
-   POLICIES PAGE (Sticky sidebar)
+   POLICIES PAGE (Figma style + real sticky)
    ========================= */
 
-/* Main Layout */
-.section-flex {
-    display: flex;
+/* breadcrumbs spacing */
+.policies-breadcrumbs {
+    margin-top: 20px;
+}
+
+/* page width + spacing */
+.policies-wrap {
+    width: 100%;
+    padding: 0 20px;
+}
+
+.policies-grid {
     width: 1040px;
-    align-items: stretch;
-    /* ✅ IMPORTANT: makes sidebar container match content height */
-    gap: 40px;
-    margin: 40px auto;
+    max-width: 1040px;
+    margin: 40px auto 80px;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 44px;
+    align-items: start;
 }
 
-/* Right content wrapper */
-.policy-content {
-    flex: 3;
-    min-width: 0;
-}
+/* ========= LEFT ========= */
 
-/* Policy content inner */
-.section-policy {
-    width: 100%;
-    margin-bottom: 100px;
-}
-
-/* Left sidebar column */
-.policy-sidebar {
-    flex: 0 0 240px;
-    max-width: 240px;
+.policies-left {
+    /* IMPORTANT: sticky stops at the bottom of this column,
+     so this column must be as tall as the right content. */
     align-self: stretch;
-    /* ✅ ensures full height like the content column */
-    position: relative;
-    /* sticky uses this column as its boundary */
 }
 
-/* Sticky wrapper (this is what actually sticks) */
-.policy-sticky-box {
+/* ✅ the actual sticky element */
+.policies-sticky {
     position: sticky;
-    top: 110px;
-    /* ✅ set this to navbar height + spacing (adjust if needed) */
+    top: clamp(40px, 6vh, 88px);
+    /* ✅ 40–88px from navbar area */
 }
 
-/* Boxes */
-.policy-box,
-.contact-box {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    background-color: #fff;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.10);
-    padding: 20px;
-    border-radius: 20px;
-    margin-bottom: 20px;
+/* left cards */
+.policies-sideCard {
+    background: #ffffff;
+    border: 1px solid #ececec;
+    border-radius: 14px;
+    padding: 18px 18px;
+    box-shadow: 0 8px 22px rgba(16, 24, 40, 0.06);
+    margin-bottom: 18px;
 }
 
-/* Nav */
-.policy-nav {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    width: 100%;
-}
-
-.policy-nav li {
+.policies-sideTitle {
+    font-weight: 800;
     font-size: 16px;
-    font-weight: 500;
-    padding: 10px 0;
-    cursor: pointer;
-    border-bottom: 1px solid #e0e0e0;
-    width: 100%;
-    color: #333;
+    color: #0b1220;
+    margin-bottom: 10px;
 }
 
-.policy-nav li:last-child {
+.policies-sideList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.policies-sideList li {
+    cursor: pointer;
+    padding: 10px 0;
+    font-size: 14px;
+    color: #101828;
+    border-bottom: 1px solid #efefef;
+    transition: opacity 0.15s ease, font-weight 0.15s ease;
+}
+
+.policies-sideList li:last-child {
     border-bottom: none;
 }
 
-.policy-nav li.active {
-    font-weight: 700;
-    color: #000;
+.policies-sideList li:hover {
+    opacity: 0.85;
 }
 
-/* Dots list styling */
-.policy-dot {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
+.policies-sideList li.isActive {
+    font-weight: 800;
+    color: #0b1220;
+}
+
+.policies-contactCard {
+    padding-top: 16px;
+}
+
+.policies-contactText {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 10px;
+    line-height: 1.35;
+}
+
+.policies-contactEmail {
+    font-weight: 800;
+    font-size: 13px;
+    color: #0b1220;
+}
+
+/* ========= RIGHT ========= */
+
+.policies-right {
+    min-width: 0;
+}
+
+/* main content card */
+.policies-contentCard {
+    background: transparent;
+}
+
+.policies-title {
+    font-size: 38px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #0b1220;
+    margin: 0 0 6px;
+}
+
+.policies-updated {
+    font-size: 12px;
+    color: #98a2b3;
+    margin-bottom: 14px;
+    font-style: italic;
+}
+
+.policies-lead {
+    font-size: 13px;
+    color: #475467;
+    line-height: 1.55;
+    max-width: 640px;
+    margin-bottom: 22px;
+}
+
+/* sections */
+.policies-block {
+    margin-top: 18px;
+    margin-bottom: 18px;
+}
+
+.policies-h {
+    font-size: 14px;
+    font-weight: 900;
+    color: #101828;
     margin-bottom: 6px;
 }
 
-.icon-10 {
-    width: 10px;
-    margin-top: 7px;
-    /* aligns bullet with first line of text */
+.policies-p {
+    font-size: 13px;
+    color: #475467;
+    line-height: 1.65;
+    margin-bottom: 10px;
 }
 
-/* ============ Responsive ============ */
+.policies-ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 12px;
+    display: grid;
+    gap: 8px;
+}
+
+.policies-ul li {
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    gap: 10px;
+    align-items: start;
+    font-size: 13px;
+    color: #475467;
+    line-height: 1.6;
+}
+
+.policies-dot {
+    width: 10px;
+    margin-top: 6px;
+    opacity: 0.9;
+}
+
+/* ========= Sticky not working? hard blockers =========
+   If ANY parent has overflow hidden/auto/scroll, sticky breaks.
+   This file doesn't set overflow anywhere. */
+
+/* ========= Responsive ========= */
 
 @media (max-width: 1200px) {
-    .section-flex {
-        max-width: 900px;
+    .policies-grid {
         width: 100%;
-        margin: 40px auto;
+        max-width: 900px;
+        grid-template-columns: 260px 1fr;
     }
 }
 
 @media (max-width: 1000px) {
-    .section-flex {
-        flex-direction: column;
-        width: 90%;
-        gap: 30px;
-        margin: 0 auto;
-        align-items: stretch;
-    }
-
-    .policy-sidebar {
-        flex: none;
-        max-width: 100%;
-    }
-
-    /* On mobile we don't want sticky */
-    .policy-sticky-box {
-        position: static;
-        display: flex;
-        flex-direction: row;
+    .policies-grid {
+        grid-template-columns: 1fr;
         gap: 20px;
-        flex-wrap: wrap;
+        margin: 20px auto 70px;
     }
 
-    .policy-box,
-    .contact-box {
-        flex: 1 1 45%;
-        margin-bottom: 0;
+    /* disable sticky on mobile, stack cards like your other pages */
+    .policies-sticky {
+        position: static;
     }
 
-    .policy-content {
-        width: 100%;
-        flex: none;
+    .policies-left {
+        align-self: auto;
     }
 
-    .section-policy {
-        margin-bottom: 80px;
-    }
-}
-
-@media (max-width: 800px) {
-    .policy-sticky-box {
-        flex-direction: column;
+    .policies-sideCard {
+        margin-bottom: 12px;
     }
 
-    .policy-box,
-    .contact-box {
-        width: 100%;
-        flex: none;
-    }
-
-    .section-flex {
-        padding: 0 10px;
+    .policies-title {
+        font-size: 34px;
     }
 }
