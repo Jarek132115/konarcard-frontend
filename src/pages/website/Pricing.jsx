@@ -148,10 +148,6 @@ export default function Pricing() {
         <>
             <Navbar />
 
-            <div style={{ marginTop: 20 }} className="section-breadcrumbs">
-                <Breadcrumbs />
-            </div>
-
             <main className="kc-pricing">
                 {/* HERO (MATCH FAQ) */}
                 <section className="kc-pricing__hero">
