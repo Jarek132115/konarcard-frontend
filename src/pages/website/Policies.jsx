@@ -316,10 +316,6 @@ export default function Policies() {
     <>
       <Navbar />
 
-      <div className="policies-breadcrumbs">
-        <Breadcrumbs />
-      </div>
-
       <section className="policies-wrap">
         <div className="policies-grid">
           {/* LEFT: sticky sidebar */}
