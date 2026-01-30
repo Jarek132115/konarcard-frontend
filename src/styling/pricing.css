@@ -1,65 +1,24 @@
 /* =========================
    Pricing Page
    File: frontend/src/styling/pricing.css
+   Uses fonts.css for typography
    ========================= */
 
 /* HERO */
 .pr-hero {
     text-align: center;
-    padding: 48px 20px 10px;
+    padding: 48px 20px 18px;
 }
 
 .pr-h1 {
     margin: 0;
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    color: #0b1220;
-    font-size: clamp(30px, 3.8vw, 46px);
-    line-height: 1.05;
+    /* Typography comes from .desktop-h2 */
 }
 
 .pr-sub {
-    margin: 10px auto 18px;
-    color: #667085;
-    font-size: 13px;
-    line-height: 1.5;
+    margin: 12px auto 0;
     max-width: 760px;
-}
-
-.pr-heroBtns {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 14px;
-}
-
-.pr-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px;
-    padding: 11px 18px;
-    font-weight: 900;
-    font-size: 12px;
-    text-decoration: none;
-    transition: opacity 0.15s ease, transform 0.12s ease;
-}
-
-.pr-btn:hover {
-    opacity: 0.93;
-}
-
-.pr-btnPrimary {
-    background: #ff7b00;
-    color: #fff;
-    border: 1px solid #ff7b00;
-}
-
-.pr-btnGhost {
-    background: #fff;
-    color: #0b1220;
-    border: 1px solid #e6e6e6;
+    /* Typography comes from .desktop-body */
 }
 
 /* BILLING */
@@ -79,23 +38,37 @@
     border: 1px solid #e6e6e6;
     background: #fff;
     color: #0b1220;
-    padding: 7px 12px;
+    padding: 8px 14px;
     border-radius: 999px;
-    font-size: 12px;
     cursor: pointer;
+
+    /* keep consistent “pill” feel */
+    font-family: "Cal Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+
+    transition: transform 0.08s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.pr-pill:hover {
+    border-color: rgba(11, 18, 32, 0.28);
+}
+
+.pr-pill:active {
+    transform: translateY(1px);
 }
 
 .pr-pill.isActive {
     background: #ff7b00;
     border-color: #ff7b00;
     color: #fff;
-    font-weight: 900;
 }
 
 .pr-note {
-    margin: 10px 0 0;
+    margin: 12px 0 0;
     color: #667085;
-    font-size: 12px;
+    /* Typography comes from .desktop-body-s */
 }
 
 /* PLAN CARDS */
@@ -133,10 +106,12 @@
     background: rgba(255, 123, 0, 0.12);
     color: #ff7b00;
     border: 1px solid rgba(255, 123, 0, 0.3);
-    font-weight: 900;
-    font-size: 11px;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 600;
+    font-size: 12px;
     padding: 6px 10px;
     border-radius: 999px;
+    letter-spacing: 0.3px;
 }
 
 .pr-planTop {
@@ -144,36 +119,36 @@
 }
 
 .pr-planTitle {
-    margin: 0 0 4px;
-    font-weight: 900;
-    color: #0b1220;
-    font-size: 14px;
+    margin: 0 0 6px;
+    /* Typography from .desktop-h6 */
 }
 
 .pr-planBadge {
     margin: 0;
     color: #667085;
-    font-size: 12px;
-    line-height: 1.4;
+    /* Typography from .desktop-body-s */
 }
 
+/* price row */
 .pr-priceRow {
     display: flex;
     align-items: baseline;
     gap: 8px;
-    margin: 10px 0 12px;
+    margin: 12px 0 12px;
 }
 
 .pr-price {
-    font-weight: 900;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 600;
     letter-spacing: -0.02em;
     color: #0b1220;
-    font-size: 26px;
+    font-size: 28px;
+    line-height: 1;
 }
 
 .pr-priceSub {
     color: #667085;
-    font-size: 12px;
+    /* Typography from .desktop-body-s */
 }
 
 .pr-list {
@@ -190,8 +165,6 @@
     gap: 10px;
     align-items: start;
     color: #0b1220;
-    font-size: 12px;
-    line-height: 1.45;
 }
 
 .pr-bulletDot {
@@ -199,7 +172,7 @@
     height: 8px;
     border-radius: 999px;
     background: rgba(255, 123, 0, 0.95);
-    margin-top: 6px;
+    margin-top: 7px;
 }
 
 .pr-cta {
@@ -207,12 +180,24 @@
     width: 100%;
     justify-content: center;
     text-decoration: none;
-    font-weight: 900;
-    font-size: 12px;
+
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+
     padding: 12px 14px;
     border-radius: 999px;
     border: 1px solid #e6e6e6;
-    transition: opacity 0.15s ease;
+    transition: opacity 0.15s ease, transform 0.08s ease;
+}
+
+.pr-cta:hover {
+    opacity: 0.93;
+}
+
+.pr-cta:active {
+    transform: translateY(1px);
 }
 
 .pr-cta.isPrimary {
@@ -234,18 +219,14 @@
 
 .pr-h2 {
     margin: 0;
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    color: #0b1220;
-    font-size: clamp(20px, 2.6vw, 26px);
+    /* Typography from .desktop-h4 */
 }
 
 .pr-sub2 {
-    margin: 8px auto 18px;
-    color: #667085;
-    font-size: 12px;
-    line-height: 1.5;
+    margin: 12px auto 18px;
     max-width: 760px;
+    color: #667085;
+    /* Typography from .desktop-body-s */
 }
 
 .pr-tableWrap {
@@ -267,11 +248,15 @@
 
 .pr-table thead th {
     text-align: left;
-    font-size: 12px;
     padding: 14px 14px;
     border-bottom: 1px solid #efefef;
     color: #0b1220;
     background: #fff;
+
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.2px;
 }
 
 .pr-thFeature {
@@ -290,11 +275,7 @@
 .pr-table tbody td {
     padding: 12px 14px;
     border-bottom: 1px solid #f1f1f1;
-    font-size: 12px;
-    color: #0b1220;
-}
-
-.pr-tdFeature {
+    font-size: 13px;
     color: #0b1220;
 }
 
@@ -328,6 +309,41 @@
     margin-top: 16px;
 }
 
+/* reuse old button styles for compare CTA */
+.pr-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 11px 18px;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    text-decoration: none;
+    transition: opacity 0.15s ease, transform 0.08s ease;
+}
+
+.pr-btn:hover {
+    opacity: 0.93;
+}
+
+.pr-btn:active {
+    transform: translateY(1px);
+}
+
+.pr-btnPrimary {
+    background: #ff7b00;
+    color: #fff;
+    border: 1px solid #ff7b00;
+}
+
+.pr-btnGhost {
+    background: #fff;
+    color: #0b1220;
+    border: 1px solid #e6e6e6;
+}
+
 /* WHO IT'S FOR */
 .pr-for {
     padding: 40px 20px 10px;
@@ -357,18 +373,17 @@
     background: rgba(255, 123, 0, 0.12);
     border: 1px solid rgba(255, 123, 0, 0.3);
     color: #ff7b00;
-    font-weight: 900;
-    font-size: 11px;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 600;
+    font-size: 12px;
     padding: 6px 10px;
     border-radius: 999px;
+    letter-spacing: 0.3px;
 }
 
 .pr-forHeadline {
-    margin: 10px 0 10px;
-    font-weight: 900;
-    color: #0b1220;
-    font-size: 13px;
-    line-height: 1.35;
+    margin: 12px 0 12px;
+    /* Typography from .desktop-h6 */
 }
 
 .pr-forList {
@@ -384,9 +399,7 @@
     grid-template-columns: 16px 1fr;
     gap: 10px;
     align-items: start;
-    font-size: 12px;
     color: #0b1220;
-    line-height: 1.45;
 }
 
 .pr-check {
@@ -406,9 +419,6 @@
     border: 1px solid #eef2f6;
     border-radius: 12px;
     padding: 12px;
-    font-size: 12px;
-    color: #667085;
-    line-height: 1.5;
 }
 
 .pr-forActions {
@@ -424,13 +434,19 @@
     background: #0b1220;
     color: #fff;
     text-decoration: none;
-    font-weight: 900;
-    font-size: 12px;
-    transition: opacity 0.15s ease;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    transition: opacity 0.15s ease, transform 0.08s ease;
 }
 
 .pr-forBtn:hover {
     opacity: 0.92;
+}
+
+.pr-forBtn:active {
+    transform: translateY(1px);
 }
 
 /* VALUE */
@@ -464,17 +480,14 @@
 }
 
 .pr-valueTitle {
-    margin: 0 0 4px;
-    font-weight: 900;
-    color: #0b1220;
-    font-size: 12px;
+    margin: 0 0 6px;
+    /* Typography from .desktop-h6 */
 }
 
 .pr-valueDesc {
     margin: 0;
     color: #667085;
-    font-size: 11px;
-    line-height: 1.5;
+    /* Typography from .desktop-body-s */
 }
 
 /* FAQS */
@@ -497,17 +510,14 @@
 }
 
 .pr-faqQ {
-    margin: 0 0 6px;
-    font-weight: 900;
-    color: #0b1220;
-    font-size: 12px;
+    margin: 0 0 8px;
+    /* Typography from .desktop-h6 */
 }
 
 .pr-faqA {
     margin: 0;
     color: #667085;
-    font-size: 11px;
-    line-height: 1.55;
+    /* Typography from .desktop-body-s */
 }
 
 /* RESPONSIVE */
