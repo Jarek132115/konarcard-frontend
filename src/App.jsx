@@ -102,6 +102,7 @@ export default function App() {
           <Route path="/whatisnfc" element={<KonarCard />} />
           <Route path="/subscription" element={<KonarSubscription />} />
 
+
           {/* PUBLIC WEBSITE PAGES */}
           <Route path="/products" element={<Products />} />
           <Route path="/examples" element={<Example />} />
