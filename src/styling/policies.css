@@ -1,219 +1,248 @@
+/* frontend/src/styling/policies.css */
+
+/* =========================================================
+   POLICIES — FINAL
+   Matches FAQ/Blog system (tokens + fonts.css)
+   Sticky sidebar works reliably
+   ========================================================= */
+
+.kc-pol {
+    background: var(--kc-bg-main);
+    color: var(--kc-text-primary);
+}
+
 /* =========================
-   POLICIES PAGE (Figma style + real sticky)
+   HERO (match FAQ spacing)
    ========================= */
-
-/* breadcrumbs spacing */
-.policies-breadcrumbs {
-    margin-top: 20px;
+.kc-pol__hero {
+    padding: 112px 20px 32px;
 }
 
-/* page width + spacing */
-.policies-wrap {
-    width: 100%;
-    padding: 0 20px;
+.kc-pol__heroInner {
+    max-width: 980px;
+    margin: 0 auto;
+    text-align: center;
 }
 
-.policies-grid {
-    width: 1040px;
+.kc-pol__heroTitle {
+    margin: 0 0 8px;
+}
+
+.kc-pol__heroSub {
+    margin: 0 auto;
+    max-width: 560px;
+    color: var(--kc-text-secondary);
+}
+
+/* =========================
+   LAYOUT
+   IMPORTANT: do NOT set overflow on parents,
+   otherwise sticky will break.
+   ========================= */
+.kc-pol__wrap {
+    padding: 0 20px 80px;
+}
+
+.kc-pol__grid {
     max-width: 1040px;
-    margin: 40px auto 80px;
+    margin: 0 auto;
     display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 44px;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
     align-items: start;
 }
 
-/* ========= LEFT ========= */
-
-.policies-left {
-    /* IMPORTANT: sticky stops at the bottom of this column,
-     so this column must be as tall as the right content. */
-    align-self: stretch;
+/* LEFT */
+.kc-pol__left {
+    align-self: start;
+    /* important */
 }
 
-/* ✅ the actual sticky element */
-.policies-sticky {
+/* ✅ The sticky element */
+.kc-pol__sticky {
     position: sticky;
-    top: clamp(40px, 6vh, 88px);
-    /* ✅ 40–88px from navbar area */
+    top: 112px;
+    /* matches hero spacing under fixed navbar */
 }
 
-/* left cards */
-.policies-sideCard {
-    background: #ffffff;
-    border: 1px solid #ececec;
+/* Side cards */
+.kc-pol__sideCard {
+    background: #fff;
+    border: 1px solid var(--kc-border);
     border-radius: 14px;
-    padding: 18px 18px;
-    box-shadow: 0 8px 22px rgba(16, 24, 40, 0.06);
-    margin-bottom: 18px;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    padding: 16px;
 }
 
-.policies-sideTitle {
-    font-weight: 800;
-    font-size: 16px;
-    color: #0b1220;
-    margin-bottom: 10px;
+.kc-pol__sideCard+.kc-pol__sideCard {
+    margin-top: 16px;
 }
 
-.policies-sideList {
+.kc-pol__sideTitle {
+    margin: 0 0 10px;
+}
+
+.kc-pol__sideList {
     list-style: none;
     margin: 0;
     padding: 0;
+    display: grid;
+}
+
+.kc-pol__sideList li+li {
+    border-top: 1px solid var(--kc-border);
+}
+
+.kc-pol__sideBtn {
     width: 100%;
-}
+    text-align: left;
 
-.policies-sideList li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 12px 10px;
+    border-radius: 10px;
+
+    border: none;
+    background: transparent;
+    color: var(--kc-text-primary);
+
     cursor: pointer;
-    padding: 10px 0;
-    font-size: 14px;
-    color: #101828;
-    border-bottom: 1px solid #efefef;
-    transition: opacity 0.15s ease, font-weight 0.15s ease;
+    transition: background-color 0.15s ease, transform 0.08s ease;
 }
 
-.policies-sideList li:last-child {
-    border-bottom: none;
+.kc-pol__sideBtn:hover {
+    background: rgba(15, 23, 42, 0.03);
 }
 
-.policies-sideList li:hover {
-    opacity: 0.85;
+.kc-pol__sideBtn:active {
+    transform: translateY(1px);
 }
 
-.policies-sideList li.isActive {
-    font-weight: 800;
-    color: #0b1220;
+.kc-pol__sideBtn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
 }
 
-.policies-contactCard {
-    padding-top: 16px;
+.kc-pol__sideBtn.is-active {
+    background: rgba(249, 115, 22, 0.10);
 }
 
-.policies-contactText {
-    font-size: 12px;
-    color: #6b7280;
-    margin-bottom: 10px;
-    line-height: 1.35;
+.kc-pol__sideArrow {
+    color: var(--kc-text-secondary);
+    font-weight: 700;
 }
 
-.policies-contactEmail {
-    font-weight: 800;
-    font-size: 13px;
-    color: #0b1220;
+.kc-pol__contactText {
+    margin: 0 0 8px;
+    color: var(--kc-text-secondary);
 }
 
-/* ========= RIGHT ========= */
+.kc-pol__contactEmail {
+    margin: 0;
+    color: var(--kc-text-primary);
+}
 
-.policies-right {
+/* RIGHT */
+.kc-pol__right {
     min-width: 0;
 }
 
-/* main content card */
-.policies-contentCard {
+/* Content container */
+.kc-pol__contentCard {
     background: transparent;
 }
 
-.policies-title {
-    font-size: 38px;
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    color: #0b1220;
-    margin: 0 0 6px;
-}
-
-.policies-updated {
-    font-size: 12px;
-    color: #98a2b3;
-    margin-bottom: 14px;
-    font-style: italic;
-}
-
-.policies-lead {
-    font-size: 13px;
-    color: #475467;
-    line-height: 1.55;
-    max-width: 640px;
-    margin-bottom: 22px;
-}
-
-/* sections */
-.policies-block {
-    margin-top: 18px;
+.kc-pol__head {
     margin-bottom: 18px;
 }
 
-.policies-h {
-    font-size: 14px;
-    font-weight: 900;
-    color: #101828;
-    margin-bottom: 6px;
+.kc-pol__title {
+    margin: 0 0 8px;
 }
 
-.policies-p {
-    font-size: 13px;
-    color: #475467;
-    line-height: 1.65;
-    margin-bottom: 10px;
+.kc-pol__updated {
+    margin: 0 0 14px;
+    color: rgba(15, 23, 42, 0.45);
+    font-style: italic;
 }
 
-.policies-ul {
+.kc-pol__lead {
+    margin: 0;
+    max-width: 720px;
+    color: var(--kc-text-secondary);
+}
+
+/* Sections */
+.kc-pol__block {
+    margin-top: 18px;
+}
+
+.kc-pol__h {
+    margin: 0 0 6px;
+}
+
+.kc-pol__p {
+    margin: 0 0 10px;
+    color: var(--kc-text-secondary);
+    max-width: 860px;
+}
+
+.kc-pol__ul {
     list-style: none;
     padding: 0;
     margin: 10px 0 12px;
     display: grid;
     gap: 8px;
+    max-width: 860px;
 }
 
-.policies-ul li {
+.kc-pol__ul li {
     display: grid;
     grid-template-columns: 14px 1fr;
     gap: 10px;
     align-items: start;
-    font-size: 13px;
-    color: #475467;
+    color: var(--kc-text-secondary);
     line-height: 1.6;
 }
 
-.policies-dot {
+.kc-pol__dot {
     width: 10px;
     margin-top: 6px;
     opacity: 0.9;
 }
 
-/* ========= Sticky not working? hard blockers =========
-   If ANY parent has overflow hidden/auto/scroll, sticky breaks.
-   This file doesn't set overflow anywhere. */
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 1000px) {
+    .kc-pol__grid {
+        grid-template-columns: 1fr;
+    }
 
-/* ========= Responsive ========= */
+    /* Disable sticky on mobile/tablet */
+    .kc-pol__sticky {
+        position: static;
+        top: auto;
+    }
 
-@media (max-width: 1200px) {
-    .policies-grid {
-        width: 100%;
-        max-width: 900px;
-        grid-template-columns: 260px 1fr;
+    .kc-pol__sideCard {
+        max-width: 760px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .kc-pol__right {
+        max-width: 760px;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
-@media (max-width: 1000px) {
-    .policies-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        margin: 20px auto 70px;
-    }
-
-    /* disable sticky on mobile, stack cards like your other pages */
-    .policies-sticky {
-        position: static;
-    }
-
-    .policies-left {
-        align-self: auto;
-    }
-
-    .policies-sideCard {
-        margin-bottom: 12px;
-    }
-
-    .policies-title {
-        font-size: 34px;
+@media (max-width: 640px) {
+    .kc-pol__hero {
+        padding-top: 96px;
     }
 }
