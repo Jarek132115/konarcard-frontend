@@ -8,6 +8,7 @@ import Footer from "../../components/Footer";
 import Hero from "../../components/Home/Hero";
 import Comparison from "../../components/Home/Comparison";
 import HowItWorks from "../../components/Home/HowItWorks";
+import CustomerTrust from "../../components/Home/CustomerTrust";
 
 /* Existing assets (unchanged) */
 import StepSection1 from "../../assets/images/Step-Section-1.jpg";
@@ -102,7 +103,10 @@ export default function Home() {
       {/* 3) HOW IT WORKS */}
       <HowItWorks />
 
-      {/* 3 STEPS (your existing section) */}
+      {/* 4) CUSTOMER TRUST */}
+      <CustomerTrust />
+
+      {/* 3 STEPS (existing section) */}
       <div className="section steps-v1">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
@@ -166,77 +170,6 @@ export default function Home() {
           >
             Watch How It Works
           </button>
-        </div>
-      </div>
-
-      {/* WHY KONARCARD VS PAPER */}
-      <div className="section why-vs-paper">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">
-            Stop <span className="orange">Wasting Money</span> on Paper Business Cards
-          </h2>
-        </div>
-
-        <div className="why-vs-grid">
-          <div className="vs-media" aria-hidden="true">
-            <div className="vs-split">
-              <div className="vs-pane vs-left" role="img" aria-label="Pile of paper business cards"></div>
-
-              <div className="vs-pane vs-right">
-                <img src={NFCBusinessCard} alt="KonarCard — tap to share instantly" loading="lazy" />
-              </div>
-
-              <div className="vs-badge" aria-hidden="true">
-                VS
-              </div>
-            </div>
-          </div>
-
-          <div className="vs-copy">
-            <ul className="vs-bullets">
-              <li>
-                <span className="vs-ico vs-neg" aria-hidden="true">
-                  ✖
-                </span>
-                <div>
-                  <p className="desktop-body-s">
-                    <strong>Paper cards get lost or binned.</strong>
-                  </p>
-                  <p className="desktop-body-xs gray">Most never make it into contacts.</p>
-                </div>
-              </li>
-
-              <li>
-                <span className="vs-ico vs-neg" aria-hidden="true">
-                  ✖
-                </span>
-                <div>
-                  <p className="desktop-body-s">
-                    <strong>Updating details means reprinting.</strong>
-                  </p>
-                  <p className="desktop-body-xs gray">Wasted time and ongoing costs.</p>
-                </div>
-              </li>
-
-              <li>
-                <span className="vs-ico vs-pos" aria-hidden="true">
-                  ✓
-                </span>
-                <div>
-                  <p className="desktop-body-s">
-                    <strong>KonarCard is eco-friendly &amp; always up-to-date.</strong>
-                  </p>
-                  <p className="desktop-body-xs gray">One tap, share forever — no app needed.</p>
-                </div>
-              </li>
-            </ul>
-
-            <div className="vs-cta">
-              <Link to="/register" className="navy-button desktop-button">
-                Make the Switch
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
 
