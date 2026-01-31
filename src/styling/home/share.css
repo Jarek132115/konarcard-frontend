@@ -1,0 +1,116 @@
+/* =========================================================
+   HOME — SHARE SECTION
+   File: frontend/src/styling/home/share.css
+   ========================================================= */
+
+.kc-share {
+    padding-top: 64px;
+    padding-bottom: 64px;
+}
+
+.kc-share__inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.kc-share__header {
+    margin-bottom: 28px;
+}
+
+.kc-share__title {
+    margin: 0 0 10px;
+    color: #0b1220;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+}
+
+.kc-share__sub {
+    margin: 0 auto;
+    max-width: 760px;
+    color: rgba(12, 24, 48, 0.72);
+    line-height: 1.6;
+}
+
+/* Grid */
+.kc-share__grid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    align-items: stretch;
+}
+
+/* Cards */
+.kc-share__card {
+    border-radius: 18px;
+    border: 1px solid rgba(12, 24, 48, 0.10);
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 16px 38px rgba(12, 24, 48, 0.08);
+    overflow: hidden;
+    padding: 14px 14px 16px;
+}
+
+.kc-share__media {
+    height: 170px;
+    border-radius: 14px;
+    background: rgba(12, 24, 48, 0.04);
+    border: 1px solid rgba(12, 24, 48, 0.06);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.kc-share__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Copy */
+.kc-share__cardTitle {
+    margin: 0 0 6px;
+    font-family: "Inter", sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: -0.02em;
+    color: #0b1220;
+}
+
+.kc-share__cardDesc {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    line-height: 1.55;
+    color: rgba(12, 24, 48, 0.70);
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .kc-share__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .kc-share__media {
+        height: 190px;
+    }
+}
+
+@media (max-width: 640px) {
+    .kc-share__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kc-share__media {
+        height: 220px;
+    }
+}
+
+@media (max-width: 520px) {
+    .kc-share {
+        padding-top: 48px;
+        padding-bottom: 48px;
+    }
+}

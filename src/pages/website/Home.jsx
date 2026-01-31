@@ -1,6 +1,5 @@
 // frontend/src/pages/Home/index.jsx
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
@@ -11,15 +10,12 @@ import HowItWorks from "../../components/Home/HowItWorks";
 import CustomerTrust from "../../components/Home/CustomerTrust";
 import Products from "../../components/Home/Products";
 import Examples from "../../components/Home/Examples";
+import Share from "../../components/Home/Share";
 import Value from "../../components/Home/Value";
 import Pricing from "../../components/Home/Pricing";
 import Review from "../../components/Home/Review";
 
 /* Existing assets (unchanged) */
-import StepSection1 from "../../assets/images/Step-Section-1.jpg";
-import EditProfile from "../../assets/images/Edit-Profile.jpg";
-import WhyYouNeedThis from "../../assets/images/WhyYouNeedThis.png";
-
 import NFCBusinessCard from "../../assets/images/NFC-Business-Card.jpg";
 import ScanQRCode from "../../assets/images/ScanQR-Code.jpg";
 import LinkInBio from "../../assets/images/LinkInBio.jpg";
@@ -90,122 +86,19 @@ export default function Home() {
       {/* 6) EXAMPLES */}
       <Examples />
 
+      {/* ✅ SHARE (moved into component) */}
+      <Share
+        nfcImage={NFCBusinessCard}
+        qrImage={ScanQRCode}
+        smsImage={SMSSend}
+        linkImage={LinkInBio}
+      />
+
       {/* 7) VALUE */}
       <Value />
 
       {/* 8) PRICING */}
       <Pricing />
-
-      {/* 3 STEPS (existing section) */}
-      <div className="section steps-v1">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">
-            Get Set Up in <span className="orange">3 Quick</span> <span className="orange">&amp; Easy</span> Steps
-          </h2>
-          <h3 className="desktop-body-xs text-center">From sign-up to sharing — it only takes minutes.</h3>
-        </div>
-
-        <div className="steps-grid-3">
-          <div className="step-tile">
-            <div className="step-copy">
-              <span className="step-pill">Step 1</span>
-              <h3 className="desktop-h5">Create Your Profile</h3>
-              <p className="desktop-body-s gray step-subtitle">
-                Set up your profile in minutes by adding details, photos, and branding, then save so it’s always ready to
-                share.
-              </p>
-            </div>
-            <div className="step-media">
-              <img src={EditProfile} alt="Create your profile" />
-            </div>
-          </div>
-
-          <div className="step-tile">
-            <div className="step-copy">
-              <span className="step-pill">Step 2</span>
-              <h3 className="desktop-h5">Order Your Konar Card</h3>
-              <p className="desktop-body-s gray step-subtitle">
-                Get your sleek NFC card to share unlimited times, delivered fast and always current with your updated
-                profile.
-              </p>
-            </div>
-            <div className="step-media">
-              <img src={StepSection1} alt="Order your Konar card" />
-            </div>
-          </div>
-
-          <div className="step-tile">
-            <div className="step-copy">
-              <span className="step-pill">Step 3</span>
-              <h3 className="desktop-h5">Share &amp; Win More Work</h3>
-              <p className="desktop-body-s gray step-subtitle">
-                Tap or scan your card to instantly send details, making it easier for clients to save, get in touch, and
-                book faster.
-              </p>
-            </div>
-            <div className="step-media">
-              <img src={WhyYouNeedThis} alt="Share your page" />
-            </div>
-          </div>
-        </div>
-
-        <div className="faq-cta">
-          <button
-            type="button"
-            className="navy-button desktop-button"
-            onClick={() => setIsVideoOpen(true)}
-            aria-haspopup="dialog"
-            aria-expanded={isVideoOpen}
-            aria-controls="how-it-works-modal"
-          >
-            Watch How It Works
-          </button>
-        </div>
-      </div>
-
-      {/* HOW TO SHARE */}
-      <div className="section">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">
-            One Profile. <span className="orange">Shared</span> Every Way.
-          </h2>
-          <h3 className="desktop-body-xs text-center">Four simple ways to get your details in front of clients.</h3>
-        </div>
-
-        <div className="share-grid">
-          <div className="share-card">
-            <div className="share-card-media">
-              <img src={NFCBusinessCard} alt="NFC business card being tapped to share details" />
-            </div>
-            <h4 className="desktop-h6">NFC Business Card</h4>
-            <p className="desktop-body-xs">Tap to Instantly Share Details With Anyone</p>
-          </div>
-
-          <div className="share-card">
-            <div className="share-card-media">
-              <img src={ScanQRCode} alt="Scanning a QR code to open profile" />
-            </div>
-            <h4 className="desktop-h6">Scan QR Code</h4>
-            <p className="desktop-body-xs">Scan the QR Code To Open Your Profile</p>
-          </div>
-
-          <div className="share-card">
-            <div className="share-card-media">
-              <img src={SMSSend} alt="Sharing your link via message apps" />
-            </div>
-            <h4 className="desktop-h6">Share via Message</h4>
-            <p className="desktop-body-xs">WhatsApp, SMS, Messenger &amp; More</p>
-          </div>
-
-          <div className="share-card">
-            <div className="share-card-media">
-              <img src={LinkInBio} alt="Link in bio on social profile" />
-            </div>
-            <h4 className="desktop-h6">Link In Bio</h4>
-            <p className="desktop-body-xs">Add to Instagram, Facebook, TikTok, or your website.</p>
-          </div>
-        </div>
-      </div>
 
       {/* 9) REVIEW (last section) */}
       <Review />
