@@ -10,6 +10,7 @@ import Comparison from "../../components/Home/Comparison";
 import HowItWorks from "../../components/Home/HowItWorks";
 import CustomerTrust from "../../components/Home/CustomerTrust";
 import Products from "../../components/Home/Products";
+import Examples from "../../components/Home/Examples";
 
 /* Existing assets (unchanged) */
 import StepSection1 from "../../assets/images/Step-Section-1.jpg";
@@ -108,6 +109,8 @@ export default function Home() {
       <CustomerTrust />
 
       <Products />
+
+      <Examples />
 
 
       {/* 3 STEPS (existing section) */}
