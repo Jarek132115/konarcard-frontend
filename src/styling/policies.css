@@ -1,7 +1,7 @@
 /* frontend/src/styling/policies.css */
 
 /* =========================================================
-   POLICIES — FINAL
+   POLICIES — FINAL (NO extra top hero)
    Matches FAQ/Blog system (tokens + fonts.css)
    Sticky sidebar works reliably
    ========================================================= */
@@ -11,36 +11,10 @@
     color: var(--kc-text-primary);
 }
 
-/* =========================
-   HERO (match FAQ spacing)
-   ========================= */
-.kc-pol__hero {
-    padding: 112px 20px 32px;
-}
-
-.kc-pol__heroInner {
-    max-width: 980px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.kc-pol__heroTitle {
-    margin: 0 0 8px;
-}
-
-.kc-pol__heroSub {
-    margin: 0 auto;
-    max-width: 560px;
-    color: var(--kc-text-secondary);
-}
-
-/* =========================
-   LAYOUT
-   IMPORTANT: do NOT set overflow on parents,
-   otherwise sticky will break.
-   ========================= */
+/* Layout wrapper (add top padding to clear fixed navbar) */
 .kc-pol__wrap {
-    padding: 0 20px 80px;
+    padding: 112px 20px 80px;
+    /* match FAQ hero top spacing but without extra heading */
 }
 
 .kc-pol__grid {
@@ -55,14 +29,13 @@
 /* LEFT */
 .kc-pol__left {
     align-self: start;
-    /* important */
 }
 
-/* ✅ The sticky element */
+/* ✅ Sticky element */
 .kc-pol__sticky {
     position: sticky;
     top: 112px;
-    /* matches hero spacing under fixed navbar */
+    /* sits nicely under navbar area */
 }
 
 /* Side cards */
@@ -127,7 +100,7 @@
 }
 
 .kc-pol__sideBtn.is-active {
-    background: rgba(249, 115, 22, 0.10);
+    background: rgba(249, 115, 22, 0.1);
 }
 
 .kc-pol__sideArrow {
@@ -150,7 +123,7 @@
     min-width: 0;
 }
 
-/* Content container */
+/* Content */
 .kc-pol__contentCard {
     background: transparent;
 }
@@ -175,7 +148,6 @@
     color: var(--kc-text-secondary);
 }
 
-/* Sections */
 .kc-pol__block {
     margin-top: 18px;
 }
@@ -214,26 +186,18 @@
     opacity: 0.9;
 }
 
-/* =========================
-   RESPONSIVE
-   ========================= */
+/* RESPONSIVE */
 @media (max-width: 1000px) {
     .kc-pol__grid {
         grid-template-columns: 1fr;
     }
 
-    /* Disable sticky on mobile/tablet */
     .kc-pol__sticky {
         position: static;
         top: auto;
     }
 
-    .kc-pol__sideCard {
-        max-width: 760px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
+    .kc-pol__sideCard,
     .kc-pol__right {
         max-width: 760px;
         margin-left: auto;
@@ -242,7 +206,7 @@
 }
 
 @media (max-width: 640px) {
-    .kc-pol__hero {
+    .kc-pol__wrap {
         padding-top: 96px;
     }
 }

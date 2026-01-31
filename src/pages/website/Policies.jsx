@@ -241,80 +241,20 @@ export default function Policies() {
           </div>
         );
 
-      case "terms":
-        return (
-          <div className="kc-pol__contentCard">
-            <header className="kc-pol__head">
-              <h1 className="h2 kc-pol__title">Terms Of Service</h1>
-              <p className="body-s kc-pol__updated">Last updated: 25/01/2026</p>
-              <p className="body-s kc-pol__lead">
-                Welcome to KonarCard. These Terms of Service outline the rules for using our
-                website, products, and services. By accessing or purchasing from our site, you
-                agree to these terms.
-              </p>
-            </header>
-
-            <p className="body-s kc-pol__p">
-              (Keep your existing Terms content here — this page styling will match automatically.)
-            </p>
-          </div>
-        );
-
-      case "warranty":
-        return (
-          <div className="kc-pol__contentCard">
-            <header className="kc-pol__head">
-              <h1 className="h2 kc-pol__title">Warranty</h1>
-              <p className="body-s kc-pol__updated">Last updated: 25/01/2026</p>
-              <p className="body-s kc-pol__lead">
-                We stand behind the quality of our NFC cards. This Warranty Policy explains what’s
-                covered, what’s not, and how to make a claim.
-              </p>
-            </header>
-
-            <p className="body-s kc-pol__p">
-              (Keep your existing Warranty content here — styling will match.)
-            </p>
-          </div>
-        );
-
-      case "cookies":
-        return (
-          <div className="kc-pol__contentCard">
-            <header className="kc-pol__head">
-              <h1 className="h2 kc-pol__title">Cookie Policy</h1>
-              <p className="body-s kc-pol__updated">Last updated: 25/01/2026</p>
-              <p className="body-s kc-pol__lead">
-                We use cookies to improve your experience on our website. This policy explains what
-                cookies are, how we use them, and how to manage your preferences.
-              </p>
-            </header>
-
-            <p className="body-s kc-pol__p">
-              (Keep your existing Cookie content here — styling will match.)
-            </p>
-          </div>
-        );
-
-      case "shipping":
-        return (
-          <div className="kc-pol__contentCard">
-            <header className="kc-pol__head">
-              <h1 className="h2 kc-pol__title">Shipping & Returns</h1>
-              <p className="body-s kc-pol__updated">Last updated: 25/01/2026</p>
-              <p className="body-s kc-pol__lead">
-                Production times, delivery windows, tracking, and return policies.
-              </p>
-            </header>
-
-            <p className="body-s kc-pol__p">
-              (Keep your existing Shipping content here — styling will match.)
-            </p>
-          </div>
-        );
-
       default:
-        return null;
+        return (
+          <div className="kc-pol__contentCard">
+            <header className="kc-pol__head">
+              <h1 className="h2 kc-pol__title">
+                {policies.find((x) => x.key === activePolicy)?.label || "Policy"}
+              </h1>
+              <p className="body-s kc-pol__updated">Last updated: 25/01/2026</p>
+              <p className="body-s kc-pol__lead">
+                (Keep your existing content here — styling will match automatically.)
+              </p>
+            </header>
+          </div>
+        );
     }
   };
 
@@ -323,20 +263,8 @@ export default function Policies() {
       <Navbar />
 
       <main className="kc-pol">
-        {/* Hero spacing to match other pages */}
-        <section className="kc-pol__hero">
-          <div className="kc-pol__heroInner">
-            <h1 className="h2 kc-pol__heroTitle">Policies</h1>
-            <p className="body-s kc-pol__heroSub">
-              Everything you need to know about how KonarCard works, your rights, and our policies.
-            </p>
-          </div>
-        </section>
-
-        {/* 2-col layout */}
         <section className="kc-pol__wrap">
           <div className="kc-pol__grid">
-            {/* LEFT: sticky sidebar */}
             <aside className="kc-pol__left" aria-label="Policy navigation">
               <div className="kc-pol__sticky">
                 <div className="kc-pol__sideCard">
@@ -362,7 +290,9 @@ export default function Policies() {
 
                 <div className="kc-pol__sideCard kc-pol__contactCard">
                   <p className="h6 kc-pol__sideTitle">Contact us</p>
-                  <p className="body-s kc-pol__contactText">Need help? Our support is available 24/7.</p>
+                  <p className="body-s kc-pol__contactText">
+                    Need help? Our support is available 24/7.
+                  </p>
                   <p className="body-s kc-pol__contactEmail">
                     <strong>support@konarcard.com</strong>
                   </p>
@@ -370,7 +300,6 @@ export default function Policies() {
               </div>
             </aside>
 
-            {/* RIGHT: content */}
             <section className="kc-pol__right">{renderContent()}</section>
           </div>
         </section>
