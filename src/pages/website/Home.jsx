@@ -9,6 +9,7 @@ import Hero from "../../components/Home/Hero";
 import Comparison from "../../components/Home/Comparison";
 import HowItWorks from "../../components/Home/HowItWorks";
 import CustomerTrust from "../../components/Home/CustomerTrust";
+import Products from "../../components/Home/Products";
 
 /* Existing assets (unchanged) */
 import StepSection1 from "../../assets/images/Step-Section-1.jpg";
@@ -105,6 +106,9 @@ export default function Home() {
 
       {/* 4) CUSTOMER TRUST */}
       <CustomerTrust />
+
+      <Products />
+
 
       {/* 3 STEPS (existing section) */}
       <div className="section steps-v1">
