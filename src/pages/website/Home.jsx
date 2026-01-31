@@ -4,6 +4,10 @@ import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
+/* ✅ NEW: Hero as its own component */
+import Hero from "../../components/Home/Hero";
+
+/* Existing assets (unchanged) */
 import Section1Image from "../../assets/images/Section-1-Image.png";
 import StepSection1 from "../../assets/images/Step-Section-1.jpg";
 import StepSection2 from "../../assets/images/Step-Section-2.jpg";
@@ -30,15 +34,11 @@ import ProductImage2 from "../../assets/images/Product-Image-2.png";
 import ProductImage3 from "../../assets/images/Product-Image-3.png";
 import ProductImage4 from "../../assets/images/Product-Image-4.png";
 
-/* === New: static profile gallery assets (UP1 → UP8) === */
-import UP1 from "../../assets/images/UP1.jpg";
-import UP2 from "../../assets/images/UP2.jpg";
-import UP3 from "../../assets/images/UP3.jpg";
-import UP4 from "../../assets/images/UP4.jpg";
-import UP5 from "../../assets/images/UP5.jpg";
-import UP6 from "../../assets/images/UP6.jpg";
-import UP7 from "../../assets/images/UP7.jpg";
-import UP8 from "../../assets/images/UP8.jpg";
+/* Keep your existing home styling (where all the other sections live) */
+import "../../styling/fonts.css";
+/* If your original Home page relied on a home.css, keep it imported here.
+   (If you already import it elsewhere, keep it consistent with your project.) */
+// import "../../styling/home.css";
 
 export default function Home() {
   // product gallery
@@ -51,24 +51,33 @@ export default function Home() {
 
   useEffect(() => {
     if (!isVideoOpen) return;
+
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
     const onKey = (e) => e.key === "Escape" && setIsVideoOpen(false);
     window.addEventListener("keydown", onKey);
-    // auto-play when opened (mobile browsers require user gesture; opening from button counts)
+
+    // auto-play when opened
     const v = videoRef.current;
     if (v) {
-      // start from the beginning each time it opens
-      try { v.currentTime = 0; } catch { }
+      try {
+        v.currentTime = 0;
+      } catch { }
       v.play().catch(() => { });
     }
+
     return () => {
       document.body.style.overflow = prev;
       window.removeEventListener("keydown", onKey);
+
       // pause & reset on close
       const vv = videoRef.current;
       if (vv) {
-        try { vv.pause(); vv.currentTime = 0; } catch { }
+        try {
+          vv.pause();
+          vv.currentTime = 0;
+        } catch { }
       }
     };
   }, [isVideoOpen]);
@@ -90,284 +99,12 @@ export default function Home() {
     []
   );
 
-  /* =========================================================
-     PROFILES: Edge-to-edge, looping, draggable marquee
-     - Order: UP1 … UP8 (exactly)
-     - Gap: 10px
-     - Auto-scroll with pause on hover/press
-     - Drag horizontally
-     - IMPORTANT: allow vertical page scroll on touch!
-  ========================================================== */
-  const items = useMemo(
-    () => [
-      { src: UP1, tone: "#FFECD2" }, // warm cream
-      { src: UP2, tone: "#FFDCC7" }, // orange-ish (matches button vibe)
-      { src: UP3, tone: "#E8F0FF" }, // light blue/grey
-      { src: UP4, tone: "#D9F2EA" }, // soft teal/green
-      { src: UP5, tone: "#E9F1FF" }, // pale blue to fit brand
-      { src: UP6, tone: "#E9F7E9" }, // green (gardening)
-      { src: UP7, tone: "#FFE3DB" }, // soft red/orange
-      { src: UP8, tone: "#E6ECFA" }, // navy-ish pastel
-    ],
-    []
-  );
-
-  const scrollerRef = useRef(null);
-  const trackRef = useRef(null);
-  const rafRef = useRef(0);
-  const draggingRef = useRef(false);
-  const pauseRef = useRef(false);
-  const lastXRef = useRef(0);
-  const lastYRef = useRef(0);
-  const startScrollRef = useRef(0);
-  const axisLockedRef = useRef(null); // 'x' | 'y' | null
-  const speedRef = useRef(0.35); // px per frame (adjust if you want faster/slower)
-
-  // Clone enough groups to cover “infinite” look
-  const renderGroups = 4; // plenty for wide screens
-  const groups = useMemo(() => new Array(renderGroups).fill(0), []);
-
-  // maintain exact 10px gap
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (el) el.style.setProperty("--gap", "10px");
-  }, []);
-
-  // autoplay
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-
-    const tick = () => {
-      if (!pauseRef.current && !draggingRef.current) {
-        el.scrollLeft += speedRef.current;
-        // loop forward
-        const maxScroll = trackRef.current?.scrollWidth || 0;
-        if (el.scrollLeft >= maxScroll / 2) {
-          // jump back by one half (since we render items repeated)
-          el.scrollLeft -= maxScroll / 2;
-        }
-      }
-      rafRef.current = requestAnimationFrame(tick);
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, []);
-
-  // keep forward/backwards look seamless
-  useEffect(() => {
-    const el = scrollerRef.current;
-    const track = trackRef.current;
-    if (!el || !track) return;
-
-    const onScroll = () => {
-      const max = track.scrollWidth;
-      if (max <= 0) return;
-
-      // if user scrolls far left, wrap to the second half
-      if (el.scrollLeft <= 0) {
-        el.scrollLeft += max / 2;
-      }
-      // if user scrolls far right, wrap back
-      if (el.scrollLeft >= max / 2) {
-        el.scrollLeft -= max / 2;
-      }
-    };
-
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // pointer interactions (drag to scroll — but allow vertical page scroll)
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-
-    let pointerId = null;
-
-    const onPointerDown = (e) => {
-      pointerId = e.pointerId;
-      el.setPointerCapture?.(pointerId);
-      draggingRef.current = true;
-      axisLockedRef.current = null;
-      lastXRef.current = e.clientX;
-      lastYRef.current = e.clientY;
-      startScrollRef.current = el.scrollLeft;
-      pauseRef.current = true;
-    };
-
-    const onPointerMove = (e) => {
-      if (!draggingRef.current) return;
-
-      const dx = e.clientX - lastXRef.current;
-      const dy = e.clientY - lastYRef.current;
-
-      // Lock axis when movement is clear enough
-      if (axisLockedRef.current == null) {
-        if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
-          axisLockedRef.current = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
-        }
-      }
-
-      if (axisLockedRef.current === "x") {
-        e.preventDefault();
-        el.scrollLeft = startScrollRef.current - (e.clientX - lastXRef.current);
-      } else if (axisLockedRef.current === "y") {
-        draggingRef.current = false;
-        pauseRef.current = false;
-        el.releasePointerCapture?.(pointerId);
-      }
-    };
-
-    const endDrag = () => {
-      if (!draggingRef.current) return;
-      draggingRef.current = false;
-      axisLockedRef.current = null;
-      pauseRef.current = false;
-      if (pointerId != null) {
-        try {
-          el.releasePointerCapture?.(pointerId);
-        } catch { }
-      }
-    };
-
-    el.addEventListener("pointerdown", onPointerDown);
-    window.addEventListener("pointermove", onPointerMove, { passive: false });
-    window.addEventListener("pointerup", endDrag);
-    window.addEventListener("pointercancel", endDrag);
-    window.addEventListener("blur", endDrag);
-
-    // pause on hover (desktop)
-    const onEnter = () => (pauseRef.current = true);
-    const onLeave = () => (pauseRef.current = false);
-    el.addEventListener("mouseenter", onEnter);
-    el.addEventListener("mouseleave", onLeave);
-
-    return () => {
-      el.removeEventListener("pointerdown", onPointerDown);
-      window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerup", endDrag);
-      window.removeEventListener("pointercancel", endDrag);
-      window.removeEventListener("blur", endDrag);
-      el.removeEventListener("mouseenter", onEnter);
-      el.removeEventListener("mouseleave", onLeave);
-    };
-  }, []);
   return (
     <>
-      {/* HERO */}
       <Navbar />
-      <div className="home-hero">
-        <div className="hero-container">
-          <div className="hero-left">
-            <div style={{ width: "fit-content" }} className="step-badge hero-badge">
-              14 Day <span style={{ fontWeight: 600 }}>Free Trial</span> Now Available
-            </div>
 
-            <h1 className="desktop-h1 hero-heading">
-              Your Business Card. <span className="orange hero-glow">Supercharged</span> to Win More Jobs.
-            </h1>
-
-            <p className="desktop-body">
-              One tap opens your full profile—photos, services, reviews—and saves your details to their phone. No app.
-              Just jobs.
-            </p>
-
-            <div className="hero-cta">
-              <Link to="/register" className="orange-button desktop-button">
-                Start Your Free Trial
-              </Link>
-
-              <button
-                type="button"
-                className="navy-button desktop-button hero-watch-btn"
-                onClick={() => setIsVideoOpen(true)}
-                aria-haspopup="dialog"
-                aria-expanded={isVideoOpen}
-                aria-controls="how-it-works-modal"
-              >
-                Watch How It Works
-              </button>
-            </div>
-
-            <div className="hero-social-proof">
-              <div className="hero-avatars">
-                <img src={pp1} alt="User 1" className="avatar" />
-                <img src={pp2} alt="User 2" className="avatar" />
-                <img src={pp3} alt="User 3" className="avatar" />
-              </div>
-              <div className="avatar-text">
-                <p style={{ fontWeight: 900 }} className="desktop-h6">
-                  520+
-                </p>
-                <p className="desktop-body-xs light-black">Using Daily</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="hero-right">
-            <video
-              className="hero-video-element"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              aria-hidden="true"
-              width="812"
-              height="500"
-            >
-              <source src="/videos/Hero-GIF.webm" type="video/webm" />
-              <source src="/videos/Hero-Video.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        </div>
-      </div>
-
-      {/* PROFILES — EDGE-TO-EDGE, DRAGGABLE, LOOPING SCROLLER */}
-      <div className="section profiles-edge">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">
-            Real <span className="orange">Profiles</span> In Action
-          </h2>
-          <h3 className="desktop-body-xs text-center">A snapshot of how tradies present their work.</h3>
-        </div>
-
-        {/* Edge-to-edge scroller */}
-        <div className="profiles-scroller-outer">
-          <div
-            ref={scrollerRef}
-            className="profiles-scroller"
-            style={{ touchAction: "pan-y" }}
-          >
-            <div ref={trackRef} className="profiles-track">
-              {groups.map((_, gi) => (
-                <React.Fragment key={gi}>
-                  {items.map((it, i) => (
-                    <div
-                      key={`${gi}-${i}`}
-                      className="phone-pill v4"
-                      style={{ "--pill": it.tone }}
-                    >
-                      <div className="phone-viewport v4">
-                        <img
-                          src={it.src}
-                          alt={`User profile ${i + 1}`}
-                          style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "inherit" }}
-                          draggable={false}
-                          loading={gi === 0 ? "eager" : "lazy"}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* ✅ HERO (now includes the Real Profiles carousel inside it) */}
+      <Hero />
 
       {/* 3 STEPS */}
       <div className="section steps-v1">
@@ -423,7 +160,6 @@ export default function Home() {
         </div>
 
         <div className="faq-cta">
-          {/* changed from Link to button so it opens the modal */}
           <button
             type="button"
             className="navy-button desktop-button"
@@ -448,7 +184,6 @@ export default function Home() {
           </h3>
         </div>
 
-        {/* Comparison Row */}
         <div className="realworld-comparison">
           <div className="comparison-box">
             <span className="comparison-badge old">The old way</span>
@@ -487,13 +222,14 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Use Case Grid */}
         <div className="realworld-grid">
           <div className="realworld-card">
             <div className="realworld-card-icon">👷</div>
             <div className="realworld-card-text">
               <h4 className="desktop-body-s">On Site, With a Client</h4>
-              <p className="equal desktop-body-xs">Tap your KonarCard. Their phone opens your profile and saves your details instantly.</p>
+              <p className="equal desktop-body-xs">
+                Tap your KonarCard. Their phone opens your profile and saves your details instantly.
+              </p>
             </div>
           </div>
 
@@ -527,7 +263,9 @@ export default function Home() {
             <div className="realworld-card-icon">📱</div>
             <div className="realworld-card-text">
               <h4 className="desktop-body-s">Social &amp; Link In Bio</h4>
-              <p className="equal desktop-body-xs">Add your link to Instagram, Facebook, and TikTok to convert views into enquiries.</p>
+              <p className="equal desktop-body-xs">
+                Add your link to Instagram, Facebook, and TikTok to convert views into enquiries.
+              </p>
             </div>
           </div>
 
@@ -558,7 +296,6 @@ export default function Home() {
         </div>
 
         <div className="why-vs-grid">
-          {/* Split visual */}
           <div className="vs-media" aria-hidden="true">
             <div className="vs-split">
               <div className="vs-pane vs-left" role="img" aria-label="Pile of paper business cards"></div>
@@ -573,7 +310,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Copy & bullets */}
           <div className="vs-copy">
             <ul className="vs-bullets">
               <li>
@@ -587,6 +323,7 @@ export default function Home() {
                   <p className="desktop-body-xs gray">Most never make it into contacts.</p>
                 </div>
               </li>
+
               <li>
                 <span className="vs-ico vs-neg" aria-hidden="true">
                   ✖
@@ -598,6 +335,7 @@ export default function Home() {
                   <p className="desktop-body-xs gray">Wasted time and ongoing costs.</p>
                 </div>
               </li>
+
               <li>
                 <span className="vs-ico vs-pos" aria-hidden="true">
                   ✓
@@ -757,6 +495,7 @@ export default function Home() {
                   <div className="pricing-media-main">
                     <img src={cardMainImage} alt="Konar Card - White Edition" />
                   </div>
+
                   <div className="pricing-media-thumbs tight">
                     {cardThumbs.map((src, i) => (
                       <button
@@ -918,6 +657,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
+
             <div className="section-list">
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
@@ -927,6 +667,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
+
             <div className="section-list">
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
@@ -936,6 +677,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
+
             <div className="section-list">
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
@@ -957,6 +699,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
+
             <div className="section-list">
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
@@ -966,6 +709,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
+
             <div className="section-list">
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
@@ -976,6 +720,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
+
             <div className="section-list">
               <span className="blue-dot" aria-hidden="true"></span>
               <div className="section-list-info">
@@ -996,8 +741,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* HOW IT WORKS - MODAL */}
       <Footer />
+
+      {/* HOW IT WORKS - MODAL */}
       {isVideoOpen && (
         <div
           id="how-it-works-modal"
@@ -1010,36 +756,18 @@ export default function Home() {
           }}
         >
           <div className="video-modal" role="document">
-            <button
-              className="video-close"
-              aria-label="Close video"
-              onClick={() => setIsVideoOpen(false)}
-              autoFocus
-            >
+            <button className="video-close" aria-label="Close video" onClick={() => setIsVideoOpen(false)} autoFocus>
               ✕
             </button>
 
             <div className="video-frame">
-              {/* REAL VIDEO GOES HERE */}
-              <video
-                ref={videoRef}
-                className="howitworks-video"
-                controls
-                playsInline
-                preload="metadata"
-              // poster can be added if you’ve got a JPG/PNG thumbnail in /public/videos
-              // poster="/videos/howitworks-poster.jpg"
-              >
+              <video ref={videoRef} className="howitworks-video" controls playsInline preload="metadata">
                 <source src="/videos/HowItWorks.mp4" type="video/mp4" />
-                {/* add a webm if you have it:
-                <source src="/videos/HowItWorks.webm" type="video/webm" /> */}
                 Sorry, your browser doesn’t support embedded videos.
               </video>
             </div>
 
-            <p className="video-caption desktop-body-xs">
-              Learn how Konar Card helps you share your profile in seconds.
-            </p>
+            <p className="video-caption desktop-body-xs">Learn how Konar Card helps you share your profile in seconds.</p>
           </div>
         </div>
       )}

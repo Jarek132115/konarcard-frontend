@@ -1,0 +1,216 @@
+/* =========================================================
+   HOME HERO (match screenshot)
+   File: frontend/src/styling/home/hero.css
+   ========================================================= */
+
+.kc-hero {
+    position: relative;
+    background: #ffffff;
+    padding: 112px 20px 34px;
+    /* space for fixed navbar */
+    overflow: hidden;
+}
+
+/* subtle geometric background */
+.kc-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 10%, rgba(15, 23, 42, 0.04), transparent 55%),
+        radial-gradient(circle at 80% 30%, rgba(249, 115, 22, 0.06), transparent 55%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.03), transparent 40%);
+    pointer-events: none;
+}
+
+.kc-hero__inner {
+    position: relative;
+    max-width: 1040px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.kc-hero__kickerWrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+
+.kc-hero__kicker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(15, 23, 42, 0.18);
+    background: rgba(255, 255, 255, 0.78);
+    color: rgba(15, 23, 42, 0.82);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    backdrop-filter: blur(6px);
+}
+
+.kc-hero__title {
+    margin: 0;
+    color: #0b1220;
+    letter-spacing: -0.03em;
+}
+
+.kc-hero__sub {
+    margin: 12px auto 0;
+    max-width: 640px;
+    color: rgba(15, 23, 42, 0.68);
+    line-height: 1.55;
+}
+
+.kc-hero__ctaRow {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+}
+
+.kc-hero__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.kc-hero__btnPrimary {
+    background: var(--kc-accent-primary, #f97316);
+    color: #ffffff;
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.22);
+}
+
+.kc-hero__btnPrimary:hover {
+    filter: brightness(0.98);
+    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.30);
+}
+
+.kc-hero__btnGhost {
+    background: #ffffff;
+    color: #0b1220;
+    border: 1px solid rgba(15, 23, 42, 0.18);
+}
+
+.kc-hero__btn:active {
+    transform: translateY(1px);
+}
+
+/* Logo strip */
+.kc-hero__logos {
+    margin-top: 26px;
+    display: flex;
+    justify-content: center;
+    gap: 42px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    user-select: none;
+    opacity: 0.95;
+}
+
+.kc-hero__logo {
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: rgba(15, 23, 42, 0.88);
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+/* =========================
+   Carousel inside hero
+   ========================= */
+
+.kc-hero__carousel {
+    position: relative;
+    margin-top: 24px;
+    padding-bottom: 6px;
+}
+
+.kc-hero__carouselInner {
+    width: 100%;
+}
+
+.kc-hero__scroller {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    /* Firefox */
+    -webkit-overflow-scrolling: touch;
+    cursor: grab;
+    padding: 10px 0 4px;
+}
+
+.kc-hero__scroller::-webkit-scrollbar {
+    display: none;
+}
+
+.kc-hero__scroller:active {
+    cursor: grabbing;
+}
+
+.kc-hero__track {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--gap, 10px);
+    padding: 0 18px;
+    /* a bit of breathing room */
+    width: max-content;
+}
+
+/* phone card */
+.kc-hero__phone {
+    width: 170px;
+    height: 320px;
+    border-radius: 22px;
+    background: var(--pill, #f2f4f7);
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+    padding: 10px;
+    flex: 0 0 auto;
+}
+
+.kc-hero__phoneViewport {
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.kc-hero__phoneViewport img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+    .kc-hero {
+        padding-top: 96px;
+    }
+
+    .kc-hero__logos {
+        gap: 22px;
+    }
+
+    .kc-hero__logo {
+        font-size: 14px;
+    }
+
+    .kc-hero__phone {
+        width: 150px;
+        height: 290px;
+    }
+}
