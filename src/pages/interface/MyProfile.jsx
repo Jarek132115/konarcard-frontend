@@ -344,11 +344,11 @@ export default function MyProfile() {
   };
 
   const handleRemoveWorkImage = (idx) => {
-    note: "";
     const item = state.workImages?.[idx];
     if (item?.preview?.startsWith("blob:")) URL.revokeObjectURL(item.preview);
     updateState({ workImages: state.workImages.filter((_, i) => i !== idx) });
   };
+
 
   // Verification helpers (USE api.js ONLY)
   const sendVerificationCode = async () => {
