@@ -110,28 +110,28 @@ export default function Register() {
         const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
 
         try {
-            clearCheckoutIntent();
-
+            // ✅ do NOT clear until we have a Stripe URL
             const res = await api.post("/subscribe", {
                 planKey: intent.planKey,
                 returnUrl,
             });
 
-            if (res?.data?.url) {
-                window.location.href = res.data.url;
-                return true;
+            const url = res?.data?.url;
+            if (!url) {
+                toast.error("Stripe checkout URL missing. Please try again.");
+                return false;
             }
 
-            toast.error("Could not start checkout.");
-            return false;
+            clearCheckoutIntent();
+            window.location.href = url;
+            return true;
         } catch (e) {
-            try {
-                localStorage.setItem(CHECKOUT_INTENT_KEY, JSON.stringify(intent));
-            } catch { }
+            // ✅ keep intent so user can retry
             toast.error(e?.response?.data?.error || "Subscription failed.");
             return false;
         }
     };
+
 
     const claimLinkContinue = async (e) => {
         e.preventDefault();
