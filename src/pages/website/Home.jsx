@@ -11,6 +11,7 @@ import HowItWorks from "../../components/Home/HowItWorks";
 import CustomerTrust from "../../components/Home/CustomerTrust";
 import Products from "../../components/Home/Products";
 import Examples from "../../components/Home/Examples";
+import Value from "../../components/Home/Value";
 
 /* Existing assets (unchanged) */
 import StepSection1 from "../../assets/images/Step-Section-1.jpg";
@@ -108,10 +109,14 @@ export default function Home() {
       {/* 4) CUSTOMER TRUST */}
       <CustomerTrust />
 
+      {/* 5) PRODUCTS */}
       <Products />
 
+      {/* 6) EXAMPLES */}
       <Examples />
 
+      {/* 7) VALUE */}
+      <Value />
 
       {/* 3 STEPS (existing section) */}
       <div className="section steps-v1">
