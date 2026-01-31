@@ -1,16 +1,20 @@
 // src/pages/MyProfile/MyProfile.jsx
 import React, { useEffect, useState, useContext, useMemo, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
+import ShareProfile from "../../components/ShareProfile";
+
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import { useCreateBusinessCard, buildBusinessCardFormData } from "../../hooks/useCreateBiz";
-import { toast } from "react-hot-toast";
-import ShareProfile from "../../components/ShareProfile";
+
 import { AuthContext } from "../../components/AuthContext";
 import api from "../../services/api";
+
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 
 // extracted components
@@ -27,7 +31,8 @@ export default function MyProfile() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
+  // ✅ AuthContext exposes "hydrating", not "loading"
+  const { user: authUser, hydrating: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
 
   const userId = authUser?._id;
   const userEmail = authUser?.email;
@@ -102,32 +107,27 @@ export default function MyProfile() {
     const paymentSuccess = params.get("payment_success");
     const subscribed = params.get("subscribed"); // toast flag
 
-    // IMPORTANT: only treat as Stripe return if Stripe gave us a session_id OR payment_success=true
     const isStripeReturn = !!sessionId || paymentSuccess === "true";
 
     if (isStripeReturn && !handledPaymentRef.current) {
       handledPaymentRef.current = true;
 
       (async () => {
-        // best-effort sync with Stripe
         try {
           await api.post("/me/sync-subscriptions", { ts: Date.now() });
         } catch {
           /* swallow */
         }
 
-        // refresh auth user so UI updates instantly
         try {
           await refetchAuthUser?.();
         } catch {
           /* swallow */
         }
 
-        // toast
         if (subscribed === "1") toast.success("You’re now subscribed ✅");
         else toast.success("Subscription updated successfully!");
 
-        // clean URL (drop query)
         const clean = new URL(window.location.href);
         clean.search = "";
         window.history.replaceState({}, document.title, clean.toString());
@@ -177,39 +177,6 @@ export default function MyProfile() {
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
   // ==========================
-  // 4) Optional scroll-to-editor on load (mobile)
-  // ==========================
-  useEffect(() => {
-    const wantScroll = localStorage.getItem("scrollToEditorOnLoad") === "1";
-    if (!wantScroll) return;
-
-    if (window.innerWidth <= 1000) {
-      let tries = 0;
-      const tick = () => {
-        const el = document.getElementById("myprofile-editor") || document.querySelector(".myprofile-editor-anchor");
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-          try {
-            localStorage.removeItem("scrollToEditorOnLoad");
-          } catch { }
-        } else if (tries < 20) {
-          tries += 1;
-          setTimeout(tick, 150);
-        } else {
-          try {
-            localStorage.removeItem("scrollToEditorOnLoad");
-          } catch { }
-        }
-      };
-      tick();
-    } else {
-      try {
-        localStorage.removeItem("scrollToEditorOnLoad");
-      } catch { }
-    }
-  }, []);
-
-  // ==========================
   // 5) Hydrate editor when card loads
   // ==========================
   useEffect(() => {
@@ -234,10 +201,7 @@ export default function MyProfile() {
         workDisplayMode: businessCard.work_display_mode || "list",
 
         services: businessCard.services || [],
-        servicesDisplayMode: businessCard.services_display_mode || "list",
         reviews: businessCard.reviews || [],
-        reviewsDisplayMode: businessCard.reviews_display_mode || "list",
-        aboutMeLayout: businessCard.about_me_layout || "side-by-side",
 
         contact_email: businessCard.contact_email || "",
         phone_number: businessCard.phone_number || "",
@@ -281,6 +245,7 @@ export default function MyProfile() {
       setServicesDisplayMode("list");
       setReviewsDisplayMode("list");
       setAboutMeLayout("side-by-side");
+
       setShowMainSection(true);
       setShowAboutMeSection(true);
       setShowWorkSection(true);
@@ -303,7 +268,7 @@ export default function MyProfile() {
   }, [businessCard, isCardLoading, resetState, updateState]);
 
   // ==========================
-  // 6) Cleanup blob URLs
+  // Cleanup blob URLs
   // ==========================
   useEffect(() => {
     return () => {
@@ -320,7 +285,6 @@ export default function MyProfile() {
     return url;
   };
 
-  // File handlers
   const onCoverUpload = (file) => {
     if (!file || !file.type?.startsWith("image/")) return;
     updateState({ coverPhoto: createAndTrackBlobUrl(file) });
@@ -401,14 +365,20 @@ export default function MyProfile() {
     }
   };
 
-  // Trial start (single place)
   const startTrial = async () => api.post("/start-trial");
+
+  const arraysEqual = (a = [], b = []) => {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+    return true;
+  };
 
   const handleResetPage = () => {
     resetState();
     setServicesDisplayMode("list");
     setReviewsDisplayMode("list");
     setAboutMeLayout("side-by-side");
+
     setShowMainSection(true);
     setShowAboutMeSection(true);
     setShowWorkSection(true);
@@ -440,18 +410,13 @@ export default function MyProfile() {
     toast.success("Editor reset.");
   };
 
-  const arraysEqual = (a = [], b = []) => {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
-    return true;
-  };
-
   const hasProfileChanges = () => {
     if (coverPhotoFile || avatarFile || workImageFiles.length || coverPhotoRemoved || isAvatarRemoved) return true;
     const original = businessCard || {};
 
     const normalizeServices = (arr) => (arr || []).map((s) => ({ name: norm(s.name), price: norm(s.price) }));
-    const normalizeReviews = (arr) => (arr || []).map((r) => ({ name: norm(r.name), text: norm(r.text), rating: Number(r.rating) || 0 }));
+    const normalizeReviews = (arr) =>
+      (arr || []).map((r) => ({ name: norm(r.name), text: norm(r.text), rating: Number(r.rating) || 0 }));
 
     const servicesChanged = (() => {
       const a = normalizeServices(state.services);
@@ -533,14 +498,6 @@ export default function MyProfile() {
       !arraysEqual(state.sectionOrder || [], origSectionOrder)
     );
   };
-
-  const handleStartSubscription = () => navigate("/pricing");
-
-  const handleShareCard = () => {
-    if (!isUserVerified) return toast.error("Please verify your email to share your card.");
-    setShowShareModal(true);
-  };
-  const handleCloseShareModal = () => setShowShareModal(false);
 
   const ensureTrialIfNeeded = async () => {
     if (isSubscribed || isTrialActive) return;
@@ -631,6 +588,14 @@ export default function MyProfile() {
     }
   };
 
+  const handleStartSubscription = () => navigate("/pricing");
+
+  const handleShareCard = () => {
+    if (!isUserVerified) return toast.error("Please verify your email to share your card.");
+    setShowShareModal(true);
+  };
+  const handleCloseShareModal = () => setShowShareModal(false);
+
   // ================= RENDER =================
   const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
   const columnScrollStyle = !isMobile ? { maxHeight: "calc(100vh - 140px)", overflow: "auto" } : undefined;
@@ -642,6 +607,7 @@ export default function MyProfile() {
         <div className="myprofile-brand">
           <img src={LogoIcon} alt="Konar" className="myprofile-logo" />
         </div>
+
         <button
           className={`sidebar-menu-toggle ${sidebarOpen ? "active" : ""}`}
           aria-label={sidebarOpen ? "Close menu" : "Open menu"}
@@ -675,6 +641,7 @@ export default function MyProfile() {
                     Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to your business
                     card.
                   </p>
+
                   <form onSubmit={handleVerifyCode} className="verification-form">
                     <input
                       type="text"
@@ -686,10 +653,12 @@ export default function MyProfile() {
                       inputMode="numeric"
                       pattern="[0-9]*"
                     />
+
                     <div className="verification-actions">
                       <button type="submit" className="desktop-button navy-button">
                         Verify Email
                       </button>
+
                       <button
                         type="button"
                         className="desktop-button orange-button"
@@ -719,6 +688,7 @@ export default function MyProfile() {
                     ) : null}
                     .
                   </p>
+
                   <button className="blue-trial desktop-body-s" onClick={handleStartSubscription}>
                     Subscribe Now
                   </button>
