@@ -1,47 +1,80 @@
+/* =========================================================
+   HOME HERO (KonarCard) — Edge-to-edge background + carousel
+   File: frontend/src/styling/home-hero.css
+   ========================================================= */
+
 /* HERO — edge to edge background + no gap below navbar */
 .kc-homeHero {
     width: 100%;
     min-height: 90vh;
-    /* ✅ around 90vh like you want */
+
+    /* ✅ background touches the top of the page */
+    margin: 0;
+    padding: 0;
+
+    /* ✅ Background image */
+    background-image: url("../assets/images/Background-Hero-New.jpg");
     background-size: cover;
     background-position: top center;
     background-repeat: no-repeat;
-
-    /* ✅ background touches top of page */
-    margin: 0;
-    padding: 0;
 
     /* keeps content centered */
     display: flex;
     justify-content: center;
 
-    /* optional overlay for legibility (very subtle) */
     position: relative;
+    overflow: hidden;
 }
 
+/* subtle white wash for legibility (optional, keep light) */
 .kc-homeHero::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.12);
     pointer-events: none;
+    z-index: 1;
 }
 
+/* ✅ THIS FIXES THE HARD LINE: fade the hero into white */
+.kc-homeHero::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    /* adjust if you want the fade longer/shorter */
+    height: 220px;
+
+    pointer-events: none;
+    z-index: 2;
+
+    background: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.85) 55%,
+            #ffffff 100%);
+}
+
+/* Inner container sits above overlays */
 .kc-homeHero__inner {
     position: relative;
+    z-index: 3;
+
     width: 100%;
     max-width: 1200px;
     padding: 0 20px;
 
-    /* ✅ IMPORTANT: no white gap under navbar.
-     Background is still behind because it's on .kc-homeHero.
-     This only pushes the content down so it doesn't hide under nav. */
+    /* ✅ No white gap under navbar:
+     - background is on .kc-homeHero and touches top
+     - content is pushed down so it doesn’t sit under the nav */
     padding-top: 120px;
     padding-bottom: 34px;
 
     text-align: center;
 }
 
+/* Badge */
 .kc-homeHero__badge {
     display: inline-flex;
     align-items: center;
@@ -51,7 +84,7 @@
     border-radius: 999px;
 
     border: 1px solid rgba(15, 23, 42, 0.25);
-    background: rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.78);
 
     font-family: "Inter", sans-serif;
     font-size: 12px;
@@ -61,8 +94,8 @@
     margin-bottom: 18px;
 }
 
+/* ✅ H1 = 72px like your screenshot */
 .kc-homeHero__title {
-    /* ✅ exact desktop size */
     font-size: 72px;
     line-height: 1.02;
     letter-spacing: -0.03em;
@@ -72,6 +105,7 @@
     color: #0b1220;
 }
 
+/* Subtitle */
 .kc-homeHero__sub {
     margin: 0 auto 22px;
     max-width: 720px;
@@ -82,6 +116,7 @@
     color: rgba(12, 24, 48, 0.75);
 }
 
+/* CTA row */
 .kc-homeHero__ctaRow {
     display: flex;
     justify-content: center;
@@ -90,6 +125,7 @@
     margin-bottom: 26px;
 }
 
+/* Buttons */
 .kc-homeHero__btn {
     display: inline-flex;
     align-items: center;
@@ -123,7 +159,7 @@
 }
 
 .kc-homeHero__btn--ghost {
-    background: rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.78);
     color: #0b1220;
     border: 1px solid rgba(15, 23, 42, 0.18);
 }
@@ -137,6 +173,7 @@
     margin-top: 10px;
 }
 
+/* Logos strip */
 .kc-homeHero__logos {
     display: flex;
     justify-content: center;
@@ -157,11 +194,10 @@
     font-size: 18px;
 }
 
-/* Edge-to-edge scroller area */
+/* Edge-to-edge scroller */
 .kc-homeHero__scrollerOuter {
     width: 100vw;
     margin-left: calc(50% - 50vw);
-    /* ✅ true edge-to-edge */
     padding: 0 0 8px;
 }
 
@@ -173,6 +209,13 @@
 
     padding: 0 20px;
     cursor: grab;
+
+    /* IMPORTANT: allow vertical scrolling on touch */
+    touch-action: pan-y;
+}
+
+.kc-homeHero__scroller:active {
+    cursor: grabbing;
 }
 
 .kc-homeHero__scroller::-webkit-scrollbar {
@@ -187,6 +230,7 @@
     padding-bottom: 6px;
 }
 
+/* Phone cards */
 .kc-homeHero__phone {
     width: 210px;
     border-radius: 18px;
@@ -210,6 +254,8 @@
     object-fit: cover;
     border-radius: inherit;
     display: block;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
 /* ===== Responsive ===== */
@@ -243,6 +289,10 @@
     .kc-homeHero__viewport {
         height: 340px;
     }
+
+    .kc-homeHero::after {
+        height: 180px;
+    }
 }
 
 @media (max-width: 520px) {
@@ -252,5 +302,9 @@
 
     .kc-homeHero__sub {
         font-size: 13px;
+    }
+
+    .kc-homeHero::after {
+        height: 160px;
     }
 }
