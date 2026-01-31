@@ -1,5 +1,5 @@
 // frontend/src/pages/Home/index.jsx
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -13,6 +13,7 @@ import Products from "../../components/Home/Products";
 import Examples from "../../components/Home/Examples";
 import Value from "../../components/Home/Value";
 import Pricing from "../../components/Home/Pricing";
+import Review from "../../components/Home/Review";
 
 /* Existing assets (unchanged) */
 import StepSection1 from "../../assets/images/Step-Section-1.jpg";
@@ -66,10 +67,6 @@ export default function Home() {
       }
     };
   }, [isVideoOpen]);
-
-  // ✅ kept (even though pricing grid is removed) in case other sections still use it later
-  // If you want this removed too, tell me and I’ll clean it.
-  useMemo(() => [], []);
 
   return (
     <>
@@ -209,6 +206,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* 9) REVIEW (last section) */}
+      <Review />
 
       <Footer />
 
