@@ -4,8 +4,11 @@ import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
-/* ✅ NEW: Hero as its own component */
+/* ✅ HERO as its own component */
 import Hero from "../../components/Home/Hero";
+
+/* ✅ NEW: Comparison as its own component (2nd section) */
+import Comparison from "../../components/Home/Comparison";
 
 /* Existing assets (unchanged) */
 import Section1Image from "../../assets/images/Section-1-Image.png";
@@ -103,8 +106,11 @@ export default function Home() {
     <>
       <Navbar />
 
-      {/* ✅ HERO (now includes the Real Profiles carousel inside it) */}
+      {/* ✅ HERO */}
       <Hero />
+
+      {/* ✅ COMPARISON (2nd section after hero) */}
+      <Comparison />
 
       {/* 3 STEPS */}
       <div className="section steps-v1">
@@ -170,120 +176,6 @@ export default function Home() {
           >
             Watch How It Works
           </button>
-        </div>
-      </div>
-
-      {/* REAL WORLD USE CASES */}
-      <div className="section realworld-section">
-        <div className="realworld-header">
-          <h2 className="desktop-h3 text-center">
-            How You’ll Use It <span className="orange">In The Real World</span>
-          </h2>
-          <h3 className="desktop-body-xs text-center">
-            No more typing your number, digging for photos, or swapping paper. It’s almost 2026 — time for a change.
-          </h3>
-        </div>
-
-        <div className="realworld-comparison">
-          <div className="comparison-box">
-            <span className="comparison-badge old">The old way</span>
-            <ul className="dot-list">
-              <li>
-                <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span className="desktop-body-xs">Type your phone &amp; email into their phone</span>
-              </li>
-              <li>
-                <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span className="desktop-body-xs">Scroll your camera roll for examples</span>
-              </li>
-              <li>
-                <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span className="desktop-body-xs">Hope they don’t lose your details</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="comparison-box">
-            <span className="comparison-badge new">The Konar way</span>
-            <ul className="dot-list">
-              <li>
-                <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span className="desktop-body-xs">Tap once — they get your full profile</span>
-              </li>
-              <li>
-                <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span className="desktop-body-xs">Photos, services, reviews, and contact — saved</span>
-              </li>
-              <li>
-                <span className="blue-dot bullet-dot" aria-hidden="true" />
-                <span className="desktop-body-xs">Follow-ups are faster and more professional</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="realworld-grid">
-          <div className="realworld-card">
-            <div className="realworld-card-icon">👷</div>
-            <div className="realworld-card-text">
-              <h4 className="desktop-body-s">On Site, With a Client</h4>
-              <p className="equal desktop-body-xs">
-                Tap your KonarCard. Their phone opens your profile and saves your details instantly.
-              </p>
-            </div>
-          </div>
-
-          <div className="realworld-card">
-            <div className="realworld-card-icon">📄</div>
-            <div className="realworld-card-text">
-              <h4 className="desktop-body-s">After a Quote</h4>
-              <p className="equal desktop-body-xs">
-                Send the link in messages so they can revisit your services and reviews while deciding.
-              </p>
-            </div>
-          </div>
-
-          <div className="realworld-card">
-            <div className="realworld-card-icon">🤝</div>
-            <div className="realworld-card-text">
-              <h4 className="desktop-body-s">Networking / Trade Counter</h4>
-              <p className="equal desktop-body-xs">No stacks of cards. One tap per person, unlimited times.</p>
-            </div>
-          </div>
-
-          <div className="realworld-card">
-            <div className="realworld-card-icon">🚐</div>
-            <div className="realworld-card-text">
-              <h4 className="desktop-body-s">Van QR &amp; Site Board</h4>
-              <p className="equal desktop-body-xs">Print your QR. Passers-by scan to view your work and save your number.</p>
-            </div>
-          </div>
-
-          <div className="realworld-card">
-            <div className="realworld-card-icon">📱</div>
-            <div className="realworld-card-text">
-              <h4 className="desktop-body-s">Social &amp; Link In Bio</h4>
-              <p className="equal desktop-body-xs">
-                Add your link to Instagram, Facebook, and TikTok to convert views into enquiries.
-              </p>
-            </div>
-          </div>
-
-          <div className="realworld-card">
-            <div className="realworld-card-icon">⚡</div>
-            <div className="realworld-card-text">
-              <h4 className="desktop-body-s">Updates in Seconds</h4>
-              <p className="equal desktop-body-xs">
-                Change prices or photos once — your card shares the latest version everywhere.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="faq-cta">
-          <Link to="/register" className="navy-button desktop-button">
-            Get Your KonarCard
-          </Link>
         </div>
       </div>
 
