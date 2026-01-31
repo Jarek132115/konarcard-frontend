@@ -1,9 +1,8 @@
 // frontend/src/pages/website/Pricing.jsx
 import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import Navbar from "../../components/Navbar";
-import Breadcrumbs from "../../components/Breadcrumbs";
 import Footer from "../../components/Footer";
 
 import "../../styling/fonts.css";
@@ -17,7 +16,10 @@ import BuiltForRealTrades from "../../assets/icons/Built_For_Real_Trades.svg";
 
 export default function Pricing() {
     const [billing, setBilling] = useState("monthly"); // monthly | quarterly | yearly
+    const [loadingKey, setLoadingKey] = useState(null); // "plus" | "teams" etc
+    const navigate = useNavigate();
 
+    // NOTE: We keep your display prices as-is (you can adjust later)
     const prices = useMemo(() => {
         return {
             monthly: {
@@ -43,6 +45,69 @@ export default function Pricing() {
 
     const p = prices[billing];
 
+    // ---- Auth helpers (matches your backend which accepts bearer OR cookie)
+    const getToken = () => {
+        try {
+            return localStorage.getItem("token") || "";
+        } catch {
+            return "";
+        }
+    };
+
+    const isLoggedIn = () => {
+        const t = getToken();
+        return !!t;
+    };
+
+    const apiBase =
+        import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+    const startSubscription = async (planKey) => {
+        // If not logged in, keep current behaviour: go to register
+        // (you can change to /login if you prefer)
+        if (!isLoggedIn()) {
+            navigate("/register");
+            return;
+        }
+
+        setLoadingKey(planKey);
+
+        try {
+            const token = getToken();
+
+            const res = await fetch(`${apiBase}/api/subscribe`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    // Your backend reads token from bearer OR cookie
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    planKey, // e.g. "plus-monthly"
+                    // optional: where to return after payment
+                    returnUrl: `${window.location.origin}/checkout/success`,
+                }),
+                credentials: "include",
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || data?.error) {
+                throw new Error(data?.error || "Failed to start checkout");
+            }
+
+            if (!data?.url) {
+                throw new Error("Missing Stripe checkout URL");
+            }
+
+            window.location.href = data.url;
+        } catch (err) {
+            alert(err.message || "Subscription failed");
+        } finally {
+            setLoadingKey(null);
+        }
+    };
+
     const planCards = useMemo(
         () => [
             {
@@ -58,7 +123,9 @@ export default function Pricing() {
                     "Works on iPhone & Android",
                     "Perfect for trying it out",
                 ],
+                // Free still uses your existing flow
                 cta: { label: "Get started free", to: "/register" },
+                action: null,
             },
             {
                 key: "plus",
@@ -76,6 +143,7 @@ export default function Pricing() {
                 ],
                 cta: { label: "Start Plus Plan", to: "/register" },
                 featured: true,
+                action: () => startSubscription(`plus-${billing}`),
             },
             {
                 key: "teams",
@@ -92,9 +160,10 @@ export default function Pricing() {
                     "Priority support",
                 ],
                 cta: { label: "Start Teams Plan", to: "/register" },
+                action: () => startSubscription(`teams-${billing}`),
             },
         ],
-        [p]
+        [p, billing]
     );
 
     const comparisonRows = useMemo(
@@ -149,7 +218,7 @@ export default function Pricing() {
             <Navbar />
 
             <main className="kc-pricing">
-                {/* HERO (MATCH FAQ) */}
+                {/* HERO */}
                 <section className="kc-pricing__hero">
                     <div className="kc-pricing__heroInner">
                         <h1 className="h2 kc-pricing__title">
@@ -163,7 +232,7 @@ export default function Pricing() {
                             Start free, then upgrade only when it’s worth it.
                         </p>
 
-                        {/* BILLING PILLS (MATCH FAQ) */}
+                        {/* BILLING PILLS */}
                         <div className="kc-pricing__tabs" role="tablist" aria-label="Billing period">
                             <button
                                 type="button"
@@ -227,12 +296,26 @@ export default function Pricing() {
                                     ))}
                                 </ul>
 
-                                <Link
-                                    to={card.cta.to}
-                                    className={`kc-pricing__cta ${card.featured ? "is-primary" : "is-secondary"}`}
-                                >
-                                    {card.cta.label}
-                                </Link>
+                                {/* Free remains Link. Paid becomes button that triggers Stripe. */}
+                                {card.action ? (
+                                    <button
+                                        type="button"
+                                        className={`kc-pricing__cta ${card.featured ? "is-primary" : "is-secondary"}`}
+                                        onClick={card.action}
+                                        disabled={!!loadingKey}
+                                    >
+                                        {loadingKey === `plus-${billing}` || loadingKey === `teams-${billing}`
+                                            ? "Redirecting..."
+                                            : card.cta.label}
+                                    </button>
+                                ) : (
+                                    <Link
+                                        to={card.cta.to}
+                                        className={`kc-pricing__cta ${card.featured ? "is-primary" : "is-secondary"}`}
+                                    >
+                                        {card.cta.label}
+                                    </Link>
+                                )}
                             </article>
                         ))}
                     </div>
