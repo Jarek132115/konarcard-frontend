@@ -216,7 +216,7 @@ export default function Hero() {
                     <Link to="/register" className="kc-hero__btn kc-hero__btnPrimary">
                         Claim Your Link
                     </Link>
-                    <Link to="/example" className="kc-hero__btn kc-hero__btnGhost">
+                    <Link to="/examples" className="kc-hero__btn kc-hero__btnGhost">
                         View Examples
                     </Link>
                 </div>
