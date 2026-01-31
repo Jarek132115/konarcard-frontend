@@ -1,24 +1,28 @@
 /* =========================================================
    HOME HERO (KonarCard) — Edge-to-edge background + carousel
-   File: frontend/src/styling/home-hero.css
+   File: frontend/src/styling/home/hero.css
    ========================================================= */
+
+/* ✅ Set this ONCE globally (best in your global css), but placing here works too */
+:root {
+    /* Match your actual page background (from your screenshot it's ~ #F5F6F8) */
+    --kc-page-bg-rgb: 245 246 248;
+}
 
 /* HERO — edge to edge background + no gap below navbar */
 .kc-homeHero {
     width: 100%;
     min-height: 90vh;
 
-    /* ✅ background touches the top of the page */
     margin: 0;
     padding: 0;
 
-    /* ✅ Background image */
-    background-image: url("../assets/images/Background-Hero-New.jpg");
+    /* NOTE: you are already setting backgroundImage inline in React,
+     so this line is optional. Keeping it won't hurt, inline wins. */
     background-size: cover;
     background-position: top center;
     background-repeat: no-repeat;
 
-    /* keeps content centered */
     display: flex;
     justify-content: center;
 
@@ -36,7 +40,7 @@
     z-index: 1;
 }
 
-/* ✅ THIS FIXES THE HARD LINE: fade the hero into white */
+/* ✅ REAL FIX: fade into whatever the PAGE background is (not hard #fff) */
 .kc-homeHero::after {
     content: "";
     position: absolute;
@@ -44,16 +48,18 @@
     right: 0;
     bottom: 0;
 
-    /* adjust if you want the fade longer/shorter */
-    height: 220px;
+    /* ✅ last ~20% of the hero fades out */
+    height: clamp(160px, 20vh, 320px);
 
     pointer-events: none;
     z-index: 2;
 
+    /* Fade from transparent to the page background colour */
     background: linear-gradient(to bottom,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.85) 55%,
-            #ffffff 100%);
+            rgb(var(--kc-page-bg-rgb) / 0) 0%,
+            rgb(var(--kc-page-bg-rgb) / 0.35) 35%,
+            rgb(var(--kc-page-bg-rgb) / 0.75) 70%,
+            rgb(var(--kc-page-bg-rgb) / 1) 100%);
 }
 
 /* Inner container sits above overlays */
@@ -65,14 +71,14 @@
     max-width: 1200px;
     padding: 0 20px;
 
-    /* ✅ No white gap under navbar:
-     - background is on .kc-homeHero and touches top
-     - content is pushed down so it doesn’t sit under the nav */
     padding-top: 120px;
     padding-bottom: 34px;
 
     text-align: center;
 }
+
+/* ... keep the rest of your CSS exactly the same ... */
+
 
 /* Badge */
 .kc-homeHero__badge {
