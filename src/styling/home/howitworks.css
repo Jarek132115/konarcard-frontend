@@ -1,0 +1,223 @@
+/* =========================================================
+   HOME — HOW IT WORKS
+   File: frontend/src/styling/home/howitworks.css
+   ========================================================= */
+
+.kc-hiw {
+    padding-top: 64px;
+    padding-bottom: 64px;
+}
+
+.kc-hiw__inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.kc-hiw__header {
+    margin-bottom: 34px;
+}
+
+.kc-hiw__title {
+    margin: 0 0 10px;
+    color: #0b1220;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+}
+
+.kc-hiw__sub {
+    margin: 0 auto;
+    max-width: 720px;
+    color: rgba(12, 24, 48, 0.72);
+    line-height: 1.55;
+}
+
+/* Grid */
+.kc-hiw__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    align-items: stretch;
+}
+
+/* Card */
+.kc-hiw__card {
+    border-radius: 18px;
+    border: 1px solid rgba(12, 24, 48, 0.10);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 16px 38px rgba(12, 24, 48, 0.08);
+    padding: 16px;
+    overflow: hidden;
+}
+
+/* Mock panel (top) */
+.kc-hiw__mock {
+    border-radius: 16px;
+    border: 1px solid rgba(12, 24, 48, 0.10);
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(12, 24, 48, 0.06);
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.kc-hiw__mockTop {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.kc-hiw__mockTitle {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    letter-spacing: -0.03em;
+    color: #0b1220;
+    line-height: 1.05;
+}
+
+.kc-hiw__mockSub {
+    margin: 10px auto 0;
+    max-width: 320px;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    line-height: 1.55;
+    color: rgba(12, 24, 48, 0.65);
+}
+
+/* Mock form */
+.kc-hiw__mockForm {
+    margin-top: 12px;
+}
+
+.kc-hiw__mockLabel {
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(12, 24, 48, 0.70);
+    margin-bottom: 6px;
+}
+
+.kc-hiw__mockInput {
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid rgba(12, 24, 48, 0.10);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.86);
+    background: rgba(255, 255, 255, 0.92);
+}
+
+.kc-hiw__mockNote {
+    text-align: center;
+    margin-top: 10px;
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    color: rgba(12, 24, 48, 0.55);
+    font-style: italic;
+}
+
+.kc-hiw__mockBtnRow {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.kc-hiw__mockBtn {
+    height: 38px;
+    padding: 0 20px;
+    border-radius: 999px;
+    border: none;
+    background: #ff7b00;
+    color: #fff;
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    box-shadow: 0 14px 30px rgba(255, 123, 0, 0.22);
+}
+
+.kc-hiw__mockFoot {
+    text-align: center;
+    margin-top: 10px;
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    color: rgba(12, 24, 48, 0.60);
+}
+
+.kc-hiw__mockFootLink {
+    color: #ff7b00;
+    font-weight: 800;
+}
+
+/* Step content */
+.kc-hiw__stepPill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: rgba(12, 24, 48, 0.92);
+    color: #fff;
+    font-family: "Inter", sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: -0.01em;
+    margin-top: 4px;
+}
+
+.kc-hiw__stepTitle {
+    margin: 12px 0 8px;
+    font-family: "Inter", sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: -0.03em;
+    color: #0b1220;
+}
+
+.kc-hiw__stepDesc {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(12, 24, 48, 0.72);
+}
+
+.kc-hiw__miniCta {
+    margin-top: 12px;
+}
+
+.kc-hiw__miniLink {
+    font-family: "Inter", sans-serif;
+    font-weight: 900;
+    color: rgba(12, 24, 48, 0.92);
+    text-decoration: none;
+}
+
+.kc-hiw__miniLink:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 1040px) {
+    .kc-hiw__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kc-hiw__mockTitle {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 520px) {
+    .kc-hiw {
+        padding-top: 48px;
+        padding-bottom: 48px;
+    }
+
+    .kc-hiw__card {
+        padding: 14px;
+    }
+}

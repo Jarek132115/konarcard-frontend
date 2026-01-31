@@ -4,32 +4,20 @@ import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
-/* ✅ HERO as its own component */
+/* Sections */
 import Hero from "../../components/Home/Hero";
-
-/* ✅ NEW: Comparison as its own component (2nd section) */
 import Comparison from "../../components/Home/Comparison";
+import HowItWorks from "../../components/Home/HowItWorks";
 
 /* Existing assets (unchanged) */
-import Section1Image from "../../assets/images/Section-1-Image.png";
 import StepSection1 from "../../assets/images/Step-Section-1.jpg";
-import StepSection2 from "../../assets/images/Step-Section-2.jpg";
-
 import EditProfile from "../../assets/images/Edit-Profile.jpg";
 import WhyYouNeedThis from "../../assets/images/WhyYouNeedThis.png";
-import People from "../../assets/images/People.png";
-
-import ReviewStars from "../../assets/icons/Stars-Icon.svg";
 
 import NFCBusinessCard from "../../assets/images/NFC-Business-Card.jpg";
 import ScanQRCode from "../../assets/images/ScanQR-Code.jpg";
 import LinkInBio from "../../assets/images/LinkInBio.jpg";
 import SMSSend from "../../assets/images/SMSSend.jpg";
-
-import pp1 from "../../assets/images/pp1.png";
-import pp2 from "../../assets/images/pp2.png";
-import pp3 from "../../assets/images/pp3.png";
-import pp4 from "../../assets/images/pp4.png";
 
 import ProductCover from "../../assets/images/Product-Cover.png";
 import ProductImage1 from "../../assets/images/Product-Image-1.png";
@@ -37,10 +25,9 @@ import ProductImage2 from "../../assets/images/Product-Image-2.png";
 import ProductImage3 from "../../assets/images/Product-Image-3.png";
 import ProductImage4 from "../../assets/images/Product-Image-4.png";
 
-/* Keep your existing home styling (where all the other sections live) */
+/* Global typography */
 import "../../styling/fonts.css";
-/* If your original Home page relied on a home.css, keep it imported here.
-   (If you already import it elsewhere, keep it consistent with your project.) */
+/* If your original Home page relied on home.css, keep it imported here */
 // import "../../styling/home.css";
 
 export default function Home() {
@@ -106,13 +93,16 @@ export default function Home() {
     <>
       <Navbar />
 
-      {/* ✅ HERO */}
+      {/* 1) HERO */}
       <Hero />
 
-      {/* ✅ COMPARISON (2nd section after hero) */}
+      {/* 2) PAPER vs KONAR COMPARISON */}
       <Comparison />
 
-      {/* 3 STEPS */}
+      {/* 3) HOW IT WORKS */}
+      <HowItWorks />
+
+      {/* 3 STEPS (your existing section) */}
       <div className="section steps-v1">
         <div className="section-1-title">
           <h2 className="desktop-h3 text-center">
@@ -410,226 +400,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* PEOPLE */}
-      <div className="section">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">
-            Tradies Are Making the <span className="orange">Switch.</span>
-          </h2>
-          <h3 className="desktop-body-xs text-center">See how Konar is used every day by real tradespeople.</h3>
-        </div>
-
-        <div className="people-grid">
-          <div className="pg-item span-2">
-            <img src={People} alt="Tradies using Konar on the job site" />
-          </div>
-          <div className="pg-item">
-            <img src={People} alt="Konar card being shared with a client" />
-          </div>
-          <div className="pg-item">
-            <img src={People} alt="Tradie showing Konar card close-up" />
-          </div>
-          <div className="pg-item span-2">
-            <img src={People} alt="Team on site showing Konar cards" />
-          </div>
-        </div>
-      </div>
-
-      {/* REVIEWS */}
-      <div className="section">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">
-            The <span className="orange">#1 Tool</span> Tradies Are Talking About
-          </h2>
-          <h3 className="desktop-body-xs text center">
-            Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
-          </h3>
-        </div>
-
-        <div className="review-container-box">
-          <div className="review-container">
-            <div className="review-pair">
-              <div className="review-div">
-                <img className="stars" src={ReviewStars} alt="5 star rating" />
-                <p className="desktop-body-s text-center">
-                  “Since using KonarCard I’m actually getting replies. Clients say it looks slick and I’m getting
-                  referrals.”
-                </p>
-                <div className="review-div-person">
-                  <img src={pp1} alt="Reviewer" />
-                  <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: "#333" }}>
-                      Plumber
-                    </p>
-                    <p className="desktop-body-s">Mark B</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="review-div">
-                <img className="stars" src={ReviewStars} alt="5 star rating" />
-                <p className="desktop-body-s text-center">
-                  “Saved me a fortune on printing. I tap the card and customers have everything in seconds.”
-                </p>
-                <div className="review-div-person">
-                  <img src={pp2} alt="Reviewer" />
-                  <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: "#333" }}>
-                      Electrician
-                    </p>
-                    <p className="desktop-body-s">Jake C</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="review-pair">
-              <div className="review-div">
-                <img className="stars" src={ReviewStars} alt="5 star rating" />
-                <p className="desktop-body-s text-center">
-                  “Gives me a proper online presence without a pricey website. Photos and reviews do the selling.”
-                </p>
-                <div className="review-div-person">
-                  <img src={pp3} alt="Reviewer" />
-                  <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: "#333" }}>
-                      Builder
-                    </p>
-                    <p className="desktop-body-s">Tom G</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="review-div">
-                <img className="stars" src={ReviewStars} alt="5 star rating" />
-                <p className="desktop-body-s text-center">
-                  “I update prices and services on my phone. No reprinting, no fuss — just more enquiries.”
-                </p>
-                <div className="review-div-person">
-                  <img src={pp4} alt="Reviewer" />
-                  <div className="review-person-name">
-                    <p className="desktop-body-xs" style={{ color: "#333" }}>
-                      Roofer
-                    </p>
-                    <p className="desktop-body-s">Sam H</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="faq-cta">
-          <Link to="/reviews" className="navy-button desktop-button">
-            Read More Reviews
-          </Link>
-        </div>
-      </div>
-
-      {/* FAQ */}
-      <div className="section">
-        <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">
-            Frequently <span className="orange">Asked</span> Questions
-          </h2>
-          <h3 className="desktop-body-xs text-center">For any other questions, feel free to reach out.</h3>
-        </div>
-
-        <div className="faq-container">
-          <div className="faq-column">
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">What is the Konar NFC business card?</p>
-                <p className="desktop-body-xs">
-                  A reusable card with an NFC chip that opens your Konar profile with a tap—no app, no battery, no fuss.
-                </p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">How does the tap actually work?</p>
-                <p className="desktop-body-xs">
-                  The phone’s NFC reader powers the chip and instantly launches your live profile link.
-                </p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">What if someone can’t tap?</p>
-                <p className="desktop-body-xs">
-                  Every card also has a QR code and a shareable link—so there’s always a backup.
-                </p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">What can my profile include?</p>
-                <p className="desktop-body-xs">
-                  Your name, job title, bio, photos, services with pricing, reviews, and contact details.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="faq-column">
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">Can I edit my page later?</p>
-                <p className="desktop-body-xs">
-                  Yes. Update info, images, services, or layout anytime—changes go live instantly.
-                </p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">How do I share my page?</p>
-                <p className="desktop-body-xs">
-                  Tap your card, show the QR code, or copy your unique link to send anywhere.
-                </p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">How does the free trial work?</p>
-                <p className="desktop-body-xs">
-                  The free trial includes the same features as the subscription. If it ends and you don’t subscribe, your
-                  page will no longer show.
-                </p>
-              </div>
-            </div>
-
-            <div className="section-list">
-              <span className="blue-dot" aria-hidden="true"></span>
-              <div className="section-list-info">
-                <p className="desktop-h6">What happens if I cancel?</p>
-                <p className="desktop-body-xs">
-                  You’ll keep access until the end of the billing period. After that, your page won’t show until you
-                  subscribe again.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="faq-cta">
-          <Link to="/faq" className="navy-button desktop-button">
-            Read More Q&amp;A
-          </Link>
         </div>
       </div>
 
