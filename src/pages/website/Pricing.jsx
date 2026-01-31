@@ -1,4 +1,3 @@
-// frontend/src/pages/website/Pricing.jsx
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -8,7 +7,7 @@ import Footer from "../../components/Footer";
 import "../../styling/fonts.css";
 import "../../styling/pricing.css";
 
-/* Reuse icons you already have */
+/* Icons */
 import WorksOnEveryPhone from "../../assets/icons/Works_On_Every_Phone.svg";
 import EasyToUpdateAnytime from "../../assets/icons/Easy_To_Update_Anytime.svg";
 import NoAppNeeded from "../../assets/icons/No_App_Needed.svg";
@@ -16,36 +15,34 @@ import BuiltForRealTrades from "../../assets/icons/Built_For_Real_Trades.svg";
 
 export default function Pricing() {
     const [billing, setBilling] = useState("monthly"); // monthly | quarterly | yearly
-    const [loadingKey, setLoadingKey] = useState(null); // "plus" | "teams" etc
+    const [loadingKey, setLoadingKey] = useState(null);
     const navigate = useNavigate();
 
-    // NOTE: We keep your display prices as-is (you can adjust later)
-    const prices = useMemo(() => {
-        return {
-            monthly: {
-                free: { label: "FREE", price: "£0", sub: "No monthly cost" },
-                plus: { label: "Plus Plan", price: "£4.95", sub: "per month" },
-                teams: { label: "Teams Plan", price: "£19.95", sub: "per month" },
-                note: "Billed monthly. Cancel anytime.",
-            },
-            quarterly: {
-                free: { label: "FREE", price: "£0", sub: "No monthly cost" },
-                plus: { label: "Plus Plan", price: "£13.95", sub: "per quarter" },
-                teams: { label: "Teams Plan", price: "£54.95", sub: "per quarter" },
-                note: "Billed every 3 months. Cancel anytime.",
-            },
-            yearly: {
-                free: { label: "FREE", price: "£0", sub: "No yearly cost" },
-                plus: { label: "Plus Plan", price: "£49.95", sub: "per year" },
-                teams: { label: "Teams Plan", price: "£189.95", sub: "per year" },
-                note: "Best value. Billed yearly.",
-            },
-        };
-    }, []);
+    /* ---------------- Prices (display only) ---------------- */
+    const prices = useMemo(() => ({
+        monthly: {
+            free: { price: "£0", sub: "No monthly cost" },
+            plus: { price: "£4.95", sub: "per month" },
+            teams: { price: "£19.95", sub: "per month" },
+            note: "Billed monthly. Cancel anytime.",
+        },
+        quarterly: {
+            free: { price: "£0", sub: "No monthly cost" },
+            plus: { price: "£13.95", sub: "per quarter" },
+            teams: { price: "£54.95", sub: "per quarter" },
+            note: "Billed every 3 months. Cancel anytime.",
+        },
+        yearly: {
+            free: { price: "£0", sub: "No yearly cost" },
+            plus: { price: "£49.95", sub: "per year" },
+            teams: { price: "£189.95", sub: "per year" },
+            note: "Best value. Billed yearly.",
+        },
+    }), []);
 
     const p = prices[billing];
 
-    // ---- Auth helpers (matches your backend which accepts bearer OR cookie)
+    /* ---------------- Auth helpers ---------------- */
     const getToken = () => {
         try {
             return localStorage.getItem("token") || "";
@@ -54,17 +51,12 @@ export default function Pricing() {
         }
     };
 
-    const isLoggedIn = () => {
-        const t = getToken();
-        return !!t;
-    };
+    const isLoggedIn = () => !!getToken();
 
-    const apiBase =
-        import.meta.env.VITE_API_URL || "http://localhost:8000";
+    const apiBase = import.meta.env.VITE_API_URL;
 
+    /* ---------------- Stripe subscription ---------------- */
     const startSubscription = async (planKey) => {
-        // If not logged in, keep current behaviour: go to register
-        // (you can change to /login if you prefer)
         if (!isLoggedIn()) {
             navigate("/register");
             return;
@@ -73,21 +65,14 @@ export default function Pricing() {
         setLoadingKey(planKey);
 
         try {
-            const token = getToken();
-
             const res = await fetch(`${apiBase}/api/subscribe`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    // Your backend reads token from bearer OR cookie
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${getToken()}`,
                 },
-                body: JSON.stringify({
-                    planKey, // e.g. "plus-monthly"
-                    // optional: where to return after payment
-                    returnUrl: `${window.location.origin}/checkout/success`,
-                }),
                 credentials: "include",
+                body: JSON.stringify({ planKey }),
             });
 
             const data = await res.json();
@@ -97,122 +82,64 @@ export default function Pricing() {
             }
 
             if (!data?.url) {
-                throw new Error("Missing Stripe checkout URL");
+                throw new Error("Stripe session URL missing");
             }
 
             window.location.href = data.url;
         } catch (err) {
             alert(err.message || "Subscription failed");
-        } finally {
             setLoadingKey(null);
         }
     };
 
-    const planCards = useMemo(
-        () => [
-            {
-                key: "free",
-                title: "Individual",
-                badge: "Everything you need to get started",
-                price: p.free.price,
-                sub: p.free.sub,
-                highlights: [
-                    "Claim your unique KonarCard link",
-                    "Basic profile (name, trade, contact buttons)",
-                    "QR code sharing",
-                    "Works on iPhone & Android",
-                    "Perfect for trying it out",
-                ],
-                // Free still uses your existing flow
-                cta: { label: "Get started free", to: "/register" },
-                action: null,
-            },
-            {
-                key: "plus",
-                title: "Plus Plan",
-                badge: "For tradies who want to look pro online",
-                price: p.plus.price,
-                sub: p.plus.sub,
-                highlights: [
-                    "Full profile customisation (themes, fonts, layout)",
-                    "Services + pricing sections",
-                    "Photo gallery",
-                    "Reviews & star ratings",
-                    "Unlimited edits (changes go live instantly)",
-                    "Priority support",
-                ],
-                cta: { label: "Start Plus Plan", to: "/register" },
-                featured: true,
-                action: () => startSubscription(`plus-${billing}`),
-            },
-            {
-                key: "teams",
-                title: "Teams Plan",
-                badge: "Built for crews and growing businesses",
-                price: p.teams.price,
-                sub: p.teams.sub,
-                highlights: [
-                    "Multiple team profiles under one account",
-                    "Assign roles & manage staff pages",
-                    "Company-wide branding consistency",
-                    "Centralised updates & control",
-                    "Ideal for 2–20+ tradies",
-                    "Priority support",
-                ],
-                cta: { label: "Start Teams Plan", to: "/register" },
-                action: () => startSubscription(`teams-${billing}`),
-            },
-        ],
-        [p, billing]
-    );
+    /* ---------------- Plan cards ---------------- */
+    const planCards = useMemo(() => [
+        {
+            key: "free",
+            title: "Individual",
+            price: p.free.price,
+            sub: p.free.sub,
+            highlights: [
+                "Claim your unique KonarCard link",
+                "Basic profile & contact buttons",
+                "QR code sharing",
+                "Works on iPhone & Android",
+            ],
+            cta: { label: "Get started free", to: "/register" },
+        },
+        {
+            key: "plus",
+            title: "Plus Plan",
+            price: p.plus.price,
+            sub: p.plus.sub,
+            featured: true,
+            highlights: [
+                "Full profile customisation",
+                "Services & pricing sections",
+                "Photo gallery",
+                "Reviews & ratings",
+                "Unlimited edits",
+            ],
+            action: () => startSubscription(`plus-${billing}`),
+            cta: { label: "Start Plus Plan" },
+        },
+        {
+            key: "teams",
+            title: "Teams Plan",
+            price: p.teams.price,
+            sub: p.teams.sub,
+            highlights: [
+                "Multiple team profiles",
+                "Role & staff management",
+                "Centralised branding",
+                "Built for growing businesses",
+            ],
+            action: () => startSubscription(`teams-${billing}`),
+            cta: { label: "Start Teams Plan" },
+        },
+    ], [billing, p]);
 
-    const comparisonRows = useMemo(
-        () => [
-            { label: "Claim your KonarCard link", free: true, plus: true, teams: true },
-            { label: "Tap / QR sharing", free: true, plus: true, teams: true },
-            { label: "Basic profile (contact buttons)", free: true, plus: true, teams: true },
-            { label: "Custom themes & fonts", free: false, plus: true, teams: true },
-            { label: "Services + pricing section", free: false, plus: true, teams: true },
-            { label: "Photo gallery", free: false, plus: true, teams: true },
-            { label: "Reviews & star ratings", free: false, plus: true, teams: true },
-            { label: "Unlimited edits (instant updates)", free: true, plus: true, teams: true },
-            { label: "Remove KonarCard branding", free: false, plus: true, teams: true },
-            { label: "Multiple profiles (team management)", free: false, plus: false, teams: true },
-            { label: "Assign staff & manage permissions", free: false, plus: false, teams: true },
-            { label: "Centralised billing & admin controls", free: false, plus: false, teams: true },
-            { label: "Support level", free: "Standard", plus: "Priority", teams: "Priority" },
-        ],
-        []
-    );
-
-    const pricingFaqs = useMemo(
-        () => [
-            {
-                q: "Can I upgrade or downgrade later?",
-                a: "Yes — you can change your plan anytime from your dashboard. Your profile stays live while you switch.",
-            },
-            {
-                q: "Do I need an app for KonarCard to work?",
-                a: "No app needed. People tap your card or scan your QR code and your profile opens instantly.",
-            },
-            {
-                q: "What happens if I cancel?",
-                a: "Your profile remains accessible, but premium features won’t be active once your plan ends.",
-            },
-            {
-                q: "Can you help me set up my profile?",
-                a: "Yes. Message us on live chat and we’ll guide you step by step.",
-            },
-        ],
-        []
-    );
-
-    const formatTick = (v) => {
-        if (v === true) return <span className="pr-tick">✓</span>;
-        if (v === false) return <span className="pr-cross">—</span>;
-        return <span className="pr-textVal">{v}</span>;
-    };
-
+    /* ---------------- Render ---------------- */
     return (
         <>
             <Navbar />
@@ -223,44 +150,22 @@ export default function Pricing() {
                     <div className="kc-pricing__heroInner">
                         <h1 className="h2 kc-pricing__title">
                             Simple pricing that pays
-                            <br />
-                            for itself
+                            <br />for itself
                         </h1>
                         <p className="body-s kc-pricing__subtitle">
-                            One job covers the cost for the year. Real tools. Real results.
-                            <br />
-                            Start free, then upgrade only when it’s worth it.
+                            Start free. Upgrade only when it’s worth it.
                         </p>
 
-                        {/* BILLING PILLS */}
-                        <div className="kc-pricing__tabs" role="tablist" aria-label="Billing period">
-                            <button
-                                type="button"
-                                className={`kc-pricing__tab pill ${billing === "monthly" ? "is-active" : ""}`}
-                                onClick={() => setBilling("monthly")}
-                                role="tab"
-                                aria-selected={billing === "monthly"}
-                            >
-                                Monthly plan
-                            </button>
-                            <button
-                                type="button"
-                                className={`kc-pricing__tab pill ${billing === "quarterly" ? "is-active" : ""}`}
-                                onClick={() => setBilling("quarterly")}
-                                role="tab"
-                                aria-selected={billing === "quarterly"}
-                            >
-                                Quarterly plan
-                            </button>
-                            <button
-                                type="button"
-                                className={`kc-pricing__tab pill ${billing === "yearly" ? "is-active" : ""}`}
-                                onClick={() => setBilling("yearly")}
-                                role="tab"
-                                aria-selected={billing === "yearly"}
-                            >
-                                Yearly plan
-                            </button>
+                        <div className="kc-pricing__tabs">
+                            {["monthly", "quarterly", "yearly"].map((v) => (
+                                <button
+                                    key={v}
+                                    className={`kc-pricing__tab pill ${billing === v ? "is-active" : ""}`}
+                                    onClick={() => setBilling(v)}
+                                >
+                                    {v.charAt(0).toUpperCase() + v.slice(1)}
+                                </button>
+                            ))}
                         </div>
 
                         <p className="body-s kc-pricing__note">{p.note}</p>
@@ -275,44 +180,29 @@ export default function Pricing() {
                                 key={card.key}
                                 className={`kc-pricing__card ${card.featured ? "is-featured" : ""}`}
                             >
-                                {card.featured && <div className="kc-pricing__tag">Most popular</div>}
-
-                                <div className="kc-pricing__cardTop">
-                                    <p className="h6 kc-pricing__cardTitle">{card.title}</p>
-                                    <p className="body-s kc-pricing__cardBadge">{card.badge}</p>
-                                </div>
+                                <h3 className="h6">{card.title}</h3>
 
                                 <div className="kc-pricing__priceRow">
                                     <span className="kc-pricing__price">{card.price}</span>
-                                    <span className="body-s kc-pricing__priceSub">{card.sub}</span>
+                                    <span className="body-s">{card.sub}</span>
                                 </div>
 
                                 <ul className="kc-pricing__list">
-                                    {card.highlights.map((t) => (
-                                        <li className="body-s" key={t}>
-                                            <span className="kc-pricing__dot" aria-hidden="true" />
-                                            <span>{t}</span>
-                                        </li>
+                                    {card.highlights.map((h) => (
+                                        <li key={h}>{h}</li>
                                     ))}
                                 </ul>
 
-                                {/* Free remains Link. Paid becomes button that triggers Stripe. */}
                                 {card.action ? (
                                     <button
-                                        type="button"
-                                        className={`kc-pricing__cta ${card.featured ? "is-primary" : "is-secondary"}`}
+                                        className="kc-pricing__cta is-primary"
                                         onClick={card.action}
                                         disabled={!!loadingKey}
                                     >
-                                        {loadingKey === `plus-${billing}` || loadingKey === `teams-${billing}`
-                                            ? "Redirecting..."
-                                            : card.cta.label}
+                                        {loadingKey ? "Redirecting…" : card.cta.label}
                                     </button>
                                 ) : (
-                                    <Link
-                                        to={card.cta.to}
-                                        className={`kc-pricing__cta ${card.featured ? "is-primary" : "is-secondary"}`}
-                                    >
+                                    <Link to={card.cta.to} className="kc-pricing__cta is-secondary">
                                         {card.cta.label}
                                     </Link>
                                 )}
@@ -321,89 +211,13 @@ export default function Pricing() {
                     </div>
                 </section>
 
-                {/* COMPARE TABLE */}
-                <section id="compare" className="kc-pricing__compare">
-                    <h2 className="h3 kc-pricing__h2">Compare plans</h2>
-                    <p className="body-s kc-pricing__sub2">
-                        Everything included in each plan — so you can pick what fits your trade.
-                    </p>
-
-                    <div className="kc-pricing__tableWrap" role="region" aria-label="Plan comparison table">
-                        <table className="kc-pricing__table">
-                            <thead>
-                                <tr>
-                                    <th className="kc-pricing__thFeature">Features</th>
-                                    <th className="kc-pricing__thPlan">FREE</th>
-                                    <th className="kc-pricing__thPlan kc-pricing__thPlus">PLUS</th>
-                                    <th className="kc-pricing__thPlan">TEAMS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {comparisonRows.map((r) => (
-                                    <tr key={r.label}>
-                                        <td className="kc-pricing__tdFeature">{r.label}</td>
-                                        <td className="kc-pricing__tdVal">{formatTick(r.free)}</td>
-                                        <td className="kc-pricing__tdVal kc-pricing__tdPlus">{formatTick(r.plus)}</td>
-                                        <td className="kc-pricing__tdVal">{formatTick(r.teams)}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div className="kc-pricing__compareCtas">
-                        <Link to="/register" className="kc-pricing__btn kc-pricing__btnPrimary">
-                            Get started
-                        </Link>
-                        <Link to="/contactus" className="kc-pricing__btn kc-pricing__btnGhost">
-                            Ask a question
-                        </Link>
-                    </div>
-                </section>
-
                 {/* VALUE */}
                 <section className="kc-pricing__value">
-                    <h2 className="h3 kc-pricing__h2">One job pays for the whole year</h2>
-                    <p className="body-s kc-pricing__sub2">
-                        No reprints. No outdated details. Your card works and you update your profile anytime.
-                    </p>
-
                     <div className="kc-pricing__valueGrid">
-                        <div className="kc-pricing__valueCard">
-                            <img src={WorksOnEveryPhone} alt="" className="kc-pricing__icon" />
-                            <p className="h6 kc-pricing__valueTitle">Works on every phone</p>
-                            <p className="body-s kc-pricing__valueDesc">No app. Tap or scan. Simple.</p>
-                        </div>
-                        <div className="kc-pricing__valueCard">
-                            <img src={EasyToUpdateAnytime} alt="" className="kc-pricing__icon" />
-                            <p className="h6 kc-pricing__valueTitle">Always up-to-date</p>
-                            <p className="body-s kc-pricing__valueDesc">No reprints when details change.</p>
-                        </div>
-                        <div className="kc-pricing__valueCard">
-                            <img src={NoAppNeeded} alt="" className="kc-pricing__icon" />
-                            <p className="h6 kc-pricing__valueTitle">No apps needed</p>
-                            <p className="body-s kc-pricing__valueDesc">Works instantly on their phone.</p>
-                        </div>
-                        <div className="kc-pricing__valueCard">
-                            <img src={BuiltForRealTrades} alt="" className="kc-pricing__icon" />
-                            <p className="h6 kc-pricing__valueTitle">Built for real trades</p>
-                            <p className="body-s kc-pricing__valueDesc">Designed for on-site, not offices.</p>
-                        </div>
-                    </div>
-                </section>
-
-                {/* PRICING FAQS */}
-                <section className="kc-pricing__faqs">
-                    <h2 className="h3 kc-pricing__h2">Pricing FAQs</h2>
-                    <p className="body-s kc-pricing__sub2">We’ve answered the questions people ask most.</p>
-
-                    <div className="kc-pricing__faqList">
-                        {pricingFaqs.map((x) => (
-                            <div className="kc-pricing__faqRow" key={x.q}>
-                                <p className="h6 kc-pricing__faqQ">{x.q}</p>
-                                <p className="body-s kc-pricing__faqA">{x.a}</p>
-                            </div>
-                        ))}
+                        <img src={WorksOnEveryPhone} alt="" />
+                        <img src={EasyToUpdateAnytime} alt="" />
+                        <img src={NoAppNeeded} alt="" />
+                        <img src={BuiltForRealTrades} alt="" />
                     </div>
                 </section>
             </main>
