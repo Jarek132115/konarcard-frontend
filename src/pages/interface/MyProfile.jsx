@@ -1,20 +1,19 @@
 // src/pages/MyProfile/MyProfile.jsx
 import React, { useEffect, useState, useContext, useMemo, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 import { useCreateBusinessCard, buildBusinessCardFormData } from "../../hooks/useCreateBiz";
-import axios from "axios";
 import { toast } from "react-hot-toast";
 import ShareProfile from "../../components/ShareProfile";
 import { AuthContext } from "../../components/AuthContext";
 import api from "../../services/api";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 
-// NEW: extracted components
+// extracted components
 import Preview from "../../components/Preview";
 import Editor from "../../components/Editor";
 
@@ -26,12 +25,13 @@ export default function MyProfile() {
   const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { user: authUser, loading: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
 
   const userId = authUser?._id;
   const userEmail = authUser?.email;
-  const isSubscribed = !!authUser?.isSubscribed; // ← single source of truth
+  const isSubscribed = !!authUser?.isSubscribed; // single source of truth
   const isUserVerified = !!authUser?.isVerified;
   const userUsername = authUser?.username;
 
@@ -43,7 +43,7 @@ export default function MyProfile() {
 
   // Local state
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
-  const [verificationCodeInput, setVerificationCodeCode] = useState("");
+  const [verificationCodeInput, setVerificationCodeInput] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
 
@@ -72,7 +72,7 @@ export default function MyProfile() {
   const [showReviewsSection, setShowReviewsSection] = useState(true);
   const [showContactSection, setShowContactSection] = useState(true);
 
-  // ---- Trial helpers (derived strictly from authUser; never poll here)
+  // ---- Trial helpers (derived strictly from authUser)
   const trialEndDate = useMemo(() => {
     if (!authUser?.trialExpires) return null;
     const d = new Date(authUser.trialExpires);
@@ -86,7 +86,6 @@ export default function MyProfile() {
     return Math.max(0, days);
   }, [trialEndDate]);
 
-  // Only show a trial if NOT subscribed
   const isTrialActive = !!(!isSubscribed && trialEndDate && trialEndDate.getTime() > Date.now());
   const hasTrialEnded = !!(!isSubscribed && trialEndDate && trialEndDate.getTime() <= Date.now());
 
@@ -94,40 +93,64 @@ export default function MyProfile() {
   const hasExchangeContact =
     (state.contact_email && state.contact_email.trim()) || (state.phone_number && state.phone_number.trim());
 
-  // ============== EFFECTS (minimal; no loops) ==============
-
-  // 1) Handle a one-time return from Stripe, then clear the URL and refresh auth.
+  // ==========================
+  // 1) Stripe return handler
+  // ==========================
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const sessionId = params.get("session_id");
     const paymentSuccess = params.get("payment_success");
+    const subscribed = params.get("subscribed"); // toast flag
 
-    if ((sessionId || paymentSuccess === "true") && !handledPaymentRef.current) {
+    // IMPORTANT: only treat as Stripe return if Stripe gave us a session_id OR payment_success=true
+    const isStripeReturn = !!sessionId || paymentSuccess === "true";
+
+    if (isStripeReturn && !handledPaymentRef.current) {
       handledPaymentRef.current = true;
+
       (async () => {
+        // best-effort sync with Stripe
         try {
-          await api.post("/me/sync-subscriptions", { ts: Date.now() }); // backend pulls latest from Stripe
-        } catch { /* swallow */ }
+          await api.post("/me/sync-subscriptions", { ts: Date.now() });
+        } catch {
+          /* swallow */
+        }
+
+        // refresh auth user so UI updates instantly
         try {
-          await refetchAuthUser?.(); // refresh isSubscribed / trialExpires
-        } catch { /* swallow */ }
-        toast.success("Subscription updated successfully!");
-        window.history.replaceState({}, document.title, location.pathname); // prevent re-trigger
+          await refetchAuthUser?.();
+        } catch {
+          /* swallow */
+        }
+
+        // toast
+        if (subscribed === "1") toast.success("You’re now subscribed ✅");
+        else toast.success("Subscription updated successfully!");
+
+        // clean URL (drop query)
+        const clean = new URL(window.location.href);
+        clean.search = "";
+        window.history.replaceState({}, document.title, clean.toString());
       })();
     }
-  }, [location.search, location.pathname, refetchAuthUser]);
+  }, [location.search, refetchAuthUser]);
 
-  // 2) Media query + body scroll management
+  // ==========================
+  // 2) Media query + body scroll
+  // ==========================
   useEffect(() => {
     const mm1 = window.matchMedia(mqDesktopToMobile);
     const mm2 = window.matchMedia(mqSmallMobile);
+
     const onChange = () => {
       setIsMobile(mm1.matches);
       setIsSmallMobile(mm2.matches);
       if (!mm1.matches && sidebarOpen) setSidebarOpen(false);
     };
+
     mm1.addEventListener("change", onChange);
     mm2.addEventListener("change", onChange);
+
     return () => {
       mm1.removeEventListener("change", onChange);
       mm2.removeEventListener("change", onChange);
@@ -139,7 +162,9 @@ export default function MyProfile() {
     else document.body.classList.remove("body-no-scroll");
   }, [sidebarOpen, isMobile]);
 
-  // 3) Verification code cooldown + prompt visibility
+  // ==========================
+  // 3) Verification cooldown + prompt
+  // ==========================
   useEffect(() => {
     if (resendCooldown <= 0) return;
     const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
@@ -151,31 +176,42 @@ export default function MyProfile() {
     else if (!authLoading && isUserVerified) setShowVerificationPrompt(false);
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // 4) Optional scroll-to-editor on load (mobile convenience)
+  // ==========================
+  // 4) Optional scroll-to-editor on load (mobile)
+  // ==========================
   useEffect(() => {
     const wantScroll = localStorage.getItem("scrollToEditorOnLoad") === "1";
     if (!wantScroll) return;
+
     if (window.innerWidth <= 1000) {
       let tries = 0;
       const tick = () => {
         const el = document.getElementById("myprofile-editor") || document.querySelector(".myprofile-editor-anchor");
         if (el) {
           el.scrollIntoView({ behavior: "smooth", block: "start" });
-          try { localStorage.removeItem("scrollToEditorOnLoad"); } catch { }
+          try {
+            localStorage.removeItem("scrollToEditorOnLoad");
+          } catch { }
         } else if (tries < 20) {
           tries += 1;
           setTimeout(tick, 150);
         } else {
-          try { localStorage.removeItem("scrollToEditorOnLoad"); } catch { }
+          try {
+            localStorage.removeItem("scrollToEditorOnLoad");
+          } catch { }
         }
       };
       tick();
     } else {
-      try { localStorage.removeItem("scrollToEditorOnLoad"); } catch { }
+      try {
+        localStorage.removeItem("scrollToEditorOnLoad");
+      } catch { }
     }
   }, []);
 
+  // ==========================
   // 5) Hydrate editor when card loads
+  // ==========================
   useEffect(() => {
     if (isCardLoading) return;
 
@@ -206,7 +242,6 @@ export default function MyProfile() {
         contact_email: businessCard.contact_email || "",
         phone_number: businessCard.phone_number || "",
 
-        // NEW: design controls + alignment + socials + ordering
         buttonBgColor: businessCard.button_bg_color || "#F47629",
         buttonTextColor: (businessCard.button_text_color || "white").toLowerCase() === "black" ? "black" : "white",
         textAlignment: ["left", "center", "right"].includes((businessCard.text_alignment || "").toLowerCase())
@@ -219,9 +254,10 @@ export default function MyProfile() {
         x_url: businessCard.x_url || "",
         tiktok_url: businessCard.tiktok_url || "",
 
-        sectionOrder: Array.isArray(businessCard.section_order) && businessCard.section_order.length
-          ? businessCard.section_order
-          : DEFAULT_SECTION_ORDER,
+        sectionOrder:
+          Array.isArray(businessCard.section_order) && businessCard.section_order.length
+            ? businessCard.section_order
+            : DEFAULT_SECTION_ORDER,
       });
 
       setServicesDisplayMode(businessCard.services_display_mode || "list");
@@ -251,7 +287,7 @@ export default function MyProfile() {
       setShowServicesSection(true);
       setShowReviewsSection(true);
       setShowContactSection(true);
-      // ensure sensible defaults for new fields
+
       updateState({
         buttonBgColor: "#F47629",
         buttonTextColor: "white",
@@ -266,16 +302,18 @@ export default function MyProfile() {
     }
   }, [businessCard, isCardLoading, resetState, updateState]);
 
-  // 6) Cleanup
+  // ==========================
+  // 6) Cleanup blob URLs
+  // ==========================
   useEffect(() => {
     return () => {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
-  // (continued) src/pages/MyProfile/MyProfile.jsx
 
-  // ================= HANDLERS & HELPERS =================
-
+  // ==========================
+  // Helpers
+  // ==========================
   const createAndTrackBlobUrl = (file) => {
     const url = URL.createObjectURL(file);
     activeBlobUrlsRef.current.push(url);
@@ -331,68 +369,41 @@ export default function MyProfile() {
     updateState({ workImages: state.workImages.filter((_, i) => i !== idx) });
   };
 
-  // Services handlers
-  const handleAddService = () => updateState({ services: [...(state.services || []), { name: "", price: "" }] });
-  const handleServiceChange = (i, field, value) => {
-    const arr = [...(state.services || [])];
-    arr[i] = { ...(arr[i] || {}), [field]: value };
-    updateState({ services: arr });
-  };
-  const handleRemoveService = (i) =>
-    updateState({ services: (state.services || []).filter((_, x) => x !== i) });
-
-  // Reviews handlers
-  const handleAddReview = () =>
-    updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
-  const handleReviewChange = (i, field, value) => {
-    const arr = [...(state.reviews || [])];
-    if (field === "rating") {
-      const n = parseInt(value, 10);
-      arr[i] = { ...(arr[i] || {}), rating: Number.isFinite(n) ? Math.min(5, Math.max(0, n)) : 0 };
-    } else {
-      arr[i] = { ...(arr[i] || {}), [field]: value };
-    }
-    updateState({ reviews: arr });
-  };
-  const handleRemoveReview = (i) =>
-    updateState({ reviews: (state.reviews || []).filter((_, x) => x !== i) });
-
-  // Verification helpers
+  // Verification helpers (USE api.js ONLY)
   const sendVerificationCode = async () => {
     if (!userEmail) return toast.error("Email not found. Please log in again.");
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/resend-code`, { email: userEmail });
-      if (res.data.error) toast.error(res.data.error);
+      const res = await api.post("/resend-code", { email: userEmail });
+      if (res.data?.error) toast.error(res.data.error);
       else {
         toast.success("Verification code sent!");
         setResendCooldown(30);
       }
     } catch (err) {
-      toast.error(err.response?.data?.error || "Could not resend code.");
+      toast.error(err?.response?.data?.error || "Could not resend code.");
     }
   };
 
   const handleVerifyCode = async (e) => {
     e.preventDefault();
     if (!userEmail) return toast.error("Email not found. Cannot verify.");
+
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/verify-email`, {
-        email: userEmail,
-        code: verificationCodeInput,
-      });
-      if (res.data.error) toast.error(res.data.error);
-      else {
-        toast.success("Email verified successfully!");
-        setShowVerificationPrompt(false);
-        setVerificationCodeCode("");
-        refetchAuthUser?.();
-      }
+      const res = await api.post("/verify-email", { email: userEmail, code: verificationCodeInput });
+      if (res.data?.error) return toast.error(res.data.error);
+
+      toast.success("Email verified successfully!");
+      setShowVerificationPrompt(false);
+      setVerificationCodeInput("");
+      await refetchAuthUser?.();
     } catch (err) {
-      toast.error(err.response?.data?.error || "Verification failed.");
+      toast.error(err?.response?.data?.error || "Verification failed.");
     }
   };
 
-  // Reset page
+  // Trial start (single place)
+  const startTrial = async () => api.post("/start-trial");
+
   const handleResetPage = () => {
     resetState();
     setServicesDisplayMode("list");
@@ -404,15 +415,16 @@ export default function MyProfile() {
     setShowServicesSection(true);
     setShowReviewsSection(true);
     setShowContactSection(true);
+
     setCoverPhotoFile(null);
     setAvatarFile(null);
     setWorkImageFiles([]);
     setCoverPhotoRemoved(false);
     setIsAvatarRemoved(false);
+
     activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     activeBlobUrlsRef.current = [];
 
-    // Defaults for new fields
     updateState({
       buttonBgColor: "#F47629",
       buttonTextColor: "white",
@@ -428,7 +440,6 @@ export default function MyProfile() {
     toast.success("Editor reset.");
   };
 
-  // Deep compare helpers
   const arraysEqual = (a = [], b = []) => {
     if (a.length !== b.length) return false;
     for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
@@ -438,11 +449,9 @@ export default function MyProfile() {
   const hasProfileChanges = () => {
     if (coverPhotoFile || avatarFile || workImageFiles.length || coverPhotoRemoved || isAvatarRemoved) return true;
     const original = businessCard || {};
-    const norm = (v) => (v ?? "").toString().trim();
 
     const normalizeServices = (arr) => (arr || []).map((s) => ({ name: norm(s.name), price: norm(s.price) }));
-    const normalizeReviews = (arr) =>
-      (arr || []).map((r) => ({ name: norm(r.name), text: norm(r.text), rating: Number(r.rating) || 0 }));
+    const normalizeReviews = (arr) => (arr || []).map((r) => ({ name: norm(r.name), text: norm(r.text), rating: Number(r.rating) || 0 }));
 
     const servicesChanged = (() => {
       const a = normalizeServices(state.services);
@@ -464,7 +473,9 @@ export default function MyProfile() {
     const currentWorks = (state.workImages || [])
       .map((w) => (w?.preview && !w.preview.startsWith("blob:") ? w.preview : null))
       .filter(Boolean);
+
     const originalWorks = original.works || [];
+
     const worksChanged = (() => {
       if (currentWorks.length !== originalWorks.length) return true;
       for (let i = 0; i < currentWorks.length; i++) if (currentWorks[i] !== originalWorks[i]) return true;
@@ -483,9 +494,9 @@ export default function MyProfile() {
     const origAlign = ["left", "center", "right"].includes((original.text_alignment || "").toLowerCase())
       ? original.text_alignment
       : "left";
-    const origSectionOrder = Array.isArray(original.section_order) && original.section_order.length
-      ? original.section_order
-      : DEFAULT_SECTION_ORDER;
+
+    const origSectionOrder =
+      Array.isArray(original.section_order) && original.section_order.length ? original.section_order : DEFAULT_SECTION_ORDER;
 
     return (
       state.businessName !== (original.business_card_name || "") ||
@@ -523,18 +534,7 @@ export default function MyProfile() {
     );
   };
 
-  const handleStartSubscription = async () => {
-    try {
-      const response = await api.post("/subscribe", {});
-      if (response.data?.url) {
-        window.location.href = response.data.url;
-      } else {
-        toast.error("Failed to start subscription. Please try again.");
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.error || "Failed to start subscription.");
-    }
-  };
+  const handleStartSubscription = () => navigate("/pricing");
 
   const handleShareCard = () => {
     if (!isUserVerified) return toast.error("Please verify your email to share your card.");
@@ -542,9 +542,9 @@ export default function MyProfile() {
   };
   const handleCloseShareModal = () => setShowShareModal(false);
 
-  // Only attempt to start a trial when saving if not subscribed and not already in trial
   const ensureTrialIfNeeded = async () => {
     if (isSubscribed || isTrialActive) return;
+
     try {
       const res = await startTrial();
       if (res?.data?.trialExpires) toast.success("Your 14-day trial started!");
@@ -556,7 +556,6 @@ export default function MyProfile() {
     }
   };
 
-  // ===== SAVE (with real array section_order) =====
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -602,20 +601,16 @@ export default function MyProfile() {
       show_reviews_section: showReviewsSection,
       show_contact_section: showContactSection,
 
-      // ✅ Save new fields
       button_bg_color: state.buttonBgColor,
-      button_text_color: state.buttonTextColor, // 'white'|'black'
-      text_alignment: state.textAlignment,      // 'left'|'center'|'right'
+      button_text_color: state.buttonTextColor,
+      text_alignment: state.textAlignment,
       facebook_url: state.facebook_url,
       instagram_url: state.instagram_url,
       linkedin_url: state.linkedin_url,
       x_url: state.x_url,
       tiktok_url: state.tiktok_url,
 
-      // ✅ IMPORTANT: save as array (not JSON string)
-      section_order: state.sectionOrder && state.sectionOrder.length
-        ? state.sectionOrder
-        : DEFAULT_SECTION_ORDER,
+      section_order: state.sectionOrder && state.sectionOrder.length ? state.sectionOrder : DEFAULT_SECTION_ORDER,
     });
 
     try {
@@ -632,17 +627,13 @@ export default function MyProfile() {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
       activeBlobUrlsRef.current = [];
     } catch (err) {
-      toast.error(err.response?.data?.error || "Something went wrong while saving.");
+      toast.error(err?.response?.data?.error || "Something went wrong while saving.");
     }
   };
 
   // ================= RENDER =================
-
   const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
-
-  const columnScrollStyle = !isMobile
-    ? { maxHeight: "calc(100vh - 140px)", overflow: "auto" }
-    : undefined;
+  const columnScrollStyle = !isMobile ? { maxHeight: "calc(100vh - 140px)", overflow: "auto" } : undefined;
 
   return (
     <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
@@ -656,19 +647,16 @@ export default function MyProfile() {
           aria-label={sidebarOpen ? "Close menu" : "Open menu"}
           onClick={() => setSidebarOpen((s) => !s)}
         >
-          <span></span><span></span><span></span>
+          <span></span>
+          <span></span>
+          <span></span>
         </button>
       </div>
 
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <main className="main-content-container">
-        <PageHeader
-          isMobile={isMobile}
-          isSmallMobile={isSmallMobile}
-          onShareCard={handleShareCard}
-          visitUrl={visitUrl}
-        />
+        <PageHeader isMobile={isMobile} isSmallMobile={isSmallMobile} onShareCard={handleShareCard} visitUrl={visitUrl} />
 
         <div className="myprofile-main-content">
           {!authLoading && !authUser && (
@@ -684,7 +672,8 @@ export default function MyProfile() {
                 <div className="content-card-box verification-prompt">
                   <p>⚠️ Your email is not verified!</p>
                   <p>
-                    Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to your business card.
+                    Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to your business
+                    card.
                   </p>
                   <form onSubmit={handleVerifyCode} className="verification-form">
                     <input
@@ -692,13 +681,15 @@ export default function MyProfile() {
                       className="text-input"
                       placeholder="Enter 6-digit code"
                       value={verificationCodeInput}
-                      onChange={(e) => setVerificationCodeCode(e.target.value)}
+                      onChange={(e) => setVerificationCodeInput(e.target.value)}
                       maxLength={6}
                       inputMode="numeric"
                       pattern="[0-9]*"
                     />
                     <div className="verification-actions">
-                      <button type="submit" className="desktop-button navy-button">Verify Email</button>
+                      <button type="submit" className="desktop-button navy-button">
+                        Verify Email
+                      </button>
                       <button
                         type="button"
                         className="desktop-button orange-button"
@@ -716,10 +707,15 @@ export default function MyProfile() {
               {!isSubscribed && isTrialActive && (
                 <div className="trial-banner">
                   <p className="desktop-body-s">
-                    Your free trial ends on{" "}
-                    <strong>{trialEndDate?.toLocaleDateString()}</strong>
+                    Your free trial ends on <strong>{trialEndDate?.toLocaleDateString()}</strong>
                     {typeof trialDaysLeft === "number" ? (
-                      <> — <strong>{trialDaysLeft} day{trialDaysLeft === 1 ? "" : "s"}</strong> left</>
+                      <>
+                        {" "}
+                        — <strong>
+                          {trialDaysLeft} day{trialDaysLeft === 1 ? "" : "s"}
+                        </strong>{" "}
+                        left
+                      </>
                     ) : null}
                     .
                   </p>
@@ -732,7 +728,7 @@ export default function MyProfile() {
               {!isSubscribed && hasTrialEnded && (
                 <div className="trial-ended-banner">
                   <p>
-                    Your free trial has ended. <Link to="/subscription">Subscribe now</Link> to prevent your profile from being deleted.
+                    Your free trial has ended. <Link to="/pricing">Subscribe now</Link> to prevent your profile from being deleted.
                   </p>
                 </div>
               )}

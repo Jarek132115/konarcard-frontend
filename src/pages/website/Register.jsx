@@ -9,6 +9,9 @@ import "../../styling/login.css";
 const PENDING_CLAIM_KEY = "pendingClaimUsername";
 const OAUTH_SOURCE_KEY = "oauthSource";
 
+// NEW (pricing -> register -> stripe resume)
+const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
+
 export default function Register() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -69,6 +72,70 @@ export default function Register() {
             .trim()
             .toLowerCase()
             .replace(/[^a-z0-9._-]/g, "");
+
+    // ----------------------------
+    // NEW: checkout intent helpers
+    // ----------------------------
+    const readCheckoutIntent = () => {
+        try {
+            const raw = localStorage.getItem(CHECKOUT_INTENT_KEY);
+            if (!raw) return null;
+
+            const intent = JSON.parse(raw);
+            if (!intent?.planKey) return null;
+
+            // expire after 30 minutes
+            const age = Date.now() - Number(intent.createdAt || 0);
+            if (Number.isFinite(age) && age > 30 * 60 * 1000) {
+                localStorage.removeItem(CHECKOUT_INTENT_KEY);
+                return null;
+            }
+
+            return intent;
+        } catch {
+            return null;
+        }
+    };
+
+    const clearCheckoutIntent = () => {
+        try {
+            localStorage.removeItem(CHECKOUT_INTENT_KEY);
+        } catch { }
+    };
+
+    // After registration + verification login, if pricing intent exists → go to Stripe
+    const resumeCheckoutIfNeeded = async () => {
+        const intent = readCheckoutIntent();
+        if (!intent) return false;
+
+        const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
+
+        try {
+            // ✅ Clear BEFORE redirect to avoid loops if user hits back
+            clearCheckoutIntent();
+
+            const res = await api.post("/subscribe", {
+                planKey: intent.planKey,
+                returnUrl,
+            });
+
+            if (res?.data?.url) {
+                window.location.href = res.data.url;
+                return true;
+            }
+
+            toast.error("Could not start checkout.");
+            return false;
+        } catch (e) {
+            // ✅ Restore intent so they can try again
+            try {
+                localStorage.setItem(CHECKOUT_INTENT_KEY, JSON.stringify(intent));
+            } catch { }
+            toast.error(e?.response?.data?.error || "Subscription failed.");
+            return false;
+        }
+    };
+
 
     const claimLinkContinue = async (e) => {
         e.preventDefault();
@@ -152,6 +219,11 @@ export default function Register() {
                 localStorage.removeItem(OAUTH_SOURCE_KEY);
             } catch { }
 
+            // ✅ PRIORITY: resume Stripe checkout if they came from pricing
+            const resumed = await resumeCheckoutIfNeeded();
+            if (resumed) return;
+
+            // fallback
             navigate("/myprofile", { replace: true });
         } catch {
             toast.error("Verification failed");
@@ -276,9 +348,7 @@ export default function Register() {
                         ) : (
                             <>
                                 <h1 className="kc-title">Create an account to save your card</h1>
-                                <p className="kc-subtitle">
-                                    Save your digital card so you can share it, edit it, and access it anytime.
-                                </p>
+                                <p className="kc-subtitle">Save your digital card so you can share it, edit it, and access it anytime.</p>
 
                                 <form onSubmit={registerUser} className="kc-form kc-form-register">
                                     <div className="kc-field">

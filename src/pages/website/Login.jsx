@@ -1,3 +1,4 @@
+// src/pages/auth/Login.jsx
 import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -6,9 +7,12 @@ import api from "../../services/api";
 import Navbar from "../../components/Navbar";
 import "../../styling/login.css";
 
-const POST_AUTH_KEY = "postAuthAction";
+const POST_AUTH_KEY = "postAuthAction"; // legacy (keep for card-buy etc)
 const REMEMBER_KEY = "rememberLogin";
 const REMEMBERED_EMAIL_KEY = "rememberedEmail";
+
+// pricing -> login -> stripe resume
+const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
 
 const ADMIN_EMAILS_UI = ["supportteam@konarcard.com"];
 
@@ -80,6 +84,31 @@ export default function Login() {
         return () => clearTimeout(t);
     }, [cooldown]);
 
+    const readCheckoutIntent = () => {
+        try {
+            const raw = localStorage.getItem(CHECKOUT_INTENT_KEY);
+            if (!raw) return null;
+            const intent = JSON.parse(raw);
+            if (!intent?.planKey) return null;
+
+            const age = Date.now() - Number(intent.createdAt || 0);
+            if (Number.isFinite(age) && age > 30 * 60 * 1000) {
+                localStorage.removeItem(CHECKOUT_INTENT_KEY);
+                return null;
+            }
+
+            return intent;
+        } catch {
+            return null;
+        }
+    };
+
+    const clearCheckoutIntent = () => {
+        try {
+            localStorage.removeItem(CHECKOUT_INTENT_KEY);
+        } catch { }
+    };
+
     const runPendingActionOrDefault = async () => {
         let action = null;
         try {
@@ -95,24 +124,6 @@ export default function Login() {
             return;
         }
 
-        if (action.type === "subscribe") {
-            try {
-                const res = await api.post("/subscribe", {
-                    returnUrl: window.location.origin + "/SuccessSubscription",
-                });
-                if (res?.data?.url) {
-                    window.location.href = res.data.url;
-                    return;
-                }
-                toast.error("Could not start subscription.");
-                navigate("/subscription");
-            } catch {
-                toast.error("Subscription failed.");
-                navigate("/subscription");
-            }
-            return;
-        }
-
         if (action.type === "buy_card") {
             navigate("/productandplan/konarcard", {
                 state: { triggerCheckout: true, quantity: Number(action?.payload?.quantity) || 1 },
@@ -122,6 +133,39 @@ export default function Login() {
         }
 
         navigate("/myprofile");
+    };
+
+    // ✅ After login, resume Stripe checkout if intent exists
+    const resumeCheckoutIfNeeded = async () => {
+        const intent = readCheckoutIntent();
+        if (!intent) return false;
+
+        try {
+            const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
+
+            // Clear BEFORE redirect to avoid loops
+            clearCheckoutIntent();
+
+            const res = await api.post("/subscribe", {
+                planKey: intent.planKey,
+                returnUrl,
+            });
+
+            if (res?.data?.url) {
+                window.location.href = res.data.url;
+                return true;
+            }
+
+            toast.error("Could not start checkout.");
+            return false;
+        } catch (e) {
+            // restore intent so they can try again
+            try {
+                localStorage.setItem(CHECKOUT_INTENT_KEY, JSON.stringify(intent));
+            } catch { }
+            toast.error(e?.response?.data?.error || "Subscription failed.");
+            return false;
+        }
     };
 
     const loginUser = async (e) => {
@@ -157,8 +201,15 @@ export default function Login() {
                 login(res.data.token, res.data.user);
 
                 const email = res.data.user?.email || data.email;
-                if (isAdminEmail(email)) navigate("/admin", { replace: true });
-                else await runPendingActionOrDefault();
+                if (isAdminEmail(email)) {
+                    navigate("/admin", { replace: true });
+                    return;
+                }
+
+                const resumed = await resumeCheckoutIfNeeded();
+                if (resumed) return;
+
+                await runPendingActionOrDefault();
             }
         } catch (err) {
             toast.error(err?.response?.data?.error || "Login failed.");
@@ -184,7 +235,12 @@ export default function Login() {
                     email: data.email.trim().toLowerCase(),
                     password: data.password,
                 });
+
                 login(loginRes.data.token, loginRes.data.user);
+
+                const resumed = await resumeCheckoutIfNeeded();
+                if (resumed) return;
+
                 await runPendingActionOrDefault();
             }
         } catch (err) {
@@ -211,9 +267,7 @@ export default function Login() {
         e.preventDefault();
         setIsSendingReset(true);
         try {
-            const res = await api.post("/forgot-password", {
-                email: emailForReset.trim().toLowerCase(),
-            });
+            const res = await api.post("/forgot-password", { email: emailForReset.trim().toLowerCase() });
             if (res.data?.error) toast.error(res.data.error);
             else toast.success("Reset link sent!");
         } catch {
