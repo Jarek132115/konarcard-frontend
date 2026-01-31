@@ -3,9 +3,9 @@
    File: frontend/src/styling/home/hero.css
    ========================================================= */
 
-/* ✅ Set this ONCE globally (best in your global css), but placing here works too */
+/* ✅ Page background token (set once globally ideally) */
 :root {
-    /* Match your actual page background (from your screenshot it's ~ #F5F6F8) */
+    /* Matches the light grey page background in your screenshot */
     --kc-page-bg-rgb: 245 246 248;
 }
 
@@ -14,15 +14,17 @@
     width: 100%;
     min-height: 90vh;
 
+    /* ✅ background touches the top of the page */
     margin: 0;
     padding: 0;
 
-    /* NOTE: you are already setting backgroundImage inline in React,
-     so this line is optional. Keeping it won't hurt, inline wins. */
+    /* Background image is set inline in Hero.jsx:
+     style={{ backgroundImage: `url(${BackgroundHeroNew})` }} */
     background-size: cover;
     background-position: top center;
     background-repeat: no-repeat;
 
+    /* keeps content centered */
     display: flex;
     justify-content: center;
 
@@ -30,7 +32,7 @@
     overflow: hidden;
 }
 
-/* subtle white wash for legibility (optional, keep light) */
+/* subtle white wash for legibility */
 .kc-homeHero::before {
     content: "";
     position: absolute;
@@ -40,7 +42,7 @@
     z-index: 1;
 }
 
-/* ✅ REAL FIX: fade into whatever the PAGE background is (not hard #fff) */
+/* ✅ Fade last ~20% of the hero into the page background (NO hard line) */
 .kc-homeHero::after {
     content: "";
     position: absolute;
@@ -48,13 +50,12 @@
     right: 0;
     bottom: 0;
 
-    /* ✅ last ~20% of the hero fades out */
+    /* ✅ “last 20%” fade, with sensible bounds */
     height: clamp(160px, 20vh, 320px);
 
     pointer-events: none;
     z-index: 2;
 
-    /* Fade from transparent to the page background colour */
     background: linear-gradient(to bottom,
             rgb(var(--kc-page-bg-rgb) / 0) 0%,
             rgb(var(--kc-page-bg-rgb) / 0.35) 35%,
@@ -71,14 +72,12 @@
     max-width: 1200px;
     padding: 0 20px;
 
+    /* content pushed down so it doesn’t sit under the nav */
     padding-top: 120px;
     padding-bottom: 34px;
 
     text-align: center;
 }
-
-/* ... keep the rest of your CSS exactly the same ... */
-
 
 /* Badge */
 .kc-homeHero__badge {
@@ -100,7 +99,7 @@
     margin-bottom: 18px;
 }
 
-/* ✅ H1 = 72px like your screenshot */
+/* H1 = 72px */
 .kc-homeHero__title {
     font-size: 72px;
     line-height: 1.02;
@@ -216,7 +215,7 @@
     padding: 0 20px;
     cursor: grab;
 
-    /* IMPORTANT: allow vertical scrolling on touch */
+    /* allow vertical scrolling on touch */
     touch-action: pan-y;
 }
 
@@ -295,10 +294,6 @@
     .kc-homeHero__viewport {
         height: 340px;
     }
-
-    .kc-homeHero::after {
-        height: 180px;
-    }
 }
 
 @media (max-width: 520px) {
@@ -308,9 +303,5 @@
 
     .kc-homeHero__sub {
         font-size: 13px;
-    }
-
-    .kc-homeHero::after {
-        height: 160px;
     }
 }
