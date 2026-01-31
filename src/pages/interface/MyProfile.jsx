@@ -99,7 +99,7 @@ export default function MyProfile() {
     (state.contact_email && state.contact_email.trim()) || (state.phone_number && state.phone_number.trim());
 
   // ==========================
-  // 1) Stripe return handler
+  // 1) Stripe return handler (FIXED: no repeated toasts)
   // ==========================
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -108,31 +108,47 @@ export default function MyProfile() {
     const subscribed = params.get("subscribed"); // toast flag
 
     const isStripeReturn = !!sessionId || paymentSuccess === "true";
+    if (!isStripeReturn) return;
 
-    if (isStripeReturn && !handledPaymentRef.current) {
-      handledPaymentRef.current = true;
+    // ✅ Persistent guard (survives remounts + strictmode)
+    const key = `kc_stripe_handled_v1:${sessionId || paymentSuccess || "unknown"}`;
+    try {
+      if (sessionStorage.getItem(key) === "1") return;
+      sessionStorage.setItem(key, "1");
+    } catch {
+      // fallback to ref only
+    }
 
-      (async () => {
-        try {
-          await api.post("/me/sync-subscriptions", { ts: Date.now() });
-        } catch {
-          /* swallow */
-        }
+    if (handledPaymentRef.current) return;
+    handledPaymentRef.current = true;
 
-        try {
-          await refetchAuthUser?.();
-        } catch {
-          /* swallow */
-        }
+    (async () => {
+      try {
+        await api.post("/me/sync-subscriptions", { ts: Date.now() });
+      } catch {
+        /* swallow */
+      }
 
-        if (subscribed === "1") toast.success("You’re now subscribed ✅");
-        else toast.success("Subscription updated successfully!");
+      try {
+        await refetchAuthUser?.();
+      } catch {
+        /* swallow */
+      }
 
+      // ✅ Prevent stacking (same toast id updates instead of creating many)
+      const toastId = "kc-subscription-toast";
+      if (subscribed === "1") toast.success("You’re now subscribed ✅", { id: toastId });
+      else toast.success("Subscription updated successfully!", { id: toastId });
+
+      // ✅ Clean URL immediately after handling
+      try {
         const clean = new URL(window.location.href);
         clean.search = "";
         window.history.replaceState({}, document.title, clean.toString());
-      })();
-    }
+      } catch {
+        // ignore
+      }
+    })();
   }, [location.search, refetchAuthUser]);
 
   // ==========================
@@ -328,6 +344,7 @@ export default function MyProfile() {
   };
 
   const handleRemoveWorkImage = (idx) => {
+    note: "";
     const item = state.workImages?.[idx];
     if (item?.preview?.startsWith("blob:")) URL.revokeObjectURL(item.preview);
     updateState({ workImages: state.workImages.filter((_, i) => i !== idx) });
@@ -415,8 +432,7 @@ export default function MyProfile() {
     const original = businessCard || {};
 
     const normalizeServices = (arr) => (arr || []).map((s) => ({ name: norm(s.name), price: norm(s.price) }));
-    const normalizeReviews = (arr) =>
-      (arr || []).map((r) => ({ name: norm(r.name), text: norm(r.text), rating: Number(r.rating) || 0 }));
+    const normalizeReviews = (arr) => (arr || []).map((r) => ({ name: norm(r.name), text: norm(r.text), rating: Number(r.rating) || 0 }));
 
     const servicesChanged = (() => {
       const a = normalizeServices(state.services);
@@ -680,7 +696,8 @@ export default function MyProfile() {
                     {typeof trialDaysLeft === "number" ? (
                       <>
                         {" "}
-                        — <strong>
+                        —{" "}
+                        <strong>
                           {trialDaysLeft} day{trialDaysLeft === 1 ? "" : "s"}
                         </strong>{" "}
                         left
@@ -776,7 +793,8 @@ export default function MyProfile() {
           job_title: businessCard?.job_title || "",
           business_card_name: businessCard?.business_card_name || "",
           bio: businessCard?.bio || "",
-          isSubscribed: businessCard?.isSubscribed || false,
+          // ✅ FIX: businessCard model doesn’t include isSubscribed
+          isSubscribed: !!authUser?.isSubscribed,
           contact_email: businessCard?.contact_email || "",
           phone_number: businessCard?.phone_number || "",
           username: userUsername || "",

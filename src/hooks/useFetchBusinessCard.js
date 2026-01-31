@@ -1,3 +1,4 @@
+// src/hooks/useFetchBusinessCard.js
 import { useQuery } from "@tanstack/react-query";
 import api from "../services/api";
 
@@ -7,30 +8,26 @@ export const useFetchBusinessCard = (userId) => {
     enabled: !!userId,
 
     queryFn: async () => {
+      // ✅ Backend route: GET /api/business-card/my_card
+      // ✅ Backend returns: the card object directly (NOT { data: card })
       const res = await api.get("/api/business-card/my_card");
-      return res?.data?.data ?? null;
+      return res?.data ?? null;
     },
 
     staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000, // ✅ react-query v5 uses gcTime (cacheTime is deprecated)
+
+    // ✅ TanStack Query v5 uses gcTime instead of cacheTime
+    // If you're on v4, rename gcTime -> cacheTime
+    gcTime: 10 * 60 * 1000,
+
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
 
-    // ✅ Only retry if it's NOT a 404
+    // ✅ Don't retry 404 (means no card yet, not a real error)
     retry: (failureCount, error) => {
       const status = error?.response?.status;
       if (status === 404) return false;
       return failureCount < 1;
-    },
-
-    // ✅ Don't spam console repeatedly (keep a single clean warning)
-    onError: (error) => {
-      const status = error?.response?.status;
-      if (status === 404) {
-        console.warn("Business card not found yet (404).");
-        return;
-      }
-      console.error("Error fetching business card:", error);
     },
   });
 };
