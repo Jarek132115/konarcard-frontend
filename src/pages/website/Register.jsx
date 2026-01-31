@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { AuthContext } from "../../components/AuthContext";
 import api from "../../services/api";
 import Navbar from "../../components/Navbar";
-import "../../styling/auth/login.css";
+import "../../styling/login.css";
 
 const PENDING_CLAIM_KEY = "pendingClaimUsername";
 const OAUTH_SOURCE_KEY = "oauthSource";

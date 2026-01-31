@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { AuthContext } from "../../components/AuthContext";
 import api from "../../services/api";
 import Navbar from "../../components/Navbar";
-import "../../styling/auth/login.css";
+import "../../styling/login.css";
 
 const POST_AUTH_KEY = "postAuthAction";
 const REMEMBER_KEY = "rememberLogin";
