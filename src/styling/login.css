@@ -4,6 +4,9 @@
     --kc-text: #0f172a;
     --kc-muted: #64748b;
     --kc-border: #e5e7eb;
+
+    /* navbar fixed height offset (your navbar CSS uses body padding-top: 75px) */
+    --kc-nav-offset: 75px;
 }
 
 *,
@@ -12,6 +15,7 @@
     box-sizing: border-box;
 }
 
+/* Page wrapper: background extends under the fixed navbar (no “gap”) */
 .kc-auth-page {
     min-height: 100dvh;
     background: #ffffff;
@@ -19,66 +23,68 @@
     overflow: hidden;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     color: var(--kc-text);
+
+    /* ✅ removes the “gap” look: background starts at very top */
+    margin-top: calc(var(--kc-nav-offset) * -1);
+    padding-top: var(--kc-nav-offset);
 }
 
+/* soft geometric wash */
 .kc-auth-page::before {
     content: "";
     position: absolute;
     inset: -20%;
     background:
-        linear-gradient(135deg, rgba(15, 23, 42, 0.03) 0%, rgba(15, 23, 42, 0.00) 55%),
-        linear-gradient(315deg, rgba(15, 23, 42, 0.03) 0%, rgba(15, 23, 42, 0.00) 55%);
+        linear-gradient(135deg, rgba(15, 23, 42, 0.03) 0%, rgba(15, 23, 42, 0) 55%),
+        linear-gradient(315deg, rgba(15, 23, 42, 0.03) 0%, rgba(15, 23, 42, 0) 55%);
     pointer-events: none;
 }
 
-.kc-auth-header {
+/* top row just for the X button (doesn't move navbar logo) */
+.kc-auth-topActions {
     position: relative;
     z-index: 2;
-    height: 84px;
-    padding: 24px 28px;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 10px 20px 0;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
 }
 
-.kc-logo {
-    text-decoration: none;
-    font-weight: 900;
-    font-size: 42px;
-    letter-spacing: -0.03em;
-    color: #111;
-    line-height: 1;
-}
-
-.kc-close {
-    width: 64px;
-    height: 64px;
+/* Close button */
+.kc-auth-closeBtn {
+    width: 52px;
+    height: 52px;
     border-radius: 999px;
-    border: none;
-    background: transparent;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(255, 255, 255, 0.85);
     cursor: pointer;
     display: grid;
     place-items: center;
-    transition: transform 0.12s ease;
+    box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+    transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 
-.kc-close span {
-    font-size: 54px;
+.kc-auth-closeBtn span {
+    font-size: 34px;
     line-height: 1;
     color: #111;
+    transform: translateY(-1px);
 }
 
-.kc-close:hover {
-    transform: scale(1.04);
+.kc-auth-closeBtn:hover {
+    background: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.10);
 }
 
 .kc-auth-main {
     position: relative;
     z-index: 2;
-    min-height: calc(100dvh - 84px);
+    min-height: calc(100dvh - var(--kc-nav-offset));
     display: grid;
     place-items: center;
-    padding: 24px 16px 64px;
+    padding: 18px 16px 64px;
 }
 
 .kc-auth-inner {
@@ -276,6 +282,9 @@
     font-size: 13px;
     color: var(--kc-muted);
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .kc-divider {
@@ -322,7 +331,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
     font-weight: 700;
     color: #0b1220;
     cursor: pointer;
@@ -339,37 +347,27 @@
     .kc-title {
         font-size: 44px;
     }
-
-    .kc-close {
-        width: 56px;
-        height: 56px;
-    }
-
-    .kc-close span {
-        font-size: 46px;
-    }
-
-    .kc-auth-inner {
-        max-width: 560px;
-    }
 }
 
 @media (max-width: 520px) {
-    .kc-auth-header {
-        padding: 18px 16px;
-        height: 72px;
-    }
-
-    .kc-auth-main {
-        min-height: calc(100dvh - 72px);
-        padding-bottom: 42px;
-    }
-
     .kc-title {
         font-size: 38px;
     }
 
     .kc-btn-center {
         width: 100%;
+    }
+
+    .kc-auth-topActions {
+        padding-top: 8px;
+    }
+
+    .kc-auth-closeBtn {
+        width: 48px;
+        height: 48px;
+    }
+
+    .kc-auth-closeBtn span {
+        font-size: 32px;
     }
 }
