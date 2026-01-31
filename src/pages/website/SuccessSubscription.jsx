@@ -1,39 +1,44 @@
 // src/pages/interface/SuccessSubscription.jsx
-import React, { useEffect, useMemo, useState, useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useEffect, useMemo, useState, useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
 
-import Sidebar from '../../components/Sidebar';
-import PageHeader from '../../components/PageHeader';
-import LogoIcon from '../../assets/icons/Logo-Icon.svg';
-import api from '../../services/api';
-import { AuthContext } from '../../components/AuthContext';
+import Sidebar from "../../components/Sidebar";
+import PageHeader from "../../components/PageHeader";
+import LogoIcon from "../../assets/icons/Logo-Icon.svg";
+import api from "../../services/api";
+import { AuthContext } from "../../components/AuthContext";
 
-function formatAmount(amount, currency = 'gbp') {
-    if (typeof amount !== 'number') return '—';
-    const value = amount / 100;
-    return new Intl.NumberFormat(undefined, {
-        style: 'currency',
-        currency: currency.toUpperCase(),
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(value);
+function nicePlanName(plan) {
+    const p = (plan || "free").toLowerCase();
+    if (p === "plus") return "Plus Plan";
+    if (p === "teams") return "Teams Plan";
+    return "Free";
+}
+
+function niceInterval(interval) {
+    const i = (interval || "").toLowerCase();
+    if (i === "monthly") return "Monthly";
+    if (i === "quarterly") return "Quarterly";
+    if (i === "yearly") return "Yearly";
+    return "—";
 }
 
 export default function SuccessSubscription() {
     const location = useLocation();
     const params = new URLSearchParams(location.search);
-    const orderIdParam = params.get('id');            // optional: pick a specific order
-    const sessionIdParam = params.get('session_id');  // Stripe return
+    const sessionIdParam = params.get("session_id"); // Stripe return (we just use it to clean the URL)
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
     const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
 
     const { user: authUser } = useContext(AuthContext);
-    const [orders, setOrders] = useState([]);
+
     const [loading, setLoading] = useState(true);
-    const [err, setErr] = useState('');
-    const [syncedOnce, setSyncedOnce] = useState(false);
+    const [err, setErr] = useState("");
+
+    // Subscription details from backend
+    const [sub, setSub] = useState(null);
 
     // ---------- layout listeners ----------
     useEffect(() => {
@@ -44,110 +49,91 @@ export default function SuccessSubscription() {
             setIsSmallMobile(sm);
             if (!m && sidebarOpen) setSidebarOpen(false);
         };
-        window.addEventListener('resize', onResize);
-        return () => window.removeEventListener('resize', onResize);
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
     }, [sidebarOpen]);
 
     useEffect(() => {
-        if (sidebarOpen && isMobile) document.body.classList.add('body-no-scroll');
-        else document.body.classList.remove('body-no-scroll');
+        if (sidebarOpen && isMobile) document.body.classList.add("body-no-scroll");
+        else document.body.classList.remove("body-no-scroll");
     }, [sidebarOpen, isMobile]);
 
-    // ---------- data fetchers ----------
-    const syncStripe = async () => {
-        try {
-            await api.post('/me/sync-subscriptions', { ts: Date.now() });
-        } catch {
-            // non-fatal
-        } finally {
-            setSyncedOnce(true);
-        }
-    };
-
-    const fetchOrders = async () => {
-        const res = await api.get('/me/orders', { params: { ts: Date.now() } });
-        return Array.isArray(res?.data?.data) ? res.data.data : [];
-    };
-
-    // Do an initial sync if we just returned from Stripe, then fetch orders
+    // ---------- fetch subscription status ----------
     useEffect(() => {
         let mounted = true;
 
         (async () => {
             try {
                 setLoading(true);
-                setErr('');
+                setErr("");
 
-                // If Stripe sent us back, try to sync first for fresher status
-                if (sessionIdParam || !syncedOnce) {
-                    await syncStripe();
-                    // Clean URL (drop session_id)
-                    if (sessionIdParam) {
-                        const clean = new URL(window.location.href);
-                        clean.searchParams.delete('session_id');
-                        window.history.replaceState({}, document.title, clean.toString());
-                    }
+                // Pull subscription status from YOUR backend (DB-backed)
+                const res = await api.get("/api/subscription-status", {
+                    params: { ts: Date.now() },
+                });
+
+                if (!mounted) return;
+
+                setSub(res?.data || null);
+
+                // Clean URL (drop session_id)
+                if (sessionIdParam) {
+                    const clean = new URL(window.location.href);
+                    clean.searchParams.delete("session_id");
+                    window.history.replaceState({}, document.title, clean.toString());
                 }
-
-                const list = await fetchOrders();
-                if (mounted) setOrders(list);
             } catch (e) {
-                if (mounted) setErr(e?.response?.data?.error || 'Could not load your subscription details.');
+                if (!mounted) return;
+                setErr(
+                    e?.response?.data?.error ||
+                    "Could not load your subscription details."
+                );
             } finally {
                 if (mounted) setLoading(false);
             }
         })();
 
-        return () => { mounted = false; };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [authUser]); // re-run when auth user changes
+        return () => {
+            mounted = false;
+        };
+    }, [authUser, sessionIdParam]);
 
-    // ---------- pick the subscription to display ----------
-    const selectedSub = useMemo(() => {
-        const subs = (orders || []).filter((o) => (o.type || '').toLowerCase() === 'subscription');
-        if (!subs.length) return null;
-        if (orderIdParam) return subs.find((s) => String(s.id) === String(orderIdParam)) || null;
-        return subs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
-    }, [orders, orderIdParam]);
-
-    const subStatus = selectedSub?.status || 'inactive';
-
-    const amountToday = useMemo(() => {
-        if (!selectedSub) return '—';
-        if (selectedSub.trialEnd && new Date(selectedSub.trialEnd) > new Date()) {
-            return 'Free trial — no charge today';
-        }
-        return formatAmount(selectedSub.amountTotal ?? 495, selectedSub.currency || 'gbp');
-    }, [selectedSub]);
+    const isActive = !!sub?.active;
+    const plan = sub?.plan || "free";
+    const interval = sub?.interval || "monthly";
+    const status = sub?.status || (isActive ? "active" : "inactive");
 
     const nextChargeDate = useMemo(() => {
-        if (!selectedSub) return null;
-        if (selectedSub.trialEnd && new Date(selectedSub.trialEnd) > new Date()) {
-            return new Date(selectedSub.trialEnd);
-        }
-        if (selectedSub.currentPeriodEnd) return new Date(selectedSub.currentPeriodEnd);
-        return null;
-    }, [selectedSub]);
-
-    const willCancel = !!selectedSub?.cancel_at_period_end;
+        if (!sub?.currentPeriodEnd) return null;
+        const d = new Date(sub.currentPeriodEnd);
+        if (Number.isNaN(d.getTime())) return null;
+        return d;
+    }, [sub]);
 
     return (
-        <div className={`app-layout ${sidebarOpen ? 'sidebar-active' : ''}`}>
+        <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
             <div className="myprofile-mobile-header">
                 <Link to="/" className="myprofile-logo-link">
                     <img src={LogoIcon} alt="Logo" className="myprofile-logo" />
                 </Link>
                 <button
-                    className={`sidebar-menu-toggle ${sidebarOpen ? 'active' : ''}`}
+                    className={`sidebar-menu-toggle ${sidebarOpen ? "active" : ""}`}
                     onClick={() => setSidebarOpen(!sidebarOpen)}
-                    aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+                    aria-label={sidebarOpen ? "Close menu" : "Open menu"}
                 >
-                    <span></span><span></span><span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
             </div>
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-            {sidebarOpen && isMobile && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)} />}
+            {sidebarOpen && isMobile && (
+                <div
+                    className="sidebar-overlay active"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
 
             <main className="main-content-container">
                 <PageHeader title="Subscription" isMobile={isMobile} isSmallMobile={isSmallMobile} />
@@ -156,72 +142,64 @@ export default function SuccessSubscription() {
                     {loading ? (
                         <p>Activating your subscription…</p>
                     ) : err ? (
-                        <p style={{ color: '#b91c1c' }}>{err}</p>
-                    ) : !selectedSub ? (
-                        <p>No subscription found.</p>
+                        <p style={{ color: "#b91c1c" }}>{err}</p>
+                    ) : !sub ? (
+                        <p>No subscription details found.</p>
                     ) : (
                         <div className="success-box">
-                            <h2 className="desktop-h4 success-header">Konar Profile Plan</h2>
+                            <h2 className="desktop-h4 success-header">Subscription Activated ✅</h2>
 
-                            {/* cancellation notice */}
-                            {willCancel && (
-                                <div className="trial-ended-banner" style={{ background: '#fff7ed', border: '1px solid #fed7aa', marginBottom: 12 }}>
+                            <p className="desktop-body" style={{ margin: 0, color: "#555" }}>
+                                Plan: <strong>{nicePlanName(plan)}</strong> · Billing:{" "}
+                                <strong>{niceInterval(interval)}</strong>
+                            </p>
+
+                            <div className="success-grid" style={{ marginTop: 14 }}>
+                                <div className="info-tile">
+                                    <p className="desktop-body-s label">Status</p>
+                                    <p className="desktop-h5 value">{String(status)}</p>
+                                </div>
+
+                                <div className="info-tile">
+                                    <p className="desktop-body-s label">Next renewal</p>
+                                    <p className="desktop-h5 value">
+                                        {nextChargeDate ? nextChargeDate.toLocaleString() : "—"}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {!isActive && (
+                                <div
+                                    style={{
+                                        marginTop: 12,
+                                        padding: 12,
+                                        borderRadius: 12,
+                                        border: "1px solid #fecaca",
+                                        background: "#fff1f2",
+                                    }}
+                                >
                                     <p className="desktop-body-s" style={{ margin: 0 }}>
-                                        Your subscription is active but set to cancel at the end of the current period
-                                        {selectedSub.currentPeriodEnd
-                                            ? ` — ${new Date(selectedSub.currentPeriodEnd).toLocaleString()}`
-                                            : ''}
-                                        .
+                                        Your subscription isn’t active yet. If you just paid, refresh in 10–20 seconds.
                                     </p>
                                 </div>
                             )}
 
-                            <p className="desktop-body" style={{ margin: 0, color: '#555' }}>
-                                Your subscription is <strong className="status-text">{subStatus}</strong>.
-                            </p>
-
-                            <div className="success-grid">
-                                <div className="info-tile">
-                                    <p className="desktop-body-s label">Amount paid today</p>
-                                    <p className="desktop-h5 value">{amountToday}</p>
-                                </div>
-                                <div className="info-tile">
-                                    <p className="desktop-body-s label">
-                                        {selectedSub.trialEnd && new Date(selectedSub.trialEnd) > new Date()
-                                            ? 'Free trial active until'
-                                            : 'Next charge on'}
-                                    </p>
-                                    <p className="desktop-h5 value">
-                                        {nextChargeDate ? nextChargeDate.toLocaleString() : '—'}
-                                        {nextChargeDate && selectedSub && !selectedSub.trialEnd
-                                            ? ` · ${formatAmount(selectedSub.amountTotal ?? 495, selectedSub.currency)}`
-                                            : ''}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="success-buttons" style={{ display: 'grid', gap: 12 }}>
-                                <Link to="/myprofile" className="cta-blue-button desktop-button" style={{ width: '100%' }}>
+                            <div className="success-buttons" style={{ display: "grid", gap: 12, marginTop: 14 }}>
+                                <Link
+                                    to="/myprofile"
+                                    className="cta-blue-button desktop-button"
+                                    style={{ width: "100%" }}
+                                >
                                     Go to Dashboard
                                 </Link>
-                                <Link to="/myorders" className="cta-black-button desktop-button" style={{ width: '100%' }}>
-                                    View Orders
+
+                                <Link
+                                    to="/pricing"
+                                    className="cta-black-button desktop-button"
+                                    style={{ width: "100%" }}
+                                >
+                                    View pricing
                                 </Link>
-                            </div>
-
-                            <hr className="divider" />
-
-                            <div className="kv">
-                                <div className="kv-row">
-                                    <span className="desktop-body-s kv-label">Created</span>
-                                    <span className="desktop-body-s kv-value">
-                                        {selectedSub?.createdAt ? new Date(selectedSub.createdAt).toLocaleString() : '—'}
-                                    </span>
-                                </div>
-                                <div className="kv-row">
-                                    <span className="desktop-body-s kv-label">Status</span>
-                                    <span className="desktop-body-s kv-value status-text">{subStatus}</span>
-                                </div>
                             </div>
                         </div>
                     )}
