@@ -47,8 +47,10 @@ export default function Hero() {
     const startScrollRef = useRef(0);
     const axisLockedRef = useRef(null); // 'x' | 'y' | null
 
-    const speedRef = useRef(0.55); // px per frame (feel free to tweak)
-    const renderGroups = 4;
+    const speedRef = useRef(0.55); // px per frame (tweak if needed)
+
+    // ✅ IMPORTANT: render exactly 2 groups so our "half width" wrap logic is correct
+    const renderGroups = 2;
     const groups = useMemo(() => new Array(renderGroups).fill(0), []);
 
     // ensure 10px gap
@@ -63,9 +65,19 @@ export default function Hero() {
         const track = trackRef.current;
         if (!el || !track) return;
 
-        // start around the middle so we can loop both ways
-        const max = track.scrollWidth;
-        if (max > 0) el.scrollLeft = max / 2;
+        const setInitial = () => {
+            const max = track.scrollWidth;
+            if (max > 0) el.scrollLeft = max / 2;
+        };
+
+        setInitial();
+        const t1 = setTimeout(setInitial, 150);
+        const t2 = setTimeout(setInitial, 600);
+
+        return () => {
+            clearTimeout(t1);
+            clearTimeout(t2);
+        };
     }, []);
 
     // autoplay LEFT ➜ RIGHT (scrollLeft goes DOWN)
@@ -76,19 +88,19 @@ export default function Hero() {
         const tick = () => {
             if (!pauseRef.current && !draggingRef.current) {
                 el.scrollLeft -= speedRef.current; // ✅ LEFT ➜ RIGHT visual motion
-                const maxScroll = trackRef.current?.scrollWidth || 0;
 
-                // loop seamlessly (we render repeated content)
+                const maxScroll = trackRef.current?.scrollWidth || 0;
                 if (maxScroll > 0) {
                     const half = maxScroll / 2;
 
                     // if we go too far left, jump forward by half
                     if (el.scrollLeft <= 0) el.scrollLeft += half;
 
-                    // if we go too far right (rare here), jump back
+                    // safety: if we drift too far right, jump back by half
                     if (el.scrollLeft >= half) el.scrollLeft -= half;
                 }
             }
+
             rafRef.current = requestAnimationFrame(tick);
         };
 
@@ -147,6 +159,7 @@ export default function Hero() {
             draggingRef.current = false;
             axisLockedRef.current = null;
             pauseRef.current = false;
+
             if (pointerId != null) {
                 try {
                     el.releasePointerCapture?.(pointerId);
