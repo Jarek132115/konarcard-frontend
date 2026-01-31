@@ -14,6 +14,9 @@ import EasyToUpdateAnytime from "../../assets/icons/Easy_To_Update_Anytime.svg";
 import NoAppNeeded from "../../assets/icons/No_App_Needed.svg";
 import BuiltForRealTrades from "../../assets/icons/Built_For_Real_Trades.svg";
 
+// ✅ Use canonical base URL (prevents /api/api issues)
+import { BASE_URL } from "../../services/api";
+
 /**
  * We store the user's "checkout intent" here so:
  * Pricing -> Login/Register -> Claim Link -> Stripe
@@ -56,7 +59,8 @@ export default function Pricing() {
 
     const navigate = useNavigate();
 
-    const apiBase = import.meta.env.VITE_API_URL; // backend base
+    // ✅ Canonical backend base (no raw env use here)
+    const apiBase = BASE_URL;
     const token = safeGetToken();
 
     /* ---------------- Prices (display only) ---------------- */
@@ -141,8 +145,7 @@ export default function Pricing() {
     const isActive = !!subState?.active;
     const currentPeriodEnd = subState?.currentPeriodEnd ? new Date(subState.currentPeriodEnd) : null;
 
-    const hasFutureAccess =
-        !!currentPeriodEnd && !Number.isNaN(currentPeriodEnd.getTime()) && currentPeriodEnd.getTime() > Date.now();
+    const hasFutureAccess = !!currentPeriodEnd && !Number.isNaN(currentPeriodEnd.getTime()) && currentPeriodEnd.getTime() > Date.now();
 
     const activeUntilLabel = hasFutureAccess ? formatDate(currentPeriodEnd) : "";
 
@@ -163,13 +166,8 @@ export default function Pricing() {
             const intent = {
                 planKey, // e.g. "plus-monthly"
                 createdAt: Date.now(),
-
-                // ✅ NEW canonical field (Register/Login now use this)
                 returnUrl,
-
-                // ✅ Backwards compatibility (safe if any older code still reads it)
                 successReturn: returnUrl,
-
                 cancelReturn: `${window.location.origin}/pricing`,
             };
 
@@ -197,7 +195,7 @@ export default function Pricing() {
         setLoadingKey(planKey);
 
         try {
-            if (!apiBase) throw new Error("Missing VITE_API_URL");
+            if (!apiBase) throw new Error("Missing backend base URL");
 
             const returnUrl = `${window.location.origin}/myprofile?subscribed=1`;
 
@@ -227,7 +225,7 @@ export default function Pricing() {
 
             window.location.href = data.url;
         } catch (err) {
-            alert(err.message || "Subscription failed");
+            alert(err?.message || "Subscription failed");
         } finally {
             setLoadingKey(null);
         }
@@ -241,7 +239,7 @@ export default function Pricing() {
         }
 
         try {
-            if (!apiBase) throw new Error("Missing VITE_API_URL");
+            if (!apiBase) throw new Error("Missing backend base URL");
             const res = await fetch(`${apiBase}/api/billing-portal`, {
                 method: "POST",
                 headers: {

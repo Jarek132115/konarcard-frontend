@@ -1,15 +1,16 @@
+// src/pages/auth/Register.jsx
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../../components/AuthContext";
-import api from "../../services/api";
+import api, { BASE_URL } from "../../services/api";
 import Navbar from "../../components/Navbar";
 import "../../styling/login.css";
 
 const PENDING_CLAIM_KEY = "pendingClaimUsername";
 const OAUTH_SOURCE_KEY = "oauthSource";
 
-// NEW (pricing -> register -> stripe resume)
+// pricing -> register -> stripe resume
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
 
 export default function Register() {
@@ -74,7 +75,7 @@ export default function Register() {
             .replace(/[^a-z0-9._-]/g, "");
 
     // ----------------------------
-    // NEW: checkout intent helpers
+    // checkout intent helpers
     // ----------------------------
     const readCheckoutIntent = () => {
         try {
@@ -84,7 +85,6 @@ export default function Register() {
             const intent = JSON.parse(raw);
             if (!intent?.planKey) return null;
 
-            // expire after 30 minutes
             const age = Date.now() - Number(intent.createdAt || 0);
             if (Number.isFinite(age) && age > 30 * 60 * 1000) {
                 localStorage.removeItem(CHECKOUT_INTENT_KEY);
@@ -103,7 +103,6 @@ export default function Register() {
         } catch { }
     };
 
-    // After registration + verification login, if pricing intent exists → go to Stripe
     const resumeCheckoutIfNeeded = async () => {
         const intent = readCheckoutIntent();
         if (!intent) return false;
@@ -111,7 +110,6 @@ export default function Register() {
         const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
 
         try {
-            // ✅ Clear BEFORE redirect to avoid loops if user hits back
             clearCheckoutIntent();
 
             const res = await api.post("/subscribe", {
@@ -127,7 +125,6 @@ export default function Register() {
             toast.error("Could not start checkout.");
             return false;
         } catch (e) {
-            // ✅ Restore intent so they can try again
             try {
                 localStorage.setItem(CHECKOUT_INTENT_KEY, JSON.stringify(intent));
             } catch { }
@@ -135,7 +132,6 @@ export default function Register() {
             return false;
         }
     };
-
 
     const claimLinkContinue = async (e) => {
         e.preventDefault();
@@ -219,11 +215,9 @@ export default function Register() {
                 localStorage.removeItem(OAUTH_SOURCE_KEY);
             } catch { }
 
-            // ✅ PRIORITY: resume Stripe checkout if they came from pricing
             const resumed = await resumeCheckoutIfNeeded();
             if (resumed) return;
 
-            // fallback
             navigate("/myprofile", { replace: true });
         } catch {
             toast.error("Verification failed");
@@ -244,8 +238,8 @@ export default function Register() {
             if (pending) localStorage.setItem(PENDING_CLAIM_KEY, pending);
         } catch { }
 
-        const base = import.meta.env.VITE_API_URL;
-        window.location.href = `${base}/auth/${provider}`;
+        // ✅ Use canonical base (prevents /api/auth/... mistakes)
+        window.location.href = `${BASE_URL}/auth/${provider}`;
     };
 
     return (
@@ -310,9 +304,7 @@ export default function Register() {
                         ) : shouldShowClaimStep ? (
                             <>
                                 <h1 className="kc-title">Claim Your Link</h1>
-                                <p className="kc-subtitle">
-                                    This is your unique link. When someone clicks it, they see your digital business card.
-                                </p>
+                                <p className="kc-subtitle">This is your unique link. When someone clicks it, they see your digital business card.</p>
 
                                 <form onSubmit={claimLinkContinue} className="kc-form kc-form-claim">
                                     <div className="kc-field">

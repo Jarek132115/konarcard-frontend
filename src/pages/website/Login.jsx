@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../../components/AuthContext";
-import api from "../../services/api";
+import api, { BASE_URL } from "../../services/api";
 import Navbar from "../../components/Navbar";
 import "../../styling/login.css";
 
@@ -54,8 +54,8 @@ export default function Login() {
             localStorage.removeItem("pendingClaimUsername");
         } catch { }
 
-        const base = import.meta.env.VITE_API_URL;
-        window.location.href = `${base}/auth/${provider}`;
+        // ✅ Use canonical base URL (never raw VITE_API_URL)
+        window.location.href = `${BASE_URL}/auth/${provider}`;
     };
 
     useEffect(() => {
@@ -140,30 +140,28 @@ export default function Login() {
         const intent = readCheckoutIntent();
         if (!intent) return false;
 
+        const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
+
         try {
-            const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
-
-            // Clear BEFORE redirect to avoid loops
-            clearCheckoutIntent();
-
+            // ✅ Do NOT clear intent until we have a Stripe URL (prevents lost intent / silent failure)
             const res = await api.post("/subscribe", {
                 planKey: intent.planKey,
                 returnUrl,
             });
 
-            if (res?.data?.url) {
-                window.location.href = res.data.url;
-                return true;
+            const url = res?.data?.url;
+            if (!url) {
+                toast.error("Stripe checkout URL missing. Please try again.");
+                return false;
             }
 
-            toast.error("Could not start checkout.");
-            return false;
+            clearCheckoutIntent();
+            window.location.href = url;
+            return true;
         } catch (e) {
-            // restore intent so they can try again
-            try {
-                localStorage.setItem(CHECKOUT_INTENT_KEY, JSON.stringify(intent));
-            } catch { }
-            toast.error(e?.response?.data?.error || "Subscription failed.");
+            const msg = e?.response?.data?.error || e?.message || "Subscription failed.";
+            toast.error(msg);
+            // keep intent so user can retry
             return false;
         }
     };
