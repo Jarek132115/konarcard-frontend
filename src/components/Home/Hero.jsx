@@ -15,7 +15,7 @@ import UP7 from "../../assets/images/UP7.jpg";
 import UP8 from "../../assets/images/UP8.jpg";
 
 /* CSS */
-import "../../styling/home-hero.css";
+import "../../styling/home.css";
 
 export default function Hero() {
     /* =========================================================
