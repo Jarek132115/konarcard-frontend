@@ -1,216 +1,256 @@
-/* =========================================================
-   HOME HERO (match screenshot)
-   File: frontend/src/styling/home/hero.css
-   ========================================================= */
+/* HERO — edge to edge background + no gap below navbar */
+.kc-homeHero {
+    width: 100%;
+    min-height: 90vh;
+    /* ✅ around 90vh like you want */
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
 
-.kc-hero {
+    /* ✅ background touches top of page */
+    margin: 0;
+    padding: 0;
+
+    /* keeps content centered */
+    display: flex;
+    justify-content: center;
+
+    /* optional overlay for legibility (very subtle) */
     position: relative;
-    background: #ffffff;
-    padding: 112px 20px 34px;
-    /* space for fixed navbar */
-    overflow: hidden;
 }
 
-/* subtle geometric background */
-.kc-hero::before {
+.kc-homeHero::before {
     content: "";
     position: absolute;
     inset: 0;
-    background:
-        radial-gradient(circle at 20% 10%, rgba(15, 23, 42, 0.04), transparent 55%),
-        radial-gradient(circle at 80% 30%, rgba(249, 115, 22, 0.06), transparent 55%),
-        linear-gradient(135deg, rgba(15, 23, 42, 0.03), transparent 40%);
+    background: rgba(255, 255, 255, 0.15);
     pointer-events: none;
 }
 
-.kc-hero__inner {
+.kc-homeHero__inner {
     position: relative;
-    max-width: 1040px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
+
+    /* ✅ IMPORTANT: no white gap under navbar.
+     Background is still behind because it's on .kc-homeHero.
+     This only pushes the content down so it doesn't hide under nav. */
+    padding-top: 120px;
+    padding-bottom: 34px;
+
     text-align: center;
 }
 
-.kc-hero__kickerWrap {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 14px;
-}
-
-.kc-hero__kicker {
+.kc-homeHero__badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     padding: 8px 14px;
     border-radius: 999px;
-    border: 1px solid rgba(15, 23, 42, 0.18);
-    background: rgba(255, 255, 255, 0.78);
-    color: rgba(15, 23, 42, 0.82);
+
+    border: 1px solid rgba(15, 23, 42, 0.25);
+    background: rgba(255, 255, 255, 0.75);
+
+    font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 600;
-    line-height: 1;
-    backdrop-filter: blur(6px);
-}
-
-.kc-hero__title {
-    margin: 0;
     color: #0b1220;
+
+    margin-bottom: 18px;
+}
+
+.kc-homeHero__title {
+    /* ✅ exact desktop size */
+    font-size: 72px;
+    line-height: 1.02;
     letter-spacing: -0.03em;
+    margin: 0 0 14px;
+
+    font-family: "Cal Sans", sans-serif;
+    color: #0b1220;
 }
 
-.kc-hero__sub {
-    margin: 12px auto 0;
-    max-width: 640px;
-    color: rgba(15, 23, 42, 0.68);
-    line-height: 1.55;
+.kc-homeHero__sub {
+    margin: 0 auto 22px;
+    max-width: 720px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(12, 24, 48, 0.75);
 }
 
-.kc-hero__ctaRow {
+.kc-homeHero__ctaRow {
     display: flex;
     justify-content: center;
     gap: 12px;
     flex-wrap: wrap;
-    margin-top: 22px;
+    margin-bottom: 26px;
 }
 
-.kc-hero__btn {
+.kc-homeHero__btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 40px;
-    padding: 10px 18px;
+
+    height: 44px;
+    padding: 0 20px;
     border-radius: 999px;
+
     text-decoration: none;
+    font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 13px;
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+
+    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
 }
 
-.kc-hero__btnPrimary {
-    background: var(--kc-accent-primary, #f97316);
-    color: #ffffff;
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.22);
+.kc-homeHero__btn:active {
+    transform: translateY(1px);
 }
 
-.kc-hero__btnPrimary:hover {
+.kc-homeHero__btn--primary {
+    background: #ff7b00;
+    color: #fff;
+    box-shadow: 0 14px 30px rgba(255, 123, 0, 0.22);
+}
+
+.kc-homeHero__btn--primary:hover {
     filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.30);
+    box-shadow: 0 18px 36px rgba(255, 123, 0, 0.28);
 }
 
-.kc-hero__btnGhost {
-    background: #ffffff;
+.kc-homeHero__btn--ghost {
+    background: rgba(255, 255, 255, 0.75);
     color: #0b1220;
     border: 1px solid rgba(15, 23, 42, 0.18);
 }
 
-.kc-hero__btn:active {
-    transform: translateY(1px);
+.kc-homeHero__btn--ghost:hover {
+    filter: brightness(0.99);
 }
 
-/* Logo strip */
-.kc-hero__logos {
-    margin-top: 26px;
+/* ===== Carousel inside hero ===== */
+.kc-homeHero__carousel {
+    margin-top: 10px;
+}
+
+.kc-homeHero__logos {
     display: flex;
     justify-content: center;
-    gap: 42px;
+    gap: 46px;
     flex-wrap: nowrap;
     overflow: hidden;
-    user-select: none;
-    opacity: 0.95;
+
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    color: #0b1220;
+    opacity: 0.9;
+
+    margin-bottom: 18px;
 }
 
-.kc-hero__logo {
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    color: rgba(15, 23, 42, 0.88);
-    font-size: 18px;
+.kc-homeHero__logos span {
     white-space: nowrap;
+    font-size: 18px;
 }
 
-/* =========================
-   Carousel inside hero
-   ========================= */
-
-.kc-hero__carousel {
-    position: relative;
-    margin-top: 24px;
-    padding-bottom: 6px;
+/* Edge-to-edge scroller area */
+.kc-homeHero__scrollerOuter {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    /* ✅ true edge-to-edge */
+    padding: 0 0 8px;
 }
 
-.kc-hero__carouselInner {
-    width: 100%;
-}
-
-.kc-hero__scroller {
-    width: 100%;
+.kc-homeHero__scroller {
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
-    /* Firefox */
-    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+
+    padding: 0 20px;
     cursor: grab;
-    padding: 10px 0 4px;
 }
 
-.kc-hero__scroller::-webkit-scrollbar {
+.kc-homeHero__scroller::-webkit-scrollbar {
     display: none;
 }
 
-.kc-hero__scroller:active {
-    cursor: grabbing;
-}
-
-.kc-hero__track {
+.kc-homeHero__track {
     display: flex;
-    align-items: flex-end;
     gap: var(--gap, 10px);
-    padding: 0 18px;
-    /* a bit of breathing room */
+    align-items: flex-start;
     width: max-content;
+    padding-bottom: 6px;
 }
 
-/* phone card */
-.kc-hero__phone {
-    width: 170px;
-    height: 320px;
-    border-radius: 22px;
-    background: var(--pill, #f2f4f7);
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
-    padding: 10px;
-    flex: 0 0 auto;
-}
-
-.kc-hero__phoneViewport {
-    width: 100%;
-    height: 100%;
+.kc-homeHero__phone {
+    width: 210px;
     border-radius: 18px;
-    overflow: hidden;
-    background: #ffffff;
+    background: #fff;
+    border: 1px solid rgba(12, 24, 48, 0.08);
+    box-shadow: 0 10px 24px rgba(12, 24, 48, 0.06);
+    padding: 10px;
 }
 
-.kc-hero__phoneViewport img {
+.kc-homeHero__viewport {
+    width: 100%;
+    height: 380px;
+    border-radius: 14px;
+    background: var(--pill);
+    overflow: hidden;
+}
+
+.kc-homeHero__viewport img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: inherit;
     display: block;
 }
 
-/* Responsive */
-@media (max-width: 720px) {
-    .kc-hero {
-        padding-top: 96px;
+/* ===== Responsive ===== */
+@media (max-width: 1100px) {
+    .kc-homeHero__title {
+        font-size: 58px;
+    }
+}
+
+@media (max-width: 820px) {
+    .kc-homeHero__inner {
+        padding-top: 104px;
     }
 
-    .kc-hero__logos {
-        gap: 22px;
+    .kc-homeHero__title {
+        font-size: 44px;
     }
 
-    .kc-hero__logo {
-        font-size: 14px;
+    .kc-homeHero__logos {
+        gap: 26px;
     }
 
-    .kc-hero__phone {
-        width: 150px;
-        height: 290px;
+    .kc-homeHero__logos span {
+        font-size: 16px;
+    }
+
+    .kc-homeHero__phone {
+        width: 190px;
+    }
+
+    .kc-homeHero__viewport {
+        height: 340px;
+    }
+}
+
+@media (max-width: 520px) {
+    .kc-homeHero__title {
+        font-size: 36px;
+    }
+
+    .kc-homeHero__sub {
+        font-size: 13px;
     }
 }
