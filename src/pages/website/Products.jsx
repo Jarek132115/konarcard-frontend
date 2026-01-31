@@ -11,12 +11,6 @@ import "../../styling/fonts.css";
 /* Page CSS */
 import "../../styling/products.css";
 
-/**
- * NOTE:
- * No local image imports (safe for deploy).
- * Swap placeholders for real images later.
- */
-
 export default function Products() {
     const topPerks = [
         { title: "One link for everything", desc: "Details, photos, prices and contact options in one place." },
@@ -26,6 +20,7 @@ export default function Products() {
         { title: "Looks professional", desc: "Make a strong first impression every time." },
     ];
 
+    // ✅ Add routes for each product page
     const products = [
         {
             tag: "Best seller",
@@ -33,6 +28,8 @@ export default function Products() {
             desc: "Lightweight, affordable and perfect for everyday use.",
             price: "£29.99",
             sub: "Includes NFC + QR and your live KonarCard profile.",
+            to: "/products/plastic-card",
+            cta: "View Plastic Card",
         },
         {
             tag: "Premium",
@@ -40,6 +37,8 @@ export default function Products() {
             desc: "A premium feel for a stronger first impression.",
             price: "£49.99",
             sub: "Matte finish, durable build, NFC + QR included.",
+            to: "/products/metal-card",
+            cta: "View Metal Card",
         },
         {
             tag: "Accessory",
@@ -47,23 +46,30 @@ export default function Products() {
             desc: "Clip it to your keys and tap to share instantly.",
             price: "£19.99",
             sub: "Same KonarCard link — always on you.",
+            to: "/products/konartag",
+            cta: "View KonarTag",
         },
     ];
 
+    // ✅ Bundle routes
     const bundles = [
         {
             tag: "Best value",
-            name: "2x KonarCard — Plastic Edition",
-            desc: "Keep one in the van and one in your wallet.",
-            price: "£49.99",
-            was: "£59.98",
+            name: "Plastic Bundle",
+            desc: "Plastic KonarCard + KonarTag + 1 month subscription.",
+            price: "£39.99",
+            was: "£49.97",
+            to: "/products/plastic-bundle",
+            cta: "View Plastic Bundle",
         },
         {
-            tag: "Best value",
-            name: "3x KonarCard — Plastic Edition",
-            desc: "Ideal for teams or keeping spares on site.",
-            price: "£69.99",
-            was: "£89.97",
+            tag: "Premium bundle",
+            name: "Metal Bundle",
+            desc: "Metal KonarCard + KonarTag + 1 month subscription.",
+            price: "£54.99",
+            was: "£69.97",
+            to: "/products/metal-bundle",
+            cta: "View Metal Bundle",
         },
     ];
 
@@ -100,7 +106,7 @@ export default function Products() {
             <Navbar />
 
             <main className="kc-products">
-                {/* HERO (matches FAQ/Pricing/Examples) */}
+                {/* HERO */}
                 <section className="kc-products__hero">
                     <div className="kc-products__heroInner">
                         <p className="kc-products__kicker body-s">Cards that link directly to your KonarCard profile</p>
@@ -147,8 +153,9 @@ export default function Products() {
                                     <p className="body-s kc-products__muted">{item.sub}</p>
 
                                     <div className="kc-products__ctaRow">
-                                        <Link to="/register" className="kc-products__btn">
-                                            Claim Your Link
+                                        {/* ✅ now links to product page */}
+                                        <Link to={item.to} className="kc-products__btn">
+                                            {item.cta}
                                         </Link>
                                     </div>
                                 </div>
@@ -161,9 +168,7 @@ export default function Products() {
                 <section className="kc-products__section kc-products__section--spaced">
                     <div className="kc-products__sectionHead">
                         <h2 className="h3 kc-products__sectionTitle">Save More With KonarCard Bundles</h2>
-                        <p className="body-s kc-products__sectionSub">
-                            Everything you need to share your profile everywhere — at a better price.
-                        </p>
+                        <p className="body-s kc-products__sectionSub">Everything you need to share your profile everywhere — at a better price.</p>
                     </div>
 
                     <div className="kc-products__bundles">
@@ -186,8 +191,9 @@ export default function Products() {
                                         <p className="body-s kc-products__strike">{b.was}</p>
                                     </div>
 
-                                    <Link to="/register" className="kc-products__btn">
-                                        Claim Your Link
+                                    {/* ✅ now links to bundle page */}
+                                    <Link to={b.to} className="kc-products__btn">
+                                        {b.cta}
                                     </Link>
                                 </div>
                             </article>
@@ -235,9 +241,7 @@ export default function Products() {
                 <section className="kc-products__section kc-products__section--spaced kc-products__section--bottom">
                     <div className="kc-products__sectionHead">
                         <h2 className="h3 kc-products__sectionTitle">Not sure which card to choose?</h2>
-                        <p className="body-s kc-products__sectionSub">
-                            Pick the card that fits how you work — all cards link to the same powerful profile.
-                        </p>
+                        <p className="body-s kc-products__sectionSub">Pick the card that fits how you work — all cards link to the same powerful profile.</p>
                     </div>
 
                     <div className="kc-products__chooseGrid">

@@ -33,6 +33,13 @@ import HelpCentre from "./pages/website/HelpCentre.jsx";
 import ContactUs from "./pages/website/ContactUs.jsx";
 import Policies from "./pages/website/Policies.jsx";
 
+// ✅ NEW: Product detail + bundle pages
+import PlasticCard from "./pages/website/products/PlasticCard.jsx";
+import MetalCard from "./pages/website/products/MetalCard.jsx";
+import KonarTag from "./pages/website/products/KonarTag.jsx";
+import PlasticBundle from "./pages/website/products/PlasticBundle.jsx";
+import MetalBundle from "./pages/website/products/MetalBundle.jsx";
+
 // ✅ Success pages
 import SuccessCard from "./pages/website/Success.jsx";
 import SuccessSubscription from "./pages/website/SuccessSubscription.jsx";
@@ -75,8 +82,7 @@ function TidioWrapper() {
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/claim");
 
-  const enableTidio =
-    !isDashboardPath || location.pathname === "/contact-support";
+  const enableTidio = !isDashboardPath || location.pathname === "/contact-support";
 
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
 }
@@ -109,15 +115,22 @@ export default function App() {
           {/* Legacy product routes (keep) */}
           <Route path="/productandplan" element={<ProductAndPlan />} />
           <Route path="/productandplan/konarcard" element={<KonarCard />} />
-          <Route
-            path="/productandplan/konarsubscription"
-            element={<KonarSubscription />}
-          />
+          <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
           <Route path="/whatisnfc" element={<KonarCard />} />
           <Route path="/subscription" element={<KonarSubscription />} />
 
           {/* Public website pages */}
           <Route path="/products" element={<Products />} />
+
+          {/* ✅ NEW product detail pages */}
+          <Route path="/products/plastic-card" element={<PlasticCard />} />
+          <Route path="/products/metal-card" element={<MetalCard />} />
+          <Route path="/products/konartag" element={<KonarTag />} />
+
+          {/* ✅ NEW bundle pages */}
+          <Route path="/products/plastic-bundle" element={<PlasticBundle />} />
+          <Route path="/products/metal-bundle" element={<MetalBundle />} />
+
           <Route path="/examples" element={<Example />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/faq" element={<FAQ />} />
@@ -137,14 +150,8 @@ export default function App() {
             }
           />
 
-          <Route
-            path="/successsubscription"
-            element={<SuccessSubscription />}
-          />
-          <Route
-            path="/SuccessSubscription"
-            element={<SuccessSubscription />}
-          />
+          <Route path="/successsubscription" element={<SuccessSubscription />} />
+          <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
 
           {/* Public profile */}
           <Route path="/u/:username" element={<UserPage />} />
