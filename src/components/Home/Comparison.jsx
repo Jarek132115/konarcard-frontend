@@ -1,121 +1,117 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import "../../styling/home/comparison.css";
 
-export default function Comparison() {
+function CheckIcon() {
     return (
-        <section className="kc-comparison section">
-            <div className="kc-comparison__header">
-                <h2 className="desktop-h3 text-center">
-                    How You’ll Use It <span className="orange">In The Real World</span>
-                </h2>
-                <h3 className="desktop-body-xs text-center">
-                    No more typing your number, digging for photos, or swapping paper. It’s almost 2026 — time for a change.
-                </h3>
-            </div>
+        <span className="kc-comp__icon kc-comp__icon--good" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="2" opacity="0.28" />
+                <path
+                    d="M6.1 10.3l2.2 2.3 5.7-6"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </svg>
+        </span>
+    );
+}
 
-            <div className="kc-comparison__twoCol">
-                <div className="kc-comparison__box kc-comparison__box--old">
-                    <span className="kc-comparison__badge kc-comparison__badge--old">The old way</span>
-                    <ul className="kc-comparison__list">
-                        <li>
-                            <span className="kc-comparison__dot" aria-hidden="true" />
-                            <span className="desktop-body-xs">Type your phone &amp; email into their phone</span>
-                        </li>
-                        <li>
-                            <span className="kc-comparison__dot" aria-hidden="true" />
-                            <span className="desktop-body-xs">Scroll your camera roll for examples</span>
-                        </li>
-                        <li>
-                            <span className="kc-comparison__dot" aria-hidden="true" />
-                            <span className="desktop-body-xs">Hope they don’t lose your details</span>
-                        </li>
-                    </ul>
+function XIcon() {
+    return (
+        <span className="kc-comp__icon kc-comp__icon--bad" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="2" opacity="0.28" />
+                <path
+                    d="M6.9 6.9l6.2 6.2M13.1 6.9l-6.2 6.2"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                />
+            </svg>
+        </span>
+    );
+}
+
+export default function Comparison() {
+    const konar = [
+        "One link that never gets lost",
+        "Always up to date — edit anytime",
+        "Photos, reviews, and proof of work built in",
+        "Share instantly by tap, QR, or message",
+        "Looks premium and builds trust fast",
+        "No reprinting costs — ever",
+    ];
+
+    const paper = [
+        "Get lost, damaged, or thrown away",
+        "Run out when you need them most",
+        "Outdated details mean missed jobs",
+        "No photos, reviews, or proof of work",
+        "Hard to share online or on the spot",
+        "Cost money every time you reprint",
+    ];
+
+    return (
+        <section className="kc-comp section" aria-label="KonarCard vs Paper Business Cards">
+            <div className="kc-comp__inner">
+                <div className="kc-comp__header">
+                    <h2 className="kc-comp__title desktop-h2 text-center">
+                        Paper Business Cards Don’t
+                        <br />
+                        Work Like They Used To
+                    </h2>
+                    <p className="kc-comp__sub desktop-body-s text-center">
+                        They get lost, go out of date, and don’t show the quality of your work.
+                    </p>
                 </div>
 
-                <div className="kc-comparison__box kc-comparison__box--new">
-                    <span className="kc-comparison__badge kc-comparison__badge--new">The Konar way</span>
-                    <ul className="kc-comparison__list">
-                        <li>
-                            <span className="kc-comparison__dot" aria-hidden="true" />
-                            <span className="desktop-body-xs">Tap once — they get your full profile</span>
-                        </li>
-                        <li>
-                            <span className="kc-comparison__dot" aria-hidden="true" />
-                            <span className="desktop-body-xs">Photos, services, reviews, and contact — saved</span>
-                        </li>
-                        <li>
-                            <span className="kc-comparison__dot" aria-hidden="true" />
-                            <span className="desktop-body-xs">Follow-ups are faster and more professional</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+                <div className="kc-comp__grid">
+                    {/* Konar */}
+                    <div className="kc-comp__card kc-comp__card--good">
+                        <div className="kc-comp__cardHead">
+                            <div className="kc-comp__cardTitle">
+                                <span className="kc-comp__brand">KonarCard</span>
+                                <span className="kc-comp__badge kc-comp__badge--good" aria-label="Good">
+                                    ✓
+                                </span>
+                            </div>
+                            <div className="kc-comp__hint">A modern profile that sells your work.</div>
+                        </div>
 
-            <div className="kc-comparison__grid">
-                <div className="kc-comparison__card">
-                    <div className="kc-comparison__icon" aria-hidden="true">👷</div>
-                    <div className="kc-comparison__cardText">
-                        <h4 className="desktop-body-s">On Site, With a Client</h4>
-                        <p className="desktop-body-xs">
-                            Tap your KonarCard. Their phone opens your profile and saves your details instantly.
-                        </p>
+                        <ul className="kc-comp__list">
+                            {konar.map((t, i) => (
+                                <li key={i} className="kc-comp__row">
+                                    <CheckIcon />
+                                    <span className="kc-comp__rowText desktop-body-s">{t}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Paper */}
+                    <div className="kc-comp__card kc-comp__card--bad">
+                        <div className="kc-comp__cardHead">
+                            <div className="kc-comp__cardTitle">
+                                <span className="kc-comp__brand">Paper Business Cards</span>
+                                <span className="kc-comp__badge kc-comp__badge--bad" aria-label="Bad">
+                                    ✕
+                                </span>
+                            </div>
+                            <div className="kc-comp__hint">Old-school, easy to lose, hard to trust.</div>
+                        </div>
+
+                        <ul className="kc-comp__list">
+                            {paper.map((t, i) => (
+                                <li key={i} className="kc-comp__row">
+                                    <XIcon />
+                                    <span className="kc-comp__rowText desktop-body-s">{t}</span>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
-
-                <div className="kc-comparison__card">
-                    <div className="kc-comparison__icon" aria-hidden="true">📄</div>
-                    <div className="kc-comparison__cardText">
-                        <h4 className="desktop-body-s">After a Quote</h4>
-                        <p className="desktop-body-xs">
-                            Send the link in messages so they can revisit your services and reviews while deciding.
-                        </p>
-                    </div>
-                </div>
-
-                <div className="kc-comparison__card">
-                    <div className="kc-comparison__icon" aria-hidden="true">🤝</div>
-                    <div className="kc-comparison__cardText">
-                        <h4 className="desktop-body-s">Networking / Trade Counter</h4>
-                        <p className="desktop-body-xs">No stacks of cards. One tap per person, unlimited times.</p>
-                    </div>
-                </div>
-
-                <div className="kc-comparison__card">
-                    <div className="kc-comparison__icon" aria-hidden="true">🚐</div>
-                    <div className="kc-comparison__cardText">
-                        <h4 className="desktop-body-s">Van QR &amp; Site Board</h4>
-                        <p className="desktop-body-xs">
-                            Print your QR. Passers-by scan to view your work and save your number.
-                        </p>
-                    </div>
-                </div>
-
-                <div className="kc-comparison__card">
-                    <div className="kc-comparison__icon" aria-hidden="true">📱</div>
-                    <div className="kc-comparison__cardText">
-                        <h4 className="desktop-body-s">Social &amp; Link In Bio</h4>
-                        <p className="desktop-body-xs">
-                            Add your link to Instagram, Facebook, and TikTok to convert views into enquiries.
-                        </p>
-                    </div>
-                </div>
-
-                <div className="kc-comparison__card">
-                    <div className="kc-comparison__icon" aria-hidden="true">⚡</div>
-                    <div className="kc-comparison__cardText">
-                        <h4 className="desktop-body-s">Updates in Seconds</h4>
-                        <p className="desktop-body-xs">
-                            Change prices or photos once — your card shares the latest version everywhere.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div className="kc-comparison__cta">
-                <Link to="/register" className="navy-button desktop-button">
-                    Get Your KonarCard
-                </Link>
             </div>
         </section>
     );

@@ -1,150 +1,200 @@
 /* =========================================================
-   HOME — COMPARISON SECTION
+   HOME — PAPER vs KONAR COMPARISON (Premium)
    File: frontend/src/styling/home/comparison.css
    ========================================================= */
 
-.kc-comparison {
-    padding-top: 34px;
-    padding-bottom: 34px;
+.kc-comp {
+    padding-top: 54px;
+    padding-bottom: 54px;
 }
 
-.kc-comparison__header {
-    margin-bottom: 18px;
+.kc-comp__inner {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
-/* Two comparison boxes */
-.kc-comparison__twoCol {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-top: 18px;
-    margin-bottom: 18px;
+.kc-comp__header {
+    margin-bottom: 34px;
 }
 
-.kc-comparison__box {
-    position: relative;
-    border-radius: 18px;
-    padding: 18px 16px;
-    border: 1px solid rgba(12, 24, 48, 0.08);
-    box-shadow: 0 10px 22px rgba(12, 24, 48, 0.06);
-    background: rgba(255, 255, 255, 0.92);
-    overflow: hidden;
-}
-
-.kc-comparison__box--old {
-    background: rgba(255, 255, 255, 0.94);
-}
-
-.kc-comparison__box--new {
-    background: rgba(255, 255, 255, 0.94);
-}
-
-.kc-comparison__badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 26px;
-    padding: 0 12px;
-    border-radius: 999px;
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
-    margin-bottom: 12px;
-    border: 1px solid rgba(12, 24, 48, 0.12);
-}
-
-.kc-comparison__badge--old {
-    background: rgba(30, 42, 56, 0.08);
+.kc-comp__title {
+    margin: 0 0 10px;
     color: #0b1220;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
 }
 
-.kc-comparison__badge--new {
-    background: rgba(255, 123, 0, 0.14);
-    color: #0b1220;
-    border-color: rgba(255, 123, 0, 0.22);
-}
-
-/* List */
-.kc-comparison__list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 10px;
-}
-
-.kc-comparison__list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-}
-
-.kc-comparison__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 99px;
-    margin-top: 7px;
-    background: rgba(34, 108, 255, 0.95);
-    box-shadow: 0 0 0 3px rgba(34, 108, 255, 0.12);
-}
-
-/* Use-case grid */
-.kc-comparison__grid {
-    margin-top: 14px;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.kc-comparison__card {
-    border-radius: 18px;
-    padding: 14px 14px;
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(12, 24, 48, 0.08);
-    box-shadow: 0 10px 22px rgba(12, 24, 48, 0.06);
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-}
-
-.kc-comparison__icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    background: rgba(12, 24, 48, 0.06);
-    font-size: 18px;
-    flex: 0 0 auto;
-}
-
-.kc-comparison__cardText p {
-    margin: 4px 0 0;
-    color: rgba(12, 24, 48, 0.75);
+.kc-comp__sub {
+    margin: 0 auto;
+    max-width: 700px;
+    color: rgba(12, 24, 48, 0.72);
     line-height: 1.55;
 }
 
-/* CTA */
-.kc-comparison__cta {
+/* Grid */
+.kc-comp__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    align-items: stretch;
+}
+
+/* Cards */
+.kc-comp__card {
+    position: relative;
+    border-radius: 18px;
+    padding: 18px 18px 14px;
+    border: 1px solid rgba(12, 24, 48, 0.10);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 16px 38px rgba(12, 24, 48, 0.08);
+    overflow: hidden;
+}
+
+/* Subtle top glow */
+.kc-comp__card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 110px;
+    pointer-events: none;
+    opacity: 0.75;
+}
+
+.kc-comp__card--good::before {
+    background: radial-gradient(600px 160px at 30% 0%,
+            rgba(255, 123, 0, 0.18) 0%,
+            rgba(255, 123, 0, 0) 60%);
+}
+
+.kc-comp__card--bad::before {
+    background: radial-gradient(600px 160px at 30% 0%,
+            rgba(255, 0, 0, 0.10) 0%,
+            rgba(255, 0, 0, 0) 60%);
+}
+
+.kc-comp__cardHead {
+    position: relative;
+    z-index: 1;
+    padding: 2px 2px 12px;
+    border-bottom: 1px solid rgba(12, 24, 48, 0.08);
+    margin-bottom: 12px;
+}
+
+.kc-comp__cardTitle {
     display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: #0b1220;
+}
+
+.kc-comp__brand {
+    letter-spacing: -0.02em;
+}
+
+.kc-comp__badge {
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    margin-top: 18px;
+    width: 22px;
+    height: 22px;
+    border-radius: 8px;
+    font-weight: 900;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.kc-comp__badge--good {
+    background: rgba(255, 123, 0, 0.15);
+    color: #ff7b00;
+    border: 1px solid rgba(255, 123, 0, 0.22);
+}
+
+.kc-comp__badge--bad {
+    background: rgba(255, 0, 0, 0.10);
+    color: #e11d48;
+    border: 1px solid rgba(225, 29, 72, 0.18);
+}
+
+.kc-comp__hint {
+    margin-top: 6px;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.62);
+}
+
+/* List */
+.kc-comp__list {
+    position: relative;
+    z-index: 1;
+    list-style: none;
+    padding: 6px 2px 0;
+    margin: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.kc-comp__row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.kc-comp__rowText {
+    margin: 0;
+    color: rgba(12, 24, 48, 0.86);
+    line-height: 1.55;
+}
+
+/* Icons */
+.kc-comp__icon {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    margin-top: 2px;
+}
+
+.kc-comp__icon svg {
+    display: block;
+}
+
+.kc-comp__icon--good {
+    color: #ff7b00;
+}
+
+.kc-comp__icon--bad {
+    color: #e11d48;
 }
 
 /* Responsive */
-@media (max-width: 980px) {
-    .kc-comparison__grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 960px) {
+    .kc-comp__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kc-comp__card {
+        padding: 16px 16px 12px;
     }
 }
 
-@media (max-width: 760px) {
-    .kc-comparison__twoCol {
-        grid-template-columns: 1fr;
+@media (max-width: 520px) {
+    .kc-comp {
+        padding-top: 40px;
+        padding-bottom: 40px;
     }
 
-    .kc-comparison__grid {
-        grid-template-columns: 1fr;
+    .kc-comp__title {
+        line-height: 1.08;
+    }
+
+    .kc-comp__cardTitle {
+        font-size: 16px;
     }
 }
