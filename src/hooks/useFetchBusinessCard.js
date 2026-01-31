@@ -1,24 +1,36 @@
 import { useQuery } from "@tanstack/react-query";
-import api from '../services/api'; 
+import api from "../services/api";
 
 export const useFetchBusinessCard = (userId) => {
   return useQuery({
     queryKey: ["businessCard", userId],
-    queryFn: async () => {
-      if (!userId) {
-        return null;
-      }
-      try {
-        const response = await api.get(`/api/business-card/my_card`);
-        return response.data.data;
-      } catch (error) {
-        console.error("Error fetching business card:", error);
-        throw error; 
-      }
-    },
     enabled: !!userId,
-    staleTime: 5 * 60 * 1000, 
-    cacheTime: 10 * 60 * 1000, 
-    retry: 1, 
+
+    queryFn: async () => {
+      const res = await api.get("/api/business-card/my_card");
+      return res?.data?.data ?? null;
+    },
+
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000, // ✅ react-query v5 uses gcTime (cacheTime is deprecated)
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+
+    // ✅ Only retry if it's NOT a 404
+    retry: (failureCount, error) => {
+      const status = error?.response?.status;
+      if (status === 404) return false;
+      return failureCount < 1;
+    },
+
+    // ✅ Don't spam console repeatedly (keep a single clean warning)
+    onError: (error) => {
+      const status = error?.response?.status;
+      if (status === 404) {
+        console.warn("Business card not found yet (404).");
+        return;
+      }
+      console.error("Error fetching business card:", error);
+    },
   });
 };
