@@ -54,7 +54,7 @@ import OAuthSuccess from "./auth/OAuthSuccess.jsx";
 import Billing from "./pages/interface/Billing.jsx";
 import ContactSupport from "./pages/interface/ContactSupport.jsx";
 import HelpCentreInterface from "./pages/interface/HelpCentreInterface.jsx";
-import MyProfile from "./pages/interface/MyProfile.jsx"; // legacy page (we redirect this)
+import MyProfile from "./pages/interface/MyProfile.jsx"; // editor page used for /profiles/edit
 import MyOrders from "./pages/interface/MyOrder.jsx";
 import NFCCards from "./pages/interface/NFCCards.jsx";
 import Notifications from "./pages/interface/Notifications.jsx";
@@ -131,10 +131,7 @@ export default function App() {
           {/* Legacy product routes (keep) */}
           <Route path="/productandplan" element={<ProductAndPlan />} />
           <Route path="/productandplan/konarcard" element={<KonarCard />} />
-          <Route
-            path="/productandplan/konarsubscription"
-            element={<KonarSubscription />}
-          />
+          <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
           <Route path="/whatisnfc" element={<KonarCard />} />
           <Route path="/subscription" element={<KonarSubscription />} />
 
@@ -185,6 +182,16 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <Profiles />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ✅ NEW: editor route lives here */}
+          <Route
+            path="/profiles/edit"
+            element={
+              <ProtectedRoute>
+                <MyProfile />
               </ProtectedRoute>
             }
           />
@@ -299,6 +306,7 @@ export default function App() {
             }
           />
 
+          {/* Old account-details page (keep) */}
           <Route
             path="/profile"
             element={

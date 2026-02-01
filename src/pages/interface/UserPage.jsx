@@ -30,7 +30,8 @@ const read = (o, keys, fb = undefined) => {
 
 const filterRealImages = (xs) => arr(xs).filter((u) => nonEmpty(u) && !looksLikePlaceholderUrl(u));
 const filterRealServices = (xs) => arr(xs).filter((s) => s && (nonEmpty(s.name) || nonEmpty(s.price)));
-const filterRealReviews = (xs) => arr(xs).filter((r) => r && (nonEmpty(r.name) || nonEmpty(r.text) || (r.rating ?? 0) > 0));
+const filterRealReviews = (xs) =>
+    arr(xs).filter((r) => r && (nonEmpty(r.name) || nonEmpty(r.text) || (r.rating ?? 0) > 0));
 
 const centerPage = {
     textAlign: "center",
@@ -50,10 +51,16 @@ export default function UserPage() {
 
     const { data: businessCard, isLoading, isError, error } = useQuery({
         queryKey: ["public-business-card", username],
-        queryFn: async () => (await api.get(`/api/business-card/by_username/${username}`)).data,
+        queryFn: async () => {
+            // ✅ IMPORTANT: public endpoint should be NO-AUTH (prevents Bearer token attach)
+            const res = await api.get(`/api/business-card/by_username/${username}`, {
+                headers: { "x-no-auth": "1" },
+            });
+            return res.data;
+        },
         enabled: !!username,
         staleTime: 5 * 60 * 1000,
-        cacheTime: 10 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
         retry: 1,
     });
 
@@ -72,8 +79,10 @@ export default function UserPage() {
         try {
             localStorage.setItem("scrollToEditorOnLoad", "1");
         } catch { }
-        window.location.href = "/myprofile";
+        // ✅ editor now lives here
+        window.location.href = "/profiles/edit";
     };
+
     const goContactSupportSmart = () => {
         try {
             localStorage.setItem("openChatOnLoad", "1");
@@ -81,22 +90,26 @@ export default function UserPage() {
         window.location.href = authUser ? "/contact-support" : "/contactus";
     };
 
-    if (isLoading)
+    if (isLoading) {
         return (
             <div className="user-landing-page" style={centerPage}>
                 <p>Loading business card...</p>
             </div>
         );
+    }
+
     if (isError) {
         console.error(error);
         return unavailable(username, goEditProfile, goContactSupportSmart);
     }
-    if (!businessCard)
+
+    if (!businessCard) {
         return (
             <div className="user-landing-page" style={centerPage}>
                 <p>No business card found for “{username}”.</p>
             </div>
         );
+    }
 
     /* ---------------------------
        Robust field fallbacks
@@ -147,9 +160,22 @@ export default function UserPage() {
 
     const hasContact = nonEmpty(email) || nonEmpty(phone);
 
-    const isSubscribed = !!businessCard.isSubscribed;
-    const isTrialActive = businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
-    if (!(isSubscribed || isTrialActive)) return unavailable(username, goEditProfile, goContactSupportSmart);
+    /**
+     * ✅ IMPORTANT FIX:
+     * Your public endpoint returns BusinessCard only, so it does NOT include isSubscribed/trialExpires.
+     * Don’t block the public page based on fields that aren’t present.
+     *
+     * If in the future you add these fields to the response, this will still work.
+     */
+    const subscriptionFieldPresent =
+        typeof businessCard?.isSubscribed !== "undefined" || typeof businessCard?.trialExpires !== "undefined";
+
+    if (subscriptionFieldPresent) {
+        const isSubscribed = !!businessCard.isSubscribed;
+        const isTrialActive =
+            businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
+        if (!(isSubscribed || isTrialActive)) return unavailable(username, goEditProfile, goContactSupportSmart);
+    }
 
     // Decide what to render
     const showMainSection =
@@ -190,6 +216,7 @@ export default function UserPage() {
 
     const handleExchangeContact = () => {
         if (!hasContact) return;
+
         const publicUrl = read(businessCard, ["publicProfileUrl"], `${window.location.origin}/u/${username}`);
         const nameParts = (fullName || "").split(" ");
         const firstName = nameParts[0] || "";
@@ -223,12 +250,8 @@ export default function UserPage() {
         return (
             <div className="user-landing-page" style={{ ...themeStyles, ...centerPage, padding: 24 }}>
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
-                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>
-                        This profile isn’t set up yet
-                    </h2>
-                    <p style={{ marginTop: 10, opacity: 0.8 }}>
-                        @{username} hasn’t published any content here yet.
-                    </p>
+                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>This profile isn’t set up yet</h2>
+                    <p style={{ marginTop: 10, opacity: 0.8 }}>@{username} hasn’t published any content here yet.</p>
                 </div>
             </div>
         );
@@ -252,12 +275,7 @@ export default function UserPage() {
                     </p>
                 )}
                 {hasContact && (
-                    <button
-                        type="button"
-                        onClick={handleExchangeContact}
-                        className="landing-action-button"
-                        style={ctaStyle}
-                    >
+                    <button type="button" onClick={handleExchangeContact} className="landing-action-button" style={ctaStyle}>
                         Save My Number
                     </button>
                 )}
@@ -287,6 +305,7 @@ export default function UserPage() {
         showWorkSection ? (
             <>
                 <p className="landing-section-title">My Work</p>
+
                 {(workMode === "list" || workMode === "grid") && (
                     <div className={`landing-work-gallery ${workMode}`}>
                         {works.map((url, i) => (
@@ -294,6 +313,7 @@ export default function UserPage() {
                         ))}
                     </div>
                 )}
+
                 {workMode === "carousel" && (
                     <div className="user-carousel-container">
                         <div className="user-carousel-nav-buttons">
@@ -451,7 +471,6 @@ export default function UserPage() {
             </>
         ) : null;
 
-    /* Render in the SAVED order */
     const sectionMap = {
         main: <MainSection key="main" />,
         about: <AboutSection key="about" />,
@@ -461,7 +480,11 @@ export default function UserPage() {
         contact: <ContactSection key="contact" />,
     };
 
-    return <div className="user-landing-page" style={themeStyles}>{sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}</div>;
+    return (
+        <div className="user-landing-page" style={themeStyles}>
+            {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}
+        </div>
+    );
 
     /* Unavailable */
     function unavailable(username, onEdit, onContact) {
@@ -487,9 +510,7 @@ export default function UserPage() {
                                 <div className="desktop-body-s">
                                     <strong>Access expired.</strong>
                                 </div>
-                                <div className="desktop-body-xs">
-                                    The free trial may have ended or a subscription is required.
-                                </div>
+                                <div className="desktop-body-xs">The free trial may have ended or a subscription is required.</div>
                             </div>
                         </li>
                     </ul>

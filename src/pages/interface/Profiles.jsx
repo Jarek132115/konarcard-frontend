@@ -1,3 +1,4 @@
+// src/pages/interface/Profiles.jsx
 import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
@@ -79,7 +80,7 @@ export default function Profiles() {
 
     const handleCreate = () => {
         // Free plan: user can only ever have one profile, so "Create" == "Go edit/setup"
-        navigate("/profile");
+        navigate("/profiles/edit");
     };
 
     const handleDelete = () => {
@@ -270,7 +271,7 @@ export default function Profiles() {
                                                     className="profiles-mini-btn"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        navigate("/profile");
+                                                        navigate("/profiles/edit");
                                                     }}
                                                 >
                                                     Edit
@@ -319,7 +320,7 @@ export default function Profiles() {
                                     <button
                                         type="button"
                                         className="profiles-btn profiles-btn-primary"
-                                        onClick={() => navigate("/profile")}
+                                        onClick={() => navigate("/profiles/edit")}
                                     >
                                         Edit profile
                                     </button>
