@@ -164,6 +164,7 @@ export default function OAuthSuccess() {
                     return;
                 }
 
+                
                 // no claim -> if they came from register and we have pending, try auto-claim
                 let source = "";
                 try {
