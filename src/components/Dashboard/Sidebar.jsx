@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../AuthContext.jsx";
 
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import DashboardIcon from "../../assets/icons/Home-Interface.svg";

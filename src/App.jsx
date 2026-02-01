@@ -61,8 +61,13 @@ import Notifications from "./pages/interface/Notifications.jsx";
 import Profile from "./pages/interface/Profile.jsx";
 import ClaimLink from "./pages/interface/ClaimLink.jsx";
 
-// ✅ NEW dashboard page
+// ✅ NEW dashboard pages (protected)
 import Dashboard from "./pages/interface/Dashboard.jsx";
+import Profiles from "./pages/interface/Profiles.jsx";
+import Cards from "./pages/interface/Cards.jsx";
+import Analytics from "./pages/interface/Analytics.jsx";
+import ContactBook from "./pages/interface/ContactBook.jsx";
+import Settings from "./pages/interface/Settings.jsx";
 
 // -------- Admin (protected) --------
 import AdminOrders from "./pages/admin/AdminDashboard.jsx";
@@ -102,6 +107,7 @@ function TidioWrapper() {
    App
 -------------------------------------------------- */
 export default function App() {
+  // keep context warm; don’t block render
   useContext(AuthContext);
 
   return (
@@ -164,12 +170,57 @@ export default function App() {
           {/* Public profile */}
           <Route path="/u/:username" element={<UserPage />} />
 
-          {/* ---------------- PROTECTED ---------------- */}
+          {/* ---------------- PROTECTED (NEW DASHBOARD) ---------------- */}
           <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/profiles"
+            element={
+              <ProtectedRoute>
+                <Profiles />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/cards"
+            element={
+              <ProtectedRoute>
+                <Cards />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <Analytics />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/contact-book"
+            element={
+              <ProtectedRoute>
+                <ContactBook />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             }
           />
@@ -184,6 +235,7 @@ export default function App() {
             }
           />
 
+          {/* ---------------- PROTECTED (LEGACY) ---------------- */}
           <Route
             path="/claim"
             element={
@@ -265,6 +317,9 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Optional: fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </RouteErrorBoundary>
     </>
