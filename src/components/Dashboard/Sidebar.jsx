@@ -28,8 +28,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const closeSidebar = () => setSidebarOpen(false);
 
     const isActive = (path) =>
-        location.pathname === path ||
-        location.pathname.startsWith(path + "/");
+        location.pathname === path || location.pathname.startsWith(path + "/");
 
     const handleLogout = async () => {
         await logout();
@@ -74,8 +73,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             key={item.to}
                             to={item.to}
                             onClick={closeSidebar}
-                            className={`sidebar-link ${isActive(item.to) ? "active" : ""
-                                }`}
+                            className={`sidebar-link ${isActive(item.to) ? "active" : ""}`}
                         >
                             <img src={item.icon} alt="" />
                             <span>{item.label}</span>

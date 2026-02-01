@@ -1,5 +1,5 @@
 // frontend/src/App.jsx
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { Toaster } from "react-hot-toast";
 
@@ -54,12 +54,15 @@ import OAuthSuccess from "./auth/OAuthSuccess.jsx";
 import Billing from "./pages/interface/Billing.jsx";
 import ContactSupport from "./pages/interface/ContactSupport.jsx";
 import HelpCentreInterface from "./pages/interface/HelpCentreInterface.jsx";
-import MyProfile from "./pages/interface/MyProfile.jsx";
+import MyProfile from "./pages/interface/MyProfile.jsx"; // legacy page (we redirect this)
 import MyOrders from "./pages/interface/MyOrder.jsx";
 import NFCCards from "./pages/interface/NFCCards.jsx";
 import Notifications from "./pages/interface/Notifications.jsx";
 import Profile from "./pages/interface/Profile.jsx";
 import ClaimLink from "./pages/interface/ClaimLink.jsx";
+
+// ✅ NEW dashboard page
+import Dashboard from "./pages/interface/Dashboard.jsx";
 
 // -------- Admin (protected) --------
 import AdminOrders from "./pages/admin/AdminDashboard.jsx";
@@ -71,6 +74,7 @@ function TidioWrapper() {
   const location = useLocation();
 
   const isDashboardPath =
+    // legacy
     location.pathname.startsWith("/myprofile") ||
     location.pathname.startsWith("/myorders") ||
     location.pathname.startsWith("/billing") ||
@@ -80,7 +84,14 @@ function TidioWrapper() {
     location.pathname.startsWith("/profile") ||
     location.pathname.startsWith("/contact-support") ||
     location.pathname.startsWith("/admin") ||
-    location.pathname.startsWith("/claim");
+    location.pathname.startsWith("/claim") ||
+    // ✅ new dashboard routes
+    location.pathname.startsWith("/dashboard") ||
+    location.pathname.startsWith("/profiles") ||
+    location.pathname.startsWith("/cards") ||
+    location.pathname.startsWith("/analytics") ||
+    location.pathname.startsWith("/contact-book") ||
+    location.pathname.startsWith("/settings");
 
   const enableTidio = !isDashboardPath || location.pathname === "/contact-support";
 
@@ -91,7 +102,6 @@ function TidioWrapper() {
    App
 -------------------------------------------------- */
 export default function App() {
-  // keep context warm; don’t block render
   useContext(AuthContext);
 
   return (
@@ -115,22 +125,20 @@ export default function App() {
           {/* Legacy product routes (keep) */}
           <Route path="/productandplan" element={<ProductAndPlan />} />
           <Route path="/productandplan/konarcard" element={<KonarCard />} />
-          <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
+          <Route
+            path="/productandplan/konarsubscription"
+            element={<KonarSubscription />}
+          />
           <Route path="/whatisnfc" element={<KonarCard />} />
           <Route path="/subscription" element={<KonarSubscription />} />
 
           {/* Public website pages */}
           <Route path="/products" element={<Products />} />
-
-          {/* ✅ NEW product detail pages */}
           <Route path="/products/plastic-card" element={<PlasticCard />} />
           <Route path="/products/metal-card" element={<MetalCard />} />
           <Route path="/products/konartag" element={<KonarTag />} />
-
-          {/* ✅ NEW bundle pages */}
           <Route path="/products/plastic-bundle" element={<PlasticBundle />} />
           <Route path="/products/metal-bundle" element={<MetalBundle />} />
-
           <Route path="/examples" element={<Example />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/faq" element={<FAQ />} />
@@ -157,6 +165,25 @@ export default function App() {
           <Route path="/u/:username" element={<UserPage />} />
 
           {/* ---------------- PROTECTED ---------------- */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ✅ Legacy route: keep but redirect */}
+          <Route
+            path="/myprofile"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/dashboard" replace />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/claim"
             element={
@@ -189,15 +216,6 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ContactSupport />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/myprofile"
-            element={
-              <ProtectedRoute>
-                <MyProfile />
               </ProtectedRoute>
             }
           />
