@@ -1,19 +1,21 @@
+// src/hooks/useAuthUser.js
 import { useQuery } from '@tanstack/react-query';
-import { api } from '../services/api'; 
+import api from '../services/api';
 
 export const useAuthUser = () => {
   return useQuery({
     queryKey: ['authUser'],
     queryFn: async () => {
-      const { data } = await api('/profile', {
-        method: 'GET',
-        credentials: 'include',
-      });
-      if (!data || data.error) {
-        throw new Error(data?.error || 'Failed to load user');
+      const res = await api.get('/profile');
+      const data = res?.data?.data || null;
+
+      if (!data) {
+        throw new Error('Failed to load user');
       }
 
-      return data; 
+      return data;
     },
+    retry: false,
+    staleTime: 60_000,
   });
 };
