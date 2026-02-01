@@ -14,7 +14,7 @@ import './styling/buttons.css';
 import './styling/product.css';
 import './styling/policies.css';
 import './styling/success.css';
-import './styling/sidebar.css';
+import './styling/dashboard/sidebar.css';
 import './styling/profile.css';
 import './styling/nfccards.css';
 import './styling/notification.css';
