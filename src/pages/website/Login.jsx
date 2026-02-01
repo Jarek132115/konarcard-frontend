@@ -43,47 +43,6 @@ export default function Login() {
         else navigate("/");
     };
 
-    const startOAuth = (provider) => {
-        if (provider === "apple") {
-            toast("Apple login coming soon");
-            return;
-        }
-
-        try {
-            localStorage.setItem("oauthSource", "login");
-            localStorage.removeItem("pendingClaimUsername");
-        } catch { }
-
-        // ✅ Use canonical base URL (never raw VITE_API_URL)
-        window.location.href = `${BASE_URL}/auth/${provider}`;
-    };
-
-    useEffect(() => {
-        try {
-            const remembered = localStorage.getItem(REMEMBER_KEY) === "true";
-            const email = localStorage.getItem(REMEMBERED_EMAIL_KEY) || "";
-            if (remembered && email) {
-                setRememberMe(true);
-                setData((d) => ({ ...d, email }));
-            }
-        } catch { }
-    }, []);
-
-    useEffect(() => {
-        const action = location.state?.postAuthAction;
-        if (action) {
-            try {
-                localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action));
-            } catch { }
-        }
-    }, [location.state]);
-
-    useEffect(() => {
-        if (cooldown <= 0) return;
-        const t = setTimeout(() => setCooldown((s) => s - 1), 1000);
-        return () => clearTimeout(t);
-    }, [cooldown]);
-
     const readCheckoutIntent = () => {
         try {
             const raw = localStorage.getItem(CHECKOUT_INTENT_KEY);
@@ -106,18 +65,79 @@ export default function Login() {
     const clearCheckoutIntent = () => {
         try {
             localStorage.removeItem(CHECKOUT_INTENT_KEY);
-        } catch { }
+        } catch {
+            // ignore
+        }
     };
+
+    const startOAuth = (provider) => {
+        if (provider === "apple") {
+            toast("Apple login coming soon");
+            return;
+        }
+
+        const intent = readCheckoutIntent(); // ✅ detect pricing checkout flow
+
+        try {
+            localStorage.setItem("oauthSource", "login");
+
+            // ✅ IMPORTANT:
+            // If checkout intent exists, DO NOT wipe pendingClaimUsername.
+            // We may need it to auto-claim before Stripe.
+            if (!intent) {
+                localStorage.removeItem("pendingClaimUsername");
+            }
+        } catch {
+            // ignore
+        }
+
+        // ✅ Use canonical base URL (never raw VITE_API_URL)
+        window.location.href = `${BASE_URL}/auth/${provider}`;
+    };
+
+    useEffect(() => {
+        try {
+            const remembered = localStorage.getItem(REMEMBER_KEY) === "true";
+            const email = localStorage.getItem(REMEMBERED_EMAIL_KEY) || "";
+            if (remembered && email) {
+                setRememberMe(true);
+                setData((d) => ({ ...d, email }));
+            }
+        } catch {
+            // ignore
+        }
+    }, []);
+
+    useEffect(() => {
+        const action = location.state?.postAuthAction;
+        if (action) {
+            try {
+                localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action));
+            } catch {
+                // ignore
+            }
+        }
+    }, [location.state]);
+
+    useEffect(() => {
+        if (cooldown <= 0) return;
+        const t = setTimeout(() => setCooldown((s) => s - 1), 1000);
+        return () => clearTimeout(t);
+    }, [cooldown]);
 
     const runPendingActionOrDefault = async () => {
         let action = null;
         try {
             const saved = localStorage.getItem(POST_AUTH_KEY);
             if (saved) action = JSON.parse(saved);
-        } catch { }
+        } catch {
+            // ignore
+        }
         try {
             localStorage.removeItem(POST_AUTH_KEY);
-        } catch { }
+        } catch {
+            // ignore
+        }
 
         if (!action) {
             navigate("/myprofile");
@@ -143,7 +163,7 @@ export default function Login() {
         const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
 
         try {
-            // ✅ Do NOT clear intent until we have a Stripe URL (prevents lost intent / silent failure)
+            // ✅ Do NOT clear intent until we have a Stripe URL
             const res = await api.post("/subscribe", {
                 planKey: intent.planKey,
                 returnUrl,
@@ -161,8 +181,7 @@ export default function Login() {
         } catch (e) {
             const msg = e?.response?.data?.error || e?.message || "Subscription failed.";
             toast.error(msg);
-            // keep intent so user can retry
-            return false;
+            return false; // keep intent so user can retry
         }
     };
 
@@ -177,7 +196,9 @@ export default function Login() {
                 localStorage.removeItem(REMEMBER_KEY);
                 localStorage.removeItem(REMEMBERED_EMAIL_KEY);
             }
-        } catch { }
+        } catch {
+            // ignore
+        }
 
         setIsSubmitting(true);
         try {
