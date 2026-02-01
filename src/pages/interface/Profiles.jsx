@@ -1,25 +1,73 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import "../../styling/dashboard/profiles.css";
 
-export default function Profiles() {
-    // TEMP: replace with real API later
-    const [plan] = useState("free"); // "free" | "plus" | "teams"
+import { useMyBusinessCard } from "../../hooks/useBusinessCard";
+import { useAuthUser } from "../../hooks/useAuthUser";
 
+export default function Profiles() {
+    const navigate = useNavigate();
+
+    // TEMP: plan logic placeholder (keep as-is for now)
+    const [plan] = useState("free"); // "free" | "plus" | "teams"
     const maxProfiles = plan === "teams" ? 999 : 1;
 
-    const [profiles, setProfiles] = useState([
-        {
-            id: "p1",
-            name: "Main Profile",
-            trade: "Electrician",
-            slug: "yourname",
-            status: "complete", // "complete" | "incomplete"
-            updatedAt: "Updated today",
-        },
-    ]);
+    // Logged-in user (for username -> public /u/:username link)
+    const { data: authUser } = useAuthUser();
 
-    const [selectedId, setSelectedId] = useState(profiles[0]?.id || null);
+    // My single business card (null if none)
+    const {
+        data: myCard,
+        isLoading: cardLoading,
+        isError: cardError,
+        refetch: refetchCard,
+    } = useMyBusinessCard();
+
+    const usernameSlug = (authUser?.username || "").toLowerCase().trim() || "yourname";
+
+    const profiles = useMemo(() => {
+        if (!myCard) return [];
+
+        const displayName =
+            (myCard.business_card_name || "").trim() ||
+            (myCard.full_name || "").trim() ||
+            "Main Profile";
+
+        const trade = (myCard.job_title || "").trim() || "Trade";
+
+        const isComplete = Boolean(
+            (myCard.full_name || "").trim() ||
+            (myCard.main_heading || "").trim() ||
+            (myCard.business_card_name || "").trim()
+        );
+
+        const updatedAtText = myCard.updatedAt
+            ? `Updated ${new Date(myCard.updatedAt).toLocaleDateString()}`
+            : "Updated recently";
+
+        return [
+            {
+                id: myCard._id || "p1",
+                name: displayName,
+                trade,
+                slug: usernameSlug,
+                status: isComplete ? "complete" : "incomplete",
+                updatedAt: updatedAtText,
+            },
+        ];
+    }, [myCard, usernameSlug]);
+
+    const [selectedId, setSelectedId] = useState(null);
+
+    // Keep selection stable when data loads/changes
+    useEffect(() => {
+        if (!profiles.length) {
+            setSelectedId(null);
+            return;
+        }
+        setSelectedId((prev) => prev || profiles[0].id);
+    }, [profiles]);
 
     const selectedProfile = useMemo(
         () => profiles.find((p) => p.id === selectedId) || profiles[0] || null,
@@ -27,19 +75,16 @@ export default function Profiles() {
     );
 
     const canCreateNew = profiles.length < maxProfiles;
-
     const isLimitReached = !canCreateNew && plan !== "teams";
 
     const handleCreate = () => {
-        // placeholder - later open create flow
-        alert("Create profile flow (coming next)");
+        // Free plan: user can only ever have one profile, so "Create" == "Go edit/setup"
+        navigate("/profile");
     };
 
-    const handleDelete = (id) => {
-        // placeholder
-        const next = profiles.filter((p) => p.id !== id);
-        setProfiles(next);
-        if (selectedId === id) setSelectedId(next[0]?.id || null);
+    const handleDelete = () => {
+        // No delete in Free plan scope
+        alert("Deleting profiles is not available on your current plan.");
     };
 
     const handleCopyLink = async () => {
@@ -72,6 +117,45 @@ export default function Profiles() {
         }
     };
 
+    // Simple loading/error handling without redesigning layout
+    if (cardLoading) {
+        return (
+            <DashboardLayout
+                title="Profiles"
+                subtitle="Create, view, and manage your digital business card profiles."
+            >
+                <div style={{ minHeight: "40vh" }} />
+            </DashboardLayout>
+        );
+    }
+
+    if (cardError) {
+        return (
+            <DashboardLayout
+                title="Profiles"
+                subtitle="Create, view, and manage your digital business card profiles."
+                rightSlot={
+                    <button
+                        type="button"
+                        className="profiles-btn profiles-btn-primary"
+                        onClick={() => refetchCard()}
+                    >
+                        Retry
+                    </button>
+                }
+            >
+                <div className="profiles-shell">
+                    <section className="profiles-card profiles-empty">
+                        <h2 className="profiles-card-title">We couldn’t load your profile</h2>
+                        <p className="profiles-muted">
+                            Please try again. If this keeps happening, contact support.
+                        </p>
+                    </section>
+                </div>
+            </DashboardLayout>
+        );
+    }
+
     return (
         <DashboardLayout
             title="Profiles"
@@ -79,8 +163,7 @@ export default function Profiles() {
             rightSlot={
                 <button
                     type="button"
-                    className={`profiles-btn profiles-btn-primary ${isLimitReached ? "locked" : ""
-                        }`}
+                    className={`profiles-btn profiles-btn-primary ${isLimitReached ? "locked" : ""}`}
                     onClick={isLimitReached ? undefined : handleCreate}
                     disabled={isLimitReached}
                 >
@@ -94,8 +177,8 @@ export default function Profiles() {
                     <div>
                         <h1 className="profiles-title">Profiles</h1>
                         <p className="profiles-subtitle">
-                            Profiles are your public digital business cards. Each profile has its
-                            own link you can share after every job.
+                            Profiles are your public digital business cards. Each profile has its own link you can
+                            share after every job.
                         </p>
                     </div>
 
@@ -115,8 +198,8 @@ export default function Profiles() {
                     <section className="profiles-card profiles-empty">
                         <h2 className="profiles-card-title">Create your first profile</h2>
                         <p className="profiles-muted">
-                            Your profile is what customers see when they scan your KonarCard. Create
-                            it once — update it any time.
+                            Your profile is what customers see when they scan your KonarCard. Create it once —
+                            update it any time.
                         </p>
 
                         <div className="profiles-actions-row">
@@ -160,18 +243,14 @@ export default function Profiles() {
                                     <button
                                         key={p.id}
                                         type="button"
-                                        className={`profiles-item ${selectedProfile?.id === p.id ? "active" : ""
-                                            }`}
+                                        className={`profiles-item ${selectedProfile?.id === p.id ? "active" : ""}`}
                                         onClick={() => setSelectedId(p.id)}
                                     >
                                         <div className="profiles-item-left">
-                                            <div className="profiles-avatar">
-                                                {p.name?.slice(0, 1) || "P"}
-                                            </div>
+                                            <div className="profiles-avatar">{p.name?.slice(0, 1) || "P"}</div>
                                             <div className="profiles-item-meta">
                                                 <div className="profiles-item-title">
-                                                    {p.name}{" "}
-                                                    <span className="profiles-trade">• {p.trade}</span>
+                                                    {p.name} <span className="profiles-trade">• {p.trade}</span>
                                                 </div>
                                                 <div className="profiles-item-sub">
                                                     <span className="profiles-link">/u/{p.slug}</span>
@@ -191,7 +270,7 @@ export default function Profiles() {
                                                     className="profiles-mini-btn"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        alert("Edit profile (coming next)");
+                                                        navigate("/profile");
                                                     }}
                                                 >
                                                     Edit
@@ -201,7 +280,7 @@ export default function Profiles() {
                                                     className="profiles-mini-btn danger"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        handleDelete(p.id);
+                                                        handleDelete();
                                                     }}
                                                 >
                                                     Delete
@@ -218,21 +297,15 @@ export default function Profiles() {
                             <div className="profiles-card-head">
                                 <div>
                                     <h2 className="profiles-card-title">Profile preview</h2>
-                                    <p className="profiles-muted">
-                                        A quick look at what customers see on mobile.
-                                    </p>
+                                    <p className="profiles-muted">A quick look at what customers see on mobile.</p>
                                 </div>
                             </div>
 
                             <div className="profiles-preview">
                                 <div className="profiles-phone">
                                     <div className="profiles-phone-top" />
-                                    <div className="profiles-preview-name">
-                                        {selectedProfile?.name || "Profile"}
-                                    </div>
-                                    <div className="profiles-preview-trade">
-                                        {selectedProfile?.trade || "Trade"}
-                                    </div>
+                                    <div className="profiles-preview-name">{selectedProfile?.name || "Profile"}</div>
+                                    <div className="profiles-preview-trade">{selectedProfile?.trade || "Trade"}</div>
                                     <div className="profiles-phone-line" />
                                     <div className="profiles-phone-line short" />
                                     <div className="profiles-phone-block" />
@@ -246,7 +319,7 @@ export default function Profiles() {
                                     <button
                                         type="button"
                                         className="profiles-btn profiles-btn-primary"
-                                        onClick={() => alert("Edit profile (coming next)")}
+                                        onClick={() => navigate("/profile")}
                                     >
                                         Edit profile
                                     </button>
@@ -277,7 +350,7 @@ export default function Profiles() {
                                     <button
                                         type="button"
                                         className="profiles-btn profiles-btn-ghost"
-                                        onClick={() => alert("Analytics shortcut (coming next)")}
+                                        onClick={() => navigate("/analytics")}
                                     >
                                         View analytics
                                     </button>
@@ -291,17 +364,15 @@ export default function Profiles() {
                                 <div>
                                     <h2 className="profiles-card-title">Add another profile</h2>
                                     <p className="profiles-muted">
-                                        Create multiple profiles (and claim multiple links) for staff or
-                                        multiple businesses. This is a Teams feature.
+                                        Create multiple profiles (and claim multiple links) for staff or multiple
+                                        businesses. This is a Teams feature.
                                     </p>
                                 </div>
 
                                 <div className="profiles-add-right">
                                     {isLimitReached ? (
                                         <>
-                                            <div className="profiles-locked-note">
-                                                You’ve reached your plan limit.
-                                            </div>
+                                            <div className="profiles-locked-note">You’ve reached your plan limit.</div>
                                             <button
                                                 type="button"
                                                 className="profiles-btn profiles-btn-primary"

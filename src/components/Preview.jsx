@@ -1,7 +1,8 @@
+// src/components/Preview.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { previewPlaceholders } from "../store/businessCardStore";
 
-// use the same svg assets as in the editor
+// social icons
 import FacebookIcon from "../assets/icons/icons8-facebook.svg";
 import InstagramIcon from "../assets/icons/icons8-instagram.svg";
 import LinkedInIcon from "../assets/icons/icons8-linkedin.svg";
@@ -41,11 +42,27 @@ export default function Preview({
     };
     const contentAlign = { textAlign: state.textAlignment || "left" };
 
+    // ---------------------------
+    // Section order (sanitized)
+    // ---------------------------
     const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
-    const sectionOrder =
-        (Array.isArray(state.sectionOrder) && state.sectionOrder.length && state.sectionOrder) ||
-        defaultOrder;
 
+    const sanitizeOrder = (order) => {
+        const KNOWN = new Set(defaultOrder);
+        const seen = new Set();
+        const cleaned = (Array.isArray(order) ? order : defaultOrder)
+            .filter((k) => KNOWN.has(k))
+            .filter((k) => (seen.has(k) ? false : seen.add(k)));
+        // ensure all sections exist in output (and keep order stable)
+        const missing = defaultOrder.filter((k) => !cleaned.includes(k));
+        return [...cleaned, ...missing];
+    };
+
+    const sectionOrder = sanitizeOrder(state.sectionOrder);
+
+    // ---------------------------
+    // Preview values
+    // ---------------------------
     const previewFullName =
         state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
     const previewJobTitle =
@@ -81,49 +98,40 @@ export default function Preview({
         const el = mpWrapRef.current;
         if (!el) return;
 
-        // ensure predictable base styles
         el.style.overflow = "hidden";
         el.style.willChange = "max-height, opacity, transform";
 
         const handleEnd = (e) => {
             if (e.propertyName !== "max-height") return;
-            if (previewOpen) {
-                // once opened, unlock to natural height so content changes don't animate
-                el.style.maxHeight = "none";
-            }
+            if (previewOpen) el.style.maxHeight = "none";
             el.removeEventListener("transitionend", handleEnd);
         };
 
         if (previewOpen) {
-            // animate open only when toggled from closed
-            // 1) start from 0
             el.style.maxHeight = "0px";
             el.style.opacity = "0";
             el.style.transform = "scale(.98)";
-            // 2) measure target
+
             const target = el.scrollHeight;
-            // 3) to target
+
             requestAnimationFrame(() => {
                 el.style.maxHeight = `${target}px`;
                 el.style.opacity = "1";
                 el.style.transform = "scale(1)";
             });
+
             el.addEventListener("transitionend", handleEnd);
         } else {
-            // animate close from current natural height to 0
             const current = el.scrollHeight;
             el.style.maxHeight = `${current}px`;
-            // force reflow
             void el.offsetHeight;
             el.style.maxHeight = "0px";
             el.style.opacity = "0";
             el.style.transform = "scale(.98)";
         }
 
-        return () => {
-            el.removeEventListener("transitionend", handleEnd);
-        };
-    }, [isMobile, previewOpen]); // <-- only toggling matters
+        return () => el.removeEventListener("transitionend", handleEnd);
+    }, [isMobile, previewOpen]);
 
     const scrollCarousel = (ref, direction) => {
         const el = ref?.current;
@@ -132,7 +140,11 @@ export default function Preview({
         el.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
     };
 
-    // icons inside the Contact card
+    // Normalize display modes so you don't get "carousel" bugs
+    const workMode = (state.workDisplayMode || "list").toLowerCase(); // list | grid
+    const servicesMode = (servicesDisplayMode || "list").toLowerCase(); // list | cards
+    const reviewsMode = (reviewsDisplayMode || "list").toLowerCase(); // list | cards
+
     const ContactSocials = () => {
         const links = [
             { key: "facebook_url", label: "Facebook", href: state.facebook_url, icon: FacebookIcon },
@@ -166,33 +178,22 @@ export default function Preview({
         showWorkSection && previewWorkImages.length > 0 ? (
             <>
                 <p className="mock-section-title">My Work</p>
+
                 <div className="work-preview-row-container" style={contentAlign}>
-                    {state.workDisplayMode === "carousel" && (
-                        <div className="carousel-nav-buttons">
-                            <button
-                                type="button"
-                                className="carousel-nav-button left-arrow"
-                                onClick={() => scrollCarousel(previewWorkCarouselRef, "left")}
-                            >
-                                &#9664;
-                            </button>
-                            <button
-                                type="button"
-                                className="carousel-nav-button right-arrow"
-                                onClick={() => scrollCarousel(previewWorkCarouselRef, "right")}
-                            >
-                                &#9654;
-                            </button>
-                        </div>
-                    )}
+                    {/* If you ever re-introduce carousel, this can come back.
+              For now backend + editor are list/grid. */}
                     <div
                         ref={previewWorkCarouselRef}
-                        className={`mock-work-gallery ${state.workDisplayMode}`}
+                        className={`mock-work-gallery ${workMode}`}
                         style={contentAlign}
                     >
                         {previewWorkImages.map((item, i) => (
                             <div key={i} className="mock-work-image-item-wrapper">
-                                <img src={item.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
+                                <img
+                                    src={item.preview || item}
+                                    alt={`work-${i}`}
+                                    className="mock-work-image-item"
+                                />
                             </div>
                         ))}
                     </div>
@@ -204,28 +205,12 @@ export default function Preview({
         showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) ? (
             <>
                 <p className="mock-section-title">My Services</p>
+
                 <div className="work-preview-row-container" style={contentAlign}>
-                    {servicesDisplayMode === "carousel" && (
-                        <div className="carousel-nav-buttons">
-                            <button
-                                type="button"
-                                className="carousel-nav-button left-arrow"
-                                onClick={() => scrollCarousel(previewServicesCarouselRef, "left")}
-                            >
-                                &#9664;
-                            </button>
-                            <button
-                                type="button"
-                                className="carousel-nav-button right-arrow"
-                                onClick={() => scrollCarousel(previewServicesCarouselRef, "right")}
-                            >
-                                &#9654;
-                            </button>
-                        </div>
-                    )}
+                    {/* If you add carousel later, re-enable arrows here */}
                     <div
                         ref={previewServicesCarouselRef}
-                        className={`mock-services-list ${servicesDisplayMode}`}
+                        className={`mock-services-list ${servicesMode}`}
                         style={contentAlign}
                     >
                         {servicesForPreview.map((s, i) => (
@@ -243,40 +228,23 @@ export default function Preview({
         showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) ? (
             <>
                 <p className="mock-section-title">Reviews</p>
+
                 <div className="work-preview-row-container" style={contentAlign}>
-                    {reviewsDisplayMode === "carousel" && (
-                        <div className="carousel-nav-buttons">
-                            <button
-                                type="button"
-                                className="carousel-nav-button left-arrow"
-                                onClick={() => scrollCarousel(previewReviewsCarouselRef, "left")}
-                            >
-                                &#9664;
-                            </button>
-                            <button
-                                type="button"
-                                className="carousel-nav-button right-arrow"
-                                onClick={() => scrollCarousel(previewReviewsCarouselRef, "right")}
-                            >
-                                &#9654;
-                            </button>
-                        </div>
-                    )}
                     <div
                         ref={previewReviewsCarouselRef}
-                        className={`mock-reviews-list ${reviewsDisplayMode}`}
+                        className={`mock-reviews-list ${reviewsMode}`}
                         style={contentAlign}
                     >
                         {reviewsForPreview.map((r, i) => (
                             <div key={i} className="mock-review-card">
                                 <div className="mock-star-rating">
                                     {Array(r.rating || 0)
-                                        .fill()
+                                        .fill(null)
                                         .map((_, idx) => (
                                             <span key={`f-${idx}`}>★</span>
                                         ))}
                                     {Array(Math.max(0, 5 - (r.rating || 0)))
-                                        .fill()
+                                        .fill(null)
                                         .map((_, idx) => (
                                             <span key={`e-${idx}`} className="empty-star">
                                                 ★
@@ -297,14 +265,20 @@ export default function Preview({
             <>
                 <p className="mock-section-title">Contact Details</p>
                 <div className="mock-contact-details">
-                    <div className="mock-contact-item">
-                        <p className="mock-contact-label">Email:</p>
-                        <p className="mock-contact-value">{previewEmail}</p>
-                    </div>
-                    <div className="mock-contact-item">
-                        <p className="mock-contact-label">Phone:</p>
-                        <p className="mock-contact-value">{previewPhone}</p>
-                    </div>
+                    {previewEmail ? (
+                        <div className="mock-contact-item">
+                            <p className="mock-contact-label">Email:</p>
+                            <p className="mock-contact-value">{previewEmail}</p>
+                        </div>
+                    ) : null}
+
+                    {previewPhone ? (
+                        <div className="mock-contact-item">
+                            <p className="mock-contact-label">Phone:</p>
+                            <p className="mock-contact-value">{previewPhone}</p>
+                        </div>
+                    ) : null}
+
                     <ContactSocials />
                 </div>
             </>
@@ -316,14 +290,17 @@ export default function Preview({
                 {(shouldShowPlaceholders || !!state.coverPhoto) && (
                     <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
                 )}
+
                 <h2 className="mock-title" style={contentAlign}>
                     {state.mainHeading ||
                         (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
                 </h2>
+
                 <p className="mock-subtitle" style={contentAlign}>
                     {state.subHeading ||
                         (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
                 </p>
+
                 {(shouldShowPlaceholders || hasExchangeContact) && (
                     <button type="button" className="mock-button" style={ctaStyle}>
                         Save My Number
@@ -333,19 +310,23 @@ export default function Preview({
         ) : null;
 
     const AboutSection = () =>
-        showAboutMeSection &&
-            (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) ? (
+        showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) ? (
             <>
                 <p className="mock-section-title">About me</p>
+
                 <div className={`mock-about-container ${aboutMeLayout}`}>
                     <div className="mock-about-content-group">
                         <div className="mock-about-header-group">
-                            {previewAvatarSrc && <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />}
+                            {previewAvatarSrc ? (
+                                <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
+                            ) : null}
+
                             <div>
                                 <p className="mock-profile-name">{previewFullName}</p>
                                 <p className="mock-profile-role">{previewJobTitle}</p>
                             </div>
                         </div>
+
                         <p className="mock-bio-text" style={contentAlign}>
                             {previewBio}
                         </p>
@@ -384,6 +365,7 @@ export default function Preview({
                         >
                             {previewOpen ? "Hide Preview" : "Show Preview"}
                         </button>
+
                         <a
                             role="tab"
                             aria-selected={!previewOpen}

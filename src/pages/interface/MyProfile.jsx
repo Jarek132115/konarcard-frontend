@@ -9,8 +9,6 @@ import ShareProfile from "../../components/ShareProfile";
 
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useQueryClient } from "@tanstack/react-query";
-import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
-import { useCreateBusinessCard, buildBusinessCardFormData } from "../../hooks/useCreateBiz";
 
 import { AuthContext } from "../../components/AuthContext";
 import api from "../../services/api";
@@ -21,12 +19,136 @@ import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import Preview from "../../components/Preview";
 import Editor from "../../components/Editor";
 
+// ✅ NEW hooks (single-profile)
+import { useMyBusinessCard, useSaveMyBusinessCard } from "../../hooks/useBusinessCard";
+
 const DEFAULT_SECTION_ORDER = ["main", "about", "work", "services", "reviews", "contact"];
 const norm = (v) => (v ?? "").toString().trim();
 
+/**
+ * Build FormData for BusinessCard UPSERT endpoint.
+ * - Supports files: cover_photo, avatar, work_images[]
+ * - Sends JSON strings for arrays: services, reviews, existing_works
+ *
+ * NOTE:
+ * This is designed to work with the backend route that accepts multipart form-data.
+ */
+const buildBusinessCardFormData = ({
+  business_card_name,
+  page_theme,
+  style,
+  main_heading,
+  sub_heading,
+  job_title,
+  full_name,
+  bio,
+
+  cover_photo,
+  avatar,
+
+  works_existing_urls,
+  work_images_files,
+
+  services,
+  reviews,
+
+  contact_email,
+  phone_number,
+
+  // optional extras (safe if backend ignores)
+  cover_photo_removed,
+  avatar_removed,
+  work_display_mode,
+  services_display_mode,
+  reviews_display_mode,
+  about_me_layout,
+
+  show_main_section,
+  show_about_me_section,
+  show_work_section,
+  show_services_section,
+  show_reviews_section,
+  show_contact_section,
+
+  button_bg_color,
+  button_text_color,
+  text_alignment,
+
+  facebook_url,
+  instagram_url,
+  linkedin_url,
+  x_url,
+  tiktok_url,
+
+  section_order,
+}) => {
+  const fd = new FormData();
+
+  // Core text fields
+  fd.append("business_card_name", business_card_name || "");
+  fd.append("page_theme", page_theme || "light");
+  fd.append("style", style || "Inter");
+  fd.append("main_heading", main_heading || "");
+  fd.append("sub_heading", sub_heading || "");
+  fd.append("job_title", job_title || "");
+  fd.append("full_name", full_name || "");
+  fd.append("bio", bio || "");
+
+  // Contact
+  fd.append("contact_email", contact_email || "");
+  fd.append("phone_number", phone_number || "");
+
+  // Arrays (as JSON strings)
+  fd.append("services", JSON.stringify(Array.isArray(services) ? services : []));
+  fd.append("reviews", JSON.stringify(Array.isArray(reviews) ? reviews : []));
+
+  const existing = Array.isArray(works_existing_urls) ? works_existing_urls.filter(Boolean) : [];
+  existing.forEach((url) => fd.append("existing_works", url));
+
+
+  // Files
+  if (cover_photo instanceof File) fd.append("cover_photo", cover_photo);
+  if (avatar instanceof File) fd.append("avatar", avatar);
+
+  const workFiles = Array.isArray(work_images_files) ? work_images_files : [];
+  workFiles.forEach((f) => {
+    if (f instanceof File) fd.append("works", f);
+  });
+
+
+  // Optional / future-proof fields (backend may ignore; harmless)
+  fd.append("cover_photo_removed", cover_photo_removed ? "1" : "0");
+  fd.append("avatar_removed", avatar_removed ? "1" : "0");
+
+  fd.append("work_display_mode", work_display_mode || "");
+  fd.append("services_display_mode", services_display_mode || "");
+  fd.append("reviews_display_mode", reviews_display_mode || "");
+  fd.append("about_me_layout", about_me_layout || "");
+
+  fd.append("show_main_section", show_main_section === false ? "0" : "1");
+  fd.append("show_about_me_section", show_about_me_section === false ? "0" : "1");
+  fd.append("show_work_section", show_work_section === false ? "0" : "1");
+  fd.append("show_services_section", show_services_section === false ? "0" : "1");
+  fd.append("show_reviews_section", show_reviews_section === false ? "0" : "1");
+  fd.append("show_contact_section", show_contact_section === false ? "0" : "1");
+
+  fd.append("button_bg_color", button_bg_color || "");
+  fd.append("button_text_color", button_text_color || "");
+  fd.append("text_alignment", text_alignment || "");
+
+  fd.append("facebook_url", facebook_url || "");
+  fd.append("instagram_url", instagram_url || "");
+  fd.append("linkedin_url", linkedin_url || "");
+  fd.append("x_url", x_url || "");
+  fd.append("tiktok_url", tiktok_url || "");
+
+  fd.append("section_order", JSON.stringify(Array.isArray(section_order) ? section_order : DEFAULT_SECTION_ORDER));
+
+  return fd;
+};
+
 export default function MyProfile() {
   const { state, updateState, resetState } = useBusinessCardStore();
-  const createBusinessCard = useCreateBusinessCard();
   const queryClient = useQueryClient();
   const location = useLocation();
   const navigate = useNavigate();
@@ -34,13 +156,16 @@ export default function MyProfile() {
   // ✅ AuthContext exposes "hydrating", not "loading"
   const { user: authUser, hydrating: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
 
-  const userId = authUser?._id;
   const userEmail = authUser?.email;
   const isSubscribed = !!authUser?.isSubscribed; // single source of truth
   const isUserVerified = !!authUser?.isVerified;
   const userUsername = authUser?.username;
 
-  const { data: businessCard, isLoading: isCardLoading } = useFetchBusinessCard(userId);
+  // ✅ NEW: fetch my single business card (JWT)
+  const { data: businessCard, isLoading: isCardLoading } = useMyBusinessCard();
+
+  // ✅ NEW: upsert save mutation (JWT)
+  const saveBusinessCard = useSaveMyBusinessCard();
 
   // Refs
   const activeBlobUrlsRef = useRef([]);
@@ -349,7 +474,6 @@ export default function MyProfile() {
     updateState({ workImages: state.workImages.filter((_, i) => i !== idx) });
   };
 
-
   // Verification helpers (USE api.js ONLY)
   const sendVerificationCode = async () => {
     if (!userEmail) return toast.error("Email not found. Please log in again.");
@@ -432,7 +556,8 @@ export default function MyProfile() {
     const original = businessCard || {};
 
     const normalizeServices = (arr) => (arr || []).map((s) => ({ name: norm(s.name), price: norm(s.price) }));
-    const normalizeReviews = (arr) => (arr || []).map((r) => ({ name: norm(r.name), text: norm(r.text), rating: Number(r.rating) || 0 }));
+    const normalizeReviews = (arr) =>
+      (arr || []).map((r) => ({ name: norm(r.name), text: norm(r.text), rating: Number(r.rating) || 0 }));
 
     const servicesChanged = (() => {
       const a = normalizeServices(state.services);
@@ -535,38 +660,48 @@ export default function MyProfile() {
     if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
     if (!isSubscribed && !isTrialActive) await ensureTrialIfNeeded();
 
-    const worksToUpload = (state.workImages || [])
+    // Existing works (URLs) + new work image files
+    const existingWorkUrls = (state.workImages || [])
       .map((item) => {
-        if (item.file) return { file: item.file };
-        if (item.preview && !item.preview.startsWith("blob:")) return item.preview;
+        if (item?.preview && !item.preview.startsWith("blob:")) return item.preview;
         return null;
       })
+      .filter(Boolean);
+
+    const newWorkFiles = (state.workImages || [])
+      .map((item) => (item?.file instanceof File ? item.file : null))
       .filter(Boolean);
 
     const formData = buildBusinessCardFormData({
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
-      page_theme_variant: state.pageThemeVariant,
-      font: state.font,
+      style: state.font,
       main_heading: state.mainHeading,
       sub_heading: state.subHeading,
       job_title: state.job_title,
       full_name: state.full_name,
       bio: state.bio,
-      user: userId,
+
       cover_photo: coverPhotoFile,
       avatar: avatarFile,
-      cover_photo_removed: coverPhotoRemoved,
-      avatar_removed: isAvatarRemoved,
-      works: worksToUpload,
-      services: (state.services || []).filter((s) => s.name || s.price),
-      reviews: (state.reviews || []).filter((r) => r.name || r.text),
+
+      works_existing_urls: existingWorkUrls,
+      work_images_files: newWorkFiles,
+
+      services: (state.services || []).filter((s) => s?.name || s?.price),
+      reviews: (state.reviews || []).filter((r) => r?.name || r?.text),
+
       contact_email: state.contact_email,
       phone_number: state.phone_number,
+
+      cover_photo_removed: coverPhotoRemoved,
+      avatar_removed: isAvatarRemoved,
+
       work_display_mode: state.workDisplayMode,
       services_display_mode: servicesDisplayMode,
       reviews_display_mode: reviewsDisplayMode,
       about_me_layout: aboutMeLayout,
+
       show_main_section: showMainSection,
       show_about_me_section: showAboutMeSection,
       show_work_section: showWorkSection,
@@ -577,6 +712,7 @@ export default function MyProfile() {
       button_bg_color: state.buttonBgColor,
       button_text_color: state.buttonTextColor,
       text_alignment: state.textAlignment,
+
       facebook_url: state.facebook_url,
       instagram_url: state.instagram_url,
       linkedin_url: state.linkedin_url,
@@ -587,9 +723,12 @@ export default function MyProfile() {
     });
 
     try {
-      await createBusinessCard.mutateAsync(formData);
+      await saveBusinessCard.mutateAsync(formData);
+
       toast.success("Your page is Published!");
-      queryClient.invalidateQueries(["businessCard", userId]);
+
+      // ✅ refresh my card everywhere
+      queryClient.invalidateQueries({ queryKey: ["businessCard", "me"] });
 
       setCoverPhotoFile(null);
       setAvatarFile(null);
@@ -600,7 +739,7 @@ export default function MyProfile() {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
       activeBlobUrlsRef.current = [];
     } catch (err) {
-      toast.error(err?.response?.data?.error || "Something went wrong while saving.");
+      toast.error(err?.response?.data?.error || err?.response?.data?.message || "Something went wrong while saving.");
     }
   };
 
@@ -613,7 +752,7 @@ export default function MyProfile() {
   const handleCloseShareModal = () => setShowShareModal(false);
 
   // ================= RENDER =================
-  const visitUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "#";
+  const visitUrl = userUsername ? `${window.location.origin}/u/${userUsername}` : "#";
   const columnScrollStyle = !isMobile ? { maxHeight: "calc(100vh - 140px)", overflow: "auto" } : undefined;
 
   return (
@@ -654,8 +793,8 @@ export default function MyProfile() {
                 <div className="content-card-box verification-prompt">
                   <p>⚠️ Your email is not verified!</p>
                   <p>
-                    Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to your business
-                    card.
+                    Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving
+                    changes to your business card.
                   </p>
 
                   <form onSubmit={handleVerifyCode} className="verification-form">
