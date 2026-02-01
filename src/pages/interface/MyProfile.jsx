@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext, useMemo, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../components/Dashboard/Sidebar";
 import PageHeader from "../../components/PageHeader";
 import ShareProfile from "../../components/ShareProfile";
 
