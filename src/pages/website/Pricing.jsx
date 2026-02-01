@@ -14,14 +14,9 @@ import EasyToUpdateAnytime from "../../assets/icons/Easy_To_Update_Anytime.svg";
 import NoAppNeeded from "../../assets/icons/No_App_Needed.svg";
 import BuiltForRealTrades from "../../assets/icons/Built_For_Real_Trades.svg";
 
-// ✅ Use canonical base URL (prevents /api/api issues)
+// ✅ Canonical backend base URL
 import { BASE_URL } from "../../services/api";
 
-/**
- * We store the user's "checkout intent" here so:
- * Pricing -> Login/Register -> Claim Link -> Stripe
- * can resume automatically.
- */
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
 
 function safeGetToken() {
@@ -32,8 +27,52 @@ function safeGetToken() {
     }
 }
 
+function clearLocalAuth() {
+    try {
+        localStorage.removeItem("token");
+        localStorage.removeItem("authUser"); // your AuthContext cache key
+        localStorage.removeItem(CHECKOUT_INTENT_KEY);
+    } catch {
+        // ignore
+    }
+}
+
+// tiny JWT exp check (so expired tokens don’t count as logged in)
+function isTokenExpired(token) {
+    try {
+        const parts = token.split(".");
+        if (parts.length !== 3) return false;
+
+        const payload = JSON.parse(
+            decodeURIComponent(
+                atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"))
+                    .split("")
+                    .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+                    .join("")
+            )
+        );
+
+        const exp = Number(payload?.exp || 0);
+        if (!exp) return false;
+
+        // exp is seconds
+        return Date.now() >= exp * 1000;
+    } catch {
+        return false;
+    }
+}
+
 function isLoggedIn() {
-    return !!safeGetToken();
+    const t = safeGetToken();
+    if (!t) return false;
+
+    // if expired => clear it so UI becomes logged out immediately
+    if (isTokenExpired(t)) {
+        clearLocalAuth();
+        return false;
+    }
+
+    return true;
 }
 
 function formatDate(d) {
@@ -44,7 +83,6 @@ function formatDate(d) {
 }
 
 function planRank(plan) {
-    // free < plus < teams
     if (plan === "teams") return 2;
     if (plan === "plus") return 1;
     return 0;
@@ -52,16 +90,13 @@ function planRank(plan) {
 
 export default function Pricing() {
     const [billing, setBilling] = useState("monthly"); // monthly | quarterly | yearly
-    const [loadingKey, setLoadingKey] = useState(null); // e.g. "plus-monthly"
+    const [loadingKey, setLoadingKey] = useState(null);
     const [subLoading, setSubLoading] = useState(false);
     const [subErr, setSubErr] = useState("");
     const [subState, setSubState] = useState(null);
 
     const navigate = useNavigate();
-
-    // ✅ Canonical backend base (no raw env use here)
     const apiBase = BASE_URL;
-    const token = safeGetToken();
 
     /* ---------------- Prices (display only) ---------------- */
     const prices = useMemo(
@@ -90,21 +125,27 @@ export default function Pricing() {
 
     const p = prices[billing];
 
-    /* ---------------- Subscription status (from backend DB) ---------------- */
+    /* ---------------- Subscription status ---------------- */
     useEffect(() => {
         let mounted = true;
 
         async function loadStatus() {
             if (!apiBase) return;
+
+            // if no valid token -> treat logged out
             if (!isLoggedIn()) {
+                if (!mounted) return;
                 setSubState(null);
                 setSubErr("");
+                setSubLoading(false);
                 return;
             }
 
             try {
                 setSubLoading(true);
                 setSubErr("");
+
+                const token = safeGetToken();
 
                 const res = await fetch(`${apiBase}/api/subscription-status`, {
                     method: "GET",
@@ -115,8 +156,21 @@ export default function Pricing() {
                     credentials: "include",
                 });
 
-                const data = await res.json();
-                if (!res.ok) throw new Error(data?.error || "Failed to load subscription status");
+                const data = await res.json().catch(() => ({}));
+
+                // ✅ If user deleted / token invalid => backend often returns 401 or 404
+                if (res.status === 401 || res.status === 404) {
+                    clearLocalAuth();
+                    if (!mounted) return;
+                    setSubState(null);
+                    setSubErr("");
+                    return;
+                }
+
+                if (!res.ok) {
+                    throw new Error(data?.error || "Failed to load subscription status");
+                }
+
                 if (!mounted) return;
 
                 setSubState({
@@ -139,13 +193,14 @@ export default function Pricing() {
         return () => {
             mounted = false;
         };
-    }, [apiBase, token]);
+    }, [apiBase]);
 
     const currentPlan = subState?.plan || "free";
     const isActive = !!subState?.active;
     const currentPeriodEnd = subState?.currentPeriodEnd ? new Date(subState.currentPeriodEnd) : null;
 
-    const hasFutureAccess = !!currentPeriodEnd && !Number.isNaN(currentPeriodEnd.getTime()) && currentPeriodEnd.getTime() > Date.now();
+    const hasFutureAccess =
+        !!currentPeriodEnd && !Number.isNaN(currentPeriodEnd.getTime()) && currentPeriodEnd.getTime() > Date.now();
 
     const activeUntilLabel = hasFutureAccess ? formatDate(currentPeriodEnd) : "";
 
@@ -162,15 +217,13 @@ export default function Pricing() {
     const saveCheckoutIntent = (planKey) => {
         try {
             const returnUrl = `${window.location.origin}/myprofile?subscribed=1`;
-
             const intent = {
-                planKey, // e.g. "plus-monthly"
+                planKey,
                 createdAt: Date.now(),
                 returnUrl,
                 successReturn: returnUrl,
                 cancelReturn: `${window.location.origin}/pricing`,
             };
-
             localStorage.setItem(CHECKOUT_INTENT_KEY, JSON.stringify(intent));
         } catch {
             // ignore
@@ -179,14 +232,14 @@ export default function Pricing() {
 
     /* ---------------- Stripe subscription: start checkout ---------------- */
     const startSubscription = async (planKey) => {
-        // 1) If not logged in -> send to LOGIN, but remember what they clicked
+        // if no valid token -> push to login and store intent
         if (!isLoggedIn()) {
             saveCheckoutIntent(planKey);
             navigate("/login");
             return;
         }
 
-        // 2) If already on that same plan and still active -> block
+        // prevent selecting same plan
         if (isActive && currentPlan === planKey.split("-")[0]) {
             alert("You’re already subscribed to this plan.");
             return;
@@ -195,28 +248,33 @@ export default function Pricing() {
         setLoadingKey(planKey);
 
         try {
-            if (!apiBase) throw new Error("Missing backend base URL");
-
+            const token = safeGetToken();
             const returnUrl = `${window.location.origin}/myprofile?subscribed=1`;
 
             const res = await fetch(`${apiBase}/api/subscribe`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${safeGetToken()}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 credentials: "include",
-                body: JSON.stringify({
-                    planKey,
-                    returnUrl, // backend appends session_id safely
-                }),
+                body: JSON.stringify({ planKey, returnUrl }),
             });
 
-            const data = await res.json();
+            const data = await res.json().catch(() => ({}));
+
+            // ✅ If user deleted / token invalid => log out and send to login
+            if (res.status === 401 || res.status === 404 || /user not found/i.test(String(data?.error || ""))) {
+                clearLocalAuth();
+                alert("Your session is no longer valid. Please log in again.");
+                navigate("/login", { replace: true });
+                return;
+            }
+
             if (!res.ok || data?.error) throw new Error(data?.error || "Failed to start checkout");
             if (!data?.url) throw new Error("Stripe session URL missing");
 
-            // clean any old intent since we’re now going to Stripe
+            // clear old intent now that we’re going to Stripe
             try {
                 localStorage.removeItem(CHECKOUT_INTENT_KEY);
             } catch {
@@ -239,18 +297,26 @@ export default function Pricing() {
         }
 
         try {
-            if (!apiBase) throw new Error("Missing backend base URL");
+            const token = safeGetToken();
+
             const res = await fetch(`${apiBase}/api/billing-portal`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${safeGetToken()}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 credentials: "include",
                 body: JSON.stringify({}),
             });
 
-            const data = await res.json();
+            const data = await res.json().catch(() => ({}));
+
+            if (res.status === 401 || res.status === 404) {
+                clearLocalAuth();
+                navigate("/login", { replace: true });
+                return;
+            }
+
             if (!res.ok || data?.error) throw new Error(data?.error || "Could not open billing portal");
             if (!data?.url) throw new Error("Billing portal URL missing");
 
@@ -326,7 +392,7 @@ export default function Pricing() {
             };
         }
 
-        const targetPlan = planName; // plus/teams
+        const targetPlan = planName;
         const isUpgrade = planRank(targetPlan) > planRank(current);
         const isDowngrade = planRank(targetPlan) < planRank(current);
 
