@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
-import Sidebar from '../../components/Sidebar';
+import Sidebar from "../../components/Dashboard/Sidebar";
 import PageHeader from '../../components/PageHeader';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';

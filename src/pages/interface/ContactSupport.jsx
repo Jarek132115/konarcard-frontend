@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
-import Sidebar from '../../components/Sidebar';
+import Sidebar from "../../components/Dashboard/Sidebar";
 import PageHeader from '../../components/PageHeader';
 import ShareProfile from '../../components/ShareProfile';
 import api from '../../services/api';

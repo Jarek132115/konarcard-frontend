@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import Sidebar from '../../components/Sidebar';
+import Sidebar from "../../components/Dashboard/Sidebar";
 import { AuthContext } from '../../components/AuthContext';
 
 export default function Billing() {
