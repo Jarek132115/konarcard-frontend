@@ -1,5 +1,5 @@
 // src/pages/auth/Register.jsx
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef, useContext, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../../components/AuthContext";
@@ -36,43 +36,20 @@ export default function Register() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
 
-    const closeAuth = () => {
-        const from = location.state?.from;
-        if (from) navigate(from);
-        else navigate("/");
-    };
-
-    useEffect(() => {
-        try {
-            const saved = (localStorage.getItem(PENDING_CLAIM_KEY) || "").trim().toLowerCase();
-            const stateSlug = (location.state?.claimedUsername || "").trim().toLowerCase();
-            const finalSlug = saved || stateSlug;
-
-            if (finalSlug) {
-                setData((d) => ({ ...d, username: finalSlug }));
-                setClaimInput(finalSlug);
-                setForceClaimStep(false);
-            } else {
-                setClaimInput("");
-            }
-        } catch { }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-        if (cooldown <= 0) return;
-        const t = setTimeout(() => setCooldown((s) => s - 1), 1000);
-        return () => clearTimeout(t);
-    }, [cooldown]);
-
-    const hasConfirmedUsername = Boolean((data.username || "").trim());
-    const shouldShowClaimStep = !verificationStep && (forceClaimStep || !hasConfirmedUsername);
-
+    // ---------------------------------
+    // Helpers
+    // ---------------------------------
     const sanitize = (v) =>
         (v || "")
             .trim()
             .toLowerCase()
             .replace(/[^a-z0-9._-]/g, "");
+
+    const closeAuth = () => {
+        const from = location.state?.from;
+        if (from) navigate(from);
+        else navigate("/");
+    };
 
     // ----------------------------
     // checkout intent helpers
@@ -85,6 +62,7 @@ export default function Register() {
             const intent = JSON.parse(raw);
             if (!intent?.planKey) return null;
 
+            // expire after 30 minutes
             const age = Date.now() - Number(intent.createdAt || 0);
             if (Number.isFinite(age) && age > 30 * 60 * 1000) {
                 localStorage.removeItem(CHECKOUT_INTENT_KEY);
@@ -100,12 +78,69 @@ export default function Register() {
     const clearCheckoutIntent = () => {
         try {
             localStorage.removeItem(CHECKOUT_INTENT_KEY);
-        } catch { }
+        } catch {
+            // ignore
+        }
     };
 
+    // Snapshot the intent for this page load (stable)
+    const checkoutIntent = useMemo(() => readCheckoutIntent(), []);
+    const hasCheckoutIntent = !!checkoutIntent;
+
+    // ---------------------------------
+    // On mount: preload pending claim, and
+    // if coming from pricing intent → FORCE claim step first
+    // ---------------------------------
+    useEffect(() => {
+        try {
+            const saved = (localStorage.getItem(PENDING_CLAIM_KEY) || "").trim().toLowerCase();
+            const stateSlug = (location.state?.claimedUsername || "").trim().toLowerCase();
+            const finalSlug = saved || stateSlug;
+
+            if (finalSlug) {
+                setData((d) => ({ ...d, username: finalSlug }));
+                setClaimInput(finalSlug);
+                setForceClaimStep(false);
+            } else {
+                setClaimInput("");
+                // ✅ If pricing intent exists and no username yet, enforce claim step
+                if (hasCheckoutIntent) setForceClaimStep(true);
+            }
+        } catch {
+            if (hasCheckoutIntent) setForceClaimStep(true);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (cooldown <= 0) return;
+        const t = setTimeout(() => setCooldown((s) => s - 1), 1000);
+        return () => clearTimeout(t);
+    }, [cooldown]);
+
+    const hasConfirmedUsername = Boolean((data.username || "").trim());
+
+    // ✅ HARD RULE:
+    // If Pricing checkout intent exists, user must claim BEFORE any other step.
+    const mustClaimBeforeContinuing = hasCheckoutIntent && !hasConfirmedUsername && !verificationStep;
+
+    const shouldShowClaimStep =
+        !verificationStep && (mustClaimBeforeContinuing || forceClaimStep || !hasConfirmedUsername);
+
+    // ---------------------------------
+    // Stripe resume (ONLY after verified login)
+    // ---------------------------------
     const resumeCheckoutIfNeeded = async () => {
         const intent = readCheckoutIntent();
         if (!intent) return false;
+
+        // ✅ Safety: if no username, do NOT allow checkout
+        const uname = (data.username || "").trim();
+        if (!uname) {
+            toast.error("Please claim your KonarCard link before subscribing.");
+            setForceClaimStep(true);
+            return false;
+        }
 
         const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
 
@@ -126,13 +161,15 @@ export default function Register() {
             window.location.href = url;
             return true;
         } catch (e) {
-            // ✅ keep intent so user can retry
             toast.error(e?.response?.data?.error || "Subscription failed.");
+            // keep intent so user can retry
             return false;
         }
     };
 
-
+    // ---------------------------------
+    // Claim link (step 1 if needed)
+    // ---------------------------------
     const claimLinkContinue = async (e) => {
         e.preventDefault();
 
@@ -154,7 +191,9 @@ export default function Register() {
 
             try {
                 localStorage.setItem(PENDING_CLAIM_KEY, cleaned);
-            } catch { }
+            } catch {
+                // ignore
+            }
 
             setTimeout(() => document.getElementById("name")?.focus(), 0);
         } catch (err) {
@@ -162,8 +201,19 @@ export default function Register() {
         }
     };
 
+    // ---------------------------------
+    // Register (step 2)
+    // ---------------------------------
     const registerUser = async (e) => {
         e.preventDefault();
+
+        // ✅ If checkout intent exists, username MUST be set here
+        if (hasCheckoutIntent && !sanitize(data.username)) {
+            toast.error("Please claim your link first.");
+            setForceClaimStep(true);
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -188,6 +238,9 @@ export default function Register() {
         }
     };
 
+    // ---------------------------------
+    // Verify email (step 3) + login + (optional) Stripe
+    // ---------------------------------
     const verifyCode = async (e) => {
         e.preventDefault();
         setIsVerifying(true);
@@ -211,12 +264,22 @@ export default function Register() {
             login(loginRes.data.token, loginRes.data.user);
 
             try {
-                localStorage.removeItem(PENDING_CLAIM_KEY);
                 localStorage.removeItem(OAUTH_SOURCE_KEY);
-            } catch { }
+                // keep PENDING_CLAIM_KEY for a moment — but user is now claimed anyway
+                // (safe to clear after checkout)
+            } catch {
+                // ignore
+            }
 
             const resumed = await resumeCheckoutIfNeeded();
             if (resumed) return;
+
+            // no checkout intent -> normal
+            try {
+                localStorage.removeItem(PENDING_CLAIM_KEY);
+            } catch {
+                // ignore
+            }
 
             navigate("/myprofile", { replace: true });
         } catch {
@@ -226,9 +289,20 @@ export default function Register() {
         }
     };
 
+    // ---------------------------------
+    // OAuth (DO NOT allow bypass if checkout intent exists)
+    // ---------------------------------
     const startOAuth = (provider) => {
         if (provider === "apple") {
             toast("Apple login coming soon");
+            return;
+        }
+
+        // ✅ If pricing intent exists, require claim before OAuth
+        if (hasCheckoutIntent && !sanitize(data.username || claimInput)) {
+            toast.error("Please claim your link before continuing.");
+            setForceClaimStep(true);
+            setTimeout(() => claimInputRef.current?.focus?.(), 0);
             return;
         }
 
@@ -236,9 +310,10 @@ export default function Register() {
             localStorage.setItem(OAUTH_SOURCE_KEY, "register");
             const pending = sanitize(data.username || claimInput);
             if (pending) localStorage.setItem(PENDING_CLAIM_KEY, pending);
-        } catch { }
+        } catch {
+            // ignore
+        }
 
-        // ✅ Use canonical base (prevents /api/auth/... mistakes)
         window.location.href = `${BASE_URL}/auth/${provider}`;
     };
 
@@ -305,6 +380,12 @@ export default function Register() {
                             <>
                                 <h1 className="kc-title">Claim Your Link</h1>
                                 <p className="kc-subtitle">This is your unique link. When someone clicks it, they see your digital business card.</p>
+
+                                {hasCheckoutIntent ? (
+                                    <p className="kc-microcopy" style={{ marginTop: 8 }}>
+                                        Before subscribing, you must claim your KonarCard link.
+                                    </p>
+                                ) : null}
 
                                 <form onSubmit={claimLinkContinue} className="kc-form kc-form-claim">
                                     <div className="kc-field">
