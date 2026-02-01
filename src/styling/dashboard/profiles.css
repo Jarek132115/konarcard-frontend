@@ -13,9 +13,10 @@
     --border: rgba(15, 23, 42, 0.08);
 }
 
+/* ✅ full-width content area */
 .profiles-shell {
-    padding: 22px 22px 28px;
-    background: var(--bg);
+    width: 100%;
+    padding: 18px 0 10px;
 }
 
 .profiles-header {
@@ -28,7 +29,7 @@
 
 .profiles-title {
     font-family: "Cal Sans", sans-serif;
-    font-size: 34px;
+    font-size: clamp(26px, 2.2vw, 38px);
     letter-spacing: -0.02em;
     margin: 0;
     color: var(--ink);
@@ -38,13 +39,15 @@
     margin: 8px 0 0;
     color: var(--muted);
     font-size: 15px;
-    max-width: 720px;
+    max-width: 820px;
+    line-height: 1.5;
 }
 
 .profiles-header-meta {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .profiles-pill {
@@ -73,7 +76,7 @@
     text-decoration: none;
     border: 1px solid transparent;
     cursor: pointer;
-    transition: transform 0.08s ease, background 0.2s, border 0.2s;
+    transition: transform 0.08s ease, background 0.2s, border 0.2s, opacity 0.2s;
 }
 
 .profiles-btn:active {
@@ -114,23 +117,12 @@
     flex-wrap: wrap;
 }
 
-/* Grid */
+/* ✅ Responsive grid: 2 columns on desktop, stacks on smaller screens */
 .profiles-grid {
     display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: 14px;
-}
-
-.profiles-span-12 {
-    grid-column: span 12;
-}
-
-.profiles-span-7 {
-    grid-column: span 7;
-}
-
-.profiles-span-5 {
-    grid-column: span 5;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
 }
 
 .profiles-card {
@@ -160,6 +152,7 @@
     color: var(--muted);
     margin: 8px 0 0;
     font-size: 14px;
+    line-height: 1.5;
 }
 
 /* List items */
@@ -181,7 +174,7 @@
     gap: 12px;
     cursor: pointer;
     text-align: left;
-    transition: background 0.2s, transform 0.08s ease;
+    transition: background 0.2s, transform 0.08s ease, box-shadow 0.2s;
 }
 
 .profiles-item:hover {
@@ -201,6 +194,11 @@
     display: flex;
     gap: 12px;
     align-items: center;
+    min-width: 0;
+}
+
+.profiles-item-meta {
+    min-width: 0;
 }
 
 .profiles-avatar {
@@ -213,12 +211,16 @@
     font-family: "Cal Sans", sans-serif;
     font-weight: 900;
     color: var(--ink);
+    flex: 0 0 auto;
 }
 
 .profiles-item-title {
     font-family: "Cal Sans", sans-serif;
     font-weight: 900;
     color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .profiles-trade {
@@ -251,6 +253,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    flex: 0 0 auto;
 }
 
 .profiles-status {
@@ -263,20 +266,14 @@
     background: var(--bg-soft);
     color: var(--ink);
     letter-spacing: 0.06em;
-}
-
-.profiles-status.complete {
-    border-color: rgb(var(--accent-rgb) / 0.25);
-}
-
-.profiles-status.incomplete {
-    border-color: rgba(15, 23, 42, 0.12);
-    opacity: 0.9;
+    white-space: nowrap;
 }
 
 .profiles-inline-actions {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .profiles-mini-btn {
@@ -288,6 +285,7 @@
     font-weight: 900;
     font-size: 12px;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .profiles-mini-btn:hover {
@@ -386,6 +384,7 @@
 
 /* Add profile upsell */
 .profiles-add {
+    margin-top: 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -409,28 +408,19 @@
     border: 1px solid rgb(var(--accent-rgb) / 0.22);
 }
 
-/* Empty state */
-.profiles-empty {
-    display: grid;
-    gap: 10px;
-}
-
-.profiles-empty-preview {
-    margin-top: 12px;
-    max-width: 360px;
-}
-
-/* Responsive */
+/* ✅ Mobile layout */
 @media (max-width: 1100px) {
-
-    .profiles-span-7,
-    .profiles-span-5 {
-        grid-column: span 12;
+    .profiles-grid {
+        grid-template-columns: 1fr;
     }
 
     .profiles-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .profiles-header-meta {
+        justify-content: flex-start;
     }
 
     .profiles-add {
@@ -440,5 +430,25 @@
 
     .profiles-add-right {
         align-items: flex-start;
+        width: 100%;
+    }
+}
+
+/* ✅ Small screens: stack profile row actions cleanly */
+@media (max-width: 640px) {
+    .profiles-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .profiles-item-right {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .profiles-inline-actions {
+        width: 100%;
+        justify-content: flex-start;
     }
 }

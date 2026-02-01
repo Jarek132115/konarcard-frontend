@@ -15,11 +15,13 @@
     background: var(--kc-bg);
 }
 
+/* ✅ Let content fill the screen */
 .dash-main {
     margin-left: calc(var(--sidebar-w) + 32px);
-    padding: 16px 16px 24px;
+    padding: 16px 24px 28px;
 }
 
+/* top bar (mobile) */
 .dash-topbar {
     display: none;
     align-items: center;
@@ -84,10 +86,13 @@
     gap: 10px;
 }
 
+/* ✅ IMPORTANT: remove max-width cap */
 .dash-content {
-    max-width: 1200px;
+    width: 100%;
+    max-width: none;
 }
 
+/* ✅ responsive */
 @media (max-width: 1000px) {
     .dash-main {
         margin-left: 0;
