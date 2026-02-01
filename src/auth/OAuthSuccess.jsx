@@ -5,8 +5,90 @@ import { AuthContext } from "../components/AuthContext";
 import api from "../services/api";
 
 const PENDING_CLAIM_KEY = "pendingClaimUsername";
-const OAUTH_SOURCE_KEY = "oauthSource";
+const OAUTH_SOURCE_KEY = "oauthSource"; // 'register' | 'login'
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
+
+function safeJsonParse(raw) {
+    try {
+        return JSON.parse(raw);
+    } catch {
+        return null;
+    }
+}
+
+function readUserFromCache() {
+    try {
+        return safeJsonParse(localStorage.getItem("authUser") || "null");
+    } catch {
+        return null;
+    }
+}
+
+function clearLocalAuth() {
+    try {
+        localStorage.removeItem("token");
+        localStorage.removeItem("authUser");
+    } catch {
+        // ignore
+    }
+}
+
+function readCheckoutIntent() {
+    try {
+        const raw = localStorage.getItem(CHECKOUT_INTENT_KEY);
+        if (!raw) return null;
+
+        const intent = safeJsonParse(raw);
+        if (!intent?.planKey) return null;
+
+        const age = Date.now() - Number(intent.createdAt || 0);
+        if (Number.isFinite(age) && age > 30 * 60 * 1000) {
+            localStorage.removeItem(CHECKOUT_INTENT_KEY);
+            return null;
+        }
+
+        return intent;
+    } catch {
+        return null;
+    }
+}
+
+function clearCheckoutIntent() {
+    try {
+        localStorage.removeItem(CHECKOUT_INTENT_KEY);
+    } catch {
+        // ignore
+    }
+}
+
+function getPendingClaim() {
+    try {
+        return (localStorage.getItem(PENDING_CLAIM_KEY) || "").trim().toLowerCase();
+    } catch {
+        return "";
+    }
+}
+
+function getOauthSource() {
+    try {
+        return localStorage.getItem(OAUTH_SOURCE_KEY) || "";
+    } catch {
+        return "";
+    }
+}
+
+function clearClaimKeys() {
+    try {
+        localStorage.removeItem(PENDING_CLAIM_KEY);
+        localStorage.removeItem(OAUTH_SOURCE_KEY);
+    } catch {
+        // ignore
+    }
+}
+
+function userHasClaim(user) {
+    return !!(user?.username || user?.slug || user?.profileUrl);
+}
 
 export default function OAuthSuccess() {
     const navigate = useNavigate();
@@ -14,66 +96,9 @@ export default function OAuthSuccess() {
     const { login, fetchUser } = useContext(AuthContext);
     const ranRef = useRef(false);
 
-    const readCheckoutIntent = () => {
-        try {
-            const raw = localStorage.getItem(CHECKOUT_INTENT_KEY);
-            if (!raw) return null;
-
-            const intent = JSON.parse(raw);
-            if (!intent?.planKey) return null;
-
-            // expire after 30 minutes
-            const age = Date.now() - Number(intent.createdAt || 0);
-            if (Number.isFinite(age) && age > 30 * 60 * 1000) {
-                localStorage.removeItem(CHECKOUT_INTENT_KEY);
-                return null;
-            }
-
-            return intent;
-        } catch {
-            return null;
-        }
-    };
-
-    const clearCheckoutIntent = () => {
-        try {
-            localStorage.removeItem(CHECKOUT_INTENT_KEY);
-        } catch {
-            // ignore
-        }
-    };
-
-    const readUserFromCache = () => {
-        try {
-            return JSON.parse(localStorage.getItem("authUser") || "null");
-        } catch {
-            return null;
-        }
-    };
-
-    const getPendingClaim = () => {
-        try {
-            return (localStorage.getItem(PENDING_CLAIM_KEY) || "").trim().toLowerCase();
-        } catch {
-            return "";
-        }
-    };
-
-    const clearClaimKeys = () => {
-        try {
-            localStorage.removeItem(PENDING_CLAIM_KEY);
-            localStorage.removeItem(OAUTH_SOURCE_KEY);
-        } catch {
-            // ignore
-        }
-    };
-
-    const hasClaim = (user) => !!(user?.username || user?.slug);
-
-    // ✅ Only start Stripe AFTER claim exists
-    const resumeCheckoutIfNeeded = async () => {
-        const intent = readCheckoutIntent();
-        if (!intent) return false;
+    // Start Stripe checkout (ONLY called when claim exists)
+    const resumeCheckout = async (intent) => {
+        if (!intent?.planKey) return false;
 
         const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
 
@@ -89,20 +114,24 @@ export default function OAuthSuccess() {
             clearCheckoutIntent();
             window.location.href = url;
             return true;
-        } catch {
+        } catch (e) {
             // keep intent so user can retry
             return false;
         }
     };
 
+    // Attempt auto-claim using pendingClaimUsername
     const autoClaimIfPossible = async () => {
         const pending = getPendingClaim();
         if (!pending) return false;
 
         try {
             const res = await api.post("/claim-link", { username: pending });
+
+            // backend patterns vary; treat any explicit error as failure
             if (res?.data?.error) return false;
 
+            // refresh user after claim
             await fetchUser();
             clearClaimKeys();
             return true;
@@ -123,56 +152,64 @@ export default function OAuthSuccess() {
             return;
         }
 
-        // Save token immediately (OAuth pattern)
+        // Save token immediately (AuthContext should write localStorage token)
         login(token, null);
 
         (async () => {
             try {
-                // Ensure authUser is hydrated
+                // Hydrate user from backend into AuthContext + localStorage
                 await fetchUser();
+
+                // IMPORTANT: read from localStorage AFTER fetchUser
                 let user = readUserFromCache();
+
+                // If backend couldn’t hydrate user (deleted user / invalid token)
+                if (!user) {
+                    clearLocalAuth();
+                    navigate("/login?oauth=invalid_user", { replace: true });
+                    return;
+                }
 
                 const intent = readCheckoutIntent();
                 const needsCheckout = !!intent;
 
-                // ✅ If checkout intent exists, we MUST ensure claim exists before Stripe
+                // ===============================
+                // A) If pricing intent exists
+                // MUST have claim BEFORE Stripe
+                // ===============================
                 if (needsCheckout) {
-                    if (!hasClaim(user)) {
+                    if (!userHasClaim(user)) {
+                        // First try auto-claim if we have a pending username
                         const claimed = await autoClaimIfPossible();
                         if (claimed) user = readUserFromCache();
 
-                        if (!hasClaim(user)) {
-                            // still no claim → send to claim page, keep checkout intent
+                        // Still no claim -> must go manual claim (keep intent)
+                        if (!userHasClaim(user)) {
                             navigate("/claim", { replace: true });
                             return;
                         }
                     }
 
-                    // has claim → go Stripe
-                    const resumed = await resumeCheckoutIfNeeded();
-                    if (resumed) return;
+                    // Claim exists -> Stripe
+                    const ok = await resumeCheckout(intent);
+                    if (ok) return;
 
-                    // if Stripe failed, go profile but keep intent so they can retry
+                    // Stripe failed -> go profile (intent remains so they can retry)
                     navigate("/myprofile", { replace: true });
                     return;
                 }
 
-                // ✅ No checkout intent -> normal flow
-                if (hasClaim(user)) {
+                // ==================================
+                // B) No pricing intent -> normal flow
+                // ==================================
+                if (userHasClaim(user)) {
                     clearClaimKeys();
                     navigate("/myprofile", { replace: true });
                     return;
                 }
 
-                
-                // no claim -> if they came from register and we have pending, try auto-claim
-                let source = "";
-                try {
-                    source = localStorage.getItem(OAUTH_SOURCE_KEY) || "";
-                } catch {
-                    source = "";
-                }
-
+                // If they came from register, we can auto-claim using pending claim
+                const source = getOauthSource();
                 if (source === "register") {
                     const claimed = await autoClaimIfPossible();
                     if (claimed) {
@@ -181,9 +218,10 @@ export default function OAuthSuccess() {
                     }
                 }
 
-                // otherwise manual claim
+                // Otherwise manual claim
                 navigate("/claim", { replace: true });
             } catch {
+                clearLocalAuth();
                 navigate("/login?oauth=failed", { replace: true });
             }
         })();
