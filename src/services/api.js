@@ -36,75 +36,60 @@ const api = axios.create({
 });
 
 /**
- * Helpers to work with both plain header objects and AxiosHeaders
- */
-const headerGet = (headers, key) => {
-  if (!headers) return undefined;
-  if (typeof headers.get === "function") return headers.get(key);
-  return headers[key] ?? headers[key.toLowerCase()] ?? headers[key.toUpperCase()];
-};
-
-const headerSet = (headers, key, value) => {
-  if (!headers) return;
-  if (typeof headers.set === "function") headers.set(key, value);
-  else headers[key] = value;
-};
-
-const headerDel = (headers, key) => {
-  if (!headers) return;
-  if (typeof headers.delete === "function") headers.delete(key);
-  else delete headers[key];
-};
-
-const getToken = () => {
-  try {
-    // ✅ check multiple keys (your project likely uses one of these)
-    const candidates = [
-      localStorage.getItem("token"),
-      localStorage.getItem("authToken"),
-      localStorage.getItem("konar_token"),
-      localStorage.getItem("jwt"),
-    ].filter(Boolean);
-
-    const raw = candidates[0] || "";
-
-    // support storing "Bearer xxx" or just "xxx"
-    if (!raw) return "";
-    return raw.startsWith("Bearer ") ? raw.slice(7) : raw;
-  } catch {
-    return "";
-  }
-};
-
-/**
  * Request interceptor:
  * - attaches Authorization header unless x-no-auth is set
- * - adds cache-buster to sensitive GET reads
+ * - adds cache-buster to sensitive reads
+ *
+ * IMPORTANT:
+ * Axios v1 uses AxiosHeaders internally. Mutating config.headers like a plain object
+ * can silently fail (especially on multipart/form-data POSTs).
+ * We normalize headers using axios.AxiosHeaders.from(...).
  */
 api.interceptors.request.use((config) => {
-  config.headers = config.headers || {};
+  const H = axios.AxiosHeaders
+    ? axios.AxiosHeaders.from(config.headers || {})
+    : (config.headers || {});
 
-  // ✅ Respect no-auth flag
-  const noAuthVal =
-    headerGet(config.headers, "x-no-auth") ??
-    headerGet(config.headers, "X-No-Auth");
+  const xNoAuth =
+    (typeof H.get === "function" && (H.get("x-no-auth") || H.get("X-No-Auth"))) ||
+    H["x-no-auth"] ||
+    H["X-No-Auth"];
 
   const noAuth =
-    noAuthVal === "1" || noAuthVal === 1 || (typeof noAuthVal === "string" && noAuthVal.trim() === "1");
+    xNoAuth === "1" ||
+    xNoAuth === 1 ||
+    String(xNoAuth || "").toLowerCase() === "true";
 
-  if (noAuth) {
-    headerDel(config.headers, "Authorization");
+  if (!noAuth) {
+    let token = "";
+    try {
+      token = localStorage.getItem("token") || "";
+    } catch {
+      token = "";
+    }
+
+    if (token) {
+      if (typeof H.set === "function") H.set("Authorization", `Bearer ${token}`);
+      else H.Authorization = `Bearer ${token}`;
+    } else {
+      if (typeof H.delete === "function") H.delete("Authorization");
+      else delete H.Authorization;
+    }
   } else {
-    const token = getToken();
-    if (token) headerSet(config.headers, "Authorization", `Bearer ${token}`);
-    else headerDel(config.headers, "Authorization");
+    if (typeof H.delete === "function") H.delete("Authorization");
+    else delete H.Authorization;
   }
 
-  // ✅ Only cache-bust GET requests (never POST/PATCH)
-  const method = (config.method || "get").toLowerCase();
-  if (method === "get" && typeof config.url === "string") {
+  config.headers = H;
+
+  // cache-buster only on sensitive reads
+  if (typeof config.url === "string") {
     const u = config.url;
-    if (u.includes("/profile") || u.includes("/me/orders") || u.includes("/subscription-status")) {
+    if (
+      u.includes("/profile") ||
+      u.includes("/me/orders") ||
+      u.includes("/subscription-status")
+    ) {
       const sep = u.includes("?") ? "&" : "?";
       config.url = `${u}${sep}ts=${Date.now()}`;
     }

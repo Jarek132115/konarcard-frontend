@@ -44,20 +44,10 @@ export const saveMyBusinessCard = async (formData) => {
         throw new Error("saveMyBusinessCard expects FormData");
     }
 
-    // ✅ Ensure auth header is present even if interceptor is broken
-    const token =
-        localStorage.getItem("token") ||
-        localStorage.getItem("authToken") ||
-        localStorage.getItem("konar_token") ||
-        "";
-
-    const headers = {};
-    if (token) headers.Authorization = `Bearer ${token}`;
-
-    // ✅ IMPORTANT:
-    // Do NOT manually set Content-Type for multipart with axios.
-    // axios will set boundary correctly.
-    const res = await api.post("/api/business-card", formData, { headers });
+    // IMPORTANT:
+    // Do NOT manually set Content-Type for FormData.
+    // Axios will set the correct multipart boundary.
+    const res = await api.post("/api/business-card", formData);
 
     return res?.data?.data ?? null;
 };
@@ -94,9 +84,7 @@ export const setDefaultProfile = async (slug) => {
     const s = (slug || "").toString().trim();
     if (!s) throw new Error("slug is required");
 
-    // ✅ Your backend route is POST (per your handover), not PATCH.
-    // If your backend actually supports PATCH too, keeping POST won't break.
-    const res = await api.post(`/api/business-card/profiles/${encodeURIComponent(s)}/default`);
+    const res = await api.patch(`/api/business-card/profiles/${encodeURIComponent(s)}/default`);
     return res?.data?.data ?? null;
 };
 
