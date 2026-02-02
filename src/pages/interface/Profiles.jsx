@@ -25,21 +25,20 @@ const TEMPLATE_OPTIONS = [
 /**
  * ✅ CHANGE THIS IF YOUR CHECKOUT ROUTE NAME IS DIFFERENT
  * This should create a Stripe checkout session for TEAMS.
- *
- * Expected behavior:
- * - backend returns { url } OR { checkoutUrl } OR { sessionUrl }
- * - frontend navigates to that URL
  */
 const TEAMS_CHECKOUT_ENDPOINT = "/api/checkout/teams";
 
 const centerTrim = (v) => (v ?? "").toString().trim();
 const safeLower = (v) => centerTrim(v).toLowerCase();
 
+/**
+ * ✅ Backend rule: ^[a-z0-9-]+$ (hyphen only)
+ */
 const normalizeSlug = (raw) => {
-    // match backend safeSlug-ish behavior:
-    // allow a-z0-9._-
-    const s = safeLower(raw).replace(/[^a-z0-9._-]/g, "");
-    return s;
+    return safeLower(raw)
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
 };
 
 export default function Profiles() {
@@ -113,8 +112,7 @@ export default function Profiles() {
             setSelectedSlug(null);
             return;
         }
-        const defaultOne =
-            sortedProfiles.find((p) => p.isDefault) || sortedProfiles[0];
+        const defaultOne = sortedProfiles.find((p) => p.isDefault) || sortedProfiles[0];
         setSelectedSlug((prev) => prev || defaultOne.slug);
     }, [sortedProfiles]);
 
@@ -124,20 +122,16 @@ export default function Profiles() {
     }, [sortedProfiles, selectedSlug]);
 
     /**
-     * ✅ RULES (now aligned with backend you pasted):
-     * - Free: 1 profile
-     * - Plus: 1 profile
+     * ✅ RULES:
+     * - Free/Plus: 1 profile
      * - Teams: multiple profiles (quantity controlled by Stripe)
-     *
-     * So: if NOT teams, “Add profile” should always go through claim->subscribe.
      */
     const canCreateMoreProfilesWithoutCheckout = isTeams;
 
     // Templates:
-    // - Free: locked (template-1 only)
     const templatesLocked = plan === "free";
 
-    // Modal
+    // Upgrade modal (kept)
     const [upgradeOpen, setUpgradeOpen] = useState(false);
     const [upgradeMode, setUpgradeMode] = useState("templates"); // templates | profiles
     const openUpgrade = (mode) => {
@@ -241,7 +235,7 @@ export default function Profiles() {
     };
 
     /* =========================================================
-       ✅ INLINE "CLAIM YOUR LINK" FLOW (NO REDIRECT)
+         ✅ INLINE "CLAIM YOUR LINK" FLOW (NO REDIRECT)
     ========================================================= */
 
     const [claimOpen, setClaimOpen] = useState(false);
@@ -271,24 +265,22 @@ export default function Profiles() {
     };
 
     const handleCreateButtonClick = () => {
-        // Always open inline claim panel
         openClaimPanel();
     };
 
     const validateClaimSlug = (raw) => {
         const s = normalizeSlug(raw);
         if (!s || s.length < 3) {
-            return { ok: false, slug: s, msg: "Slug must be at least 3 characters." };
+            return { ok: false, slug: s, msg: "Slug must be at least 3 characters (a-z, 0-9, hyphen)." };
         }
         return { ok: true, slug: s, msg: "" };
     };
 
     /**
      * Check availability:
-     * - We use the public slug endpoint:
-     *   GET /api/business-card/public/:slug
-     * - If 404 => available
-     * - If 200 => taken
+     * GET /api/business-card/public/:slug
+     * - 404 => available
+     * - 200 => taken
      */
     const checkSlugAvailability = async () => {
         const v = validateClaimSlug(claimSlugInput);
@@ -307,7 +299,6 @@ export default function Profiles() {
             const headers = { "x-no-auth": "1" };
             await api.get(`/api/business-card/public/${encodeURIComponent(v.slug)}`, { headers });
 
-            // if we got here, it exists => taken
             setClaimStatus("taken");
             setClaimMessage("Sorry — that link is already taken. Try a different one.");
         } catch (err) {
@@ -352,7 +343,6 @@ export default function Profiles() {
 
             const createdSlug = created?.profile_slug || slug;
 
-            // Go edit this new profile
             setTimeout(() => {
                 handleEdit(createdSlug);
             }, 400);
@@ -360,7 +350,6 @@ export default function Profiles() {
             const code = e?.response?.data?.code;
             const msg = e?.response?.data?.error || e?.message || "Could not create profile.";
 
-            // If backend blocked due to plan, push them to subscribe
             if (code === "UPGRADE_REQUIRED") {
                 setClaimStatus("available");
                 setClaimMessage("Your plan needs Teams to add profiles. Click Subscribe now.");
@@ -372,15 +361,26 @@ export default function Profiles() {
         }
     };
 
+    /**
+     * ✅ FIXED:
+     * Send claimedSlug to backend (required for webhook-created profile).
+     */
     const startTeamsCheckout = async () => {
         if (claimStatus !== "available") return;
+
+        const v = validateClaimSlug(claimSlugInput);
+        if (!v.ok) {
+            setClaimStatus("invalid");
+            setClaimMessage(v.msg);
+            return;
+        }
 
         setClaimStatus("subscribing");
         setClaimMessage("");
 
         try {
-            // We ask for desiredQuantity = current profiles + 1
             const res = await api.post(TEAMS_CHECKOUT_ENDPOINT, {
+                claimedSlug: v.slug, // ✅ REQUIRED
                 desiredQuantity: desiredNewCount,
             });
 
@@ -389,13 +389,10 @@ export default function Profiles() {
 
             if (!url) {
                 setClaimStatus("error");
-                setClaimMessage(
-                    "Checkout was created but no redirect URL was returned. Check your backend checkout response."
-                );
+                setClaimMessage("Checkout was created but no redirect URL was returned.");
                 return;
             }
 
-            // Redirect to Stripe checkout
             window.location.href = url;
         } catch (e) {
             setClaimStatus("error");
@@ -405,7 +402,6 @@ export default function Profiles() {
 
     /**
      * Stripe return handler:
-     * If the user comes back to /profiles with session_id/subscribed/payment_success,
      * refresh user + profiles and clean query params.
      */
     useEffect(() => {
@@ -437,10 +433,7 @@ export default function Profiles() {
 
     if (isLoading) {
         return (
-            <DashboardLayout
-                title="Profiles"
-                subtitle="Create, view, and manage your digital business card profiles."
-            >
+            <DashboardLayout title="Profiles" subtitle="Create, view, and manage your digital business card profiles.">
                 <div style={{ minHeight: "40vh" }} />
             </DashboardLayout>
         );
@@ -452,11 +445,7 @@ export default function Profiles() {
                 title="Profiles"
                 subtitle="Create, view, and manage your digital business card profiles."
                 rightSlot={
-                    <button
-                        type="button"
-                        className="profiles-btn profiles-btn-primary"
-                        onClick={() => refetch()}
-                    >
+                    <button type="button" className="profiles-btn profiles-btn-primary" onClick={() => refetch()}>
                         Retry
                     </button>
                 }
@@ -464,9 +453,7 @@ export default function Profiles() {
                 <div className="profiles-shell">
                     <section className="profiles-card profiles-empty">
                         <h2 className="profiles-card-title">We couldn’t load your profiles</h2>
-                        <p className="profiles-muted">
-                            Please try again. If this keeps happening, contact support.
-                        </p>
+                        <p className="profiles-muted">Please try again. If this keeps happening, contact support.</p>
                     </section>
                 </div>
             </DashboardLayout>
@@ -478,11 +465,7 @@ export default function Profiles() {
             title="Profiles"
             subtitle="Create, view, and manage your digital business card profiles."
             rightSlot={
-                <button
-                    type="button"
-                    className="profiles-btn profiles-btn-primary"
-                    onClick={handleCreateButtonClick}
-                >
+                <button type="button" className="profiles-btn profiles-btn-primary" onClick={handleCreateButtonClick}>
                     + Add Profile
                 </button>
             }
@@ -492,8 +475,7 @@ export default function Profiles() {
                     <div>
                         <h1 className="profiles-title">Profiles</h1>
                         <p className="profiles-subtitle">
-                            Profiles are your public digital business cards. Each profile has its own link you can
-                            share after every job.
+                            Profiles are your public digital business cards. Each profile has its own link you can share after every job.
                         </p>
                     </div>
 
@@ -502,8 +484,7 @@ export default function Profiles() {
                             Plan: <strong>{plan.toUpperCase()}</strong>
                         </span>
                         <span className="profiles-pill">
-                            Profiles: <strong>{sortedProfiles.length}</strong> /{" "}
-                            <strong>{isTeams ? "∞" : 1}</strong>
+                            Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{isTeams ? "∞" : 1}</strong>
                         </span>
                     </div>
                 </div>
@@ -516,7 +497,9 @@ export default function Profiles() {
                                 <h2 className="profiles-card-title">Claim your link</h2>
                                 <p className="profiles-muted" style={{ marginBottom: 0 }}>
                                     Choose the link your customers will visit. Example:{" "}
-                                    <strong>{window.location.origin}/u/{username}/your-link</strong>
+                                    <strong>
+                                        {window.location.origin}/u/{username}/your-link
+                                    </strong>
                                 </p>
                             </div>
 
@@ -543,7 +526,9 @@ export default function Profiles() {
                                     type="button"
                                     className="profiles-btn profiles-btn-primary"
                                     onClick={checkSlugAvailability}
-                                    disabled={claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"}
+                                    disabled={
+                                        claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"
+                                    }
                                 >
                                     {claimStatus === "checking" ? "Checking..." : "Check availability"}
                                 </button>
@@ -551,7 +536,9 @@ export default function Profiles() {
                                 {claimStatus === "available" && (
                                     <div style={{ opacity: 0.85 }}>
                                         Available link:{" "}
-                                        <strong>{window.location.origin}/u/{username}/{claimSlugNormalized || normalizeSlug(claimSlugInput)}</strong>
+                                        <strong>
+                                            {window.location.origin}/u/{username}/{claimSlugNormalized || normalizeSlug(claimSlugInput)}
+                                        </strong>
                                     </div>
                                 )}
                             </div>
@@ -596,7 +583,6 @@ export default function Profiles() {
                                                 type="button"
                                                 className="profiles-btn profiles-btn-ghost"
                                                 onClick={() => {
-                                                    // keep the panel open, but explain requirement
                                                     setClaimMessage(
                                                         "To add more profiles you need Teams. After checkout completes, come back here and click Create profile."
                                                     );
@@ -612,8 +598,8 @@ export default function Profiles() {
                             {/* Small hint when user is Plus/Free */}
                             {!isTeams && (
                                 <div className="profiles-muted" style={{ fontSize: 13 }}>
-                                    Your current plan allows <strong>1 profile</strong>. Teams lets you add more profiles and links.
-                                    When you subscribe, we’ll automatically update your account.
+                                    Your current plan allows <strong>1 profile</strong>. Teams lets you add more profiles and links. When you
+                                    subscribe, we’ll automatically update your account.
                                 </div>
                             )}
                         </div>
@@ -750,11 +736,7 @@ export default function Profiles() {
                                         )}
                                     </div>
 
-                                    <button
-                                        type="button"
-                                        className="profiles-btn profiles-btn-primary"
-                                        onClick={handleCreateButtonClick}
-                                    >
+                                    <button type="button" className="profiles-btn profiles-btn-primary" onClick={handleCreateButtonClick}>
                                         + Add profile
                                     </button>
                                 </div>
@@ -818,9 +800,7 @@ export default function Profiles() {
                             <div className="profiles-templates-card">
                                 <div className="profiles-templates-head">
                                     <h3 className="profiles-actions-title">Templates</h3>
-                                    <div className="profiles-templates-note">
-                                        {templatesLocked ? "Upgrade to use templates" : "Pick a template"}
-                                    </div>
+                                    <div className="profiles-templates-note">{templatesLocked ? "Upgrade to use templates" : "Pick a template"}</div>
                                 </div>
 
                                 <div className={`profiles-templates-grid ${templatesLocked ? "locked" : ""}`}>
@@ -858,25 +838,17 @@ export default function Profiles() {
                             {upgradeMode === "templates" ? (
                                 <>
                                     <h2 className="profiles-modal-title">Templates are a paid feature</h2>
-                                    <p className="profiles-modal-sub">
-                                        Upgrade your plan to unlock all 5 templates and make your profile stand out.
-                                    </p>
+                                    <p className="profiles-modal-sub">Upgrade your plan to unlock all 5 templates and make your profile stand out.</p>
                                 </>
                             ) : (
                                 <>
                                     <h2 className="profiles-modal-title">Add more profiles</h2>
-                                    <p className="profiles-modal-sub">
-                                        Subscribe to Teams to create multiple profiles and claim multiple links.
-                                    </p>
+                                    <p className="profiles-modal-sub">Subscribe to Teams to create multiple profiles and claim multiple links.</p>
                                 </>
                             )}
 
                             <div className="profiles-modal-actions">
-                                <button
-                                    type="button"
-                                    className="profiles-btn profiles-btn-primary"
-                                    onClick={() => openClaimPanel()}
-                                >
+                                <button type="button" className="profiles-btn profiles-btn-primary" onClick={() => openClaimPanel()}>
                                     Claim a link
                                 </button>
                                 <button type="button" className="profiles-btn profiles-btn-ghost" onClick={closeUpgrade}>

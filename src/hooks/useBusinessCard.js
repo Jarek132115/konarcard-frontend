@@ -28,10 +28,8 @@ export const qk = {
  * LEGACY / DEFAULT PROFILE
  * =========================================================
  *
- * IMPORTANT:
- * This query contains plan + entitlement info used by the UI.
- * After Stripe redirect, cached data may still be "fresh" and won't refetch.
- * We force refetch on mount/focus so plan updates immediately.
+ * Contains plan + entitlement info used by UI.
+ * Must refresh immediately after Stripe redirect.
  */
 export const useMyBusinessCard = () => {
     return useQuery({
@@ -39,11 +37,16 @@ export const useMyBusinessCard = () => {
         queryFn: getMyBusinessCard,
         retry: false,
 
-        // CRITICAL: Always refetch when the page remounts (e.g., after Stripe redirect)
+        // Always consider stale (so remount/focus triggers network)
         staleTime: 0,
+
+        // Force refetch when page remounts (Stripe return -> /profiles)
         refetchOnMount: "always",
         refetchOnWindowFocus: true,
         refetchOnReconnect: true,
+
+        // Reduce cache retention so it can't show old plan for long
+        gcTime: 5_000,
     });
 };
 
@@ -52,9 +55,7 @@ export const useMyBusinessCard = () => {
  * MULTI-PROFILE (NEW, CANONICAL)
  * =========================================================
  *
- * IMPORTANT:
- * This is what must update immediately after checkout (new BusinessCard created by webhook).
- * We force refetch on mount/focus so profiles list reflects backend truth instantly.
+ * Must refresh immediately after webhook-created profile exists.
  */
 export const useMyProfiles = () => {
     return useQuery({
@@ -62,11 +63,13 @@ export const useMyProfiles = () => {
         queryFn: getMyProfiles,
         retry: false,
 
-        // CRITICAL: Avoid "fresh cache" hiding newly-created profiles
         staleTime: 0,
         refetchOnMount: "always",
         refetchOnWindowFocus: true,
         refetchOnReconnect: true,
+
+        // Reduce cache retention so the list can't be "stuck" after checkout
+        gcTime: 5_000,
     });
 };
 
@@ -79,7 +82,7 @@ export const useMyProfileBySlug = (slug) => {
         enabled: true,
         retry: false,
 
-        // OK to keep this slightly cached; it's not the main culprit
+        // It's fine to cache a single profile briefly
         staleTime: 30_000,
     });
 };
@@ -96,15 +99,15 @@ export const useSaveMyBusinessCard = () => {
         mutationFn: saveMyBusinessCard,
 
         onSuccess: (_data, formData) => {
-            // Always refresh core caches
-            qc.invalidateQueries({ queryKey: qk.myDefault });
-            qc.invalidateQueries({ queryKey: qk.profiles });
+            // Refresh core caches
+            qc.invalidateQueries({ queryKey: qk.myDefault, exact: true });
+            qc.invalidateQueries({ queryKey: qk.profiles, exact: true });
 
-            // If this save was for a specific profile, refresh it
+            // If save is for a specific profile, refresh it too
             try {
                 if (formData instanceof FormData) {
                     const slug = (formData.get("profile_slug") || "main").toString();
-                    qc.invalidateQueries({ queryKey: qk.profileBySlug(slug) });
+                    qc.invalidateQueries({ queryKey: qk.profileBySlug(slug), exact: true });
                 }
             } catch {
                 // ignore
@@ -126,8 +129,8 @@ export const useCreateProfile = () => {
             createMyProfile({ profile_slug, template_id, business_card_name }),
 
         onSuccess: () => {
-            qc.invalidateQueries({ queryKey: qk.profiles });
-            qc.invalidateQueries({ queryKey: qk.myDefault });
+            qc.invalidateQueries({ queryKey: qk.profiles, exact: true });
+            qc.invalidateQueries({ queryKey: qk.myDefault, exact: true });
         },
     });
 };
@@ -139,8 +142,8 @@ export const useSetDefaultProfile = () => {
         mutationFn: (slug) => setDefaultProfile((slug || "main").toString()),
 
         onSuccess: () => {
-            qc.invalidateQueries({ queryKey: qk.profiles });
-            qc.invalidateQueries({ queryKey: qk.myDefault });
+            qc.invalidateQueries({ queryKey: qk.profiles, exact: true });
+            qc.invalidateQueries({ queryKey: qk.myDefault, exact: true });
         },
     });
 };
@@ -152,8 +155,8 @@ export const useDeleteProfile = () => {
         mutationFn: (slug) => deleteMyProfile((slug || "main").toString()),
 
         onSuccess: () => {
-            qc.invalidateQueries({ queryKey: qk.profiles });
-            qc.invalidateQueries({ queryKey: qk.myDefault });
+            qc.invalidateQueries({ queryKey: qk.profiles, exact: true });
+            qc.invalidateQueries({ queryKey: qk.myDefault, exact: true });
         },
     });
 };
