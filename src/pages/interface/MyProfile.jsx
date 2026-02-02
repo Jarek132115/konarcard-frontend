@@ -181,7 +181,17 @@ export default function MyProfile() {
     useContext(AuthContext);
 
   const userEmail = authUser?.email;
-  const isSubscribed = !!authUser?.isSubscribed;
+
+  // ✅ NEW PLANS:
+  // free: can edit/save (with limits enforced server-side)
+  // plus: full templates/unlimited sections, still 1 profile
+  // teams: multiple profiles
+  const plan = String(authUser?.plan || "free").toLowerCase();
+  const isTeams = plan === "teams";
+  const isPlus = plan === "plus";
+  const isFree = !isPlus && !isTeams;
+
+  // Keep this if you still require verified email for sharing
   const isUserVerified = !!authUser?.isVerified;
   const userUsername = authUser?.username;
 
@@ -242,22 +252,8 @@ export default function MyProfile() {
   const [showReviewsSection, setShowReviewsSection] = useState(true);
   const [showContactSection, setShowContactSection] = useState(true);
 
-  // ---- Trial helpers (derived strictly from authUser)
-  const trialEndDate = useMemo(() => {
-    if (!authUser?.trialExpires) return null;
-    const d = new Date(authUser.trialExpires);
-    return Number.isNaN(d.getTime()) ? null : d;
-  }, [authUser?.trialExpires]);
-
-  const trialDaysLeft = useMemo(() => {
-    if (!trialEndDate) return null;
-    const ms = trialEndDate.getTime() - Date.now();
-    const days = Math.ceil(ms / (1000 * 60 * 60 * 24));
-    return Math.max(0, days);
-  }, [trialEndDate]);
-
-  const isTrialActive = !!(!isSubscribed && trialEndDate && trialEndDate.getTime() > Date.now());
-  const hasTrialEnded = !!(!isSubscribed && trialEndDate && trialEndDate.getTime() <= Date.now());
+  // ✅ TRIAL REMOVED COMPLETELY
+  const hasTrialEnded = false;
 
   const hasSavedData = !!businessCard;
   const hasExchangeContact =
@@ -295,12 +291,11 @@ export default function MyProfile() {
       } catch { }
 
       const toastId = "kc-subscription-toast";
-      if (subscribed === "1") toast.success("You’re now subscribed ✅", { id: toastId });
-      else toast.success("Subscription updated successfully!", { id: toastId });
+      if (subscribed === "1") toast.success("Plan updated ✅", { id: toastId });
+      else toast.success("Plan updated successfully!", { id: toastId });
 
       try {
         const clean = new URL(window.location.href);
-        // keep slug param if present (don’t destroy editor context)
         const slug = clean.searchParams.get("slug");
         clean.search = "";
         if (slug) clean.searchParams.set("slug", slug);
@@ -358,7 +353,6 @@ export default function MyProfile() {
 
     if (businessCard) {
       updateState({
-        // ✅ template hydrate (so it persists in UI + saves)
         templateId: businessCard.template_id || "template-1",
 
         businessName: businessCard.business_card_name || "",
@@ -419,7 +413,6 @@ export default function MyProfile() {
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     } else {
-      // If profile doesn't exist yet, just reset editor for a fresh start
       resetState();
       setServicesDisplayMode("list");
       setReviewsDisplayMode("list");
@@ -546,8 +539,6 @@ export default function MyProfile() {
     }
   };
 
-  const startTrial = async () => api.post("/start-trial");
-
   const arraysEqual = (a = [], b = []) => {
     if (a.length !== b.length) return false;
     for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
@@ -646,7 +637,6 @@ export default function MyProfile() {
     const origSectionOrder =
       Array.isArray(original.section_order) && original.section_order.length ? original.section_order : DEFAULT_SECTION_ORDER;
 
-    // ✅ template compare
     const origTemplate = original.template_id || "template-1";
     const currentTemplate = state.templateId || "template-1";
 
@@ -688,25 +678,10 @@ export default function MyProfile() {
     );
   };
 
-  const ensureTrialIfNeeded = async () => {
-    if (isSubscribed || isTrialActive) return;
-
-    try {
-      const res = await startTrial();
-      if (res?.data?.trialExpires) toast.success("Your 14-day trial started!");
-      else toast.success("Trial activated!");
-      await refetchAuthUser?.();
-    } catch (err) {
-      const msg = err?.response?.data?.error || "";
-      if (!/already started/i.test(msg)) console.error("Failed to auto-start trial:", msg);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
-    if (!isSubscribed && !isTrialActive) await ensureTrialIfNeeded();
 
     const existingWorkUrls = (state.workImages || [])
       .map((item) => (item?.preview && !item.preview.startsWith("blob:") ? item.preview : null))
@@ -719,7 +694,6 @@ export default function MyProfile() {
     const formData = buildBusinessCardFormData({
       profile_slug: activeSlug,
 
-      // ✅ template persist
       template_id: state.templateId || "template-1",
 
       business_card_name: state.businessName,
@@ -775,9 +749,8 @@ export default function MyProfile() {
     try {
       await saveBusinessCard.mutateAsync(formData);
 
-      toast.success("Your page is Published!");
+      toast.success("Saved ✅");
 
-      // ✅ refresh caches
       queryClient.invalidateQueries({ queryKey: ["businessCard", "me"] });
       queryClient.invalidateQueries({ queryKey: ["myProfiles"] });
       queryClient.invalidateQueries({ queryKey: ["businessCard", "profile", activeSlug] });
@@ -791,11 +764,7 @@ export default function MyProfile() {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
       activeBlobUrlsRef.current = [];
     } catch (err) {
-      toast.error(
-        err?.response?.data?.error ||
-        err?.response?.data?.message ||
-        "Something went wrong while saving."
-      );
+      toast.error(err?.response?.data?.error || err?.response?.data?.message || "Something went wrong while saving.");
     }
   };
 
@@ -839,12 +808,7 @@ export default function MyProfile() {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <main className="main-content-container">
-        <PageHeader
-          isMobile={isMobile}
-          isSmallMobile={isSmallMobile}
-          onShareCard={handleShareCard}
-          visitUrl={visitUrl}
-        />
+        <PageHeader isMobile={isMobile} isSmallMobile={isSmallMobile} onShareCard={handleShareCard} visitUrl={visitUrl} />
 
         <div className="myprofile-main-content">
           {!authLoading && !authUser && (
@@ -886,8 +850,8 @@ export default function MyProfile() {
                 <div className="content-card-box verification-prompt">
                   <p>⚠️ Your email is not verified!</p>
                   <p>
-                    Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving
-                    changes to your business card.
+                    Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to
+                    your business card.
                   </p>
 
                   <form onSubmit={handleVerifyCode} className="verification-form">
@@ -920,37 +884,18 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {/* SUBSCRIPTION / TRIAL BANNERS */}
-              {!isSubscribed && isTrialActive && (
-                <div className="trial-banner">
-                  <p className="desktop-body-s">
-                    Your free trial ends on <strong>{trialEndDate?.toLocaleDateString()}</strong>
-                    {typeof trialDaysLeft === "number" ? (
-                      <>
-                        {" "}
-                        —{" "}
-                        <strong>
-                          {trialDaysLeft} day{trialDaysLeft === 1 ? "" : "s"}
-                        </strong>{" "}
-                        left
-                      </>
-                    ) : null}
-                    .
-                  </p>
-
+              {/* ✅ NO TRIAL BANNERS ANYMORE */}
+              {/* Optional: show simple plan badge */}
+              <div className="trial-banner" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <p className="desktop-body-s" style={{ margin: 0 }}>
+                  Plan: <strong>{isTeams ? "Teams" : isPlus ? "Plus" : "Free"}</strong>
+                </p>
+                {!isPlus && !isTeams ? (
                   <button className="blue-trial desktop-body-s" onClick={handleStartSubscription}>
-                    Subscribe Now
+                    Upgrade
                   </button>
-                </div>
-              )}
-
-              {!isSubscribed && hasTrialEnded && (
-                <div className="trial-ended-banner">
-                  <p>
-                    Your free trial has ended. <Link to="/pricing">Subscribe now</Link> to prevent your profile from being deleted.
-                  </p>
-                </div>
-              )}
+                ) : null}
+              </div>
 
               <div className="myprofile-flex-container">
                 {/* Preview column */}
@@ -978,8 +923,8 @@ export default function MyProfile() {
                 <Editor
                   state={state}
                   updateState={updateState}
-                  isSubscribed={isSubscribed}
-                  hasTrialEnded={hasTrialEnded}
+                  isSubscribed={!isFree} // treat Plus/Teams as "subscribed features"
+                  hasTrialEnded={hasTrialEnded} // always false now
                   onStartSubscription={handleStartSubscription}
                   onResetPage={handleResetPage}
                   onSubmit={handleSubmit}
@@ -1025,7 +970,7 @@ export default function MyProfile() {
           job_title: businessCard?.job_title || "",
           business_card_name: businessCard?.business_card_name || "",
           bio: businessCard?.bio || "",
-          isSubscribed: !!authUser?.isSubscribed,
+          isSubscribed: !isFree, // align with new plan rules
           contact_email: businessCard?.contact_email || "",
           phone_number: businessCard?.phone_number || "",
           username: userUsername || "",

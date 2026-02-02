@@ -2,17 +2,17 @@
 import React, { useRef, useState, useEffect } from "react";
 import { previewPlaceholders } from "../store/businessCardStore";
 
-// Social icons
+/* Social icons */
 import FacebookIcon from "../assets/icons/icons8-facebook.svg";
 import InstagramIcon from "../assets/icons/icons8-instagram.svg";
 import LinkedInIcon from "../assets/icons/icons8-linkedin.svg";
 import XIcon from "../assets/icons/icons8-x.svg";
 import TikTokIcon from "../assets/icons/icons8-tiktok.svg";
 
-// Color wheel lib
+/* Color wheel lib */
 import iro from "@jaames/iro";
 
-// Pick black/white text for a given hex background
+/* Pick black/white text for a given hex background */
 const getContrastColor = (hex = "#000000") => {
     const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec((hex || "").trim());
     if (!m) return "#111";
@@ -26,8 +26,11 @@ const getContrastColor = (hex = "#000000") => {
 export default function Editor({
     state,
     updateState,
-    isSubscribed,
-    hasTrialEnded,
+
+    // ✅ plan / UI gating (new model)
+    isSubscribed, // true for plus/teams, false for free
+    hasTrialEnded, // legacy prop (ignored now)
+
     onStartSubscription,
     onResetPage,
     onSubmit,
@@ -75,10 +78,11 @@ export default function Editor({
     const TEMPLATE_IDS = ["template-1", "template-2", "template-3", "template-4", "template-5"];
     const currentTemplate = (state.templateId || "template-1").toString();
 
+    // ✅ NEW RULE:
+    // - Free CAN edit and save. Only limitation is templates: free => template-1 only.
+    // - Plus/Teams => all templates.
     const isTemplateLocked = (templateId) => {
-        // backend rule: free users only template-1
-        // we treat "not subscribed" as free/trial -> keep locked to template-1 (safe)
-        if (!isSubscribed && templateId !== "template-1") return true;
+        if (!isSubscribed && templateId !== "template-1") return true; // free lock
         return false;
     };
 
@@ -87,10 +91,8 @@ export default function Editor({
             onStartSubscription?.();
             return;
         }
-        updateState({ templateId: id }); // ✅ keep one key in your store
+        updateState({ templateId: id });
     };
-
-
 
     // Init / update iro.js color wheel when popover opens
     useEffect(() => {
@@ -136,11 +138,9 @@ export default function Editor({
         updateState({ services: next });
     };
 
-    const handleAddService = () =>
-        updateState({ services: [...(state.services || []), { name: "", price: "" }] });
+    const handleAddService = () => updateState({ services: [...(state.services || []), { name: "", price: "" }] });
 
-    const handleRemoveService = (i) =>
-        updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
+    const handleRemoveService = (i) => updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
 
     const handleReviewChange = (i, field, value) => {
         const next = [...(state.reviews || [])];
@@ -153,11 +153,9 @@ export default function Editor({
         updateState({ reviews: next });
     };
 
-    const handleAddReview = () =>
-        updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
+    const handleAddReview = () => updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
 
-    const handleRemoveReview = (i) =>
-        updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
+    const handleRemoveReview = (i) => updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
     // ===== Section Order (Main locked at top) =====
     const readableSectionName = (key) =>
@@ -206,28 +204,10 @@ export default function Editor({
 
     return (
         <div className="myprofile-editor-wrapper editor-scope" id="myprofile-editor" style={columnScrollStyle}>
-            {!isSubscribed && hasTrialEnded && (
-                <div className="subscription-overlay">
-                    <div className="subscription-message">
-                        <p className="desktop-h4">Subscription Required</p>
-                        <p className="desktop-h6">
-                            Your free trial has ended. Please subscribe to continue editing your profile.
-                        </p>
-                        <button className="btn btn-accent" onClick={onStartSubscription}>
-                            Go to Subscription
-                        </button>
-                    </div>
-                </div>
-            )}
+            {/* ✅ TRIAL OVERLAY REMOVED COMPLETELY */}
+            {/* ✅ Free users can always edit & save */}
 
-            <form
-                onSubmit={onSubmit}
-                className="myprofile-editor"
-                style={{
-                    filter: !isSubscribed && hasTrialEnded ? "blur(5px)" : "none",
-                    pointerEvents: !isSubscribed && hasTrialEnded ? "none" : "auto",
-                }}
-            >
+            <form onSubmit={onSubmit} className="myprofile-editor">
                 <h2 className="editor-title">Edit Your Digital Business Card</h2>
                 <hr className="title-divider" />
 
@@ -258,6 +238,7 @@ export default function Editor({
                             );
                         })}
                     </div>
+
                     {!isSubscribed && (
                         <p style={{ marginTop: 8, opacity: 0.75, fontSize: 13 }}>
                             Free users can use <strong>TEMPLATE 1</strong> only. Upgrade to unlock Templates 2–5.
