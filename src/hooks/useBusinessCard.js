@@ -27,13 +27,23 @@ export const qk = {
  * =========================================================
  * LEGACY / DEFAULT PROFILE
  * =========================================================
+ *
+ * IMPORTANT:
+ * This query contains plan + entitlement info used by the UI.
+ * After Stripe redirect, cached data may still be "fresh" and won't refetch.
+ * We force refetch on mount/focus so plan updates immediately.
  */
 export const useMyBusinessCard = () => {
     return useQuery({
         queryKey: qk.myDefault,
         queryFn: getMyBusinessCard,
         retry: false,
-        staleTime: 30_000,
+
+        // CRITICAL: Always refetch when the page remounts (e.g., after Stripe redirect)
+        staleTime: 0,
+        refetchOnMount: "always",
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
     });
 };
 
@@ -41,13 +51,22 @@ export const useMyBusinessCard = () => {
  * =========================================================
  * MULTI-PROFILE (NEW, CANONICAL)
  * =========================================================
+ *
+ * IMPORTANT:
+ * This is what must update immediately after checkout (new BusinessCard created by webhook).
+ * We force refetch on mount/focus so profiles list reflects backend truth instantly.
  */
 export const useMyProfiles = () => {
     return useQuery({
         queryKey: qk.profiles,
         queryFn: getMyProfiles,
         retry: false,
-        staleTime: 30_000,
+
+        // CRITICAL: Avoid "fresh cache" hiding newly-created profiles
+        staleTime: 0,
+        refetchOnMount: "always",
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
     });
 };
 
@@ -59,6 +78,8 @@ export const useMyProfileBySlug = (slug) => {
         queryFn: () => getMyProfileBySlug(resolved),
         enabled: true,
         retry: false,
+
+        // OK to keep this slightly cached; it's not the main culprit
         staleTime: 30_000,
     });
 };
