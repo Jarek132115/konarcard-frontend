@@ -179,7 +179,7 @@ export default function MyProfile() {
     isLoading: isCardLoading,
     isError: isCardError,
   } = useQuery({
-    queryKey: ["myProfileBySlug", activeSlug],
+    queryKey: ["businessCard", "profile", activeSlug],
     queryFn: async () => {
       const res = await api.get(`/api/business-card/profiles/${encodeURIComponent(activeSlug)}`);
       return res?.data?.data ?? null;
@@ -746,7 +746,7 @@ export default function MyProfile() {
       // ✅ refresh caches
       queryClient.invalidateQueries({ queryKey: ["businessCard", "me"] });
       queryClient.invalidateQueries({ queryKey: ["myProfiles"] });
-      queryClient.invalidateQueries({ queryKey: ["myProfileBySlug", activeSlug] });
+      queryClient.invalidateQueries({ queryKey: ["businessCard", "profile", activeSlug] });
 
       setCoverPhotoFile(null);
       setAvatarFile(null);
@@ -821,9 +821,17 @@ export default function MyProfile() {
                     Try again, or go back to Profiles and select a different profile.
                   </p>
                   <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-                    <button className="desktop-button navy-button" onClick={() => queryClient.invalidateQueries({ queryKey: ["myProfileBySlug", activeSlug] })}>
+                    <button
+                      className="desktop-button navy-button"
+                      onClick={() =>
+                        queryClient.invalidateQueries({
+                          queryKey: ["businessCard", "profile", activeSlug]
+                        })
+                      }
+                    >
                       Retry
                     </button>
+
                     <button className="desktop-button orange-button" onClick={() => navigate("/profiles")}>
                       Back to Profiles
                     </button>
