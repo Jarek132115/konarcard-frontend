@@ -1,3 +1,5 @@
+/* frontend/src/styling/dashboard/profiles.css */
+
 :root {
     --bg: #ffffff;
     --bg-soft: #fafafa;
@@ -286,10 +288,15 @@
     font-size: 12px;
     cursor: pointer;
     white-space: nowrap;
+    transition: background 0.2s, transform 0.08s ease;
 }
 
 .profiles-mini-btn:hover {
     background: rgba(15, 23, 42, 0.03);
+}
+
+.profiles-mini-btn:active {
+    transform: translateY(1px);
 }
 
 .profiles-mini-btn.danger {
@@ -382,30 +389,216 @@
     font-size: 14px;
 }
 
-/* Add profile upsell */
-.profiles-add {
-    margin-top: 16px;
+/* ----------------------------
+   ✅ NEW: Under list upsell row
+---------------------------- */
+.profiles-under-list {
+    margin-top: 14px;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    padding-top: 14px;
+}
+
+.profiles-upsell-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 14px;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 16px;
+    padding: 14px;
 }
 
-.profiles-add-right {
+.profiles-upsell-text {
+    color: var(--ink);
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.profiles-upsell-text strong {
+    color: rgb(var(--accent-rgb));
+}
+
+/* ----------------------------
+   ✅ NEW: Templates card
+---------------------------- */
+.profiles-templates-card {
+    margin-top: 14px;
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    padding: 14px;
+}
+
+.profiles-templates-head {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.profiles-templates-note {
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: var(--bg-soft);
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.profiles-templates-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 10px;
 }
 
-.profiles-locked-note {
+.profiles-template {
+    position: relative;
+    text-align: left;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 16px;
+    background: #fff;
+    padding: 12px;
+    cursor: pointer;
+    transition: transform 0.08s ease, box-shadow 0.2s, border 0.2s, background 0.2s;
+}
+
+.profiles-template:hover {
+    background: rgba(15, 23, 42, 0.02);
+}
+
+.profiles-template:active {
+    transform: translateY(1px);
+}
+
+.profiles-template.active {
+    border-color: rgb(var(--accent-rgb) / 0.35);
+    box-shadow: 0 10px 22px rgb(var(--accent-rgb) / 0.14);
+}
+
+.profiles-template-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 12px;
+    background: linear-gradient(135deg,
+            rgba(15, 23, 42, 0.06),
+            rgba(249, 115, 22, 0.12));
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.profiles-template-name {
+    margin-top: 10px;
     font-family: "Cal Sans", sans-serif;
     font-weight: 900;
-    color: rgb(var(--accent-rgb));
-    background: rgb(var(--accent-rgb) / 0.12);
+    color: var(--ink);
+    font-size: 12px;
+}
+
+.profiles-template-lock {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.86);
+    color: #fff;
+}
+
+.profiles-templates-grid.locked .profiles-template {
+    opacity: 0.82;
+}
+
+/* ----------------------------
+   ✅ NEW: Upgrade modal
+---------------------------- */
+.profiles-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    z-index: 9999;
+}
+
+.profiles-modal {
+    width: min(560px, 100%);
+    background: #fff;
+    border-radius: 22px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
+    padding: 18px;
+    position: relative;
+}
+
+.profiles-modal-x {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(15, 23, 42, 0.04);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.profiles-modal-x:hover {
+    background: rgba(15, 23, 42, 0.07);
+}
+
+.profiles-modal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    font-size: 12px;
     padding: 10px 12px;
     border-radius: 999px;
+    background: rgb(var(--accent-rgb) / 0.12);
     border: 1px solid rgb(var(--accent-rgb) / 0.22);
+    color: rgb(var(--accent-rgb));
+}
+
+.profiles-modal-title {
+    margin: 14px 0 6px;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    font-size: 22px;
+}
+
+.profiles-modal-sub {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.55;
+    font-weight: 700;
+}
+
+.profiles-modal-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.profiles-modal-fine {
+    margin-top: 12px;
+    font-size: 12px;
+    color: rgba(71, 85, 105, 0.9);
+    font-weight: 700;
 }
 
 /* ✅ Mobile layout */
@@ -423,18 +616,11 @@
         justify-content: flex-start;
     }
 
-    .profiles-add {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .profiles-add-right {
-        align-items: flex-start;
-        width: 100%;
+    .profiles-templates-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
-/* ✅ Small screens: stack profile row actions cleanly */
 @media (max-width: 640px) {
     .profiles-item {
         flex-direction: column;
@@ -450,5 +636,14 @@
     .profiles-inline-actions {
         width: 100%;
         justify-content: flex-start;
+    }
+
+    .profiles-upsell-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profiles-templates-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }

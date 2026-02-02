@@ -1,96 +1,124 @@
 // src/pages/interface/Profiles.jsx
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import "../../styling/dashboard/profiles.css";
 
-import { useMyBusinessCard } from "../../hooks/useBusinessCard";
 import { useAuthUser } from "../../hooks/useAuthUser";
+import { useMyProfiles } from "../../hooks/useBusinessCard";
+
+// ✅ IMPORTANT: use the service functions that actually exist
+import { createMyProfile, deleteMyProfile, setDefaultProfile } from "../../services/businessCard";
+
+const TEMPLATE_OPTIONS = [
+    { id: "template-1", name: "Template 1" },
+    { id: "template-2", name: "Template 2" },
+    { id: "template-3", name: "Template 3" },
+    { id: "template-4", name: "Template 4" },
+    { id: "template-5", name: "Template 5" },
+];
 
 export default function Profiles() {
     const navigate = useNavigate();
 
-    // TEMP: plan logic placeholder (keep as-is for now)
-    const [plan] = useState("free"); // "free" | "plus" | "teams"
-    const maxProfiles = plan === "teams" ? 999 : 1;
-
-    // Logged-in user (for username -> public /u/:username link)
+    // ✅ REAL plan from user model (fallback to free)
     const { data: authUser } = useAuthUser();
+    const plan = (authUser?.plan || "free").toLowerCase(); // free | plus | teams
 
-    // My single business card (null if none)
-    const {
-        data: myCard,
-        isLoading: cardLoading,
-        isError: cardError,
-        refetch: refetchCard,
-    } = useMyBusinessCard();
+    // ✅ list of profiles (multi-profile)
+    const { data: cards, isLoading, isError, refetch } = useMyProfiles();
 
-    const usernameSlug = (authUser?.username || "").toLowerCase().trim() || "yourname";
+    const username = (authUser?.username || "").toLowerCase().trim() || "yourname";
 
     const profiles = useMemo(() => {
-        if (!myCard) return [];
+        const xs = Array.isArray(cards) ? cards : [];
 
-        const displayName =
-            (myCard.business_card_name || "").trim() ||
-            (myCard.full_name || "").trim() ||
-            "Main Profile";
+        return xs.map((c) => {
+            const displayName =
+                (c.business_card_name || "").trim() ||
+                (c.full_name || "").trim() ||
+                (c.profile_slug === "main" ? "Main Profile" : "Profile");
 
-        const trade = (myCard.job_title || "").trim() || "Trade";
+            const trade = (c.job_title || "").trim() || "Trade";
 
-        const isComplete = Boolean(
-            (myCard.full_name || "").trim() ||
-            (myCard.main_heading || "").trim() ||
-            (myCard.business_card_name || "").trim()
-        );
+            const isComplete = Boolean(
+                (c.full_name || "").trim() ||
+                (c.main_heading || "").trim() ||
+                (c.business_card_name || "").trim()
+            );
 
-        const updatedAtText = myCard.updatedAt
-            ? `Updated ${new Date(myCard.updatedAt).toLocaleDateString()}`
-            : "Updated recently";
+            const updatedAtText = c.updatedAt
+                ? `Updated ${new Date(c.updatedAt).toLocaleDateString()}`
+                : "Updated recently";
 
-        return [
-            {
-                id: myCard._id || "p1",
+            return {
+                id: c._id,
+                slug: c.profile_slug || "main",
+                isDefault: !!c.is_default,
+                templateId: c.template_id || "template-1",
                 name: displayName,
                 trade,
-                slug: usernameSlug,
                 status: isComplete ? "complete" : "incomplete",
                 updatedAt: updatedAtText,
-            },
-        ];
-    }, [myCard, usernameSlug]);
+            };
+        });
+    }, [cards]);
 
-    const [selectedId, setSelectedId] = useState(null);
-
-    // Keep selection stable when data loads/changes
-    useEffect(() => {
-        if (!profiles.length) {
-            setSelectedId(null);
-            return;
-        }
-        setSelectedId((prev) => prev || profiles[0].id);
+    // Sort: default first
+    const sortedProfiles = useMemo(() => {
+        const xs = [...profiles];
+        xs.sort((a, b) => {
+            if (a.isDefault && !b.isDefault) return -1;
+            if (!a.isDefault && b.isDefault) return 1;
+            return 0;
+        });
+        return xs;
     }, [profiles]);
 
-    const selectedProfile = useMemo(
-        () => profiles.find((p) => p.id === selectedId) || profiles[0] || null,
-        [profiles, selectedId]
-    );
+    const [selectedSlug, setSelectedSlug] = useState(null);
 
-    const canCreateNew = profiles.length < maxProfiles;
-    const isLimitReached = !canCreateNew && plan !== "teams";
+    useEffect(() => {
+        if (!sortedProfiles.length) {
+            setSelectedSlug(null);
+            return;
+        }
+        const defaultOne = sortedProfiles.find((p) => p.isDefault) || sortedProfiles[0];
+        setSelectedSlug((prev) => prev || defaultOne.slug);
+    }, [sortedProfiles]);
 
-    const handleCreate = () => {
-        // Free plan: user can only ever have one profile, so "Create" == "Go edit/setup"
-        navigate("/profiles/edit");
+    const selectedProfile = useMemo(() => {
+        if (!sortedProfiles.length) return null;
+        return sortedProfiles.find((p) => p.slug === selectedSlug) || sortedProfiles[0];
+    }, [sortedProfiles, selectedSlug]);
+
+    // ✅ Rules:
+    // - Free: 1 profile, templates visible but locked (modal)
+    // - Plus: allow extra profiles @ £1.95/mo each (we allow creation; billing wired later)
+    // - Teams: unlimited profiles
+    const isLimitReached = plan === "free" && sortedProfiles.length >= 1;
+
+    // Templates:
+    // - Free: show but locked (modal)
+    const templatesLocked = plan === "free";
+
+    // Modal
+    const [upgradeOpen, setUpgradeOpen] = useState(false);
+    const [upgradeMode, setUpgradeMode] = useState("templates"); // templates | profiles
+    const openUpgrade = (mode) => {
+        setUpgradeMode(mode);
+        setUpgradeOpen(true);
     };
+    const closeUpgrade = () => setUpgradeOpen(false);
 
-    const handleDelete = () => {
-        // No delete in Free plan scope
-        alert("Deleting profiles is not available on your current plan.");
+    const buildPublicUrl = (_profileSlug) => {
+        // ✅ Currently public route is /u/:username (default profile)
+        // Later when you switch to /u/:username/:slug, update here.
+        return `${window.location.origin}/u/${username}`;
     };
 
     const handleCopyLink = async () => {
         if (!selectedProfile) return;
-        const link = `${window.location.origin}/u/${selectedProfile.slug}`;
+        const link = buildPublicUrl(selectedProfile.slug);
         try {
             await navigator.clipboard.writeText(link);
             alert("Link copied ✅");
@@ -101,7 +129,7 @@ export default function Profiles() {
 
     const handleShare = async () => {
         if (!selectedProfile) return;
-        const link = `${window.location.origin}/u/${selectedProfile.slug}`;
+        const link = buildPublicUrl(selectedProfile.slug);
 
         if (navigator.share) {
             try {
@@ -111,46 +139,122 @@ export default function Profiles() {
                     url: link,
                 });
             } catch {
-                // user cancelled share — ignore
+                // ignore cancel
             }
         } else {
             await handleCopyLink();
         }
     };
 
-    // Simple loading/error handling without redesigning layout
-    if (cardLoading) {
+    const handleEdit = (slug) => {
+        navigate(`/profiles/edit?slug=${encodeURIComponent(slug || "main")}`);
+    };
+
+    const handleVisit = (slug) => {
+        window.open(buildPublicUrl(slug || "main"), "_blank", "noreferrer");
+    };
+
+    const handleCreate = async () => {
+        if (isLimitReached) {
+            openUpgrade("profiles");
+            return;
+        }
+
+        // Create unique slug like profile-2, profile-3...
+        const base = "profile";
+        let n = sortedProfiles.length + 1;
+        let candidate = `${base}-${n}`;
+        const existing = new Set(sortedProfiles.map((p) => p.slug));
+        while (existing.has(candidate)) {
+            n += 1;
+            candidate = `${base}-${n}`;
+        }
+
+        try {
+            const created = await createMyProfile({
+                profile_slug: candidate,
+                template_id: "template-1",
+                business_card_name: "",
+            });
+
+            await refetch();
+
+            if (created?.profile_slug) {
+                handleEdit(created.profile_slug);
+            }
+        } catch (e) {
+            const msg =
+                e?.response?.data?.error || e?.message || "Could not create profile. Please try again.";
+            alert(msg);
+        }
+    };
+
+    const handleDelete = async (slug) => {
+        const ok = window.confirm("Delete this profile? This cannot be undone.");
+        if (!ok) return;
+
+        try {
+            await deleteMyProfile(slug);
+            await refetch();
+        } catch (e) {
+            const msg = e?.response?.data?.error || e?.message || "Delete failed.";
+            alert(msg);
+        }
+    };
+
+    const handleSetDefault = async (slug) => {
+        try {
+            await setDefaultProfile(slug);
+            await refetch();
+            setSelectedSlug(slug);
+        } catch (e) {
+            const msg = e?.response?.data?.error || e?.message || "Could not set default.";
+            alert(msg);
+        }
+    };
+
+    const handleTemplatePick = async (templateId) => {
+        if (!selectedProfile) return;
+
+        if (templatesLocked) {
+            openUpgrade("templates");
+            return;
+        }
+
+        // store selection; editor can apply and save with FormData
+        try {
+            localStorage.setItem(
+                "kc_template_pick",
+                JSON.stringify({ slug: selectedProfile.slug, template_id: templateId, t: Date.now() })
+            );
+        } catch { }
+
+        handleEdit(selectedProfile.slug);
+    };
+
+    if (isLoading) {
         return (
-            <DashboardLayout
-                title="Profiles"
-                subtitle="Create, view, and manage your digital business card profiles."
-            >
+            <DashboardLayout title="Profiles" subtitle="Create, view, and manage your digital business card profiles.">
                 <div style={{ minHeight: "40vh" }} />
             </DashboardLayout>
         );
     }
 
-    if (cardError) {
+    if (isError) {
         return (
             <DashboardLayout
                 title="Profiles"
                 subtitle="Create, view, and manage your digital business card profiles."
                 rightSlot={
-                    <button
-                        type="button"
-                        className="profiles-btn profiles-btn-primary"
-                        onClick={() => refetchCard()}
-                    >
+                    <button type="button" className="profiles-btn profiles-btn-primary" onClick={() => refetch()}>
                         Retry
                     </button>
                 }
             >
                 <div className="profiles-shell">
                     <section className="profiles-card profiles-empty">
-                        <h2 className="profiles-card-title">We couldn’t load your profile</h2>
-                        <p className="profiles-muted">
-                            Please try again. If this keeps happening, contact support.
-                        </p>
+                        <h2 className="profiles-card-title">We couldn’t load your profiles</h2>
+                        <p className="profiles-muted">Please try again. If this keeps happening, contact support.</p>
                     </section>
                 </div>
             </DashboardLayout>
@@ -165,21 +269,18 @@ export default function Profiles() {
                 <button
                     type="button"
                     className={`profiles-btn profiles-btn-primary ${isLimitReached ? "locked" : ""}`}
-                    onClick={isLimitReached ? undefined : handleCreate}
-                    disabled={isLimitReached}
+                    onClick={handleCreate}
                 >
-                    {isLimitReached ? "Locked" : "+ Create New Profile"}
+                    {isLimitReached ? "Upgrade to add profiles" : "+ Create New Profile"}
                 </button>
             }
         >
             <div className="profiles-shell">
-                {/* 2. Page Header */}
                 <div className="profiles-header">
                     <div>
                         <h1 className="profiles-title">Profiles</h1>
                         <p className="profiles-subtitle">
-                            Profiles are your public digital business cards. Each profile has its own link you can
-                            share after every job.
+                            Profiles are your public digital business cards. Each profile has its own link you can share after every job.
                         </p>
                     </div>
 
@@ -188,27 +289,20 @@ export default function Profiles() {
                             Plan: <strong>{plan.toUpperCase()}</strong>
                         </span>
                         <span className="profiles-pill">
-                            Profiles: <strong>{profiles.length}</strong> /{" "}
-                            <strong>{maxProfiles === 999 ? "∞" : maxProfiles}</strong>
+                            Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{plan === "teams" ? "∞" : plan === "free" ? 1 : "∞"}</strong>
                         </span>
                     </div>
                 </div>
 
-                {/* 7. Empty State (If No Profiles) */}
-                {profiles.length === 0 ? (
+                {sortedProfiles.length === 0 ? (
                     <section className="profiles-card profiles-empty">
                         <h2 className="profiles-card-title">Create your first profile</h2>
                         <p className="profiles-muted">
-                            Your profile is what customers see when they scan your KonarCard. Create it once —
-                            update it any time.
+                            Your profile is what customers see when they scan your KonarCard. Create it once — update it any time.
                         </p>
 
                         <div className="profiles-actions-row">
-                            <button
-                                type="button"
-                                className="profiles-btn profiles-btn-primary"
-                                onClick={handleCreate}
-                            >
+                            <button type="button" className="profiles-btn profiles-btn-primary" onClick={handleCreate}>
                                 Create your first profile
                             </button>
                         </div>
@@ -228,24 +322,22 @@ export default function Profiles() {
                     </section>
                 ) : (
                     <div className="profiles-grid">
-                        {/* 3. Profiles List */}
-                        <section className="profiles-card profiles-span-7">
+                        {/* Left */}
+                        <section className="profiles-card">
                             <div className="profiles-card-head">
                                 <div>
                                     <h2 className="profiles-card-title">Profiles list</h2>
-                                    <p className="profiles-muted">
-                                        Select a profile to preview, edit, share or manage it.
-                                    </p>
+                                    <p className="profiles-muted">Select a profile to preview, edit, share or manage it.</p>
                                 </div>
                             </div>
 
                             <div className="profiles-list">
-                                {profiles.map((p) => (
+                                {sortedProfiles.map((p) => (
                                     <button
-                                        key={p.id}
+                                        key={p.slug}
                                         type="button"
-                                        className={`profiles-item ${selectedProfile?.id === p.id ? "active" : ""}`}
-                                        onClick={() => setSelectedId(p.id)}
+                                        className={`profiles-item ${selectedProfile?.slug === p.slug ? "active" : ""}`}
+                                        onClick={() => setSelectedSlug(p.slug)}
                                     >
                                         <div className="profiles-item-left">
                                             <div className="profiles-avatar">{p.name?.slice(0, 1) || "P"}</div>
@@ -254,7 +346,7 @@ export default function Profiles() {
                                                     {p.name} <span className="profiles-trade">• {p.trade}</span>
                                                 </div>
                                                 <div className="profiles-item-sub">
-                                                    <span className="profiles-link">/u/{p.slug}</span>
+                                                    <span className="profiles-link">{p.isDefault ? "DEFAULT" : p.slug}</span>
                                                     <span className="profiles-dot">•</span>
                                                     <span className="profiles-muted">{p.updatedAt}</span>
                                                 </div>
@@ -265,23 +357,49 @@ export default function Profiles() {
                                             <span className={`profiles-status ${p.status}`}>
                                                 {p.status === "complete" ? "COMPLETE" : "INCOMPLETE"}
                                             </span>
+
                                             <div className="profiles-inline-actions">
                                                 <button
                                                     type="button"
                                                     className="profiles-mini-btn"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        navigate("/profiles/edit");
+                                                        handleEdit(p.slug);
                                                     }}
                                                 >
                                                     Edit
                                                 </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="profiles-mini-btn"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleVisit(p.slug);
+                                                    }}
+                                                >
+                                                    Visit
+                                                </button>
+
+                                                {!p.isDefault && (
+                                                    <button
+                                                        type="button"
+                                                        className="profiles-mini-btn"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleSetDefault(p.slug);
+                                                        }}
+                                                    >
+                                                        Set default
+                                                    </button>
+                                                )}
+
                                                 <button
                                                     type="button"
                                                     className="profiles-mini-btn danger"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        handleDelete();
+                                                        handleDelete(p.slug);
                                                     }}
                                                 >
                                                     Delete
@@ -291,10 +409,46 @@ export default function Profiles() {
                                     </button>
                                 ))}
                             </div>
+
+                            {/* Under list upsell */}
+                            <div className="profiles-under-list">
+                                {plan === "free" ? (
+                                    <div className="profiles-upsell-row">
+                                        <div className="profiles-upsell-text">
+                                            Want another profile? <strong>Upgrade to Teams</strong> to add more.
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className="profiles-btn profiles-btn-primary"
+                                            onClick={() => (window.location.href = "/subscription")}
+                                        >
+                                            Upgrade
+                                        </button>
+                                    </div>
+                                ) : plan === "plus" ? (
+                                    <div className="profiles-upsell-row">
+                                        <div className="profiles-upsell-text">
+                                            Add more profiles for <strong>£1.95 / month</strong> each.
+                                        </div>
+                                        <button type="button" className="profiles-btn profiles-btn-primary" onClick={handleCreate}>
+                                            + Add profile
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="profiles-upsell-row">
+                                        <div className="profiles-upsell-text">
+                                            Teams plan: <strong>Unlimited profiles</strong>.
+                                        </div>
+                                        <button type="button" className="profiles-btn profiles-btn-primary" onClick={handleCreate}>
+                                            + Add profile
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </section>
 
-                        {/* 4. Profile Preview */}
-                        <section className="profiles-card profiles-span-5">
+                        {/* Right */}
+                        <section className="profiles-card">
                             <div className="profiles-card-head">
                                 <div>
                                     <h2 className="profiles-card-title">Profile preview</h2>
@@ -320,80 +474,105 @@ export default function Profiles() {
                                     <button
                                         type="button"
                                         className="profiles-btn profiles-btn-primary"
-                                        onClick={() => navigate("/profiles/edit")}
+                                        onClick={() => handleEdit(selectedProfile?.slug)}
                                     >
                                         Edit profile
                                     </button>
+
+                                    <button
+                                        type="button"
+                                        className="profiles-btn profiles-btn-ghost"
+                                        onClick={() => handleVisit(selectedProfile?.slug)}
+                                    >
+                                        Visit
+                                    </button>
                                 </div>
                             </div>
 
-                            {/* 6. Profile Actions */}
                             <div className="profiles-actions-card">
                                 <h3 className="profiles-actions-title">Profile actions</h3>
-
                                 <div className="profiles-actions-row">
-                                    <button
-                                        type="button"
-                                        className="profiles-btn profiles-btn-ghost"
-                                        onClick={handleShare}
-                                    >
+                                    <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleShare}>
                                         Share link
                                     </button>
-
-                                    <button
-                                        type="button"
-                                        className="profiles-btn profiles-btn-ghost"
-                                        onClick={handleCopyLink}
-                                    >
+                                    <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleCopyLink}>
                                         Copy link
                                     </button>
-
-                                    <button
-                                        type="button"
-                                        className="profiles-btn profiles-btn-ghost"
-                                        onClick={() => navigate("/analytics")}
-                                    >
-                                        View analytics
-                                    </button>
                                 </div>
                             </div>
-                        </section>
 
-                        {/* 5. Add Profile (Teams Upsell) */}
-                        <section className="profiles-card profiles-span-12">
-                            <div className="profiles-add">
-                                <div>
-                                    <h2 className="profiles-card-title">Add another profile</h2>
-                                    <p className="profiles-muted">
-                                        Create multiple profiles (and claim multiple links) for staff or multiple
-                                        businesses. This is a Teams feature.
-                                    </p>
+                            <div className="profiles-templates-card">
+                                <div className="profiles-templates-head">
+                                    <h3 className="profiles-actions-title">Templates</h3>
+                                    <div className="profiles-templates-note">
+                                        {templatesLocked ? "Upgrade to use templates" : "Pick a template"}
+                                    </div>
                                 </div>
 
-                                <div className="profiles-add-right">
-                                    {isLimitReached ? (
-                                        <>
-                                            <div className="profiles-locked-note">You’ve reached your plan limit.</div>
+                                <div className={`profiles-templates-grid ${templatesLocked ? "locked" : ""}`}>
+                                    {TEMPLATE_OPTIONS.map((t) => {
+                                        const isActive = selectedProfile?.templateId === t.id;
+                                        return (
                                             <button
+                                                key={t.id}
                                                 type="button"
-                                                className="profiles-btn profiles-btn-primary"
-                                                onClick={() => (window.location.href = "/subscription")}
+                                                className={`profiles-template ${isActive ? "active" : ""}`}
+                                                onClick={() => handleTemplatePick(t.id)}
                                             >
-                                                Upgrade to Teams
+                                                <div className="profiles-template-thumb" />
+                                                <div className="profiles-template-name">{t.name}</div>
+                                                {templatesLocked && <div className="profiles-template-lock">Locked</div>}
                                             </button>
-                                        </>
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            className="profiles-btn profiles-btn-primary"
-                                            onClick={handleCreate}
-                                        >
-                                            + Create profile
-                                        </button>
-                                    )}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </section>
+                    </div>
+                )}
+
+                {upgradeOpen && (
+                    <div className="profiles-modal-overlay" role="dialog" aria-modal="true">
+                        <div className="profiles-modal">
+                            <button type="button" className="profiles-modal-x" onClick={closeUpgrade} aria-label="Close">
+                                ✕
+                            </button>
+
+                            <div className="profiles-modal-badge">Upgrade required</div>
+
+                            {upgradeMode === "templates" ? (
+                                <>
+                                    <h2 className="profiles-modal-title">Templates are a paid feature</h2>
+                                    <p className="profiles-modal-sub">
+                                        Upgrade your plan to unlock all 5 templates and make your profile stand out.
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <h2 className="profiles-modal-title">Add more profiles</h2>
+                                    <p className="profiles-modal-sub">
+                                        Upgrade to Teams to create multiple profiles and claim multiple links.
+                                    </p>
+                                </>
+                            )}
+
+                            <div className="profiles-modal-actions">
+                                <button
+                                    type="button"
+                                    className="profiles-btn profiles-btn-primary"
+                                    onClick={() => (window.location.href = "/subscription")}
+                                >
+                                    Upgrade now
+                                </button>
+                                <button type="button" className="profiles-btn profiles-btn-ghost" onClick={closeUpgrade}>
+                                    Not now
+                                </button>
+                            </div>
+
+                            <div className="profiles-modal-fine">
+                                Tip: On Plus, extra profiles are billed at <strong>£1.95/month</strong> each (we’ll wire billing next).
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>

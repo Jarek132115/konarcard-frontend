@@ -2,58 +2,53 @@
 import api from "./api";
 
 /**
- * Get the logged-in user's business card.
+ * =========================================================
+ * SINGLE PROFILE (legacy / default profile)
+ * =========================================================
+ */
+
+/**
+ * Get the logged-in user's DEFAULT business card.
  *
  * Preferred backend route:
  *  GET /api/business-card/me
  *  Returns: { data: null } OR { data: { ...BusinessCard } }
  *
- * Legacy fallback (older backend):
+ * Legacy fallback:
  *  GET /api/business-card/my_card
  *  Returns: card object directly (or 404 if not found)
- *
- * Returns:
- * - null if no profile exists yet
- * - BusinessCard object if it exists
  */
 export const getMyBusinessCard = async () => {
-    // 1) Prefer the new /me endpoint
     try {
         const res = await api.get("/api/business-card/me");
         return res?.data?.data ?? null;
     } catch (err) {
         const status = err?.response?.status;
 
-        // If /me doesn't exist on this backend (older deploy), fallback
+        // backend too old -> fallback
         if (status === 404) {
             try {
                 const res2 = await api.get("/api/business-card/my_card");
                 return res2?.data ?? null;
             } catch (err2) {
                 const s2 = err2?.response?.status;
-                if (s2 === 404) return null; // no card yet
+                if (s2 === 404) return null;
                 throw err2;
             }
         }
 
-        // If unauthorized or other error, bubble up
         throw err;
     }
 };
 
 /**
- * Create or update (UPSERT) the logged-in user's business card.
- *
+ * Upsert (save) a business card.
  * Backend route:
  *  POST /api/business-card
  *
- * IMPORTANT:
- * - Uses JWT on backend to determine user
- * - Must be FormData (supports images)
- * - Do NOT require `user` in body
- *
- * Backend returns:
- *  { message, data: updatedCard }
+ * NOTE:
+ * - FormData required (images)
+ * - include profile_slug in the FormData if saving a non-main profile
  */
 export const saveMyBusinessCard = async (formData) => {
     if (!(formData instanceof FormData)) {
@@ -61,34 +56,84 @@ export const saveMyBusinessCard = async (formData) => {
     }
 
     const res = await api.post("/api/business-card", formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
     });
 
     return res?.data?.data ?? null;
 };
 
 /**
- * Fetch a public business card by username.
- * Used for /u/:username
- *
- * Backend route:
- *  GET /api/business-card/by_username/:username
- *
- * No auth required (use x-no-auth so api.js does not attach Bearer token)
- *
- * Backend returns:
- *  card object directly (NOT wrapped)
+ * =========================================================
+ * MULTI PROFILE (new)
+ * =========================================================
+ */
+
+export const getMyProfiles = async () => {
+    // GET /api/business-card/profiles -> { data: [] }
+    const res = await api.get("/api/business-card/profiles");
+    return res?.data?.data ?? [];
+};
+
+export const getMyProfileBySlug = async (slug) => {
+    if (!slug) throw new Error("slug is required");
+    const res = await api.get(`/api/business-card/profiles/${encodeURIComponent(slug)}`);
+    return res?.data?.data ?? null;
+};
+
+export const createMyProfile = async ({ profile_slug, template_id, business_card_name } = {}) => {
+    // POST /api/business-card/profiles -> { message, data }
+    const res = await api.post("/api/business-card/profiles", {
+        profile_slug,
+        template_id,
+        business_card_name,
+    });
+    return res?.data?.data ?? null;
+};
+
+export const setDefaultProfile = async (slug) => {
+    if (!slug) throw new Error("slug is required");
+    const res = await api.patch(`/api/business-card/profiles/${encodeURIComponent(slug)}/default`);
+    return res?.data?.data ?? null;
+};
+
+export const deleteMyProfile = async (slug) => {
+    if (!slug) throw new Error("slug is required");
+    const res = await api.delete(`/api/business-card/profiles/${encodeURIComponent(slug)}`);
+    return res?.data ?? null;
+};
+
+/**
+ * =========================================================
+ * PUBLIC PROFILE FETCH
+ * =========================================================
+ */
+
+/**
+ * Default public profile by username (backend returns default/main/newest)
+ * GET /api/business-card/by_username/:username
  */
 export const getBusinessCardByUsername = async (username) => {
     if (!username) throw new Error("Username is required");
 
-    const res = await api.get(`/api/business-card/by_username/${username}`, {
-        headers: {
-            "x-no-auth": "1",
-        },
+    const res = await api.get(`/api/business-card/by_username/${encodeURIComponent(username)}`, {
+        headers: { "x-no-auth": "1" },
     });
+
+    return res?.data ?? null;
+};
+
+/**
+ * Specific public profile by username + slug
+ * GET /api/business-card/by_username/:username/:slug
+ */
+export const getBusinessCardByUsernameAndSlug = async (username, slug) => {
+    if (!username) throw new Error("Username is required");
+    if (!slug) throw new Error("Slug is required");
+
+    const res = await api.get(
+        `/api/business-card/by_username/${encodeURIComponent(username)}/${encodeURIComponent(slug)}`,
+        { headers: { "x-no-auth": "1" } }
+    );
 
     return res?.data ?? null;
 };
