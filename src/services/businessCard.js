@@ -2,6 +2,25 @@
 import api from "./api";
 
 /**
+ * Small helper to safely unwrap common API shapes:
+ * - { data: <thing> }
+ * - { data: { data: <thing> } }  (older pattern)
+ * - <thing> (public)
+ */
+const unwrap = (res) => {
+    const d = res?.data;
+    if (d && typeof d === "object") {
+        if ("data" in d) {
+            // could be { data: thing } or { data: { data: thing } }
+            const inner = d.data;
+            if (inner && typeof inner === "object" && "data" in inner) return inner.data;
+            return inner;
+        }
+    }
+    return d ?? null;
+};
+
+/**
  * =========================================================
  * SINGLE PROFILE (legacy / default profile)
  * =========================================================
@@ -9,16 +28,20 @@ import api from "./api";
 
 export const getMyBusinessCard = async () => {
     try {
+        // Your new backend returns 400 NO_DEFAULT_PROFILE; treat as null.
         const res = await api.get("/api/business-card/me");
-        return res?.data?.data ?? null;
+        return unwrap(res);
     } catch (err) {
         const status = err?.response?.status;
+
+        // New backend stub: no default profile
+        if (status === 400) return null;
 
         // backend too old -> fallback
         if (status === 404) {
             try {
                 const res2 = await api.get("/api/business-card/my_card");
-                return res2?.data ?? null;
+                return unwrap(res2);
             } catch (err2) {
                 const s2 = err2?.response?.status;
                 if (s2 === 404) return null;
@@ -31,89 +54,49 @@ export const getMyBusinessCard = async () => {
 };
 
 /**
- * Upsert (save) a business card.
+ * =========================================================
+ * SAVE (UPSERT)
+ * =========================================================
  *
- * Primary (new) backend route:
+ * Canonical backend route (your routes file):
  *   POST /api/business-card
- *   - expects multipart/form-data
- *   - supports profile_slug in FormData for multi-profile
  *
- * Fallbacks (if your deployed backend differs):
- *   POST /api/business-card/profiles/:slug
- *   PATCH /api/business-card/profiles/:slug
+ * IMPORTANT:
+ * - Do NOT set Content-Type manually.
+ * - Do NOT pass headers: {} (can break multipart boundary handling in some Axios setups)
  */
-export const saveMyBusinessCard = async (formData, opts = {}) => {
+export const saveMyBusinessCard = async (formData) => {
     if (!(formData instanceof FormData)) {
         throw new Error("saveMyBusinessCard expects FormData");
     }
 
-    const slug = (opts.profile_slug || formData.get("profile_slug") || "main")
-        .toString()
-        .trim() || "main";
+    const res = await api.post("/api/business-card", formData, {
+        // keep axios from trying to serialize FormData
+        transformRequest: (data) => data,
+    });
 
-    // IMPORTANT:
-    // Do NOT manually set Content-Type boundary; let Axios handle it.
-    // (Axios will set multipart/form-data with correct boundary automatically.)
-    const postConfig = {
-        // keep empty to avoid boundary issues
-        headers: {},
-    };
-
-    // 1) Preferred route
-    try {
-        const res = await api.post("/api/business-card", formData, postConfig);
-        return res?.data?.data ?? null;
-    } catch (err) {
-        const status = err?.response?.status;
-
-        // If forbidden, keep the original error (most likely auth/subscription/verify)
-        // If not-found/method-not-allowed, try fallbacks
-        if (status !== 404 && status !== 405) {
-            throw err;
-        }
-    }
-
-    // 2) Fallback: POST /profiles/:slug
-    try {
-        const res = await api.post(
-            `/api/business-card/profiles/${encodeURIComponent(slug)}`,
-            formData,
-            postConfig
-        );
-        return res?.data?.data ?? null;
-    } catch (err2) {
-        const status2 = err2?.response?.status;
-        if (status2 !== 404 && status2 !== 405) {
-            throw err2;
-        }
-    }
-
-    // 3) Fallback: PATCH /profiles/:slug
-    const res3 = await api.patch(
-        `/api/business-card/profiles/${encodeURIComponent(slug)}`,
-        formData,
-        postConfig
-    );
-    return res3?.data?.data ?? null;
+    // backend returns { data: saved, normalized?: ... }
+    return unwrap(res);
 };
 
 /**
  * =========================================================
- * MULTI PROFILE (new)
+ * MULTI PROFILE (canonical)
  * =========================================================
  */
 
 export const getMyProfiles = async () => {
     const res = await api.get("/api/business-card/profiles");
-    return res?.data?.data ?? [];
+    const data = unwrap(res);
+    return Array.isArray(data) ? data : [];
 };
 
 export const getMyProfileBySlug = async (slug) => {
-    const s = (slug || "").toString().trim();
+    const s = (slug || "main").toString().trim();
     if (!s) throw new Error("slug is required");
 
     const res = await api.get(`/api/business-card/profiles/${encodeURIComponent(s)}`);
-    return res?.data?.data ?? null;
+    return unwrap(res);
 };
 
 export const createMyProfile = async ({ profile_slug, template_id, business_card_name } = {}) => {
@@ -122,15 +105,16 @@ export const createMyProfile = async ({ profile_slug, template_id, business_card
         template_id,
         business_card_name,
     });
-    return res?.data?.data ?? null;
+    return unwrap(res);
 };
 
 export const setDefaultProfile = async (slug) => {
     const s = (slug || "").toString().trim();
     if (!s) throw new Error("slug is required");
 
+    // backend returns 400 (no default profile) — keep for compatibility
     const res = await api.patch(`/api/business-card/profiles/${encodeURIComponent(s)}/default`);
-    return res?.data?.data ?? null;
+    return unwrap(res);
 };
 
 export const deleteMyProfile = async (slug) => {
@@ -138,12 +122,12 @@ export const deleteMyProfile = async (slug) => {
     if (!s) throw new Error("slug is required");
 
     const res = await api.delete(`/api/business-card/profiles/${encodeURIComponent(s)}`);
-    return res?.data ?? null;
+    return unwrap(res);
 };
 
 /**
  * =========================================================
- * PUBLIC PROFILE FETCH
+ * PUBLIC PROFILE FETCH (deprecated username endpoints)
  * =========================================================
  */
 
@@ -155,7 +139,7 @@ export const getBusinessCardByUsername = async (username) => {
         headers: { "x-no-auth": "1" },
     });
 
-    return res?.data ?? null;
+    return unwrap(res);
 };
 
 export const getBusinessCardByUsernameAndSlug = async (username, slug) => {
@@ -170,5 +154,5 @@ export const getBusinessCardByUsernameAndSlug = async (username, slug) => {
         { headers: { "x-no-auth": "1" } }
     );
 
-    return res?.data ?? null;
+    return unwrap(res);
 };

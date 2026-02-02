@@ -1,30 +1,17 @@
 // frontend/src/services/api.js
 import axios from "axios";
 
-/**
- * Canonical backend base URL:
- * - MUST be the ROOT domain (no trailing /api)
- * - Example: https://your-backend.com
- */
 const ENV_BASE = (import.meta.env.VITE_API_URL || "").trim();
 
-// fallback if VITE_API_URL is not set
 const FALLBACK_BASE =
   "https://konarcard-backend-331608269918.europe-west1.run.app";
 
 function normalizeBase(url) {
   if (!url) return "";
   let u = url.trim();
-
-  // remove trailing slashes
   u = u.replace(/\/+$/, "");
-
-  // if someone set VITE_API_URL="https://x.com/api" remove "/api"
   if (u.endsWith("/api")) u = u.slice(0, -4);
-
-  // remove trailing slashes again
   u = u.replace(/\/+$/, "");
-
   return u;
 }
 
@@ -35,20 +22,27 @@ const api = axios.create({
   withCredentials: false,
 });
 
-/**
- * Request interceptor:
- * - attaches Authorization header unless x-no-auth is set
- * - adds cache-buster to sensitive reads
- *
- * IMPORTANT:
- * Axios v1 uses AxiosHeaders internally. Mutating config.headers like a plain object
- * can silently fail (especially on multipart/form-data POSTs).
- * We normalize headers using axios.AxiosHeaders.from(...).
- */
 api.interceptors.request.use((config) => {
   const H = axios.AxiosHeaders
     ? axios.AxiosHeaders.from(config.headers || {})
     : (config.headers || {});
+
+  // ✅ If sending FormData, NEVER allow JSON content-type
+  const isFormData =
+    typeof FormData !== "undefined" && config.data instanceof FormData;
+
+  if (isFormData) {
+    // Let browser/axios set boundary. Remove any forced content-type.
+    try {
+      if (typeof H.delete === "function") {
+        H.delete("Content-Type");
+        H.delete("content-type");
+      } else {
+        delete H["Content-Type"];
+        delete H["content-type"];
+      }
+    } catch { }
+  }
 
   const xNoAuth =
     (typeof H.get === "function" && (H.get("x-no-auth") || H.get("X-No-Auth"))) ||
@@ -85,8 +79,9 @@ api.interceptors.request.use((config) => {
   // cache-buster only on sensitive reads
   if (typeof config.url === "string") {
     const u = config.url;
+    // ✅ match "/profiles" not "/profile"
     if (
-      u.includes("/profile") ||
+      u.includes("/profiles") ||
       u.includes("/me/orders") ||
       u.includes("/subscription-status")
     ) {
