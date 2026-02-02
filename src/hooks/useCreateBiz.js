@@ -7,6 +7,12 @@ export const buildBusinessCardFormData = (data = {}) => {
 
   // ---- Alias normalisation (accept camelCase from UI and snake_case for backend) ----
   const normalized = {
+    // ✅ IMPORTANT: multi-profile save target
+    profile_slug: data.profile_slug ?? data.profileSlug ?? data.profileSlugSelected,
+
+    // ✅ Template selection (5 templates)
+    template_id: data.template_id ?? data.templateId,
+
     // theme + typography
     page_theme: data.page_theme ?? data.pageTheme,
     page_theme_variant: data.page_theme_variant ?? data.pageThemeVariant,
@@ -15,13 +21,13 @@ export const buildBusinessCardFormData = (data = {}) => {
     // headings + bio
     main_heading: data.main_heading ?? data.mainHeading,
     sub_heading: data.sub_heading ?? data.subHeading,
-    job_title: data.job_title,
-    full_name: data.full_name,
+    job_title: data.job_title ?? data.jobTitle,
+    full_name: data.full_name ?? data.fullName,
     bio: data.bio,
 
     // contact
-    contact_email: data.contact_email,
-    phone_number: data.phone_number,
+    contact_email: data.contact_email ?? data.contactEmail,
+    phone_number: data.phone_number ?? data.phoneNumber,
 
     // optional name
     business_card_name: data.business_card_name ?? data.businessName,
@@ -36,8 +42,8 @@ export const buildBusinessCardFormData = (data = {}) => {
     reviews: data.reviews,
 
     // existing image removal flags
-    cover_photo_removed: data.cover_photo_removed,
-    avatar_removed: data.avatar_removed,
+    cover_photo_removed: data.cover_photo_removed ?? data.coverPhotoRemoved,
+    avatar_removed: data.avatar_removed ?? data.avatarRemoved,
 
     // display modes / layouts
     work_display_mode: data.work_display_mode ?? data.workDisplayMode,
@@ -51,11 +57,11 @@ export const buildBusinessCardFormData = (data = {}) => {
     text_alignment: data.text_alignment ?? data.textAlignment,
 
     // socials
-    facebook_url: data.facebook_url,
-    instagram_url: data.instagram_url,
-    linkedin_url: data.linkedin_url,
-    x_url: data.x_url,
-    tiktok_url: data.tiktok_url,
+    facebook_url: data.facebook_url ?? data.facebookUrl,
+    instagram_url: data.instagram_url ?? data.instagramUrl,
+    linkedin_url: data.linkedin_url ?? data.linkedinUrl,
+    x_url: data.x_url ?? data.xUrl,
+    tiktok_url: data.tiktok_url ?? data.tiktokUrl,
 
     // ordering + visibility
     section_order: data.section_order ?? data.sectionOrder,
@@ -70,6 +76,12 @@ export const buildBusinessCardFormData = (data = {}) => {
 
   // ---- Simple string fields ----
   const simpleKeys = [
+    // ✅ must be present for multi-profile saving
+    "profile_slug",
+
+    // ✅ templates
+    "template_id",
+
     "business_card_name",
     "page_theme",
     "page_theme_variant",
@@ -99,7 +111,7 @@ export const buildBusinessCardFormData = (data = {}) => {
 
   simpleKeys.forEach((key) => {
     const val = normalized[key];
-    if (val !== undefined && val !== null && val !== "") {
+    if (val !== undefined && val !== null && String(val).trim() !== "") {
       formData.append(key, val);
     }
   });
@@ -118,9 +130,7 @@ export const buildBusinessCardFormData = (data = {}) => {
   }
 
   // ---- Works: mix of existing URLs and new files ----
-  // ✅ New backend accepts BOTH "works" and "work_images".
-  // We send files as "works" to match the new flow.
-  // Existing URLs must be sent as "existing_works" (repeatable).
+  // ✅ Backend accepts files as "works" and existing URLs as "existing_works"
   if (Array.isArray(normalized.works)) {
     normalized.works.forEach((item) => {
       // New uploads (File)
@@ -166,16 +176,10 @@ export const buildBusinessCardFormData = (data = {}) => {
 
   // ---- Removal flags (booleans -> strings) ----
   if (typeof normalized.cover_photo_removed !== "undefined") {
-    formData.append(
-      "cover_photo_removed",
-      String(Boolean(normalized.cover_photo_removed))
-    );
+    formData.append("cover_photo_removed", String(Boolean(normalized.cover_photo_removed)));
   }
   if (typeof normalized.avatar_removed !== "undefined") {
-    formData.append(
-      "avatar_removed",
-      String(Boolean(normalized.avatar_removed))
-    );
+    formData.append("avatar_removed", String(Boolean(normalized.avatar_removed)));
   }
 
   // ---- Section visibility flags ----
@@ -194,7 +198,6 @@ export const buildBusinessCardFormData = (data = {}) => {
   });
 
   // ❌ DO NOT append "user" anymore (JWT route uses req.user from token)
-
   return formData;
 };
 
@@ -205,7 +208,7 @@ export const useCreateBusinessCard = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // backend returns: { message, data: updatedCard }
+      // backend returns: { data: saved } OR { message, data: updatedCard }
       return response.data?.data ?? null;
     },
   });

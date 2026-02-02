@@ -16,9 +16,9 @@ import iro from "@jaames/iro";
 const getContrastColor = (hex = "#000000") => {
     const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec((hex || "").trim());
     if (!m) return "#111";
-    const r = parseInt(m[1], 16),
-        g = parseInt(m[2], 16),
-        b = parseInt(m[3], 16);
+    const r = parseInt(m[1], 16);
+    const g = parseInt(m[2], 16);
+    const b = parseInt(m[3], 16);
     const L = 0.2126 * (r / 255) + 0.7152 * (g / 255) + 0.0722 * (b / 255);
     return L > 0.6 ? "#111" : "#fff";
 };
@@ -31,6 +31,13 @@ export default function Editor({
     onStartSubscription,
     onResetPage,
     onSubmit,
+
+    servicesDisplayMode,
+    setServicesDisplayMode,
+    reviewsDisplayMode,
+    setReviewsDisplayMode,
+    aboutMeLayout,
+    setAboutMeLayout,
 
     showMainSection,
     setShowMainSection,
@@ -64,6 +71,27 @@ export default function Editor({
     const popoverRef = useRef(null);
     const wheelMountRef = useRef(null);
 
+    // ✅ Template picker
+    const TEMPLATE_IDS = ["template-1", "template-2", "template-3", "template-4", "template-5"];
+    const currentTemplate = (state.templateId || "template-1").toString();
+
+    const isTemplateLocked = (templateId) => {
+        // backend rule: free users only template-1
+        // we treat "not subscribed" as free/trial -> keep locked to template-1 (safe)
+        if (!isSubscribed && templateId !== "template-1") return true;
+        return false;
+    };
+
+    const handleTemplateSelect = (id) => {
+        if (isTemplateLocked(id)) {
+            onStartSubscription?.();
+            return;
+        }
+        updateState({ templateId: id }); // ✅ keep one key in your store
+    };
+
+
+
     // Init / update iro.js color wheel when popover opens
     useEffect(() => {
         if (!wheelOpen || !wheelMountRef.current) return;
@@ -80,29 +108,22 @@ export default function Editor({
             ],
         });
 
-        const onChange = (color) => {
-            updateState({ buttonBgColor: color.hexString });
-        };
+        const onChange = (color) => updateState({ buttonBgColor: color.hexString });
         picker.on("color:change", onChange);
 
         return () => {
             picker.off("color:change", onChange);
-            // allow GC by clearing DOM
             if (wheelMountRef.current) wheelMountRef.current.innerHTML = "";
         };
-    }, [wheelOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [wheelOpen]);
 
     // Close popover when clicking outside
     useEffect(() => {
         if (!wheelOpen) return;
         const onDocClick = (e) => {
             const t = e.target;
-            if (
-                popoverRef.current?.contains(t) ||
-                triggerRef.current?.contains(t)
-            ) {
-                return;
-            }
+            if (popoverRef.current?.contains(t) || triggerRef.current?.contains(t)) return;
             setWheelOpen(false);
         };
         document.addEventListener("mousedown", onDocClick);
@@ -114,8 +135,10 @@ export default function Editor({
         next[i] = { ...(next[i] || {}), [field]: value };
         updateState({ services: next });
     };
+
     const handleAddService = () =>
         updateState({ services: [...(state.services || []), { name: "", price: "" }] });
+
     const handleRemoveService = (i) =>
         updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
 
@@ -123,32 +146,29 @@ export default function Editor({
         const next = [...(state.reviews || [])];
         if (field === "rating") {
             const n = parseInt(value, 10);
-            next[i] = {
-                ...(next[i] || {}),
-                rating: Number.isFinite(n) ? Math.min(5, Math.max(1, n)) : "",
-            };
+            next[i] = { ...(next[i] || {}), rating: Number.isFinite(n) ? Math.min(5, Math.max(1, n)) : "" };
         } else {
             next[i] = { ...(next[i] || {}), [field]: value };
         }
         updateState({ reviews: next });
     };
+
     const handleAddReview = () =>
         updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
+
     const handleRemoveReview = (i) =>
         updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
     // ===== Section Order (Main locked at top) =====
     const readableSectionName = (key) =>
-    (
-        {
-            main: "Main",
-            about: "About Me",
-            work: "My Work",
-            services: "My Services",
-            reviews: "Reviews",
-            contact: "Contact",
-        }[key] || key
-    );
+    ({
+        main: "Main",
+        about: "About Me",
+        work: "My Work",
+        services: "My Services",
+        reviews: "Reviews",
+        contact: "Contact",
+    }[key] || key);
 
     const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
 
@@ -185,11 +205,7 @@ export default function Editor({
     const pickedInk = getContrastColor(pickedBg);
 
     return (
-        <div
-            className="myprofile-editor-wrapper editor-scope"
-            id="myprofile-editor"
-            style={columnScrollStyle}
-        >
+        <div className="myprofile-editor-wrapper editor-scope" id="myprofile-editor" style={columnScrollStyle}>
             {!isSubscribed && hasTrialEnded && (
                 <div className="subscription-overlay">
                     <div className="subscription-message">
@@ -214,6 +230,40 @@ export default function Editor({
             >
                 <h2 className="editor-title">Edit Your Digital Business Card</h2>
                 <hr className="title-divider" />
+
+                {/* ✅ TEMPLATE PICKER */}
+                <div className="input-block">
+                    <div className="choice-label">Template</div>
+                    <div className="option-row" style={{ gap: 10, flexWrap: "wrap" }}>
+                        {TEMPLATE_IDS.map((t) => {
+                            const locked = isTemplateLocked(t);
+                            const active = currentTemplate === t;
+
+                            return (
+                                <button
+                                    key={t}
+                                    type="button"
+                                    className={`chip ${active ? "is-active" : ""}`}
+                                    onClick={() => handleTemplateSelect(t)}
+                                    title={locked ? "Upgrade to unlock this template" : "Select template"}
+                                    aria-label={locked ? `${t} locked` : `${t}`}
+                                    style={{
+                                        opacity: locked ? 0.6 : 1,
+                                        borderStyle: locked ? "dashed" : "solid",
+                                    }}
+                                >
+                                    {t.replace("-", " ").toUpperCase()}
+                                    {locked ? " 🔒" : ""}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    {!isSubscribed && (
+                        <p style={{ marginTop: 8, opacity: 0.75, fontSize: 13 }}>
+                            Free users can use <strong>TEMPLATE 1</strong> only. Upgrade to unlock Templates 2–5.
+                        </p>
+                    )}
+                </div>
 
                 {/* Theme */}
                 <div className="input-block">
@@ -316,11 +366,7 @@ export default function Editor({
                                         aria-hidden
                                     />
                                     <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 10 }}>
-                                        <button
-                                            type="button"
-                                            className="btn btn-accent"
-                                            onClick={() => setWheelOpen(false)}
-                                        >
+                                        <button type="button" className="btn btn-accent" onClick={() => setWheelOpen(false)}>
                                             Done
                                         </button>
                                     </div>
@@ -381,38 +427,8 @@ export default function Editor({
 
                                     <div className="order-buttons">
                                         {isMain ? (
-                                            <button
-                                                type="button"
-                                                className="btn btn-ghost"
-                                                disabled
-                                                aria-label="Main section is locked at the top"
-                                                title="Main section is locked at the top"
-                                            >
-                                                <svg
-                                                    width="18"
-                                                    height="18"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    aria-hidden="true"
-                                                >
-                                                    <path
-                                                        d="M7 10V7a5 5 0 0 1 10 0v3"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                    />
-                                                    <rect
-                                                        x="5"
-                                                        y="10"
-                                                        width="14"
-                                                        height="11"
-                                                        rx="2"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2"
-                                                    />
-                                                </svg>
+                                            <button type="button" className="btn btn-ghost" disabled title="Main section is locked at the top">
+                                                🔒
                                             </button>
                                         ) : (
                                             <>
@@ -447,11 +463,7 @@ export default function Editor({
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">Main Section</h3>
-                    <button
-                        type="button"
-                        onClick={() => setShowMainSection(!showMainSection)}
-                        className="toggle-button section-chip"
-                    >
+                    <button type="button" onClick={() => setShowMainSection(!showMainSection)} className="toggle-button section-chip">
                         {showMainSection ? "Hide Section" : "Show Section"}
                     </button>
                 </div>
@@ -470,16 +482,9 @@ export default function Editor({
                                 }}
                                 style={{ display: "none" }}
                             />
-                            <div
-                                className="editor-item-card work-image-item-wrapper cover-photo-card"
-                                onClick={() => coverInputRef.current?.click()}
-                            >
+                            <div className="editor-item-card work-image-item-wrapper cover-photo-card" onClick={() => coverInputRef.current?.click()}>
                                 {state.coverPhoto ? (
-                                    <img
-                                        src={state.coverPhoto || previewPlaceholders.coverPhoto}
-                                        alt="Cover"
-                                        className="work-image-preview"
-                                    />
+                                    <img src={state.coverPhoto || previewPlaceholders.coverPhoto} alt="Cover" className="work-image-preview" />
                                 ) : (
                                     <span className="upload-text">+ Upload Cover Image</span>
                                 )}
@@ -528,11 +533,7 @@ export default function Editor({
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">About Me Section</h3>
-                    <button
-                        type="button"
-                        onClick={() => setShowAboutMeSection(!showAboutMeSection)}
-                        className="toggle-button section-chip"
-                    >
+                    <button type="button" onClick={() => setShowAboutMeSection(!showAboutMeSection)} className="toggle-button section-chip">
                         {showAboutMeSection ? "Hide Section" : "Show Section"}
                     </button>
                 </div>
@@ -551,10 +552,7 @@ export default function Editor({
                                 }}
                                 style={{ display: "none" }}
                             />
-                            <div
-                                className="editor-item-card work-image-item-wrapper avatar-tile"
-                                onClick={() => avatarInputRef.current?.click()}
-                            >
+                            <div className="editor-item-card work-image-item-wrapper avatar-tile" onClick={() => avatarInputRef.current?.click()}>
                                 {state.avatar ? (
                                     <img src={state.avatar || ""} alt="Avatar preview" className="work-image-preview" />
                                 ) : (
@@ -610,6 +608,26 @@ export default function Editor({
                                 placeholder={previewPlaceholders.bio}
                             />
                         </div>
+
+                        <div className="input-block">
+                            <div className="choice-label">About Layout</div>
+                            <div className="option-row split-2">
+                                <button
+                                    type="button"
+                                    className={`chip ${aboutMeLayout === "side-by-side" ? "is-active" : ""}`}
+                                    onClick={() => setAboutMeLayout?.("side-by-side")}
+                                >
+                                    Side-by-side
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`chip ${aboutMeLayout === "stacked" ? "is-active" : ""}`}
+                                    onClick={() => setAboutMeLayout?.("stacked")}
+                                >
+                                    Stacked
+                                </button>
+                            </div>
+                        </div>
                     </>
                 )}
 
@@ -617,17 +635,30 @@ export default function Editor({
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">My Work Section</h3>
-                    <button
-                        type="button"
-                        onClick={() => setShowWorkSection(!showWorkSection)}
-                        className="toggle-button section-chip"
-                    >
+                    <button type="button" onClick={() => setShowWorkSection(!showWorkSection)} className="toggle-button section-chip">
                         {showWorkSection ? "Hide Section" : "Show Section"}
                     </button>
                 </div>
                 {showWorkSection && (
                     <div className="input-block">
                         <label>Work Images</label>
+
+                        <div className="input-block">
+                            <div className="choice-label">Work Layout</div>
+                            <div className="option-row split-2">
+                                {["list", "grid"].map((m) => (
+                                    <button
+                                        key={m}
+                                        type="button"
+                                        className={`chip ${String(state.workDisplayMode || "list") === m ? "is-active" : ""}`}
+                                        onClick={() => updateState({ workDisplayMode: m })}
+                                    >
+                                        {m[0].toUpperCase() + m.slice(1)}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
                         <div className="editor-work-image-grid">
                             {(state.workImages || []).map((item, i) => (
                                 <div key={i} className="editor-item-card work-image-item-wrapper">
@@ -644,15 +675,14 @@ export default function Editor({
                                     </button>
                                 </div>
                             ))}
+
                             {(state.workImages || []).length < 10 && (
-                                <div
-                                    className="add-work-image-placeholder"
-                                    onClick={() => workImageInputRef.current?.click()}
-                                >
+                                <div className="add-work-image-placeholder" onClick={() => workImageInputRef.current?.click()}>
                                     <span className="upload-text">+ Add image(s)</span>
                                 </div>
                             )}
                         </div>
+
                         <input
                             ref={workImageInputRef}
                             type="file"
@@ -660,9 +690,7 @@ export default function Editor({
                             accept="image/*"
                             style={{ display: "none" }}
                             onChange={(e) => {
-                                const files = Array.from(e.target.files || []).filter(
-                                    (f) => f && f.type.startsWith("image/")
-                                );
+                                const files = Array.from(e.target.files || []).filter((f) => f && f.type.startsWith("image/"));
                                 if (files.length) onAddWorkImages?.(files);
                             }}
                         />
@@ -673,17 +701,27 @@ export default function Editor({
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">My Services Section</h3>
-                    <button
-                        type="button"
-                        onClick={() => setShowServicesSection(!showServicesSection)}
-                        className="toggle-button section-chip"
-                    >
+                    <button type="button" onClick={() => setShowServicesSection(!showServicesSection)} className="toggle-button section-chip">
                         {showServicesSection ? "Hide Section" : "Show Section"}
                     </button>
                 </div>
                 {showServicesSection && (
                     <div className="input-block">
-                        <label>Services</label>
+                        <div className="choice-label">Services Layout</div>
+                        <div className="option-row split-2">
+                            {["list", "cards"].map((m) => (
+                                <button
+                                    key={m}
+                                    type="button"
+                                    className={`chip ${String(servicesDisplayMode || "list") === m ? "is-active" : ""}`}
+                                    onClick={() => setServicesDisplayMode?.(m)}
+                                >
+                                    {m[0].toUpperCase() + m.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+
+                        <label style={{ marginTop: 10 }}>Services</label>
                         <div className="editor-service-list">
                             {(state.services || []).map((s, i) => (
                                 <div key={i} className="editor-item-card mock-service-item-wrapper">
@@ -707,6 +745,7 @@ export default function Editor({
                                 </div>
                             ))}
                         </div>
+
                         <button type="button" onClick={handleAddService} className="desktop-button navy-button w-full">
                             + Add Service
                         </button>
@@ -717,17 +756,27 @@ export default function Editor({
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">Reviews Section</h3>
-                    <button
-                        type="button"
-                        onClick={() => setShowReviewsSection(!showReviewsSection)}
-                        className="toggle-button section-chip"
-                    >
+                    <button type="button" onClick={() => setShowReviewsSection(!showReviewsSection)} className="toggle-button section-chip">
                         {showReviewsSection ? "Hide Section" : "Show Section"}
                     </button>
                 </div>
                 {showReviewsSection && (
                     <div className="input-block">
-                        <label>Reviews</label>
+                        <div className="choice-label">Reviews Layout</div>
+                        <div className="option-row split-2">
+                            {["list", "cards"].map((m) => (
+                                <button
+                                    key={m}
+                                    type="button"
+                                    className={`chip ${String(reviewsDisplayMode || "list") === m ? "is-active" : ""}`}
+                                    onClick={() => setReviewsDisplayMode?.(m)}
+                                >
+                                    {m[0].toUpperCase() + m.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+
+                        <label style={{ marginTop: 10 }}>Reviews</label>
                         <div className="editor-reviews-list" style={{ display: "grid", gap: 8 }}>
                             {(state.reviews || []).map((r, i) => (
                                 <div key={i} className="editor-item-card mock-review-card-wrapper">
@@ -760,6 +809,7 @@ export default function Editor({
                                 </div>
                             ))}
                         </div>
+
                         <button type="button" onClick={handleAddReview} className="desktop-button navy-button w-full">
                             + Add Review
                         </button>
@@ -770,11 +820,7 @@ export default function Editor({
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">My Contact Details</h3>
-                    <button
-                        type="button"
-                        onClick={() => setShowContactSection(!showContactSection)}
-                        className="toggle-button section-chip"
-                    >
+                    <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="toggle-button section-chip">
                         {showContactSection ? "Hide Section" : "Show Section"}
                     </button>
                 </div>

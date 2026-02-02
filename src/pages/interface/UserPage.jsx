@@ -1,10 +1,18 @@
 // frontend/src/pages/interface/UserPage.jsx
-import React, { useRef, useContext, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
 import { AuthContext } from "../../components/AuthContext";
 
+/* ✅ TEMPLATES */
+import Template1 from "../../components/Dashboard/Template1";
+import Template2 from "../../components/Dashboard/Template2";
+import Template3 from "../../components/Dashboard/Template3";
+import Template4 from "../../components/Dashboard/Template4";
+import Template5 from "../../components/Dashboard/Template5";
+
+/* Social icons */
 import FacebookIcon from "../../assets/icons/icons8-facebook.svg";
 import InstagramIcon from "../../assets/icons/icons8-instagram.svg";
 import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
@@ -14,19 +22,10 @@ import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
 /* ---------------------------
    Helpers
 --------------------------- */
-const PLACEHOLDER_HINTS = [
-    "placeholder",
-    "sample",
-    "demo",
-    "stock",
-    "default",
-    "template",
-    "card-mock",
-];
+const PLACEHOLDER_HINTS = ["placeholder", "sample", "demo", "stock", "default", "template", "card-mock"];
 
 const looksLikePlaceholderUrl = (url = "") =>
-    typeof url === "string" &&
-    PLACEHOLDER_HINTS.some((h) => url.toLowerCase().includes(h));
+    typeof url === "string" && PLACEHOLDER_HINTS.some((h) => url.toLowerCase().includes(h));
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 const arr = (v) => (Array.isArray(v) ? v : []);
@@ -39,16 +38,10 @@ const read = (o, keys, fb = undefined) => {
     return fb;
 };
 
-const filterRealImages = (xs) =>
-    arr(xs).filter((u) => nonEmpty(u) && !looksLikePlaceholderUrl(u));
-
-const filterRealServices = (xs) =>
-    arr(xs).filter((s) => s && (nonEmpty(s.name) || nonEmpty(s.price)));
-
+const filterRealImages = (xs) => arr(xs).filter((u) => nonEmpty(u) && !looksLikePlaceholderUrl(u));
+const filterRealServices = (xs) => arr(xs).filter((s) => s && (nonEmpty(s.name) || nonEmpty(s.price)));
 const filterRealReviews = (xs) =>
-    arr(xs).filter(
-        (r) => r && (nonEmpty(r.name) || nonEmpty(r.text) || (r.rating ?? 0) > 0)
-    );
+    arr(xs).filter((r) => r && (nonEmpty(r.name) || nonEmpty(r.text) || (r.rating ?? 0) > 0));
 
 const centerPage = {
     textAlign: "center",
@@ -62,10 +55,6 @@ export default function UserPage() {
     // ✅ supports /u/:username and /u/:username/:slug
     const { username, slug } = useParams();
     const { user: authUser } = useContext(AuthContext);
-
-    const workCarouselRef = useRef(null);
-    const servicesCarouselRef = useRef(null);
-    const reviewsCarouselRef = useRef(null);
 
     // Normalize slug
     const profileSlug = useMemo(() => {
@@ -84,19 +73,14 @@ export default function UserPage() {
             // ✅ If slug exists fetch specific profile
             if (profileSlug) {
                 const res = await api.get(
-                    `/api/business-card/by_username/${encodeURIComponent(
-                        username
-                    )}/${encodeURIComponent(profileSlug)}`,
+                    `/api/business-card/by_username/${encodeURIComponent(username)}/${encodeURIComponent(profileSlug)}`,
                     { headers }
                 );
                 return res.data;
             }
 
             // ✅ else fetch default/main/newest
-            const res = await api.get(
-                `/api/business-card/by_username/${encodeURIComponent(username)}`,
-                { headers }
-            );
+            const res = await api.get(`/api/business-card/by_username/${encodeURIComponent(username)}`, { headers });
             return res.data;
         },
         enabled: !!username,
@@ -104,17 +88,6 @@ export default function UserPage() {
         gcTime: 10 * 60 * 1000,
         retry: 1,
     });
-
-    const scrollCarousel = (ref, dir) => {
-        if (!ref.current || !ref.current.children.length) return;
-        const el = ref.current;
-        const w = el.children[0].offsetWidth;
-        const max = el.scrollWidth - el.offsetWidth;
-        let next = dir === "left" ? el.scrollLeft - w : el.scrollLeft + w;
-        if (next < 0) next = max;
-        if (next >= max) next = 0;
-        el.scrollTo({ left: next, behavior: "smooth" });
-    };
 
     const goEditProfile = () => {
         try {
@@ -157,6 +130,9 @@ export default function UserPage() {
     /* ---------------------------
        Robust field fallbacks
     --------------------------- */
+
+    // ✅ template id (persisted)
+    const templateId = read(businessCard, ["template_id", "templateId"], "template-1");
 
     // Theme, font, alignment, CTA colors
     const pageTheme = read(businessCard, ["page_theme", "pageTheme"], "light");
@@ -208,15 +184,12 @@ export default function UserPage() {
      * so don’t block the public page unless those fields exist.
      */
     const subscriptionFieldPresent =
-        typeof businessCard?.isSubscribed !== "undefined" ||
-        typeof businessCard?.trialExpires !== "undefined";
+        typeof businessCard?.isSubscribed !== "undefined" || typeof businessCard?.trialExpires !== "undefined";
 
     if (subscriptionFieldPresent) {
         const isSubscribed = !!businessCard.isSubscribed;
-        const isTrialActive =
-            businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
-        if (!(isSubscribed || isTrialActive))
-            return unavailable(username, goEditProfile, goContactSupportSmart);
+        const isTrialActive = businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
+        if (!(isSubscribed || isTrialActive)) return unavailable(username, goEditProfile, goContactSupportSmart);
     }
 
     // Decide what to render
@@ -251,8 +224,7 @@ export default function UserPage() {
         color: buttonTxt === "black" ? "#000000" : "#FFFFFF",
     };
 
-    const flexJustify =
-        textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : "flex-start";
+    const flexJustify = textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : "flex-start";
 
     const socialLinks = [
         { key: "facebook_url", url: read(businessCard, ["facebook_url", "facebookUrl"]), icon: FacebookIcon, label: "Facebook" },
@@ -306,252 +278,77 @@ export default function UserPage() {
         return (
             <div className="user-landing-page" style={{ ...themeStyles, ...centerPage, padding: 24 }}>
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
-                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>
-                        This profile isn’t set up yet
-                    </h2>
-                    <p style={{ marginTop: 10, opacity: 0.8 }}>
-                        @{username} hasn’t published any content here yet.
-                    </p>
+                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>This profile isn’t set up yet</h2>
+                    <p style={{ marginTop: 10, opacity: 0.8 }}>@{username} hasn’t published any content here yet.</p>
                 </div>
             </div>
         );
     }
 
-    /* ---------------------------
-       Sections
-    --------------------------- */
-    const MainSection = () =>
-        showMainSection ? (
-            <>
-                {nonEmpty(cover) && <img src={cover} alt="Cover" className="landing-cover-photo" />}
-                {nonEmpty(mainHeading) && (
-                    <h2 className="landing-main-heading" style={contentAlign}>
-                        {mainHeading}
-                    </h2>
-                )}
-                {nonEmpty(subHeading) && (
-                    <p className="landing-sub-heading" style={contentAlign}>
-                        {subHeading}
-                    </p>
-                )}
-                {hasContact && (
-                    <button
-                        type="button"
-                        onClick={handleExchangeContact}
-                        className="landing-action-button"
-                        style={ctaStyle}
-                    >
-                        Save My Number
-                    </button>
-                )}
-            </>
-        ) : null;
+    /* =========================================================
+       ✅ Build a single ViewModel for all templates
+    ========================================================= */
+    const vm = {
+        // styles
+        themeStyles,
+        contentAlign,
+        ctaStyle,
+        flexJustify,
 
-    const AboutSection = () =>
-        showAboutMeSection ? (
-            <>
-                <p className="landing-section-title">About Me</p>
-                <div className={`landing-about-section ${aboutLayout}`}>
-                    {nonEmpty(avatar) && <img src={avatar} alt="Avatar" className="landing-avatar" />}
-                    <div className="landing-about-header">
-                        {nonEmpty(fullName) && <p className="landing-profile-name">{fullName}</p>}
-                        {nonEmpty(jobTitle) && <p className="landing-profile-role">{jobTitle}</p>}
-                    </div>
-                    {nonEmpty(bio) && (
-                        <p className="landing-bio-text" style={contentAlign}>
-                            {bio}
-                        </p>
-                    )}
-                </div>
-            </>
-        ) : null;
+        // identity
+        username,
+        profileSlug,
 
-    const WorkSection = () =>
-        showWorkSection ? (
-            <>
-                <p className="landing-section-title">My Work</p>
+        // content
+        cover,
+        avatar,
+        mainHeading,
+        subHeading,
+        fullName,
+        jobTitle,
+        bio,
+        works,
+        services,
+        reviews,
+        email,
+        phone,
+        hasContact,
+        socialLinks,
 
-                {(workMode === "list" || workMode === "grid") && (
-                    <div className={`landing-work-gallery ${workMode}`}>
-                        {works.map((url, i) => (
-                            <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />
-                        ))}
-                    </div>
-                )}
+        // display modes
+        aboutLayout,
+        workMode,
+        servicesMode,
+        reviewsMode,
 
-                {workMode === "carousel" && (
-                    <div className="user-carousel-container">
-                        <div className="user-carousel-nav-buttons">
-                            <button
-                                type="button"
-                                className="user-carousel-nav-button left-arrow"
-                                onClick={() => scrollCarousel(workCarouselRef, "left")}
-                            >
-                                &#9664;
-                            </button>
-                            <button
-                                type="button"
-                                className="user-carousel-nav-button right-arrow"
-                                onClick={() => scrollCarousel(workCarouselRef, "right")}
-                            >
-                                &#9654;
-                            </button>
-                        </div>
-                        <div ref={workCarouselRef} className="user-work-gallery-carousel">
-                            {works.map((url, i) => (
-                                <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </>
-        ) : null;
+        // sections
+        sectionOrder,
+        showMainSection,
+        showAboutMeSection,
+        showWorkSection,
+        showServicesSection,
+        showReviewsSection,
+        showContactSection,
 
-    const ServicesSection = () =>
-        showServicesSection ? (
-            <>
-                <p className="landing-section-title">My Services</p>
-                <div className="user-carousel-container">
-                    {servicesMode === "carousel" && (
-                        <div className="user-carousel-nav-buttons">
-                            <button
-                                type="button"
-                                className="user-carousel-nav-button left-arrow"
-                                onClick={() => scrollCarousel(servicesCarouselRef, "left")}
-                            >
-                                &#9664;
-                            </button>
-                            <button
-                                type="button"
-                                className="user-carousel-nav-button right-arrow"
-                                onClick={() => scrollCarousel(servicesCarouselRef, "right")}
-                            >
-                                &#9654;
-                            </button>
-                        </div>
-                    )}
-                    <div
-                        ref={servicesCarouselRef}
-                        className={`user-services-list-carousel ${servicesMode === "carousel" ? "" : "list"}`}
-                        style={contentAlign}
-                    >
-                        {services.map((s, i) => (
-                            <div key={i} className="landing-service-item">
-                                {nonEmpty(s.name) && <p className="landing-service-name">{s.name}</p>}
-                                {nonEmpty(s.price) && <span className="landing-service-price">{s.price}</span>}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </>
-        ) : null;
-
-    const ReviewsSection = () =>
-        showReviewsSection ? (
-            <>
-                <p className="landing-section-title">Reviews</p>
-                <div className="user-carousel-container">
-                    {reviewsMode === "carousel" && (
-                        <div className="user-carousel-nav-buttons">
-                            <button
-                                type="button"
-                                className="user-carousel-nav-button left-arrow"
-                                onClick={() => scrollCarousel(reviewsCarouselRef, "left")}
-                            >
-                                &#9664;
-                            </button>
-                            <button
-                                type="button"
-                                className="user-carousel-nav-button right-arrow"
-                                onClick={() => scrollCarousel(reviewsCarouselRef, "right")}
-                            >
-                                &#9654;
-                            </button>
-                        </div>
-                    )}
-                    <div
-                        ref={reviewsCarouselRef}
-                        className={`user-reviews-list-carousel ${reviewsMode === "carousel" ? "" : "list"}`}
-                        style={contentAlign}
-                    >
-                        {reviews.map((r, i) => (
-                            <div key={i} className="landing-review-card" style={contentAlign}>
-                                <div className="landing-star-rating" style={{ justifyContent: flexJustify }}>
-                                    {Array(r.rating || 0)
-                                        .fill()
-                                        .map((_, j) => (
-                                            <span key={`f-${j}`}>★</span>
-                                        ))}
-                                    {Array(Math.max(0, 5 - (r.rating || 0)))
-                                        .fill()
-                                        .map((_, j) => (
-                                            <span key={`e-${j}`} className="empty-star">
-                                                ★
-                                            </span>
-                                        ))}
-                                </div>
-                                {nonEmpty(r.text) && <p className="landing-review-text">{`"${r.text}"`}</p>}
-                                {nonEmpty(r.name) && <p className="landing-reviewer-name">{r.name}</p>}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </>
-        ) : null;
-
-    const ContactSection = () =>
-        showContactSection ? (
-            <>
-                <p className="landing-section-title">Contact Details</p>
-                <div className="landing-contact-details">
-                    {nonEmpty(email) && (
-                        <div className="landing-contact-item">
-                            <p className="landing-contact-label">Email:</p>
-                            <p className="landing-contact-value">{email}</p>
-                        </div>
-                    )}
-                    {nonEmpty(phone) && (
-                        <div className="landing-contact-item">
-                            <p className="landing-contact-label">Phone:</p>
-                            <p className="landing-contact-value">{phone}</p>
-                        </div>
-                    )}
-                    {socialLinks.length > 0 && (
-                        <div className="landing-contact-socials" aria-label="Social links">
-                            {socialLinks.map((s) => (
-                                <a
-                                    key={s.key}
-                                    href={s.url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="landing-contact-social-chip"
-                                    aria-label={s.label}
-                                >
-                                    <img src={s.icon} alt="" className="landing-contact-social-glyph" />
-                                </a>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </>
-        ) : null;
-
-    const sectionMap = {
-        main: <MainSection key="main" />,
-        about: <AboutSection key="about" />,
-        work: <WorkSection key="work" />,
-        services: <ServicesSection key="services" />,
-        reviews: <ReviewsSection key="reviews" />,
-        contact: <ContactSection key="contact" />,
+        // actions
+        onExchangeContact: handleExchangeContact,
     };
 
-    return (
-        <div className="user-landing-page" style={themeStyles}>
-            {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}
-        </div>
-    );
+    /* =========================================================
+       ✅ Template switch
+    ========================================================= */
+    const tid = (templateId || "template-1").toString();
 
-    function unavailable(username, onEdit, onContact) {
+    if (tid === "template-2") return <Template2 vm={vm} />;
+    if (tid === "template-3") return <Template3 vm={vm} />;
+    if (tid === "template-4") return <Template4 vm={vm} />;
+    if (tid === "template-5") return <Template5 vm={vm} />;
+    return <Template1 vm={vm} />;
+
+    /* ---------------------------
+       Unavailable page
+    --------------------------- */
+    function unavailable(usernameValue, onEdit, onContact) {
         return (
             <div className="user-landing-page unavailable-wrap">
                 <div className="unavailable-card">
@@ -574,9 +371,7 @@ export default function UserPage() {
                                 <div className="desktop-body-s">
                                     <strong>Access expired.</strong>
                                 </div>
-                                <div className="desktop-body-xs">
-                                    The free trial may have ended or a subscription is required.
-                                </div>
+                                <div className="desktop-body-xs">The free trial may have ended or a subscription is required.</div>
                             </div>
                         </li>
                     </ul>

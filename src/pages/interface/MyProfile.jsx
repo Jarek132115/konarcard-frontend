@@ -32,8 +32,12 @@ const norm = (v) => (v ?? "").toString().trim();
 const buildBusinessCardFormData = ({
   profile_slug,
 
+  // ✅ template
+  template_id,
+
   business_card_name,
   page_theme,
+  page_theme_variant,
   style,
   main_heading,
   sub_heading,
@@ -85,9 +89,16 @@ const buildBusinessCardFormData = ({
   // ✅ MULTI-PROFILE: tell backend which profile we are editing
   fd.append("profile_slug", (profile_slug || "main").toString());
 
+  // ✅ TEMPLATE: tell backend which template to persist
+  if (template_id) fd.append("template_id", template_id.toString());
+
   // Core text fields
   fd.append("business_card_name", business_card_name || "");
   fd.append("page_theme", page_theme || "light");
+
+  // ✅ you hydrate this; you should also save it
+  if (page_theme_variant) fd.append("page_theme_variant", page_theme_variant);
+
   fd.append("style", style || "Inter");
   fd.append("main_heading", main_heading || "");
   fd.append("sub_heading", sub_heading || "");
@@ -141,7 +152,10 @@ const buildBusinessCardFormData = ({
   fd.append("x_url", x_url || "");
   fd.append("tiktok_url", tiktok_url || "");
 
-  fd.append("section_order", JSON.stringify(Array.isArray(section_order) ? section_order : DEFAULT_SECTION_ORDER));
+  fd.append(
+    "section_order",
+    JSON.stringify(Array.isArray(section_order) ? section_order : DEFAULT_SECTION_ORDER)
+  );
 
   return fd;
 };
@@ -163,7 +177,8 @@ export default function MyProfile() {
   const navigate = useNavigate();
 
   // ✅ AuthContext exposes "hydrating", not "loading"
-  const { user: authUser, hydrating: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
+  const { user: authUser, hydrating: authLoading, fetchUser: refetchAuthUser } =
+    useContext(AuthContext);
 
   const userEmail = authUser?.email;
   const isSubscribed = !!authUser?.isSubscribed;
@@ -246,7 +261,8 @@ export default function MyProfile() {
 
   const hasSavedData = !!businessCard;
   const hasExchangeContact =
-    (state.contact_email && state.contact_email.trim()) || (state.phone_number && state.phone_number.trim());
+    (state.contact_email && state.contact_email.trim()) ||
+    (state.phone_number && state.phone_number.trim());
 
   // ==========================
   // 1) Stripe return handler (no repeated toasts)
@@ -342,6 +358,9 @@ export default function MyProfile() {
 
     if (businessCard) {
       updateState({
+        // ✅ template hydrate (so it persists in UI + saves)
+        templateId: businessCard.template_id || "template-1",
+
         businessName: businessCard.business_card_name || "",
         pageTheme: businessCard.page_theme || "light",
         pageThemeVariant: businessCard.page_theme_variant || "subtle-light",
@@ -365,7 +384,8 @@ export default function MyProfile() {
         phone_number: businessCard.phone_number || "",
 
         buttonBgColor: businessCard.button_bg_color || "#F47629",
-        buttonTextColor: (businessCard.button_text_color || "white").toLowerCase() === "black" ? "black" : "white",
+        buttonTextColor:
+          (businessCard.button_text_color || "white").toLowerCase() === "black" ? "black" : "white",
         textAlignment: ["left", "center", "right"].includes((businessCard.text_alignment || "").toLowerCase())
           ? businessCard.text_alignment
           : "left",
@@ -413,6 +433,8 @@ export default function MyProfile() {
       setShowContactSection(true);
 
       updateState({
+        templateId: "template-1",
+
         buttonBgColor: "#F47629",
         buttonTextColor: "white",
         textAlignment: "left",
@@ -555,6 +577,8 @@ export default function MyProfile() {
     activeBlobUrlsRef.current = [];
 
     updateState({
+      templateId: "template-1",
+
       buttonBgColor: "#F47629",
       buttonTextColor: "white",
       textAlignment: "left",
@@ -622,9 +646,15 @@ export default function MyProfile() {
     const origSectionOrder =
       Array.isArray(original.section_order) && original.section_order.length ? original.section_order : DEFAULT_SECTION_ORDER;
 
+    // ✅ template compare
+    const origTemplate = original.template_id || "template-1";
+    const currentTemplate = state.templateId || "template-1";
+
     return (
+      currentTemplate !== origTemplate ||
       state.businessName !== (original.business_card_name || "") ||
       state.pageTheme !== (original.page_theme || "light") ||
+      (state.pageThemeVariant || "subtle-light") !== (original.page_theme_variant || "subtle-light") ||
       state.font !== (original.style || "Inter") ||
       state.mainHeading !== (original.main_heading || "") ||
       state.subHeading !== (original.sub_heading || "") ||
@@ -689,8 +719,12 @@ export default function MyProfile() {
     const formData = buildBusinessCardFormData({
       profile_slug: activeSlug,
 
+      // ✅ template persist
+      template_id: state.templateId || "template-1",
+
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
+      page_theme_variant: state.pageThemeVariant || "subtle-light",
       style: state.font,
       main_heading: state.mainHeading,
       sub_heading: state.subHeading,
@@ -757,7 +791,11 @@ export default function MyProfile() {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
       activeBlobUrlsRef.current = [];
     } catch (err) {
-      toast.error(err?.response?.data?.error || err?.response?.data?.message || "Something went wrong while saving.");
+      toast.error(
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        "Something went wrong while saving."
+      );
     }
   };
 
@@ -801,7 +839,12 @@ export default function MyProfile() {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <main className="main-content-container">
-        <PageHeader isMobile={isMobile} isSmallMobile={isSmallMobile} onShareCard={handleShareCard} visitUrl={visitUrl} />
+        <PageHeader
+          isMobile={isMobile}
+          isSmallMobile={isSmallMobile}
+          onShareCard={handleShareCard}
+          visitUrl={visitUrl}
+        />
 
         <div className="myprofile-main-content">
           {!authLoading && !authUser && (
@@ -825,7 +868,7 @@ export default function MyProfile() {
                       className="desktop-button navy-button"
                       onClick={() =>
                         queryClient.invalidateQueries({
-                          queryKey: ["businessCard", "profile", activeSlug]
+                          queryKey: ["businessCard", "profile", activeSlug],
                         })
                       }
                     >
@@ -976,7 +1019,6 @@ export default function MyProfile() {
         isOpen={showShareModal}
         onClose={handleCloseShareModal}
         profileUrl={visitUrl}
-        // ✅ BusinessCard uses qr_code_url
         qrCodeUrl={businessCard?.qr_code_url || ""}
         contactDetails={{
           full_name: businessCard?.full_name || "",

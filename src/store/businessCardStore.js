@@ -1,136 +1,264 @@
-import { create } from "zustand";
+// src/components/Editor.jsx
+import React, { useRef, useState, useEffect } from "react";
+import { previewPlaceholders } from "../store/businessCardStore";
+import useBusinessCardStore from "../store/businessCardStore";
 
-/** keep a pure template */
-const template = {
-  businessName: "",
-  pageTheme: "light",
-  pageThemeVariant: "subtle-light",
-  font: "Inter",
+/* icons */
+import FacebookIcon from "../assets/icons/icons8-facebook.svg";
+import InstagramIcon from "../assets/icons/icons8-instagram.svg";
+import LinkedInIcon from "../assets/icons/icons8-linkedin.svg";
+import XIcon from "../assets/icons/icons8-x.svg";
+import TikTokIcon from "../assets/icons/icons8-tiktok.svg";
 
-  // NEW: styling controls
-  buttonBgColor: "#F47629",     // CTA/button background colour
-  buttonTextColor: "white",     // "white" | "black"
-  textAlignment: "left",        // "left" | "center" | "right"
+/* color wheel */
+import iro from "@jaames/iro";
 
-  // NEW: social links
-  facebook_url: "",
-  instagram_url: "",
-  linkedin_url: "",
-  x_url: "",
-  tiktok_url: "",
-
-  // NEW: section order (rendering sequence)
-  sectionOrder: ["main", "about", "work", "services", "reviews", "contact"],
-
-  coverPhoto: null,
-  avatar: null,
-  workImages: [],
-  workDisplayMode: "list",
-
-  mainHeading: "",
-  subHeading: "",
-  job_title: "",
-  full_name: "",
-  bio: "",
-
-  services: [],
-  servicesDisplayMode: "list",
-  reviews: [],
-  reviewsDisplayMode: "list",
-  aboutMeLayout: "side-by-side",
-
-  contact_email: "",
-  phone_number: "",
+/* contrast helper */
+const getContrastColor = (hex = "#000000") => {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!m) return "#111";
+  const r = parseInt(m[1], 16);
+  const g = parseInt(m[2], 16);
+  const b = parseInt(m[3], 16);
+  const L = 0.2126 * (r / 255) + 0.7152 * (g / 255) + 0.0722 * (b / 255);
+  return L > 0.6 ? "#111" : "#fff";
 };
 
-/** always return a fresh copy */
-const freshInitialState = () => ({
-  ...template,
-  // ensure new array identities
-  workImages: [],
-  services: [],
-  reviews: [],
-});
+export default function Editor({
+  state,
+  updateState,
+  onSubmit,
+  onStartSubscription,
+  onCoverUpload,
+  onRemoveCover,
+  onAvatarUpload,
+  onRemoveAvatar,
+  onAddWorkImages,
+  onRemoveWorkImage,
+}) {
+  const {
+    checkLimit,
+    lockTemplateIfNeeded,
+  } = useBusinessCardStore();
 
-const useBusinessCardStore = create((set) => ({
-  state: freshInitialState(),
-  updateState: (newState) =>
-    set((store) => ({
-      state: { ...store.state, ...newState },
-    })),
-  resetState: () => set({ state: freshInitialState() }),
-}));
+  const coverInputRef = useRef(null);
+  const avatarInputRef = useRef(null);
+  const workInputRef = useRef(null);
 
-export default useBusinessCardStore;
+  /* color wheel */
+  const [wheelOpen, setWheelOpen] = useState(false);
+  const wheelMountRef = useRef(null);
 
-export const previewPlaceholders = {
-  businessName: "Elite Bathrooms & Renovations",
-  pageTheme: "light",
-  pageThemeVariant: "subtle-light",
+  useEffect(() => {
+    if (!wheelOpen || !wheelMountRef.current) return;
+    wheelMountRef.current.innerHTML = "";
 
-  // Optional preview defaults for styling (used if needed in Preview)
-  buttonBgColor: "#F47629",
-  buttonTextColor: "white",
-  textAlignment: "left",
+    const picker = new iro.ColorPicker(wheelMountRef.current, {
+      width: 200,
+      color: state.buttonBgColor,
+      layout: [{ component: iro.ui.Wheel }],
+    });
 
-  coverPhoto: "/Interface-Preview/Cover-Photo1.png",
-  avatar: "/Interface-Preview/Profile-Pic.png",
+    picker.on("color:change", (c) =>
+      updateState({ buttonBgColor: c.hexString })
+    );
+  }, [wheelOpen]);
 
-  workImages: [
-    { file: null, preview: "/Interface-Preview/Work-Images1.png" },
-    { file: null, preview: "/Interface-Preview/Work-Images2.png" },
-    { file: null, preview: "/Interface-Preview/Work-Images3.png" },
-  ],
-  workDisplayMode: "list",
-  servicesDisplayMode: "list",
-  reviewsDisplayMode: "list",
-  aboutMeLayout: "side-by-side",
+  const pickedBg = state.buttonBgColor;
+  const pickedInk = getContrastColor(pickedBg);
 
-  mainHeading: "Transforming Bathrooms, Elevating Homes",
-  subHeading: "Premium bathroom renovations with unmatched craftsmanship",
-  main_heading: "Transforming Bathrooms, Elevating Homes",
-  sub_heading: "Premium bathroom renovations with unmatched craftsmanship",
+  /* =========================
+     TEMPLATE SELECT
+  ========================= */
+  const handleTemplateSelect = (id) => {
+    const ok = lockTemplateIfNeeded(id);
+    if (!ok) onStartSubscription?.();
+  };
 
-  job_title: "Bathroom Renovation Specialist",
-  full_name: "James Carter",
-  bio:
-    "With 15 years of experience in luxury bathroom renovations, I create stylish, functional spaces tailored to each client. From modern wet rooms to classic designs, every project blends quality craftsmanship with attention to detail.",
+  /* =========================
+     WORK IMAGES
+  ========================= */
+  const handleAddImages = (files) => {
+    if (!checkLimit("images")) {
+      onStartSubscription?.();
+      return;
+    }
+    onAddWorkImages(files);
+  };
 
-  services: [
-    { name: "Full Bathroom Renovation", price: "Starting from £9,995" },
-    { name: "Shower & Wet Room Installation", price: "Starting from £9,995" },
-    { name: "Custom Vanity & Cabinetry", price: "Starting from £9,995" },
-    { name: "Tiling & Flooring", price: "Starting from £9,995" },
-  ],
+  /* =========================
+     SERVICES
+  ========================= */
+  const addService = () => {
+    if (!checkLimit("services")) {
+      onStartSubscription?.();
+      return;
+    }
+    updateState({
+      services: [...state.services, { name: "", price: "" }],
+    });
+  };
 
-  reviews: [
-    {
-      name: "Sarah Mitchell",
-      text: "James completely transformed our outdated bathroom into a spa-like retreat. Impeccable attention to detail!",
-      rating: 5,
-    },
-    {
-      name: "Daniel Hughes",
-      text: "Professional, punctual, and the quality of work was outstanding. Highly recommend for any bathroom project.",
-      rating: 5,
-    },
-    {
-      name: "Laura Evans",
-      text: "We love our new walk-in shower! James guided us through every step and made the process stress-free.",
-      rating: 4,
-    },
-  ],
+  /* =========================
+     REVIEWS
+  ========================= */
+  const addReview = () => {
+    if (!checkLimit("reviews")) {
+      onStartSubscription?.();
+      return;
+    }
+    updateState({
+      reviews: [...state.reviews, { name: "", text: "", rating: 5 }],
+    });
+  };
 
-  contact_email: "info@elitebathrooms.co.uk",
-  phone_number: "+44 7700 900123",
+  return (
+    <form className="myprofile-editor" onSubmit={onSubmit}>
+      {/* TEMPLATE SELECT */}
+      <h3>Template</h3>
+      <div className="template-row">
+        {["template-1", "template-2", "template-3", "template-4", "template-5"].map((t) => (
+          <button
+            key={t}
+            type="button"
+            className={`template-chip ${state.template_id === t ? "active" : ""}`}
+            style={{
+              background:
+                t === "template-1"
+                  ? "#e74c3c"
+                  : t === "template-2"
+                    ? "#3498db"
+                    : t === "template-3"
+                      ? "#2ecc71"
+                      : t === "template-4"
+                        ? "#f1c40f"
+                        : "#9b59b6",
+            }}
+            onClick={() => handleTemplateSelect(t)}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
 
-  // Optional placeholder order
-  sectionOrder: ["main", "about", "work", "services", "reviews", "contact"],
+      {/* BUTTON STYLE */}
+      <h3>Button Style</h3>
+      <div
+        className="color-chip"
+        style={{ background: pickedBg, color: pickedInk }}
+        onClick={() => setWheelOpen(!wheelOpen)}
+      >
+        Pick colour
+      </div>
+      {wheelOpen && <div ref={wheelMountRef} />}
 
-  // Optional placeholder socials (left empty so they don't render unless user adds)
-  facebook_url: "",
-  instagram_url: "",
-  linkedin_url: "",
-  x_url: "",
-  tiktok_url: "",
-};
+      {/* COVER */}
+      <h3>Cover Photo</h3>
+      <input
+        ref={coverInputRef}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={(e) => e.target.files && onCoverUpload(e.target.files[0])}
+      />
+      <button type="button" onClick={() => coverInputRef.current.click()}>
+        Upload cover
+      </button>
+
+      {/* WORK */}
+      <h3>Work Images</h3>
+      <div className="work-grid">
+        {state.workImages.map((img, i) => (
+          <div key={i} className="img-tile">
+            <img src={img.preview || img} alt="" />
+            <button type="button" onClick={() => onRemoveWorkImage(i)}>
+              ×
+            </button>
+          </div>
+        ))}
+        <button type="button" onClick={() => workInputRef.current.click()}>
+          + Add
+        </button>
+      </div>
+      <input
+        ref={workInputRef}
+        type="file"
+        multiple
+        hidden
+        accept="image/*"
+        onChange={(e) => handleAddImages(Array.from(e.target.files || []))}
+      />
+
+      {/* SERVICES */}
+      <h3>Services</h3>
+      {state.services.map((s, i) => (
+        <div key={i}>
+          <input
+            value={s.name}
+            onChange={(e) => {
+              const next = [...state.services];
+              next[i].name = e.target.value;
+              updateState({ services: next });
+            }}
+            placeholder="Service name"
+          />
+          <input
+            value={s.price}
+            onChange={(e) => {
+              const next = [...state.services];
+              next[i].price = e.target.value;
+              updateState({ services: next });
+            }}
+            placeholder="Price"
+          />
+        </div>
+      ))}
+      <button type="button" onClick={addService}>
+        + Add service
+      </button>
+
+      {/* REVIEWS */}
+      <h3>Reviews</h3>
+      {state.reviews.map((r, i) => (
+        <div key={i}>
+          <input
+            value={r.name}
+            onChange={(e) => {
+              const next = [...state.reviews];
+              next[i].name = e.target.value;
+              updateState({ reviews: next });
+            }}
+            placeholder="Name"
+          />
+          <textarea
+            value={r.text}
+            onChange={(e) => {
+              const next = [...state.reviews];
+              next[i].text = e.target.value;
+              updateState({ reviews: next });
+            }}
+            placeholder="Review"
+          />
+        </div>
+      ))}
+      <button type="button" onClick={addReview}>
+        + Add review
+      </button>
+
+      {/* SUBMIT */}
+      <button type="submit" className="publish-btn">
+        Publish
+      </button>
+
+      {/* UPGRADE MODAL TRIGGER */}
+      {state.upgradeRequired && (
+        <div className="upgrade-banner">
+          <p>{state.upgradeReason}</p>
+          <button type="button" onClick={onStartSubscription}>
+            Upgrade
+          </button>
+        </div>
+      )}
+    </form>
+  );
+}

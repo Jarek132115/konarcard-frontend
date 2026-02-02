@@ -36,6 +36,31 @@ export default function Preview({
     const shouldShowPlaceholders = !hasSavedData;
     const isDarkMode = state.pageTheme === "dark";
 
+    // ---------------------------
+    // ✅ Templates (background colour demo)
+    // Supports both snake_case and camelCase
+    // ---------------------------
+    const templateIdRaw = (state.template_id || state.templateId || "template-1").toString();
+    const templateId = ["template-1", "template-2", "template-3", "template-4", "template-5"].includes(templateIdRaw)
+        ? templateIdRaw
+        : "template-1";
+
+    // Bright “it’s working” colours (you can replace later with real designs)
+    const templateBgMap = {
+        "template-1": "#ffdddd", // red-ish
+        "template-2": "#dde9ff", // blue-ish
+        "template-3": "#fff6cc", // yellow-ish
+        "template-4": "#ddffdd", // green-ish
+        "template-5": "#f0ddff", // purple-ish
+    };
+
+    // Apply background on the phone “screen”
+    // If dark mode, keep background darker but still different per template.
+    const templateBg = templateBgMap[templateId] || templateBgMap["template-1"];
+    const phoneBgStyle = isDarkMode
+        ? { backgroundColor: "rgba(20,20,20,0.95)" } // keep your dark look consistent
+        : { backgroundColor: templateBg };
+
     const ctaStyle = {
         backgroundColor: state.buttonBgColor || "#F47629",
         color: state.buttonTextColor === "black" ? "#000000" : "#FFFFFF",
@@ -180,8 +205,6 @@ export default function Preview({
                 <p className="mock-section-title">My Work</p>
 
                 <div className="work-preview-row-container" style={contentAlign}>
-                    {/* If you ever re-introduce carousel, this can come back.
-              For now backend + editor are list/grid. */}
                     <div
                         ref={previewWorkCarouselRef}
                         className={`mock-work-gallery ${workMode}`}
@@ -207,7 +230,6 @@ export default function Preview({
                 <p className="mock-section-title">My Services</p>
 
                 <div className="work-preview-row-container" style={contentAlign}>
-                    {/* If you add carousel later, re-enable arrows here */}
                     <div
                         ref={previewServicesCarouselRef}
                         className={`mock-services-list ${servicesMode}`}
@@ -344,13 +366,12 @@ export default function Preview({
         contact: <ContactSection key="contact" />,
     };
 
+    const rootClasses = `myprofile-preview ${isDarkMode ? "dark" : ""} template-${templateId}`;
+
     if (isMobile) {
         return (
             <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
-                <div
-                    className={`myprofile-preview ${isDarkMode ? "dark" : ""}`}
-                    style={{ fontFamily: state.font || previewPlaceholders.font }}
-                >
+                <div className={rootClasses} style={{ fontFamily: state.font || previewPlaceholders.font }}>
                     <div
                         className={`mp-toolbar ${previewOpen ? "is-open" : "is-collapsed"}`}
                         role="tablist"
@@ -380,7 +401,7 @@ export default function Preview({
                     </div>
 
                     <div className={`mp-preview-wrap ${previewOpen ? "open" : "closed"}`} ref={mpWrapRef}>
-                        <div className="mock-phone mobile-preview">
+                        <div className="mock-phone mobile-preview" style={phoneBgStyle}>
                             <div className="mock-phone-scrollable-content">
                                 {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}
                             </div>
@@ -393,11 +414,8 @@ export default function Preview({
 
     return (
         <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
-            <div
-                className={`myprofile-preview ${isDarkMode ? "dark" : ""}`}
-                style={{ fontFamily: state.font || previewPlaceholders.font }}
-            >
-                <div className="mock-phone">
+            <div className={rootClasses} style={{ fontFamily: state.font || previewPlaceholders.font }}>
+                <div className="mock-phone" style={phoneBgStyle}>
                     <div className="mock-phone-scrollable-content desktop-no-inner-scroll">
                         {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}
                     </div>
