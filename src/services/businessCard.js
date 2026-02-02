@@ -32,24 +32,69 @@ export const getMyBusinessCard = async () => {
 
 /**
  * Upsert (save) a business card.
- * Backend route:
- *  POST /api/business-card
  *
- * NOTE:
- * - FormData required (images)
- * - include profile_slug in the FormData if saving a non-main profile
+ * Primary (new) backend route:
+ *   POST /api/business-card
+ *   - expects multipart/form-data
+ *   - supports profile_slug in FormData for multi-profile
+ *
+ * Fallbacks (if your deployed backend differs):
+ *   POST /api/business-card/profiles/:slug
+ *   PATCH /api/business-card/profiles/:slug
  */
-export const saveMyBusinessCard = async (formData) => {
+export const saveMyBusinessCard = async (formData, opts = {}) => {
     if (!(formData instanceof FormData)) {
         throw new Error("saveMyBusinessCard expects FormData");
     }
 
-    // IMPORTANT:
-    // Do NOT manually set Content-Type for FormData.
-    // Axios will set the correct multipart boundary.
-    const res = await api.post("/api/business-card", formData);
+    const slug = (opts.profile_slug || formData.get("profile_slug") || "main")
+        .toString()
+        .trim() || "main";
 
-    return res?.data?.data ?? null;
+    // IMPORTANT:
+    // Do NOT manually set Content-Type boundary; let Axios handle it.
+    // (Axios will set multipart/form-data with correct boundary automatically.)
+    const postConfig = {
+        // keep empty to avoid boundary issues
+        headers: {},
+    };
+
+    // 1) Preferred route
+    try {
+        const res = await api.post("/api/business-card", formData, postConfig);
+        return res?.data?.data ?? null;
+    } catch (err) {
+        const status = err?.response?.status;
+
+        // If forbidden, keep the original error (most likely auth/subscription/verify)
+        // If not-found/method-not-allowed, try fallbacks
+        if (status !== 404 && status !== 405) {
+            throw err;
+        }
+    }
+
+    // 2) Fallback: POST /profiles/:slug
+    try {
+        const res = await api.post(
+            `/api/business-card/profiles/${encodeURIComponent(slug)}`,
+            formData,
+            postConfig
+        );
+        return res?.data?.data ?? null;
+    } catch (err2) {
+        const status2 = err2?.response?.status;
+        if (status2 !== 404 && status2 !== 405) {
+            throw err2;
+        }
+    }
+
+    // 3) Fallback: PATCH /profiles/:slug
+    const res3 = await api.patch(
+        `/api/business-card/profiles/${encodeURIComponent(slug)}`,
+        formData,
+        postConfig
+    );
+    return res3?.data?.data ?? null;
 };
 
 /**
