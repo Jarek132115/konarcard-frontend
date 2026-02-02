@@ -9,6 +9,9 @@ import LinkedInIcon from "../assets/icons/icons8-linkedin.svg";
 import XIcon from "../assets/icons/icons8-x.svg";
 import TikTokIcon from "../assets/icons/icons8-tiktok.svg";
 
+const asArray = (v) => (Array.isArray(v) ? v : []);
+const asString = (v) => (typeof v === "string" ? v : "");
+
 export default function Preview({
     state,
     isMobile,
@@ -33,39 +36,39 @@ export default function Preview({
     const previewReviewsCarouselRef = useRef(null);
     const mpWrapRef = useRef(null);
 
+    // ✅ Guard state so Preview can never crash during loading
+    const s = state || {};
+
     const shouldShowPlaceholders = !hasSavedData;
-    const isDarkMode = state.pageTheme === "dark";
+    const isDarkMode = (s.pageTheme || s.page_theme || "light") === "dark";
 
     // ---------------------------
     // ✅ Templates (background colour demo)
     // Supports both snake_case and camelCase
     // ---------------------------
-    const templateIdRaw = (state.template_id || state.templateId || "template-1").toString();
+    const templateIdRaw = (s.template_id || s.templateId || "template-1").toString();
     const templateId = ["template-1", "template-2", "template-3", "template-4", "template-5"].includes(templateIdRaw)
         ? templateIdRaw
         : "template-1";
 
-    // Bright “it’s working” colours (you can replace later with real designs)
     const templateBgMap = {
-        "template-1": "#ffdddd", // red-ish
-        "template-2": "#dde9ff", // blue-ish
-        "template-3": "#fff6cc", // yellow-ish
-        "template-4": "#ddffdd", // green-ish
-        "template-5": "#f0ddff", // purple-ish
+        "template-1": "#ffdddd",
+        "template-2": "#dde9ff",
+        "template-3": "#fff6cc",
+        "template-4": "#ddffdd",
+        "template-5": "#f0ddff",
     };
 
-    // Apply background on the phone “screen”
-    // If dark mode, keep background darker but still different per template.
     const templateBg = templateBgMap[templateId] || templateBgMap["template-1"];
     const phoneBgStyle = isDarkMode
-        ? { backgroundColor: "rgba(20,20,20,0.95)" } // keep your dark look consistent
+        ? { backgroundColor: "rgba(20,20,20,0.95)" }
         : { backgroundColor: templateBg };
 
     const ctaStyle = {
-        backgroundColor: state.buttonBgColor || "#F47629",
-        color: state.buttonTextColor === "black" ? "#000000" : "#FFFFFF",
+        backgroundColor: s.buttonBgColor || s.button_bg_color || "#F47629",
+        color: (s.buttonTextColor || s.button_text_color) === "black" ? "#000000" : "#FFFFFF",
     };
-    const contentAlign = { textAlign: state.textAlignment || "left" };
+    const contentAlign = { textAlign: s.textAlignment || s.text_alignment || "left" };
 
     // ---------------------------
     // Section order (sanitized)
@@ -78,44 +81,54 @@ export default function Preview({
         const cleaned = (Array.isArray(order) ? order : defaultOrder)
             .filter((k) => KNOWN.has(k))
             .filter((k) => (seen.has(k) ? false : seen.add(k)));
-        // ensure all sections exist in output (and keep order stable)
         const missing = defaultOrder.filter((k) => !cleaned.includes(k));
         return [...cleaned, ...missing];
     };
 
-    const sectionOrder = sanitizeOrder(state.sectionOrder);
+    // ✅ Supports both state.sectionOrder and state.section_order
+    const sectionOrder = sanitizeOrder(s.sectionOrder || s.section_order);
 
     // ---------------------------
     // Preview values
     // ---------------------------
-    const previewFullName =
-        state.full_name || (shouldShowPlaceholders ? previewPlaceholders.full_name : "");
-    const previewJobTitle =
-        state.job_title || (shouldShowPlaceholders ? previewPlaceholders.job_title : "");
-    const previewBio = state.bio || (shouldShowPlaceholders ? previewPlaceholders.bio : "");
-    const previewEmail =
-        state.contact_email || (shouldShowPlaceholders ? previewPlaceholders.contact_email : "");
-    const previewPhone =
-        state.phone_number || (shouldShowPlaceholders ? previewPlaceholders.phone_number : "");
-    const previewCoverPhotoSrc =
-        state.coverPhoto ?? (shouldShowPlaceholders ? previewPlaceholders.coverPhoto : "");
-    const previewAvatarSrc =
-        state.avatar ?? (shouldShowPlaceholders ? previewPlaceholders.avatar : null);
+    const ph = previewPlaceholders || {};
 
+    const previewFullName = asString(s.full_name) || (shouldShowPlaceholders ? asString(ph.full_name) : "");
+    const previewJobTitle = asString(s.job_title) || (shouldShowPlaceholders ? asString(ph.job_title) : "");
+    const previewBio = asString(s.bio) || (shouldShowPlaceholders ? asString(ph.bio) : "");
+    const previewEmail = asString(s.contact_email) || (shouldShowPlaceholders ? asString(ph.contact_email) : "");
+    const previewPhone = asString(s.phone_number) || (shouldShowPlaceholders ? asString(ph.phone_number) : "");
+
+    const previewCoverPhotoSrc =
+        s.coverPhoto ?? s.cover_photo ?? (shouldShowPlaceholders ? ph.coverPhoto : "");
+
+    const previewAvatarSrc =
+        s.avatar ?? (shouldShowPlaceholders ? ph.avatar : null);
+
+    // ✅ ALWAYS return arrays (never undefined)
     const previewWorkImages = useMemo(() => {
-        if (state.workImages && state.workImages.length > 0) return state.workImages;
-        return shouldShowPlaceholders ? previewPlaceholders.workImages : [];
-    }, [state.workImages, shouldShowPlaceholders]);
+        const fromState = asArray(s.workImages || s.works);
+        if (fromState.length > 0) return fromState;
+
+        const fromPlaceholders = asArray(ph.workImages || ph.works);
+        return shouldShowPlaceholders ? fromPlaceholders : [];
+    }, [s.workImages, s.works, shouldShowPlaceholders, ph.workImages, ph.works]);
 
     const servicesForPreview = useMemo(() => {
-        if (state.services && state.services.length > 0) return state.services;
-        return shouldShowPlaceholders ? previewPlaceholders.services : [];
-    }, [state.services, shouldShowPlaceholders]);
+        const fromState = asArray(s.services);
+        if (fromState.length > 0) return fromState;
+
+        const fromPlaceholders = asArray(ph.services);
+        return shouldShowPlaceholders ? fromPlaceholders : [];
+    }, [s.services, shouldShowPlaceholders, ph.services]);
 
     const reviewsForPreview = useMemo(() => {
-        if (state.reviews && state.reviews.length > 0) return state.reviews;
-        return shouldShowPlaceholders ? previewPlaceholders.reviews : [];
-    }, [state.reviews, shouldShowPlaceholders]);
+        const fromState = asArray(s.reviews);
+        if (fromState.length > 0) return fromState;
+
+        const fromPlaceholders = asArray(ph.reviews);
+        return shouldShowPlaceholders ? fromPlaceholders : [];
+    }, [s.reviews, shouldShowPlaceholders, ph.reviews]);
 
     /** Smooth open/close on mobile without re-running for every content change */
     useEffect(() => {
@@ -165,18 +178,18 @@ export default function Preview({
         el.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
     };
 
-    // Normalize display modes so you don't get "carousel" bugs
-    const workMode = (state.workDisplayMode || "list").toLowerCase(); // list | grid
+    // Normalize display modes
+    const workMode = (s.workDisplayMode || "list").toLowerCase(); // list | grid
     const servicesMode = (servicesDisplayMode || "list").toLowerCase(); // list | cards
     const reviewsMode = (reviewsDisplayMode || "list").toLowerCase(); // list | cards
 
     const ContactSocials = () => {
         const links = [
-            { key: "facebook_url", label: "Facebook", href: state.facebook_url, icon: FacebookIcon },
-            { key: "instagram_url", label: "Instagram", href: state.instagram_url, icon: InstagramIcon },
-            { key: "linkedin_url", label: "LinkedIn", href: state.linkedin_url, icon: LinkedInIcon },
-            { key: "x_url", label: "X", href: state.x_url, icon: XIcon },
-            { key: "tiktok_url", label: "TikTok", href: state.tiktok_url, icon: TikTokIcon },
+            { key: "facebook_url", label: "Facebook", href: s.facebook_url, icon: FacebookIcon },
+            { key: "instagram_url", label: "Instagram", href: s.instagram_url, icon: InstagramIcon },
+            { key: "linkedin_url", label: "LinkedIn", href: s.linkedin_url, icon: LinkedInIcon },
+            { key: "x_url", label: "X", href: s.x_url, icon: XIcon },
+            { key: "tiktok_url", label: "TikTok", href: s.tiktok_url, icon: TikTokIcon },
         ].filter((x) => typeof x.href === "string" && x.href.trim());
 
         if (!links.length) return null;
@@ -213,7 +226,7 @@ export default function Preview({
                         {previewWorkImages.map((item, i) => (
                             <div key={i} className="mock-work-image-item-wrapper">
                                 <img
-                                    src={item.preview || item}
+                                    src={item?.preview || item}
                                     alt={`work-${i}`}
                                     className="mock-work-image-item"
                                 />
@@ -235,10 +248,10 @@ export default function Preview({
                         className={`mock-services-list ${servicesMode}`}
                         style={contentAlign}
                     >
-                        {servicesForPreview.map((s, i) => (
+                        {servicesForPreview.map((sv, i) => (
                             <div key={i} className="mock-service-item">
-                                <p className="mock-service-name">{s.name}</p>
-                                <span className="mock-service-price">{s.price}</span>
+                                <p className="mock-service-name">{sv?.name}</p>
+                                <span className="mock-service-price">{sv?.price}</span>
                             </div>
                         ))}
                     </div>
@@ -260,12 +273,12 @@ export default function Preview({
                         {reviewsForPreview.map((r, i) => (
                             <div key={i} className="mock-review-card">
                                 <div className="mock-star-rating">
-                                    {Array(r.rating || 0)
+                                    {Array(r?.rating || 0)
                                         .fill(null)
                                         .map((_, idx) => (
                                             <span key={`f-${idx}`}>★</span>
                                         ))}
-                                    {Array(Math.max(0, 5 - (r.rating || 0)))
+                                    {Array(Math.max(0, 5 - (r?.rating || 0)))
                                         .fill(null)
                                         .map((_, idx) => (
                                             <span key={`e-${idx}`} className="empty-star">
@@ -273,8 +286,8 @@ export default function Preview({
                                             </span>
                                         ))}
                                 </div>
-                                <p className="mock-review-text">{`"${r.text}"`}</p>
-                                <p className="mock-reviewer-name">{r.name}</p>
+                                <p className="mock-review-text">{`"${r?.text || ""}"`}</p>
+                                <p className="mock-reviewer-name">{r?.name}</p>
                             </div>
                         ))}
                     </div>
@@ -309,18 +322,20 @@ export default function Preview({
     const MainSection = () =>
         showMainSection ? (
             <>
-                {(shouldShowPlaceholders || !!state.coverPhoto) && (
+                {(shouldShowPlaceholders || !!s.coverPhoto || !!s.cover_photo) && (
                     <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
                 )}
 
                 <h2 className="mock-title" style={contentAlign}>
-                    {state.mainHeading ||
-                        (!hasSavedData ? previewPlaceholders.main_heading : "Your Main Heading Here")}
+                    {s.mainHeading ||
+                        s.main_heading ||
+                        (!hasSavedData ? ph.main_heading : "Your Main Heading Here")}
                 </h2>
 
                 <p className="mock-subtitle" style={contentAlign}>
-                    {state.subHeading ||
-                        (!hasSavedData ? previewPlaceholders.sub_heading : "Your Tagline or Slogan Goes Here")}
+                    {s.subHeading ||
+                        s.sub_heading ||
+                        (!hasSavedData ? ph.sub_heading : "Your Tagline or Slogan Goes Here")}
                 </p>
 
                 {(shouldShowPlaceholders || hasExchangeContact) && (
@@ -367,11 +382,12 @@ export default function Preview({
     };
 
     const rootClasses = `myprofile-preview ${isDarkMode ? "dark" : ""} template-${templateId}`;
+    const fontFamily = s.font || s.style || ph.font;
 
     if (isMobile) {
         return (
             <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
-                <div className={rootClasses} style={{ fontFamily: state.font || previewPlaceholders.font }}>
+                <div className={rootClasses} style={{ fontFamily }}>
                     <div
                         className={`mp-toolbar ${previewOpen ? "is-open" : "is-collapsed"}`}
                         role="tablist"
@@ -382,7 +398,7 @@ export default function Preview({
                             role="tab"
                             aria-selected={previewOpen}
                             className={`mp-tab ${previewOpen ? "active" : ""}`}
-                            onClick={() => setPreviewOpen((s) => !s)}
+                            onClick={() => setPreviewOpen((x) => !x)}
                         >
                             {previewOpen ? "Hide Preview" : "Show Preview"}
                         </button>
@@ -414,7 +430,7 @@ export default function Preview({
 
     return (
         <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
-            <div className={rootClasses} style={{ fontFamily: state.font || previewPlaceholders.font }}>
+            <div className={rootClasses} style={{ fontFamily }}>
                 <div className="mock-phone" style={phoneBgStyle}>
                     <div className="mock-phone-scrollable-content desktop-no-inner-scroll">
                         {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}
