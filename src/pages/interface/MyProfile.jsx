@@ -32,7 +32,6 @@ const norm = (v) => (v ?? "").toString().trim();
 const buildBusinessCardFormData = ({
   profile_slug,
 
-  // ✅ template
   template_id,
 
   business_card_name,
@@ -57,7 +56,6 @@ const buildBusinessCardFormData = ({
   contact_email,
   phone_number,
 
-  // optional extras
   cover_photo_removed,
   avatar_removed,
   work_display_mode,
@@ -86,17 +84,11 @@ const buildBusinessCardFormData = ({
 }) => {
   const fd = new FormData();
 
-  // ✅ MULTI-PROFILE: tell backend which profile we are editing
   fd.append("profile_slug", (profile_slug || "main").toString());
-
-  // ✅ TEMPLATE: tell backend which template to persist
   if (template_id) fd.append("template_id", template_id.toString());
 
-  // Core text fields
   fd.append("business_card_name", business_card_name || "");
   fd.append("page_theme", page_theme || "light");
-
-  // ✅ you hydrate this; you should also save it
   if (page_theme_variant) fd.append("page_theme_variant", page_theme_variant);
 
   fd.append("style", style || "Inter");
@@ -106,18 +98,15 @@ const buildBusinessCardFormData = ({
   fd.append("full_name", full_name || "");
   fd.append("bio", bio || "");
 
-  // Contact
   fd.append("contact_email", contact_email || "");
   fd.append("phone_number", phone_number || "");
 
-  // Arrays (as JSON strings)
   fd.append("services", JSON.stringify(Array.isArray(services) ? services : []));
   fd.append("reviews", JSON.stringify(Array.isArray(reviews) ? reviews : []));
 
   const existing = Array.isArray(works_existing_urls) ? works_existing_urls.filter(Boolean) : [];
   existing.forEach((url) => fd.append("existing_works", url));
 
-  // Files
   if (cover_photo instanceof File) fd.append("cover_photo", cover_photo);
   if (avatar instanceof File) fd.append("avatar", avatar);
 
@@ -126,7 +115,6 @@ const buildBusinessCardFormData = ({
     if (f instanceof File) fd.append("works", f);
   });
 
-  // Optional / future-proof fields
   fd.append("cover_photo_removed", cover_photo_removed ? "1" : "0");
   fd.append("avatar_removed", avatar_removed ? "1" : "0");
 
@@ -152,10 +140,7 @@ const buildBusinessCardFormData = ({
   fd.append("x_url", x_url || "");
   fd.append("tiktok_url", tiktok_url || "");
 
-  fd.append(
-    "section_order",
-    JSON.stringify(Array.isArray(section_order) ? section_order : DEFAULT_SECTION_ORDER)
-  );
+  fd.append("section_order", JSON.stringify(Array.isArray(section_order) ? section_order : DEFAULT_SECTION_ORDER));
 
   return fd;
 };
@@ -176,52 +161,72 @@ export default function MyProfile() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // ✅ AuthContext exposes "hydrating", not "loading"
-  const { user: authUser, hydrating: authLoading, fetchUser: refetchAuthUser } =
-    useContext(AuthContext);
+  const { user: authUser, hydrating: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
 
   const userEmail = authUser?.email;
 
   // ✅ NEW PLANS:
-  // free: can edit/save (with limits enforced server-side)
-  // plus: full templates/unlimited sections, still 1 profile
-  // teams: multiple profiles
   const plan = String(authUser?.plan || "free").toLowerCase();
   const isTeams = plan === "teams";
   const isPlus = plan === "plus";
   const isFree = !isPlus && !isTeams;
 
-  // Keep this if you still require verified email for sharing
+  // Verified email only required for sharing (NOT saving)
   const isUserVerified = !!authUser?.isVerified;
   const userUsername = authUser?.username;
 
-  // ✅ slug we are editing
   const activeSlug = useMemo(() => getSlugFromSearch(location.search), [location.search]);
 
   // ✅ Fetch the specific profile card by slug
-  const {
-    data: businessCard,
-    isLoading: isCardLoading,
-    isError: isCardError,
-  } = useQuery({
+  const { data: businessCard, isLoading: isCardLoading, isError: isCardError } = useQuery({
     queryKey: ["businessCard", "profile", activeSlug],
     queryFn: async () => {
       const res = await api.get(`/api/business-card/profiles/${encodeURIComponent(activeSlug)}`);
       return res?.data?.data ?? null;
     },
-    enabled: !!authUser && !!activeSlug, // wait for auth
+    enabled: !!authUser && !!activeSlug,
     staleTime: 30 * 1000,
     retry: 1,
   });
 
-  // ✅ upsert save mutation (JWT)
+  // ✅ If /profiles/:slug returns null, fallback to first existing profile and redirect URL.
+  useEffect(() => {
+    if (!authUser) return;
+    if (isCardLoading) return;
+    if (businessCard) return;
+
+    // if the requested slug isn't found, look for any existing profile
+    (async () => {
+      try {
+        const res = await api.get("/api/business-card/profiles");
+        const list = res?.data?.data || [];
+        const first = Array.isArray(list) && list.length ? list[0] : null;
+
+        const firstSlug = (first?.profile_slug || "").toString().trim();
+        if (!firstSlug) return;
+
+        // already on correct slug -> nothing
+        if (firstSlug === activeSlug) return;
+
+        // rewrite URL to the real slug so editor loads real data
+        const url = new URL(window.location.href);
+        url.searchParams.set("slug", firstSlug);
+        window.history.replaceState({}, document.title, url.toString());
+
+        // force react-router to re-render same page with new search
+        navigate(url.pathname + url.search, { replace: true });
+      } catch {
+        // ignore
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser, isCardLoading, businessCard, activeSlug]);
+
   const saveBusinessCard = useSaveMyBusinessCard();
 
-  // Refs
   const activeBlobUrlsRef = useRef([]);
   const handledPaymentRef = useRef(false);
 
-  // Local state
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeInput] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -240,7 +245,6 @@ export default function MyProfile() {
   const [isMobile, setIsMobile] = useState(() => window.matchMedia(mqDesktopToMobile).matches);
   const [isSmallMobile, setIsSmallMobile] = useState(() => window.matchMedia(mqSmallMobile).matches);
 
-  // Editor display toggles
   const [servicesDisplayMode, setServicesDisplayMode] = useState("list");
   const [reviewsDisplayMode, setReviewsDisplayMode] = useState("list");
   const [aboutMeLayout, setAboutMeLayout] = useState("side-by-side");
@@ -252,16 +256,12 @@ export default function MyProfile() {
   const [showReviewsSection, setShowReviewsSection] = useState(true);
   const [showContactSection, setShowContactSection] = useState(true);
 
-  // ✅ TRIAL REMOVED COMPLETELY
-  const hasTrialEnded = false;
-
   const hasSavedData = !!businessCard;
   const hasExchangeContact =
-    (state.contact_email && state.contact_email.trim()) ||
-    (state.phone_number && state.phone_number.trim());
+    (state.contact_email && state.contact_email.trim()) || (state.phone_number && state.phone_number.trim());
 
   // ==========================
-  // 1) Stripe return handler (no repeated toasts)
+  // 1) Stripe return handler
   // ==========================
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -346,7 +346,7 @@ export default function MyProfile() {
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
   // ==========================
-  // 4) Hydrate editor when card loads (per slug)
+  // 4) Hydrate editor
   // ==========================
   useEffect(() => {
     if (isCardLoading) return;
@@ -427,7 +427,6 @@ export default function MyProfile() {
 
       updateState({
         templateId: "template-1",
-
         buttonBgColor: "#F47629",
         buttonTextColor: "white",
         textAlignment: "left",
@@ -439,20 +438,15 @@ export default function MyProfile() {
         sectionOrder: DEFAULT_SECTION_ORDER,
       });
     }
-  }, [businessCard, isCardLoading, resetState, updateState, activeSlug]);
+  }, [businessCard, isCardLoading, resetState, updateState]);
 
-  // ==========================
   // Cleanup blob URLs
-  // ==========================
   useEffect(() => {
     return () => {
       activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
 
-  // ==========================
-  // Helpers
-  // ==========================
   const createAndTrackBlobUrl = (file) => {
     const url = URL.createObjectURL(file);
     activeBlobUrlsRef.current.push(url);
@@ -569,7 +563,6 @@ export default function MyProfile() {
 
     updateState({
       templateId: "template-1",
-
       buttonBgColor: "#F47629",
       buttonTextColor: "white",
       textAlignment: "left",
@@ -748,11 +741,10 @@ export default function MyProfile() {
 
     try {
       await saveBusinessCard.mutateAsync(formData);
-
       toast.success("Saved ✅");
 
       queryClient.invalidateQueries({ queryKey: ["businessCard", "me"] });
-      queryClient.invalidateQueries({ queryKey: ["myProfiles"] });
+      queryClient.invalidateQueries({ queryKey: ["businessCard", "profiles"] });
       queryClient.invalidateQueries({ queryKey: ["businessCard", "profile", activeSlug] });
 
       setCoverPhotoFile(null);
@@ -771,15 +763,13 @@ export default function MyProfile() {
   const handleStartSubscription = () => navigate("/pricing");
 
   const handleShareCard = () => {
-    if (!isUserVerified) return toast.error("Please verify your email to share your card.");
+    if (!isUserVerified) return toast.error("Please verify your email to share your page.");
     setShowShareModal(true);
   };
   const handleCloseShareModal = () => setShowShareModal(false);
 
-  // ================= RENDER =================
   const visitUrl = useMemo(() => {
     if (!userUsername) return "#";
-    // default profile uses /u/:username
     if (!activeSlug || activeSlug === "main") return `${window.location.origin}/u/${userUsername}`;
     return `${window.location.origin}/u/${userUsername}/${encodeURIComponent(activeSlug)}`;
   }, [userUsername, activeSlug]);
@@ -788,7 +778,6 @@ export default function MyProfile() {
 
   return (
     <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
-      {/* Mobile header */}
       <div className="myprofile-mobile-header">
         <div className="myprofile-brand">
           <img src={LogoIcon} alt="Konar" className="myprofile-logo" />
@@ -820,13 +809,10 @@ export default function MyProfile() {
 
           {!authLoading && authUser && (
             <>
-              {/* If profile fetch fails, show useful message */}
               {isCardError && (
                 <div className="content-card-box error-state">
                   <p>Couldn’t load this profile.</p>
-                  <p style={{ opacity: 0.8, marginTop: 8 }}>
-                    Try again, or go back to Profiles and select a different profile.
-                  </p>
+                  <p style={{ opacity: 0.8, marginTop: 8 }}>Try again, or go back to Profiles and select a different profile.</p>
                   <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
                     <button
                       className="desktop-button navy-button"
@@ -850,8 +836,7 @@ export default function MyProfile() {
                 <div className="content-card-box verification-prompt">
                   <p>⚠️ Your email is not verified!</p>
                   <p>
-                    Please verify your email address (<strong>{userEmail}</strong>) to unlock all features, including saving changes to
-                    your business card.
+                    Please verify your email address (<strong>{userEmail}</strong>) to enable sharing features.
                   </p>
 
                   <form onSubmit={handleVerifyCode} className="verification-form">
@@ -884,13 +869,12 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {/* ✅ NO TRIAL BANNERS ANYMORE */}
-              {/* Optional: show simple plan badge */}
+              {/* Plan badge */}
               <div className="trial-banner" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <p className="desktop-body-s" style={{ margin: 0 }}>
                   Plan: <strong>{isTeams ? "Teams" : isPlus ? "Plus" : "Free"}</strong>
                 </p>
-                {!isPlus && !isTeams ? (
+                {isFree ? (
                   <button className="blue-trial desktop-body-s" onClick={handleStartSubscription}>
                     Upgrade
                   </button>
@@ -898,12 +882,11 @@ export default function MyProfile() {
               </div>
 
               <div className="myprofile-flex-container">
-                {/* Preview column */}
                 <div style={columnScrollStyle}>
                   <Preview
                     state={state}
                     isMobile={isMobile}
-                    hasSavedData={hasSavedData}
+                    hasSavedData={!!businessCard}
                     servicesDisplayMode={servicesDisplayMode}
                     reviewsDisplayMode={reviewsDisplayMode}
                     aboutMeLayout={aboutMeLayout}
@@ -919,12 +902,11 @@ export default function MyProfile() {
                   />
                 </div>
 
-                {/* Editor column */}
                 <Editor
                   state={state}
                   updateState={updateState}
-                  isSubscribed={!isFree} // treat Plus/Teams as "subscribed features"
-                  hasTrialEnded={hasTrialEnded} // always false now
+                  isSubscribed={!isFree}
+                  hasTrialEnded={false}
                   onStartSubscription={handleStartSubscription}
                   onResetPage={handleResetPage}
                   onSubmit={handleSubmit}
@@ -970,7 +952,7 @@ export default function MyProfile() {
           job_title: businessCard?.job_title || "",
           business_card_name: businessCard?.business_card_name || "",
           bio: businessCard?.bio || "",
-          isSubscribed: !isFree, // align with new plan rules
+          isSubscribed: !isFree,
           contact_email: businessCard?.contact_email || "",
           phone_number: businessCard?.phone_number || "",
           username: userUsername || "",

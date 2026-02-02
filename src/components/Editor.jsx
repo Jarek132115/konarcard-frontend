@@ -138,9 +138,11 @@ export default function Editor({
         updateState({ services: next });
     };
 
-    const handleAddService = () => updateState({ services: [...(state.services || []), { name: "", price: "" }] });
+    const handleAddService = () =>
+        updateState({ services: [...(state.services || []), { name: "", price: "" }] });
 
-    const handleRemoveService = (i) => updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
+    const handleRemoveService = (i) =>
+        updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
 
     const handleReviewChange = (i, field, value) => {
         const next = [...(state.reviews || [])];
@@ -153,9 +155,11 @@ export default function Editor({
         updateState({ reviews: next });
     };
 
-    const handleAddReview = () => updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
+    const handleAddReview = () =>
+        updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
 
-    const handleRemoveReview = (i) => updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
+    const handleRemoveReview = (i) =>
+        updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
     // ===== Section Order (Main locked at top) =====
     const readableSectionName = (key) =>
@@ -463,7 +467,10 @@ export default function Editor({
                                 }}
                                 style={{ display: "none" }}
                             />
-                            <div className="editor-item-card work-image-item-wrapper cover-photo-card" onClick={() => coverInputRef.current?.click()}>
+                            <div
+                                className="editor-item-card work-image-item-wrapper cover-photo-card"
+                                onClick={() => coverInputRef.current?.click()}
+                            >
                                 {state.coverPhoto ? (
                                     <img src={state.coverPhoto || previewPlaceholders.coverPhoto} alt="Cover" className="work-image-preview" />
                                 ) : (
@@ -514,7 +521,11 @@ export default function Editor({
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">About Me Section</h3>
-                    <button type="button" onClick={() => setShowAboutMeSection(!showAboutMeSection)} className="toggle-button section-chip">
+                    <button
+                        type="button"
+                        onClick={() => setShowAboutMeSection(!showAboutMeSection)}
+                        className="toggle-button section-chip"
+                    >
                         {showAboutMeSection ? "Hide Section" : "Show Section"}
                     </button>
                 </div>
@@ -682,7 +693,11 @@ export default function Editor({
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">My Services Section</h3>
-                    <button type="button" onClick={() => setShowServicesSection(!showServicesSection)} className="toggle-button section-chip">
+                    <button
+                        type="button"
+                        onClick={() => setShowServicesSection(!showServicesSection)}
+                        className="toggle-button section-chip"
+                    >
                         {showServicesSection ? "Hide Section" : "Show Section"}
                     </button>
                 </div>
@@ -737,7 +752,11 @@ export default function Editor({
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">Reviews Section</h3>
-                    <button type="button" onClick={() => setShowReviewsSection(!showReviewsSection)} className="toggle-button section-chip">
+                    <button
+                        type="button"
+                        onClick={() => setShowReviewsSection(!showReviewsSection)}
+                        className="toggle-button section-chip"
+                    >
                         {showReviewsSection ? "Hide Section" : "Show Section"}
                     </button>
                 </div>
@@ -801,7 +820,11 @@ export default function Editor({
                 <hr className="divider" />
                 <div className="editor-section-header stacked">
                     <h3 className="editor-subtitle">My Contact Details</h3>
-                    <button type="button" onClick={() => setShowContactSection(!showContactSection)} className="toggle-button section-chip">
+                    <button
+                        type="button"
+                        onClick={() => setShowContactSection(!showContactSection)}
+                        className="toggle-button section-chip"
+                    >
                         {showContactSection ? "Hide Section" : "Show Section"}
                     </button>
                 </div>
