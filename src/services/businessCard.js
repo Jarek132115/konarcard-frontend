@@ -68,20 +68,32 @@ export const saveMyBusinessCard = async (formData) => {
  * =========================================================
  */
 
+/**
+ * List my profiles
+ * GET /api/business-card/profiles -> { data: [] }
+ */
 export const getMyProfiles = async () => {
-    // GET /api/business-card/profiles -> { data: [] }
     const res = await api.get("/api/business-card/profiles");
     return res?.data?.data ?? [];
 };
 
+/**
+ * Fetch one profile by slug
+ * GET /api/business-card/profiles/:slug -> { data: BusinessCard|null }
+ */
 export const getMyProfileBySlug = async (slug) => {
-    if (!slug) throw new Error("slug is required");
-    const res = await api.get(`/api/business-card/profiles/${encodeURIComponent(slug)}`);
+    const s = (slug || "").toString().trim();
+    if (!s) throw new Error("slug is required");
+
+    const res = await api.get(`/api/business-card/profiles/${encodeURIComponent(s)}`);
     return res?.data?.data ?? null;
 };
 
+/**
+ * Create profile
+ * POST /api/business-card/profiles -> { message, data }
+ */
 export const createMyProfile = async ({ profile_slug, template_id, business_card_name } = {}) => {
-    // POST /api/business-card/profiles -> { message, data }
     const res = await api.post("/api/business-card/profiles", {
         profile_slug,
         template_id,
@@ -90,15 +102,27 @@ export const createMyProfile = async ({ profile_slug, template_id, business_card
     return res?.data?.data ?? null;
 };
 
+/**
+ * Set default profile
+ * PATCH /api/business-card/profiles/:slug/default -> { message, data }
+ */
 export const setDefaultProfile = async (slug) => {
-    if (!slug) throw new Error("slug is required");
-    const res = await api.patch(`/api/business-card/profiles/${encodeURIComponent(slug)}/default`);
+    const s = (slug || "").toString().trim();
+    if (!s) throw new Error("slug is required");
+
+    const res = await api.patch(`/api/business-card/profiles/${encodeURIComponent(s)}/default`);
     return res?.data?.data ?? null;
 };
 
+/**
+ * Delete profile
+ * DELETE /api/business-card/profiles/:slug
+ */
 export const deleteMyProfile = async (slug) => {
-    if (!slug) throw new Error("slug is required");
-    const res = await api.delete(`/api/business-card/profiles/${encodeURIComponent(slug)}`);
+    const s = (slug || "").toString().trim();
+    if (!s) throw new Error("slug is required");
+
+    const res = await api.delete(`/api/business-card/profiles/${encodeURIComponent(s)}`);
     return res?.data ?? null;
 };
 
@@ -113,9 +137,10 @@ export const deleteMyProfile = async (slug) => {
  * GET /api/business-card/by_username/:username
  */
 export const getBusinessCardByUsername = async (username) => {
-    if (!username) throw new Error("Username is required");
+    const u = (username || "").toString().trim();
+    if (!u) throw new Error("Username is required");
 
-    const res = await api.get(`/api/business-card/by_username/${encodeURIComponent(username)}`, {
+    const res = await api.get(`/api/business-card/by_username/${encodeURIComponent(u)}`, {
         headers: { "x-no-auth": "1" },
     });
 
@@ -127,11 +152,14 @@ export const getBusinessCardByUsername = async (username) => {
  * GET /api/business-card/by_username/:username/:slug
  */
 export const getBusinessCardByUsernameAndSlug = async (username, slug) => {
-    if (!username) throw new Error("Username is required");
-    if (!slug) throw new Error("Slug is required");
+    const u = (username || "").toString().trim();
+    const s = (slug || "").toString().trim();
+
+    if (!u) throw new Error("Username is required");
+    if (!s) throw new Error("Slug is required");
 
     const res = await api.get(
-        `/api/business-card/by_username/${encodeURIComponent(username)}/${encodeURIComponent(slug)}`,
+        `/api/business-card/by_username/${encodeURIComponent(u)}/${encodeURIComponent(s)}`,
         { headers: { "x-no-auth": "1" } }
     );
 

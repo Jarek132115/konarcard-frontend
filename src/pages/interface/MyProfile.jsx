@@ -1,4 +1,4 @@
-// src/pages/MyProfile/MyProfile.jsx
+// frontend/src/pages/interface/MyProfile.jsx
 import React, { useEffect, useState, useContext, useMemo, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -8,7 +8,7 @@ import PageHeader from "../../components/PageHeader";
 import ShareProfile from "../../components/ShareProfile";
 
 import useBusinessCardStore from "../../store/businessCardStore";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 
 import { AuthContext } from "../../components/AuthContext";
 import api from "../../services/api";
@@ -19,21 +19,19 @@ import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import Preview from "../../components/Preview";
 import Editor from "../../components/Editor";
 
-// ✅ NEW hooks (single-profile)
-import { useMyBusinessCard, useSaveMyBusinessCard } from "../../hooks/useBusinessCard";
+// ✅ ONLY use save hook (upsert). We will do slug-fetch manually.
+import { useSaveMyBusinessCard } from "../../hooks/useBusinessCard";
 
 const DEFAULT_SECTION_ORDER = ["main", "about", "work", "services", "reviews", "contact"];
 const norm = (v) => (v ?? "").toString().trim();
 
 /**
  * Build FormData for BusinessCard UPSERT endpoint.
- * - Supports files: cover_photo, avatar, work_images[]
- * - Sends JSON strings for arrays: services, reviews, existing_works
- *
- * NOTE:
- * This is designed to work with the backend route that accepts multipart form-data.
+ * IMPORTANT: supports profile_slug (multi-profile).
  */
 const buildBusinessCardFormData = ({
+  profile_slug,
+
   business_card_name,
   page_theme,
   style,
@@ -55,7 +53,7 @@ const buildBusinessCardFormData = ({
   contact_email,
   phone_number,
 
-  // optional extras (safe if backend ignores)
+  // optional extras
   cover_photo_removed,
   avatar_removed,
   work_display_mode,
@@ -84,6 +82,9 @@ const buildBusinessCardFormData = ({
 }) => {
   const fd = new FormData();
 
+  // ✅ MULTI-PROFILE: tell backend which profile we are editing
+  fd.append("profile_slug", (profile_slug || "main").toString());
+
   // Core text fields
   fd.append("business_card_name", business_card_name || "");
   fd.append("page_theme", page_theme || "light");
@@ -105,7 +106,6 @@ const buildBusinessCardFormData = ({
   const existing = Array.isArray(works_existing_urls) ? works_existing_urls.filter(Boolean) : [];
   existing.forEach((url) => fd.append("existing_works", url));
 
-
   // Files
   if (cover_photo instanceof File) fd.append("cover_photo", cover_photo);
   if (avatar instanceof File) fd.append("avatar", avatar);
@@ -115,8 +115,7 @@ const buildBusinessCardFormData = ({
     if (f instanceof File) fd.append("works", f);
   });
 
-
-  // Optional / future-proof fields (backend may ignore; harmless)
+  // Optional / future-proof fields
   fd.append("cover_photo_removed", cover_photo_removed ? "1" : "0");
   fd.append("avatar_removed", avatar_removed ? "1" : "0");
 
@@ -147,6 +146,16 @@ const buildBusinessCardFormData = ({
   return fd;
 };
 
+function getSlugFromSearch(search) {
+  try {
+    const params = new URLSearchParams(search || "");
+    const raw = (params.get("slug") || "").toString().trim().toLowerCase();
+    return raw || "main";
+  } catch {
+    return "main";
+  }
+}
+
 export default function MyProfile() {
   const { state, updateState, resetState } = useBusinessCardStore();
   const queryClient = useQueryClient();
@@ -157,14 +166,30 @@ export default function MyProfile() {
   const { user: authUser, hydrating: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
 
   const userEmail = authUser?.email;
-  const isSubscribed = !!authUser?.isSubscribed; // single source of truth
+  const isSubscribed = !!authUser?.isSubscribed;
   const isUserVerified = !!authUser?.isVerified;
   const userUsername = authUser?.username;
 
-  // ✅ NEW: fetch my single business card (JWT)
-  const { data: businessCard, isLoading: isCardLoading } = useMyBusinessCard();
+  // ✅ slug we are editing
+  const activeSlug = useMemo(() => getSlugFromSearch(location.search), [location.search]);
 
-  // ✅ NEW: upsert save mutation (JWT)
+  // ✅ Fetch the specific profile card by slug
+  const {
+    data: businessCard,
+    isLoading: isCardLoading,
+    isError: isCardError,
+  } = useQuery({
+    queryKey: ["myProfileBySlug", activeSlug],
+    queryFn: async () => {
+      const res = await api.get(`/api/business-card/profiles/${encodeURIComponent(activeSlug)}`);
+      return res?.data?.data ?? null;
+    },
+    enabled: !!authUser && !!activeSlug, // wait for auth
+    staleTime: 30 * 1000,
+    retry: 1,
+  });
+
+  // ✅ upsert save mutation (JWT)
   const saveBusinessCard = useSaveMyBusinessCard();
 
   // Refs
@@ -224,25 +249,22 @@ export default function MyProfile() {
     (state.contact_email && state.contact_email.trim()) || (state.phone_number && state.phone_number.trim());
 
   // ==========================
-  // 1) Stripe return handler (FIXED: no repeated toasts)
+  // 1) Stripe return handler (no repeated toasts)
   // ==========================
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const sessionId = params.get("session_id");
     const paymentSuccess = params.get("payment_success");
-    const subscribed = params.get("subscribed"); // toast flag
+    const subscribed = params.get("subscribed");
 
     const isStripeReturn = !!sessionId || paymentSuccess === "true";
     if (!isStripeReturn) return;
 
-    // ✅ Persistent guard (survives remounts + strictmode)
     const key = `kc_stripe_handled_v1:${sessionId || paymentSuccess || "unknown"}`;
     try {
       if (sessionStorage.getItem(key) === "1") return;
       sessionStorage.setItem(key, "1");
-    } catch {
-      // fallback to ref only
-    }
+    } catch { }
 
     if (handledPaymentRef.current) return;
     handledPaymentRef.current = true;
@@ -250,29 +272,24 @@ export default function MyProfile() {
     (async () => {
       try {
         await api.post("/me/sync-subscriptions", { ts: Date.now() });
-      } catch {
-        /* swallow */
-      }
+      } catch { }
 
       try {
         await refetchAuthUser?.();
-      } catch {
-        /* swallow */
-      }
+      } catch { }
 
-      // ✅ Prevent stacking (same toast id updates instead of creating many)
       const toastId = "kc-subscription-toast";
       if (subscribed === "1") toast.success("You’re now subscribed ✅", { id: toastId });
       else toast.success("Subscription updated successfully!", { id: toastId });
 
-      // ✅ Clean URL immediately after handling
       try {
         const clean = new URL(window.location.href);
+        // keep slug param if present (don’t destroy editor context)
+        const slug = clean.searchParams.get("slug");
         clean.search = "";
+        if (slug) clean.searchParams.set("slug", slug);
         window.history.replaceState({}, document.title, clean.toString());
-      } catch {
-        // ignore
-      }
+      } catch { }
     })();
   }, [location.search, refetchAuthUser]);
 
@@ -318,7 +335,7 @@ export default function MyProfile() {
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
   // ==========================
-  // 5) Hydrate editor when card loads
+  // 4) Hydrate editor when card loads (per slug)
   // ==========================
   useEffect(() => {
     if (isCardLoading) return;
@@ -382,6 +399,7 @@ export default function MyProfile() {
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     } else {
+      // If profile doesn't exist yet, just reset editor for a fresh start
       resetState();
       setServicesDisplayMode("list");
       setReviewsDisplayMode("list");
@@ -406,7 +424,7 @@ export default function MyProfile() {
         sectionOrder: DEFAULT_SECTION_ORDER,
       });
     }
-  }, [businessCard, isCardLoading, resetState, updateState]);
+  }, [businessCard, isCardLoading, resetState, updateState, activeSlug]);
 
   // ==========================
   // Cleanup blob URLs
@@ -474,7 +492,7 @@ export default function MyProfile() {
     updateState({ workImages: state.workImages.filter((_, i) => i !== idx) });
   };
 
-  // Verification helpers (USE api.js ONLY)
+  // Verification helpers
   const sendVerificationCode = async () => {
     if (!userEmail) return toast.error("Email not found. Please log in again.");
     try {
@@ -660,12 +678,8 @@ export default function MyProfile() {
     if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
     if (!isSubscribed && !isTrialActive) await ensureTrialIfNeeded();
 
-    // Existing works (URLs) + new work image files
     const existingWorkUrls = (state.workImages || [])
-      .map((item) => {
-        if (item?.preview && !item.preview.startsWith("blob:")) return item.preview;
-        return null;
-      })
+      .map((item) => (item?.preview && !item.preview.startsWith("blob:") ? item.preview : null))
       .filter(Boolean);
 
     const newWorkFiles = (state.workImages || [])
@@ -673,6 +687,8 @@ export default function MyProfile() {
       .filter(Boolean);
 
     const formData = buildBusinessCardFormData({
+      profile_slug: activeSlug,
+
       business_card_name: state.businessName,
       page_theme: state.pageTheme,
       style: state.font,
@@ -727,8 +743,10 @@ export default function MyProfile() {
 
       toast.success("Your page is Published!");
 
-      // ✅ refresh my card everywhere
+      // ✅ refresh caches
       queryClient.invalidateQueries({ queryKey: ["businessCard", "me"] });
+      queryClient.invalidateQueries({ queryKey: ["myProfiles"] });
+      queryClient.invalidateQueries({ queryKey: ["myProfileBySlug", activeSlug] });
 
       setCoverPhotoFile(null);
       setAvatarFile(null);
@@ -752,7 +770,13 @@ export default function MyProfile() {
   const handleCloseShareModal = () => setShowShareModal(false);
 
   // ================= RENDER =================
-  const visitUrl = userUsername ? `${window.location.origin}/u/${userUsername}` : "#";
+  const visitUrl = useMemo(() => {
+    if (!userUsername) return "#";
+    // default profile uses /u/:username
+    if (!activeSlug || activeSlug === "main") return `${window.location.origin}/u/${userUsername}`;
+    return `${window.location.origin}/u/${userUsername}/${encodeURIComponent(activeSlug)}`;
+  }, [userUsername, activeSlug]);
+
   const columnScrollStyle = !isMobile ? { maxHeight: "calc(100vh - 140px)", overflow: "auto" } : undefined;
 
   return (
@@ -789,6 +813,24 @@ export default function MyProfile() {
 
           {!authLoading && authUser && (
             <>
+              {/* If profile fetch fails, show useful message */}
+              {isCardError && (
+                <div className="content-card-box error-state">
+                  <p>Couldn’t load this profile.</p>
+                  <p style={{ opacity: 0.8, marginTop: 8 }}>
+                    Try again, or go back to Profiles and select a different profile.
+                  </p>
+                  <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+                    <button className="desktop-button navy-button" onClick={() => queryClient.invalidateQueries({ queryKey: ["myProfileBySlug", activeSlug] })}>
+                      Retry
+                    </button>
+                    <button className="desktop-button orange-button" onClick={() => navigate("/profiles")}>
+                      Back to Profiles
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {showVerificationPrompt && (
                 <div className="content-card-box verification-prompt">
                   <p>⚠️ Your email is not verified!</p>
@@ -926,13 +968,13 @@ export default function MyProfile() {
         isOpen={showShareModal}
         onClose={handleCloseShareModal}
         profileUrl={visitUrl}
-        qrCodeUrl={businessCard?.qrCodeUrl || ""}
+        // ✅ BusinessCard uses qr_code_url
+        qrCodeUrl={businessCard?.qr_code_url || ""}
         contactDetails={{
           full_name: businessCard?.full_name || "",
           job_title: businessCard?.job_title || "",
           business_card_name: businessCard?.business_card_name || "",
           bio: businessCard?.bio || "",
-          // ✅ FIX: businessCard model doesn’t include isSubscribed
           isSubscribed: !!authUser?.isSubscribed,
           contact_email: businessCard?.contact_email || "",
           phone_number: businessCard?.phone_number || "",

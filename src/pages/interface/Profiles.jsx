@@ -5,10 +5,12 @@ import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import "../../styling/dashboard/profiles.css";
 
 import { useAuthUser } from "../../hooks/useAuthUser";
-import { useMyProfiles } from "../../hooks/useBusinessCard";
-
-// ✅ IMPORTANT: use the service functions that actually exist
-import { createMyProfile, deleteMyProfile, setDefaultProfile } from "../../services/businessCard";
+import {
+    useMyProfiles,
+    useCreateProfile,
+    useDeleteProfile,
+    useSetDefaultProfile,
+} from "../../hooks/useBusinessCard";
 
 const TEMPLATE_OPTIONS = [
     { id: "template-1", name: "Template 1" },
@@ -27,6 +29,11 @@ export default function Profiles() {
 
     // ✅ list of profiles (multi-profile)
     const { data: cards, isLoading, isError, refetch } = useMyProfiles();
+
+    // ✅ mutations (keep cache invalidation consistent)
+    const createProfile = useCreateProfile();
+    const deleteProfile = useDeleteProfile();
+    const setDefault = useSetDefaultProfile();
 
     const username = (authUser?.username || "").toLowerCase().trim() || "yourname";
 
@@ -110,10 +117,14 @@ export default function Profiles() {
     };
     const closeUpgrade = () => setUpgradeOpen(false);
 
-    const buildPublicUrl = (_profileSlug) => {
-        // ✅ Currently public route is /u/:username (default profile)
-        // Later when you switch to /u/:username/:slug, update here.
-        return `${window.location.origin}/u/${username}`;
+    const buildPublicUrl = (profileSlug) => {
+        const s = (profileSlug || "").toString().trim().toLowerCase();
+
+        // default profile uses /u/:username
+        if (!s || s === "main") return `${window.location.origin}/u/${username}`;
+
+        // other profiles use /u/:username/:slug
+        return `${window.location.origin}/u/${username}/${encodeURIComponent(s)}`;
     };
 
     const handleCopyLink = async () => {
@@ -171,20 +182,20 @@ export default function Profiles() {
         }
 
         try {
-            const created = await createMyProfile({
+            const created = await createProfile.mutateAsync({
                 profile_slug: candidate,
                 template_id: "template-1",
                 business_card_name: "",
             });
 
+            // hook already invalidates, but refetch makes UI feel instant
             await refetch();
 
             if (created?.profile_slug) {
                 handleEdit(created.profile_slug);
             }
         } catch (e) {
-            const msg =
-                e?.response?.data?.error || e?.message || "Could not create profile. Please try again.";
+            const msg = e?.response?.data?.error || e?.message || "Could not create profile. Please try again.";
             alert(msg);
         }
     };
@@ -194,7 +205,7 @@ export default function Profiles() {
         if (!ok) return;
 
         try {
-            await deleteMyProfile(slug);
+            await deleteProfile.mutateAsync(slug);
             await refetch();
         } catch (e) {
             const msg = e?.response?.data?.error || e?.message || "Delete failed.";
@@ -204,7 +215,7 @@ export default function Profiles() {
 
     const handleSetDefault = async (slug) => {
         try {
-            await setDefaultProfile(slug);
+            await setDefault.mutateAsync(slug);
             await refetch();
             setSelectedSlug(slug);
         } catch (e) {
@@ -289,7 +300,8 @@ export default function Profiles() {
                             Plan: <strong>{plan.toUpperCase()}</strong>
                         </span>
                         <span className="profiles-pill">
-                            Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{plan === "teams" ? "∞" : plan === "free" ? 1 : "∞"}</strong>
+                            Profiles: <strong>{sortedProfiles.length}</strong> /{" "}
+                            <strong>{plan === "teams" ? "∞" : plan === "free" ? 1 : "∞"}</strong>
                         </span>
                     </div>
                 </div>

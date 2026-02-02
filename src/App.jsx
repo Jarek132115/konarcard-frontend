@@ -166,6 +166,8 @@ export default function App() {
 
           {/* Public profile */}
           <Route path="/u/:username" element={<UserPage />} />
+          {/* ✅ NEW: slug profile route (needed for multi-profile + QR codes) */}
+          <Route path="/u/:username/:slug" element={<UserPage />} />
 
           {/* ---------------- PROTECTED (NEW DASHBOARD) ---------------- */}
           <Route
@@ -186,7 +188,7 @@ export default function App() {
             }
           />
 
-          {/* ✅ NEW: editor route lives here */}
+          {/* ✅ editor route lives here */}
           <Route
             path="/profiles/edit"
             element={

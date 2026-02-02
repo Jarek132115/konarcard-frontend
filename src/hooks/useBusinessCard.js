@@ -25,15 +25,31 @@ export const useMyBusinessCard = () => {
     });
 };
 
+/**
+ * Save business card (multipart FormData)
+ * - Works for BOTH legacy + multi-profile
+ * - If formData contains profile_slug, we invalidate that specific profile cache too.
+ */
 export const useSaveMyBusinessCard = () => {
     const qc = useQueryClient();
 
     return useMutation({
         mutationFn: saveMyBusinessCard,
-        onSuccess: () => {
+        onSuccess: (_data, formData) => {
+            // Always refresh these (covers dashboards, lists, and editor views)
             qc.invalidateQueries({ queryKey: ["businessCard", "me"] });
-            qc.invalidateQueries({ queryKey: ["businessCard"] });
             qc.invalidateQueries({ queryKey: ["businessCard", "profiles"] });
+            qc.invalidateQueries({ queryKey: ["businessCard"] });
+
+            // ✅ If saving a specific profile, refresh that specific cache key
+            try {
+                if (formData instanceof FormData) {
+                    const slug = (formData.get("profile_slug") || "main").toString();
+                    qc.invalidateQueries({ queryKey: ["businessCard", "profile", slug] });
+                }
+            } catch {
+                // ignore
+            }
         },
     });
 };
@@ -68,8 +84,7 @@ export const useMyProfileBySlug = (slug) => {
     return useQuery({
         queryKey: ["businessCard", "profile", resolved],
         queryFn: () => getMyProfileBySlug(resolved),
-        // ✅ always enabled (so "main" works even if slug not passed)
-        enabled: true,
+        enabled: true, // allow "main" even if slug not passed
         retry: false,
         staleTime: 30_000,
     });
@@ -84,6 +99,7 @@ export const useCreateProfile = () => {
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["businessCard", "profiles"] });
             qc.invalidateQueries({ queryKey: ["businessCard", "me"] });
+            qc.invalidateQueries({ queryKey: ["businessCard"] });
         },
     });
 };
@@ -96,6 +112,7 @@ export const useSetDefaultProfile = () => {
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["businessCard", "profiles"] });
             qc.invalidateQueries({ queryKey: ["businessCard", "me"] });
+            qc.invalidateQueries({ queryKey: ["businessCard"] });
         },
     });
 };
@@ -108,14 +125,19 @@ export const useDeleteProfile = () => {
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["businessCard", "profiles"] });
             qc.invalidateQueries({ queryKey: ["businessCard", "me"] });
+            qc.invalidateQueries({ queryKey: ["businessCard"] });
         },
     });
 };
 
 /**
- * ✅ Multi-profile save helper
+ * ✅ Multi-profile save helper (optional)
  * - posts to same endpoint
- * - adds profile_slug into FormData so backend saves correct profile
+ * - ensures profile_slug is set in FormData
+ * - invalidates the specific profile cache key
+ *
+ * NOTE: If your editor already sets profile_slug in FormData,
+ * you can use useSaveMyBusinessCard() directly and remove this helper.
  */
 export const useSaveMyBusinessCardForSlug = () => {
     const qc = useQueryClient();
@@ -126,12 +148,12 @@ export const useSaveMyBusinessCardForSlug = () => {
             if (!(formData instanceof FormData)) throw new Error("formData must be FormData");
 
             formData.set("profile_slug", profile_slug);
-
             const updated = await saveMyBusinessCard(formData);
             return updated;
         },
         onSuccess: (_data, vars) => {
-            const slug = vars?.profile_slug || "main";
+            const slug = (vars?.profile_slug || "main").toString();
+
             qc.invalidateQueries({ queryKey: ["businessCard", "profiles"] });
             qc.invalidateQueries({ queryKey: ["businessCard", "me"] });
             qc.invalidateQueries({ queryKey: ["businessCard", "profile", slug] });

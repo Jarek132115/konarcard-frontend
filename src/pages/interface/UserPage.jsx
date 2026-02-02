@@ -1,5 +1,5 @@
-// src/pages/UserPage/UserPage.jsx
-import React, { useRef, useContext } from "react";
+// frontend/src/pages/interface/UserPage.jsx
+import React, { useRef, useContext, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
@@ -14,9 +14,20 @@ import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
 /* ---------------------------
    Helpers
 --------------------------- */
-const PLACEHOLDER_HINTS = ["placeholder", "sample", "demo", "stock", "default", "template", "card-mock"];
+const PLACEHOLDER_HINTS = [
+    "placeholder",
+    "sample",
+    "demo",
+    "stock",
+    "default",
+    "template",
+    "card-mock",
+];
+
 const looksLikePlaceholderUrl = (url = "") =>
-    typeof url === "string" && PLACEHOLDER_HINTS.some((h) => url.toLowerCase().includes(h));
+    typeof url === "string" &&
+    PLACEHOLDER_HINTS.some((h) => url.toLowerCase().includes(h));
+
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 const arr = (v) => (Array.isArray(v) ? v : []);
 
@@ -28,10 +39,16 @@ const read = (o, keys, fb = undefined) => {
     return fb;
 };
 
-const filterRealImages = (xs) => arr(xs).filter((u) => nonEmpty(u) && !looksLikePlaceholderUrl(u));
-const filterRealServices = (xs) => arr(xs).filter((s) => s && (nonEmpty(s.name) || nonEmpty(s.price)));
+const filterRealImages = (xs) =>
+    arr(xs).filter((u) => nonEmpty(u) && !looksLikePlaceholderUrl(u));
+
+const filterRealServices = (xs) =>
+    arr(xs).filter((s) => s && (nonEmpty(s.name) || nonEmpty(s.price)));
+
 const filterRealReviews = (xs) =>
-    arr(xs).filter((r) => r && (nonEmpty(r.name) || nonEmpty(r.text) || (r.rating ?? 0) > 0));
+    arr(xs).filter(
+        (r) => r && (nonEmpty(r.name) || nonEmpty(r.text) || (r.rating ?? 0) > 0)
+    );
 
 const centerPage = {
     textAlign: "center",
@@ -42,20 +59,44 @@ const centerPage = {
 };
 
 export default function UserPage() {
-    const { username } = useParams();
+    // ✅ supports /u/:username and /u/:username/:slug
+    const { username, slug } = useParams();
     const { user: authUser } = useContext(AuthContext);
 
     const workCarouselRef = useRef(null);
     const servicesCarouselRef = useRef(null);
     const reviewsCarouselRef = useRef(null);
 
+    // Normalize slug
+    const profileSlug = useMemo(() => {
+        const s = (slug || "").toString().trim().toLowerCase();
+        return s || null; // null => default profile
+    }, [slug]);
+
     const { data: businessCard, isLoading, isError, error } = useQuery({
-        queryKey: ["public-business-card", username],
+        queryKey: ["public-business-card", username, profileSlug || "default"],
         queryFn: async () => {
-            // ✅ IMPORTANT: public endpoint should be NO-AUTH (prevents Bearer token attach)
-            const res = await api.get(`/api/business-card/by_username/${username}`, {
-                headers: { "x-no-auth": "1" },
-            });
+            if (!username) return null;
+
+            // ✅ public endpoint must be NO AUTH
+            const headers = { "x-no-auth": "1" };
+
+            // ✅ If slug exists fetch specific profile
+            if (profileSlug) {
+                const res = await api.get(
+                    `/api/business-card/by_username/${encodeURIComponent(
+                        username
+                    )}/${encodeURIComponent(profileSlug)}`,
+                    { headers }
+                );
+                return res.data;
+            }
+
+            // ✅ else fetch default/main/newest
+            const res = await api.get(
+                `/api/business-card/by_username/${encodeURIComponent(username)}`,
+                { headers }
+            );
             return res.data;
         },
         enabled: !!username,
@@ -79,8 +120,10 @@ export default function UserPage() {
         try {
             localStorage.setItem("scrollToEditorOnLoad", "1");
         } catch { }
-        // ✅ editor now lives here
-        window.location.href = "/profiles/edit";
+
+        // ✅ editor supports ?slug=
+        const s = profileSlug || "main";
+        window.location.href = `/profiles/edit?slug=${encodeURIComponent(s)}`;
     };
 
     const goContactSupportSmart = () => {
@@ -161,27 +204,28 @@ export default function UserPage() {
     const hasContact = nonEmpty(email) || nonEmpty(phone);
 
     /**
-     * ✅ IMPORTANT FIX:
-     * Your public endpoint returns BusinessCard only, so it does NOT include isSubscribed/trialExpires.
-     * Don’t block the public page based on fields that aren’t present.
-     *
-     * If in the future you add these fields to the response, this will still work.
+     * Public endpoint returns BusinessCard only (no plan fields normally),
+     * so don’t block the public page unless those fields exist.
      */
     const subscriptionFieldPresent =
-        typeof businessCard?.isSubscribed !== "undefined" || typeof businessCard?.trialExpires !== "undefined";
+        typeof businessCard?.isSubscribed !== "undefined" ||
+        typeof businessCard?.trialExpires !== "undefined";
 
     if (subscriptionFieldPresent) {
         const isSubscribed = !!businessCard.isSubscribed;
         const isTrialActive =
             businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
-        if (!(isSubscribed || isTrialActive)) return unavailable(username, goEditProfile, goContactSupportSmart);
+        if (!(isSubscribed || isTrialActive))
+            return unavailable(username, goEditProfile, goContactSupportSmart);
     }
 
     // Decide what to render
     const showMainSection =
         showMain && (nonEmpty(cover) || nonEmpty(mainHeading) || nonEmpty(subHeading) || hasContact);
+
     const showAboutMeSection =
         showAbout && (nonEmpty(avatar) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(bio));
+
     const showWorkSection = showWork && works.length > 0;
     const showServicesSection = showServices && services.length > 0;
     const showReviewsSection = showReviews && reviews.length > 0;
@@ -200,11 +244,15 @@ export default function UserPage() {
         color: pageTheme === "dark" ? "#FFFFFF" : "#000000",
         fontFamily: font,
     };
-    const contentAlign = { textAlign: textAlign || "left" };
-    const ctaStyle = { backgroundColor: buttonBg, color: buttonTxt === "black" ? "#000000" : "#FFFFFF" };
 
-    // For star row alignment in reviews
-    const flexJustify = textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : "flex-start";
+    const contentAlign = { textAlign: textAlign || "left" };
+    const ctaStyle = {
+        backgroundColor: buttonBg,
+        color: buttonTxt === "black" ? "#000000" : "#FFFFFF",
+    };
+
+    const flexJustify =
+        textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : "flex-start";
 
     const socialLinks = [
         { key: "facebook_url", url: read(businessCard, ["facebook_url", "facebookUrl"]), icon: FacebookIcon, label: "Facebook" },
@@ -217,7 +265,14 @@ export default function UserPage() {
     const handleExchangeContact = () => {
         if (!hasContact) return;
 
-        const publicUrl = read(businessCard, ["publicProfileUrl"], `${window.location.origin}/u/${username}`);
+        // ✅ Use exact URL of current view
+        const derivedPublicUrl =
+            profileSlug && profileSlug !== "main"
+                ? `${window.location.origin}/u/${username}/${profileSlug}`
+                : `${window.location.origin}/u/${username}`;
+
+        const publicUrl = read(businessCard, ["publicProfileUrl"], derivedPublicUrl);
+
         const nameParts = (fullName || "").split(" ");
         const firstName = nameParts[0] || "";
         const lastName = nameParts.slice(1).join(" ") || "";
@@ -226,6 +281,7 @@ export default function UserPage() {
         let vCard = "BEGIN:VCARD\nVERSION:3.0\n";
         vCard += `FN:${fullName || ""}\n`;
         vCard += `N:${lastName};${firstName};${middle};;\n`;
+
         const org = read(businessCard, ["business_card_name", "businessCardName"], "");
         if (org) vCard += `ORG:${org}\n`;
         if (jobTitle) vCard += `TITLE:${jobTitle}\n`;
@@ -250,15 +306,19 @@ export default function UserPage() {
         return (
             <div className="user-landing-page" style={{ ...themeStyles, ...centerPage, padding: 24 }}>
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
-                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>This profile isn’t set up yet</h2>
-                    <p style={{ marginTop: 10, opacity: 0.8 }}>@{username} hasn’t published any content here yet.</p>
+                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>
+                        This profile isn’t set up yet
+                    </h2>
+                    <p style={{ marginTop: 10, opacity: 0.8 }}>
+                        @{username} hasn’t published any content here yet.
+                    </p>
                 </div>
             </div>
         );
     }
 
     /* ---------------------------
-       Section components
+       Sections
     --------------------------- */
     const MainSection = () =>
         showMainSection ? (
@@ -275,7 +335,12 @@ export default function UserPage() {
                     </p>
                 )}
                 {hasContact && (
-                    <button type="button" onClick={handleExchangeContact} className="landing-action-button" style={ctaStyle}>
+                    <button
+                        type="button"
+                        onClick={handleExchangeContact}
+                        className="landing-action-button"
+                        style={ctaStyle}
+                    >
                         Save My Number
                     </button>
                 )}
@@ -486,7 +551,6 @@ export default function UserPage() {
         </div>
     );
 
-    /* Unavailable */
     function unavailable(username, onEdit, onContact) {
         return (
             <div className="user-landing-page unavailable-wrap">
@@ -510,7 +574,9 @@ export default function UserPage() {
                                 <div className="desktop-body-s">
                                     <strong>Access expired.</strong>
                                 </div>
-                                <div className="desktop-body-xs">The free trial may have ended or a subscription is required.</div>
+                                <div className="desktop-body-xs">
+                                    The free trial may have ended or a subscription is required.
+                                </div>
                             </div>
                         </li>
                     </ul>
