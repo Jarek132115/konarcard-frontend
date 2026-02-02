@@ -7,17 +7,6 @@ import api from "./api";
  * =========================================================
  */
 
-/**
- * Get the logged-in user's DEFAULT business card.
- *
- * Preferred backend route:
- *  GET /api/business-card/me
- *  Returns: { data: null } OR { data: { ...BusinessCard } }
- *
- * Legacy fallback:
- *  GET /api/business-card/my_card
- *  Returns: card object directly (or 404 if not found)
- */
 export const getMyBusinessCard = async () => {
     try {
         const res = await api.get("/api/business-card/me");
@@ -55,9 +44,20 @@ export const saveMyBusinessCard = async (formData) => {
         throw new Error("saveMyBusinessCard expects FormData");
     }
 
-    const res = await api.post("/api/business-card", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-    });
+    // ✅ Ensure auth header is present even if interceptor is broken
+    const token =
+        localStorage.getItem("token") ||
+        localStorage.getItem("authToken") ||
+        localStorage.getItem("konar_token") ||
+        "";
+
+    const headers = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    // ✅ IMPORTANT:
+    // Do NOT manually set Content-Type for multipart with axios.
+    // axios will set boundary correctly.
+    const res = await api.post("/api/business-card", formData, { headers });
 
     return res?.data?.data ?? null;
 };
@@ -68,19 +68,11 @@ export const saveMyBusinessCard = async (formData) => {
  * =========================================================
  */
 
-/**
- * List my profiles
- * GET /api/business-card/profiles -> { data: [] }
- */
 export const getMyProfiles = async () => {
     const res = await api.get("/api/business-card/profiles");
     return res?.data?.data ?? [];
 };
 
-/**
- * Fetch one profile by slug
- * GET /api/business-card/profiles/:slug -> { data: BusinessCard|null }
- */
 export const getMyProfileBySlug = async (slug) => {
     const s = (slug || "").toString().trim();
     if (!s) throw new Error("slug is required");
@@ -89,10 +81,6 @@ export const getMyProfileBySlug = async (slug) => {
     return res?.data?.data ?? null;
 };
 
-/**
- * Create profile
- * POST /api/business-card/profiles -> { message, data }
- */
 export const createMyProfile = async ({ profile_slug, template_id, business_card_name } = {}) => {
     const res = await api.post("/api/business-card/profiles", {
         profile_slug,
@@ -102,22 +90,16 @@ export const createMyProfile = async ({ profile_slug, template_id, business_card
     return res?.data?.data ?? null;
 };
 
-/**
- * Set default profile
- * PATCH /api/business-card/profiles/:slug/default -> { message, data }
- */
 export const setDefaultProfile = async (slug) => {
     const s = (slug || "").toString().trim();
     if (!s) throw new Error("slug is required");
 
-    const res = await api.patch(`/api/business-card/profiles/${encodeURIComponent(s)}/default`);
+    // ✅ Your backend route is POST (per your handover), not PATCH.
+    // If your backend actually supports PATCH too, keeping POST won't break.
+    const res = await api.post(`/api/business-card/profiles/${encodeURIComponent(s)}/default`);
     return res?.data?.data ?? null;
 };
 
-/**
- * Delete profile
- * DELETE /api/business-card/profiles/:slug
- */
 export const deleteMyProfile = async (slug) => {
     const s = (slug || "").toString().trim();
     if (!s) throw new Error("slug is required");
@@ -132,10 +114,6 @@ export const deleteMyProfile = async (slug) => {
  * =========================================================
  */
 
-/**
- * Default public profile by username (backend returns default/main/newest)
- * GET /api/business-card/by_username/:username
- */
 export const getBusinessCardByUsername = async (username) => {
     const u = (username || "").toString().trim();
     if (!u) throw new Error("Username is required");
@@ -147,10 +125,6 @@ export const getBusinessCardByUsername = async (username) => {
     return res?.data ?? null;
 };
 
-/**
- * Specific public profile by username + slug
- * GET /api/business-card/by_username/:username/:slug
- */
 export const getBusinessCardByUsernameAndSlug = async (username, slug) => {
     const u = (username || "").toString().trim();
     const s = (slug || "").toString().trim();

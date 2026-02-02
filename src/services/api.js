@@ -32,41 +32,77 @@ const BASE_URL = normalizeBase(ENV_BASE) || normalizeBase(FALLBACK_BASE);
 
 const api = axios.create({
   baseURL: BASE_URL,
-  // We use Bearer tokens (localStorage), not cookie auth
   withCredentials: false,
 });
 
 /**
+ * Helpers to work with both plain header objects and AxiosHeaders
+ */
+const headerGet = (headers, key) => {
+  if (!headers) return undefined;
+  if (typeof headers.get === "function") return headers.get(key);
+  return headers[key] ?? headers[key.toLowerCase()] ?? headers[key.toUpperCase()];
+};
+
+const headerSet = (headers, key, value) => {
+  if (!headers) return;
+  if (typeof headers.set === "function") headers.set(key, value);
+  else headers[key] = value;
+};
+
+const headerDel = (headers, key) => {
+  if (!headers) return;
+  if (typeof headers.delete === "function") headers.delete(key);
+  else delete headers[key];
+};
+
+const getToken = () => {
+  try {
+    // ✅ check multiple keys (your project likely uses one of these)
+    const candidates = [
+      localStorage.getItem("token"),
+      localStorage.getItem("authToken"),
+      localStorage.getItem("konar_token"),
+      localStorage.getItem("jwt"),
+    ].filter(Boolean);
+
+    const raw = candidates[0] || "";
+
+    // support storing "Bearer xxx" or just "xxx"
+    if (!raw) return "";
+    return raw.startsWith("Bearer ") ? raw.slice(7) : raw;
+  } catch {
+    return "";
+  }
+};
+
+/**
  * Request interceptor:
  * - attaches Authorization header unless x-no-auth is set
- * - adds cache-buster to sensitive reads
+ * - adds cache-buster to sensitive GET reads
  */
 api.interceptors.request.use((config) => {
-  const headers = config.headers || {};
+  config.headers = config.headers || {};
 
-  // ✅ If this request is marked as "no auth", do NOT attach Authorization
+  // ✅ Respect no-auth flag
+  const noAuthVal =
+    headerGet(config.headers, "x-no-auth") ??
+    headerGet(config.headers, "X-No-Auth");
+
   const noAuth =
-    headers["x-no-auth"] === "1" ||
-    headers["X-No-Auth"] === "1" ||
-    headers["x-no-auth"] === 1 ||
-    headers["X-No-Auth"] === 1;
+    noAuthVal === "1" || noAuthVal === 1 || (typeof noAuthVal === "string" && noAuthVal.trim() === "1");
 
-  if (!noAuth) {
-    try {
-      const token = localStorage.getItem("token");
-      if (token) headers.Authorization = `Bearer ${token}`;
-      else delete headers.Authorization;
-    } catch {
-      delete headers.Authorization;
-    }
+  if (noAuth) {
+    headerDel(config.headers, "Authorization");
   } else {
-    delete headers.Authorization;
+    const token = getToken();
+    if (token) headerSet(config.headers, "Authorization", `Bearer ${token}`);
+    else headerDel(config.headers, "Authorization");
   }
 
-  config.headers = headers;
-
-  // cache-buster only on sensitive reads
-  if (typeof config.url === "string") {
+  // ✅ Only cache-bust GET requests (never POST/PATCH)
+  const method = (config.method || "get").toLowerCase();
+  if (method === "get" && typeof config.url === "string") {
     const u = config.url;
     if (u.includes("/profile") || u.includes("/me/orders") || u.includes("/subscription-status")) {
       const sep = u.includes("?") ? "&" : "?";
