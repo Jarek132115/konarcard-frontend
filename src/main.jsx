@@ -27,8 +27,6 @@ import './styling/contactinterface.css';
 import './styling/nfccard.css';
 import './styling/myorders.css';
 import './styling/admin.css';
-import './styling/preview.css';
-import './styling/editor.css';
 
 import App from './App.jsx';
 import { AuthProvider } from './components/AuthContext';
