@@ -51,39 +51,38 @@ const centerPage = {
     minHeight: "100vh",
 };
 
+/**
+ * Must match backend safeSlug rules: a-z 0-9 hyphen only
+ */
+const normalizeSlug = (raw) =>
+    String(raw || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+
 export default function UserPage() {
-    // ✅ supports /u/:username and /u/:username/:slug
-    const { username, slug } = useParams();
+    // ✅ ROUTE: /u/:slug
+    const { slug } = useParams();
     const { user: authUser } = useContext(AuthContext);
 
-    // Normalize slug
-    const profileSlug = useMemo(() => {
-        const s = (slug || "").toString().trim().toLowerCase();
-        return s || null; // null => default profile
-    }, [slug]);
+    // Normalize + validate
+    const publicSlug = useMemo(() => normalizeSlug(slug), [slug]);
+    const isValidSlug = publicSlug && publicSlug.length >= 3;
 
     const { data: businessCard, isLoading, isError, error } = useQuery({
-        queryKey: ["public-business-card", username, profileSlug || "default"],
+        queryKey: ["public-business-card", publicSlug || "missing-slug"],
         queryFn: async () => {
-            if (!username) return null;
+            if (!isValidSlug) return null;
 
             // ✅ public endpoint must be NO AUTH
             const headers = { "x-no-auth": "1" };
 
-            // ✅ If slug exists fetch specific profile
-            if (profileSlug) {
-                const res = await api.get(
-                    `/api/business-card/by_username/${encodeURIComponent(username)}/${encodeURIComponent(profileSlug)}`,
-                    { headers }
-                );
-                return res.data;
-            }
-
-            // ✅ else fetch default/main/newest
-            const res = await api.get(`/api/business-card/by_username/${encodeURIComponent(username)}`, { headers });
+            const res = await api.get(`/api/business-card/public/${encodeURIComponent(publicSlug)}`, { headers });
             return res.data;
         },
-        enabled: !!username,
+        enabled: isValidSlug,
         staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
         retry: 1,
@@ -94,9 +93,14 @@ export default function UserPage() {
             localStorage.setItem("scrollToEditorOnLoad", "1");
         } catch { }
 
-        // ✅ editor supports ?slug=
-        const s = profileSlug || "main";
-        window.location.href = `/profiles/edit?slug=${encodeURIComponent(s)}`;
+        // ✅ editor expects ?slug=...
+        // If slug is invalid, don’t navigate to a broken editor route.
+        if (!isValidSlug) {
+            window.location.href = "/login";
+            return;
+        }
+
+        window.location.href = `/profiles/edit?slug=${encodeURIComponent(publicSlug)}`;
     };
 
     const goContactSupportSmart = () => {
@@ -105,6 +109,20 @@ export default function UserPage() {
         } catch { }
         window.location.href = authUser ? "/contact-support" : "/contactus";
     };
+
+    // If slug is missing/invalid, show a clean message (don’t hit API)
+    if (!isValidSlug) {
+        return (
+            <div className="user-landing-page" style={{ ...centerPage, padding: 24 }}>
+                <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
+                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>Invalid link</h2>
+                    <p style={{ marginTop: 10, opacity: 0.8 }}>
+                        This profile link is not valid. Please check the URL and try again.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     if (isLoading) {
         return (
@@ -116,13 +134,13 @@ export default function UserPage() {
 
     if (isError) {
         console.error(error);
-        return unavailable(username, goEditProfile, goContactSupportSmart);
+        return unavailable(publicSlug, goEditProfile, goContactSupportSmart);
     }
 
     if (!businessCard) {
         return (
             <div className="user-landing-page" style={centerPage}>
-                <p>No business card found for “{username}”.</p>
+                <p>No business card found for “{publicSlug}”.</p>
             </div>
         );
     }
@@ -189,16 +207,12 @@ export default function UserPage() {
     if (subscriptionFieldPresent) {
         const isSubscribed = !!businessCard.isSubscribed;
         const isTrialActive = businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
-        if (!(isSubscribed || isTrialActive)) return unavailable(username, goEditProfile, goContactSupportSmart);
+        if (!(isSubscribed || isTrialActive)) return unavailable(publicSlug, goEditProfile, goContactSupportSmart);
     }
 
     // Decide what to render
-    const showMainSection =
-        showMain && (nonEmpty(cover) || nonEmpty(mainHeading) || nonEmpty(subHeading) || hasContact);
-
-    const showAboutMeSection =
-        showAbout && (nonEmpty(avatar) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(bio));
-
+    const showMainSection = showMain && (nonEmpty(cover) || nonEmpty(mainHeading) || nonEmpty(subHeading) || hasContact);
+    const showAboutMeSection = showAbout && (nonEmpty(avatar) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(bio));
     const showWorkSection = showWork && works.length > 0;
     const showServicesSection = showServices && services.length > 0;
     const showReviewsSection = showReviews && reviews.length > 0;
@@ -237,12 +251,8 @@ export default function UserPage() {
     const handleExchangeContact = () => {
         if (!hasContact) return;
 
-        // ✅ Use exact URL of current view
-        const derivedPublicUrl =
-            profileSlug && profileSlug !== "main"
-                ? `${window.location.origin}/u/${username}/${profileSlug}`
-                : `${window.location.origin}/u/${username}`;
-
+        // ✅ Exact current public URL (/u/:slug)
+        const derivedPublicUrl = `${window.location.origin}/u/${encodeURIComponent(publicSlug)}`;
         const publicUrl = read(businessCard, ["publicProfileUrl"], derivedPublicUrl);
 
         const nameParts = (fullName || "").split(" ");
@@ -267,7 +277,7 @@ export default function UserPage() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${(fullName || username || "contact").replace(/\s/g, "_")}.vcf`;
+        a.download = `${(fullName || publicSlug || "contact").replace(/\s/g, "_")}.vcf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -279,7 +289,7 @@ export default function UserPage() {
             <div className="user-landing-page" style={{ ...themeStyles, ...centerPage, padding: 24 }}>
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
                     <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>This profile isn’t set up yet</h2>
-                    <p style={{ marginTop: 10, opacity: 0.8 }}>@{username} hasn’t published any content here yet.</p>
+                    <p style={{ marginTop: 10, opacity: 0.8 }}>This profile hasn’t published any content here yet.</p>
                 </div>
             </div>
         );
@@ -296,8 +306,8 @@ export default function UserPage() {
         flexJustify,
 
         // identity
-        username,
-        profileSlug,
+        username: publicSlug, // keep key name for templates that display it
+        profileSlug: publicSlug,
 
         // content
         cover,
@@ -348,7 +358,7 @@ export default function UserPage() {
     /* ---------------------------
        Unavailable page
     --------------------------- */
-    function unavailable(usernameValue, onEdit, onContact) {
+    function unavailable(slugValue, onEdit, onContact) {
         return (
             <div className="user-landing-page unavailable-wrap">
                 <div className="unavailable-card">
@@ -371,7 +381,7 @@ export default function UserPage() {
                                 <div className="desktop-body-s">
                                     <strong>Access expired.</strong>
                                 </div>
-                                <div className="desktop-body-xs">The free trial may have ended or a subscription is required.</div>
+                                <div className="desktop-body-xs">A subscription may be required to keep this profile live.</div>
                             </div>
                         </li>
                     </ul>
@@ -383,6 +393,11 @@ export default function UserPage() {
                             Contact us
                         </button>
                     </div>
+                    {slugValue ? (
+                        <div style={{ marginTop: 12, opacity: 0.7, fontSize: 12 }}>
+                            Requested link: <strong>/u/{slugValue}</strong>
+                        </div>
+                    ) : null}
                 </div>
             </div>
         );

@@ -54,7 +54,7 @@ import OAuthSuccess from "./auth/OAuthSuccess.jsx";
 import Billing from "./pages/interface/Billing.jsx";
 import ContactSupport from "./pages/interface/ContactSupport.jsx";
 import HelpCentreInterface from "./pages/interface/HelpCentreInterface.jsx";
-import MyProfile from "./pages/interface/MyProfile.jsx"; // editor page used for /profiles/edit
+import MyProfile from "./pages/interface/MyProfile.jsx";
 import MyOrders from "./pages/interface/MyOrder.jsx";
 import NFCCards from "./pages/interface/NFCCards.jsx";
 import Notifications from "./pages/interface/Notifications.jsx";
@@ -79,7 +79,6 @@ function TidioWrapper() {
   const location = useLocation();
 
   const isDashboardPath =
-    // legacy
     location.pathname.startsWith("/myprofile") ||
     location.pathname.startsWith("/myorders") ||
     location.pathname.startsWith("/billing") ||
@@ -90,7 +89,6 @@ function TidioWrapper() {
     location.pathname.startsWith("/contact-support") ||
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/claim") ||
-    // ✅ new dashboard routes
     location.pathname.startsWith("/dashboard") ||
     location.pathname.startsWith("/profiles") ||
     location.pathname.startsWith("/cards") ||
@@ -107,7 +105,6 @@ function TidioWrapper() {
    App
 -------------------------------------------------- */
 export default function App() {
-  // keep context warm; don’t block render
   useContext(AuthContext);
 
   return (
@@ -164,10 +161,8 @@ export default function App() {
           <Route path="/successsubscription" element={<SuccessSubscription />} />
           <Route path="/SuccessSubscription" element={<SuccessSubscription />} />
 
-          {/* Public profile */}
-          <Route path="/u/:username" element={<UserPage />} />
-          {/* ✅ NEW: slug profile route (needed for multi-profile + QR codes) */}
-          <Route path="/u/:username/:slug" element={<UserPage />} />
+          {/* ✅ Public profile (GLOBAL SLUG ONLY) */}
+          <Route path="/u/:slug" element={<UserPage />} />
 
           {/* ---------------- PROTECTED (NEW DASHBOARD) ---------------- */}
           <Route
@@ -188,7 +183,6 @@ export default function App() {
             }
           />
 
-          {/* ✅ editor route lives here */}
           <Route
             path="/profiles/edit"
             element={
@@ -308,7 +302,6 @@ export default function App() {
             }
           />
 
-          {/* Old account-details page (keep) */}
           <Route
             path="/profile"
             element={
