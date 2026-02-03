@@ -1,6 +1,6 @@
 // src/components/Preview.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { previewPlaceholders } from "../store/businessCardStore";
+import { previewPlaceholders } from "../../store/businessCardStore";
 
 // social icons
 import FacebookIcon from "../assets/icons/icons8-facebook.svg";

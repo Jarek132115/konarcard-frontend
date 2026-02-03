@@ -17,7 +17,7 @@ import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 
 // extracted components
 import Preview from "../../components/Preview";
-import Editor from "../../components/Editor";
+import Editor from "../../components/Dashboard/Editor";
 
 // ✅ ONLY use save hook (upsert). We will do slug-fetch manually.
 import { useSaveMyBusinessCard } from "../../hooks/useBusinessCard";
