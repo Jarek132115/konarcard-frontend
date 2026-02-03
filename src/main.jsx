@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import './styling/home.css';
 import './styling/fonts.css';
-import './styling/myprofile.css';
 import './styling/login.css';
 import './styling/navbar.css';
 import './styling/footer.css';
