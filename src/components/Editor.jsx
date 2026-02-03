@@ -928,6 +928,7 @@ export default function Editor({
                     </>
                 )}
 
+
                 <div className="button-group">
                     <button type="button" onClick={onResetPage} className="desktop-button navy-button">
                         Reset Page

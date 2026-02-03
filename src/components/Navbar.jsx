@@ -74,6 +74,7 @@ export default function Navbar() {
                   <img src={LogoIcon} alt="Logo" className="kc-navbar__logo" />
                 </Link>
 
+
                 <button
                   className="kc-navbar__close"
                   aria-label="Close menu"
