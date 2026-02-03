@@ -140,6 +140,7 @@
     max-width: none;
 }
 
+
 /* ✅ responsive */
 @media (max-width: 1000px) {
     .dash-main {
