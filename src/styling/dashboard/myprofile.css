@@ -1,0 +1,231 @@
+/* =========================================================
+   MyProfile (Edit Page) — NEW Dashboard Styling
+   - No orange/peach tray
+   - Desktop: Preview + Editor scroll independently
+   - Mobile: normal page scroll
+   - Uses same tokens as profiles/layout where possible
+========================================================= */
+
+/* Use the dashboard tokens if they exist (profiles.css/layout.css),
+   fallback to safe defaults */
+:root {
+    --mp-bg: var(--kc-bg, #ffffff);
+    --mp-surface: var(--kc-surface, #ffffff);
+    --mp-soft: var(--kc-soft, #fafafa);
+
+    --mp-ink: var(--kc-ink, #0b1220);
+    --mp-muted: var(--kc-muted, #5b667a);
+
+    --mp-accent: var(--kc-accent, #f97316);
+    --mp-accent-rgb: var(--kc-accent-rgb, 249 115 22);
+
+    --mp-border: var(--border, rgba(11, 18, 32, 0.10));
+    --mp-border-2: rgba(11, 18, 32, 0.08);
+
+    --mp-radius: 18px;
+    --mp-radius-lg: 22px;
+
+    --mp-shadow-sm: 0 8px 18px rgba(11, 18, 32, 0.06);
+    --mp-shadow-md: 0 14px 34px rgba(11, 18, 32, 0.10);
+
+    --mp-focus: 0 0 0 3px rgb(var(--mp-accent-rgb) / 0.28);
+}
+
+/* Shell inside DashboardLayout content area */
+.myprofile-shell {
+    width: 100%;
+    padding: 0 0 10px;
+}
+
+/* Optional: if something is forcing body background */
+.myprofile-shell,
+.myprofile-shell * {
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   Header right badges (reuse pill look from profiles.css)
+========================================================= */
+.myprofile-header-badges {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+@media (max-width: 1000px) {
+    .myprofile-header-badges {
+        justify-content: flex-start;
+    }
+}
+
+/* =========================================================
+   Generic cards used on this page (errors, verify prompt)
+   Uses the same look as profiles cards
+========================================================= */
+.myprofile-card {
+    background: var(--mp-surface);
+    border: 1px solid var(--mp-border-2);
+    border-radius: var(--mp-radius-lg);
+    box-shadow: var(--mp-shadow-sm);
+    padding: 16px;
+}
+
+/* Warning card (email verify) */
+.myprofile-warn {
+    border-color: rgb(var(--mp-accent-rgb) / 0.22);
+    background: linear-gradient(180deg, #fff, rgb(var(--mp-accent-rgb) / 0.06));
+}
+
+/* Verification form layout */
+.myprofile-verify {
+    margin-top: 12px;
+    display: grid;
+    gap: 10px;
+}
+
+/* =========================================================
+   MAIN WORKSPACE GRID
+   Desktop: two equal columns, each scrolls
+   Mobile: single column, page scroll
+========================================================= */
+.myprofile-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+/* This is the IMPORTANT part:
+   - min-height:0 allows child overflow
+   - max-height gives a scroll container
+*/
+.myprofile-col {
+    min-width: 0;
+    min-height: 0;
+
+    background: var(--mp-surface);
+    border: 1px solid var(--mp-border-2);
+    border-radius: var(--mp-radius-lg);
+    box-shadow: var(--mp-shadow-sm);
+    padding: 16px;
+
+    /* Desktop scroll inside columns */
+    overflow: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+
+    /* Height tuned to leave room for PageHeader
+     If you want tighter/taller columns, tweak this number */
+    max-height: calc(100vh - 190px);
+}
+
+/* Mobile: natural page flow */
+@media (max-width: 1000px) {
+    .myprofile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .myprofile-col {
+        max-height: none;
+        overflow: visible;
+        padding: 14px;
+    }
+}
+
+/* =========================================================
+   Focus styles (nice keyboard UX)
+========================================================= */
+.myprofile-col:focus-within {
+    outline: none;
+    box-shadow: var(--mp-shadow-sm), var(--mp-focus);
+}
+
+/* =========================================================
+   Make sure NOTHING blocks scroll inside editor/preview
+   (this is what your old css did)
+========================================================= */
+.myprofile-flex-container,
+.myprofile-content,
+.myprofile-editor-container {
+    /* If any legacy class is still present in JSX, keep it safe */
+    overflow: visible;
+    height: auto;
+    max-height: none;
+}
+
+/* =========================================================
+   Inputs (safe local input styling if editor uses text-input)
+========================================================= */
+.text-input {
+    width: 100%;
+    border: 1px solid rgba(11, 18, 32, 0.14);
+    background: #fff;
+    border-radius: 14px;
+    padding: 12px 12px;
+    font-size: 14px;
+    color: var(--mp-ink);
+    outline: none;
+    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.text-input::placeholder {
+    color: rgba(91, 102, 122, 0.8);
+    font-weight: 700;
+}
+
+.text-input:focus {
+    border-color: rgb(var(--mp-accent-rgb) / 0.5);
+    box-shadow: var(--mp-focus);
+}
+
+/* =========================================================
+   Buttons (in case you still render some old ones here)
+   Keeps consistent with profiles buttons
+========================================================= */
+.myprofile-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.2s, border 0.2s, opacity 0.2s, box-shadow 0.2s;
+}
+
+.myprofile-btn:active {
+    transform: translateY(1px);
+}
+
+.myprofile-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--mp-focus);
+}
+
+.myprofile-btn-primary {
+    background: var(--mp-accent);
+    color: #fff;
+    border-color: rgb(var(--mp-accent-rgb) / 0.35);
+    box-shadow: 0 12px 22px rgb(var(--mp-accent-rgb) / 0.18);
+}
+
+.myprofile-btn-primary:hover {
+    background: rgb(var(--mp-accent-rgb) / 0.92);
+}
+
+.myprofile-btn-ghost {
+    background: var(--mp-soft);
+    color: var(--mp-ink);
+    border-color: rgba(11, 18, 32, 0.14);
+}
+
+.myprofile-btn-ghost:hover {
+    background: rgba(11, 18, 32, 0.04);
+}

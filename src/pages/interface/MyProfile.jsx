@@ -1,9 +1,9 @@
 // frontend/src/pages/interface/MyProfile.jsx
 import React, { useEffect, useState, useContext, useMemo, useRef } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
-import Sidebar from "../../components/Dashboard/Sidebar";
+import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
 import ShareProfile from "../../components/ShareProfile";
 
@@ -13,14 +13,13 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../components/AuthContext";
 import api from "../../services/api";
 
-import LogoIcon from "../../assets/icons/Logo-Icon.svg";
-
 // extracted components
 import Preview from "../../components/Dashboard/Preview";
 import Editor from "../../components/Dashboard/Editor";
 
-// ✅ ONLY use save hook (upsert). We will do slug-fetch manually.
 import { useSaveMyBusinessCard } from "../../hooks/useBusinessCard";
+
+import "../../styling/dashboard/myprofile.css";
 
 const DEFAULT_SECTION_ORDER = ["main", "about", "work", "services", "reviews", "contact"];
 const norm = (v) => (v ?? "").toString().trim();
@@ -31,9 +30,7 @@ const norm = (v) => (v ?? "").toString().trim();
  */
 const buildBusinessCardFormData = ({
   profile_slug,
-
   template_id,
-
   business_card_name,
   page_theme,
   page_theme_variant,
@@ -43,43 +40,34 @@ const buildBusinessCardFormData = ({
   job_title,
   full_name,
   bio,
-
   cover_photo,
   avatar,
-
   works_existing_urls,
   work_images_files,
-
   services,
   reviews,
-
   contact_email,
   phone_number,
-
   cover_photo_removed,
   avatar_removed,
   work_display_mode,
   services_display_mode,
   reviews_display_mode,
   about_me_layout,
-
   show_main_section,
   show_about_me_section,
   show_work_section,
   show_services_section,
   show_reviews_section,
   show_contact_section,
-
   button_bg_color,
   button_text_color,
   text_alignment,
-
   facebook_url,
   instagram_url,
   linkedin_url,
   x_url,
   tiktok_url,
-
   section_order,
 }) => {
   const fd = new FormData();
@@ -165,19 +153,16 @@ export default function MyProfile() {
 
   const userEmail = authUser?.email;
 
-  // ✅ NEW PLANS:
   const plan = String(authUser?.plan || "free").toLowerCase();
   const isTeams = plan === "teams";
   const isPlus = plan === "plus";
   const isFree = !isPlus && !isTeams;
 
-  // Verified email only required for sharing (NOT saving)
   const isUserVerified = !!authUser?.isVerified;
   const userUsername = authUser?.username;
 
   const activeSlug = useMemo(() => getSlugFromSearch(location.search), [location.search]);
 
-  // ✅ Fetch the specific profile card by slug
   const { data: businessCard, isLoading: isCardLoading, isError: isCardError } = useQuery({
     queryKey: ["businessCard", "profile", activeSlug],
     queryFn: async () => {
@@ -189,13 +174,12 @@ export default function MyProfile() {
     retry: 1,
   });
 
-  // ✅ If /profiles/:slug returns null, fallback to first existing profile and redirect URL.
+  // If slug not found -> fallback to first profile
   useEffect(() => {
     if (!authUser) return;
     if (isCardLoading) return;
     if (businessCard) return;
 
-    // if the requested slug isn't found, look for any existing profile
     (async () => {
       try {
         const res = await api.get("/api/business-card/profiles");
@@ -204,16 +188,11 @@ export default function MyProfile() {
 
         const firstSlug = (first?.profile_slug || "").toString().trim();
         if (!firstSlug) return;
-
-        // already on correct slug -> nothing
         if (firstSlug === activeSlug) return;
 
-        // rewrite URL to the real slug so editor loads real data
         const url = new URL(window.location.href);
         url.searchParams.set("slug", firstSlug);
         window.history.replaceState({}, document.title, url.toString());
-
-        // force react-router to re-render same page with new search
         navigate(url.pathname + url.search, { replace: true });
       } catch {
         // ignore
@@ -238,10 +217,8 @@ export default function MyProfile() {
   const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const mqDesktopToMobile = "(max-width: 1000px)";
-  const mqSmallMobile = "(max-width: 600px)";
+  const mqSmallMobile = "(max-width: 520px)";
   const [isMobile, setIsMobile] = useState(() => window.matchMedia(mqDesktopToMobile).matches);
   const [isSmallMobile, setIsSmallMobile] = useState(() => window.matchMedia(mqSmallMobile).matches);
 
@@ -256,13 +233,10 @@ export default function MyProfile() {
   const [showReviewsSection, setShowReviewsSection] = useState(true);
   const [showContactSection, setShowContactSection] = useState(true);
 
-  const hasSavedData = !!businessCard;
   const hasExchangeContact =
     (state.contact_email && state.contact_email.trim()) || (state.phone_number && state.phone_number.trim());
 
-  // ==========================
-  // 1) Stripe return handler
-  // ==========================
+  // Stripe return handler
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const sessionId = params.get("session_id");
@@ -304,9 +278,7 @@ export default function MyProfile() {
     })();
   }, [location.search, refetchAuthUser]);
 
-  // ==========================
-  // 2) Media query + body scroll
-  // ==========================
+  // Media queries
   useEffect(() => {
     const mm1 = window.matchMedia(mqDesktopToMobile);
     const mm2 = window.matchMedia(mqSmallMobile);
@@ -314,7 +286,6 @@ export default function MyProfile() {
     const onChange = () => {
       setIsMobile(mm1.matches);
       setIsSmallMobile(mm2.matches);
-      if (!mm1.matches && sidebarOpen) setSidebarOpen(false);
     };
 
     mm1.addEventListener("change", onChange);
@@ -324,16 +295,9 @@ export default function MyProfile() {
       mm1.removeEventListener("change", onChange);
       mm2.removeEventListener("change", onChange);
     };
-  }, [sidebarOpen]);
+  }, []);
 
-  useEffect(() => {
-    if (sidebarOpen && isMobile) document.body.classList.add("body-no-scroll");
-    else document.body.classList.remove("body-no-scroll");
-  }, [sidebarOpen, isMobile]);
-
-  // ==========================
-  // 3) Verification cooldown + prompt
-  // ==========================
+  // Verification cooldown
   useEffect(() => {
     if (resendCooldown <= 0) return;
     const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
@@ -345,9 +309,7 @@ export default function MyProfile() {
     else if (!authLoading && isUserVerified) setShowVerificationPrompt(false);
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // ==========================
-  // 4) Hydrate editor
-  // ==========================
+  // Hydrate editor
   useEffect(() => {
     if (isCardLoading) return;
 
@@ -377,9 +339,8 @@ export default function MyProfile() {
         contact_email: businessCard.contact_email || "",
         phone_number: businessCard.phone_number || "",
 
-        buttonBgColor: businessCard.button_bg_color || "#F47629",
-        buttonTextColor:
-          (businessCard.button_text_color || "white").toLowerCase() === "black" ? "black" : "white",
+        buttonBgColor: businessCard.button_bg_color || "#f97316",
+        buttonTextColor: (businessCard.button_text_color || "white").toLowerCase() === "black" ? "black" : "white",
         textAlignment: ["left", "center", "right"].includes((businessCard.text_alignment || "").toLowerCase())
           ? businessCard.text_alignment
           : "left",
@@ -427,7 +388,7 @@ export default function MyProfile() {
 
       updateState({
         templateId: "template-1",
-        buttonBgColor: "#F47629",
+        buttonBgColor: "#f97316",
         buttonTextColor: "white",
         textAlignment: "left",
         facebook_url: "",
@@ -501,7 +462,6 @@ export default function MyProfile() {
     updateState({ workImages: state.workImages.filter((_, i) => i !== idx) });
   };
 
-  // Verification helpers
   const sendVerificationCode = async () => {
     if (!userEmail) return toast.error("Email not found. Please log in again.");
     try {
@@ -533,12 +493,6 @@ export default function MyProfile() {
     }
   };
 
-  const arraysEqual = (a = [], b = []) => {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
-    return true;
-  };
-
   const handleResetPage = () => {
     resetState();
     setServicesDisplayMode("list");
@@ -563,7 +517,7 @@ export default function MyProfile() {
 
     updateState({
       templateId: "template-1",
-      buttonBgColor: "#F47629",
+      buttonBgColor: "#f97316",
       buttonTextColor: "white",
       textAlignment: "left",
       facebook_url: "",
@@ -575,6 +529,12 @@ export default function MyProfile() {
     });
 
     toast.success("Editor reset.");
+  };
+
+  const arraysEqual = (a = [], b = []) => {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+    return true;
   };
 
   const hasProfileChanges = () => {
@@ -614,14 +574,7 @@ export default function MyProfile() {
       return false;
     })();
 
-    const origShowMain = original.show_main_section !== false;
-    const origShowAbout = original.show_about_me_section !== false;
-    const origShowWork = original.show_work_section !== false;
-    const origShowServices = original.show_services_section !== false;
-    const origShowReviews = original.show_reviews_section !== false;
-    const origShowContact = original.show_contact_section !== false;
-
-    const origButtonBg = original.button_bg_color || "#F47629";
+    const origButtonBg = original.button_bg_color || "#f97316";
     const origButtonText = (original.button_text_color || "white").toLowerCase() === "black" ? "black" : "white";
     const origAlign = ["left", "center", "right"].includes((original.text_alignment || "").toLowerCase())
       ? original.text_alignment
@@ -632,6 +585,13 @@ export default function MyProfile() {
 
     const origTemplate = original.template_id || "template-1";
     const currentTemplate = state.templateId || "template-1";
+
+    const origShowMain = original.show_main_section !== false;
+    const origShowAbout = original.show_about_me_section !== false;
+    const origShowWork = original.show_work_section !== false;
+    const origShowServices = original.show_services_section !== false;
+    const origShowReviews = original.show_reviews_section !== false;
+    const origShowContact = original.show_contact_section !== false;
 
     return (
       currentTemplate !== origTemplate ||
@@ -673,7 +633,6 @@ export default function MyProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
 
     const existingWorkUrls = (state.workImages || [])
@@ -686,7 +645,6 @@ export default function MyProfile() {
 
     const formData = buildBusinessCardFormData({
       profile_slug: activeSlug,
-
       template_id: state.templateId || "template-1",
 
       business_card_name: state.businessName,
@@ -766,7 +724,6 @@ export default function MyProfile() {
     if (!isUserVerified) return toast.error("Please verify your email to share your page.");
     setShowShareModal(true);
   };
-  const handleCloseShareModal = () => setShowShareModal(false);
 
   const visitUrl = useMemo(() => {
     if (!userUsername) return "#";
@@ -774,134 +731,127 @@ export default function MyProfile() {
     return `${window.location.origin}/u/${userUsername}/${encodeURIComponent(activeSlug)}`;
   }, [userUsername, activeSlug]);
 
-  const columnScrollStyle = !isMobile ? { maxHeight: "calc(100vh - 140px)", overflow: "auto" } : undefined;
+  const rightSlot = (
+    <div className="myprofile-header-badges">
+      <span className="profiles-pill">
+        Plan: <strong>{isTeams ? "TEAMS" : isPlus ? "PLUS" : "FREE"}</strong>
+      </span>
+      <span className="profiles-pill">
+        Editing: <strong>{activeSlug}</strong>
+      </span>
+    </div>
+  );
+
+  // Scrollable columns on desktop (this is the key fix)
+  const desktopScrollStyle = !isMobile ? { overflow: "auto" } : undefined;
 
   return (
-    <div className={`app-layout ${sidebarOpen ? "sidebar-active" : ""}`}>
-      <div className="myprofile-mobile-header">
-        <div className="myprofile-brand">
-          <img src={LogoIcon} alt="Konar" className="myprofile-logo" />
-        </div>
+    <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
+      <div className="myprofile-shell">
+        <PageHeader
+          title="Edit your profile"
+          subtitle="Update your card — changes go live when you publish."
+          onShareCard={handleShareCard}
+          visitUrl={visitUrl}
+          isMobile={isMobile}
+          isSmallMobile={isSmallMobile}
+          rightSlot={rightSlot}
+        />
 
-        <button
-          className={`sidebar-menu-toggle ${sidebarOpen ? "active" : ""}`}
-          aria-label={sidebarOpen ? "Close menu" : "Open menu"}
-          onClick={() => setSidebarOpen((s) => !s)}
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
-
-      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-      <main className="main-content-container">
-        <PageHeader isMobile={isMobile} isSmallMobile={isSmallMobile} onShareCard={handleShareCard} visitUrl={visitUrl} />
-
-        <div className="myprofile-main-content">
-          {!authLoading && !authUser && (
-            <div className="content-card-box error-state">
-              <p>User not loaded. Please ensure you are logged in.</p>
-              <button onClick={() => (window.location.href = "/login")}>Go to Login</button>
+        {(!authLoading && !authUser) && (
+          <section className="profiles-card myprofile-card">
+            <h2 className="profiles-card-title">User not loaded</h2>
+            <p className="profiles-muted">Please ensure you are logged in.</p>
+            <div className="profiles-actions-row">
+              <button className="profiles-btn profiles-btn-primary" onClick={() => (window.location.href = "/login")}>
+                Go to Login
+              </button>
             </div>
-          )}
+          </section>
+        )}
 
-          {!authLoading && authUser && (
-            <>
-              {isCardError && (
-                <div className="content-card-box error-state">
-                  <p>Couldn’t load this profile.</p>
-                  <p style={{ opacity: 0.8, marginTop: 8 }}>Try again, or go back to Profiles and select a different profile.</p>
-                  <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-                    <button
-                      className="desktop-button navy-button"
-                      onClick={() =>
-                        queryClient.invalidateQueries({
-                          queryKey: ["businessCard", "profile", activeSlug],
-                        })
-                      }
-                    >
-                      Retry
+        {(!authLoading && authUser) && (
+          <>
+            {isCardError && (
+              <section className="profiles-card myprofile-card">
+                <h2 className="profiles-card-title">Couldn’t load this profile</h2>
+                <p className="profiles-muted">
+                  Try again, or go back to Profiles and select a different profile.
+                </p>
+                <div className="profiles-actions-row">
+                  <button
+                    className="profiles-btn profiles-btn-primary"
+                    onClick={() => queryClient.invalidateQueries({ queryKey: ["businessCard", "profile", activeSlug] })}
+                  >
+                    Retry
+                  </button>
+                  <button className="profiles-btn profiles-btn-ghost" onClick={() => navigate("/profiles")}>
+                    Back to Profiles
+                  </button>
+                </div>
+              </section>
+            )}
+
+            {showVerificationPrompt && (
+              <section className="profiles-card myprofile-card myprofile-warn">
+                <h2 className="profiles-card-title">Email not verified</h2>
+                <p className="profiles-muted">
+                  Verify your email (<strong>{userEmail}</strong>) to enable sharing features.
+                </p>
+
+                <form onSubmit={handleVerifyCode} className="myprofile-verify">
+                  <input
+                    type="text"
+                    className="text-input"
+                    placeholder="Enter 6-digit code"
+                    value={verificationCodeInput}
+                    onChange={(e) => setVerificationCodeInput(e.target.value)}
+                    maxLength={6}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                  />
+
+                  <div className="profiles-actions-row">
+                    <button type="submit" className="profiles-btn profiles-btn-primary">
+                      Verify Email
                     </button>
 
-                    <button className="desktop-button orange-button" onClick={() => navigate("/profiles")}>
-                      Back to Profiles
+                    <button
+                      type="button"
+                      className="profiles-btn profiles-btn-ghost"
+                      onClick={sendVerificationCode}
+                      disabled={resendCooldown > 0}
+                    >
+                      {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend Code"}
                     </button>
                   </div>
-                </div>
-              )}
+                </form>
+              </section>
+            )}
 
-              {showVerificationPrompt && (
-                <div className="content-card-box verification-prompt">
-                  <p>⚠️ Your email is not verified!</p>
-                  <p>
-                    Please verify your email address (<strong>{userEmail}</strong>) to enable sharing features.
-                  </p>
+            <div className="myprofile-grid">
+              {/* PREVIEW */}
+              <section className="profiles-card myprofile-col" style={desktopScrollStyle}>
+                <Preview
+                  state={state}
+                  isMobile={isMobile}
+                  hasSavedData={!!businessCard}
+                  servicesDisplayMode={servicesDisplayMode}
+                  reviewsDisplayMode={reviewsDisplayMode}
+                  aboutMeLayout={aboutMeLayout}
+                  showMainSection={showMainSection}
+                  showAboutMeSection={showAboutMeSection}
+                  showWorkSection={showWorkSection}
+                  showServicesSection={showServicesSection}
+                  showReviewsSection={showReviewsSection}
+                  showContactSection={showContactSection}
+                  hasExchangeContact={hasExchangeContact}
+                  visitUrl={visitUrl}
+                />
+              </section>
 
-                  <form onSubmit={handleVerifyCode} className="verification-form">
-                    <input
-                      type="text"
-                      className="text-input"
-                      placeholder="Enter 6-digit code"
-                      value={verificationCodeInput}
-                      onChange={(e) => setVerificationCodeInput(e.target.value)}
-                      maxLength={6}
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                    />
-
-                    <div className="verification-actions">
-                      <button type="submit" className="desktop-button navy-button">
-                        Verify Email
-                      </button>
-
-                      <button
-                        type="button"
-                        className="desktop-button orange-button"
-                        onClick={sendVerificationCode}
-                        disabled={resendCooldown > 0}
-                      >
-                        {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend Code"}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
-
-              {/* Plan badge */}
-              <div className="trial-banner" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <p className="desktop-body-s" style={{ margin: 0 }}>
-                  Plan: <strong>{isTeams ? "Teams" : isPlus ? "Plus" : "Free"}</strong>
-                </p>
-                {isFree ? (
-                  <button className="blue-trial desktop-body-s" onClick={handleStartSubscription}>
-                    Upgrade
-                  </button>
-                ) : null}
-              </div>
-
-              <div className="myprofile-flex-container">
-                <div style={columnScrollStyle}>
-                  <Preview
-                    state={state}
-                    isMobile={isMobile}
-                    hasSavedData={!!businessCard}
-                    servicesDisplayMode={servicesDisplayMode}
-                    reviewsDisplayMode={reviewsDisplayMode}
-                    aboutMeLayout={aboutMeLayout}
-                    showMainSection={showMainSection}
-                    showAboutMeSection={showAboutMeSection}
-                    showWorkSection={showWorkSection}
-                    showServicesSection={showServicesSection}
-                    showReviewsSection={showReviewsSection}
-                    showContactSection={showContactSection}
-                    hasExchangeContact={hasExchangeContact}
-                    visitUrl={visitUrl}
-                    columnScrollStyle={columnScrollStyle}
-                  />
-                </div>
-
+              {/* EDITOR */}
+              <section className="profiles-card myprofile-col" style={desktopScrollStyle}>
                 <Editor
                   state={state}
                   updateState={updateState}
@@ -934,17 +884,16 @@ export default function MyProfile() {
                   onRemoveAvatar={handleRemoveAvatar}
                   onAddWorkImages={onAddWorkImages}
                   onRemoveWorkImage={handleRemoveWorkImage}
-                  columnScrollStyle={columnScrollStyle}
                 />
-              </div>
-            </>
-          )}
-        </div>
-      </main>
+              </section>
+            </div>
+          </>
+        )}
+      </div>
 
       <ShareProfile
         isOpen={showShareModal}
-        onClose={handleCloseShareModal}
+        onClose={() => setShowShareModal(false)}
         profileUrl={visitUrl}
         qrCodeUrl={businessCard?.qr_code_url || ""}
         contactDetails={{
@@ -959,6 +908,6 @@ export default function MyProfile() {
         }}
         username={userUsername || ""}
       />
-    </div>
+    </DashboardLayout>
   );
 }
