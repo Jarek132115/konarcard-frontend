@@ -9,14 +9,6 @@ import { useAuthUser } from "../../hooks/useAuthUser";
 import { useMyProfiles, useCreateProfile, useDeleteProfile } from "../../hooks/useBusinessCard";
 import api from "../../services/api";
 
-const TEMPLATE_OPTIONS = [
-    { id: "template-1", name: "Template 1" },
-    { id: "template-2", name: "Template 2" },
-    { id: "template-3", name: "Template 3" },
-    { id: "template-4", name: "Template 4" },
-    { id: "template-5", name: "Template 5" },
-];
-
 const TEAMS_CHECKOUT_ENDPOINT = "/api/checkout/teams";
 
 const centerTrim = (v) => (v ?? "").toString().trim();
@@ -44,7 +36,6 @@ export default function Profiles() {
 
     // ✅ list of profiles
     const { data: cards, isLoading, isError, refetch: refetchProfiles } = useMyProfiles();
-
     const createProfile = useCreateProfile();
     const deleteProfile = useDeleteProfile();
 
@@ -69,7 +60,6 @@ export default function Profiles() {
             return {
                 id: c._id,
                 slug: c.profile_slug || "",
-                templateId: c.template_id || "template-1",
                 name: displayName,
                 trade,
                 status: isComplete ? "complete" : "incomplete",
@@ -100,15 +90,6 @@ export default function Profiles() {
     }, [sortedProfiles, selectedSlug]);
 
     const canCreateMoreProfilesWithoutCheckout = isTeams && sortedProfiles.length < maxProfiles;
-    const templatesLocked = plan === "free";
-
-    const [upgradeOpen, setUpgradeOpen] = useState(false);
-    const [upgradeMode, setUpgradeMode] = useState("templates");
-    const openUpgrade = (mode) => {
-        setUpgradeMode(mode);
-        setUpgradeOpen(true);
-    };
-    const closeUpgrade = () => setUpgradeOpen(false);
 
     const buildPublicUrl = (profileSlug) => {
         const s = normalizeSlug(profileSlug);
@@ -167,26 +148,49 @@ export default function Profiles() {
         }
     };
 
-    const handleTemplatePick = async (templateId) => {
+    // =========================================================
+    // Actions: QR + Wallet
+    // =========================================================
+    const downloadFile = (blob, filename) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+    };
+
+    const handleDownloadQr = async () => {
         if (!selectedProfile) return;
+        const slug = selectedProfile.slug;
+        const link = buildPublicUrl(slug);
 
-        if (templatesLocked) {
-            openUpgrade("templates");
-            return;
-        }
-
+        // Try backend endpoint if it exists
         try {
-            localStorage.setItem(
-                "kc_template_pick",
-                JSON.stringify({
-                    slug: selectedProfile.slug,
-                    template_id: templateId,
-                    t: Date.now(),
-                })
-            );
-        } catch { }
+            const res = await api.get(`/api/business-card/${encodeURIComponent(slug)}/qr`, {
+                responseType: "blob",
+            });
+            downloadFile(res.data, `${slug}-qr.png`);
+            return;
+        } catch {
+            // Fallback to simple QR generator (non-blocking)
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=900x900&data=${encodeURIComponent(link)}`;
+            window.open(qrUrl, "_blank", "noreferrer");
+        }
+    };
 
-        handleEdit(selectedProfile.slug);
+    const handleAddToGoogleWallet = async () => {
+        if (!selectedProfile) return;
+        // Wire this when you add backend pass generation
+        alert("Google Wallet pass coming next (backend endpoint needed).");
+    };
+
+    const handleAddToAppleWallet = async () => {
+        if (!selectedProfile) return;
+        // Wire this when you add backend pass generation
+        alert("Apple Wallet pass coming next (backend endpoint needed).");
     };
 
     /* =========================================================
@@ -278,9 +282,7 @@ export default function Profiles() {
 
         if (sortedProfiles.length >= maxProfiles) {
             setClaimStatus("error");
-            setClaimMessage(
-                `You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase quantity to add more.`
-            );
+            setClaimMessage(`You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase quantity to add more.`);
             return;
         }
 
@@ -420,21 +422,6 @@ export default function Profiles() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.search, refetchProfiles, refetchAuthUser]);
 
-    // --- PageHeader helpers (mobile flags) ---
-    const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
-    const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
-
-    const headerRightSlot = (
-        <div className="profiles-header-badges">
-            <span className="profiles-pill">
-                Plan: <strong>{plan.toUpperCase()}</strong>
-            </span>
-            <span className="profiles-pill">
-                Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong>
-            </span>
-        </div>
-    );
-
     if (isLoading) {
         return (
             <DashboardLayout title={null} subtitle={null}>
@@ -480,7 +467,6 @@ export default function Profiles() {
             }
             hideDesktopHeader
         >
-
             <div className="profiles-shell">
                 <PageHeader
                     title="Profiles"
@@ -488,16 +474,19 @@ export default function Profiles() {
                     onShareCard={handleShare}
                     visitUrl={selectedProfile ? buildPublicUrl(selectedProfile.slug) : undefined}
                     onVisitPage={() => handleVisit(selectedProfile?.slug)}
-                    isMobile={window.innerWidth <= 1000}
-                    isSmallMobile={window.innerWidth <= 520}
+                    isMobile={typeof window !== "undefined" ? window.innerWidth <= 1000 : false}
+                    isSmallMobile={typeof window !== "undefined" ? window.innerWidth <= 520 : false}
                     rightSlot={
                         <div className="profiles-header-badges">
-                            <span className="profiles-pill">Plan: <strong>{plan.toUpperCase()}</strong></span>
-                            <span className="profiles-pill">Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong></span>
+                            <span className="profiles-pill">
+                                Plan: <strong>{plan.toUpperCase()}</strong>
+                            </span>
+                            <span className="profiles-pill">
+                                Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong>
+                            </span>
                         </div>
                     }
                 />
-
 
                 {/* Claim panel */}
                 {claimOpen && (
@@ -548,10 +537,10 @@ export default function Profiles() {
                             {claimMessage ? (
                                 <div
                                     className={`profiles-alert ${claimStatus === "available"
-                                        ? "success"
-                                        : claimStatus === "error" || claimStatus === "invalid"
-                                            ? "danger"
-                                            : "neutral"
+                                            ? "success"
+                                            : claimStatus === "error" || claimStatus === "invalid"
+                                                ? "danger"
+                                                : "neutral"
                                         }`}
                                 >
                                     {claimMessage}
@@ -598,7 +587,7 @@ export default function Profiles() {
 
                             {!isTeams && (
                                 <div className="profiles-hint">
-                                    Your current plan allows <strong>1 profile</strong>. Plus unlocks templates. Teams unlocks multiple profiles.
+                                    Your current plan allows <strong>1 profile</strong>. Teams unlocks multiple profiles.
                                 </div>
                             )}
 
@@ -763,7 +752,11 @@ export default function Profiles() {
                                             Edit profile
                                         </button>
 
-                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={() => handleVisit(selectedProfile?.slug)}>
+                                        <button
+                                            type="button"
+                                            className="profiles-btn profiles-btn-ghost"
+                                            onClick={() => handleVisit(selectedProfile?.slug)}
+                                        >
                                             Visit
                                         </button>
                                     </div>
@@ -771,82 +764,30 @@ export default function Profiles() {
 
                                 <div className="profiles-actions-card">
                                     <h3 className="profiles-actions-title">Profile actions</h3>
-                                    <div className="profiles-actions-row">
+                                    <div className="profiles-actions-grid">
                                         <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleShare}>
                                             Share link
                                         </button>
+
                                         <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleCopyLink}>
                                             Copy link
                                         </button>
-                                    </div>
-                                </div>
 
-                                <div className="profiles-templates-card">
-                                    <div className="profiles-templates-head">
-                                        <h3 className="profiles-actions-title">Templates</h3>
-                                        <div className="profiles-templates-note">
-                                            {templatesLocked ? "Upgrade to use templates" : "Pick a template"}
-                                        </div>
-                                    </div>
+                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleDownloadQr}>
+                                            Download QR code
+                                        </button>
 
-                                    <div className={`profiles-templates-grid ${templatesLocked ? "locked" : ""}`}>
-                                        {TEMPLATE_OPTIONS.map((t) => {
-                                            const active = selectedProfile?.templateId === t.id;
-                                            return (
-                                                <button
-                                                    key={t.id}
-                                                    type="button"
-                                                    className={`profiles-template ${active ? "active" : ""}`}
-                                                    onClick={() => handleTemplatePick(t.id)}
-                                                >
-                                                    <div className="profiles-template-thumb" />
-                                                    <div className="profiles-template-name">{t.name}</div>
-                                                    {templatesLocked && <div className="profiles-template-lock">Locked</div>}
-                                                </button>
-                                            );
-                                        })}
+                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleAddToGoogleWallet}>
+                                            Add to Google Wallet
+                                        </button>
+
+                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleAddToAppleWallet}>
+                                            Add to Apple Wallet
+                                        </button>
                                     </div>
                                 </div>
                             </section>
                         </aside>
-                    </div>
-                )}
-
-                {/* Upgrade modal */}
-                {upgradeOpen && (
-                    <div className="profiles-modal-overlay" role="dialog" aria-modal="true">
-                        <div className="profiles-modal">
-                            <button type="button" className="profiles-modal-x" onClick={closeUpgrade} aria-label="Close">
-                                ✕
-                            </button>
-
-                            <div className="profiles-modal-badge">Upgrade required</div>
-
-                            {upgradeMode === "templates" ? (
-                                <>
-                                    <h2 className="profiles-modal-title">Templates are a paid feature</h2>
-                                    <p className="profiles-modal-sub">Upgrade to unlock all 5 templates.</p>
-                                </>
-                            ) : (
-                                <>
-                                    <h2 className="profiles-modal-title">Add more profiles</h2>
-                                    <p className="profiles-modal-sub">
-                                        Subscribe to Teams (or increase quantity) to create more profiles and claim more links.
-                                    </p>
-                                </>
-                            )}
-
-                            <div className="profiles-modal-actions">
-                                <button type="button" className="profiles-btn profiles-btn-primary" onClick={openClaimPanel}>
-                                    Claim a link
-                                </button>
-                                <button type="button" className="profiles-btn profiles-btn-ghost" onClick={closeUpgrade}>
-                                    Not now
-                                </button>
-                            </div>
-
-                            <div className="profiles-modal-fine">Tip: Teams quantity controls how many profiles you can create.</div>
-                        </div>
                     </div>
                 )}
             </div>
