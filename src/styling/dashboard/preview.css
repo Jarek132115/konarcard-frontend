@@ -1,20 +1,24 @@
+/* src/styling/dashboard/preview.css */
+
 /* =========================
    Preview (scoped like editor)
+   NAVY theme to match editor
    ========================= */
 .preview-scope {
-    --accent: #FF6B00;
-    --accent-rgb: 255 107 0;
+    --accent: #1E2A38;
+    --accent-rgb: 30 42 56;
 
-    /* card backgrounds */
     --card-bg-light: #F6F8FC;
-    /* slightly darker than pure white (LIGHT MODE) */
     --card-bg-dark: #FAFAFB;
-    /* very light white for cards on dark mode */
 
     --pill-bg-light: #fff;
-    --pill-bg-dark: #202020;
-    --pill-stroke-light: #E8E8E8;
-    --pill-stroke-dark: rgba(255, 255, 255, .12);
+    --pill-bg-dark: #161a22;
+
+    --pill-stroke-light: rgba(11, 18, 32, 0.14);
+    --pill-stroke-dark: rgba(255, 255, 255, 0.12);
+
+    --stroke: rgba(30, 42, 56, 0.22);
+    --shadow: 0 10px 26px rgba(11, 18, 32, 0.10);
 }
 
 .preview-scope.myprofile-preview-wrapper {
@@ -22,10 +26,10 @@
     height: 100%;
 }
 
-/* Card matches editor: thin orange line, NO shadow, centered, inner scroll */
+/* Card */
 .preview-scope .myprofile-preview {
     background: #fff;
-    border: 1px solid rgba(255, 107, 0, .22);
+    border: 1px solid var(--stroke);
     border-radius: 20px;
     padding: 18px;
     max-width: 500px;
@@ -33,18 +37,19 @@
     height: 100%;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    box-shadow: var(--shadow);
 
-    /* container queries */
     container-type: inline-size;
     container-name: preview;
 }
 
 .preview-scope .myprofile-preview.dark {
-    background: #1F1F1F;
+    background: #0f1115;
     color: #fff;
+    border-color: rgba(255, 255, 255, 0.10);
 }
 
-/* --- Pretty rounded scrollbar (WebKit/Chromium) --- */
+/* Scrollbar */
 .preview-scope .myprofile-preview::-webkit-scrollbar {
     width: 10px;
 }
@@ -61,14 +66,13 @@
     background-clip: padding-box;
 }
 
-/* Firefox */
 .preview-scope .myprofile-preview {
     scrollbar-width: thin;
     scrollbar-color: rgba(30, 42, 56, .6) transparent;
 }
 
 /* =============================
-   ORANGE toolbar (inside the card on mobile)
+   Mobile toolbar
    ============================= */
 .preview-scope .mp-toolbar {
     display: grid;
@@ -87,11 +91,10 @@
 .preview-scope .myprofile-preview.dark .mp-toolbar {
     background: var(--pill-bg-dark);
     border-color: var(--pill-stroke-dark);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, .18);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .20);
 }
 
-.preview-scope .mp-tab,
-.preview-scope .mp-tab.visit {
+.preview-scope .mp-tab {
     border: 0;
     background: transparent;
     padding: 10px 14px;
@@ -99,7 +102,6 @@
     cursor: pointer;
     font-family: "Cal Sans", sans-serif;
     font-size: 12px;
-    line-height: normal;
     text-align: center;
     color: inherit;
     text-decoration: none;
@@ -109,26 +111,22 @@
     transition: background .15s, box-shadow .15s, transform .04s;
 }
 
-.preview-scope .mp-tab:active,
-.preview-scope .mp-tab.visit:active {
+.preview-scope .mp-tab:active {
     transform: translateY(1px);
 }
 
-.preview-scope .mp-tab.active,
-.preview-scope .mp-tab.visit.active {
+.preview-scope .mp-tab.active {
     background: var(--accent);
     color: #fff;
-    box-shadow: 0 8px 18px rgb(var(--accent-rgb)/.25);
+    box-shadow: 0 8px 18px rgb(var(--accent-rgb) / .25);
 }
 
-/* Hide the toolbar on desktop */
-@media (min-width:1001px) {
+@media (min-width: 1001px) {
     .preview-scope .mp-toolbar {
         display: none;
     }
 }
 
-/* Smooth expand/collapse wrapper for mobile body */
 .preview-scope .mp-preview-wrap {
     overflow: hidden;
     will-change: max-height, opacity, transform;
@@ -142,13 +140,12 @@
 }
 
 .preview-scope .mp-preview-wrap.open {
-    /* when open we let JS set max-height:none after transition */
     opacity: 1;
     transform: scale(1);
 }
 
 /* =============================
-   PREVIEW (mock site) styles
+   Phone content
    ============================= */
 .mock-phone {
     width: 100%;
@@ -158,39 +155,31 @@
     text-align: center;
     box-sizing: border-box;
     display: flow-root;
-    color: var(--text-color);
 }
 
-.preview-scope .myprofile-preview.dark .mock-phone {
-    color: #fff;
-}
-
-/* Desktop: outer card handles scrolling */
 .mock-phone-scrollable-content.desktop-no-inner-scroll {
     overflow: visible;
 }
 
-/* Head section */
+/* Cover */
 .mock-cover {
     width: 100%;
     aspect-ratio: 4 / 3;
-    /* keep 4:3 for cover */
     object-fit: cover;
     border-radius: 14px;
-    margin-bottom: 10px;
-    margin-top: 10px;
-    background-color: var(--placeholder-bg);
-    background-size: cover;
-    background-position: center;
+    margin: 10px 0;
+    border: 1px solid rgba(11, 18, 32, 0.08);
 }
 
+/* Titles */
 .mock-title {
     font-size: clamp(20px, 2.6vw, 32px);
-    font-weight: 800;
+    font-weight: 900;
     margin: 0;
     line-height: 1.2;
-    color: #000;
+    color: #0b1220;
     text-align: inherit;
+    font-family: "Cal Sans", sans-serif;
 }
 
 .preview-scope .myprofile-preview.dark .mock-title {
@@ -198,31 +187,29 @@
 }
 
 .mock-subtitle {
-    font-size: .95rem;
-    font-weight: 600;
+    font-size: 0.95rem;
+    font-weight: 700;
     margin: 8px 0 0;
-    color: #000;
+    color: rgba(11, 18, 32, 0.75);
     text-align: inherit;
 }
 
 .preview-scope .myprofile-preview.dark .mock-subtitle {
-    color: #fff;
+    color: rgba(255, 255, 255, 0.75);
 }
 
-/* Primary CTA */
+/* CTA */
 .mock-button {
-    background: var(--accent);
-    color: #fff;
-    padding: .9rem 1.2rem;
+    padding: 0.9rem 1.2rem;
     border-radius: 12px;
     border: none;
-    font-weight: 800;
-    font-size: .95rem;
+    font-weight: 900;
+    font-size: 0.95rem;
     margin-top: 16px;
     width: 100%;
     box-sizing: border-box;
     transition: transform .06s, opacity .2s;
-    font-family: inherit;
+    font-family: "Cal Sans", sans-serif;
 }
 
 .mock-button:hover {
@@ -233,139 +220,47 @@
     transform: translateY(1px);
 }
 
-/* Section titles */
+/* Section headings */
 .mock-section-title {
     font-size: 1rem;
-    font-weight: 700;
-    margin: 60px 0 10px;
+    font-weight: 900;
+    margin: 46px 0 10px;
     text-align: left;
-    color: #000;
+    color: #0b1220;
+    font-family: "Cal Sans", sans-serif;
 }
 
 .preview-scope .myprofile-preview.dark .mock-section-title {
     color: #fff;
 }
 
-/* Cards — backgrounds depend on mode */
+/* Cards */
 .mock-about-container,
 .mock-service-item,
-.mock-review-card {
+.mock-review-card,
+.mock-contact-details {
     background: var(--card-bg-light);
-    /* LIGHT MODE: slightly darker */
     border-radius: 16px;
-    border: 1px solid rgba(0, 0, 0, .06);
-    color: #111;
+    border: 1px solid rgba(11, 18, 32, 0.08);
+    color: #0b1220;
     padding: 14px;
 }
 
 .preview-scope .myprofile-preview.dark .mock-about-container,
 .preview-scope .myprofile-preview.dark .mock-service-item,
-.preview-scope .myprofile-preview.dark .mock-review-card {
-    background: var(--card-bg-dark);
-    /* DARK MODE: very light white */
-    color: #111;
+.preview-scope .myprofile-preview.dark .mock-review-card,
+.preview-scope .myprofile-preview.dark .mock-contact-details {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.10);
+    color: #fff;
 }
 
-/* Contact card keeps its original white background */
-.mock-contact-details {
-    background: #f6f8fc;
-    border-radius: 16px;
-    border: 1px solid rgba(0, 0, 0, .06);
-    color: #111;
-    padding: 14px;
-    display: grid;
-    gap: 10px;
-}
-
-/* Body text inside cards */
-.mock-profile-name {
-    font-weight: 800;
-    margin: 0;
-    font-size: 1rem;
-    color: #111;
-}
-
-.mock-profile-role {
-    font-size: .9375rem;
-    margin: 0;
-    color: #333;
-    font-weight: 400;
-}
-
-.mock-bio-text {
-    font-size: .95rem;
-    line-height: 1.55;
-    margin: 0;
-    color: #111;
-}
-
-.mock-service-name {
-    font-size: .95rem;
-    font-weight: 700;
-    margin: 0;
-    color: #111;
-}
-
-.mock-service-price {
-    font-size: .85rem;
-    margin: 2px 0 0;
-    color: #000;
-}
-
-.mock-star-rating {
-    color: #111;
-    font-size: 1.1rem;
-    margin-bottom: 6px;
-    letter-spacing: .06rem;
-}
-
-.mock-star-rating .empty-star {
-    color: #D1D5DB;
-}
-
-.mock-review-text {
-    font-size: .95rem;
-    color: #111;
-    margin: 0 0 10px;
-    line-height: 1.5;
-}
-
-.mock-reviewer-name {
-    font-size: .9rem;
-    font-weight: 700;
-    color: #333;
-    margin: 0;
-}
-
-.mock-contact-label {
-    font-size: .95rem;
-    font-weight: 700;
-    margin: 0;
-    color: #333;
-}
-
-.mock-contact-value {
-    font-size: 12px;
-    font-weight: 400;
-    margin: 0;
-    color: #111;
-}
-
-/* About card layout */
+/* About */
 .mock-about-container {
     display: flex;
     flex-direction: column;
     gap: .75rem;
     text-align: left;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.mock-about-content-group {
-    display: flex;
-    flex-direction: column;
-    gap: .75rem;
-    min-width: 0;
 }
 
 .mock-about-header-group {
@@ -377,24 +272,59 @@
 .mock-avatar {
     width: 64px;
     height: 64px;
-    border-radius: 10px;
+    border-radius: 12px;
     object-fit: cover;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+    border: 1px solid rgba(11, 18, 32, 0.10);
 }
 
-/* Work/Services/Reviews previews */
-.work-preview-row-container {
-    position: relative;
+.mock-profile-name {
+    font-weight: 900;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.mock-profile-role {
+    font-size: .9rem;
+    margin: 4px 0 0;
+    opacity: .8;
+    font-weight: 700;
+}
+
+.mock-bio-text {
+    font-size: .95rem;
+    line-height: 1.55;
+    margin: 0;
+    opacity: .9;
+}
+
+/* Work */
+.mock-work-gallery,
+.mock-services-list,
+.mock-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
     width: 100%;
 }
 
-/* My Work items: 4 / 2.5 */
+.mock-work-gallery.grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
 .mock-work-image-item-wrapper {
     width: 100%;
     aspect-ratio: 4 / 2.5;
     overflow: hidden;
     border-radius: 14px;
-    border: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+    border: 1px solid rgba(11, 18, 32, 0.08);
+    background: rgba(11, 18, 32, 0.03);
+}
+
+.preview-scope .myprofile-preview.dark .mock-work-image-item-wrapper {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
 }
 
 .mock-work-image-item {
@@ -403,139 +333,92 @@
     object-fit: cover;
 }
 
-.mock-work-gallery,
-.mock-services-list,
-.mock-reviews-list {
-    display: flex;
-    flex-direction: column;
-    gap: .75rem;
-    width: 100%;
-    padding: 0;
-    background: transparent;
+/* Services */
+.mock-service-name {
+    font-size: .95rem;
+    font-weight: 900;
+    margin: 0;
 }
 
-.mock-work-gallery.grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.mock-work-gallery.carousel,
-.mock-services-list.carousel,
-.mock-reviews-list.carousel {
-    display: flex;
-    flex-direction: row;
-    gap: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    align-items: stretch;
-    flex-wrap: nowrap;
-    scroll-snap-type: x mandatory;
-}
-
-.mock-work-gallery.carousel::-webkit-scrollbar,
-.mock-services-list.carousel::-webkit-scrollbar,
-.mock-reviews-list.carousel::-webkit-scrollbar {
-    display: none;
-}
-
-.mock-work-gallery.carousel .mock-work-image-item-wrapper,
-.mock-services-list.carousel .mock-service-item,
-.mock-reviews-list.carousel .mock-review-card {
-    flex: 0 0 100%;
-    max-width: 100%;
-    scroll-snap-align: start;
-    margin-right: 12px;
-}
-
-/* Carousel buttons */
-.carousel-nav-buttons {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: space-between;
-    padding: 0 10px;
-    z-index: 5;
-    pointer-events: none;
-    width: 100%;
-}
-
-.carousel-nav-button {
-    background-color: rgba(0, 0, 0, .4);
-    color: #fff;
-    border: 0;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: auto;
-    transition: background-color .2s;
-}
-
-.carousel-nav-button:hover {
-    background-color: rgba(0, 0, 0, .6);
-}
-
-/* Social row (legacy, outside contact card) */
-.preview-scope .social-row {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    align-items: center;
-    margin-top: 8px;
-    flex-wrap: wrap;
-}
-
-.preview-scope .social-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 36px;
-    height: 36px;
-    padding: 0 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(0, 0, 0, .08);
-    background: #fff;
-    color: #111;
+.mock-service-price {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: .85rem;
     font-weight: 800;
-    text-decoration: none;
-    box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
-    transition: transform .05s, box-shadow .15s, border-color .15s, background .15s;
+    opacity: .85;
 }
 
-.preview-scope .social-icon:hover {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgb(var(--accent-rgb)/.12);
+/* Reviews */
+.mock-star-rating {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    letter-spacing: .06rem;
+    color: rgba(11, 18, 32, 0.85);
 }
 
-.preview-scope .social-fallback-label {
-    font-size: 12px;
+.preview-scope .myprofile-preview.dark .mock-star-rating {
+    color: rgba(255, 255, 255, 0.85);
 }
 
-/* Socials inside Contact card */
+.mock-star-rating .empty-star {
+    opacity: .25;
+}
+
+.mock-review-text {
+    font-size: .95rem;
+    margin: 0 0 10px;
+    line-height: 1.5;
+    opacity: .9;
+}
+
+.mock-reviewer-name {
+    font-size: .9rem;
+    font-weight: 900;
+    margin: 0;
+    opacity: .85;
+}
+
+/* Contact */
+.mock-contact-details {
+    display: grid;
+    gap: 10px;
+}
+
+.mock-contact-label {
+    font-size: .8rem;
+    font-weight: 900;
+    margin: 0;
+    opacity: .8;
+}
+
+.mock-contact-value {
+    font-size: .85rem;
+    font-weight: 800;
+    margin: 4px 0 0;
+    word-break: break-word;
+}
+
+/* Social chips */
 .mock-contact-socials {
     display: flex;
     justify-content: space-around;
     align-items: center;
     flex-wrap: wrap;
     margin-top: 10px;
+    gap: 10px;
 }
 
 .contact-social-chip {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 999px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(0, 0, 0, .08);
+    border: 1px solid rgba(11, 18, 32, 0.10);
     background: #fff;
     box-shadow: 0 1px 2px rgba(30, 42, 56, .06);
+    transition: transform .06s, box-shadow .2s;
 }
 
 .contact-social-glyph {
@@ -545,8 +428,8 @@
 }
 
 .preview-scope .myprofile-preview.dark .contact-social-chip {
-    background: #111;
-    border-color: #111;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.10);
 }
 
 .preview-scope .myprofile-preview.dark .contact-social-glyph {
@@ -555,20 +438,13 @@
 
 .contact-social-chip:hover {
     transform: translateY(-1px);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, .10);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .12);
 }
 
-/* =============================
-   Container queries for PREVIEW
-   ============================= */
-/* Mobile preview (<=600px container) */
+/* Container queries */
 @container preview (max-width: 600px) {
     .mock-title {
         font-size: clamp(18px, 6vw, 24px);
-    }
-
-    .mock-about-container {
-        padding: 12px;
     }
 
     .mock-avatar {
@@ -582,39 +458,23 @@
     }
 
     .mock-section-title {
-        margin-top: 36px;
-    }
-
-    .mock-service-item,
-    .mock-review-card,
-    .mock-contact-details {
-        border-radius: 14px;
-        padding: 12px;
+        margin-top: 32px;
     }
 }
 
-/* Larger preview (>=601px) */
 @container preview (min-width: 601px) {
-    .mock-title {
-        font-size: clamp(22px, 2.2vw, 32px);
-    }
-
-    .mock-work-gallery.grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
     .mock-section-title {
-        margin-top: 48px;
+        margin-top: 46px;
     }
 
     .mock-phone-scrollable-content {
-        padding-bottom: 32px;
+        padding-bottom: 28px;
     }
 }
 
 /* A11y focus */
 .mock-button:focus-visible,
 .mp-tab:focus-visible {
-    outline: 2px solid rgb(var(--accent-rgb)/.5);
+    outline: 2px solid rgb(var(--accent-rgb) / 0.6);
     outline-offset: 2px;
 }

@@ -1,8 +1,9 @@
-// src/components/Preview.jsx
+// src/components/Dashboard/Preview.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { previewPlaceholders } from "../../store/businessCardStore";
+import "../../styling/dashboard/preview.css";
 
-/* Social icons */
+/* Social icons (✅ case-sensitive on Vercel!) */
 import FacebookIcon from "../../assets/icons/icons8-facebook.svg";
 import InstagramIcon from "../../assets/icons/icons8-instagram.svg";
 import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
@@ -19,32 +20,30 @@ export default function Preview({
     servicesDisplayMode,
     reviewsDisplayMode,
     aboutMeLayout,
+
     showMainSection,
     showAboutMeSection,
     showWorkSection,
     showServicesSection,
     showReviewsSection,
     showContactSection,
+
     hasExchangeContact,
     visitUrl,
     columnScrollStyle,
 }) {
     const [previewOpen, setPreviewOpen] = useState(true);
-
-    const previewWorkCarouselRef = useRef(null);
-    const previewServicesCarouselRef = useRef(null);
-    const previewReviewsCarouselRef = useRef(null);
     const mpWrapRef = useRef(null);
 
-    // ✅ Guard state so Preview can never crash during loading
+    // ✅ Never crash if state is null while loading
     const s = state || {};
-
+    const ph = previewPlaceholders || {};
     const shouldShowPlaceholders = !hasSavedData;
+
     const isDarkMode = (s.pageTheme || s.page_theme || "light") === "dark";
 
     // ---------------------------
-    // ✅ Templates (background colour demo)
-    // Supports both snake_case and camelCase
+    // Templates (background)
     // ---------------------------
     const templateIdRaw = (s.template_id || s.templateId || "template-1").toString();
     const templateId = ["template-1", "template-2", "template-3", "template-4", "template-5"].includes(templateIdRaw)
@@ -52,22 +51,25 @@ export default function Preview({
         : "template-1";
 
     const templateBgMap = {
-        "template-1": "#ffdddd",
-        "template-2": "#dde9ff",
-        "template-3": "#fff6cc",
-        "template-4": "#ddffdd",
-        "template-5": "#f0ddff",
+        "template-1": "#fff2ea",
+        "template-2": "#eef4ff",
+        "template-3": "#fff7dd",
+        "template-4": "#ecfff1",
+        "template-5": "#f5eeff",
     };
 
     const templateBg = templateBgMap[templateId] || templateBgMap["template-1"];
+
     const phoneBgStyle = isDarkMode
-        ? { backgroundColor: "rgba(20,20,20,0.95)" }
+        ? { backgroundColor: "#0f1115" }
         : { backgroundColor: templateBg };
 
+    // CTA button style
     const ctaStyle = {
-        backgroundColor: s.buttonBgColor || s.button_bg_color || "#F47629",
-        color: (s.buttonTextColor || s.button_text_color) === "black" ? "#000000" : "#FFFFFF",
+        backgroundColor: s.buttonBgColor || s.button_bg_color || "#1E2A38",
+        color: (s.buttonTextColor || s.button_text_color) === "black" ? "#000" : "#fff",
     };
+
     const contentAlign = { textAlign: s.textAlignment || s.text_alignment || "left" };
 
     // ---------------------------
@@ -81,35 +83,28 @@ export default function Preview({
         const cleaned = (Array.isArray(order) ? order : defaultOrder)
             .filter((k) => KNOWN.has(k))
             .filter((k) => (seen.has(k) ? false : seen.add(k)));
+
         const missing = defaultOrder.filter((k) => !cleaned.includes(k));
         return [...cleaned, ...missing];
     };
 
-    // ✅ Supports both state.sectionOrder and state.section_order
     const sectionOrder = sanitizeOrder(s.sectionOrder || s.section_order);
 
     // ---------------------------
     // Preview values
     // ---------------------------
-    const ph = previewPlaceholders || {};
-
     const previewFullName = asString(s.full_name) || (shouldShowPlaceholders ? asString(ph.full_name) : "");
     const previewJobTitle = asString(s.job_title) || (shouldShowPlaceholders ? asString(ph.job_title) : "");
     const previewBio = asString(s.bio) || (shouldShowPlaceholders ? asString(ph.bio) : "");
     const previewEmail = asString(s.contact_email) || (shouldShowPlaceholders ? asString(ph.contact_email) : "");
     const previewPhone = asString(s.phone_number) || (shouldShowPlaceholders ? asString(ph.phone_number) : "");
 
-    const previewCoverPhotoSrc =
-        s.coverPhoto ?? s.cover_photo ?? (shouldShowPlaceholders ? ph.coverPhoto : "");
+    const previewCoverPhotoSrc = s.coverPhoto ?? s.cover_photo ?? (shouldShowPlaceholders ? ph.coverPhoto : "");
+    const previewAvatarSrc = s.avatar ?? (shouldShowPlaceholders ? ph.avatar : null);
 
-    const previewAvatarSrc =
-        s.avatar ?? (shouldShowPlaceholders ? ph.avatar : null);
-
-    // ✅ ALWAYS return arrays (never undefined)
     const previewWorkImages = useMemo(() => {
         const fromState = asArray(s.workImages || s.works);
         if (fromState.length > 0) return fromState;
-
         const fromPlaceholders = asArray(ph.workImages || ph.works);
         return shouldShowPlaceholders ? fromPlaceholders : [];
     }, [s.workImages, s.works, shouldShowPlaceholders, ph.workImages, ph.works]);
@@ -117,7 +112,6 @@ export default function Preview({
     const servicesForPreview = useMemo(() => {
         const fromState = asArray(s.services);
         if (fromState.length > 0) return fromState;
-
         const fromPlaceholders = asArray(ph.services);
         return shouldShowPlaceholders ? fromPlaceholders : [];
     }, [s.services, shouldShowPlaceholders, ph.services]);
@@ -125,12 +119,11 @@ export default function Preview({
     const reviewsForPreview = useMemo(() => {
         const fromState = asArray(s.reviews);
         if (fromState.length > 0) return fromState;
-
         const fromPlaceholders = asArray(ph.reviews);
         return shouldShowPlaceholders ? fromPlaceholders : [];
     }, [s.reviews, shouldShowPlaceholders, ph.reviews]);
 
-    /** Smooth open/close on mobile without re-running for every content change */
+    // Mobile expand/collapse animation
     useEffect(() => {
         if (!isMobile) return;
         const el = mpWrapRef.current;
@@ -171,13 +164,6 @@ export default function Preview({
         return () => el.removeEventListener("transitionend", handleEnd);
     }, [isMobile, previewOpen]);
 
-    const scrollCarousel = (ref, direction) => {
-        const el = ref?.current;
-        if (!el) return;
-        const amount = el.clientWidth * 0.9;
-        el.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
-    };
-
     // Normalize display modes
     const workMode = (s.workDisplayMode || "list").toLowerCase(); // list | grid
     const servicesMode = (servicesDisplayMode || "list").toLowerCase(); // list | cards
@@ -212,130 +198,19 @@ export default function Preview({
         );
     };
 
-    const WorkSection = () =>
-        showWorkSection && previewWorkImages.length > 0 ? (
-            <>
-                <p className="mock-section-title">My Work</p>
-
-                <div className="work-preview-row-container" style={contentAlign}>
-                    <div
-                        ref={previewWorkCarouselRef}
-                        className={`mock-work-gallery ${workMode}`}
-                        style={contentAlign}
-                    >
-                        {previewWorkImages.map((item, i) => (
-                            <div key={i} className="mock-work-image-item-wrapper">
-                                <img
-                                    src={item?.preview || item}
-                                    alt={`work-${i}`}
-                                    className="mock-work-image-item"
-                                />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </>
-        ) : null;
-
-    const ServicesSection = () =>
-        showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) ? (
-            <>
-                <p className="mock-section-title">My Services</p>
-
-                <div className="work-preview-row-container" style={contentAlign}>
-                    <div
-                        ref={previewServicesCarouselRef}
-                        className={`mock-services-list ${servicesMode}`}
-                        style={contentAlign}
-                    >
-                        {servicesForPreview.map((sv, i) => (
-                            <div key={i} className="mock-service-item">
-                                <p className="mock-service-name">{sv?.name}</p>
-                                <span className="mock-service-price">{sv?.price}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </>
-        ) : null;
-
-    const ReviewsSection = () =>
-        showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) ? (
-            <>
-                <p className="mock-section-title">Reviews</p>
-
-                <div className="work-preview-row-container" style={contentAlign}>
-                    <div
-                        ref={previewReviewsCarouselRef}
-                        className={`mock-reviews-list ${reviewsMode}`}
-                        style={contentAlign}
-                    >
-                        {reviewsForPreview.map((r, i) => (
-                            <div key={i} className="mock-review-card">
-                                <div className="mock-star-rating">
-                                    {Array(r?.rating || 0)
-                                        .fill(null)
-                                        .map((_, idx) => (
-                                            <span key={`f-${idx}`}>★</span>
-                                        ))}
-                                    {Array(Math.max(0, 5 - (r?.rating || 0)))
-                                        .fill(null)
-                                        .map((_, idx) => (
-                                            <span key={`e-${idx}`} className="empty-star">
-                                                ★
-                                            </span>
-                                        ))}
-                                </div>
-                                <p className="mock-review-text">{`"${r?.text || ""}"`}</p>
-                                <p className="mock-reviewer-name">{r?.name}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </>
-        ) : null;
-
-    const ContactSection = () =>
-        showContactSection && (previewEmail || previewPhone) ? (
-            <>
-                <p className="mock-section-title">Contact Details</p>
-                <div className="mock-contact-details">
-                    {previewEmail ? (
-                        <div className="mock-contact-item">
-                            <p className="mock-contact-label">Email:</p>
-                            <p className="mock-contact-value">{previewEmail}</p>
-                        </div>
-                    ) : null}
-
-                    {previewPhone ? (
-                        <div className="mock-contact-item">
-                            <p className="mock-contact-label">Phone:</p>
-                            <p className="mock-contact-value">{previewPhone}</p>
-                        </div>
-                    ) : null}
-
-                    <ContactSocials />
-                </div>
-            </>
-        ) : null;
-
     const MainSection = () =>
         showMainSection ? (
             <>
-                {(shouldShowPlaceholders || !!s.coverPhoto || !!s.cover_photo) && (
+                {(shouldShowPlaceholders || !!s.coverPhoto || !!s.cover_photo) && previewCoverPhotoSrc ? (
                     <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
-                )}
+                ) : null}
 
                 <h2 className="mock-title" style={contentAlign}>
-                    {s.mainHeading ||
-                        s.main_heading ||
-                        (!hasSavedData ? ph.main_heading : "Your Main Heading Here")}
+                    {s.mainHeading || s.main_heading || (!hasSavedData ? ph.main_heading : "Your Main Heading Here")}
                 </h2>
 
                 <p className="mock-subtitle" style={contentAlign}>
-                    {s.subHeading ||
-                        s.sub_heading ||
-                        (!hasSavedData ? ph.sub_heading : "Your Tagline or Slogan Goes Here")}
+                    {s.subHeading || s.sub_heading || (!hasSavedData ? ph.sub_heading : "Your Tagline or Slogan Goes Here")}
                 </p>
 
                 {(shouldShowPlaceholders || hasExchangeContact) && (
@@ -351,23 +226,104 @@ export default function Preview({
             <>
                 <p className="mock-section-title">About me</p>
 
-                <div className={`mock-about-container ${aboutMeLayout}`}>
-                    <div className="mock-about-content-group">
-                        <div className="mock-about-header-group">
-                            {previewAvatarSrc ? (
-                                <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" />
-                            ) : null}
-
-                            <div>
-                                <p className="mock-profile-name">{previewFullName}</p>
-                                <p className="mock-profile-role">{previewJobTitle}</p>
-                            </div>
+                <div className={`mock-about-container ${aboutMeLayout || "stacked"}`}>
+                    <div className="mock-about-header-group">
+                        {previewAvatarSrc ? <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" /> : null}
+                        <div>
+                            <p className="mock-profile-name">{previewFullName}</p>
+                            <p className="mock-profile-role">{previewJobTitle}</p>
                         </div>
-
-                        <p className="mock-bio-text" style={contentAlign}>
-                            {previewBio}
-                        </p>
                     </div>
+
+                    <p className="mock-bio-text" style={contentAlign}>
+                        {previewBio}
+                    </p>
+                </div>
+            </>
+        ) : null;
+
+    const WorkSection = () =>
+        showWorkSection && previewWorkImages.length > 0 ? (
+            <>
+                <p className="mock-section-title">My Work</p>
+
+                <div className={`mock-work-gallery ${workMode}`}>
+                    {previewWorkImages.map((item, i) => (
+                        <div key={i} className="mock-work-image-item-wrapper">
+                            <img src={item?.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
+                        </div>
+                    ))}
+                </div>
+            </>
+        ) : null;
+
+    const ServicesSection = () =>
+        showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) ? (
+            <>
+                <p className="mock-section-title">My Services</p>
+
+                <div className={`mock-services-list ${servicesMode}`}>
+                    {servicesForPreview.map((sv, i) => (
+                        <div key={i} className="mock-service-item">
+                            <p className="mock-service-name">{sv?.name}</p>
+                            <span className="mock-service-price">{sv?.price}</span>
+                        </div>
+                    ))}
+                </div>
+            </>
+        ) : null;
+
+    const ReviewsSection = () =>
+        showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) ? (
+            <>
+                <p className="mock-section-title">Reviews</p>
+
+                <div className={`mock-reviews-list ${reviewsMode}`}>
+                    {reviewsForPreview.map((r, i) => (
+                        <div key={i} className="mock-review-card">
+                            <div className="mock-star-rating" aria-label={`Rating ${r?.rating || 0} out of 5`}>
+                                {Array(Math.min(5, r?.rating || 0))
+                                    .fill(null)
+                                    .map((_, idx) => (
+                                        <span key={`f-${idx}`}>★</span>
+                                    ))}
+                                {Array(Math.max(0, 5 - (r?.rating || 0)))
+                                    .fill(null)
+                                    .map((_, idx) => (
+                                        <span key={`e-${idx}`} className="empty-star">
+                                            ★
+                                        </span>
+                                    ))}
+                            </div>
+                            <p className="mock-review-text">{`"${r?.text || ""}"`}</p>
+                            <p className="mock-reviewer-name">{r?.name}</p>
+                        </div>
+                    ))}
+                </div>
+            </>
+        ) : null;
+
+    const ContactSection = () =>
+        showContactSection && (previewEmail || previewPhone) ? (
+            <>
+                <p className="mock-section-title">Contact Details</p>
+
+                <div className="mock-contact-details">
+                    {previewEmail ? (
+                        <div className="mock-contact-item">
+                            <p className="mock-contact-label">Email</p>
+                            <p className="mock-contact-value">{previewEmail}</p>
+                        </div>
+                    ) : null}
+
+                    {previewPhone ? (
+                        <div className="mock-contact-item">
+                            <p className="mock-contact-label">Phone</p>
+                            <p className="mock-contact-value">{previewPhone}</p>
+                        </div>
+                    ) : null}
+
+                    <ContactSocials />
                 </div>
             </>
         ) : null;
@@ -382,17 +338,13 @@ export default function Preview({
     };
 
     const rootClasses = `myprofile-preview ${isDarkMode ? "dark" : ""} template-${templateId}`;
-    const fontFamily = s.font || s.style || ph.font;
+    const fontFamily = s.font || s.style || ph.font || "Inter";
 
     if (isMobile) {
         return (
             <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
                 <div className={rootClasses} style={{ fontFamily }}>
-                    <div
-                        className={`mp-toolbar ${previewOpen ? "is-open" : "is-collapsed"}`}
-                        role="tablist"
-                        aria-label="Preview controls"
-                    >
+                    <div className="mp-toolbar" role="tablist" aria-label="Preview controls">
                         <button
                             type="button"
                             role="tab"
