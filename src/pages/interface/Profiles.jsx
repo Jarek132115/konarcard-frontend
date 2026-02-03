@@ -5,13 +5,7 @@ import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import "../../styling/dashboard/profiles.css";
 
 import { useAuthUser } from "../../hooks/useAuthUser";
-import {
-    useMyProfiles,
-    useCreateProfile,
-    useDeleteProfile,
-    useSetDefaultProfile,
-} from "../../hooks/useBusinessCard";
-
+import { useMyProfiles, useCreateProfile, useDeleteProfile } from "../../hooks/useBusinessCard";
 import api from "../../services/api";
 
 const TEMPLATE_OPTIONS = [
@@ -23,8 +17,7 @@ const TEMPLATE_OPTIONS = [
 ];
 
 /**
- * ✅ CHANGE THIS IF YOUR CHECKOUT ROUTE NAME IS DIFFERENT
- * This should create a Stripe checkout session for TEAMS.
+ * This creates a Stripe checkout session for TEAMS (add profile via quantity).
  */
 const TEAMS_CHECKOUT_ENDPOINT = "/api/checkout/teams";
 
@@ -45,10 +38,14 @@ export default function Profiles() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // ✅ REAL plan from user model (fallback to free)
+    // ✅ User + plan
     const { data: authUser, refetch: refetchAuthUser } = useAuthUser();
     const plan = safeLower(authUser?.plan || "free"); // free | plus | teams
     const isTeams = plan === "teams";
+
+    // ✅ Teams profile cap comes from Stripe quantity stored on user
+    const teamsCap = Math.max(1, Number(authUser?.teamsProfilesQty || 1));
+    const maxProfiles = isTeams ? teamsCap : 1;
 
     // ✅ list of profiles (multi-profile)
     const { data: cards, isLoading, isError, refetch } = useMyProfiles();
@@ -56,9 +53,10 @@ export default function Profiles() {
     // ✅ mutations
     const createProfile = useCreateProfile();
     const deleteProfile = useDeleteProfile();
-    const setDefault = useSetDefaultProfile();
 
-    const username = safeLower(authUser?.username || "").trim() || "yourname";
+    // “username” is no longer used to build public URLs (global slugs),
+    // but we keep it as a fallback if a legacy profile uses slug="main".
+    const usernameFallbackSlug = safeLower(authUser?.username || "").trim();
 
     const profiles = useMemo(() => {
         const xs = Array.isArray(cards) ? cards : [];
@@ -72,19 +70,14 @@ export default function Profiles() {
             const trade = centerTrim(c.job_title) || "Trade";
 
             const isComplete = Boolean(
-                centerTrim(c.full_name) ||
-                centerTrim(c.main_heading) ||
-                centerTrim(c.business_card_name)
+                centerTrim(c.full_name) || centerTrim(c.main_heading) || centerTrim(c.business_card_name)
             );
 
-            const updatedAtText = c.updatedAt
-                ? `Updated ${new Date(c.updatedAt).toLocaleDateString()}`
-                : "Updated recently";
+            const updatedAtText = c.updatedAt ? `Updated ${new Date(c.updatedAt).toLocaleDateString()}` : "Updated recently";
 
             return {
                 id: c._id,
                 slug: c.profile_slug || "main",
-                isDefault: !!c.is_default,
                 templateId: c.template_id || "template-1",
                 name: displayName,
                 trade,
@@ -94,14 +87,10 @@ export default function Profiles() {
         });
     }, [cards]);
 
-    // Sort: default first
+    // Sort stable (no default concept now)
     const sortedProfiles = useMemo(() => {
         const xs = [...profiles];
-        xs.sort((a, b) => {
-            if (a.isDefault && !b.isDefault) return -1;
-            if (!a.isDefault && b.isDefault) return 1;
-            return 0;
-        });
+        xs.sort((a, b) => a.slug.localeCompare(b.slug));
         return xs;
     }, [profiles]);
 
@@ -112,8 +101,7 @@ export default function Profiles() {
             setSelectedSlug(null);
             return;
         }
-        const defaultOne = sortedProfiles.find((p) => p.isDefault) || sortedProfiles[0];
-        setSelectedSlug((prev) => prev || defaultOne.slug);
+        setSelectedSlug((prev) => prev || sortedProfiles[0].slug);
     }, [sortedProfiles]);
 
     const selectedProfile = useMemo(() => {
@@ -123,10 +111,11 @@ export default function Profiles() {
 
     /**
      * ✅ RULES:
-     * - Free/Plus: 1 profile
-     * - Teams: multiple profiles (quantity controlled by Stripe)
+     * - Free: 1 profile + 1 template
+     * - Plus: 1 profile + all templates
+     * - Teams: up to teamsProfilesQty profiles (Stripe quantity)
      */
-    const canCreateMoreProfilesWithoutCheckout = isTeams;
+    const canCreateMoreProfilesWithoutCheckout = isTeams && sortedProfiles.length < maxProfiles;
 
     // Templates:
     const templatesLocked = plan === "free";
@@ -140,14 +129,26 @@ export default function Profiles() {
     };
     const closeUpgrade = () => setUpgradeOpen(false);
 
+    /**
+     * ✅ FIXED PUBLIC URL:
+     * Every profile is GLOBAL at:
+     *   /u/:slug
+     *
+     * Legacy fallback:
+     * if a profile was stored as slug="main", we use user.username as the real public slug when available.
+     */
     const buildPublicUrl = (profileSlug) => {
         const s = safeLower(profileSlug);
 
-        // default profile uses /u/:username
-        if (!s || s === "main") return `${window.location.origin}/u/${username}`;
+        if (!s) return `${window.location.origin}/u/${encodeURIComponent(usernameFallbackSlug || "profile")}`;
 
-        // other profiles use /u/:username/:slug
-        return `${window.location.origin}/u/${username}/${encodeURIComponent(s)}`;
+        // legacy main -> /u/:username
+        if (s === "main" && usernameFallbackSlug) {
+            return `${window.location.origin}/u/${encodeURIComponent(usernameFallbackSlug)}`;
+        }
+
+        // normal global slug
+        return `${window.location.origin}/u/${encodeURIComponent(s)}`;
     };
 
     const handleCopyLink = async () => {
@@ -201,17 +202,6 @@ export default function Profiles() {
         }
     };
 
-    const handleSetDefault = async (slug) => {
-        try {
-            await setDefault.mutateAsync(slug);
-            await refetch();
-            setSelectedSlug(slug);
-        } catch (e) {
-            const msg = e?.response?.data?.error || e?.message || "Could not set default.";
-            alert(msg);
-        }
-    };
-
     const handleTemplatePick = async (templateId) => {
         if (!selectedProfile) return;
 
@@ -235,7 +225,7 @@ export default function Profiles() {
     };
 
     /* =========================================================
-         ✅ INLINE "CLAIM YOUR LINK" FLOW (NO REDIRECT)
+          INLINE "CLAIM YOUR LINK" FLOW
     ========================================================= */
 
     const [claimOpen, setClaimOpen] = useState(false);
@@ -245,7 +235,7 @@ export default function Profiles() {
     // idle | invalid | checking | available | taken | creating | created | subscribing | error
     const [claimMessage, setClaimMessage] = useState("");
 
-    const desiredNewCount = Math.max(2, sortedProfiles.length + 1);
+    const desiredNewCount = Math.max(2, sortedProfiles.length + 1); // next desired qty for teams checkout
 
     const resetClaim = () => {
         setClaimSlugInput("");
@@ -265,6 +255,16 @@ export default function Profiles() {
     };
 
     const handleCreateButtonClick = () => {
+        // If user already at cap for Teams, tell them clearly
+        if (isTeams && sortedProfiles.length >= maxProfiles) {
+            setClaimOpen(true);
+            resetClaim();
+            setClaimStatus("error");
+            setClaimMessage(
+                `You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase your Teams quantity to add more profiles.`
+            );
+            return;
+        }
         openClaimPanel();
     };
 
@@ -273,14 +273,15 @@ export default function Profiles() {
         if (!s || s.length < 3) {
             return { ok: false, slug: s, msg: "Slug must be at least 3 characters (a-z, 0-9, hyphen)." };
         }
+        if (s === "main") {
+            return { ok: false, slug: s, msg: "Please choose a real slug (not “main”)." };
+        }
         return { ok: true, slug: s, msg: "" };
     };
 
     /**
-     * Check availability:
-     * GET /api/business-card/public/:slug
-     * - 404 => available
-     * - 200 => taken
+     * ✅ Better availability check:
+     * GET /api/business-card/slug-available/:slug
      */
     const checkSlugAvailability = async () => {
         const v = validateClaimSlug(claimSlugInput);
@@ -297,19 +298,17 @@ export default function Profiles() {
 
         try {
             const headers = { "x-no-auth": "1" };
-            await api.get(`/api/business-card/public/${encodeURIComponent(v.slug)}`, { headers });
+            const r = await api.get(`/api/business-card/slug-available/${encodeURIComponent(v.slug)}`, { headers });
+            const available = !!r?.data?.available;
 
-            setClaimStatus("taken");
-            setClaimMessage("Sorry — that link is already taken. Try a different one.");
-        } catch (err) {
-            const status = err?.response?.status;
-
-            if (status === 404) {
+            if (available) {
                 setClaimStatus("available");
                 setClaimMessage("Nice! That link is available ✅");
-                return;
+            } else {
+                setClaimStatus("taken");
+                setClaimMessage("Sorry — that link is already taken. Try a different one.");
             }
-
+        } catch (err) {
             setClaimStatus("error");
             setClaimMessage(err?.response?.data?.error || "Could not check availability. Try again.");
         }
@@ -317,11 +316,18 @@ export default function Profiles() {
 
     /**
      * If Teams: create profile immediately (POST /api/business-card/profiles).
-     * If not Teams: start Teams checkout.
+     * Note: QR generation for manual-created profiles must be handled on backend
+     * (we’ll fix that next if it’s not already generating QR).
      */
     const createTeamsProfileNow = async () => {
         if (!isTeams) return;
         if (claimStatus !== "available") return;
+
+        if (sortedProfiles.length >= maxProfiles) {
+            setClaimStatus("error");
+            setClaimMessage(`You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase quantity to add more.`);
+            return;
+        }
 
         const slug = claimSlugNormalized || normalizeSlug(claimSlugInput);
         if (!slug) return;
@@ -339,11 +345,12 @@ export default function Profiles() {
             await refetch();
 
             setClaimStatus("created");
-            setClaimMessage("Profile created ✅ Redirecting to editor...");
+            setClaimMessage("Profile created ✅ Opening editor...");
 
             const createdSlug = created?.profile_slug || slug;
 
             setTimeout(() => {
+                closeClaimPanel();
                 handleEdit(createdSlug);
             }, 400);
         } catch (e) {
@@ -362,8 +369,7 @@ export default function Profiles() {
     };
 
     /**
-     * ✅ FIXED:
-     * Send claimedSlug to backend (required for webhook-created profile).
+     * Start Teams checkout to increase quantity and auto-create the claimed slug via webhook.
      */
     const startTeamsCheckout = async () => {
         if (claimStatus !== "available") return;
@@ -380,12 +386,11 @@ export default function Profiles() {
 
         try {
             const res = await api.post(TEAMS_CHECKOUT_ENDPOINT, {
-                claimedSlug: v.slug, // ✅ REQUIRED
+                claimedSlug: v.slug, // ✅ REQUIRED for webhook creation
                 desiredQuantity: desiredNewCount,
             });
 
-            const url =
-                res?.data?.url || res?.data?.checkoutUrl || res?.data?.sessionUrl || res?.data?.redirectUrl;
+            const url = res?.data?.url || res?.data?.checkoutUrl || res?.data?.sessionUrl || res?.data?.redirectUrl;
 
             if (!url) {
                 setClaimStatus("error");
@@ -401,34 +406,74 @@ export default function Profiles() {
     };
 
     /**
-     * Stripe return handler:
-     * refresh user + profiles and clean query params.
+     * ✅ Stripe return handler (Teams add-profile flow)
+     * Backend successUrl is:
+     *   /profiles?checkout=success&slug=...&qty=...&session_id=...
+     *
+     * We:
+     *  - refetch user + profiles
+     *  - retry a few times to allow webhook to finish
+     *  - auto-select the new profile when it appears
+     *  - clean URL so user doesn’t re-trigger
      */
     useEffect(() => {
         const params = new URLSearchParams(location.search);
-        const sessionId = params.get("session_id");
-        const subscribed = params.get("subscribed");
-        const paymentSuccess = params.get("payment_success");
 
-        const isStripeReturn = !!sessionId || subscribed === "1" || paymentSuccess === "true";
-        if (!isStripeReturn) return;
+        const checkout = params.get("checkout"); // success | cancel
+        const returnedSlug = normalizeSlug(params.get("slug") || "");
+        const sessionId = params.get("session_id") || "";
 
-        (async () => {
-            try {
-                await refetchAuthUser?.();
-            } catch { }
+        const isTeamsReturn = checkout === "success" && !!returnedSlug && !!sessionId;
+        if (!isTeamsReturn) return;
 
-            try {
-                await refetch?.();
-            } catch { }
+        let cancelled = false;
 
-            // Clean URL
+        const run = async () => {
+            // Close claim UI so it never asks again
+            setClaimOpen(false);
+            setClaimStatus("idle");
+            setClaimMessage("");
+
+            // Try a few times because webhook + DB write can lag slightly
+            for (let attempt = 0; attempt < 6; attempt++) {
+                if (cancelled) return;
+
+                try {
+                    await refetchAuthUser?.();
+                } catch { }
+
+                try {
+                    await refetch?.();
+                } catch { }
+
+                // Check if new profile exists yet
+                const xs = Array.isArray(cards) ? cards : [];
+                const found = xs.find((c) => safeLower(c?.profile_slug) === returnedSlug);
+
+                if (found) {
+                    setSelectedSlug(returnedSlug);
+                    break;
+                }
+
+                // wait a bit then try again
+                await new Promise((r) => setTimeout(r, 900));
+            }
+
+            // Clean URL (remove checkout params)
             try {
                 const clean = new URL(window.location.href);
                 clean.search = "";
                 window.history.replaceState({}, document.title, clean.toString());
             } catch { }
-        })();
+        };
+
+        run();
+
+        return () => {
+            cancelled = true;
+        };
+        // IMPORTANT: do NOT include `cards` here (would loop). We use refetch() to refresh.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.search, refetch, refetchAuthUser]);
 
     if (isLoading) {
@@ -484,21 +529,21 @@ export default function Profiles() {
                             Plan: <strong>{plan.toUpperCase()}</strong>
                         </span>
                         <span className="profiles-pill">
-                            Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{isTeams ? "∞" : 1}</strong>
+                            Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong>
                         </span>
                     </div>
                 </div>
 
-                {/* ✅ INLINE CLAIM PANEL (no redirect) */}
+                {/* INLINE CLAIM PANEL */}
                 {claimOpen && (
                     <section className="profiles-card" style={{ marginBottom: 16 }}>
                         <div className="profiles-card-head" style={{ display: "flex", justifyContent: "space-between" }}>
                             <div>
                                 <h2 className="profiles-card-title">Claim your link</h2>
                                 <p className="profiles-muted" style={{ marginBottom: 0 }}>
-                                    Choose the link your customers will visit. Example:{" "}
+                                    Choose the link customers will visit. Example:{" "}
                                     <strong>
-                                        {window.location.origin}/u/{username}/your-link
+                                        {window.location.origin}/u/<span style={{ opacity: 0.9 }}>your-link</span>
                                     </strong>
                                 </p>
                             </div>
@@ -526,9 +571,7 @@ export default function Profiles() {
                                     type="button"
                                     className="profiles-btn profiles-btn-primary"
                                     onClick={checkSlugAvailability}
-                                    disabled={
-                                        claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"
-                                    }
+                                    disabled={claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"}
                                 >
                                     {claimStatus === "checking" ? "Checking..." : "Check availability"}
                                 </button>
@@ -537,7 +580,7 @@ export default function Profiles() {
                                     <div style={{ opacity: 0.85 }}>
                                         Available link:{" "}
                                         <strong>
-                                            {window.location.origin}/u/{username}/{claimSlugNormalized || normalizeSlug(claimSlugInput)}
+                                            {window.location.origin}/u/{claimSlugNormalized || normalizeSlug(claimSlugInput)}
                                         </strong>
                                     </div>
                                 )}
@@ -576,7 +619,7 @@ export default function Profiles() {
                                                 onClick={startTeamsCheckout}
                                                 disabled={claimStatus === "subscribing"}
                                             >
-                                                {claimStatus === "subscribing" ? "Opening checkout..." : "Subscribe now (Teams)"}
+                                                {claimStatus === "subscribing" ? "Opening checkout..." : "Subscribe / Update Teams to add it"}
                                             </button>
 
                                             <button
@@ -584,22 +627,26 @@ export default function Profiles() {
                                                 className="profiles-btn profiles-btn-ghost"
                                                 onClick={() => {
                                                     setClaimMessage(
-                                                        "To add more profiles you need Teams. After checkout completes, come back here and click Create profile."
+                                                        "To add more profiles you need Teams (or higher Teams quantity). After checkout completes, we’ll auto-create the profile."
                                                     );
                                                 }}
                                             >
-                                                Why Teams?
+                                                Why?
                                             </button>
                                         </>
                                     )}
                                 </div>
                             )}
 
-                            {/* Small hint when user is Plus/Free */}
                             {!isTeams && (
                                 <div className="profiles-muted" style={{ fontSize: 13 }}>
-                                    Your current plan allows <strong>1 profile</strong>. Teams lets you add more profiles and links. When you
-                                    subscribe, we’ll automatically update your account.
+                                    Your current plan allows <strong>1 profile</strong>. Plus unlocks templates. Teams unlocks multiple profiles.
+                                </div>
+                            )}
+
+                            {isTeams && (
+                                <div className="profiles-muted" style={{ fontSize: 13 }}>
+                                    Teams cap is controlled by your subscription quantity: <strong>{maxProfiles}</strong>. If you hit the limit, increase quantity.
                                 </div>
                             )}
                         </div>
@@ -658,7 +705,7 @@ export default function Profiles() {
                                                     {p.name} <span className="profiles-trade">• {p.trade}</span>
                                                 </div>
                                                 <div className="profiles-item-sub">
-                                                    <span className="profiles-link">{p.isDefault ? "DEFAULT" : p.slug}</span>
+                                                    <span className="profiles-link">{p.slug}</span>
                                                     <span className="profiles-dot">•</span>
                                                     <span className="profiles-muted">{p.updatedAt}</span>
                                                 </div>
@@ -666,9 +713,7 @@ export default function Profiles() {
                                         </div>
 
                                         <div className="profiles-item-right">
-                                            <span className={`profiles-status ${p.status}`}>
-                                                {p.status === "complete" ? "COMPLETE" : "INCOMPLETE"}
-                                            </span>
+                                            <span className={`profiles-status ${p.status}`}>{p.status === "complete" ? "COMPLETE" : "INCOMPLETE"}</span>
 
                                             <div className="profiles-inline-actions">
                                                 <button
@@ -693,19 +738,6 @@ export default function Profiles() {
                                                     Visit
                                                 </button>
 
-                                                {!p.isDefault && (
-                                                    <button
-                                                        type="button"
-                                                        className="profiles-mini-btn"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleSetDefault(p.slug);
-                                                        }}
-                                                    >
-                                                        Set default
-                                                    </button>
-                                                )}
-
                                                 <button
                                                     type="button"
                                                     className="profiles-mini-btn danger"
@@ -727,11 +759,11 @@ export default function Profiles() {
                                     <div className="profiles-upsell-text">
                                         {isTeams ? (
                                             <>
-                                                Teams plan: <strong>Create unlimited profiles</strong>.
+                                                Teams plan: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong> profiles.
                                             </>
                                         ) : (
                                             <>
-                                                Want more profiles? <strong>Claim a link</strong> and then subscribe to <strong>Teams</strong>.
+                                                Want more profiles? <strong>Teams</strong> lets you add more links.
                                             </>
                                         )}
                                     </div>
@@ -767,19 +799,11 @@ export default function Profiles() {
                                 </div>
 
                                 <div className="profiles-actions-row">
-                                    <button
-                                        type="button"
-                                        className="profiles-btn profiles-btn-primary"
-                                        onClick={() => handleEdit(selectedProfile?.slug)}
-                                    >
+                                    <button type="button" className="profiles-btn profiles-btn-primary" onClick={() => handleEdit(selectedProfile?.slug)}>
                                         Edit profile
                                     </button>
 
-                                    <button
-                                        type="button"
-                                        className="profiles-btn profiles-btn-ghost"
-                                        onClick={() => handleVisit(selectedProfile?.slug)}
-                                    >
+                                    <button type="button" className="profiles-btn profiles-btn-ghost" onClick={() => handleVisit(selectedProfile?.slug)}>
                                         Visit
                                     </button>
                                 </div>
@@ -825,7 +849,7 @@ export default function Profiles() {
                     </div>
                 )}
 
-                {/* Existing upgrade modal (kept) */}
+                {/* Upgrade modal */}
                 {upgradeOpen && (
                     <div className="profiles-modal-overlay" role="dialog" aria-modal="true">
                         <div className="profiles-modal">
@@ -838,12 +862,12 @@ export default function Profiles() {
                             {upgradeMode === "templates" ? (
                                 <>
                                     <h2 className="profiles-modal-title">Templates are a paid feature</h2>
-                                    <p className="profiles-modal-sub">Upgrade your plan to unlock all 5 templates and make your profile stand out.</p>
+                                    <p className="profiles-modal-sub">Upgrade to unlock all 5 templates.</p>
                                 </>
                             ) : (
                                 <>
                                     <h2 className="profiles-modal-title">Add more profiles</h2>
-                                    <p className="profiles-modal-sub">Subscribe to Teams to create multiple profiles and claim multiple links.</p>
+                                    <p className="profiles-modal-sub">Subscribe to Teams (or increase quantity) to create more profiles and claim more links.</p>
                                 </>
                             )}
 
@@ -856,9 +880,7 @@ export default function Profiles() {
                                 </button>
                             </div>
 
-                            <div className="profiles-modal-fine">
-                                Tip: Teams is what enables multiple profiles (billing controls how many profiles you can create).
-                            </div>
+                            <div className="profiles-modal-fine">Tip: Teams quantity controls how many profiles you can create.</div>
                         </div>
                     </div>
                 )}
