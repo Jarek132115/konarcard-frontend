@@ -10,6 +10,7 @@ import TikTokIcon from "../../../assets/icons/icons8-tiktok.svg";
 
 /* Color wheel lib */
 import iro from "@jaames/iro";
+import "../../styling/dashboard/editor.css";
 
 /* contrast helper */
 const getContrastColor = (hex = "#000000") => {
