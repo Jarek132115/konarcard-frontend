@@ -16,7 +16,7 @@ import api from "../../services/api";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 
 // extracted components
-import Preview from "../../components/Preview";
+import Preview from "../../components/Dashboard/Preview";
 import Editor from "../../components/Dashboard/Editor";
 
 // ✅ ONLY use save hook (upsert). We will do slug-fetch manually.
