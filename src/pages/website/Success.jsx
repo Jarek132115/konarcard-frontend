@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import Sidebar from "../../components/Dashboard/Sidebar";
-import PageHeader from "../../components/PageHeader";
+import PageHeader from "../../components/Dashboard/PageHeader";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import api from "../../services/api";
 import { AuthContext } from "../../components/AuthContext";

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 import Sidebar from "../../components/Dashboard/Sidebar";
-import PageHeader from '../../components/PageHeader';
+import PageHeader from "../../components/Dashboard/PageHeader";
 import ShareProfile from '../../components/ShareProfile';
 import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';

@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 import Sidebar from "../../components/Dashboard/Sidebar";
-import PageHeader from "../../components/PageHeader";
+import PageHeader from "../../components/Dashboard/PageHeader";
 import ShareProfile from "../../components/ShareProfile";
 
 import useBusinessCardStore from "../../store/businessCardStore";

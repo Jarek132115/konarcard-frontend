@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import Sidebar from "../../components/Dashboard/Sidebar";
-import PageHeader from '../../components/PageHeader';
+import PageHeader from "../../components/Dashboard/PageHeader";
 import ShareProfile from '../../components/ShareProfile';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
