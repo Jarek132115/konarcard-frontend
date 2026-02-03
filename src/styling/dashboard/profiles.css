@@ -932,3 +932,32 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* =========================================================
+   Perfect alignment with dash-main padding (layout.css)
+   dash-main uses padding: 26px; so we match that grid here
+========================================================= */
+
+/* Kill any hidden left/right offsets inside the page */
+.profiles-shell {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* PageHeader wrapper sometimes has its own margins/padding */
+.profiles-shell>* {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* If PageHeader component has internal margin-bottom that differs */
+.profiles-shell .page-header,
+.profiles-shell .kc-pageheader,
+.profiles-shell .dash-pageheader {
+    margin-top: 0 !important;
+}
+
+/* Ensure first content card sits on the same vertical rhythm */
+.profiles-shell .profiles-grid {
+    margin-top: 16px;
+}
