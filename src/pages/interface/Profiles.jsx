@@ -44,17 +44,12 @@ export default function Profiles() {
     const isTeams = plan === "teams";
 
     // ✅ Teams profile cap comes from Stripe entitlements stored on user
-    // NOTE: after backend fix, teamsProfilesQty should be TOTAL allowed profiles (1 + extraProfilesQty)
+    // NOTE: teamsProfilesQty should be TOTAL allowed profiles (1 + extraProfilesQty)
     const teamsCap = Math.max(1, Number(authUser?.teamsProfilesQty || 1));
     const maxProfiles = isTeams ? teamsCap : 1;
 
     // ✅ list of profiles (multi-profile)
-    const {
-        data: cards,
-        isLoading,
-        isError,
-        refetch: refetchProfiles,
-    } = useMyProfiles();
+    const { data: cards, isLoading, isError, refetch: refetchProfiles } = useMyProfiles();
 
     // ✅ mutations
     const createProfile = useCreateProfile();
@@ -62,7 +57,6 @@ export default function Profiles() {
 
     const profiles = useMemo(() => {
         const xs = Array.isArray(cards) ? cards : [];
-
         return xs.map((c) => {
             const displayName =
                 centerTrim(c.business_card_name) ||
@@ -266,7 +260,6 @@ export default function Profiles() {
         if (!s || s.length < 3) {
             return { ok: false, slug: s, msg: "Slug must be at least 3 characters (a-z, 0-9, hyphen)." };
         }
-        // Avoid legacy reserved slug
         if (s === "main") {
             return { ok: false, slug: s, msg: "Please choose a real slug (not “main”)." };
         }
@@ -382,7 +375,6 @@ export default function Profiles() {
                 desiredQuantity: desiredNewCount,
             });
 
-            // If backend returned a checkout url -> redirect
             const url = res?.data?.url || res?.data?.checkoutUrl || res?.data?.sessionUrl || res?.data?.redirectUrl;
 
             if (url) {
@@ -390,13 +382,7 @@ export default function Profiles() {
                 return;
             }
 
-            // If backend updated subscription directly (no URL), refresh and wait for profile creation
             if (res?.data?.updated) {
-                // This path covers: existing Teams user increasing quantity
-                // Backend charges proration now; webhook updates entitlements
-                // User still needs profile created:
-                // - If backend created it via webhook path, it will appear shortly
-                // - Otherwise user can click Create profile again
                 setClaimMessage("Subscription updated ✅ Finishing setup...");
                 await refetchAuthUser?.();
                 await refetchProfiles();
@@ -415,15 +401,6 @@ export default function Profiles() {
 
     /**
      * ✅ Stripe return handler (Teams add-profile flow)
-     *
-     * Backend successUrl:
-     *   /profiles?checkout=success&slug=...&profiles=...&session_id=...
-     *
-     * We:
-     *  - refetch user + profiles
-     *  - poll a few times for webhook-created profile to appear
-     *  - auto-select it when it does
-     *  - clean URL
      */
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -450,12 +427,8 @@ export default function Profiles() {
                 } catch { }
 
                 try {
-                    // IMPORTANT: refetchProfiles returns latest list (avoid stale `cards`)
-                    const fresh = await refetchProfiles?.();
-                    const freshCards = fresh?.data ?? fresh?.data?.data ?? null;
+                    await refetchProfiles?.();
 
-                    // But hooks differ; safest is to read from window by calling API directly if needed
-                    // So: also check current cards state after refetch
                     const current = Array.isArray(cards) ? cards : [];
                     const found = current.find((c) => normalizeSlug(c?.profile_slug) === returnedSlug);
 
@@ -468,7 +441,6 @@ export default function Profiles() {
                 await new Promise((r) => setTimeout(r, 900));
             }
 
-            // Clean URL
             try {
                 const clean = new URL(window.location.href);
                 clean.search = "";
@@ -481,14 +453,18 @@ export default function Profiles() {
         return () => {
             cancelled = true;
         };
-        // do not depend on `cards` (would loop)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.search, refetchProfiles, refetchAuthUser]);
 
     if (isLoading) {
         return (
             <DashboardLayout title="Profiles" subtitle="Create, view, and manage your digital business card profiles.">
-                <div style={{ minHeight: "40vh" }} />
+                <div className="profiles-shell">
+                    <div className="profiles-skeleton">
+                        <div className="profiles-skel-card" />
+                        <div className="profiles-skel-card" />
+                    </div>
+                </div>
             </DashboardLayout>
         );
     }
@@ -525,15 +501,16 @@ export default function Profiles() {
             }
         >
             <div className="profiles-shell">
-                <div className="profiles-header">
-                    <div>
+                {/* Top header row */}
+                <div className="profiles-topbar">
+                    <div className="profiles-topbar-left">
                         <h1 className="profiles-title">Profiles</h1>
                         <p className="profiles-subtitle">
                             Profiles are your public digital business cards. Each profile has its own link you can share after every job.
                         </p>
                     </div>
 
-                    <div className="profiles-header-meta">
+                    <div className="profiles-topbar-right">
                         <span className="profiles-pill">
                             Plan: <strong>{plan.toUpperCase()}</strong>
                         </span>
@@ -543,13 +520,13 @@ export default function Profiles() {
                     </div>
                 </div>
 
-                {/* INLINE CLAIM PANEL */}
+                {/* Claim panel */}
                 {claimOpen && (
-                    <section className="profiles-card" style={{ marginBottom: 16 }}>
-                        <div className="profiles-card-head" style={{ display: "flex", justifyContent: "space-between" }}>
+                    <section className="profiles-card profiles-claim">
+                        <div className="profiles-card-head">
                             <div>
                                 <h2 className="profiles-card-title">Claim your link</h2>
-                                <p className="profiles-muted" style={{ marginBottom: 0 }}>
+                                <p className="profiles-muted">
                                     Choose the link customers will visit. Example:{" "}
                                     <strong>
                                         {window.location.origin}/u/<span style={{ opacity: 0.9 }}>your-link</span>
@@ -562,19 +539,22 @@ export default function Profiles() {
                             </button>
                         </div>
 
-                        <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
-                            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-                                <input
-                                    className="text-input"
-                                    style={{ maxWidth: 320 }}
-                                    value={claimSlugInput}
-                                    onChange={(e) => {
-                                        setClaimSlugInput(e.target.value);
-                                        setClaimStatus("idle");
-                                        setClaimMessage("");
-                                    }}
-                                    placeholder="e.g. plumbing-north-london"
-                                />
+                        <div className="profiles-claim-grid">
+                            <div className="profiles-claim-row">
+                                <div className="profiles-input-wrap">
+                                    <span className="profiles-input-prefix">{window.location.origin}/u/</span>
+                                    <input
+                                        className="text-input profiles-input"
+                                        value={claimSlugInput}
+                                        onChange={(e) => {
+                                            setClaimSlugInput(e.target.value);
+                                            setClaimStatus("idle");
+                                            setClaimMessage("");
+                                        }}
+                                        placeholder="plumbing-north-london"
+                                        aria-label="Profile slug"
+                                    />
+                                </div>
 
                                 <button
                                     type="button"
@@ -584,33 +564,23 @@ export default function Profiles() {
                                 >
                                     {claimStatus === "checking" ? "Checking..." : "Check availability"}
                                 </button>
-
-                                {claimStatus === "available" && (
-                                    <div style={{ opacity: 0.85 }}>
-                                        Available link:{" "}
-                                        <strong>
-                                            {window.location.origin}/u/{claimSlugNormalized || normalizeSlug(claimSlugInput)}
-                                        </strong>
-                                    </div>
-                                )}
                             </div>
 
                             {claimMessage ? (
                                 <div
-                                    style={{
-                                        padding: "10px 12px",
-                                        borderRadius: 10,
-                                        background: claimStatus === "available" ? "rgba(0,128,0,0.08)" : "rgba(0,0,0,0.04)",
-                                        border: "1px solid rgba(0,0,0,0.08)",
-                                    }}
+                                    className={`profiles-alert ${claimStatus === "available"
+                                            ? "success"
+                                            : claimStatus === "error" || claimStatus === "invalid"
+                                                ? "danger"
+                                                : "neutral"
+                                        }`}
                                 >
                                     {claimMessage}
                                 </div>
                             ) : null}
 
-                            {/* Action buttons */}
                             {claimStatus === "available" && (
-                                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                                <div className="profiles-claim-actions">
                                     {canCreateMoreProfilesWithoutCheckout ? (
                                         <button
                                             type="button"
@@ -648,13 +618,13 @@ export default function Profiles() {
                             )}
 
                             {!isTeams && (
-                                <div className="profiles-muted" style={{ fontSize: 13 }}>
+                                <div className="profiles-hint">
                                     Your current plan allows <strong>1 profile</strong>. Plus unlocks templates. Teams unlocks multiple profiles.
                                 </div>
                             )}
 
                             {isTeams && (
-                                <div className="profiles-muted" style={{ fontSize: 13 }}>
+                                <div className="profiles-hint">
                                     Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit, increase quantity.
                                 </div>
                             )}
@@ -677,79 +647,87 @@ export default function Profiles() {
                     </section>
                 ) : (
                     <div className="profiles-grid">
-                        {/* Left */}
-                        <section className="profiles-card">
+                        {/* LEFT */}
+                        <section className="profiles-card profiles-list-card">
                             <div className="profiles-card-head">
                                 <div>
-                                    <h2 className="profiles-card-title">Profiles list</h2>
+                                    <h2 className="profiles-card-title">Profiles</h2>
                                     <p className="profiles-muted">Select a profile to preview, edit, share or manage it.</p>
                                 </div>
                             </div>
 
                             <div className="profiles-list">
-                                {sortedProfiles.map((p) => (
-                                    <button
-                                        key={p.slug}
-                                        type="button"
-                                        className={`profiles-item ${selectedProfile?.slug === p.slug ? "active" : ""}`}
-                                        onClick={() => setSelectedSlug(p.slug)}
-                                    >
-                                        <div className="profiles-item-left">
-                                            <div className="profiles-avatar">{p.name?.slice(0, 1) || "P"}</div>
-                                            <div className="profiles-item-meta">
-                                                <div className="profiles-item-title">
-                                                    {p.name} <span className="profiles-trade">• {p.trade}</span>
+                                {sortedProfiles.map((p) => {
+                                    const isActive = selectedProfile?.slug === p.slug;
+                                    return (
+                                        <button
+                                            key={p.slug}
+                                            type="button"
+                                            className={`profiles-item ${isActive ? "active" : ""}`}
+                                            onClick={() => setSelectedSlug(p.slug)}
+                                        >
+                                            <div className="profiles-item-left">
+                                                <div className="profiles-avatar" aria-hidden="true">
+                                                    {p.name?.slice(0, 1) || "P"}
                                                 </div>
-                                                <div className="profiles-item-sub">
-                                                    <span className="profiles-link">{p.slug}</span>
-                                                    <span className="profiles-dot">•</span>
-                                                    <span className="profiles-muted">{p.updatedAt}</span>
+
+                                                <div className="profiles-item-meta">
+                                                    <div className="profiles-item-title">
+                                                        <span className="profiles-item-name">{p.name}</span>
+                                                        <span className="profiles-trade">• {p.trade}</span>
+                                                    </div>
+
+                                                    <div className="profiles-item-sub">
+                                                        <span className="profiles-link">{p.slug}</span>
+                                                        <span className="profiles-dot">•</span>
+                                                        <span className="profiles-muted">{p.updatedAt}</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div className="profiles-item-right">
-                                            <span className={`profiles-status ${p.status}`}>
-                                                {p.status === "complete" ? "COMPLETE" : "INCOMPLETE"}
-                                            </span>
+                                            <div className="profiles-item-right">
+                                                <span className={`profiles-status ${p.status}`}>
+                                                    {p.status === "complete" ? "COMPLETE" : "INCOMPLETE"}
+                                                </span>
 
-                                            <div className="profiles-inline-actions">
-                                                <button
-                                                    type="button"
-                                                    className="profiles-mini-btn"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleEdit(p.slug);
-                                                    }}
-                                                >
-                                                    Edit
-                                                </button>
+                                                <div className="profiles-inline-actions">
+                                                    <button
+                                                        type="button"
+                                                        className="profiles-mini-btn"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleEdit(p.slug);
+                                                        }}
+                                                    >
+                                                        Edit
+                                                    </button>
 
-                                                <button
-                                                    type="button"
-                                                    className="profiles-mini-btn"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleVisit(p.slug);
-                                                    }}
-                                                >
-                                                    Visit
-                                                </button>
+                                                    <button
+                                                        type="button"
+                                                        className="profiles-mini-btn"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleVisit(p.slug);
+                                                        }}
+                                                    >
+                                                        Visit
+                                                    </button>
 
-                                                <button
-                                                    type="button"
-                                                    className="profiles-mini-btn danger"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDelete(p.slug);
-                                                    }}
-                                                >
-                                                    Delete
-                                                </button>
+                                                    <button
+                                                        type="button"
+                                                        className="profiles-mini-btn danger"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDelete(p.slug);
+                                                        }}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </button>
-                                ))}
+                                        </button>
+                                    );
+                                })}
                             </div>
 
                             <div className="profiles-under-list">
@@ -773,87 +751,87 @@ export default function Profiles() {
                             </div>
                         </section>
 
-                        {/* Right */}
-                        <section className="profiles-card">
-                            <div className="profiles-card-head">
-                                <div>
-                                    <h2 className="profiles-card-title">Profile preview</h2>
-                                    <p className="profiles-muted">A quick look at what customers see on mobile.</p>
-                                </div>
-                            </div>
-
-                            <div className="profiles-preview">
-                                <div className="profiles-phone">
-                                    <div className="profiles-phone-top" />
-                                    <div className="profiles-preview-name">{selectedProfile?.name || "Profile"}</div>
-                                    <div className="profiles-preview-trade">{selectedProfile?.trade || "Trade"}</div>
-                                    <div className="profiles-phone-line" />
-                                    <div className="profiles-phone-line short" />
-                                    <div className="profiles-phone-block" />
-                                    <div className="profiles-phone-row">
-                                        <div className="profiles-chip" />
-                                        <div className="profiles-chip" />
+                        {/* RIGHT */}
+                        <aside className="profiles-right">
+                            <section className="profiles-card profiles-preview-card">
+                                <div className="profiles-card-head">
+                                    <div>
+                                        <h2 className="profiles-card-title">Profile preview</h2>
+                                        <p className="profiles-muted">A quick look at what customers see on mobile.</p>
                                     </div>
                                 </div>
 
-                                <div className="profiles-actions-row">
-                                    <button
-                                        type="button"
-                                        className="profiles-btn profiles-btn-primary"
-                                        onClick={() => handleEdit(selectedProfile?.slug)}
-                                    >
-                                        Edit profile
-                                    </button>
+                                <div className="profiles-preview">
+                                    <div className="profiles-phone">
+                                        <div className="profiles-phone-top" />
+                                        <div className="profiles-preview-name">{selectedProfile?.name || "Profile"}</div>
+                                        <div className="profiles-preview-trade">{selectedProfile?.trade || "Trade"}</div>
+                                        <div className="profiles-phone-line" />
+                                        <div className="profiles-phone-line short" />
+                                        <div className="profiles-phone-block" />
+                                        <div className="profiles-phone-row">
+                                            <div className="profiles-chip" />
+                                            <div className="profiles-chip" />
+                                        </div>
+                                    </div>
 
-                                    <button
-                                        type="button"
-                                        className="profiles-btn profiles-btn-ghost"
-                                        onClick={() => handleVisit(selectedProfile?.slug)}
-                                    >
-                                        Visit
-                                    </button>
-                                </div>
-                            </div>
+                                    <div className="profiles-actions-row">
+                                        <button
+                                            type="button"
+                                            className="profiles-btn profiles-btn-primary"
+                                            onClick={() => handleEdit(selectedProfile?.slug)}
+                                        >
+                                            Edit profile
+                                        </button>
 
-                            <div className="profiles-actions-card">
-                                <h3 className="profiles-actions-title">Profile actions</h3>
-                                <div className="profiles-actions-row">
-                                    <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleShare}>
-                                        Share link
-                                    </button>
-                                    <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleCopyLink}>
-                                        Copy link
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="profiles-templates-card">
-                                <div className="profiles-templates-head">
-                                    <h3 className="profiles-actions-title">Templates</h3>
-                                    <div className="profiles-templates-note">
-                                        {templatesLocked ? "Upgrade to use templates" : "Pick a template"}
+                                        <button
+                                            type="button"
+                                            className="profiles-btn profiles-btn-ghost"
+                                            onClick={() => handleVisit(selectedProfile?.slug)}
+                                        >
+                                            Visit
+                                        </button>
                                     </div>
                                 </div>
 
-                                <div className={`profiles-templates-grid ${templatesLocked ? "locked" : ""}`}>
-                                    {TEMPLATE_OPTIONS.map((t) => {
-                                        const isActive = selectedProfile?.templateId === t.id;
-                                        return (
-                                            <button
-                                                key={t.id}
-                                                type="button"
-                                                className={`profiles-template ${isActive ? "active" : ""}`}
-                                                onClick={() => handleTemplatePick(t.id)}
-                                            >
-                                                <div className="profiles-template-thumb" />
-                                                <div className="profiles-template-name">{t.name}</div>
-                                                {templatesLocked && <div className="profiles-template-lock">Locked</div>}
-                                            </button>
-                                        );
-                                    })}
+                                <div className="profiles-actions-card">
+                                    <h3 className="profiles-actions-title">Profile actions</h3>
+                                    <div className="profiles-actions-row">
+                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleShare}>
+                                            Share link
+                                        </button>
+                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleCopyLink}>
+                                            Copy link
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </section>
+
+                                <div className="profiles-templates-card">
+                                    <div className="profiles-templates-head">
+                                        <h3 className="profiles-actions-title">Templates</h3>
+                                        <div className="profiles-templates-note">{templatesLocked ? "Upgrade to use templates" : "Pick a template"}</div>
+                                    </div>
+
+                                    <div className={`profiles-templates-grid ${templatesLocked ? "locked" : ""}`}>
+                                        {TEMPLATE_OPTIONS.map((t) => {
+                                            const active = selectedProfile?.templateId === t.id;
+                                            return (
+                                                <button
+                                                    key={t.id}
+                                                    type="button"
+                                                    className={`profiles-template ${active ? "active" : ""}`}
+                                                    onClick={() => handleTemplatePick(t.id)}
+                                                >
+                                                    <div className="profiles-template-thumb" />
+                                                    <div className="profiles-template-name">{t.name}</div>
+                                                    {templatesLocked && <div className="profiles-template-lock">Locked</div>}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </section>
+                        </aside>
                     </div>
                 )}
 
