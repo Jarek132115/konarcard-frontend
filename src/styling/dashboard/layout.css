@@ -24,10 +24,15 @@
 }
 
 /* Desktop main area sits next to fixed sidebar */
+/* ✅ Desktop main area sits next to fixed sidebar */
 .dash-main {
-    margin-left: calc(var(--sidebar-w) + 32px);
-    padding: 18px 26px 28px;
+    /* was: margin-left: calc(var(--sidebar-w) + 32px); */
+    margin-left: var(--sidebar-w);
+
+    /* was: padding: 18px 26px 28px; */
+    padding: 26px;
 }
+
 
 /* Desktop header */
 .dash-desktop-header {
