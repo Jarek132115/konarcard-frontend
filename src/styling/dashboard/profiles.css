@@ -903,3 +903,17 @@
         grid-template-columns: 1fr;
     }
 }
+
+.profiles-header-badges {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+@media (max-width: 1000px) {
+    .profiles-header-badges {
+        justify-content: flex-start;
+    }
+}

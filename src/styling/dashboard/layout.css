@@ -23,7 +23,7 @@
     background: var(--kc-bg);
 }
 
-/* ✅ Desktop main area sits next to fixed sidebar */
+/* Desktop main area sits next to fixed sidebar */
 .dash-main {
     margin-left: calc(var(--sidebar-w) + 32px);
     padding: 18px 26px 28px;
@@ -63,7 +63,7 @@
     flex-wrap: wrap;
 }
 
-/* top bar (mobile only) */
+/* Mobile topbar */
 .dash-topbar {
     display: none;
     align-items: center;
@@ -134,14 +134,13 @@
     gap: 10px;
 }
 
-/* ✅ Content area */
+/* Content area */
 .dash-content {
     width: 100%;
     max-width: none;
 }
 
-
-/* ✅ responsive */
+/* Responsive */
 @media (max-width: 1000px) {
     .dash-main {
         margin-left: 0;

@@ -17,7 +17,7 @@ import "../../styling/dashboard/pageheader.css";
  * - visitUrl?: string
  * - isMobile: boolean
  * - isSmallMobile: boolean
- * - rightSlot?: ReactNode  (optional extra actions)
+ * - rightSlot?: ReactNode
  */
 export default function PageHeader({
   title,
@@ -44,7 +44,6 @@ export default function PageHeader({
   return (
     <div className="ph-wrap">
       <div className="ph-card">
-        {/* Left */}
         <div className="ph-left">
           <div className="ph-avatar-wrap" aria-hidden="true">
             <img src={Avatar} alt="" className="ph-avatar" />
@@ -66,7 +65,6 @@ export default function PageHeader({
           </div>
         </div>
 
-        {/* Right */}
         <div className="ph-right">
           {rightSlot ? <div className="ph-slot">{rightSlot}</div> : null}
 
@@ -77,19 +75,13 @@ export default function PageHeader({
               rel={visitUrl ? "noopener noreferrer" : undefined}
               onClick={handleVisitClick}
               className="ph-btn ph-btn-ghost"
-              aria-label="Visit your page"
             >
               <img src={ExternalLinkIcon} alt="" className="ph-ico" />
               <span>Visit Page</span>
             </a>
           )}
 
-          <button
-            type="button"
-            className="ph-btn ph-btn-primary"
-            onClick={onShareCard}
-            aria-label="Share your profile"
-          >
+          <button type="button" className="ph-btn ph-btn-primary" onClick={onShareCard}>
             <img src={ShareProfileIcon} alt="" className="ph-ico" />
             <span>{isSmallMobile ? "Share" : "Share Your Page"}</span>
           </button>

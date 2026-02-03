@@ -471,14 +471,16 @@ export default function Profiles() {
 
     return (
         <DashboardLayout
-            title={null}
-            subtitle={null}
+            title="Profiles"
+            subtitle="Create, view, and manage your digital business card profiles."
             rightSlot={
                 <button type="button" className="profiles-btn profiles-btn-primary" onClick={handleCreateButtonClick}>
                     + Add Profile
                 </button>
             }
+            hideDesktopHeader
         >
+
             <div className="profiles-shell">
                 <PageHeader
                     title="Profiles"
@@ -486,10 +488,16 @@ export default function Profiles() {
                     onShareCard={handleShare}
                     visitUrl={selectedProfile ? buildPublicUrl(selectedProfile.slug) : undefined}
                     onVisitPage={() => handleVisit(selectedProfile?.slug)}
-                    isMobile={isMobile}
-                    isSmallMobile={isSmallMobile}
-                    rightSlot={headerRightSlot}
+                    isMobile={window.innerWidth <= 1000}
+                    isSmallMobile={window.innerWidth <= 520}
+                    rightSlot={
+                        <div className="profiles-header-badges">
+                            <span className="profiles-pill">Plan: <strong>{plan.toUpperCase()}</strong></span>
+                            <span className="profiles-pill">Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong></span>
+                        </div>
+                    }
                 />
+
 
                 {/* Claim panel */}
                 {claimOpen && (
@@ -540,10 +548,10 @@ export default function Profiles() {
                             {claimMessage ? (
                                 <div
                                     className={`profiles-alert ${claimStatus === "available"
-                                            ? "success"
-                                            : claimStatus === "error" || claimStatus === "invalid"
-                                                ? "danger"
-                                                : "neutral"
+                                        ? "success"
+                                        : claimStatus === "error" || claimStatus === "invalid"
+                                            ? "danger"
+                                            : "neutral"
                                         }`}
                                 >
                                     {claimMessage}

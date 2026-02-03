@@ -92,11 +92,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 260px;
-}
-
-.ph-titleline {
-    min-width: 0;
+    max-width: 320px;
 }
 
 .ph-title {
@@ -186,7 +182,6 @@
     opacity: 0.95;
 }
 
-/* Responsive */
 @media (max-width: 1000px) {
     .ph-card {
         flex-direction: column;
@@ -197,10 +192,7 @@
         justify-content: flex-start;
     }
 
-    .ph-name {
-        max-width: 100%;
-    }
-
+    .ph-name,
     .ph-email {
         max-width: 100%;
     }
@@ -213,7 +205,6 @@
 
     .ph-btn {
         width: 100%;
-        justify-content: center;
     }
 
     .ph-right {
