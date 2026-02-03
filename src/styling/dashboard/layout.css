@@ -1,13 +1,21 @@
+/* frontend/src/styling/dashboard/layout.css */
+
 :root {
     --kc-bg: #ffffff;
+    --kc-surface: #ffffff;
     --kc-soft: #fafafa;
-    --kc-ink: #0f172a;
-    --kc-muted: #475569;
+
+    --kc-ink: #0b1220;
+    --kc-muted: #5b667a;
 
     --kc-accent: #f97316;
     --kc-accent-rgb: 249 115 22;
 
     --sidebar-w: 272px;
+
+    --border: rgba(11, 18, 32, 0.10);
+    --shadow: 0 14px 34px rgba(11, 18, 32, 0.10);
+    --focus: 0 0 0 3px rgb(var(--kc-accent-rgb) / 0.28);
 }
 
 .dash-layout {
@@ -15,23 +23,57 @@
     background: var(--kc-bg);
 }
 
-/* ✅ Let content fill the screen */
+/* ✅ Desktop main area sits next to fixed sidebar */
 .dash-main {
     margin-left: calc(var(--sidebar-w) + 32px);
-    padding: 16px 24px 28px;
+    padding: 18px 26px 28px;
 }
 
-/* top bar (mobile) */
+/* Desktop header */
+.dash-desktop-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.dash-desktop-title {
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--kc-ink);
+    font-size: 26px;
+    line-height: 1.05;
+}
+
+.dash-desktop-sub {
+    margin-top: 6px;
+    color: var(--kc-muted);
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 980px;
+}
+
+.dash-desktop-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* top bar (mobile only) */
 .dash-topbar {
     display: none;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    background: var(--kc-soft);
-    border: 1px solid rgb(var(--kc-accent-rgb) / 0.18);
+    background: var(--kc-surface);
+    border: 1px solid var(--border);
     border-radius: 18px;
     padding: 14px;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    box-shadow: var(--shadow);
     margin: 0 0 14px;
 }
 
@@ -39,12 +81,12 @@
     width: 44px;
     height: 44px;
     border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
+    border: 1px solid rgba(11, 18, 32, 0.12);
     background: #fff;
     cursor: pointer;
     font-size: 20px;
     line-height: 1;
-    transition: background 0.2s, transform 0.08s ease;
+    transition: background 0.2s, transform 0.08s ease, box-shadow 0.2s;
 }
 
 .dash-burger:hover {
@@ -53,6 +95,11 @@
 
 .dash-burger:active {
     transform: translateY(1px);
+}
+
+.dash-burger:focus-visible {
+    outline: none;
+    box-shadow: var(--focus);
 }
 
 .dash-topbar-text {
@@ -74,6 +121,7 @@
 .dash-topbar-sub {
     margin-top: 2px;
     font-size: 13px;
+    font-weight: 800;
     color: var(--kc-muted);
     white-space: nowrap;
     overflow: hidden;
@@ -86,7 +134,7 @@
     gap: 10px;
 }
 
-/* ✅ IMPORTANT: remove max-width cap */
+/* ✅ Content area */
 .dash-content {
     width: 100%;
     max-width: none;
@@ -103,7 +151,7 @@
         display: flex;
     }
 
-    .dash-content {
-        max-width: 100%;
+    .dash-desktop-header {
+        display: none;
     }
 }

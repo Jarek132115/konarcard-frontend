@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
+// src/components/Dashboard/Sidebar.jsx
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
 
@@ -17,7 +18,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+    const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 1000);
 
     useEffect(() => {
         const onResize = () => setIsMobile(window.innerWidth <= 1000);
@@ -35,14 +36,22 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
         navigate("/");
     };
 
-    const NAV_ITEMS = [
-        { to: "/dashboard", label: "Dashboard", icon: DashboardIcon },
-        { to: "/profiles", label: "Profiles", icon: ProfileIcon },
-        { to: "/cards", label: "Cards", icon: CardsIcon },
-        { to: "/analytics", label: "Analytics", icon: AnalyticsIcon },
-        { to: "/contact-book", label: "Contact Book", icon: ContactsIcon },
-        { to: "/settings", label: "Settings", icon: SettingsIcon },
-    ];
+    /**
+     * ✅ MAIN NAV (Settings removed from here)
+     * ✅ Help & Support moved INTO nav (swap with settings)
+     * ✅ Settings goes to footer (bottom)
+     */
+    const NAV_ITEMS = useMemo(
+        () => [
+            { to: "/dashboard", label: "Dashboard", icon: DashboardIcon },
+            { to: "/profiles", label: "Profiles", icon: ProfileIcon },
+            { to: "/cards", label: "Cards", icon: CardsIcon },
+            { to: "/analytics", label: "Analytics", icon: AnalyticsIcon },
+            { to: "/contact-book", label: "Contact Book", icon: ContactsIcon },
+            { to: "/helpcentreinterface", label: "Help & Support", icon: HelpIcon },
+        ],
+        []
+    );
 
     return (
         <>
@@ -51,23 +60,35 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 onClick={closeSidebar}
             />
 
-            <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+            <aside className={`sidebar ${sidebarOpen ? "open" : ""}`} aria-label="Sidebar">
+                {/* Header */}
                 <div className="sidebar-header">
-                    <span className="sidebar-logo-text">KonarCard</span>
-                    <img src={LogoIcon} alt="KonarCard" className="sidebar-logo-icon" />
+                    <div className="sidebar-brand">
+                        <div className="sidebar-logo">
+                            <img src={LogoIcon} alt="KonarCard" />
+                        </div>
+                        <div className="sidebar-brand-text">
+                            <div className="sidebar-logo-text">KonarCard</div>
+                            <div className="sidebar-tagline">Your digital business card</div>
+                        </div>
+                    </div>
 
                     {isMobile && (
                         <button
                             className="sidebar-close"
                             aria-label="Close menu"
                             onClick={closeSidebar}
+                            type="button"
                         >
                             ✕
                         </button>
                     )}
                 </div>
 
+                {/* Nav */}
                 <nav className="sidebar-nav">
+                    <div className="sidebar-nav-label">Menu</div>
+
                     {NAV_ITEMS.map((item) => (
                         <Link
                             key={item.to}
@@ -75,30 +96,46 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             onClick={closeSidebar}
                             className={`sidebar-link ${isActive(item.to) ? "active" : ""}`}
                         >
-                            <img src={item.icon} alt="" />
-                            <span>{item.label}</span>
+                            <span className="sidebar-icon">
+                                <img src={item.icon} alt="" aria-hidden="true" />
+                            </span>
+                            <span className="sidebar-link-text">{item.label}</span>
+                            <span className="sidebar-chevron" aria-hidden="true">
+                                ›
+                            </span>
                         </Link>
                     ))}
                 </nav>
 
+                {/* Footer */}
                 <div className="sidebar-footer">
                     <Link
-                        to="/helpcentreinterface"
+                        to="/settings"
                         onClick={closeSidebar}
-                        className={`sidebar-link ${isActive("/helpcentreinterface") ? "active" : ""
-                            }`}
+                        className={`sidebar-link sidebar-link-footer ${isActive("/settings") ? "active" : ""}`}
                     >
-                        <img src={HelpIcon} alt="" />
-                        <span>Help & Support</span>
+                        <span className="sidebar-icon">
+                            <img src={SettingsIcon} alt="" aria-hidden="true" />
+                        </span>
+                        <span className="sidebar-link-text">Settings</span>
+                        <span className="sidebar-chevron" aria-hidden="true">
+                            ›
+                        </span>
                     </Link>
 
                     <button
                         className="sidebar-logout"
                         onClick={handleLogout}
                         aria-label="Logout"
+                        type="button"
                     >
-                        <img src={LogoutIcon} alt="" />
+                        <span className="sidebar-logout-inner">
+                            <img src={LogoutIcon} alt="" aria-hidden="true" />
+                            <span>Logout</span>
+                        </span>
                     </button>
+
+                    <div className="sidebar-footnote">© {new Date().getFullYear()} KonarCard</div>
                 </div>
             </aside>
         </>

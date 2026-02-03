@@ -1,3 +1,4 @@
+// src/components/Dashboard/DashboardLayout.jsx
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import "../../styling/dashboard/layout.css";
@@ -28,6 +29,15 @@ export default function DashboardLayout({ title, subtitle, rightSlot, children }
 
                     <div className="dash-topbar-right">{rightSlot}</div>
                 </header>
+
+                {/* Desktop header */}
+                <div className="dash-desktop-header">
+                    <div className="dash-desktop-left">
+                        <div className="dash-desktop-title">{title}</div>
+                        {subtitle ? <div className="dash-desktop-sub">{subtitle}</div> : null}
+                    </div>
+                    <div className="dash-desktop-right">{rightSlot}</div>
+                </div>
 
                 <main className="dash-content">{children}</main>
             </div>
