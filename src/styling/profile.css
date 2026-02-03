@@ -12,6 +12,22 @@
 /* =========================
    Desktop frame wrapper — peach shell like editor tray
    ========================= */
+/* inside frontend/src/styling/dashboard/profiles.css */
+.profiles-header-badges {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+@media (max-width: 1000px) {
+    .profiles-header-badges {
+        justify-content: flex-start;
+    }
+}
+
+
 .account-frame {
     /* peach shell */
     background: var(--shell-bg, #FFF1E8);

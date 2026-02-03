@@ -1,0 +1,222 @@
+/* src/styling/dashboard/pageheader.css */
+
+:root {
+    --ph-ink: #0b1220;
+    --ph-muted: #5b667a;
+
+    --ph-accent: #f97316;
+    --ph-accent-rgb: 249 115 22;
+
+    --ph-surface: #ffffff;
+    --ph-soft: #fafafa;
+
+    --ph-border: rgba(11, 18, 32, 0.10);
+    --ph-shadow: 0 14px 34px rgba(11, 18, 32, 0.10);
+    --ph-focus: 0 0 0 3px rgb(var(--ph-accent-rgb) / 0.28);
+}
+
+.ph-wrap {
+    width: 100%;
+    margin: 0 0 16px;
+}
+
+.ph-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, var(--ph-surface), var(--ph-soft));
+    border: 1px solid var(--ph-border);
+    box-shadow: var(--ph-shadow);
+}
+
+.ph-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.ph-avatar-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 18px;
+    background: rgb(var(--ph-accent-rgb) / 0.12);
+    border: 1px solid rgb(var(--ph-accent-rgb) / 0.16);
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.ph-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ph-meta {
+    min-width: 0;
+}
+
+.ph-userline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    margin-bottom: 6px;
+}
+
+.ph-name {
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    color: var(--ph-ink);
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 240px;
+}
+
+.ph-dot {
+    color: rgba(91, 102, 122, 0.55);
+    font-weight: 900;
+}
+
+.ph-email {
+    font-weight: 900;
+    color: rgba(91, 102, 122, 0.95);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 260px;
+}
+
+.ph-titleline {
+    min-width: 0;
+}
+
+.ph-title {
+    margin: 0;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--ph-ink);
+    font-size: 22px;
+    line-height: 1.15;
+}
+
+.ph-sub {
+    margin: 6px 0 0;
+    color: var(--ph-muted);
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 820px;
+}
+
+.ph-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.ph-slot {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ph-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.08s ease, background 0.2s, border 0.2s, box-shadow 0.2s, opacity 0.2s;
+    user-select: none;
+}
+
+.ph-btn:active {
+    transform: translateY(1px);
+}
+
+.ph-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--ph-focus);
+}
+
+.ph-btn-primary {
+    background: var(--ph-accent);
+    color: #fff;
+    border-color: rgb(var(--ph-accent-rgb) / 0.35);
+    box-shadow: 0 12px 22px rgb(var(--ph-accent-rgb) / 0.18);
+}
+
+.ph-btn-primary:hover {
+    background: rgb(var(--ph-accent-rgb) / 0.92);
+}
+
+.ph-btn-ghost {
+    background: #fff;
+    color: var(--ph-ink);
+    border-color: rgba(11, 18, 32, 0.14);
+}
+
+.ph-btn-ghost:hover {
+    background: rgba(11, 18, 32, 0.03);
+}
+
+.ph-ico {
+    width: 18px;
+    height: 18px;
+    opacity: 0.95;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+    .ph-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ph-right {
+        justify-content: flex-start;
+    }
+
+    .ph-name {
+        max-width: 100%;
+    }
+
+    .ph-email {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 520px) {
+    .ph-title {
+        font-size: 20px;
+    }
+
+    .ph-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .ph-right {
+        width: 100%;
+    }
+}
