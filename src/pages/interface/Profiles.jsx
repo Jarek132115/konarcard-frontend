@@ -873,6 +873,7 @@ export default function Profiles() {
                     </div>
                 )}
             </div>
+            
         </DashboardLayout>
     );
 }
