@@ -1,12 +1,13 @@
-import React, { useRef, useState, useEffect, useMemo } from "react";
-import { previewPlaceholders } from "../../../store/businessCardStore";
+import React, { useRef, useState, useEffect } from "react";
+import { previewPlaceholders } from "../../store/businessCardStore";
 
 /* Social icons */
-import FacebookIcon from "../../../assets/icons/icons8-facebook.svg";
-import InstagramIcon from "../../../assets/icons/icons8-instagram.svg";
-import LinkedInIcon from "../../../assets/icons/icons8-linkedin.svg";
-import XIcon from "../../../assets/icons/icons8-x.svg";
-import TikTokIcon from "../../../assets/icons/icons8-tiktok.svg";
+import FacebookIcon from "../../assets/icons/icons8-facebook.svg";
+import InstagramIcon from "../../assets/icons/icons8-instagram.svg";
+import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
+import XIcon from "../../assets/icons/icons8-x.svg";
+import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
+
 
 /* Color wheel lib */
 import iro from "@jaames/iro";
