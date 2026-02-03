@@ -39,6 +39,10 @@ export default function Profiles() {
     const createProfile = useCreateProfile();
     const deleteProfile = useDeleteProfile();
 
+    // --- PageHeader flags ---
+    const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
+    const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
+
     const profiles = useMemo(() => {
         const xs = Array.isArray(cards) ? cards : [];
         return xs.map((c) => {
@@ -149,48 +153,22 @@ export default function Profiles() {
     };
 
     // =========================================================
-    // Actions: QR + Wallet
+    // Profile actions (right panel)
     // =========================================================
-    const downloadFile = (blob, filename) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-    };
-
     const handleDownloadQr = async () => {
-        if (!selectedProfile) return;
-        const slug = selectedProfile.slug;
-        const link = buildPublicUrl(slug);
+        if (!selectedProfile?.slug) return;
 
-        // Try backend endpoint if it exists
-        try {
-            const res = await api.get(`/api/business-card/${encodeURIComponent(slug)}/qr`, {
-                responseType: "blob",
-            });
-            downloadFile(res.data, `${slug}-qr.png`);
-            return;
-        } catch {
-            // Fallback to simple QR generator (non-blocking)
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=900x900&data=${encodeURIComponent(link)}`;
-            window.open(qrUrl, "_blank", "noreferrer");
-        }
+        // If you already have a backend endpoint, swap this to it.
+        // For now we do a safe fallback: open the public page and let you screenshot/QR it later.
+        alert("QR download endpoint not wired yet. Tell me your backend QR endpoint and I’ll connect it.");
     };
 
-    const handleAddToGoogleWallet = async () => {
-        if (!selectedProfile) return;
-        // Wire this when you add backend pass generation
-        alert("Google Wallet pass coming next (backend endpoint needed).");
+    const handleAddGoogleWallet = async () => {
+        alert("Google Wallet not wired yet. If you have an endpoint/URL for pass creation, send it and I’ll connect it.");
     };
 
-    const handleAddToAppleWallet = async () => {
-        if (!selectedProfile) return;
-        // Wire this when you add backend pass generation
-        alert("Apple Wallet pass coming next (backend endpoint needed).");
+    const handleAddAppleWallet = async () => {
+        alert("Apple Wallet not wired yet. If you have an endpoint/URL for pass creation, send it and I’ll connect it.");
     };
 
     /* =========================================================
@@ -282,7 +260,9 @@ export default function Profiles() {
 
         if (sortedProfiles.length >= maxProfiles) {
             setClaimStatus("error");
-            setClaimMessage(`You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase quantity to add more.`);
+            setClaimMessage(
+                `You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase quantity to add more.`
+            );
             return;
         }
 
@@ -311,15 +291,7 @@ export default function Profiles() {
                 handleEdit(createdSlug);
             }, 350);
         } catch (e) {
-            const code = e?.response?.data?.code;
             const msg = e?.response?.data?.error || e?.message || "Could not create profile.";
-
-            if (code === "UPGRADE_REQUIRED") {
-                setClaimStatus("available");
-                setClaimMessage("Your plan needs Teams to add profiles. Click Subscribe now.");
-                return;
-            }
-
             setClaimStatus("error");
             setClaimMessage(msg);
         }
@@ -474,8 +446,8 @@ export default function Profiles() {
                     onShareCard={handleShare}
                     visitUrl={selectedProfile ? buildPublicUrl(selectedProfile.slug) : undefined}
                     onVisitPage={() => handleVisit(selectedProfile?.slug)}
-                    isMobile={typeof window !== "undefined" ? window.innerWidth <= 1000 : false}
-                    isSmallMobile={typeof window !== "undefined" ? window.innerWidth <= 520 : false}
+                    isMobile={isMobile}
+                    isSmallMobile={isSmallMobile}
                     rightSlot={
                         <div className="profiles-header-badges">
                             <span className="profiles-pill">
@@ -528,7 +500,9 @@ export default function Profiles() {
                                     type="button"
                                     className="profiles-btn profiles-btn-primary"
                                     onClick={checkSlugAvailability}
-                                    disabled={claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"}
+                                    disabled={
+                                        claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"
+                                    }
                                 >
                                     {claimStatus === "checking" ? "Checking..." : "Check availability"}
                                 </button>
@@ -559,28 +533,14 @@ export default function Profiles() {
                                             {claimStatus === "creating" ? "Creating..." : "Create profile"}
                                         </button>
                                     ) : (
-                                        <>
-                                            <button
-                                                type="button"
-                                                className="profiles-btn profiles-btn-primary"
-                                                onClick={startTeamsCheckout}
-                                                disabled={claimStatus === "subscribing"}
-                                            >
-                                                {claimStatus === "subscribing" ? "Opening checkout..." : "Subscribe / Update Teams to add it"}
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                className="profiles-btn profiles-btn-ghost"
-                                                onClick={() => {
-                                                    setClaimMessage(
-                                                        "To add more profiles you need Teams (or higher Teams quantity). After checkout completes, we’ll auto-create the profile."
-                                                    );
-                                                }}
-                                            >
-                                                Why?
-                                            </button>
-                                        </>
+                                        <button
+                                            type="button"
+                                            className="profiles-btn profiles-btn-primary"
+                                            onClick={startTeamsCheckout}
+                                            disabled={claimStatus === "subscribing"}
+                                        >
+                                            {claimStatus === "subscribing" ? "Opening checkout..." : "Subscribe / Update Teams to add it"}
+                                        </button>
                                     )}
                                 </div>
                             )}
@@ -593,7 +553,8 @@ export default function Profiles() {
 
                             {isTeams && (
                                 <div className="profiles-hint">
-                                    Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit, increase quantity.
+                                    Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit,
+                                    increase quantity.
                                 </div>
                             )}
                         </div>
@@ -764,6 +725,7 @@ export default function Profiles() {
 
                                 <div className="profiles-actions-card">
                                     <h3 className="profiles-actions-title">Profile actions</h3>
+
                                     <div className="profiles-actions-grid">
                                         <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleShare}>
                                             Share link
@@ -777,11 +739,11 @@ export default function Profiles() {
                                             Download QR code
                                         </button>
 
-                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleAddToGoogleWallet}>
+                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleAddGoogleWallet}>
                                             Add to Google Wallet
                                         </button>
 
-                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleAddToAppleWallet}>
+                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleAddAppleWallet}>
                                             Add to Apple Wallet
                                         </button>
                                     </div>
