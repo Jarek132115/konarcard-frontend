@@ -2,12 +2,12 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { previewPlaceholders } from "../../store/businessCardStore";
 
-// social icons
-import FacebookIcon from "../assets/icons/icons8-facebook.svg";
-import InstagramIcon from "../assets/icons/icons8-instagram.svg";
-import LinkedInIcon from "../assets/icons/icons8-linkedin.svg";
-import XIcon from "../assets/icons/icons8-x.svg";
-import TikTokIcon from "../assets/icons/icons8-tiktok.svg";
+/* Social icons */
+import FacebookIcon from "../../assets/icons/icons8-facebook.svg";
+import InstagramIcon from "../../assets/icons/icons8-instagram.svg";
+import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
+import XIcon from "../../assets/icons/icons8-x.svg";
+import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
 
 const asArray = (v) => (Array.isArray(v) ? v : []);
 const asString = (v) => (typeof v === "string" ? v : "");
