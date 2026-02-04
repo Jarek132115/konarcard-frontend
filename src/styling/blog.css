@@ -1,8 +1,12 @@
 /* frontend/src/styling/blog.css */
 
 /* =========================================================
-   BLOG PAGE — FINAL
-   Uses design-system tokens + 8pt spacing
+   BLOG
+   Match Examples page styling:
+   - same hero spacing
+   - same pills
+   - square (1:1) thumbnail
+   - 3 columns desktop
    ========================================================= */
 
 .kc-blog {
@@ -11,11 +15,11 @@
 }
 
 /* =========================
-   HERO
+   HERO (same rhythm as Examples/FAQ)
    ========================= */
 .kc-blog__hero {
-    padding: 112px 20px 40px;
-    /* 14*8, 5*8 */
+    padding: 0 20px 32px;
+    /* kc-page handles top space */
 }
 
 .kc-blog__heroInner {
@@ -30,16 +34,15 @@
 
 .kc-blog__subtitle {
     margin: 0 auto;
-    max-width: 680px;
+    max-width: 720px;
     color: var(--kc-text-secondary);
 }
 
 /* =========================
-   TABS (PILLS) — MATCH FAQ STYLE
+   TABS (pills) — same as FAQ/Examples
    ========================= */
 .kc-blog__tabs {
     margin-top: 24px;
-    /* 3*8 */
     display: flex;
     justify-content: center;
     gap: 8px;
@@ -92,20 +95,16 @@
    ========================= */
 .kc-blog__section {
     padding: 40px 20px 24px;
-    /* 5*8, 3*8 */
 }
 
 .kc-blog__section--tightTop {
     padding-top: 16px;
-    /* 2*8 */
     padding-bottom: 80px;
-    /* 10*8 */
 }
 
 .kc-blog__sectionHead {
-    max-width: 1140px;
+    max-width: 1040px;
     margin: 0 auto 24px;
-    /* 3*8 */
     text-align: center;
 }
 
@@ -115,81 +114,97 @@
 
 .kc-blog__sectionSub {
     margin: 0 auto;
-    max-width: 560px;
+    max-width: 720px;
     color: var(--kc-text-secondary);
 }
 
 /* =========================
-   GRID
+   GRID (keep 3 columns desktop)
    ========================= */
 .kc-blog__grid {
-    max-width: 1140px;
+    max-width: 1040px;
     margin: 0 auto;
+
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    /* 3*8 */
+    gap: 18px;
 }
 
 /* =========================
-   CARD
+   CARD (match Examples feel)
    ========================= */
 .kc-blog__card {
     border: 1px solid var(--kc-border);
-    border-radius: 16px;
-    overflow: hidden;
     background: #fff;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .kc-blog__card:hover {
     transform: translateY(-2px);
     border-color: rgba(15, 23, 42, 0.16);
-    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.10);
+    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.10);
 }
 
-.kc-blog__image {
-    height: 168px;
-    /* 21*8 */
-    background: var(--kc-bg-soft);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(15, 23, 42, 0.55);
-    font-weight: 600;
-    font-size: 12px;
+/* ✅ 1:1 media wrapper */
+.kc-blog__media {
+    padding: 14px;
+    background: #fff;
     border-bottom: 1px solid var(--kc-border);
 }
 
+/* ✅ square image */
+.kc-blog__image {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    border-radius: 12px;
+
+    background: var(--kc-bg-soft);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+
+    display: grid;
+    place-items: center;
+
+    color: rgba(15, 23, 42, 0.55);
+    font-weight: 700;
+    font-size: 12px;
+}
+
+/* Body */
 .kc-blog__cardBody {
     padding: 16px;
-    /* 2*8 */
 }
 
 .kc-blog__cat {
     margin: 0 0 8px;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     color: rgba(15, 23, 42, 0.55);
     letter-spacing: 0.2px;
+    text-transform: none;
 }
 
 .kc-blog__cardTitle {
     margin: 0 0 8px;
+    color: var(--kc-text-primary);
 }
 
 .kc-blog__excerpt {
     margin: 0 0 16px;
-    /* 2*8 */
+    color: var(--kc-text-secondary);
+    line-height: 1.55;
 }
 
+/* Read link */
 .kc-blog__read {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+
     color: var(--kc-accent-primary);
-    font-weight: 600;
+    font-weight: 700;
     font-size: 13px;
     text-decoration: none;
 }
@@ -208,17 +223,7 @@
 }
 
 @media (max-width: 640px) {
-    .kc-blog__hero {
-        padding-top: 96px;
-        /* 12*8 */
-        padding-bottom: 32px;
-    }
-
     .kc-blog__grid {
         grid-template-columns: 1fr;
-    }
-
-    .kc-blog__image {
-        height: 176px;
     }
 }

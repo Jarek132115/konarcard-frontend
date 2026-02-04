@@ -154,7 +154,8 @@ export default function Blog() {
         <>
             <Navbar />
 
-            <main className="kc-blog">
+            {/* ✅ kc-page gives consistent top spacing under navbar */}
+            <main className="kc-blog kc-page">
                 {/* Hero */}
                 <section className="kc-blog__hero">
                     <div className="kc-blog__heroInner">
@@ -163,8 +164,7 @@ export default function Blog() {
                             help you win more jobs
                         </h1>
                         <p className="body-s kc-blog__subtitle">
-                            Practical advice for trades using digital business cards, profiles,
-                            and NFC.
+                            Practical advice for trades using digital business cards, profiles, and NFC.
                         </p>
 
                         {/* Tabs */}
@@ -201,8 +201,8 @@ export default function Blog() {
                         <div className="kc-blog__grid">
                             {featuredPosts.slice(0, 3).map((p) => (
                                 <article className="kc-blog__card" key={p.id}>
-                                    <div className="kc-blog__image" aria-hidden="true">
-                                        Image
+                                    <div className="kc-blog__media" aria-hidden="true">
+                                        <div className="kc-blog__image">Image</div>
                                     </div>
 
                                     <div className="kc-blog__cardBody">
@@ -232,8 +232,8 @@ export default function Blog() {
                     <div className="kc-blog__grid">
                         {allFilteredPosts.map((p) => (
                             <article className="kc-blog__card" key={p.id}>
-                                <div className="kc-blog__image" aria-hidden="true">
-                                    Image
+                                <div className="kc-blog__media" aria-hidden="true">
+                                    <div className="kc-blog__image">Image</div>
                                 </div>
 
                                 <div className="kc-blog__cardBody">
