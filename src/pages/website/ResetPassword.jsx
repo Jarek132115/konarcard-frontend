@@ -1,213 +1,176 @@
-// src/pages/ResetPassword/ResetPassword.jsx
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
-import backgroundImg from '../../assets/images/background.png';
-import greenTick from '../../assets/icons/Green-Tick-Icon.svg';
-import redCross from '../../assets/icons/Red-Cross-Icon.svg';
+// src/pages/auth/ResetPassword.jsx
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import axios from "axios";
+import Navbar from "../../components/Navbar";
+import "../../styling/login.css";
 
 export default function ResetPassword() {
     const navigate = useNavigate();
     const { token } = useParams();
 
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
-    const [showPasswordFeedback, setShowPasswordFeedback] = useState(false);
+    const [showFeedback, setShowFeedback] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const blurTimeoutRef = useRef(null);
 
-    const togglePassword = () => setShowPassword((s) => !s);
-    const toggleConfirm = () => setShowConfirm((s) => !s);
-
-    const passwordChecks = {
-        minLength: password.length >= 8,
-        hasUppercase: /[A-Z]/.test(password),
-        hasNumber: /\d/.test(password),
-        passwordsMatch: password === confirmPassword && confirmPassword.length > 0,
-    };
-
-    const handlePasswordFocus = () => {
-        if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
-        setShowPasswordFeedback(true);
-    };
-
-    const handlePasswordBlur = () => {
-        blurTimeoutRef.current = setTimeout(() => setShowPasswordFeedback(false), 100);
-    };
-
-    useEffect(() => {
-        return () => {
-            if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
-        };
-    }, []);
-
     useEffect(() => {
         if (!token) {
-            toast.error('Invalid or missing password reset token.');
-            navigate('/login');
+            toast.error("Invalid or expired reset link.");
+            navigate("/login");
         }
     }, [token, navigate]);
+
+    const checks = {
+        minLength: password.length >= 8,
+        hasUpper: /[A-Z]/.test(password),
+        hasNumber: /\d/.test(password),
+        match: password === confirmPassword && confirmPassword.length > 0,
+    };
+
+    const allValid = Object.values(checks).every(Boolean);
+
+    const handleBlur = () => {
+        blurTimeoutRef.current = setTimeout(() => setShowFeedback(false), 120);
+    };
+
+    const handleFocus = () => {
+        if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+        setShowFeedback(true);
+    };
 
     const resetPassword = async (e) => {
         e.preventDefault();
 
-        // Client-side requirements
-        if (!Object.values(passwordChecks).every(Boolean)) {
-            toast.error('Please meet all password requirements.');
-            return;
-        }
-        if (!token) {
-            toast.error('Invalid reset link. Token missing.');
+        if (!allValid) {
+            toast.error("Please meet all password requirements.");
             return;
         }
 
         try {
             setIsSubmitting(true);
 
-            const API = import.meta.env.VITE_API_URL; // e.g., https://api.yourapp.com
-            const url = `${API}/reset-password/${encodeURIComponent(token)}`;
-
-            // Backend only needs { password }
-            const res = await axios.post(
-                url,
+            const API = import.meta.env.VITE_API_URL;
+            await axios.post(
+                `${API}/reset-password/${encodeURIComponent(token)}`,
                 { password },
-                { headers: { 'Content-Type': 'application/json' } }
+                { headers: { "Content-Type": "application/json" } }
             );
 
-            if (res.data?.error) {
-                toast.error(res.data.error);
-                return;
-            }
-
-            toast.success('Password reset successful! You can now log in.');
-            navigate('/login');
+            toast.success("Password reset successfully!");
+            navigate("/login");
         } catch (err) {
-            const msg =
-                err.response?.data?.error ||
-                err.response?.data?.message ||
-                err.message ||
-                'Could not reset password. Please check the link and try again.';
-            toast.error(msg);
+            toast.error(
+                err?.response?.data?.error ||
+                "Reset link expired or invalid."
+            );
         } finally {
             setIsSubmitting(false);
         }
     };
 
     return (
-        <div className="login-wrapper">
-            <div className="close-button" onClick={() => navigate('/')}>×</div>
+        <>
+            <Navbar />
 
-            <div className="login-left">
-                <img src={backgroundImg} alt="Visual" className="login-visual" />
-                <div className="login-quote">
-                    <span className="quote-icon">“</span>
-                    <p className="quote-text">“This has completely changed the way I find work. Clients love it.”</p>
-                    <p className="quote-author">Liam Turner – Electrical Contractor</p>
+            <div className="kc-auth-page">
+                <div className="kc-auth-topActions">
+                    <button
+                        type="button"
+                        className="kc-auth-closeBtn"
+                        onClick={() => navigate("/")}
+                        aria-label="Close"
+                    >
+                        <span aria-hidden="true">×</span>
+                    </button>
                 </div>
-            </div>
 
-            <div className="login-right">
-                <div className="login-card">
-                    <h2 className="login-title">Reset Your Password</h2>
+                <main className="kc-auth-main">
+                    <div className="kc-auth-inner">
+                        <h1 className="kc-title">Reset your password</h1>
+                        <p className="kc-subtitle">
+                            Choose a strong password you’ll remember.
+                        </p>
 
-                    <form onSubmit={resetPassword} className="login-form">
-                        <label htmlFor="newPassword" className="form-label">New Password</label>
-                        <div className="password-wrapper">
-                            <input
-                                type={showPassword ? 'text' : 'password'}
-                                id="newPassword"
-                                placeholder="New Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                onFocus={handlePasswordFocus}
-                                onBlur={handlePasswordBlur}
-                                autoComplete="new-password"
-                            />
-                            <button type="button" onClick={togglePassword}>
-                                {showPassword ? 'Hide' : 'Show'}
-                            </button>
-                        </div>
-
-                        <label htmlFor="confirmNewPassword" className="form-label">Confirm New Password</label>
-                        <div className="password-wrapper">
-                            <input
-                                type={showConfirm ? 'text' : 'password'}
-                                id="confirmNewPassword"
-                                placeholder="Confirm New Password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                required
-                                onFocus={handlePasswordFocus}
-                                onBlur={handlePasswordBlur}
-                                autoComplete="new-password"
-                            />
-                            <button type="button" onClick={toggleConfirm}>
-                                {showConfirm ? 'Hide' : 'Show'}
-                            </button>
-                        </div>
-
-                        {showPasswordFeedback && (
-                            <div className="password-feedback">
-                                <p className={passwordChecks.minLength ? 'valid' : 'invalid'}>
-                                    <img
-                                        src={passwordChecks.minLength ? greenTick : redCross}
-                                        alt=""
-                                        className="feedback-icon"
+                        <form className="kc-form" onSubmit={resetPassword}>
+                            <div className="kc-field">
+                                <label className="kc-label">New password</label>
+                                <div className="kc-password">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        className="kc-input"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        onFocus={handleFocus}
+                                        onBlur={handleBlur}
+                                        autoComplete="new-password"
+                                        required
                                     />
-                                    Minimum 8 characters
-                                </p>
-                                <p className={passwordChecks.hasUppercase ? 'valid' : 'invalid'}>
-                                    <img
-                                        src={passwordChecks.hasUppercase ? greenTick : redCross}
-                                        alt=""
-                                        className="feedback-icon"
-                                    />
-                                    One uppercase letter
-                                </p>
-                                <p className={passwordChecks.hasNumber ? 'valid' : 'invalid'}>
-                                    <img
-                                        src={passwordChecks.hasNumber ? greenTick : redCross}
-                                        alt=""
-                                        className="feedback-icon"
-                                    />
-                                    One number
-                                </p>
-                                <p className={passwordChecks.passwordsMatch ? 'valid' : 'invalid'}>
-                                    <img
-                                        src={passwordChecks.passwordsMatch ? greenTick : redCross}
-                                        alt=""
-                                        className="feedback-icon"
-                                    />
-                                    Passwords match
-                                </p>
+                                    <button
+                                        type="button"
+                                        className="kc-password-toggle"
+                                        onClick={() => setShowPassword((s) => !s)}
+                                    >
+                                        {showPassword ? "Hide" : "Show"}
+                                    </button>
+                                </div>
                             </div>
-                        )}
 
-                        <button
-                            type="submit"
-                            className="primary-button verify-email-button"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? 'Resetting…' : 'Reset Password'}
-                        </button>
+                            <div className="kc-field">
+                                <label className="kc-label">Confirm password</label>
+                                <div className="kc-password">
+                                    <input
+                                        type={showConfirm ? "text" : "password"}
+                                        className="kc-input"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        onFocus={handleFocus}
+                                        onBlur={handleBlur}
+                                        autoComplete="new-password"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        className="kc-password-toggle"
+                                        onClick={() => setShowConfirm((s) => !s)}
+                                    >
+                                        {showConfirm ? "Hide" : "Show"}
+                                    </button>
+                                </div>
+                            </div>
 
-                        <button
-                            type="button"
-                            className="secondary-button back-to-login-button"
-                            onClick={() => navigate('/login')}
-                            disabled={isSubmitting}
-                        >
-                            Back to Login
-                        </button>
-                    </form>
-                </div>
+                            {showFeedback && (
+                                <div className="kc-password-feedback">
+                                    <p className={checks.minLength ? "is-valid" : ""}>• At least 8 characters</p>
+                                    <p className={checks.hasUpper ? "is-valid" : ""}>• One uppercase letter</p>
+                                    <p className={checks.hasNumber ? "is-valid" : ""}>• One number</p>
+                                    <p className={checks.match ? "is-valid" : ""}>• Passwords match</p>
+                                </div>
+                            )}
+
+                            <button
+                                className="kc-btn kc-btn-primary kc-btn-center"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? "Resetting…" : "Reset password"}
+                            </button>
+
+                            <button
+                                type="button"
+                                className="kc-text-back"
+                                onClick={() => navigate("/login")}
+                            >
+                                Back to login
+                            </button>
+                        </form>
+                    </div>
+                </main>
             </div>
-        </div>
+        </>
     );
 }
