@@ -301,14 +301,15 @@
     -webkit-backface-visibility: hidden;
 }
 
-/* ✅ FIX: proper face separation (prevents logo showing both sides) */
+/* ✅ FIX: proper face separation (prevents face fighting + back disappearing) */
 .kc-premFace--front {
     transform: translateZ(1px);
     background: #ffffff;
 }
 
+/* ✅ IMPORTANT FIX: was translateZ(-1px) (makes back vanish / get occluded) */
 .kc-premFace--back {
-    transform: rotateY(180deg) translateZ(-1px);
+    transform: rotateY(180deg) translateZ(1px);
     background: #ffffff;
 }
 
