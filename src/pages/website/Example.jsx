@@ -1,6 +1,5 @@
 // frontend/src/pages/website/Example.jsx
 import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -107,7 +106,7 @@ export default function Example() {
         <>
             <Navbar />
 
-            {/* kc-page = consistent nav -> heading spacing across site */}
+            {/* IMPORTANT: kc-page gives the consistent nav->heading spacing */}
             <main className="kc-examples kc-page">
                 {/* HERO */}
                 <section className="kc-examples__hero">
@@ -159,18 +158,11 @@ export default function Example() {
 
                                     <div className="ex-cardBody">
                                         <div className="ex-cardTop">
-                                            <span className="ex-rolePill pill">{item.role}</span>
+                                            <span className="ex-roleTag pill">{item.role}</span>
                                         </div>
 
                                         <p className="h6 ex-cardTitle">{item.name}</p>
                                         <p className="body-s ex-cardDesc">{item.desc}</p>
-
-                                        <div className="ex-cardActions">
-                                            {/* Keep as a light CTA – real links can come later */}
-                                            <Link to="/pricing" className="ex-cardLink">
-                                                See plans →
-                                            </Link>
-                                        </div>
                                     </div>
                                 </article>
                             );

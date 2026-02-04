@@ -2,12 +2,11 @@
 
 /* =========================================================
    EXAMPLES PAGE
-   - Uses global tokens + typography from fonts.css
-   - Layout-only styles here
+   Layout-only styles (tokens/type from fonts.css)
    ========================================================= */
 
 /* =========================
-   HERO (same structure as FAQ)
+   HERO
    ========================= */
 .kc-examples__hero {
     padding: 0 20px 32px;
@@ -29,7 +28,7 @@
 }
 
 /* =========================
-   TABS (match FAQ pills exactly)
+   TABS (same as FAQ pills)
    ========================= */
 .kc-examples__tabs {
     margin-top: 24px;
@@ -81,7 +80,7 @@
 }
 
 /* =========================
-   GRID SECTION (redesigned)
+   GRID
    ========================= */
 .kc-examples__gridSection {
     padding: 0 20px 64px;
@@ -176,7 +175,7 @@
     height: 82px;
     border-radius: 12px;
     background: var(--kc-accent-secondary);
-    color: #fff;
+    color: #ffffff;
     display: grid;
     place-items: center;
     box-shadow: 0 12px 22px rgba(16, 24, 40, 0.22);
@@ -206,9 +205,12 @@
     margin-bottom: 10px;
 }
 
-.ex-rolePill {
-    /* keeps the global .pill look; just make it feel like a tag */
+/* Trade tag: neutral, NO BLUE, uses tokens */
+.ex-roleTag {
+    background: var(--kc-bg-soft);
+    color: var(--kc-text-primary);
     border: 1px solid var(--kc-border);
+    font-weight: 600;
 }
 
 .ex-cardTitle {
@@ -218,21 +220,6 @@
 .ex-cardDesc {
     margin: 0;
     line-height: 1.55;
-}
-
-.ex-cardActions {
-    margin-top: 12px;
-}
-
-.ex-cardLink {
-    text-decoration: none;
-    font-weight: 600;
-    color: var(--kc-text-primary);
-    border-bottom: 1px solid rgba(15, 23, 42, 0.24);
-}
-
-.ex-cardLink:hover {
-    border-bottom-color: rgba(15, 23, 42, 0.50);
 }
 
 /* =========================
@@ -287,7 +274,7 @@
 }
 
 /* =========================
-   CTA
+   CTA (orange only)
    ========================= */
 .kc-examples__cta {
     padding: 72px 20px;
