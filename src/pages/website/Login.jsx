@@ -76,14 +76,12 @@ export default function Login() {
             return;
         }
 
-        const intent = readCheckoutIntent(); // ✅ detect pricing checkout flow
+        const intent = readCheckoutIntent(); // detect pricing checkout flow
 
         try {
             localStorage.setItem("oauthSource", "login");
 
-            // ✅ IMPORTANT:
             // If checkout intent exists, DO NOT wipe pendingClaimUsername.
-            // We may need it to auto-claim before Stripe.
             if (!intent) {
                 localStorage.removeItem("pendingClaimUsername");
             }
@@ -91,7 +89,6 @@ export default function Login() {
             // ignore
         }
 
-        // ✅ Use canonical base URL (never raw VITE_API_URL)
         window.location.href = `${BASE_URL}/auth/${provider}`;
     };
 
@@ -146,7 +143,10 @@ export default function Login() {
 
         if (action.type === "buy_card") {
             navigate("/productandplan/konarcard", {
-                state: { triggerCheckout: true, quantity: Number(action?.payload?.quantity) || 1 },
+                state: {
+                    triggerCheckout: true,
+                    quantity: Number(action?.payload?.quantity) || 1,
+                },
                 replace: true,
             });
             return;
@@ -155,7 +155,7 @@ export default function Login() {
         navigate("/myprofile");
     };
 
-    // ✅ After login, resume Stripe checkout if intent exists
+    // After login, resume Stripe checkout if intent exists
     const resumeCheckoutIfNeeded = async () => {
         const intent = readCheckoutIntent();
         if (!intent) return false;
@@ -163,7 +163,6 @@ export default function Login() {
         const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
 
         try {
-            // ✅ Do NOT clear intent until we have a Stripe URL
             const res = await api.post("/subscribe", {
                 planKey: intent.planKey,
                 returnUrl,
@@ -178,14 +177,13 @@ export default function Login() {
             clearCheckoutIntent();
             window.location.href = url;
             return true;
-        } catch (e) {
-            const msg = e?.response?.data?.error || e?.message || "Subscription failed.";
-            toast.error(msg);
-            return false; // keep intent so user can retry
+        } catch (err) {
+            toast.error(err?.response?.data?.error || "Subscription failed. Please try again.");
+            return false;
         }
     };
 
-    // ✅ Central helper: move user into verification UI
+    // Central helper: move user into verification UI
     const goToVerificationStep = (msg) => {
         toast.error(msg || "Email not verified. Code sent.");
         setCode("");
@@ -197,7 +195,7 @@ export default function Login() {
     const loginUser = async (e) => {
         e.preventDefault();
 
-        const cleanEmail = data.email.trim().toLowerCase();
+        const cleanEmail = (data.email || "").trim().toLowerCase();
 
         try {
             if (rememberMe) {
@@ -218,8 +216,8 @@ export default function Login() {
                 password: data.password,
             });
 
-            // Some older backend paths return 200 with {error,resend:true}
-            if (res?.data?.error) {
+            // ✅ With api.validateStatus, 401/400 comes back here (not catch)
+            if (res.data?.error) {
                 if (res.data?.resend) {
                     goToVerificationStep(res.data?.error || "Email not verified. Code sent.");
                 } else {
@@ -242,18 +240,8 @@ export default function Login() {
 
             await runPendingActionOrDefault();
         } catch (err) {
-            // ✅ NEW: handle 401 unverified (axios throws)
-            const serverData = err?.response?.data;
-            const status = err?.response?.status;
-
-            if (serverData?.resend || status === 401) {
-                // If backend says resend, always go verify step
-                const msg = serverData?.error || "Email not verified. Code sent.";
-                goToVerificationStep(msg);
-                return;
-            }
-
-            toast.error(serverData?.error || "Login failed.");
+            // ✅ Only true network/5xx errors should land here
+            toast.error(err?.response?.data?.error || "Login failed.");
         } finally {
             setIsSubmitting(false);
         }
@@ -262,8 +250,8 @@ export default function Login() {
     const verifyCode = async (e) => {
         e.preventDefault();
 
-        const cleanEmail = data.email.trim().toLowerCase();
-        const cleanCode = String(code || "").trim();
+        const cleanEmail = (data.email || "").trim().toLowerCase();
+        const cleanOtp = String(code || "").replace(/\D/g, "").slice(0, 6);
 
         if (!cleanEmail) {
             toast.error("Please enter your email first.");
@@ -271,7 +259,7 @@ export default function Login() {
             return;
         }
 
-        if (cleanCode.length !== 6) {
+        if (cleanOtp.length !== 6) {
             toast.error("Please enter the 6-digit code.");
             return;
         }
@@ -280,7 +268,7 @@ export default function Login() {
         try {
             const res = await api.post("/verify-email", {
                 email: cleanEmail,
-                code: cleanCode,
+                code: cleanOtp,
             });
 
             if (res.data?.error) {
@@ -296,7 +284,6 @@ export default function Login() {
                 password: data.password,
             });
 
-            // Safety: if login still returns resend, keep user here
             if (loginRes.data?.error) {
                 if (loginRes.data?.resend) {
                     goToVerificationStep(loginRes.data?.error || "Email not verified. Code sent.");
@@ -320,20 +307,28 @@ export default function Login() {
     };
 
     const resendCode = async () => {
-        const cleanEmail = data.email.trim().toLowerCase();
+        const cleanEmail = (data.email || "").trim().toLowerCase();
         if (!cleanEmail) {
             toast.error("Enter your email first.");
             setVerificationStep(false);
             return;
         }
 
+        if (cooldown > 0) return;
+
         try {
             const res = await api.post("/resend-code", { email: cleanEmail });
-            if (res.data?.error) toast.error(res.data.error);
-            else {
-                toast.success("New code sent!");
-                setCooldown(30);
+
+            if (res.data?.error) {
+                toast.error(res.data.error);
+                return;
             }
+
+            toast.success("New code sent!");
+            setCode("");
+            setCooldown(30);
+            setVerificationStep(true);
+            setForgotPasswordStep(false);
         } catch (err) {
             toast.error(err?.response?.data?.error || "Could not resend code.");
         }
@@ -343,7 +338,9 @@ export default function Login() {
         e.preventDefault();
         setIsSendingReset(true);
         try {
-            const res = await api.post("/forgot-password", { email: emailForReset.trim().toLowerCase() });
+            const res = await api.post("/forgot-password", {
+                email: emailForReset.trim().toLowerCase(),
+            });
             if (res.data?.error) toast.error(res.data.error);
             else toast.success("Reset link sent!");
         } catch {
@@ -387,11 +384,19 @@ export default function Login() {
                                         />
                                     </div>
 
-                                    <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isSendingReset} aria-busy={isSendingReset}>
+                                    <button
+                                        className="kc-btn kc-btn-primary kc-btn-center"
+                                        disabled={isSendingReset}
+                                        aria-busy={isSendingReset}
+                                    >
                                         {isSendingReset ? "Sending…" : "Send reset link"}
                                     </button>
 
-                                    <button type="button" className="kc-btn kc-btn-secondary kc-btn-center" onClick={() => setForgotPasswordStep(false)}>
+                                    <button
+                                        type="button"
+                                        className="kc-btn kc-btn-secondary kc-btn-center"
+                                        onClick={() => setForgotPasswordStep(false)}
+                                    >
                                         Back
                                     </button>
                                 </form>
@@ -413,12 +418,12 @@ export default function Login() {
                                             placeholder="123456"
                                             value={code}
                                             onChange={(e) => {
-                                                // keep it clean (digits only, max 6)
                                                 const v = (e.target.value || "").replace(/\D/g, "").slice(0, 6);
                                                 setCode(v);
                                             }}
                                             maxLength={6}
                                             inputMode="numeric"
+                                            autoComplete="one-time-code"
                                             required
                                         />
                                     </div>
@@ -427,7 +432,12 @@ export default function Login() {
                                         {isVerifying ? "Verifying…" : "Verify"}
                                     </button>
 
-                                    <button type="button" className="kc-btn kc-btn-secondary kc-btn-center" onClick={resendCode} disabled={cooldown > 0}>
+                                    <button
+                                        type="button"
+                                        className="kc-btn kc-btn-secondary kc-btn-center"
+                                        onClick={resendCode}
+                                        disabled={cooldown > 0}
+                                    >
                                         {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
                                     </button>
 

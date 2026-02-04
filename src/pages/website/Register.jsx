@@ -19,6 +19,7 @@ export default function Register() {
     const { login } = useContext(AuthContext);
 
     const claimInputRef = useRef(null);
+    const nameInputRef = useRef(null);
 
     const [data, setData] = useState({
         name: "",
@@ -135,7 +136,8 @@ export default function Register() {
     // If Pricing checkout intent exists, user must claim BEFORE any other step.
     const mustClaimBeforeContinuing = hasCheckoutIntent && !hasConfirmedUsername && !verificationStep;
 
-    const shouldShowClaimStep = !verificationStep && (mustClaimBeforeContinuing || forceClaimStep || !hasConfirmedUsername);
+    const shouldShowClaimStep =
+        !verificationStep && (mustClaimBeforeContinuing || forceClaimStep || !hasConfirmedUsername);
 
     // ---------------------------------
     // Stripe resume (ONLY after verified login)
@@ -205,14 +207,17 @@ export default function Register() {
                 // ignore
             }
 
-            setTimeout(() => document.getElementById("name")?.focus(), 0);
+            setTimeout(() => {
+                nameInputRef.current?.focus?.();
+                document.getElementById("name")?.focus?.();
+            }, 0);
         } catch (err) {
             toast.error(err?.response?.data?.error || "Link not available");
         }
     };
 
     // ---------------------------------
-    // Register (step 2)
+    // Register (step 2) -> always go to verify
     // ---------------------------------
     const registerUser = async (e) => {
         e.preventDefault();
@@ -232,6 +237,15 @@ export default function Register() {
             confirmPassword: data.password,
         };
 
+        // Keep state normalized so verify/resend always uses the same email/username
+        setData((d) => ({
+            ...d,
+            name: payload.name,
+            email: payload.email,
+            username: payload.username,
+        }));
+
+        if (!payload.name) return toast.error("Please enter your name.");
         if (!payload.email) return toast.error("Please enter your email.");
         if (!payload.password) return toast.error("Please enter a password.");
         if (!payload.username) {
@@ -245,13 +259,13 @@ export default function Register() {
         try {
             const res = await api.post("/register", payload);
 
-            if (res.data?.error) {
+            if (res?.data?.error) {
                 toast.error(res.data.error);
                 return;
             }
 
             // Backend may respond success even if email failed, and expects you to use "Resend code"
-            if (res.data?.success) {
+            if (res?.data?.success) {
                 if (res.data?.emailSent === false) {
                     goToVerifyStep("Account created. Tap “Resend code” to get your verification code.");
                 } else {
@@ -260,11 +274,9 @@ export default function Register() {
                 return;
             }
 
-            toast.success("Verification code sent");
-            setVerificationStep(true);
-            setCooldown(30);
+            // Fallback
+            goToVerifyStep("Verification code sent");
         } catch (err) {
-            // Sometimes backend may send useful message in response body
             const msg = err?.response?.data?.error || "Registration failed";
             toast.error(msg);
         } finally {
@@ -274,6 +286,7 @@ export default function Register() {
 
     // ---------------------------------
     // Verify email (step 3) + login + (optional) Stripe
+    // Note: api.js validateStatus allows 4xx to return as a normal response.
     // ---------------------------------
     const verifyCode = async (e) => {
         e.preventDefault();
@@ -295,45 +308,42 @@ export default function Register() {
             return;
         }
 
+        // Lock state to cleaned values (prevents mismatch from spacing/case)
+        setData((d) => ({ ...d, email }));
+        setCode(finalCode);
+
         try {
             const res = await api.post("/verify-email", {
                 email,
                 code: finalCode,
             });
 
-            if (res.data?.error) {
+            if (res?.data?.error) {
                 toast.error(res.data.error);
                 return;
             }
 
             toast.success("Email verified!");
 
-            // Now login
-            let loginRes;
-            try {
-                loginRes = await api.post("/login", {
-                    email,
-                    password: data.password,
-                });
-            } catch (loginErr) {
-                // If backend returns 401 resend again, keep them on verify UI
-                const server = loginErr?.response?.data;
-                if (server?.resend) {
-                    toast.error(server?.error || "Please verify your email. Code sent.");
-                    setCooldown(30);
-                    return;
-                }
-                toast.error(server?.error || "Login failed after verification.");
-                return;
-            }
+            // Now login (DO NOT treat generic 401 as verify unless server says resend:true)
+            const loginRes = await api.post("/login", {
+                email,
+                password: data.password,
+            });
 
-            if (loginRes.data?.error) {
+            if (loginRes?.data?.error) {
                 if (loginRes.data?.resend) {
+                    // Backend says user still not verified; keep them on verify UI
                     toast.error(loginRes.data?.error || "Please verify your email. Code sent.");
                     setCooldown(30);
                     return;
                 }
-                toast.error(loginRes.data.error);
+                toast.error(loginRes.data.error || "Login failed after verification.");
+                return;
+            }
+
+            if (!loginRes?.data?.token || !loginRes?.data?.user) {
+                toast.error("Login failed after verification.");
                 return;
             }
 
@@ -341,7 +351,6 @@ export default function Register() {
 
             try {
                 localStorage.removeItem(OAUTH_SOURCE_KEY);
-                // keep PENDING_CLAIM_KEY for a moment — but user is now claimed anyway
             } catch {
                 // ignore
             }
@@ -358,6 +367,7 @@ export default function Register() {
 
             navigate("/myprofile", { replace: true });
         } catch (err) {
+            // network / 5xx
             toast.error(err?.response?.data?.error || "Verification failed");
         } finally {
             setIsVerifying(false);
@@ -372,14 +382,20 @@ export default function Register() {
             return;
         }
 
+        if (cooldown > 0) return;
+
         try {
             const r = await api.post("/resend-code", { email });
-            if (r.data?.error) toast.error(r.data.error);
-            else {
-                toast.success("New code sent!");
-                setCooldown(30);
-                setCode("");
+
+            if (r?.data?.error) {
+                toast.error(r.data.error);
+                return;
             }
+
+            toast.success("New code sent!");
+            setCooldown(30);
+            setCode("");
+            setVerificationStep(true);
         } catch (err) {
             toast.error(err?.response?.data?.error || "Could not resend code.");
         }
@@ -413,6 +429,19 @@ export default function Register() {
         window.location.href = `${BASE_URL}/auth/${provider}`;
     };
 
+    // Back from verification should respect checkout intent rule
+    const backFromVerify = () => {
+        setVerificationStep(false);
+        setCode("");
+        // If pricing intent exists and username missing, force claim
+        if (hasCheckoutIntent && !sanitizeSlug(data.username)) {
+            setForceClaimStep(true);
+            setTimeout(() => claimInputRef.current?.focus?.(), 0);
+        }
+    };
+
+    const displayUsername = sanitizeSlug(data.username);
+
     return (
         <>
             <Navbar />
@@ -443,12 +472,17 @@ export default function Register() {
                                             onChange={(e) => setCode(cleanCode(e.target.value))}
                                             maxLength={6}
                                             inputMode="numeric"
+                                            autoComplete="one-time-code"
                                             placeholder="123456"
                                             required
                                         />
                                     </div>
 
-                                    <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isVerifying} aria-busy={isVerifying}>
+                                    <button
+                                        className="kc-btn kc-btn-primary kc-btn-center"
+                                        disabled={isVerifying}
+                                        aria-busy={isVerifying}
+                                    >
                                         {isVerifying ? "Verifying…" : "Verify"}
                                     </button>
 
@@ -464,10 +498,7 @@ export default function Register() {
                                     <button
                                         type="button"
                                         className="kc-text-back"
-                                        onClick={() => {
-                                            setVerificationStep(false);
-                                            setCode("");
-                                        }}
+                                        onClick={backFromVerify}
                                         style={{ marginTop: 10 }}
                                     >
                                         Back
@@ -477,7 +508,9 @@ export default function Register() {
                         ) : shouldShowClaimStep ? (
                             <>
                                 <h1 className="kc-title">Claim Your Link</h1>
-                                <p className="kc-subtitle">This is your unique link. When someone clicks it, they see your digital business card.</p>
+                                <p className="kc-subtitle">
+                                    This is your unique link. When someone clicks it, they see your digital business card.
+                                </p>
 
                                 {hasCheckoutIntent ? (
                                     <p className="kc-microcopy" style={{ marginTop: 8 }}>
@@ -519,7 +552,9 @@ export default function Register() {
                         ) : (
                             <>
                                 <h1 className="kc-title">Create an account to save your card</h1>
-                                <p className="kc-subtitle">Save your digital card so you can share it, edit it, and access it anytime.</p>
+                                <p className="kc-subtitle">
+                                    Save your digital card so you can share it, edit it, and access it anytime.
+                                </p>
 
                                 <form onSubmit={registerUser} className="kc-form kc-form-register">
                                     <div className="kc-field">
@@ -527,11 +562,13 @@ export default function Register() {
                                             Full name
                                         </label>
                                         <input
+                                            ref={nameInputRef}
                                             id="name"
                                             className="kc-input"
                                             placeholder="Enter your name"
                                             value={data.name}
                                             onChange={(e) => setData((d) => ({ ...d, name: e.target.value }))}
+                                            autoComplete="name"
                                             required
                                         />
                                     </div>
@@ -543,9 +580,11 @@ export default function Register() {
                                         <input
                                             id="email"
                                             className="kc-input"
+                                            type="email"
                                             placeholder="Enter your email"
                                             value={data.email}
                                             onChange={(e) => setData((d) => ({ ...d, email: e.target.value }))}
+                                            autoComplete="email"
                                             required
                                         />
                                     </div>
@@ -561,11 +600,16 @@ export default function Register() {
                                             placeholder="Create a password"
                                             value={data.password}
                                             onChange={(e) => setData((d) => ({ ...d, password: e.target.value }))}
+                                            autoComplete="new-password"
                                             required
                                         />
                                     </div>
 
-                                    <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isSubmitting} aria-busy={isSubmitting}>
+                                    <button
+                                        className="kc-btn kc-btn-primary kc-btn-center"
+                                        disabled={isSubmitting}
+                                        aria-busy={isSubmitting}
+                                    >
                                         {isSubmitting ? "Saving…" : "Save my digital card"}
                                     </button>
 
@@ -594,12 +638,13 @@ export default function Register() {
                                 </div>
 
                                 <p className="kc-bottom-line" style={{ marginTop: 18 }}>
-                                    Your link: <strong>konarcard.com/u/{data.username}</strong>{" "}
+                                    Your link:{" "}
+                                    <strong>{displayUsername ? `konarcard.com/u/${displayUsername}` : "—"}</strong>{" "}
                                     <button
                                         type="button"
                                         className="kc-link"
                                         onClick={() => {
-                                            setClaimInput(data.username);
+                                            setClaimInput(displayUsername);
                                             setForceClaimStep(true);
                                             setTimeout(() => claimInputRef.current?.focus?.(), 0);
                                         }}

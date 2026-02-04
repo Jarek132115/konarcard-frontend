@@ -20,6 +20,16 @@ const BASE_URL = normalizeBase(ENV_BASE) || normalizeBase(FALLBACK_BASE);
 const api = axios.create({
   baseURL: BASE_URL,
   withCredentials: false,
+
+  /**
+   * ✅ CRITICAL:
+   * Do NOT throw on 4xx (especially 401), because the app expects:
+   *   res.data.resend === true
+   * and then it shows the "Verify email" step.
+   *
+   * We still throw on 5xx so real server crashes are visible.
+   */
+  validateStatus: (status) => status >= 200 && status < 500,
 });
 
 api.interceptors.request.use((config) => {
@@ -41,7 +51,9 @@ api.interceptors.request.use((config) => {
         delete H["Content-Type"];
         delete H["content-type"];
       }
-    } catch { }
+    } catch {
+      // ignore
+    }
   }
 
   const xNoAuth =
@@ -79,11 +91,15 @@ api.interceptors.request.use((config) => {
   // cache-buster only on sensitive reads
   if (typeof config.url === "string") {
     const u = config.url;
+
     // ✅ match "/profiles" not "/profile"
     if (
       u.includes("/profiles") ||
       u.includes("/me/orders") ||
-      u.includes("/subscription-status")
+      u.includes("/subscription-status") ||
+      u.includes("/billing/summary") ||
+      u.includes("/billing/invoices") ||
+      u.includes("/billing/payments")
     ) {
       const sep = u.includes("?") ? "&" : "?";
       config.url = `${u}${sep}ts=${Date.now()}`;
