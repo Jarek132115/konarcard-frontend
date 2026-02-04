@@ -262,11 +262,13 @@ export default function Policies() {
     <>
       <Navbar />
 
-      <main className="kc-pol">
+      {/* kc-page ensures consistent spacing under navbar */}
+      <main className="kc-pol kc-page">
         <section className="kc-pol__wrap">
           <div className="kc-pol__grid">
             <aside className="kc-pol__left" aria-label="Policy navigation">
-              <div className="kc-pol__sticky">
+              {/* Sticky wrapper is the aside itself (most reliable) */}
+              <div className="kc-pol__side">
                 <div className="kc-pol__sideCard">
                   <p className="h6 kc-pol__sideTitle">Policies</p>
 
