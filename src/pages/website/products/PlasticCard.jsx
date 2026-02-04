@@ -18,7 +18,7 @@ import ProductImage2 from "../../../assets/images/Product-Image-2.png";
 import ProductImage3 from "../../../assets/images/Product-Image-3.png";
 import ProductImage4 from "../../../assets/images/Product-Image-4.png";
 
-/** simple "QR-like" SVG placeholder */
+/** simple "QR-like" SVG placeholder (static) */
 const QrSvg = () => (
     <svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
         <rect x="0" y="0" width="120" height="120" fill="white" />
@@ -55,11 +55,11 @@ export default function PlasticCard() {
         []
     );
 
-    // we keep thumbnails for later, but the card itself must be plain white
+    // thumbs kept for later
     const [activeImg, setActiveImg] = useState(gallery[0]);
     const [qty, setQty] = useState(1);
 
-    // ---- Logo upload preview ----
+    // ---- Logo upload preview (FRONT ONLY) ----
     const [logoUrl, setLogoUrl] = useState("");
     const [logoSize, setLogoSize] = useState(44);
 
@@ -197,6 +197,7 @@ export default function PlasticCard() {
         []
     );
 
+    // FRONT logo only
     const displayedLogo = logoUrl || LogoIcon;
 
     const shineX = 50 + (rot.ry % 360) * 0.12;
@@ -206,10 +207,8 @@ export default function PlasticCard() {
         <>
             <Navbar />
 
-            {/* ✅ add same top spacing as other pages (navbar clearance) */}
             <main className="kc-konarcard kc-konarcard--premium kc-konarcard--pagePad">
                 <div className="kc-konarcard__wrap">
-                    {/* ✅ ONLY KEEP FIRST SECTION */}
                     <section className="kc-premHero kc-premHero--clean">
                         <div className="kc-premHero__top">
                             <div className="kc-premHero__crumbs">
@@ -234,7 +233,6 @@ export default function PlasticCard() {
                         </div>
 
                         <div className="kc-premStage">
-                            {/* ✅ smaller: ~40% of visible screen height */}
                             <div
                                 className={`kc-premStage__surface kc-premStage__surface--small ${isDragging ? "is-dragging" : ""}`}
                                 onPointerDown={onPointerDown}
@@ -252,12 +250,9 @@ export default function PlasticCard() {
                                         ["--shineY"]: `${shineY}%`,
                                     }}
                                 >
-                                    {/* FRONT */}
-                                    <div className="kc-premFace kc-premFace--front kc-premFace--plainWhite">
-                                        <div className="kc-premFace__base kc-premFace__base--plain" />
-
-                                        {/* ✅ removed texture background from image */}
-                                        {/* no kc-premFace__texture */}
+                                    {/* FRONT: logo only */}
+                                    <div className="kc-premFace kc-premFace--front">
+                                        <div className="kc-premFace__base" />
 
                                         <div className="kc-premLogoWrap">
                                             <img
@@ -273,17 +268,15 @@ export default function PlasticCard() {
                                         <div className="kc-premRim" aria-hidden="true" />
                                     </div>
 
-                                    {/* BACK */}
-                                    <div className="kc-premFace kc-premFace--back kc-premFace--plainWhite">
-                                        <div className="kc-premBackInner">
-                                            <div className="kc-premBackMeta">
-                                                <div className="kc-premBackK">QR backup</div>
-                                                <div className="kc-premBackS">Scan to open profile</div>
-                                            </div>
+                                    {/* BACK: QR ONLY (static) */}
+                                    <div className="kc-premFace kc-premFace--back">
+                                        {/* no logo here at all */}
+                                        <div className="kc-premBackInner" style={{ gridTemplateColumns: "1fr", placeItems: "center" }}>
                                             <div className="kc-premQr">
                                                 <QrSvg />
                                             </div>
                                         </div>
+
                                         <div className="kc-premShine" aria-hidden="true" />
                                         <div className="kc-premRim" aria-hidden="true" />
                                     </div>
@@ -300,7 +293,7 @@ export default function PlasticCard() {
                                 </div>
                             </div>
 
-                            {/* Controls (keep, but cleaner) */}
+                            {/* Controls */}
                             <div className="kc-premControls kc-premControls--clean">
                                 <div className="kc-premControls__left">
                                     <div className="kc-premControls__label">Your logo</div>
@@ -376,7 +369,7 @@ export default function PlasticCard() {
                                 </div>
                             </div>
 
-                            {/* Optional thumbs kept (they no longer affect card texture, but you can keep for future) */}
+                            {/* Thumbs (kept for later) */}
                             <div className="kc-premThumbs" aria-label="Choose a preview image">
                                 <div className="kc-premThumbs__label">Preview images</div>
                                 <div className="kc-konarcard__thumbRow">
@@ -397,7 +390,7 @@ export default function PlasticCard() {
                                 </div>
                             </div>
 
-                            {/* What you get (keep) */}
+                            {/* What you get */}
                             <div className="kc-konarcard__section">
                                 <div className="kc-konarcard__sectionHead">
                                     <h2 className="kc-konarcard__h2">What you get</h2>
@@ -420,8 +413,6 @@ export default function PlasticCard() {
                                     ))}
                                 </div>
                             </div>
-
-                            {/* ✅ removed Ready / bottom CTA sections completely */}
                         </div>
                     </section>
                 </div>
