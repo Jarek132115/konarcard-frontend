@@ -7,9 +7,10 @@ import Navbar from "../../components/Navbar";
 import "../../styling/login.css";
 
 /* Social logos */
-import GoogleIcon from "../../assets/icons/Google-icon.svg";
+import GoogleIcon from "../../assets/icons/Google-Icon.svg";
 import FacebookIcon from "../../assets/icons/Facebook-Icon.svg";
 import AppleIcon from "../../assets/icons/Apple-Icon.svg";
+
 
 const PENDING_CLAIM_KEY = "pendingClaimUsername";
 const OAUTH_SOURCE_KEY = "oauthSource";

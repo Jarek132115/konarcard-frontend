@@ -7,9 +7,10 @@ import Navbar from "../../components/Navbar";
 import "../../styling/login.css";
 
 /* Social logos */
-import GoogleIcon from "../../assets/icons/Google-icon.svg";
+import GoogleIcon from "../../assets/icons/Google-Icon.svg";
 import FacebookIcon from "../../assets/icons/Facebook-Icon.svg";
 import AppleIcon from "../../assets/icons/Apple-Icon.svg";
+
 
 const POST_AUTH_KEY = "postAuthAction"; // legacy (keep for card-buy etc)
 const REMEMBER_KEY = "rememberLogin";

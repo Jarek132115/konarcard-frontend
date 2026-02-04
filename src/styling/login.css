@@ -2,8 +2,8 @@
 
 /* =========================================================
    AUTH (Login/Register/Verify/Reset)
-   Matches FAQ/Examples/Pricing (tokens + fonts.css)
-   Orange-only accents, 8pt spacing, Cal Sans headings
+   Matches your Figma (no background image, no white cards,
+   inputs sit on transparent/soft surfaces)
    ========================================================= */
 
 *,
@@ -15,21 +15,22 @@
 /* Page wrapper */
 .kc-auth-page {
     min-height: 100dvh;
-    background: var(--kc-bg-main);
+    background: #fff;
+    /* ✅ remove any “image” look */
     color: var(--kc-text-primary);
     position: relative;
     overflow: hidden;
 }
 
-/* Soft background wash (subtle like other pages) */
+/* Subtle clean wash (matches Figma feel) */
 .kc-auth-page::before {
     content: "";
     position: absolute;
     inset: -20%;
     background:
-        radial-gradient(circle at 15% 10%, rgba(249, 115, 22, 0.10), rgba(249, 115, 22, 0) 42%),
-        radial-gradient(circle at 90% 20%, rgba(15, 23, 42, 0.06), rgba(15, 23, 42, 0) 45%),
-        linear-gradient(180deg, rgba(15, 23, 42, 0.02), rgba(15, 23, 42, 0));
+        radial-gradient(circle at 25% 18%, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0) 48%),
+        radial-gradient(circle at 70% 65%, rgba(0, 0, 0, 0.035), rgba(0, 0, 0, 0) 52%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0));
     pointer-events: none;
 }
 
@@ -40,18 +41,17 @@
     max-width: 1140px;
     margin: 0 auto;
     padding: 96px 20px 0;
-    /* clears navbar like other pages */
     display: flex;
     justify-content: flex-end;
 }
 
-/* Close button */
+/* Close button (center the X properly) */
 .kc-auth-closeBtn {
     width: 48px;
     height: 48px;
     border-radius: 999px;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.92);
     cursor: pointer;
     display: grid;
     place-items: center;
@@ -60,15 +60,17 @@
 }
 
 .kc-auth-closeBtn span {
-    font-size: 28px;
+    display: inline-block;
     line-height: 1;
+    font-size: 26px;
     color: var(--kc-text-primary);
-    transform: translateY(-1px);
+    transform: none;
+    /* ✅ removes off-center nudge */
 }
 
 .kc-auth-closeBtn:hover {
     transform: translateY(-1px);
-    border-color: rgba(15, 23, 42, 0.22);
+    border-color: rgba(15, 23, 42, 0.18);
     box-shadow: 0 16px 34px rgba(16, 24, 40, 0.10);
 }
 
@@ -92,7 +94,7 @@
     text-align: center;
 }
 
-/* Headings / text — use your design system typography */
+/* Headings / text */
 .kc-title {
     margin: 0 0 8px;
     font-family: "Cal Sans", sans-serif;
@@ -119,26 +121,19 @@
     color: rgba(15, 23, 42, 0.60);
 }
 
-/* Card container (keeps auth feeling premium) */
+/* ✅ REMOVE white card look: form becomes “flat” like Figma */
 .kc-form {
     margin-top: 18px;
     text-align: left;
 
-    background: #fff;
-    border: 1px solid var(--kc-border);
-    border-radius: 16px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.08);
+    background: transparent;
+    border: none;
+    box-shadow: none;
 
-    padding: 18px;
+    padding: 0;
     display: flex;
     flex-direction: column;
     gap: 12px;
-}
-
-/* tighter variants (optional) */
-.kc-form-claim,
-.kc-form-register {
-    margin-top: 18px;
 }
 
 /* Field */
@@ -154,17 +149,18 @@
     color: var(--kc-text-secondary);
 }
 
-/* Inputs */
+/* ✅ Inputs: no pure white background (soft surface) */
 .kc-input {
     width: 100%;
     min-height: 46px;
-    border: 1px solid rgba(15, 23, 42, 0.14);
+    border: 1px solid rgba(15, 23, 42, 0.12);
     border-radius: 12px;
     padding: 10px 12px;
     font-size: 14px;
     outline: none;
-    background: #fff;
-    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    background: rgba(15, 23, 42, 0.03);
+    /* ✅ matches Figma “not white” */
+    transition: box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
 
 .kc-input::placeholder {
@@ -172,6 +168,7 @@
 }
 
 .kc-input:focus {
+    background: rgba(15, 23, 42, 0.02);
     border-color: rgba(249, 115, 22, 0.65);
     box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
 }
@@ -181,14 +178,16 @@
     min-height: 46px;
     display: flex;
     align-items: center;
-    border: 1px solid rgba(15, 23, 42, 0.14);
+    border: 1px solid rgba(15, 23, 42, 0.12);
     border-radius: 12px;
     overflow: hidden;
-    background: #fff;
-    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    background: rgba(15, 23, 42, 0.03);
+    /* ✅ same surface as inputs */
+    transition: box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
 
 .kc-claim:focus-within {
+    background: rgba(15, 23, 42, 0.02);
     border-color: rgba(249, 115, 22, 0.65);
     box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
 }
@@ -204,7 +203,6 @@
 
 .kc-claim-sep {
     display: none;
-    /* remove the “|” visual, looks cleaner */
 }
 
 .kc-claim-input {
@@ -213,6 +211,7 @@
     box-shadow: none !important;
     height: 46px !important;
     padding: 0 12px !important;
+    background: transparent !important;
 }
 
 .kc-claim-input:focus {
@@ -244,7 +243,6 @@
     transform: none;
 }
 
-/* Primary (orange) */
 .kc-btn-primary {
     background: var(--kc-accent-primary);
     color: #fff;
@@ -260,7 +258,6 @@
     transform: translateY(1px);
 }
 
-/* Secondary (dark) */
 .kc-btn-secondary {
     background: var(--kc-accent-secondary);
     color: #fff;
@@ -278,7 +275,7 @@
     width: 100%;
 }
 
-/* “Back” text link */
+/* Back text */
 .kc-text-back {
     margin: 2px auto 0;
     display: inline-flex;
@@ -330,14 +327,15 @@
     right: 0;
     top: 50%;
     height: 1px;
-    background: var(--kc-border);
+    background: rgba(15, 23, 42, 0.10);
 }
 
 .kc-divider span {
     position: relative;
     z-index: 1;
     padding: 0 12px;
-    background: var(--kc-bg-main);
+    background: #fff;
+    /* ✅ page background */
     color: rgba(15, 23, 42, 0.55);
     font-size: 12px;
     font-weight: 700;
@@ -354,33 +352,43 @@
     width: 100%;
 
     border-radius: 999px;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.86);
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
+    /* ✅ space for icons */
 
     font-weight: 700;
     font-size: 14px;
     color: var(--kc-text-primary);
 
     cursor: pointer;
-    transition: transform 0.08s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    transition: transform 0.08s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
 }
 
 .kc-social-btn:hover {
     transform: translateY(-1px);
-    border-color: rgba(15, 23, 42, 0.22);
+    border-color: rgba(15, 23, 42, 0.18);
     box-shadow: 0 16px 34px rgba(15, 23, 42, 0.10);
+    background: rgba(255, 255, 255, 0.92);
 }
 
 .kc-social-btn:active {
     transform: translateY(0);
 }
 
-/* Responsive (match your fonts.css breakpoints) */
+/* ✅ Social icon images */
+.kc-social-icon {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+}
+
+/* Responsive */
 @media (max-width: 1000px) {
     .kc-title {
         font-size: 40px;
@@ -402,14 +410,9 @@
         font-size: 14px;
         line-height: 22px;
     }
-
-    .kc-form {
-        padding: 14px;
-        border-radius: 14px;
-    }
 }
 
-/* Remember me (Login only) */
+/* Remember me */
 .kc-remember {
     display: flex;
     align-items: center;
