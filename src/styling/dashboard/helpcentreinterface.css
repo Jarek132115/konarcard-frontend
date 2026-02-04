@@ -1,430 +1,435 @@
 /* frontend/src/styling/dashboard/helpcentreinetrface.css
-   =========================================================
-   Help Centre (Dashboard Interface) — UI/UX Redesign
-   - Modern 2-column layout on desktop (nav/sections + content cards)
-   - Consistent spacing + polished card system
-   - Sticky header behavior preserved
-   - Responsive: single column on tablet/mobile
-   ========================================================= */
+=========================================================
+Help Centre (Dashboard) — Matches Profiles UI system
+- Uses same tokens: radius, shadows, typography
+- Clean 2-column grid like Profiles page
+========================================================= */
 
 :root {
-  --hc-ink: #0b1220;
-  --hc-muted: rgba(11, 18, 32, 0.62);
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #fafafa;
+  --surface-3: #f6f7f9;
 
-  --hc-surface: #ffffff;
-  --hc-surface-2: #fafafa;
-  --hc-surface-3: #f6f7f9;
+  --ink: #0b1220;
+  --muted: #5b667a;
 
-  --hc-border: rgba(11, 18, 32, 0.10);
-  --hc-border-2: rgba(11, 18, 32, 0.08);
+  --accent: #f97316;
+  --accent-rgb: 249 115 22;
 
-  --hc-accent: #f97316;
-  --hc-accent-rgb: 249 115 22;
+  --ok: #16a34a;
+  --ok-rgb: 22 163 74;
 
-  --hc-purple: #6b21a8;
+  --danger: #dc2626;
+  --danger-rgb: 220 38 38;
 
-  --hc-radius: 18px;
-  --hc-radius-lg: 22px;
+  --border: rgba(11, 18, 32, 0.10);
+  --border-2: rgba(11, 18, 32, 0.08);
 
-  --hc-shadow-sm: 0 10px 22px rgba(11, 18, 32, 0.06);
-  --hc-shadow-md: 0 16px 44px rgba(11, 18, 32, 0.10);
+  --radius: 18px;
+  --radius-lg: 22px;
 
-  --hc-focus: 0 0 0 3px rgb(var(--hc-accent-rgb) / 0.26);
+  --shadow-sm: 0 8px 18px rgba(11, 18, 32, 0.06);
+  --shadow-md: 0 14px 34px rgba(11, 18, 32, 0.10);
 
-  /* shell */
-  --hc-shell: #fff1e8;
-  --hc-shell-border: rgb(var(--hc-accent-rgb) / 0.22);
+  --focus: 0 0 0 3px rgb(var(--accent-rgb) / 0.28);
 }
 
 /* =========================================================
-   PAGE STRUCTURE
+   Shell
 ========================================================= */
-
-/* Keep your original flex column + full height */
-.help-main {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
+.help-shell {
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
-/* Sticky PageHeader only on help page */
-.help-page .page-header-card {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  backdrop-filter: saturate(1.1);
+/* header right slot */
+.help-header-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 1000px) {
+  .help-header-actions {
+    justify-content: flex-start;
+  }
+}
+
+/* =========================================================
+   Grid layout (like Profiles)
+   Left rail wider than typical because it has content
+========================================================= */
+.help-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.65fr);
+  gap: 16px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+/* =========================================================
+   Cards
+========================================================= */
+.help-card {
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 16px;
+}
+
+.help-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 12px;
 }
 
-/* Shell fills remaining height and becomes the scroll container */
-.help-frame {
-  flex: 1 1 auto;
-  overflow: auto;
-
-  background: var(--hc-shell);
-  border: 1px solid var(--hc-shell-border);
-  border-radius: var(--hc-radius-lg);
-  box-shadow: var(--hc-shadow-sm);
-  padding: 18px;
+.help-card-title {
+  margin: 0;
+  font-family: "Cal Sans", sans-serif;
+  color: var(--ink);
+  font-size: 18px;
+  letter-spacing: -0.01em;
 }
 
-/* Inner container */
-.help-container {
-  width: 100%;
+.help-muted {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+  font-weight: 800;
+}
+
+/* Pills */
+.help-pill {
+  font-family: "Cal Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--ink);
+  white-space: nowrap;
 }
 
 /* =========================================================
-   NEW: LAYOUT GRID
-   Left column = section nav / hints
-   Right column = content cards
+   Buttons (same vibe as Profiles)
 ========================================================= */
-
-.help-layout {
-  display: grid;
-  grid-template-columns: minmax(260px, 0.42fr) minmax(0, 1fr);
-  gap: 16px;
-  align-items: start;
+.help-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-family: "Cal Sans", sans-serif;
+  font-weight: 900;
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.2s, border 0.2s, opacity 0.2s, box-shadow 0.2s;
+  user-select: none;
 }
 
-/* Left rail card */
+.help-btn:active {
+  transform: translateY(1px);
+}
+
+.help-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+
+.help-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: rgb(var(--accent-rgb) / 0.35);
+  box-shadow: 0 12px 22px rgb(var(--accent-rgb) / 0.18);
+}
+
+.help-btn-primary:hover {
+  background: rgb(var(--accent-rgb) / 0.92);
+}
+
+.help-btn-ghost {
+  background: var(--surface-2);
+  color: var(--ink);
+  border-color: rgba(11, 18, 32, 0.14);
+}
+
+.help-btn-ghost:hover {
+  background: rgba(11, 18, 32, 0.04);
+}
+
+/* =========================================================
+   Left rail
+========================================================= */
 .help-rail {
   position: sticky;
-  top: 84px;
-  /* below sticky header; adjust if needed */
-  align-self: start;
-  border-radius: var(--hc-radius-lg);
-  border: 1px solid var(--hc-border-2);
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: var(--hc-shadow-sm);
-  padding: 14px;
+  top: 12px;
 }
 
-/* Rail header */
-.help-rail-title {
-  margin: 2px 0 10px;
-  font-family: "Cal Sans", sans-serif;
-  font-size: 16px;
-  letter-spacing: -0.01em;
-  color: var(--hc-ink);
-}
-
-.help-rail-sub {
-  margin: 0 0 12px;
-  color: var(--hc-muted);
-  font-size: 13px;
-  font-weight: 800;
-  line-height: 1.4;
-}
-
-/* Rail items (anchors/buttons style) */
 .help-rail-list {
   display: grid;
   gap: 10px;
 }
 
 .help-rail-item {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-
-  padding: 12px 12px;
-  border-radius: 16px;
-  border: 1px solid rgba(11, 18, 32, 0.08);
+  width: 100%;
   background: #fff;
-  box-shadow: 0 6px 14px rgba(11, 18, 32, 0.05);
-
-  cursor: default;
-  user-select: none;
+  border: 1px solid rgba(11, 18, 32, 0.10);
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s, transform 0.08s ease, box-shadow 0.2s, border-color 0.2s;
 }
 
-.help-rail-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: rgb(var(--hc-accent-rgb) / 0.25);
-  border: 1px solid rgb(var(--hc-accent-rgb) / 0.25);
+.help-rail-item:hover {
+  background: rgba(11, 18, 32, 0.02);
+}
+
+.help-rail-item:active {
+  transform: translateY(1px);
+}
+
+.help-rail-item:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+
+.help-rail-ico {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: rgb(var(--accent-rgb) / 0.14);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--ink);
+  border: 1px solid rgb(var(--accent-rgb) / 0.18);
   flex: 0 0 auto;
 }
 
-.help-rail-item strong {
-  font-size: 13px;
-  font-weight: 1000;
-  color: var(--hc-ink);
-  line-height: 1.1;
-}
-
-.help-rail-item span {
-  display: block;
-  margin-top: 2px;
-  font-size: 12px;
-  font-weight: 850;
-  color: rgba(11, 18, 32, 0.58);
-}
-
-/* Optional rail CTA area */
-.help-rail-cta {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(11, 18, 32, 0.08);
-  display: grid;
-  gap: 10px;
-}
-
-/* =========================================================
-   RIGHT: LIST / CARDS
-========================================================= */
-
-.help-list {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-  margin-bottom: 6px;
-}
-
-/* Modern card */
-.help-card {
-  position: relative;
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 16px;
-
-  border: 1px solid rgba(11, 18, 32, 0.10);
-  border-radius: var(--hc-radius-lg);
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: var(--hc-shadow-sm);
-  align-items: start;
-
-  overflow: hidden;
-}
-
-/* soft top sheen */
-.help-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(900px 240px at 18% 10%,
-      rgba(249, 115, 22, 0.10),
-      transparent 55%);
-}
-
-/* Badge */
-.help-status-badge {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-
-  font-weight: 1000;
-  font-size: 12px;
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(11, 18, 32, 0.08);
-  background: rgb(var(--hc-accent-rgb) / 0.10);
-  color: var(--hc-accent);
-  box-shadow: 0 10px 20px rgba(11, 18, 32, 0.08);
-}
-
-.help-status-badge.status-maintenance {
-  background: rgba(107, 33, 168, 0.10);
-  border-color: rgba(107, 33, 168, 0.18);
-  color: var(--hc-purple);
-}
-
-/* Thumbnail (video preview) */
-.help-thumb {
-  width: 100%;
-  height: 190px;
-  border-radius: 18px;
-  border: 1px solid rgba(11, 18, 32, 0.08);
-  background: linear-gradient(135deg,
-      rgba(11, 18, 32, 0.03),
-      rgba(11, 18, 32, 0.01));
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  box-shadow: 0 10px 18px rgba(11, 18, 32, 0.06 ());
-  /* safe shadow */
-  margin-top: 32px;
-  /* space for badge */
-}
-
-.help-thumb-mark {
-  font-size: 56px;
-  line-height: 1;
-  filter: saturate(1.05);
-}
-
-/* Details column */
-.help-details {
-  display: flex;
-  flex-direction: column;
-  min-height: 222px;
-  gap: 10px;
+.help-rail-meta {
   min-width: 0;
 }
 
-/* Meta line */
-.help-meta {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+.help-rail-title {
+  font-family: "Cal Sans", sans-serif;
+  font-weight: 900;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.help-rail-sub {
+  margin-top: 4px;
+  font-weight: 800;
   font-size: 13px;
-  color: rgba(11, 18, 32, 0.58);
-  font-weight: 850;
+  color: rgba(91, 102, 122, 0.95);
 }
 
-.help-meta .type {
-  color: var(--hc-ink);
-  font-weight: 1000;
-}
-
-/* Content blocks */
-.help-fields {
+/* rail bottom */
+.help-rail-cta {
+  margin-top: 14px;
+  border-top: 1px solid rgba(11, 18, 32, 0.08);
+  padding-top: 14px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 16px;
-  align-items: start;
-  margin-top: 6px;
+  gap: 12px;
 }
 
-.help-kv {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  padding: 12px;
-  border-radius: 16px;
-  border: 1px solid rgba(11, 18, 32, 0.08);
-  background: rgba(255, 255, 255, 0.75);
-}
-
-.help-kv .kv-label {
-  font-weight: 1000;
-  color: rgba(11, 18, 32, 0.82);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  line-height: 1.1;
-}
-
-.help-kv .kv-value {
-  font-size: 13px;
-  font-weight: 850;
-  color: rgba(11, 18, 32, 0.62);
-  line-height: 1.45;
-}
-
-/* Actions */
-.help-actions {
-  margin-top: auto;
-  padding-top: 12px;
-
+.help-rail-actions {
   display: flex;
   gap: 10px;
-  justify-content: flex-start;
   flex-wrap: wrap;
-  align-items: center;
 }
 
-/* Link-like button */
-.link-like {
+/* alert (Profiles style) */
+.help-alert {
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(11, 18, 32, 0.10);
+  background: var(--surface);
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.help-alert.neutral {
+  background: rgba(11, 18, 32, 0.03);
+}
+
+.help-linklike {
   background: none;
   border: none;
   padding: 0;
   margin: 0;
-  color: var(--hc-accent);
+  color: rgb(var(--accent-rgb));
   cursor: pointer;
   text-decoration: underline;
   font: inherit;
-  font-weight: 1000;
-}
-
-.link-like:focus-visible {
-  outline: none;
-  box-shadow: var(--hc-focus);
-  border-radius: 8px;
-}
-
-/* If your existing button classes exist, keep them.
-   These just make them look tighter on this page. */
-.help-actions .cta-black-button.desktop-button,
-.help-actions .cta-accent-button.desktop-button {
-  border-radius: 14px !important;
-  padding: 12px 14px !important;
+  font-weight: 900;
 }
 
 /* =========================================================
-   MOBILE / RESPONSIVE
+   Right content list
 ========================================================= */
+.help-right {
+  min-width: 0;
+}
 
+.help-list {
+  display: grid;
+  gap: 12px;
+}
+
+/* item card */
+.help-item {
+  padding: 16px;
+}
+
+.help-item-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.help-item-titlewrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.help-item-emoji {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: rgb(var(--accent-rgb) / 0.12);
+  border: 1px solid rgb(var(--accent-rgb) / 0.16);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex: 0 0 auto;
+}
+
+.help-item-title {
+  margin: 0;
+  font-family: "Cal Sans", sans-serif;
+  color: var(--ink);
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
+
+/* badge */
+.help-badge {
+  font-family: "Cal Sans", sans-serif;
+  font-weight: 900;
+  font-size: 12px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(11, 18, 32, 0.12);
+  background: var(--surface-2);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.help-badge.maintenance {
+  background: rgba(107, 33, 168, 0.10);
+  border-color: rgba(107, 33, 168, 0.20);
+  color: #6b21a8;
+}
+
+/* body grid */
+.help-item-body {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.help-kv {
+  border: 1px solid rgba(11, 18, 32, 0.10);
+  background: #fff;
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.help-k {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: rgba(11, 18, 32, 0.55);
+  text-transform: uppercase;
+}
+
+.help-v {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(91, 102, 122, 0.95);
+  line-height: 1.45;
+}
+
+.help-inline-link {
+  color: rgb(var(--accent-rgb));
+  font-weight: 900;
+}
+
+/* actions */
+.help-item-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   Responsive
+========================================================= */
 @media (max-width: 1100px) {
-  .help-main {
-    min-height: auto;
-  }
-
-  /* Remove shell for mobile like you had */
-  .help-frame {
-    background: none;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-    overflow: visible;
-  }
-
-  .help-layout {
+  .help-grid {
     grid-template-columns: 1fr;
   }
 
   .help-rail {
     position: static;
-    top: auto;
-    padding: 12px;
   }
 
-  .help-card {
-    grid-template-columns: 1fr;
-  }
-
-  .help-thumb {
-    height: auto;
-    min-height: 180px;
-    margin-top: 0;
-  }
-
-  .help-status-badge {
-    position: static;
-    margin-bottom: 10px;
-    display: inline-flex;
-    place-self: start;
-  }
-
-  .help-fields {
+  .help-item-body {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 560px) {
-  .help-actions {
+@media (max-width: 520px) {
+  .help-item-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .help-header-actions,
+  .help-rail-actions,
+  .help-item-actions {
     width: 100%;
   }
 
-  .help-actions .cta-black-button.desktop-button,
-  .help-actions .cta-accent-button.desktop-button {
-    width: 100% !important;
-    max-width: none !important;
+  .help-header-actions .help-btn,
+  .help-rail-actions .help-btn,
+  .help-item-actions .help-btn {
+    width: 100%;
+    justify-content: center;
   }
-
-  .help-kv {
-    padding: 11px;
-  }
-}
-
-/* =========================================================
-   OPTIONAL: SAFETY (if sidebar overlay adds body no scroll)
-========================================================= */
-.body-no-scroll {
-  overflow: hidden;
 }
