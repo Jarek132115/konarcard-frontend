@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
-import "../../styling/dashboard/helpcentreinetrface.css";
+import "../../styling/dashboard/helpcentreinterface.css";
 
 import { AuthContext } from "../../components/AuthContext";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
