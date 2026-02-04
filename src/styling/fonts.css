@@ -38,7 +38,7 @@ body {
   /* =========================================================
      PAGE LAYOUT UTILITIES (CONSISTENT NAV GAP)
      ========================================================= */
-  --kc-page-top-space: 140px;
+  --kc-page-top-space: 160px;
   --kc-page-top-space-mobile: 120px;
 
   /* Optional: reusable focus + accent shadow tokens */
