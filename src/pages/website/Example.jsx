@@ -11,35 +11,13 @@ import "../../styling/fonts.css";
 /* Page CSS */
 import "../../styling/example.css";
 
+/* Images */
+import ExampleTest from "../../assets/images/ExampleTest.jpg";
+
 /* Icons */
 import WorksOnEveryPhone from "../../assets/icons/Works_On_Every_Phone.svg";
 import BuiltForRealTrades from "../../assets/icons/Built_For_Real_Trades.svg";
 import OneLinkForEverything from "../../assets/icons/One_Link_For_Everything.svg";
-
-function ExampleThumb({ initials = "K" }) {
-    return (
-        <div className="ex-cardThumb" aria-hidden="true">
-            <div className="ex-phone">
-                <div className="ex-phoneTop" />
-                <div className="ex-phoneScreen">
-                    <div className="ex-bar" />
-                    <div className="ex-bar ex-bar2" />
-                    <div className="ex-grid">
-                        <div className="ex-tile" />
-                        <div className="ex-tile" />
-                        <div className="ex-tile" />
-                        <div className="ex-tile" />
-                    </div>
-                </div>
-            </div>
-
-            <div className="ex-physicalCard">
-                <div className="ex-physicalK">{initials}</div>
-                <div className="ex-physicalSub">KonarCard</div>
-            </div>
-        </div>
-    );
-}
 
 export default function Example() {
     const categories = useMemo(
@@ -107,7 +85,7 @@ export default function Example() {
         <>
             <Navbar />
 
-            {/* IMPORTANT: kc-page gives the consistent nav->heading spacing */}
+            {/* kc-page gives spacing; we also add extra safety padding in CSS */}
             <main className="kc-examples kc-page">
                 {/* HERO */}
                 <section className="kc-examples__hero">
@@ -119,7 +97,7 @@ export default function Example() {
                         </h1>
 
                         <p className="body-s kc-examples__subtitle">
-                            Real-world examples of how KonarCard helps you win more work — from first contact to repeat jobs.
+                            Real profiles. Real cards. Real examples of how KonarCard helps win more work.
                         </p>
 
                         <div className="kc-examples__tabs" role="tablist" aria-label="Example categories">
@@ -145,29 +123,22 @@ export default function Example() {
                 {/* GRID */}
                 <section className="kc-examples__gridSection" aria-label="Example profiles">
                     <div className="kc-examples__grid">
-                        {visible.map((item) => {
-                            const initials = item.name
-                                .split(" ")
-                                .slice(0, 2)
-                                .map((w) => w[0])
-                                .join("")
-                                .toUpperCase();
+                        {visible.map((item) => (
+                            <article className="ex-card" key={item.id}>
+                                {/* 1:1 image */}
+                                <div className="ex-imageWrap">
+                                    <img src={ExampleTest} alt="" className="ex-image" loading="lazy" />
+                                </div>
 
-                            return (
-                                <article className="ex-card" key={item.id}>
-                                    <ExampleThumb initials={initials} />
-
-                                    <div className="ex-cardBody">
-                                        <div className="ex-cardTop">
-                                            <span className="ex-roleTag pill">{item.role}</span>
-                                        </div>
-
-                                        <p className="h6 ex-cardTitle">{item.name}</p>
-                                        <p className="body-s ex-cardDesc">{item.desc}</p>
-                                    </div>
-                                </article>
-                            );
-                        })}
+                                {/* info underneath */}
+                                <div className="ex-cardBody">
+                                    <p className="h6 ex-cardTitle">
+                                        {item.role} — {item.name.split(" ")[0]}
+                                    </p>
+                                    <p className="body-s ex-cardDesc">{item.desc}</p>
+                                </div>
+                            </article>
+                        ))}
                     </div>
                 </section>
 
