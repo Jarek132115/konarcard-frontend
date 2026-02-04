@@ -804,7 +804,7 @@
 
     /* give the card breathing room so it never clips */
     height: auto !important;
-    min-height: 420px;
+    min-height: 600px;
     /* desktop */
     padding: 44px 0 56px !important;
     /* extra top/bottom space */
@@ -820,7 +820,7 @@
 
 /* if you're using the small modifier, keep it roomy too */
 .kc-premStage__surface--small {
-    min-height: 380px;
+    min-height: 420px;
     padding: 40px 0 52px !important;
     overflow: visible !important;
 }
