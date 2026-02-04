@@ -14,9 +14,9 @@ canvas {
 /* ---------- Root ---------- */
 html,
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: #FFFFFF;
-  color: #0F172A;
+  font-family: "Inter", sans-serif;
+  background-color: #ffffff;
+  color: #0f172a;
 }
 
 /* =========================================================
@@ -24,16 +24,27 @@ body {
    ========================================================= */
 
 :root {
-  --kc-bg-main: #FFFFFF;
-  --kc-bg-soft: #FAFAFA;
+  --kc-bg-main: #ffffff;
+  --kc-bg-soft: #fafafa;
 
-  --kc-text-primary: #0F172A;
+  --kc-text-primary: #0f172a;
   --kc-text-secondary: #475569;
 
-  --kc-accent-primary: #F97316;
+  --kc-accent-primary: #f97316;
   --kc-accent-secondary: #111827;
 
-  --kc-border: #E5E7EB;
+  --kc-border: #e5e7eb;
+
+  /* =========================================================
+     PAGE LAYOUT UTILITIES (CONSISTENT NAV GAP)
+     ========================================================= */
+  --kc-page-top-space: 140px;
+  --kc-page-top-space-mobile: 120px;
+
+  /* Optional: reusable focus + accent shadow tokens */
+  --kc-focus-ring: rgba(249, 115, 22, 0.2);
+  --kc-shadow-accent: 0 12px 28px rgba(249, 115, 22, 0.25);
+  --kc-shadow-accent-hover: 0 16px 34px rgba(249, 115, 22, 0.32);
 }
 
 /* Utility colour classes (use sparingly) */
@@ -46,7 +57,7 @@ body {
 }
 
 .text-white {
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .bg-main {
@@ -59,6 +70,15 @@ body {
 
 .bg-orange {
   background-color: var(--kc-accent-primary);
+}
+
+/* =========================================================
+   PAGE LAYOUT HELPERS
+   ========================================================= */
+
+/* Apply to <main> on pages to keep spacing consistent site-wide */
+.kc-page {
+  padding-top: var(--kc-page-top-space);
 }
 
 /* =========================================================
@@ -196,6 +216,12 @@ body {
    ========================================================= */
 
 @media (max-width: 600px) {
+
+  /* consistent top spacing under navbar */
+  .kc-page {
+    padding-top: var(--kc-page-top-space-mobile);
+  }
+
   .h1 {
     font-size: 36px;
     line-height: 44px;

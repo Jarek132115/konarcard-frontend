@@ -20,7 +20,6 @@ export default function FAQPage() {
 
   const faqs = useMemo(
     () => [
-      // Getting started
       {
         tab: "getting-started",
         q: "What is KonarCard?",
@@ -42,7 +41,6 @@ export default function FAQPage() {
         a: "It’s ideal for electricians, plumbers, builders, landscapers, and any service business that wants more calls, more quotes, and easier referrals.",
       },
 
-      // Cards & profiles
       {
         tab: "cards-profiles",
         q: "How does the physical card work?",
@@ -69,7 +67,6 @@ export default function FAQPage() {
         a: "Yes. You can add your preferred contact methods and links — including WhatsApp, website, Google reviews, quote forms, and more.",
       },
 
-      // Pricing & plans
       {
         tab: "pricing",
         q: "What plans are available?",
@@ -91,7 +88,6 @@ export default function FAQPage() {
         a: "If there’s a delivery or print issue, we’ll make it right. For order help, message us via live chat or the Contact Us page.",
       },
 
-      // Teams
       {
         tab: "teams",
         q: "Can I create cards for my team?",
@@ -103,7 +99,6 @@ export default function FAQPage() {
         a: "Yes. Team setups can be managed from one place so branding and key details stay consistent.",
       },
 
-      // Technical & support
       {
         tab: "support",
         q: "Do I need an app?",
@@ -135,7 +130,8 @@ export default function FAQPage() {
     <>
       <Navbar />
 
-      <main className="kc-faq">
+      {/* kc-page gives the consistent navbar->heading gap across all pages */}
+      <main className="kc-faq kc-page">
         {/* Hero */}
         <section className="kc-faq__hero">
           <div className="kc-faq__heroInner">
@@ -147,11 +143,16 @@ export default function FAQPage() {
             <div className="kc-faq__tabs" role="tablist" aria-label="FAQ categories">
               {tabs.map((t) => {
                 const isActive = t.key === activeTab;
+
                 return (
                   <button
                     key={t.key}
                     type="button"
-                    className={`kc-faq__tab pill ${isActive ? "is-active" : ""}`}
+                    className={[
+                      "kc-faq__tab",
+                      "pill",
+                      isActive ? "bg-orange text-white" : "",
+                    ].join(" ")}
                     onClick={() => {
                       setActiveTab(t.key);
                       setOpenIndex(0);
@@ -200,7 +201,7 @@ export default function FAQPage() {
             If you can’t find what you’re looking for, our team is here to help.
           </p>
 
-          <Link to="/contactus" className="kc-faq__helpCta">
+          <Link to="/contactus" className="kc-faq__helpCta button-text bg-orange text-white">
             Start A Live Chat
           </Link>
         </section>

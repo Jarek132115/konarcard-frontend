@@ -1,22 +1,16 @@
 /* frontend/src/styling/faq.css */
 
 /* =========================================================
-   FAQ PAGE — FINAL
-   Uses design-system tokens + 8pt spacing
+   FAQ PAGE — Layout only
+   - No page-level text colour or font overrides
+   - Typography + colours come from fonts.css
    ========================================================= */
-
-/* Page base */
-.kc-faq {
-    background: var(--kc-bg-main);
-    color: var(--kc-text-primary);
-}
 
 /* =========================
    HERO
    ========================= */
 .kc-faq__hero {
-    /* space below fixed navbar */
-    padding: 112px 20px 32px;
+    padding: 0 20px 32px;
 }
 
 .kc-faq__heroInner {
@@ -32,11 +26,12 @@
 .kc-faq__subtitle {
     margin: 0 auto;
     max-width: 560px;
-    color: var(--kc-text-secondary);
 }
 
 /* =========================
-   TABS (PILLS) — MATCH IMAGE
+   TABS (PILLS)
+   - Base styling from .pill (fonts.css)
+   - Active styling uses bg-orange + text-white (fonts.css)
    ========================= */
 .kc-faq__tabs {
     margin-top: 24px;
@@ -46,30 +41,13 @@
     flex-wrap: wrap;
 }
 
-/* IMPORTANT: these pills should NOT inherit global .pill styles */
+/* Only layout/shape/interaction — no colours/fonts */
 .kc-faq__tab {
     appearance: none;
-    background: #ffffff;
-    color: var(--kc-text-primary);
-
-    border: 1px solid rgba(15, 23, 42, 0.30);
     border-radius: 999px;
-
-    padding: 8px 14px;
-    min-height: 32px;
-
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1;
-
+    border: 1px solid var(--kc-border);
     cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease,
-        color 0.15s ease, transform 0.08s ease;
-}
-
-.kc-faq__tab:hover {
-    border-color: rgba(15, 23, 42, 0.48);
+    transition: transform 0.08s ease, filter 0.15s ease;
 }
 
 .kc-faq__tab:active {
@@ -78,15 +56,7 @@
 
 .kc-faq__tab:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.18);
-    border-color: rgba(249, 115, 22, 0.65);
-}
-
-/* Active pill */
-.kc-faq__tab.is-active {
-    background: var(--kc-accent-primary);
-    border-color: var(--kc-accent-primary);
-    color: #ffffff;
+    box-shadow: 0 0 0 3px var(--kc-focus-ring);
 }
 
 /* =========================
@@ -110,9 +80,7 @@
 .kc-faq__qRow {
     width: 100%;
     text-align: left;
-
     padding: 24px 0;
-    /* 3 * 8 */
     background: transparent;
     border: none;
 
@@ -126,20 +94,17 @@
 
 .kc-faq__qRow:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
+    box-shadow: 0 0 0 3px var(--kc-focus-ring);
     border-radius: 10px;
 }
 
-/* Question text uses .h6 from design-system */
 .kc-faq__q {
     margin: 0;
-    color: var(--kc-text-primary);
 }
 
 /* Chevron */
 .kc-faq__chev {
     font-size: 14px;
-    color: var(--kc-text-secondary);
     transition: transform 0.15s ease;
 }
 
@@ -147,11 +112,9 @@
     transform: rotate(180deg);
 }
 
-/* Answer text uses .body-s in JSX; only spacing + max width here */
+/* Answer spacing only */
 .kc-faq__a {
     padding: 0 0 24px 0;
-    /* 3 * 8 */
-    color: var(--kc-text-secondary);
     max-width: 860px;
 }
 
@@ -159,10 +122,8 @@
    HELP SECTION
    ========================= */
 .kc-faq__help {
-    padding: 72px 20px 72px;
-    /* 9 * 8 */
+    padding: 72px 20px;
     text-align: center;
-    background: var(--kc-bg-main);
 }
 
 .kc-faq__helpTitle {
@@ -172,10 +133,9 @@
 .kc-faq__helpSub {
     margin: 0 auto 24px;
     max-width: 520px;
-    color: var(--kc-text-secondary);
 }
 
-/* CTA button */
+/* CTA — layout only (colour + type via className) */
 .kc-faq__helpCta {
     display: inline-flex;
     align-items: center;
@@ -183,24 +143,15 @@
 
     padding: 14px 30px;
     border-radius: 999px;
-
-    background: var(--kc-accent-primary);
-    color: #ffffff;
-
     text-decoration: none;
-    font-family: "Cal Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.4px;
 
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.25);
-    transition: transform 0.08s ease, filter 0.15s ease,
-        box-shadow 0.15s ease;
+    box-shadow: var(--kc-shadow-accent);
+    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
 }
 
 .kc-faq__helpCta:hover {
     filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.32);
+    box-shadow: var(--kc-shadow-accent-hover);
 }
 
 .kc-faq__helpCta:active {
@@ -209,32 +160,15 @@
 
 .kc-faq__helpCta:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.20),
-        0 16px 34px rgba(249, 115, 22, 0.32);
+    box-shadow: 0 0 0 3px var(--kc-focus-ring), var(--kc-shadow-accent-hover);
 }
 
 /* =========================
    RESPONSIVE
    ========================= */
 @media (max-width: 640px) {
-    .kc-faq__hero {
-        padding-top: 96px;
-        /* 12 * 8 */
-    }
-
-    .kc-faq__tabs {
-        gap: 8px;
-    }
-
-    .kc-faq__tab {
-        padding: 8px 12px;
-        min-height: 32px;
-        font-size: 12px;
-    }
-
     .kc-faq__qRow {
         padding: 16px 0;
-        /* 2 * 8 */
     }
 
     .kc-faq__a {
