@@ -21,6 +21,9 @@
     padding: 34px 20px 70px;
 }
 
+/* =========================================
+   Base crumbs (used across pages)
+   ========================================= */
 .kc-konarcard__crumbs {
     display: flex;
     align-items: center;
@@ -51,6 +54,9 @@
     color: rgba(12, 24, 48, 0.72);
 }
 
+/* =========================================
+   OLD grid layout (still used in other pages)
+   ========================================= */
 .kc-konarcard__grid {
     display: grid;
     grid-template-columns: 1.05fr 0.95fr;
@@ -135,9 +141,9 @@
     padding: 18px 18px 16px;
     position: sticky;
     top: 92px;
-    /* sits below fixed navbar */
 }
 
+/* pills */
 .kc-konarcard__badgeRow {
     display: flex;
     gap: 10px;
@@ -186,6 +192,7 @@
     color: var(--kc-muted);
 }
 
+/* price */
 .kc-konarcard__priceRow {
     display: flex;
     align-items: baseline;
@@ -211,6 +218,7 @@
     color: rgba(12, 24, 48, 0.55);
 }
 
+/* buy row */
 .kc-konarcard__buyRow {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -257,6 +265,7 @@
     color: rgba(12, 24, 48, 0.85);
 }
 
+/* CTAs */
 .kc-konarcard__cta {
     height: 52px;
     border-radius: 999px;
@@ -270,6 +279,7 @@
     font-weight: 900;
     letter-spacing: -0.01em;
     transition: transform 0.1s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    white-space: nowrap;
 }
 
 .kc-konarcard__cta:active {
@@ -301,6 +311,7 @@
     margin-top: 10px;
 }
 
+/* meta rows */
 .kc-konarcard__meta {
     margin-top: 16px;
     border-top: 1px solid rgba(12, 24, 48, 0.08);
@@ -329,6 +340,7 @@
     text-align: right;
 }
 
+/* sections */
 .kc-konarcard__section {
     margin-top: 34px;
 }
@@ -354,6 +366,7 @@
     font-size: 14px;
 }
 
+/* feature grid */
 .kc-konarcard__featureGrid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -469,6 +482,7 @@
     background: rgba(12, 24, 48, 0.06);
 }
 
+/* bottom CTA */
 .kc-konarcard__bottom {
     margin-top: 34px;
     border-top: 1px solid rgba(12, 24, 48, 0.08);
@@ -486,6 +500,452 @@
     padding: 18px;
 }
 
+/* =========================================
+   PREMIUM PRODUCT PAGE (NEW)
+   Used by PlasticCard.jsx premium layout
+   ========================================= */
+
+.kc-konarcard--premium {
+    background: #ffffff;
+}
+
+.kc-premHero {
+    border-radius: 22px;
+    border: 1px solid rgba(12, 24, 48, 0.08);
+    background:
+        radial-gradient(1200px 520px at 50% 0%, rgba(255, 123, 0, 0.10), rgba(255, 255, 255, 0) 62%),
+        linear-gradient(180deg, rgba(248, 250, 252, 1), rgba(255, 255, 255, 1));
+    padding: 22px 22px 18px;
+    box-shadow: 0 22px 60px rgba(12, 24, 48, 0.08);
+}
+
+.kc-premHero__crumbs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 13px;
+    color: rgba(12, 24, 48, 0.55);
+    margin-bottom: 14px;
+}
+
+.kc-premHero__titleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.kc-premHero__title {
+    margin: 0;
+    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 42px;
+    letter-spacing: -0.04em;
+    line-height: 1.03;
+    color: rgba(12, 24, 48, 0.95);
+}
+
+.kc-premHero__sub {
+    margin: 10px auto 0;
+    max-width: 880px;
+    text-align: center;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(12, 24, 48, 0.68);
+}
+
+/* Stage */
+.kc-premStage {
+    margin-top: 18px;
+}
+
+.kc-premStage__surface {
+    position: relative;
+    height: 460px;
+    border-radius: 20px;
+    border: 1px solid rgba(12, 24, 48, 0.08);
+    background:
+        radial-gradient(900px 340px at 50% 35%, rgba(255, 123, 0, 0.08), rgba(255, 255, 255, 0) 58%),
+        linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(248, 250, 252, 1));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 20px 60px rgba(12, 24, 48, 0.08);
+    display: grid;
+    place-items: center;
+    perspective: 1200px;
+    user-select: none;
+    touch-action: none;
+    cursor: grab;
+    overflow: hidden;
+}
+
+.kc-premStage__surface.is-dragging {
+    cursor: grabbing;
+}
+
+.kc-premStage__hint {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    color: rgba(12, 24, 48, 0.55);
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(12, 24, 48, 0.10);
+    border-radius: 999px;
+    padding: 8px 12px;
+}
+
+.kc-premStage__reset {
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(12, 24, 48, 0.14);
+    background: rgba(12, 24, 48, 0.04);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    color: rgba(12, 24, 48, 0.75);
+    cursor: pointer;
+}
+
+.kc-premCard {
+    width: min(820px, 92%);
+    aspect-ratio: 85.6 / 54;
+    position: relative;
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: transform 120ms ease;
+    filter: drop-shadow(0 34px 55px rgba(12, 24, 48, 0.16));
+}
+
+/* Faces */
+.kc-premFace {
+    position: absolute;
+    inset: 0;
+    border-radius: 22px;
+    overflow: hidden;
+    backface-visibility: hidden;
+    border: 1px solid rgba(12, 24, 48, 0.10);
+}
+
+.kc-premFace--front {
+    transform: translateZ(10px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(248, 250, 252, 1));
+}
+
+.kc-premFace--back {
+    transform: rotateY(180deg) translateZ(10px);
+    background: linear-gradient(135deg, rgba(12, 24, 48, 0.06), rgba(255, 255, 255, 0.92));
+}
+
+/* White plastic base */
+.kc-premFace__base {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(1100px 320px at 40% 20%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 60%),
+        linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(245, 247, 250, 1));
+}
+
+/* Optional subtle texture from chosen gallery image */
+.kc-premFace__texture {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.10;
+    transform: scale(1.02);
+}
+
+/* Logo placement */
+.kc-premLogoWrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+
+.kc-premLogo {
+    height: auto;
+    max-height: 70%;
+    object-fit: contain;
+    filter: drop-shadow(0 14px 18px rgba(12, 24, 48, 0.18));
+}
+
+/* Shine controlled by CSS variables */
+.kc-premShine {
+    position: absolute;
+    inset: -60%;
+    background:
+        radial-gradient(closest-side at var(--shineX, 45%) var(--shineY, 40%), rgba(255, 255, 255, 0.60), rgba(255, 255, 255, 0) 60%);
+    transform: rotate(18deg);
+    mix-blend-mode: screen;
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+/* Rim highlight */
+.kc-premRim {
+    position: absolute;
+    inset: 0;
+    border-radius: 22px;
+    pointer-events: none;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -10px 18px rgba(12, 24, 48, 0.04);
+}
+
+/* Back inner */
+.kc-premBackInner {
+    position: absolute;
+    inset: 0;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 18px;
+}
+
+.kc-premBackMeta {
+    display: grid;
+    gap: 6px;
+}
+
+.kc-premBackK {
+    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    color: rgba(12, 24, 48, 0.88);
+}
+
+.kc-premBackS {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(12, 24, 48, 0.62);
+}
+
+/* QR box */
+.kc-premQr {
+    width: 130px;
+    height: 130px;
+    border-radius: 16px;
+    border: 1px solid rgba(12, 24, 48, 0.12);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 18px 30px rgba(12, 24, 48, 0.10);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+
+/* thickness illusion edges */
+.kc-premEdge {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 18px;
+    transform-style: preserve-3d;
+    pointer-events: none;
+}
+
+.kc-premEdge--top {
+    top: 0;
+    transform: translateZ(0px) rotateX(90deg);
+    transform-origin: top;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(12, 24, 48, 0.06));
+}
+
+.kc-premEdge--bottom {
+    bottom: 0;
+    transform: translateZ(0px) rotateX(-90deg);
+    transform-origin: bottom;
+    background: linear-gradient(180deg, rgba(12, 24, 48, 0.07), rgba(255, 255, 255, 0.85));
+}
+
+/* Controls bar */
+.kc-premControls {
+    margin-top: 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(12, 24, 48, 0.08);
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 18px 44px rgba(12, 24, 48, 0.06);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.kc-premControls__left {
+    display: grid;
+    gap: 2px;
+}
+
+.kc-premControls__label {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    color: rgba(12, 24, 48, 0.88);
+}
+
+.kc-premControls__sub {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.60);
+}
+
+.kc-premControls__right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.kc-premBtn {
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(12, 24, 48, 0.14);
+    background: rgba(255, 255, 255, 0.92);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.88);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+.kc-premBtn:active {
+    transform: translateY(1px);
+}
+
+.kc-premBtn input {
+    display: none;
+}
+
+.kc-premBtn--ghost {
+    background: rgba(12, 24, 48, 0.05);
+}
+
+.kc-premBtn[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.kc-premSlider {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(12, 24, 48, 0.12);
+    background: rgba(255, 255, 255, 0.78);
+    padding: 0 12px;
+}
+
+.kc-premSlider__k {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.72);
+}
+
+.kc-premSlider input[type="range"] {
+    width: 220px;
+    accent-color: var(--kc-orange);
+}
+
+.kc-premSlider__v {
+    width: 44px;
+    text-align: right;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.74);
+}
+
+/* Buy row under hero */
+.kc-premBuy {
+    margin-top: 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(12, 24, 48, 0.08);
+    background: #ffffff;
+    box-shadow: 0 18px 44px rgba(12, 24, 48, 0.06);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.kc-premPrice {
+    display: grid;
+    gap: 4px;
+}
+
+.kc-premPrice__value {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 34px;
+    font-weight: 950;
+    letter-spacing: -0.03em;
+    color: rgba(12, 24, 48, 0.95);
+}
+
+.kc-premPrice__note {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(12, 24, 48, 0.60);
+}
+
+.kc-premBuy__right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+/* thumbs section */
+.kc-premThumbs {
+    margin-top: 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(12, 24, 48, 0.08);
+    background: rgba(12, 24, 48, 0.02);
+    padding: 14px;
+}
+
+.kc-premThumbs__label {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    color: rgba(12, 24, 48, 0.62);
+    margin-bottom: 8px;
+}
+
+/* =========================================
+   Responsive
+   ========================================= */
 @media (max-width: 1020px) {
     .kc-konarcard__grid {
         grid-template-columns: 1fr;
@@ -503,6 +963,14 @@
     .kc-konarcard__bottomInner {
         flex-direction: column;
         text-align: center;
+    }
+
+    .kc-premStage__surface {
+        height: 420px;
+    }
+
+    .kc-premCard {
+        width: min(760px, 94%);
     }
 }
 
@@ -535,352 +1003,20 @@
         justify-content: center;
         width: 100%;
     }
-}
 
-/* ============================
-   NEW: Live 3D Preview + Customizer
-   ============================ */
-
-.kc-konarcard__previewHead {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
-.kc-konarcard__previewKicker {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.55);
-    letter-spacing: -0.01em;
-}
-
-.kc-konarcard__previewTitle {
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 18px;
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    color: rgba(12, 24, 48, 0.92);
-    margin-top: 4px;
-}
-
-.kc-konarcard__tinyBtn {
-    height: 36px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(12, 24, 48, 0.14);
-    background: rgba(255, 255, 255, 0.9);
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 900;
-    font-size: 12px;
-    color: rgba(12, 24, 48, 0.85);
-    cursor: pointer;
-    transition: transform 0.1s ease, filter 0.15s ease;
-}
-
-.kc-konarcard__tinyBtn:active {
-    transform: translateY(1px);
-}
-
-/* 3D stage */
-.kc-3dWrap {
-    border-radius: 16px;
-    border: 1px solid rgba(12, 24, 48, 0.08);
-    background: radial-gradient(1200px 420px at 50% 35%, rgba(255, 123, 0, 0.10), rgba(255, 255, 255, 0.0));
-    padding: 14px;
-    margin-bottom: 12px;
-}
-
-.kc-3dStage {
-    position: relative;
-    height: 340px;
-    border-radius: 14px;
-    background: linear-gradient(180deg, rgba(248, 250, 252, 1), rgba(244, 247, 252, 1));
-    display: grid;
-    place-items: center;
-    perspective: 1000px;
-    user-select: none;
-    touch-action: none;
-    cursor: grab;
-    overflow: hidden;
-}
-
-.kc-3dStage.is-dragging {
-    cursor: grabbing;
-}
-
-.kc-3dHint {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.55);
-    background: rgba(255, 255, 255, 0.75);
-    border: 1px solid rgba(12, 24, 48, 0.08);
-    border-radius: 999px;
-    padding: 7px 12px;
-}
-
-.kc-3dCard {
-    width: min(520px, 92%);
-    aspect-ratio: 85.6 / 54;
-    /* card ratio */
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 120ms ease;
-    will-change: transform;
-    filter: drop-shadow(0 28px 40px rgba(12, 24, 48, 0.14));
-}
-
-.kc-3dFace {
-    position: absolute;
-    inset: 0;
-    border-radius: 18px;
-    overflow: hidden;
-    backface-visibility: hidden;
-    border: 1px solid rgba(12, 24, 48, 0.10);
-}
-
-.kc-3dFace--front {
-    transform: translateZ(6px);
-}
-
-.kc-3dFace--back {
-    transform: rotateY(180deg) translateZ(6px);
-    background: linear-gradient(135deg, rgba(12, 24, 48, 0.06), rgba(255, 255, 255, 0.9));
-}
-
-.kc-3dCard--plastic .kc-3dFace--front {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(248, 250, 252, 1));
-}
-
-/* Front texture (your gallery image) */
-.kc-3dTexture {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    opacity: 0.85;
-    transform: scale(1.02);
-}
-
-/* subtle brand corner mark */
-.kc-3dBrandMark {
-    position: absolute;
-    inset: 0;
-    background:
-        radial-gradient(800px 260px at 35% 25%, rgba(255, 123, 0, 0.16), rgba(255, 255, 255, 0) 60%),
-        linear-gradient(135deg, rgba(12, 24, 48, 0.04), rgba(255, 255, 255, 0));
-    pointer-events: none;
-}
-
-/* Logo */
-.kc-3dLogo {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: auto;
-    max-height: 72%;
-    object-fit: contain;
-    filter: drop-shadow(0 10px 16px rgba(12, 24, 48, 0.18));
-    pointer-events: none;
-}
-
-.kc-3dLogoPlaceholder {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 74%;
-    transform: translate(-50%, -50%);
-    border-radius: 14px;
-    border: 1px dashed rgba(12, 24, 48, 0.18);
-    background: rgba(255, 255, 255, 0.65);
-    padding: 14px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    pointer-events: none;
-}
-
-.kc-3dLogoDot {
-    width: 34px;
-    height: 34px;
-    border-radius: 12px;
-    background: rgba(255, 123, 0, 0.14);
-    border: 1px solid rgba(255, 123, 0, 0.22);
-    flex: 0 0 auto;
-}
-
-.kc-3dLogoPhT {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 13px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.9);
-    margin-bottom: 2px;
-}
-
-.kc-3dLogoPhS {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-    color: rgba(12, 24, 48, 0.6);
-}
-
-/* Shine overlay */
-.kc-3dShine {
-    position: absolute;
-    inset: -40%;
-    background: radial-gradient(closest-side at 30% 35%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 60%);
-    transform: rotate(18deg);
-    mix-blend-mode: screen;
-    opacity: 0.7;
-    pointer-events: none;
-}
-
-/* Back face */
-.kc-3dBackInner {
-    position: absolute;
-    inset: 0;
-    padding: 18px;
-    display: grid;
-    align-content: center;
-    justify-items: center;
-    gap: 10px;
-}
-
-.kc-3dBackTitle {
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 18px;
-    letter-spacing: -0.02em;
-    color: rgba(12, 24, 48, 0.9);
-}
-
-.kc-3dBackSub {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-    color: rgba(12, 24, 48, 0.6);
-}
-
-.kc-3dFakeQr {
-    width: 84px;
-    height: 84px;
-    border-radius: 12px;
-    border: 1px solid rgba(12, 24, 48, 0.12);
-    background:
-        linear-gradient(90deg, rgba(12, 24, 48, 0.08) 1px, transparent 1px) 0 0 / 10px 10px,
-        linear-gradient(0deg, rgba(12, 24, 48, 0.08) 1px, transparent 1px) 0 0 / 10px 10px,
-        rgba(255, 255, 255, 0.85);
-}
-
-/* Customizer */
-.kc-customize {
-    margin-top: 6px;
-    border-top: 1px solid rgba(12, 24, 48, 0.08);
-    padding-top: 12px;
-    display: grid;
-    gap: 12px;
-}
-
-.kc-customize__row {
-    display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 12px;
-    align-items: center;
-}
-
-.kc-customize__label {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.7);
-}
-
-.kc-customize__actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.kc-customize__file {
-    height: 40px;
-    padding: 0 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(12, 24, 48, 0.14);
-    background: rgba(255, 255, 255, 0.9);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 900;
-    font-size: 12px;
-    color: rgba(12, 24, 48, 0.9);
-    cursor: pointer;
-}
-
-.kc-customize__file input {
-    display: none;
-}
-
-.kc-customize__ghost {
-    height: 40px;
-    padding: 0 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(12, 24, 48, 0.14);
-    background: rgba(12, 24, 48, 0.06);
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 900;
-    font-size: 12px;
-    color: rgba(12, 24, 48, 0.86);
-    cursor: pointer;
-}
-
-.kc-customize__ghost[disabled] {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.kc-customize__slider {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-}
-
-.kc-customize__slider input[type="range"] {
-    width: min(320px, 100%);
-    accent-color: var(--kc-orange);
-}
-
-.kc-customize__val {
-    width: 54px;
-    text-align: right;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.75);
-}
-
-@media (max-width: 560px) {
-    .kc-customize__row {
-        grid-template-columns: 1fr;
-        gap: 8px;
+    .kc-premHero {
+        padding: 18px 14px 14px;
     }
 
-    .kc-customize__actions,
-    .kc-customize__slider {
-        justify-content: flex-start;
+    .kc-premHero__title {
+        font-size: 34px;
     }
 
-    .kc-3dStage {
-        height: 300px;
+    .kc-premStage__surface {
+        height: 340px;
+    }
+
+    .kc-premSlider input[type="range"] {
+        width: 160px;
     }
 }
