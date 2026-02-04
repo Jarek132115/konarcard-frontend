@@ -1,81 +1,125 @@
-import React, { useMemo, useState } from "react";
+// frontend/src/pages/interface/ContactBook.jsx
+import React, { useMemo, useState, useEffect, useContext } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
+import PageHeader from "../../components/Dashboard/PageHeader";
 import "../../styling/dashboard/contactbook.css";
+import api from "../../services/api";
+import { AuthContext } from "../../components/AuthContext";
+import { toast } from "react-hot-toast";
+
+const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
+
+function safeDate(d) {
+    try {
+        const dt = new Date(d);
+        if (Number.isNaN(dt.getTime())) return "";
+        return dt.toISOString().slice(0, 10);
+    } catch {
+        return "";
+    }
+}
 
 export default function ContactBook() {
-    // TEMP: later replace with real backend data
-    const [contacts, setContacts] = useState([
-        {
-            id: "ct1",
-            name: "John Smith",
-            email: "john@example.com",
-            phone: "+44 7700 900123",
-            source: "card_tap", // card_tap | link_view | qr_scan
-            interactions: 3,
-            firstSeen: "2026-01-18",
-            lastSeen: "2026-02-01",
-            note: "Asked for a quote. Follow up next week.",
-        },
-        {
-            id: "ct2",
-            name: "Sarah Brown",
-            email: "sarah@example.com",
-            phone: "",
-            source: "link_view",
-            interactions: 1,
-            firstSeen: "2026-01-28",
-            lastSeen: "2026-01-28",
-            note: "",
-        },
-        {
-            id: "ct3",
-            name: "Unknown Visitor",
-            email: "",
-            phone: "",
-            source: "qr_scan",
-            interactions: 2,
-            firstSeen: "2026-01-30",
-            lastSeen: "2026-02-01",
-            note: "",
-        },
-    ]);
+    const { user: authUser } = useContext(AuthContext);
+    const queryClient = useQueryClient();
 
     const [search, setSearch] = useState("");
-    const [selectedId, setSelectedId] = useState(contacts[0]?.id || null);
+    const [selectedId, setSelectedId] = useState(null);
 
-    const selected = useMemo(
-        () => contacts.find((c) => c.id === selectedId) || contacts[0] || null,
-        [contacts, selectedId]
-    );
+    // match other pages’ responsive logic
+    const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
+    const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
+
+    // ✅ Fetch real contact exchanges (protected)
+    const {
+        data: exchanges,
+        isLoading,
+        isError,
+        error,
+    } = useQuery({
+        queryKey: ["contact-exchanges"],
+        queryFn: async () => {
+            const res = await api.get("/contact-exchanges");
+            return Array.isArray(res.data) ? res.data : [];
+        },
+        enabled: !!authUser,
+        staleTime: 60 * 1000,
+        retry: 1,
+    });
+
+    // ✅ Transform backend schema -> UI model
+    const contacts = useMemo(() => {
+        const xs = Array.isArray(exchanges) ? exchanges : [];
+        return xs.map((x) => {
+            const name = x.visitor_name || "Unknown Visitor";
+            const email = x.visitor_email || "";
+            const phone = x.visitor_phone || "";
+            const note = x.message || "";
+
+            return {
+                id: x._id,
+                name,
+                email,
+                phone,
+                source: "exchange_contact",
+                interactions: 1,
+                firstSeen: safeDate(x.createdAt),
+                lastSeen: safeDate(x.createdAt),
+                note,
+                raw: x,
+            };
+        });
+    }, [exchanges]);
+
+    // ✅ Pick first contact when loaded
+    useEffect(() => {
+        if (!selectedId && contacts.length > 0) {
+            setSelectedId(contacts[0].id);
+        }
+        if (selectedId && contacts.length > 0) {
+            const stillExists = contacts.some((c) => c.id === selectedId);
+            if (!stillExists) setSelectedId(contacts[0].id);
+        }
+    }, [contacts, selectedId]);
+
+    const selected = useMemo(() => {
+        if (!contacts.length) return null;
+        return contacts.find((c) => c.id === selectedId) || contacts[0] || null;
+    }, [contacts, selectedId]);
 
     const filtered = useMemo(() => {
         const q = search.trim().toLowerCase();
         if (!q) return contacts;
+
         return contacts.filter((c) => {
             return (
                 (c.name || "").toLowerCase().includes(q) ||
                 (c.email || "").toLowerCase().includes(q) ||
-                (c.phone || "").toLowerCase().includes(q)
+                (c.phone || "").toLowerCase().includes(q) ||
+                (c.note || "").toLowerCase().includes(q)
             );
         });
     }, [contacts, search]);
 
     const sourceLabel = (s) => {
-        if (s === "card_tap") return "Card tap";
-        if (s === "link_view") return "Link view";
-        if (s === "qr_scan") return "QR scan";
+        if (s === "exchange_contact") return "Exchange contact";
         return "Unknown";
     };
 
     const exportCSV = () => {
+        if (!contacts.length) {
+            toast.error("No contacts to export.");
+            return;
+        }
+
         const rows = [
-            ["Name", "Email", "Phone", "Source", "Interactions", "First Seen", "Last Seen", "Note"],
+            ["Name", "Email", "Phone", "Source", "First Seen", "Last Seen", "Message"],
             ...contacts.map((c) => [
                 c.name || "",
                 c.email || "",
                 c.phone || "",
                 sourceLabel(c.source),
-                String(c.interactions ?? 0),
                 c.firstSeen || "",
                 c.lastSeen || "",
                 (c.note || "").replace(/\n/g, " "),
@@ -97,54 +141,59 @@ export default function ContactBook() {
         URL.revokeObjectURL(url);
     };
 
-    const deleteContact = (id) => {
+    const deleteContact = async (id) => {
         const ok = window.confirm("Delete this contact? This cannot be undone.");
         if (!ok) return;
 
-        const next = contacts.filter((c) => c.id !== id);
-        setContacts(next);
-
-        if (selectedId === id) setSelectedId(next[0]?.id || null);
+        try {
+            await api.delete(`/contact-exchanges/${id}`);
+            toast.success("Contact deleted");
+            queryClient.invalidateQueries({ queryKey: ["contact-exchanges"] });
+        } catch (err) {
+            toast.error(err?.response?.data?.error || "Failed to delete contact");
+        }
     };
 
+    // ✅ Page header right slot like other dashboard pages
+    const rightSlot = (
+        <button type="button" className="cb-btn cb-btn-primary" onClick={exportCSV}>
+            Export CSV
+        </button>
+    );
+
     return (
-        <DashboardLayout
-            title="Contact Book"
-            subtitle="People who have tapped or viewed your profile."
-            rightSlot={
-                <button type="button" className="cb-btn cb-btn-primary" onClick={exportCSV}>
-                    Export CSV
-                </button>
-            }
-        >
+        <DashboardLayout title="Contact Book" subtitle="People who exchanged details with you." hideDesktopHeader>
             <div className="cb-shell">
-                {/* 2. Page Header */}
-                <div className="cb-header">
-                    <div>
-                        <h1 className="cb-title">Contact Book</h1>
-                        <p className="cb-subtitle">
-                            This is your growing list of people who interacted with your KonarCard profile —
-                            card taps, link views, and QR scans.
+                <PageHeader
+                    title="Contact Book"
+                    subtitle="People who exchanged their details from your public KonarCard profile."
+                    isMobile={isMobile}
+                    isSmallMobile={isSmallMobile}
+                    rightSlot={rightSlot}
+                />
+
+                {/* Loading / Error */}
+                {isLoading ? (
+                    <section className="cb-card cb-empty" style={{ marginTop: 16 }}>
+                        <h2 className="cb-card-title">Loading contacts…</h2>
+                        <p className="cb-muted">Fetching your latest exchanges.</p>
+                    </section>
+                ) : isError ? (
+                    <section className="cb-card cb-empty" style={{ marginTop: 16 }}>
+                        <h2 className="cb-card-title">Couldn’t load contacts</h2>
+                        <p className="cb-muted">
+                            {error?.response?.data?.error || error?.message || "Something went wrong."}
                         </p>
-                    </div>
-
-                    <div className="cb-header-meta">
-                        <span className="cb-pill">
-                            Total contacts: <strong>{contacts.length}</strong>
-                        </span>
-                    </div>
-                </div>
-
-                {/* Empty State */}
-                {contacts.length === 0 ? (
-                    <section className="cb-card cb-empty">
+                    </section>
+                ) : contacts.length === 0 ? (
+                    <section className="cb-card cb-empty" style={{ marginTop: 16 }}>
                         <h2 className="cb-card-title">No contacts yet</h2>
                         <p className="cb-muted">
-                            Your contact book will populate as soon as people tap your card or view your link.
+                            This page will populate when someone presses <strong>Exchange Contact</strong> on your public profile.
                         </p>
                         <div className="cb-actions-row">
                             <a className="cb-btn cb-btn-primary" href="/profiles">
-                                Share profile link
+                                Go to profiles
                             </a>
                             <a className="cb-btn cb-btn-ghost" href="/cards">
                                 Manage cards
@@ -152,15 +201,13 @@ export default function ContactBook() {
                         </div>
                     </section>
                 ) : (
-                    <div className="cb-grid">
-                        {/* 3. Contacts List (Core Section) */}
+                    <div className="cb-grid" style={{ marginTop: 16 }}>
+                        {/* LEFT: list */}
                         <section className="cb-card cb-span-7">
                             <div className="cb-card-head">
                                 <div>
                                     <h2 className="cb-card-title">Contacts list</h2>
-                                    <p className="cb-muted">
-                                        Search and select a contact to see details and interaction history.
-                                    </p>
+                                    <p className="cb-muted">Search and select a contact to view details.</p>
                                 </div>
 
                                 <div className="cb-search">
@@ -183,7 +230,7 @@ export default function ContactBook() {
                                     >
                                         <div className="cb-item-left">
                                             <div className="cb-avatar" aria-hidden="true">
-                                                {(c.name || "U").slice(0, 1)}
+                                                {(c.name || "U").slice(0, 1).toUpperCase()}
                                             </div>
 
                                             <div className="cb-item-meta">
@@ -191,7 +238,7 @@ export default function ContactBook() {
                                                 <div className="cb-item-sub">
                                                     <span className="cb-source">{sourceLabel(c.source)}</span>
                                                     <span className="cb-dot">•</span>
-                                                    <span className="cb-muted">Last seen {c.lastSeen}</span>
+                                                    <span className="cb-muted">Received {c.lastSeen || "—"}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -204,33 +251,27 @@ export default function ContactBook() {
                                 ))}
 
                                 {filtered.length === 0 && (
-                                    <div className="cb-empty-inline">
-                                        No contacts match “{search}”.
-                                    </div>
+                                    <div className="cb-empty-inline">No contacts match “{search}”.</div>
                                 )}
                             </div>
                         </section>
 
-                        {/* 4. Contact Detail View */}
+                        {/* RIGHT: detail */}
                         <section className="cb-card cb-span-5">
                             <div className="cb-card-head">
                                 <div>
                                     <h2 className="cb-card-title">Contact detail</h2>
-                                    <p className="cb-muted">
-                                        Useful context about this person and how they interacted.
-                                    </p>
+                                    <p className="cb-muted">Details submitted through Exchange Contact.</p>
                                 </div>
                             </div>
 
                             {!selected ? (
-                                <div className="cb-empty-detail">
-                                    Select a contact to view details.
-                                </div>
+                                <div className="cb-empty-detail">Select a contact to view details.</div>
                             ) : (
                                 <div className="cb-detail">
                                     <div className="cb-detail-top">
                                         <div className="cb-detail-avatar" aria-hidden="true">
-                                            {(selected.name || "U").slice(0, 1)}
+                                            {(selected.name || "U").slice(0, 1).toUpperCase()}
                                         </div>
 
                                         <div>
@@ -244,40 +285,32 @@ export default function ContactBook() {
                                     <div className="cb-detail-grid">
                                         <div className="cb-detail-row">
                                             <div className="cb-detail-label">Email</div>
-                                            <div className="cb-detail-value">{selected.email || "—"}</div>
+                                            <div className="cb-detail-value">{nonEmpty(selected.email) ? selected.email : "—"}</div>
                                         </div>
 
                                         <div className="cb-detail-row">
                                             <div className="cb-detail-label">Phone</div>
-                                            <div className="cb-detail-value">{selected.phone || "—"}</div>
+                                            <div className="cb-detail-value">{nonEmpty(selected.phone) ? selected.phone : "—"}</div>
                                         </div>
 
                                         <div className="cb-detail-row">
-                                            <div className="cb-detail-label">Interactions</div>
-                                            <div className="cb-detail-value">
-                                                {selected.interactions ?? 0}
-                                            </div>
-                                        </div>
-
-                                        <div className="cb-detail-row">
-                                            <div className="cb-detail-label">First seen</div>
+                                            <div className="cb-detail-label">Received</div>
                                             <div className="cb-detail-value">{selected.firstSeen || "—"}</div>
                                         </div>
 
                                         <div className="cb-detail-row">
-                                            <div className="cb-detail-label">Last seen</div>
-                                            <div className="cb-detail-value">{selected.lastSeen || "—"}</div>
+                                            <div className="cb-detail-label">Profile</div>
+                                            <div className="cb-detail-value">{selected.raw?.profile_slug || "—"}</div>
                                         </div>
                                     </div>
 
                                     <div className="cb-note">
-                                        <div className="cb-note-title">Notes</div>
+                                        <div className="cb-note-title">Message</div>
                                         <div className="cb-note-body">
-                                            {selected.note?.trim() ? selected.note : "No notes yet."}
+                                            {nonEmpty(selected.note) ? selected.note : "No message."}
                                         </div>
                                     </div>
 
-                                    {/* 5. Export & Management */}
                                     <div className="cb-manage">
                                         <button type="button" className="cb-btn cb-btn-ghost" onClick={exportCSV}>
                                             Export CSV
@@ -293,7 +326,7 @@ export default function ContactBook() {
                                     </div>
 
                                     <div className="cb-hint">
-                                        Tip: Add your QR code to invoices and signage to collect more contacts.
+                                        Tip: Add “Exchange Contact” on your profile to collect leads faster.
                                     </div>
                                 </div>
                             )}
