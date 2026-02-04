@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Navbar from "../../../components/Navbar";
@@ -7,7 +7,7 @@ import Footer from "../../../components/Footer";
 /* ✅ Shared CSS for Plastic + Metal */
 import "../../../styling/products/konarcard.css";
 
-/* Images (swap these later with your real product images if needed) */
+/* Images (swap later) */
 import ProductCover from "../../../assets/images/Product-Cover.png";
 import ProductImage1 from "../../../assets/images/Product-Image-1.png";
 import ProductImage2 from "../../../assets/images/Product-Image-2.png";
@@ -22,6 +22,89 @@ export default function PlasticCard() {
 
     const [activeImg, setActiveImg] = useState(gallery[0]);
     const [qty, setQty] = useState(1);
+
+    // ---- Logo upload preview (frontend-only) ----
+    const [logoUrl, setLogoUrl] = useState("");
+    const [logoSize, setLogoSize] = useState(46); // percent of card height-ish
+
+    useEffect(() => {
+        return () => {
+            if (logoUrl) URL.revokeObjectURL(logoUrl);
+        };
+    }, [logoUrl]);
+
+    const onPickLogo = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // simple image guard
+        if (!file.type.startsWith("image/")) return;
+
+        if (logoUrl) URL.revokeObjectURL(logoUrl);
+        setLogoUrl(URL.createObjectURL(file));
+    };
+
+    const clearLogo = () => {
+        if (logoUrl) URL.revokeObjectURL(logoUrl);
+        setLogoUrl("");
+    };
+
+    // ---- Drag 3D rotation ----
+    const wrapRef = useRef(null);
+    const dragRef = useRef({
+        isDown: false,
+        startX: 0,
+        startY: 0,
+        baseRX: -10,
+        baseRY: 18,
+    });
+
+    const [rot, setRot] = useState({ rx: -10, ry: 18 });
+    const [isDragging, setIsDragging] = useState(false);
+
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+    const setRotation = (rx, ry) => {
+        setRot({
+            rx: clamp(rx, -28, 28),
+            ry: clamp(ry, -40, 40),
+        });
+    };
+
+    const onPointerDown = (e) => {
+        // allow drag on touch + mouse
+        dragRef.current.isDown = true;
+        setIsDragging(true);
+
+        dragRef.current.startX = e.clientX;
+        dragRef.current.startY = e.clientY;
+        dragRef.current.baseRX = rot.rx;
+        dragRef.current.baseRY = rot.ry;
+
+        // capture pointer so it keeps dragging even if cursor leaves
+        try {
+            e.currentTarget.setPointerCapture(e.pointerId);
+        } catch { }
+    };
+
+    const onPointerMove = (e) => {
+        if (!dragRef.current.isDown) return;
+        const dx = e.clientX - dragRef.current.startX;
+        const dy = e.clientY - dragRef.current.startY;
+
+        // tweak sensitivity
+        const nextRY = dragRef.current.baseRY + dx * 0.12;
+        const nextRX = dragRef.current.baseRX - dy * 0.12;
+
+        setRotation(nextRX, nextRY);
+    };
+
+    const onPointerUp = () => {
+        dragRef.current.isDown = false;
+        setIsDragging(false);
+    };
+
+    const resetView = () => setRotation(-10, 18);
 
     const features = useMemo(
         () => [
@@ -52,12 +135,116 @@ export default function PlasticCard() {
                         </div>
 
                         <div className="kc-konarcard__grid">
-                            {/* Left: Gallery */}
+                            {/* Left: Gallery + 3D Preview */}
                             <section className="kc-konarcard__gallery" aria-label="Product gallery">
-                                <div className="kc-konarcard__mainImg">
-                                    <img src={activeImg} alt="KonarCard Plastic Edition" />
+                                {/* NEW: 3D preview */}
+                                <div className="kc-konarcard__previewHead">
+                                    <div>
+                                        <div className="kc-konarcard__previewKicker">Live preview</div>
+                                        <div className="kc-konarcard__previewTitle">Upload your logo</div>
+                                    </div>
+
+                                    <button type="button" className="kc-konarcard__tinyBtn" onClick={resetView}>
+                                        Reset view
+                                    </button>
                                 </div>
 
+                                <div className="kc-3dWrap" ref={wrapRef}>
+                                    <div
+                                        className={`kc-3dStage ${isDragging ? "is-dragging" : ""}`}
+                                        onPointerDown={onPointerDown}
+                                        onPointerMove={onPointerMove}
+                                        onPointerUp={onPointerUp}
+                                        onPointerCancel={onPointerUp}
+                                        role="application"
+                                        aria-label="3D card preview. Drag to rotate."
+                                    >
+                                        <div
+                                            className="kc-3dCard kc-3dCard--plastic"
+                                            style={{
+                                                transform: `rotateX(${rot.rx}deg) rotateY(${rot.ry}deg)`,
+                                            }}
+                                        >
+                                            {/* front */}
+                                            <div className="kc-3dFace kc-3dFace--front">
+                                                <div className="kc-3dTexture" style={{ backgroundImage: `url(${activeImg})` }} />
+                                                <div className="kc-3dBrandMark" aria-hidden="true" />
+
+                                                {logoUrl ? (
+                                                    <img
+                                                        className="kc-3dLogo"
+                                                        src={logoUrl}
+                                                        alt="Uploaded logo preview"
+                                                        style={{ width: `${logoSize}%` }}
+                                                        draggable={false}
+                                                    />
+                                                ) : (
+                                                    <div className="kc-3dLogoPlaceholder">
+                                                        <div className="kc-3dLogoDot" />
+                                                        <div>
+                                                            <div className="kc-3dLogoPhT">Your logo here</div>
+                                                            <div className="kc-3dLogoPhS">Upload a PNG/SVG/JPG</div>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                <div className="kc-3dShine" aria-hidden="true" />
+                                            </div>
+
+                                            {/* back */}
+                                            <div className="kc-3dFace kc-3dFace--back">
+                                                <div className="kc-3dBackInner">
+                                                    <div className="kc-3dBackTitle">QR backup</div>
+                                                    <div className="kc-3dBackSub">Scan if NFC is off</div>
+                                                    <div className="kc-3dFakeQr" aria-hidden="true" />
+                                                </div>
+                                                <div className="kc-3dShine" aria-hidden="true" />
+                                            </div>
+                                        </div>
+
+                                        <div className="kc-3dHint">{isDragging ? "Release to stop" : "Drag to rotate"}</div>
+                                    </div>
+                                </div>
+
+                                {/* NEW: controls */}
+                                <div className="kc-customize">
+                                    <div className="kc-customize__row">
+                                        <div className="kc-customize__label">Logo file</div>
+                                        <div className="kc-customize__actions">
+                                            <label className="kc-customize__file">
+                                                <input type="file" accept="image/*" onChange={onPickLogo} />
+                                                Upload logo
+                                            </label>
+
+                                            <button
+                                                type="button"
+                                                className="kc-customize__ghost"
+                                                onClick={clearLogo}
+                                                disabled={!logoUrl}
+                                                aria-disabled={!logoUrl}
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="kc-customize__row">
+                                        <div className="kc-customize__label">Logo size</div>
+                                        <div className="kc-customize__slider">
+                                            <input
+                                                type="range"
+                                                min={26}
+                                                max={70}
+                                                value={logoSize}
+                                                onChange={(e) => setLogoSize(Number(e.target.value))}
+                                                aria-label="Logo size"
+                                            />
+                                            <div className="kc-customize__val">{logoSize}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Thumbs */}
                                 <div className="kc-konarcard__thumbRow" role="list" aria-label="Choose an image">
                                     {gallery.map((src, i) => {
                                         const isActive = src === activeImg;
@@ -116,7 +303,6 @@ export default function PlasticCard() {
                                         </button>
                                     </div>
 
-                                    {/* Hook this to checkout later */}
                                     <Link
                                         to="/productandplan/konarcard"
                                         state={{ triggerCheckout: true, quantity: qty, edition: "plastic" }}

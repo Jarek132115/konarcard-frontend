@@ -536,3 +536,351 @@
         width: 100%;
     }
 }
+
+/* ============================
+   NEW: Live 3D Preview + Customizer
+   ============================ */
+
+.kc-konarcard__previewHead {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.kc-konarcard__previewKicker {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    color: rgba(12, 24, 48, 0.55);
+    letter-spacing: -0.01em;
+}
+
+.kc-konarcard__previewTitle {
+    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: rgba(12, 24, 48, 0.92);
+    margin-top: 4px;
+}
+
+.kc-konarcard__tinyBtn {
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(12, 24, 48, 0.14);
+    background: rgba(255, 255, 255, 0.9);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.85);
+    cursor: pointer;
+    transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+.kc-konarcard__tinyBtn:active {
+    transform: translateY(1px);
+}
+
+/* 3D stage */
+.kc-3dWrap {
+    border-radius: 16px;
+    border: 1px solid rgba(12, 24, 48, 0.08);
+    background: radial-gradient(1200px 420px at 50% 35%, rgba(255, 123, 0, 0.10), rgba(255, 255, 255, 0.0));
+    padding: 14px;
+    margin-bottom: 12px;
+}
+
+.kc-3dStage {
+    position: relative;
+    height: 340px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(248, 250, 252, 1), rgba(244, 247, 252, 1));
+    display: grid;
+    place-items: center;
+    perspective: 1000px;
+    user-select: none;
+    touch-action: none;
+    cursor: grab;
+    overflow: hidden;
+}
+
+.kc-3dStage.is-dragging {
+    cursor: grabbing;
+}
+
+.kc-3dHint {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    color: rgba(12, 24, 48, 0.55);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(12, 24, 48, 0.08);
+    border-radius: 999px;
+    padding: 7px 12px;
+}
+
+.kc-3dCard {
+    width: min(520px, 92%);
+    aspect-ratio: 85.6 / 54;
+    /* card ratio */
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 120ms ease;
+    will-change: transform;
+    filter: drop-shadow(0 28px 40px rgba(12, 24, 48, 0.14));
+}
+
+.kc-3dFace {
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    backface-visibility: hidden;
+    border: 1px solid rgba(12, 24, 48, 0.10);
+}
+
+.kc-3dFace--front {
+    transform: translateZ(6px);
+}
+
+.kc-3dFace--back {
+    transform: rotateY(180deg) translateZ(6px);
+    background: linear-gradient(135deg, rgba(12, 24, 48, 0.06), rgba(255, 255, 255, 0.9));
+}
+
+.kc-3dCard--plastic .kc-3dFace--front {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(248, 250, 252, 1));
+}
+
+/* Front texture (your gallery image) */
+.kc-3dTexture {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.85;
+    transform: scale(1.02);
+}
+
+/* subtle brand corner mark */
+.kc-3dBrandMark {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(800px 260px at 35% 25%, rgba(255, 123, 0, 0.16), rgba(255, 255, 255, 0) 60%),
+        linear-gradient(135deg, rgba(12, 24, 48, 0.04), rgba(255, 255, 255, 0));
+    pointer-events: none;
+}
+
+/* Logo */
+.kc-3dLogo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: auto;
+    max-height: 72%;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 16px rgba(12, 24, 48, 0.18));
+    pointer-events: none;
+}
+
+.kc-3dLogoPlaceholder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 74%;
+    transform: translate(-50%, -50%);
+    border-radius: 14px;
+    border: 1px dashed rgba(12, 24, 48, 0.18);
+    background: rgba(255, 255, 255, 0.65);
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    pointer-events: none;
+}
+
+.kc-3dLogoDot {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    background: rgba(255, 123, 0, 0.14);
+    border: 1px solid rgba(255, 123, 0, 0.22);
+    flex: 0 0 auto;
+}
+
+.kc-3dLogoPhT {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 900;
+    color: rgba(12, 24, 48, 0.9);
+    margin-bottom: 2px;
+}
+
+.kc-3dLogoPhS {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(12, 24, 48, 0.6);
+}
+
+/* Shine overlay */
+.kc-3dShine {
+    position: absolute;
+    inset: -40%;
+    background: radial-gradient(closest-side at 30% 35%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 60%);
+    transform: rotate(18deg);
+    mix-blend-mode: screen;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Back face */
+.kc-3dBackInner {
+    position: absolute;
+    inset: 0;
+    padding: 18px;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 10px;
+}
+
+.kc-3dBackTitle {
+    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    color: rgba(12, 24, 48, 0.9);
+}
+
+.kc-3dBackSub {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(12, 24, 48, 0.6);
+}
+
+.kc-3dFakeQr {
+    width: 84px;
+    height: 84px;
+    border-radius: 12px;
+    border: 1px solid rgba(12, 24, 48, 0.12);
+    background:
+        linear-gradient(90deg, rgba(12, 24, 48, 0.08) 1px, transparent 1px) 0 0 / 10px 10px,
+        linear-gradient(0deg, rgba(12, 24, 48, 0.08) 1px, transparent 1px) 0 0 / 10px 10px,
+        rgba(255, 255, 255, 0.85);
+}
+
+/* Customizer */
+.kc-customize {
+    margin-top: 6px;
+    border-top: 1px solid rgba(12, 24, 48, 0.08);
+    padding-top: 12px;
+    display: grid;
+    gap: 12px;
+}
+
+.kc-customize__row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 12px;
+    align-items: center;
+}
+
+.kc-customize__label {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    color: rgba(12, 24, 48, 0.7);
+}
+
+.kc-customize__actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.kc-customize__file {
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(12, 24, 48, 0.14);
+    background: rgba(255, 255, 255, 0.9);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.9);
+    cursor: pointer;
+}
+
+.kc-customize__file input {
+    display: none;
+}
+
+.kc-customize__ghost {
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(12, 24, 48, 0.14);
+    background: rgba(12, 24, 48, 0.06);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.86);
+    cursor: pointer;
+}
+
+.kc-customize__ghost[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.kc-customize__slider {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.kc-customize__slider input[type="range"] {
+    width: min(320px, 100%);
+    accent-color: var(--kc-orange);
+}
+
+.kc-customize__val {
+    width: 54px;
+    text-align: right;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    color: rgba(12, 24, 48, 0.75);
+}
+
+@media (max-width: 560px) {
+    .kc-customize__row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .kc-customize__actions,
+    .kc-customize__slider {
+        justify-content: flex-start;
+    }
+
+    .kc-3dStage {
+        height: 300px;
+    }
+}
