@@ -29,9 +29,7 @@
 }
 
 /* =========================
-   TABS (PILLS)
-   - Base styling from .pill (fonts.css)
-   - Active styling uses bg-orange + text-white (fonts.css)
+   TABS (PILLS) — ORIGINAL DESIGN
    ========================= */
 .kc-faq__tabs {
     margin-top: 24px;
@@ -41,13 +39,33 @@
     flex-wrap: wrap;
 }
 
-/* Only layout/shape/interaction — no colours/fonts */
+/* IMPORTANT: these pills intentionally override .pill visuals */
 .kc-faq__tab {
     appearance: none;
+    background: #ffffff;
+    color: var(--kc-text-primary);
+
+    border: 1px solid rgba(15, 23, 42, 0.30);
     border-radius: 999px;
-    border: 1px solid var(--kc-border);
+
+    padding: 8px 14px;
+    min-height: 32px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+
     cursor: pointer;
-    transition: transform 0.08s ease, filter 0.15s ease;
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        transform 0.08s ease;
+}
+
+.kc-faq__tab:hover {
+    border-color: rgba(15, 23, 42, 0.48);
 }
 
 .kc-faq__tab:active {
@@ -57,7 +75,16 @@
 .kc-faq__tab:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px var(--kc-focus-ring);
+    border-color: rgba(249, 115, 22, 0.65);
 }
+
+/* Active pill — EXACT original look */
+.kc-faq__tab.is-active {
+    background: var(--kc-accent-primary);
+    border-color: var(--kc-accent-primary);
+    color: #ffffff;
+}
+
 
 /* =========================
    FAQ LIST

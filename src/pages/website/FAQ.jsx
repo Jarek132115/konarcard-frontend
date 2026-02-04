@@ -148,11 +148,7 @@ export default function FAQPage() {
                   <button
                     key={t.key}
                     type="button"
-                    className={[
-                      "kc-faq__tab",
-                      "pill",
-                      isActive ? "bg-orange text-white" : "",
-                    ].join(" ")}
+                    className={`kc-faq__tab pill ${isActive ? "is-active" : ""}`}
                     onClick={() => {
                       setActiveTab(t.key);
                       setOpenIndex(0);
