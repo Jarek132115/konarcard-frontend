@@ -256,6 +256,7 @@
 
     perspective: 1200px;
     transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
 
     user-select: none;
     touch-action: none;
@@ -272,21 +273,31 @@
     overflow: visible !important;
 }
 
-/* 3D card */
+/* ✅ NEW: shadow wrapper (NOT rotated) */
+.kc-premCardWrap {
+    display: inline-block;
+    transform: translateZ(0);
+    filter: drop-shadow(0 30px 55px rgba(12, 24, 48, 0.18));
+}
+
+.kc-premCardWrap--sm {
+    width: min(560px, 86%);
+}
+
+/* 3D card (rotated element MUST NOT use filter) */
 .kc-premCard {
     width: min(820px, 92%);
     aspect-ratio: 85.6 / 54;
     position: relative;
     transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
     will-change: transform;
     transition: transform 120ms ease;
-    filter: drop-shadow(0 30px 55px rgba(12, 24, 48, 0.18));
 }
 
 /* smaller card */
 .kc-premCard--sm {
-    width: min(560px, 86%);
-    filter: drop-shadow(0 30px 55px rgba(12, 24, 48, 0.18));
+    width: 100%;
 }
 
 /* Faces */
@@ -301,13 +312,12 @@
     -webkit-backface-visibility: hidden;
 }
 
-/* ✅ FIX: proper face separation (prevents face fighting + back disappearing) */
+/* face separation */
 .kc-premFace--front {
     transform: translateZ(1px);
     background: #ffffff;
 }
 
-/* ✅ IMPORTANT FIX: was translateZ(-1px) (makes back vanish / get occluded) */
 .kc-premFace--back {
     transform: rotateY(180deg) translateZ(1px);
     background: #ffffff;
@@ -715,10 +725,6 @@
 @media (max-width: 1020px) {
     .kc-konarcard__featureGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .kc-premCard--sm {
-        width: min(520px, 92%);
     }
 }
 

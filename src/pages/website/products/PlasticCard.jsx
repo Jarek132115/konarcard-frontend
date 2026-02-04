@@ -75,7 +75,6 @@ export default function PlasticCard() {
     });
 
     const rafRef = useRef(null);
-    // rxBase = the "rest" tilt (whatever you left it at); we add a small breathe around that
     const idleRef = useRef({ isIdle: true, ry: 16, rxBase: -10 });
 
     const [rot, setRot] = useState({ rx: -10, ry: 16 });
@@ -85,7 +84,7 @@ export default function PlasticCard() {
 
     const setRotation = (rx, ry) => {
         const next = { rx: clamp(rx, -24, 24), ry };
-        idleRef.current.rxBase = next.rx; // IMPORTANT: keep "rest" as current rx
+        idleRef.current.rxBase = next.rx;
         idleRef.current.ry = next.ry;
         setRot(next);
     };
@@ -99,11 +98,9 @@ export default function PlasticCard() {
         const tick = () => {
             if (!idleRef.current.isIdle) return;
 
-            // speed (keep spinning forever)
             idleRef.current.ry += 0.22;
 
-            // small premium "breathe" around whatever RX you left it at
-            const breathe = Math.sin((idleRef.current.ry * Math.PI) / 180 * 0.7) * 1.0;
+            const breathe = Math.sin(((idleRef.current.ry * Math.PI) / 180) * 0.7) * 1.0;
             const rx = clamp(idleRef.current.rxBase + breathe, -24, 24);
 
             setRot({ rx, ry: idleRef.current.ry });
@@ -136,7 +133,6 @@ export default function PlasticCard() {
         dragRef.current.startX = e.clientX;
         dragRef.current.startY = e.clientY;
 
-        // start from current orientation (NO snapping / no reset)
         dragRef.current.baseRX = rot.rx;
         dragRef.current.baseRY = rot.ry;
 
@@ -151,12 +147,9 @@ export default function PlasticCard() {
         const dx = e.clientX - dragRef.current.startX;
         const dy = e.clientY - dragRef.current.startY;
 
-        // ✅ stronger drag:
-        // - PC: stronger than before
-        // - Mobile: MUCH stronger
         const isTouch = dragRef.current.pointerType === "touch";
-        const gainX = isTouch ? 0.62 : 0.32; // rotateY gain
-        const gainY = isTouch ? 0.42 : 0.22; // rotateX gain
+        const gainX = isTouch ? 0.62 : 0.32;
+        const gainY = isTouch ? 0.42 : 0.22;
 
         const nextRY = dragRef.current.baseRY + dx * gainX;
         const nextRX = dragRef.current.baseRX - dy * gainY;
@@ -168,7 +161,6 @@ export default function PlasticCard() {
         dragRef.current.isDown = false;
         setIsDragging(false);
 
-        // ✅ immediately continue spinning from the exact position you let go
         idleRef.current.rxBase = rot.rx;
         idleRef.current.ry = rot.ry;
         startIdleSpin();
@@ -186,7 +178,6 @@ export default function PlasticCard() {
         []
     );
 
-    // FRONT logo only
     const displayedLogo = logoUrl || LogoIcon;
 
     const shineX = 50 + (rot.ry % 360) * 0.12;
@@ -231,49 +222,50 @@ export default function PlasticCard() {
                                 role="application"
                                 aria-label="3D KonarCard preview. Drag to rotate."
                             >
-                                <div
-                                    className="kc-premCard kc-premCard--sm"
-                                    style={{
-                                        transform: `rotateX(${rot.rx}deg) rotateY(${rot.ry}deg)`,
-                                        ["--shineX"]: `${shineX}%`,
-                                        ["--shineY"]: `${shineY}%`,
-                                    }}
-                                >
-                                    {/* FRONT: logo only */}
-                                    <div className="kc-premFace kc-premFace--front">
-                                        <div className="kc-premFace__base" />
+                                {/* ✅ IMPORTANT: wrapper holds the shadow, NOT the rotating 3D element */}
+                                <div className="kc-premCardWrap kc-premCardWrap--sm">
+                                    <div
+                                        className="kc-premCard kc-premCard--sm"
+                                        style={{
+                                            transform: `rotateX(${rot.rx}deg) rotateY(${rot.ry}deg)`,
+                                            ["--shineX"]: `${shineX}%`,
+                                            ["--shineY"]: `${shineY}%`,
+                                        }}
+                                    >
+                                        {/* FRONT: logo only */}
+                                        <div className="kc-premFace kc-premFace--front">
+                                            <div className="kc-premFace__base" />
 
-                                        <div className="kc-premLogoWrap">
-                                            <img
-                                                src={displayedLogo}
-                                                alt="Card logo"
-                                                className="kc-premLogo"
-                                                style={{ width: `${logoSize}%` }}
-                                                draggable={false}
-                                            />
-                                        </div>
-
-                                        <div className="kc-premShine" aria-hidden="true" />
-                                        <div className="kc-premRim" aria-hidden="true" />
-                                    </div>
-
-                                    {/* BACK: QR ONLY (static image) */}
-                                    <div className="kc-premFace kc-premFace--back">
-                                        <div className="kc-premBackInner kc-premBackInner--center">
-                                            <div className="kc-premQr" aria-label="QR code">
-                                                <img src={CardQrCode} alt="QR code" draggable={false} />
+                                            <div className="kc-premLogoWrap">
+                                                <img
+                                                    src={displayedLogo}
+                                                    alt="Card logo"
+                                                    className="kc-premLogo"
+                                                    style={{ width: `${logoSize}%` }}
+                                                    draggable={false}
+                                                />
                                             </div>
+
+                                            <div className="kc-premShine" aria-hidden="true" />
+                                            <div className="kc-premRim" aria-hidden="true" />
                                         </div>
 
-                                        <div className="kc-premShine" aria-hidden="true" />
-                                        <div className="kc-premRim" aria-hidden="true" />
+                                        {/* BACK: QR ONLY (static image) */}
+                                        <div className="kc-premFace kc-premFace--back">
+                                            <div className="kc-premBackInner kc-premBackInner--center">
+                                                <div className="kc-premQr" aria-label="QR code">
+                                                    <img src={CardQrCode} alt="QR code" draggable={false} />
+                                                </div>
+                                            </div>
+
+                                            <div className="kc-premShine" aria-hidden="true" />
+                                            <div className="kc-premRim" aria-hidden="true" />
+                                        </div>
+
+                                        <div className="kc-premEdge kc-premEdge--top" aria-hidden="true" />
+                                        <div className="kc-premEdge kc-premEdge--bottom" aria-hidden="true" />
                                     </div>
-
-                                    <div className="kc-premEdge kc-premEdge--top" aria-hidden="true" />
-                                    <div className="kc-premEdge kc-premEdge--bottom" aria-hidden="true" />
                                 </div>
-
-                                {/* ✅ Removed “Drag to rotate” + Reset بالكامل */}
                             </div>
 
                             {/* Controls */}
