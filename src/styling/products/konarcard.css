@@ -1,11 +1,7 @@
 /* frontend/src/styling/products/konarcard.css
    ✅ CLEAN FILE: only styles what PlasticCard.jsx currently renders
-   (premium product page + thumbs + features + buy row)
 */
 
-/* =========================
-   Tokens
-   ========================= */
 :root {
     --kc-orange: #ff7b00;
     --kc-orange-hover: #e66f00;
@@ -13,7 +9,7 @@
     --kc-text: #0b1220;
     --kc-muted: rgba(12, 24, 48, 0.72);
 
-    --kc-border: rgba(12, 24, 48, 0.10);
+    --kc-border: rgba(12, 24, 48, 0.1);
     --kc-border-2: rgba(12, 24, 48, 0.08);
 
     --kc-card: #ffffff;
@@ -243,65 +239,37 @@
     margin-top: 18px;
 }
 
+/* stage: no box, lots of breathing room */
 .kc-premStage__surface {
-    position: relative;
-    height: 460px;
-    border-radius: 20px;
-    border: 1px solid var(--kc-border-2);
-    background:
-        radial-gradient(900px 340px at 50% 35%, rgba(255, 123, 0, 0.06), rgba(255, 255, 255, 0) 58%),
-        linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(248, 250, 252, 1));
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.9),
-        0 20px 60px rgba(12, 24, 48, 0.07);
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    height: auto !important;
+    min-height: 600px;
+    padding: 44px 0 56px !important;
+
+    overflow: visible !important;
+
     display: grid;
     place-items: center;
+
     perspective: 1200px;
+    transform-style: preserve-3d;
+
     user-select: none;
     touch-action: none;
     cursor: grab;
-    overflow: hidden;
-}
-
-/* ✅ "40% screen" sizing */
-.kc-premStage__surface--small {
-    height: min(40vh, 420px);
-    max-height: 420px;
 }
 
 .kc-premStage__surface.is-dragging {
     cursor: grabbing;
 }
 
-.kc-premStage__hint {
-    position: absolute;
-    bottom: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: inline-flex;
-    gap: 10px;
-    align-items: center;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.55);
-    background: rgba(255, 255, 255, 0.74);
-    border: 1px solid rgba(12, 24, 48, 0.10);
-    border-radius: 999px;
-    padding: 8px 12px;
-}
-
-.kc-premStage__reset {
-    height: 30px;
-    padding: 0 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(12, 24, 48, 0.14);
-    background: rgba(12, 24, 48, 0.04);
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.75);
-    cursor: pointer;
+.kc-premStage__surface--small {
+    min-height: 600px;
+    padding: 40px 0 52px !important;
+    overflow: visible !important;
 }
 
 /* 3D card */
@@ -312,13 +280,13 @@
     transform-style: preserve-3d;
     will-change: transform;
     transition: transform 120ms ease;
-    filter: drop-shadow(0 26px 46px rgba(12, 24, 48, 0.14));
+    filter: drop-shadow(0 30px 55px rgba(12, 24, 48, 0.18));
 }
 
-/* ✅ smaller card */
+/* smaller card */
 .kc-premCard--sm {
     width: min(560px, 86%);
-    filter: drop-shadow(0 22px 40px rgba(12, 24, 48, 0.14));
+    filter: drop-shadow(0 30px 55px rgba(12, 24, 48, 0.18));
 }
 
 /* Faces */
@@ -327,18 +295,20 @@
     inset: 0;
     border-radius: 22px;
     overflow: hidden;
+    border: 1px solid rgba(12, 24, 48, 0.1);
+
     backface-visibility: hidden;
-    border: 1px solid rgba(12, 24, 48, 0.10);
+    -webkit-backface-visibility: hidden;
 }
 
-/* plain white front/back */
+/* ✅ FIX: proper face separation (prevents logo showing both sides) */
 .kc-premFace--front {
-    transform: translateZ(10px);
+    transform: translateZ(1px);
     background: #ffffff;
 }
 
 .kc-premFace--back {
-    transform: rotateY(180deg) translateZ(10px);
+    transform: rotateY(180deg) translateZ(-1px);
     background: #ffffff;
 }
 
@@ -373,7 +343,7 @@
     position: absolute;
     inset: -60%;
     background: radial-gradient(closest-side at var(--shineX, 45%) var(--shineY, 40%),
-            rgba(255, 255, 255, 0.60),
+            rgba(255, 255, 255, 0.6),
             rgba(255, 255, 255, 0) 60%);
     transform: rotate(18deg);
     mix-blend-mode: screen;
@@ -387,9 +357,7 @@
     inset: 0;
     border-radius: 22px;
     pointer-events: none;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.95),
-        inset 0 -10px 18px rgba(12, 24, 48, 0.04);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -10px 18px rgba(12, 24, 48, 0.04);
 }
 
 /* Back inner (QR) */
@@ -403,23 +371,9 @@
     gap: 18px;
 }
 
-.kc-premBackMeta {
-    display: grid;
-    gap: 6px;
-}
-
-.kc-premBackK {
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 18px;
-    letter-spacing: -0.02em;
-    color: rgba(12, 24, 48, 0.88);
-}
-
-.kc-premBackS {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-    color: rgba(12, 24, 48, 0.62);
+.kc-premBackInner--center {
+    grid-template-columns: 1fr !important;
+    place-items: center !important;
 }
 
 .kc-premQr {
@@ -428,10 +382,17 @@
     border-radius: 16px;
     border: 1px solid rgba(12, 24, 48, 0.12);
     background: rgba(255, 255, 255, 0.96);
-    box-shadow: 0 18px 30px rgba(12, 24, 48, 0.10);
+    box-shadow: 0 18px 30px rgba(12, 24, 48, 0.1);
     display: grid;
     place-items: center;
     overflow: hidden;
+}
+
+.kc-premQr img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
 }
 
 /* thickness illusion edges */
@@ -448,7 +409,7 @@
     top: 0;
     transform: translateZ(0px) rotateX(90deg);
     transform-origin: top;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.90), rgba(12, 24, 48, 0.06));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(12, 24, 48, 0.06));
 }
 
 .kc-premEdge--bottom {
@@ -491,7 +452,7 @@
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-weight: 700;
     font-size: 12px;
-    color: rgba(12, 24, 48, 0.60);
+    color: rgba(12, 24, 48, 0.6);
 }
 
 .kc-premControls__right {
@@ -602,7 +563,7 @@
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 12px;
     font-weight: 800;
-    color: rgba(12, 24, 48, 0.60);
+    color: rgba(12, 24, 48, 0.6);
 }
 
 .kc-premBuy__right {
@@ -711,7 +672,7 @@
 
 .kc-konarcard__feature {
     background: #fff;
-    border: 1px solid rgba(12, 24, 48, 0.10);
+    border: 1px solid rgba(12, 24, 48, 0.1);
     border-radius: 16px;
     padding: 16px;
     box-shadow: var(--kc-soft);
@@ -769,10 +730,6 @@
         font-size: 34px;
     }
 
-    .kc-premStage__surface--small {
-        height: 340px;
-    }
-
     .kc-premSlider input[type="range"] {
         width: 160px;
     }
@@ -789,92 +746,11 @@
         justify-content: center;
         width: 100%;
     }
-}
 
-/* =========================
-   Stage: make it premium + no box
-   ========================= */
-
-/* the wrapper that currently looks like a "box" */
-.kc-premStage__surface {
-    /* remove the box look */
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-
-    /* give the card breathing room so it never clips */
-    height: auto !important;
-    min-height: 600px;
-    /* desktop */
-    padding: 44px 0 56px !important;
-    /* extra top/bottom space */
-
-    /* IMPORTANT: allow the card shadow/edges to show fully */
-    overflow: visible !important;
-
-    /* keep interaction feeling the same */
-    display: grid;
-    place-items: center;
-    perspective: 1200px;
-}
-
-/* if you're using the small modifier, keep it roomy too */
-.kc-premStage__surface--small {
-    min-height: 600px;
-    padding: 40px 0 52px !important;
-    overflow: visible !important;
-}
-
-/* the actual 3D card shadow should be visible */
-.kc-premCard {
-    filter: drop-shadow(0 30px 55px rgba(12, 24, 48, 0.18));
-}
-
-/* hint pill stays readable even with no stage background */
-.kc-premStage__hint {
-    background: rgba(255, 255, 255, 0.78);
-    border: 1px solid rgba(12, 24, 48, 0.10);
-}
-
-/* mobile spacing */
-@media (max-width: 560px) {
-
+    /* stage breathing room on mobile */
     .kc-premStage__surface,
     .kc-premStage__surface--small {
         min-height: 320px;
         padding: 28px 0 46px !important;
     }
-}
-
-/* =========================
-   FIX: front showing on both sides
-   (proper 3D face separation)
-   ========================= */
-
-/* ensure 3D context is correct */
-.kc-premStage__surface {
-    transform-style: preserve-3d;
-}
-
-/* the 3D object */
-.kc-premCard {
-    transform-style: preserve-3d;
-}
-
-/* both faces must hide when turned away */
-.kc-premFace {
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-}
-
-/* IMPORTANT:
-   Put front slightly toward camera,
-   put back slightly away (negative Z)
-*/
-.kc-premFace--front {
-    transform: translateZ(1px);
-}
-
-.kc-premFace--back {
-    transform: rotateY(180deg) translateZ(-1px);
 }

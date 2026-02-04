@@ -18,36 +18,8 @@ import ProductImage2 from "../../../assets/images/Product-Image-2.png";
 import ProductImage3 from "../../../assets/images/Product-Image-3.png";
 import ProductImage4 from "../../../assets/images/Product-Image-4.png";
 
-/** simple "QR-like" SVG placeholder (static) */
-const QrSvg = () => (
-    <svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
-        <rect x="0" y="0" width="120" height="120" fill="white" />
-        <rect x="6" y="6" width="34" height="34" fill="#0b1220" />
-        <rect x="12" y="12" width="22" height="22" fill="white" />
-        <rect x="16" y="16" width="14" height="14" fill="#0b1220" />
-
-        <rect x="80" y="6" width="34" height="34" fill="#0b1220" />
-        <rect x="86" y="12" width="22" height="22" fill="white" />
-        <rect x="90" y="16" width="14" height="14" fill="#0b1220" />
-
-        <rect x="6" y="80" width="34" height="34" fill="#0b1220" />
-        <rect x="12" y="86" width="22" height="22" fill="white" />
-        <rect x="16" y="90" width="14" height="14" fill="#0b1220" />
-
-        {[
-            [52, 10], [60, 10], [52, 18], [72, 18], [60, 26], [52, 34],
-            [46, 52], [54, 52], [62, 52], [70, 52], [78, 52],
-            [46, 60], [62, 60], [78, 60],
-            [46, 68], [54, 68], [70, 68], [78, 68],
-            [52, 76], [60, 76], [68, 76], [76, 76],
-            [52, 88], [60, 88], [68, 88], [76, 88],
-            [52, 96], [76, 96],
-            [52, 104], [60, 104], [68, 104], [76, 104],
-        ].map(([x, y], i) => (
-            <rect key={i} x={x} y={y} width="6" height="6" fill="#0b1220" />
-        ))}
-    </svg>
-);
+/* ✅ Your QR image (static) */
+import CardQrCode from "../../../assets/images/CardQrCode.png";
 
 export default function PlasticCard() {
     const gallery = useMemo(
@@ -83,7 +55,7 @@ export default function PlasticCard() {
         setLogoUrl("");
     };
 
-    // ---- 3D rotation + idle spin ----
+    // ---- 3D rotation + idle spin (continues from where you left it) ----
     const prefersReducedMotion = useRef(false);
     useEffect(() => {
         try {
@@ -99,10 +71,12 @@ export default function PlasticCard() {
         startY: 0,
         baseRX: -10,
         baseRY: 16,
+        pointerType: "mouse",
     });
 
     const rafRef = useRef(null);
-    const idleRef = useRef({ isIdle: true, ry: 16, rx: -10 });
+    // rxBase = the "rest" tilt (whatever you left it at); we add a small breathe around that
+    const idleRef = useRef({ isIdle: true, ry: 16, rxBase: -10 });
 
     const [rot, setRot] = useState({ rx: -10, ry: 16 });
     const [isDragging, setIsDragging] = useState(false);
@@ -111,12 +85,10 @@ export default function PlasticCard() {
 
     const setRotation = (rx, ry) => {
         const next = { rx: clamp(rx, -24, 24), ry };
-        idleRef.current.rx = next.rx;
+        idleRef.current.rxBase = next.rx; // IMPORTANT: keep "rest" as current rx
         idleRef.current.ry = next.ry;
         setRot(next);
     };
-
-    const resetView = () => setRotation(-10, 16);
 
     const startIdleSpin = () => {
         if (prefersReducedMotion.current) return;
@@ -126,9 +98,15 @@ export default function PlasticCard() {
 
         const tick = () => {
             if (!idleRef.current.isIdle) return;
-            idleRef.current.ry += 0.16;
-            const breathe = Math.sin(idleRef.current.ry * (Math.PI / 180) * 0.7) * 1.0;
-            setRot({ rx: clamp(-10 + breathe, -24, 24), ry: idleRef.current.ry });
+
+            // speed (keep spinning forever)
+            idleRef.current.ry += 0.22;
+
+            // small premium "breathe" around whatever RX you left it at
+            const breathe = Math.sin((idleRef.current.ry * Math.PI) / 180 * 0.7) * 1.0;
+            const rx = clamp(idleRef.current.rxBase + breathe, -24, 24);
+
+            setRot({ rx, ry: idleRef.current.ry });
             rafRef.current = requestAnimationFrame(tick);
         };
 
@@ -151,13 +129,16 @@ export default function PlasticCard() {
 
     const onPointerDown = (e) => {
         dragRef.current.isDown = true;
+        dragRef.current.pointerType = e.pointerType || "mouse";
         setIsDragging(true);
         stopIdleSpin();
 
         dragRef.current.startX = e.clientX;
         dragRef.current.startY = e.clientY;
-        dragRef.current.baseRX = idleRef.current.rx;
-        dragRef.current.baseRY = idleRef.current.ry;
+
+        // start from current orientation (NO snapping / no reset)
+        dragRef.current.baseRX = rot.rx;
+        dragRef.current.baseRY = rot.ry;
 
         try {
             e.currentTarget.setPointerCapture(e.pointerId);
@@ -170,8 +151,15 @@ export default function PlasticCard() {
         const dx = e.clientX - dragRef.current.startX;
         const dy = e.clientY - dragRef.current.startY;
 
-        const nextRY = dragRef.current.baseRY + dx * 0.18;
-        const nextRX = dragRef.current.baseRX - dy * 0.16;
+        // ✅ stronger drag:
+        // - PC: stronger than before
+        // - Mobile: MUCH stronger
+        const isTouch = dragRef.current.pointerType === "touch";
+        const gainX = isTouch ? 0.62 : 0.32; // rotateY gain
+        const gainY = isTouch ? 0.42 : 0.22; // rotateX gain
+
+        const nextRY = dragRef.current.baseRY + dx * gainX;
+        const nextRX = dragRef.current.baseRX - dy * gainY;
 
         setRotation(nextRX, nextRY);
     };
@@ -180,9 +168,10 @@ export default function PlasticCard() {
         dragRef.current.isDown = false;
         setIsDragging(false);
 
-        window.setTimeout(() => {
-            if (!dragRef.current.isDown) startIdleSpin();
-        }, 450);
+        // ✅ immediately continue spinning from the exact position you let go
+        idleRef.current.rxBase = rot.rx;
+        idleRef.current.ry = rot.ry;
+        startIdleSpin();
     };
 
     const features = useMemo(
@@ -268,12 +257,11 @@ export default function PlasticCard() {
                                         <div className="kc-premRim" aria-hidden="true" />
                                     </div>
 
-                                    {/* BACK: QR ONLY (static) */}
+                                    {/* BACK: QR ONLY (static image) */}
                                     <div className="kc-premFace kc-premFace--back">
-                                        {/* no logo here at all */}
-                                        <div className="kc-premBackInner" style={{ gridTemplateColumns: "1fr", placeItems: "center" }}>
-                                            <div className="kc-premQr">
-                                                <QrSvg />
+                                        <div className="kc-premBackInner kc-premBackInner--center">
+                                            <div className="kc-premQr" aria-label="QR code">
+                                                <img src={CardQrCode} alt="QR code" draggable={false} />
                                             </div>
                                         </div>
 
@@ -285,12 +273,7 @@ export default function PlasticCard() {
                                     <div className="kc-premEdge kc-premEdge--bottom" aria-hidden="true" />
                                 </div>
 
-                                <div className="kc-premStage__hint">
-                                    {isDragging ? "Release to stop" : "Drag to rotate • 360°"}
-                                    <button type="button" className="kc-premStage__reset" onClick={resetView}>
-                                        Reset
-                                    </button>
-                                </div>
+                                {/* ✅ Removed “Drag to rotate” + Reset بالكامل */}
                             </div>
 
                             {/* Controls */}
