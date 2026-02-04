@@ -1,5 +1,5 @@
 // src/pages/interface/Settings.jsx
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import "../../styling/dashboard/settings.css";
 
@@ -7,135 +7,152 @@ import { useAuthUser } from "../../hooks/useAuthUser";
 import api from "../../services/api";
 
 /**
- * Settings page:
- * - Account details (Google vs Email login)
- * - Billing / subscription
- * - Orders
- * - Invoices
- *
- * Notes:
- * - We don't allow editing Google identity details from our app.
- * - Orders/invoices are shown if your backend endpoints exist.
+ * Settings page (wired to backend billing endpoints):
+ * - GET  /api/billing/summary
+ * - GET  /api/billing/invoices
+ * - GET  /api/billing/payments
+ * - POST /api/billing-portal  (redirect to returned url)
  */
 
 const safeLower = (v) => String(v || "").toLowerCase();
+
 const fmtDate = (d) => {
     try {
-        if (!d) return "";
+        if (!d) return "—";
         const x = new Date(d);
-        if (Number.isNaN(x.getTime())) return "";
-        return x.toLocaleDateString();
+        if (Number.isNaN(x.getTime())) return "—";
+        return x.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "2-digit" });
     } catch {
-        return "";
+        return "—";
+    }
+};
+
+const fmtMoney = (amount, currency) => {
+    // Supports:
+    // - amount as number in cents
+    // - amount as string already formatted
+    // - amount as number already in major units (best-effort)
+    if (amount == null || amount === "") return "—";
+    if (typeof amount === "string") return amount;
+
+    const cur = String(currency || "GBP").toUpperCase();
+
+    // Heuristic: Stripe amounts usually come as integer cents.
+    // If it's an integer and pretty large, assume cents. If it's fractional, assume major units.
+    const isInt = Number.isFinite(amount) && Math.floor(amount) === amount;
+    const major = isInt ? amount / 100 : amount;
+
+    try {
+        return new Intl.NumberFormat(undefined, {
+            style: "currency",
+            currency: cur,
+            maximumFractionDigits: 2,
+        }).format(major);
+    } catch {
+        // fallback
+        return `${major.toFixed(2)} ${cur}`;
     }
 };
 
 export default function Settings() {
-    const { data: authUser, isLoading, isError, refetch } = useAuthUser();
+    // Keep authUser hook for token/session + fallback display
+    const { data: authUser, isLoading: authLoading, isError: authError, refetch: refetchAuth } = useAuthUser();
 
-    const plan = safeLower(authUser?.plan || "free");
-    const isTeams = plan === "teams";
-    const isPlus = plan === "plus";
-    const planLabel = isTeams ? "Teams" : isPlus ? "Plus" : "Free";
+    const [summary, setSummary] = useState(null);
+    const [invoices, setInvoices] = useState(null);
+    const [payments, setPayments] = useState(null);
 
-    // Detect Google sign-in (supports different possible backend field names)
-    const isGoogleLogin = useMemo(() => {
-        const provider = safeLower(authUser?.provider || authUser?.authProvider || authUser?.loginProvider);
-        return (
-            provider === "google" ||
-            !!authUser?.googleId ||
-            !!authUser?.google_id ||
-            !!authUser?.googleSub ||
-            !!authUser?.google_sub
-        );
-    }, [authUser]);
+    const [loading, setLoading] = useState(true);
+    const [loadErr, setLoadErr] = useState("");
 
-    const displayName = authUser?.name || authUser?.full_name || "—";
-    const displayEmail = authUser?.email || "—";
+    const provider = useMemo(() => {
+        const p = safeLower(summary?.authProvider || authUser?.authProvider || authUser?.provider || authUser?.loginProvider);
+        return p === "google" ? "google" : "local";
+    }, [summary, authUser]);
 
-    const createdAt = fmtDate(authUser?.createdAt || authUser?.created_at);
-    const updatedAt = fmtDate(authUser?.updatedAt || authUser?.updated_at);
+    const isGoogle = provider === "google";
 
-    // Optional subscription fields (if your backend provides them)
-    const renewAt = fmtDate(authUser?.currentPeriodEnd || authUser?.current_period_end || authUser?.renewAt);
+    const accountName = summary?.name || authUser?.name || authUser?.full_name || "—";
+    const accountEmail = summary?.email || authUser?.email || "—";
+    const accountAvatar = summary?.avatar || authUser?.avatar || authUser?.profilePhoto || authUser?.photoURL || "";
 
-    const openBillingPortal = async () => {
-        try {
-            // Try a few likely endpoints (first one that works wins)
-            const candidates = [
-                "/api/checkout/portal",
-                "/api/checkout/customer-portal",
-                "/api/stripe/portal",
-            ];
+    const planLabel = summary?.planLabel || summary?.plan || "Free";
+    const statusLabel = summary?.status || "free";
+    const currentPeriodEnd = summary?.currentPeriodEnd || null;
 
-            let lastErr = null;
-
-            for (const path of candidates) {
-                try {
-                    const res = await api.post(path, {});
-                    const url = res?.data?.url || res?.data?.portalUrl || res?.data?.redirectUrl;
-                    if (url) {
-                        window.location.href = url;
-                        return;
-                    }
-                } catch (e) {
-                    lastErr = e;
-                }
-            }
-
-            const msg =
-                lastErr?.response?.data?.error ||
-                lastErr?.message ||
-                "Billing portal isn't available yet. Add a backend endpoint for it.";
-            alert(msg);
-        } catch (e) {
-            alert(e?.response?.data?.error || e?.message || "Could not open billing portal.");
+    useEffect(() => {
+        if (!authUser && !authLoading) {
+            // not logged in or no session; still show page shell
+            setLoading(false);
+            return;
         }
-    };
 
-    const fetchList = async (path) => {
-        try {
-            const res = await api.get(path);
-            // Support a few response shapes
-            return res?.data?.data || res?.data || [];
-        } catch (e) {
-            // 404 or not implemented -> treat as empty
-            return [];
-        }
-    };
-
-    // We fetch orders/invoices in a simple way (no react-query required here).
-    // If you prefer react-query, we can refactor after your backend endpoints are confirmed.
-    const [orders, setOrders] = React.useState(null);
-    const [invoices, setInvoices] = React.useState(null);
-    const [loadingLists, setLoadingLists] = React.useState(false);
-
-    React.useEffect(() => {
-        if (!authUser) return;
         let cancelled = false;
 
         (async () => {
-            setLoadingLists(true);
-            const [o, i] = await Promise.all([
-                fetchList("/api/orders"),
-                fetchList("/api/invoices"),
-            ]);
-            if (cancelled) return;
-            setOrders(Array.isArray(o) ? o : []);
-            setInvoices(Array.isArray(i) ? i : []);
-            setLoadingLists(false);
+            try {
+                setLoading(true);
+                setLoadErr("");
+
+                const [sRes, iRes, pRes] = await Promise.all([
+                    api.get("/api/billing/summary"),
+                    api.get("/api/billing/invoices"),
+                    api.get("/api/billing/payments"),
+                ]);
+
+                if (cancelled) return;
+
+                const s = sRes?.data?.data ?? sRes?.data ?? null;
+                const inv = iRes?.data?.data ?? iRes?.data ?? [];
+                const pay = pRes?.data?.data ?? pRes?.data ?? [];
+
+                setSummary(s && typeof s === "object" ? s : null);
+                setInvoices(Array.isArray(inv) ? inv : []);
+                setPayments(Array.isArray(pay) ? pay : []);
+            } catch (e) {
+                if (cancelled) return;
+                const msg = e?.response?.data?.error || e?.message || "Could not load settings.";
+                setLoadErr(msg);
+                setSummary(null);
+                setInvoices([]);
+                setPayments([]);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
         })();
 
         return () => {
             cancelled = true;
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [authUser?.email]);
+    }, [authUser, authLoading]);
 
-    if (isLoading) {
+    const openBillingPortal = async () => {
+        try {
+            const res = await api.post("/api/billing-portal", {});
+            const url = res?.data?.url || res?.data?.portalUrl || res?.data?.redirectUrl;
+            if (!url) throw new Error("Billing portal URL missing.");
+            window.location.href = url;
+        } catch (e) {
+            alert(e?.response?.data?.error || e?.message || "Could not open billing portal.");
+        }
+    };
+
+    const retryAll = async () => {
+        try {
+            setLoadErr("");
+            setLoading(true);
+            await refetchAuth?.();
+            // refetchAuth triggers authUser update; our effect will fetch billing endpoints again
+        } finally {
+            // do nothing
+        }
+    };
+
+    if (authLoading || loading) {
         return (
-            <DashboardLayout title="Settings" subtitle="Manage your account and preferences.">
+            <DashboardLayout title="Settings" subtitle="Manage your account and billing.">
                 <div className="settings-shell">
+                    <div className="settings-card settings-skel" />
                     <div className="settings-card settings-skel" />
                     <div className="settings-card settings-skel" />
                 </div>
@@ -143,13 +160,13 @@ export default function Settings() {
         );
     }
 
-    if (isError) {
+    if (authError || loadErr) {
         return (
             <DashboardLayout
                 title="Settings"
-                subtitle="Manage your account and preferences."
+                subtitle="Manage your account and billing."
                 rightSlot={
-                    <button className="settings-btn settings-btn-primary" onClick={() => refetch?.()}>
+                    <button className="settings-btn settings-btn-primary" onClick={retryAll}>
                         Retry
                     </button>
                 }
@@ -157,7 +174,7 @@ export default function Settings() {
                 <div className="settings-shell">
                     <div className="settings-card">
                         <h2 className="settings-card-title">Couldn’t load your settings</h2>
-                        <p className="settings-muted">Please try again.</p>
+                        <p className="settings-muted">{loadErr || "Please try again."}</p>
                     </div>
                 </div>
             </DashboardLayout>
@@ -165,85 +182,63 @@ export default function Settings() {
     }
 
     return (
-        <DashboardLayout title="Settings" subtitle="Manage your account, billing, orders and invoices.">
+        <DashboardLayout title="Settings" subtitle="Manage your account, billing, invoices and payments.">
             <div className="settings-shell">
                 {/* ACCOUNT */}
                 <section className="settings-card">
                     <div className="settings-card-head">
                         <div>
                             <h2 className="settings-card-title">Account</h2>
-                            <p className="settings-muted">
-                                Your login method determines what details can be edited.
-                            </p>
+                            <p className="settings-muted">Your login method determines what details can be edited.</p>
                         </div>
+
                         <span className="settings-pill">
-                            Login: <strong>{isGoogleLogin ? "GOOGLE" : "EMAIL"}</strong>
+                            Login: <strong>{isGoogle ? "GOOGLE" : "EMAIL"}</strong>
                         </span>
                     </div>
 
                     <div className="settings-grid-2">
                         <div className="settings-field">
                             <label className="settings-label">Name</label>
-                            <input className="settings-input" value={displayName} disabled />
-                            {isGoogleLogin ? (
+                            <input className="settings-input" value={accountName} disabled />
+                            {isGoogle ? (
                                 <div className="settings-hint">
-                                    This is managed by Google — you can’t change it here.
+                                    This account is managed by Google. Changes must be made through Google.
                                 </div>
                             ) : null}
                         </div>
 
                         <div className="settings-field">
                             <label className="settings-label">Email</label>
-                            <input className="settings-input" value={displayEmail} disabled />
-                            {isGoogleLogin ? (
+                            <input className="settings-input" value={accountEmail} disabled />
+                            {isGoogle ? (
                                 <div className="settings-hint">
-                                    This is managed by Google — you can’t change it here.
+                                    This account is managed by Google. Changes must be made through Google.
                                 </div>
                             ) : null}
                         </div>
 
                         <div className="settings-meta-row">
                             <div className="settings-meta">
-                                <div className="settings-meta-k">Created</div>
-                                <div className="settings-meta-v">{createdAt || "—"}</div>
+                                <div className="settings-meta-k">Avatar</div>
+                                <div className="settings-meta-v">
+                                    {accountAvatar ? (
+                                        <img
+                                            src={accountAvatar}
+                                            alt="Avatar"
+                                            style={{ width: 44, height: 44, borderRadius: 12, objectFit: "cover" }}
+                                        />
+                                    ) : (
+                                        "—"
+                                    )}
+                                </div>
                             </div>
+
                             <div className="settings-meta">
-                                <div className="settings-meta-k">Last updated</div>
-                                <div className="settings-meta-v">{updatedAt || "—"}</div>
+                                <div className="settings-meta-k">Provider</div>
+                                <div className="settings-meta-v">{isGoogle ? "Google" : "Email"}</div>
                             </div>
                         </div>
-
-                        {!isGoogleLogin ? (
-                            <div className="settings-actions">
-                                <button
-                                    type="button"
-                                    className="settings-btn settings-btn-ghost"
-                                    onClick={() => alert("Next step: add Change Password flow + endpoint.")}
-                                >
-                                    Change password
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="settings-btn settings-btn-danger"
-                                    onClick={() => alert("Next step: add Delete Account flow + endpoint.")}
-                                >
-                                    Delete account
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="settings-actions">
-                                <button
-                                    type="button"
-                                    className="settings-btn settings-btn-ghost"
-                                    onClick={() =>
-                                        alert("Google account details must be changed in your Google account settings.")
-                                    }
-                                >
-                                    Manage Google account
-                                </button>
-                            </div>
-                        )}
                     </div>
                 </section>
 
@@ -256,24 +251,25 @@ export default function Settings() {
                         </div>
 
                         <span className="settings-pill">
-                            Plan: <strong>{planLabel.toUpperCase()}</strong>
+                            Plan: <strong>{String(planLabel || "Free").toUpperCase()}</strong>
                         </span>
                     </div>
 
                     <div className="settings-billing-row">
                         <div className="settings-billing-left">
                             <div className="settings-billing-line">
-                                <span className="settings-billing-k">Current plan</span>
-                                <span className="settings-billing-v">{planLabel}</span>
+                                <span className="settings-billing-k">Status</span>
+                                <span className="settings-billing-v">{String(statusLabel || "free")}</span>
                             </div>
 
                             <div className="settings-billing-line">
                                 <span className="settings-billing-k">Renews</span>
-                                <span className="settings-billing-v">{renewAt || "—"}</span>
+                                <span className="settings-billing-v">{currentPeriodEnd ? fmtDate(currentPeriodEnd) : "—"}</span>
                             </div>
 
                             <div className="settings-hint">
-                                Orders and invoices will appear below once your backend is storing them.
+                                If you’re on Free, you can upgrade any time. If you’re subscribed, use “Manage billing” to update payment
+                                method or cancel.
                             </div>
                         </div>
 
@@ -281,53 +277,11 @@ export default function Settings() {
                             <button className="settings-btn settings-btn-primary" onClick={openBillingPortal}>
                                 Manage billing
                             </button>
-                            <button
-                                className="settings-btn settings-btn-ghost"
-                                onClick={() => (window.location.href = "/pricing")}
-                            >
+                            <button className="settings-btn settings-btn-ghost" onClick={() => (window.location.href = "/pricing")}>
                                 View plans
                             </button>
                         </div>
                     </div>
-                </section>
-
-                {/* ORDERS */}
-                <section className="settings-card">
-                    <div className="settings-card-head">
-                        <div>
-                            <h2 className="settings-card-title">Orders</h2>
-                            <p className="settings-muted">Purchases such as cards, add-ons, or plan upgrades.</p>
-                        </div>
-                    </div>
-
-                    {loadingLists && orders === null ? (
-                        <div className="settings-muted">Loading…</div>
-                    ) : Array.isArray(orders) && orders.length ? (
-                        <div className="settings-table">
-                            <div className="settings-row settings-row-head">
-                                <div>Order</div>
-                                <div>Status</div>
-                                <div>Amount</div>
-                                <div>Date</div>
-                            </div>
-
-                            {orders.map((o, idx) => (
-                                <div className="settings-row" key={o?.id || o?._id || idx}>
-                                    <div className="settings-mono">{o?.number || o?.id || o?._id || "—"}</div>
-                                    <div>{o?.status || "—"}</div>
-                                    <div>{o?.amountFormatted || o?.amount || "—"}</div>
-                                    <div>{fmtDate(o?.createdAt || o?.created_at) || "—"}</div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="settings-empty">
-                            No orders yet.
-                            <div className="settings-hint">
-                                When you add backend endpoint <strong>/api/orders</strong>, they will show here.
-                            </div>
-                        </div>
-                    )}
                 </section>
 
                 {/* INVOICES */}
@@ -339,32 +293,97 @@ export default function Settings() {
                         </div>
                     </div>
 
-                    {loadingLists && invoices === null ? (
-                        <div className="settings-muted">Loading…</div>
-                    ) : Array.isArray(invoices) && invoices.length ? (
+                    {Array.isArray(invoices) && invoices.length ? (
                         <div className="settings-table">
                             <div className="settings-row settings-row-head">
-                                <div>Invoice</div>
-                                <div>Status</div>
-                                <div>Total</div>
                                 <div>Date</div>
+                                <div>Amount</div>
+                                <div>Status</div>
+                                <div>PDF</div>
                             </div>
 
-                            {invoices.map((inv, idx) => (
-                                <div className="settings-row" key={inv?.id || inv?._id || idx}>
-                                    <div className="settings-mono">{inv?.number || inv?.id || inv?._id || "—"}</div>
-                                    <div>{inv?.status || "—"}</div>
-                                    <div>{inv?.totalFormatted || inv?.total || "—"}</div>
-                                    <div>{fmtDate(inv?.createdAt || inv?.created_at) || "—"}</div>
-                                </div>
-                            ))}
+                            {invoices.map((inv, idx) => {
+                                const id = inv?.id || inv?._id || idx;
+                                const date = inv?.date || inv?.createdAt || inv?.created_at || inv?.created;
+                                const amount = inv?.amount || inv?.total || inv?.amount_due || inv?.amountPaid || inv?.amount_paid;
+                                const currency = inv?.currency;
+                                const status = inv?.status || inv?.payment_status || "—";
+                                const pdf = inv?.pdf || inv?.invoicePdf || inv?.invoice_pdf || inv?.hosted_invoice_url || inv?.url;
+
+                                return (
+                                    <div className="settings-row" key={id}>
+                                        <div>{fmtDate(date)}</div>
+                                        <div>{fmtMoney(amount, currency)}</div>
+                                        <div>{String(status)}</div>
+                                        <div>
+                                            {pdf ? (
+                                                <a className="settings-link" href={pdf} target="_blank" rel="noreferrer">
+                                                    Download
+                                                </a>
+                                            ) : (
+                                                "—"
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     ) : (
                         <div className="settings-empty">
                             No invoices yet.
-                            <div className="settings-hint">
-                                When you add backend endpoint <strong>/api/invoices</strong>, they will show here.
+                            <div className="settings-hint">Invoices appear here once you’ve been billed through Stripe.</div>
+                        </div>
+                    )}
+                </section>
+
+                {/* PAYMENTS */}
+                <section className="settings-card">
+                    <div className="settings-card-head">
+                        <div>
+                            <h2 className="settings-card-title">Payments</h2>
+                            <p className="settings-muted">Your recent payment activity.</p>
+                        </div>
+                    </div>
+
+                    {Array.isArray(payments) && payments.length ? (
+                        <div className="settings-table">
+                            <div className="settings-row settings-row-head">
+                                <div>Date</div>
+                                <div>Amount</div>
+                                <div>Status</div>
+                                <div>Description</div>
                             </div>
+
+                            {payments.map((p, idx) => {
+                                const id = p?.id || p?._id || idx;
+                                const date = p?.date || p?.createdAt || p?.created_at || p?.created;
+                                const amount = p?.amount || p?.total || p?.amount_received || p?.amountReceived || p?.amount_received;
+                                const currency = p?.currency;
+                                const status = p?.status || p?.paid || p?.payment_status || "—";
+                                const desc =
+                                    p?.description ||
+                                    p?.statement_descriptor ||
+                                    p?.receipt_email ||
+                                    p?.invoiceNumber ||
+                                    p?.invoice_number ||
+                                    "—";
+
+                                return (
+                                    <div className="settings-row" key={id}>
+                                        <div>{fmtDate(date)}</div>
+                                        <div>{fmtMoney(amount, currency)}</div>
+                                        <div>{String(status)}</div>
+                                        <div className="settings-mono" style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                                            {String(desc)}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="settings-empty">
+                            No payments yet.
+                            <div className="settings-hint">Payments appear here after successful charges.</div>
                         </div>
                     )}
                 </section>
