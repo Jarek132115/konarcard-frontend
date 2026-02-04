@@ -1,11 +1,11 @@
-/* frontend/src/styling/dashboard/settings.css */
-
-/* =========================================================
-   Settings (Dashboard) — redesigned two-column layout
-   - Left: Account + Billing
-   - Right: Invoices + Payments
-   - Balanced spacing, consistent rhythm, responsive
-========================================================= */
+/* frontend/src/styling/dashboard/settings.css
+   =========================================================
+   Settings Page — Redesigned Layout (2-column)
+   - Left column wider (Account + Billing)
+   - Right column (Invoices + Payments)
+   - Full-width stretch + better vertical fill
+   - Consistent spacing + clean UI/UX
+   ========================================================= */
 
 :root {
     --bg: #ffffff;
@@ -34,37 +34,56 @@
     --focus: 0 0 0 3px rgb(var(--accent-rgb) / 0.28);
 }
 
-/* Shell */
+/* =========================================================
+   PAGE LAYOUT
+========================================================= */
+
+/* Wrapper inside DashboardLayout content */
 .settings-shell {
     width: 100%;
     padding: 0 0 12px;
-    display: grid;
-    gap: 14px;
 }
 
-/* New: 2-column layout */
+/* ✅ New 2-column layout:
+   Left wider than right + full width stretch */
 .settings-layout {
+    width: 100%;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    /* left wider */
     gap: 14px;
-    align-items: start;
+    align-items: stretch;
 }
 
+/* Column stacks */
 .settings-col {
     display: grid;
     gap: 14px;
     min-width: 0;
+    align-content: start;
 }
 
-/* Card */
+/* Right column fills height better */
+.settings-col-right {
+    grid-auto-rows: 1fr;
+    align-content: stretch;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
 .settings-card {
     background: var(--surface);
     border: 1px solid var(--border-2);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     padding: 16px;
+    height: 100%;
+    /* helps stretch in right column */
 }
 
+/* Card header */
 .settings-card-head {
     display: flex;
     align-items: flex-start;
@@ -89,7 +108,10 @@
     font-weight: 700;
 }
 
-/* Pills */
+/* =========================================================
+   PILLS / BADGES
+========================================================= */
+
 .settings-pill {
     font-family: "Cal Sans", sans-serif;
     font-size: 12px;
@@ -103,96 +125,24 @@
     white-space: nowrap;
 }
 
-/* Account header block (avatar + summary) */
-.settings-account-top {
-    display: grid;
-    grid-template-columns: 56px minmax(0, 1fr);
-    gap: 12px;
-    padding: 12px;
-    border-radius: 18px;
-    border: 1px solid rgba(11, 18, 32, 0.10);
-    background: var(--surface-2);
-    margin-bottom: 12px;
-    align-items: center;
-}
-
-.settings-avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid rgba(11, 18, 32, 0.10);
-    background: #fff;
-}
-
-.settings-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.settings-avatar-fallback {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    display: grid;
-    place-items: center;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    font-size: 20px;
-    color: var(--ink);
-    background: #fff;
-}
-
-.settings-account-summary {
-    min-width: 0;
-}
-
-.settings-account-name {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-    font-size: 16px;
-    line-height: 1.2;
-}
-
-.settings-account-email {
-    margin-top: 4px;
-    color: rgba(91, 102, 122, 0.95);
-    font-weight: 800;
-    font-size: 13px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.settings-account-badges {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
+/* Small status chips (optional use) */
 .settings-chip {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 8px 10px;
     border-radius: 999px;
-    border: 1px solid rgba(11, 18, 32, 0.12);
-    background: #fff;
+    border: 1px solid rgba(11, 18, 32, 0.10);
+    background: rgba(11, 18, 32, 0.03);
     font-weight: 900;
     font-size: 12px;
-    color: var(--ink);
+    color: rgba(11, 18, 32, 0.78);
 }
 
-.settings-chip-ghost {
-    background: rgba(11, 18, 32, 0.03);
-}
+/* =========================================================
+   INPUTS / FIELDS
+========================================================= */
 
-/* Inputs */
 .settings-field {
     display: grid;
     gap: 8px;
@@ -231,7 +181,7 @@
 
 /* Hint text */
 .settings-hint {
-    margin-top: 10px;
+    margin-top: 6px;
     font-size: 13px;
     font-weight: 800;
     color: rgba(91, 102, 122, 0.95);
@@ -241,14 +191,49 @@
     color: rgb(var(--accent-rgb));
 }
 
-/* Grid for account fields */
+/* =========================================================
+   ACCOUNT GRID + META ROW
+========================================================= */
+
 .settings-grid-2 {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
 }
 
-/* Buttons */
+.settings-meta-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.settings-meta {
+    border: 1px solid rgba(11, 18, 32, 0.10);
+    background: var(--surface-2);
+    border-radius: 16px;
+    padding: 12px;
+}
+
+.settings-meta-k {
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: rgba(11, 18, 32, 0.55);
+    text-transform: uppercase;
+}
+
+.settings-meta-v {
+    margin-top: 6px;
+    font-weight: 900;
+    color: var(--ink);
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
 .settings-btn {
     display: inline-flex;
     align-items: center;
@@ -302,20 +287,33 @@
     background: rgba(11, 18, 32, 0.04);
 }
 
-/* Billing: stat grid */
+.settings-btn-danger {
+    background: rgb(var(--danger-rgb) / 0.10);
+    border-color: rgb(var(--danger-rgb) / 0.22);
+    color: rgb(var(--danger-rgb));
+}
+
+.settings-btn-danger:hover {
+    background: rgb(var(--danger-rgb) / 0.14);
+}
+
+/* =========================================================
+   BILLING
+========================================================= */
+
+/* If you’re using the “3 stat tiles” billing redesign */
 .settings-billing-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
-    align-items: start;
+    margin-top: 8px;
 }
 
 .settings-stat {
     border: 1px solid rgba(11, 18, 32, 0.10);
     background: #fff;
-    border-radius: 18px;
+    border-radius: 16px;
     padding: 12px;
-    min-width: 0;
 }
 
 .settings-stat-k {
@@ -327,27 +325,56 @@
 }
 
 .settings-stat-v {
-    margin-top: 8px;
-    font-family: "Cal Sans", sans-serif;
+    margin-top: 6px;
     font-weight: 900;
     color: var(--ink);
-    font-size: 16px;
-    letter-spacing: -0.01em;
-}
-
-.settings-stat-v.is-active {
-    color: rgb(var(--accent-rgb));
 }
 
 .settings-billing-actions {
-    grid-column: 1 / -1;
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    margin-top: 12px;
 }
 
-/* Tables */
+/* Backwards-compatible billing row (if still present) */
+.settings-billing-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: start;
+}
+
+.settings-billing-left {
+    min-width: 0;
+}
+
+.settings-billing-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(11, 18, 32, 0.10);
+    background: #fff;
+    margin-bottom: 10px;
+}
+
+.settings-billing-k {
+    font-weight: 900;
+    color: rgba(11, 18, 32, 0.65);
+}
+
+.settings-billing-v {
+    font-weight: 900;
+    color: var(--ink);
+}
+
+/* =========================================================
+   TABLES
+========================================================= */
+
 .settings-table {
     margin-top: 10px;
     border-radius: 18px;
@@ -356,13 +383,12 @@
     background: #fff;
 }
 
-.settings-table-compact .settings-row {
-    padding: 11px 12px;
-}
-
+/* Invoices table (4 cols) */
 .settings-row {
     display: grid;
+    grid-template-columns: 1.2fr 0.8fr 0.8fr 0.9fr;
     gap: 10px;
+    padding: 12px 14px;
     border-top: 1px solid rgba(11, 18, 32, 0.08);
     align-items: center;
     font-weight: 800;
@@ -382,19 +408,12 @@
     color: rgba(11, 18, 32, 0.70);
 }
 
-/* Different column templates for invoice/pay rows */
-.settings-row-4 {
-    grid-template-columns: 1.2fr 0.8fr 0.8fr 0.9fr;
-    padding: 12px 12px;
-}
-
-.settings-row-4p {
-    grid-template-columns: 1.1fr 0.8fr 0.8fr 1.3fr;
-    padding: 12px 12px;
+/* Payments table (4 cols) — you can add this class in JSX if you want */
+.settings-row-payments {
+    grid-template-columns: 1.1fr 0.8fr 0.8fr 1.4fr;
 }
 
 .settings-link {
-    font-family: "Cal Sans", sans-serif;
     font-weight: 900;
     color: rgb(var(--accent-rgb));
     text-decoration: none;
@@ -404,47 +423,10 @@
     text-decoration: underline;
 }
 
-/* Badges for status */
-.settings-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(11, 18, 32, 0.12);
-    background: rgba(11, 18, 32, 0.03);
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    font-size: 12px;
-    color: var(--ink);
-    text-transform: capitalize;
-}
-
-.settings-badge.paid,
-.settings-badge.succeeded {
-    border-color: rgb(var(--accent-rgb) / 0.25);
-    background: rgb(var(--accent-rgb) / 0.10);
-    color: rgb(var(--accent-rgb));
-}
-
-.settings-badge.failed,
-.settings-badge.past_due {
-    border-color: rgb(var(--danger-rgb) / 0.25);
-    background: rgb(var(--danger-rgb) / 0.10);
-    color: rgb(var(--danger-rgb));
-}
-
-/* Text utils */
 .settings-mono {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-weight: 800;
     font-size: 13px;
-}
-
-.settings-ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 /* Empty state */
@@ -458,9 +440,12 @@
     font-weight: 900;
 }
 
-/* Loading skeleton */
+/* =========================================================
+   SKELETON LOADING
+========================================================= */
+
 .settings-skel {
-    height: 180px;
+    height: 160px;
     border-radius: var(--radius-lg);
     border: 1px solid rgba(11, 18, 32, 0.08);
     background: linear-gradient(90deg,
@@ -481,25 +466,44 @@
     }
 }
 
-/* Responsive */
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
 @media (max-width: 1100px) {
     .settings-layout {
         grid-template-columns: 1fr;
+        align-items: start;
     }
 
     .settings-grid-2 {
         grid-template-columns: 1fr;
     }
 
+    .settings-meta-row {
+        grid-template-columns: 1fr;
+    }
+
     .settings-billing-grid {
         grid-template-columns: 1fr;
+    }
+
+    .settings-billing-row {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-billing-actions {
+        justify-content: flex-start;
+    }
+
+    .settings-col-right {
+        grid-auto-rows: initial;
+        align-content: start;
     }
 }
 
 @media (max-width: 640px) {
-
-    .settings-row-4,
-    .settings-row-4p {
+    .settings-row {
         grid-template-columns: 1fr;
         gap: 6px;
     }
@@ -510,91 +514,5 @@
 
     .settings-table {
         overflow: visible;
-    }
-
-    .settings-account-top {
-        grid-template-columns: 52px 1fr;
-    }
-
-    .settings-avatar,
-    .settings-avatar-fallback {
-        width: 52px;
-        height: 52px;
-        border-radius: 14px;
-    }
-}
-
-/* ✅ NEW CSS PATCH (drop this at the BOTTOM of settings.css)
-   Goal:
-   - Left column wider than right (more content)
-   - Columns stretch full width
-   - Right column cards fill height better (less floating)
-   - Consistent gaps + perfect fit
-*/
-
-/* 2-column layout: left wider */
-.settings-layout {
-    width: 100%;
-    display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
-    /* ✅ left > right */
-    gap: 14px;
-    align-items: stretch;
-    /* ✅ stretch both columns */
-}
-
-/* Make columns stretch and allow cards to grow */
-.settings-col {
-    display: grid;
-    gap: 14px;
-    min-width: 0;
-    align-content: start;
-}
-
-/* ✅ Let cards naturally stretch and match height rhythm */
-.settings-card {
-    height: 100%;
-}
-
-/* ✅ Make right column “fill” by distributing space */
-.settings-col:last-child {
-    grid-auto-rows: 1fr;
-    /* each card takes equal row height */
-    align-content: stretch;
-}
-
-/* In case there are only 2 cards on the right, force them to fill nicely */
-.settings-col:last-child>.settings-card {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Ensure tables/empty states don’t collapse and leave weird whitespace */
-.settings-table,
-.settings-empty {
-    margin-top: 10px;
-}
-
-/* ✅ Billing area should expand a bit so left column feels filled */
-.settings-billing-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-content: start;
-}
-
-/* ✅ Give right side tables a bit more breathing space */
-.settings-table-compact .settings-row {
-    padding: 12px 14px;
-}
-
-/* Responsive: stack at smaller sizes */
-@media (max-width: 1100px) {
-    .settings-layout {
-        grid-template-columns: 1fr;
-        /* stack */
-        align-items: start;
-    }
-
-    .settings-col:last-child {
-        grid-auto-rows: initial;
     }
 }
