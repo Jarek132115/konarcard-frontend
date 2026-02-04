@@ -7,11 +7,11 @@ import { useAuthUser } from "../../hooks/useAuthUser";
 import api from "../../services/api";
 
 /**
- * Settings page (wired to backend billing endpoints):
- * - GET  /api/billing/summary
- * - GET  /api/billing/invoices
- * - GET  /api/billing/payments
- * - POST /api/billing-portal  (redirect to returned url)
+ * Uses backend billingController shapes:
+ * - GET  /api/billing/summary  -> { account: {...}, plan, planInterval, subscriptionStatus, currentPeriodEnd }
+ * - GET  /api/billing/invoices -> { invoices: [...] }
+ * - GET  /api/billing/payments -> { payments: [...] }
+ * - POST /api/billing-portal   -> { url }
  */
 
 const safeLower = (v) => String(v || "").toLowerCase();
@@ -27,20 +27,11 @@ const fmtDate = (d) => {
     }
 };
 
-const fmtMoney = (amount, currency) => {
-    // Supports:
-    // - amount as number in cents
-    // - amount as string already formatted
-    // - amount as number already in major units (best-effort)
-    if (amount == null || amount === "") return "—";
-    if (typeof amount === "string") return amount;
-
+const fmtMoneyFromMinor = (minorAmount, currency) => {
+    if (minorAmount == null || minorAmount === "") return "—";
     const cur = String(currency || "GBP").toUpperCase();
-
-    // Heuristic: Stripe amounts usually come as integer cents.
-    // If it's an integer and pretty large, assume cents. If it's fractional, assume major units.
-    const isInt = Number.isFinite(amount) && Math.floor(amount) === amount;
-    const major = isInt ? amount / 100 : amount;
+    const major = typeof minorAmount === "number" ? minorAmount / 100 : Number(minorAmount) / 100;
+    if (!Number.isFinite(major)) return "—";
 
     try {
         return new Intl.NumberFormat(undefined, {
@@ -49,40 +40,23 @@ const fmtMoney = (amount, currency) => {
             maximumFractionDigits: 2,
         }).format(major);
     } catch {
-        // fallback
         return `${major.toFixed(2)} ${cur}`;
     }
 };
 
 export default function Settings() {
-    // Keep authUser hook for token/session + fallback display
     const { data: authUser, isLoading: authLoading, isError: authError, refetch: refetchAuth } = useAuthUser();
 
     const [summary, setSummary] = useState(null);
-    const [invoices, setInvoices] = useState(null);
-    const [payments, setPayments] = useState(null);
+    const [invoices, setInvoices] = useState([]);
+    const [payments, setPayments] = useState([]);
 
     const [loading, setLoading] = useState(true);
     const [loadErr, setLoadErr] = useState("");
 
-    const provider = useMemo(() => {
-        const p = safeLower(summary?.authProvider || authUser?.authProvider || authUser?.provider || authUser?.loginProvider);
-        return p === "google" ? "google" : "local";
-    }, [summary, authUser]);
-
-    const isGoogle = provider === "google";
-
-    const accountName = summary?.name || authUser?.name || authUser?.full_name || "—";
-    const accountEmail = summary?.email || authUser?.email || "—";
-    const accountAvatar = summary?.avatar || authUser?.avatar || authUser?.profilePhoto || authUser?.photoURL || "";
-
-    const planLabel = summary?.planLabel || summary?.plan || "Free";
-    const statusLabel = summary?.status || "free";
-    const currentPeriodEnd = summary?.currentPeriodEnd || null;
-
     useEffect(() => {
-        if (!authUser && !authLoading) {
-            // not logged in or no session; still show page shell
+        if (authLoading) return;
+        if (!authUser) {
             setLoading(false);
             return;
         }
@@ -94,25 +68,27 @@ export default function Settings() {
                 setLoading(true);
                 setLoadErr("");
 
+                // cache bust to avoid 304 stale responses
+                const ts = Date.now();
+
                 const [sRes, iRes, pRes] = await Promise.all([
-                    api.get("/api/billing/summary"),
-                    api.get("/api/billing/invoices"),
-                    api.get("/api/billing/payments"),
+                    api.get(`/api/billing/summary?ts=${ts}`),
+                    api.get(`/api/billing/invoices?ts=${ts}`),
+                    api.get(`/api/billing/payments?ts=${ts}`),
                 ]);
 
                 if (cancelled) return;
 
-                const s = sRes?.data?.data ?? sRes?.data ?? null;
-                const inv = iRes?.data?.data ?? iRes?.data ?? [];
-                const pay = pRes?.data?.data ?? pRes?.data ?? [];
+                const s = sRes?.data || null;
+                const invPayload = iRes?.data || {};
+                const payPayload = pRes?.data || {};
 
                 setSummary(s && typeof s === "object" ? s : null);
-                setInvoices(Array.isArray(inv) ? inv : []);
-                setPayments(Array.isArray(pay) ? pay : []);
+                setInvoices(Array.isArray(invPayload.invoices) ? invPayload.invoices : []);
+                setPayments(Array.isArray(payPayload.payments) ? payPayload.payments : []);
             } catch (e) {
                 if (cancelled) return;
-                const msg = e?.response?.data?.error || e?.message || "Could not load settings.";
-                setLoadErr(msg);
+                setLoadErr(e?.response?.data?.error || e?.message || "Could not load settings.");
                 setSummary(null);
                 setInvoices([]);
                 setPayments([]);
@@ -124,12 +100,28 @@ export default function Settings() {
         return () => {
             cancelled = true;
         };
-    }, [authUser, authLoading]);
+    }, [authLoading, authUser]);
+
+    const provider = useMemo(() => {
+        const p = safeLower(summary?.account?.authProvider || authUser?.authProvider || authUser?.provider || authUser?.loginProvider);
+        return p === "google" ? "google" : "local";
+    }, [summary, authUser]);
+
+    const isGoogle = provider === "google";
+
+    const accountName = summary?.account?.name || authUser?.name || authUser?.full_name || "—";
+    const accountEmail = summary?.account?.email || authUser?.email || "—";
+    const accountAvatar = summary?.account?.avatar || authUser?.avatar || authUser?.picture || authUser?.photoURL || "";
+
+    const plan = summary?.plan || "free";
+    const planInterval = summary?.planInterval || null;
+    const subscriptionStatus = summary?.subscriptionStatus || "free";
+    const currentPeriodEnd = summary?.currentPeriodEnd || null;
 
     const openBillingPortal = async () => {
         try {
             const res = await api.post("/api/billing-portal", {});
-            const url = res?.data?.url || res?.data?.portalUrl || res?.data?.redirectUrl;
+            const url = res?.data?.url;
             if (!url) throw new Error("Billing portal URL missing.");
             window.location.href = url;
         } catch (e) {
@@ -138,14 +130,9 @@ export default function Settings() {
     };
 
     const retryAll = async () => {
-        try {
-            setLoadErr("");
-            setLoading(true);
-            await refetchAuth?.();
-            // refetchAuth triggers authUser update; our effect will fetch billing endpoints again
-        } finally {
-            // do nothing
-        }
+        setLoadErr("");
+        setLoading(true);
+        await refetchAuth?.();
     };
 
     if (authLoading || loading) {
@@ -251,7 +238,7 @@ export default function Settings() {
                         </div>
 
                         <span className="settings-pill">
-                            Plan: <strong>{String(planLabel || "Free").toUpperCase()}</strong>
+                            Plan: <strong>{String(plan || "free").toUpperCase()}</strong>
                         </span>
                     </div>
 
@@ -259,7 +246,12 @@ export default function Settings() {
                         <div className="settings-billing-left">
                             <div className="settings-billing-line">
                                 <span className="settings-billing-k">Status</span>
-                                <span className="settings-billing-v">{String(statusLabel || "free")}</span>
+                                <span className="settings-billing-v">{subscriptionStatus || "free"}</span>
+                            </div>
+
+                            <div className="settings-billing-line">
+                                <span className="settings-billing-k">Interval</span>
+                                <span className="settings-billing-v">{planInterval || "—"}</span>
                             </div>
 
                             <div className="settings-billing-line">
@@ -267,10 +259,7 @@ export default function Settings() {
                                 <span className="settings-billing-v">{currentPeriodEnd ? fmtDate(currentPeriodEnd) : "—"}</span>
                             </div>
 
-                            <div className="settings-hint">
-                                If you’re on Free, you can upgrade any time. If you’re subscribed, use “Manage billing” to update payment
-                                method or cancel.
-                            </div>
+                            <div className="settings-hint">Use “Manage billing” to view invoices, update payment method, or cancel.</div>
                         </div>
 
                         <div className="settings-billing-actions">
@@ -293,7 +282,7 @@ export default function Settings() {
                         </div>
                     </div>
 
-                    {Array.isArray(invoices) && invoices.length ? (
+                    {invoices.length ? (
                         <div className="settings-table">
                             <div className="settings-row settings-row-head">
                                 <div>Date</div>
@@ -303,17 +292,17 @@ export default function Settings() {
                             </div>
 
                             {invoices.map((inv, idx) => {
-                                const id = inv?.id || inv?._id || idx;
-                                const date = inv?.date || inv?.createdAt || inv?.created_at || inv?.created;
-                                const amount = inv?.amount || inv?.total || inv?.amount_due || inv?.amountPaid || inv?.amount_paid;
+                                const id = inv?.id || idx;
+                                const date = inv?.created;
+                                const amountMinor = inv?.total ?? inv?.amount_paid ?? inv?.amount_due;
                                 const currency = inv?.currency;
-                                const status = inv?.status || inv?.payment_status || "—";
-                                const pdf = inv?.pdf || inv?.invoicePdf || inv?.invoice_pdf || inv?.hosted_invoice_url || inv?.url;
+                                const status = inv?.status || "—";
+                                const pdf = inv?.invoice_pdf || inv?.hosted_invoice_url;
 
                                 return (
                                     <div className="settings-row" key={id}>
                                         <div>{fmtDate(date)}</div>
-                                        <div>{fmtMoney(amount, currency)}</div>
+                                        <div>{fmtMoneyFromMinor(amountMinor, currency)}</div>
                                         <div>{String(status)}</div>
                                         <div>
                                             {pdf ? (
@@ -331,7 +320,7 @@ export default function Settings() {
                     ) : (
                         <div className="settings-empty">
                             No invoices yet.
-                            <div className="settings-hint">Invoices appear here once you’ve been billed through Stripe.</div>
+                            <div className="settings-hint">Invoices appear here once Stripe generates them.</div>
                         </div>
                     )}
                 </section>
@@ -345,7 +334,7 @@ export default function Settings() {
                         </div>
                     </div>
 
-                    {Array.isArray(payments) && payments.length ? (
+                    {payments.length ? (
                         <div className="settings-table">
                             <div className="settings-row settings-row-head">
                                 <div>Date</div>
@@ -355,23 +344,17 @@ export default function Settings() {
                             </div>
 
                             {payments.map((p, idx) => {
-                                const id = p?.id || p?._id || idx;
-                                const date = p?.date || p?.createdAt || p?.created_at || p?.created;
-                                const amount = p?.amount || p?.total || p?.amount_received || p?.amountReceived || p?.amount_received;
+                                const id = p?.id || idx;
+                                const date = p?.created;
+                                const amountMinor = p?.amount;
                                 const currency = p?.currency;
-                                const status = p?.status || p?.paid || p?.payment_status || "—";
-                                const desc =
-                                    p?.description ||
-                                    p?.statement_descriptor ||
-                                    p?.receipt_email ||
-                                    p?.invoiceNumber ||
-                                    p?.invoice_number ||
-                                    "—";
+                                const status = p?.status || "—";
+                                const desc = p?.description || p?.receipt_email || "—";
 
                                 return (
                                     <div className="settings-row" key={id}>
                                         <div>{fmtDate(date)}</div>
-                                        <div>{fmtMoney(amount, currency)}</div>
+                                        <div>{fmtMoneyFromMinor(amountMinor, currency)}</div>
                                         <div>{String(status)}</div>
                                         <div className="settings-mono" style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
                                             {String(desc)}
