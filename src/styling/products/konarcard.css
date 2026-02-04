@@ -790,3 +790,58 @@
         width: 100%;
     }
 }
+
+/* =========================
+   Stage: make it premium + no box
+   ========================= */
+
+/* the wrapper that currently looks like a "box" */
+.kc-premStage__surface {
+    /* remove the box look */
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    /* give the card breathing room so it never clips */
+    height: auto !important;
+    min-height: 420px;
+    /* desktop */
+    padding: 44px 0 56px !important;
+    /* extra top/bottom space */
+
+    /* IMPORTANT: allow the card shadow/edges to show fully */
+    overflow: visible !important;
+
+    /* keep interaction feeling the same */
+    display: grid;
+    place-items: center;
+    perspective: 1200px;
+}
+
+/* if you're using the small modifier, keep it roomy too */
+.kc-premStage__surface--small {
+    min-height: 380px;
+    padding: 40px 0 52px !important;
+    overflow: visible !important;
+}
+
+/* the actual 3D card shadow should be visible */
+.kc-premCard {
+    filter: drop-shadow(0 30px 55px rgba(12, 24, 48, 0.18));
+}
+
+/* hint pill stays readable even with no stage background */
+.kc-premStage__hint {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(12, 24, 48, 0.10);
+}
+
+/* mobile spacing */
+@media (max-width: 560px) {
+
+    .kc-premStage__surface,
+    .kc-premStage__surface--small {
+        min-height: 320px;
+        padding: 28px 0 46px !important;
+    }
+}
