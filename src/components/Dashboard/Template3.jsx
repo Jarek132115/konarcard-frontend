@@ -1,3 +1,4 @@
+// src/components/Dashboard/Template3.jsx
 import React from "react";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
@@ -30,7 +31,10 @@ export default function Template3({ vm }) {
         socialLinks,
 
         ctaStyle,
-        onExchangeContact,
+
+        // ✅ actions from UserPage vm
+        onSaveMyNumber,
+        onOpenExchangeContact,
     } = vm;
 
     const wrap = {
@@ -60,12 +64,23 @@ export default function Template3({ vm }) {
 
     const title = { margin: "0 0 10px", fontWeight: 950, fontSize: 18 };
 
+    const leftBtnStyle = {
+        ...ctaStyle,
+        width: "100%",
+        padding: "12px 14px",
+        borderRadius: 12,
+        border: "none",
+        fontWeight: 900,
+        cursor: "pointer",
+    };
+
     const Left = () => (
         <div style={{ position: "sticky", top: 14, alignSelf: "start" }}>
             <div style={card}>
                 {nonEmpty(cover) && (
                     <img src={cover} alt="Cover" style={{ width: "100%", height: 170, objectFit: "cover" }} />
                 )}
+
                 <div style={{ padding: 16 }}>
                     <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
                         {nonEmpty(avatar) && (
@@ -75,9 +90,17 @@ export default function Template3({ vm }) {
                                 style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover" }}
                             />
                         )}
-                        <div>
-                            {nonEmpty(fullName) && <div style={{ fontWeight: 950 }}>{fullName}</div>}
-                            {nonEmpty(jobTitle) && <div style={{ opacity: 0.8, fontSize: 14 }}>{jobTitle}</div>}
+                        <div style={{ minWidth: 0 }}>
+                            {nonEmpty(fullName) && (
+                                <div style={{ fontWeight: 950, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                    {fullName}
+                                </div>
+                            )}
+                            {nonEmpty(jobTitle) && (
+                                <div style={{ opacity: 0.8, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis" }}>
+                                    {jobTitle}
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -85,22 +108,17 @@ export default function Template3({ vm }) {
                     {nonEmpty(subHeading) && <p style={{ margin: "6px 0 0", opacity: 0.85 }}>{subHeading}</p>}
 
                     {hasContact && (
-                        <button
-                            type="button"
-                            onClick={onExchangeContact}
-                            style={{
-                                ...ctaStyle,
-                                marginTop: 14,
-                                width: "100%",
-                                padding: "12px 14px",
-                                borderRadius: 12,
-                                border: "none",
-                                fontWeight: 900,
-                                cursor: "pointer",
-                            }}
-                        >
-                            Save Contact
-                        </button>
+                        <div style={{ marginTop: 14, display: "grid", gap: 10 }}>
+                            {/* ✅ Save contact (vCard download) */}
+                            <button type="button" onClick={onSaveMyNumber} style={leftBtnStyle}>
+                                Save My Number
+                            </button>
+
+                            {/* ✅ New: open exchange modal */}
+                            <button type="button" onClick={onOpenExchangeContact} style={leftBtnStyle}>
+                                Exchange Contact
+                            </button>
+                        </div>
                     )}
 
                     {(nonEmpty(email) || nonEmpty(phone)) && (
@@ -126,7 +144,10 @@ export default function Template3({ vm }) {
                                         alignItems: "center",
                                         justifyContent: "center",
                                         border: "1px solid rgba(0,0,0,0.10)",
-                                        background: themeStyles?.backgroundColor === "#1F1F1F" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
+                                        background:
+                                            themeStyles?.backgroundColor === "#1F1F1F"
+                                                ? "rgba(255,255,255,0.05)"
+                                                : "rgba(0,0,0,0.03)",
                                     }}
                                     aria-label={s.label}
                                 >
@@ -153,7 +174,7 @@ export default function Template3({ vm }) {
         showAboutMeSection ? (
             <div style={section}>
                 <div style={title}>About</div>
-                {nonEmpty(bio) && <div style={{ opacity: 0.92, lineHeight: 1.5 }}>{bio}</div>}
+                {nonEmpty(bio) && <div style={{ opacity: 0.92, lineHeight: 1.5, whiteSpace: "pre-wrap" }}>{bio}</div>}
             </div>
         ) : null;
 
@@ -162,7 +183,7 @@ export default function Template3({ vm }) {
             <div style={section}>
                 <div style={title}>Work</div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10 }}>
-                    {works.map((url, i) => (
+                    {(works || []).map((url, i) => (
                         <img
                             key={i}
                             src={url}
@@ -179,7 +200,7 @@ export default function Template3({ vm }) {
             <div style={section}>
                 <div style={title}>Services</div>
                 <div style={{ display: "grid", gap: 8 }}>
-                    {services.map((s, i) => (
+                    {(services || []).map((s, i) => (
                         <div
                             key={i}
                             style={{
@@ -191,8 +212,8 @@ export default function Template3({ vm }) {
                                 gap: 10,
                             }}
                         >
-                            <div style={{ fontWeight: 900 }}>{s.name}</div>
-                            {nonEmpty(s.price) && <div style={{ opacity: 0.85 }}>{s.price}</div>}
+                            <div style={{ fontWeight: 900 }}>{s?.name || ""}</div>
+                            {nonEmpty(s?.price) && <div style={{ opacity: 0.85 }}>{s.price}</div>}
                         </div>
                     ))}
                 </div>
@@ -204,12 +225,28 @@ export default function Template3({ vm }) {
             <div style={section}>
                 <div style={title}>Reviews</div>
                 <div style={{ display: "grid", gap: 10 }}>
-                    {reviews.map((r, i) => (
-                        <div key={i} style={{ padding: 12, borderRadius: 14, border: "1px solid rgba(0,0,0,0.10)" }}>
-                            <div style={{ fontWeight: 900 }}>{r.name || "Review"}</div>
-                            {nonEmpty(r.text) && <div style={{ opacity: 0.9, marginTop: 6 }}>{`"${r.text}"`}</div>}
-                        </div>
-                    ))}
+                    {(reviews || []).map((r, i) => {
+                        const rating = Number(r?.rating || 0);
+                        const fullStars = Math.min(5, Math.max(0, rating));
+                        const emptyStars = Math.max(0, 5 - fullStars);
+
+                        return (
+                            <div
+                                key={i}
+                                style={{ padding: 12, borderRadius: 14, border: "1px solid rgba(0,0,0,0.10)" }}
+                            >
+                                <div style={{ fontWeight: 900 }}>{r?.name || "Review"}</div>
+                                {nonEmpty(r?.text) && <div style={{ opacity: 0.9, marginTop: 6 }}>{`"${r.text}"`}</div>}
+
+                                {fullStars > 0 && (
+                                    <div style={{ marginTop: 8, opacity: 0.9 }}>
+                                        {"★".repeat(fullStars)}
+                                        <span style={{ opacity: 0.35 }}>{"★".repeat(emptyStars)}</span>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         ) : null;
@@ -236,7 +273,7 @@ export default function Template3({ vm }) {
         <div className="user-landing-page template-3" style={themeStyles}>
             <div style={wrap}>
                 <Left />
-                <div>{sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}</div>
+                <div>{(sectionOrder || []).map((k) => sectionMap[k]).filter(Boolean)}</div>
             </div>
         </div>
     );

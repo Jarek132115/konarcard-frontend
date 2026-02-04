@@ -55,8 +55,9 @@ export default function Template1({ vm }) {
         servicesMode,
         reviewsMode,
 
-        // actions
-        onExchangeContact,
+        // ✅ actions (new names)
+        onSaveMyNumber,
+        onOpenExchangeContact,
     } = vm;
 
     const MainSection = () =>
@@ -73,15 +74,29 @@ export default function Template1({ vm }) {
                         {subHeading}
                     </p>
                 )}
+
                 {hasContact && (
-                    <button
-                        type="button"
-                        onClick={onExchangeContact}
-                        className="landing-action-button"
-                        style={ctaStyle}
-                    >
-                        Save My Number
-                    </button>
+                    <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
+                        {/* ✅ Existing button = Save vCard */}
+                        <button
+                            type="button"
+                            onClick={onSaveMyNumber}
+                            className="landing-action-button"
+                            style={ctaStyle}
+                        >
+                            Save My Number
+                        </button>
+
+                        {/* ✅ NEW button under it = Exchange contact modal */}
+                        <button
+                            type="button"
+                            onClick={onOpenExchangeContact}
+                            className="landing-action-button"
+                            style={ctaStyle}
+                        >
+                            Exchange Contact
+                        </button>
+                    </div>
                 )}
             </>
         ) : null;
@@ -255,7 +270,7 @@ export default function Template1({ vm }) {
                             <p className="landing-contact-value">{phone}</p>
                         </div>
                     )}
-                    {socialLinks.length > 0 && (
+                    {(socialLinks?.length || 0) > 0 && (
                         <div className="landing-contact-socials" aria-label="Social links">
                             {socialLinks.map((s) => (
                                 <a

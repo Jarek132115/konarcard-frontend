@@ -1,9 +1,10 @@
 // frontend/src/pages/interface/UserPage.jsx
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
 import { AuthContext } from "../../components/AuthContext";
+import { toast } from "react-hot-toast";
 
 /* ✅ TEMPLATES */
 import Template1 from "../../components/Dashboard/Template1";
@@ -30,7 +31,6 @@ const looksLikePlaceholderUrl = (url = "") =>
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 const arr = (v) => (Array.isArray(v) ? v : []);
 
-/** read(obj, ["keyA","key_b"], fallback) -> first present value */
 const read = (o, keys, fb = undefined) => {
     for (const k of keys) {
         if (o?.[k] !== undefined && o?.[k] !== null) return o[k];
@@ -51,9 +51,6 @@ const centerPage = {
     minHeight: "100vh",
 };
 
-/**
- * Must match backend safeSlug rules: a-z 0-9 hyphen only
- */
 const normalizeSlug = (raw) =>
     String(raw || "")
         .trim()
@@ -62,12 +59,188 @@ const normalizeSlug = (raw) =>
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "");
 
+/* Small input cleaners for exchange modal */
+const cleanEmail = (v) => String(v || "").trim().toLowerCase();
+const cleanPhone = (v) => String(v || "").replace(/[^\d+]/g, "").slice(0, 20);
+
+function ExchangeContactModal({ open, onClose, profileSlug, ownerName }) {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [message, setMessage] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+
+    if (!open) return null;
+
+    const submit = async (e) => {
+        e.preventDefault();
+        if (submitting) return;
+
+        const payload = {
+            profileSlug: String(profileSlug || "").trim().toLowerCase(),
+            name: String(name || "").trim(),
+            email: cleanEmail(email),
+            phone: cleanPhone(phone),
+            message: String(message || "").trim(),
+        };
+
+        if (!payload.profileSlug) return toast.error("Missing profile slug.");
+        if (!payload.name) return toast.error("Please enter your name.");
+        if (!payload.email && !payload.phone) return toast.error("Please provide email or phone.");
+
+        setSubmitting(true);
+        try {
+            // ✅ PUBLIC endpoint
+            const res = await api.post("/exchange-contact", payload, { headers: { "x-no-auth": "1" } });
+
+            if (res.data?.error) {
+                toast.error(res.data.error);
+                return;
+            }
+
+            toast.success("Sent! Your details were shared.");
+            onClose?.();
+            setName("");
+            setEmail("");
+            setPhone("");
+            setMessage("");
+        } catch (err) {
+            toast.error(err?.response?.data?.error || "Could not send details.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    return (
+        <div
+            onMouseDown={(e) => {
+                if (e.target === e.currentTarget) onClose?.();
+            }}
+            style={{
+                position: "fixed",
+                inset: 0,
+                background: "rgba(0,0,0,0.45)",
+                zIndex: 99999,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 16,
+            }}
+        >
+            <div
+                style={{
+                    width: "100%",
+                    maxWidth: 460,
+                    background: "#fff",
+                    borderRadius: 16,
+                    padding: 18,
+                    boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
+                }}
+            >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+                    <div>
+                        <div style={{ fontSize: 18, fontWeight: 800 }}>Exchange contact</div>
+                        <div style={{ fontSize: 13, opacity: 0.75, marginTop: 2 }}>
+                            Share your details with {ownerName || "this person"}.
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label="Close"
+                        style={{
+                            border: "none",
+                            background: "transparent",
+                            fontSize: 26,
+                            lineHeight: 1,
+                            cursor: "pointer",
+                            padding: 4,
+                        }}
+                    >
+                        ×
+                    </button>
+                </div>
+
+                <form onSubmit={submit} style={{ marginTop: 14 }}>
+                    <div style={{ display: "grid", gap: 10 }}>
+                        <div>
+                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>Your name</label>
+                            <input
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="kc-input"
+                                placeholder="John Smith"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
+                                Email (optional)
+                            </label>
+                            <input
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="kc-input"
+                                placeholder="you@email.com"
+                                type="email"
+                            />
+                        </div>
+
+                        <div>
+                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
+                                Phone (optional)
+                            </label>
+                            <input
+                                value={phone}
+                                onChange={(e) => setPhone(cleanPhone(e.target.value))}
+                                className="kc-input"
+                                placeholder="+44..."
+                                inputMode="tel"
+                            />
+                        </div>
+
+                        <div>
+                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
+                                Message (optional)
+                            </label>
+                            <textarea
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                className="kc-input"
+                                placeholder="Hi — great profile!"
+                                rows={3}
+                                style={{ resize: "vertical" }}
+                            />
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={submitting}
+                        aria-busy={submitting}
+                        className="kc-btn kc-btn-primary kc-btn-center"
+                        style={{ marginTop: 14 }}
+                    >
+                        {submitting ? "Sending…" : "Send my details"}
+                    </button>
+                </form>
+
+                <div style={{ fontSize: 12, opacity: 0.65, marginTop: 10 }}>
+                    Your details will be emailed to the profile owner and saved in their KonarCard contacts.
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function UserPage() {
-    // ✅ ROUTE: /u/:slug
     const { slug } = useParams();
     const { user: authUser } = useContext(AuthContext);
 
-    // Normalize + validate
+    const [exchangeOpen, setExchangeOpen] = useState(false);
+
     const publicSlug = useMemo(() => normalizeSlug(slug), [slug]);
     const isValidSlug = publicSlug && publicSlug.length >= 3;
 
@@ -75,10 +248,7 @@ export default function UserPage() {
         queryKey: ["public-business-card", publicSlug || "missing-slug"],
         queryFn: async () => {
             if (!isValidSlug) return null;
-
-            // ✅ public endpoint must be NO AUTH
             const headers = { "x-no-auth": "1" };
-
             const res = await api.get(`/api/business-card/public/${encodeURIComponent(publicSlug)}`, { headers });
             return res.data;
         },
@@ -92,14 +262,7 @@ export default function UserPage() {
         try {
             localStorage.setItem("scrollToEditorOnLoad", "1");
         } catch { }
-
-        // ✅ editor expects ?slug=...
-        // If slug is invalid, don’t navigate to a broken editor route.
-        if (!isValidSlug) {
-            window.location.href = "/login";
-            return;
-        }
-
+        if (!isValidSlug) return (window.location.href = "/login");
         window.location.href = `/profiles/edit?slug=${encodeURIComponent(publicSlug)}`;
     };
 
@@ -110,49 +273,28 @@ export default function UserPage() {
         window.location.href = authUser ? "/contact-support" : "/contactus";
     };
 
-    // If slug is missing/invalid, show a clean message (don’t hit API)
     if (!isValidSlug) {
         return (
             <div className="user-landing-page" style={{ ...centerPage, padding: 24 }}>
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
                     <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>Invalid link</h2>
-                    <p style={{ marginTop: 10, opacity: 0.8 }}>
-                        This profile link is not valid. Please check the URL and try again.
-                    </p>
+                    <p style={{ marginTop: 10, opacity: 0.8 }}>This profile link is not valid. Please check the URL and try again.</p>
                 </div>
             </div>
         );
     }
 
-    if (isLoading) {
-        return (
-            <div className="user-landing-page" style={centerPage}>
-                <p>Loading business card...</p>
-            </div>
-        );
-    }
+    if (isLoading) return <div className="user-landing-page" style={centerPage}><p>Loading business card...</p></div>;
 
     if (isError) {
         console.error(error);
         return unavailable(publicSlug, goEditProfile, goContactSupportSmart);
     }
 
-    if (!businessCard) {
-        return (
-            <div className="user-landing-page" style={centerPage}>
-                <p>No business card found for “{publicSlug}”.</p>
-            </div>
-        );
-    }
+    if (!businessCard) return <div className="user-landing-page" style={centerPage}><p>No business card found for “{publicSlug}”.</p></div>;
 
-    /* ---------------------------
-       Robust field fallbacks
-    --------------------------- */
-
-    // ✅ template id (persisted)
     const templateId = read(businessCard, ["template_id", "templateId"], "template-1");
 
-    // Theme, font, alignment, CTA colors
     const pageTheme = read(businessCard, ["page_theme", "pageTheme"], "light");
     const font = read(businessCard, ["style", "font"], "Inter");
     const textAlign = read(businessCard, ["text_alignment", "textAlignment"], "left");
@@ -165,7 +307,6 @@ export default function UserPage() {
     const servicesMode = read(businessCard, ["services_display_mode", "servicesDisplayMode"], "list");
     const reviewsMode = read(businessCard, ["reviews_display_mode", "reviewsDisplayMode"], "list");
 
-    // Section toggles (default true)
     const showMain = read(businessCard, ["show_main_section", "showMainSection"], true);
     const showAbout = read(businessCard, ["show_about_me_section", "showAboutMeSection"], true);
     const showWork = read(businessCard, ["show_work_section", "showWorkSection"], true);
@@ -173,7 +314,6 @@ export default function UserPage() {
     const showReviews = read(businessCard, ["show_reviews_section", "showReviewsSection"], true);
     const showContact = read(businessCard, ["show_contact_section", "showContactSection"], true);
 
-    // Section order
     const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
     const savedOrderRaw = read(businessCard, ["section_order", "sectionOrder"], []);
     const sectionOrder =
@@ -181,7 +321,6 @@ export default function UserPage() {
             ? savedOrderRaw.filter((k) => defaultOrder.includes(k))
             : defaultOrder;
 
-    // Core data
     const cover = read(businessCard, ["cover_photo", "coverPhoto"], "");
     const avatar = read(businessCard, ["avatar"], "");
     const mainHeading = read(businessCard, ["main_heading", "mainHeading"], "");
@@ -197,10 +336,6 @@ export default function UserPage() {
 
     const hasContact = nonEmpty(email) || nonEmpty(phone);
 
-    /**
-     * Public endpoint returns BusinessCard only (no plan fields normally),
-     * so don’t block the public page unless those fields exist.
-     */
     const subscriptionFieldPresent =
         typeof businessCard?.isSubscribed !== "undefined" || typeof businessCard?.trialExpires !== "undefined";
 
@@ -210,7 +345,6 @@ export default function UserPage() {
         if (!(isSubscribed || isTrialActive)) return unavailable(publicSlug, goEditProfile, goContactSupportSmart);
     }
 
-    // Decide what to render
     const showMainSection = showMain && (nonEmpty(cover) || nonEmpty(mainHeading) || nonEmpty(subHeading) || hasContact);
     const showAboutMeSection = showAbout && (nonEmpty(avatar) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(bio));
     const showWorkSection = showWork && works.length > 0;
@@ -219,12 +353,7 @@ export default function UserPage() {
     const showContactSection = showContact && hasContact;
 
     const nothingToShow =
-        !showMainSection &&
-        !showAboutMeSection &&
-        !showWorkSection &&
-        !showServicesSection &&
-        !showReviewsSection &&
-        !showContactSection;
+        !showMainSection && !showAboutMeSection && !showWorkSection && !showServicesSection && !showReviewsSection && !showContactSection;
 
     const themeStyles = {
         backgroundColor: pageTheme === "dark" ? "#1F1F1F" : "#FFFFFF",
@@ -248,10 +377,9 @@ export default function UserPage() {
         { key: "tiktok_url", url: read(businessCard, ["tiktok_url", "tiktokUrl"]), icon: TikTokIcon, label: "TikTok" },
     ].filter((x) => nonEmpty(x.url));
 
-    const handleExchangeContact = () => {
+    const handleSaveMyNumber = () => {
         if (!hasContact) return;
 
-        // ✅ Exact current public URL (/u/:slug)
         const derivedPublicUrl = `${window.location.origin}/u/${encodeURIComponent(publicSlug)}`;
         const publicUrl = read(businessCard, ["publicProfileUrl"], derivedPublicUrl);
 
@@ -284,6 +412,8 @@ export default function UserPage() {
         URL.revokeObjectURL(url);
     };
 
+    const openExchangeModal = () => setExchangeOpen(true);
+
     if (nothingToShow) {
         return (
             <div className="user-landing-page" style={{ ...themeStyles, ...centerPage, padding: 24 }}>
@@ -295,21 +425,15 @@ export default function UserPage() {
         );
     }
 
-    /* =========================================================
-       ✅ Build a single ViewModel for all templates
-    ========================================================= */
     const vm = {
-        // styles
         themeStyles,
         contentAlign,
         ctaStyle,
         flexJustify,
 
-        // identity
-        username: publicSlug, // keep key name for templates that display it
+        username: publicSlug,
         profileSlug: publicSlug,
 
-        // content
         cover,
         avatar,
         mainHeading,
@@ -325,13 +449,11 @@ export default function UserPage() {
         hasContact,
         socialLinks,
 
-        // display modes
         aboutLayout,
         workMode,
         servicesMode,
         reviewsMode,
 
-        // sections
         sectionOrder,
         showMainSection,
         showAboutMeSection,
@@ -340,24 +462,35 @@ export default function UserPage() {
         showReviewsSection,
         showContactSection,
 
-        // actions
-        onExchangeContact: handleExchangeContact,
+        // ✅ new actions
+        onSaveMyNumber: handleSaveMyNumber,
+        onOpenExchangeContact: openExchangeModal,
+
+        // ✅ backwards compatibility for Templates 1–4 (they call onExchangeContact today)
+        onExchangeContact: handleSaveMyNumber,
     };
 
-    /* =========================================================
-       ✅ Template switch
-    ========================================================= */
     const tid = (templateId || "template-1").toString();
 
-    if (tid === "template-2") return <Template2 vm={vm} />;
-    if (tid === "template-3") return <Template3 vm={vm} />;
-    if (tid === "template-4") return <Template4 vm={vm} />;
-    if (tid === "template-5") return <Template5 vm={vm} />;
-    return <Template1 vm={vm} />;
+    return (
+        <>
+            <ExchangeContactModal
+                open={exchangeOpen}
+                onClose={() => setExchangeOpen(false)}
+                profileSlug={publicSlug}
+                ownerName={fullName || publicSlug}
+            />
 
-    /* ---------------------------
-       Unavailable page
-    --------------------------- */
+            {tid === "template-2" ? <Template2 vm={vm} /> : null}
+            {tid === "template-3" ? <Template3 vm={vm} /> : null}
+            {tid === "template-4" ? <Template4 vm={vm} /> : null}
+            {tid === "template-5" ? <Template5 vm={vm} /> : null}
+            {tid === "template-1" || !["template-2", "template-3", "template-4", "template-5"].includes(tid) ? (
+                <Template1 vm={vm} />
+            ) : null}
+        </>
+    );
+
     function unavailable(slugValue, onEdit, onContact) {
         return (
             <div className="user-landing-page unavailable-wrap">
@@ -369,29 +502,21 @@ export default function UserPage() {
                         <li className="unavailable-item">
                             <span className="dot" />
                             <div className="reason">
-                                <div className="desktop-body-s">
-                                    <strong>No content published yet.</strong>
-                                </div>
+                                <div className="desktop-body-s"><strong>No content published yet.</strong></div>
                                 <div className="desktop-body-xs">The owner might not have created their page.</div>
                             </div>
                         </li>
                         <li className="unavailable-item">
                             <span className="dot" />
                             <div className="reason">
-                                <div className="desktop-body-s">
-                                    <strong>Access expired.</strong>
-                                </div>
+                                <div className="desktop-body-s"><strong>Access expired.</strong></div>
                                 <div className="desktop-body-xs">A subscription may be required to keep this profile live.</div>
                             </div>
                         </li>
                     </ul>
                     <div className="unavailable-actions">
-                        <button className="desktop-button cta-blue-button" onClick={onEdit}>
-                            Create / Edit My Profile
-                        </button>
-                        <button className="desktop-button cta-black-button" onClick={onContact}>
-                            Contact us
-                        </button>
+                        <button className="desktop-button cta-blue-button" onClick={onEdit}>Create / Edit My Profile</button>
+                        <button className="desktop-button cta-black-button" onClick={onContact}>Contact us</button>
                     </div>
                     {slugValue ? (
                         <div style={{ marginTop: 12, opacity: 0.7, fontSize: 12 }}>

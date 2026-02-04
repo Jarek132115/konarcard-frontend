@@ -1,3 +1,4 @@
+// src/components/Dashboard/Template4.jsx
 import React from "react";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
@@ -30,7 +31,10 @@ export default function Template4({ vm }) {
         socialLinks,
 
         ctaStyle,
-        onExchangeContact,
+
+        // ✅ actions from UserPage vm
+        onSaveMyNumber,
+        onOpenExchangeContact,
     } = vm;
 
     const shell = { maxWidth: 860, margin: "0 auto", padding: "34px 18px 56px" };
@@ -43,6 +47,15 @@ export default function Template4({ vm }) {
         alignItems: "center",
     };
 
+    const btn = {
+        ...ctaStyle,
+        padding: "12px 18px",
+        borderRadius: 14,
+        border: "none",
+        fontWeight: 900,
+        cursor: "pointer",
+    };
+
     const Head = () =>
         showMainSection ? (
             <>
@@ -53,15 +66,22 @@ export default function Template4({ vm }) {
                 )}
 
                 <div style={{ marginTop: 18, ...header }}>
-                    <div>
+                    <div style={{ minWidth: 0 }}>
                         {nonEmpty(mainHeading) && (
-                            <h1 style={{ margin: 0, fontSize: 34, fontWeight: 1000, letterSpacing: -0.5 }}>
+                            <h1
+                                style={{
+                                    margin: 0,
+                                    fontSize: 34,
+                                    fontWeight: 1000,
+                                    letterSpacing: -0.5,
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                }}
+                            >
                                 {mainHeading}
                             </h1>
                         )}
-                        {nonEmpty(subHeading) && (
-                            <div style={{ marginTop: 10, opacity: 0.85, fontSize: 16 }}>{subHeading}</div>
-                        )}
+                        {nonEmpty(subHeading) && <div style={{ marginTop: 10, opacity: 0.85, fontSize: 16 }}>{subHeading}</div>}
 
                         {(nonEmpty(fullName) || nonEmpty(jobTitle)) && (
                             <div style={{ marginTop: 14, opacity: 0.85 }}>
@@ -81,21 +101,17 @@ export default function Template4({ vm }) {
                 </div>
 
                 {hasContact && (
-                    <button
-                        type="button"
-                        onClick={onExchangeContact}
-                        style={{
-                            ...ctaStyle,
-                            marginTop: 16,
-                            padding: "12px 18px",
-                            borderRadius: 14,
-                            border: "none",
-                            fontWeight: 900,
-                            cursor: "pointer",
-                        }}
-                    >
-                        Save Contact
-                    </button>
+                    <div style={{ marginTop: 16, display: "grid", gap: 10, maxWidth: 420 }}>
+                        {/* ✅ existing: download vCard */}
+                        <button type="button" onClick={onSaveMyNumber} style={btn}>
+                            Save My Number
+                        </button>
+
+                        {/* ✅ new: open exchange modal */}
+                        <button type="button" onClick={onOpenExchangeContact} style={btn}>
+                            Exchange Contact
+                        </button>
+                    </div>
                 )}
             </>
         ) : null;
@@ -105,7 +121,7 @@ export default function Template4({ vm }) {
             <>
                 <div style={hr} />
                 <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 1000 }}>About</h3>
-                {nonEmpty(bio) && <div style={{ opacity: 0.92, lineHeight: 1.55 }}>{bio}</div>}
+                {nonEmpty(bio) && <div style={{ opacity: 0.92, lineHeight: 1.55, whiteSpace: "pre-wrap" }}>{bio}</div>}
             </>
         ) : null;
 
@@ -115,7 +131,7 @@ export default function Template4({ vm }) {
                 <div style={hr} />
                 <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 1000 }}>Work</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10 }}>
-                    {works.map((url, i) => (
+                    {(works || []).map((url, i) => (
                         <img
                             key={i}
                             src={url}
@@ -133,7 +149,7 @@ export default function Template4({ vm }) {
                 <div style={hr} />
                 <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 1000 }}>Services</h3>
                 <div style={{ display: "grid", gap: 10 }}>
-                    {services.map((s, i) => (
+                    {(services || []).map((s, i) => (
                         <div
                             key={i}
                             style={{
@@ -145,8 +161,8 @@ export default function Template4({ vm }) {
                                 gap: 10,
                             }}
                         >
-                            <div style={{ fontWeight: 900 }}>{s.name}</div>
-                            {nonEmpty(s.price) && <div style={{ opacity: 0.85 }}>{s.price}</div>}
+                            <div style={{ fontWeight: 900 }}>{s?.name || ""}</div>
+                            {nonEmpty(s?.price) && <div style={{ opacity: 0.85 }}>{s.price}</div>}
                         </div>
                     ))}
                 </div>
@@ -159,19 +175,32 @@ export default function Template4({ vm }) {
                 <div style={hr} />
                 <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 1000 }}>Reviews</h3>
                 <div style={{ display: "grid", gap: 10 }}>
-                    {reviews.map((r, i) => (
-                        <div
-                            key={i}
-                            style={{
-                                padding: 14,
-                                borderRadius: 16,
-                                border: "1px solid rgba(0,0,0,0.10)",
-                            }}
-                        >
-                            <div style={{ fontWeight: 900 }}>{r.name || "Review"}</div>
-                            {nonEmpty(r.text) && <div style={{ marginTop: 8, opacity: 0.9 }}>{`"${r.text}"`}</div>}
-                        </div>
-                    ))}
+                    {(reviews || []).map((r, i) => {
+                        const rating = Number(r?.rating || 0);
+                        const fullStars = Math.min(5, Math.max(0, rating));
+                        const emptyStars = Math.max(0, 5 - fullStars);
+
+                        return (
+                            <div
+                                key={i}
+                                style={{
+                                    padding: 14,
+                                    borderRadius: 16,
+                                    border: "1px solid rgba(0,0,0,0.10)",
+                                }}
+                            >
+                                <div style={{ fontWeight: 900 }}>{r?.name || "Review"}</div>
+                                {nonEmpty(r?.text) && <div style={{ marginTop: 8, opacity: 0.9 }}>{`"${r.text}"`}</div>}
+
+                                {fullStars > 0 && (
+                                    <div style={{ marginTop: 8, opacity: 0.9 }}>
+                                        {"★".repeat(fullStars)}
+                                        <span style={{ opacity: 0.35 }}>{"★".repeat(emptyStars)}</span>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             </>
         ) : null;
@@ -224,7 +253,7 @@ export default function Template4({ vm }) {
 
     return (
         <div className="user-landing-page template-4" style={themeStyles}>
-            <div style={shell}>{sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}</div>
+            <div style={shell}>{(sectionOrder || []).map((k) => sectionMap[k]).filter(Boolean)}</div>
         </div>
     );
 }
