@@ -523,3 +523,78 @@
         border-radius: 14px;
     }
 }
+
+/* ✅ NEW CSS PATCH (drop this at the BOTTOM of settings.css)
+   Goal:
+   - Left column wider than right (more content)
+   - Columns stretch full width
+   - Right column cards fill height better (less floating)
+   - Consistent gaps + perfect fit
+*/
+
+/* 2-column layout: left wider */
+.settings-layout {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    /* ✅ left > right */
+    gap: 14px;
+    align-items: stretch;
+    /* ✅ stretch both columns */
+}
+
+/* Make columns stretch and allow cards to grow */
+.settings-col {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+    align-content: start;
+}
+
+/* ✅ Let cards naturally stretch and match height rhythm */
+.settings-card {
+    height: 100%;
+}
+
+/* ✅ Make right column “fill” by distributing space */
+.settings-col:last-child {
+    grid-auto-rows: 1fr;
+    /* each card takes equal row height */
+    align-content: stretch;
+}
+
+/* In case there are only 2 cards on the right, force them to fill nicely */
+.settings-col:last-child>.settings-card {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure tables/empty states don’t collapse and leave weird whitespace */
+.settings-table,
+.settings-empty {
+    margin-top: 10px;
+}
+
+/* ✅ Billing area should expand a bit so left column feels filled */
+.settings-billing-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-content: start;
+}
+
+/* ✅ Give right side tables a bit more breathing space */
+.settings-table-compact .settings-row {
+    padding: 12px 14px;
+}
+
+/* Responsive: stack at smaller sizes */
+@media (max-width: 1100px) {
+    .settings-layout {
+        grid-template-columns: 1fr;
+        /* stack */
+        align-items: start;
+    }
+
+    .settings-col:last-child {
+        grid-auto-rows: initial;
+    }
+}
