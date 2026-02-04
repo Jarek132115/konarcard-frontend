@@ -8,12 +8,6 @@ import Footer from "../../components/Footer";
 import "../../styling/fonts.css";
 import "../../styling/pricing.css";
 
-/* Icons */
-import WorksOnEveryPhone from "../../assets/icons/Works_On_Every_Phone.svg";
-import EasyToUpdateAnytime from "../../assets/icons/Easy_To_Update_Anytime.svg";
-import NoAppNeeded from "../../assets/icons/No_App_Needed.svg";
-import BuiltForRealTrades from "../../assets/icons/Built_For_Real_Trades.svg";
-
 // ✅ Canonical backend base URL
 import { BASE_URL } from "../../services/api";
 
@@ -30,14 +24,11 @@ function safeGetToken() {
 function clearLocalAuth() {
     try {
         localStorage.removeItem("token");
-        localStorage.removeItem("authUser"); // your AuthContext cache key
+        localStorage.removeItem("authUser");
         localStorage.removeItem(CHECKOUT_INTENT_KEY);
-    } catch {
-        // ignore
-    }
+    } catch { }
 }
 
-// tiny JWT exp check (so expired tokens don’t count as logged in)
 function isTokenExpired(token) {
     try {
         const parts = token.split(".");
@@ -54,8 +45,6 @@ function isTokenExpired(token) {
 
         const exp = Number(payload?.exp || 0);
         if (!exp) return false;
-
-        // exp is seconds
         return Date.now() >= exp * 1000;
     } catch {
         return false;
@@ -65,13 +54,10 @@ function isTokenExpired(token) {
 function isLoggedIn() {
     const t = safeGetToken();
     if (!t) return false;
-
-    // if expired => clear it so UI becomes logged out immediately
     if (isTokenExpired(t)) {
         clearLocalAuth();
         return false;
     }
-
     return true;
 }
 
@@ -98,7 +84,6 @@ export default function Pricing() {
     const navigate = useNavigate();
     const apiBase = BASE_URL;
 
-    /* ---------------- Prices (display only) ---------------- */
     const prices = useMemo(
         () => ({
             monthly: {
@@ -132,7 +117,6 @@ export default function Pricing() {
         async function loadStatus() {
             if (!apiBase) return;
 
-            // if no valid token -> treat logged out
             if (!isLoggedIn()) {
                 if (!mounted) return;
                 setSubState(null);
@@ -146,19 +130,14 @@ export default function Pricing() {
                 setSubErr("");
 
                 const token = safeGetToken();
-
                 const res = await fetch(`${apiBase}/api/subscription-status`, {
                     method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                     credentials: "include",
                 });
 
                 const data = await res.json().catch(() => ({}));
 
-                // ✅ If user deleted / token invalid => backend often returns 401 or 404
                 if (res.status === 401 || res.status === 404) {
                     clearLocalAuth();
                     if (!mounted) return;
@@ -167,12 +146,9 @@ export default function Pricing() {
                     return;
                 }
 
-                if (!res.ok) {
-                    throw new Error(data?.error || "Failed to load subscription status");
-                }
+                if (!res.ok) throw new Error(data?.error || "Failed to load subscription status");
 
                 if (!mounted) return;
-
                 setSubState({
                     active: !!data?.active,
                     plan: data?.plan || "free",
@@ -225,21 +201,17 @@ export default function Pricing() {
                 cancelReturn: `${window.location.origin}/pricing`,
             };
             localStorage.setItem(CHECKOUT_INTENT_KEY, JSON.stringify(intent));
-        } catch {
-            // ignore
-        }
+        } catch { }
     };
 
     /* ---------------- Stripe subscription: start checkout ---------------- */
     const startSubscription = async (planKey) => {
-        // if no valid token -> push to login and store intent
         if (!isLoggedIn()) {
             saveCheckoutIntent(planKey);
             navigate("/login");
             return;
         }
 
-        // prevent selecting same plan
         if (isActive && currentPlan === planKey.split("-")[0]) {
             alert("You’re already subscribed to this plan.");
             return;
@@ -253,17 +225,13 @@ export default function Pricing() {
 
             const res = await fetch(`${apiBase}/api/subscribe`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 credentials: "include",
                 body: JSON.stringify({ planKey, returnUrl }),
             });
 
             const data = await res.json().catch(() => ({}));
 
-            // ✅ If user deleted / token invalid => log out and send to login
             if (res.status === 401 || res.status === 404 || /user not found/i.test(String(data?.error || ""))) {
                 clearLocalAuth();
                 alert("Your session is no longer valid. Please log in again.");
@@ -274,12 +242,9 @@ export default function Pricing() {
             if (!res.ok || data?.error) throw new Error(data?.error || "Failed to start checkout");
             if (!data?.url) throw new Error("Stripe session URL missing");
 
-            // clear old intent now that we’re going to Stripe
             try {
                 localStorage.removeItem(CHECKOUT_INTENT_KEY);
-            } catch {
-                // ignore
-            }
+            } catch { }
 
             window.location.href = data.url;
         } catch (err) {
@@ -301,10 +266,7 @@ export default function Pricing() {
 
             const res = await fetch(`${apiBase}/api/billing-portal`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 credentials: "include",
                 body: JSON.stringify({}),
             });
@@ -332,13 +294,7 @@ export default function Pricing() {
 
         if (!logged) {
             if (planName === "free") {
-                return {
-                    type: "link",
-                    label: "Get started free",
-                    to: "/register",
-                    disabled: false,
-                    helper: "",
-                };
+                return { type: "link", label: "Get started free", to: "/register", disabled: false, helper: "" };
             }
             return {
                 type: "button",
@@ -374,22 +330,10 @@ export default function Pricing() {
             }
 
             if (current === "free") {
-                return {
-                    type: "button",
-                    label: "Current plan",
-                    onClick: null,
-                    disabled: true,
-                    helper: "",
-                };
+                return { type: "button", label: "Current plan", onClick: null, disabled: true, helper: "" };
             }
 
-            return {
-                type: "button",
-                label: "Choose Free",
-                onClick: openBillingPortal,
-                disabled: false,
-                helper: "",
-            };
+            return { type: "button", label: "Choose Free", onClick: openBillingPortal, disabled: false, helper: "" };
         }
 
         const targetPlan = planName;
@@ -425,7 +369,6 @@ export default function Pricing() {
         };
     };
 
-    /* ---------------- Plan cards ---------------- */
     const planCards = useMemo(() => {
         const plusKey = `plus-${billing}`;
         const teamsKey = `teams-${billing}`;
@@ -437,7 +380,12 @@ export default function Pricing() {
                 price: p.free.price,
                 sub: p.free.sub,
                 featured: false,
-                highlights: ["Claim your unique KonarCard link", "Basic profile & contact buttons", "QR code sharing", "Works on iPhone & Android"],
+                highlights: [
+                    "Claim your unique KonarCard link",
+                    "Basic profile & contact buttons",
+                    "QR code sharing",
+                    "Works on iPhone & Android",
+                ],
                 button: getPlanButton("free"),
             },
             {
@@ -462,129 +410,316 @@ export default function Pricing() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [billing, p, currentPlan, isActive, hasFutureAccess, activeUntilLabel, loadingKey, subLoading]);
 
+    const compareRows = useMemo(
+        () => [
+            { f: "Your KonarCard link", free: true, plus: true, teams: true },
+            { f: "Custom branding", free: false, plus: true, teams: true },
+            { f: "Services & pricing section", free: false, plus: true, teams: true },
+            { f: "Photo gallery", free: false, plus: true, teams: true },
+            { f: "Reviews & ratings", free: false, plus: true, teams: true },
+            { f: "Multiple profiles", free: false, plus: false, teams: "Up to 10" },
+            { f: "Centralised branding", free: false, plus: false, teams: true },
+            { f: "Team roles & staff", free: false, plus: false, teams: true },
+            { f: "Priority support", free: false, plus: false, teams: true },
+        ],
+        []
+    );
+
+    const pricingFaqs = useMemo(
+        () => [
+            { q: "Do I need to pay upfront?", a: "No. Start on Free, then upgrade when you’re ready. Paid plans are billed on your chosen interval." },
+            { q: "Can I cancel anytime?", a: "Yes. You can manage or cancel your plan anytime via the Billing portal." },
+            { q: "Can I upgrade later?", a: "Absolutely. Upgrade whenever you want — your profile stays live and your link never changes." },
+            { q: "What happens if my plan ends?", a: "You’ll keep access to the Free plan. Any paid features simply stop until you re-subscribe." },
+        ],
+        []
+    );
+
     return (
         <>
             <Navbar />
 
-            <main className="kc-pricing">
-                <section className="kc-pricing__hero">
-                    <div className="kc-pricing__heroInner">
-                        <h1 className="h2 kc-pricing__title">
-                            Simple pricing that pays
-                            <br />
+            <main className="pr-page">
+                {/* 1) HERO */}
+                <section className="pr-hero">
+                    <div className="pr-container pr-hero__inner">
+                        <p className="pr-kicker">Start free • Upgrade when it’s worth it</p>
+
+                        <h1 className="pr-h1">
+                            Simple pricing that pays <br />
                             for itself
                         </h1>
 
-                        <p className="body-s kc-pricing__subtitle">Start free. Upgrade only when it’s worth it.</p>
+                        <p className="pr-sub">
+                            Designed for real trades. One job covers the cost. Cancel anytime — no stress.
+                        </p>
 
                         {isLoggedIn() && (
-                            <div style={{ marginTop: 10 }}>
+                            <div className="pr-status">
                                 {subLoading ? (
-                                    <p className="body-s kc-pricing__note">Checking your plan…</p>
+                                    <span className="pr-status__muted">Checking your plan…</span>
                                 ) : subErr ? (
-                                    <p className="body-s kc-pricing__note" style={{ color: "#b91c1c" }}>
-                                        {subErr}
-                                    </p>
+                                    <span className="pr-status__err">{subErr}</span>
                                 ) : (
-                                    <p className="body-s kc-pricing__note">{planStatusLine}</p>
+                                    <span className="pr-status__muted">{planStatusLine}</span>
                                 )}
                             </div>
                         )}
 
-                        <div className="kc-pricing__tabs">
-                            {["monthly", "quarterly", "yearly"].map((v) => (
-                                <button
-                                    key={v}
-                                    type="button"
-                                    className={`kc-pricing__tab pill ${billing === v ? "is-active" : ""}`}
-                                    onClick={() => setBilling(v)}
-                                >
-                                    {v.charAt(0).toUpperCase() + v.slice(1)}
-                                </button>
-                            ))}
+                        <div className="pr-billing">
+                            <div className="pr-billing__tabs" role="tablist" aria-label="Billing interval">
+                                {["monthly", "quarterly", "yearly"].map((v) => (
+                                    <button
+                                        key={v}
+                                        type="button"
+                                        className={`pr-pill ${billing === v ? "is-active" : ""}`}
+                                        onClick={() => setBilling(v)}
+                                        role="tab"
+                                        aria-selected={billing === v}
+                                    >
+                                        {v.charAt(0).toUpperCase() + v.slice(1)}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="pr-note">{p.note}</div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 2) PLAN CARDS */}
+                <section className="pr-plans">
+                    <div className="pr-container">
+                        <div className="pr-plans__grid">
+                            {planCards.map((card) => {
+                                const btn = card.button;
+                                const isFeatured = card.featured;
+
+                                return (
+                                    <article key={card.key} className={`pr-card ${isFeatured ? "is-featured" : ""}`}>
+                                        {isFeatured ? <div className="pr-card__tag">Most popular</div> : null}
+
+                                        <div className="pr-card__head">
+                                            <h3 className="pr-card__title">{card.title}</h3>
+                                        </div>
+
+                                        <div className="pr-card__priceRow">
+                                            <div className="pr-card__price">{card.price}</div>
+                                            <div className="pr-card__priceSub">{card.sub}</div>
+                                        </div>
+
+                                        <ul className="pr-card__list">
+                                            {card.highlights.map((h) => (
+                                                <li key={h}>
+                                                    <span className="pr-dot" aria-hidden="true" />
+                                                    <span>{h}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+
+                                        <div className="pr-card__actions">
+                                            {btn.type === "link" ? (
+                                                <Link to={btn.to} className={`pr-btn ${isFeatured ? "is-primary" : "is-ghost"}`}>
+                                                    {btn.label}
+                                                </Link>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    className={`pr-btn ${isFeatured ? "is-primary" : "is-ghost"}`}
+                                                    onClick={btn.onClick || undefined}
+                                                    disabled={!!btn.disabled}
+                                                    aria-disabled={!!btn.disabled}
+                                                >
+                                                    {loadingKey ? "Redirecting…" : btn.label}
+                                                </button>
+                                            )}
+
+                                            {btn.helper ? <div className="pr-helper">{btn.helper}</div> : null}
+
+                                            {isLoggedIn() && card.key !== "free" && currentPlan !== "free" ? (
+                                                <button type="button" className="pr-linkBtn" onClick={openBillingPortal}>
+                                                    Manage plan in Billing
+                                                </button>
+                                            ) : null}
+                                        </div>
+                                    </article>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </section>
+
+                {/* 3) FEATURE COMPARISON TABLE */}
+                <section className="pr-compare">
+                    <div className="pr-container">
+                        <div className="pr-sectionHead">
+                            <h2 className="pr-h2">Compare plans</h2>
+                            <p className="pr-sectionSub">Clear differences — no fluff. Pick what matches how you work.</p>
                         </div>
 
-                        <p className="body-s kc-pricing__note">{p.note}</p>
+                        <div className="pr-tableWrap" role="region" aria-label="Plan comparison table" tabIndex={0}>
+                            <table className="pr-table">
+                                <thead>
+                                    <tr>
+                                        <th className="pr-thFeature">Feature</th>
+                                        <th className="pr-thPlan">Free</th>
+                                        <th className="pr-thPlan pr-thPlus">Plus</th>
+                                        <th className="pr-thPlan">Teams</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {compareRows.map((r) => (
+                                        <tr key={r.f}>
+                                            <td className="pr-tdFeature">{r.f}</td>
+
+                                            <td className="pr-tdVal">
+                                                {typeof r.free === "string" ? (
+                                                    <span className="pr-textVal">{r.free}</span>
+                                                ) : r.free ? (
+                                                    <span className="pr-tick">✓</span>
+                                                ) : (
+                                                    <span className="pr-cross">—</span>
+                                                )}
+                                            </td>
+
+                                            <td className="pr-tdVal pr-tdPlus">
+                                                {typeof r.plus === "string" ? (
+                                                    <span className="pr-textVal">{r.plus}</span>
+                                                ) : r.plus ? (
+                                                    <span className="pr-tick">✓</span>
+                                                ) : (
+                                                    <span className="pr-cross">—</span>
+                                                )}
+                                            </td>
+
+                                            <td className="pr-tdVal">
+                                                {typeof r.teams === "string" ? (
+                                                    <span className="pr-textVal">{r.teams}</span>
+                                                ) : r.teams ? (
+                                                    <span className="pr-tick">✓</span>
+                                                ) : (
+                                                    <span className="pr-cross">—</span>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div className="pr-compareCtas">
+                            <Link to="/register" className="pr-btn is-primary pr-btn--inline">
+                                Start free
+                            </Link>
+                            <Link to="/products" className="pr-btn is-ghost pr-btn--inline">
+                                Shop cards
+                            </Link>
+                        </div>
                     </div>
                 </section>
 
-                <section className="kc-pricing__plans">
-                    <div className="kc-pricing__grid">
-                        {planCards.map((card) => {
-                            const btn = card.button;
-                            const isFeatured = card.featured ? "is-featured" : "";
-                            const btnClass = `kc-pricing__cta ${card.featured ? "is-primary" : "is-secondary"}`;
+                {/* 4) WHO EACH PLAN IS FOR */}
+                <section className="pr-who">
+                    <div className="pr-container">
+                        <div className="pr-sectionHead">
+                            <h2 className="pr-h2">Who each plan is for</h2>
+                            <p className="pr-sectionSub">Pick the plan that fits your day-to-day.</p>
+                        </div>
 
-                            return (
-                                <article key={card.key} className={`kc-pricing__card ${isFeatured}`}>
-                                    <h3 className="h6">{card.title}</h3>
+                        <div className="pr-3col">
+                            <div className="pr-miniCard">
+                                <div className="pr-miniCard__top">
+                                    <div className="pr-miniCard__title">Free</div>
+                                    <div className="pr-miniCard__pill">Trying it out</div>
+                                </div>
+                                <p className="pr-miniCard__p">Perfect if you just want your link, contact buttons, and a clean profile.</p>
+                            </div>
 
-                                    <div className="kc-pricing__priceRow">
-                                        <span className="kc-pricing__price">{card.price}</span>
-                                        <span className="body-s">{card.sub}</span>
-                                    </div>
+                            <div className="pr-miniCard is-accent">
+                                <div className="pr-miniCard__top">
+                                    <div className="pr-miniCard__title">Plus</div>
+                                    <div className="pr-miniCard__pill">Solo trades</div>
+                                </div>
+                                <p className="pr-miniCard__p">Best for trades who want services, photos, reviews, and a premium presence.</p>
+                            </div>
 
-                                    <ul className="kc-pricing__list">
-                                        {card.highlights.map((h) => (
-                                            <li key={h}>{h}</li>
-                                        ))}
-                                    </ul>
-
-                                    <div style={{ display: "grid", gap: 8 }}>
-                                        {btn.type === "link" ? (
-                                            <Link to={btn.to} className={btnClass}>
-                                                {btn.label}
-                                            </Link>
-                                        ) : (
-                                            <button
-                                                type="button"
-                                                className={btnClass}
-                                                onClick={btn.onClick || undefined}
-                                                disabled={!!btn.disabled}
-                                                aria-disabled={!!btn.disabled}
-                                                style={btn.disabled ? { opacity: 0.7, cursor: "not-allowed" } : undefined}
-                                            >
-                                                {loadingKey ? "Redirecting…" : btn.label}
-                                            </button>
-                                        )}
-
-                                        {btn.helper ? (
-                                            <p className="body-s" style={{ margin: 0, opacity: 0.75 }}>
-                                                {btn.helper}
-                                            </p>
-                                        ) : null}
-
-                                        {isLoggedIn() && card.key !== "free" && currentPlan !== "free" ? (
-                                            <button
-                                                type="button"
-                                                onClick={openBillingPortal}
-                                                style={{
-                                                    border: "none",
-                                                    background: "transparent",
-                                                    padding: 0,
-                                                    textDecoration: "underline",
-                                                    cursor: "pointer",
-                                                    fontSize: 13,
-                                                    opacity: 0.8,
-                                                    textAlign: "left",
-                                                }}
-                                            >
-                                                Manage plan in Billing
-                                            </button>
-                                        ) : null}
-                                    </div>
-                                </article>
-                            );
-                        })}
+                            <div className="pr-miniCard">
+                                <div className="pr-miniCard__top">
+                                    <div className="pr-miniCard__title">Teams</div>
+                                    <div className="pr-miniCard__pill">Growing business</div>
+                                </div>
+                                <p className="pr-miniCard__p">For companies with staff — multiple profiles, central branding, and control.</p>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
-                <section className="kc-pricing__value">
-                    <div className="kc-pricing__valueGrid">
-                        <img src={WorksOnEveryPhone} alt="Works on every phone" />
-                        <img src={EasyToUpdateAnytime} alt="Easy to update anytime" />
-                        <img src={NoAppNeeded} alt="No app needed" />
-                        <img src={BuiltForRealTrades} alt="Built for real trades" />
+                {/* 5) PHYSICAL CARDS CONTEXT */}
+                <section className="pr-physical">
+                    <div className="pr-container">
+                        <div className="pr-physical__card">
+                            <div className="pr-physical__left">
+                                <h2 className="pr-h2">Physical cards are separate</h2>
+                                <p className="pr-sectionSub pr-sectionSub--left">
+                                    Your plan is for the digital profile. NFC cards are a one-time purchase and always link to your profile.
+                                </p>
+                            </div>
+
+                            <div className="pr-physical__right">
+                                <div className="pr-placeholder" aria-hidden="true">
+                                    Image placeholder
+                                </div>
+
+                                <Link to="/products" className="pr-btn is-ghost pr-btn--inline">
+                                    Shop NFC cards
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 6) VALUE JUSTIFICATION (DARK BAND) */}
+                <section className="pr-band">
+                    <div className="pr-container pr-band__inner">
+                        <h2 className="pr-band__h2">Because business cards should work harder</h2>
+
+                        <div className="pr-band__grid">
+                            <div className="pr-band__item">
+                                <div className="pr-band__k">Works on every phone</div>
+                                <div className="pr-band__s">iPhone + Android — no app, no setup headaches.</div>
+                            </div>
+                            <div className="pr-band__item">
+                                <div className="pr-band__k">No app needed</div>
+                                <div className="pr-band__s">Just tap or scan — everything opens in the browser.</div>
+                            </div>
+                            <div className="pr-band__item">
+                                <div className="pr-band__k">One link for everything</div>
+                                <div className="pr-band__s">Your details, photos, services, and contact buttons in one place.</div>
+                            </div>
+                        </div>
+
+                        <Link to="/register" className="pr-btn pr-band__cta">
+                            Claim your link
+                        </Link>
+                    </div>
+                </section>
+
+                {/* 7) PRICING FAQS */}
+                <section className="pr-faq">
+                    <div className="pr-container">
+                        <div className="pr-sectionHead">
+                            <h2 className="pr-h2">Pricing FAQs</h2>
+                            <p className="pr-sectionSub">Quick answers before you commit.</p>
+                        </div>
+
+                        <div className="pr-faqList">
+                            {pricingFaqs.map((x) => (
+                                <div className="pr-faqRow" key={x.q}>
+                                    <div className="pr-faqQ">{x.q}</div>
+                                    <div className="pr-faqA">{x.a}</div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </section>
             </main>
