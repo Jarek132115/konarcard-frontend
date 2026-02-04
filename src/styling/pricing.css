@@ -460,7 +460,7 @@
 }
 
 /* =========================
-   FAQ LIST (simple + clean)
+   FAQ (Accordion like FAQ/Contact)
    ========================= */
 .pr-faq {
     padding: 56px 0 88px;
@@ -468,29 +468,70 @@
 
 .pr-faqList {
     margin-top: 18px;
+    text-align: left;
     border-top: 1px solid var(--kc-border);
     max-width: 920px;
     margin-left: auto;
     margin-right: auto;
 }
 
-.pr-faqRow {
-    padding: 18px 0;
+.pr-faqItem {
     border-bottom: 1px solid var(--kc-border);
-    display: grid;
-    gap: 6px;
 }
 
-.pr-faqQ {
+.pr-qRow {
+    width: 100%;
+    text-align: left;
+
+    padding: 24px 0;
+    background: transparent;
+    border: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    cursor: pointer;
+}
+
+.pr-qRow:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
+    border-radius: 10px;
+}
+
+.pr-q {
     margin: 0;
     color: var(--kc-text-primary);
 }
 
-.pr-faqA {
-    margin: 0;
+.pr-chev {
+    font-size: 14px;
+    color: var(--kc-text-secondary);
+    transition: transform 0.15s ease;
+}
+
+.pr-chev.is-open {
+    transform: rotate(180deg);
+}
+
+.pr-a {
+    padding: 0 0 24px 0;
     color: var(--kc-text-secondary);
     max-width: 860px;
 }
+
+@media (max-width: 980px) {
+    .pr-qRow {
+        padding: 16px 0;
+    }
+
+    .pr-a {
+        padding-bottom: 16px;
+    }
+}
+
 
 /* =========================
    RESPONSIVE

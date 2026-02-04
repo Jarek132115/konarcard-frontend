@@ -81,6 +81,9 @@ export default function Pricing() {
     const [subErr, setSubErr] = useState("");
     const [subState, setSubState] = useState(null);
 
+    // ✅ FAQ accordion state (same as FAQ/Contact)
+    const [openIndex, setOpenIndex] = useState(0);
+
     const navigate = useNavigate();
     const apiBase = BASE_URL;
 
@@ -434,7 +437,6 @@ export default function Pricing() {
         <>
             <Navbar />
 
-            {/* ✅ kc-page ensures consistent top spacing under navbar */}
             <main className="pr-page kc-page">
                 {/* HERO */}
                 <section className="pr-hero">
@@ -656,7 +658,7 @@ export default function Pricing() {
                     </div>
                 </section>
 
-                {/* FAQs */}
+                {/* ✅ PRICING FAQ (Accordion like FAQ/Contact) */}
                 <section className="pr-faq">
                     <div className="pr-container">
                         <div className="pr-sectionHead">
@@ -664,13 +666,27 @@ export default function Pricing() {
                             <p className="body-s pr-sectionSub">Quick answers before you commit.</p>
                         </div>
 
-                        <div className="pr-faqList">
-                            {pricingFaqs.map((x) => (
-                                <div className="pr-faqRow" key={x.q}>
-                                    <div className="h6 pr-faqQ">{x.q}</div>
-                                    <div className="body-s pr-faqA">{x.a}</div>
-                                </div>
-                            ))}
+                        <div className="pr-faqList" role="region" aria-label="Pricing FAQs">
+                            {pricingFaqs.map((item, idx) => {
+                                const isOpen = idx === openIndex;
+                                return (
+                                    <div className="pr-faqItem" key={`${item.q}-${idx}`}>
+                                        <button
+                                            type="button"
+                                            className="pr-qRow"
+                                            onClick={() => setOpenIndex(isOpen ? -1 : idx)}
+                                            aria-expanded={isOpen}
+                                        >
+                                            <span className="h6 pr-q">{item.q}</span>
+                                            <span className={`pr-chev ${isOpen ? "is-open" : ""}`} aria-hidden="true">
+                                                ▾
+                                            </span>
+                                        </button>
+
+                                        {isOpen && <div className="body-s pr-a">{item.a}</div>}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </section>
