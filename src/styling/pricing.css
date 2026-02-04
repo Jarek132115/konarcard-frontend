@@ -1,325 +1,205 @@
-/* frontend/src/styling/pricing.css
-   Premium pricing page — matches provided structure.
-   No external images required. Uses placeholders.
-*/
+/* frontend/src/styling/pricing.css */
 
-:root {
-    --pr-orange: #ff7b00;
-    --pr-orange-2: #e66f00;
-    --pr-text: #0b1220;
-    --pr-muted: rgba(12, 24, 48, 0.70);
-    --pr-border: rgba(12, 24, 48, 0.10);
-    --pr-card: #ffffff;
-    --pr-soft: 0 10px 26px rgba(16, 24, 40, 0.06);
-    --pr-shadow: 0 22px 60px rgba(12, 24, 48, 0.08);
-    --pr-bg: #ffffff;
-    --pr-bg2: #f8fafc;
-    --pr-navy: #08142b;
-    --pr-navy2: #0b1a36;
-}
+/* =========================================================
+   PRICING — Match FAQ / Examples / Blog
+   Tokens + fonts.css
+   ========================================================= */
 
 .pr-page {
-    background: var(--pr-bg);
-    color: var(--pr-text);
+    background: var(--kc-bg-main);
+    color: var(--kc-text-primary);
 }
 
-/* container */
 .pr-container {
-    max-width: 1140px;
+    max-width: 1040px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* typography */
-.pr-kicker {
-    margin: 0 0 10px;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.55);
-    letter-spacing: -0.01em;
-}
-
-.pr-h1 {
-    margin: 0;
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 56px;
-    line-height: 1.02;
-    letter-spacing: -0.05em;
-}
-
-.pr-sub {
-    margin: 14px auto 0;
-    max-width: 720px;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.75;
-    color: var(--pr-muted);
-}
-
-.pr-h2 {
-    margin: 0;
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 38px;
-    letter-spacing: -0.03em;
-}
-
-.pr-sectionSub {
-    margin: 10px auto 0;
-    max-width: 760px;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.75;
-    color: var(--pr-muted);
-}
-
-.pr-sectionSub--left {
-    margin-left: 0;
-    margin-right: 0;
-    max-width: 520px;
-}
-
-.pr-sectionHead {
-    text-align: center;
-    max-width: 900px;
-    margin: 0 auto 18px;
-}
-
-/* buttons + pills */
-.pr-pill {
-    appearance: none;
-    border: 1px solid rgba(12, 24, 48, 0.22);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.90);
-    color: rgba(12, 24, 48, 0.88);
-    padding: 8px 14px;
-    min-height: 34px;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    cursor: pointer;
-    transition: transform 0.1s ease, border-color 0.15s ease, background 0.15s ease;
-}
-
-.pr-pill:hover {
-    border-color: rgba(12, 24, 48, 0.38);
-}
-
-.pr-pill:active {
-    transform: translateY(1px);
-}
-
-.pr-pill.is-active {
-    background: var(--pr-orange);
-    border-color: var(--pr-orange);
-    color: #fff;
-}
-
-.pr-btn {
-    height: 44px;
-    border-radius: 999px;
-    padding: 0 18px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    border: 1px solid rgba(12, 24, 48, 0.14);
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 13px;
-    font-weight: 950;
-    letter-spacing: -0.01em;
-    cursor: pointer;
-    transition: transform 0.1s ease, filter 0.15s ease, box-shadow 0.15s ease;
-    background: #fff;
-    color: rgba(12, 24, 48, 0.92);
-}
-
-.pr-btn:active {
-    transform: translateY(1px);
-}
-
-.pr-btn.is-primary {
-    background: var(--pr-orange);
-    border-color: var(--pr-orange);
-    color: #fff;
-    box-shadow: 0 16px 34px rgba(255, 123, 0, 0.20);
-}
-
-.pr-btn.is-primary:hover {
-    box-shadow: 0 20px 44px rgba(255, 123, 0, 0.26);
-    filter: brightness(0.99);
-}
-
-.pr-btn.is-ghost {
-    background: rgba(255, 255, 255, 0.92);
-}
-
-.pr-btn[disabled] {
-    opacity: 0.65;
-    cursor: not-allowed;
-}
-
-.pr-btn--inline {
-    height: 46px;
-    padding: 0 20px;
-}
-
-/* link button */
-.pr-linkBtn {
-    border: none;
-    background: transparent;
-    padding: 0;
-    margin-top: 6px;
-    text-decoration: underline;
-    cursor: pointer;
-    font-size: 13px;
-    opacity: 0.78;
-    text-align: left;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-/* =========================================================
-   1) HERO
-   ========================================================= */
+/* =========================
+   HERO
+   ========================= */
 .pr-hero {
-    padding: 112px 0 26px;
-    background:
-        radial-gradient(1200px 520px at 50% 0%, rgba(255, 123, 0, 0.10), rgba(255, 255, 255, 0) 62%),
-        linear-gradient(180deg, rgba(248, 250, 252, 1), rgba(255, 255, 255, 1));
+    padding: 0 0 32px;
+    /* kc-page provides top spacing */
 }
 
 .pr-hero__inner {
     text-align: center;
 }
 
+.pr-kicker {
+    margin: 0 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.62);
+    background: var(--kc-bg-soft);
+    border: 1px solid var(--kc-border);
+    padding: 8px 12px;
+    border-radius: 999px;
+}
+
+.pr-title {
+    margin: 0 0 8px;
+}
+
+.pr-sub {
+    margin: 0 auto;
+    max-width: 720px;
+    color: var(--kc-text-secondary);
+}
+
 .pr-status {
-    margin-top: 10px;
+    margin-top: 14px;
 }
 
 .pr-status__muted {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: rgba(15, 23, 42, 0.6);
+    font-weight: 600;
     font-size: 13px;
-    font-weight: 800;
-    color: rgba(12, 24, 48, 0.60);
 }
 
 .pr-status__err {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: #b42318;
+    font-weight: 700;
     font-size: 13px;
-    font-weight: 900;
-    color: #b91c1c;
 }
 
+/* Billing pills (same as FAQ/Examples) */
 .pr-billing {
-    margin-top: 20px;
-    display: grid;
-    justify-items: center;
-    gap: 10px;
+    margin-top: 22px;
 }
 
 .pr-billing__tabs {
-    display: inline-flex;
+    display: flex;
+    justify-content: center;
     gap: 8px;
-    padding: 6px;
+    flex-wrap: wrap;
+}
+
+.pr-pill {
+    appearance: none;
+    background: #ffffff;
+    color: var(--kc-text-primary);
+
+    border: 1px solid rgba(15, 23, 42, 0.30);
     border-radius: 999px;
-    border: 1px solid rgba(12, 24, 48, 0.10);
-    background: rgba(255, 255, 255, 0.75);
-    box-shadow: 0 14px 34px rgba(12, 24, 48, 0.06);
+
+    padding: 8px 14px;
+    min-height: 32px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+        color 0.15s ease, transform 0.08s ease;
+}
+
+.pr-pill:hover {
+    border-color: rgba(15, 23, 42, 0.48);
+}
+
+.pr-pill:active {
+    transform: translateY(1px);
+}
+
+.pr-pill:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.18);
+    border-color: rgba(249, 115, 22, 0.65);
+}
+
+.pr-pill.is-active {
+    background: var(--kc-accent-primary);
+    border-color: var(--kc-accent-primary);
+    color: #ffffff;
 }
 
 .pr-note {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-    color: rgba(12, 24, 48, 0.60);
+    margin-top: 10px;
+    color: var(--kc-text-secondary);
 }
 
-/* =========================================================
-   2) PLAN CARDS
-   ========================================================= */
+/* =========================
+   PLAN CARDS
+   ========================= */
 .pr-plans {
-    padding: 18px 0 56px;
-    background: #fff;
+    padding: 24px 0 56px;
 }
 
 .pr-plans__grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
     align-items: stretch;
 }
 
 .pr-card {
-    position: relative;
-    border-radius: 18px;
-    border: 1px solid rgba(12, 24, 48, 0.08);
+    border: 1px solid var(--kc-border);
     background: #fff;
-    box-shadow: var(--pr-soft);
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     padding: 18px;
-    display: grid;
-    grid-template-rows: auto auto 1fr auto;
-    min-height: 420px;
+    position: relative;
 }
 
 .pr-card.is-featured {
-    border-color: rgba(255, 123, 0, 0.35);
-    box-shadow: 0 18px 44px rgba(255, 123, 0, 0.14);
-    transform: translateY(-6px);
+    border-color: rgba(249, 115, 22, 0.45);
+    box-shadow: 0 18px 44px rgba(249, 115, 22, 0.12);
 }
 
 .pr-card__tag {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    border-radius: 999px;
-    padding: 7px 12px;
-    background: rgba(255, 123, 0, 0.12);
-    border: 1px solid rgba(255, 123, 0, 0.30);
-    color: #7a3300;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    top: 14px;
+    right: 14px;
     font-size: 12px;
-    font-weight: 950;
+    font-weight: 800;
+    color: #fff;
+    background: var(--kc-accent-primary);
+    padding: 8px 12px;
+    border-radius: 999px;
+    box-shadow: 0 10px 22px rgba(249, 115, 22, 0.18);
 }
 
 .pr-card__head {
-    padding-right: 116px;
+    padding-top: 4px;
 }
 
 .pr-card__title {
-    margin: 0;
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 18px;
-    letter-spacing: -0.02em;
-    color: rgba(12, 24, 48, 0.92);
+    margin: 0 0 10px;
 }
 
 .pr-card__priceRow {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-top: 14px;
+    display: grid;
+    gap: 2px;
+    margin-bottom: 14px;
 }
 
 .pr-card__price {
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 36px;
-    letter-spacing: -0.03em;
-    color: rgba(12, 24, 48, 0.95);
+    font-family: "Cal Sans", sans-serif;
+    font-size: 34px;
+    line-height: 38px;
+    font-weight: 600;
+    color: var(--kc-text-primary);
 }
 
 .pr-card__priceSub {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.58);
+    color: var(--kc-text-secondary);
 }
 
 .pr-card__list {
     list-style: none;
     padding: 0;
-    margin: 16px 0 16px;
+    margin: 0 0 18px;
     display: grid;
-    gap: 12px;
+    gap: 10px;
 }
 
 .pr-card__list li {
@@ -327,151 +207,226 @@
     grid-template-columns: 10px 1fr;
     gap: 10px;
     align-items: start;
-    color: rgba(12, 24, 48, 0.82);
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 13px;
-    line-height: 1.6;
 }
 
 .pr-dot {
     width: 8px;
     height: 8px;
     border-radius: 999px;
-    background: var(--pr-orange);
+    background: var(--kc-accent-primary);
     margin-top: 7px;
 }
 
+.pr-liText {
+    color: var(--kc-text-secondary);
+}
+
 .pr-card__actions {
+    margin-top: auto;
     display: grid;
-    gap: 8px;
-    align-content: end;
+    gap: 10px;
+}
+
+/* Buttons (same “feel” as FAQ buttons) */
+.pr-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 14px 18px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+
+    text-decoration: none;
+    cursor: pointer;
+
+    font-family: "Cal Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+
+    transition: transform 0.08s ease, filter 0.15s ease,
+        box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.pr-btn:active {
+    transform: translateY(1px);
+}
+
+.pr-btn.is-primary {
+    background: var(--kc-accent-primary);
+    color: #fff;
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.25);
+}
+
+.pr-btn.is-primary:hover {
+    filter: brightness(0.98);
+    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.32);
+}
+
+.pr-btn.is-ghost {
+    background: #fff;
+    color: var(--kc-text-primary);
+    border-color: rgba(15, 23, 42, 0.18);
+}
+
+.pr-btn.is-ghost:hover {
+    border-color: rgba(15, 23, 42, 0.28);
+}
+
+.pr-btn:disabled,
+.pr-btn[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .pr-helper {
-    margin: 0;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-    color: rgba(12, 24, 48, 0.62);
+    color: rgba(15, 23, 42, 0.55);
 }
 
-/* =========================================================
-   3) COMPARE TABLE
-   ========================================================= */
+.pr-linkBtn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: var(--kc-accent-primary);
+    font-weight: 800;
+    cursor: pointer;
+    text-align: left;
+}
+
+.pr-linkBtn:hover {
+    opacity: 0.92;
+}
+
+/* =========================
+   COMPARE TABLE
+   ========================= */
 .pr-compare {
-    padding: 56px 0 42px;
-    background: var(--pr-bg2);
+    padding: 56px 0 56px;
+}
+
+.pr-sectionHead {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.pr-h2 {
+    margin: 0 0 8px;
+}
+
+.pr-sectionSub {
+    margin: 0 auto;
+    max-width: 720px;
+    color: var(--kc-text-secondary);
 }
 
 .pr-tableWrap {
     margin-top: 18px;
-    overflow: auto;
-    border-radius: 18px;
-    border: 1px solid rgba(12, 24, 48, 0.08);
+    border: 1px solid var(--kc-border);
+    border-radius: 14px;
+    overflow: hidden;
     background: #fff;
-    box-shadow: var(--pr-soft);
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
 }
 
 .pr-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 860px;
+    font-size: 14px;
 }
 
 .pr-table thead th {
     text-align: left;
-    padding: 16px;
-    border-bottom: 1px solid rgba(12, 24, 48, 0.08);
-    background: #fff;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 950;
-    font-size: 12px;
-    color: rgba(12, 24, 48, 0.72);
-}
-
-.pr-thFeature {
-    width: 44%;
-}
-
-.pr-thPlan {
-    width: 18.66%;
-    text-align: center;
+    padding: 14px 14px;
+    border-bottom: 1px solid var(--kc-border);
+    background: rgba(15, 23, 42, 0.02);
+    color: rgba(15, 23, 42, 0.72);
+    font-weight: 800;
 }
 
 .pr-thPlus {
-    background: rgba(255, 123, 0, 0.06);
+    background: rgba(249, 115, 22, 0.08) !important;
 }
 
 .pr-table tbody td {
-    padding: 14px 16px;
-    border-bottom: 1px solid rgba(12, 24, 48, 0.06);
-    font-size: 13px;
-    color: rgba(12, 24, 48, 0.86);
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    padding: 14px 14px;
+    border-bottom: 1px solid var(--kc-border);
+    vertical-align: top;
+}
+
+.pr-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .pr-tdFeature {
-    font-weight: 800;
-    color: rgba(12, 24, 48, 0.82);
+    color: var(--kc-text-primary);
+    font-weight: 700;
+    width: 46%;
 }
 
 .pr-tdVal {
     text-align: center;
+    width: 18%;
+    color: var(--kc-text-secondary);
 }
 
 .pr-tdPlus {
-    background: rgba(255, 123, 0, 0.04);
+    background: rgba(249, 115, 22, 0.04);
 }
 
 .pr-tick {
-    font-weight: 1000;
-    color: var(--pr-orange);
+    color: var(--kc-text-primary);
+    font-weight: 900;
 }
 
 .pr-cross {
-    color: rgba(12, 24, 48, 0.35);
+    color: rgba(15, 23, 42, 0.35);
     font-weight: 900;
 }
 
 .pr-textVal {
-    color: rgba(12, 24, 48, 0.65);
-    font-weight: 900;
+    color: var(--kc-text-secondary);
+    font-weight: 700;
 }
 
 .pr-compareCtas {
+    margin-top: 18px;
     display: flex;
-    justify-content: center;
     gap: 10px;
+    justify-content: center;
     flex-wrap: wrap;
-    margin-top: 16px;
 }
 
-/* =========================================================
-   4) WHO EACH PLAN IS FOR
-   ========================================================= */
+.pr-btn--inline {
+    min-width: 170px;
+}
+
+/* =========================
+   WHO EACH PLAN IS FOR
+   ========================= */
 .pr-who {
-    padding: 56px 0 42px;
-    background: #fff;
+    padding: 56px 0 72px;
 }
 
 .pr-3col {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
     margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
 }
 
 .pr-miniCard {
-    border-radius: 18px;
-    border: 1px solid rgba(12, 24, 48, 0.08);
+    border: 1px solid var(--kc-border);
     background: #fff;
-    box-shadow: var(--pr-soft);
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     padding: 16px;
 }
 
 .pr-miniCard.is-accent {
-    border-color: rgba(255, 123, 0, 0.28);
-    box-shadow: 0 18px 44px rgba(255, 123, 0, 0.12);
+    border-color: rgba(249, 115, 22, 0.35);
+    box-shadow: 0 18px 44px rgba(249, 115, 22, 0.10);
 }
 
 .pr-miniCard__top {
@@ -483,220 +438,90 @@
 }
 
 .pr-miniCard__title {
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-family: "Cal Sans", sans-serif;
     font-size: 18px;
-    letter-spacing: -0.02em;
-    color: rgba(12, 24, 48, 0.92);
+    font-weight: 600;
+    color: var(--kc-text-primary);
 }
 
 .pr-miniCard__pill {
-    border-radius: 999px;
-    padding: 7px 12px;
-    border: 1px solid rgba(12, 24, 48, 0.12);
-    background: rgba(12, 24, 48, 0.04);
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 12px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.72);
+    font-weight: 800;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: var(--kc-bg-soft);
+    border: 1px solid var(--kc-border);
+    color: rgba(15, 23, 42, 0.75);
 }
 
 .pr-miniCard__p {
     margin: 0;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 13px;
-    line-height: 1.7;
-    color: rgba(12, 24, 48, 0.70);
+    color: var(--kc-text-secondary);
 }
 
-/* =========================================================
-   5) PHYSICAL CARDS CONTEXT
-   ========================================================= */
-.pr-physical {
-    padding: 42px 0 56px;
-    background: var(--pr-bg2);
-}
-
-.pr-physical__card {
-    border-radius: 22px;
-    border: 1px solid rgba(12, 24, 48, 0.08);
-    background: #fff;
-    box-shadow: var(--pr-shadow);
-    padding: 18px;
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 16px;
-    align-items: center;
-}
-
-.pr-physical__right {
-    display: grid;
-    justify-items: end;
-    gap: 12px;
-}
-
-.pr-placeholder {
-    width: min(340px, 100%);
-    height: 160px;
-    border-radius: 18px;
-    border: 1px dashed rgba(12, 24, 48, 0.22);
-    background:
-        linear-gradient(135deg, rgba(12, 24, 48, 0.02), rgba(255, 255, 255, 0.0)),
-        rgba(255, 255, 255, 0.85);
-    display: grid;
-    place-items: center;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.55);
-}
-
-/* =========================================================
-   6) DARK VALUE BAND (matches your screenshot vibe)
-   ========================================================= */
-.pr-band {
-    padding: 64px 0;
-    background: radial-gradient(1200px 520px at 50% 0%, rgba(255, 123, 0, 0.16), rgba(0, 0, 0, 0) 60%),
-        linear-gradient(180deg, var(--pr-navy), var(--pr-navy2));
-    color: #fff;
-}
-
-.pr-band__inner {
-    display: grid;
-    justify-items: center;
-    text-align: center;
-    gap: 18px;
-}
-
-.pr-band__h2 {
-    margin: 0;
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 44px;
-    letter-spacing: -0.04em;
-    line-height: 1.04;
-}
-
-.pr-band__grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
-    margin-top: 8px;
-}
-
-.pr-band__item {
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.04);
-    padding: 16px;
-    text-align: left;
-}
-
-.pr-band__k {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 13px;
-    font-weight: 950;
-    letter-spacing: -0.01em;
-    margin-bottom: 6px;
-}
-
-.pr-band__s {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.78);
-}
-
-.pr-band__cta {
-    margin-top: 4px;
-    border-color: rgba(255, 255, 255, 0.16);
-    background: rgba(255, 255, 255, 0.92);
-    color: rgba(12, 24, 48, 0.92);
-}
-
-/* =========================================================
-   7) PRICING FAQS
-   ========================================================= */
+/* =========================
+   FAQ LIST (simple + clean)
+   ========================= */
 .pr-faq {
-    padding: 56px 0 72px;
-    background: #fff;
+    padding: 56px 0 88px;
 }
 
 .pr-faqList {
-    max-width: 980px;
-    margin: 18px auto 0;
-    border-top: 1px solid rgba(12, 24, 48, 0.10);
-    text-align: left;
+    margin-top: 18px;
+    border-top: 1px solid var(--kc-border);
+    max-width: 920px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .pr-faqRow {
-    padding: 16px 0;
-    border-bottom: 1px solid rgba(12, 24, 48, 0.10);
+    padding: 18px 0;
+    border-bottom: 1px solid var(--kc-border);
+    display: grid;
+    gap: 6px;
 }
 
 .pr-faqQ {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 13px;
-    font-weight: 950;
-    color: rgba(12, 24, 48, 0.92);
-    margin-bottom: 8px;
+    margin: 0;
+    color: var(--kc-text-primary);
 }
 
 .pr-faqA {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 13px;
-    line-height: 1.75;
-    color: rgba(12, 24, 48, 0.68);
+    margin: 0;
+    color: var(--kc-text-secondary);
+    max-width: 860px;
 }
 
-/* =========================================================
-   Responsive
-   ========================================================= */
+/* =========================
+   RESPONSIVE
+   ========================= */
 @media (max-width: 980px) {
-    .pr-h1 {
-        font-size: 44px;
-    }
-
     .pr-plans__grid {
         grid-template-columns: 1fr;
         max-width: 520px;
         margin: 0 auto;
     }
 
-    .pr-card.is-featured {
-        transform: none;
-    }
-
     .pr-3col {
         grid-template-columns: 1fr;
-        max-width: 520px;
-        margin: 18px auto 0;
+        max-width: 760px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    .pr-band__grid {
-        grid-template-columns: 1fr;
-        max-width: 520px;
-    }
-
-    .pr-physical__card {
-        grid-template-columns: 1fr;
-    }
-
-    .pr-physical__right {
-        justify-items: start;
+    .pr-tdFeature {
+        width: auto;
     }
 }
 
 @media (max-width: 640px) {
-    .pr-hero {
-        padding: 96px 0 20px;
+    .pr-card__price {
+        font-size: 32px;
+        line-height: 36px;
     }
 
-    .pr-h1 {
-        font-size: 36px;
-    }
-
-    .pr-billing__tabs {
-        width: 100%;
-        justify-content: center;
+    .pr-table thead th,
+    .pr-table tbody td {
+        padding: 12px 12px;
     }
 }

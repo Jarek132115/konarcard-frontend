@@ -380,12 +380,7 @@ export default function Pricing() {
                 price: p.free.price,
                 sub: p.free.sub,
                 featured: false,
-                highlights: [
-                    "Claim your unique KonarCard link",
-                    "Basic profile & contact buttons",
-                    "QR code sharing",
-                    "Works on iPhone & Android",
-                ],
+                highlights: ["Claim your unique KonarCard link", "Basic profile & contact buttons", "QR code sharing", "Works on iPhone & Android"],
                 button: getPlanButton("free"),
             },
             {
@@ -439,18 +434,19 @@ export default function Pricing() {
         <>
             <Navbar />
 
-            <main className="pr-page">
-                {/* 1) HERO */}
+            {/* ✅ kc-page ensures consistent top spacing under navbar */}
+            <main className="pr-page kc-page">
+                {/* HERO */}
                 <section className="pr-hero">
                     <div className="pr-container pr-hero__inner">
                         <p className="pr-kicker">Start free • Upgrade when it’s worth it</p>
 
-                        <h1 className="pr-h1">
+                        <h1 className="h2 pr-title">
                             Simple pricing that pays <br />
                             for itself
                         </h1>
 
-                        <p className="pr-sub">
+                        <p className="body-s pr-sub">
                             Designed for real trades. One job covers the cost. Cancel anytime — no stress.
                         </p>
 
@@ -482,12 +478,12 @@ export default function Pricing() {
                                 ))}
                             </div>
 
-                            <div className="pr-note">{p.note}</div>
+                            <div className="body-s pr-note">{p.note}</div>
                         </div>
                     </div>
                 </section>
 
-                {/* 2) PLAN CARDS */}
+                {/* PLAN CARDS */}
                 <section className="pr-plans">
                     <div className="pr-container">
                         <div className="pr-plans__grid">
@@ -500,19 +496,19 @@ export default function Pricing() {
                                         {isFeatured ? <div className="pr-card__tag">Most popular</div> : null}
 
                                         <div className="pr-card__head">
-                                            <h3 className="pr-card__title">{card.title}</h3>
+                                            <h3 className="h5 pr-card__title">{card.title}</h3>
                                         </div>
 
                                         <div className="pr-card__priceRow">
                                             <div className="pr-card__price">{card.price}</div>
-                                            <div className="pr-card__priceSub">{card.sub}</div>
+                                            <div className="body-s pr-card__priceSub">{card.sub}</div>
                                         </div>
 
                                         <ul className="pr-card__list">
                                             {card.highlights.map((h) => (
                                                 <li key={h}>
                                                     <span className="pr-dot" aria-hidden="true" />
-                                                    <span>{h}</span>
+                                                    <span className="body-s pr-liText">{h}</span>
                                                 </li>
                                             ))}
                                         </ul>
@@ -534,7 +530,7 @@ export default function Pricing() {
                                                 </button>
                                             )}
 
-                                            {btn.helper ? <div className="pr-helper">{btn.helper}</div> : null}
+                                            {btn.helper ? <div className="body-s pr-helper">{btn.helper}</div> : null}
 
                                             {isLoggedIn() && card.key !== "free" && currentPlan !== "free" ? (
                                                 <button type="button" className="pr-linkBtn" onClick={openBillingPortal}>
@@ -549,12 +545,12 @@ export default function Pricing() {
                     </div>
                 </section>
 
-                {/* 3) FEATURE COMPARISON TABLE */}
+                {/* COMPARE */}
                 <section className="pr-compare">
                     <div className="pr-container">
                         <div className="pr-sectionHead">
-                            <h2 className="pr-h2">Compare plans</h2>
-                            <p className="pr-sectionSub">Clear differences — no fluff. Pick what matches how you work.</p>
+                            <h2 className="h3 pr-h2">Compare plans</h2>
+                            <p className="body-s pr-sectionSub">Clear differences — no fluff. Pick what matches how you work.</p>
                         </div>
 
                         <div className="pr-tableWrap" role="region" aria-label="Plan comparison table" tabIndex={0}>
@@ -618,12 +614,12 @@ export default function Pricing() {
                     </div>
                 </section>
 
-                {/* 4) WHO EACH PLAN IS FOR */}
+                {/* WHO */}
                 <section className="pr-who">
                     <div className="pr-container">
                         <div className="pr-sectionHead">
-                            <h2 className="pr-h2">Who each plan is for</h2>
-                            <p className="pr-sectionSub">Pick the plan that fits your day-to-day.</p>
+                            <h2 className="h3 pr-h2">Who each plan is for</h2>
+                            <p className="body-s pr-sectionSub">Pick the plan that fits your day-to-day.</p>
                         </div>
 
                         <div className="pr-3col">
@@ -632,7 +628,9 @@ export default function Pricing() {
                                     <div className="pr-miniCard__title">Free</div>
                                     <div className="pr-miniCard__pill">Trying it out</div>
                                 </div>
-                                <p className="pr-miniCard__p">Perfect if you just want your link, contact buttons, and a clean profile.</p>
+                                <p className="body-s pr-miniCard__p">
+                                    Perfect if you just want your link, contact buttons, and a clean profile.
+                                </p>
                             </div>
 
                             <div className="pr-miniCard is-accent">
@@ -640,7 +638,9 @@ export default function Pricing() {
                                     <div className="pr-miniCard__title">Plus</div>
                                     <div className="pr-miniCard__pill">Solo trades</div>
                                 </div>
-                                <p className="pr-miniCard__p">Best for trades who want services, photos, reviews, and a premium presence.</p>
+                                <p className="body-s pr-miniCard__p">
+                                    Best for trades who want services, photos, reviews, and a premium presence.
+                                </p>
                             </div>
 
                             <div className="pr-miniCard">
@@ -648,75 +648,27 @@ export default function Pricing() {
                                     <div className="pr-miniCard__title">Teams</div>
                                     <div className="pr-miniCard__pill">Growing business</div>
                                 </div>
-                                <p className="pr-miniCard__p">For companies with staff — multiple profiles, central branding, and control.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* 5) PHYSICAL CARDS CONTEXT */}
-                <section className="pr-physical">
-                    <div className="pr-container">
-                        <div className="pr-physical__card">
-                            <div className="pr-physical__left">
-                                <h2 className="pr-h2">Physical cards are separate</h2>
-                                <p className="pr-sectionSub pr-sectionSub--left">
-                                    Your plan is for the digital profile. NFC cards are a one-time purchase and always link to your profile.
+                                <p className="body-s pr-miniCard__p">
+                                    For companies with staff — multiple profiles, central branding, and control.
                                 </p>
                             </div>
-
-                            <div className="pr-physical__right">
-                                <div className="pr-placeholder" aria-hidden="true">
-                                    Image placeholder
-                                </div>
-
-                                <Link to="/products" className="pr-btn is-ghost pr-btn--inline">
-                                    Shop NFC cards
-                                </Link>
-                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* 6) VALUE JUSTIFICATION (DARK BAND) */}
-                <section className="pr-band">
-                    <div className="pr-container pr-band__inner">
-                        <h2 className="pr-band__h2">Because business cards should work harder</h2>
-
-                        <div className="pr-band__grid">
-                            <div className="pr-band__item">
-                                <div className="pr-band__k">Works on every phone</div>
-                                <div className="pr-band__s">iPhone + Android — no app, no setup headaches.</div>
-                            </div>
-                            <div className="pr-band__item">
-                                <div className="pr-band__k">No app needed</div>
-                                <div className="pr-band__s">Just tap or scan — everything opens in the browser.</div>
-                            </div>
-                            <div className="pr-band__item">
-                                <div className="pr-band__k">One link for everything</div>
-                                <div className="pr-band__s">Your details, photos, services, and contact buttons in one place.</div>
-                            </div>
-                        </div>
-
-                        <Link to="/register" className="pr-btn pr-band__cta">
-                            Claim your link
-                        </Link>
-                    </div>
-                </section>
-
-                {/* 7) PRICING FAQS */}
+                {/* FAQs */}
                 <section className="pr-faq">
                     <div className="pr-container">
                         <div className="pr-sectionHead">
-                            <h2 className="pr-h2">Pricing FAQs</h2>
-                            <p className="pr-sectionSub">Quick answers before you commit.</p>
+                            <h2 className="h3 pr-h2">Pricing FAQs</h2>
+                            <p className="body-s pr-sectionSub">Quick answers before you commit.</p>
                         </div>
 
                         <div className="pr-faqList">
                             {pricingFaqs.map((x) => (
                                 <div className="pr-faqRow" key={x.q}>
-                                    <div className="pr-faqQ">{x.q}</div>
-                                    <div className="pr-faqA">{x.a}</div>
+                                    <div className="h6 pr-faqQ">{x.q}</div>
+                                    <div className="body-s pr-faqA">{x.a}</div>
                                 </div>
                             ))}
                         </div>
