@@ -1,11 +1,11 @@
 /* frontend/src/styling/dashboard/settings.css
-   =========================================================
-   Settings Page — Redesigned Layout (2-column)
-   - Left column wider (Account + Billing)
-   - Right column (Invoices + Payments)
-   - Full-width stretch + better vertical fill
-   - Consistent spacing + clean UI/UX
-   ========================================================= */
+=========================================================
+Settings (Dashboard) — Profiles-style UI
+- Uses DashboardLayout + PageHeader
+- Left column wider (Account + Billing)
+- Right column (Invoices + Payments)
+- Consistent spacing, radius, shadows, typography
+========================================================= */
 
 :root {
     --bg: #ffffff;
@@ -18,6 +18,9 @@
 
     --accent: #f97316;
     --accent-rgb: 249 115 22;
+
+    --ok: #16a34a;
+    --ok-rgb: 22 163 74;
 
     --danger: #dc2626;
     --danger-rgb: 220 38 38;
@@ -35,55 +38,58 @@
 }
 
 /* =========================================================
-   PAGE LAYOUT
+   Shell
 ========================================================= */
-
-/* Wrapper inside DashboardLayout content */
 .settings-shell {
     width: 100%;
-    padding: 0 0 12px;
+    padding: 0;
+    margin: 0;
 }
 
-/* ✅ New 2-column layout:
-   Left wider than right + full width stretch */
-.settings-layout {
-    width: 100%;
-    display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
-    /* left wider */
-    gap: 14px;
-    align-items: stretch;
+/* PageHeader right slot */
+.settings-header-badges {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
-/* Column stacks */
-.settings-col {
-    display: grid;
-    gap: 14px;
-    min-width: 0;
-    align-content: start;
-}
-
-/* Right column fills height better */
-.settings-col-right {
-    grid-auto-rows: 1fr;
-    align-content: stretch;
+@media (max-width: 1000px) {
+    .settings-header-badges {
+        justify-content: flex-start;
+    }
 }
 
 /* =========================================================
-   CARD
+   Grid layout (match Profiles rhythm)
 ========================================================= */
+.settings-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.95fr);
+    /* left wider */
+    gap: 16px;
+    align-items: start;
+    margin-top: 16px;
+}
 
+.settings-col {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+}
+
+/* =========================================================
+   Card
+========================================================= */
 .settings-card {
     background: var(--surface);
     border: 1px solid var(--border-2);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     padding: 16px;
-    height: 100%;
-    /* helps stretch in right column */
 }
 
-/* Card header */
 .settings-card-head {
     display: flex;
     align-items: flex-start;
@@ -105,13 +111,12 @@
     color: var(--muted);
     font-size: 14px;
     line-height: 1.55;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 /* =========================================================
-   PILLS / BADGES
+   Pills / chips
 ========================================================= */
-
 .settings-pill {
     font-family: "Cal Sans", sans-serif;
     font-size: 12px;
@@ -125,23 +130,101 @@
     white-space: nowrap;
 }
 
-/* Small status chips (optional use) */
 .settings-chip {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 8px 10px;
     border-radius: 999px;
-    border: 1px solid rgba(11, 18, 32, 0.10);
+    border: 1px solid rgba(11, 18, 32, 0.12);
     background: rgba(11, 18, 32, 0.03);
     font-weight: 900;
     font-size: 12px;
-    color: rgba(11, 18, 32, 0.78);
+    color: rgba(11, 18, 32, 0.82);
+}
+
+.settings-chip-ghost {
+    background: #fff;
 }
 
 /* =========================================================
-   INPUTS / FIELDS
+   Account top summary
 ========================================================= */
+.settings-account-top {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    border: 1px solid rgba(11, 18, 32, 0.10);
+    background: linear-gradient(180deg, #fff, var(--surface-2));
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 12px;
+}
+
+.settings-avatar {
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(11, 18, 32, 0.10);
+    background: rgb(var(--accent-rgb) / 0.12);
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+}
+
+.settings-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.settings-avatar-fallback {
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    color: var(--ink);
+    font-size: 18px;
+}
+
+.settings-account-summary {
+    min-width: 0;
+}
+
+.settings-account-name {
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    color: var(--ink);
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.settings-account-email {
+    margin-top: 2px;
+    color: rgba(91, 102, 122, 0.95);
+    font-weight: 800;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.settings-account-badges {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* =========================================================
+   Inputs
+========================================================= */
+.settings-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
 
 .settings-field {
     display: grid;
@@ -179,7 +262,7 @@
     color: rgba(11, 18, 32, 0.85);
 }
 
-/* Hint text */
+/* hint */
 .settings-hint {
     margin-top: 6px;
     font-size: 13px;
@@ -192,48 +275,8 @@
 }
 
 /* =========================================================
-   ACCOUNT GRID + META ROW
+   Buttons
 ========================================================= */
-
-.settings-grid-2 {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.settings-meta-row {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    margin-top: 6px;
-}
-
-.settings-meta {
-    border: 1px solid rgba(11, 18, 32, 0.10);
-    background: var(--surface-2);
-    border-radius: 16px;
-    padding: 12px;
-}
-
-.settings-meta-k {
-    font-size: 12px;
-    font-weight: 900;
-    letter-spacing: 0.08em;
-    color: rgba(11, 18, 32, 0.55);
-    text-transform: uppercase;
-}
-
-.settings-meta-v {
-    margin-top: 6px;
-    font-weight: 900;
-    color: var(--ink);
-}
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
 .settings-btn {
     display: inline-flex;
     align-items: center;
@@ -271,12 +314,6 @@
     background: rgb(var(--accent-rgb) / 0.92);
 }
 
-.settings-btn-primary:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
 .settings-btn-ghost {
     background: var(--surface-2);
     color: var(--ink);
@@ -287,21 +324,16 @@
     background: rgba(11, 18, 32, 0.04);
 }
 
-.settings-btn-danger {
-    background: rgb(var(--danger-rgb) / 0.10);
-    border-color: rgb(var(--danger-rgb) / 0.22);
-    color: rgb(var(--danger-rgb));
-}
-
-.settings-btn-danger:hover {
-    background: rgb(var(--danger-rgb) / 0.14);
+.settings-actions-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
 }
 
 /* =========================================================
-   BILLING
+   Billing stats row
 ========================================================= */
-
-/* If you’re using the “3 stat tiles” billing redesign */
 .settings-billing-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -312,8 +344,8 @@
 .settings-stat {
     border: 1px solid rgba(11, 18, 32, 0.10);
     background: #fff;
-    border-radius: 16px;
-    padding: 12px;
+    border-radius: 18px;
+    padding: 14px;
 }
 
 .settings-stat-k {
@@ -325,56 +357,19 @@
 }
 
 .settings-stat-v {
-    margin-top: 6px;
+    margin-top: 8px;
     font-weight: 900;
     color: var(--ink);
+    font-size: 14px;
 }
 
-.settings-billing-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 12px;
-}
-
-/* Backwards-compatible billing row (if still present) */
-.settings-billing-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 14px;
-    align-items: start;
-}
-
-.settings-billing-left {
-    min-width: 0;
-}
-
-.settings-billing-line {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 10px 12px;
-    border-radius: 16px;
-    border: 1px solid rgba(11, 18, 32, 0.10);
-    background: #fff;
-    margin-bottom: 10px;
-}
-
-.settings-billing-k {
-    font-weight: 900;
-    color: rgba(11, 18, 32, 0.65);
-}
-
-.settings-billing-v {
-    font-weight: 900;
-    color: var(--ink);
+.settings-stat-v.is-active {
+    color: rgb(var(--ok-rgb));
 }
 
 /* =========================================================
-   TABLES
+   Tables
 ========================================================= */
-
 .settings-table {
     margin-top: 10px;
     border-radius: 18px;
@@ -383,10 +378,8 @@
     background: #fff;
 }
 
-/* Invoices table (4 cols) */
 .settings-row {
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr 0.8fr 0.9fr;
     gap: 10px;
     padding: 12px 14px;
     border-top: 1px solid rgba(11, 18, 32, 0.08);
@@ -408,9 +401,12 @@
     color: rgba(11, 18, 32, 0.70);
 }
 
-/* Payments table (4 cols) — you can add this class in JSX if you want */
-.settings-row-payments {
-    grid-template-columns: 1.1fr 0.8fr 0.8fr 1.4fr;
+.settings-row-4 {
+    grid-template-columns: 1.1fr 0.8fr 0.8fr 0.9fr;
+}
+
+.settings-row-4p {
+    grid-template-columns: 1.0fr 0.8fr 0.8fr 1.5fr;
 }
 
 .settings-link {
@@ -429,7 +425,56 @@
     font-size: 13px;
 }
 
-/* Empty state */
+.settings-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* status badge */
+.settings-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(11, 18, 32, 0.12);
+    background: var(--surface-2);
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: rgba(11, 18, 32, 0.88);
+}
+
+.settings-badge.paid,
+.settings-badge.succeeded,
+.settings-badge.succeeded\? {
+    /* harmless fallback */
+    border-color: rgb(var(--ok-rgb) / 0.25);
+    background: rgb(var(--ok-rgb) / 0.08);
+    color: rgb(var(--ok-rgb));
+}
+
+.settings-badge.open,
+.settings-badge.draft,
+.settings-badge.pending,
+.settings-badge.processing {
+    border-color: rgb(var(--accent-rgb) / 0.22);
+    background: rgb(var(--accent-rgb) / 0.08);
+    color: rgb(var(--accent-rgb));
+}
+
+.settings-badge.failed,
+.settings-badge.canceled,
+.settings-badge.cancelled,
+.settings-badge.uncollectible,
+.settings-badge.void {
+    border-color: rgb(var(--danger-rgb) / 0.22);
+    background: rgb(var(--danger-rgb) / 0.08);
+    color: rgb(var(--danger-rgb));
+}
+
+/* empty */
 .settings-empty {
     margin-top: 10px;
     padding: 14px;
@@ -441,11 +486,10 @@
 }
 
 /* =========================================================
-   SKELETON LOADING
+   Skeleton
 ========================================================= */
-
 .settings-skel {
-    height: 160px;
+    height: 180px;
     border-radius: var(--radius-lg);
     border: 1px solid rgba(11, 18, 32, 0.08);
     background: linear-gradient(90deg,
@@ -467,44 +511,25 @@
 }
 
 /* =========================================================
-   RESPONSIVE
+   Responsive
 ========================================================= */
-
 @media (max-width: 1100px) {
-    .settings-layout {
+    .settings-grid {
         grid-template-columns: 1fr;
-        align-items: start;
     }
 
     .settings-grid-2 {
         grid-template-columns: 1fr;
     }
 
-    .settings-meta-row {
-        grid-template-columns: 1fr;
-    }
-
     .settings-billing-grid {
         grid-template-columns: 1fr;
-    }
-
-    .settings-billing-row {
-        grid-template-columns: 1fr;
-    }
-
-    .settings-billing-actions {
-        justify-content: flex-start;
-    }
-
-    .settings-col-right {
-        grid-auto-rows: initial;
-        align-content: start;
     }
 }
 
 @media (max-width: 640px) {
     .settings-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
         gap: 6px;
     }
 

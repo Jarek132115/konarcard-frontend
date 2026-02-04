@@ -1,6 +1,7 @@
 // src/pages/interface/Settings.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
+import PageHeader from "../../components/Dashboard/PageHeader";
 import "../../styling/dashboard/settings.css";
 
 import { useAuthUser } from "../../hooks/useAuthUser";
@@ -45,6 +46,9 @@ export default function Settings() {
 
     const [loading, setLoading] = useState(true);
     const [loadErr, setLoadErr] = useState("");
+
+    const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
+    const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
 
     useEffect(() => {
         if (authLoading) return;
@@ -131,11 +135,19 @@ export default function Settings() {
         await refetchAuth?.();
     };
 
+    // Loading
     if (authLoading || loading) {
         return (
-            <DashboardLayout title="Settings" subtitle="Manage your account and billing.">
+            <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
                 <div className="settings-shell">
-                    <div className="settings-layout">
+                    <PageHeader
+                        title="Settings"
+                        subtitle="Manage your account and billing."
+                        isMobile={isMobile}
+                        isSmallMobile={isSmallMobile}
+                    />
+
+                    <div className="settings-grid">
                         <div className="settings-col">
                             <div className="settings-card settings-skel" />
                             <div className="settings-card settings-skel" />
@@ -150,34 +162,55 @@ export default function Settings() {
         );
     }
 
+    // Error
     if (authError || loadErr) {
         return (
-            <DashboardLayout
-                title="Settings"
-                subtitle="Manage your account and billing."
-                rightSlot={
-                    <button className="settings-btn settings-btn-primary" onClick={retryAll}>
-                        Retry
-                    </button>
-                }
-            >
+            <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
                 <div className="settings-shell">
-                    <div className="settings-card">
+                    <PageHeader
+                        title="Settings"
+                        subtitle="Manage your account and billing."
+                        isMobile={isMobile}
+                        isSmallMobile={isSmallMobile}
+                        rightSlot={
+                            <button className="settings-btn settings-btn-primary" onClick={retryAll}>
+                                Retry
+                            </button>
+                        }
+                    />
+
+                    <section className="settings-card">
                         <h2 className="settings-card-title">Couldn’t load your settings</h2>
                         <p className="settings-muted">{loadErr || "Please try again."}</p>
-                    </div>
+                    </section>
                 </div>
             </DashboardLayout>
         );
     }
 
     return (
-        <DashboardLayout title="Settings" subtitle="Manage your account, billing, invoices and payments.">
+        <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
             <div className="settings-shell">
-                <div className="settings-layout">
-                    {/* LEFT COLUMN: ACCOUNT + BILLING */}
+                <PageHeader
+                    title="Settings"
+                    subtitle="Manage your account, billing, invoices and payments."
+                    isMobile={isMobile}
+                    isSmallMobile={isSmallMobile}
+                    rightSlot={
+                        <div className="settings-header-badges">
+                            <span className="settings-pill">
+                                Plan: <strong>{String(plan || "free").toUpperCase()}</strong>
+                            </span>
+                            <span className="settings-pill">
+                                Status: <strong>{String(subscriptionStatus || "free").toUpperCase()}</strong>
+                            </span>
+                        </div>
+                    }
+                />
+
+                <div className="settings-grid">
+                    {/* LEFT (wider): Account + Billing */}
                     <div className="settings-col">
-                        {/* ACCOUNT */}
                         <section className="settings-card">
                             <div className="settings-card-head">
                                 <div>
@@ -206,7 +239,9 @@ export default function Settings() {
                                     <div className="settings-account-email">{accountEmail}</div>
                                     <div className="settings-account-badges">
                                         <span className="settings-chip">{isGoogle ? "Google account" : "Email account"}</span>
-                                        <span className="settings-chip settings-chip-ghost">{isGoogle ? "Managed by Google" : "Editable in app"}</span>
+                                        <span className="settings-chip settings-chip-ghost">
+                                            {isGoogle ? "Managed by Google" : "Editable in app"}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -230,7 +265,6 @@ export default function Settings() {
                             </div>
                         </section>
 
-                        {/* BILLING */}
                         <section className="settings-card">
                             <div className="settings-card-head">
                                 <div>
@@ -246,7 +280,7 @@ export default function Settings() {
                             <div className="settings-billing-grid">
                                 <div className="settings-stat">
                                     <div className="settings-stat-k">Status</div>
-                                    <div className={`settings-stat-v ${subscriptionStatus === "active" ? "is-active" : ""}`}>
+                                    <div className={`settings-stat-v ${safeLower(subscriptionStatus) === "active" ? "is-active" : ""}`}>
                                         {subscriptionStatus || "free"}
                                     </div>
                                 </div>
@@ -260,15 +294,15 @@ export default function Settings() {
                                     <div className="settings-stat-k">Renews</div>
                                     <div className="settings-stat-v">{currentPeriodEnd ? fmtDate(currentPeriodEnd) : "—"}</div>
                                 </div>
+                            </div>
 
-                                <div className="settings-billing-actions">
-                                    <button className="settings-btn settings-btn-primary" onClick={openBillingPortal}>
-                                        Manage billing
-                                    </button>
-                                    <button className="settings-btn settings-btn-ghost" onClick={() => (window.location.href = "/pricing")}>
-                                        View plans
-                                    </button>
-                                </div>
+                            <div className="settings-actions-row">
+                                <button className="settings-btn settings-btn-primary" onClick={openBillingPortal}>
+                                    Manage billing
+                                </button>
+                                <button className="settings-btn settings-btn-ghost" onClick={() => (window.location.href = "/pricing")}>
+                                    View plans
+                                </button>
                             </div>
 
                             <div className="settings-hint">
@@ -277,9 +311,8 @@ export default function Settings() {
                         </section>
                     </div>
 
-                    {/* RIGHT COLUMN: INVOICES + PAYMENTS */}
+                    {/* RIGHT: Invoices + Payments */}
                     <div className="settings-col">
-                        {/* INVOICES */}
                         <section className="settings-card">
                             <div className="settings-card-head">
                                 <div>
@@ -289,7 +322,7 @@ export default function Settings() {
                             </div>
 
                             {invoices.length ? (
-                                <div className="settings-table settings-table-compact">
+                                <div className="settings-table">
                                     <div className="settings-row settings-row-head settings-row-4">
                                         <div>Date</div>
                                         <div>Amount</div>
@@ -310,9 +343,7 @@ export default function Settings() {
                                                 <div>{fmtDate(date)}</div>
                                                 <div>{fmtMoneyFromMinor(amountMinor, currency)}</div>
                                                 <div>
-                                                    <span className={`settings-badge ${String(status).toLowerCase()}`}>
-                                                        {String(status)}
-                                                    </span>
+                                                    <span className={`settings-badge ${safeLower(status)}`}>{String(status)}</span>
                                                 </div>
                                                 <div>
                                                     {pdf ? (
@@ -335,7 +366,6 @@ export default function Settings() {
                             )}
                         </section>
 
-                        {/* PAYMENTS */}
                         <section className="settings-card">
                             <div className="settings-card-head">
                                 <div>
@@ -345,7 +375,7 @@ export default function Settings() {
                             </div>
 
                             {payments.length ? (
-                                <div className="settings-table settings-table-compact">
+                                <div className="settings-table">
                                     <div className="settings-row settings-row-head settings-row-4p">
                                         <div>Date</div>
                                         <div>Amount</div>
@@ -366,9 +396,7 @@ export default function Settings() {
                                                 <div>{fmtDate(date)}</div>
                                                 <div>{fmtMoneyFromMinor(amountMinor, currency)}</div>
                                                 <div>
-                                                    <span className={`settings-badge ${String(status).toLowerCase()}`}>
-                                                        {String(status)}
-                                                    </span>
+                                                    <span className={`settings-badge ${safeLower(status)}`}>{String(status)}</span>
                                                 </div>
                                                 <div className="settings-mono settings-ellipsis" title={String(desc)}>
                                                     {String(desc)}
