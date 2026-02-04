@@ -6,6 +6,7 @@ import PageHeader from "../../components/Dashboard/PageHeader";
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
+import "../../styling/dashboard/helpcentreinterface.css";
 
 export default function HelpCentreInterface() {
   const [sidebarOpen, setSidebarOpen] = useState(false);

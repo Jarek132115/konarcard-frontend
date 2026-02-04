@@ -1,0 +1,430 @@
+/* frontend/src/styling/dashboard/helpcentreinetrface.css
+   =========================================================
+   Help Centre (Dashboard Interface) — UI/UX Redesign
+   - Modern 2-column layout on desktop (nav/sections + content cards)
+   - Consistent spacing + polished card system
+   - Sticky header behavior preserved
+   - Responsive: single column on tablet/mobile
+   ========================================================= */
+
+:root {
+  --hc-ink: #0b1220;
+  --hc-muted: rgba(11, 18, 32, 0.62);
+
+  --hc-surface: #ffffff;
+  --hc-surface-2: #fafafa;
+  --hc-surface-3: #f6f7f9;
+
+  --hc-border: rgba(11, 18, 32, 0.10);
+  --hc-border-2: rgba(11, 18, 32, 0.08);
+
+  --hc-accent: #f97316;
+  --hc-accent-rgb: 249 115 22;
+
+  --hc-purple: #6b21a8;
+
+  --hc-radius: 18px;
+  --hc-radius-lg: 22px;
+
+  --hc-shadow-sm: 0 10px 22px rgba(11, 18, 32, 0.06);
+  --hc-shadow-md: 0 16px 44px rgba(11, 18, 32, 0.10);
+
+  --hc-focus: 0 0 0 3px rgb(var(--hc-accent-rgb) / 0.26);
+
+  /* shell */
+  --hc-shell: #fff1e8;
+  --hc-shell-border: rgb(var(--hc-accent-rgb) / 0.22);
+}
+
+/* =========================================================
+   PAGE STRUCTURE
+========================================================= */
+
+/* Keep your original flex column + full height */
+.help-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* Sticky PageHeader only on help page */
+.help-page .page-header-card {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  backdrop-filter: saturate(1.1);
+  margin-bottom: 12px;
+}
+
+/* Shell fills remaining height and becomes the scroll container */
+.help-frame {
+  flex: 1 1 auto;
+  overflow: auto;
+
+  background: var(--hc-shell);
+  border: 1px solid var(--hc-shell-border);
+  border-radius: var(--hc-radius-lg);
+  box-shadow: var(--hc-shadow-sm);
+  padding: 18px;
+}
+
+/* Inner container */
+.help-container {
+  width: 100%;
+}
+
+/* =========================================================
+   NEW: LAYOUT GRID
+   Left column = section nav / hints
+   Right column = content cards
+========================================================= */
+
+.help-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.42fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+/* Left rail card */
+.help-rail {
+  position: sticky;
+  top: 84px;
+  /* below sticky header; adjust if needed */
+  align-self: start;
+  border-radius: var(--hc-radius-lg);
+  border: 1px solid var(--hc-border-2);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: var(--hc-shadow-sm);
+  padding: 14px;
+}
+
+/* Rail header */
+.help-rail-title {
+  margin: 2px 0 10px;
+  font-family: "Cal Sans", sans-serif;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--hc-ink);
+}
+
+.help-rail-sub {
+  margin: 0 0 12px;
+  color: var(--hc-muted);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+/* Rail items (anchors/buttons style) */
+.help-rail-list {
+  display: grid;
+  gap: 10px;
+}
+
+.help-rail-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  padding: 12px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(11, 18, 32, 0.08);
+  background: #fff;
+  box-shadow: 0 6px 14px rgba(11, 18, 32, 0.05);
+
+  cursor: default;
+  user-select: none;
+}
+
+.help-rail-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgb(var(--hc-accent-rgb) / 0.25);
+  border: 1px solid rgb(var(--hc-accent-rgb) / 0.25);
+  flex: 0 0 auto;
+}
+
+.help-rail-item strong {
+  font-size: 13px;
+  font-weight: 1000;
+  color: var(--hc-ink);
+  line-height: 1.1;
+}
+
+.help-rail-item span {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 850;
+  color: rgba(11, 18, 32, 0.58);
+}
+
+/* Optional rail CTA area */
+.help-rail-cta {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(11, 18, 32, 0.08);
+  display: grid;
+  gap: 10px;
+}
+
+/* =========================================================
+   RIGHT: LIST / CARDS
+========================================================= */
+
+.help-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+
+/* Modern card */
+.help-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 16px;
+
+  border: 1px solid rgba(11, 18, 32, 0.10);
+  border-radius: var(--hc-radius-lg);
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--hc-shadow-sm);
+  align-items: start;
+
+  overflow: hidden;
+}
+
+/* soft top sheen */
+.help-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(900px 240px at 18% 10%,
+      rgba(249, 115, 22, 0.10),
+      transparent 55%);
+}
+
+/* Badge */
+.help-status-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+
+  font-weight: 1000;
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(11, 18, 32, 0.08);
+  background: rgb(var(--hc-accent-rgb) / 0.10);
+  color: var(--hc-accent);
+  box-shadow: 0 10px 20px rgba(11, 18, 32, 0.08);
+}
+
+.help-status-badge.status-maintenance {
+  background: rgba(107, 33, 168, 0.10);
+  border-color: rgba(107, 33, 168, 0.18);
+  color: var(--hc-purple);
+}
+
+/* Thumbnail (video preview) */
+.help-thumb {
+  width: 100%;
+  height: 190px;
+  border-radius: 18px;
+  border: 1px solid rgba(11, 18, 32, 0.08);
+  background: linear-gradient(135deg,
+      rgba(11, 18, 32, 0.03),
+      rgba(11, 18, 32, 0.01));
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 10px 18px rgba(11, 18, 32, 0.06 ());
+  /* safe shadow */
+  margin-top: 32px;
+  /* space for badge */
+}
+
+.help-thumb-mark {
+  font-size: 56px;
+  line-height: 1;
+  filter: saturate(1.05);
+}
+
+/* Details column */
+.help-details {
+  display: flex;
+  flex-direction: column;
+  min-height: 222px;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Meta line */
+.help-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: rgba(11, 18, 32, 0.58);
+  font-weight: 850;
+}
+
+.help-meta .type {
+  color: var(--hc-ink);
+  font-weight: 1000;
+}
+
+/* Content blocks */
+.help-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 16px;
+  align-items: start;
+  margin-top: 6px;
+}
+
+.help-kv {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(11, 18, 32, 0.08);
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.help-kv .kv-label {
+  font-weight: 1000;
+  color: rgba(11, 18, 32, 0.82);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.help-kv .kv-value {
+  font-size: 13px;
+  font-weight: 850;
+  color: rgba(11, 18, 32, 0.62);
+  line-height: 1.45;
+}
+
+/* Actions */
+.help-actions {
+  margin-top: auto;
+  padding-top: 12px;
+
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Link-like button */
+.link-like {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--hc-accent);
+  cursor: pointer;
+  text-decoration: underline;
+  font: inherit;
+  font-weight: 1000;
+}
+
+.link-like:focus-visible {
+  outline: none;
+  box-shadow: var(--hc-focus);
+  border-radius: 8px;
+}
+
+/* If your existing button classes exist, keep them.
+   These just make them look tighter on this page. */
+.help-actions .cta-black-button.desktop-button,
+.help-actions .cta-accent-button.desktop-button {
+  border-radius: 14px !important;
+  padding: 12px 14px !important;
+}
+
+/* =========================================================
+   MOBILE / RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+  .help-main {
+    min-height: auto;
+  }
+
+  /* Remove shell for mobile like you had */
+  .help-frame {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .help-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .help-rail {
+    position: static;
+    top: auto;
+    padding: 12px;
+  }
+
+  .help-card {
+    grid-template-columns: 1fr;
+  }
+
+  .help-thumb {
+    height: auto;
+    min-height: 180px;
+    margin-top: 0;
+  }
+
+  .help-status-badge {
+    position: static;
+    margin-bottom: 10px;
+    display: inline-flex;
+    place-self: start;
+  }
+
+  .help-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .help-actions {
+    width: 100%;
+  }
+
+  .help-actions .cta-black-button.desktop-button,
+  .help-actions .cta-accent-button.desktop-button {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .help-kv {
+    padding: 11px;
+  }
+}
+
+/* =========================================================
+   OPTIONAL: SAFETY (if sidebar overlay adds body no scroll)
+========================================================= */
+.body-no-scroll {
+  overflow: hidden;
+}

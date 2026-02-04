@@ -18,7 +18,6 @@ import './styling/profile.css';
 import './styling/nfccards.css';
 import './styling/notification.css';
 import './styling/subscription.css';
-import './styling/helpcentreinterface.css';
 import './styling/contactus.css';
 import './styling/userpage.css';
 import './styling/shareprofile.css';
