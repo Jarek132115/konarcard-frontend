@@ -1,21 +1,16 @@
 /* frontend/src/styling/example.css */
 
 /* =========================================================
-   EXAMPLES PAGE — FINAL
-   Matches FAQ/Pricing hero + pill styles + spacing (8pt)
+   EXAMPLES PAGE
+   - Uses global tokens + typography from fonts.css
+   - Layout-only styles here
    ========================================================= */
 
-/* Page base */
-.kc-examples {
-    background: var(--kc-bg-main);
-    color: var(--kc-text-primary);
-}
-
 /* =========================
-   HERO (same as FAQ)
+   HERO (same structure as FAQ)
    ========================= */
 .kc-examples__hero {
-    padding: 112px 20px 32px;
+    padding: 0 20px 32px;
 }
 
 .kc-examples__heroInner {
@@ -31,11 +26,10 @@
 .kc-examples__subtitle {
     margin: 0 auto;
     max-width: 720px;
-    color: var(--kc-text-secondary);
 }
 
 /* =========================
-   TABS (match FAQ pills)
+   TABS (match FAQ pills exactly)
    ========================= */
 .kc-examples__tabs {
     margin-top: 24px;
@@ -50,7 +44,7 @@
     background: #ffffff;
     color: var(--kc-text-primary);
 
-    border: 1px solid rgba(15, 23, 42, 0.30);
+    border: 1px solid rgba(15, 23, 42, 0.3);
     border-radius: 999px;
 
     padding: 8px 14px;
@@ -76,7 +70,7 @@
 
 .kc-examples__tab:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.18);
+    box-shadow: 0 0 0 3px var(--kc-focus-ring);
     border-color: rgba(249, 115, 22, 0.65);
 }
 
@@ -87,44 +81,49 @@
 }
 
 /* =========================
-   GRID SECTION
+   GRID SECTION (redesigned)
    ========================= */
 .kc-examples__gridSection {
     padding: 0 20px 64px;
 }
 
 .kc-examples__grid {
-    width: 1040px;
     max-width: 1040px;
     margin: 0 auto;
 
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    gap: 16px;
 }
 
-/* Keep your existing card styles, but align to tokens */
+/* card */
 .ex-card {
     border: 1px solid var(--kc-border);
-    background: #fff;
-    border-radius: 14px;
+    background: #ffffff;
+    border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.ex-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.10);
 }
 
 .ex-cardThumb {
-    height: 160px;
+    height: 172px;
     display: grid;
     place-items: center;
     position: relative;
     padding: 16px;
-    background: #fff;
+    background: #ffffff;
 }
 
 /* phone mock */
 .ex-phone {
-    width: 84px;
-    height: 122px;
+    width: 88px;
+    height: 126px;
     border-radius: 18px;
     border: 1px solid rgba(15, 23, 42, 0.12);
     background: #f6f7f9;
@@ -172,10 +171,10 @@
 .ex-physicalCard {
     position: absolute;
     right: 14px;
-    bottom: 10px;
-    width: 60px;
-    height: 78px;
-    border-radius: 10px;
+    bottom: 12px;
+    width: 64px;
+    height: 82px;
+    border-radius: 12px;
     background: var(--kc-accent-secondary);
     color: #fff;
     display: grid;
@@ -201,15 +200,39 @@
     padding: 16px;
 }
 
+.ex-cardTop {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+}
+
+.ex-rolePill {
+    /* keeps the global .pill look; just make it feel like a tag */
+    border: 1px solid var(--kc-border);
+}
+
 .ex-cardTitle {
-    margin: 0 0 8px;
-    color: var(--kc-text-primary);
+    margin: 0 0 6px;
 }
 
 .ex-cardDesc {
     margin: 0;
-    color: var(--kc-text-secondary);
     line-height: 1.55;
+}
+
+.ex-cardActions {
+    margin-top: 12px;
+}
+
+.ex-cardLink {
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--kc-text-primary);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.24);
+}
+
+.ex-cardLink:hover {
+    border-bottom-color: rgba(15, 23, 42, 0.50);
 }
 
 /* =========================
@@ -232,7 +255,6 @@
 .kc-examples__whySub {
     margin: 0 auto 24px;
     max-width: 720px;
-    color: var(--kc-text-secondary);
 }
 
 .kc-examples__whyGrid {
@@ -243,7 +265,7 @@
 
 .ex-whyCard {
     border: 1px solid var(--kc-border);
-    background: #fff;
+    background: #ffffff;
     border-radius: 14px;
     box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     padding: 16px;
@@ -262,14 +284,13 @@
 
 .ex-whyDesc {
     margin: 0;
-    color: var(--kc-text-secondary);
 }
 
 /* =========================
    CTA
    ========================= */
 .kc-examples__cta {
-    padding: 72px 20px 72px;
+    padding: 72px 20px;
     text-align: center;
 }
 
@@ -285,7 +306,13 @@
 .kc-examples__ctaSub {
     margin: 0 auto 24px;
     max-width: 720px;
-    color: var(--kc-text-secondary);
+}
+
+.kc-examples__ctaBtns {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .kc-examples__ctaBtn {
@@ -305,45 +332,47 @@
     font-weight: 600;
     letter-spacing: 0.4px;
 
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.25);
-    transition: transform 0.08s ease, filter 0.15s ease,
-        box-shadow 0.15s ease;
+    box-shadow: var(--kc-shadow-accent);
+    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
 }
 
 .kc-examples__ctaBtn:hover {
     filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.32);
+    box-shadow: var(--kc-shadow-accent-hover);
 }
 
 .kc-examples__ctaBtn:active {
     transform: translateY(1px);
 }
 
+.kc-examples__ctaBtn--ghost {
+    background: #ffffff;
+    color: var(--kc-text-primary);
+    border: 1px solid var(--kc-border);
+    box-shadow: none;
+}
+
+.kc-examples__ctaBtn--ghost:hover {
+    box-shadow: none;
+    filter: none;
+}
+
 /* =========================
    RESPONSIVE
    ========================= */
-@media (max-width: 1100px) {
+@media (max-width: 900px) {
     .kc-examples__grid {
-        width: 100%;
-        max-width: 980px;
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 820px) {
-    .kc-examples__grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
     .kc-examples__whyGrid {
         grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 640px) {
-    .kc-examples__hero {
-        padding-top: 96px;
-    }
-
     .kc-examples__grid {
         grid-template-columns: 1fr;
     }
