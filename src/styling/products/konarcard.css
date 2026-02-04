@@ -1,14 +1,29 @@
+/* frontend/src/styling/products/konarcard.css
+   ✅ CLEAN FILE: only styles what PlasticCard.jsx currently renders
+   (premium product page + thumbs + features + buy row)
+*/
+
+/* =========================
+   Tokens
+   ========================= */
 :root {
     --kc-orange: #ff7b00;
     --kc-orange-hover: #e66f00;
+
     --kc-text: #0b1220;
     --kc-muted: rgba(12, 24, 48, 0.72);
+
     --kc-border: rgba(12, 24, 48, 0.10);
+    --kc-border-2: rgba(12, 24, 48, 0.08);
+
     --kc-card: #ffffff;
-    --kc-shadow: 0 18px 40px rgba(12, 24, 48, 0.08);
     --kc-soft: 0 10px 24px rgba(12, 24, 48, 0.06);
+    --kc-shadow: 0 18px 40px rgba(12, 24, 48, 0.08);
 }
 
+/* =========================
+   Page shell
+   ========================= */
 .kc-konarcard {
     width: 100%;
     background: #ffffff;
@@ -21,24 +36,19 @@
     padding: 34px 20px 70px;
 }
 
-/* =========================================
-   Base crumbs (used across pages)
-   ========================================= */
-.kc-konarcard__crumbs {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 13px;
-    color: rgba(12, 24, 48, 0.55);
-    margin-bottom: 18px;
+/* ✅ spacing under navbar like other pages */
+.kc-konarcard--pagePad .kc-konarcard__wrap {
+    padding-top: 96px;
 }
 
+/* =========================
+   Crumbs
+   ========================= */
 .kc-konarcard__crumbLink {
     color: rgba(12, 24, 48, 0.75);
     text-decoration: none;
     font-weight: 700;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 .kc-konarcard__crumbLink:hover {
@@ -50,107 +60,14 @@
 }
 
 .kc-konarcard__crumbHere {
-    font-weight: 700;
+    font-weight: 800;
     color: rgba(12, 24, 48, 0.72);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-/* =========================================
-   OLD grid layout (still used in other pages)
-   ========================================= */
-.kc-konarcard__grid {
-    display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    gap: 28px;
-    align-items: start;
-}
-
-.kc-konarcard__gallery {
-    background: var(--kc-card);
-    border: 1px solid var(--kc-border);
-    border-radius: 18px;
-    box-shadow: var(--kc-soft);
-    padding: 16px;
-}
-
-.kc-konarcard__mainImg {
-    border-radius: 14px;
-    overflow: hidden;
-    border: 1px solid rgba(12, 24, 48, 0.08);
-    background: #f8fafc;
-    min-height: 360px;
-    display: grid;
-    place-items: center;
-}
-
-.kc-konarcard__mainImg img {
-    width: 100%;
-    height: 100%;
-    max-height: 520px;
-    object-fit: cover;
-    display: block;
-}
-
-.kc-konarcard__thumbRow {
-    margin-top: 12px;
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-}
-
-.kc-konarcard__thumbRow::-webkit-scrollbar {
-    display: none;
-}
-
-.kc-konarcard__thumb {
-    width: 72px;
-    height: 62px;
-    border-radius: 12px;
-    border: 1px solid rgba(12, 24, 48, 0.12);
-    background: #fff;
-    padding: 0;
-    cursor: pointer;
-    overflow: hidden;
-    flex: 0 0 auto;
-    transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.kc-konarcard__thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.kc-konarcard__thumb:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 22px rgba(12, 24, 48, 0.08);
-}
-
-.kc-konarcard__thumb.is-active {
-    border-color: rgba(255, 123, 0, 0.55);
-    box-shadow: 0 0 0 4px rgba(255, 123, 0, 0.12);
-}
-
-.kc-konarcard__panel {
-    background: var(--kc-card);
-    border: 1px solid var(--kc-border);
-    border-radius: 18px;
-    box-shadow: var(--kc-soft);
-    padding: 18px 18px 16px;
-    position: sticky;
-    top: 92px;
-}
-
-/* pills */
-.kc-konarcard__badgeRow {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-}
-
+/* =========================
+   Pills / badges
+   ========================= */
 .kc-konarcard__pill {
     display: inline-flex;
     align-items: center;
@@ -159,9 +76,10 @@
     border-radius: 999px;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 900;
     border: 1px solid rgba(12, 24, 48, 0.12);
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.85);
+    white-space: nowrap;
 }
 
 .kc-konarcard__pill--best {
@@ -175,58 +93,9 @@
     color: rgba(12, 24, 48, 0.75);
 }
 
-.kc-konarcard__title {
-    margin: 0 0 10px;
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 36px;
-    line-height: 1.06;
-    letter-spacing: -0.03em;
-    color: var(--kc-text);
-}
-
-.kc-konarcard__sub {
-    margin: 0 0 14px;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--kc-muted);
-}
-
-/* price */
-.kc-konarcard__priceRow {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    border-top: 1px solid rgba(12, 24, 48, 0.08);
-    padding-top: 14px;
-    margin-top: 10px;
-}
-
-.kc-konarcard__price {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 34px;
-    font-weight: 900;
-    letter-spacing: -0.03em;
-}
-
-.kc-konarcard__priceNote {
-    text-align: right;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    color: rgba(12, 24, 48, 0.55);
-}
-
-/* buy row */
-.kc-konarcard__buyRow {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 12px;
-    align-items: center;
-    margin-top: 14px;
-}
-
+/* =========================
+   CTAs + Quantity
+   ========================= */
 .kc-konarcard__qty {
     display: inline-flex;
     align-items: center;
@@ -265,7 +134,6 @@
     color: rgba(12, 24, 48, 0.85);
 }
 
-/* CTAs */
 .kc-konarcard__cta {
     height: 52px;
     border-radius: 999px;
@@ -298,7 +166,7 @@
 }
 
 .kc-konarcard__cta--ghost {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.9);
     color: rgba(12, 24, 48, 0.9);
     border: 1px solid rgba(12, 24, 48, 0.14);
 }
@@ -307,218 +175,22 @@
     filter: brightness(0.99);
 }
 
-.kc-konarcard__secondaryRow {
-    margin-top: 10px;
-}
-
-/* meta rows */
-.kc-konarcard__meta {
-    margin-top: 16px;
-    border-top: 1px solid rgba(12, 24, 48, 0.08);
-    padding-top: 12px;
-    display: grid;
-    gap: 10px;
-}
-
-.kc-konarcard__metaItem {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-.kc-konarcard__metaK {
-    font-size: 12px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.65);
-}
-
-.kc-konarcard__metaV {
-    font-size: 12px;
-    font-weight: 800;
-    color: rgba(12, 24, 48, 0.85);
-    text-align: right;
-}
-
-/* sections */
-.kc-konarcard__section {
-    margin-top: 34px;
-}
-
-.kc-konarcard__sectionHead {
-    text-align: center;
-    max-width: 760px;
-    margin: 0 auto 18px;
-}
-
-.kc-konarcard__h2 {
-    margin: 0 0 10px;
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 38px;
-    letter-spacing: -0.03em;
-}
-
-.kc-konarcard__p {
-    margin: 0;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    color: var(--kc-muted);
-    line-height: 1.7;
-    font-size: 14px;
-}
-
-/* feature grid */
-.kc-konarcard__featureGrid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
-    margin-top: 18px;
-}
-
-.kc-konarcard__feature {
-    background: #fff;
-    border: 1px solid rgba(12, 24, 48, 0.10);
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: var(--kc-soft);
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-}
-
-.kc-konarcard__ico {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-    display: grid;
-    place-items: center;
-    background: rgba(255, 123, 0, 0.12);
-    color: rgba(255, 123, 0, 0.95);
-    font-weight: 900;
-    flex: 0 0 auto;
-}
-
-.kc-konarcard__featureT {
-    font-weight: 900;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    margin-bottom: 6px;
-    color: rgba(12, 24, 48, 0.95);
-}
-
-.kc-konarcard__featureS {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 13px;
-    color: rgba(12, 24, 48, 0.7);
-    line-height: 1.6;
-}
-
-.kc-konarcard__split {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-top: 18px;
-}
-
-.kc-konarcard__card {
-    background: #fff;
-    border: 1px solid rgba(12, 24, 48, 0.10);
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: var(--kc-soft);
-}
-
-.kc-konarcard__h3 {
-    margin: 0 0 10px;
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 20px;
-    letter-spacing: -0.02em;
-}
-
-.kc-konarcard__list {
-    margin: 0;
-    padding-left: 18px;
-    color: rgba(12, 24, 48, 0.78);
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    line-height: 1.75;
-    font-size: 14px;
-}
-
-.kc-konarcard__list--ol {
-    padding-left: 18px;
-}
-
-.kc-konarcard__miniCtas {
-    display: flex;
-    gap: 10px;
-    margin-top: 14px;
-    flex-wrap: wrap;
-}
-
-.kc-konarcard__miniBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 44px;
-    padding: 0 16px;
-    border-radius: 999px;
-    text-decoration: none;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 900;
-    font-size: 13px;
-    border: 1px solid rgba(12, 24, 48, 0.14);
-    background: rgba(255, 255, 255, 0.9);
-    color: rgba(12, 24, 48, 0.9);
-    transition: transform 0.1s ease, filter 0.15s ease;
-}
-
-.kc-konarcard__miniBtn:hover {
-    filter: brightness(0.99);
-}
-
-.kc-konarcard__miniBtn:active {
-    transform: translateY(1px);
-}
-
-.kc-konarcard__miniBtn--ghost {
-    background: rgba(12, 24, 48, 0.06);
-}
-
-/* bottom CTA */
-.kc-konarcard__bottom {
-    margin-top: 34px;
-    border-top: 1px solid rgba(12, 24, 48, 0.08);
-    padding-top: 26px;
-}
-
-.kc-konarcard__bottomInner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    background: rgba(12, 24, 48, 0.03);
-    border: 1px solid rgba(12, 24, 48, 0.08);
-    border-radius: 18px;
-    padding: 18px;
-}
-
-/* =========================================
-   PREMIUM PRODUCT PAGE (NEW)
-   Used by PlasticCard.jsx premium layout
-   ========================================= */
-
+/* =========================
+   Premium page base
+   ========================= */
 .kc-konarcard--premium {
     background: #ffffff;
 }
 
-.kc-premHero {
-    border-radius: 22px;
-    border: 1px solid rgba(12, 24, 48, 0.08);
-    background:
-        radial-gradient(1200px 520px at 50% 0%, rgba(255, 123, 0, 0.10), rgba(255, 255, 255, 0) 62%),
-        linear-gradient(180deg, rgba(248, 250, 252, 1), rgba(255, 255, 255, 1));
-    padding: 22px 22px 18px;
-    box-shadow: 0 22px 60px rgba(12, 24, 48, 0.08);
+/* ✅ hero must feel like it floats (no border/background box) */
+.kc-premHero--clean {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
 }
 
+/* Hero top area */
 .kc-premHero__crumbs {
     display: flex;
     align-items: center;
@@ -547,9 +219,16 @@
     color: rgba(12, 24, 48, 0.95);
 }
 
+.kc-premHero__badges {
+    display: inline-flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
 .kc-premHero__sub {
     margin: 10px auto 0;
-    max-width: 880px;
+    max-width: 900px;
     text-align: center;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 14px;
@@ -557,7 +236,9 @@
     color: rgba(12, 24, 48, 0.68);
 }
 
-/* Stage */
+/* =========================
+   3D Stage
+   ========================= */
 .kc-premStage {
     margin-top: 18px;
 }
@@ -566,13 +247,13 @@
     position: relative;
     height: 460px;
     border-radius: 20px;
-    border: 1px solid rgba(12, 24, 48, 0.08);
+    border: 1px solid var(--kc-border-2);
     background:
-        radial-gradient(900px 340px at 50% 35%, rgba(255, 123, 0, 0.08), rgba(255, 255, 255, 0) 58%),
+        radial-gradient(900px 340px at 50% 35%, rgba(255, 123, 0, 0.06), rgba(255, 255, 255, 0) 58%),
         linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(248, 250, 252, 1));
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.9),
-        0 20px 60px rgba(12, 24, 48, 0.08);
+        0 20px 60px rgba(12, 24, 48, 0.07);
     display: grid;
     place-items: center;
     perspective: 1200px;
@@ -580,6 +261,12 @@
     touch-action: none;
     cursor: grab;
     overflow: hidden;
+}
+
+/* ✅ "40% screen" sizing */
+.kc-premStage__surface--small {
+    height: min(40vh, 420px);
+    max-height: 420px;
 }
 
 .kc-premStage__surface.is-dragging {
@@ -598,7 +285,7 @@
     font-size: 12px;
     font-weight: 900;
     color: rgba(12, 24, 48, 0.55);
-    background: rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.74);
     border: 1px solid rgba(12, 24, 48, 0.10);
     border-radius: 999px;
     padding: 8px 12px;
@@ -617,6 +304,7 @@
     cursor: pointer;
 }
 
+/* 3D card */
 .kc-premCard {
     width: min(820px, 92%);
     aspect-ratio: 85.6 / 54;
@@ -624,7 +312,13 @@
     transform-style: preserve-3d;
     will-change: transform;
     transition: transform 120ms ease;
-    filter: drop-shadow(0 34px 55px rgba(12, 24, 48, 0.16));
+    filter: drop-shadow(0 26px 46px rgba(12, 24, 48, 0.14));
+}
+
+/* ✅ smaller card */
+.kc-premCard--sm {
+    width: min(560px, 86%);
+    filter: drop-shadow(0 22px 40px rgba(12, 24, 48, 0.14));
 }
 
 /* Faces */
@@ -637,33 +331,22 @@
     border: 1px solid rgba(12, 24, 48, 0.10);
 }
 
+/* plain white front/back */
 .kc-premFace--front {
     transform: translateZ(10px);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(248, 250, 252, 1));
+    background: #ffffff;
 }
 
 .kc-premFace--back {
     transform: rotateY(180deg) translateZ(10px);
-    background: linear-gradient(135deg, rgba(12, 24, 48, 0.06), rgba(255, 255, 255, 0.92));
+    background: #ffffff;
 }
 
-/* White plastic base */
+/* base: plain white */
 .kc-premFace__base {
     position: absolute;
     inset: 0;
-    background:
-        radial-gradient(1100px 320px at 40% 20%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 60%),
-        linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(245, 247, 250, 1));
-}
-
-/* Optional subtle texture from chosen gallery image */
-.kc-premFace__texture {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    opacity: 0.10;
-    transform: scale(1.02);
+    background: #ffffff;
 }
 
 /* Logo placement */
@@ -689,8 +372,9 @@
 .kc-premShine {
     position: absolute;
     inset: -60%;
-    background:
-        radial-gradient(closest-side at var(--shineX, 45%) var(--shineY, 40%), rgba(255, 255, 255, 0.60), rgba(255, 255, 255, 0) 60%);
+    background: radial-gradient(closest-side at var(--shineX, 45%) var(--shineY, 40%),
+            rgba(255, 255, 255, 0.60),
+            rgba(255, 255, 255, 0) 60%);
     transform: rotate(18deg);
     mix-blend-mode: screen;
     opacity: 0.85;
@@ -708,7 +392,7 @@
         inset 0 -10px 18px rgba(12, 24, 48, 0.04);
 }
 
-/* Back inner */
+/* Back inner (QR) */
 .kc-premBackInner {
     position: absolute;
     inset: 0;
@@ -738,13 +422,12 @@
     color: rgba(12, 24, 48, 0.62);
 }
 
-/* QR box */
 .kc-premQr {
     width: 130px;
     height: 130px;
     border-radius: 16px;
     border: 1px solid rgba(12, 24, 48, 0.12);
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 18px 30px rgba(12, 24, 48, 0.10);
     display: grid;
     place-items: center;
@@ -765,23 +448,25 @@
     top: 0;
     transform: translateZ(0px) rotateX(90deg);
     transform-origin: top;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(12, 24, 48, 0.06));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.90), rgba(12, 24, 48, 0.06));
 }
 
 .kc-premEdge--bottom {
     bottom: 0;
     transform: translateZ(0px) rotateX(-90deg);
     transform-origin: bottom;
-    background: linear-gradient(180deg, rgba(12, 24, 48, 0.07), rgba(255, 255, 255, 0.85));
+    background: linear-gradient(180deg, rgba(12, 24, 48, 0.07), rgba(255, 255, 255, 0.88));
 }
 
-/* Controls bar */
+/* =========================
+   Controls
+   ========================= */
 .kc-premControls {
     margin-top: 14px;
     border-radius: 18px;
-    border: 1px solid rgba(12, 24, 48, 0.08);
-    background: rgba(255, 255, 255, 0.78);
-    box-shadow: 0 18px 44px rgba(12, 24, 48, 0.06);
+    border: 1px solid var(--kc-border-2);
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 18px 44px rgba(12, 24, 48, 0.05);
     padding: 14px;
     display: flex;
     align-items: center;
@@ -883,13 +568,15 @@
     color: rgba(12, 24, 48, 0.74);
 }
 
-/* Buy row under hero */
+/* =========================
+   Buy row
+   ========================= */
 .kc-premBuy {
     margin-top: 14px;
     border-radius: 18px;
-    border: 1px solid rgba(12, 24, 48, 0.08);
+    border: 1px solid var(--kc-border-2);
     background: #ffffff;
-    box-shadow: 0 18px 44px rgba(12, 24, 48, 0.06);
+    box-shadow: 0 18px 44px rgba(12, 24, 48, 0.05);
     padding: 16px;
     display: flex;
     align-items: center;
@@ -926,11 +613,13 @@
     justify-content: flex-end;
 }
 
-/* thumbs section */
+/* =========================
+   Thumbs
+   ========================= */
 .kc-premThumbs {
     margin-top: 14px;
     border-radius: 18px;
-    border: 1px solid rgba(12, 24, 48, 0.08);
+    border: 1px solid var(--kc-border-2);
     background: rgba(12, 24, 48, 0.02);
     padding: 14px;
 }
@@ -943,44 +632,149 @@
     margin-bottom: 8px;
 }
 
-/* =========================================
+.kc-konarcard__thumbRow {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+}
+
+.kc-konarcard__thumbRow::-webkit-scrollbar {
+    display: none;
+}
+
+.kc-konarcard__thumb {
+    width: 72px;
+    height: 62px;
+    border-radius: 12px;
+    border: 1px solid rgba(12, 24, 48, 0.12);
+    background: #fff;
+    padding: 0;
+    cursor: pointer;
+    overflow: hidden;
+    flex: 0 0 auto;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.kc-konarcard__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.kc-konarcard__thumb:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 22px rgba(12, 24, 48, 0.08);
+}
+
+.kc-konarcard__thumb.is-active {
+    border-color: rgba(255, 123, 0, 0.55);
+    box-shadow: 0 0 0 4px rgba(255, 123, 0, 0.12);
+}
+
+/* =========================
+   What you get
+   ========================= */
+.kc-konarcard__section {
+    margin-top: 34px;
+}
+
+.kc-konarcard__sectionHead {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 18px;
+}
+
+.kc-konarcard__h2 {
+    margin: 0 0 10px;
+    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 38px;
+    letter-spacing: -0.03em;
+}
+
+.kc-konarcard__p {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--kc-muted);
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.kc-konarcard__featureGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.kc-konarcard__feature {
+    background: #fff;
+    border: 1px solid rgba(12, 24, 48, 0.10);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: var(--kc-soft);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.kc-konarcard__ico {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 123, 0, 0.12);
+    color: rgba(255, 123, 0, 0.95);
+    font-weight: 900;
+    flex: 0 0 auto;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.kc-konarcard__featureT {
+    font-weight: 900;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    margin-bottom: 6px;
+    color: rgba(12, 24, 48, 0.95);
+}
+
+.kc-konarcard__featureS {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 13px;
+    color: rgba(12, 24, 48, 0.7);
+    line-height: 1.6;
+}
+
+/* =========================
    Responsive
-   ========================================= */
+   ========================= */
 @media (max-width: 1020px) {
-    .kc-konarcard__grid {
-        grid-template-columns: 1fr;
-    }
-
-    .kc-konarcard__panel {
-        position: relative;
-        top: auto;
-    }
-
     .kc-konarcard__featureGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .kc-konarcard__bottomInner {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .kc-premStage__surface {
-        height: 420px;
-    }
-
-    .kc-premCard {
-        width: min(760px, 94%);
+    .kc-premCard--sm {
+        width: min(520px, 92%);
     }
 }
 
 @media (max-width: 560px) {
-    .kc-konarcard__wrap {
-        padding-top: 22px;
+    .kc-konarcard--pagePad .kc-konarcard__wrap {
+        padding-top: 88px;
     }
 
-    .kc-konarcard__title {
-        font-size: 30px;
+    .kc-premHero__title {
+        font-size: 34px;
+    }
+
+    .kc-premStage__surface--small {
+        height: 340px;
+    }
+
+    .kc-premSlider input[type="range"] {
+        width: 160px;
     }
 
     .kc-konarcard__h2 {
@@ -991,32 +785,8 @@
         grid-template-columns: 1fr;
     }
 
-    .kc-konarcard__split {
-        grid-template-columns: 1fr;
-    }
-
-    .kc-konarcard__buyRow {
-        grid-template-columns: 1fr;
-    }
-
     .kc-konarcard__qty {
         justify-content: center;
         width: 100%;
-    }
-
-    .kc-premHero {
-        padding: 18px 14px 14px;
-    }
-
-    .kc-premHero__title {
-        font-size: 34px;
-    }
-
-    .kc-premStage__surface {
-        height: 340px;
-    }
-
-    .kc-premSlider input[type="range"] {
-        width: 160px;
     }
 }

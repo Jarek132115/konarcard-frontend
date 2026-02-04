@@ -1,3 +1,4 @@
+// src/pages/website/products/PlasticCard.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -33,7 +34,6 @@ const QrSvg = () => (
         <rect x="12" y="86" width="22" height="22" fill="white" />
         <rect x="16" y="90" width="14" height="14" fill="#0b1220" />
 
-        {/* noise blocks */}
         {[
             [52, 10], [60, 10], [52, 18], [72, 18], [60, 26], [52, 34],
             [46, 52], [54, 52], [62, 52], [70, 52], [78, 52],
@@ -55,13 +55,13 @@ export default function PlasticCard() {
         []
     );
 
+    // we keep thumbnails for later, but the card itself must be plain white
     const [activeImg, setActiveImg] = useState(gallery[0]);
     const [qty, setQty] = useState(1);
 
     // ---- Logo upload preview ----
     const [logoUrl, setLogoUrl] = useState("");
-    const [logoSize, setLogoSize] = useState(44); // %
-    const [logoY, setLogoY] = useState(0); // future: keep if we add positioning later
+    const [logoSize, setLogoSize] = useState(44);
 
     useEffect(() => {
         return () => {
@@ -83,7 +83,7 @@ export default function PlasticCard() {
         setLogoUrl("");
     };
 
-    // ---- Premium 3D rotation (full 360) + idle auto-rotate ----
+    // ---- 3D rotation + idle spin ----
     const prefersReducedMotion = useRef(false);
     useEffect(() => {
         try {
@@ -97,32 +97,26 @@ export default function PlasticCard() {
         isDown: false,
         startX: 0,
         startY: 0,
-        baseRX: -12,
-        baseRY: 18,
-        lastMoveTs: 0,
+        baseRX: -10,
+        baseRY: 16,
     });
 
     const rafRef = useRef(null);
-    const idleRef = useRef({
-        isIdle: true,
-        ry: 18,
-        rx: -12,
-    });
+    const idleRef = useRef({ isIdle: true, ry: 16, rx: -10 });
 
-    const [rot, setRot] = useState({ rx: -12, ry: 18 });
+    const [rot, setRot] = useState({ rx: -10, ry: 16 });
     const [isDragging, setIsDragging] = useState(false);
 
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
     const setRotation = (rx, ry) => {
-        // rx clamped for realism, ry free (360+)
-        const next = { rx: clamp(rx, -26, 26), ry };
+        const next = { rx: clamp(rx, -24, 24), ry };
         idleRef.current.rx = next.rx;
         idleRef.current.ry = next.ry;
         setRot(next);
     };
 
-    const resetView = () => setRotation(-12, 18);
+    const resetView = () => setRotation(-10, 16);
 
     const startIdleSpin = () => {
         if (prefersReducedMotion.current) return;
@@ -132,10 +126,9 @@ export default function PlasticCard() {
 
         const tick = () => {
             if (!idleRef.current.isIdle) return;
-            idleRef.current.ry += 0.18; // speed
-            // tiny breathe
-            const breathe = Math.sin(idleRef.current.ry * (Math.PI / 180) * 0.7) * 1.2;
-            setRot({ rx: clamp(-12 + breathe, -26, 26), ry: idleRef.current.ry });
+            idleRef.current.ry += 0.16;
+            const breathe = Math.sin(idleRef.current.ry * (Math.PI / 180) * 0.7) * 1.0;
+            setRot({ rx: clamp(-10 + breathe, -24, 24), ry: idleRef.current.ry });
             rafRef.current = requestAnimationFrame(tick);
         };
 
@@ -165,7 +158,6 @@ export default function PlasticCard() {
         dragRef.current.startY = e.clientY;
         dragRef.current.baseRX = idleRef.current.rx;
         dragRef.current.baseRY = idleRef.current.ry;
-        dragRef.current.lastMoveTs = Date.now();
 
         try {
             e.currentTarget.setPointerCapture(e.pointerId);
@@ -178,11 +170,9 @@ export default function PlasticCard() {
         const dx = e.clientX - dragRef.current.startX;
         const dy = e.clientY - dragRef.current.startY;
 
-        // sensitivity tuned for premium feel
-        const nextRY = dragRef.current.baseRY + dx * 0.18; // full 360 OK
+        const nextRY = dragRef.current.baseRY + dx * 0.18;
         const nextRX = dragRef.current.baseRX - dy * 0.16;
 
-        dragRef.current.lastMoveTs = Date.now();
         setRotation(nextRX, nextRY);
     };
 
@@ -190,10 +180,9 @@ export default function PlasticCard() {
         dragRef.current.isDown = false;
         setIsDragging(false);
 
-        // resume idle after a short pause
         window.setTimeout(() => {
             if (!dragRef.current.isDown) startIdleSpin();
-        }, 500);
+        }, 450);
     };
 
     const features = useMemo(
@@ -208,21 +197,20 @@ export default function PlasticCard() {
         []
     );
 
-    // Use uploaded logo or Konar logo as placeholder
     const displayedLogo = logoUrl || LogoIcon;
 
-    // drive shine from rotation
-    const shineX = 50 + (rot.ry % 360) * 0.12; // moves with rotate
+    const shineX = 50 + (rot.ry % 360) * 0.12;
     const shineY = 40 + rot.rx * -0.6;
 
     return (
         <>
             <Navbar />
 
-            <main className="kc-konarcard kc-konarcard--premium">
+            {/* ✅ add same top spacing as other pages (navbar clearance) */}
+            <main className="kc-konarcard kc-konarcard--premium kc-konarcard--pagePad">
                 <div className="kc-konarcard__wrap">
-                    {/* ===== Premium hero row: BIG product ===== */}
-                    <section className="kc-premHero">
+                    {/* ✅ ONLY KEEP FIRST SECTION */}
+                    <section className="kc-premHero kc-premHero--clean">
                         <div className="kc-premHero__top">
                             <div className="kc-premHero__crumbs">
                                 <Link to="/products" className="kc-konarcard__crumbLink">
@@ -246,8 +234,9 @@ export default function PlasticCard() {
                         </div>
 
                         <div className="kc-premStage">
+                            {/* ✅ smaller: ~40% of visible screen height */}
                             <div
-                                className={`kc-premStage__surface ${isDragging ? "is-dragging" : ""}`}
+                                className={`kc-premStage__surface kc-premStage__surface--small ${isDragging ? "is-dragging" : ""}`}
                                 onPointerDown={onPointerDown}
                                 onPointerMove={onPointerMove}
                                 onPointerUp={onPointerUp}
@@ -256,7 +245,7 @@ export default function PlasticCard() {
                                 aria-label="3D KonarCard preview. Drag to rotate."
                             >
                                 <div
-                                    className="kc-premCard"
+                                    className="kc-premCard kc-premCard--sm"
                                     style={{
                                         transform: `rotateX(${rot.rx}deg) rotateY(${rot.ry}deg)`,
                                         ["--shineX"]: `${shineX}%`,
@@ -264,17 +253,13 @@ export default function PlasticCard() {
                                     }}
                                 >
                                     {/* FRONT */}
-                                    <div className="kc-premFace kc-premFace--front">
-                                        <div className="kc-premFace__base" />
+                                    <div className="kc-premFace kc-premFace--front kc-premFace--plainWhite">
+                                        <div className="kc-premFace__base kc-premFace__base--plain" />
 
-                                        {/* subtle “plastic” texture from your gallery image (optional) */}
-                                        <div
-                                            className="kc-premFace__texture"
-                                            style={{ backgroundImage: `url(${activeImg})` }}
-                                            aria-hidden="true"
-                                        />
+                                        {/* ✅ removed texture background from image */}
+                                        {/* no kc-premFace__texture */}
 
-                                        <div className="kc-premLogoWrap" style={{ transform: `translate(-50%, calc(-50% + ${logoY}px))` }}>
+                                        <div className="kc-premLogoWrap">
                                             <img
                                                 src={displayedLogo}
                                                 alt="Card logo"
@@ -289,7 +274,7 @@ export default function PlasticCard() {
                                     </div>
 
                                     {/* BACK */}
-                                    <div className="kc-premFace kc-premFace--back">
+                                    <div className="kc-premFace kc-premFace--back kc-premFace--plainWhite">
                                         <div className="kc-premBackInner">
                                             <div className="kc-premBackMeta">
                                                 <div className="kc-premBackK">QR backup</div>
@@ -303,7 +288,6 @@ export default function PlasticCard() {
                                         <div className="kc-premRim" aria-hidden="true" />
                                     </div>
 
-                                    {/* thickness illusion */}
                                     <div className="kc-premEdge kc-premEdge--top" aria-hidden="true" />
                                     <div className="kc-premEdge kc-premEdge--bottom" aria-hidden="true" />
                                 </div>
@@ -316,8 +300,8 @@ export default function PlasticCard() {
                                 </div>
                             </div>
 
-                            {/* Customizer (premium bar) */}
-                            <div className="kc-premControls">
+                            {/* Controls (keep, but cleaner) */}
+                            <div className="kc-premControls kc-premControls--clean">
                                 <div className="kc-premControls__left">
                                     <div className="kc-premControls__label">Your logo</div>
                                     <div className="kc-premControls__sub">Upload any image — preview updates instantly.</div>
@@ -347,116 +331,97 @@ export default function PlasticCard() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </section>
 
-                    {/* ===== Purchase row (clean, premium) ===== */}
-                    <section className="kc-premBuy">
-                        <div className="kc-premBuy__left">
-                            <div className="kc-premPrice">
-                                <div className="kc-premPrice__value">£29.99</div>
-                                <div className="kc-premPrice__note">One-time purchase • Works with your profile</div>
-                            </div>
-                        </div>
-
-                        <div className="kc-premBuy__right" aria-label="Choose quantity and buy">
-                            <div className="kc-konarcard__qty">
-                                <button
-                                    type="button"
-                                    className="kc-konarcard__qtyBtn"
-                                    onClick={() => setQty((q) => Math.max(1, q - 1))}
-                                    aria-label="Decrease quantity"
-                                >
-                                    −
-                                </button>
-                                <div className="kc-konarcard__qtyVal" aria-label="Quantity">
-                                    {qty}
+                            {/* Buy row */}
+                            <div className="kc-premBuy kc-premBuy--clean" aria-label="Choose quantity and buy">
+                                <div className="kc-premPrice">
+                                    <div className="kc-premPrice__value">£29.99</div>
+                                    <div className="kc-premPrice__note">One-time purchase • Works with your profile</div>
                                 </div>
-                                <button
-                                    type="button"
-                                    className="kc-konarcard__qtyBtn"
-                                    onClick={() => setQty((q) => Math.min(20, q + 1))}
-                                    aria-label="Increase quantity"
-                                >
-                                    +
-                                </button>
-                            </div>
 
-                            <Link
-                                to="/productandplan/konarcard"
-                                state={{ triggerCheckout: true, quantity: qty, edition: "plastic" }}
-                                className="kc-konarcard__cta kc-konarcard__cta--primary"
-                            >
-                                Buy KonarCard
-                            </Link>
+                                <div className="kc-premBuy__right">
+                                    <div className="kc-konarcard__qty">
+                                        <button
+                                            type="button"
+                                            className="kc-konarcard__qtyBtn"
+                                            onClick={() => setQty((q) => Math.max(1, q - 1))}
+                                            aria-label="Decrease quantity"
+                                        >
+                                            −
+                                        </button>
+                                        <div className="kc-konarcard__qtyVal" aria-label="Quantity">
+                                            {qty}
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className="kc-konarcard__qtyBtn"
+                                            onClick={() => setQty((q) => Math.min(20, q + 1))}
+                                            aria-label="Increase quantity"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
 
-                            <Link to="/register" className="kc-konarcard__cta kc-konarcard__cta--ghost">
-                                Create your profile first
-                            </Link>
-                        </div>
-                    </section>
-
-                    {/* thumbs (optional: keep for textures) */}
-                    <section className="kc-premThumbs" aria-label="Choose a preview texture">
-                        <div className="kc-premThumbs__label">Preview styles</div>
-                        <div className="kc-konarcard__thumbRow">
-                            {gallery.map((src, i) => {
-                                const isActive = src === activeImg;
-                                return (
-                                    <button
-                                        key={i}
-                                        type="button"
-                                        className={`kc-konarcard__thumb ${isActive ? "is-active" : ""}`}
-                                        onClick={() => setActiveImg(src)}
-                                        aria-label={`View image ${i + 1}`}
+                                    <Link
+                                        to="/productandplan/konarcard"
+                                        state={{ triggerCheckout: true, quantity: qty, edition: "plastic" }}
+                                        className="kc-konarcard__cta kc-konarcard__cta--primary"
                                     >
-                                        <img src={src} alt={`KonarCard image ${i + 1}`} />
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </section>
+                                        Buy KonarCard
+                                    </Link>
 
-                    {/* ===== Middle content ===== */}
-                    <section className="kc-konarcard__section">
-                        <div className="kc-konarcard__sectionHead">
-                            <h2 className="kc-konarcard__h2">What you get</h2>
-                            <p className="kc-konarcard__p">
-                                Everything you need to share your profile instantly — no paper cards, no typing numbers.
-                            </p>
-                        </div>
-
-                        <div className="kc-konarcard__featureGrid">
-                            {features.map((f, i) => (
-                                <div className="kc-konarcard__feature" key={i}>
-                                    <div className="kc-konarcard__ico" aria-hidden="true">
-                                        ✓
-                                    </div>
-                                    <div>
-                                        <div className="kc-konarcard__featureT">{f.t}</div>
-                                        <div className="kc-konarcard__featureS">{f.s}</div>
-                                    </div>
+                                    <Link to="/register" className="kc-konarcard__cta kc-konarcard__cta--ghost">
+                                        Create your profile first
+                                    </Link>
                                 </div>
-                            ))}
-                        </div>
-                    </section>
-
-                    <section className="kc-konarcard__bottom">
-                        <div className="kc-konarcard__bottomInner">
-                            <div>
-                                <h2 className="kc-konarcard__h2">Ready to share like a pro?</h2>
-                                <p className="kc-konarcard__p">
-                                    Get your KonarCard and start sending your profile instantly — no paper, no hassle.
-                                </p>
                             </div>
 
-                            <Link
-                                to="/productandplan/konarcard"
-                                state={{ triggerCheckout: true, quantity: qty, edition: "plastic" }}
-                                className="kc-konarcard__cta kc-konarcard__cta--primary"
-                            >
-                                Buy KonarCard
-                            </Link>
+                            {/* Optional thumbs kept (they no longer affect card texture, but you can keep for future) */}
+                            <div className="kc-premThumbs" aria-label="Choose a preview image">
+                                <div className="kc-premThumbs__label">Preview images</div>
+                                <div className="kc-konarcard__thumbRow">
+                                    {gallery.map((src, i) => {
+                                        const isActive = src === activeImg;
+                                        return (
+                                            <button
+                                                key={i}
+                                                type="button"
+                                                className={`kc-konarcard__thumb ${isActive ? "is-active" : ""}`}
+                                                onClick={() => setActiveImg(src)}
+                                                aria-label={`View image ${i + 1}`}
+                                            >
+                                                <img src={src} alt={`KonarCard image ${i + 1}`} />
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* What you get (keep) */}
+                            <div className="kc-konarcard__section">
+                                <div className="kc-konarcard__sectionHead">
+                                    <h2 className="kc-konarcard__h2">What you get</h2>
+                                    <p className="kc-konarcard__p">
+                                        Everything you need to share your profile instantly — no paper cards, no typing numbers.
+                                    </p>
+                                </div>
+
+                                <div className="kc-konarcard__featureGrid">
+                                    {features.map((f, i) => (
+                                        <div className="kc-konarcard__feature" key={i}>
+                                            <div className="kc-konarcard__ico" aria-hidden="true">
+                                                ✓
+                                            </div>
+                                            <div>
+                                                <div className="kc-konarcard__featureT">{f.t}</div>
+                                                <div className="kc-konarcard__featureS">{f.s}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* ✅ removed Ready / bottom CTA sections completely */}
                         </div>
                     </section>
                 </div>
