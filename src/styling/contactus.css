@@ -1,20 +1,15 @@
 /* frontend/src/styling/contactus.css */
 
 /* =========================================================
-   CONTACT US — FINAL
-   Matches FAQ page (tokens + fonts.css + 8pt spacing)
+   CONTACT US
+   Layout-only styles (tokens/type from fonts.css)
    ========================================================= */
 
-.kc-contact {
-    background: var(--kc-bg-main);
-    color: var(--kc-text-primary);
-}
-
 /* =========================
-   HERO (match FAQ padding)
+   HERO
    ========================= */
 .kc-contact__hero {
-    padding: 112px 20px 32px;
+    padding: 0 20px 32px;
 }
 
 .kc-contact__heroInner {
@@ -30,7 +25,6 @@
 .kc-contact__subtitle {
     margin: 0 auto;
     max-width: 560px;
-    color: var(--kc-text-secondary);
 }
 
 /* =========================
@@ -46,7 +40,7 @@
 
 .kc-contact__card {
     border: 1px solid var(--kc-border);
-    background: #fff;
+    background: #ffffff;
     border-radius: 14px;
     box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     padding: 16px;
@@ -71,9 +65,9 @@
 
 .kc-contact__cardText {
     margin: 0 0 10px;
-    color: var(--kc-text-secondary);
 }
 
+/* Orange-only link/button */
 .kc-contact__cardLink {
     display: inline-flex;
     align-items: center;
@@ -90,7 +84,7 @@
 }
 
 .kc-contact__cardLink:hover {
-    opacity: 0.9;
+    opacity: 0.92;
 }
 
 .kc-contact__cardButton {
@@ -101,8 +95,8 @@
    FORM SECTION
    ========================= */
 .kc-contact__formSection {
-    padding: 72px 20px 72px;
-    background: rgba(15, 23, 42, 0.03);
+    padding: 72px 20px;
+    background: var(--kc-bg-soft);
 }
 
 .kc-contact__formWrap {
@@ -118,7 +112,6 @@
 .kc-contact__sectionSub {
     margin: 0 auto 24px;
     max-width: 560px;
-    color: var(--kc-text-secondary);
 }
 
 /* Form */
@@ -140,9 +133,6 @@
 
 .kc-contact__label {
     display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--kc-text-secondary);
     margin-bottom: 6px;
 }
 
@@ -155,7 +145,8 @@
     font-size: 14px;
     outline: none;
     transition: box-shadow 0.15s ease, border-color 0.15s ease;
-    background: #fff;
+    background: #ffffff;
+    color: var(--kc-text-primary);
 }
 
 .kc-contact__textarea {
@@ -169,7 +160,7 @@
     box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
 }
 
-/* CTA button — match FAQ help button */
+/* CTA button — matches your system */
 .kc-contact__submit {
     margin: 12px auto 0;
     display: inline-flex;
@@ -181,21 +172,21 @@
     border: none;
 
     background: var(--kc-accent-primary);
-    color: #fff;
+    color: #ffffff;
 
     font-family: "Cal Sans", sans-serif;
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.4px;
 
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.25);
+    box-shadow: var(--kc-shadow-accent);
     transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
     cursor: pointer;
 }
 
 .kc-contact__submit:hover {
     filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.32);
+    box-shadow: var(--kc-shadow-accent-hover);
 }
 
 .kc-contact__submit:active {
@@ -204,16 +195,14 @@
 
 .kc-contact__submit:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.20),
-        0 16px 34px rgba(249, 115, 22, 0.32);
+    box-shadow: 0 0 0 3px var(--kc-focus-ring), var(--kc-shadow-accent-hover);
 }
 
 /* =========================
    QUICK ANSWERS (FAQ STYLE)
    ========================= */
 .kc-contact__faq {
-    padding: 72px 20px 72px;
-    background: var(--kc-bg-main);
+    padding: 72px 20px;
 }
 
 .kc-contact__faqInner {
@@ -256,12 +245,10 @@
 
 .kc-contact__q {
     margin: 0;
-    color: var(--kc-text-primary);
 }
 
 .kc-contact__chev {
     font-size: 14px;
-    color: var(--kc-text-secondary);
     transition: transform 0.15s ease;
 }
 
@@ -271,7 +258,6 @@
 
 .kc-contact__a {
     padding: 0 0 24px 0;
-    color: var(--kc-text-secondary);
     max-width: 860px;
 }
 
@@ -296,10 +282,6 @@
 }
 
 @media (max-width: 640px) {
-    .kc-contact__hero {
-        padding-top: 96px;
-    }
-
     .kc-contact__row2 {
         grid-template-columns: 1fr;
     }

@@ -117,12 +117,26 @@ export default function ContactUs() {
     }
   };
 
+  const openChat = () => {
+    if (window.tidioChatApi && typeof window.tidioChatApi.open === "function") {
+      window.tidioChatApi.open();
+    } else {
+      toast.error("Live chat is still loading — please try again in a moment.");
+    }
+  };
+
+  const scrollToForm = () => {
+    const el = document.getElementById("kc-contact-form");
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <>
       <Navbar />
 
-      <main className="kc-contact">
-        {/* HERO (match FAQ spacing/typography) */}
+      {/* kc-page = consistent navbar spacing */}
+      <main className="kc-contact kc-page">
+        {/* HERO */}
         <section className="kc-contact__hero">
           <div className="kc-contact__heroInner">
             <h1 className="h2 kc-contact__title">We’re Here To Help</h1>
@@ -133,8 +147,8 @@ export default function ContactUs() {
             {/* CONTACT OPTIONS */}
             <div className="kc-contact__cards">
               <div className="kc-contact__card">
-                <div className="kc-contact__cardIcon">
-                  <img src={ContactIcon} alt="" aria-hidden="true" />
+                <div className="kc-contact__cardIcon" aria-hidden="true">
+                  <img src={ContactIcon} alt="" />
                 </div>
                 <p className="h6 kc-contact__cardTitle">Email us</p>
                 <p className="body-s kc-contact__cardText">
@@ -146,8 +160,8 @@ export default function ContactUs() {
               </div>
 
               <div className="kc-contact__card">
-                <div className="kc-contact__cardIcon">
-                  <img src={ChatIcon} alt="" aria-hidden="true" />
+                <div className="kc-contact__cardIcon" aria-hidden="true">
+                  <img src={ChatIcon} alt="" />
                 </div>
                 <p className="h6 kc-contact__cardTitle">Live chat</p>
                 <p className="body-s kc-contact__cardText">
@@ -156,27 +170,24 @@ export default function ContactUs() {
                 <button
                   type="button"
                   className="kc-contact__cardLink kc-contact__cardButton"
-                  onClick={() => window.tidioChatApi && window.tidioChatApi.open()}
+                  onClick={openChat}
                 >
                   Start Live Chat
                 </button>
               </div>
 
               <div className="kc-contact__card">
-                <div className="kc-contact__cardIcon">
-                  <img src={ToolsIcon} alt="" aria-hidden="true" />
+                <div className="kc-contact__cardIcon" aria-hidden="true">
+                  <img src={ToolsIcon} alt="" />
                 </div>
-                <p className="h6 kc-contact__cardTitle">Support available 24/7</p>
+                <p className="h6 kc-contact__cardTitle">Support 24/7</p>
                 <p className="body-s kc-contact__cardText">
                   You can email us anytime — we’ll get back to you as soon as possible.
                 </p>
                 <button
                   type="button"
                   className="kc-contact__cardLink kc-contact__cardButton"
-                  onClick={() => {
-                    const el = document.getElementById("kc-contact-form");
-                    el?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }}
+                  onClick={scrollToForm}
                 >
                   Send Message
                 </button>
@@ -196,7 +207,7 @@ export default function ContactUs() {
             <form className="kc-contact__form" onSubmit={handleSubmit}>
               <div className="kc-contact__row2">
                 <div className="kc-contact__field">
-                  <label className="kc-contact__label" htmlFor="firstName">
+                  <label className="label kc-contact__label" htmlFor="firstName">
                     First name
                   </label>
                   <input
@@ -211,7 +222,7 @@ export default function ContactUs() {
                 </div>
 
                 <div className="kc-contact__field">
-                  <label className="kc-contact__label" htmlFor="email">
+                  <label className="label kc-contact__label" htmlFor="email">
                     Email address
                   </label>
                   <input
@@ -228,7 +239,7 @@ export default function ContactUs() {
               </div>
 
               <div className="kc-contact__field">
-                <label className="kc-contact__label" htmlFor="message">
+                <label className="label kc-contact__label" htmlFor="message">
                   Message
                 </label>
                 <textarea
@@ -249,7 +260,7 @@ export default function ContactUs() {
           </div>
         </section>
 
-        {/* FAQ STYLE QUICK ANSWERS (same as FAQ page) */}
+        {/* QUICK ANSWERS (FAQ STYLE) */}
         <section className="kc-contact__faq">
           <div className="kc-contact__faqInner">
             <h2 className="h3 kc-contact__sectionTitle">Quick answers</h2>
