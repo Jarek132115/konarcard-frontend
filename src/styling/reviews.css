@@ -1,0 +1,337 @@
+/* frontend/src/styling/reviews.css */
+
+/* =========================================================
+   REVIEWS
+   Real-feel layout (varied cards, subtle details, tokens only)
+   ========================================================= */
+
+.kc-rev {
+    background: var(--kc-bg-main);
+    color: var(--kc-text-primary);
+}
+
+/* =========================
+   HERO
+   ========================= */
+.kc-rev__hero {
+    padding: 0 20px 28px;
+}
+
+.kc-rev__heroInner {
+    max-width: 980px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.kc-rev__title {
+    margin: 0 0 10px;
+}
+
+.kc-rev__accent {
+    color: var(--kc-accent-primary);
+}
+
+.kc-rev__subtitle {
+    margin: 0 auto;
+    max-width: 720px;
+}
+
+/* Summary */
+.kc-rev__summary {
+    margin: 22px auto 0;
+    max-width: 980px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+
+    border: 1px solid var(--kc-border);
+    border-radius: 16px;
+    background: #ffffff;
+    padding: 16px;
+
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+}
+
+.kc-rev__summaryLeft {
+    text-align: left;
+}
+
+.kc-rev__score {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 0 0 6px;
+}
+
+.kc-rev__scoreNum {
+    font-family: "Cal Sans", sans-serif;
+    font-size: 34px;
+    line-height: 1;
+    font-weight: 600;
+    color: var(--kc-text-primary);
+}
+
+.kc-rev__scoreOut {
+    font-size: 14px;
+    color: var(--kc-text-secondary);
+}
+
+.kc-rev__count {
+    margin: 6px 0 0;
+    color: var(--kc-text-secondary);
+}
+
+.kc-rev__summaryRight {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.kc-rev__pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--kc-border);
+    background: var(--kc-bg-soft);
+    color: var(--kc-text-primary);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* =========================
+   STARS
+   ========================= */
+.kc-rev__stars {
+    position: relative;
+    display: inline-block;
+    font-size: 14px;
+    letter-spacing: 1px;
+    line-height: 1;
+    user-select: none;
+}
+
+.kc-rev__starsBase {
+    color: rgba(15, 23, 42, 0.18);
+}
+
+.kc-rev__starsFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    color: var(--kc-accent-primary);
+    white-space: nowrap;
+}
+
+/* =========================
+   GRID
+   ========================= */
+.kc-rev__gridSection {
+    padding: 0 20px 64px;
+}
+
+.kc-rev__grid {
+    max-width: 1040px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+/* =========================
+   CARD (real review look)
+   ========================= */
+.kc-rev__card {
+    border: 1px solid var(--kc-border);
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    /* subtle “real” variance */
+    transform: translateY(0);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.kc-rev__card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.10);
+}
+
+/* top row */
+.kc-rev__cardTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.kc-rev__person {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.kc-rev__avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    object-fit: cover;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+}
+
+.kc-rev__personMeta {
+    min-width: 0;
+}
+
+.kc-rev__nameLine {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.kc-rev__name {
+    font-weight: 800;
+    color: var(--kc-text-primary);
+}
+
+.kc-rev__trade {
+    color: var(--kc-text-secondary);
+    font-weight: 600;
+}
+
+.kc-rev__subLine {
+    margin: 2px 0 0;
+    color: var(--kc-text-secondary);
+}
+
+.kc-rev__dotSep {
+    color: rgba(15, 23, 42, 0.35);
+}
+
+.kc-rev__rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.kc-rev__ratingText {
+    color: var(--kc-text-secondary);
+}
+
+/* tags */
+.kc-rev__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.kc-rev__tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(15, 23, 42, 0.03);
+
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--kc-text-primary);
+}
+
+/* review text */
+.kc-rev__text {
+    margin: 0;
+    color: var(--kc-text-secondary);
+    line-height: 1.65;
+}
+
+/* =========================
+   CTA
+   ========================= */
+.kc-rev__cta {
+    padding: 72px 20px;
+    text-align: center;
+}
+
+.kc-rev__ctaInner {
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.kc-rev__ctaTitle {
+    margin: 0 0 8px;
+}
+
+.kc-rev__ctaSub {
+    margin: 0 auto 24px;
+    max-width: 720px;
+}
+
+.kc-rev__ctaBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 14px 30px;
+    border-radius: 999px;
+
+    background: var(--kc-accent-primary);
+    color: #ffffff;
+
+    text-decoration: none;
+    font-family: "Cal Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+
+    box-shadow: var(--kc-shadow-accent);
+    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kc-rev__ctaBtn:hover {
+    filter: brightness(0.98);
+    box-shadow: var(--kc-shadow-accent-hover);
+}
+
+.kc-rev__ctaBtn:active {
+    transform: translateY(1px);
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 980px) {
+    .kc-rev__summary {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .kc-rev__summaryRight {
+        justify-content: flex-start;
+    }
+
+    .kc-rev__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .kc-rev__grid {
+        grid-template-columns: 1fr;
+    }
+}
