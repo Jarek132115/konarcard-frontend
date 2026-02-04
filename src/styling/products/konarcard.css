@@ -845,3 +845,36 @@
         padding: 28px 0 46px !important;
     }
 }
+
+/* =========================
+   FIX: front showing on both sides
+   (proper 3D face separation)
+   ========================= */
+
+/* ensure 3D context is correct */
+.kc-premStage__surface {
+    transform-style: preserve-3d;
+}
+
+/* the 3D object */
+.kc-premCard {
+    transform-style: preserve-3d;
+}
+
+/* both faces must hide when turned away */
+.kc-premFace {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* IMPORTANT:
+   Put front slightly toward camera,
+   put back slightly away (negative Z)
+*/
+.kc-premFace--front {
+    transform: translateZ(1px);
+}
+
+.kc-premFace--back {
+    transform: rotateY(180deg) translateZ(-1px);
+}
