@@ -27,7 +27,6 @@ export default function PlasticCard() {
         []
     );
 
-    // thumbs kept for later
     const [activeImg, setActiveImg] = useState(gallery[0]);
     const [qty, setQty] = useState(1);
 
@@ -55,7 +54,7 @@ export default function PlasticCard() {
         setLogoUrl("");
     };
 
-    // ---- 3D rotation + idle spin (continues from where you left it) ----
+    // ---- 3D rotation + idle spin ----
     const prefersReducedMotion = useRef(false);
     useEffect(() => {
         try {
@@ -222,7 +221,6 @@ export default function PlasticCard() {
                                 role="application"
                                 aria-label="3D KonarCard preview. Drag to rotate."
                             >
-                                {/* ✅ IMPORTANT: wrapper holds the shadow, NOT the rotating 3D element */}
                                 <div className="kc-premCardWrap kc-premCardWrap--sm">
                                     <div
                                         className="kc-premCard kc-premCard--sm"
@@ -232,10 +230,9 @@ export default function PlasticCard() {
                                             ["--shineY"]: `${shineY}%`,
                                         }}
                                     >
-                                        {/* FRONT: logo only */}
+                                        {/* FRONT */}
                                         <div className="kc-premFace kc-premFace--front">
                                             <div className="kc-premFace__base" />
-
                                             <div className="kc-premLogoWrap">
                                                 <img
                                                     src={displayedLogo}
@@ -245,25 +242,26 @@ export default function PlasticCard() {
                                                     draggable={false}
                                                 />
                                             </div>
-
                                             <div className="kc-premShine" aria-hidden="true" />
                                             <div className="kc-premRim" aria-hidden="true" />
                                         </div>
 
-                                        {/* BACK: QR ONLY (static image) */}
+                                        {/* BACK */}
                                         <div className="kc-premFace kc-premFace--back">
                                             <div className="kc-premBackInner kc-premBackInner--center">
                                                 <div className="kc-premQr" aria-label="QR code">
                                                     <img src={CardQrCode} alt="QR code" draggable={false} />
                                                 </div>
                                             </div>
-
                                             <div className="kc-premShine" aria-hidden="true" />
                                             <div className="kc-premRim" aria-hidden="true" />
                                         </div>
 
+                                        {/* ✅ REAL THICKNESS: 4 sides */}
                                         <div className="kc-premEdge kc-premEdge--top" aria-hidden="true" />
                                         <div className="kc-premEdge kc-premEdge--bottom" aria-hidden="true" />
+                                        <div className="kc-premEdge kc-premEdge--left" aria-hidden="true" />
+                                        <div className="kc-premEdge kc-premEdge--right" aria-hidden="true" />
                                     </div>
                                 </div>
                             </div>
