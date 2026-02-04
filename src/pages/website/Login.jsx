@@ -185,13 +185,24 @@ export default function Login() {
         }
     };
 
+    // ✅ Central helper: move user into verification UI
+    const goToVerificationStep = (msg) => {
+        toast.error(msg || "Email not verified. Code sent.");
+        setCode("");
+        setForgotPasswordStep(false);
+        setVerificationStep(true);
+        setCooldown(30);
+    };
+
     const loginUser = async (e) => {
         e.preventDefault();
+
+        const cleanEmail = data.email.trim().toLowerCase();
 
         try {
             if (rememberMe) {
                 localStorage.setItem(REMEMBER_KEY, "true");
-                localStorage.setItem(REMEMBERED_EMAIL_KEY, data.email.trim().toLowerCase());
+                localStorage.setItem(REMEMBERED_EMAIL_KEY, cleanEmail);
             } else {
                 localStorage.removeItem(REMEMBER_KEY);
                 localStorage.removeItem(REMEMBERED_EMAIL_KEY);
@@ -203,35 +214,46 @@ export default function Login() {
         setIsSubmitting(true);
         try {
             const res = await api.post("/login", {
-                email: data.email.trim().toLowerCase(),
+                email: cleanEmail,
                 password: data.password,
             });
 
-            if (res.data?.error) {
-                if (res.data.resend) {
-                    toast.error("Email not verified. Code sent.");
-                    setVerificationStep(true);
-                    setCooldown(30);
+            // Some older backend paths return 200 with {error,resend:true}
+            if (res?.data?.error) {
+                if (res.data?.resend) {
+                    goToVerificationStep(res.data?.error || "Email not verified. Code sent.");
                 } else {
                     toast.error(res.data.error);
                 }
-            } else {
-                toast.success("Login successful!");
-                login(res.data.token, res.data.user);
-
-                const email = res.data.user?.email || data.email;
-                if (isAdminEmail(email)) {
-                    navigate("/admin", { replace: true });
-                    return;
-                }
-
-                const resumed = await resumeCheckoutIfNeeded();
-                if (resumed) return;
-
-                await runPendingActionOrDefault();
+                return;
             }
+
+            toast.success("Login successful!");
+            login(res.data.token, res.data.user);
+
+            const email = res.data.user?.email || cleanEmail;
+            if (isAdminEmail(email)) {
+                navigate("/admin", { replace: true });
+                return;
+            }
+
+            const resumed = await resumeCheckoutIfNeeded();
+            if (resumed) return;
+
+            await runPendingActionOrDefault();
         } catch (err) {
-            toast.error(err?.response?.data?.error || "Login failed.");
+            // ✅ NEW: handle 401 unverified (axios throws)
+            const serverData = err?.response?.data;
+            const status = err?.response?.status;
+
+            if (serverData?.resend || status === 401) {
+                // If backend says resend, always go verify step
+                const msg = serverData?.error || "Email not verified. Code sent.";
+                goToVerificationStep(msg);
+                return;
+            }
+
+            toast.error(serverData?.error || "Login failed.");
         } finally {
             setIsSubmitting(false);
         }
@@ -239,29 +261,57 @@ export default function Login() {
 
     const verifyCode = async (e) => {
         e.preventDefault();
+
+        const cleanEmail = data.email.trim().toLowerCase();
+        const cleanCode = String(code || "").trim();
+
+        if (!cleanEmail) {
+            toast.error("Please enter your email first.");
+            setVerificationStep(false);
+            return;
+        }
+
+        if (cleanCode.length !== 6) {
+            toast.error("Please enter the 6-digit code.");
+            return;
+        }
+
         setIsVerifying(true);
         try {
             const res = await api.post("/verify-email", {
-                email: data.email.trim().toLowerCase(),
-                code,
+                email: cleanEmail,
+                code: cleanCode,
             });
 
             if (res.data?.error) {
                 toast.error(res.data.error);
-            } else {
-                toast.success("Email verified!");
-                const loginRes = await api.post("/login", {
-                    email: data.email.trim().toLowerCase(),
-                    password: data.password,
-                });
-
-                login(loginRes.data.token, loginRes.data.user);
-
-                const resumed = await resumeCheckoutIfNeeded();
-                if (resumed) return;
-
-                await runPendingActionOrDefault();
+                return;
             }
+
+            toast.success("Email verified!");
+
+            // Now login normally
+            const loginRes = await api.post("/login", {
+                email: cleanEmail,
+                password: data.password,
+            });
+
+            // Safety: if login still returns resend, keep user here
+            if (loginRes.data?.error) {
+                if (loginRes.data?.resend) {
+                    goToVerificationStep(loginRes.data?.error || "Email not verified. Code sent.");
+                    return;
+                }
+                toast.error(loginRes.data.error);
+                return;
+            }
+
+            login(loginRes.data.token, loginRes.data.user);
+
+            const resumed = await resumeCheckoutIfNeeded();
+            if (resumed) return;
+
+            await runPendingActionOrDefault();
         } catch (err) {
             toast.error(err?.response?.data?.error || "Verification failed.");
         } finally {
@@ -270,15 +320,22 @@ export default function Login() {
     };
 
     const resendCode = async () => {
+        const cleanEmail = data.email.trim().toLowerCase();
+        if (!cleanEmail) {
+            toast.error("Enter your email first.");
+            setVerificationStep(false);
+            return;
+        }
+
         try {
-            const res = await api.post("/resend-code", { email: data.email.trim().toLowerCase() });
+            const res = await api.post("/resend-code", { email: cleanEmail });
             if (res.data?.error) toast.error(res.data.error);
             else {
                 toast.success("New code sent!");
                 setCooldown(30);
             }
-        } catch {
-            toast.error("Could not resend code.");
+        } catch (err) {
+            toast.error(err?.response?.data?.error || "Could not resend code.");
         }
     };
 
@@ -355,8 +412,13 @@ export default function Login() {
                                             type="text"
                                             placeholder="123456"
                                             value={code}
-                                            onChange={(e) => setCode(e.target.value)}
+                                            onChange={(e) => {
+                                                // keep it clean (digits only, max 6)
+                                                const v = (e.target.value || "").replace(/\D/g, "").slice(0, 6);
+                                                setCode(v);
+                                            }}
                                             maxLength={6}
+                                            inputMode="numeric"
                                             required
                                         />
                                     </div>
@@ -367,6 +429,18 @@ export default function Login() {
 
                                     <button type="button" className="kc-btn kc-btn-secondary kc-btn-center" onClick={resendCode} disabled={cooldown > 0}>
                                         {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="kc-text-back"
+                                        onClick={() => {
+                                            setVerificationStep(false);
+                                            setCode("");
+                                        }}
+                                        style={{ marginTop: 10 }}
+                                    >
+                                        Back to login
                                     </button>
                                 </form>
                             </>

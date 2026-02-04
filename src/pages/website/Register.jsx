@@ -39,16 +39,27 @@ export default function Register() {
     // ---------------------------------
     // Helpers
     // ---------------------------------
-    const sanitize = (v) =>
+    const sanitizeSlug = (v) =>
         (v || "")
             .trim()
             .toLowerCase()
             .replace(/[^a-z0-9._-]/g, "");
 
+    const cleanEmail = (v) => String(v || "").trim().toLowerCase();
+
+    const cleanCode = (v) => String(v || "").replace(/\D/g, "").slice(0, 6);
+
     const closeAuth = () => {
         const from = location.state?.from;
         if (from) navigate(from);
         else navigate("/");
+    };
+
+    const goToVerifyStep = (msg) => {
+        toast.success(msg || "Verification code sent");
+        setCode("");
+        setVerificationStep(true);
+        setCooldown(30);
     };
 
     // ----------------------------
@@ -124,8 +135,7 @@ export default function Register() {
     // If Pricing checkout intent exists, user must claim BEFORE any other step.
     const mustClaimBeforeContinuing = hasCheckoutIntent && !hasConfirmedUsername && !verificationStep;
 
-    const shouldShowClaimStep =
-        !verificationStep && (mustClaimBeforeContinuing || forceClaimStep || !hasConfirmedUsername);
+    const shouldShowClaimStep = !verificationStep && (mustClaimBeforeContinuing || forceClaimStep || !hasConfirmedUsername);
 
     // ---------------------------------
     // Stripe resume (ONLY after verified login)
@@ -173,7 +183,7 @@ export default function Register() {
     const claimLinkContinue = async (e) => {
         e.preventDefault();
 
-        const cleaned = sanitize(claimInput);
+        const cleaned = sanitizeSlug(claimInput);
         if (!cleaned) return toast.error("Please enter a link name");
         if (cleaned.length < 3) return toast.error("Link name must be at least 3 characters");
 
@@ -208,7 +218,23 @@ export default function Register() {
         e.preventDefault();
 
         // ✅ If checkout intent exists, username MUST be set here
-        if (hasCheckoutIntent && !sanitize(data.username)) {
+        if (hasCheckoutIntent && !sanitizeSlug(data.username)) {
+            toast.error("Please claim your link first.");
+            setForceClaimStep(true);
+            return;
+        }
+
+        const payload = {
+            name: String(data.name || "").trim(),
+            email: cleanEmail(data.email),
+            username: sanitizeSlug(data.username),
+            password: data.password,
+            confirmPassword: data.password,
+        };
+
+        if (!payload.email) return toast.error("Please enter your email.");
+        if (!payload.password) return toast.error("Please enter a password.");
+        if (!payload.username) {
             toast.error("Please claim your link first.");
             setForceClaimStep(true);
             return;
@@ -217,22 +243,30 @@ export default function Register() {
         setIsSubmitting(true);
 
         try {
-            const res = await api.post("/register", {
-                name: data.name,
-                email: data.email.toLowerCase(),
-                username: sanitize(data.username),
-                password: data.password,
-                confirmPassword: data.password,
-            });
+            const res = await api.post("/register", payload);
 
-            if (res.data?.error) toast.error(res.data.error);
-            else {
-                toast.success("Verification code sent");
-                setVerificationStep(true);
-                setCooldown(30);
+            if (res.data?.error) {
+                toast.error(res.data.error);
+                return;
             }
-        } catch {
-            toast.error("Registration failed");
+
+            // Backend may respond success even if email failed, and expects you to use "Resend code"
+            if (res.data?.success) {
+                if (res.data?.emailSent === false) {
+                    goToVerifyStep("Account created. Tap “Resend code” to get your verification code.");
+                } else {
+                    goToVerifyStep("Verification code sent");
+                }
+                return;
+            }
+
+            toast.success("Verification code sent");
+            setVerificationStep(true);
+            setCooldown(30);
+        } catch (err) {
+            // Sometimes backend may send useful message in response body
+            const msg = err?.response?.data?.error || "Registration failed";
+            toast.error(msg);
         } finally {
             setIsSubmitting(false);
         }
@@ -245,10 +279,26 @@ export default function Register() {
         e.preventDefault();
         setIsVerifying(true);
 
+        const email = cleanEmail(data.email);
+        const finalCode = cleanCode(code);
+
+        if (!email) {
+            toast.error("Please enter your email first.");
+            setVerificationStep(false);
+            setIsVerifying(false);
+            return;
+        }
+
+        if (finalCode.length !== 6) {
+            toast.error("Please enter the 6-digit code.");
+            setIsVerifying(false);
+            return;
+        }
+
         try {
             const res = await api.post("/verify-email", {
-                email: data.email.toLowerCase(),
-                code,
+                email,
+                code: finalCode,
             });
 
             if (res.data?.error) {
@@ -256,17 +306,42 @@ export default function Register() {
                 return;
             }
 
-            const loginRes = await api.post("/login", {
-                email: data.email.toLowerCase(),
-                password: data.password,
-            });
+            toast.success("Email verified!");
+
+            // Now login
+            let loginRes;
+            try {
+                loginRes = await api.post("/login", {
+                    email,
+                    password: data.password,
+                });
+            } catch (loginErr) {
+                // If backend returns 401 resend again, keep them on verify UI
+                const server = loginErr?.response?.data;
+                if (server?.resend) {
+                    toast.error(server?.error || "Please verify your email. Code sent.");
+                    setCooldown(30);
+                    return;
+                }
+                toast.error(server?.error || "Login failed after verification.");
+                return;
+            }
+
+            if (loginRes.data?.error) {
+                if (loginRes.data?.resend) {
+                    toast.error(loginRes.data?.error || "Please verify your email. Code sent.");
+                    setCooldown(30);
+                    return;
+                }
+                toast.error(loginRes.data.error);
+                return;
+            }
 
             login(loginRes.data.token, loginRes.data.user);
 
             try {
                 localStorage.removeItem(OAUTH_SOURCE_KEY);
                 // keep PENDING_CLAIM_KEY for a moment — but user is now claimed anyway
-                // (safe to clear after checkout)
             } catch {
                 // ignore
             }
@@ -282,10 +357,31 @@ export default function Register() {
             }
 
             navigate("/myprofile", { replace: true });
-        } catch {
-            toast.error("Verification failed");
+        } catch (err) {
+            toast.error(err?.response?.data?.error || "Verification failed");
         } finally {
             setIsVerifying(false);
+        }
+    };
+
+    const resendCode = async () => {
+        const email = cleanEmail(data.email);
+        if (!email) {
+            toast.error("Enter your email first.");
+            setVerificationStep(false);
+            return;
+        }
+
+        try {
+            const r = await api.post("/resend-code", { email });
+            if (r.data?.error) toast.error(r.data.error);
+            else {
+                toast.success("New code sent!");
+                setCooldown(30);
+                setCode("");
+            }
+        } catch (err) {
+            toast.error(err?.response?.data?.error || "Could not resend code.");
         }
     };
 
@@ -299,7 +395,7 @@ export default function Register() {
         }
 
         // ✅ If pricing intent exists, require claim before OAuth
-        if (hasCheckoutIntent && !sanitize(data.username || claimInput)) {
+        if (hasCheckoutIntent && !sanitizeSlug(data.username || claimInput)) {
             toast.error("Please claim your link before continuing.");
             setForceClaimStep(true);
             setTimeout(() => claimInputRef.current?.focus?.(), 0);
@@ -308,7 +404,7 @@ export default function Register() {
 
         try {
             localStorage.setItem(OAUTH_SOURCE_KEY, "register");
-            const pending = sanitize(data.username || claimInput);
+            const pending = sanitizeSlug(data.username || claimInput);
             if (pending) localStorage.setItem(PENDING_CLAIM_KEY, pending);
         } catch {
             // ignore
@@ -344,8 +440,9 @@ export default function Register() {
                                             id="code"
                                             className="kc-input"
                                             value={code}
-                                            onChange={(e) => setCode(e.target.value)}
+                                            onChange={(e) => setCode(cleanCode(e.target.value))}
                                             maxLength={6}
+                                            inputMode="numeric"
                                             placeholder="123456"
                                             required
                                         />
@@ -359,20 +456,21 @@ export default function Register() {
                                         type="button"
                                         className="kc-btn kc-btn-secondary kc-btn-center"
                                         disabled={cooldown > 0}
-                                        onClick={async () => {
-                                            try {
-                                                const r = await api.post("/resend-code", { email: data.email.toLowerCase() });
-                                                if (r.data?.error) toast.error(r.data.error);
-                                                else {
-                                                    toast.success("New code sent!");
-                                                    setCooldown(30);
-                                                }
-                                            } catch {
-                                                toast.error("Could not resend code.");
-                                            }
-                                        }}
+                                        onClick={resendCode}
                                     >
                                         {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="kc-text-back"
+                                        onClick={() => {
+                                            setVerificationStep(false);
+                                            setCode("");
+                                        }}
+                                        style={{ marginTop: 10 }}
+                                    >
+                                        Back
                                     </button>
                                 </form>
                             </>
