@@ -1,4 +1,3 @@
-// src/pages/auth/Register.jsx
 import React, { useState, useEffect, useRef, useContext, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -6,6 +5,11 @@ import { AuthContext } from "../../components/AuthContext";
 import api, { BASE_URL } from "../../services/api";
 import Navbar from "../../components/Navbar";
 import "../../styling/login.css";
+
+/* Social logos */
+import GoogleIcon from "../../assets/icons/Google-icon.svg";
+import FacebookIcon from "../../assets/icons/Facebook-Icon.svg";
+import AppleIcon from "../../assets/icons/Apple-Icon.svg";
 
 const PENDING_CLAIM_KEY = "pendingClaimUsername";
 const OAUTH_SOURCE_KEY = "oauthSource";
@@ -95,13 +99,11 @@ export default function Register() {
         }
     };
 
-    // Snapshot the intent for this page load (stable)
     const checkoutIntent = useMemo(() => readCheckoutIntent(), []);
     const hasCheckoutIntent = !!checkoutIntent;
 
     // ---------------------------------
-    // On mount: preload pending claim, and
-    // if coming from pricing intent → FORCE claim step first
+    // On mount: preload pending claim
     // ---------------------------------
     useEffect(() => {
         try {
@@ -115,7 +117,6 @@ export default function Register() {
                 setForceClaimStep(false);
             } else {
                 setClaimInput("");
-                // ✅ If pricing intent exists and no username yet, enforce claim step
                 if (hasCheckoutIntent) setForceClaimStep(true);
             }
         } catch {
@@ -132,8 +133,6 @@ export default function Register() {
 
     const hasConfirmedUsername = Boolean((data.username || "").trim());
 
-    // ✅ HARD RULE:
-    // If Pricing checkout intent exists, user must claim BEFORE any other step.
     const mustClaimBeforeContinuing = hasCheckoutIntent && !hasConfirmedUsername && !verificationStep;
 
     const shouldShowClaimStep =
@@ -146,7 +145,6 @@ export default function Register() {
         const intent = readCheckoutIntent();
         if (!intent) return false;
 
-        // ✅ Safety: if no username, do NOT allow checkout
         const uname = (data.username || "").trim();
         if (!uname) {
             toast.error("Please claim your KonarCard link before subscribing.");
@@ -157,7 +155,6 @@ export default function Register() {
         const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
 
         try {
-            // ✅ do NOT clear until we have a Stripe URL
             const res = await api.post("/subscribe", {
                 planKey: intent.planKey,
                 returnUrl,
@@ -174,7 +171,6 @@ export default function Register() {
             return true;
         } catch (e) {
             toast.error(e?.response?.data?.error || "Subscription failed.");
-            // keep intent so user can retry
             return false;
         }
     };
@@ -222,7 +218,6 @@ export default function Register() {
     const registerUser = async (e) => {
         e.preventDefault();
 
-        // ✅ If checkout intent exists, username MUST be set here
         if (hasCheckoutIntent && !sanitizeSlug(data.username)) {
             toast.error("Please claim your link first.");
             setForceClaimStep(true);
@@ -237,7 +232,6 @@ export default function Register() {
             confirmPassword: data.password,
         };
 
-        // Keep state normalized so verify/resend always uses the same email/username
         setData((d) => ({
             ...d,
             name: payload.name,
@@ -264,7 +258,6 @@ export default function Register() {
                 return;
             }
 
-            // Backend may respond success even if email failed, and expects you to use "Resend code"
             if (res?.data?.success) {
                 if (res.data?.emailSent === false) {
                     goToVerifyStep("Account created. Tap “Resend code” to get your verification code.");
@@ -274,11 +267,9 @@ export default function Register() {
                 return;
             }
 
-            // Fallback
             goToVerifyStep("Verification code sent");
         } catch (err) {
-            const msg = err?.response?.data?.error || "Registration failed";
-            toast.error(msg);
+            toast.error(err?.response?.data?.error || "Registration failed");
         } finally {
             setIsSubmitting(false);
         }
@@ -286,7 +277,6 @@ export default function Register() {
 
     // ---------------------------------
     // Verify email (step 3) + login + (optional) Stripe
-    // Note: api.js validateStatus allows 4xx to return as a normal response.
     // ---------------------------------
     const verifyCode = async (e) => {
         e.preventDefault();
@@ -308,15 +298,11 @@ export default function Register() {
             return;
         }
 
-        // Lock state to cleaned values (prevents mismatch from spacing/case)
         setData((d) => ({ ...d, email }));
         setCode(finalCode);
 
         try {
-            const res = await api.post("/verify-email", {
-                email,
-                code: finalCode,
-            });
+            const res = await api.post("/verify-email", { email, code: finalCode });
 
             if (res?.data?.error) {
                 toast.error(res.data.error);
@@ -325,7 +311,6 @@ export default function Register() {
 
             toast.success("Email verified!");
 
-            // Now login (DO NOT treat generic 401 as verify unless server says resend:true)
             const loginRes = await api.post("/login", {
                 email,
                 password: data.password,
@@ -333,7 +318,6 @@ export default function Register() {
 
             if (loginRes?.data?.error) {
                 if (loginRes.data?.resend) {
-                    // Backend says user still not verified; keep them on verify UI
                     toast.error(loginRes.data?.error || "Please verify your email. Code sent.");
                     setCooldown(30);
                     return;
@@ -358,7 +342,6 @@ export default function Register() {
             const resumed = await resumeCheckoutIfNeeded();
             if (resumed) return;
 
-            // no checkout intent -> normal
             try {
                 localStorage.removeItem(PENDING_CLAIM_KEY);
             } catch {
@@ -367,7 +350,6 @@ export default function Register() {
 
             navigate("/myprofile", { replace: true });
         } catch (err) {
-            // network / 5xx
             toast.error(err?.response?.data?.error || "Verification failed");
         } finally {
             setIsVerifying(false);
@@ -402,7 +384,7 @@ export default function Register() {
     };
 
     // ---------------------------------
-    // OAuth (DO NOT allow bypass if checkout intent exists)
+    // OAuth
     // ---------------------------------
     const startOAuth = (provider) => {
         if (provider === "apple") {
@@ -410,7 +392,6 @@ export default function Register() {
             return;
         }
 
-        // ✅ If pricing intent exists, require claim before OAuth
         if (hasCheckoutIntent && !sanitizeSlug(data.username || claimInput)) {
             toast.error("Please claim your link before continuing.");
             setForceClaimStep(true);
@@ -429,11 +410,9 @@ export default function Register() {
         window.location.href = `${BASE_URL}/auth/${provider}`;
     };
 
-    // Back from verification should respect checkout intent rule
     const backFromVerify = () => {
         setVerificationStep(false);
         setCode("");
-        // If pricing intent exists and username missing, force claim
         if (hasCheckoutIntent && !sanitizeSlug(data.username)) {
             setForceClaimStep(true);
             setTimeout(() => claimInputRef.current?.focus?.(), 0);
@@ -449,7 +428,9 @@ export default function Register() {
             <div className="kc-auth-page">
                 <div className="kc-auth-topActions">
                     <button type="button" className="kc-auth-closeBtn" onClick={closeAuth} aria-label="Close">
-                        <span aria-hidden="true">×</span>
+                        <span className="kc-auth-closeIcon" aria-hidden="true">
+                            ×
+                        </span>
                     </button>
                 </div>
 
@@ -478,11 +459,7 @@ export default function Register() {
                                         />
                                     </div>
 
-                                    <button
-                                        className="kc-btn kc-btn-primary kc-btn-center"
-                                        disabled={isVerifying}
-                                        aria-busy={isVerifying}
-                                    >
+                                    <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isVerifying} aria-busy={isVerifying}>
                                         {isVerifying ? "Verifying…" : "Verify"}
                                     </button>
 
@@ -495,12 +472,7 @@ export default function Register() {
                                         {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
                                     </button>
 
-                                    <button
-                                        type="button"
-                                        className="kc-text-back"
-                                        onClick={backFromVerify}
-                                        style={{ marginTop: 10 }}
-                                    >
+                                    <button type="button" className="kc-text-back" onClick={backFromVerify} style={{ marginTop: 10 }}>
                                         Back
                                     </button>
                                 </form>
@@ -552,9 +524,7 @@ export default function Register() {
                         ) : (
                             <>
                                 <h1 className="kc-title">Create an account to save your card</h1>
-                                <p className="kc-subtitle">
-                                    Save your digital card so you can share it, edit it, and access it anytime.
-                                </p>
+                                <p className="kc-subtitle">Save your digital card so you can share it, edit it, and access it anytime.</p>
 
                                 <form onSubmit={registerUser} className="kc-form kc-form-register">
                                     <div className="kc-field">
@@ -605,11 +575,7 @@ export default function Register() {
                                         />
                                     </div>
 
-                                    <button
-                                        className="kc-btn kc-btn-primary kc-btn-center"
-                                        disabled={isSubmitting}
-                                        aria-busy={isSubmitting}
-                                    >
+                                    <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isSubmitting} aria-busy={isSubmitting}>
                                         {isSubmitting ? "Saving…" : "Save my digital card"}
                                     </button>
 
@@ -627,19 +593,23 @@ export default function Register() {
 
                                 <div className="kc-social">
                                     <button type="button" className="kc-social-btn" onClick={() => startOAuth("google")}>
+                                        <img className="kc-social-icon" src={GoogleIcon} alt="" aria-hidden="true" />
                                         <span>Sign in with Google</span>
                                     </button>
+
                                     <button type="button" className="kc-social-btn" onClick={() => startOAuth("facebook")}>
+                                        <img className="kc-social-icon" src={FacebookIcon} alt="" aria-hidden="true" />
                                         <span>Sign in with Facebook</span>
                                     </button>
+
                                     <button type="button" className="kc-social-btn" onClick={() => startOAuth("apple")}>
+                                        <img className="kc-social-icon" src={AppleIcon} alt="" aria-hidden="true" />
                                         <span>Sign in with Apple</span>
                                     </button>
                                 </div>
 
                                 <p className="kc-bottom-line" style={{ marginTop: 18 }}>
-                                    Your link:{" "}
-                                    <strong>{displayUsername ? `konarcard.com/u/${displayUsername}` : "—"}</strong>{" "}
+                                    Your link: <strong>{displayUsername ? `konarcard.com/u/${displayUsername}` : "—"}</strong>{" "}
                                     <button
                                         type="button"
                                         className="kc-link"

@@ -1,4 +1,3 @@
-// src/pages/auth/Login.jsx
 import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -6,6 +5,11 @@ import { AuthContext } from "../../components/AuthContext";
 import api, { BASE_URL } from "../../services/api";
 import Navbar from "../../components/Navbar";
 import "../../styling/login.css";
+
+/* Social logos */
+import GoogleIcon from "../../assets/icons/Google-icon.svg";
+import FacebookIcon from "../../assets/icons/Facebook-Icon.svg";
+import AppleIcon from "../../assets/icons/Apple-Icon.svg";
 
 const POST_AUTH_KEY = "postAuthAction"; // legacy (keep for card-buy etc)
 const REMEMBER_KEY = "rememberLogin";
@@ -76,15 +80,11 @@ export default function Login() {
             return;
         }
 
-        const intent = readCheckoutIntent(); // detect pricing checkout flow
+        const intent = readCheckoutIntent();
 
         try {
             localStorage.setItem("oauthSource", "login");
-
-            // If checkout intent exists, DO NOT wipe pendingClaimUsername.
-            if (!intent) {
-                localStorage.removeItem("pendingClaimUsername");
-            }
+            if (!intent) localStorage.removeItem("pendingClaimUsername");
         } catch {
             // ignore
         }
@@ -155,7 +155,6 @@ export default function Login() {
         navigate("/myprofile");
     };
 
-    // After login, resume Stripe checkout if intent exists
     const resumeCheckoutIfNeeded = async () => {
         const intent = readCheckoutIntent();
         if (!intent) return false;
@@ -183,7 +182,6 @@ export default function Login() {
         }
     };
 
-    // Central helper: move user into verification UI
     const goToVerificationStep = (msg) => {
         toast.error(msg || "Email not verified. Code sent.");
         setCode("");
@@ -216,7 +214,6 @@ export default function Login() {
                 password: data.password,
             });
 
-            // ✅ With api.validateStatus, 401/400 comes back here (not catch)
             if (res.data?.error) {
                 if (res.data?.resend) {
                     goToVerificationStep(res.data?.error || "Email not verified. Code sent.");
@@ -240,7 +237,6 @@ export default function Login() {
 
             await runPendingActionOrDefault();
         } catch (err) {
-            // ✅ Only true network/5xx errors should land here
             toast.error(err?.response?.data?.error || "Login failed.");
         } finally {
             setIsSubmitting(false);
@@ -271,14 +267,14 @@ export default function Login() {
                 code: cleanOtp,
             });
 
-            if (res.data?.error) {
-                toast.error(res.data.error);
+            if (res?.data?.error) {
+                toast.error(res.data.error || "Verification failed.");
                 return;
             }
 
+
             toast.success("Email verified!");
 
-            // Now login normally
             const loginRes = await api.post("/login", {
                 email: cleanEmail,
                 password: data.password,
@@ -357,7 +353,9 @@ export default function Login() {
             <div className="kc-auth-page">
                 <div className="kc-auth-topActions">
                     <button type="button" className="kc-auth-closeBtn" onClick={closeAuth} aria-label="Close">
-                        <span aria-hidden="true">×</span>
+                        <span className="kc-auth-closeIcon" aria-hidden="true">
+                            ×
+                        </span>
                     </button>
                 </div>
 
@@ -384,19 +382,11 @@ export default function Login() {
                                         />
                                     </div>
 
-                                    <button
-                                        className="kc-btn kc-btn-primary kc-btn-center"
-                                        disabled={isSendingReset}
-                                        aria-busy={isSendingReset}
-                                    >
+                                    <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isSendingReset} aria-busy={isSendingReset}>
                                         {isSendingReset ? "Sending…" : "Send reset link"}
                                     </button>
 
-                                    <button
-                                        type="button"
-                                        className="kc-btn kc-btn-secondary kc-btn-center"
-                                        onClick={() => setForgotPasswordStep(false)}
-                                    >
+                                    <button type="button" className="kc-btn kc-btn-secondary kc-btn-center" onClick={() => setForgotPasswordStep(false)}>
                                         Back
                                     </button>
                                 </form>
@@ -417,10 +407,7 @@ export default function Login() {
                                             type="text"
                                             placeholder="123456"
                                             value={code}
-                                            onChange={(e) => {
-                                                const v = (e.target.value || "").replace(/\D/g, "").slice(0, 6);
-                                                setCode(v);
-                                            }}
+                                            onChange={(e) => setCode((e.target.value || "").replace(/\D/g, "").slice(0, 6))}
                                             maxLength={6}
                                             inputMode="numeric"
                                             autoComplete="one-time-code"
@@ -432,12 +419,7 @@ export default function Login() {
                                         {isVerifying ? "Verifying…" : "Verify"}
                                     </button>
 
-                                    <button
-                                        type="button"
-                                        className="kc-btn kc-btn-secondary kc-btn-center"
-                                        onClick={resendCode}
-                                        disabled={cooldown > 0}
-                                    >
+                                    <button type="button" className="kc-btn kc-btn-secondary kc-btn-center" onClick={resendCode} disabled={cooldown > 0}>
                                         {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
                                     </button>
 
@@ -515,12 +497,17 @@ export default function Login() {
 
                                 <div className="kc-social">
                                     <button type="button" className="kc-social-btn" onClick={() => startOAuth("google")}>
+                                        <img className="kc-social-icon" src={GoogleIcon} alt="" aria-hidden="true" />
                                         <span>Sign in with Google</span>
                                     </button>
+
                                     <button type="button" className="kc-social-btn" onClick={() => startOAuth("facebook")}>
+                                        <img className="kc-social-icon" src={FacebookIcon} alt="" aria-hidden="true" />
                                         <span>Sign in with Facebook</span>
                                     </button>
+
                                     <button type="button" className="kc-social-btn" onClick={() => startOAuth("apple")}>
+                                        <img className="kc-social-icon" src={AppleIcon} alt="" aria-hidden="true" />
                                         <span>Sign in with Apple</span>
                                     </button>
                                 </div>
