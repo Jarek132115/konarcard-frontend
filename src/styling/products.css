@@ -3,6 +3,7 @@
 /* =========================================================
    PRODUCTS PAGE — FINAL
    Matches FAQ/Pricing/Examples (tokens + fonts.css)
+   Orange-only accents + 8pt spacing
    ========================================================= */
 
 .kc-products {
@@ -109,6 +110,26 @@
 }
 
 /* =========================
+   TAGS
+   ========================= */
+.kc-products__tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid rgba(249, 115, 22, 0.30);
+    background: rgba(249, 115, 22, 0.10);
+    color: var(--kc-accent-primary);
+}
+
+.kc-products__tagSoft {
+    margin-bottom: 12px;
+}
+
+/* =========================
    PRODUCTS GRID
    ========================= */
 .kc-products__grid {
@@ -132,19 +153,6 @@
 
 .kc-products__cardTop {
     padding: 14px 16px 0;
-}
-
-.kc-products__tag {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px;
-    padding: 6px 10px;
-    font-size: 12px;
-    font-weight: 700;
-    border: 1px solid rgba(249, 115, 22, 0.30);
-    background: rgba(249, 115, 22, 0.10);
-    color: var(--kc-accent-primary);
 }
 
 .kc-products__imgWrap,
@@ -189,7 +197,7 @@
     margin-top: 8px;
 }
 
-/* Button matches other CTAs */
+/* CTA button (match site) */
 .kc-products__btn {
     display: inline-flex;
     align-items: center;
@@ -278,10 +286,6 @@
     text-align: left;
 }
 
-.kc-products__tagSoft {
-    margin-bottom: 12px;
-}
-
 .kc-products__bullets {
     margin: 12px 0 0;
     padding-left: 18px;
@@ -341,11 +345,90 @@
 }
 
 /* =========================
+   FAQ (Accordion — same as FAQ/Pricing/Contact)
+   ========================= */
+.kc-products__faq {
+    padding: 72px 20px 88px;
+    background: var(--kc-bg-main);
+}
+
+.kc-products__faqInner {
+    max-width: 920px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.kc-products__faqTitle {
+    margin: 0 0 8px;
+}
+
+.kc-products__faqSub {
+    margin: 0 auto 18px;
+    max-width: 560px;
+    color: var(--kc-text-secondary);
+}
+
+.kc-products__faqList {
+    text-align: left;
+    border-top: 1px solid var(--kc-border);
+}
+
+.kc-products__faqItem {
+    border-bottom: 1px solid var(--kc-border);
+}
+
+.kc-products__qRow {
+    width: 100%;
+    text-align: left;
+
+    padding: 24px 0;
+    background: transparent;
+    border: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    cursor: pointer;
+}
+
+.kc-products__qRow:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
+    border-radius: 10px;
+}
+
+.kc-products__q {
+    margin: 0;
+    color: var(--kc-text-primary);
+}
+
+.kc-products__chev {
+    font-size: 14px;
+    color: var(--kc-text-secondary);
+    transition: transform 0.15s ease;
+}
+
+.kc-products__chev.is-open {
+    transform: rotate(180deg);
+}
+
+.kc-products__a {
+    padding: 0 0 24px 0;
+    color: var(--kc-text-secondary);
+    max-width: 860px;
+}
+
+/* =========================
    RESPONSIVE
    ========================= */
 @media (max-width: 980px) {
     .kc-products__perks {
         grid-template-columns: 1fr;
+        max-width: 520px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .kc-products__grid {
@@ -371,6 +454,14 @@
     .kc-products__chooseGrid {
         grid-template-columns: 1fr;
         max-width: 520px;
+    }
+
+    .kc-products__qRow {
+        padding: 16px 0;
+    }
+
+    .kc-products__a {
+        padding-bottom: 16px;
     }
 }
 

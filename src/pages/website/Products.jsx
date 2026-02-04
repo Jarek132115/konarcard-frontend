@@ -1,5 +1,5 @@
 // frontend/src/pages/website/Products.jsx
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Navbar from "../../components/Navbar";
@@ -12,94 +12,123 @@ import "../../styling/fonts.css";
 import "../../styling/products.css";
 
 export default function Products() {
-    const topPerks = [
-        { title: "One link for everything", desc: "Details, photos, prices and contact options in one place." },
-        { title: "Easy to update anytime", desc: "Change your details instantly without reprinting cards." },
-        { title: "Share by tap or QR", desc: "Works in person, online and anywhere in between." },
-        { title: "Built for real trades", desc: "Designed for on-site, not offices." },
-        { title: "Looks professional", desc: "Make a strong first impression every time." },
-    ];
+    const topPerks = useMemo(
+        () => [
+            { title: "One link for everything", desc: "Details, photos, prices and contact options in one place." },
+            { title: "Easy to update anytime", desc: "Change your details instantly without reprinting cards." },
+            { title: "Share by tap or QR", desc: "Works in person, online and anywhere in between." },
+            { title: "Built for real trades", desc: "Designed for on-site, not offices." },
+            { title: "Looks professional", desc: "Make a strong first impression every time." },
+        ],
+        []
+    );
 
-    // ✅ Add routes for each product page
-    const products = [
-        {
-            tag: "Best seller",
-            name: "KonarCard — Plastic Edition",
-            desc: "Lightweight, affordable and perfect for everyday use.",
-            price: "£29.99",
-            sub: "Includes NFC + QR and your live KonarCard profile.",
-            to: "/products/plastic-card",
-            cta: "View Plastic Card",
-        },
-        {
-            tag: "Premium",
-            name: "KonarCard — Metal Edition",
-            desc: "A premium feel for a stronger first impression.",
-            price: "£49.99",
-            sub: "Matte finish, durable build, NFC + QR included.",
-            to: "/products/metal-card",
-            cta: "View Metal Card",
-        },
-        {
-            tag: "Accessory",
-            name: "KonarTag",
-            desc: "Clip it to your keys and tap to share instantly.",
-            price: "£19.99",
-            sub: "Same KonarCard link — always on you.",
-            to: "/products/konartag",
-            cta: "View KonarTag",
-        },
-    ];
+    const products = useMemo(
+        () => [
+            {
+                tag: "Best seller",
+                name: "KonarCard — Plastic Edition",
+                desc: "Lightweight, affordable and perfect for everyday use.",
+                price: "£29.99",
+                sub: "Includes NFC + QR and your live KonarCard profile.",
+                to: "/products/plastic-card",
+                cta: "View Plastic Card",
+            },
+            {
+                tag: "Premium",
+                name: "KonarCard — Metal Edition",
+                desc: "A premium feel for a stronger first impression.",
+                price: "£49.99",
+                sub: "Matte finish, durable build, NFC + QR included.",
+                to: "/products/metal-card",
+                cta: "View Metal Card",
+            },
+            {
+                tag: "Accessory",
+                name: "KonarTag",
+                desc: "Clip it to your keys and tap to share instantly.",
+                price: "£19.99",
+                sub: "Same KonarCard link — always on you.",
+                to: "/products/konartag",
+                cta: "View KonarTag",
+            },
+        ],
+        []
+    );
 
-    // ✅ Bundle routes
-    const bundles = [
-        {
-            tag: "Best value",
-            name: "Plastic Bundle",
-            desc: "Plastic KonarCard + KonarTag + 1 month subscription.",
-            price: "£39.99",
-            was: "£49.97",
-            to: "/products/plastic-bundle",
-            cta: "View Plastic Bundle",
-        },
-        {
-            tag: "Premium bundle",
-            name: "Metal Bundle",
-            desc: "Metal KonarCard + KonarTag + 1 month subscription.",
-            price: "£54.99",
-            was: "£69.97",
-            to: "/products/metal-bundle",
-            cta: "View Metal Bundle",
-        },
-    ];
+    const bundles = useMemo(
+        () => [
+            {
+                tag: "Best value",
+                name: "Plastic Bundle",
+                desc: "Plastic KonarCard + KonarTag + 1 month subscription.",
+                price: "£39.99",
+                was: "£49.97",
+                to: "/products/plastic-bundle",
+                cta: "View Plastic Bundle",
+            },
+            {
+                tag: "Premium bundle",
+                name: "Metal Bundle",
+                desc: "Metal KonarCard + KonarTag + 1 month subscription.",
+                price: "£54.99",
+                was: "£69.97",
+                to: "/products/metal-bundle",
+                cta: "View Metal Bundle",
+            },
+        ],
+        []
+    );
 
-    const realWorldTop = [
-        {
-            tag: "Use it on-site",
-            title: "Tap to swap details on the spot",
-            points: ["Tap to open your profile instantly", "Works even when you’re busy on a job", "No app needed — just tap or scan"],
-        },
-        {
-            tag: "Win more jobs",
-            title: "Turn taps into customers",
-            points: ["Create a clean, trustworthy profile", "Show photos, services, reviews and contact buttons", "Faster follow-ups and fewer missed calls"],
-        },
-    ];
+    const realWorldTop = useMemo(
+        () => [
+            {
+                tag: "Use it on-site",
+                title: "Tap to swap details on the spot",
+                points: ["Tap to open your profile instantly", "Works even when you’re busy on a job", "No app needed — just tap or scan"],
+            },
+            {
+                tag: "Win more jobs",
+                title: "Turn taps into customers",
+                points: ["Create a clean, trustworthy profile", "Show photos, services, reviews and contact buttons", "Faster follow-ups and fewer missed calls"],
+            },
+        ],
+        []
+    );
 
-    const realWorldGrid = [
-        { title: "On site, with a client", desc: "Tap your KonarCard. Their phone opens your profile and saves your details instantly — no typing." },
-        { title: "After a quote", desc: "Send your link by WhatsApp so they can review your work, services and reviews while deciding." },
-        { title: "Networking / trade counter", desc: "No stacks of cards. Tap to share your details as many times as you want." },
-        { title: "Van QR & site boards", desc: "Stick the QR on your van or signage so customers can scan and call you straight away." },
-        { title: "Social & link in bio", desc: "Add your KonarCard link to Instagram, Facebook or TikTok so new leads land on your profile." },
-        { title: "Updates in seconds", desc: "New number, new prices, new photos — update once and it’s live everywhere instantly." },
-    ];
+    const realWorldGrid = useMemo(
+        () => [
+            { title: "On site, with a client", desc: "Tap your KonarCard. Their phone opens your profile and saves your details instantly — no typing." },
+            { title: "After a quote", desc: "Send your link by WhatsApp so they can review your work, services and reviews while deciding." },
+            { title: "Networking / trade counter", desc: "No stacks of cards. Tap to share your details as many times as you want." },
+            { title: "Van QR & site boards", desc: "Stick the QR on your van or signage so customers can scan and call you straight away." },
+            { title: "Social & link in bio", desc: "Add your KonarCard link to Instagram, Facebook or TikTok so new leads land on your profile." },
+            { title: "Updates in seconds", desc: "New number, new prices, new photos — update once and it’s live everywhere instantly." },
+        ],
+        []
+    );
 
-    const chooseCards = [
-        { title: "Metal cards", desc: "Best if you want a premium feel and strong first impressions." },
-        { title: "Plastic cards", desc: "Lightweight, affordable, and perfect for everyday use." },
-        { title: "Custom logo cards", desc: "Ideal for established businesses that want branded cards." },
-    ];
+    const chooseCards = useMemo(
+        () => [
+            { title: "Metal cards", desc: "Best if you want a premium feel and strong first impressions." },
+            { title: "Plastic cards", desc: "Lightweight, affordable, and perfect for everyday use." },
+            { title: "Custom logo cards", desc: "Ideal for established businesses that want branded cards." },
+        ],
+        []
+    );
+
+    const productFaqs = useMemo(
+        () => [
+            { q: "Will it work on iPhone and Android?", a: "Yes — KonarCard works on iPhone and Android. Most modern phones support NFC. QR works on any phone with a camera." },
+            { q: "Do customers need an app to tap my card?", a: "No app needed. The tap opens your KonarCard profile instantly in their browser." },
+            { q: "Can I update my details after ordering?", a: "Yes. Update your profile anytime — changes go live instantly without reprinting anything." },
+            { q: "What if someone’s phone doesn’t support NFC?", a: "Every card includes a QR code backup, so anyone can scan and view your profile." },
+            { q: "Can I use one profile on multiple products?", a: "Yes — your card and keytag can link to the same KonarCard profile." },
+        ],
+        []
+    );
+
+    const [openIndex, setOpenIndex] = useState(0);
 
     return (
         <>
@@ -109,7 +138,7 @@ export default function Products() {
                 {/* HERO */}
                 <section className="kc-products__hero">
                     <div className="kc-products__heroInner">
-                        <p className="kc-products__kicker body-s">Cards that link directly to your KonarCard profile</p>
+                        <p className="body-s kc-products__kicker">Cards that link directly to your KonarCard profile</p>
                         <h1 className="h2 kc-products__title">Shop KonarCards</h1>
                         <p className="body-s kc-products__subtitle">
                             Physical NFC business cards that open your profile instantly — so customers can save your details and contact you fast.
@@ -153,7 +182,6 @@ export default function Products() {
                                     <p className="body-s kc-products__muted">{item.sub}</p>
 
                                     <div className="kc-products__ctaRow">
-                                        {/* ✅ now links to product page */}
                                         <Link to={item.to} className="kc-products__btn">
                                             {item.cta}
                                         </Link>
@@ -168,7 +196,9 @@ export default function Products() {
                 <section className="kc-products__section kc-products__section--spaced">
                     <div className="kc-products__sectionHead">
                         <h2 className="h3 kc-products__sectionTitle">Save More With KonarCard Bundles</h2>
-                        <p className="body-s kc-products__sectionSub">Everything you need to share your profile everywhere — at a better price.</p>
+                        <p className="body-s kc-products__sectionSub">
+                            Everything you need to share your profile everywhere — at a better price.
+                        </p>
                     </div>
 
                     <div className="kc-products__bundles">
@@ -191,7 +221,6 @@ export default function Products() {
                                         <p className="body-s kc-products__strike">{b.was}</p>
                                     </div>
 
-                                    {/* ✅ now links to bundle page */}
                                     <Link to={b.to} className="kc-products__btn">
                                         {b.cta}
                                     </Link>
@@ -241,7 +270,9 @@ export default function Products() {
                 <section className="kc-products__section kc-products__section--spaced kc-products__section--bottom">
                     <div className="kc-products__sectionHead">
                         <h2 className="h3 kc-products__sectionTitle">Not sure which card to choose?</h2>
-                        <p className="body-s kc-products__sectionSub">Pick the card that fits how you work — all cards link to the same powerful profile.</p>
+                        <p className="body-s kc-products__sectionSub">
+                            Pick the card that fits how you work — all cards link to the same powerful profile.
+                        </p>
                     </div>
 
                     <div className="kc-products__chooseGrid">
@@ -256,6 +287,37 @@ export default function Products() {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </section>
+
+                {/* ✅ PRODUCTS FAQ (Accordion same as FAQ/Pricing/Contact) */}
+                <section className="kc-products__faq">
+                    <div className="kc-products__faqInner">
+                        <h2 className="h3 kc-products__faqTitle">Product FAQs</h2>
+                        <p className="body-s kc-products__faqSub">Quick answers before you order.</p>
+
+                        <div className="kc-products__faqList" role="region" aria-label="Product FAQs">
+                            {productFaqs.map((item, idx) => {
+                                const isOpen = idx === openIndex;
+                                return (
+                                    <div className="kc-products__faqItem" key={`${item.q}-${idx}`}>
+                                        <button
+                                            type="button"
+                                            className="kc-products__qRow"
+                                            onClick={() => setOpenIndex(isOpen ? -1 : idx)}
+                                            aria-expanded={isOpen}
+                                        >
+                                            <span className="h6 kc-products__q">{item.q}</span>
+                                            <span className={`kc-products__chev ${isOpen ? "is-open" : ""}`} aria-hidden="true">
+                                                ▾
+                                            </span>
+                                        </button>
+
+                                        {isOpen && <div className="body-s kc-products__a">{item.a}</div>}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </section>
             </main>
