@@ -2,19 +2,20 @@
 
 .pc3d {
     width: 100%;
-    height: 560px;
-    /* a bit taller so it never clips */
+    height: 580px;
+    /* extra room so it never clips */
     cursor: grab;
     overflow: visible;
-    /* ✅ make sure nothing gets cut */
-    padding: 80px;
-    /* ✅ breathing room top/bottom */
+    /* ✅ never cut card off */
+    padding: 26px 0;
+    /* ✅ breathing space */
 }
 
 .pc3d:active {
     cursor: grabbing;
 }
 
+/* keep the canvas crisp + interactive */
 .pc3d canvas {
     width: 100% !important;
     height: 100% !important;
@@ -24,6 +25,6 @@
 @media (max-width: 560px) {
     .pc3d {
         height: 420px;
-        padding: 14px 0;
+        padding: 16px 0;
     }
 }
