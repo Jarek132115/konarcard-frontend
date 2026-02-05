@@ -4,12 +4,11 @@ import { Link } from "react-router-dom";
 
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
+import PlasticCard3D from "../../../components/PlasticCard3D";
 
 /* ✅ Page CSS */
 import "../../../styling/products/konarcard.css";
 
-/* ✅ 3D component (new file) */
-import PlasticCard3D from "./PlasticCard3D";
 
 /* Use Konar logo as placeholder (same as navbar) */
 import LogoIcon from "../../../assets/icons/Logo-Icon.svg";
