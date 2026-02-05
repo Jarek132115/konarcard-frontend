@@ -322,9 +322,16 @@
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 
-    border: 1px solid rgba(12, 24, 48, 0.09);
+    /* ✅ remove the “transparent border” */
+    border: none;
+
+    /* keep the card solid white */
     background: #ffffff;
+
+    /* optional: tiny inset so it still feels premium (not a border) */
+    box-shadow: inset 0 0 0 0.5px rgba(12, 24, 48, 0.04);
 }
+
 
 /* push faces out by half thickness */
 .kc-premFace--front {
@@ -379,8 +386,13 @@
     inset: 0;
     border-radius: var(--kc-radius);
     pointer-events: none;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -10px 18px rgba(12, 24, 48, 0.04);
+
+    /* softer rim, no “frame” */
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.85),
+        inset 0 -8px 14px rgba(12, 24, 48, 0.025);
 }
+
 
 /* Back inner (QR) */
 .kc-premBackInner {
