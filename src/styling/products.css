@@ -24,9 +24,9 @@
    HERO (fix top spacing)
    ========================= */
 .kp-hero {
-    /* ✅ Pricing-like breathing room under navbar */
-    padding: 18px 0 30px;
+    padding: 0 0 30px;
 }
+
 
 .kp-hero__inner {
     text-align: center;
