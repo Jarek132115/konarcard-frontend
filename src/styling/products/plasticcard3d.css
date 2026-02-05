@@ -10,7 +10,6 @@
     cursor: grabbing;
 }
 
-/* keep the canvas crisp + interactive */
 .pc3d canvas {
     width: 100% !important;
     height: 100% !important;
