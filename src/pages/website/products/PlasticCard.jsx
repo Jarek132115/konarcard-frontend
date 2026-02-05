@@ -1,4 +1,3 @@
-// src/pages/website/products/PlasticCard.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -60,10 +59,11 @@ export default function PlasticCard() {
         <>
             <Navbar />
 
+            {/* ✅ keep kc-page like your other pages */}
             <main className="kc-konarcard kc-konarcard--premium kc-page">
                 <div className="kc-konarcard__wrap">
                     <section className="kc-premHero kc-premHero--clean">
-                        {/* ✅ TOP (keep as-is) */}
+                        {/* ✅ Centered hero block */}
                         <div className="kc-premHero__top">
                             <div className="kc-premHero__crumbs">
                                 <Link to="/products" className="kc-konarcard__crumbLink">
@@ -85,133 +85,111 @@ export default function PlasticCard() {
                             </p>
                         </div>
 
-                        {/* ✅ PRODUCT AREA (small tweak: add bottom spacing so shadow never gets covered) */}
-                        <div className="kc-premStage kc-premStage--padBottom">
-                            <PlasticCard3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoSize} />
+                        <div className="kc-premStage">
+                            {/* ✅ 3D preview */}
+                            <div className="kc-premStage__canvasPad">
+                                <PlasticCard3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoSize} />
+                            </div>
 
-                            {/* ✅ Controls + buy row grouped into a “purchase panel” */}
-                            <div className="kc-purchase">
-                                <div className="kc-purchase__grid">
-                                    {/* left: logo controls */}
-                                    <div className="kc-purchase__card">
-                                        <div className="kc-purchase__head">
-                                            <div>
-                                                <div className="kc-purchase__title">Your logo</div>
-                                                <div className="kc-purchase__sub">Upload any image — preview updates instantly.</div>
-                                            </div>
+                            {/* Controls */}
+                            <div className="kc-premControls kc-premControls--clean">
+                                <div className="kc-premControls__left">
+                                    <div className="kc-premControls__label">Your logo</div>
+                                    <div className="kc-premControls__sub">Upload any image — preview updates instantly.</div>
+                                </div>
 
-                                            <div className="kc-purchase__actions">
-                                                <label className="kc-premBtn">
-                                                    <input type="file" accept="image/*" onChange={onPickLogo} />
-                                                    Upload logo
-                                                </label>
+                                <div className="kc-premControls__right">
+                                    <label className="kc-premBtn">
+                                        <input type="file" accept="image/*" onChange={onPickLogo} />
+                                        Upload logo
+                                    </label>
 
-                                                <button
-                                                    type="button"
-                                                    className="kc-premBtn kc-premBtn--ghost"
-                                                    onClick={clearLogo}
-                                                    disabled={!logoUrl}
-                                                >
-                                                    Remove
-                                                </button>
-                                            </div>
-                                        </div>
+                                    <button
+                                        type="button"
+                                        className="kc-premBtn kc-premBtn--ghost"
+                                        onClick={clearLogo}
+                                        disabled={!logoUrl}
+                                    >
+                                        Remove
+                                    </button>
 
-                                        <div className="kc-purchase__sliderRow">
-                                            <div className="kc-premSlider kc-premSlider--full">
-                                                <span className="kc-premSlider__k">Size</span>
-                                                <input
-                                                    type="range"
-                                                    min={28}
-                                                    max={70}
-                                                    value={logoSize}
-                                                    onChange={(e) => setLogoSize(Number(e.target.value))}
-                                                    aria-label="Logo size"
-                                                />
-                                                <span className="kc-premSlider__v">{logoSize}%</span>
-                                            </div>
-                                        </div>
-
-                                        <div className="kc-miniNote">
-                                            Tip: choose a high-resolution PNG/SVG for the cleanest print.
-                                        </div>
-                                    </div>
-
-                                    {/* right: purchase */}
-                                    <div className="kc-purchase__card">
-                                        <div className="kc-purchase__priceRow">
-                                            <div className="kc-premPrice">
-                                                <div className="kc-premPrice__value">£29.99</div>
-                                                <div className="kc-premPrice__note">One-time purchase • Works with your profile</div>
-                                            </div>
-
-                                            <div className="kc-konarcard__qty">
-                                                <button
-                                                    type="button"
-                                                    className="kc-konarcard__qtyBtn"
-                                                    onClick={() => setQty((q) => Math.max(1, q - 1))}
-                                                    aria-label="Decrease quantity"
-                                                >
-                                                    −
-                                                </button>
-                                                <div className="kc-konarcard__qtyVal" aria-label="Quantity">
-                                                    {qty}
-                                                </div>
-                                                <button
-                                                    type="button"
-                                                    className="kc-konarcard__qtyBtn"
-                                                    onClick={() => setQty((q) => Math.min(20, q + 1))}
-                                                    aria-label="Increase quantity"
-                                                >
-                                                    +
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div className="kc-purchase__ctaRow">
-                                            <Link
-                                                to="/productandplan/konarcard"
-                                                state={{ triggerCheckout: true, quantity: qty, edition: "plastic" }}
-                                                className="kc-konarcard__cta kc-konarcard__cta--primary kc-konarcard__cta--wide"
-                                            >
-                                                Buy KonarCard
-                                            </Link>
-
-                                            <Link
-                                                to="/register"
-                                                className="kc-konarcard__cta kc-konarcard__cta--ghost kc-konarcard__cta--wide"
-                                            >
-                                                Create your profile first
-                                            </Link>
-                                        </div>
-
-                                        <div className="kc-badgelist">
-                                            <span className="kc-badgeMini">Free profile updates</span>
-                                            <span className="kc-badgeMini">Ships fast</span>
-                                            <span className="kc-badgeMini">Secure checkout</span>
-                                        </div>
+                                    <div className="kc-premSlider">
+                                        <span className="kc-premSlider__k">Size</span>
+                                        <input
+                                            type="range"
+                                            min={28}
+                                            max={70}
+                                            value={logoSize}
+                                            onChange={(e) => setLogoSize(Number(e.target.value))}
+                                            aria-label="Logo size"
+                                        />
+                                        <span className="kc-premSlider__v">{logoSize}%</span>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* ✅ “What you get” redesigned (same content, nicer layout) */}
-                            <div className="kc-konarcard__section kc-section">
-                                <div className="kc-section__head">
+                            {/* Buy row */}
+                            <div className="kc-premBuy kc-premBuy--clean" aria-label="Choose quantity and buy">
+                                <div className="kc-premPrice">
+                                    <div className="kc-premPrice__value">£29.99</div>
+                                    <div className="kc-premPrice__note">One-time purchase • Works with your profile</div>
+                                </div>
+
+                                <div className="kc-premBuy__right">
+                                    <div className="kc-konarcard__qty">
+                                        <button
+                                            type="button"
+                                            className="kc-konarcard__qtyBtn"
+                                            onClick={() => setQty((q) => Math.max(1, q - 1))}
+                                            aria-label="Decrease quantity"
+                                        >
+                                            −
+                                        </button>
+                                        <div className="kc-konarcard__qtyVal" aria-label="Quantity">
+                                            {qty}
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className="kc-konarcard__qtyBtn"
+                                            onClick={() => setQty((q) => Math.min(20, q + 1))}
+                                            aria-label="Increase quantity"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+
+                                    <Link
+                                        to="/productandplan/konarcard"
+                                        state={{ triggerCheckout: true, quantity: qty, edition: "plastic" }}
+                                        className="kc-konarcard__cta kc-konarcard__cta--primary"
+                                    >
+                                        Buy KonarCard
+                                    </Link>
+
+                                    <Link to="/register" className="kc-konarcard__cta kc-konarcard__cta--ghost">
+                                        Create your profile first
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* What you get */}
+                            <div className="kc-konarcard__section">
+                                <div className="kc-konarcard__sectionHead">
                                     <h2 className="kc-konarcard__h2">What you get</h2>
                                     <p className="kc-konarcard__p">
                                         Everything you need to share your profile instantly — no paper cards, no typing numbers.
                                     </p>
                                 </div>
 
-                                <div className="kc-featureGrid2">
+                                <div className="kc-konarcard__featureGrid">
                                     {features.map((f, i) => (
-                                        <div className="kc-feature2" key={i}>
-                                            <div className="kc-feature2__dot" aria-hidden="true">
+                                        <div className="kc-konarcard__feature" key={i}>
+                                            <div className="kc-konarcard__ico" aria-hidden="true">
                                                 ✓
                                             </div>
-                                            <div className="kc-feature2__body">
-                                                <div className="kc-feature2__t">{f.t}</div>
-                                                <div className="kc-feature2__s">{f.s}</div>
+                                            <div>
+                                                <div className="kc-konarcard__featureT">{f.t}</div>
+                                                <div className="kc-konarcard__featureS">{f.s}</div>
                                             </div>
                                         </div>
                                     ))}

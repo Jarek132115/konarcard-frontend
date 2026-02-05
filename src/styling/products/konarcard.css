@@ -1,148 +1,409 @@
-/* frontend/src/styling/products/konarcard.css */
+:root {
+    --kc-orange: #ff7b00;
+    --kc-orange-hover: #e66f00;
 
-/* ...KEEP EVERYTHING YOU ALREADY HAVE ABOVE... */
+    --kc-text: #0b1220;
+    --kc-muted: rgba(12, 24, 48, 0.72);
 
-/* ✅ add a little bottom room so the 3D shadow never gets covered */
-.kc-premStage--padBottom {
-    padding-bottom: 18px;
+    --kc-border: rgba(12, 24, 48, 0.1);
+    --kc-border-2: rgba(12, 24, 48, 0.08);
+
+    --kc-soft: 0 10px 24px rgba(12, 24, 48, 0.06);
 }
 
-/* =========================
-   NEW: Purchase panel redesign
-   ========================= */
-.kc-purchase {
+/* Page shell */
+.kc-konarcard {
+    width: 100%;
+    background: #fff;
+    color: var(--kc-text);
+}
+
+.kc-konarcard__wrap {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 34px 20px 70px;
+}
+
+/* Premium base */
+.kc-konarcard--premium {
+    background: #ffffff;
+}
+
+/* Hero must float */
+.kc-premHero--clean {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* Centered hero block */
+.kc-premHero__top {
+    text-align: center;
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+/* Crumbs */
+.kc-premHero__crumbs {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 13px;
+    color: rgba(12, 24, 48, 0.55);
+    margin-bottom: 14px;
+}
+
+.kc-konarcard__crumbLink {
+    color: rgba(12, 24, 48, 0.75);
+    text-decoration: none;
+    font-weight: 700;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.kc-konarcard__crumbLink:hover {
+    text-decoration: underline;
+}
+
+.kc-konarcard__crumbSep {
+    opacity: 0.5;
+}
+
+.kc-konarcard__crumbHere {
+    font-weight: 800;
+    color: rgba(12, 24, 48, 0.72);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* Title + badges */
+.kc-premHero__title {
+    margin: 0;
+    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 42px;
+    letter-spacing: -0.04em;
+    line-height: 1.03;
+    color: rgba(12, 24, 48, 0.95);
+}
+
+.kc-premHero__badges {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.kc-premHero__sub {
+    margin: 10px auto 0;
+    max-width: 900px;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(12, 24, 48, 0.68);
+}
+
+/* Pills */
+.kc-konarcard__pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    border: 1px solid rgba(12, 24, 48, 0.12);
+    background: rgba(255, 255, 255, 0.85);
+    white-space: nowrap;
+}
+
+.kc-konarcard__pill--best {
+    border-color: rgba(255, 123, 0, 0.28);
+    background: rgba(255, 123, 0, 0.12);
+    color: #7a3300;
+}
+
+.kc-konarcard__pill--warranty {
+    background: rgba(12, 24, 48, 0.06);
+    color: rgba(12, 24, 48, 0.75);
+}
+
+/* Stage spacing */
+.kc-premStage {
+    margin-top: 18px;
+}
+
+/* ✅ IMPORTANT: extra bottom spacing so the 3D shadow is never clipped/covered */
+.kc-premStage__canvasPad {
+    padding: 18px 0 26px;
+}
+
+/* Controls */
+.kc-premControls {
     margin-top: 14px;
-}
-
-.kc-purchase__grid {
-    display: grid;
-    grid-template-columns: 1.35fr 1fr;
-    gap: 14px;
-}
-
-.kc-purchase__card {
     border-radius: 18px;
     border: 1px solid var(--kc-border-2);
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.82);
     box-shadow: 0 18px 44px rgba(12, 24, 48, 0.05);
-    padding: 16px;
-}
-
-.kc-purchase__head {
+    padding: 14px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
 }
 
-.kc-purchase__title {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 950;
-    font-size: 14px;
-    color: rgba(12, 24, 48, 0.9);
+.kc-premControls__left {
+    display: grid;
+    gap: 2px;
 }
 
-.kc-purchase__sub {
-    margin-top: 2px;
+.kc-premControls__label {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    color: rgba(12, 24, 48, 0.88);
+}
+
+.kc-premControls__sub {
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-weight: 700;
     font-size: 12px;
     color: rgba(12, 24, 48, 0.6);
 }
 
-.kc-purchase__actions {
-    display: inline-flex;
+.kc-premControls__right {
+    display: flex;
     gap: 10px;
+    align-items: center;
     flex-wrap: wrap;
     justify-content: flex-end;
 }
 
-.kc-purchase__sliderRow {
-    margin-top: 12px;
-}
-
-.kc-premSlider--full {
-    width: 100%;
-    justify-content: space-between;
-}
-
-.kc-premSlider--full input[type="range"] {
-    width: min(360px, 48vw);
-}
-
-.kc-miniNote {
-    margin-top: 10px;
+.kc-premBtn {
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(12, 24, 48, 0.14);
+    background: rgba(255, 255, 255, 0.92);
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
     font-size: 12px;
-    font-weight: 700;
-    color: rgba(12, 24, 48, 0.55);
-}
-
-/* Right card purchase layout */
-.kc-purchase__priceRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.kc-purchase__ctaRow {
-    margin-top: 12px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.kc-konarcard__cta--wide {
-    width: 100%;
-}
-
-.kc-badgelist {
-    margin-top: 12px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.kc-badgeMini {
+    color: rgba(12, 24, 48, 0.88);
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
-    padding: 7px 10px;
+    justify-content: center;
+    transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+.kc-premBtn:active {
+    transform: translateY(1px);
+}
+
+.kc-premBtn input {
+    display: none;
+}
+
+.kc-premBtn--ghost {
+    background: rgba(12, 24, 48, 0.05);
+}
+
+.kc-premBtn[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.kc-premSlider {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     border-radius: 999px;
     border: 1px solid rgba(12, 24, 48, 0.12);
-    background: rgba(12, 24, 48, 0.03);
+    background: rgba(255, 255, 255, 0.78);
+    padding: 0 12px;
+}
+
+.kc-premSlider__k {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.72);
+}
+
+.kc-premSlider input[type="range"] {
+    width: 220px;
+    accent-color: var(--kc-orange);
+}
+
+.kc-premSlider__v {
+    width: 44px;
+    text-align: right;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.74);
+}
+
+/* Buy row */
+.kc-premBuy {
+    margin-top: 14px;
+    border-radius: 18px;
+    border: 1px solid var(--kc-border-2);
+    background: #ffffff;
+    box-shadow: 0 18px 44px rgba(12, 24, 48, 0.05);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.kc-premPrice {
+    display: grid;
+    gap: 4px;
+}
+
+.kc-premPrice__value {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 34px;
+    font-weight: 950;
+    letter-spacing: -0.03em;
+    color: rgba(12, 24, 48, 0.95);
+}
+
+.kc-premPrice__note {
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 12px;
     font-weight: 800;
-    color: rgba(12, 24, 48, 0.75);
+    color: rgba(12, 24, 48, 0.6);
 }
 
-/* =========================
-   NEW: “What you get” redesign
-   ========================= */
-.kc-section {
+.kc-premBuy__right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+/* Qty + CTAs */
+.kc-konarcard__qty {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(12, 24, 48, 0.12);
+    border-radius: 999px;
+    overflow: hidden;
+    height: 52px;
+    background: #fff;
+}
+
+.kc-konarcard__qtyBtn {
+    width: 44px;
+    height: 52px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: 900;
+    color: rgba(12, 24, 48, 0.8);
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.kc-konarcard__qtyBtn:hover {
+    background: rgba(12, 24, 48, 0.05);
+}
+
+.kc-konarcard__qtyBtn:active {
+    transform: translateY(1px);
+}
+
+.kc-konarcard__qtyVal {
+    width: 46px;
+    text-align: center;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    color: rgba(12, 24, 48, 0.85);
+}
+
+.kc-konarcard__cta {
+    height: 52px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 18px;
+    text-decoration: none;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    transition: transform 0.1s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    white-space: nowrap;
+}
+
+.kc-konarcard__cta:active {
+    transform: translateY(1px);
+}
+
+.kc-konarcard__cta--primary {
+    background: var(--kc-orange);
+    color: #fff;
+    box-shadow: 0 16px 34px rgba(255, 123, 0, 0.22);
+}
+
+.kc-konarcard__cta--primary:hover {
+    filter: brightness(0.98);
+    box-shadow: 0 20px 44px rgba(255, 123, 0, 0.26);
+}
+
+.kc-konarcard__cta--ghost {
+    background: rgba(255, 255, 255, 0.9);
+    color: rgba(12, 24, 48, 0.9);
+    border: 1px solid rgba(12, 24, 48, 0.14);
+}
+
+/* What you get */
+.kc-konarcard__section {
     margin-top: 34px;
 }
 
-.kc-section__head {
+.kc-konarcard__sectionHead {
     text-align: center;
     max-width: 760px;
     margin: 0 auto 18px;
 }
 
-.kc-featureGrid2 {
+.kc-konarcard__h2 {
+    margin: 0 0 10px;
+    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 38px;
+    letter-spacing: -0.03em;
+}
+
+.kc-konarcard__p {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--kc-muted);
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.kc-konarcard__featureGrid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
     margin-top: 18px;
 }
 
-.kc-feature2 {
+.kc-konarcard__feature {
     background: #fff;
     border: 1px solid rgba(12, 24, 48, 0.1);
-    border-radius: 18px;
+    border-radius: 16px;
     padding: 16px;
     box-shadow: var(--kc-soft);
     display: flex;
@@ -150,56 +411,59 @@
     align-items: flex-start;
 }
 
-.kc-feature2__dot {
-    width: 34px;
-    height: 34px;
-    border-radius: 12px;
+.kc-konarcard__ico {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
     display: grid;
     place-items: center;
     background: rgba(255, 123, 0, 0.12);
     color: rgba(255, 123, 0, 0.95);
-    font-weight: 950;
+    font-weight: 900;
     flex: 0 0 auto;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-.kc-feature2__t {
-    font-weight: 950;
+.kc-konarcard__featureT {
+    font-weight: 900;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     margin-bottom: 6px;
     color: rgba(12, 24, 48, 0.95);
 }
 
-.kc-feature2__s {
+.kc-konarcard__featureS {
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 13px;
     color: rgba(12, 24, 48, 0.7);
     line-height: 1.6;
 }
 
-/* =========================
-   Responsive for new sections
-   ========================= */
+/* Responsive */
 @media (max-width: 1020px) {
-    .kc-purchase__grid {
-        grid-template-columns: 1fr;
-    }
-
-    .kc-featureGrid2 {
+    .kc-konarcard__featureGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 560px) {
-    .kc-purchase__ctaRow {
-        grid-template-columns: 1fr;
+    .kc-premHero__title {
+        font-size: 34px;
     }
 
-    .kc-premSlider--full input[type="range"] {
+    .kc-premSlider input[type="range"] {
         width: 160px;
     }
 
-    .kc-featureGrid2 {
+    .kc-konarcard__h2 {
+        font-size: 30px;
+    }
+
+    .kc-konarcard__featureGrid {
         grid-template-columns: 1fr;
+    }
+
+    .kc-konarcard__qty {
+        justify-content: center;
+        width: 100%;
     }
 }
