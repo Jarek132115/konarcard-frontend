@@ -84,11 +84,7 @@ export default function Products() {
             {
                 tag: "Use it on-site",
                 title: "Tap to swap details on the spot",
-                points: [
-                    "Tap to open your profile instantly",
-                    "Works even when you’re busy on a job",
-                    "No app needed — just tap or scan",
-                ],
+                points: ["Tap to open your profile instantly", "Works even when you’re busy on a job", "No app needed — just tap or scan"],
             },
             {
                 tag: "Win more jobs",
@@ -139,22 +135,10 @@ export default function Products() {
                 q: "Will it work on iPhone and Android?",
                 a: "Yes — KonarCard works on iPhone and Android. Most modern phones support NFC. QR works on any phone with a camera.",
             },
-            {
-                q: "Do customers need an app to tap my card?",
-                a: "No app needed. The tap opens your KonarCard profile instantly in their browser.",
-            },
-            {
-                q: "Can I update my details after ordering?",
-                a: "Yes. Update your profile anytime — changes go live instantly without reprinting anything.",
-            },
-            {
-                q: "What if someone’s phone doesn’t support NFC?",
-                a: "Every card includes a QR code backup, so anyone can scan and view your profile.",
-            },
-            {
-                q: "Can I use one profile on multiple products?",
-                a: "Yes — your card and keytag can link to the same KonarCard profile.",
-            },
+            { q: "Do customers need an app to tap my card?", a: "No app needed. The tap opens your KonarCard profile instantly in their browser." },
+            { q: "Can I update my details after ordering?", a: "Yes. Update your profile anytime — changes go live instantly without reprinting anything." },
+            { q: "What if someone’s phone doesn’t support NFC?", a: "Every card includes a QR code backup, so anyone can scan and view your profile." },
+            { q: "Can I use one profile on multiple products?", a: "Yes — your card and keytag can link to the same KonarCard profile." },
         ],
         []
     );
@@ -165,16 +149,15 @@ export default function Products() {
         <>
             <Navbar />
 
-            {/* ✅ kc-page for consistent top spacing like Pricing */}
-            <main className="kp-page kc-products kc-page">
+            {/* ✅ MUST have kc-page. We also add a CSS fallback on .kc-products in products.css */}
+            <main className="kc-products kc-page kp-page">
                 {/* HERO */}
                 <section className="kp-hero">
                     <div className="kp-container kp-hero__inner">
                         <p className="kp-kicker">Cards that link directly to your KonarCard profile</p>
                         <h1 className="h2 kp-title">Shop KonarCards</h1>
                         <p className="body-s kp-sub">
-                            Physical NFC business cards that open your profile instantly — so customers can save your details and
-                            contact you fast.
+                            Physical NFC business cards that open your profile instantly — so customers can save your details and contact you fast.
                         </p>
                     </div>
                 </section>
@@ -220,9 +203,7 @@ export default function Products() {
                     <div className="kp-container">
                         <div className="kp-sectionHead">
                             <h2 className="h3 kp-h2">Save More With KonarCard Bundles</h2>
-                            <p className="body-s kp-sectionSub">
-                                Everything you need to share your profile everywhere — at a better price.
-                            </p>
+                            <p className="body-s kp-sectionSub">Everything you need to share your profile everywhere — at a better price.</p>
                         </div>
 
                         <div className="kp-bundles">
@@ -263,8 +244,8 @@ export default function Products() {
                         <div className="kp-sectionHead">
                             <h2 className="h3 kp-h2">How you’ll use it in the real world</h2>
                             <p className="body-s kp-sectionSub">
-                                Your KonarCard profile puts your work, reviews and contact details in one place — so customers can see
-                                you’re legit and get in touch fast.
+                                Your KonarCard profile puts your work, reviews and contact details in one place — so customers can see you’re legit and
+                                get in touch fast.
                             </p>
                         </div>
 

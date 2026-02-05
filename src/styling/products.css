@@ -9,9 +9,21 @@
     color: var(--kc-text-primary);
 }
 
+/* ✅ CRITICAL FIX:
+   If for ANY reason .kc-page isn't taking effect (override/order),
+   this guarantees the exact same top spacing token is applied on Products.
+*/
 .kc-products {
     background: var(--kc-bg-main);
     color: var(--kc-text-primary);
+
+    padding-top: var(--kc-page-top-space) !important;
+}
+
+@media (max-width: 600px) {
+    .kc-products {
+        padding-top: var(--kc-page-top-space-mobile) !important;
+    }
 }
 
 .kp-container {
@@ -21,12 +33,11 @@
 }
 
 /* =========================
-   HERO (fix top spacing)
+   HERO
    ========================= */
 .kp-hero {
     padding: 0 0 30px;
 }
-
 
 .kp-hero__inner {
     text-align: center;
@@ -65,7 +76,6 @@
 }
 
 .kp-section--cards {
-    /* ✅ like Pricing plan cards section */
     padding: 18px 0 56px;
 }
 
@@ -166,13 +176,12 @@
     object-position: center;
 }
 
-/* ✅ Tighter + consistent spacing (fix “too big” gaps) */
+/* ✅ Tighter + consistent spacing */
 .kp-card__body {
     padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    /* tighter than before */
 }
 
 .kp-card__name,
@@ -181,7 +190,6 @@
 .kp-price,
 .kp-strike {
     margin: 0;
-    /* prevent random paragraph spacing */
 }
 
 .kp-desc {
@@ -311,7 +319,7 @@
 }
 
 /* =========================
-   FAQ (match Pricing)
+   FAQ
    ========================= */
 .kp-faq {
     padding: 56px 0 88px;
