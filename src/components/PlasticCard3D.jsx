@@ -11,7 +11,6 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44 }) {
         <div className="pc3d">
             <Canvas
                 dpr={[1, 2]}
-                // ✅ slightly further back + centered so it never clips
                 camera={{ position: [0, 0.12, 1.32], fov: 36 }}
                 gl={{
                     antialias: true,
@@ -43,7 +42,7 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44 }) {
 }
 
 /**
- * Drag rotate + slow idle spin (kept like your “good” version)
+ * Drag rotate + slow idle spin
  */
 function CardRig({ children }) {
     const group = useRef();
@@ -67,7 +66,7 @@ function CardRig({ children }) {
 
         if (drag.current.idle) {
             drag.current.t += dt;
-            drag.current.ry += 0.32 * dt; // ✅ slow (DO NOT change)
+            drag.current.ry += 0.32 * dt; // slow spin
             const breathe = Math.sin(drag.current.t * 1.05) * 0.03;
             drag.current.rx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
         }
@@ -127,8 +126,7 @@ function CardRig({ children }) {
 }
 
 /**
- * ✅ SVG-safe texture loader (fixes “logo not showing / black face”)
- * Draws the image to a canvas → CanvasTexture.
+ * SVG-safe texture loader (canvas → CanvasTexture)
  */
 function useCanvasTexture(src) {
     const [out, setOut] = useState({ tex: null, aspect: 1 });
@@ -156,6 +154,7 @@ function useCanvasTexture(src) {
             const canvas = document.createElement("canvas");
             canvas.width = cw;
             canvas.height = ch;
+
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, cw, ch);
             ctx.drawImage(img, 0, 0, cw, ch);
@@ -197,10 +196,10 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
     const w = 0.92;
     const h = w * (54 / 85.6);
 
-    // ✅ thinner plastic feel
+    // thin plastic feel
     const t = 0.010;
 
-    // Rounded body geometry
+    // Card body
     const bodyGeo = useMemo(() => {
         const shape = roundedRectShape(w, h, 0.06);
         const geo = new THREE.ExtrudeGeometry(shape, {
@@ -216,14 +215,21 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
         return geo;
     }, [w, h, t]);
 
-    // Base face planes (pure white)
-    const basePlaneGeo = useMemo(() => new THREE.PlaneGeometry(w * 0.988, h * 0.988), [w, h]);
+    // ✅ Rounded face geometry (THIS REMOVES THE STRAIGHT CORNERS)
+    const faceGeo = useMemo(() => {
+        // tiny inset so it never sticks out past the body bevel
+        const inset = 0.986;
+        const shape = roundedRectShape(w * inset, h * inset, 0.06 * inset);
+        const geo = new THREE.ShapeGeometry(shape, 32);
+        geo.center();
+        return geo;
+    }, [w, h]);
 
-    // ✅ Actual logo / qr textures (SVG-safe)
+    // textures
     const { tex: logoTex, aspect: logoAspect } = useCanvasTexture(logoSrc);
     const { tex: qrTex, aspect: qrAspect } = useCanvasTexture(qrSrc);
 
-    // Materials (keep white, prevent black corner artifacts)
+    // materials
     const edgeMat = useMemo(
         () =>
             new THREE.MeshPhysicalMaterial({
@@ -259,7 +265,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
             alphaTest: 0.05,
             side: THREE.DoubleSide,
         });
-        // ✅ avoid z-fight / dark seams
         m.polygonOffset = true;
         m.polygonOffsetFactor = -3;
         m.polygonOffsetUnits = -3;
@@ -281,13 +286,10 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
         return m;
     }, [qrTex]);
 
-    // ✅ Sizes:
-    // - Logo height = 55% of card height * slider (logoSize)
-    // - QR height  = 45% of card height (fixed)
+    // logo sizing (55% height * slider)
     const logoHeightFracBase = 0.55;
     const qrHeightFrac = 0.45;
 
-    // slider maps 28..70 to 0.7..1.2 feel (stays sane)
     const slider = Math.max(28, Math.min(70, Number(logoSize || 44)));
     const sliderScale = 0.7 + ((slider - 28) / (70 - 28)) * 0.5;
 
@@ -307,15 +309,28 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
         qrH = qrW / (qrAspect || 1);
     }
 
-    const logoPlaneGeo = useMemo(() => new THREE.PlaneGeometry(logoW, logoH), [logoW, logoH]);
-    const qrPlaneGeo = useMemo(() => new THREE.PlaneGeometry(qrW, qrH), [qrW, qrH]);
+    // ✅ decals are also rounded (prevents corner silhouette on overlays)
+    const logoGeo = useMemo(() => {
+        const r = Math.min(logoW, logoH) * 0.12;
+        const s = roundedRectShape(logoW, logoH, r);
+        const g = new THREE.ShapeGeometry(s, 24);
+        g.center();
+        return g;
+    }, [logoW, logoH]);
 
-    // push faces outward a hair
+    const qrGeo = useMemo(() => {
+        const r = Math.min(qrW, qrH) * 0.12;
+        const s = roundedRectShape(qrW, qrH, r);
+        const g = new THREE.ShapeGeometry(s, 24);
+        g.center();
+        return g;
+    }, [qrW, qrH]);
+
+    // z offsets
     const halfT = t / 2;
     const zFront = halfT + 0.0024;
     const zBack = -halfT - 0.0024;
 
-    // decals slightly above base faces
     const zFrontDecal = zFront + 0.0018;
     const zBackDecal = zBack - 0.0018;
 
@@ -324,19 +339,19 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
             {/* Body */}
             <mesh geometry={bodyGeo} material={edgeMat} castShadow receiveShadow />
 
-            {/* Base white faces */}
-            <mesh geometry={basePlaneGeo} material={baseFaceMat} position={[0, 0, zFront]} />
-            <mesh geometry={basePlaneGeo} material={baseFaceMat} position={[0, 0, zBack]} rotation={[0, Math.PI, 0]} />
+            {/* ✅ Rounded white faces (no more straight corners) */}
+            <mesh geometry={faceGeo} material={baseFaceMat} position={[0, 0, zFront]} />
+            <mesh geometry={faceGeo} material={baseFaceMat} position={[0, 0, zBack]} rotation={[0, Math.PI, 0]} />
 
-            {/* Logo decal (front) — centered */}
+            {/* Logo */}
             {logoTex && (
-                <mesh geometry={logoPlaneGeo} material={decalMatLogo} position={[0, 0, zFrontDecal]} castShadow receiveShadow />
+                <mesh geometry={logoGeo} material={decalMatLogo} position={[0, 0, zFrontDecal]} castShadow receiveShadow />
             )}
 
-            {/* QR decal (back) — centered */}
+            {/* QR */}
             {qrTex && (
                 <mesh
-                    geometry={qrPlaneGeo}
+                    geometry={qrGeo}
                     material={decalMatQr}
                     position={[0, 0, zBackDecal]}
                     rotation={[0, Math.PI, 0]}
