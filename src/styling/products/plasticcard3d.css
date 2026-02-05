@@ -3,14 +3,12 @@
 .pc3d {
     width: 100%;
     height: 560px;
-    /* ✅ more headroom so card never crops */
+    /* a bit taller so it never clips */
     cursor: grab;
-
-    /* ✅ IMPORTANT: allow 3D card to render outside box */
     overflow: visible;
-
-    /* small breathing room above/below */
-    padding: 16px 0 18px;
+    /* ✅ make sure nothing gets cut */
+    padding: 80px;
+    /* ✅ breathing room top/bottom */
 }
 
 .pc3d:active {
@@ -26,7 +24,6 @@
 @media (max-width: 560px) {
     .pc3d {
         height: 420px;
-        /* ✅ more room on mobile too */
-        padding: 10px 0 12px;
+        padding: 14px 0;
     }
 }
