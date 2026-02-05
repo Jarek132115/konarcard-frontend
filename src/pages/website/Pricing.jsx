@@ -81,7 +81,7 @@ export default function Pricing() {
     const [subErr, setSubErr] = useState("");
     const [subState, setSubState] = useState(null);
 
-    // ✅ FAQ accordion state
+    // FAQ accordion
     const [openIndex, setOpenIndex] = useState(0);
 
     const navigate = useNavigate();
@@ -295,7 +295,7 @@ export default function Pricing() {
     const getPlanButton = (planName, planKeyForPaid) => {
         const logged = isLoggedIn();
 
-        // ✅ REMOVE “Login required” text completely
+        // ✅ no “login required” text
         if (!logged) {
             if (planName === "free") {
                 return { type: "link", label: "Get started free", to: "/register", disabled: false, helper: "" };
@@ -377,7 +377,6 @@ export default function Pricing() {
         const plusKey = `plus-${billing}`;
         const teamsKey = `teams-${billing}`;
 
-        // ✅ same number of bullets across all 3 cards (6 each)
         return [
             {
                 key: "free",
@@ -434,17 +433,52 @@ export default function Pricing() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [billing, p, currentPlan, isActive, hasFutureAccess, activeUntilLabel, loadingKey, subLoading]);
 
-    const compareRows = useMemo(
+    // ✅ NEW: comparison data based on your exact rules
+    const compareSections = useMemo(
         () => [
-            { f: "Your KonarCard link", free: true, plus: true, teams: true },
-            { f: "Custom branding", free: false, plus: true, teams: true },
-            { f: "Services & pricing section", free: false, plus: true, teams: true },
-            { f: "Photo gallery", free: false, plus: true, teams: true },
-            { f: "Reviews & ratings", free: false, plus: true, teams: true },
-            { f: "Multiple profiles", free: false, plus: false, teams: "Up to 10" },
-            { f: "Centralised branding", free: false, plus: false, teams: true },
-            { f: "Team roles & staff", free: false, plus: false, teams: true },
-            { f: "Priority support", free: false, plus: false, teams: true },
+            {
+                title: "Basics",
+                rows: [
+                    { label: "1 profile + 1 link + 1 QR code", free: true, plus: true, teams: true },
+                    { label: "Fully customise your profile", free: true, plus: true, teams: true },
+                    { label: "Your own KonarCard link", free: true, plus: true, teams: true },
+                    { label: "Your own QR code", free: true, plus: true, teams: true },
+                ],
+            },
+            {
+                title: "Templates & branding",
+                rows: [
+                    { label: "Templates", hint: "Choose a design layout", free: "1 template", plus: "5 templates", teams: "5 templates" },
+                    { label: "Remove KonarCard branding", free: false, plus: true, teams: true },
+                ],
+            },
+            {
+                title: "Content limits",
+                rows: [
+                    { label: "Work photos", hint: "Upload images to your profile", free: "Up to 6", plus: "Up to 12", teams: "Up to 12" },
+                    { label: "Services & prices", free: "Up to 6", plus: "Up to 12", teams: "Up to 12" },
+                    { label: "Reviews", free: "Up to 6", plus: "Up to 12", teams: "Up to 12" },
+                ],
+            },
+            {
+                title: "Analytics",
+                rows: [
+                    { label: "Analytics", free: "Basic", plus: "Deep", teams: "Deep" },
+                ],
+            },
+            {
+                title: "Teams",
+                rows: [
+                    { label: "Add extra profiles", hint: "For staff / team members", free: false, plus: false, teams: true },
+                    {
+                        label: "Extra profile price",
+                        hint: "Monthly add-on per extra profile",
+                        free: "—",
+                        plus: "—",
+                        teams: "£1.95 / extra profile / month",
+                    },
+                ],
+            },
         ],
         []
     );
@@ -529,10 +563,7 @@ export default function Pricing() {
                                             <div className="body-s pr-card__priceSub">{card.sub}</div>
                                         </div>
 
-                                        {/* ✅ divider under price */}
                                         <div className="pr-card__divider" aria-hidden="true" />
-
-                                        {/* ✅ “What’s included” label */}
                                         <div className="pr-card__included">What’s included</div>
 
                                         <ul className="pr-card__list">
@@ -563,7 +594,6 @@ export default function Pricing() {
                                                 </button>
                                             )}
 
-                                            {/* keep helpers for billing actions (but we removed Login required) */}
                                             {btn.helper ? <div className="body-s pr-helper">{btn.helper}</div> : null}
 
                                             {isLoggedIn() && card.key !== "free" && currentPlan !== "free" ? (
@@ -579,7 +609,7 @@ export default function Pricing() {
                     </div>
                 </section>
 
-                {/* COMPARE */}
+                {/* ✅ NEW COMPARE */}
                 <section className="pr-compare">
                     <div className="pr-container">
                         <div className="pr-sectionHead">
@@ -587,54 +617,62 @@ export default function Pricing() {
                             <p className="body-s pr-sectionSub">Clear differences — no fluff. Pick what matches how you work.</p>
                         </div>
 
-                        <div className="pr-tableWrap" role="region" aria-label="Plan comparison table" tabIndex={0}>
-                            <table className="pr-table">
-                                <thead>
-                                    <tr>
-                                        <th className="pr-thFeature">Feature</th>
-                                        <th className="pr-thPlan">Free</th>
-                                        <th className="pr-thPlan pr-thPlus">Plus</th>
-                                        <th className="pr-thPlan">Teams</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {compareRows.map((r) => (
-                                        <tr key={r.f}>
-                                            <td className="pr-tdFeature">{r.f}</td>
+                        <div className="pr-compareWrap" role="region" aria-label="Plan comparison">
+                            {/* Header */}
+                            <div className="pr-compareHeader" aria-hidden="true">
+                                <div className="pr-compareHeader__left">Feature</div>
 
-                                            <td className="pr-tdVal">
-                                                {typeof r.free === "string" ? (
-                                                    <span className="pr-textVal">{r.free}</span>
-                                                ) : r.free ? (
-                                                    <span className="pr-tick">✓</span>
-                                                ) : (
-                                                    <span className="pr-cross">—</span>
-                                                )}
-                                            </td>
+                                <div className="pr-compareHeader__plan">
+                                    <div className="pr-compareHeader__name">Free</div>
+                                    <div className="pr-compareHeader__sub">£0</div>
+                                </div>
 
-                                            <td className="pr-tdVal pr-tdPlus">
-                                                {typeof r.plus === "string" ? (
-                                                    <span className="pr-textVal">{r.plus}</span>
-                                                ) : r.plus ? (
-                                                    <span className="pr-tick">✓</span>
-                                                ) : (
-                                                    <span className="pr-cross">—</span>
-                                                )}
-                                            </td>
+                                <div className="pr-compareHeader__plan pr-compareHeader__plan--plus">
+                                    <div className="pr-compareHeader__name">Plus</div>
+                                    <div className="pr-compareHeader__sub">{billing === "monthly" ? "£4.95/mo" : billing === "quarterly" ? "£13.95/qtr" : "£49.95/yr"}</div>
+                                </div>
 
-                                            <td className="pr-tdVal">
-                                                {typeof r.teams === "string" ? (
-                                                    <span className="pr-textVal">{r.teams}</span>
-                                                ) : r.teams ? (
-                                                    <span className="pr-tick">✓</span>
-                                                ) : (
-                                                    <span className="pr-cross">—</span>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                <div className="pr-compareHeader__plan">
+                                    <div className="pr-compareHeader__name">Teams</div>
+                                    <div className="pr-compareHeader__sub">
+                                        {billing === "monthly" ? "£4.95 + add-ons" : billing === "quarterly" ? "£13.95 + add-ons" : "£49.95 + add-ons"}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Body */}
+                            <div className="pr-compareBody">
+                                {compareSections.map((sec) => (
+                                    <div className="pr-compareSection" key={sec.title}>
+                                        <div className="pr-compareSection__title">{sec.title}</div>
+
+                                        <div className="pr-compareGrid" role="table" aria-label={`${sec.title} comparison`}>
+                                            {sec.rows.map((r) => (
+                                                <div className="pr-compareRow" role="row" key={r.label}>
+                                                    <div className="pr-compareCell pr-compareCell--feature" role="cell">
+                                                        <div className="pr-compareFeat">
+                                                            <div className="pr-compareFeat__label">{r.label}</div>
+                                                            {r.hint ? <div className="pr-compareFeat__hint">{r.hint}</div> : null}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="pr-compareCell pr-compareCell--center" role="cell">
+                                                        <CompareValue v={r.free} />
+                                                    </div>
+
+                                                    <div className="pr-compareCell pr-compareCell--center pr-compareCell--plus" role="cell">
+                                                        <CompareValue v={r.plus} />
+                                                    </div>
+
+                                                    <div className="pr-compareCell pr-compareCell--center" role="cell">
+                                                        <CompareValue v={r.teams} />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="pr-compareCtas">
@@ -670,7 +708,7 @@ export default function Pricing() {
                                     <div className="pr-miniCard__title">Plus</div>
                                     <div className="pr-miniCard__pill">Solo trades</div>
                                 </div>
-                                <p className="body-s pr-miniCard__p">Best for trades who want services, photos, reviews, and a premium presence.</p>
+                                <p className="body-s pr-miniCard__p">Best for trades who want more templates, higher limits, and deeper analytics.</p>
                             </div>
 
                             <div className="pr-miniCard">
@@ -678,13 +716,13 @@ export default function Pricing() {
                                     <div className="pr-miniCard__title">Teams</div>
                                     <div className="pr-miniCard__pill">Growing business</div>
                                 </div>
-                                <p className="body-s pr-miniCard__p">For companies with staff — multiple profiles, central branding, and control.</p>
+                                <p className="body-s pr-miniCard__p">For teams — everything in Plus, with extra profiles available for staff.</p>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* PRICING FAQ */}
+                {/* FAQ */}
                 <section className="pr-faq">
                     <div className="pr-container">
                         <div className="pr-sectionHead">
@@ -721,4 +759,14 @@ export default function Pricing() {
             <Footer />
         </>
     );
+}
+
+function CompareValue({ v }) {
+    const isBool = typeof v === "boolean";
+    if (isBool) {
+        return v ? <span className="pr-cv pr-cv--yes">✓</span> : <span className="pr-cv pr-cv--no">—</span>;
+    }
+    const s = String(v ?? "—");
+    if (!s || s === "—") return <span className="pr-cv pr-cv--no">—</span>;
+    return <span className="pr-cv pr-cv--text">{s}</span>;
 }

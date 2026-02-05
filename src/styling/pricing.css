@@ -127,7 +127,7 @@
 }
 
 /* =========================
-   PLAN CARDS (Droxy-ish)
+   PLAN CARDS
    ========================= */
 .pr-plans {
     padding: 18px 0 56px;
@@ -147,43 +147,18 @@
     box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     padding: 18px;
     position: relative;
-
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    gap: 14px;
-
-    overflow: hidden;
-}
-
-.pr-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(1200px 360px at 50% 0%, rgba(249, 115, 22, 0.08), transparent 60%);
-    opacity: 0.7;
-    pointer-events: none;
+    display: flex;
+    flex-direction: column;
 }
 
 .pr-card.is-featured {
-    border-color: rgba(249, 115, 22, 0.48);
-    box-shadow: 0 18px 44px rgba(249, 115, 22, 0.14);
+    border-color: rgba(249, 115, 22, 0.45);
+    box-shadow: 0 18px 44px rgba(249, 115, 22, 0.12);
+    background: linear-gradient(180deg, rgba(249, 115, 22, 0.06), rgba(255, 255, 255, 1) 55%);
 }
 
-.pr-card.is-featured::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 16px;
-    box-shadow: inset 0 0 0 2px rgba(249, 115, 22, 0.25);
-    pointer-events: none;
-}
-
-.pr-card__top {
-    position: relative;
-    z-index: 1;
-}
-
-.pr-card__nameRow {
+/* top row (title + pill) */
+.pr-card__topRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -195,32 +170,33 @@
     margin: 0;
 }
 
-.pr-tag {
-    font-size: 11px;
-    font-weight: 900;
-    padding: 7px 10px;
+.pr-card__pill {
+    font-size: 12px;
+    font-weight: 800;
+    padding: 8px 12px;
     border-radius: 999px;
-    background: rgba(249, 115, 22, 0.12);
-    border: 1px solid rgba(249, 115, 22, 0.28);
-    color: rgba(122, 51, 0, 0.98);
+    background: var(--kc-bg-soft);
+    border: 1px solid var(--kc-border);
+    color: rgba(15, 23, 42, 0.75);
     white-space: nowrap;
 }
 
-.pr-tag--muted {
-    background: rgba(15, 23, 42, 0.05);
-    border-color: rgba(15, 23, 42, 0.12);
-    color: rgba(15, 23, 42, 0.70);
+.pr-card__pill.is-featured {
+    background: rgba(249, 115, 22, 0.12);
+    border-color: rgba(249, 115, 22, 0.35);
+    color: #7a3300;
 }
 
 .pr-card__priceRow {
     display: grid;
     gap: 2px;
+    margin-bottom: 10px;
 }
 
 .pr-card__price {
     font-family: "Cal Sans", sans-serif;
-    font-size: 38px;
-    line-height: 42px;
+    font-size: 34px;
+    line-height: 38px;
     font-weight: 600;
     color: var(--kc-text-primary);
 }
@@ -229,18 +205,29 @@
     color: var(--kc-text-secondary);
 }
 
-/* Feature list */
+.pr-card__divider {
+    height: 1px;
+    width: 100%;
+    background: rgba(15, 23, 42, 0.10);
+    margin: 12px 0 10px;
+}
+
+.pr-card__included {
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.65);
+    margin-bottom: 10px;
+}
+
 .pr-card__list {
-    position: relative;
-    z-index: 1;
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0 0 18px;
     display: grid;
     gap: 10px;
 }
 
-.pr-li {
+.pr-card__list li {
     display: grid;
     grid-template-columns: 18px 1fr;
     gap: 10px;
@@ -250,7 +237,13 @@
 .pr-check {
     width: 18px;
     height: 18px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: rgba(249, 115, 22, 0.12);
     color: var(--kc-accent-primary);
+    font-weight: 900;
+    font-size: 12px;
     margin-top: 2px;
 }
 
@@ -258,10 +251,8 @@
     color: var(--kc-text-secondary);
 }
 
-/* Actions */
 .pr-card__actions {
-    position: relative;
-    z-index: 1;
+    margin-top: auto;
     display: grid;
     gap: 10px;
 }
@@ -319,6 +310,10 @@
     transform: none;
 }
 
+.pr-btn--inline {
+    min-width: 170px;
+}
+
 .pr-helper {
     color: rgba(15, 23, 42, 0.55);
 }
@@ -338,12 +333,8 @@
 }
 
 /* =========================
-   COMPARE TABLE
+   SECTION HEADS
    ========================= */
-.pr-compare {
-    padding: 56px 0 56px;
-}
-
 .pr-sectionHead {
     text-align: center;
     margin-bottom: 18px;
@@ -359,75 +350,167 @@
     color: var(--kc-text-secondary);
 }
 
-.pr-tableWrap {
+/* =========================
+   ✅ NEW COMPARE GRID
+   ========================= */
+.pr-compare {
+    padding: 56px 0 56px;
+}
+
+.pr-compareWrap {
     margin-top: 18px;
     border: 1px solid var(--kc-border);
-    border-radius: 14px;
-    overflow: hidden;
+    border-radius: 16px;
     background: #fff;
     box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    overflow: hidden;
 }
 
-.pr-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
+/* allow horizontal scroll on small screens */
+.pr-compareWrap {
+    overflow-x: auto;
 }
 
-.pr-table thead th {
-    text-align: left;
-    padding: 14px 14px;
+.pr-compareHeader {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    align-items: stretch;
+
+    min-width: 860px;
     border-bottom: 1px solid var(--kc-border);
     background: rgba(15, 23, 42, 0.02);
-    color: rgba(15, 23, 42, 0.72);
+}
+
+.pr-compareHeader__left {
+    padding: 16px 16px;
+    font-weight: 900;
+    color: rgba(15, 23, 42, 0.78);
+}
+
+.pr-compareHeader__plan {
+    padding: 14px 10px;
+    text-align: center;
+    border-left: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.pr-compareHeader__plan--plus {
+    background: rgba(249, 115, 22, 0.07);
+}
+
+.pr-compareHeader__name {
+    font-weight: 950;
+    color: rgba(15, 23, 42, 0.92);
+}
+
+.pr-compareHeader__sub {
+    margin-top: 4px;
+    font-size: 12px;
     font-weight: 800;
+    color: rgba(15, 23, 42, 0.6);
 }
 
-.pr-thPlus {
-    background: rgba(249, 115, 22, 0.08) !important;
+.pr-compareBody {
+    min-width: 860px;
 }
 
-.pr-table tbody td {
-    padding: 14px 14px;
-    border-bottom: 1px solid var(--kc-border);
-    vertical-align: top;
+.pr-compareSection {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
 }
 
-.pr-table tbody tr:last-child td {
+.pr-compareSection:last-child {
     border-bottom: none;
 }
 
-.pr-tdFeature {
-    color: var(--kc-text-primary);
-    font-weight: 700;
-    width: 46%;
+.pr-compareSection__title {
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: 0.02em;
+    color: rgba(15, 23, 42, 0.68);
+    background: rgba(15, 23, 42, 0.02);
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
 }
 
-.pr-tdVal {
+.pr-compareGrid {
+    display: grid;
+}
+
+.pr-compareRow {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    align-items: stretch;
+}
+
+.pr-compareRow+.pr-compareRow {
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.pr-compareCell {
+    padding: 14px 16px;
+}
+
+.pr-compareCell--feature {
+    padding-right: 18px;
+}
+
+.pr-compareCell--center {
     text-align: center;
-    width: 18%;
-    color: var(--kc-text-secondary);
+    display: grid;
+    place-items: center;
+    border-left: 1px solid rgba(15, 23, 42, 0.06);
 }
 
-.pr-tdPlus {
+.pr-compareCell--plus {
     background: rgba(249, 115, 22, 0.04);
 }
 
-.pr-tick {
-    color: var(--kc-text-primary);
+.pr-compareFeat__label {
+    font-weight: 850;
+    color: rgba(15, 23, 42, 0.92);
+}
+
+.pr-compareFeat__hint {
+    margin-top: 3px;
+    font-size: 12px;
+    font-weight: 650;
+    color: rgba(15, 23, 42, 0.56);
+}
+
+/* Value pills */
+.pr-cv {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
     font-weight: 900;
+    font-size: 12px;
+    letter-spacing: -0.01em;
 }
 
-.pr-cross {
-    color: rgba(15, 23, 42, 0.35);
-    font-weight: 900;
+.pr-cv--yes {
+    width: 28px;
+    padding: 0;
+    border-radius: 999px;
+    background: rgba(249, 115, 22, 0.12);
+    color: var(--kc-accent-primary);
 }
 
-.pr-textVal {
-    color: var(--kc-text-secondary);
-    font-weight: 700;
+.pr-cv--no {
+    width: 28px;
+    padding: 0;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.06);
+    color: rgba(15, 23, 42, 0.45);
 }
 
+.pr-cv--text {
+    background: rgba(15, 23, 42, 0.05);
+    color: rgba(15, 23, 42, 0.75);
+}
+
+/* Compare CTAs */
 .pr-compareCtas {
     margin-top: 18px;
     display: flex;
@@ -436,12 +519,65 @@
     flex-wrap: wrap;
 }
 
-.pr-btn--inline {
-    min-width: 170px;
+/* =========================
+   WHO EACH PLAN IS FOR
+   ========================= */
+.pr-who {
+    padding: 56px 0 72px;
+}
+
+.pr-3col {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.pr-miniCard {
+    border: 1px solid var(--kc-border);
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    padding: 16px;
+}
+
+.pr-miniCard.is-accent {
+    border-color: rgba(249, 115, 22, 0.35);
+    box-shadow: 0 18px 44px rgba(249, 115, 22, 0.10);
+}
+
+.pr-miniCard__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.pr-miniCard__title {
+    font-family: "Cal Sans", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--kc-text-primary);
+}
+
+.pr-miniCard__pill {
+    font-size: 12px;
+    font-weight: 800;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: var(--kc-bg-soft);
+    border: 1px solid var(--kc-border);
+    color: rgba(15, 23, 42, 0.75);
+}
+
+.pr-miniCard__p {
+    margin: 0;
+    color: var(--kc-text-secondary);
 }
 
 /* =========================
-   FAQ (Accordion)
+   FAQ
    ========================= */
 .pr-faq {
     padding: 56px 0 88px;
@@ -513,6 +649,13 @@
         margin: 0 auto;
     }
 
+    .pr-3col {
+        grid-template-columns: 1fr;
+        max-width: 760px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
     .pr-qRow {
         padding: 16px 0;
     }
@@ -520,156 +663,11 @@
     .pr-a {
         padding-bottom: 16px;
     }
-
-    .pr-tdFeature {
-        width: auto;
-    }
 }
-
 
 @media (max-width: 640px) {
     .pr-card__price {
         font-size: 34px;
         line-height: 38px;
     }
-
-    .pr-table thead th,
-    .pr-table tbody td {
-        padding: 12px 12px;
-    }
-}
-
-/* =========================
-   PLAN CARDS
-   ========================= */
-.pr-plans {
-    padding: 24px 0 56px;
-}
-
-.pr-plans__grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-    align-items: stretch;
-}
-
-.pr-card {
-    border: 1px solid var(--kc-border);
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
-    padding: 18px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
-.pr-card.is-featured {
-    border-color: rgba(249, 115, 22, 0.45);
-    box-shadow: 0 18px 44px rgba(249, 115, 22, 0.12);
-    background: linear-gradient(180deg, rgba(249, 115, 22, 0.06), rgba(255, 255, 255, 1) 55%);
-}
-
-/* top row (title + pill like droxy) */
-.pr-card__topRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.pr-card__title {
-    margin: 0;
-}
-
-.pr-card__pill {
-    font-size: 12px;
-    font-weight: 800;
-    padding: 8px 12px;
-    border-radius: 999px;
-    background: var(--kc-bg-soft);
-    border: 1px solid var(--kc-border);
-    color: rgba(15, 23, 42, 0.75);
-    white-space: nowrap;
-}
-
-.pr-card__pill.is-featured {
-    background: rgba(249, 115, 22, 0.12);
-    border-color: rgba(249, 115, 22, 0.35);
-    color: #7a3300;
-}
-
-.pr-card__priceRow {
-    display: grid;
-    gap: 2px;
-    margin-bottom: 10px;
-}
-
-.pr-card__price {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 34px;
-    line-height: 38px;
-    font-weight: 600;
-    color: var(--kc-text-primary);
-}
-
-.pr-card__priceSub {
-    color: var(--kc-text-secondary);
-}
-
-/* ✅ divider under the price */
-.pr-card__divider {
-    height: 1px;
-    width: 100%;
-    background: rgba(15, 23, 42, 0.10);
-    margin: 12px 0 10px;
-}
-
-/* ✅ “What’s included” */
-.pr-card__included {
-    font-size: 12px;
-    font-weight: 800;
-    color: rgba(15, 23, 42, 0.65);
-    margin-bottom: 10px;
-    text-transform: none;
-}
-
-/* list */
-.pr-card__list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 18px;
-    display: grid;
-    gap: 10px;
-}
-
-.pr-card__list li {
-    display: grid;
-    grid-template-columns: 18px 1fr;
-    gap: 10px;
-    align-items: start;
-}
-
-.pr-check {
-    width: 18px;
-    height: 18px;
-    border-radius: 999px;
-    display: grid;
-    place-items: center;
-    background: rgba(249, 115, 22, 0.12);
-    color: var(--kc-accent-primary);
-    font-weight: 900;
-    font-size: 12px;
-    margin-top: 2px;
-}
-
-.pr-liText {
-    color: var(--kc-text-secondary);
-}
-
-.pr-card__actions {
-    margin-top: auto;
-    display: grid;
-    gap: 10px;
 }
