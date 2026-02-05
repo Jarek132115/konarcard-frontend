@@ -29,7 +29,6 @@
 .kc-konarcard__wrap {
     max-width: 1140px;
     margin: 0 auto;
-    padding: 34px 20px 70px;
 }
 
 /* ✅ We now use .kc-page for the navbar gap, so NO extra top padding here */
