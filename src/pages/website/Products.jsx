@@ -63,7 +63,7 @@ export default function Products() {
                 was: "£49.97",
                 to: "/products/plastic-bundle",
                 cta: "View Plastic Bundle",
-                img: PlasticCardImg, // ✅ same plastic image
+                img: PlasticCardImg,
             },
             {
                 tag: "Premium bundle",
@@ -73,7 +73,7 @@ export default function Products() {
                 was: "£69.97",
                 to: "/products/metal-bundle",
                 cta: "View Metal Bundle",
-                img: MetalCardImg, // ✅ same metal image
+                img: MetalCardImg,
             },
         ],
         []
@@ -133,27 +133,6 @@ export default function Products() {
         []
     );
 
-    const chooseCards = useMemo(
-        () => [
-            {
-                title: "Metal cards",
-                desc: "Best if you want a premium feel and strong first impressions.",
-                img: MetalCardImg,
-            },
-            {
-                title: "Plastic cards",
-                desc: "Lightweight, affordable, and perfect for everyday use.",
-                img: PlasticCardImg,
-            },
-            {
-                title: "Custom logo cards",
-                desc: "Ideal for established businesses that want branded cards.",
-                img: PlasticCardImg, // placeholder (swap later)
-            },
-        ],
-        []
-    );
-
     const productFaqs = useMemo(
         () => [
             {
@@ -186,9 +165,9 @@ export default function Products() {
         <>
             <Navbar />
 
-            {/* ✅ Use kc-page like Pricing for consistent top spacing under navbar */}
-            <main className="kc-products kc-page">
-                {/* HERO (no perks grid) */}
+            {/* ✅ kc-page for consistent top spacing like Pricing */}
+            <main className="kp-page kc-products kc-page">
+                {/* HERO */}
                 <section className="kp-hero">
                     <div className="kp-container kp-hero__inner">
                         <p className="kp-kicker">Cards that link directly to your KonarCard profile</p>
@@ -201,7 +180,7 @@ export default function Products() {
                 </section>
 
                 {/* PRODUCTS */}
-                <section className="kp-section">
+                <section className="kp-section kp-section--cards">
                     <div className="kp-container">
                         <div className="kp-grid">
                             {products.map((item) => (
@@ -210,20 +189,19 @@ export default function Products() {
                                         <span className="kp-pill">{item.tag}</span>
                                     </div>
 
-                                    {/* ✅ 1:1 media, cover */}
                                     <div className="kp-media" aria-hidden="true">
                                         <img src={item.img} alt="" className="kp-media__img" loading="lazy" />
                                     </div>
 
                                     <div className="kp-card__body">
                                         <p className="h6 kp-card__name">{item.name}</p>
-                                        <p className="body-s kp-muted">{item.desc}</p>
+                                        <p className="body-s kp-desc">{item.desc}</p>
 
                                         <div className="kp-priceRow">
                                             <p className="h6 kp-price">{item.price}</p>
                                         </div>
 
-                                        <p className="body-s kp-muted">{item.sub}</p>
+                                        <p className="body-s kp-subline">{item.sub}</p>
 
                                         <div className="kp-actions">
                                             <Link to={item.to} className="kp-btn">
@@ -254,14 +232,13 @@ export default function Products() {
                                         <span className="kp-pill">{b.tag}</span>
                                     </div>
 
-                                    {/* ✅ 1:1 media, cover */}
                                     <div className="kp-media" aria-hidden="true">
                                         <img src={b.img} alt="" className="kp-media__img" loading="lazy" />
                                     </div>
 
                                     <div className="kp-card__body">
                                         <p className="h6 kp-card__name">{b.name}</p>
-                                        <p className="body-s kp-muted">{b.desc}</p>
+                                        <p className="body-s kp-desc">{b.desc}</p>
 
                                         <div className="kp-bundlePrice">
                                             <p className="h6 kp-price">{b.price}</p>
@@ -311,40 +288,15 @@ export default function Products() {
                             {realWorldGrid.map((g) => (
                                 <div key={g.title} className="kp-realCard">
                                     <div className="kp-miniIcon" aria-hidden="true" />
-                                    <p className="h6">{g.title}</p>
-                                    <p className="body-s kp-muted">{g.desc}</p>
+                                    <p className="h6 kp-realTitle">{g.title}</p>
+                                    <p className="body-s kp-muted kp-realDesc">{g.desc}</p>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </section>
 
-                {/* CHOOSE */}
-                <section className="kp-section kp-section--spaced kp-section--bottom">
-                    <div className="kp-container">
-                        <div className="kp-sectionHead">
-                            <h2 className="h3 kp-h2">Not sure which card to choose?</h2>
-                            <p className="body-s kp-sectionSub">
-                                Pick the card that fits how you work — all cards link to the same powerful profile.
-                            </p>
-                        </div>
-
-                        <div className="kp-grid">
-                            {chooseCards.map((c) => (
-                                <article key={c.title} className="kp-card">
-                                    <div className="kp-media" aria-hidden="true">
-                                        <img src={c.img} alt="" className="kp-media__img" loading="lazy" />
-                                    </div>
-
-                                    <div className="kp-card__body">
-                                        <p className="h6 kp-card__name">{c.title}</p>
-                                        <p className="body-s kp-muted">{c.desc}</p>
-                                    </div>
-                                </article>
-                            ))}
-                        </div>
-                    </div>
-                </section>
+                {/* ✅ REMOVED: “Not sure which card to choose?” section */}
 
                 {/* FAQ */}
                 <section className="kp-faq">

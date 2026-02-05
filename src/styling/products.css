@@ -4,6 +4,11 @@
    PRODUCTS — Match Pricing spacing/tokens (Droxy-ish)
    ========================================================= */
 
+.kp-page {
+    background: var(--kc-bg-main);
+    color: var(--kc-text-primary);
+}
+
 .kc-products {
     background: var(--kc-bg-main);
     color: var(--kc-text-primary);
@@ -16,11 +21,11 @@
 }
 
 /* =========================
-   HERO (match Pricing)
+   HERO (fix top spacing)
    ========================= */
 .kp-hero {
-    padding: 0 0 30px;
-    /* kc-page handles top spacing under navbar */
+    /* ✅ Pricing-like breathing room under navbar */
+    padding: 18px 0 30px;
 }
 
 .kp-hero__inner {
@@ -59,12 +64,13 @@
     padding: 18px 0 0;
 }
 
-.kp-section--spaced {
-    padding-top: 56px;
+.kp-section--cards {
+    /* ✅ like Pricing plan cards section */
+    padding: 18px 0 56px;
 }
 
-.kp-section--bottom {
-    padding-bottom: 72px;
+.kp-section--spaced {
+    padding-top: 56px;
 }
 
 .kp-sectionHead {
@@ -87,7 +93,7 @@
 }
 
 /* =========================
-   GRID + CARDS (match Pricing cards)
+   GRID + CARDS
    ========================= */
 .kp-grid {
     display: grid;
@@ -115,7 +121,7 @@
 }
 
 .kp-card__topRow {
-    padding: 16px 16px 12px;
+    padding: 14px 16px 10px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -157,27 +163,37 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* ✅ fill, not fit */
     object-position: center;
 }
 
+/* ✅ Tighter + consistent spacing (fix “too big” gaps) */
 .kp-card__body {
     padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    /* tighter than before */
 }
 
-.kp-card__name {
+.kp-card__name,
+.kp-desc,
+.kp-subline,
+.kp-price,
+.kp-strike {
     margin: 0;
+    /* prevent random paragraph spacing */
+}
+
+.kp-desc {
+    color: var(--kc-text-secondary);
+}
+
+.kp-subline {
+    color: rgba(15, 23, 42, 0.58);
 }
 
 .kp-priceRow {
     margin-top: 2px;
-}
-
-.kp-price {
-    margin: 0;
 }
 
 .kp-bundlePrice {
@@ -192,7 +208,7 @@
 }
 
 .kp-actions {
-    margin-top: 8px;
+    margin-top: 10px;
 }
 
 /* Button (match Pricing primary) */
@@ -284,6 +300,14 @@
     background: rgba(249, 115, 22, 0.15);
     border-radius: 8px;
     margin-bottom: 12px;
+}
+
+.kp-realTitle {
+    margin: 0;
+}
+
+.kp-realDesc {
+    margin: 6px 0 0;
 }
 
 /* =========================
