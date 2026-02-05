@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
-import PlasticCard3D from "./PlasticCard3D";
+import PlasticCard3D from "../../../components/PlasticCard3D";
 
 /* ✅ Page CSS */
 import "../../../styling/products/konarcard.css";
