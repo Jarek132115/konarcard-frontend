@@ -74,6 +74,14 @@ function planRank(plan) {
     return 0;
 }
 
+function CheckIcon() {
+    return (
+        <svg className="pr-check" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
 export default function Pricing() {
     const [billing, setBilling] = useState("monthly"); // monthly | quarterly | yearly
     const [loadingKey, setLoadingKey] = useState(null);
@@ -81,7 +89,7 @@ export default function Pricing() {
     const [subErr, setSubErr] = useState("");
     const [subState, setSubState] = useState(null);
 
-    // ✅ FAQ accordion state (same as FAQ/Contact)
+    // ✅ FAQ accordion state
     const [openIndex, setOpenIndex] = useState(0);
 
     const navigate = useNavigate();
@@ -376,6 +384,7 @@ export default function Pricing() {
         const plusKey = `plus-${billing}`;
         const teamsKey = `teams-${billing}`;
 
+        // ✅ Make bullet count consistent (5 each)
         return [
             {
                 key: "free",
@@ -383,25 +392,43 @@ export default function Pricing() {
                 price: p.free.price,
                 sub: p.free.sub,
                 featured: false,
-                highlights: ["Claim your unique KonarCard link", "Basic profile & contact buttons", "QR code sharing", "Works on iPhone & Android"],
+                highlights: [
+                    "Claim your unique KonarCard link",
+                    "Basic profile & contact buttons",
+                    "QR code sharing",
+                    "Works on iPhone & Android",
+                    "Unlimited link updates",
+                ],
                 button: getPlanButton("free"),
             },
             {
                 key: "plus",
-                title: "Plus Plan",
+                title: "Plus",
                 price: p.plus.price,
                 sub: p.plus.sub,
                 featured: true,
-                highlights: ["Full profile customisation", "Services & pricing sections", "Photo gallery", "Reviews & ratings", "Unlimited edits"],
+                highlights: [
+                    "Full profile customisation",
+                    "Services & pricing sections",
+                    "Photo gallery",
+                    "Reviews & ratings",
+                    "Unlimited edits",
+                ],
                 button: getPlanButton("plus", plusKey),
             },
             {
                 key: "teams",
-                title: "Teams Plan",
+                title: "Teams",
                 price: p.teams.price,
                 sub: p.teams.sub,
                 featured: false,
-                highlights: ["Multiple team profiles", "Role & staff management", "Centralised branding", "Built for growing businesses"],
+                highlights: [
+                    "Multiple team profiles",
+                    "Role & staff management",
+                    "Centralised branding",
+                    "Priority support",
+                    "Built for growing businesses",
+                ],
                 button: getPlanButton("teams", teamsKey),
             },
         ];
@@ -444,12 +471,12 @@ export default function Pricing() {
                         <p className="pr-kicker">Start free • Upgrade when it’s worth it</p>
 
                         <h1 className="h2 pr-title">
-                            Simple pricing that pays <br />
-                            for itself
+                            Plans & pricing built <br />
+                            for real trades
                         </h1>
 
                         <p className="body-s pr-sub">
-                            Designed for real trades. One job covers the cost. Cancel anytime — no stress.
+                            Clean plans. Clear value. Cancel anytime — no stress.
                         </p>
 
                         {isLoggedIn() && (
@@ -485,7 +512,7 @@ export default function Pricing() {
                     </div>
                 </section>
 
-                {/* PLAN CARDS */}
+                {/* PLANS */}
                 <section className="pr-plans">
                     <div className="pr-container">
                         <div className="pr-plans__grid">
@@ -495,21 +522,22 @@ export default function Pricing() {
 
                                 return (
                                     <article key={card.key} className={`pr-card ${isFeatured ? "is-featured" : ""}`}>
-                                        {isFeatured ? <div className="pr-card__tag">Most popular</div> : null}
+                                        <div className="pr-card__top">
+                                            <div className="pr-card__nameRow">
+                                                <h3 className="h5 pr-card__title">{card.title}</h3>
+                                                {isFeatured ? <span className="pr-tag">Most popular</span> : <span className="pr-tag pr-tag--muted">Best for {card.key === "free" ? "starting out" : "teams"}</span>}
+                                            </div>
 
-                                        <div className="pr-card__head">
-                                            <h3 className="h5 pr-card__title">{card.title}</h3>
+                                            <div className="pr-card__priceRow">
+                                                <div className="pr-card__price">{card.price}</div>
+                                                <div className="body-s pr-card__priceSub">{card.sub}</div>
+                                            </div>
                                         </div>
 
-                                        <div className="pr-card__priceRow">
-                                            <div className="pr-card__price">{card.price}</div>
-                                            <div className="body-s pr-card__priceSub">{card.sub}</div>
-                                        </div>
-
-                                        <ul className="pr-card__list">
+                                        <ul className="pr-card__list" aria-label={`${card.title} features`}>
                                             {card.highlights.map((h) => (
-                                                <li key={h}>
-                                                    <span className="pr-dot" aria-hidden="true" />
+                                                <li key={h} className="pr-li">
+                                                    <CheckIcon />
                                                     <span className="body-s pr-liText">{h}</span>
                                                 </li>
                                             ))}
@@ -616,49 +644,7 @@ export default function Pricing() {
                     </div>
                 </section>
 
-                {/* WHO */}
-                <section className="pr-who">
-                    <div className="pr-container">
-                        <div className="pr-sectionHead">
-                            <h2 className="h3 pr-h2">Who each plan is for</h2>
-                            <p className="body-s pr-sectionSub">Pick the plan that fits your day-to-day.</p>
-                        </div>
-
-                        <div className="pr-3col">
-                            <div className="pr-miniCard">
-                                <div className="pr-miniCard__top">
-                                    <div className="pr-miniCard__title">Free</div>
-                                    <div className="pr-miniCard__pill">Trying it out</div>
-                                </div>
-                                <p className="body-s pr-miniCard__p">
-                                    Perfect if you just want your link, contact buttons, and a clean profile.
-                                </p>
-                            </div>
-
-                            <div className="pr-miniCard is-accent">
-                                <div className="pr-miniCard__top">
-                                    <div className="pr-miniCard__title">Plus</div>
-                                    <div className="pr-miniCard__pill">Solo trades</div>
-                                </div>
-                                <p className="body-s pr-miniCard__p">
-                                    Best for trades who want services, photos, reviews, and a premium presence.
-                                </p>
-                            </div>
-
-                            <div className="pr-miniCard">
-                                <div className="pr-miniCard__top">
-                                    <div className="pr-miniCard__title">Teams</div>
-                                    <div className="pr-miniCard__pill">Growing business</div>
-                                </div>
-                                <p className="body-s pr-miniCard__p">
-                                    For companies with staff — multiple profiles, central branding, and control.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* ✅ PRICING FAQ (Accordion like FAQ/Contact) */}
+                {/* FAQ */}
                 <section className="pr-faq">
                     <div className="pr-container">
                         <div className="pr-sectionHead">

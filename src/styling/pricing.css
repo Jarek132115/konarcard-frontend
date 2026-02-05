@@ -1,8 +1,7 @@
 /* frontend/src/styling/pricing.css */
 
 /* =========================================================
-   PRICING — Match FAQ / Examples / Blog
-   Tokens + fonts.css
+   PRICING — Droxy-like layout, Konar tokens preserved
    ========================================================= */
 
 .pr-page {
@@ -20,8 +19,7 @@
    HERO
    ========================= */
 .pr-hero {
-    padding: 0 0 32px;
-    /* kc-page provides top spacing */
+    padding: 0 0 30px;
 }
 
 .pr-hero__inner {
@@ -49,7 +47,7 @@
 
 .pr-sub {
     margin: 0 auto;
-    max-width: 720px;
+    max-width: 760px;
     color: var(--kc-text-secondary);
 }
 
@@ -69,24 +67,25 @@
     font-size: 13px;
 }
 
-/* Billing pills (same as FAQ/Examples) */
+/* Billing pills */
 .pr-billing {
     margin-top: 22px;
 }
 
 .pr-billing__tabs {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    display: inline-flex;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 999px;
+    border: 1px solid var(--kc-border);
+    background: rgba(255, 255, 255, 0.75);
 }
 
 .pr-pill {
     appearance: none;
-    background: #ffffff;
+    background: transparent;
     color: var(--kc-text-primary);
-
-    border: 1px solid rgba(15, 23, 42, 0.30);
+    border: 1px solid transparent;
     border-radius: 999px;
 
     padding: 8px 14px;
@@ -94,16 +93,16 @@
 
     font-family: "Inter", sans-serif;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1;
 
     cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease,
-        color 0.15s ease, transform 0.08s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.08s ease;
 }
 
 .pr-pill:hover {
-    border-color: rgba(15, 23, 42, 0.48);
+    border-color: rgba(15, 23, 42, 0.18);
+    background: rgba(255, 255, 255, 0.85);
 }
 
 .pr-pill:active {
@@ -128,10 +127,10 @@
 }
 
 /* =========================
-   PLAN CARDS
+   PLAN CARDS (Droxy-ish)
    ========================= */
 .pr-plans {
-    padding: 24px 0 56px;
+    padding: 18px 0 56px;
 }
 
 .pr-plans__grid {
@@ -144,48 +143,84 @@
 .pr-card {
     border: 1px solid var(--kc-border);
     background: #fff;
-    border-radius: 14px;
+    border-radius: 16px;
     box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     padding: 18px;
     position: relative;
+
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 14px;
+
+    overflow: hidden;
+}
+
+.pr-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(1200px 360px at 50% 0%, rgba(249, 115, 22, 0.08), transparent 60%);
+    opacity: 0.7;
+    pointer-events: none;
 }
 
 .pr-card.is-featured {
-    border-color: rgba(249, 115, 22, 0.45);
-    box-shadow: 0 18px 44px rgba(249, 115, 22, 0.12);
+    border-color: rgba(249, 115, 22, 0.48);
+    box-shadow: 0 18px 44px rgba(249, 115, 22, 0.14);
 }
 
-.pr-card__tag {
+.pr-card.is-featured::after {
+    content: "";
     position: absolute;
-    top: 14px;
-    right: 14px;
-    font-size: 12px;
-    font-weight: 800;
-    color: #fff;
-    background: var(--kc-accent-primary);
-    padding: 8px 12px;
-    border-radius: 999px;
-    box-shadow: 0 10px 22px rgba(249, 115, 22, 0.18);
+    inset: 0;
+    border-radius: 16px;
+    box-shadow: inset 0 0 0 2px rgba(249, 115, 22, 0.25);
+    pointer-events: none;
 }
 
-.pr-card__head {
-    padding-top: 4px;
+.pr-card__top {
+    position: relative;
+    z-index: 1;
+}
+
+.pr-card__nameRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
 .pr-card__title {
-    margin: 0 0 10px;
+    margin: 0;
+}
+
+.pr-tag {
+    font-size: 11px;
+    font-weight: 900;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(249, 115, 22, 0.12);
+    border: 1px solid rgba(249, 115, 22, 0.28);
+    color: rgba(122, 51, 0, 0.98);
+    white-space: nowrap;
+}
+
+.pr-tag--muted {
+    background: rgba(15, 23, 42, 0.05);
+    border-color: rgba(15, 23, 42, 0.12);
+    color: rgba(15, 23, 42, 0.70);
 }
 
 .pr-card__priceRow {
     display: grid;
     gap: 2px;
-    margin-bottom: 14px;
 }
 
 .pr-card__price {
     font-family: "Cal Sans", sans-serif;
-    font-size: 34px;
-    line-height: 38px;
+    font-size: 38px;
+    line-height: 42px;
     font-weight: 600;
     color: var(--kc-text-primary);
 }
@@ -194,40 +229,44 @@
     color: var(--kc-text-secondary);
 }
 
+/* Feature list */
 .pr-card__list {
+    position: relative;
+    z-index: 1;
     list-style: none;
     padding: 0;
-    margin: 0 0 18px;
+    margin: 0;
     display: grid;
     gap: 10px;
 }
 
-.pr-card__list li {
+.pr-li {
     display: grid;
-    grid-template-columns: 10px 1fr;
+    grid-template-columns: 18px 1fr;
     gap: 10px;
     align-items: start;
 }
 
-.pr-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: var(--kc-accent-primary);
-    margin-top: 7px;
+.pr-check {
+    width: 18px;
+    height: 18px;
+    color: var(--kc-accent-primary);
+    margin-top: 2px;
 }
 
 .pr-liText {
     color: var(--kc-text-secondary);
 }
 
+/* Actions */
 .pr-card__actions {
-    margin-top: auto;
+    position: relative;
+    z-index: 1;
     display: grid;
     gap: 10px;
 }
 
-/* Buttons (same “feel” as FAQ buttons) */
+/* Buttons */
 .pr-btn {
     display: inline-flex;
     align-items: center;
@@ -245,8 +284,7 @@
     font-weight: 600;
     letter-spacing: 0.4px;
 
-    transition: transform 0.08s ease, filter 0.15s ease,
-        box-shadow 0.15s ease, border-color 0.15s ease;
+    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .pr-btn:active {
@@ -403,64 +441,7 @@
 }
 
 /* =========================
-   WHO EACH PLAN IS FOR
-   ========================= */
-.pr-who {
-    padding: 56px 0 72px;
-}
-
-.pr-3col {
-    margin-top: 18px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-}
-
-.pr-miniCard {
-    border: 1px solid var(--kc-border);
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
-    padding: 16px;
-}
-
-.pr-miniCard.is-accent {
-    border-color: rgba(249, 115, 22, 0.35);
-    box-shadow: 0 18px 44px rgba(249, 115, 22, 0.10);
-}
-
-.pr-miniCard__top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.pr-miniCard__title {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--kc-text-primary);
-}
-
-.pr-miniCard__pill {
-    font-size: 12px;
-    font-weight: 800;
-    padding: 8px 12px;
-    border-radius: 999px;
-    background: var(--kc-bg-soft);
-    border: 1px solid var(--kc-border);
-    color: rgba(15, 23, 42, 0.75);
-}
-
-.pr-miniCard__p {
-    margin: 0;
-    color: var(--kc-text-secondary);
-}
-
-/* =========================
-   FAQ (Accordion like FAQ/Contact)
+   FAQ (Accordion)
    ========================= */
 .pr-faq {
     padding: 56px 0 88px;
@@ -483,7 +464,7 @@
     width: 100%;
     text-align: left;
 
-    padding: 24px 0;
+    padding: 22px 0;
     background: transparent;
     border: none;
 
@@ -517,21 +498,10 @@
 }
 
 .pr-a {
-    padding: 0 0 24px 0;
+    padding: 0 0 22px 0;
     color: var(--kc-text-secondary);
     max-width: 860px;
 }
-
-@media (max-width: 980px) {
-    .pr-qRow {
-        padding: 16px 0;
-    }
-
-    .pr-a {
-        padding-bottom: 16px;
-    }
-}
-
 
 /* =========================
    RESPONSIVE
@@ -539,15 +509,16 @@
 @media (max-width: 980px) {
     .pr-plans__grid {
         grid-template-columns: 1fr;
-        max-width: 520px;
+        max-width: 560px;
         margin: 0 auto;
     }
 
-    .pr-3col {
-        grid-template-columns: 1fr;
-        max-width: 760px;
-        margin-left: auto;
-        margin-right: auto;
+    .pr-qRow {
+        padding: 16px 0;
+    }
+
+    .pr-a {
+        padding-bottom: 16px;
     }
 
     .pr-tdFeature {
@@ -557,8 +528,8 @@
 
 @media (max-width: 640px) {
     .pr-card__price {
-        font-size: 32px;
-        line-height: 36px;
+        font-size: 34px;
+        line-height: 38px;
     }
 
     .pr-table thead th,
