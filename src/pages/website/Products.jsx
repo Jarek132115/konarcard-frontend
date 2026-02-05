@@ -24,7 +24,6 @@ export default function Products() {
                 name: "KonarCard — Plastic Edition",
                 desc: "Durable, lightweight NFC business card for everyday use.",
                 price: "£29.99",
-                sub: "Includes NFC + QR and your live KonarCard profile.",
                 to: "/products/plastic-card",
                 cta: "View Plastic Card",
                 img: PlasticCardImg,
@@ -34,7 +33,6 @@ export default function Products() {
                 name: "KonarCard — Metal Edition",
                 desc: "Premium metal NFC card designed to make a strong first impression.",
                 price: "£44.99",
-                sub: "Premium finish, durable build, NFC + QR included.",
                 to: "/products/metal-card",
                 cta: "View Metal Card",
                 img: MetalCardImg,
@@ -44,7 +42,6 @@ export default function Products() {
                 name: "KonarTag",
                 desc: "Compact NFC key tag that shares your profile with a tap.",
                 price: "£9.99",
-                sub: "Same KonarCard link — always on you.",
                 to: "/products/konartag",
                 cta: "View KonarTag",
                 img: KonarTagImg,
@@ -149,7 +146,6 @@ export default function Products() {
         <>
             <Navbar />
 
-            {/* ✅ MUST have kc-page. We also add a CSS fallback on .kc-products in products.css */}
             <main className="kc-products kc-page kp-page">
                 {/* HERO */}
                 <section className="kp-hero">
@@ -176,6 +172,7 @@ export default function Products() {
                                         <img src={item.img} alt="" className="kp-media__img" loading="lazy" />
                                     </div>
 
+                                    {/* ✅ Only: name + desc + price (removed the extra line under price) */}
                                     <div className="kp-card__body">
                                         <p className="h6 kp-card__name">{item.name}</p>
                                         <p className="body-s kp-desc">{item.desc}</p>
@@ -183,8 +180,6 @@ export default function Products() {
                                         <div className="kp-priceRow">
                                             <p className="h6 kp-price">{item.price}</p>
                                         </div>
-
-                                        <p className="body-s kp-subline">{item.sub}</p>
 
                                         <div className="kp-actions">
                                             <Link to={item.to} className="kp-btn">
@@ -276,8 +271,6 @@ export default function Products() {
                         </div>
                     </div>
                 </section>
-
-                {/* ✅ REMOVED: “Not sure which card to choose?” section */}
 
                 {/* FAQ */}
                 <section className="kp-faq">
