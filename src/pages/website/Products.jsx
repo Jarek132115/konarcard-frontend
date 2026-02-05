@@ -1,4 +1,3 @@
-// frontend/src/pages/website/Products.jsx
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -11,46 +10,47 @@ import "../../styling/fonts.css";
 /* Page CSS */
 import "../../styling/products.css";
 
-export default function Products() {
-    const topPerks = useMemo(
-        () => [
-            { title: "One link for everything", desc: "Details, photos, prices and contact options in one place." },
-            { title: "Easy to update anytime", desc: "Change your details instantly without reprinting cards." },
-            { title: "Share by tap or QR", desc: "Works in person, online and anywhere in between." },
-            { title: "Built for real trades", desc: "Designed for on-site, not offices." },
-            { title: "Looks professional", desc: "Make a strong first impression every time." },
-        ],
-        []
-    );
+/* Images (local) */
+import PlasticCardImg from "../../assets/images/PlasticCard.png";
+import MetalCardImg from "../../assets/images/MetalCard.png";
+import KonarTagImg from "../../assets/images/KonarTag.jpg";
+import KonarCardCustomImg from "../../assets/images/KonarCardCustom.png";
 
+export default function Products() {
     const products = useMemo(
         () => [
             {
                 tag: "Best seller",
                 name: "KonarCard — Plastic Edition",
-                desc: "Lightweight, affordable and perfect for everyday use.",
+                desc: "Durable, lightweight NFC business card for everyday use.",
                 price: "£29.99",
                 sub: "Includes NFC + QR and your live KonarCard profile.",
                 to: "/products/plastic-card",
                 cta: "View Plastic Card",
+                img: PlasticCardImg,
+                imgAlt: "KonarCard Plastic Edition",
             },
             {
                 tag: "Premium",
                 name: "KonarCard — Metal Edition",
-                desc: "A premium feel for a stronger first impression.",
-                price: "£49.99",
+                desc: "Premium metal NFC card designed to make a stronger first impression.",
+                price: "£44.99",
                 sub: "Matte finish, durable build, NFC + QR included.",
                 to: "/products/metal-card",
                 cta: "View Metal Card",
+                img: MetalCardImg,
+                imgAlt: "KonarCard Metal Edition",
             },
             {
                 tag: "Accessory",
                 name: "KonarTag",
-                desc: "Clip it to your keys and tap to share instantly.",
-                price: "£19.99",
+                desc: "Compact NFC key tag that shares your profile with a tap.",
+                price: "£9.99",
                 sub: "Same KonarCard link — always on you.",
                 to: "/products/konartag",
                 cta: "View KonarTag",
+                img: KonarTagImg,
+                imgAlt: "KonarTag key tag",
             },
         ],
         []
@@ -66,6 +66,8 @@ export default function Products() {
                 was: "£49.97",
                 to: "/products/plastic-bundle",
                 cta: "View Plastic Bundle",
+                img: PlasticCardImg,
+                imgAlt: "Plastic bundle preview",
             },
             {
                 tag: "Premium bundle",
@@ -75,6 +77,8 @@ export default function Products() {
                 was: "£69.97",
                 to: "/products/metal-bundle",
                 cta: "View Metal Bundle",
+                img: MetalCardImg,
+                imgAlt: "Metal bundle preview",
             },
         ],
         []
@@ -85,12 +89,20 @@ export default function Products() {
             {
                 tag: "Use it on-site",
                 title: "Tap to swap details on the spot",
-                points: ["Tap to open your profile instantly", "Works even when you’re busy on a job", "No app needed — just tap or scan"],
+                points: [
+                    "Tap to open your profile instantly",
+                    "Works even when you’re busy on a job",
+                    "No app needed — just tap or scan",
+                ],
             },
             {
                 tag: "Win more jobs",
                 title: "Turn taps into customers",
-                points: ["Create a clean, trustworthy profile", "Show photos, services, reviews and contact buttons", "Faster follow-ups and fewer missed calls"],
+                points: [
+                    "Create a clean, trustworthy profile",
+                    "Show photos, services, reviews and contact buttons",
+                    "Faster follow-ups and fewer missed calls",
+                ],
             },
         ],
         []
@@ -98,32 +110,80 @@ export default function Products() {
 
     const realWorldGrid = useMemo(
         () => [
-            { title: "On site, with a client", desc: "Tap your KonarCard. Their phone opens your profile and saves your details instantly — no typing." },
-            { title: "After a quote", desc: "Send your link by WhatsApp so they can review your work, services and reviews while deciding." },
-            { title: "Networking / trade counter", desc: "No stacks of cards. Tap to share your details as many times as you want." },
-            { title: "Van QR & site boards", desc: "Stick the QR on your van or signage so customers can scan and call you straight away." },
-            { title: "Social & link in bio", desc: "Add your KonarCard link to Instagram, Facebook or TikTok so new leads land on your profile." },
-            { title: "Updates in seconds", desc: "New number, new prices, new photos — update once and it’s live everywhere instantly." },
+            {
+                title: "On site, with a client",
+                desc: "Tap your KonarCard. Their phone opens your profile and saves your details instantly — no typing.",
+            },
+            {
+                title: "After a quote",
+                desc: "Send your link by WhatsApp so they can review your work, services and reviews while deciding.",
+            },
+            {
+                title: "Networking / trade counter",
+                desc: "No stacks of cards. Tap to share your details as many times as you want.",
+            },
+            {
+                title: "Van QR & site boards",
+                desc: "Stick the QR on your van or signage so customers can scan and call you straight away.",
+            },
+            {
+                title: "Social & link in bio",
+                desc: "Add your KonarCard link to Instagram, Facebook or TikTok so new leads land on your profile.",
+            },
+            {
+                title: "Updates in seconds",
+                desc: "New number, new prices, new photos — update once and it’s live everywhere instantly.",
+            },
         ],
         []
     );
 
     const chooseCards = useMemo(
         () => [
-            { title: "Metal cards", desc: "Best if you want a premium feel and strong first impressions." },
-            { title: "Plastic cards", desc: "Lightweight, affordable, and perfect for everyday use." },
-            { title: "Custom logo cards", desc: "Ideal for established businesses that want branded cards." },
+            {
+                title: "Metal cards",
+                desc: "Best if you want a premium feel and strong first impressions.",
+                img: MetalCardImg,
+                imgAlt: "Metal card preview",
+            },
+            {
+                title: "Plastic cards",
+                desc: "Lightweight, affordable, and perfect for everyday use.",
+                img: PlasticCardImg,
+                imgAlt: "Plastic card preview",
+            },
+            {
+                title: "Custom logo cards",
+                desc: "Ideal for established businesses that want branded cards.",
+                img: KonarCardCustomImg,
+                imgAlt: "Custom logo card preview",
+            },
         ],
         []
     );
 
     const productFaqs = useMemo(
         () => [
-            { q: "Will it work on iPhone and Android?", a: "Yes — KonarCard works on iPhone and Android. Most modern phones support NFC. QR works on any phone with a camera." },
-            { q: "Do customers need an app to tap my card?", a: "No app needed. The tap opens your KonarCard profile instantly in their browser." },
-            { q: "Can I update my details after ordering?", a: "Yes. Update your profile anytime — changes go live instantly without reprinting anything." },
-            { q: "What if someone’s phone doesn’t support NFC?", a: "Every card includes a QR code backup, so anyone can scan and view your profile." },
-            { q: "Can I use one profile on multiple products?", a: "Yes — your card and keytag can link to the same KonarCard profile." },
+            {
+                q: "Will it work on iPhone and Android?",
+                a: "Yes — KonarCard works on iPhone and Android. Most modern phones support NFC. QR works on any phone with a camera.",
+            },
+            {
+                q: "Do customers need an app to tap my card?",
+                a: "No app needed. The tap opens your KonarCard profile instantly in their browser.",
+            },
+            {
+                q: "Can I update my details after ordering?",
+                a: "Yes. Update your profile anytime — changes go live instantly without reprinting anything.",
+            },
+            {
+                q: "What if someone’s phone doesn’t support NFC?",
+                a: "Every card includes a QR code backup, so anyone can scan and view your profile.",
+            },
+            {
+                q: "Can I use one profile on multiple products?",
+                a: "Yes — your card and keytag can link to the same KonarCard profile.",
+            },
         ],
         []
     );
@@ -134,31 +194,19 @@ export default function Products() {
         <>
             <Navbar />
 
-            <main className="kc-products">
-                {/* HERO */}
+            <main className="kc-products kc-page">
+                {/* HERO (no perks) */}
                 <section className="kc-products__hero">
                     <div className="kc-products__heroInner">
-                        <p className="body-s kc-products__kicker">Cards that link directly to your KonarCard profile</p>
+                        <p className="kc-products__kicker">Cards that link directly to your KonarCard profile</p>
                         <h1 className="h2 kc-products__title">Shop KonarCards</h1>
                         <p className="body-s kc-products__subtitle">
                             Physical NFC business cards that open your profile instantly — so customers can save your details and contact you fast.
                         </p>
-
-                        <div className="kc-products__perks">
-                            {topPerks.map((p) => (
-                                <div key={p.title} className="kc-products__perk">
-                                    <div className="kc-products__perkIcon" aria-hidden="true" />
-                                    <div>
-                                        <p className="h6 kc-products__perkTitle">{p.title}</p>
-                                        <p className="body-s kc-products__perkDesc">{p.desc}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
                     </div>
                 </section>
 
-                {/* PRODUCTS GRID */}
+                {/* PRODUCTS GRID (immediately after hero) */}
                 <section className="kc-products__section">
                     <div className="kc-products__grid">
                         {products.map((item) => (
@@ -167,12 +215,12 @@ export default function Products() {
                                     <span className="kc-products__tag">{item.tag}</span>
                                 </div>
 
-                                <div className="kc-products__imgWrap" aria-hidden="true">
-                                    <div className="kc-products__imgPlaceholder">Image</div>
+                                <div className="kc-products__imgWrap">
+                                    <img className="kc-products__img" src={item.img} alt={item.imgAlt} loading="lazy" />
                                 </div>
 
                                 <div className="kc-products__cardBody">
-                                    <p className="h6">{item.name}</p>
+                                    <p className="h6 kc-products__name">{item.name}</p>
                                     <p className="body-s kc-products__muted">{item.desc}</p>
 
                                     <div className="kc-products__priceRow">
@@ -208,8 +256,8 @@ export default function Products() {
                                     <span className="kc-products__tag">{b.tag}</span>
                                 </div>
 
-                                <div className="kc-products__bundleImg" aria-hidden="true">
-                                    <div className="kc-products__imgPlaceholder">Image</div>
+                                <div className="kc-products__bundleImg">
+                                    <img className="kc-products__img" src={b.img} alt={b.imgAlt} loading="lazy" />
                                 </div>
 
                                 <div className="kc-products__bundleBody">
@@ -278,8 +326,8 @@ export default function Products() {
                     <div className="kc-products__chooseGrid">
                         {chooseCards.map((c) => (
                             <div key={c.title} className="kc-products__chooseCard">
-                                <div className="kc-products__chooseImg" aria-hidden="true">
-                                    <div className="kc-products__imgPlaceholder">Image</div>
+                                <div className="kc-products__chooseImg">
+                                    <img className="kc-products__img" src={c.img} alt={c.imgAlt} loading="lazy" />
                                 </div>
                                 <div className="kc-products__chooseBody">
                                     <p className="h6">{c.title}</p>
@@ -290,7 +338,7 @@ export default function Products() {
                     </div>
                 </section>
 
-                {/* ✅ PRODUCTS FAQ (Accordion same as FAQ/Pricing/Contact) */}
+                {/* FAQ */}
                 <section className="kc-products__faq">
                     <div className="kc-products__faqInner">
                         <h2 className="h3 kc-products__faqTitle">Product FAQs</h2>
