@@ -4,11 +4,10 @@ import { Link } from "react-router-dom";
 
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
-import PlasticCard3D from "../../../components/PlasticCard3D";
+import PlasticCard3D from "./PlasticCard3D";
 
 /* ✅ Page CSS */
 import "../../../styling/products/konarcard.css";
-
 
 /* Use Konar logo as placeholder (same as navbar) */
 import LogoIcon from "../../../assets/icons/Logo-Icon.svg";
@@ -88,7 +87,7 @@ export default function PlasticCard() {
                         </div>
 
                         <div className="kc-premStage">
-                            {/* ✅ New 3D preview component */}
+                            {/* ✅ 3D preview (drag to rotate restored) */}
                             <PlasticCard3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoSize} />
 
                             {/* Controls */}
