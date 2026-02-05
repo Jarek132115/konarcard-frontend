@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, Environment, useTexture } from "@react-three/drei";
 
-import "../../../styling/products/plasticcard3d.css";
+import "../styling/products/plasticcard3d.css";
 
 export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44 }) {
     return (
