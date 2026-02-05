@@ -1,8 +1,8 @@
 // src/pages/website/products/PlasticCard3D.jsx
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { ContactShadows, Environment, useTexture } from "@react-three/drei";
+import { ContactShadows, Environment } from "@react-three/drei";
 
 import "../styling/products/plasticcard3d.css";
 
@@ -11,13 +11,12 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44 }) {
         <div className="pc3d">
             <Canvas
                 dpr={[1, 2]}
-                // ✅ pull camera back a bit so card never clips top/bottom
-                camera={{ position: [0, 0.16, 1.22], fov: 36 }}
+                // ✅ slightly further back + centered so it never clips
+                camera={{ position: [0, 0.12, 1.32], fov: 36 }}
                 gl={{
                     antialias: true,
                     alpha: true,
                     premultipliedAlpha: false,
-                    // ✅ helps avoid jaggy black edge artifacts
                     powerPreference: "high-performance",
                 }}
                 onCreated={({ gl }) => {
@@ -44,7 +43,7 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44 }) {
 }
 
 /**
- * Drag rotate + slow idle spin (match old vibe)
+ * Drag rotate + slow idle spin (kept like your “good” version)
  */
 function CardRig({ children }) {
     const group = useRef();
@@ -68,12 +67,7 @@ function CardRig({ children }) {
 
         if (drag.current.idle) {
             drag.current.t += dt;
-
-            // ✅ OLD FEEL: ~0.22 degrees per frame at 60fps ≈ 13.2 deg/sec
-            // Convert to radians/sec:
-            const degPerSec = 13.2;
-            drag.current.ry += THREE.MathUtils.degToRad(degPerSec) * dt;
-
+            drag.current.ry += 0.32 * dt; // ✅ slow (DO NOT change)
             const breathe = Math.sin(drag.current.t * 1.05) * 0.03;
             drag.current.rx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
         }
@@ -132,12 +126,78 @@ function CardRig({ children }) {
     );
 }
 
+/**
+ * ✅ SVG-safe texture loader (fixes “logo not showing / black face”)
+ * Draws the image to a canvas → CanvasTexture.
+ */
+function useCanvasTexture(src) {
+    const [out, setOut] = useState({ tex: null, aspect: 1 });
+
+    useEffect(() => {
+        if (!src) {
+            setOut({ tex: null, aspect: 1 });
+            return;
+        }
+
+        let cancelled = false;
+        let textureToDispose = null;
+
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+
+        img.onload = () => {
+            if (cancelled) return;
+
+            const max = 1024;
+            const scale = Math.min(1, max / Math.max(img.width || 1, img.height || 1));
+            const cw = Math.max(1, Math.round((img.width || 1) * scale));
+            const ch = Math.max(1, Math.round((img.height || 1) * scale));
+
+            const canvas = document.createElement("canvas");
+            canvas.width = cw;
+            canvas.height = ch;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, cw, ch);
+            ctx.drawImage(img, 0, 0, cw, ch);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.anisotropy = 12;
+            tex.wrapS = THREE.ClampToEdgeWrapping;
+            tex.wrapT = THREE.ClampToEdgeWrapping;
+            tex.minFilter = THREE.LinearMipmapLinearFilter;
+            tex.magFilter = THREE.LinearFilter;
+            tex.needsUpdate = true;
+
+            textureToDispose = tex;
+
+            setOut({
+                tex,
+                aspect: (img.width || 1) / (img.height || 1),
+            });
+        };
+
+        img.onerror = () => {
+            if (!cancelled) setOut({ tex: null, aspect: 1 });
+        };
+
+        img.src = src;
+
+        return () => {
+            cancelled = true;
+            if (textureToDispose) textureToDispose.dispose();
+        };
+    }, [src]);
+
+    return out;
+}
+
 function CardMesh({ logoSrc, qrSrc, logoSize }) {
     // real card proportions
     const w = 0.92;
     const h = w * (54 / 85.6);
 
-    // ✅ MUCH thinner (plastic NFC card feel)
+    // ✅ thinner plastic feel
     const t = 0.010;
 
     // Rounded body geometry
@@ -146,8 +206,8 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
         const geo = new THREE.ExtrudeGeometry(shape, {
             depth: t,
             bevelEnabled: true,
-            bevelThickness: 0.0025,
-            bevelSize: 0.004,
+            bevelThickness: 0.0022,
+            bevelSize: 0.0038,
             bevelSegments: 6,
             curveSegments: 18,
             steps: 1,
@@ -156,105 +216,14 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
         return geo;
     }, [w, h, t]);
 
-    // Face planes
-    const planeGeo = useMemo(() => new THREE.PlaneGeometry(w * 0.985, h * 0.985), [w, h]);
+    // Base face planes (pure white)
+    const basePlaneGeo = useMemo(() => new THREE.PlaneGeometry(w * 0.988, h * 0.988), [w, h]);
 
-    const [logoTex, qrTex] = useTexture([logoSrc, qrSrc]);
+    // ✅ Actual logo / qr textures (SVG-safe)
+    const { tex: logoTex, aspect: logoAspect } = useCanvasTexture(logoSrc);
+    const { tex: qrTex, aspect: qrAspect } = useCanvasTexture(qrSrc);
 
-    // ✅ make sure textures are correct
-    useEffect(() => {
-        [logoTex, qrTex].forEach((tex) => {
-            if (!tex) return;
-            tex.colorSpace = THREE.SRGBColorSpace;
-            tex.anisotropy = 12;
-            tex.wrapS = THREE.ClampToEdgeWrapping;
-            tex.wrapT = THREE.ClampToEdgeWrapping;
-            tex.minFilter = THREE.LinearMipmapLinearFilter;
-            tex.magFilter = THREE.LinearFilter;
-
-            // NOTE: useTexture already handles flipY for most cases, but this can vary.
-            // Keeping it as you had it:
-            tex.flipY = false;
-
-            tex.needsUpdate = true;
-        });
-    }, [logoTex, qrTex]);
-
-    /**
-     * ✅ Correct sizing (what you want):
-     * - Logo = 55% of card HEIGHT (base), centered
-     * - QR   = 45% of card HEIGHT, centered
-     *
-     * IMPORTANT:
-     * repeat/offset works in UV space, but images have different aspect ratios.
-     * We calculate a "contain" crop based on image aspect so it never stretches.
-     */
-    const fitCenteredByHeight = (tex, heightFrac) => {
-        const img = tex?.image;
-        if (!tex || !img || !img.width || !img.height) return;
-
-        // Height fraction in UV space:
-        // - smaller repeat => larger on the model
-        // We want the image to occupy "heightFrac" of the face height,
-        // so we crop the UVs so the visible region has that height.
-        // That means repeatY = 1 / heightFrac
-        // BUT we also must match aspect to avoid stretching.
-
-        const faceAspect = (w * 0.985) / (h * 0.985); // ~1.585
-        const imgAspect = img.width / img.height;
-
-        // desired visible height in UV:
-        const visibleY = heightFrac;
-
-        // the visible width needed to keep image aspect (relative to face):
-        // visibleX / visibleY should match (imgAspect / faceAspect)
-        let visibleX = visibleY * (imgAspect / faceAspect);
-
-        // clamp so we never ask for more than full width
-        // if it exceeds, we instead fit by width and reduce height accordingly
-        if (visibleX > 1) {
-            visibleX = 1;
-            // recompute visibleY to preserve aspect
-            // visibleX / visibleY = imgAspect / faceAspect  => visibleY = visibleX * (faceAspect / imgAspect)
-            const newVisibleY = visibleX * (faceAspect / imgAspect);
-            // use the smaller of the two (still centered)
-            heightFrac = Math.min(heightFrac, newVisibleY);
-        }
-
-        const repeatX = 1 / visibleX;
-        const repeatY = 1 / heightFrac;
-
-        tex.center.set(0.5, 0.5);
-        tex.repeat.set(repeatX, repeatY);
-
-        // center the crop region
-        const offX = 0.5 - (1 / repeatX) / 2;
-        const offY = 0.5 - (1 / repeatY) / 2;
-        tex.offset.set(offX, offY);
-
-        tex.needsUpdate = true;
-    };
-
-    // Apply sizing when textures load/change
-    useEffect(() => {
-        if (!logoTex) return;
-
-        // Base logo height = 55%
-        // Slider acts like a multiplier around it (your 44 is "normal")
-        const mult = Math.max(0.75, Math.min(1.35, Number(logoSize || 44) / 44));
-        const logoHeight = Math.max(0.30, Math.min(0.72, 0.55 * mult));
-
-        fitCenteredByHeight(logoTex, logoHeight);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [logoTex, logoSize]);
-
-    useEffect(() => {
-        if (!qrTex) return;
-        fitCenteredByHeight(qrTex, 0.45);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [qrTex]);
-
-    // Materials
+    // Materials (keep white, prevent black corner artifacts)
     const edgeMat = useMemo(
         () =>
             new THREE.MeshPhysicalMaterial({
@@ -265,71 +234,116 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
                 clearcoatRoughness: 0.28,
                 sheen: 0.08,
                 sheenRoughness: 0.75,
-                // ✅ tiny lift so edges never look “black”
-                emissive: new THREE.Color("#0a0a0a"),
-                emissiveIntensity: 0.05,
             }),
         []
     );
 
-    const frontMat = useMemo(() => {
-        const m = new THREE.MeshPhysicalMaterial({
+    const baseFaceMat = useMemo(
+        () =>
+            new THREE.MeshPhysicalMaterial({
+                color: "#ffffff",
+                roughness: 0.36,
+                metalness: 0.0,
+                clearcoat: 0.6,
+                clearcoatRoughness: 0.25,
+            }),
+        []
+    );
+
+    const decalMatLogo = useMemo(() => {
+        const m = new THREE.MeshStandardMaterial({
             color: "#ffffff",
-            roughness: 0.36,
-            metalness: 0.0,
-            clearcoat: 0.6,
-            clearcoatRoughness: 0.25,
             map: logoTex || null,
+            transparent: true,
+            opacity: 1,
+            alphaTest: 0.05,
+            side: THREE.DoubleSide,
         });
-
+        // ✅ avoid z-fight / dark seams
         m.polygonOffset = true;
-        m.polygonOffsetFactor = -2;
-        m.polygonOffsetUnits = -2;
-
-        m.side = THREE.DoubleSide;
+        m.polygonOffsetFactor = -3;
+        m.polygonOffsetUnits = -3;
         return m;
     }, [logoTex]);
 
-    const backMat = useMemo(() => {
-        const m = new THREE.MeshPhysicalMaterial({
+    const decalMatQr = useMemo(() => {
+        const m = new THREE.MeshStandardMaterial({
             color: "#ffffff",
-            roughness: 0.36,
-            metalness: 0.0,
-            clearcoat: 0.6,
-            clearcoatRoughness: 0.25,
             map: qrTex || null,
+            transparent: true,
+            opacity: 1,
+            alphaTest: 0.05,
+            side: THREE.DoubleSide,
         });
-
         m.polygonOffset = true;
-        m.polygonOffsetFactor = -2;
-        m.polygonOffsetUnits = -2;
-
-        m.side = THREE.DoubleSide;
+        m.polygonOffsetFactor = -3;
+        m.polygonOffsetUnits = -3;
         return m;
     }, [qrTex]);
 
-    // ✅ push planes a hair outward to avoid z-fighting
+    // ✅ Sizes:
+    // - Logo height = 55% of card height * slider (logoSize)
+    // - QR height  = 45% of card height (fixed)
+    const logoHeightFracBase = 0.55;
+    const qrHeightFrac = 0.45;
+
+    // slider maps 28..70 to 0.7..1.2 feel (stays sane)
+    const slider = Math.max(28, Math.min(70, Number(logoSize || 44)));
+    const sliderScale = 0.7 + ((slider - 28) / (70 - 28)) * 0.5;
+
+    let logoH = h * logoHeightFracBase * sliderScale;
+    let logoW = logoH * (logoAspect || 1);
+    const maxLogoW = w * 0.82;
+    if (logoW > maxLogoW) {
+        logoW = maxLogoW;
+        logoH = logoW / (logoAspect || 1);
+    }
+
+    let qrH = h * qrHeightFrac;
+    let qrW = qrH * (qrAspect || 1);
+    const maxQrW = w * 0.62;
+    if (qrW > maxQrW) {
+        qrW = maxQrW;
+        qrH = qrW / (qrAspect || 1);
+    }
+
+    const logoPlaneGeo = useMemo(() => new THREE.PlaneGeometry(logoW, logoH), [logoW, logoH]);
+    const qrPlaneGeo = useMemo(() => new THREE.PlaneGeometry(qrW, qrH), [qrW, qrH]);
+
+    // push faces outward a hair
     const halfT = t / 2;
-    const zFront = halfT + 0.0016;
-    const zBack = -halfT - 0.0016;
+    const zFront = halfT + 0.0024;
+    const zBack = -halfT - 0.0024;
+
+    // decals slightly above base faces
+    const zFrontDecal = zFront + 0.0018;
+    const zBackDecal = zBack - 0.0018;
 
     return (
         <group>
-            {/* Body (edges only) */}
+            {/* Body */}
             <mesh geometry={bodyGeo} material={edgeMat} castShadow receiveShadow />
 
-            {/* Front (logo) */}
-            <mesh geometry={planeGeo} material={frontMat} position={[0, 0, zFront]} castShadow receiveShadow />
+            {/* Base white faces */}
+            <mesh geometry={basePlaneGeo} material={baseFaceMat} position={[0, 0, zFront]} />
+            <mesh geometry={basePlaneGeo} material={baseFaceMat} position={[0, 0, zBack]} rotation={[0, Math.PI, 0]} />
 
-            {/* Back (QR) */}
-            <mesh
-                geometry={planeGeo}
-                material={backMat}
-                position={[0, 0, zBack]}
-                rotation={[0, Math.PI, 0]}
-                castShadow
-                receiveShadow
-            />
+            {/* Logo decal (front) — centered */}
+            {logoTex && (
+                <mesh geometry={logoPlaneGeo} material={decalMatLogo} position={[0, 0, zFrontDecal]} castShadow receiveShadow />
+            )}
+
+            {/* QR decal (back) — centered */}
+            {qrTex && (
+                <mesh
+                    geometry={qrPlaneGeo}
+                    material={decalMatQr}
+                    position={[0, 0, zBackDecal]}
+                    rotation={[0, Math.PI, 0]}
+                    castShadow
+                    receiveShadow
+                />
+            )}
         </group>
     );
 }
