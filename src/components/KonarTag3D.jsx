@@ -1,16 +1,17 @@
+// frontend/src/components/KonarTag3D.jsx
 import React, { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, Environment, useTexture } from "@react-three/drei";
 
-import "../styling/products/plasticcard3d.css";
+import "../styling/products/konartag3d.css";
 
-export default function MetalCard3D({ logoSrc, qrSrc, logoSize = 44, finish = "black" }) {
+export default function KonarTag3D({ logoSrc, qrSrc, logoSize = 44, finish = "black" }) {
     return (
-        <div className="pc3d">
+        <div className="kt3d">
             <Canvas
                 dpr={[1, 2]}
-                camera={{ position: [0, 0.16, 1.22], fov: 36 }}
+                camera={{ position: [0, 0.20, 1.32], fov: 36 }}
                 gl={{
                     antialias: true,
                     alpha: true,
@@ -23,26 +24,26 @@ export default function MetalCard3D({ logoSrc, qrSrc, logoSize = 44, finish = "b
                     gl.domElement.style.touchAction = "none";
                 }}
             >
-                <ambientLight intensity={0.78} />
-                <directionalLight position={[2.3, 3.3, 2.3]} intensity={1.12} castShadow />
-                <directionalLight position={[-2, 1.2, -2]} intensity={0.6} />
+                <ambientLight intensity={0.72} />
+                <directionalLight position={[2.8, 3.6, 2.6]} intensity={1.18} castShadow />
+                <directionalLight position={[-2, 1.1, -2]} intensity={0.55} />
 
                 <Environment preset="studio" />
 
-                <CardRig>
-                    <CardMesh logoSrc={logoSrc} qrSrc={qrSrc} logoSize={logoSize} finish={finish} />
-                </CardRig>
+                <TagRig>
+                    <TagMesh logoSrc={logoSrc} qrSrc={qrSrc} logoSize={logoSize} finish={finish} />
+                </TagRig>
 
-                <ContactShadows position={[0, -0.42, 0]} opacity={0.32} blur={1.9} scale={2.35} far={2.4} />
+                <ContactShadows position={[0, -0.52, 0]} opacity={0.28} blur={2.2} scale={2.6} far={3} />
             </Canvas>
         </div>
     );
 }
 
 /**
- * Drag rotate + slow idle spin (same feel as Plastic)
+ * Drag rotate + slow idle spin (same speed as PlasticCard3D)
  */
-function CardRig({ children }) {
+function TagRig({ children }) {
     const group = useRef();
 
     const drag = useRef({
@@ -81,7 +82,6 @@ function CardRig({ children }) {
 
         drag.current.startX = e.clientX;
         drag.current.startY = e.clientY;
-
         drag.current.baseRX = drag.current.rx;
         drag.current.baseRY = drag.current.ry;
 
@@ -111,39 +111,38 @@ function CardRig({ children }) {
     };
 
     return (
-        <group
-            ref={group}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerCancel={onPointerUp}
-        >
+        <group ref={group} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
             {children}
         </group>
     );
 }
 
-function CardMesh({ logoSrc, qrSrc, logoSize, finish }) {
-    const w = 0.92;
-    const h = w * (54 / 85.6);
+function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
+    // ✅ more unique than a rectangle:
+    // - rounded capsule-ish top
+    // - side “waist” curves
+    // - keyring hole cutout
+    const w = 0.84;
+    const h = w * 0.86;
+    const t = 0.014;
 
-    // ✅ slightly thicker than plastic, still realistic for metal
-    const t = 0.013;
+    const holeR = w * 0.088;
+    const holeY = h * 0.30;
 
     const bodyGeo = useMemo(() => {
-        const shape = roundedRectShape(w, h, 0.06);
+        const shape = tagShape(w, h, holeR, holeY);
         const geo = new THREE.ExtrudeGeometry(shape, {
             depth: t,
             bevelEnabled: true,
-            bevelThickness: 0.0025,
-            bevelSize: 0.004,
+            bevelThickness: 0.0032,
+            bevelSize: 0.0065,
             bevelSegments: 10,
-            curveSegments: 28,
+            curveSegments: 36,
             steps: 1,
         });
         geo.center();
         return geo;
-    }, [w, h, t]);
+    }, [w, h, t, holeR, holeY]);
 
     const [logoTex, qrTex] = useTexture([logoSrc, qrSrc]);
 
@@ -163,91 +162,48 @@ function CardMesh({ logoSrc, qrSrc, logoSize, finish }) {
         setup(qrTex);
     }, [logoTex, qrTex]);
 
-    // planes sized the same as plastic (55% logo height / 45% QR height)
-    const logoPlaneDims = useMemo(() => {
-        const desiredH = h * 0.55;
-        const maxW = w * 0.78;
+    // planes sized by % of tag height, and pushed slightly down because of the hole
+    const artY = -h * 0.08;
 
+    const logoPlaneDims = useMemo(() => {
+        const baseH = h * 0.46;
         const s = Math.max(28, Math.min(70, Number(logoSize || 44))) / 44;
-        const scaledH = desiredH * (s * 0.55);
+        const planeH = Math.min(h * 0.62, Math.max(h * 0.16, baseH * (0.58 + (s - 1) * 0.25)));
 
         const img = logoTex?.image;
         const aspect = img && img.width && img.height ? img.width / img.height : 1;
 
-        const planeH = Math.min(h * 0.70, Math.max(h * 0.18, scaledH));
+        const maxW = w * 0.78;
         const planeW = Math.min(maxW, planeH * aspect);
 
         return { planeW, planeH };
     }, [logoTex, w, h, logoSize]);
 
     const qrPlaneDims = useMemo(() => {
-        const desired = h * 0.45;
-        const plane = Math.min(h * 0.62, Math.max(h * 0.18, desired));
+        const plane = Math.min(h * 0.50, Math.max(h * 0.18, h * 0.42));
         return { planeW: plane, planeH: plane };
     }, [h]);
 
-    const logoPlaneGeo = useMemo(
-        () => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH),
-        [logoPlaneDims]
-    );
+    const logoPlaneGeo = useMemo(() => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH), [logoPlaneDims]);
+    const qrPlaneGeo = useMemo(() => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH), [qrPlaneDims]);
 
-    const qrPlaneGeo = useMemo(
-        () => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH),
-        [qrPlaneDims]
-    );
+    const metalMat = useMemo(() => {
+        const isGold = finish === "gold";
 
-    // ✅ metal finish presets
-    const metalPreset = useMemo(() => {
-        if (String(finish).toLowerCase() === "gold") {
-            return {
-                base: "#b88a2a",
-                edge: "#caa24a",
-                roughness: 0.22,
-                metalness: 1.0,
-                clearcoat: 0.35,
-                clearcoatRoughness: 0.22,
-                env: 1.35,
-            };
-        }
-        // black metal default
-        return {
-            base: "#121417",
-            edge: "#1a1d22",
-            roughness: 0.28,
+        // a nicer “metal” feel
+        const base = isGold ? "#b38a2f" : "#101318";
+        const rough = isGold ? 0.22 : 0.30;
+
+        return new THREE.MeshPhysicalMaterial({
+            color: base,
             metalness: 1.0,
-            clearcoat: 0.25,
-            clearcoatRoughness: 0.25,
-            env: 1.25,
-        };
+            roughness: rough,
+            clearcoat: 0.6,
+            clearcoatRoughness: 0.22,
+            envMapIntensity: isGold ? 1.35 : 1.15,
+        });
     }, [finish]);
 
-    // Body material (real metal look)
-    const bodyMat = useMemo(() => {
-        const m = new THREE.MeshPhysicalMaterial({
-            color: metalPreset.base,
-            roughness: metalPreset.roughness,
-            metalness: metalPreset.metalness,
-            clearcoat: metalPreset.clearcoat,
-            clearcoatRoughness: metalPreset.clearcoatRoughness,
-        });
-        m.envMapIntensity = metalPreset.env;
-        return m;
-    }, [metalPreset]);
-
-    // Edge material (slightly different tone for nicer bevel)
-    const edgeMat = useMemo(() => {
-        const m = new THREE.MeshPhysicalMaterial({
-            color: metalPreset.edge,
-            roughness: Math.min(0.55, metalPreset.roughness + 0.10),
-            metalness: metalPreset.metalness,
-            clearcoat: metalPreset.clearcoat,
-            clearcoatRoughness: metalPreset.clearcoatRoughness,
-        });
-        m.envMapIntensity = metalPreset.env;
-        return m;
-    }, [metalPreset]);
-
-    // Logo/QR always readable (not affected by lighting)
     const logoMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
             map: logoTex || null,
@@ -284,41 +240,60 @@ function CardMesh({ logoSrc, qrSrc, logoSize, finish }) {
 
     return (
         <group>
-            {/* Body split: main + edges for nicer bevel contrast */}
-            <mesh geometry={bodyGeo} material={bodyMat} castShadow receiveShadow />
-            {/* subtle second pass edge tint (same geo, different mat, helps bevel pop) */}
-            <mesh geometry={bodyGeo} material={edgeMat} castShadow receiveShadow />
-
-            {/* Front */}
-            <mesh geometry={logoPlaneGeo} material={logoMat} position={[0, 0, zFront]} castShadow receiveShadow />
-
-            {/* Back */}
-            <mesh
-                geometry={qrPlaneGeo}
-                material={qrMat}
-                position={[0, 0, zBack]}
-                rotation={[0, Math.PI, 0]}
-                castShadow
-                receiveShadow
-            />
+            <mesh geometry={bodyGeo} material={metalMat} castShadow receiveShadow />
+            <mesh geometry={logoPlaneGeo} material={logoMat} position={[0, artY, zFront]} castShadow receiveShadow />
+            <mesh geometry={qrPlaneGeo} material={qrMat} position={[0, artY, zBack]} rotation={[0, Math.PI, 0]} castShadow receiveShadow />
         </group>
     );
 }
 
-function roundedRectShape(w, h, r) {
+/**
+ * More unique tag silhouette (not a plain rectangle):
+ * - rounded top “cap”
+ * - slightly pinched sides
+ * - rounded bottom
+ * - hole cut-out at top center
+ */
+function tagShape(w, h, holeR, holeY) {
     const shape = new THREE.Shape();
     const x = -w / 2;
     const y = -h / 2;
 
-    shape.moveTo(x + r, y);
-    shape.lineTo(x + w - r, y);
-    shape.quadraticCurveTo(x + w, y, x + w, y + r);
-    shape.lineTo(x + w, y + h - r);
-    shape.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    shape.lineTo(x + r, y + h);
-    shape.quadraticCurveTo(x, y + h, x, y + h - r);
-    shape.lineTo(x, y + r);
-    shape.quadraticCurveTo(x, y, x + r, y);
+    const topR = w * 0.22;        // top cap radius
+    const botR = w * 0.16;        // bottom radius
+    const pinch = w * 0.06;       // side waist pinch
+
+    // start bottom-left
+    shape.moveTo(x + botR, y);
+
+    // bottom edge
+    shape.lineTo(x + w - botR, y);
+    shape.quadraticCurveTo(x + w, y, x + w, y + botR);
+
+    // right side up with pinch
+    shape.lineTo(x + w, y + h * 0.44);
+    shape.quadraticCurveTo(x + w - pinch, y + h * 0.55, x + w, y + h * 0.66);
+
+    // top-right into rounded cap
+    shape.lineTo(x + w, y + h - topR);
+    shape.quadraticCurveTo(x + w, y + h, x + w - topR, y + h);
+
+    // top edge
+    shape.lineTo(x + topR, y + h);
+    shape.quadraticCurveTo(x, y + h, x, y + h - topR);
+
+    // left side down with pinch
+    shape.lineTo(x, y + h * 0.66);
+    shape.quadraticCurveTo(x + pinch, y + h * 0.55, x, y + h * 0.44);
+
+    // bottom-left corner
+    shape.lineTo(x, y + botR);
+    shape.quadraticCurveTo(x, y, x + botR, y);
+
+    // hole (top center)
+    const hole = new THREE.Path();
+    hole.absellipse(0, holeY, holeR, holeR, 0, Math.PI * 2, false, 0);
+    shape.holes.push(hole);
 
     return shape;
 }

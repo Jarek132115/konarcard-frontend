@@ -1,195 +1,221 @@
 // frontend/src/pages/website/products/KonarTag.jsx
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
+import KonarTag3D from "../../../components/KonarTag3D";
 
-/* ✅ KonarTag CSS (used for KonarTag page) */
-import "../../../styling/products/konartag.css";
+/* ✅ Page CSS (SAME system as Plastic/Metal) */
+import "../../../styling/products/konarcard.css";
 
-/* Images (swap later with real KonarTag images) */
-import ProductCover from "../../../assets/images/Product-Cover.png";
-import ProductImage1 from "../../../assets/images/Product-Image-1.png";
-import ProductImage2 from "../../../assets/images/Product-Image-2.png";
-import ProductImage3 from "../../../assets/images/Product-Image-3.png";
-import ProductImage4 from "../../../assets/images/Product-Image-4.png";
+/* ✅ White logo (for dark metal finish on the tag) */
+import LogoIconWhite from "../../../assets/icons/Logo-Icon-White.svg";
+
+/* ✅ Your QR image (static) */
+import CardQrCode from "../../../assets/images/CardQrCode.png";
 
 export default function KonarTag() {
-    const gallery = useMemo(
-        () => [ProductCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4],
-        []
-    );
-
-    const [activeImg, setActiveImg] = useState(gallery[0]);
     const [qty, setQty] = useState(1);
 
-    const highlights = useMemo(
+    // ---- Logo upload preview (FRONT ONLY) ----
+    const [logoUrl, setLogoUrl] = useState("");
+    const [logoSize, setLogoSize] = useState(44);
+
+    // black | gold (same idea as you asked)
+    const [finish, setFinish] = useState("black");
+
+    useEffect(() => {
+        return () => {
+            if (logoUrl) URL.revokeObjectURL(logoUrl);
+        };
+    }, [logoUrl]);
+
+    const onPickLogo = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) return;
+
+        if (logoUrl) URL.revokeObjectURL(logoUrl);
+        setLogoUrl(URL.createObjectURL(file));
+    };
+
+    const clearLogo = () => {
+        if (logoUrl) URL.revokeObjectURL(logoUrl);
+        setLogoUrl("");
+    };
+
+    const features = useMemo(
         () => [
             { t: "Pocket-friendly", s: "Small, simple, and always with your keys." },
-            { t: "Tap to share", s: "Opens your Konar profile instantly on compatible phones." },
-            { t: "QR backup", s: "If NFC is off, scan and still save your details." },
+            { t: "Tap to share instantly", s: "Open your Konar profile on compatible phones with a tap." },
+            { t: "QR code backup", s: "If NFC is off, they can scan and still save your details." },
             { t: "No app needed", s: "Works right in the browser — iPhone & Android." },
+            { t: "Built for daily use", s: "Durable design made for keys, vans, and site days." },
             { t: "One-time purchase", s: "Buy once. Share forever." },
-            { t: "Built for real work", s: "Durable design for daily use." },
         ],
         []
     );
+
+    // ✅ default tag “logo” is the WHITE icon so it reads on black metal
+    const displayedLogo = logoUrl || LogoIconWhite;
 
     return (
         <>
             <Navbar />
 
-            <main className="kc-tag">
-                <div className="kc-tag__wrap">
-                    {/* ===== Breadcrumbs ===== */}
-                    <div className="kc-tag__crumbs">
-                        <Link to="/products" className="kc-tag__crumbLink">
-                            Products
-                        </Link>
-                        <span className="kc-tag__crumbSep">/</span>
-                        <span className="kc-tag__crumbHere">KonarTag</span>
-                    </div>
-
-                    {/* ===== Top grid ===== */}
-                    <div className="kc-tag__grid">
-                        {/* Left: gallery */}
-                        <section className="kc-tag__gallery" aria-label="KonarTag gallery">
-                            <div className="kc-tag__main">
-                                <img src={activeImg} alt="KonarTag product" />
+            {/* ✅ same shell + spacing as Plastic/Metal */}
+            <main className="kc-konarcard kc-konarcard--premium kc-page">
+                <div className="kc-konarcard__wrap">
+                    <section className="kc-premHero kc-premHero--clean">
+                        <div className="kc-premHero__top">
+                            <div className="kc-premHero__crumbs">
+                                <Link to="/products" className="kc-konarcard__crumbLink">
+                                    Products
+                                </Link>
+                                <span className="kc-konarcard__crumbSep">/</span>
+                                <span className="kc-konarcard__crumbHere">KonarTag</span>
                             </div>
 
-                            <div className="kc-tag__thumbs" role="list" aria-label="Choose an image">
-                                {gallery.map((src, i) => {
-                                    const isActive = src === activeImg;
-                                    return (
+                            <h1 className="kc-premHero__title">KonarTag</h1>
+
+                            <div className="kc-premHero__badges">
+                                <span className="kc-konarcard__pill kc-konarcard__pill--best">Best for keys</span>
+                                <span className="kc-konarcard__pill kc-konarcard__pill--warranty">12 Month Warranty</span>
+                            </div>
+
+                            <p className="kc-premHero__sub">
+                                A premium NFC key tag that shares your Konar profile instantly — with QR backup on the back.
+                            </p>
+                        </div>
+
+                        <div className="kc-premStage">
+                            {/* ✅ spacing pad so the shadow never gets covered */}
+                            <div className="kc-premStage__canvasPad">
+                                <KonarTag3D
+                                    logoSrc={displayedLogo}
+                                    qrSrc={CardQrCode}
+                                    logoSize={logoSize}
+                                    finish={finish}
+                                />
+                            </div>
+
+                            {/* Controls */}
+                            <div className="kc-premControls kc-premControls--clean">
+                                <div className="kc-premControls__left">
+                                    <div className="kc-premControls__label">Your logo</div>
+                                    <div className="kc-premControls__sub">Upload any image — preview updates instantly.</div>
+                                </div>
+
+                                <div className="kc-premControls__right">
+                                    {/* Finish toggle (same visual language as your site) */}
+                                    <div className="kc-konarcard__finish" role="group" aria-label="Choose tag finish">
                                         <button
-                                            key={i}
                                             type="button"
-                                            className={`kc-tag__thumb ${isActive ? "is-active" : ""}`}
-                                            onClick={() => setActiveImg(src)}
-                                            aria-label={`View image ${i + 1}`}
+                                            className={`kc-konarcard__finishBtn ${finish === "black" ? "is-active" : ""}`}
+                                            onClick={() => setFinish("black")}
                                         >
-                                            <img src={src} alt={`KonarTag image ${i + 1}`} />
+                                            Black
                                         </button>
-                                    );
-                                })}
-                            </div>
-                        </section>
-
-                        {/* Right: details */}
-                        <section className="kc-tag__panel" aria-label="KonarTag details">
-                            <div className="kc-tag__pillRow">
-                                <span className="kc-tag__pill kc-tag__pill--best">Best for keys</span>
-                                <span className="kc-tag__pill kc-tag__pill--warranty">12 Month Warranty</span>
-                            </div>
-
-                            <h1 className="kc-tag__title">KonarTag</h1>
-                            <p className="kc-tag__sub">
-                                Compact NFC key tag that shares your Konar profile with a tap. Perfect for on-the-go sharing without a
-                                wallet card.
-                            </p>
-
-                            <div className="kc-tag__priceRow">
-                                <div className="kc-tag__price">£9.99</div>
-                                <div className="kc-tag__priceNote">One-time purchase • Works with your profile</div>
-                            </div>
-
-                            <div className="kc-tag__buyRow" aria-label="Choose quantity and buy">
-                                <div className="kc-tag__qty">
-                                    <button
-                                        type="button"
-                                        className="kc-tag__qtyBtn"
-                                        onClick={() => setQty((q) => Math.max(1, q - 1))}
-                                        aria-label="Decrease quantity"
-                                    >
-                                        −
-                                    </button>
-                                    <div className="kc-tag__qtyVal" aria-label="Quantity">
-                                        {qty}
+                                        <button
+                                            type="button"
+                                            className={`kc-konarcard__finishBtn ${finish === "gold" ? "is-active" : ""}`}
+                                            onClick={() => setFinish("gold")}
+                                        >
+                                            Gold
+                                        </button>
                                     </div>
-                                    <button
-                                        type="button"
-                                        className="kc-tag__qtyBtn"
-                                        onClick={() => setQty((q) => Math.min(50, q + 1))}
-                                        aria-label="Increase quantity"
-                                    >
-                                        +
+
+                                    <label className="kc-premBtn">
+                                        <input type="file" accept="image/*" onChange={onPickLogo} />
+                                        Upload logo
+                                    </label>
+
+                                    <button type="button" className="kc-premBtn kc-premBtn--ghost" onClick={clearLogo} disabled={!logoUrl}>
+                                        Remove
                                     </button>
-                                </div>
 
-                                {/* Hook this to checkout later */}
-                                <Link
-                                    to="/productandplan/konartag"
-                                    state={{ triggerCheckout: true, quantity: qty }}
-                                    className="kc-tag__cta kc-tag__cta--primary"
-                                >
-                                    Buy KonarTag
-                                </Link>
-                            </div>
-
-                            <div className="kc-tag__secondaryRow">
-                                <Link to="/register" className="kc-tag__cta kc-tag__cta--ghost">
-                                    Create your profile first
-                                </Link>
-                            </div>
-
-                            <div className="kc-tag__meta">
-                                <div className="kc-tag__metaItem">
-                                    <span className="kc-tag__metaK">Delivery</span>
-                                    <span className="kc-tag__metaV">Fast dispatch • UK shipping</span>
-                                </div>
-                                <div className="kc-tag__metaItem">
-                                    <span className="kc-tag__metaK">Compatibility</span>
-                                    <span className="kc-tag__metaV">iPhone + Android (NFC / QR)</span>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-
-                    {/* ===== Highlights ===== */}
-                    <section className="kc-tag__section">
-                        <div className="kc-tag__sectionHead">
-                            <h2 className="kc-tag__h2">Why KonarTag</h2>
-                            <p className="kc-tag__p">
-                                The quickest way to share your details when your hands are full — keys, van, site visits, and quotes.
-                            </p>
-                        </div>
-
-                        <div className="kc-tag__cards">
-                            {highlights.map((h, i) => (
-                                <div className="kc-tag__card" key={i}>
-                                    <div className="kc-tag__ico" aria-hidden="true">
-                                        ✓
+                                    <div className="kc-premSlider">
+                                        <span className="kc-premSlider__k">Size</span>
+                                        <input
+                                            type="range"
+                                            min={28}
+                                            max={70}
+                                            value={logoSize}
+                                            onChange={(e) => setLogoSize(Number(e.target.value))}
+                                            aria-label="Logo size"
+                                        />
+                                        <span className="kc-premSlider__v">{logoSize}%</span>
                                     </div>
-                                    <div className="kc-tag__cardT">{h.t}</div>
-                                    <div className="kc-tag__cardS">{h.s}</div>
                                 </div>
-                            ))}
-                        </div>
-                    </section>
-
-                    {/* ===== Bottom CTA ===== */}
-                    <section className="kc-tag__bottom">
-                        <div className="kc-tag__bottomInner">
-                            <div>
-                                <h2 className="kc-tag__h2">Ready to share with one tap?</h2>
-                                <p className="kc-tag__p">
-                                    Add KonarTag to your keys and your profile is always one tap away — no apps, no hassle.
-                                </p>
                             </div>
 
-                            <div className="kc-tag__bottomBtns">
-                                <Link to="/examples" className="kc-tag__cta kc-tag__cta--ghost">
-                                    See examples
-                                </Link>
-                                <Link
-                                    to="/productandplan/konartag"
-                                    state={{ triggerCheckout: true, quantity: qty }}
-                                    className="kc-tag__cta kc-tag__cta--primary"
-                                >
-                                    Buy KonarTag
-                                </Link>
+                            {/* Buy row */}
+                            <div className="kc-premBuy kc-premBuy--clean" aria-label="Choose quantity and buy">
+                                <div className="kc-premPrice">
+                                    <div className="kc-premPrice__value">£9.99</div>
+                                    <div className="kc-premPrice__note">One-time purchase • Works with your profile</div>
+                                </div>
+
+                                <div className="kc-premBuy__right">
+                                    <div className="kc-konarcard__qty">
+                                        <button
+                                            type="button"
+                                            className="kc-konarcard__qtyBtn"
+                                            onClick={() => setQty((q) => Math.max(1, q - 1))}
+                                            aria-label="Decrease quantity"
+                                        >
+                                            −
+                                        </button>
+                                        <div className="kc-konarcard__qtyVal" aria-label="Quantity">
+                                            {qty}
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className="kc-konarcard__qtyBtn"
+                                            onClick={() => setQty((q) => Math.min(50, q + 1))}
+                                            aria-label="Increase quantity"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+
+                                    <Link
+                                        to="/productandplan/konartag"
+                                        state={{ triggerCheckout: true, quantity: qty, finish }}
+                                        className="kc-konarcard__cta kc-konarcard__cta--primary"
+                                    >
+                                        Buy KonarTag
+                                    </Link>
+
+                                    <Link to="/register" className="kc-konarcard__cta kc-konarcard__cta--ghost">
+                                        Create your profile first
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* What you get */}
+                            <div className="kc-konarcard__section">
+                                <div className="kc-konarcard__sectionHead">
+                                    <h2 className="kc-konarcard__h2">What you get</h2>
+                                    <p className="kc-konarcard__p">
+                                        Everything you need to share instantly — just tap, or scan the QR if NFC is off.
+                                    </p>
+                                </div>
+
+                                <div className="kc-konarcard__featureGrid">
+                                    {features.map((f, i) => (
+                                        <div className="kc-konarcard__feature" key={i}>
+                                            <div className="kc-konarcard__ico" aria-hidden="true">
+                                                ✓
+                                            </div>
+                                            <div>
+                                                <div className="kc-konarcard__featureT">{f.t}</div>
+                                                <div className="kc-konarcard__featureS">{f.s}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </section>

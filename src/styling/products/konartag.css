@@ -59,73 +59,150 @@
     align-items: start;
 }
 
-/* gallery */
-.kc-tag__gallery {
+/* LEFT: 3D block (matches panel feel) */
+.kc-tag3d {
     border: 1px solid var(--kc-border);
     border-radius: 18px;
-    overflow: hidden;
+    overflow: visible;
     background: #fff;
     box-shadow: var(--kc-shadow);
 }
 
-.kc-tag__main {
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.03), rgba(15, 23, 42, 0));
+.kc-tag3d__canvasPad {
+    padding: 12px 12px 0;
+}
+
+.kc-tag3d__controls {
+    margin: 10px 12px 12px;
+    border-radius: 18px;
+    border: 1px solid rgba(12, 24, 48, 0.08);
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: 0 18px 44px rgba(12, 24, 48, 0.05);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.kc-tag3d__left {
     display: grid;
-    place-items: center;
-    padding: 22px;
+    gap: 2px;
 }
 
-.kc-tag__main img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    display: block;
-    user-select: none;
-    -webkit-user-drag: none;
+.kc-tag3d__label {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    color: rgba(12, 24, 48, 0.88);
 }
 
-.kc-tag__thumbs {
+.kc-tag3d__sub {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.6);
+}
+
+.kc-tag3d__right {
     display: flex;
     gap: 10px;
-    padding: 14px;
-    overflow-x: auto;
-    scrollbar-width: none;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
-.kc-tag__thumbs::-webkit-scrollbar {
+/* finish toggle */
+.kc-tag3d__seg {
+    display: inline-flex;
+    border: 1px solid rgba(12, 24, 48, 0.14);
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.92);
+}
+
+.kc-tag3d__segBtn {
+    height: 42px;
+    padding: 0 14px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.78);
+}
+
+.kc-tag3d__segBtn.is-active {
+    background: rgba(255, 123, 0, 0.12);
+    color: rgba(12, 24, 48, 0.92);
+}
+
+.kc-tag3d__btn {
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(12, 24, 48, 0.14);
+    background: rgba(255, 255, 255, 0.92);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.88);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+.kc-tag3d__btn:active {
+    transform: translateY(1px);
+}
+
+.kc-tag3d__btn input {
     display: none;
 }
 
-.kc-tag__thumb {
-    flex: 0 0 auto;
-    width: 74px;
-    height: 54px;
-    border-radius: 12px;
+.kc-tag3d__btn--ghost {
+    background: rgba(12, 24, 48, 0.05);
+}
+
+.kc-tag3d__btn[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.kc-tag3d__slider {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 999px;
     border: 1px solid rgba(12, 24, 48, 0.12);
-    background: #fff;
-    cursor: pointer;
-    padding: 6px;
-    transition: transform 0.08s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    background: rgba(255, 255, 255, 0.78);
+    padding: 0 12px;
 }
 
-.kc-tag__thumb:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 18px rgba(12, 24, 48, 0.08);
+.kc-tag3d__k {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.72);
 }
 
-.kc-tag__thumb.is-active {
-    border-color: rgba(255, 123, 0, 0.55);
-    box-shadow: 0 0 0 4px rgba(255, 123, 0, 0.12);
+.kc-tag3d__slider input[type="range"] {
+    width: 200px;
+    accent-color: var(--kc-orange);
 }
 
-.kc-tag__thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-    display: block;
+.kc-tag3d__v {
+    width: 44px;
+    text-align: right;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.74);
 }
 
 /* right panel */
@@ -477,4 +554,43 @@
     .kc-tag__cta--primary {
         width: 100%;
     }
+
+    .kc-tag3d__slider input[type="range"] {
+        width: 160px;
+    }
+}
+
+/* frontend/src/styling/products/konarcard.css */
+/* ✅ ADD THIS at the very bottom of your existing konarcard.css (do NOT remove anything) */
+
+.kc-premStage__canvasPad {
+    padding-bottom: 18px;
+    /* extra room so shadow never gets covered by the controls */
+}
+
+/* KonarTag finish toggle (scoped so it won't affect other pages) */
+.kc-konarcard__finish {
+    height: 42px;
+    display: inline-flex;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(12, 24, 48, 0.14);
+    background: rgba(255, 255, 255, 0.92);
+}
+
+.kc-konarcard__finishBtn {
+    height: 42px;
+    padding: 0 14px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.76);
+}
+
+.kc-konarcard__finishBtn.is-active {
+    background: rgba(255, 123, 0, 0.12);
+    color: rgba(12, 24, 48, 0.92);
 }
