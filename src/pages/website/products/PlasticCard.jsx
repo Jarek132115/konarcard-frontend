@@ -1,33 +1,23 @@
 // src/pages/website/products/PlasticCard.jsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 
-/* ✅ Shared CSS */
+/* ✅ Page CSS */
 import "../../../styling/products/konarcard.css";
+
+/* ✅ 3D component (new file) */
+import PlasticCard3D from "./PlasticCard3D";
 
 /* Use Konar logo as placeholder (same as navbar) */
 import LogoIcon from "../../../assets/icons/Logo-Icon.svg";
-
-/* Images (swap later) */
-import ProductCover from "../../../assets/images/Product-Cover.png";
-import ProductImage1 from "../../../assets/images/Product-Image-1.png";
-import ProductImage2 from "../../../assets/images/Product-Image-2.png";
-import ProductImage3 from "../../../assets/images/Product-Image-3.png";
-import ProductImage4 from "../../../assets/images/Product-Image-4.png";
 
 /* ✅ Your QR image (static) */
 import CardQrCode from "../../../assets/images/CardQrCode.png";
 
 export default function PlasticCard() {
-    const gallery = useMemo(
-        () => [ProductCover, ProductImage1, ProductImage2, ProductImage3, ProductImage4],
-        []
-    );
-
-    const [activeImg, setActiveImg] = useState(gallery[0]);
     const [qty, setQty] = useState(1);
 
     // ---- Logo upload preview (FRONT ONLY) ----
@@ -54,117 +44,6 @@ export default function PlasticCard() {
         setLogoUrl("");
     };
 
-    // ---- 3D rotation + idle spin ----
-    const prefersReducedMotion = useRef(false);
-    useEffect(() => {
-        try {
-            prefersReducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        } catch {
-            prefersReducedMotion.current = false;
-        }
-    }, []);
-
-    const dragRef = useRef({
-        isDown: false,
-        startX: 0,
-        startY: 0,
-        baseRX: -10,
-        baseRY: 16,
-        pointerType: "mouse",
-    });
-
-    const rafRef = useRef(null);
-    const idleRef = useRef({ isIdle: true, ry: 16, rxBase: -10 });
-
-    const [rot, setRot] = useState({ rx: -10, ry: 16 });
-    const [isDragging, setIsDragging] = useState(false);
-
-    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-
-    const setRotation = (rx, ry) => {
-        const next = { rx: clamp(rx, -24, 24), ry };
-        idleRef.current.rxBase = next.rx;
-        idleRef.current.ry = next.ry;
-        setRot(next);
-    };
-
-    const startIdleSpin = () => {
-        if (prefersReducedMotion.current) return;
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-
-        idleRef.current.isIdle = true;
-
-        const tick = () => {
-            if (!idleRef.current.isIdle) return;
-
-            idleRef.current.ry += 0.22;
-
-            const breathe = Math.sin(((idleRef.current.ry * Math.PI) / 180) * 0.7) * 1.0;
-            const rx = clamp(idleRef.current.rxBase + breathe, -24, 24);
-
-            setRot({ rx, ry: idleRef.current.ry });
-            rafRef.current = requestAnimationFrame(tick);
-        };
-
-        rafRef.current = requestAnimationFrame(tick);
-    };
-
-    const stopIdleSpin = () => {
-        idleRef.current.isIdle = false;
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-    };
-
-    useEffect(() => {
-        startIdleSpin();
-        return () => {
-            if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const onPointerDown = (e) => {
-        dragRef.current.isDown = true;
-        dragRef.current.pointerType = e.pointerType || "mouse";
-        setIsDragging(true);
-        stopIdleSpin();
-
-        dragRef.current.startX = e.clientX;
-        dragRef.current.startY = e.clientY;
-
-        dragRef.current.baseRX = rot.rx;
-        dragRef.current.baseRY = rot.ry;
-
-        try {
-            e.currentTarget.setPointerCapture(e.pointerId);
-        } catch { }
-    };
-
-    const onPointerMove = (e) => {
-        if (!dragRef.current.isDown) return;
-
-        const dx = e.clientX - dragRef.current.startX;
-        const dy = e.clientY - dragRef.current.startY;
-
-        const isTouch = dragRef.current.pointerType === "touch";
-        const gainX = isTouch ? 0.62 : 0.32;
-        const gainY = isTouch ? 0.42 : 0.22;
-
-        const nextRY = dragRef.current.baseRY + dx * gainX;
-        const nextRX = dragRef.current.baseRX - dy * gainY;
-
-        setRotation(nextRX, nextRY);
-    };
-
-    const onPointerUp = () => {
-        dragRef.current.isDown = false;
-        setIsDragging(false);
-
-        idleRef.current.rxBase = rot.rx;
-        idleRef.current.ry = rot.ry;
-        startIdleSpin();
-    };
-
     const features = useMemo(
         () => [
             { t: "Tap to share instantly", s: "Open your profile on any modern phone with an NFC tap." },
@@ -179,16 +58,15 @@ export default function PlasticCard() {
 
     const displayedLogo = logoUrl || LogoIcon;
 
-    const shineX = 50 + (rot.ry % 360) * 0.12;
-    const shineY = 40 + rot.rx * -0.6;
-
     return (
         <>
             <Navbar />
 
-            <main className="kc-konarcard kc-konarcard--premium kc-konarcard--pagePad">
+            {/* ✅ Use kc-page so top spacing matches Pricing / other pages */}
+            <main className="kc-konarcard kc-konarcard--premium kc-page">
                 <div className="kc-konarcard__wrap">
                     <section className="kc-premHero kc-premHero--clean">
+                        {/* ✅ Centered hero block (title + badges + sub) */}
                         <div className="kc-premHero__top">
                             <div className="kc-premHero__crumbs">
                                 <Link to="/products" className="kc-konarcard__crumbLink">
@@ -198,12 +76,11 @@ export default function PlasticCard() {
                                 <span className="kc-konarcard__crumbHere">KonarCard – Plastic</span>
                             </div>
 
-                            <div className="kc-premHero__titleRow">
-                                <h1 className="kc-premHero__title">KonarCard — Plastic Edition</h1>
-                                <div className="kc-premHero__badges">
-                                    <span className="kc-konarcard__pill kc-konarcard__pill--best">Best Value</span>
-                                    <span className="kc-konarcard__pill kc-konarcard__pill--warranty">12 Month Warranty</span>
-                                </div>
+                            <h1 className="kc-premHero__title">KonarCard — Plastic Edition</h1>
+
+                            <div className="kc-premHero__badges">
+                                <span className="kc-konarcard__pill kc-konarcard__pill--best">Best Value</span>
+                                <span className="kc-konarcard__pill kc-konarcard__pill--warranty">12 Month Warranty</span>
                             </div>
 
                             <p className="kc-premHero__sub">
@@ -212,59 +89,8 @@ export default function PlasticCard() {
                         </div>
 
                         <div className="kc-premStage">
-                            <div
-                                className={`kc-premStage__surface kc-premStage__surface--small ${isDragging ? "is-dragging" : ""}`}
-                                onPointerDown={onPointerDown}
-                                onPointerMove={onPointerMove}
-                                onPointerUp={onPointerUp}
-                                onPointerCancel={onPointerUp}
-                                role="application"
-                                aria-label="3D KonarCard preview. Drag to rotate."
-                            >
-                                <div className="kc-premCardWrap kc-premCardWrap--sm">
-                                    <div
-                                        className="kc-premCard kc-premCard--sm"
-                                        style={{
-                                            transform: `rotateX(${rot.rx}deg) rotateY(${rot.ry}deg)`,
-                                            ["--shineX"]: `${shineX}%`,
-                                            ["--shineY"]: `${shineY}%`,
-                                        }}
-                                    >
-                                        {/* FRONT */}
-                                        <div className="kc-premFace kc-premFace--front">
-                                            <div className="kc-premFace__base" />
-                                            <div className="kc-premLogoWrap">
-                                                <img
-                                                    src={displayedLogo}
-                                                    alt="Card logo"
-                                                    className="kc-premLogo"
-                                                    style={{ width: `${logoSize}%` }}
-                                                    draggable={false}
-                                                />
-                                            </div>
-                                            <div className="kc-premShine" aria-hidden="true" />
-                                            <div className="kc-premRim" aria-hidden="true" />
-                                        </div>
-
-                                        {/* BACK */}
-                                        <div className="kc-premFace kc-premFace--back">
-                                            <div className="kc-premBackInner kc-premBackInner--center">
-                                                <div className="kc-premQr" aria-label="QR code">
-                                                    <img src={CardQrCode} alt="QR code" draggable={false} />
-                                                </div>
-                                            </div>
-                                            <div className="kc-premShine" aria-hidden="true" />
-                                            <div className="kc-premRim" aria-hidden="true" />
-                                        </div>
-
-                                        {/* ✅ REAL THICKNESS: 4 sides */}
-                                        <div className="kc-premEdge kc-premEdge--top" aria-hidden="true" />
-                                        <div className="kc-premEdge kc-premEdge--bottom" aria-hidden="true" />
-                                        <div className="kc-premEdge kc-premEdge--left" aria-hidden="true" />
-                                        <div className="kc-premEdge kc-premEdge--right" aria-hidden="true" />
-                                    </div>
-                                </div>
-                            </div>
+                            {/* ✅ New 3D preview component */}
+                            <PlasticCard3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoSize} />
 
                             {/* Controls */}
                             <div className="kc-premControls kc-premControls--clean">
@@ -339,27 +165,6 @@ export default function PlasticCard() {
                                     <Link to="/register" className="kc-konarcard__cta kc-konarcard__cta--ghost">
                                         Create your profile first
                                     </Link>
-                                </div>
-                            </div>
-
-                            {/* Thumbs (kept for later) */}
-                            <div className="kc-premThumbs" aria-label="Choose a preview image">
-                                <div className="kc-premThumbs__label">Preview images</div>
-                                <div className="kc-konarcard__thumbRow">
-                                    {gallery.map((src, i) => {
-                                        const isActive = src === activeImg;
-                                        return (
-                                            <button
-                                                key={i}
-                                                type="button"
-                                                className={`kc-konarcard__thumb ${isActive ? "is-active" : ""}`}
-                                                onClick={() => setActiveImg(src)}
-                                                aria-label={`View image ${i + 1}`}
-                                            >
-                                                <img src={src} alt={`KonarCard image ${i + 1}`} />
-                                            </button>
-                                        );
-                                    })}
                                 </div>
                             </div>
 

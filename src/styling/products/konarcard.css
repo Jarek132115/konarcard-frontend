@@ -1,5 +1,5 @@
 /* frontend/src/styling/products/konarcard.css
-   ✅ CLEAN FILE: only styles what PlasticCard.jsx currently renders
+   ✅ UPDATED: fixes heading alignment + uses kc-page for top spacing
 */
 
 :root {
@@ -32,9 +32,9 @@
     padding: 34px 20px 70px;
 }
 
-/* ✅ spacing under navbar like other pages */
+/* ✅ We now use .kc-page for the navbar gap, so NO extra top padding here */
 .kc-konarcard--pagePad .kc-konarcard__wrap {
-    padding-top: 96px;
+    padding-top: 34px;
 }
 
 /* =========================
@@ -186,9 +186,16 @@
     padding: 0 !important;
 }
 
-/* Hero top area */
+/* Hero top area — ✅ CENTERED like your Pricing style */
+.kc-premHero__top {
+    text-align: center;
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+/* crumbs centered */
 .kc-premHero__crumbs {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
@@ -198,14 +205,7 @@
     margin-bottom: 14px;
 }
 
-.kc-premHero__titleRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-
+/* ✅ title centered, no “row” layout */
 .kc-premHero__title {
     margin: 0;
     font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -215,17 +215,18 @@
     color: rgba(12, 24, 48, 0.95);
 }
 
+/* badges centered under title */
 .kc-premHero__badges {
-    display: inline-flex;
+    margin-top: 12px;
+    display: flex;
     gap: 10px;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .kc-premHero__sub {
     margin: 10px auto 0;
     max-width: 900px;
-    text-align: center;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.7;
@@ -233,257 +234,10 @@
 }
 
 /* =========================
-   3D Stage
+   Stage area (now just spacing around the 3D component)
    ========================= */
 .kc-premStage {
     margin-top: 18px;
-}
-
-/* stage: no box, lots of breathing room */
-.kc-premStage__surface {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-
-    height: auto !important;
-    min-height: 600px;
-    padding: 44px 0 56px !important;
-
-    overflow: visible !important;
-
-    display: grid;
-    place-items: center;
-
-    perspective: 1200px;
-    transform-style: preserve-3d;
-    -webkit-transform-style: preserve-3d;
-
-    user-select: none;
-    touch-action: none;
-    cursor: grab;
-}
-
-.kc-premStage__surface.is-dragging {
-    cursor: grabbing;
-}
-
-.kc-premStage__surface--small {
-    min-height: 600px;
-    padding: 40px 0 52px !important;
-    overflow: visible !important;
-}
-
-/* ✅ Shadow wrapper (NOT rotated) */
-.kc-premCardWrap {
-    display: inline-block;
-    transform: translateZ(0);
-    filter: drop-shadow(0 30px 55px rgba(12, 24, 48, 0.18));
-}
-
-.kc-premCardWrap--sm {
-    width: min(560px, 86%);
-}
-
-/* =========================
-   ✅ REALISTIC 3D CARD THICKNESS
-   ========================= */
-.kc-premCard {
-    /* tune these */
-    --kc-radius: 22px;
-    --kc-t: 10px;
-    /* thickness */
-    --kc-halfT: calc(var(--kc-t) / 2);
-
-    width: min(820px, 92%);
-    aspect-ratio: 85.6 / 54;
-    position: relative;
-
-    transform-style: preserve-3d;
-    -webkit-transform-style: preserve-3d;
-
-    will-change: transform;
-    transition: transform 120ms ease;
-
-    /* important so edges clip to round corners */
-    border-radius: var(--kc-radius);
-}
-
-.kc-premCard--sm {
-    width: 100%;
-}
-
-/* Faces */
-.kc-premFace {
-    position: absolute;
-    inset: 0;
-    border-radius: var(--kc-radius);
-    overflow: hidden;
-
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-
-    /* ✅ remove the “transparent border” */
-    border: none;
-
-    /* keep the card solid white */
-    background: #ffffff;
-
-    /* optional: tiny inset so it still feels premium (not a border) */
-    box-shadow: inset 0 0 0 0.5px rgba(12, 24, 48, 0.04);
-}
-
-
-/* push faces out by half thickness */
-.kc-premFace--front {
-    transform: translateZ(var(--kc-halfT));
-}
-
-.kc-premFace--back {
-    transform: rotateY(180deg) translateZ(var(--kc-halfT));
-}
-
-.kc-premFace__base {
-    position: absolute;
-    inset: 0;
-    background: #ffffff;
-}
-
-/* Logo placement */
-.kc-premLogoWrap {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 70%;
-    display: grid;
-    place-items: center;
-    pointer-events: none;
-}
-
-.kc-premLogo {
-    height: auto;
-    max-height: 70%;
-    object-fit: contain;
-    filter: drop-shadow(0 14px 18px rgba(12, 24, 48, 0.18));
-}
-
-/* Shine */
-.kc-premShine {
-    position: absolute;
-    inset: -60%;
-    background: radial-gradient(closest-side at var(--shineX, 45%) var(--shineY, 40%),
-            rgba(255, 255, 255, 0.55),
-            rgba(255, 255, 255, 0) 60%);
-    transform: rotate(18deg);
-    mix-blend-mode: screen;
-    opacity: 0.85;
-    pointer-events: none;
-}
-
-/* Rim highlight */
-.kc-premRim {
-    position: absolute;
-    inset: 0;
-    border-radius: var(--kc-radius);
-    pointer-events: none;
-
-    /* softer rim, no “frame” */
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.85),
-        inset 0 -8px 14px rgba(12, 24, 48, 0.025);
-}
-
-
-/* Back inner (QR) */
-.kc-premBackInner {
-    position: absolute;
-    inset: 0;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 18px;
-}
-
-.kc-premBackInner--center {
-    grid-template-columns: 1fr !important;
-    place-items: center !important;
-}
-
-.kc-premQr {
-    width: 130px;
-    height: 130px;
-    border-radius: 16px;
-    border: 1px solid rgba(12, 24, 48, 0.12);
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: 0 18px 30px rgba(12, 24, 48, 0.1);
-    display: grid;
-    place-items: center;
-    overflow: hidden;
-}
-
-.kc-premQr img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-}
-
-/* ✅ Edges */
-.kc-premEdge {
-    position: absolute;
-    pointer-events: none;
-
-    /* Clip edges to rounded corners so they don't look like slabs */
-    clip-path: inset(0 round var(--kc-radius));
-    -webkit-clip-path: inset(0 round var(--kc-radius));
-
-    /* Edge plastic shading */
-    background: linear-gradient(180deg,
-            rgba(255, 255, 255, 0.92),
-            rgba(12, 24, 48, 0.055),
-            rgba(255, 255, 255, 0.90));
-    opacity: 0.96;
-}
-
-/* Top edge */
-.kc-premEdge--top {
-    left: 0;
-    right: 0;
-    top: 0;
-    height: var(--kc-t);
-    transform-origin: top;
-    transform: rotateX(90deg) translateZ(var(--kc-halfT));
-}
-
-/* Bottom edge */
-.kc-premEdge--bottom {
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: var(--kc-t);
-    transform-origin: bottom;
-    transform: rotateX(-90deg) translateZ(var(--kc-halfT));
-}
-
-/* Left edge */
-.kc-premEdge--left {
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: var(--kc-t);
-    transform-origin: left;
-    transform: rotateY(-90deg) translateZ(var(--kc-halfT));
-}
-
-/* Right edge */
-.kc-premEdge--right {
-    top: 0;
-    bottom: 0;
-    right: 0;
-    width: var(--kc-t);
-    transform-origin: right;
-    transform: rotateY(90deg) translateZ(var(--kc-halfT));
 }
 
 /* =========================
@@ -642,67 +396,6 @@
 }
 
 /* =========================
-   Thumbs
-   ========================= */
-.kc-premThumbs {
-    margin-top: 14px;
-    border-radius: 18px;
-    border: 1px solid var(--kc-border-2);
-    background: rgba(12, 24, 48, 0.02);
-    padding: 14px;
-}
-
-.kc-premThumbs__label {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    color: rgba(12, 24, 48, 0.62);
-    margin-bottom: 8px;
-}
-
-.kc-konarcard__thumbRow {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-}
-
-.kc-konarcard__thumbRow::-webkit-scrollbar {
-    display: none;
-}
-
-.kc-konarcard__thumb {
-    width: 72px;
-    height: 62px;
-    border-radius: 12px;
-    border: 1px solid rgba(12, 24, 48, 0.12);
-    background: #fff;
-    padding: 0;
-    cursor: pointer;
-    overflow: hidden;
-    flex: 0 0 auto;
-    transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.kc-konarcard__thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.kc-konarcard__thumb:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 22px rgba(12, 24, 48, 0.08);
-}
-
-.kc-konarcard__thumb.is-active {
-    border-color: rgba(255, 123, 0, 0.55);
-    box-shadow: 0 0 0 4px rgba(255, 123, 0, 0.12);
-}
-
-/* =========================
    What you get
    ========================= */
 .kc-konarcard__section {
@@ -785,10 +478,6 @@
 }
 
 @media (max-width: 560px) {
-    .kc-konarcard--pagePad .kc-konarcard__wrap {
-        padding-top: 88px;
-    }
-
     .kc-premHero__title {
         font-size: 34px;
     }
@@ -808,17 +497,5 @@
     .kc-konarcard__qty {
         justify-content: center;
         width: 100%;
-    }
-
-    /* stage breathing room on mobile */
-    .kc-premStage__surface,
-    .kc-premStage__surface--small {
-        min-height: 320px;
-        padding: 28px 0 46px !important;
-    }
-
-    /* thinner on mobile so it doesn't look chunky */
-    .kc-premCard {
-        --kc-t: 8px;
     }
 }

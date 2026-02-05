@@ -1,0 +1,12 @@
+/* frontend/src/styling/products/plasticcard3d.css */
+.pc3d {
+    width: 100%;
+    height: 520px;
+}
+
+/* a little breathing room like your screenshot */
+@media (max-width: 560px) {
+    .pc3d {
+        height: 360px;
+    }
+}

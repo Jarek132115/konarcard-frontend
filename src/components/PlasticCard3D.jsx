@@ -1,11 +1,14 @@
+// src/pages/website/products/PlasticCard3D.jsx
 import React, { useMemo } from "react";
 import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
-import { Environment, ContactShadows, useTexture } from "@react-three/drei";
+import { ContactShadows, Environment, useTexture } from "@react-three/drei";
 
-export default function PlasticCard3D({ logoSrc, qrSrc }) {
+import "../../../styling/products/plasticcard3d.css";
+
+export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44 }) {
     return (
-        <div style={{ width: "100%", height: "520px" }}>
+        <div className="pc3d">
             <Canvas
                 dpr={[1, 2]}
                 camera={{ position: [0, 0.35, 1.35], fov: 38 }}
@@ -22,25 +25,19 @@ export default function PlasticCard3D({ logoSrc, qrSrc }) {
 
                 <Environment preset="studio" />
 
-                <CardMesh logoSrc={logoSrc} qrSrc={qrSrc} />
+                <CardMesh logoSrc={logoSrc} qrSrc={qrSrc} logoSize={logoSize} />
 
-                <ContactShadows
-                    position={[0, -0.37, 0]}
-                    opacity={0.38}
-                    blur={1.6}
-                    scale={2.2}
-                    far={2}
-                />
+                <ContactShadows position={[0, -0.37, 0]} opacity={0.38} blur={1.6} scale={2.2} far={2} />
             </Canvas>
         </div>
     );
 }
 
-function CardMesh({ logoSrc, qrSrc }) {
+function CardMesh({ logoSrc, qrSrc, logoSize }) {
     const w = 0.95;
     const h = w * (54 / 85.6);
 
-    // Slightly thinner + softer bevel (more like real plastic, less “frame”)
+    // Slightly thinner + softer bevel
     const t = 0.026;
 
     const geometry = useMemo(() => {
@@ -48,7 +45,7 @@ function CardMesh({ logoSrc, qrSrc }) {
         const extrude = new THREE.ExtrudeGeometry(shape, {
             depth: t,
             bevelEnabled: true,
-            bevelThickness: 0.006, // ✅ smaller bevel = less border look
+            bevelThickness: 0.006,
             bevelSize: 0.008,
             bevelSegments: 6,
             curveSegments: 18,
@@ -72,9 +69,8 @@ function CardMesh({ logoSrc, qrSrc }) {
     });
 
     const materials = useMemo(() => {
-        // ✅ SOLID white base (used for sides/bevel too)
         const edge = new THREE.MeshPhysicalMaterial({
-            color: "#ffffff",           // ✅ was #f2f2f2 (this caused the “frame”)
+            color: "#ffffff",
             roughness: 0.42,
             metalness: 0.0,
             clearcoat: 0.55,
@@ -83,7 +79,6 @@ function CardMesh({ logoSrc, qrSrc }) {
             sheenRoughness: 0.75,
         });
 
-        // ✅ Front face material (NO transparent to avoid halo artifacts)
         const front = new THREE.MeshPhysicalMaterial({
             color: "#ffffff",
             roughness: 0.36,
@@ -94,7 +89,6 @@ function CardMesh({ logoSrc, qrSrc }) {
             transparent: false,
         });
 
-        // ✅ Back face material (NO transparent to avoid halo artifacts)
         const back = new THREE.MeshPhysicalMaterial({
             color: "#ffffff",
             roughness: 0.36,
@@ -109,15 +103,18 @@ function CardMesh({ logoSrc, qrSrc }) {
         return [front, back, edge];
     }, [logoTex, qrTex]);
 
+    // scale the logo texture (keep centered)
+    useMemo(() => {
+        const s = Math.max(28, Math.min(70, Number(logoSize || 44))) / 100;
+        logoTex.center.set(0.5, 0.5);
+        logoTex.repeat.set(s, s);
+        logoTex.offset.set(0.5 - s / 2, 0.5 - s / 2);
+        logoTex.needsUpdate = true;
+    }, [logoTex, logoSize]);
+
     return (
         <group>
-            <mesh
-                geometry={geometry}
-                material={materials}
-                castShadow
-                receiveShadow
-                rotation={[0.08, 0.7, 0.02]}
-            />
+            <mesh geometry={geometry} material={materials} castShadow receiveShadow rotation={[0.08, 0.7, 0.02]} />
         </group>
     );
 }
