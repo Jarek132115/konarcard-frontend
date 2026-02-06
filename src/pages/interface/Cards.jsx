@@ -1,24 +1,180 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import "../../styling/dashboard/cards.css";
 
+/**
+ * Fetch helper (uses JWT token in localStorage like the rest of the app)
+ */
+async function apiGetJson(path) {
+    const token = localStorage.getItem("token") || "";
+    const res = await fetch(path, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        credentials: "include",
+    });
+
+    const text = await res.text();
+    let data = null;
+    try {
+        data = text ? JSON.parse(text) : null;
+    } catch {
+        // ignore
+    }
+
+    if (!res.ok) {
+        const msg =
+            data?.message ||
+            data?.error ||
+            `Request failed (${res.status})`;
+        throw new Error(msg);
+    }
+
+    return data;
+}
+
+function titleFromOrder(order) {
+    const productKey = String(order?.productKey || "");
+    const profileName =
+        order?.profile?.business_card_name ||
+        order?.profile?.main_heading ||
+        order?.profile?.full_name ||
+        order?.profile?.username ||
+        "";
+
+    if (productKey === "plastic-card") return profileName ? `Plastic Card • ${profileName}` : "Plastic Card";
+    if (productKey === "metal-card") return profileName ? `Metal Card • ${profileName}` : "Metal Card";
+    if (productKey === "konartag") return profileName ? `KonarTag • ${profileName}` : "KonarTag";
+
+    return profileName ? `KonarCard • ${profileName}` : "KonarCard";
+}
+
+function materialFromOrder(order) {
+    const productKey = String(order?.productKey || "");
+    if (productKey === "plastic-card") return "Plastic";
+    if (productKey === "metal-card") return "Metal";
+    if (productKey === "konartag") return "KonarTag";
+    return "NFC";
+}
+
+function typeFromOrder(order) {
+    const productKey = String(order?.productKey || "");
+    if (productKey === "konartag") return "NFC Tag";
+    return "NFC Card";
+}
+
+function variantFromOrder(order) {
+    // We currently store variant in preview.variant (and also in Stripe metadata)
+    const v =
+        order?.variant ||
+        order?.preview?.variant ||
+        order?.preview?.color ||
+        "";
+    return v ? String(v).toUpperCase() : "";
+}
+
+function uiStatusFromOrder(order) {
+    // UI only has active/inactive right now.
+    // Paid -> active, everything else -> inactive
+    const s = String(order?.status || "").toLowerCase();
+    return s === "paid" || s === "fulfilled" ? "active" : "inactive";
+}
+
+function assignedProfileFromOrder(order) {
+    return (
+        order?.profile?.business_card_name ||
+        order?.profile?.main_heading ||
+        order?.profile?.full_name ||
+        order?.profile?.username ||
+        "Not assigned"
+    );
+}
+
+function profileLinkFromOrder(order) {
+    // Adjust these keys to whatever your BusinessCard doc actually stores.
+    const slug =
+        order?.profile?.slug ||
+        order?.profile?.username ||
+        order?.profile?.profile_username ||
+        order?.profile?.safeSlug ||
+        "";
+
+    if (!slug) return "";
+    return `${window.location.origin}/u/${slug}`;
+}
+
 export default function Cards() {
-    // TEMP: replace with real data later
+    // TEMP: you can later source this from the user/subscription object
     const [plan] = useState("free"); // "free" | "plus" | "teams"
 
-    const [cards, setCards] = useState([
-        {
-            id: "c1",
-            name: "KonarCard - Main",
-            type: "NFC Card",
-            material: "Plastic",
-            status: "active", // active | inactive
-            assignedProfile: "Main Profile",
-            lastTap: "No taps yet",
-        },
-    ]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [orders, setOrders] = useState([]);
 
-    const [selectedId, setSelectedId] = useState(cards[0]?.id || null);
+    // Local UI toggle (until you add a backend field for enabling/disabling)
+    const [overrides, setOverrides] = useState({}); // { [orderId]: "active" | "inactive" }
+
+    useEffect(() => {
+        let alive = true;
+
+        (async () => {
+            try {
+                setLoading(true);
+                setError("");
+
+                const data = await apiGetJson("/api/nfc-orders/mine");
+                const list = Array.isArray(data) ? data : data?.orders || data?.data || [];
+
+                if (!alive) return;
+                setOrders(Array.isArray(list) ? list : []);
+            } catch (e) {
+                if (!alive) return;
+                setError(e?.message || "Failed to load orders.");
+                setOrders([]);
+            } finally {
+                if (!alive) return;
+                setLoading(false);
+            }
+        })();
+
+        return () => {
+            alive = false;
+        };
+    }, []);
+
+    const cards = useMemo(() => {
+        return (orders || []).map((o) => {
+            const baseStatus = uiStatusFromOrder(o);
+            const id = String(o?._id || o?.id || "");
+
+            return {
+                id,
+                name: titleFromOrder(o),
+                type: typeFromOrder(o),
+                material: materialFromOrder(o),
+                variant: variantFromOrder(o),
+                quantity: Number(o?.quantity || 1),
+                status: overrides[id] || baseStatus, // active|inactive
+                orderStatus: String(o?.status || ""), // raw: pending/paid/...
+                assignedProfile: assignedProfileFromOrder(o),
+                logoUrl: o?.logoUrl || "",
+                createdAt: o?.createdAt ? new Date(o.createdAt).toLocaleString() : "",
+                link: profileLinkFromOrder(o),
+                lastTap: "No taps yet", // not implemented yet
+                _raw: o,
+            };
+        });
+    }, [orders, overrides]);
+
+    const [selectedId, setSelectedId] = useState(null);
+
+    // Keep selectedId stable when data loads
+    useEffect(() => {
+        if (!selectedId && cards[0]?.id) setSelectedId(cards[0].id);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [cards.length]);
 
     const selectedCard = useMemo(
         () => cards.find((c) => c.id === selectedId) || cards[0] || null,
@@ -31,16 +187,14 @@ export default function Cards() {
     const isLimitReached = !canAddCard && plan !== "teams";
 
     const handleOrderCard = () => {
-        // Later: route to shop/cards or checkout flow
         window.location.href = "/products";
     };
 
     const handleDeactivate = (id) => {
-        setCards((prev) =>
-            prev.map((c) =>
-                c.id === id ? { ...c, status: c.status === "active" ? "inactive" : "active" } : c
-            )
-        );
+        setOverrides((prev) => {
+            const current = prev[id] || cards.find((c) => c.id === id)?.status || "inactive";
+            return { ...prev, [id]: current === "active" ? "inactive" : "active" };
+        });
     };
 
     const handleAssignProfile = () => {
@@ -50,11 +204,10 @@ export default function Cards() {
     const handleCopyLink = async () => {
         if (!selectedCard) return;
 
-        // Later: card will map to profile slug from DB
-        const link = `${window.location.origin}/u/yourname`;
+        const link = selectedCard.link || `${window.location.origin}/products`;
         try {
             await navigator.clipboard.writeText(link);
-            alert("Profile link copied ✅");
+            alert("Link copied ✅");
         } catch {
             alert("Copy failed — please copy manually: " + link);
         }
@@ -62,7 +215,8 @@ export default function Cards() {
 
     const handleShare = async () => {
         if (!selectedCard) return;
-        const link = `${window.location.origin}/u/yourname`;
+
+        const link = selectedCard.link || `${window.location.origin}/products`;
 
         if (navigator.share) {
             try {
@@ -101,9 +255,19 @@ export default function Cards() {
                     <div>
                         <h1 className="cards-title">Cards</h1>
                         <p className="cards-subtitle">
-                            Your KonarCards are physical NFC products. Assign each card to a profile so customers
-                            always land on the right page.
+                            Your KonarCards are physical NFC products. Assign each card to a profile so customers always land on the
+                            right page.
                         </p>
+
+                        {loading ? (
+                            <p className="cards-muted" style={{ marginTop: 10 }}>
+                                Loading your orders…
+                            </p>
+                        ) : error ? (
+                            <p className="cards-muted" style={{ marginTop: 10 }}>
+                                {error}
+                            </p>
+                        ) : null}
                     </div>
 
                     <div className="cards-header-meta">
@@ -111,19 +275,17 @@ export default function Cards() {
                             Plan: <strong>{plan.toUpperCase()}</strong>
                         </span>
                         <span className="cards-pill">
-                            Cards: <strong>{cards.length}</strong> /{" "}
-                            <strong>{maxCards === 999 ? "∞" : maxCards}</strong>
+                            Cards: <strong>{cards.length}</strong> / <strong>{maxCards === 999 ? "∞" : maxCards}</strong>
                         </span>
                     </div>
                 </div>
 
                 {/* Empty State */}
-                {cards.length === 0 ? (
+                {!loading && !error && cards.length === 0 ? (
                     <section className="cards-card cards-empty">
                         <h2 className="cards-card-title">Order your first KonarCard</h2>
                         <p className="cards-muted">
-                            Your card lets customers tap their phone to instantly save your contact and open your
-                            profile.
+                            Your card lets customers tap their phone to instantly save your contact and open your profile.
                         </p>
 
                         <div className="cards-actions-row">
@@ -174,22 +336,28 @@ export default function Cards() {
 
                                             <div className="cards-item-meta">
                                                 <div className="cards-item-title">
-                                                    {c.name} <span className="cards-type">• {c.material}</span>
+                                                    {c.name}
+                                                    <span className="cards-type">
+                                                        {" "}
+                                                        • {c.material}
+                                                        {c.variant ? ` • ${c.variant}` : ""}
+                                                        {c.quantity > 1 ? ` • x${c.quantity}` : ""}
+                                                    </span>
                                                 </div>
                                                 <div className="cards-item-sub">
                                                     <span className="cards-muted">
                                                         Assigned: <strong>{c.assignedProfile || "Not assigned"}</strong>
                                                     </span>
                                                     <span className="cards-dot">•</span>
-                                                    <span className="cards-muted">{c.lastTap}</span>
+                                                    <span className="cards-muted">
+                                                        {c.orderStatus ? `Order: ${String(c.orderStatus).toUpperCase()}` : c.lastTap}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div className="cards-item-right">
-                                            <span className={`cards-status ${c.status}`}>
-                                                {c.status === "active" ? "ACTIVE" : "INACTIVE"}
-                                            </span>
+                                            <span className={`cards-status ${c.status}`}>{c.status === "active" ? "ACTIVE" : "INACTIVE"}</span>
 
                                             <button
                                                 type="button"
@@ -198,6 +366,8 @@ export default function Cards() {
                                                     e.stopPropagation();
                                                     handleDeactivate(c.id);
                                                 }}
+                                            // If you want: disable toggling unless paid
+                                            // disabled={String(c.orderStatus).toLowerCase() !== "paid" && String(c.orderStatus).toLowerCase() !== "fulfilled"}
                                             >
                                                 {c.status === "active" ? "Disable" : "Enable"}
                                             </button>
@@ -218,16 +388,35 @@ export default function Cards() {
 
                             <div className="cards-preview">
                                 <div className="cards-preview-card">
-                                    <div className="cards-preview-logo">K</div>
+                                    <div className="cards-preview-logo">
+                                        {selectedCard?.logoUrl ? (
+                                            <img
+                                                src={selectedCard.logoUrl}
+                                                alt="Logo"
+                                                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "999px" }}
+                                            />
+                                        ) : (
+                                            "K"
+                                        )}
+                                    </div>
+
                                     <div className="cards-preview-name">{selectedCard?.name || "KonarCard"}</div>
                                     <div className="cards-preview-sub">
                                         {selectedCard?.material} • {selectedCard?.type}
+                                        {selectedCard?.variant ? ` • ${selectedCard.variant}` : ""}
                                     </div>
+
                                     <div className="cards-preview-qr" />
                                     <div className="cards-preview-row">
                                         <div className="cards-preview-pill" />
                                         <div className="cards-preview-pill" />
                                     </div>
+
+                                    {selectedCard?.createdAt ? (
+                                        <div className="cards-muted" style={{ marginTop: 10, fontSize: 12 }}>
+                                            Ordered: {selectedCard.createdAt}
+                                        </div>
+                                    ) : null}
                                 </div>
 
                                 <div className="cards-actions">
@@ -260,8 +449,8 @@ export default function Cards() {
                                 <div>
                                     <h2 className="cards-card-title">Need multiple cards?</h2>
                                     <p className="cards-muted">
-                                        Teams lets you manage multiple cards and assign them to multiple profiles —
-                                        perfect for staff or growing businesses.
+                                        Teams lets you manage multiple cards and assign them to multiple profiles — perfect for staff or
+                                        growing businesses.
                                     </p>
                                 </div>
 
