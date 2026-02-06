@@ -51,11 +51,16 @@ function assignedProfileFromOrder(order) {
 }
 
 function profileLinkFromOrder(order) {
-    // adjust if your profile URL uses a different field
-    const slug = order?.profile?.slug || order?.profile?.username || "";
+    const slug =
+        order?.profile?.profile_slug ||
+        order?.profile?.slug ||
+        order?.profile?.username ||
+        "";
+
     if (!slug) return "";
     return `${window.location.origin}/u/${slug}`;
 }
+
 
 async function getMyOrders() {
     const r = await api.get("/api/nfc-orders/mine");
