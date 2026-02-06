@@ -1,62 +1,87 @@
+// frontend/src/components/home/Share.jsx
 import React from "react";
 import "../../styling/home/share.css";
 
-/*
-  HOME — SHARE SECTION
-  Previously lived in Home/index.jsx as "HOW TO SHARE"
-  Now a component so Home stays clean.
-*/
+export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
+    const items = [
+        {
+            k: "nfc",
+            title: "Tap with KonarCard",
+            desc: "Instantly opens your profile on modern phones — no app needed.",
+            img: nfcImage,
+            badge: "Fastest",
+            icon: "↯",
+        },
+        {
+            k: "qr",
+            title: "Scan the QR backup",
+            desc: "Works even when NFC is off — anyone can scan with a camera.",
+            img: qrImage,
+            badge: "Works for everyone",
+            icon: "⌁",
+        },
+        {
+            k: "msg",
+            title: "Send your link",
+            desc: "Share in WhatsApp, SMS, Messenger, email — wherever they reply.",
+            img: smsImage,
+            badge: "Best for follow-ups",
+            icon: "✉",
+        },
+        {
+            k: "bio",
+            title: "Link in bio",
+            desc: "Add to Instagram, Facebook, TikTok, Google Business, or your site.",
+            img: linkImage,
+            badge: "Always visible",
+            icon: "⛓",
+        },
+    ];
 
-export default function Share({
-    nfcImage,
-    qrImage,
-    smsImage,
-    linkImage,
-}) {
     return (
-        <section className="kc-share section" aria-label="How to share your profile">
-            <div className="kc-share__inner">
-                <div className="kc-share__header">
-                    <h2 className="kc-share__title desktop-h3 text-center">
-                        One Profile. <span className="orange">Shared</span> Every Way.
+        <section className="khs-share" aria-label="How to share your profile">
+            <div className="khs-container">
+                <header className="khs-head">
+                    <p className="khs-kicker">One profile, everywhere</p>
+
+                    <h2 className="h3 khs-title">
+                        One Profile. <span className="khs-accent">Shared</span> Every Way.
                     </h2>
-                    <p className="kc-share__sub desktop-body-xs text-center">
-                        Four simple ways to get your details in front of clients.
+
+                    <p className="body-s khs-sub">
+                        Four simple ways to get your details in front of clients — in person, online, and on-site.
                     </p>
-                </div>
+                </header>
 
-                <div className="kc-share__grid">
-                    <div className="kc-share__card">
-                        <div className="kc-share__media">
-                            {nfcImage ? <img src={nfcImage} alt="NFC business card being tapped to share details" /> : null}
-                        </div>
-                        <h3 className="kc-share__cardTitle">NFC Business Card</h3>
-                        <p className="kc-share__cardDesc">Tap to Instantly Share Details With Anyone</p>
-                    </div>
+                <div className="khs-grid">
+                    {items.map((it) => (
+                        <article className="khs-card" key={it.k}>
+                            <div className="khs-cardTop">
+                                <span className="khs-pill">{it.badge}</span>
+                            </div>
 
-                    <div className="kc-share__card">
-                        <div className="kc-share__media">
-                            {qrImage ? <img src={qrImage} alt="Scanning a QR code to open profile" /> : null}
-                        </div>
-                        <h3 className="kc-share__cardTitle">Scan QR Code</h3>
-                        <p className="kc-share__cardDesc">Scan the QR Code To Open Your Profile</p>
-                    </div>
+                            <div className="khs-media" aria-hidden="true">
+                                {it.img ? (
+                                    <img src={it.img} alt="" loading="lazy" />
+                                ) : (
+                                    <div className={`khs-mock khs-mock--${it.k}`}>
+                                        <div className="khs-mock__icon">{it.icon}</div>
+                                        <div className="khs-mock__lines">
+                                            <span />
+                                            <span />
+                                            <span />
+                                        </div>
+                                        <div className="khs-mock__chip" />
+                                    </div>
+                                )}
+                            </div>
 
-                    <div className="kc-share__card">
-                        <div className="kc-share__media">
-                            {smsImage ? <img src={smsImage} alt="Sharing your link via message apps" /> : null}
-                        </div>
-                        <h3 className="kc-share__cardTitle">Share via Message</h3>
-                        <p className="kc-share__cardDesc">WhatsApp, SMS, Messenger &amp; More</p>
-                    </div>
-
-                    <div className="kc-share__card">
-                        <div className="kc-share__media">
-                            {linkImage ? <img src={linkImage} alt="Link in bio on social profile" /> : null}
-                        </div>
-                        <h3 className="kc-share__cardTitle">Link In Bio</h3>
-                        <p className="kc-share__cardDesc">Add to Instagram, Facebook, TikTok, or your website.</p>
-                    </div>
+                            <div className="khs-body">
+                                <p className="h6 khs-cardTitle">{it.title}</p>
+                                <p className="body-s khs-cardDesc">{it.desc}</p>
+                            </div>
+                        </article>
+                    ))}
                 </div>
             </div>
         </section>

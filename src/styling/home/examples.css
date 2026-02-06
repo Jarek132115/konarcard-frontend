@@ -1,127 +1,111 @@
 /* =========================================================
    HOME — EXAMPLES SECTION
+   Match Examples page card styles (ex-card / grid feel)
    File: frontend/src/styling/home/examples.css
    ========================================================= */
 
-.kc-examples {
-    padding-top: 64px;
-    padding-bottom: 64px;
+.khe-examples {
+    background: var(--kc-bg-main);
+    color: var(--kc-text-primary);
+    padding: 80px 0;
 }
 
-.kc-examples__inner {
-    max-width: 1180px;
+@media (max-width: 600px) {
+    .khe-examples {
+        padding: 56px 0;
+    }
+}
+
+.khe-container {
+    max-width: 1040px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-.kc-examples__header {
-    margin-bottom: 34px;
+/* =========================
+   HEADER
+   ========================= */
+.khe-hero {
+    padding: 0 0 30px;
 }
 
-.kc-examples__title {
-    margin: 0 0 10px;
-    color: #0b1220;
-    letter-spacing: -0.03em;
-    line-height: 1.05;
+.khe-hero__inner {
+    text-align: center;
 }
 
-.kc-examples__sub {
+.khe-title {
+    margin: 0 0 8px;
+}
+
+.khe-sub {
     margin: 0 auto;
-    max-width: 760px;
-    color: rgba(12, 24, 48, 0.72);
-    line-height: 1.6;
+    max-width: 720px;
+    color: var(--kc-text-secondary);
 }
 
-/* Grid */
-.kc-examples__grid {
-    margin-top: 22px;
+/* =========================
+   GRID (like examples page)
+   ========================= */
+.khe-grid {
+    max-width: 1040px;
+    margin: 0 auto;
+
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
-    align-items: stretch;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
 }
 
-/* Card */
-.kc-examples__card {
-    border-radius: 18px;
-    border: 1px solid rgba(12, 24, 48, 0.10);
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 16px 38px rgba(12, 24, 48, 0.08);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.kc-examples__media {
-    height: 250px;
+.khe-card {
+    border: 1px solid var(--kc-border);
     background: #ffffff;
-    border-bottom: 1px solid rgba(12, 24, 48, 0.06);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.khe-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.1);
+}
+
+/* 1:1 image area */
+.khe-imageWrap {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: var(--kc-bg-soft);
     display: grid;
     place-items: center;
+    padding: 14px;
 }
 
-.kc-examples__media img {
+.khe-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
+    border-radius: 12px;
 }
 
-/* Placeholder (swap for real assets) */
-.kc-examples__placeholder {
-    position: relative;
-    width: 240px;
-    height: 200px;
-    display: grid;
-    place-items: center;
+/* text */
+.khe-cardBody {
+    padding: 16px;
 }
 
-.kc-examples__phone {
-    width: 110px;
-    height: 170px;
-    border-radius: 22px;
-    background: rgba(12, 24, 48, 0.06);
-    border: 1px solid rgba(12, 24, 48, 0.10);
-    box-shadow: 0 18px 30px rgba(12, 24, 48, 0.10);
-}
-
-.kc-examples__cardMock {
-    position: absolute;
-    right: 42px;
-    bottom: 26px;
-    width: 100px;
-    height: 72px;
-    border-radius: 14px;
-    background: rgba(12, 24, 48, 0.10);
-    border: 1px solid rgba(12, 24, 48, 0.12);
-    box-shadow: 0 16px 28px rgba(12, 24, 48, 0.12);
-    transform: rotate(-10deg);
-}
-
-/* Body */
-.kc-examples__body {
-    padding: 16px 16px 18px;
-}
-
-.kc-examples__name {
+.khe-cardTitle {
     margin: 0 0 6px;
-    font-family: "Inter", sans-serif;
-    font-weight: 900;
-    font-size: 16px;
-    letter-spacing: -0.02em;
-    color: #0b1220;
+    color: var(--kc-text-primary);
 }
 
-.kc-examples__desc {
+.khe-cardDesc {
     margin: 0;
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
+    color: var(--kc-text-secondary);
     line-height: 1.55;
-    color: rgba(12, 24, 48, 0.68);
 }
 
-/* CTA */
-.kc-examples__ctaRow {
+/* =========================
+   CTA ROW (same vibe as examples page)
+   ========================= */
+.khe-ctaRow {
     margin-top: 22px;
     display: flex;
     justify-content: center;
@@ -129,70 +113,66 @@
     flex-wrap: wrap;
 }
 
-/* Buttons */
-.kc-examples__btn {
+.khe-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    height: 46px;
-    padding: 0 26px;
+    padding: 14px 26px;
     border-radius: 999px;
     text-decoration: none;
 
-    font-family: "Inter", sans-serif;
-    font-weight: 900;
+    font-family: "Cal Sans", sans-serif;
     font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
 
     transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
 }
 
-.kc-examples__btn:active {
+.khe-btn:active {
     transform: translateY(1px);
 }
 
-.kc-examples__btn--primary {
-    background: #ff7b00;
-    color: #fff;
-    box-shadow: 0 18px 36px rgba(255, 123, 0, 0.26);
+.khe-btn--primary {
+    background: var(--kc-accent-primary);
+    color: #ffffff;
+    box-shadow: var(--kc-shadow-accent);
 }
 
-.kc-examples__btn--primary:hover {
+.khe-btn--primary:hover {
     filter: brightness(0.98);
-    box-shadow: 0 22px 42px rgba(255, 123, 0, 0.30);
+    box-shadow: var(--kc-shadow-accent-hover);
 }
 
-.kc-examples__btn--ghost {
-    background: rgba(255, 255, 255, 0.90);
-    color: rgba(12, 24, 48, 0.92);
-    border: 1px solid rgba(12, 24, 48, 0.12);
-    box-shadow: 0 12px 24px rgba(12, 24, 48, 0.06);
+.khe-btn--ghost {
+    background: #ffffff;
+    color: var(--kc-text-primary);
+    border: 1px solid var(--kc-border);
+    box-shadow: 0 10px 24px rgba(16, 24, 40, 0.06);
 }
 
-.kc-examples__btn--ghost:hover {
+.khe-btn--ghost:hover {
     filter: brightness(0.99);
 }
 
-/* Responsive */
+/* =========================
+   RESPONSIVE
+   ========================= */
 @media (max-width: 1100px) {
-    .kc-examples__grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .khe-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .khe-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 640px) {
-    .kc-examples__grid {
+    .khe-grid {
         grid-template-columns: 1fr;
-    }
-
-    .kc-examples__media {
-        height: 240px;
-    }
-}
-
-@media (max-width: 520px) {
-    .kc-examples {
-        padding-top: 48px;
-        padding-bottom: 48px;
     }
 }

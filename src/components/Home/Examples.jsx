@@ -1,77 +1,64 @@
-import React from "react";
+// frontend/src/components/home/Examples.jsx
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
+
+import "../../styling/fonts.css";
 import "../../styling/home/examples.css";
 
-/*
-  HOME — Examples section
-  Matches screenshot:
-  - Title + subtitle centered
-  - 4 cards with image area and text
-  - 2 CTA buttons centered (primary orange + ghost)
-  - Images are placeholders: swap to your real assets anytime
-*/
+/* ✅ Use the same image as Examples page for now (swap later) */
+import ExampleTest from "../../assets/images/ExampleTest.jpg";
 
 export default function Examples() {
-    const items = [
-        {
-            title: "Electrician — James",
-            desc: "Uses KonarCard to share contact details instantly after jobs and quotes.",
-            image: null,
-        },
-        {
-            title: "Electrician — James",
-            desc: "Uses KonarCard to share contact details instantly after jobs and quotes.",
-            image: null,
-        },
-        {
-            title: "Electrician — James",
-            desc: "Uses KonarCard to share contact details instantly after jobs and quotes.",
-            image: null,
-        },
-        {
-            title: "Electrician — James",
-            desc: "Uses KonarCard to share contact details instantly after jobs and quotes.",
-            image: null,
-        },
-    ];
+    const items = useMemo(
+        () => [
+            { role: "Electrician", name: "James", desc: "Shares contact details instantly after jobs and quotes." },
+            { role: "Plumber", name: "Ben", desc: "Shows reviews + gallery to build trust on the first visit." },
+            { role: "Builder", name: "Ryan", desc: "Shares portfolio + booking link to win higher-value work." },
+            { role: "Landscaper", name: "Charlie", desc: "Shares seasonal packages and availability on-site." },
+        ],
+        []
+    );
 
     return (
-        <section className="kc-examples section" aria-label="Real examples">
-            <div className="kc-examples__inner">
-                <div className="kc-examples__header">
-                    <h2 className="kc-examples__title desktop-h2 text-center">See How Other Tradies Use KonarCard</h2>
-                    <p className="kc-examples__sub desktop-body-s text-center">
-                        Real profiles. Real cards. Real examples of how KonarCard helps win more work.
-                    </p>
+        <section className="khe-examples" aria-label="Real examples">
+            <div className="khe-container">
+                <div className="khe-hero">
+                    <div className="khe-hero__inner">
+                        <h2 className="h2 khe-title">
+                            See How Other Tradies
+                            <br />
+                            Use KonarCard
+                        </h2>
+
+                        <p className="body-s khe-sub">
+                            Real profiles. Real cards. Real examples of how KonarCard helps win more work.
+                        </p>
+                    </div>
                 </div>
 
-                <div className="kc-examples__grid">
-                    {items.map((it, i) => (
-                        <article className="kc-examples__card" key={i}>
-                            <div className="kc-examples__media">
-                                {it.image ? (
-                                    <img src={it.image} alt={it.title} loading="lazy" />
-                                ) : (
-                                    <div className="kc-examples__placeholder" aria-hidden="true">
-                                        <div className="kc-examples__phone" />
-                                        <div className="kc-examples__cardMock" />
-                                    </div>
-                                )}
+                <div className="khe-grid" aria-label="Example profiles">
+                    {items.map((it) => (
+                        <article className="khe-card" key={`${it.role}-${it.name}`}>
+                            <div className="khe-imageWrap" aria-hidden="true">
+                                <img src={ExampleTest} alt="" className="khe-image" loading="lazy" />
                             </div>
 
-                            <div className="kc-examples__body">
-                                <h3 className="kc-examples__name">{it.title}</h3>
-                                <p className="kc-examples__desc">{it.desc}</p>
+                            <div className="khe-cardBody">
+                                <p className="h6 khe-cardTitle">
+                                    {it.role} — {it.name}
+                                </p>
+                                <p className="body-s khe-cardDesc">{it.desc}</p>
                             </div>
                         </article>
                     ))}
                 </div>
 
-                <div className="kc-examples__ctaRow">
-                    <Link to="/examples" className="kc-examples__btn kc-examples__btn--primary">
+                <div className="khe-ctaRow">
+                    <Link to="/examples" className="khe-btn khe-btn--primary">
                         See More Real Examples
                     </Link>
-                    <Link to="/register" className="kc-examples__btn kc-examples__btn--ghost">
+
+                    <Link to="/register" className="khe-btn khe-btn--ghost">
                         Create Your Own Profile
                     </Link>
                 </div>
