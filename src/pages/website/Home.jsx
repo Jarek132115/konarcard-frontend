@@ -101,7 +101,7 @@ export default function Home() {
       <Pricing />
 
       {/* 9) REVIEW (last section) */}
-      <Review />
+      {/* <Review /> */}
 
       <Footer />
 

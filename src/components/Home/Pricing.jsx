@@ -1,23 +1,15 @@
+// frontend/src/components/home/Pricing.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import "../../styling/home/pricing.css";
 
-/*
-  HOME — PRICING SECTION
-  Matches screenshot:
-  - Title + subtitle centered
-  - 3 pricing cards
-  - Each card: heading, subheading, 14-day pill, divider, big price £0 + Forever, bullet list, full-width CTA
-  - Uses simple consistent classes + global typography where available
-*/
-
-function Bullet({ title, desc }) {
+function Feature({ title, desc }) {
     return (
-        <li className="kc-pricing__feature">
-            <span className="kc-pricing__dot" aria-hidden="true" />
-            <div className="kc-pricing__featureCopy">
-                <div className="kc-pricing__featureTitle">{title}</div>
-                <div className="kc-pricing__featureDesc">{desc}</div>
+        <li className="khp-feature">
+            <span className="khp-check" aria-hidden="true">✓</span>
+            <div className="khp-featureCopy">
+                <div className="khp-featureTitle">{title}</div>
+                <div className="khp-featureDesc">{desc}</div>
             </div>
         </li>
     );
@@ -26,97 +18,111 @@ function Bullet({ title, desc }) {
 export default function Pricing() {
     const cards = [
         {
-            title: "Konar Digital Business Card Page",
-            sub: "Win more work with a power profile",
-            badge: "14-Day Free Trial",
+            title: "Free",
+            sub: "Perfect to start sharing today",
+            tag: "Start free",
             price: "£0",
             cadence: "Forever",
             features: [
-                { t: "Digital profile", d: "Upload unlimited photos (Portfolio / Gallery)" },
-                { t: "Simple Editor", d: "Edit anytime — no tech skills needed" },
-                { t: "Reviews", d: "Build trust with social proof" },
-                { t: "Contact options", d: "Call, message, or save details instantly" },
+                { t: "1 profile + 1 link + 1 QR", d: "Everything you need to share your details." },
+                { t: "Fully customise your profile", d: "Edit your details anytime." },
+                { t: "Works on any phone", d: "Tap or scan — no app needed." },
+                { t: "Unlimited link updates", d: "Your link never changes." },
             ],
-            ctaText: "Start Free",
+            ctaText: "Get started free",
             ctaTo: "/register",
             featured: false,
         },
         {
-            title: "Konar Digital Business Card Page",
-            sub: "Win more work with a power profile",
-            badge: "14-Day Free Trial",
-            price: "£0",
-            cadence: "Forever",
+            title: "Plus",
+            sub: "Most popular for solo trades",
+            tag: "Most popular",
+            price: "£4.95",
+            cadence: "per month",
+            note: "Cancel anytime",
             features: [
-                { t: "Digital profile", d: "Upload unlimited photos (Portfolio / Gallery)" },
-                { t: "Simple Editor", d: "Edit anytime — no tech skills needed" },
-                { t: "Services", d: "List what you do with clear pricing" },
-                { t: "Share anywhere", d: "Link, QR code, and NFC tap" },
+                { t: "More templates", d: "Choose from 5 layouts." },
+                { t: "Higher limits", d: "More photos, services, and reviews." },
+                { t: "Deep analytics", d: "See what customers click." },
+                { t: "Remove Konar branding", d: "Make it fully yours." },
             ],
-            ctaText: "Start Free",
-            ctaTo: "/register",
-            featured: true, // subtle emphasis on middle card
+            ctaText: "Upgrade to Plus",
+            ctaTo: "/pricing",
+            featured: true,
         },
         {
-            title: "Konar Digital Business Card Page",
-            sub: "Win more work with a power profile",
-            badge: "14-Day Free Trial",
-            price: "£0",
-            cadence: "Forever",
+            title: "Teams",
+            sub: "Built for growing businesses",
+            tag: "For teams",
+            price: "£19.95",
+            cadence: "per month",
+            note: "Add extra profiles",
             features: [
-                { t: "Digital profile", d: "Upload unlimited photos (Portfolio / Gallery)" },
-                { t: "Simple Editor", d: "Edit anytime — no tech skills needed" },
-                { t: "Branding", d: "Logo, colours, and layout control" },
-                { t: "Works on any phone", d: "No app needed — just tap or scan" },
+                { t: "Multiple team profiles", d: "Great for staff and contractors." },
+                { t: "Centralised branding", d: "Keep everything consistent." },
+                { t: "Deep analytics", d: "Track performance across profiles." },
+                { t: "Extra profiles available", d: "£1.95 / extra profile / month." },
             ],
-            ctaText: "Start Free",
-            ctaTo: "/register",
+            ctaText: "See Teams options",
+            ctaTo: "/pricing",
             featured: false,
         },
     ];
 
     return (
-        <section className="kc-pricing section" aria-label="Pricing">
-            <div className="kc-pricing__inner">
-                <div className="kc-pricing__header">
-                    <h2 className="kc-pricing__title desktop-h2 text-center">Simple Pricing That Pays For Itself</h2>
-                    <p className="kc-pricing__sub desktop-body-s text-center">Start free. Upgrade only if you need more.</p>
-                </div>
+        <section className="khp-pricing" aria-label="Pricing">
+            <div className="khp-container">
+                <header className="khp-head">
+                    <p className="khp-kicker">Simple pricing</p>
+                    <h2 className="h3 khp-title">Pricing That Pays For Itself</h2>
+                    <p className="body-s khp-sub">Start free. Upgrade only when you need more.</p>
+                </header>
 
-                <div className="kc-pricing__grid">
-                    {cards.map((c, i) => (
-                        <article
-                            key={i}
-                            className={`kc-pricing__card ${c.featured ? "is-featured" : ""}`}
-                        >
-                            <div className="kc-pricing__top">
-                                <div className="kc-pricing__head">
-                                    <h3 className="kc-pricing__cardTitle">{c.title}</h3>
-                                    <p className="kc-pricing__cardSub">{c.sub}</p>
-                                </div>
-                                <span className="kc-pricing__badge">{c.badge}</span>
+                <div className="khp-grid">
+                    {cards.map((c) => (
+                        <article key={c.title} className={`khp-card ${c.featured ? "is-featured" : ""}`}>
+                            <div className="khp-cardTop">
+                                <div className={`khp-pill ${c.featured ? "is-featured" : ""}`}>{c.tag}</div>
+                                <p className="h5 khp-cardTitle">{c.title}</p>
+                                <p className="body-s khp-cardSub">{c.sub}</p>
                             </div>
 
-                            <div className="kc-pricing__divider" />
-
-                            <div className="kc-pricing__priceRow">
-                                <div className="kc-pricing__price">{c.price}</div>
-                                <div className="kc-pricing__cadence">{c.cadence}</div>
+                            <div className="khp-priceRow">
+                                <div className="khp-price">{c.price}</div>
+                                <div className="khp-cadence">{c.cadence}</div>
                             </div>
 
-                            <ul className="kc-pricing__features">
+                            {c.note ? <div className="khp-note">{c.note}</div> : <div className="khp-note khp-note--empty" aria-hidden="true" />}
+
+                            <div className="khp-divider" aria-hidden="true" />
+
+                            <ul className="khp-list" aria-label={`${c.title} plan features`}>
                                 {c.features.map((f, idx) => (
-                                    <Bullet key={idx} title={f.t} desc={f.d} />
+                                    <Feature key={idx} title={f.t} desc={f.d} />
                                 ))}
                             </ul>
 
-                            <div className="kc-pricing__bottom">
-                                <Link to={c.ctaTo} className="kc-pricing__btn">
+                            <div className="khp-actions">
+                                <Link to={c.ctaTo} className={`khp-btn ${c.featured ? "is-primary" : "is-ghost"}`}>
                                     {c.ctaText}
                                 </Link>
                             </div>
                         </article>
                     ))}
+                </div>
+
+                <div className="khp-bottom">
+                    <p className="body-s khp-bottomNote">
+                        Want full details? Compare plans and billing intervals on the pricing page.
+                    </p>
+                    <div className="khp-bottomBtns">
+                        <Link to="/pricing" className="khp-btn is-primary khp-btn--inline">
+                            View full pricing
+                        </Link>
+                        <Link to="/products" className="khp-btn is-ghost khp-btn--inline">
+                            Shop cards
+                        </Link>
+                    </div>
                 </div>
             </div>
         </section>
