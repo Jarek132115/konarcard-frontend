@@ -58,17 +58,10 @@ function profileLinkFromOrder(order) {
 }
 
 async function getMyOrders() {
-    // Some codebases mount api baseURL already at /api, some don't.
-    // We try both without making you guess.
-    try {
-        const r = await api.get("/nfc-orders/mine");
-        return r.data;
-    } catch (e) {
-        // fallback
-        const r = await api.get("/api/nfc-orders/mine");
-        return r.data;
-    }
+    const r = await api.get("/api/nfc-orders/mine");
+    return r.data;
 }
+
 
 export default function Cards() {
     const [plan] = useState("free"); // later wire to subscription
