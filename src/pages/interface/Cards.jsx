@@ -59,8 +59,10 @@ function profileLinkFromOrder(order) {
 
 async function getMyOrders() {
     const r = await api.get("/api/nfc-orders/mine");
+    if (r.status !== 200) throw new Error(r.data?.message || "Failed to load orders");
     return r.data;
 }
+
 
 
 export default function Cards() {
