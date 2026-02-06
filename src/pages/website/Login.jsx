@@ -11,13 +11,15 @@ import GoogleIcon from "../../assets/icons/Google-Icon.svg";
 import FacebookIcon from "../../assets/icons/Facebook-Icon.svg";
 import AppleIcon from "../../assets/icons/Apple-Icon.svg";
 
-
 const POST_AUTH_KEY = "postAuthAction"; // legacy (keep for card-buy etc)
 const REMEMBER_KEY = "rememberLogin";
 const REMEMBERED_EMAIL_KEY = "rememberedEmail";
 
 // pricing -> login -> stripe resume
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
+
+// ✅ NFC product buy intent
+const NFC_INTENT_KEY = "konar_nfc_intent_v1";
 
 const ADMIN_EMAILS_UI = ["supportteam@konarcard.com"];
 
@@ -75,23 +77,52 @@ export default function Login() {
         }
     };
 
+    const readNfcIntent = () => {
+        try {
+            const raw = localStorage.getItem(NFC_INTENT_KEY);
+            if (!raw) return null;
+            const intent = JSON.parse(raw);
+            if (!intent?.productKey) return null;
+
+            const age = Date.now() - Number(intent.createdAt || intent.updatedAt || 0);
+            if (Number.isFinite(age) && age > 30 * 60 * 1000) {
+                localStorage.removeItem(NFC_INTENT_KEY);
+                return null;
+            }
+
+            return intent;
+        } catch {
+            return null;
+        }
+    };
+
+    const clearNfcIntent = () => {
+        try {
+            localStorage.removeItem(NFC_INTENT_KEY);
+        } catch {
+            // ignore
+        }
+    };
+
     const startOAuth = (provider) => {
         if (provider === "apple") {
             toast("Apple login coming soon");
             return;
         }
 
-        const intent = readCheckoutIntent();
+        const subIntent = readCheckoutIntent();
+        const nfcIntent = readNfcIntent();
 
         try {
             localStorage.setItem("oauthSource", "login");
-            if (!intent) localStorage.removeItem("pendingClaimUsername");
+            if (!subIntent && !nfcIntent) localStorage.removeItem("pendingClaimUsername");
         } catch {
             // ignore
         }
 
         window.location.href = `${BASE_URL}/auth/${provider}`;
     };
+
 
     useEffect(() => {
         try {
@@ -106,6 +137,7 @@ export default function Login() {
         }
     }, []);
 
+    // Store postAuthAction if passed in navigation state
     useEffect(() => {
         const action = location.state?.postAuthAction;
         if (action) {
@@ -123,7 +155,16 @@ export default function Login() {
         return () => clearTimeout(t);
     }, [cooldown]);
 
+    /**
+     * ✅ After login we decide where to go:
+     * Priority:
+     * 1) Subscription checkout intent (Stripe)
+     * 2) postAuthAction (buy_nfc / buy_card / etc)
+     * 3) NFC intent fallback (if it exists without postAuthAction)
+     * 4) default: /myprofile
+     */
     const runPendingActionOrDefault = async () => {
+        // pull stored postAuthAction
         let action = null;
         try {
             const saved = localStorage.getItem(POST_AUTH_KEY);
@@ -137,12 +178,21 @@ export default function Login() {
             // ignore
         }
 
-        if (!action) {
-            navigate("/myprofile");
+        // ✅ NEW: buy_nfc support (return to product page)
+        if (action?.type === "buy_nfc") {
+            const returnTo =
+                (typeof action?.payload?.returnTo === "string" && action.payload.returnTo.trim()) ||
+                readNfcIntent()?.returnTo ||
+                (typeof location.state?.from === "string" && location.state.from.trim()) ||
+                "/products";
+
+            navigate(returnTo, { replace: true });
             return;
         }
 
-        if (action.type === "buy_card") {
+
+        // legacy: buy_card
+        if (action?.type === "buy_card") {
             navigate("/productandplan/konarcard", {
                 state: {
                     triggerCheckout: true,
@@ -150,6 +200,13 @@ export default function Login() {
                 },
                 replace: true,
             });
+            return;
+        }
+
+        // ✅ If no action but NFC intent exists, go back
+        const nfc = readNfcIntent();
+        if (nfc?.returnTo) {
+            navigate(nfc.returnTo, { replace: true });
             return;
         }
 
@@ -229,10 +286,12 @@ export default function Login() {
 
             const email = res.data.user?.email || cleanEmail;
             if (isAdminEmail(email)) {
+                clearNfcIntent();
                 navigate("/admin", { replace: true });
                 return;
             }
 
+            // ✅ keep subscription flow exactly as-is
             const resumed = await resumeCheckoutIfNeeded();
             if (resumed) return;
 
@@ -272,7 +331,6 @@ export default function Login() {
                 toast.error(res.data.error || "Verification failed.");
                 return;
             }
-
 
             toast.success("Email verified!");
 

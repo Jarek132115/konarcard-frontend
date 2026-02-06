@@ -11,12 +11,14 @@ import GoogleIcon from "../../assets/icons/Google-Icon.svg";
 import FacebookIcon from "../../assets/icons/Facebook-Icon.svg";
 import AppleIcon from "../../assets/icons/Apple-Icon.svg";
 
-
 const PENDING_CLAIM_KEY = "pendingClaimUsername";
 const OAUTH_SOURCE_KEY = "oauthSource";
 
 // pricing -> register -> stripe resume
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
+
+// ✅ NFC product buy intent
+const NFC_INTENT_KEY = "konar_nfc_intent_v1";
 
 export default function Register() {
     const navigate = useNavigate();
@@ -52,7 +54,6 @@ export default function Register() {
             .replace(/[^a-z0-9._-]/g, "");
 
     const cleanEmail = (v) => String(v || "").trim().toLowerCase();
-
     const cleanCode = (v) => String(v || "").replace(/\D/g, "").slice(0, 6);
 
     const closeAuth = () => {
@@ -79,7 +80,6 @@ export default function Register() {
             const intent = JSON.parse(raw);
             if (!intent?.planKey) return null;
 
-            // expire after 30 minutes
             const age = Date.now() - Number(intent.createdAt || 0);
             if (Number.isFinite(age) && age > 30 * 60 * 1000) {
                 localStorage.removeItem(CHECKOUT_INTENT_KEY);
@@ -100,8 +100,33 @@ export default function Register() {
         }
     };
 
+    // ✅ NFC intent read (for returning to product page after register)
+    const readNfcIntent = () => {
+        try {
+            const raw = localStorage.getItem(NFC_INTENT_KEY);
+            if (!raw) return null;
+
+            const intent = JSON.parse(raw);
+            if (!intent?.productKey) return null;
+
+            const age = Date.now() - Number(intent.createdAt || intent.updatedAt || 0);
+            if (Number.isFinite(age) && age > 30 * 60 * 1000) {
+                localStorage.removeItem(NFC_INTENT_KEY);
+                return null;
+            }
+
+            return intent;
+        } catch {
+            return null;
+        }
+    };
+
     const checkoutIntent = useMemo(() => readCheckoutIntent(), []);
     const hasCheckoutIntent = !!checkoutIntent;
+
+    // ✅ NFC intent presence matters too (needs claimed username)
+    const nfcIntent = useMemo(() => readNfcIntent(), []);
+    const hasNfcIntent = !!nfcIntent;
 
     // ---------------------------------
     // On mount: preload pending claim
@@ -118,10 +143,12 @@ export default function Register() {
                 setForceClaimStep(false);
             } else {
                 setClaimInput("");
-                if (hasCheckoutIntent) setForceClaimStep(true);
+
+                // ✅ if subscription OR NFC intent exists, force claim step
+                if (hasCheckoutIntent || hasNfcIntent) setForceClaimStep(true);
             }
         } catch {
-            if (hasCheckoutIntent) setForceClaimStep(true);
+            if (hasCheckoutIntent || hasNfcIntent) setForceClaimStep(true);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -134,7 +161,8 @@ export default function Register() {
 
     const hasConfirmedUsername = Boolean((data.username || "").trim());
 
-    const mustClaimBeforeContinuing = hasCheckoutIntent && !hasConfirmedUsername && !verificationStep;
+    const mustClaimBeforeContinuing =
+        (hasCheckoutIntent || hasNfcIntent) && !hasConfirmedUsername && !verificationStep;
 
     const shouldShowClaimStep =
         !verificationStep && (mustClaimBeforeContinuing || forceClaimStep || !hasConfirmedUsername);
@@ -174,6 +202,21 @@ export default function Register() {
             toast.error(e?.response?.data?.error || "Subscription failed.");
             return false;
         }
+    };
+
+    // ✅ If NFC intent exists, return to product page after verify+login
+    const resumeNfcIfNeeded = () => {
+        const intent = readNfcIntent();
+        if (!intent) return false;
+
+        const returnTo =
+            (typeof intent.returnTo === "string" && intent.returnTo.trim()) ||
+            (typeof location.state?.from === "string" && location.state.from.trim()) ||
+            "/products";
+
+        // do NOT clear NFC intent — product page needs it to restore logoSize/qty, etc.
+        navigate(returnTo, { replace: true });
+        return true;
     };
 
     // ---------------------------------
@@ -219,7 +262,8 @@ export default function Register() {
     const registerUser = async (e) => {
         e.preventDefault();
 
-        if (hasCheckoutIntent && !sanitizeSlug(data.username)) {
+        // ✅ if subscription OR NFC intent, require claimed username
+        if ((hasCheckoutIntent || hasNfcIntent) && !sanitizeSlug(data.username)) {
             toast.error("Please claim your link first.");
             setForceClaimStep(true);
             return;
@@ -340,8 +384,12 @@ export default function Register() {
                 // ignore
             }
 
+            // ✅ Priority: subscription resume first (keeps existing behavior)
             const resumed = await resumeCheckoutIfNeeded();
             if (resumed) return;
+
+            // ✅ If NFC intent exists, go back to product page
+            if (resumeNfcIfNeeded()) return;
 
             try {
                 localStorage.removeItem(PENDING_CLAIM_KEY);
@@ -393,7 +441,8 @@ export default function Register() {
             return;
         }
 
-        if (hasCheckoutIntent && !sanitizeSlug(data.username || claimInput)) {
+        // ✅ if subscription OR NFC intent, require claimed username
+        if ((hasCheckoutIntent || hasNfcIntent) && !sanitizeSlug(data.username || claimInput)) {
             toast.error("Please claim your link before continuing.");
             setForceClaimStep(true);
             setTimeout(() => claimInputRef.current?.focus?.(), 0);
@@ -414,7 +463,7 @@ export default function Register() {
     const backFromVerify = () => {
         setVerificationStep(false);
         setCode("");
-        if (hasCheckoutIntent && !sanitizeSlug(data.username)) {
+        if ((hasCheckoutIntent || hasNfcIntent) && !sanitizeSlug(data.username)) {
             setForceClaimStep(true);
             setTimeout(() => claimInputRef.current?.focus?.(), 0);
         }
@@ -464,12 +513,7 @@ export default function Register() {
                                         {isVerifying ? "Verifying…" : "Verify"}
                                     </button>
 
-                                    <button
-                                        type="button"
-                                        className="kc-btn kc-btn-secondary kc-btn-center"
-                                        disabled={cooldown > 0}
-                                        onClick={resendCode}
-                                    >
+                                    <button type="button" className="kc-btn kc-btn-secondary kc-btn-center" disabled={cooldown > 0} onClick={resendCode}>
                                         {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
                                     </button>
 
@@ -485,9 +529,9 @@ export default function Register() {
                                     This is your unique link. When someone clicks it, they see your digital business card.
                                 </p>
 
-                                {hasCheckoutIntent ? (
+                                {(hasCheckoutIntent || hasNfcIntent) ? (
                                     <p className="kc-microcopy" style={{ marginTop: 8 }}>
-                                        Before subscribing, you must claim your KonarCard link.
+                                        Before continuing, you must claim your KonarCard link.
                                     </p>
                                 ) : null}
 
