@@ -1,90 +1,101 @@
-import React from "react";
+// frontend/src/components/home/Products.jsx
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
+
+import "../../styling/fonts.css";
 import "../../styling/home/products.css";
 
-/*
-  Products section (Home)
-  - Matches screenshot: header + sub, 3 product cards, best value pill on first
-  - Uses existing typography classes from fonts.css where possible
-  - Images are intentionally placeholders — swap src to your real assets if needed
-*/
+/* ✅ Product images (same as Products page) */
+import PlasticCardImg from "../../assets/images/PlasticCard.jpg";
+import MetalCardImg from "../../assets/images/MetalCard.jpg";
+import KonarTagImg from "../../assets/images/KonarTag.jpg";
 
 export default function Products() {
-    const products = [
-        {
-            tag: "Best Value",
-            name: "KonarCard - Plastic Edition",
-            desc: "Durable, lightweight NFC business card for everyday use.",
-            price: "£29.99",
-            // Replace with your real asset if you have it:
-            // image: PlasticCardImg,
-            image: null,
-        },
-        {
-            tag: null,
-            name: "KonarCard - Metal Edition",
-            desc: "Premium metal NFC card designed to make a strong first impression.",
-            price: "£44.99",
-            image: null,
-        },
-        {
-            tag: null,
-            name: "KonarTag",
-            desc: "Compact NFC key tag that shares your profile with a tap.",
-            price: "£9.99",
-            image: null,
-        },
-    ];
+    const products = useMemo(
+        () => [
+            {
+                tag: "Best seller",
+                name: "KonarCard — Plastic Edition",
+                desc: "Durable, lightweight NFC business card for everyday use.",
+                price: "£29.99",
+                to: "/products/plastic-card",
+                cta: "View Plastic Card",
+                img: PlasticCardImg,
+            },
+            {
+                tag: "Premium",
+                name: "KonarCard — Metal Edition",
+                desc: "Premium metal NFC card designed to make a strong first impression.",
+                price: "£44.99",
+                to: "/products/metal-card",
+                cta: "View Metal Card",
+                img: MetalCardImg,
+            },
+            {
+                tag: "Accessory",
+                name: "KonarTag",
+                desc: "Compact NFC key tag that shares your profile with a tap.",
+                price: "£9.99",
+                to: "/products/konartag",
+                cta: "View KonarTag",
+                img: KonarTagImg,
+            },
+        ],
+        []
+    );
 
     return (
-        <section className="kc-products section" aria-label="Products">
-            <div className="kc-products__inner">
-                <div className="kc-products__header">
-                    <h2 className="kc-products__title desktop-h2 text-center">
-                        Business Cards That Share Your Profile Instantly
-                    </h2>
-                    <p className="kc-products__sub desktop-body-s text-center">
-                        The KonarCard is an NFC business card that opens your digital profile with a tap. It’s
-                        <br />
-                        the easiest way to share your details in person — without paper cards.
-                    </p>
+        <section className="khp-products" aria-label="Products">
+            <div className="khp-container">
+                <div className="khp-hero">
+                    <div className="khp-hero__inner">
+                        <p className="khp-kicker">Cards that link directly to your KonarCard profile</p>
+                        <h2 className="h2 khp-title">Business Cards That Share Your Profile Instantly</h2>
+                        <p className="body-s khp-sub">
+                            The KonarCard is an NFC business card that opens your digital profile with a tap. It’s the easiest way to share your
+                            details in person — without paper cards.
+                        </p>
+                    </div>
                 </div>
 
-                <div className="kc-products__grid">
-                    {products.map((p, i) => (
-                        <article key={i} className="kc-products__card">
-                            <div className="kc-products__media">
-                                {p.tag && <div className="kc-products__pill">{p.tag}</div>}
-
-                                {/* If you have real images, swap this placeholder */}
-                                {p.image ? (
-                                    <img src={p.image} alt={p.name} loading="lazy" />
-                                ) : (
-                                    <div className="kc-products__placeholder" aria-hidden="true">
-                                        <div className="kc-products__placeholderMark">K</div>
-                                    </div>
-                                )}
+                <div className="khp-grid">
+                    {products.map((item) => (
+                        <article key={item.name} className="khp-card">
+                            <div className="khp-card__topRow">
+                                <span className="khp-pill">{item.tag}</span>
                             </div>
 
-                            <div className="kc-products__body">
-                                <h3 className="kc-products__name">{p.name}</h3>
-                                <p className="kc-products__desc">{p.desc}</p>
-                                <div className="kc-products__price">{p.price}</div>
+                            <div className="khp-media" aria-hidden="true">
+                                <img src={item.img} alt="" className="khp-media__img" loading="lazy" />
+                            </div>
+
+                            <div className="khp-card__body">
+                                <p className="h6 khp-card__name">{item.name}</p>
+                                <p className="body-s khp-desc">{item.desc}</p>
+
+                                <div className="khp-priceRow">
+                                    <p className="h6 khp-price">{item.price}</p>
+                                </div>
+
+                                <div className="khp-actions">
+                                    <Link to={item.to} className="khp-btn">
+                                        {item.cta}
+                                    </Link>
+                                </div>
                             </div>
                         </article>
                     ))}
                 </div>
 
-                <p className="kc-products__note">
+                <p className="khp-note">
                     Your KonarCard works with your digital profile. The card is a one-time purchase. Profiles are free to start.
                 </p>
 
-                <div className="kc-products__ctaRow">
-                    <Link to="/products" className="kc-products__btn kc-products__btn--primary">
+                <div className="khp-ctaRow">
+                    <Link to="/products" className="khp-cta khp-cta--primary">
                         Shop Business Cards
                     </Link>
-
-                    <Link to="/how-it-works" className="kc-products__btn kc-products__btn--ghost">
+                    <Link to="/how-it-works" className="khp-cta khp-cta--ghost">
                         See How The Cards Work
                     </Link>
                 </div>
