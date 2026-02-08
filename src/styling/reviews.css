@@ -209,8 +209,9 @@
 /* =========================
    GRID
    ========================= */
+/* ✅ More breathing room before footer (since CTA removed) */
 .kc-rev__list {
-    padding: 12px 0 54px;
+    padding: 12px 0 120px;
 }
 
 .kc-rev__grid {
@@ -294,7 +295,7 @@
     color: var(--kc-text-secondary);
 }
 
-/* tags (wrap uses .pill, but keep spacing consistent) */
+/* tags */
 .kc-rev__tags {
     display: flex;
     flex-wrap: wrap;
@@ -304,54 +305,6 @@
 /* text */
 .kc-rev__text {
     margin: 0;
-}
-
-/* =========================
-   CTA
-   ========================= */
-.kc-rev__cta {
-    padding: 20px 0 70px;
-}
-
-.kc-rev__ctaCard {
-    border: 1px solid var(--kc-border);
-    border-radius: 20px;
-    background: #ffffff;
-    padding: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-}
-
-.kc-rev__ctaTitle {
-    margin: 0 0 6px;
-}
-
-.kc-rev__ctaSub {
-    margin: 0;
-}
-
-.kc-rev__ctaBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 18px;
-    border-radius: 999px;
-    background: var(--kc-accent-primary);
-    color: #ffffff;
-    text-decoration: none;
-    box-shadow: var(--kc-shadow-accent);
-    transition: filter 0.15s ease, transform 0.08s ease;
-    white-space: nowrap;
-}
-
-.kc-rev__ctaBtn:hover {
-    filter: brightness(0.98);
-}
-
-.kc-rev__ctaBtn:active {
-    transform: translateY(1px);
 }
 
 /* =========================
@@ -366,18 +319,19 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .kc-rev__ctaCard {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .kc-rev__ctaBtn {
-        width: 100%;
+    /* ✅ slightly more space before footer on tablet */
+    .kc-rev__list {
+        padding-bottom: 130px;
     }
 }
 
 @media (max-width: 640px) {
     .kc-rev__grid {
         grid-template-columns: 1fr;
+    }
+
+    /* ✅ even more space before footer on mobile */
+    .kc-rev__list {
+        padding-bottom: 150px;
     }
 }

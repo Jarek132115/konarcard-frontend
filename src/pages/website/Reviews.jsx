@@ -334,24 +334,6 @@ export default function Reviews() {
             </div>
           </div>
         </section>
-
-        {/* CTA */}
-        <section className="kc-rev__cta">
-          <div className="kc-rev__container">
-            <div className="kc-rev__ctaCard">
-              <div className="kc-rev__ctaCopy">
-                <h2 className="h5 kc-rev__ctaTitle">Ready to look more professional?</h2>
-                <p className="body-s kc-rev__ctaSub">
-                  Claim your KonarCard link, build your profile, and start sharing instantly.
-                </p>
-              </div>
-
-              <a className="kc-rev__ctaBtn button-text" href="/claimyourlink">
-                Claim your link
-              </a>
-            </div>
-          </div>
-        </section>
       </main>
 
       <Footer />
