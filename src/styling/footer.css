@@ -41,11 +41,10 @@
 
 .kc-footer__carouselViewport {
     overflow: hidden;
-    /* IMPORTANT: marquee style (no scrollbar) */
     user-select: none;
     -webkit-user-select: none;
 
-    /* IMPORTANT: let vertical drags scroll the page */
+    /* ✅ let vertical drags scroll the page */
     touch-action: pan-y;
 }
 
@@ -62,12 +61,18 @@
     cursor: grabbing;
 }
 
+/* ✅ Constrain each item so text never runs too long on mobile */
 .kc-footer__item {
     display: flex;
     gap: 14px;
     align-items: flex-start;
-    min-width: 320px;
-    max-width: 360px;
+
+    /* instead of huge widths, keep readable measure */
+    width: 320px;
+    /* consistent “card width” */
+    max-width: 320px;
+    flex: 0 0 320px;
+
     color: #fff;
 }
 
@@ -80,12 +85,16 @@
 
 .kc-footer__itemText {
     text-align: left;
+    min-width: 0;
 }
 
 .kc-footer__itemTitle {
     font-weight: 800;
     font-size: 14px;
     margin: 0 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .kc-footer__itemDesc {
@@ -93,6 +102,9 @@
     font-size: 12px;
     line-height: 1.35;
     color: rgba(255, 255, 255, 0.76);
+
+    /* ✅ keep desc readable instead of super-long single line */
+    max-width: 240px;
 }
 
 /* Edge fades */
@@ -142,11 +154,13 @@
 }
 
 /* =========================
-   Main footer
+   Main footer (WHITE SECTION)
+   ✅ more padding top & bottom on desktop
    ========================= */
 .kc-footer__main {
     background: #fff;
-    padding: 62px 20px 0;
+    padding: 84px 20px 0;
+    /* ✅ increased from 62px */
 }
 
 .kc-footer__mainInner {
@@ -155,10 +169,17 @@
     display: grid;
     grid-template-columns: 1.2fr 2fr;
     gap: 80px;
-    padding-bottom: 40px;
+
+    /* ✅ give more breathing room before bottom divider */
+    padding-bottom: 56px;
+    /* ✅ increased from 40px */
 }
 
 /* Left */
+.kc-footer__left {
+    justify-self: start;
+}
+
 .kc-footer__brand {
     display: inline-flex;
     align-items: center;
@@ -241,7 +262,7 @@
 }
 
 /* =========================
-   Bottom bar (matches your 2nd image)
+   Bottom bar
    ========================= */
 .kc-footer__bottomBar {
     border-top: 1px solid rgba(12, 24, 48, 0.12);
@@ -297,28 +318,71 @@
    Responsive
    ========================= */
 @media (max-width: 1000px) {
+
+    /* ✅ tighter white padding on tablet while still spacious */
+    .kc-footer__main {
+        padding: 68px 20px 0;
+    }
+
+    /* ✅ stack + center the white section content */
     .kc-footer__mainInner {
         grid-template-columns: 1fr;
         gap: 44px;
+        padding-bottom: 48px;
+        text-align: center;
+        justify-items: center;
     }
 
+    .kc-footer__left {
+        justify-self: center;
+        text-align: center;
+    }
+
+    .kc-footer__desc {
+        max-width: 460px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .kc-footer__socials {
+        justify-content: center;
+    }
+
+    /* ✅ one column per row (Product, Support, Company stacked) */
     .kc-footer__cols {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 34px;
+        grid-template-columns: 1fr;
+        gap: 26px;
+        width: 100%;
+        max-width: 520px;
+        justify-items: center;
+    }
+
+    .kc-footer__col {
+        width: 100%;
+        text-align: center;
     }
 }
 
 @media (max-width: 640px) {
-    .kc-footer__cols {
-        grid-template-columns: 1fr;
+
+    /* ✅ carousel items slightly narrower on small phones */
+    .kc-footer__item {
+        width: 290px;
+        max-width: 290px;
+        flex: 0 0 290px;
     }
 
-    .kc-footer__item {
-        min-width: 280px;
+    .kc-footer__itemDesc {
+        max-width: 210px;
     }
 
     .kc-footer__policies {
         gap: 16px;
         flex-wrap: wrap;
+    }
+
+    .kc-footer__bottomInner {
+        justify-content: center;
+        text-align: center;
     }
 }

@@ -1,10 +1,8 @@
-// frontend/src/pages/website/ContactUs.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import api from "../../services/api";
 
 /* Global typography/tokens */
 import "../../styling/fonts.css";
@@ -15,16 +13,8 @@ import "../../styling/contactus.css";
 /* Icons */
 import ContactIcon from "../../assets/icons/Contact-Icon.svg";
 import ChatIcon from "../../assets/icons/Contact-Interface.svg";
-import ToolsIcon from "../../assets/icons/ToolBox-Icon.svg";
 
 export default function ContactUs() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    email: "",
-    message: "",
-  });
-
-  // Auto-open chat if flagged
   useEffect(() => {
     if (localStorage.getItem("openChatOnLoad") !== "1") return;
 
@@ -36,16 +26,10 @@ export default function ContactUs() {
         typeof window.tidioChatApi.open === "function";
 
       if (ready) {
-        try {
-          localStorage.removeItem("openChatOnLoad");
-        } catch { }
+        localStorage.removeItem("openChatOnLoad");
         window.tidioChatApi.open();
       } else if (Date.now() - started < 5000) {
         setTimeout(tryOpen, 200);
-      } else {
-        try {
-          localStorage.removeItem("openChatOnLoad");
-        } catch { }
       }
     };
 
@@ -56,27 +40,27 @@ export default function ContactUs() {
     () => [
       {
         q: "How quickly do you reply?",
-        a: "We aim to reply to all messages within one working day. If your message is urgent, live chat during working hours is usually the fastest way to get help.",
+        a: "Live chat during working hours is the fastest way to get help. If you email us, we aim to reply within one working day.",
       },
       {
         q: "Can you help me set up my profile?",
-        a: "Yes. If you’re unsure how to set something up or want to check you’re doing it right, send us a message and we’ll guide you through it step by step.",
+        a: "Yes — live chat is best for this. We’ll guide you step by step.",
       },
       {
         q: "Do I need an account to contact you?",
-        a: "No — you don’t need an account to get in touch. Anyone can send us a message using the contact form on this page.",
+        a: "No. Anyone can contact us.",
       },
       {
         q: "Is it okay to finish my profile later?",
-        a: "Yes. You can claim your link first and complete your profile later. Your link won’t go anywhere, and you can edit your profile at any time.",
+        a: "Yes. You can claim your link first and complete your profile later.",
       },
       {
         q: "Is there a phone number I can call?",
-        a: "We don’t offer phone support at the moment. Email and live chat are the quickest and most reliable ways to reach us and get help.",
+        a: "We don’t offer phone support at the moment. Live chat and email are the quickest options.",
       },
       {
         q: "What should I do if something isn’t working?",
-        a: "If something doesn’t look right or isn’t working as expected, send us a message and explain what’s happening. Screenshots help if you have them.",
+        a: "Use live chat and include a screenshot if possible — it helps us fix things faster.",
       },
     ],
     []
@@ -84,211 +68,111 @@ export default function ContactUs() {
 
   const [openIndex, setOpenIndex] = useState(0);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!formData.firstName || !formData.email || !formData.message) {
-      toast.error("Please fill in all fields.");
-      return;
-    }
-
-    try {
-      const res = await api.post("/contact", {
-        name: formData.firstName,
-        email: formData.email,
-        message: formData.message,
-        reason: "Contact Page",
-        agree: true,
-      });
-
-      if (res.data?.success) {
-        toast.success("Message sent!");
-        setFormData({ firstName: "", email: "", message: "" });
-      } else {
-        toast.error(res.data?.error || "Something went wrong");
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.error || "Failed to send message.");
-    }
-  };
-
   const openChat = () => {
-    if (window.tidioChatApi && typeof window.tidioChatApi.open === "function") {
+    if (window.tidioChatApi?.open) {
       window.tidioChatApi.open();
     } else {
-      toast.error("Live chat is still loading — please try again in a moment.");
+      toast.error("Live chat is still loading — please try again shortly.");
     }
-  };
-
-  const scrollToForm = () => {
-    const el = document.getElementById("kc-contact-form");
-    el?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
     <>
       <Navbar />
 
-      {/* kc-page = consistent navbar spacing */}
       <main className="kc-contact kc-page">
         {/* HERO */}
         <section className="kc-contact__hero">
-          <div className="kc-contact__heroInner">
-            <h1 className="h2 kc-contact__title">We’re Here To Help</h1>
-            <p className="body-s kc-contact__subtitle">
-              Questions, support, or partnerships — get in touch.
+          <div className="kc-contact__container">
+            <p className="label kc-contact__kicker">Contact</p>
+            <h1 className="h2 kc-contact__title">We’re here to help</h1>
+            <p className="body kc-contact__subtitle">
+              Live chat is the quickest way to get support. Email is available anytime.
             </p>
 
             {/* CONTACT OPTIONS */}
             <div className="kc-contact__cards">
-              <div className="kc-contact__card">
-                <div className="kc-contact__cardIcon" aria-hidden="true">
-                  <img src={ContactIcon} alt="" />
-                </div>
-                <p className="h6 kc-contact__cardTitle">Email us</p>
-                <p className="body-s kc-contact__cardText">
-                  Email us — we usually reply within one working day.
-                </p>
-                <a className="kc-contact__cardLink" href="mailto:supportteam@konarcard.com">
-                  supportteam@konarcard.com
-                </a>
-              </div>
-
-              <div className="kc-contact__card">
-                <div className="kc-contact__cardIcon" aria-hidden="true">
+              {/* LIVE CHAT */}
+              <div className="kc-contact__card kc-contact__card--primary">
+                <div className="kc-contact__cardIcon">
                   <img src={ChatIcon} alt="" />
                 </div>
-                <p className="h6 kc-contact__cardTitle">Live chat</p>
+
+                <p className="h6 kc-contact__cardTitle">Live chat (fastest)</p>
                 <p className="body-s kc-contact__cardText">
-                  Chat with our team during working hours for quick help.
+                  Quick help during working hours. Best for setup questions and fixes.
                 </p>
+
                 <button
                   type="button"
-                  className="kc-contact__cardLink kc-contact__cardButton"
+                  className="kc-contact__primaryBtn button-text"
                   onClick={openChat}
                 >
-                  Start Live Chat
+                  Start live chat
                 </button>
+
+                <p className="body-xs kc-contact__cardHint">
+                  Tip: Include a screenshot if something isn’t working.
+                </p>
               </div>
 
+              {/* EMAIL */}
               <div className="kc-contact__card">
-                <div className="kc-contact__cardIcon" aria-hidden="true">
-                  <img src={ToolsIcon} alt="" />
+                <div className="kc-contact__cardIcon">
+                  <img src={ContactIcon} alt="" />
                 </div>
-                <p className="h6 kc-contact__cardTitle">Support 24/7</p>
+
+                <p className="h6 kc-contact__cardTitle">Email</p>
                 <p className="body-s kc-contact__cardText">
-                  You can email us anytime — we’ll get back to you as soon as possible.
+                  We aim to reply within one working day with helpful guidance.
                 </p>
-                <button
-                  type="button"
-                  className="kc-contact__cardLink kc-contact__cardButton"
-                  onClick={scrollToForm}
+
+                <a
+                  className="kc-contact__secondaryBtn button-text"
+                  href="mailto:supportteam@konarcard.com"
                 >
-                  Send Message
-                </button>
+                  Send email
+                </a>
+
+                <p className="body-xs kc-contact__cardHint">
+                  Best for non-urgent questions and partnerships.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* FORM */}
-        <section className="kc-contact__formSection" id="kc-contact-form">
-          <div className="kc-contact__formWrap">
-            <h2 className="h3 kc-contact__sectionTitle">Or send us a message</h2>
-            <p className="body-s kc-contact__sectionSub">
-              Fill in the form below and we’ll get back to you as soon as we can.
-            </p>
-
-            <form className="kc-contact__form" onSubmit={handleSubmit}>
-              <div className="kc-contact__row2">
-                <div className="kc-contact__field">
-                  <label className="label kc-contact__label" htmlFor="firstName">
-                    First name
-                  </label>
-                  <input
-                    id="firstName"
-                    name="firstName"
-                    className="kc-contact__input"
-                    placeholder="Enter your name"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="kc-contact__field">
-                  <label className="label kc-contact__label" htmlFor="email">
-                    Email address
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    className="kc-contact__input"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="kc-contact__field">
-                <label className="label kc-contact__label" htmlFor="message">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  className="kc-contact__textarea"
-                  placeholder="Enter your message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <button type="submit" className="kc-contact__submit">
-                Send Message
-              </button>
-            </form>
-          </div>
-        </section>
-
-        {/* QUICK ANSWERS (FAQ STYLE) */}
+        {/* QUICK ANSWERS */}
         <section className="kc-contact__faq">
-          <div className="kc-contact__faqInner">
+          <div className="kc-contact__container">
             <h2 className="h3 kc-contact__sectionTitle">Quick answers</h2>
-            <p className="body-s kc-contact__sectionSub">
-              Common questions people ask before they message us.
+            <p className="body kc-contact__sectionSub">
+              Common questions people ask before reaching out.
             </p>
 
-            <div className="kc-contact__faqList" role="region" aria-label="Quick answers">
+            <div className="kc-contact__faqList">
               {quickAnswers.map((item, idx) => {
                 const isOpen = idx === openIndex;
                 return (
-                  <div className="kc-contact__faqItem" key={`${item.q}-${idx}`}>
+                  <div className="kc-contact__faqItem" key={idx}>
                     <button
-                      type="button"
                       className="kc-contact__qRow"
                       onClick={() => setOpenIndex(isOpen ? -1 : idx)}
-                      aria-expanded={isOpen}
                     >
-                      <span className="h6 kc-contact__q">{item.q}</span>
-                      <span className={`kc-contact__chev ${isOpen ? "is-open" : ""}`} aria-hidden="true">
-                        ▾
-                      </span>
+                      <span className="h6">{item.q}</span>
+                      <span className={`kc-contact__chev ${isOpen ? "is-open" : ""}`}>▾</span>
                     </button>
 
-                    {isOpen && <div className="body-s kc-contact__a">{item.a}</div>}
+                    {isOpen && <div className="body kc-contact__a">{item.a}</div>}
                   </div>
                 );
               })}
+            </div>
+
+            <div className="kc-contact__faqCta">
+              <a href="/faqs" className="kc-contact__faqBtn button-text">
+                Read more FAQs
+              </a>
             </div>
           </div>
         </section>

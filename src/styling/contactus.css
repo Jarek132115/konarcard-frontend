@@ -1,30 +1,51 @@
 /* frontend/src/styling/contactus.css */
 
 /* =========================================================
-   CONTACT US
+   CONTACT US — Live chat (primary) + Email (secondary)
    Layout-only styles (tokens/type from fonts.css)
    ========================================================= */
+
+.kc-contact {
+    background: var(--kc-bg-main);
+    color: var(--kc-text-primary);
+}
+
+.kc-contact__container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Keep Cal Sans at 500 everywhere it appears */
+.kc-contact__title,
+.kc-contact__cardTitle,
+.kc-contact__sectionTitle {
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 500 !important;
+}
 
 /* =========================
    HERO
    ========================= */
 .kc-contact__hero {
-    padding: 0 20px 32px;
+    padding: 0 0 44px;
 }
 
-.kc-contact__heroInner {
-    max-width: 980px;
-    margin: 0 auto;
+.kc-contact__kicker {
     text-align: center;
+    margin: 0 0 10px;
 }
 
 .kc-contact__title {
-    margin: 0 0 8px;
+    text-align: center;
+    margin: 0 0 10px;
 }
 
 .kc-contact__subtitle {
+    text-align: center;
     margin: 0 auto;
-    max-width: 560px;
+    max-width: 60ch;
+    color: var(--kc-text-secondary);
 }
 
 /* =========================
@@ -33,136 +54,79 @@
 .kc-contact__cards {
     margin-top: 24px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+
+    max-width: 880px;
+    margin-left: auto;
+    margin-right: auto;
+
     text-align: left;
 }
 
 .kc-contact__card {
     border: 1px solid var(--kc-border);
     background: #ffffff;
-    border-radius: 14px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
-    padding: 16px;
+    border-radius: 18px;
+    padding: 18px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    transition: transform 0.12s ease;
+}
+
+.kc-contact__card:hover {
+    transform: translateY(-1px);
+}
+
+/* Primary card (subtle orange emphasis) */
+.kc-contact__card--primary {
+    background: rgba(249, 115, 22, 0.05);
+    border-color: rgba(249, 115, 22, 0.25);
 }
 
 .kc-contact__cardIcon {
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
     display: grid;
     place-items: center;
-    margin-bottom: 10px;
+
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.03);
+    border: 1px solid rgba(15, 23, 42, 0.06);
 }
 
 .kc-contact__cardIcon img {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
 }
 
 .kc-contact__cardTitle {
-    margin: 0 0 6px;
+    margin: 0;
 }
 
 .kc-contact__cardText {
-    margin: 0 0 10px;
+    margin: 0;
+    color: var(--kc-text-secondary);
+    line-height: 1.65;
 }
 
-/* Orange-only link/button */
-.kc-contact__cardLink {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-
-    background: transparent;
-    border: none;
-    padding: 0;
-
-    color: var(--kc-accent-primary);
-    font-weight: 700;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.kc-contact__cardLink:hover {
-    opacity: 0.92;
-}
-
-.kc-contact__cardButton {
-    appearance: none;
+.kc-contact__cardHint {
+    margin: 6px 0 0;
+    color: var(--kc-text-secondary);
 }
 
 /* =========================
-   FORM SECTION
+   BUTTONS
    ========================= */
-.kc-contact__formSection {
-    padding: 72px 20px;
-    background: var(--kc-bg-soft);
-}
 
-.kc-contact__formWrap {
-    max-width: 760px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.kc-contact__sectionTitle {
-    margin: 0 0 8px;
-}
-
-.kc-contact__sectionSub {
-    margin: 0 auto 24px;
-    max-width: 560px;
-}
-
-/* Form */
-.kc-contact__form {
-    max-width: 520px;
-    margin: 0 auto;
-    text-align: left;
-}
-
-.kc-contact__row2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-}
-
-.kc-contact__field {
-    margin-bottom: 12px;
-}
-
-.kc-contact__label {
-    display: block;
-    margin-bottom: 6px;
-}
-
-.kc-contact__input,
-.kc-contact__textarea {
+/* Primary (orange) */
+.kc-contact__primaryBtn {
+    margin-top: 6px;
     width: 100%;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    border-radius: 10px;
-    padding: 10px 12px;
-    font-size: 14px;
-    outline: none;
-    transition: box-shadow 0.15s ease, border-color 0.15s ease;
-    background: #ffffff;
-    color: var(--kc-text-primary);
-}
 
-.kc-contact__textarea {
-    min-height: 140px;
-    resize: vertical;
-}
-
-.kc-contact__input:focus,
-.kc-contact__textarea:focus {
-    border-color: rgba(249, 115, 22, 0.65);
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
-}
-
-/* CTA button — matches your system */
-.kc-contact__submit {
-    margin: 12px auto 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -174,47 +138,89 @@
     background: var(--kc-accent-primary);
     color: #ffffff;
 
-    font-family: "Cal Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-
     box-shadow: var(--kc-shadow-accent);
     transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
     cursor: pointer;
+    text-decoration: none;
 }
 
-.kc-contact__submit:hover {
+.kc-contact__primaryBtn:hover {
     filter: brightness(0.98);
     box-shadow: var(--kc-shadow-accent-hover);
 }
 
-.kc-contact__submit:active {
+.kc-contact__primaryBtn:active {
     transform: translateY(1px);
 }
 
-.kc-contact__submit:focus-visible {
+.kc-contact__primaryBtn:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px var(--kc-focus-ring), var(--kc-shadow-accent-hover);
 }
 
-/* =========================
-   QUICK ANSWERS (FAQ STYLE)
-   ========================= */
-.kc-contact__faq {
-    padding: 72px 20px;
+/* Secondary (white fill, orange border + text) */
+.kc-contact__secondaryBtn {
+    margin-top: 6px;
+    width: 100%;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 14px 30px;
+    border-radius: 999px;
+
+    background: #ffffff;
+    color: var(--kc-accent-primary);
+
+    border: 1.5px solid var(--kc-accent-primary);
+
+    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    cursor: pointer;
+    text-decoration: none;
 }
 
-.kc-contact__faqInner {
-    max-width: 920px;
-    margin: 0 auto;
+.kc-contact__secondaryBtn:hover {
+    filter: brightness(0.99);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+}
+
+.kc-contact__secondaryBtn:active {
+    transform: translateY(1px);
+}
+
+.kc-contact__secondaryBtn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--kc-focus-ring);
+}
+
+/* =========================
+   QUICK ANSWERS (FAQ)
+   ========================= */
+.kc-contact__faq {
+    padding: 62px 0 110px;
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.kc-contact__sectionTitle {
     text-align: center;
+    margin: 0 0 10px;
+}
+
+.kc-contact__sectionSub {
+    text-align: center;
+    margin: 0 auto 14px;
+    max-width: 60ch;
+    color: var(--kc-text-secondary);
 }
 
 .kc-contact__faqList {
     margin-top: 18px;
     text-align: left;
     border-top: 1px solid var(--kc-border);
+    max-width: 920px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .kc-contact__faqItem {
@@ -225,7 +231,7 @@
     width: 100%;
     text-align: left;
 
-    padding: 24px 0;
+    padding: 22px 0;
     background: transparent;
     border: none;
 
@@ -243,13 +249,10 @@
     border-radius: 10px;
 }
 
-.kc-contact__q {
-    margin: 0;
-}
-
 .kc-contact__chev {
     font-size: 14px;
     transition: transform 0.15s ease;
+    color: var(--kc-text-secondary);
 }
 
 .kc-contact__chev.is-open {
@@ -257,8 +260,47 @@
 }
 
 .kc-contact__a {
-    padding: 0 0 24px 0;
+    padding: 0 0 22px 0;
     max-width: 860px;
+    color: var(--kc-text-secondary);
+    line-height: 1.7;
+}
+
+/* CTA under FAQ */
+.kc-contact__faqCta {
+    margin-top: 28px;
+    text-align: center;
+}
+
+.kc-contact__faqBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 14px 30px;
+    border-radius: 999px;
+
+    background: #ffffff;
+    color: var(--kc-accent-primary);
+
+    border: 1.5px solid var(--kc-accent-primary);
+    text-decoration: none;
+
+    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kc-contact__faqBtn:hover {
+    filter: brightness(0.99);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+}
+
+.kc-contact__faqBtn:active {
+    transform: translateY(1px);
+}
+
+.kc-contact__faqBtn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--kc-focus-ring);
 }
 
 /* =========================
@@ -267,9 +309,7 @@
 @media (max-width: 980px) {
     .kc-contact__cards {
         grid-template-columns: 1fr;
-        max-width: 520px;
-        margin-left: auto;
-        margin-right: auto;
+        max-width: 560px;
     }
 
     .kc-contact__qRow {
@@ -279,10 +319,18 @@
     .kc-contact__a {
         padding-bottom: 16px;
     }
+
+    .kc-contact__faqCta {
+        margin-top: 22px;
+    }
 }
 
 @media (max-width: 640px) {
-    .kc-contact__row2 {
-        grid-template-columns: 1fr;
+    .kc-contact__hero {
+        padding-bottom: 36px;
+    }
+
+    .kc-contact__faq {
+        padding: 54px 0 100px;
     }
 }
