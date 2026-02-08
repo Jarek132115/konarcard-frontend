@@ -1,5 +1,5 @@
 // frontend/src/pages/interface/MyProfile.jsx
-import React, { useEffect, useState, useContext, useMemo, useRef } from "react";
+import React, { useEffect, useState, useContext, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -23,6 +23,22 @@ import "../../styling/dashboard/myprofile.css";
 
 const DEFAULT_SECTION_ORDER = ["main", "about", "work", "services", "reviews", "contact"];
 const norm = (v) => (v ?? "").toString().trim();
+
+const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
+
+const safeRevoke = (url) => {
+  if (!url || typeof url !== "string") return;
+  if (!url.startsWith("blob:")) return;
+  try {
+    URL.revokeObjectURL(url);
+  } catch { }
+};
+
+const revokeAllLocalPreviews = (st) => {
+  safeRevoke(st?.coverPhotoPreview);
+  safeRevoke(st?.avatarPreview);
+  (st?.workImages || []).forEach((w) => safeRevoke(w?.preview));
+};
 
 /**
  * Build FormData for BusinessCard UPSERT endpoint.
@@ -203,17 +219,12 @@ export default function MyProfile() {
 
   const saveBusinessCard = useSaveMyBusinessCard();
 
-  const activeBlobUrlsRef = useRef([]);
-  const handledPaymentRef = useRef(false);
-
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeInput] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
 
-  const [coverPhotoFile, setCoverPhotoFile] = useState(null);
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [workImageFiles, setWorkImageFiles] = useState([]);
+  // removed flags (persisted images)
   const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
 
@@ -236,7 +247,7 @@ export default function MyProfile() {
   const hasExchangeContact =
     (state.contact_email && state.contact_email.trim()) || (state.phone_number && state.phone_number.trim());
 
-  // Stripe return handler
+  // Stripe return handler (unchanged)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const sessionId = params.get("session_id");
@@ -251,9 +262,6 @@ export default function MyProfile() {
       if (sessionStorage.getItem(key) === "1") return;
       sessionStorage.setItem(key, "1");
     } catch { }
-
-    if (handledPaymentRef.current) return;
-    handledPaymentRef.current = true;
 
     (async () => {
       try {
@@ -309,9 +317,12 @@ export default function MyProfile() {
     else if (!authLoading && isUserVerified) setShowVerificationPrompt(false);
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // Hydrate editor
+  // Hydrate editor from backend (IMPORTANT: clear local previews/files on load)
   useEffect(() => {
     if (isCardLoading) return;
+
+    // cleanup any previews from previous profile before swapping
+    revokeAllLocalPreviews(state);
 
     if (businessCard) {
       updateState({
@@ -328,8 +339,17 @@ export default function MyProfile() {
         full_name: businessCard.full_name || "",
         bio: businessCard.bio || "",
 
+        // Persisted URLs only:
         avatar: businessCard.avatar || null,
         coverPhoto: businessCard.cover_photo || null,
+
+        // Local-only:
+        avatarPreview: "",
+        coverPhotoPreview: "",
+        avatarFile: null,
+        coverPhotoFile: null,
+
+        // work images: persist URLs as previews (no file)
         workImages: (businessCard.works || []).map((url) => ({ file: null, preview: url })),
         workDisplayMode: businessCard.work_display_mode || "list",
 
@@ -368,9 +388,6 @@ export default function MyProfile() {
       setShowReviewsSection(businessCard.show_reviews_section !== false);
       setShowContactSection(businessCard.show_contact_section !== false);
 
-      setCoverPhotoFile(null);
-      setAvatarFile(null);
-      setWorkImageFiles([]);
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     } else {
@@ -397,71 +414,99 @@ export default function MyProfile() {
         x_url: "",
         tiktok_url: "",
         sectionOrder: DEFAULT_SECTION_ORDER,
+
+        // ensure local fields exist
+        avatarPreview: "",
+        coverPhotoPreview: "",
+        avatarFile: null,
+        coverPhotoFile: null,
+        workImages: [],
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessCard, isCardLoading, resetState, updateState]);
 
-  // Cleanup blob URLs
-  useEffect(() => {
-    return () => {
-      activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, []);
-
-  const createAndTrackBlobUrl = (file) => {
-    const url = URL.createObjectURL(file);
-    activeBlobUrlsRef.current.push(url);
-    return url;
-  };
-
+  // -------- Upload handlers (NO MORE saving blobs into coverPhoto/avatar) --------
   const onCoverUpload = (file) => {
     if (!file || !file.type?.startsWith("image/")) return;
-    updateState({ coverPhoto: createAndTrackBlobUrl(file) });
-    setCoverPhotoFile(file);
+
+    // cleanup previous local preview if any
+    safeRevoke(state.coverPhotoPreview);
+
+    const url = URL.createObjectURL(file);
+
+    updateState({
+      coverPhotoPreview: url,   // local-only
+      coverPhotoFile: file,     // upload source
+    });
+
     setCoverPhotoRemoved(false);
   };
 
   const onAvatarUpload = (file) => {
     if (!file || !file.type?.startsWith("image/")) return;
-    updateState({ avatar: createAndTrackBlobUrl(file) });
-    setAvatarFile(file);
+
+    safeRevoke(state.avatarPreview);
+
+    const url = URL.createObjectURL(file);
+
+    updateState({
+      avatarPreview: url,     // local-only
+      avatarFile: file,       // upload source
+    });
+
     setIsAvatarRemoved(false);
   };
 
   const onAddWorkImages = (files) => {
     const valid = Array.from(files || []).filter((f) => f && f.type.startsWith("image/"));
     if (!valid.length) return;
-    const previewItems = valid.map((file) => ({ file, preview: createAndTrackBlobUrl(file) }));
-    updateState({ workImages: [...(state.workImages || []), ...previewItems] });
-    setWorkImageFiles((prev) => [...prev, ...valid]);
+
+    const items = valid.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+
+    const existing = Array.isArray(state.workImages) ? state.workImages : [];
+    const merged = [...existing, ...items].slice(0, 10);
+
+    updateState({ workImages: merged });
   };
 
   const handleRemoveCoverPhoto = () => {
-    const isLocalBlob = state.coverPhoto && state.coverPhoto.startsWith("blob:");
-    if (!isLocalBlob && state.coverPhoto) setCoverPhotoRemoved(true);
+    // if there is a persisted URL, mark removed. (never treat blob as persisted)
+    if (state.coverPhoto && !isBlobUrl(state.coverPhoto)) setCoverPhotoRemoved(true);
     else setCoverPhotoRemoved(false);
 
-    if (isLocalBlob) URL.revokeObjectURL(state.coverPhoto);
-    updateState({ coverPhoto: null });
-    setCoverPhotoFile(null);
+    safeRevoke(state.coverPhotoPreview);
+
+    updateState({
+      coverPhoto: null,
+      coverPhotoPreview: "",
+      coverPhotoFile: null,
+    });
   };
 
   const handleRemoveAvatar = () => {
-    const isLocalBlob = state.avatar && state.avatar.startsWith("blob:");
-    if (!isLocalBlob && state.avatar) setIsAvatarRemoved(true);
+    if (state.avatar && !isBlobUrl(state.avatar)) setIsAvatarRemoved(true);
     else setIsAvatarRemoved(false);
 
-    if (isLocalBlob) URL.revokeObjectURL(state.avatar);
-    updateState({ avatar: null });
-    setAvatarFile(null);
+    safeRevoke(state.avatarPreview);
+
+    updateState({
+      avatar: null,
+      avatarPreview: "",
+      avatarFile: null,
+    });
   };
 
   const handleRemoveWorkImage = (idx) => {
     const item = state.workImages?.[idx];
-    if (item?.preview?.startsWith("blob:")) URL.revokeObjectURL(item.preview);
-    updateState({ workImages: state.workImages.filter((_, i) => i !== idx) });
+    safeRevoke(item?.preview);
+    updateState({ workImages: (state.workImages || []).filter((_, i) => i !== idx) });
   };
 
+  // -------- Verification --------
   const sendVerificationCode = async () => {
     if (!userEmail) return toast.error("Email not found. Please log in again.");
     try {
@@ -494,6 +539,9 @@ export default function MyProfile() {
   };
 
   const handleResetPage = () => {
+    // cleanup local preview urls first
+    revokeAllLocalPreviews(state);
+
     resetState();
     setServicesDisplayMode("list");
     setReviewsDisplayMode("list");
@@ -506,14 +554,8 @@ export default function MyProfile() {
     setShowReviewsSection(true);
     setShowContactSection(true);
 
-    setCoverPhotoFile(null);
-    setAvatarFile(null);
-    setWorkImageFiles([]);
     setCoverPhotoRemoved(false);
     setIsAvatarRemoved(false);
-
-    activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
-    activeBlobUrlsRef.current = [];
 
     updateState({
       templateId: "template-1",
@@ -526,6 +568,12 @@ export default function MyProfile() {
       x_url: "",
       tiktok_url: "",
       sectionOrder: DEFAULT_SECTION_ORDER,
+
+      avatarPreview: "",
+      coverPhotoPreview: "",
+      avatarFile: null,
+      coverPhotoFile: null,
+      workImages: [],
     });
 
     toast.success("Editor reset.");
@@ -538,7 +586,13 @@ export default function MyProfile() {
   };
 
   const hasProfileChanges = () => {
-    if (coverPhotoFile || avatarFile || workImageFiles.length || coverPhotoRemoved || isAvatarRemoved) return true;
+    const hasNewFiles =
+      (state.coverPhotoFile instanceof File) ||
+      (state.avatarFile instanceof File) ||
+      (state.workImages || []).some((w) => w?.file instanceof File);
+
+    if (hasNewFiles || coverPhotoRemoved || isAvatarRemoved) return true;
+
     const original = businessCard || {};
 
     const normalizeServices = (arr) => (arr || []).map((s) => ({ name: norm(s.name), price: norm(s.price) }));
@@ -635,6 +689,7 @@ export default function MyProfile() {
     e.preventDefault();
     if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
 
+    // existing URLs are ones that are NOT blob previews (these come from backend)
     const existingWorkUrls = (state.workImages || [])
       .map((item) => (item?.preview && !item.preview.startsWith("blob:") ? item.preview : null))
       .filter(Boolean);
@@ -657,8 +712,9 @@ export default function MyProfile() {
       full_name: state.full_name,
       bio: state.bio,
 
-      cover_photo: coverPhotoFile,
-      avatar: avatarFile,
+      // ✅ use File fields ONLY
+      cover_photo: state.coverPhotoFile,
+      avatar: state.avatarFile,
 
       works_existing_urls: existingWorkUrls,
       work_images_files: newWorkFiles,
@@ -705,14 +761,17 @@ export default function MyProfile() {
       queryClient.invalidateQueries({ queryKey: ["businessCard", "profiles"] });
       queryClient.invalidateQueries({ queryKey: ["businessCard", "profile", activeSlug] });
 
-      setCoverPhotoFile(null);
-      setAvatarFile(null);
-      setWorkImageFiles([]);
+      // cleanup local previews & clear local file fields
+      revokeAllLocalPreviews(state);
+      updateState({
+        coverPhotoPreview: "",
+        avatarPreview: "",
+        coverPhotoFile: null,
+        avatarFile: null,
+      });
+
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
-
-      activeBlobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
-      activeBlobUrlsRef.current = [];
     } catch (err) {
       toast.error(err?.response?.data?.error || err?.response?.data?.message || "Something went wrong while saving.");
     }
@@ -725,6 +784,7 @@ export default function MyProfile() {
     setShowShareModal(true);
   };
 
+  // NOTE: leaving your current visitUrl logic untouched (even if you later change route structure)
   const visitUrl = useMemo(() => {
     if (!userUsername) return "#";
     if (!activeSlug || activeSlug === "main") return `${window.location.origin}/u/${userUsername}`;
@@ -742,7 +802,7 @@ export default function MyProfile() {
     </div>
   );
 
-  // Scrollable columns on desktop (this is the key fix)
+  // Scrollable columns on desktop
   const desktopScrollStyle = !isMobile ? { overflow: "auto" } : undefined;
 
   return (

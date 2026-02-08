@@ -1,4 +1,3 @@
-// src/components/Dashboard/Preview.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { previewPlaceholders } from "../../store/businessCardStore";
 import "../../styling/dashboard/preview.css";
@@ -12,6 +11,7 @@ import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
 
 const asArray = (v) => (Array.isArray(v) ? v : []);
 const asString = (v) => (typeof v === "string" ? v : "");
+const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
 
 export default function Preview({
     state,
@@ -99,8 +99,17 @@ export default function Preview({
     const previewEmail = asString(s.contact_email) || (shouldShowPlaceholders ? asString(ph.contact_email) : "");
     const previewPhone = asString(s.phone_number) || (shouldShowPlaceholders ? asString(ph.phone_number) : "");
 
-    const previewCoverPhotoSrc = s.coverPhoto ?? s.cover_photo ?? (shouldShowPlaceholders ? ph.coverPhoto : "");
-    const previewAvatarSrc = s.avatar ?? (shouldShowPlaceholders ? ph.avatar : null);
+    // ✅ Prefer local preview fields, then persisted URLs. Ignore raw blob urls stored in persisted fields.
+    const previewCoverPhotoSrc =
+        s.coverPhotoPreview ||
+        (isBlobUrl(s.coverPhoto) ? "" : s.coverPhoto) ||
+        (isBlobUrl(s.cover_photo) ? "" : s.cover_photo) ||
+        (shouldShowPlaceholders ? ph.coverPhoto : "");
+
+    const previewAvatarSrc =
+        s.avatarPreview ||
+        (isBlobUrl(s.avatar) ? "" : s.avatar) ||
+        (shouldShowPlaceholders ? ph.avatar : null);
 
     const previewWorkImages = useMemo(() => {
         const fromState = asArray(s.workImages || s.works);
@@ -201,7 +210,7 @@ export default function Preview({
     const MainSection = () =>
         showMainSection ? (
             <>
-                {(shouldShowPlaceholders || !!s.coverPhoto || !!s.cover_photo) && previewCoverPhotoSrc ? (
+                {(shouldShowPlaceholders || !!previewCoverPhotoSrc) && previewCoverPhotoSrc ? (
                     <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
                 ) : null}
 
@@ -250,7 +259,11 @@ export default function Preview({
                 <div className={`mock-work-gallery ${workMode}`}>
                     {previewWorkImages.map((item, i) => (
                         <div key={i} className="mock-work-image-item-wrapper">
-                            <img src={item?.preview || item} alt={`work-${i}`} className="mock-work-image-item" />
+                            <img
+                                src={item?.preview || item?.url || item}
+                                alt={`work-${i}`}
+                                className="mock-work-image-item"
+                            />
                         </div>
                     ))}
                 </div>

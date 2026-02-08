@@ -8,7 +8,6 @@ import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
 import XIcon from "../../assets/icons/icons8-x.svg";
 import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
 
-
 /* Color wheel lib */
 import iro from "@jaames/iro";
 import "../../styling/dashboard/editor.css";
@@ -23,6 +22,8 @@ const getContrastColor = (hex = "#000000") => {
     const L = 0.2126 * (r / 255) + 0.7152 * (g / 255) + 0.0722 * (b / 255);
     return L > 0.6 ? "#111" : "#fff";
 };
+
+const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
 
 function SectionHeader({ title, subtitle, open, onToggle, rightSlot }) {
     return (
@@ -73,6 +74,7 @@ export default function Editor({
     showContactSection,
     setShowContactSection,
 
+    // legacy handlers (we keep calling them for compatibility)
     onCoverUpload,
     onRemoveCover,
     onAvatarUpload,
@@ -85,6 +87,27 @@ export default function Editor({
     const coverInputRef = useRef(null);
     const avatarInputRef = useRef(null);
     const workImageInputRef = useRef(null);
+
+    // track object URLs so we can revoke (avoid memory leaks)
+    const objectUrlsRef = useRef(new Set());
+
+    const rememberObjectUrl = (url) => {
+        if (typeof url === "string" && url.startsWith("blob:")) {
+            objectUrlsRef.current.add(url);
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            // cleanup any created object urls
+            for (const url of objectUrlsRef.current) {
+                try {
+                    URL.revokeObjectURL(url);
+                } catch { }
+            }
+            objectUrlsRef.current.clear();
+        };
+    }, []);
 
     // color wheel popover
     const [wheelOpen, setWheelOpen] = useState(false);
@@ -220,6 +243,17 @@ export default function Editor({
         [next[idx + 1], next[idx]] = [next[idx], next[idx + 1]];
         updateState({ sectionOrder: sanitizeOrder(next) });
     };
+
+    // Prefer explicit preview fields, then persisted URLs, but NEVER force blob into persisted field.
+    const coverSrc =
+        state.coverPhotoPreview ||
+        (isBlobUrl(state.coverPhoto) ? "" : state.coverPhoto) ||
+        previewPlaceholders.coverPhoto;
+
+    const avatarSrc =
+        state.avatarPreview ||
+        (isBlobUrl(state.avatar) ? "" : state.avatar) ||
+        "";
 
     return (
         <div className="kc-editor-scope" id="myprofile-editor" style={columnScrollStyle}>
@@ -442,27 +476,31 @@ export default function Editor({
                                     accept="image/*"
                                     onChange={(e) => {
                                         const file = e.target.files?.[0];
-                                        if (file) onCoverUpload?.(file);
+                                        if (!file) return;
+
+                                        // Create local preview URL (do NOT store in coverPhoto)
+                                        const url = URL.createObjectURL(file);
+                                        rememberObjectUrl(url);
+
+                                        updateState({
+                                            coverPhotoPreview: url,
+                                            coverPhotoFile: file, // used later by submit to upload
+                                        });
+
+                                        // keep calling legacy handler if parent uses it
+                                        onCoverUpload?.(file);
                                     }}
                                     style={{ display: "none" }}
                                 />
 
-                                <button
-                                    type="button"
-                                    className="kc-upload"
-                                    onClick={() => coverInputRef.current?.click()}
-                                >
-                                    {state.coverPhoto ? (
-                                        <img
-                                            src={state.coverPhoto || previewPlaceholders.coverPhoto}
-                                            alt="Cover"
-                                            className="kc-upload-img"
-                                        />
+                                <button type="button" className="kc-upload" onClick={() => coverInputRef.current?.click()}>
+                                    {coverSrc ? (
+                                        <img src={coverSrc} alt="Cover" className="kc-upload-img" />
                                     ) : (
                                         <span className="kc-upload-text">+ Upload cover image</span>
                                     )}
 
-                                    {state.coverPhoto ? (
+                                    {coverSrc ? (
                                         <span
                                             className="kc-upload-x"
                                             role="button"
@@ -470,6 +508,7 @@ export default function Editor({
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
+                                                updateState({ coverPhotoPreview: "", coverPhotoFile: null });
                                                 onRemoveCover?.();
                                             }}
                                         >
@@ -477,6 +516,11 @@ export default function Editor({
                                         </span>
                                     ) : null}
                                 </button>
+
+                                {/* Optional tiny hint if preview is local-only */}
+                                {isBlobUrl(state.coverPhotoPreview) && !state.coverPhoto ? (
+                                    <div className="kc-help">This image is previewing locally — publish to save it.</div>
+                                ) : null}
                             </div>
 
                             <div className="kc-grid-2">
@@ -526,19 +570,29 @@ export default function Editor({
                                         accept="image/*"
                                         onChange={(e) => {
                                             const file = e.target.files?.[0];
-                                            if (file) onAvatarUpload?.(file);
+                                            if (!file) return;
+
+                                            const url = URL.createObjectURL(file);
+                                            rememberObjectUrl(url);
+
+                                            updateState({
+                                                avatarPreview: url,
+                                                avatarFile: file,
+                                            });
+
+                                            onAvatarUpload?.(file);
                                         }}
                                         style={{ display: "none" }}
                                     />
 
                                     <button type="button" className="kc-upload kc-upload-square" onClick={() => avatarInputRef.current?.click()}>
-                                        {state.avatar ? (
-                                            <img src={state.avatar} alt="Avatar" className="kc-upload-img" />
+                                        {avatarSrc ? (
+                                            <img src={avatarSrc} alt="Avatar" className="kc-upload-img" />
                                         ) : (
                                             <span className="kc-upload-text">+ Add profile picture / logo</span>
                                         )}
 
-                                        {state.avatar ? (
+                                        {avatarSrc ? (
                                             <span
                                                 className="kc-upload-x"
                                                 role="button"
@@ -546,6 +600,7 @@ export default function Editor({
                                                 onClick={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
+                                                    updateState({ avatarPreview: "", avatarFile: null });
                                                     onRemoveAvatar?.();
                                                 }}
                                             >
@@ -553,6 +608,10 @@ export default function Editor({
                                             </span>
                                         ) : null}
                                     </button>
+
+                                    {isBlobUrl(state.avatarPreview) && !state.avatar ? (
+                                        <div className="kc-help">This image is previewing locally — publish to save it.</div>
+                                    ) : null}
                                 </div>
 
                                 <div className="kc-block">
@@ -641,7 +700,7 @@ export default function Editor({
                             <div className="kc-work-grid">
                                 {(state.workImages || []).map((item, i) => (
                                     <div key={i} className="kc-work-item">
-                                        <img src={item.preview || item} alt={`work-${i}`} />
+                                        <img src={item?.preview || item} alt={`work-${i}`} />
                                         <button
                                             type="button"
                                             className="kc-work-x"
@@ -668,7 +727,21 @@ export default function Editor({
                                 style={{ display: "none" }}
                                 onChange={(e) => {
                                     const files = Array.from(e.target.files || []).filter((f) => f && f.type.startsWith("image/"));
-                                    if (files.length) onAddWorkImages?.(files);
+                                    if (!files.length) return;
+
+                                    // create preview items w/ File
+                                    const items = files.map((file) => {
+                                        const url = URL.createObjectURL(file);
+                                        rememberObjectUrl(url);
+                                        return { preview: url, file };
+                                    });
+
+                                    // keep existing items (strings or objects)
+                                    const existing = Array.isArray(state.workImages) ? state.workImages : [];
+                                    updateState({ workImages: [...existing, ...items].slice(0, 10) });
+
+                                    // keep calling legacy handler if parent uses it
+                                    onAddWorkImages?.(files);
                                 }}
                             />
                         </div>
