@@ -40,6 +40,12 @@ function fileToDataUrl(file) {
     });
 }
 
+const PRESET_TO_PERCENT = {
+    small: 60,
+    medium: 70,
+    large: 80,
+};
+
 export default function PlasticCard() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -47,11 +53,14 @@ export default function PlasticCard() {
     const PRODUCT_KEY = "plastic-card";
 
     const [qty, setQty] = useState(1);
+
     const [cardVariant, setCardVariant] = useState("white"); // "white" | "black"
 
     const [logoUrl, setLogoUrl] = useState("");
     const [logoFile, setLogoFile] = useState(null);
-    const [logoSize, setLogoSize] = useState(44);
+
+    const [logoPreset, setLogoPreset] = useState("medium"); // small | medium | large
+    const logoPercent = PRESET_TO_PERCENT[logoPreset] || 70;
 
     const [profileId, setProfileId] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
@@ -107,11 +116,12 @@ export default function PlasticCard() {
         if (intent.productKey !== PRODUCT_KEY) return;
 
         if (typeof intent.quantity === "number") setQty(Math.max(1, Math.min(20, intent.quantity)));
-        if (typeof intent.logoSize === "number") setLogoSize(Math.max(28, Math.min(70, intent.logoSize)));
         if (typeof intent.profileId === "string") setProfileId(intent.profileId);
 
-        if (intent.cardVariant === "black" || intent.cardVariant === "white") {
-            setCardVariant(intent.cardVariant);
+        if (intent.cardVariant === "black" || intent.cardVariant === "white") setCardVariant(intent.cardVariant);
+
+        if (intent.logoPreset === "small" || intent.logoPreset === "medium" || intent.logoPreset === "large") {
+            setLogoPreset(intent.logoPreset);
         }
 
         if (intent.hadLogo) setInfoMsg("Please re-upload your logo to continue checkout.");
@@ -138,16 +148,16 @@ export default function PlasticCard() {
             ...(base || {}),
             productKey: PRODUCT_KEY,
             quantity: qty,
-            logoSize,
             profileId,
             hadLogo: !!logoFile,
             cardVariant,
+            logoPreset,
             returnTo: location.pathname,
             createdAt: base?.createdAt || Date.now(),
             updatedAt: Date.now(),
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [qty, logoSize, profileId, logoFile, cardVariant, location.pathname, location.search]);
+    }, [qty, profileId, logoFile, cardVariant, logoPreset, location.pathname, location.search]);
 
     const onPickLogo = (e) => {
         const file = e.target.files?.[0];
@@ -168,7 +178,30 @@ export default function PlasticCard() {
         setLogoFile(null);
     };
 
-    // ✅ Default logo depends on variant (REAL svg for black)
+    const features = useMemo(
+        () => [
+            { t: "Tap to share instantly", s: "Open your profile on any modern phone with an NFC tap." },
+            { t: "QR code backup", s: "If NFC is off, they can scan and still save your details." },
+            { t: "Works with your Konar profile", s: "Your card always links to your live profile — edits update instantly." },
+            { t: "No app needed", s: "Works in the browser on iPhone and Android." },
+            { t: "Built for real trades", s: "Clean, durable, and made to be shared every day." },
+            { t: "One-time purchase", s: "Buy once. Share forever." },
+        ],
+        []
+    );
+
+    const specs = useMemo(
+        () => [
+            { k: "Card size", v: "85.6 × 54 mm (standard bank card)" },
+            { k: "Thickness", v: "0.76 mm" },
+            { k: "Material", v: "Premium PVC plastic, smooth matte finish" },
+            { k: "NFC", v: "NTAG compatible (works with iPhone & Android)" },
+            { k: "QR backup", v: "Printed on the rear for instant scan access" },
+            { k: "Setup", v: "Link to your Konar profile — updates anytime" },
+        ],
+        []
+    );
+
     const defaultLogo = cardVariant === "black" ? LogoIconWhite : LogoIcon;
     const displayedLogo = logoUrl || defaultLogo;
 
@@ -182,10 +215,10 @@ export default function PlasticCard() {
                 ...(existing && typeof existing === "object" ? existing : {}),
                 productKey: PRODUCT_KEY,
                 quantity: qty,
-                logoSize,
                 profileId,
                 hadLogo: !!logoFile,
                 cardVariant,
+                logoPreset,
                 returnTo: location.pathname,
                 createdAt: existing?.createdAt || Date.now(),
                 updatedAt: Date.now(),
@@ -229,7 +262,8 @@ export default function PlasticCard() {
                 profileId,
                 logoUrl: savedLogoUrl || "",
                 preview: {
-                    logoSize,
+                    logoPercent,
+                    logoPreset,
                     usedCustomLogo: !!savedLogoUrl,
                     cardVariant,
                 },
@@ -247,18 +281,6 @@ export default function PlasticCard() {
             setBusy(false);
         }
     };
-
-    const specs = useMemo(
-        () => [
-            { k: "Card size", v: "85.6 × 54 mm (standard bank card)" },
-            { k: "Thickness", v: "0.76 mm" },
-            { k: "Material", v: "Premium PVC plastic, smooth matte finish" },
-            { k: "NFC", v: "NTAG compatible (works with iPhone & Android)" },
-            { k: "QR backup", v: "Printed on the rear for instant scan access" },
-            { k: "Setup", v: "Link to your Konar profile — updates anytime" },
-        ],
-        []
-    );
 
     return (
         <>
@@ -288,19 +310,7 @@ export default function PlasticCard() {
                             </p>
 
                             {(errorMsg || infoMsg) && (
-                                <div
-                                    style={{
-                                        marginTop: 12,
-                                        padding: "10px 12px",
-                                        borderRadius: 12,
-                                        border: "1px solid var(--kc-border)",
-                                        background: "rgba(12, 24, 48, 0.03)",
-                                        color: "rgba(12, 24, 48, 0.9)",
-                                        fontSize: 14,
-                                    }}
-                                >
-                                    {errorMsg ? `⚠️ ${errorMsg}` : `ℹ️ ${infoMsg}`}
-                                </div>
+                                <div className="kc-msgBox">{errorMsg ? `⚠️ ${errorMsg}` : `ℹ️ ${infoMsg}`}</div>
                             )}
                         </div>
 
@@ -309,7 +319,7 @@ export default function PlasticCard() {
                                 <PlasticCard3D
                                     logoSrc={displayedLogo}
                                     qrSrc={CardQrCode}
-                                    logoSize={logoSize}
+                                    logoSize={logoPercent}
                                     variant={cardVariant}
                                 />
                             </div>
@@ -333,16 +343,14 @@ export default function PlasticCard() {
                                 </div>
                             </div>
 
-                            {/* ✅ SAME HEIGHT PANELS */}
-                            <div className="kc-pc-panels kc-pc-panels--equal">
-                                {/* Left */}
-                                <div className="kc-pc-card kc-pc-logoCard kc-pc-card--stretch">
+                            <div className="kc-pc-panels">
+                                <div className="kc-pc-card kc-pc-logoCard">
                                     <div className="kc-pc-logoHead">
                                         <div className="kc-pc-logoTitle">Your logo</div>
                                         <div className="kc-pc-logoSub">Upload any image — preview updates instantly.</div>
                                     </div>
 
-                                    <div className="kc-pc-logoPreview kc-pc-logoPreview--flex" aria-label="Logo preview">
+                                    <div className="kc-pc-logoPreview" aria-label="Logo preview">
                                         {logoUrl ? <img src={logoUrl} alt="Uploaded logo preview" /> : <div className="kc-pc-plus">+</div>}
                                     </div>
 
@@ -362,37 +370,51 @@ export default function PlasticCard() {
                                         </button>
                                     </div>
 
-                                    <div className="kc-pc-sliderRow">
-                                        <span>Size</span>
-                                        <input
-                                            type="range"
-                                            min={28}
-                                            max={70}
-                                            value={logoSize}
-                                            onChange={(e) => setLogoSize(Number(e.target.value))}
-                                            aria-label="Logo size"
-                                            disabled={busy}
-                                        />
-                                        <span className="kc-pc-sliderVal">{logoSize}%</span>
+                                    <div className="kc-sizeRow" role="group" aria-label="Choose logo size">
+                                        <div className="kc-sizeLabel">Size</div>
+                                        <div className="kc-sizePills">
+                                            <button
+                                                type="button"
+                                                className={`kc-sizeBtn ${logoPreset === "small" ? "is-active" : ""}`}
+                                                onClick={() => setLogoPreset("small")}
+                                                disabled={busy}
+                                            >
+                                                Small
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={`kc-sizeBtn ${logoPreset === "medium" ? "is-active" : ""}`}
+                                                onClick={() => setLogoPreset("medium")}
+                                                disabled={busy}
+                                            >
+                                                Medium
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={`kc-sizeBtn ${logoPreset === "large" ? "is-active" : ""}`}
+                                                onClick={() => setLogoPreset("large")}
+                                                disabled={busy}
+                                            >
+                                                Large
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Right */}
-                                <div className="kc-pc-card kc-pc-buyCard kc-pc-card--stretch" aria-label="Checkout options">
+                                <div className="kc-pc-card kc-pc-buyCard" aria-label="Checkout options">
                                     <div className="kc-premPrice__value">£29.99</div>
                                     <div className="kc-premPrice__note">
                                         One-time purchase • {cardVariant === "black" ? "Black card" : "White card"} • Works with your profile
                                     </div>
 
-                                    {/* ✅ qty + profile on same row */}
                                     <div className="kc-buyRow">
                                         <div className="kc-qtySm" aria-label="Quantity">
                                             <button
                                                 type="button"
                                                 className="kc-qtySm__btn"
                                                 onClick={() => setQty((q) => Math.max(1, q - 1))}
-                                                aria-label="Decrease quantity"
                                                 disabled={busy}
+                                                aria-label="Decrease quantity"
                                             >
                                                 −
                                             </button>
@@ -401,71 +423,63 @@ export default function PlasticCard() {
                                                 type="button"
                                                 className="kc-qtySm__btn"
                                                 onClick={() => setQty((q) => Math.min(20, q + 1))}
-                                                aria-label="Increase quantity"
                                                 disabled={busy}
+                                                aria-label="Increase quantity"
                                             >
                                                 +
                                             </button>
                                         </div>
-
-                                        <div className="kc-buyRow__select">
-                                            <select
-                                                value={profileId}
-                                                onChange={(e) => setProfileId(e.target.value)}
-                                                disabled={!isLoggedIn || busy || isProfilesLoading}
-                                                aria-label="Choose profile"
-                                                className="kc-profileSelect"
-                                            >
-                                                <option value="">
-                                                    {!isLoggedIn
-                                                        ? "Log in to choose a profile"
-                                                        : isProfilesLoading
-                                                            ? "Loading profiles..."
-                                                            : myProfiles.length
-                                                                ? "Choose profile to link"
-                                                                : "No profiles found"}
-                                                </option>
-
-                                                {myProfiles.map((p) => {
-                                                    const id = String(p?._id || "");
-                                                    if (!id) return null;
-                                                    const label =
-                                                        p?.business_card_name ||
-                                                        p?.full_name ||
-                                                        p?.main_heading ||
-                                                        p?.profile_slug ||
-                                                        "Profile";
-                                                    const slug = p?.profile_slug ? ` (@${p.profile_slug})` : "";
-                                                    return (
-                                                        <option key={id} value={id}>
-                                                            {label}
-                                                            {slug}
-                                                        </option>
-                                                    );
-                                                })}
-                                            </select>
-
-                                            {!isLoggedIn && (
-                                                <div className="kc-buyHint">
-                                                    You must be logged in to link a profile before checkout.
-                                                </div>
-                                            )}
-                                        </div>
                                     </div>
 
-                                    <button
-                                        type="button"
-                                        onClick={handleBuy}
-                                        className="kc-buyMainBtn"
-                                        disabled={busy}
-                                    >
+                                    <div className="kc-buyRow__select">
+                                        <select
+                                            className="kc-profileSelect"
+                                            value={profileId}
+                                            onChange={(e) => setProfileId(e.target.value)}
+                                            disabled={!isLoggedIn || busy || isProfilesLoading}
+                                            aria-label="Choose profile"
+                                        >
+                                            <option value="">
+                                                {!isLoggedIn
+                                                    ? "Log in to choose a profile"
+                                                    : isProfilesLoading
+                                                        ? "Loading profiles..."
+                                                        : myProfiles.length
+                                                            ? "Choose profile to link"
+                                                            : "No profiles found"}
+                                            </option>
+
+                                            {myProfiles.map((p) => {
+                                                const id = String(p?._id || "");
+                                                if (!id) return null;
+                                                const label =
+                                                    p?.business_card_name ||
+                                                    p?.full_name ||
+                                                    p?.main_heading ||
+                                                    p?.profile_slug ||
+                                                    "Profile";
+                                                const slug = p?.profile_slug ? ` (@${p.profile_slug})` : "";
+                                                return (
+                                                    <option key={id} value={id}>
+                                                        {label}
+                                                        {slug}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
+
+                                        {!isLoggedIn && (
+                                            <div className="kc-buyHint">You must be logged in to link a profile before checkout.</div>
+                                        )}
+                                    </div>
+
+                                    <button type="button" onClick={handleBuy} className="kc-buyMainBtn" disabled={busy}>
                                         {busy ? "Starting checkout..." : "Buy KonarCard"}
                                     </button>
                                 </div>
                             </div>
 
-                            {/* ✅ NEW SPECS / DETAILS */}
-                            <div className="kc-pc-card kc-specCard" aria-label="Product specifications">
+                            <div className="kc-pc-card kc-specCard">
                                 <div className="kc-specHead">
                                     <div className="kc-specTitle">Product details</div>
                                     <div className="kc-specSub">Everything you need to know — materials, sizing, and tech.</div>
@@ -481,7 +495,6 @@ export default function PlasticCard() {
                                 </div>
                             </div>
 
-                            {/* What you get */}
                             <div className="kc-konarcard__section">
                                 <div className="kc-konarcard__sectionHead">
                                     <h2 className="kc-konarcard__h2">What you get</h2>
@@ -491,14 +504,7 @@ export default function PlasticCard() {
                                 </div>
 
                                 <div className="kc-konarcard__featureGrid">
-                                    {[
-                                        { t: "Tap to share instantly", s: "Open your profile on any modern phone with an NFC tap." },
-                                        { t: "QR code backup", s: "If NFC is off, they can scan and still save your details." },
-                                        { t: "Works with your Konar profile", s: "Your card always links to your live profile — edits update instantly." },
-                                        { t: "No app needed", s: "Works in the browser on iPhone and Android." },
-                                        { t: "Built for real trades", s: "Clean, durable, and made to be shared every day." },
-                                        { t: "One-time purchase", s: "Buy once. Share forever." },
-                                    ].map((f, i) => (
+                                    {features.map((f, i) => (
                                         <div className="kc-konarcard__feature" key={i}>
                                             <div className="kc-konarcard__ico" aria-hidden="true">
                                                 ✓

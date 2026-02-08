@@ -5,10 +5,6 @@ import { ContactShadows, Environment, useTexture } from "@react-three/drei";
 
 import "../styling/products/plasticcard3d.css";
 
-/**
- * ✅ CRITICAL SAFETY:
- * useTexture MUST NEVER receive undefined / "" / null
- */
 const TRANSPARENT_1PX =
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO9qWZkAAAAASUVORK5CYII=";
 
@@ -17,7 +13,7 @@ const safeTexSrc = (src) => {
     return s ? s : TRANSPARENT_1PX;
 };
 
-export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44, variant = "white" }) {
+export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 70, variant = "white" }) {
     const safeLogo = safeTexSrc(logoSrc);
     const safeQr = safeTexSrc(qrSrc);
 
@@ -26,8 +22,7 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44, variant =
             <div className="pc3d__stage">
                 <Canvas
                     dpr={[1, 2]}
-                    /* ✅ Pull camera back a touch so rotations never clip */
-                    camera={{ position: [0, 0.18, 1.55], fov: 34 }}
+                    camera={{ position: [0, 0.18, 1.48], fov: 34 }} // ✅ slightly further back + better vertical framing
                     gl={{
                         antialias: true,
                         alpha: true,
@@ -37,8 +32,6 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44, variant =
                     onCreated={({ gl }) => {
                         gl.setClearColor(0x000000, 0);
                         gl.outputColorSpace = THREE.SRGBColorSpace;
-
-                        // ✅ Only the canvas blocks scroll (drag rotate works). White space scrolls.
                         gl.domElement.style.touchAction = "none";
                     }}
                 >
@@ -50,20 +43,20 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44, variant =
 
                     <ResponsiveRig>
                         <CardRig>
-                            {/* ✅ Nudge card up slightly so bottom edge never clips on spin */}
-                            <group position={[0, 0.095, 0]}>
+                            {/* ✅ put card closer to true center (was pushing up too much) */}
+                            <group position={[0, 0.05, 0]}>
                                 <CardMesh logoSrc={safeLogo} qrSrc={safeQr} logoSize={logoSize} variant={variant} />
                             </group>
                         </CardRig>
                     </ResponsiveRig>
 
-                    {/* ✅ Shadow lower so it doesn't visually “eat” space */}
+                    {/* ✅ shadow sits centered under the card (not creating huge bottom whitespace) */}
                     <ContactShadows
-                        position={[0, -0.58, 0]}
-                        opacity={0.30}
-                        blur={2.1}
-                        scale={2.7}
-                        far={3.0}
+                        position={[0, -0.44, 0]}
+                        opacity={0.28}
+                        blur={2.6}
+                        scale={2.45}
+                        far={3.2}
                     />
                 </Canvas>
             </div>
@@ -72,8 +65,9 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44, variant =
 }
 
 /**
- * ✅ Scale down slightly on small screens
- * so the card always fits comfortably.
+ * ✅ Real scaling:
+ * - Desktop: slightly smaller
+ * - Mobile: noticeably smaller (this was missing before)
  */
 function ResponsiveRig({ children }) {
     const g = useRef();
@@ -81,8 +75,17 @@ function ResponsiveRig({ children }) {
 
     useEffect(() => {
         if (!g.current) return;
-        const isSmall = size.width < 520;
-        g.current.scale.setScalar(isSmall ? 0.90 : 1.0);
+
+        const w = size.width;
+
+        const scale =
+            w >= 1200 ? 0.96 :  // desktop ~ smaller
+                w >= 980 ? 0.92 :
+                    w >= 720 ? 0.88 :
+                        w >= 520 ? 0.84 :
+                            0.80;              // ✅ mobile actually smaller
+
+        g.current.scale.setScalar(scale);
     }, [size.width]);
 
     return <group ref={g}>{children}</group>;
@@ -214,13 +217,15 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
         const desiredH = h * 0.55;
         const maxW = w * 0.78;
 
-        const s = Math.max(28, Math.min(70, Number(logoSize || 44))) / 44;
-        const scaledH = desiredH * (s * 0.55);
+        const clamped = Math.max(60, Math.min(80, Number(logoSize || 70)));
+        const s = clamped / 70;
+
+        const scaledH = desiredH * (s * 0.72);
 
         const img = logoTex?.image;
         const aspect = img && img.width && img.height ? img.width / img.height : 1;
 
-        const planeH = Math.min(h * 0.70, Math.max(h * 0.18, scaledH));
+        const planeH = Math.min(h * 0.78, Math.max(h * 0.22, scaledH));
         const planeW = Math.min(maxW, planeH * aspect);
 
         return { planeW, planeH };
@@ -232,14 +237,8 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
         return { planeW: plane, planeH: plane };
     }, [h]);
 
-    const logoPlaneGeo = useMemo(
-        () => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH),
-        [logoPlaneDims]
-    );
-    const qrPlaneGeo = useMemo(
-        () => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH),
-        [qrPlaneDims]
-    );
+    const logoPlaneGeo = useMemo(() => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH), [logoPlaneDims]);
+    const qrPlaneGeo = useMemo(() => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH), [qrPlaneDims]);
 
     const edgeMat = useMemo(() => {
         const isBlack = variant === "black";
