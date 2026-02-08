@@ -1,8 +1,6 @@
-/* frontend/src/styling/faq.css */
-
 /* =========================================================
    FAQ PAGE — Layout only (tokens + typography via fonts.css)
-   Goal: minimal, premium, easy scanning
+   Minimal, premium, no glow
    ========================================================= */
 
 /* =========================
@@ -38,7 +36,6 @@
     flex-wrap: wrap;
 }
 
-/* Keep your "pill" look but soften the border for a cleaner UI */
 .kc-faq__tab {
     appearance: none;
     background: #ffffff;
@@ -53,10 +50,9 @@
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 600;
-    line-height: 1;
 
     cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
+    transition: border-color 0.15s ease, transform 0.08s ease;
 }
 
 .kc-faq__tab:hover {
@@ -67,13 +63,6 @@
     transform: translateY(1px);
 }
 
-.kc-faq__tab:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--kc-focus-ring);
-    border-color: rgba(249, 115, 22, 0.65);
-}
-
-/* Active pill — keep your exact orange */
 .kc-faq__tab.is-active {
     background: var(--kc-accent-primary);
     border-color: var(--kc-accent-primary);
@@ -81,7 +70,7 @@
 }
 
 /* =========================
-   FAQ LIST (clean + scannable)
+   FAQ LIST
    ========================= */
 .kc-faq__listSection {
     padding: 0 20px 64px;
@@ -90,21 +79,16 @@
 .kc-faq__list {
     max-width: 920px;
     margin: 0 auto;
-
-    /* give it a subtle frame without making it a "card" */
     border-top: 1px solid rgba(15, 23, 42, 0.10);
 }
 
-/* Each item gets breathing room via inner padding on the row */
 .kc-faq__item {
     border-bottom: 1px solid rgba(15, 23, 42, 0.10);
 }
 
-/* Button row */
 .kc-faq__qRow {
     width: 100%;
     text-align: left;
-
     padding: 22px 6px;
     background: transparent;
     border: none;
@@ -112,33 +96,22 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
 
     cursor: pointer;
-    transition: background-color 0.12s ease;
 }
 
-/* subtle hover so it feels interactive but not noisy */
 .kc-faq__qRow:hover {
     background: rgba(15, 23, 42, 0.02);
 }
 
-.kc-faq__qRow:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--kc-focus-ring);
-    border-radius: 12px;
-}
-
-/* Keep question compact + readable line length */
 .kc-faq__q {
     margin: 0;
     max-width: 70ch;
 }
 
-/* Chevron */
 .kc-faq__chev {
     font-size: 14px;
-    color: rgba(71, 85, 105, 0.95);
+    color: rgba(71, 85, 105, 0.9);
     transition: transform 0.15s ease;
 }
 
@@ -146,9 +119,8 @@
     transform: rotate(180deg);
 }
 
-/* Answer spacing */
 .kc-faq__a {
-    padding: 0 6px 22px 6px;
+    padding: 0 6px 22px;
     max-width: 78ch;
     line-height: 1.65;
 }
@@ -170,32 +142,38 @@
     max-width: 60ch;
 }
 
-/* CTA — layout only (colour + type via className) */
+/* =========================
+   HELP CTA — EXACT MATCH
+   Contact Us "Read more FAQs"
+   ========================= */
 .kc-faq__helpCta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    appearance: none;
+    background: #ffffff;
+    color: var(--kc-accent-primary);
 
-    padding: 14px 30px;
+    border: 1.5px solid var(--kc-accent-primary);
     border-radius: 999px;
+
+    padding: 14px 32px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
     text-decoration: none;
 
-    box-shadow: var(--kc-shadow-accent);
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    /* ❌ NO SHADOW */
+    box-shadow: none;
+    transition: background-color 0.15s ease, transform 0.08s ease;
 }
 
 .kc-faq__helpCta:hover {
-    filter: brightness(0.98);
-    box-shadow: var(--kc-shadow-accent-hover);
+    background: rgba(249, 115, 22, 0.06);
 }
 
 .kc-faq__helpCta:active {
     transform: translateY(1px);
-}
-
-.kc-faq__helpCta:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--kc-focus-ring), var(--kc-shadow-accent-hover);
 }
 
 /* =========================

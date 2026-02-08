@@ -1,5 +1,6 @@
 // frontend/src/pages/FAQ/index.jsx
 import React, { useMemo, useState } from "react";
+import { toast } from "react-hot-toast";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import "../../styling/fonts.css";
@@ -126,14 +127,24 @@ export default function FAQPage() {
   );
 
   const openLiveChat = () => {
-    // Try to trigger the existing chat launcher button
-    const chatBtn =
-      document.querySelector(".chat-with-us") ||
-      document.querySelector("[data-chat-launcher]");
+    const started = Date.now();
 
-    if (chatBtn) {
-      chatBtn.click();
-    }
+    const tryOpen = () => {
+      const ready =
+        typeof window !== "undefined" &&
+        window.tidioChatApi &&
+        typeof window.tidioChatApi.open === "function";
+
+      if (ready) {
+        window.tidioChatApi.open();
+      } else if (Date.now() - started < 5000) {
+        setTimeout(tryOpen, 200);
+      } else {
+        toast.error("Live chat is still loading — please try again shortly.");
+      }
+    };
+
+    tryOpen();
   };
 
   return (
@@ -152,6 +163,7 @@ export default function FAQPage() {
             <div className="kc-faq__tabs" role="tablist" aria-label="FAQ categories">
               {tabs.map((t) => {
                 const isActive = t.key === activeTab;
+
                 return (
                   <button
                     key={t.key}
@@ -208,10 +220,11 @@ export default function FAQPage() {
           <button
             type="button"
             onClick={openLiveChat}
-            className="kc-faq__helpCta button-text bg-orange text-white"
+            className="kc-faq__helpCta kc-faq__helpCta--outline"
           >
             Start Live Chat
           </button>
+
         </section>
       </main>
 
