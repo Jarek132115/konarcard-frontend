@@ -7,7 +7,7 @@ import React from "react";
  * - Uses same data object as every template
  * - Only respects visibility toggles
  */
-import "./templates/template1.css";
+import "../../styling/dashboard/templates/template1.css";
 
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
