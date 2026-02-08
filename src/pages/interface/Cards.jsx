@@ -5,15 +5,17 @@ import PageHeader from "../../components/Dashboard/PageHeader";
 import "../../styling/dashboard/cards.css";
 import api from "../../services/api";
 
+// ✅ 3D components you already have
+import PlasticCard3D from "../../components/PlasticCard3D";
+import MetalCard3D from "../../components/MetalCard3D";
+import KonarTag3D from "../../components/KonarTag3D";
+
 /* -----------------------------
    Helpers
 ----------------------------- */
 
 const centerTrim = (v) => (v ?? "").toString().trim();
-
-function safeUpper(v) {
-    return centerTrim(v).toUpperCase();
-}
+const safeUpper = (v) => centerTrim(v).toUpperCase();
 
 function prettyProduct(productKey) {
     if (productKey === "plastic-card") return "Plastic Card";
@@ -91,18 +93,36 @@ function formatMoneyMinor(amountMinor, currency) {
 }
 
 /* -----------------------------
-   Theme helpers for preview
+   3D Preview Wrapper
+   - tileMode=true => pointer events OFF (tile remains clickable)
+   - tileMode=false => pointer events ON (interactive in details)
 ----------------------------- */
 
-function themeClass(productKey, variant) {
+function Card3DPreview({ productKey, variant, logoUrl, tileMode }) {
     const pk = String(productKey || "");
     const v = String(variant || "").toLowerCase();
 
-    if (pk === "metal-card") return v === "gold" ? "kc-cardtheme-metal-gold" : "kc-cardtheme-metal-black";
-    if (pk === "konartag") return v === "white" ? "kc-cardtheme-tag-white" : "kc-cardtheme-tag-black";
+    // We pass some common props. If your 3D components don't use them, it's fine.
+    const commonProps = {
+        variant: v,
+        logoUrl: logoUrl || "",
+        // Some of your flows store preview.logoSize; if component supports it, great.
+        logoSize: 44,
+    };
 
-    // plastic default
-    return v === "black" ? "kc-cardtheme-plastic-black" : "kc-cardtheme-plastic-white";
+    return (
+        <div className={`kc-3dwrap ${tileMode ? "tile" : "details"}`}>
+            {pk === "plastic-card" ? (
+                <PlasticCard3D {...commonProps} />
+            ) : pk === "metal-card" ? (
+                <MetalCard3D {...commonProps} />
+            ) : pk === "konartag" ? (
+                <KonarTag3D {...commonProps} />
+            ) : (
+                <PlasticCard3D {...commonProps} />
+            )}
+        </div>
+    );
 }
 
 /* -----------------------------
@@ -125,7 +145,7 @@ export default function Cards() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [orders, setOrders] = useState([]);
-    const [overrides, setOverrides] = useState({}); // { [id]: "active" | "inactive" }
+    const [overrides, setOverrides] = useState({});
     const [selectedId, setSelectedId] = useState(null);
 
     const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
@@ -186,13 +206,11 @@ export default function Cards() {
                 assignedProfile: assignedProfileFromOrder(o),
                 profileSlug: profileSlugFromOrder(o),
                 logoUrl: String(o?.logoUrl || ""),
-                createdAtISO: String(o?.createdAt || ""),
                 createdAt: o?.createdAt ? new Date(o.createdAt).toLocaleString() : "",
                 link: profileLinkFromOrder(o),
                 amountTotal: Number(o?.amountTotal || 0),
                 currency: String(o?.currency || ""),
                 stripeCheckoutSessionId: String(o?.stripeCheckoutSessionId || ""),
-                stripePaymentIntentId: String(o?.stripePaymentIntentId || ""),
                 _raw: o,
             };
         });
@@ -215,7 +233,6 @@ export default function Cards() {
         [cards, selectedId]
     );
 
-    // Placeholder rules (wire to subscription later)
     const maxCards = plan === "teams" ? 999 : 1;
     const canAddCard = cards.length < maxCards;
     const isLimitReached = !canAddCard && plan !== "teams";
@@ -306,18 +323,12 @@ export default function Cards() {
                     }
                 />
 
-                {/* Loading / error */}
                 {loading ? (
-                    <section className="kc-cards-card kc-cards-mutedblock">
-                        Loading your orders…
-                    </section>
+                    <section className="kc-cards-card kc-cards-mutedblock">Loading your orders…</section>
                 ) : error ? (
-                    <section className="kc-cards-card kc-cards-mutedblock">
-                        {error}
-                    </section>
+                    <section className="kc-cards-card kc-cards-mutedblock">{error}</section>
                 ) : null}
 
-                {/* Empty */}
                 {!loading && !error && cards.length === 0 ? (
                     <section className="kc-cards-card kc-cards-empty">
                         <h2 className="kc-cards-card-title">Order your first KonarCard</h2>
@@ -333,23 +344,10 @@ export default function Cards() {
                                 View card options
                             </a>
                         </div>
-
-                        <div className="kc-cards-empty-preview" aria-hidden="true">
-                            <div className="kc-cards-mock">
-                                <div className="kc-cards-mock-top" />
-                                <div className="kc-cards-mock-row">
-                                    <div className="kc-cards-mock-chip" />
-                                    <div className="kc-cards-mock-chip" />
-                                </div>
-                                <div className="kc-cards-mock-block" />
-                                <div className="kc-cards-mock-line" />
-                                <div className="kc-cards-mock-line short" />
-                            </div>
-                        </div>
                     </section>
                 ) : (
                     <>
-                        {/* SECTION 1: Your cards (tiles) */}
+                        {/* SECTION 1: cards tiles */}
                         <section className="kc-cards-card">
                             <div className="kc-cards-card-head">
                                 <div>
@@ -361,7 +359,6 @@ export default function Cards() {
                             <div className="kc-cards-tiles">
                                 {cards.map((c) => {
                                     const active = selectedCard?.id === c.id;
-                                    const theme = themeClass(c.productKey, c.variantRaw);
 
                                     return (
                                         <button
@@ -370,31 +367,34 @@ export default function Cards() {
                                             className={`kc-card-tile ${active ? "active" : ""}`}
                                             onClick={() => setSelectedId(c.id)}
                                         >
-                                            {/* square preview area */}
-                                            <div className={`kc-card-preview ${theme}`}>
-                                                <div className="kc-card-spin">
-                                                    <div className="kc-card-face">
-                                                        <div className="kc-card-logo">
-                                                            {c.logoUrl ? <img src={c.logoUrl} alt="" /> : <span>K</span>}
-                                                        </div>
-                                                        <div className="kc-card-chip" />
-                                                        <div className="kc-card-mark" />
-                                                    </div>
-                                                </div>
+                                            <div className="kc-card-preview real3d">
+                                                {/* ✅ REAL 3D PREVIEW (tile mode) */}
+                                                <Card3DPreview
+                                                    productKey={c.productKey}
+                                                    variant={c.variantRaw}
+                                                    logoUrl={c.logoUrl}
+                                                    tileMode
+                                                />
 
                                                 <div className="kc-card-preview-badges">
-                                                    <span className={`kc-cards-status ${c.status}`}>{c.status === "active" ? "ACTIVE" : "INACTIVE"}</span>
+                                                    <span className={`kc-cards-status ${c.status}`}>
+                                                        {c.status === "active" ? "ACTIVE" : "INACTIVE"}
+                                                    </span>
                                                     {c.variant ? <span className="kc-cards-status neutral">{c.variant}</span> : null}
                                                 </div>
                                             </div>
 
-                                            {/* tile meta */}
                                             <div className="kc-card-meta">
                                                 <div className="kc-card-name">{c.name}</div>
+
                                                 <div className="kc-card-sub">
-                                                    <span className="kc-cards-muted">{c.material} • {prettyProduct(c.productKey)}</span>
+                                                    <span className="kc-cards-muted">
+                                                        {c.material} • {prettyProduct(c.productKey)}
+                                                    </span>
                                                     <span className="kc-card-dot">•</span>
-                                                    <span className="kc-cards-muted">{c.orderStatus ? `Order: ${safeUpper(c.orderStatus)}` : "Order: —"}</span>
+                                                    <span className="kc-cards-muted">
+                                                        {c.orderStatus ? `Order: ${safeUpper(c.orderStatus)}` : "Order: —"}
+                                                    </span>
                                                 </div>
 
                                                 <div className="kc-card-sub">
@@ -404,7 +404,6 @@ export default function Cards() {
                                                 </div>
                                             </div>
 
-                                            {/* tile action */}
                                             <div className="kc-card-tile-actions">
                                                 <button
                                                     type="button"
@@ -423,7 +422,7 @@ export default function Cards() {
                             </div>
                         </section>
 
-                        {/* SECTION 2: Details (below) */}
+                        {/* SECTION 2: details */}
                         <section className="kc-cards-card">
                             <div className="kc-cards-card-head">
                                 <div>
@@ -467,6 +466,16 @@ export default function Cards() {
                                                 Copy link
                                             </button>
                                         </div>
+                                    </div>
+
+                                    {/* ✅ BIGGER INTERACTIVE 3D PREVIEW */}
+                                    <div className="kc-details-3dpanel">
+                                        <Card3DPreview
+                                            productKey={selectedCard.productKey}
+                                            variant={selectedCard.variantRaw}
+                                            logoUrl={selectedCard.logoUrl}
+                                            tileMode={false}
+                                        />
                                     </div>
 
                                     <div className="kc-cards-order-details">
@@ -517,13 +526,15 @@ export default function Cards() {
                                         {selectedCard.stripeCheckoutSessionId ? (
                                             <div className="kc-cards-detail-row">
                                                 <span className="kc-cards-muted">Stripe session</span>
-                                                <strong className="kc-cards-mono">{selectedCard.stripeCheckoutSessionId.slice(0, 14)}…</strong>
+                                                <strong className="kc-cards-mono">
+                                                    {selectedCard.stripeCheckoutSessionId.slice(0, 14)}…
+                                                </strong>
                                             </div>
                                         ) : null}
                                     </div>
 
                                     <div className="kc-cards-note">
-                                        Tip: When you connect “Assign profile”, we’ll update the backend so the NFC card opens the correct profile.
+                                        Tip: Next we’ll wire “Assign profile” so the NFC destination updates for that physical card.
                                     </div>
                                 </div>
                             )}
