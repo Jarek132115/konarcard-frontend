@@ -1,250 +1,216 @@
-// src/components/Dashboard/Template5.jsx
-import React from "react";
+import React, { useMemo } from "react";
+import "../../styling/dashboard/templates/template5.css";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
+const asArray = (v) => (Array.isArray(v) ? v : []);
+
+function Stars({ rating = 0 }) {
+    const r = Math.max(0, Math.min(5, Number(rating) || 0));
+    return (
+        <div className="t5-stars" aria-label={`Rating ${r} out of 5`}>
+            {Array(5)
+                .fill(null)
+                .map((_, i) => (
+                    <span key={i} className={`t5-star ${i < r ? "on" : "off"}`}>
+                        ★
+                    </span>
+                ))}
+        </div>
+    );
+}
 
 export default function Template5({ vm }) {
-    const {
-        themeStyles,
-        sectionOrder,
+    const v = vm || {};
 
-        showMainSection,
-        showAboutMeSection,
-        showWorkSection,
-        showServicesSection,
-        showReviewsSection,
-        showContactSection,
+    const cover = v.cover || "";
+    const avatar = v.avatar || "";
 
-        cover,
-        avatar,
-        mainHeading,
-        subHeading,
-        fullName,
-        jobTitle,
-        bio,
-        works,
-        services,
-        reviews,
-        email,
-        phone,
-        hasContact,
-        socialLinks,
+    const works = useMemo(
+        () =>
+            asArray(v.works)
+                .map((x) => x?.preview || x?.url || x)
+                .filter(Boolean),
+        [v.works]
+    );
 
-        ctaStyle,
+    const services = useMemo(() => asArray(v.services).filter((s) => s?.name || s?.price), [v.services]);
+    const reviews = useMemo(() => asArray(v.reviews).filter((r) => r?.name || r?.text), [v.reviews]);
 
-        // ✅ actions from UserPage vm
-        onSaveMyNumber,
-        onOpenExchangeContact,
-    } = vm;
+    const socials = useMemo(() => {
+        return Object.entries(v.socials || {})
+            .filter(([, url]) => nonEmpty(url))
+            .map(([key, url]) => ({
+                key,
+                url,
+                label: key.replace("_url", "").toUpperCase(),
+            }));
+    }, [v.socials]);
 
-    const shell = { maxWidth: 980, margin: "0 auto", padding: "26px 16px 56px" };
-
-    const card = {
-        borderRadius: 20,
-        border: "2px solid rgba(0,0,0,0.10)",
-        background: themeStyles?.backgroundColor === "#1F1F1F" ? "rgba(255,255,255,0.05)" : "#fff",
-        padding: 16,
-        boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-    };
-
-    const title = { margin: "0 0 12px", fontWeight: 1000, fontSize: 18 };
-
-    const btn = {
-        ...ctaStyle,
-        padding: "12px 18px",
-        borderRadius: 14,
-        border: "none",
-        fontWeight: 1000,
-        cursor: "pointer",
-    };
-
-    const Head = () =>
-        showMainSection ? (
-            <div style={{ ...card, padding: 0, overflow: "hidden" }}>
-                {nonEmpty(cover) && (
-                    <img src={cover} alt="Cover" style={{ width: "100%", height: 240, objectFit: "cover" }} />
-                )}
-
-                <div style={{ padding: 16 }}>
-                    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                        {nonEmpty(avatar) && (
-                            <img
-                                src={avatar}
-                                alt="Avatar"
-                                style={{
-                                    width: 64,
-                                    height: 64,
-                                    borderRadius: 18,
-                                    objectFit: "cover",
-                                    border: "2px solid rgba(0,0,0,0.10)",
-                                }}
-                            />
-                        )}
-                        <div style={{ minWidth: 0 }}>
-                            {nonEmpty(fullName) && <div style={{ fontWeight: 1000 }}>{fullName}</div>}
-                            {nonEmpty(jobTitle) && <div style={{ opacity: 0.8, fontSize: 14 }}>{jobTitle}</div>}
-                        </div>
-                    </div>
-
-                    {nonEmpty(mainHeading) && (
-                        <h1 style={{ margin: "14px 0 0", fontSize: 30, fontWeight: 1000 }}>{mainHeading}</h1>
-                    )}
-                    {nonEmpty(subHeading) && <p style={{ margin: "8px 0 0", opacity: 0.85 }}>{subHeading}</p>}
-
-                    {hasContact && (
-                        <div style={{ marginTop: 14, display: "grid", gap: 10, maxWidth: 520 }}>
-                            {/* ✅ existing: download vCard */}
-                            <button type="button" onClick={onSaveMyNumber} style={btn}>
-                                Save My Number
-                            </button>
-
-                            {/* ✅ new: open exchange modal */}
-                            <button type="button" onClick={onOpenExchangeContact} style={btn}>
-                                Exchange Contact
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </div>
-        ) : null;
-
-    const About = () =>
-        showAboutMeSection ? (
-            <div style={card}>
-                <div style={title}>About</div>
-                {nonEmpty(bio) && <div style={{ opacity: 0.92, lineHeight: 1.55, whiteSpace: "pre-wrap" }}>{bio}</div>}
-            </div>
-        ) : null;
-
-    const Work = () =>
-        showWorkSection ? (
-            <div style={card}>
-                <div style={title}>Work</div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10 }}>
-                    {(works || []).map((url, i) => (
-                        <img
-                            key={i}
-                            src={url}
-                            alt={`work-${i}`}
-                            style={{ width: "100%", height: 170, borderRadius: 18, objectFit: "cover" }}
-                        />
-                    ))}
-                </div>
-            </div>
-        ) : null;
-
-    const Services = () =>
-        showServicesSection ? (
-            <div style={card}>
-                <div style={title}>Services</div>
-                <div style={{ display: "grid", gap: 10 }}>
-                    {(services || []).map((s, i) => (
-                        <div
-                            key={i}
-                            style={{
-                                padding: 14,
-                                borderRadius: 16,
-                                border: "2px solid rgba(0,0,0,0.08)",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                gap: 10,
-                            }}
-                        >
-                            <div style={{ fontWeight: 1000 }}>{s?.name || ""}</div>
-                            {nonEmpty(s?.price) && <div style={{ opacity: 0.85 }}>{s.price}</div>}
-                        </div>
-                    ))}
-                </div>
-            </div>
-        ) : null;
-
-    const Reviews = () =>
-        showReviewsSection ? (
-            <div style={card}>
-                <div style={title}>Reviews</div>
-                <div style={{ display: "grid", gap: 10 }}>
-                    {(reviews || []).map((r, i) => {
-                        const rating = Number(r?.rating || 0);
-                        const fullStars = Math.min(5, Math.max(0, rating));
-                        const emptyStars = Math.max(0, 5 - fullStars);
-
-                        return (
-                            <div
-                                key={i}
-                                style={{
-                                    padding: 14,
-                                    borderRadius: 16,
-                                    border: "2px solid rgba(0,0,0,0.08)",
-                                }}
-                            >
-                                <div style={{ fontWeight: 1000 }}>{r?.name || "Review"}</div>
-                                {nonEmpty(r?.text) && <div style={{ marginTop: 8, opacity: 0.9 }}>{`"${r.text}"`}</div>}
-
-                                {fullStars > 0 && (
-                                    <div style={{ marginTop: 8, opacity: 0.9 }}>
-                                        {"★".repeat(fullStars)}
-                                        <span style={{ opacity: 0.35 }}>{"★".repeat(emptyStars)}</span>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-        ) : null;
-
-    const Contact = () =>
-        showContactSection ? (
-            <div style={card}>
-                <div style={title}>Contact</div>
-                <div style={{ display: "grid", gap: 8 }}>
-                    {nonEmpty(email) && <div style={{ opacity: 0.9 }}>{email}</div>}
-                    {nonEmpty(phone) && <div style={{ opacity: 0.9 }}>{phone}</div>}
-                </div>
-
-                {socialLinks?.length > 0 && (
-                    <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
-                        {socialLinks.map((s) => (
-                            <a
-                                key={s.key}
-                                href={s.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{
-                                    width: 48,
-                                    height: 48,
-                                    borderRadius: 16,
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    border: "2px solid rgba(0,0,0,0.08)",
-                                }}
-                                aria-label={s.label}
-                            >
-                                <img src={s.icon} alt="" style={{ width: 22, height: 22 }} />
-                            </a>
-                        ))}
-                    </div>
-                )}
-            </div>
-        ) : null;
-
-    const sectionMap = {
-        main: <Head key="main" />,
-        about: <About key="about" />,
-        work: <Work key="work" />,
-        services: <Services key="services" />,
-        reviews: <Reviews key="reviews" />,
-        contact: <Contact key="contact" />,
-    };
+    const hasHeroCtas = !!(v.hasExchangeContact || nonEmpty(v.email) || nonEmpty(v.phone));
 
     return (
-        <div className="user-landing-page template-5" style={themeStyles}>
-            <div style={shell}>
-                <div style={{ display: "grid", gap: 14 }}>
-                    {(sectionOrder || []).map((k) => sectionMap[k]).filter(Boolean)}
-                </div>
-            </div>
+        <div className="kc-tpl kc-tpl-5">
+            {/* HERO */}
+            {v.showMainSection && (
+                <section className="t5-hero">
+                    <div className="t5-hero-card">
+                        <div className="t5-hero-top">
+                            <div className="t5-brand">
+                                {nonEmpty(avatar) ? (
+                                    <img className="t5-avatar" src={avatar} alt="Avatar" />
+                                ) : (
+                                    <div className="t5-avatar t5-avatar--ph" aria-hidden="true" />
+                                )}
+
+                                <div className="t5-brand-text">
+                                    <h1 className="t5-h1">{v.mainHeading || "Your Main Heading"}</h1>
+                                    {nonEmpty(v.subHeading) ? <p className="t5-sub">{v.subHeading}</p> : null}
+                                </div>
+                            </div>
+
+                            {(nonEmpty(v.fullName) || nonEmpty(v.jobTitle)) && (
+                                <div className="t5-meta">
+                                    {nonEmpty(v.fullName) ? <div className="t5-name">{v.fullName}</div> : null}
+                                    {nonEmpty(v.jobTitle) ? <div className="t5-role">{v.jobTitle}</div> : null}
+                                </div>
+                            )}
+                        </div>
+
+                        {nonEmpty(cover) ? (
+                            <div className="t5-cover">
+                                <img className="t5-cover-img" src={cover} alt="Cover" />
+                            </div>
+                        ) : (
+                            <div className="t5-cover t5-cover--ph" aria-hidden="true" />
+                        )}
+
+                        {hasHeroCtas ? (
+                            <div className="t5-cta">
+                                <button type="button" className="t5-btn t5-btn-primary" onClick={v.onSaveMyNumber}>
+                                    Save My Number
+                                </button>
+                                <button type="button" className="t5-btn t5-btn-ghost" onClick={v.onOpenExchangeContact}>
+                                    Exchange Contact
+                                </button>
+                            </div>
+                        ) : null}
+                    </div>
+                </section>
+            )}
+
+            {/* ABOUT */}
+            {v.showAboutMeSection && (nonEmpty(v.bio) || nonEmpty(v.fullName) || nonEmpty(v.jobTitle)) ? (
+                <section className="t5-section">
+                    <div className="t5-head">
+                        <h2 className="t5-h2">About</h2>
+                        <div className="t5-line" />
+                    </div>
+
+                    <div className="t5-card t5-about">
+                        {nonEmpty(v.bio) ? <p className="t5-bio">{v.bio}</p> : null}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* WORK */}
+            {v.showWorkSection && works.length > 0 ? (
+                <section className="t5-section">
+                    <div className="t5-head">
+                        <h2 className="t5-h2">Portfolio</h2>
+                        <div className="t5-line" />
+                    </div>
+
+                    <div className="t5-work">
+                        {works.slice(0, 12).map((url, i) => (
+                            <div key={i} className="t5-work-tile">
+                                <img src={url} alt={`Work ${i + 1}`} className="t5-work-img" />
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* SERVICES */}
+            {v.showServicesSection && services.length > 0 ? (
+                <section className="t5-section">
+                    <div className="t5-head">
+                        <h2 className="t5-h2">Services</h2>
+                        <div className="t5-line" />
+                    </div>
+
+                    <div className="t5-services">
+                        {services.slice(0, 14).map((s, i) => (
+                            <div key={i} className="t5-service">
+                                <div className="t5-service-left">
+                                    <div className="t5-service-name">{s?.name || "Service"}</div>
+                                    {nonEmpty(s?.price) ? <div className="t5-service-price">{s.price}</div> : null}
+                                </div>
+                                <div className="t5-chip" aria-hidden="true">
+                                    •••
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* REVIEWS */}
+            {v.showReviewsSection && reviews.length > 0 ? (
+                <section className="t5-section">
+                    <div className="t5-head">
+                        <h2 className="t5-h2">Reviews</h2>
+                        <div className="t5-line" />
+                    </div>
+
+                    <div className="t5-reviews">
+                        {reviews.slice(0, 10).map((r, i) => (
+                            <div key={i} className="t5-card t5-review">
+                                <Stars rating={r?.rating} />
+                                {nonEmpty(r?.text) ? <p className="t5-review-text">“{r.text}”</p> : null}
+                                {nonEmpty(r?.name) ? <div className="t5-review-name">{r.name}</div> : null}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* CONTACT */}
+            {v.showContactSection && (nonEmpty(v.email) || nonEmpty(v.phone) || socials.length > 0) ? (
+                <section className="t5-section t5-section-last">
+                    <div className="t5-head">
+                        <h2 className="t5-h2">Contact</h2>
+                        <div className="t5-line" />
+                    </div>
+
+                    <div className="t5-card t5-contact">
+                        <div className="t5-contact-grid">
+                            {nonEmpty(v.email) ? (
+                                <a className="t5-contact-row" href={`mailto:${v.email}`}>
+                                    <span className="t5-k">Email</span>
+                                    <span className="t5-v">{v.email}</span>
+                                </a>
+                            ) : null}
+
+                            {nonEmpty(v.phone) ? (
+                                <a className="t5-contact-row" href={`tel:${v.phone}`}>
+                                    <span className="t5-k">Phone</span>
+                                    <span className="t5-v">{v.phone}</span>
+                                </a>
+                            ) : null}
+                        </div>
+
+                        {socials.length > 0 ? (
+                            <div className="t5-socials" aria-label="Social links">
+                                {socials.map((s) => (
+                                    <a key={s.key} className="t5-social" href={s.url} target="_blank" rel="noreferrer">
+                                        {s.label}
+                                    </a>
+                                ))}
+                            </div>
+                        ) : null}
+                    </div>
+                </section>
+            ) : null}
         </div>
     );
 }
