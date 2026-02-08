@@ -12,18 +12,21 @@
     height: 100%;
 }
 
-/* Preview wrapper card (not the template itself) */
+/* ✅ Preview wrapper card (REMOVE inner card look, stretch to outer card) */
 .preview-scope .myprofile-preview {
-    background: #fff;
-    border: 1px solid var(--stroke);
-    border-radius: 20px;
-    padding: 18px;
-    max-width: 520px;
-    margin: 0 auto;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    /* ✅ no inner padding */
+    max-width: none;
+    /* ✅ no fixed width */
+    margin: 0;
+    /* ✅ no centering */
     height: 100%;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    box-shadow: var(--shadow);
+    box-shadow: none;
 }
 
 /* Scrollbar */
@@ -64,6 +67,7 @@
     margin-bottom: 12px;
 }
 
+/* Tabs */
 .preview-scope .mp-tab {
     border: 0;
     background: transparent;
@@ -102,6 +106,15 @@
     overflow: hidden;
     will-change: max-height, opacity, transform;
     transition: max-height .28s ease, opacity .2s ease, transform .2s ease;
+
+    /* ✅ give the template a little breathing room now that inner card padding is removed */
+    padding: 12px;
+}
+
+@media (min-width: 1001px) {
+    .preview-scope .mp-preview-wrap {
+        padding: 14px;
+    }
 }
 
 .preview-scope .mp-preview-wrap.closed {
