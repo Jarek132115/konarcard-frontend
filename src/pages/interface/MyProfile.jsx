@@ -13,7 +13,6 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../components/AuthContext";
 import api from "../../services/api";
 
-// extracted components
 import Preview from "../../components/Dashboard/Preview";
 import Editor from "../../components/Dashboard/Editor";
 
@@ -21,9 +20,7 @@ import { useSaveMyBusinessCard } from "../../hooks/useBusinessCard";
 
 import "../../styling/dashboard/myprofile.css";
 
-const DEFAULT_SECTION_ORDER = ["main", "about", "work", "services", "reviews", "contact"];
 const norm = (v) => (v ?? "").toString().trim();
-
 const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
 
 const safeRevoke = (url) => {
@@ -41,76 +38,75 @@ const revokeAllLocalPreviews = (st) => {
 };
 
 /**
- * Build FormData for BusinessCard UPSERT endpoint.
- * IMPORTANT: supports profile_slug (multi-profile).
+ * ✅ NEW: Minimal FormData
+ * Only data content + template + show/hide toggles.
+ * NO theme/font/alignment/button colors/section order/display modes.
  */
 const buildBusinessCardFormData = ({
   profile_slug,
   template_id,
+
   business_card_name,
-  page_theme,
-  page_theme_variant,
-  style,
   main_heading,
   sub_heading,
   job_title,
   full_name,
   bio,
+
   cover_photo,
   avatar,
+
   works_existing_urls,
   work_images_files,
+
   services,
   reviews,
+
   contact_email,
   phone_number,
+
   cover_photo_removed,
   avatar_removed,
-  work_display_mode,
-  services_display_mode,
-  reviews_display_mode,
-  about_me_layout,
+
   show_main_section,
   show_about_me_section,
   show_work_section,
   show_services_section,
   show_reviews_section,
   show_contact_section,
-  button_bg_color,
-  button_text_color,
-  text_alignment,
+
   facebook_url,
   instagram_url,
   linkedin_url,
   x_url,
   tiktok_url,
-  section_order,
 }) => {
   const fd = new FormData();
 
   fd.append("profile_slug", (profile_slug || "main").toString());
-  if (template_id) fd.append("template_id", template_id.toString());
+  fd.append("template_id", (template_id || "template-1").toString());
 
+  // Content
   fd.append("business_card_name", business_card_name || "");
-  fd.append("page_theme", page_theme || "light");
-  if (page_theme_variant) fd.append("page_theme_variant", page_theme_variant);
-
-  fd.append("style", style || "Inter");
   fd.append("main_heading", main_heading || "");
   fd.append("sub_heading", sub_heading || "");
   fd.append("job_title", job_title || "");
   fd.append("full_name", full_name || "");
   fd.append("bio", bio || "");
 
+  // Contact
   fd.append("contact_email", contact_email || "");
   fd.append("phone_number", phone_number || "");
 
+  // Arrays
   fd.append("services", JSON.stringify(Array.isArray(services) ? services : []));
   fd.append("reviews", JSON.stringify(Array.isArray(reviews) ? reviews : []));
 
+  // Existing works URLs (repeat key)
   const existing = Array.isArray(works_existing_urls) ? works_existing_urls.filter(Boolean) : [];
   existing.forEach((url) => fd.append("existing_works", url));
 
+  // New uploads
   if (cover_photo instanceof File) fd.append("cover_photo", cover_photo);
   if (avatar instanceof File) fd.append("avatar", avatar);
 
@@ -119,14 +115,11 @@ const buildBusinessCardFormData = ({
     if (f instanceof File) fd.append("works", f);
   });
 
+  // Removed flags
   fd.append("cover_photo_removed", cover_photo_removed ? "1" : "0");
   fd.append("avatar_removed", avatar_removed ? "1" : "0");
 
-  fd.append("work_display_mode", work_display_mode || "");
-  fd.append("services_display_mode", services_display_mode || "");
-  fd.append("reviews_display_mode", reviews_display_mode || "");
-  fd.append("about_me_layout", about_me_layout || "");
-
+  // Show/hide toggles
   fd.append("show_main_section", show_main_section === false ? "0" : "1");
   fd.append("show_about_me_section", show_about_me_section === false ? "0" : "1");
   fd.append("show_work_section", show_work_section === false ? "0" : "1");
@@ -134,17 +127,12 @@ const buildBusinessCardFormData = ({
   fd.append("show_reviews_section", show_reviews_section === false ? "0" : "1");
   fd.append("show_contact_section", show_contact_section === false ? "0" : "1");
 
-  fd.append("button_bg_color", button_bg_color || "");
-  fd.append("button_text_color", button_text_color || "");
-  fd.append("text_alignment", text_alignment || "");
-
+  // Socials
   fd.append("facebook_url", facebook_url || "");
   fd.append("instagram_url", instagram_url || "");
   fd.append("linkedin_url", linkedin_url || "");
   fd.append("x_url", x_url || "");
   fd.append("tiktok_url", tiktok_url || "");
-
-  fd.append("section_order", JSON.stringify(Array.isArray(section_order) ? section_order : DEFAULT_SECTION_ORDER));
 
   return fd;
 };
@@ -165,7 +153,8 @@ export default function MyProfile() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { user: authUser, hydrating: authLoading, fetchUser: refetchAuthUser } = useContext(AuthContext);
+  const { user: authUser, hydrating: authLoading, fetchUser: refetchAuthUser } =
+    useContext(AuthContext);
 
   const userEmail = authUser?.email;
 
@@ -179,16 +168,19 @@ export default function MyProfile() {
 
   const activeSlug = useMemo(() => getSlugFromSearch(location.search), [location.search]);
 
-  const { data: businessCard, isLoading: isCardLoading, isError: isCardError } = useQuery({
-    queryKey: ["businessCard", "profile", activeSlug],
-    queryFn: async () => {
-      const res = await api.get(`/api/business-card/profiles/${encodeURIComponent(activeSlug)}`);
-      return res?.data?.data ?? null;
-    },
-    enabled: !!authUser && !!activeSlug,
-    staleTime: 30 * 1000,
-    retry: 1,
-  });
+  const { data: businessCard, isLoading: isCardLoading, isError: isCardError } =
+    useQuery({
+      queryKey: ["businessCard", "profile", activeSlug],
+      queryFn: async () => {
+        const res = await api.get(
+          `/api/business-card/profiles/${encodeURIComponent(activeSlug)}`
+        );
+        return res?.data?.data ?? null;
+      },
+      enabled: !!authUser && !!activeSlug,
+      staleTime: 30 * 1000,
+      retry: 1,
+    });
 
   // If slug not found -> fallback to first profile
   useEffect(() => {
@@ -224,7 +216,6 @@ export default function MyProfile() {
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
 
-  // removed flags (persisted images)
   const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
 
@@ -233,10 +224,7 @@ export default function MyProfile() {
   const [isMobile, setIsMobile] = useState(() => window.matchMedia(mqDesktopToMobile).matches);
   const [isSmallMobile, setIsSmallMobile] = useState(() => window.matchMedia(mqSmallMobile).matches);
 
-  const [servicesDisplayMode, setServicesDisplayMode] = useState("list");
-  const [reviewsDisplayMode, setReviewsDisplayMode] = useState("list");
-  const [aboutMeLayout, setAboutMeLayout] = useState("side-by-side");
-
+  // ✅ ONLY user controls are show/hide toggles now
   const [showMainSection, setShowMainSection] = useState(true);
   const [showAboutMeSection, setShowAboutMeSection] = useState(true);
   const [showWorkSection, setShowWorkSection] = useState(true);
@@ -245,7 +233,8 @@ export default function MyProfile() {
   const [showContactSection, setShowContactSection] = useState(true);
 
   const hasExchangeContact =
-    (state.contact_email && state.contact_email.trim()) || (state.phone_number && state.phone_number.trim());
+    (state.contact_email && state.contact_email.trim()) ||
+    (state.phone_number && state.phone_number.trim());
 
   // Stripe return handler (unchanged)
   useEffect(() => {
@@ -317,69 +306,52 @@ export default function MyProfile() {
     else if (!authLoading && isUserVerified) setShowVerificationPrompt(false);
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // Hydrate editor from backend (IMPORTANT: clear local previews/files on load)
+  // ✅ Hydrate editor from backend (minimal — no style controls)
   useEffect(() => {
     if (isCardLoading) return;
 
-    // cleanup any previews from previous profile before swapping
     revokeAllLocalPreviews(state);
 
     if (businessCard) {
       updateState({
+        // template
         templateId: businessCard.template_id || "template-1",
 
+        // content
         businessName: businessCard.business_card_name || "",
-        pageTheme: businessCard.page_theme || "light",
-        pageThemeVariant: businessCard.page_theme_variant || "subtle-light",
-        font: businessCard.style || "Inter",
-
         mainHeading: businessCard.main_heading || "",
         subHeading: businessCard.sub_heading || "",
         job_title: businessCard.job_title || "",
         full_name: businessCard.full_name || "",
         bio: businessCard.bio || "",
 
-        // Persisted URLs only:
+        // persisted URLs only
         avatar: businessCard.avatar || null,
         coverPhoto: businessCard.cover_photo || null,
 
-        // Local-only:
+        // local-only
         avatarPreview: "",
         coverPhotoPreview: "",
         avatarFile: null,
         coverPhotoFile: null,
 
-        // work images: persist URLs as previews (no file)
+        // works: store as preview urls (no file)
         workImages: (businessCard.works || []).map((url) => ({ file: null, preview: url })),
-        workDisplayMode: businessCard.work_display_mode || "list",
 
+        // arrays
         services: businessCard.services || [],
         reviews: businessCard.reviews || [],
 
+        // contact + socials
         contact_email: businessCard.contact_email || "",
         phone_number: businessCard.phone_number || "",
-
-        buttonBgColor: businessCard.button_bg_color || "#f97316",
-        buttonTextColor: (businessCard.button_text_color || "white").toLowerCase() === "black" ? "black" : "white",
-        textAlignment: ["left", "center", "right"].includes((businessCard.text_alignment || "").toLowerCase())
-          ? businessCard.text_alignment
-          : "left",
 
         facebook_url: businessCard.facebook_url || "",
         instagram_url: businessCard.instagram_url || "",
         linkedin_url: businessCard.linkedin_url || "",
         x_url: businessCard.x_url || "",
         tiktok_url: businessCard.tiktok_url || "",
-
-        sectionOrder:
-          Array.isArray(businessCard.section_order) && businessCard.section_order.length
-            ? businessCard.section_order
-            : DEFAULT_SECTION_ORDER,
       });
-
-      setServicesDisplayMode(businessCard.services_display_mode || "list");
-      setReviewsDisplayMode(businessCard.reviews_display_mode || "list");
-      setAboutMeLayout(businessCard.about_me_layout || "side-by-side");
 
       setShowMainSection(businessCard.show_main_section !== false);
       setShowAboutMeSection(businessCard.show_about_me_section !== false);
@@ -392,9 +364,6 @@ export default function MyProfile() {
       setIsAvatarRemoved(false);
     } else {
       resetState();
-      setServicesDisplayMode("list");
-      setReviewsDisplayMode("list");
-      setAboutMeLayout("side-by-side");
 
       setShowMainSection(true);
       setShowAboutMeSection(true);
@@ -405,39 +374,52 @@ export default function MyProfile() {
 
       updateState({
         templateId: "template-1",
-        buttonBgColor: "#f97316",
-        buttonTextColor: "white",
-        textAlignment: "left",
+
+        businessName: "",
+        mainHeading: "",
+        subHeading: "",
+        job_title: "",
+        full_name: "",
+        bio: "",
+
         facebook_url: "",
         instagram_url: "",
         linkedin_url: "",
         x_url: "",
         tiktok_url: "",
-        sectionOrder: DEFAULT_SECTION_ORDER,
 
-        // ensure local fields exist
+        contact_email: "",
+        phone_number: "",
+
+        avatar: null,
+        coverPhoto: null,
+
         avatarPreview: "",
         coverPhotoPreview: "",
         avatarFile: null,
         coverPhotoFile: null,
+
         workImages: [],
+        services: [],
+        reviews: [],
       });
+
+      setCoverPhotoRemoved(false);
+      setIsAvatarRemoved(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessCard, isCardLoading, resetState, updateState]);
 
-  // -------- Upload handlers (NO MORE saving blobs into coverPhoto/avatar) --------
+  // -------- Upload handlers (keep) --------
   const onCoverUpload = (file) => {
     if (!file || !file.type?.startsWith("image/")) return;
 
-    // cleanup previous local preview if any
     safeRevoke(state.coverPhotoPreview);
-
     const url = URL.createObjectURL(file);
 
     updateState({
-      coverPhotoPreview: url,   // local-only
-      coverPhotoFile: file,     // upload source
+      coverPhotoPreview: url,
+      coverPhotoFile: file,
     });
 
     setCoverPhotoRemoved(false);
@@ -447,12 +429,11 @@ export default function MyProfile() {
     if (!file || !file.type?.startsWith("image/")) return;
 
     safeRevoke(state.avatarPreview);
-
     const url = URL.createObjectURL(file);
 
     updateState({
-      avatarPreview: url,     // local-only
-      avatarFile: file,       // upload source
+      avatarPreview: url,
+      avatarFile: file,
     });
 
     setIsAvatarRemoved(false);
@@ -474,7 +455,6 @@ export default function MyProfile() {
   };
 
   const handleRemoveCoverPhoto = () => {
-    // if there is a persisted URL, mark removed. (never treat blob as persisted)
     if (state.coverPhoto && !isBlobUrl(state.coverPhoto)) setCoverPhotoRemoved(true);
     else setCoverPhotoRemoved(false);
 
@@ -526,7 +506,10 @@ export default function MyProfile() {
     if (!userEmail) return toast.error("Email not found. Cannot verify.");
 
     try {
-      const res = await api.post("/verify-email", { email: userEmail, code: verificationCodeInput });
+      const res = await api.post("/verify-email", {
+        email: userEmail,
+        code: verificationCodeInput,
+      });
       if (res.data?.error) return toast.error(res.data.error);
 
       toast.success("Email verified successfully!");
@@ -539,13 +522,8 @@ export default function MyProfile() {
   };
 
   const handleResetPage = () => {
-    // cleanup local preview urls first
     revokeAllLocalPreviews(state);
-
     resetState();
-    setServicesDisplayMode("list");
-    setReviewsDisplayMode("list");
-    setAboutMeLayout("side-by-side");
 
     setShowMainSection(true);
     setShowAboutMeSection(true);
@@ -559,36 +537,44 @@ export default function MyProfile() {
 
     updateState({
       templateId: "template-1",
-      buttonBgColor: "#f97316",
-      buttonTextColor: "white",
-      textAlignment: "left",
+
+      businessName: "",
+      mainHeading: "",
+      subHeading: "",
+      job_title: "",
+      full_name: "",
+      bio: "",
+
+      contact_email: "",
+      phone_number: "",
+
       facebook_url: "",
       instagram_url: "",
       linkedin_url: "",
       x_url: "",
       tiktok_url: "",
-      sectionOrder: DEFAULT_SECTION_ORDER,
+
+      avatar: null,
+      coverPhoto: null,
 
       avatarPreview: "",
       coverPhotoPreview: "",
       avatarFile: null,
       coverPhotoFile: null,
+
       workImages: [],
+      services: [],
+      reviews: [],
     });
 
     toast.success("Editor reset.");
   };
 
-  const arraysEqual = (a = [], b = []) => {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
-    return true;
-  };
-
+  // ✅ Changes detector (minimal — ignores styling fields)
   const hasProfileChanges = () => {
     const hasNewFiles =
-      (state.coverPhotoFile instanceof File) ||
-      (state.avatarFile instanceof File) ||
+      state.coverPhotoFile instanceof File ||
+      state.avatarFile instanceof File ||
       (state.workImages || []).some((w) => w?.file instanceof File);
 
     if (hasNewFiles || coverPhotoRemoved || isAvatarRemoved) return true;
@@ -619,7 +605,6 @@ export default function MyProfile() {
     const currentWorks = (state.workImages || [])
       .map((w) => (w?.preview && !w.preview.startsWith("blob:") ? w.preview : null))
       .filter(Boolean);
-
     const originalWorks = original.works || [];
 
     const worksChanged = (() => {
@@ -627,15 +612,6 @@ export default function MyProfile() {
       for (let i = 0; i < currentWorks.length; i++) if (currentWorks[i] !== originalWorks[i]) return true;
       return false;
     })();
-
-    const origButtonBg = original.button_bg_color || "#f97316";
-    const origButtonText = (original.button_text_color || "white").toLowerCase() === "black" ? "black" : "white";
-    const origAlign = ["left", "center", "right"].includes((original.text_alignment || "").toLowerCase())
-      ? original.text_alignment
-      : "left";
-
-    const origSectionOrder =
-      Array.isArray(original.section_order) && original.section_order.length ? original.section_order : DEFAULT_SECTION_ORDER;
 
     const origTemplate = original.template_id || "template-1";
     const currentTemplate = state.templateId || "template-1";
@@ -650,9 +626,6 @@ export default function MyProfile() {
     return (
       currentTemplate !== origTemplate ||
       state.businessName !== (original.business_card_name || "") ||
-      state.pageTheme !== (original.page_theme || "light") ||
-      (state.pageThemeVariant || "subtle-light") !== (original.page_theme_variant || "subtle-light") ||
-      state.font !== (original.style || "Inter") ||
       state.mainHeading !== (original.main_heading || "") ||
       state.subHeading !== (original.sub_heading || "") ||
       state.job_title !== (original.job_title || "") ||
@@ -660,10 +633,6 @@ export default function MyProfile() {
       state.bio !== (original.bio || "") ||
       state.contact_email !== (original.contact_email || "") ||
       state.phone_number !== (original.phone_number || "") ||
-      state.workDisplayMode !== (original.work_display_mode || "list") ||
-      servicesDisplayMode !== (original.services_display_mode || "list") ||
-      reviewsDisplayMode !== (original.reviews_display_mode || "list") ||
-      aboutMeLayout !== (original.about_me_layout || "side-by-side") ||
       servicesChanged ||
       reviewsChanged ||
       worksChanged ||
@@ -673,15 +642,11 @@ export default function MyProfile() {
       showServicesSection !== origShowServices ||
       showReviewsSection !== origShowReviews ||
       showContactSection !== origShowContact ||
-      state.buttonBgColor !== origButtonBg ||
-      state.buttonTextColor !== origButtonText ||
-      state.textAlignment !== origAlign ||
       state.facebook_url !== (original.facebook_url || "") ||
       state.instagram_url !== (original.instagram_url || "") ||
       state.linkedin_url !== (original.linkedin_url || "") ||
       state.x_url !== (original.x_url || "") ||
-      state.tiktok_url !== (original.tiktok_url || "") ||
-      !arraysEqual(state.sectionOrder || [], origSectionOrder)
+      state.tiktok_url !== (original.tiktok_url || "")
     );
   };
 
@@ -689,7 +654,6 @@ export default function MyProfile() {
     e.preventDefault();
     if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
 
-    // existing URLs are ones that are NOT blob previews (these come from backend)
     const existingWorkUrls = (state.workImages || [])
       .map((item) => (item?.preview && !item.preview.startsWith("blob:") ? item.preview : null))
       .filter(Boolean);
@@ -703,16 +667,12 @@ export default function MyProfile() {
       template_id: state.templateId || "template-1",
 
       business_card_name: state.businessName,
-      page_theme: state.pageTheme,
-      page_theme_variant: state.pageThemeVariant || "subtle-light",
-      style: state.font,
       main_heading: state.mainHeading,
       sub_heading: state.subHeading,
       job_title: state.job_title,
       full_name: state.full_name,
       bio: state.bio,
 
-      // ✅ use File fields ONLY
       cover_photo: state.coverPhotoFile,
       avatar: state.avatarFile,
 
@@ -728,11 +688,6 @@ export default function MyProfile() {
       cover_photo_removed: coverPhotoRemoved,
       avatar_removed: isAvatarRemoved,
 
-      work_display_mode: state.workDisplayMode,
-      services_display_mode: servicesDisplayMode,
-      reviews_display_mode: reviewsDisplayMode,
-      about_me_layout: aboutMeLayout,
-
       show_main_section: showMainSection,
       show_about_me_section: showAboutMeSection,
       show_work_section: showWorkSection,
@@ -740,17 +695,11 @@ export default function MyProfile() {
       show_reviews_section: showReviewsSection,
       show_contact_section: showContactSection,
 
-      button_bg_color: state.buttonBgColor,
-      button_text_color: state.buttonTextColor,
-      text_alignment: state.textAlignment,
-
       facebook_url: state.facebook_url,
       instagram_url: state.instagram_url,
       linkedin_url: state.linkedin_url,
       x_url: state.x_url,
       tiktok_url: state.tiktok_url,
-
-      section_order: state.sectionOrder && state.sectionOrder.length ? state.sectionOrder : DEFAULT_SECTION_ORDER,
     });
 
     try {
@@ -773,7 +722,11 @@ export default function MyProfile() {
       setCoverPhotoRemoved(false);
       setIsAvatarRemoved(false);
     } catch (err) {
-      toast.error(err?.response?.data?.error || err?.response?.data?.message || "Something went wrong while saving.");
+      toast.error(
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        "Something went wrong while saving."
+      );
     }
   };
 
@@ -784,7 +737,6 @@ export default function MyProfile() {
     setShowShareModal(true);
   };
 
-  // NOTE: leaving your current visitUrl logic untouched (even if you later change route structure)
   const visitUrl = useMemo(() => {
     if (!userUsername) return "#";
     if (!activeSlug || activeSlug === "main") return `${window.location.origin}/u/${userUsername}`;
@@ -802,7 +754,6 @@ export default function MyProfile() {
     </div>
   );
 
-  // Scrollable columns on desktop
   const desktopScrollStyle = !isMobile ? { overflow: "auto" } : undefined;
 
   return (
@@ -818,19 +769,22 @@ export default function MyProfile() {
           rightSlot={rightSlot}
         />
 
-        {(!authLoading && !authUser) && (
+        {!authLoading && !authUser && (
           <section className="profiles-card myprofile-card">
             <h2 className="profiles-card-title">User not loaded</h2>
             <p className="profiles-muted">Please ensure you are logged in.</p>
             <div className="profiles-actions-row">
-              <button className="profiles-btn profiles-btn-primary" onClick={() => (window.location.href = "/login")}>
+              <button
+                className="profiles-btn profiles-btn-primary"
+                onClick={() => (window.location.href = "/login")}
+              >
                 Go to Login
               </button>
             </div>
           </section>
         )}
 
-        {(!authLoading && authUser) && (
+        {!authLoading && authUser && (
           <>
             {isCardError && (
               <section className="profiles-card myprofile-card">
@@ -841,7 +795,11 @@ export default function MyProfile() {
                 <div className="profiles-actions-row">
                   <button
                     className="profiles-btn profiles-btn-primary"
-                    onClick={() => queryClient.invalidateQueries({ queryKey: ["businessCard", "profile", activeSlug] })}
+                    onClick={() =>
+                      queryClient.invalidateQueries({
+                        queryKey: ["businessCard", "profile", activeSlug],
+                      })
+                    }
                   >
                     Retry
                   </button>
@@ -896,9 +854,6 @@ export default function MyProfile() {
                   state={state}
                   isMobile={isMobile}
                   hasSavedData={!!businessCard}
-                  servicesDisplayMode={servicesDisplayMode}
-                  reviewsDisplayMode={reviewsDisplayMode}
-                  aboutMeLayout={aboutMeLayout}
                   showMainSection={showMainSection}
                   showAboutMeSection={showAboutMeSection}
                   showWorkSection={showWorkSection}
@@ -920,12 +875,6 @@ export default function MyProfile() {
                   onStartSubscription={handleStartSubscription}
                   onResetPage={handleResetPage}
                   onSubmit={handleSubmit}
-                  servicesDisplayMode={servicesDisplayMode}
-                  setServicesDisplayMode={setServicesDisplayMode}
-                  reviewsDisplayMode={reviewsDisplayMode}
-                  setReviewsDisplayMode={setReviewsDisplayMode}
-                  aboutMeLayout={aboutMeLayout}
-                  setAboutMeLayout={setAboutMeLayout}
                   showMainSection={showMainSection}
                   setShowMainSection={setShowMainSection}
                   showAboutMeSection={showAboutMeSection}
