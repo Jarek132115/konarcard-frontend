@@ -24,16 +24,13 @@ import pp11 from "../../assets/images/pp11.png";
 import pp12 from "../../assets/images/pp12.png";
 
 function Stars({ value = 5 }) {
-  // value: 1..5 (supports halves: 4.5)
   const pct = Math.max(0, Math.min(5, value)) / 5;
 
   return (
     <div className="kc-rev__stars" aria-label={`${value} out of 5 stars`}>
-      {/* base (empty stars) */}
       <div className="kc-rev__starsBase" aria-hidden="true">
         {"★★★★★"}
       </div>
-      {/* fill overlay */}
       <div
         className="kc-rev__starsFill"
         style={{ width: `${pct * 100}%` }}
@@ -41,6 +38,15 @@ function Stars({ value = 5 }) {
       >
         {"★★★★★"}
       </div>
+    </div>
+  );
+}
+
+function Stat({ label, value }) {
+  return (
+    <div className="kc-rev__stat">
+      <p className="kc-rev__statValue">{value}</p>
+      <p className="body-xs kc-rev__statLabel">{label}</p>
     </div>
   );
 }
@@ -196,6 +202,19 @@ export default function Reviews() {
     []
   );
 
+  const summary = useMemo(() => {
+    const avg = 4.8;
+    const total = reviews.length;
+    return {
+      avg,
+      total,
+      stats: [
+        { label: "Average rating", value: `${avg} / 5` },
+        { label: "Total reviews", value: `${total}` },
+      ],
+    };
+  }, [reviews.length]);
+
   return (
     <>
       <Navbar />
@@ -203,93 +222,134 @@ export default function Reviews() {
       <main className="kc-rev kc-page">
         {/* HERO */}
         <section className="kc-rev__hero">
-          <div className="kc-rev__heroInner">
-            <h1 className="h2 kc-rev__title">
-              The <span className="kc-rev__accent">#1 Tool</span> Tradies Are Talking About
-            </h1>
-            <p className="body-s kc-rev__subtitle">
-              Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
-            </p>
+          <div className="kc-rev__container">
+            <div className="kc-rev__heroGrid">
+              <div className="kc-rev__heroCopy">
+                <p className="label kc-rev__kicker">Customer reviews</p>
 
-            {/* Summary bar */}
-            <div className="kc-rev__summary" role="region" aria-label="Review summary">
-              <div className="kc-rev__summaryLeft">
-                <p className="kc-rev__score">
-                  <span className="kc-rev__scoreNum">4.8</span>
-                  <span className="kc-rev__scoreOut">/5</span>
+                <h1 className="h2 kc-rev__title">
+                  Tradespeople use KonarCard to look more professional — fast.
+                </h1>
+
+                <p className="body kc-rev__subtitle">
+                  Clear profiles, easy sharing, and a better first impression. Here’s what customers
+                  are saying after switching.
                 </p>
-                <Stars value={4.8} />
-                <p className="body-xs kc-rev__count">Based on recent customer feedback</p>
+
+                <div className="kc-rev__trustRow" aria-label="Average rating">
+                  <div className="kc-rev__trustScore">
+                    <span className="kc-rev__trustNum">{summary.avg}</span>
+                    <span className="body-xs kc-rev__trustOut">/5</span>
+                  </div>
+
+                  <Stars value={summary.avg} />
+
+                  <span className="body-xs kc-rev__trustNote">
+                    Based on {summary.total} reviews
+                  </span>
+                </div>
+
+                <div className="kc-rev__chips" aria-label="Highlights">
+                  <span className="pill">Verified purchases</span>
+                  <span className="pill">Real trades</span>
+                  <span className="pill">UK customers</span>
+                </div>
               </div>
 
-              <div className="kc-rev__summaryRight">
-                <div className="kc-rev__pill">Verified purchases</div>
-                <div className="kc-rev__pill">Real trades</div>
-                <div className="kc-rev__pill">UK customers</div>
-              </div>
+              <aside className="kc-rev__summary" aria-label="Review summary">
+                <div className="kc-rev__summaryTop">
+                  <p className="h6 kc-rev__summaryTitle">Summary</p>
+                  <p className="body-xs kc-rev__summaryDesc">
+                    Short, honest feedback from people using KonarCard day-to-day.
+                  </p>
+                </div>
+
+                <div className="kc-rev__stats" role="list">
+                  {summary.stats.map((s) => (
+                    <div key={s.label} role="listitem">
+                      <Stat label={s.label} value={s.value} />
+                    </div>
+                  ))}
+                </div>
+
+                <a className="kc-rev__summaryBtn button-text" href="/claimyourlink">
+                  Claim your link
+                </a>
+
+                <p className="body-xs kc-rev__summaryHint">Set up in minutes. Update anytime.</p>
+              </aside>
             </div>
           </div>
         </section>
 
-        {/* GRID */}
-        <section className="kc-rev__gridSection" aria-label="Customer reviews">
-          <div className="kc-rev__grid">
-            {reviews.map((r) => (
-              <article className="kc-rev__card" key={r.id}>
-                <header className="kc-rev__cardTop">
-                  <div className="kc-rev__person">
-                    <img className="kc-rev__avatar" src={r.avatar} alt={`${r.name} avatar`} />
-                    <div className="kc-rev__personMeta">
-                      <p className="kc-rev__nameLine">
-                        <span className="kc-rev__name">{r.name}</span>
-                        <span className="kc-rev__dotSep" aria-hidden="true">
-                          •
-                        </span>
-                        <span className="kc-rev__trade">{r.trade}</span>
-                      </p>
-                      <p className="body-xs kc-rev__subLine">
-                        {r.location} <span className="kc-rev__dotSep">•</span> {r.date}
-                      </p>
-                    </div>
-                  </div>
+        {/* LIST */}
+        <section className="kc-rev__list" aria-label="Customer reviews">
+          <div className="kc-rev__container">
+            <div className="kc-rev__grid">
+              {reviews.map((r) => {
+                const oneParagraph = r.text.replace(/\s*\n\s*/g, " ").trim();
+                return (
+                  <article className="kc-rev__card" key={r.id}>
+                    <header className="kc-rev__cardHeader">
+                      <div className="kc-rev__person">
+                        <img className="kc-rev__avatar" src={r.avatar} alt={`${r.name} avatar`} />
+                        <div className="kc-rev__personMeta">
+                          <p className="kc-rev__nameLine">
+                            <span className="kc-rev__name">{r.name}</span>
+                            <span className="kc-rev__dot" aria-hidden="true">
+                              •
+                            </span>
+                            <span className="kc-rev__trade">{r.trade}</span>
+                          </p>
+                          <p className="body-xs kc-rev__subLine">
+                            {r.location}
+                            <span className="kc-rev__dot" aria-hidden="true">
+                              •
+                            </span>
+                            {r.date}
+                          </p>
+                        </div>
+                      </div>
 
-                  <div className="kc-rev__rating">
-                    <Stars value={r.rating} />
-                    <span className="body-xs kc-rev__ratingText">{r.rating.toFixed(1)}</span>
-                  </div>
-                </header>
+                      <div className="kc-rev__rating">
+                        <Stars value={r.rating} />
+                        <span className="body-xs kc-rev__ratingText">{r.rating.toFixed(1)}</span>
+                      </div>
+                    </header>
 
-                <div className="kc-rev__tags">
-                  {r.tags.map((t) => (
-                    <span key={t} className="kc-rev__tag">
-                      {t}
-                    </span>
-                  ))}
-                </div>
+                    {r.tags?.length ? (
+                      <div className="kc-rev__tags" aria-label="Tags">
+                        {r.tags.map((t) => (
+                          <span key={t} className="pill">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
 
-                <p className="body-s kc-rev__text">
-                  {r.text.split("\n").map((line, idx) => (
-                    <React.Fragment key={idx}>
-                      {line}
-                      {idx !== r.text.split("\n").length - 1 ? <br /> : null}
-                    </React.Fragment>
-                  ))}
-                </p>
-              </article>
-            ))}
+                    <p className="body-s kc-rev__text">“{oneParagraph}”</p>
+                  </article>
+                );
+              })}
+            </div>
           </div>
         </section>
 
         {/* CTA */}
         <section className="kc-rev__cta">
-          <div className="kc-rev__ctaInner">
-            <h2 className="h3 kc-rev__ctaTitle">Ready to look more professional?</h2>
-            <p className="body-s kc-rev__ctaSub">
-              Claim your KonarCard link, build your profile, and start sharing instantly.
-            </p>
-            <a className="kc-rev__ctaBtn" href="/claimyourlink">
-              Claim your link
-            </a>
+          <div className="kc-rev__container">
+            <div className="kc-rev__ctaCard">
+              <div className="kc-rev__ctaCopy">
+                <h2 className="h5 kc-rev__ctaTitle">Ready to look more professional?</h2>
+                <p className="body-s kc-rev__ctaSub">
+                  Claim your KonarCard link, build your profile, and start sharing instantly.
+                </p>
+              </div>
+
+              <a className="kc-rev__ctaBtn button-text" href="/claimyourlink">
+                Claim your link
+              </a>
+            </div>
           </div>
         </section>
       </main>

@@ -1,8 +1,9 @@
 /* frontend/src/styling/reviews.css */
 
 /* =========================================================
-   REVIEWS
-   Real-feel layout (varied cards, subtle details, tokens only)
+   REVIEWS — minimal, consistent with design system classes
+   - Cal Sans must always be font-weight: 500 (enforced here)
+   - No blue accents: use orange tokens only
    ========================================================= */
 
 .kc-rev {
@@ -10,96 +11,174 @@
     color: var(--kc-text-primary);
 }
 
+.kc-rev__container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Ensure any Cal Sans usage stays at 500 */
+.kc-rev__title,
+.kc-rev__trustNum,
+.kc-rev__summaryTitle,
+.kc-rev__statValue,
+.kc-rev__ctaTitle,
+.kc-rev__name {
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 500 !important;
+}
+
 /* =========================
    HERO
    ========================= */
 .kc-rev__hero {
-    padding: 0 20px 28px;
+    padding: 26px 0 18px;
 }
 
-.kc-rev__heroInner {
-    max-width: 980px;
-    margin: 0 auto;
-    text-align: center;
+.kc-rev__heroGrid {
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 18px;
+    align-items: start;
+}
+
+.kc-rev__heroCopy {
+    border: 1px solid var(--kc-border);
+    border-radius: 18px;
+    background: #ffffff;
+    padding: 18px;
+}
+
+.kc-rev__kicker {
+    margin: 0 0 10px;
 }
 
 .kc-rev__title {
     margin: 0 0 10px;
 }
 
-.kc-rev__accent {
+.kc-rev__subtitle {
+    margin: 0 0 14px;
+    max-width: 60ch;
+}
+
+/* Trust row */
+.kc-rev__trustRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.kc-rev__trustScore {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.kc-rev__trustNum {
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -0.2px;
+}
+
+.kc-rev__trustOut,
+.kc-rev__trustNote {
+    color: var(--kc-text-secondary);
+}
+
+/* chips */
+.kc-rev__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+/* ✅ Override your global .pill inside this page to be ORANGE accented */
+.kc-rev .pill {
+    border: 1px solid rgba(249, 115, 22, 0.28);
+    background: rgba(249, 115, 22, 0.08);
     color: var(--kc-accent-primary);
 }
 
-.kc-rev__subtitle {
-    margin: 0 auto;
-    max-width: 720px;
-}
-
-/* Summary */
+/* =========================
+   SUMMARY CARD
+   ========================= */
 .kc-rev__summary {
-    margin: 22px auto 0;
-    max-width: 980px;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-
     border: 1px solid var(--kc-border);
-    border-radius: 16px;
+    border-radius: 18px;
     background: #ffffff;
-    padding: 16px;
-
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    padding: 18px;
 }
 
-.kc-rev__summaryLeft {
-    text-align: left;
+.kc-rev__summaryTop {
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    margin-bottom: 12px;
 }
 
-.kc-rev__score {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
+.kc-rev__summaryTitle {
     margin: 0 0 6px;
 }
 
-.kc-rev__scoreNum {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 34px;
-    line-height: 1;
-    font-weight: 600;
+.kc-rev__summaryDesc {
+    margin: 0;
+}
+
+.kc-rev__stats {
+    display: grid;
+    gap: 10px;
+}
+
+.kc-rev__stat {
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.02);
+    padding: 12px;
+}
+
+.kc-rev__statValue {
+    margin: 0 0 4px;
+    font-size: 14px;
+    line-height: 20px;
     color: var(--kc-text-primary);
 }
 
-.kc-rev__scoreOut {
-    font-size: 14px;
+.kc-rev__statLabel {
+    margin: 0;
     color: var(--kc-text-secondary);
 }
 
-.kc-rev__count {
-    margin: 6px 0 0;
-    color: var(--kc-text-secondary);
-}
-
-.kc-rev__summaryRight {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 8px;
-}
-
-.kc-rev__pill {
+.kc-rev__summaryBtn {
+    margin-top: 14px;
+    width: 100%;
     display: inline-flex;
     align-items: center;
-    padding: 7px 10px;
+    justify-content: center;
+    padding: 12px 16px;
     border-radius: 999px;
-    border: 1px solid var(--kc-border);
-    background: var(--kc-bg-soft);
-    color: var(--kc-text-primary);
-    font-size: 12px;
-    font-weight: 600;
+    background: var(--kc-accent-primary);
+    color: #ffffff;
+    text-decoration: none;
+    box-shadow: var(--kc-shadow-accent);
+    transition: filter 0.15s ease, transform 0.08s ease;
+}
+
+.kc-rev__summaryBtn:hover {
+    filter: brightness(0.98);
+}
+
+.kc-rev__summaryBtn:active {
+    transform: translateY(1px);
+}
+
+.kc-rev__summaryHint {
+    margin: 10px 0 0;
+    text-align: center;
+    color: var(--kc-text-secondary);
 }
 
 /* =========================
@@ -130,45 +209,34 @@
 /* =========================
    GRID
    ========================= */
-.kc-rev__gridSection {
-    padding: 0 20px 64px;
+.kc-rev__list {
+    padding: 12px 0 54px;
 }
 
 .kc-rev__grid {
-    max-width: 1040px;
-    margin: 0 auto;
-
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
 }
 
-/* =========================
-   CARD (real review look)
-   ========================= */
+/* card */
 .kc-rev__card {
     border: 1px solid var(--kc-border);
     background: #ffffff;
-    border-radius: 16px;
-    padding: 14px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
-
+    border-radius: 18px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-
-    /* subtle “real” variance */
-    transform: translateY(0);
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    transition: transform 0.12s ease;
 }
 
 .kc-rev__card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.10);
+    transform: translateY(-1px);
 }
 
-/* top row */
-.kc-rev__cardTop {
+/* header */
+.kc-rev__cardHeader {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -202,22 +270,16 @@
     flex-wrap: wrap;
 }
 
-.kc-rev__name {
-    font-weight: 800;
-    color: var(--kc-text-primary);
-}
-
 .kc-rev__trade {
     color: var(--kc-text-secondary);
-    font-weight: 600;
+    font-weight: 400;
 }
 
 .kc-rev__subLine {
     margin: 2px 0 0;
-    color: var(--kc-text-secondary);
 }
 
-.kc-rev__dotSep {
+.kc-rev__dot {
     color: rgba(15, 23, 42, 0.35);
 }
 
@@ -232,80 +294,60 @@
     color: var(--kc-text-secondary);
 }
 
-/* tags */
+/* tags (wrap uses .pill, but keep spacing consistent) */
 .kc-rev__tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
 }
 
-.kc-rev__tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 10px;
-    border-radius: 999px;
-
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: rgba(15, 23, 42, 0.03);
-
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--kc-text-primary);
-}
-
-/* review text */
+/* text */
 .kc-rev__text {
     margin: 0;
-    color: var(--kc-text-secondary);
-    line-height: 1.65;
 }
 
 /* =========================
    CTA
    ========================= */
 .kc-rev__cta {
-    padding: 72px 20px;
-    text-align: center;
+    padding: 20px 0 70px;
 }
 
-.kc-rev__ctaInner {
-    max-width: 980px;
-    margin: 0 auto;
+.kc-rev__ctaCard {
+    border: 1px solid var(--kc-border);
+    border-radius: 20px;
+    background: #ffffff;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
 }
 
 .kc-rev__ctaTitle {
-    margin: 0 0 8px;
+    margin: 0 0 6px;
 }
 
 .kc-rev__ctaSub {
-    margin: 0 auto 24px;
-    max-width: 720px;
+    margin: 0;
 }
 
 .kc-rev__ctaBtn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    padding: 14px 30px;
+    padding: 12px 18px;
     border-radius: 999px;
-
     background: var(--kc-accent-primary);
     color: #ffffff;
-
     text-decoration: none;
-    font-family: "Cal Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-
     box-shadow: var(--kc-shadow-accent);
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    transition: filter 0.15s ease, transform 0.08s ease;
+    white-space: nowrap;
 }
 
 .kc-rev__ctaBtn:hover {
     filter: brightness(0.98);
-    box-shadow: var(--kc-shadow-accent-hover);
 }
 
 .kc-rev__ctaBtn:active {
@@ -316,17 +358,21 @@
    RESPONSIVE
    ========================= */
 @media (max-width: 980px) {
-    .kc-rev__summary {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .kc-rev__summaryRight {
-        justify-content: flex-start;
+    .kc-rev__heroGrid {
+        grid-template-columns: 1fr;
     }
 
     .kc-rev__grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .kc-rev__ctaCard {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .kc-rev__ctaBtn {
+        width: 100%;
     }
 }
 
