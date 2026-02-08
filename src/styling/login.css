@@ -1,8 +1,10 @@
 /* =========================================================
    AUTH (Login/Register/Verify/Reset)
-   - Faded grid background stays
-   - Remove white "panel/card" behind form
-   - Improve OR divider (no bg, split line, even spacing)
+   - Faded grid background
+   - No white card behind form
+   - Clean OR divider (broken line, no bubble)
+   - Inter 500 for labels + social buttons
+   - Social buttons max width (centered)
    ========================================================= */
 
 *,
@@ -46,7 +48,7 @@
     pointer-events: none;
     background:
         radial-gradient(circle at 50% 0%,
-            rgba(255, 255, 255, 0.0) 0%,
+            rgba(255, 255, 255, 0) 0%,
             rgba(255, 255, 255, 0.55) 55%,
             rgba(255, 255, 255, 0.92) 100%);
 }
@@ -85,7 +87,11 @@
 .kc-auth-closeBtn:hover {
     transform: translateY(-1px);
     border-color: rgba(15, 23, 42, 0.18);
-    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.10);
+    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.1);
+}
+
+.kc-auth-closeBtn:active {
+    transform: translateY(0);
 }
 
 /* Main */
@@ -104,18 +110,9 @@
     text-align: center;
 }
 
-/* ✅ REMOVE the "white card" entirely */
+/* ✅ Soft surface container (same pattern as Login) */
 .kc-auth-panel {
     width: 100%;
-    margin: 0 auto;
-    padding: 0;
-    /* no card padding */
-    border: none;
-    border-radius: 0;
-    background: transparent;
-    /* key */
-    box-shadow: none;
-    backdrop-filter: none;
 }
 
 /* Headings / text */
@@ -123,7 +120,7 @@
     margin: 0 0 8px;
     font-family: "Cal Sans", sans-serif;
     font-size: 48px;
-    font-weight: 500;
+    font-weight: 500 !important;
     line-height: 56px;
     color: var(--kc-text-primary);
     letter-spacing: -0.02em;
@@ -132,14 +129,16 @@
 .kc-subtitle {
     margin: 0 auto 18px;
     max-width: 520px;
+    font-family: "Inter", sans-serif;
     font-size: 14px;
+    font-weight: 500;
     line-height: 22px;
     color: var(--kc-text-secondary);
 }
 
 .kc-link {
     color: var(--kc-accent-primary);
-    font-weight: 700;
+    font-weight: 600;
     text-decoration: none;
 }
 
@@ -155,8 +154,15 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    width: 100%;
 }
 
+/* Used on claim to center the block like your 3rd image */
+.kc-form-claim {
+    margin-top: 18px;
+}
+
+/* Field */
 .kc-field {
     display: flex;
     flex-direction: column;
@@ -164,8 +170,9 @@
 }
 
 .kc-label {
+    font-family: "Inter", sans-serif;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--kc-text-secondary);
 }
 
@@ -176,9 +183,10 @@
     border: 1px solid rgba(15, 23, 42, 0.12);
     border-radius: 12px;
     padding: 10px 12px;
+    font-family: "Inter", sans-serif;
     font-size: 14px;
+    font-weight: 500;
     outline: none;
-
     background: rgba(15, 23, 42, 0.03);
     transition: box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
@@ -193,29 +201,55 @@
     box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
 }
 
-/* Remember + forgot row */
+/* Remember me + Forgot password row */
 .kc-row {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
-    margin: 2px 0 4px;
+    gap: 16px;
+    margin: 6px 0 10px;
 }
 
+/* Checkbox + label alignment */
 .kc-remember {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 10px;
+    font-family: "Inter", sans-serif;
     font-size: 13px;
+    font-weight: 500;
     color: var(--kc-text-secondary);
-    font-weight: 600;
+    margin: 0;
+    line-height: 1;
 }
 
 .kc-remember input[type="checkbox"] {
     width: 16px;
     height: 16px;
+    margin: 0;
     accent-color: var(--kc-accent-primary);
     cursor: pointer;
+}
+
+/* Links as buttons */
+.kc-text-link {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    color: rgba(15, 23, 42, 0.65);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.kc-text-link:hover {
+    color: var(--kc-text-primary);
+    text-decoration: underline;
 }
 
 /* Buttons */
@@ -228,8 +262,8 @@
     border: none;
     font-family: "Cal Sans", sans-serif;
     font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.4px;
+    font-weight: 500 !important;
+    letter-spacing: 0.2px;
     cursor: pointer;
     transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
 }
@@ -252,108 +286,84 @@
 
 .kc-btn-primary:hover {
     filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.30);
+    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.3);
 }
 
 .kc-btn-primary:active {
     transform: translateY(1px);
 }
 
-/* Ghost */
-.kc-btn-ghost {
-    background: rgba(255, 255, 255, 0.0);
-    color: rgba(15, 23, 42, 0.70);
-    border: 1px solid rgba(15, 23, 42, 0.14);
-}
-
-.kc-btn-ghost:hover {
-    background: rgba(15, 23, 42, 0.03);
-}
-
-.kc-btn-ghost:active {
-    transform: translateY(1px);
-}
-
-/* Text link buttons */
-.kc-text-link {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 6px 8px;
-    border-radius: 10px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.62);
-}
-
-.kc-text-link:hover {
-    background: rgba(15, 23, 42, 0.03);
+.kc-btn-secondary {
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(15, 23, 42, 0.12);
     color: var(--kc-text-primary);
 }
 
-/* =========================================================
-   ✅ OR DIVIDER (split line, NO background, equal spacing)
-   ========================================================= */
+/* ✅ Divider spacing (more space above + below “or”) */
 .kc-divider {
-    margin: 18px 0 18px;
-    /* equal spacing above/below */
+    margin: 44px 0 40px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 12px;
+    gap: 16px;
+    width: 100%;
 }
 
 .kc-divider::before,
 .kc-divider::after {
     content: "";
-    height: 1px;
     flex: 1;
+    height: 1px;
     background: rgba(15, 23, 42, 0.12);
 }
 
 .kc-divider span {
-    padding: 0;
-    background: transparent;
-    /* ✅ no white pill */
-    color: rgba(15, 23, 42, 0.55);
+    font-family: "Inter", sans-serif;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.55);
     line-height: 1;
+    background: none;
+    padding: 0;
 }
 
-/* Social buttons */
+/* ✅ Social section: buttons centered, max width 280–300px */
 .kc-social {
-    display: grid;
-    gap: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 }
 
-/* Give social buttons the same width + “breathing room” visually */
 .kc-social-btn {
-    min-height: 48px;
     width: 100%;
+    max-width: 300px;
+    /* ✅ requested */
+    min-height: 48px;
 
     border-radius: 999px;
     border: 1px solid rgba(15, 23, 42, 0.12);
-    background: rgba(255, 255, 255, 0.86);
+    background: rgba(255, 255, 255, 0.9);
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
 
-    font-weight: 700;
+    font-family: "Inter", sans-serif;
     font-size: 14px;
+    font-weight: 500;
     color: var(--kc-text-primary);
 
     cursor: pointer;
-    transition: transform 0.08s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+    transition: transform 0.08s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .kc-social-btn:hover {
     transform: translateY(-1px);
     border-color: rgba(15, 23, 42, 0.18);
-    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.10);
-    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 16px 30px rgba(15, 23, 42, 0.1);
 }
 
 .kc-social-btn:active {
@@ -363,7 +373,69 @@
 .kc-social-icon {
     width: 18px;
     height: 18px;
-    display: inline-block;
+}
+
+/* -------------------------
+   Claim link input (matches your 3rd image vibe)
+   ------------------------- */
+.kc-claim {
+    width: 100%;
+    max-width: 460px;
+    margin: 6px auto 0;
+    display: flex;
+    align-items: center;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+}
+
+.kc-claim-prefix {
+    padding: 12px 12px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.7);
+    white-space: nowrap;
+}
+
+.kc-claim-sep {
+    width: 1px;
+    align-self: stretch;
+    background: rgba(15, 23, 42, 0.12);
+}
+
+.kc-claim-input {
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    min-height: 48px;
+    padding: 12px 14px;
+}
+
+.kc-claim-input:focus {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.kc-microcopy {
+    margin: 10px 0 0;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.58);
+    text-align: center;
+}
+
+.kc-bottom-line {
+    margin: 14px 0 0;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.65);
+    text-align: center;
 }
 
 /* Responsive */
@@ -385,8 +457,16 @@
     }
 
     .kc-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
+        flex-wrap: wrap;
+        row-gap: 10px;
+    }
+
+    .kc-claim {
+        max-width: 100%;
+    }
+
+    .kc-claim-prefix {
+        display: none;
+        /* optional: keeps it clean on tiny screens */
     }
 }
