@@ -1,7 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import "../../styling/dashboard/cards.css";
-import api from "../../services/api"; // ✅ IMPORTANT
+import api from "../../services/api";
+
+/* -----------------------------
+   Helpers
+----------------------------- */
+
+function prettyProduct(productKey) {
+    if (productKey === "plastic-card") return "Plastic Card";
+    if (productKey === "metal-card") return "Metal Card";
+    if (productKey === "konartag") return "KonarTag";
+    return "KonarCard";
+}
 
 function titleFromOrder(order) {
     const productKey = String(order?.productKey || "");
@@ -30,8 +41,12 @@ function typeFromOrder(order) {
     return String(order?.productKey || "") === "konartag" ? "NFC Tag" : "NFC Card";
 }
 
+function variantRaw(order) {
+    return order?.variant || order?.preview?.variant || "";
+}
+
 function variantFromOrder(order) {
-    const v = order?.variant || order?.preview?.variant || "";
+    const v = variantRaw(order);
     return v ? String(v).toUpperCase() : "";
 }
 
@@ -50,25 +65,85 @@ function assignedProfileFromOrder(order) {
     );
 }
 
-function profileLinkFromOrder(order) {
-    const slug =
+function profileSlugFromOrder(order) {
+    return (
         order?.profile?.profile_slug ||
         order?.profile?.slug ||
         order?.profile?.username ||
-        "";
+        ""
+    );
+}
 
+function profileLinkFromOrder(order) {
+    const slug = profileSlugFromOrder(order);
     if (!slug) return "";
     return `${window.location.origin}/u/${slug}`;
 }
 
+function formatMoneyMinor(amountMinor, currency) {
+    const a = Number(amountMinor || 0);
+    const c = String(currency || "").toUpperCase();
+    // amountTotal stored in minor units by Stripe (e.g. 1299 => £12.99)
+    const major = (a / 100).toFixed(2);
+    return c ? `${c} ${major}` : major;
+}
+
+/* -----------------------------
+   Thumbnail (static) for list
+----------------------------- */
+
+function thumbTheme(productKey, variant) {
+    const pk = String(productKey || "");
+    const v = String(variant || "").toLowerCase();
+
+    // CSS classes only; actual look is in cards.css (added below)
+    if (pk === "metal-card") {
+        if (v === "gold") return "thumb thumb-metal thumb-gold";
+        return "thumb thumb-metal thumb-black";
+    }
+    if (pk === "konartag") {
+        if (v === "white") return "thumb thumb-tag thumb-white";
+        return "thumb thumb-tag thumb-black";
+    }
+
+    // plastic default
+    if (v === "black") return "thumb thumb-plastic thumb-black";
+    return "thumb thumb-plastic thumb-white";
+}
+
+function CardThumb({ productKey, variant, logoUrl }) {
+    const cls = thumbTheme(productKey, variant);
+
+    return (
+        <div className={cls} aria-hidden="true">
+            <div className="thumb-inner">
+                <div className="thumb-logo">
+                    {logoUrl ? (
+                        <img src={logoUrl} alt="" />
+                    ) : (
+                        <span className="thumb-k">K</span>
+                    )}
+                </div>
+                <div className="thumb-chip" />
+                <div className="thumb-line" />
+            </div>
+        </div>
+    );
+}
+
+/* -----------------------------
+   API
+----------------------------- */
 
 async function getMyOrders() {
     const r = await api.get("/api/nfc-orders/mine");
-    if (r.status !== 200) throw new Error(r.data?.message || "Failed to load orders");
+    if (r.status !== 200) throw new Error(r.data?.message || r.data?.error || "Failed to load orders");
     return r.data;
 }
 
-
+/* -----------------------------
+   Page
+----------------------------- */
 
 export default function Cards() {
     const [plan] = useState("free"); // later wire to subscription
@@ -82,7 +157,6 @@ export default function Cards() {
 
     const [selectedId, setSelectedId] = useState(null);
 
-    // If you later redirect back with ?orderId=...
     const orderIdFromUrl = useMemo(() => {
         try {
             return new URLSearchParams(window.location.search).get("orderId") || "";
@@ -106,7 +180,7 @@ export default function Cards() {
                 setOrders(Array.isArray(list) ? list : []);
             } catch (e) {
                 if (!alive) return;
-                setError(e?.response?.data?.message || e?.message || "Failed to load orders.");
+                setError(e?.response?.data?.message || e?.response?.data?.error || e?.message || "Failed to load orders.");
                 setOrders([]);
             } finally {
                 if (!alive) return;
@@ -129,32 +203,37 @@ export default function Cards() {
                 name: titleFromOrder(o),
                 type: typeFromOrder(o),
                 material: materialFromOrder(o),
+                productKey: String(o?.productKey || ""),
                 variant: variantFromOrder(o),
+                variantRaw: String(variantRaw(o) || ""),
                 quantity: Number(o?.quantity || 1),
                 status: overrides[id] || baseStatus,
                 orderStatus: String(o?.status || ""),
                 assignedProfile: assignedProfileFromOrder(o),
+                profileSlug: profileSlugFromOrder(o),
                 logoUrl: o?.logoUrl || "",
+                createdAtISO: o?.createdAt || "",
                 createdAt: o?.createdAt ? new Date(o.createdAt).toLocaleString() : "",
                 link: profileLinkFromOrder(o),
+                amountTotal: Number(o?.amountTotal || 0),
+                currency: String(o?.currency || ""),
+                stripeCheckoutSessionId: String(o?.stripeCheckoutSessionId || ""),
+                stripePaymentIntentId: String(o?.stripePaymentIntentId || ""),
+                _raw: o, // ✅ keep full order for any future UI
             };
         });
     }, [orders, overrides]);
 
-    // select a card once cards load
     useEffect(() => {
         if (!cards.length) return;
 
-        // 1) prefer orderId in URL
         if (orderIdFromUrl && cards.some((c) => c.id === orderIdFromUrl)) {
             setSelectedId(orderIdFromUrl);
             return;
         }
 
-        // 2) keep existing if still valid
         if (selectedId && cards.some((c) => c.id === selectedId)) return;
 
-        // 3) default first
         setSelectedId(cards[0].id);
     }, [cards, orderIdFromUrl, selectedId]);
 
@@ -163,6 +242,7 @@ export default function Cards() {
         [cards, selectedId]
     );
 
+    // Placeholder rules (wire to subscription later)
     const maxCards = plan === "teams" ? 999 : 1;
     const canAddCard = cards.length < maxCards;
     const isLimitReached = !canAddCard && plan !== "teams";
@@ -184,8 +264,8 @@ export default function Cards() {
 
     const handleCopyLink = async () => {
         if (!selectedCard) return;
-        const link = selectedCard.link || `${window.location.origin}/products`;
 
+        const link = selectedCard.link || `${window.location.origin}/products`;
         try {
             await navigator.clipboard.writeText(link);
             alert("Link copied ✅");
@@ -196,6 +276,7 @@ export default function Cards() {
 
     const handleShare = async () => {
         if (!selectedCard) return;
+
         const link = selectedCard.link || `${window.location.origin}/products`;
 
         if (navigator.share) {
@@ -205,10 +286,17 @@ export default function Cards() {
                     text: "Here’s my KonarCard profile link:",
                     url: link,
                 });
-            } catch { }
+            } catch {
+                // user cancelled
+            }
         } else {
             await handleCopyLink();
         }
+    };
+
+    const handleOpenProfile = () => {
+        if (!selectedCard?.link) return;
+        window.open(selectedCard.link, "_blank", "noopener,noreferrer");
     };
 
     return (
@@ -228,12 +316,12 @@ export default function Cards() {
             }
         >
             <div className="cards-shell">
+                {/* Header */}
                 <div className="cards-header">
                     <div>
                         <h1 className="cards-title">Cards</h1>
                         <p className="cards-subtitle">
-                            Your KonarCards are physical NFC products. Assign each card to a profile so customers always land on the
-                            right page.
+                            Your KonarCards are physical NFC products. Assign each card to a profile so customers always land on the right page.
                         </p>
 
                         {loading ? (
@@ -257,6 +345,7 @@ export default function Cards() {
                     </div>
                 </div>
 
+                {/* Empty */}
                 {!loading && !error && cards.length === 0 ? (
                     <section className="cards-card cards-empty">
                         <h2 className="cards-card-title">Order your first KonarCard</h2>
@@ -288,6 +377,7 @@ export default function Cards() {
                     </section>
                 ) : (
                     <div className="cards-grid">
+                        {/* List */}
                         <section className="cards-card cards-span-7">
                             <div className="cards-card-head">
                                 <div>
@@ -305,9 +395,8 @@ export default function Cards() {
                                         onClick={() => setSelectedId(c.id)}
                                     >
                                         <div className="cards-item-left">
-                                            <div className="cards-avatar" aria-hidden="true">
-                                                K
-                                            </div>
+                                            {/* ✅ STATIC THUMBNAIL */}
+                                            <CardThumb productKey={c.productKey} variant={c.variantRaw} logoUrl={c.logoUrl} />
 
                                             <div className="cards-item-meta">
                                                 <div className="cards-item-title">
@@ -332,7 +421,9 @@ export default function Cards() {
                                         </div>
 
                                         <div className="cards-item-right">
-                                            <span className={`cards-status ${c.status}`}>{c.status === "active" ? "ACTIVE" : "INACTIVE"}</span>
+                                            <span className={`cards-status ${c.status}`}>
+                                                {c.status === "active" ? "ACTIVE" : "INACTIVE"}
+                                            </span>
 
                                             <button
                                                 type="button"
@@ -350,6 +441,7 @@ export default function Cards() {
                             </div>
                         </section>
 
+                        {/* Preview + Details */}
                         <section className="cards-card cards-span-5">
                             <div className="cards-card-head">
                                 <div>
@@ -389,6 +481,58 @@ export default function Cards() {
                                             Ordered: {selectedCard.createdAt}
                                         </div>
                                     ) : null}
+
+                                    {/* ✅ REAL DETAILS */}
+                                    {selectedCard ? (
+                                        <div className="cards-order-details">
+                                            <div className="cards-order-details-title">Order details</div>
+
+                                            <div className="cards-detail-row">
+                                                <span className="cards-muted">Product</span>
+                                                <strong>{prettyProduct(selectedCard.productKey)}</strong>
+                                            </div>
+
+                                            <div className="cards-detail-row">
+                                                <span className="cards-muted">Variant</span>
+                                                <strong>{selectedCard.variantRaw || "—"}</strong>
+                                            </div>
+
+                                            <div className="cards-detail-row">
+                                                <span className="cards-muted">Quantity</span>
+                                                <strong>{selectedCard.quantity}</strong>
+                                            </div>
+
+                                            <div className="cards-detail-row">
+                                                <span className="cards-muted">Status</span>
+                                                <strong>{String(selectedCard.orderStatus || "—").toUpperCase()}</strong>
+                                            </div>
+
+                                            <div className="cards-detail-row">
+                                                <span className="cards-muted">Total</span>
+                                                <strong>{formatMoneyMinor(selectedCard.amountTotal, selectedCard.currency)}</strong>
+                                            </div>
+
+                                            <div className="cards-detail-row">
+                                                <span className="cards-muted">Profile</span>
+                                                <strong>{selectedCard.profileSlug || "—"}</strong>
+                                            </div>
+
+                                            <div className="cards-detail-row">
+                                                <span className="cards-muted">Custom logo</span>
+                                                <strong>{selectedCard.logoUrl ? "YES" : "NO"}</strong>
+                                            </div>
+
+                                            {/* Optional advanced info (kept small) */}
+                                            {selectedCard.stripeCheckoutSessionId ? (
+                                                <div className="cards-detail-row">
+                                                    <span className="cards-muted">Stripe session</span>
+                                                    <strong className="cards-mono">
+                                                        {selectedCard.stripeCheckoutSessionId.slice(0, 10)}…
+                                                    </strong>
+                                                </div>
+                                            ) : null}
+                                        </div>
+                                    ) : null}
                                 </div>
 
                                 <div className="cards-actions">
@@ -397,6 +541,10 @@ export default function Cards() {
                                     <div className="cards-actions-row">
                                         <button className="cards-btn cards-btn-primary" type="button" onClick={handleAssignProfile}>
                                             Assign profile
+                                        </button>
+
+                                        <button className="cards-btn cards-btn-ghost" type="button" onClick={handleOpenProfile} disabled={!selectedCard?.link}>
+                                            Open profile
                                         </button>
 
                                         <button className="cards-btn cards-btn-ghost" type="button" onClick={handleShare}>
@@ -408,11 +556,14 @@ export default function Cards() {
                                         </button>
                                     </div>
 
-                                    <div className="cards-note">Tip: Assign each card to a profile so the right details open when customers tap.</div>
+                                    <div className="cards-note">
+                                        Tip: Assign each card to a profile so the right details open when customers tap.
+                                    </div>
                                 </div>
                             </div>
                         </section>
 
+                        {/* Teams Upsell */}
                         <section className="cards-card cards-span-12">
                             <div className="cards-upsell">
                                 <div>

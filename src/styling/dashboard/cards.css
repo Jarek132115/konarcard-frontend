@@ -462,3 +462,157 @@
         align-items: flex-start;
     }
 }
+
+/* =========================================================
+   Cards thumbnails + order details (NEW)
+   ========================================================= */
+
+.thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    flex: 0 0 auto;
+    overflow: hidden;
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    box-shadow: 0 8px 18px rgba(17, 24, 39, 0.06);
+}
+
+.thumb-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.thumb-logo {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.85);
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+}
+
+.thumb-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumb-k {
+    font-weight: 800;
+    font-size: 12px;
+    color: rgba(17, 24, 39, 0.85);
+}
+
+.thumb-chip {
+    position: absolute;
+    right: 8px;
+    bottom: 9px;
+    width: 14px;
+    height: 10px;
+    border-radius: 4px;
+    opacity: 0.9;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.thumb-line {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    width: 18px;
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.55);
+}
+
+/* Plastic */
+.thumb-plastic.thumb-white {
+    background: linear-gradient(180deg, #ffffff, #f3f4f6);
+}
+
+.thumb-plastic.thumb-black {
+    background: linear-gradient(180deg, #111827, #0b1220);
+}
+
+.thumb-plastic.thumb-black .thumb-logo {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+.thumb-plastic.thumb-black .thumb-k {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.thumb-plastic.thumb-black .thumb-chip,
+.thumb-plastic.thumb-black .thumb-line {
+    background: rgba(255, 255, 255, 0.20);
+}
+
+/* Metal */
+.thumb-metal.thumb-black {
+    background: linear-gradient(180deg, #0b0f16, #1f2937);
+}
+
+.thumb-metal.thumb-gold {
+    background: linear-gradient(180deg, #f7d36a, #caa43d);
+}
+
+.thumb-metal .thumb-chip,
+.thumb-metal .thumb-line {
+    background: rgba(255, 255, 255, 0.20);
+}
+
+/* Tag */
+.thumb-tag.thumb-white {
+    background: linear-gradient(180deg, #ffffff, #f3f4f6);
+    border-radius: 999px;
+}
+
+.thumb-tag.thumb-black {
+    background: linear-gradient(180deg, #111827, #0b1220);
+    border-radius: 999px;
+}
+
+.thumb-tag.thumb-black .thumb-logo {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+.thumb-tag.thumb-black .thumb-k {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.cards-order-details {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.cards-order-details-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: rgba(17, 24, 39, 0.90);
+    margin-bottom: 8px;
+}
+
+.cards-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-top: 1px solid rgba(17, 24, 39, 0.06);
+}
+
+.cards-detail-row:first-of-type {
+    border-top: none;
+    padding-top: 0;
+}
+
+.cards-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12px;
+}
