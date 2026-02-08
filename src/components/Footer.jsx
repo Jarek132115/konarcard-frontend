@@ -210,8 +210,9 @@ export default function Footer() {
                         </div>
 
                         <p className="kc-footer__desc">
-                            Join our newsletter to stay up to date on features and updates.
+                            Follow us on our socials to stay up to date with new features and updates.
                         </p>
+
 
                         <div className="kc-footer__socials">
                             {/* keeping your same placeholder links */}
