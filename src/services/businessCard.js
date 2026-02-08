@@ -70,14 +70,11 @@ export const saveMyBusinessCard = async (formData) => {
         throw new Error("saveMyBusinessCard expects FormData");
     }
 
-    const res = await api.post("/api/business-card", formData, {
-        // keep axios from trying to serialize FormData
-        transformRequest: (data) => data,
-    });
+    const res = await api.post("/api/business-card", formData);
 
-    // backend returns { data: saved, normalized?: ... }
     return unwrap(res);
 };
+
 
 /**
  * =========================================================
