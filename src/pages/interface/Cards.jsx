@@ -11,6 +11,28 @@ import MetalCard3D from "../../components/MetalCard3D";
 import KonarTag3D from "../../components/KonarTag3D";
 
 /* -----------------------------
+   ErrorBoundary (prevents crash/reload loops)
+----------------------------- */
+class CardPreviewErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+    }
+    static getDerivedStateFromError() {
+        return { hasError: true };
+    }
+    componentDidCatch(err) {
+        // keep console log so we can diagnose props later
+        // eslint-disable-next-line no-console
+        console.error("3D preview crashed:", err);
+    }
+    render() {
+        if (this.state.hasError) return this.props.fallback || null;
+        return this.props.children;
+    }
+}
+
+/* -----------------------------
    Helpers
 ----------------------------- */
 
@@ -93,36 +115,55 @@ function formatMoneyMinor(amountMinor, currency) {
 }
 
 /* -----------------------------
-   3D Preview Wrapper
-   - tileMode=true => pointer events OFF (tile remains clickable)
-   - tileMode=false => pointer events ON (interactive in details)
+   SAFE Static Thumbnail (tile)
 ----------------------------- */
 
-function Card3DPreview({ productKey, variant, logoUrl, tileMode }) {
+function thumbTheme(productKey, variant) {
     const pk = String(productKey || "");
     const v = String(variant || "").toLowerCase();
 
-    // We pass some common props. If your 3D components don't use them, it's fine.
-    const commonProps = {
-        variant: v,
-        logoUrl: logoUrl || "",
-        // Some of your flows store preview.logoSize; if component supports it, great.
-        logoSize: 44,
-    };
+    if (pk === "metal-card") {
+        if (v === "gold") return "thumb thumb-metal thumb-gold";
+        return "thumb thumb-metal thumb-black";
+    }
+    if (pk === "konartag") {
+        if (v === "white") return "thumb thumb-tag thumb-white";
+        return "thumb thumb-tag thumb-black";
+    }
+
+    if (v === "black") return "thumb thumb-plastic thumb-black";
+    return "thumb thumb-plastic thumb-white";
+}
+
+function CardThumb({ productKey, variant, logoUrl }) {
+    const cls = thumbTheme(productKey, variant);
 
     return (
-        <div className={`kc-3dwrap ${tileMode ? "tile" : "details"}`}>
-            {pk === "plastic-card" ? (
-                <PlasticCard3D {...commonProps} />
-            ) : pk === "metal-card" ? (
-                <MetalCard3D {...commonProps} />
-            ) : pk === "konartag" ? (
-                <KonarTag3D {...commonProps} />
-            ) : (
-                <PlasticCard3D {...commonProps} />
-            )}
+        <div className={cls} aria-hidden="true">
+            <div className="thumb-inner">
+                <div className="thumb-logo">
+                    {logoUrl ? <img src={logoUrl} alt="" /> : <span className="thumb-k">K</span>}
+                </div>
+                <div className="thumb-chip" />
+                <div className="thumb-line" />
+            </div>
         </div>
     );
+}
+
+/* -----------------------------
+   3D Details Preview (ONLY here, with ErrorBoundary)
+   IMPORTANT: we render without custom props first to avoid undefined-loader crashes.
+   After it works, we will pass the correct prop names matching your Product page usage.
+----------------------------- */
+
+function Card3DDetails({ productKey }) {
+    const pk = String(productKey || "");
+
+    // ✅ Render the same way your product page likely does: no risky props yet.
+    if (pk === "metal-card") return <MetalCard3D />;
+    if (pk === "konartag") return <KonarTag3D />;
+    return <PlasticCard3D />;
 }
 
 /* -----------------------------
@@ -254,7 +295,6 @@ export default function Cards() {
 
     const handleCopyLink = async () => {
         if (!selectedCard) return;
-
         const link = selectedCard.link || `${window.location.origin}/products`;
         try {
             await navigator.clipboard.writeText(link);
@@ -266,8 +306,8 @@ export default function Cards() {
 
     const handleShare = async () => {
         if (!selectedCard) return;
-
         const link = selectedCard.link || `${window.location.origin}/products`;
+
         if (navigator.share) {
             try {
                 await navigator.share({
@@ -367,14 +407,10 @@ export default function Cards() {
                                             className={`kc-card-tile ${active ? "active" : ""}`}
                                             onClick={() => setSelectedId(c.id)}
                                         >
-                                            <div className="kc-card-preview real3d">
-                                                {/* ✅ REAL 3D PREVIEW (tile mode) */}
-                                                <Card3DPreview
-                                                    productKey={c.productKey}
-                                                    variant={c.variantRaw}
-                                                    logoUrl={c.logoUrl}
-                                                    tileMode
-                                                />
+                                            <div className="kc-card-preview static">
+                                                <div className="kc-card-thumb-center">
+                                                    <CardThumb productKey={c.productKey} variant={c.variantRaw} logoUrl={c.logoUrl} />
+                                                </div>
 
                                                 <div className="kc-card-preview-badges">
                                                     <span className={`kc-cards-status ${c.status}`}>
@@ -468,14 +504,17 @@ export default function Cards() {
                                         </div>
                                     </div>
 
-                                    {/* ✅ BIGGER INTERACTIVE 3D PREVIEW */}
+                                    {/* ✅ BIG 3D PREVIEW BUT SAFE */}
                                     <div className="kc-details-3dpanel">
-                                        <Card3DPreview
-                                            productKey={selectedCard.productKey}
-                                            variant={selectedCard.variantRaw}
-                                            logoUrl={selectedCard.logoUrl}
-                                            tileMode={false}
-                                        />
+                                        <CardPreviewErrorBoundary
+                                            fallback={
+                                                <div className="kc-3d-fallback">
+                                                    3D preview unavailable (we’ll fix props next).
+                                                </div>
+                                            }
+                                        >
+                                            <Card3DDetails productKey={selectedCard.productKey} />
+                                        </CardPreviewErrorBoundary>
                                     </div>
 
                                     <div className="kc-cards-order-details">
@@ -534,7 +573,8 @@ export default function Cards() {
                                     </div>
 
                                     <div className="kc-cards-note">
-                                        Tip: Next we’ll wire “Assign profile” so the NFC destination updates for that physical card.
+                                        Next: we’ll pass the *correct prop names* to the 3D component (same as your Products page),
+                                        then we can safely show 3D inside each tile too.
                                     </div>
                                 </div>
                             )}
