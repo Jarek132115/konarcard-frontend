@@ -1,259 +1,204 @@
-// src/components/Dashboard/Template4.jsx
-import React from "react";
+import React, { useMemo } from "react";
+import "../../styling/dashboard/templates/template4.css";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
+const asArray = (v) => (Array.isArray(v) ? v : []);
+
+function Stars({ rating = 0 }) {
+    const r = Math.max(0, Math.min(5, Number(rating) || 0));
+    return (
+        <div className="t4-stars" aria-label={`Rating ${r} out of 5`}>
+            {Array(5)
+                .fill(null)
+                .map((_, i) => (
+                    <span key={i} className={`t4-star ${i < r ? "on" : "off"}`}>
+                        ★
+                    </span>
+                ))}
+        </div>
+    );
+}
 
 export default function Template4({ vm }) {
-    const {
-        themeStyles,
-        sectionOrder,
+    const v = vm || {};
 
-        showMainSection,
-        showAboutMeSection,
-        showWorkSection,
-        showServicesSection,
-        showReviewsSection,
-        showContactSection,
+    const cover = v.cover || "";
+    const avatar = v.avatar || "";
 
-        cover,
-        avatar,
-        mainHeading,
-        subHeading,
-        fullName,
-        jobTitle,
-        bio,
-        works,
-        services,
-        reviews,
-        email,
-        phone,
-        hasContact,
-        socialLinks,
+    const works = useMemo(
+        () =>
+            asArray(v.works)
+                .map((x) => x?.preview || x?.url || x)
+                .filter(Boolean),
+        [v.works]
+    );
 
-        ctaStyle,
+    const services = useMemo(() => asArray(v.services).filter((s) => s?.name || s?.price), [v.services]);
+    const reviews = useMemo(() => asArray(v.reviews).filter((r) => r?.name || r?.text), [v.reviews]);
 
-        // ✅ actions from UserPage vm
-        onSaveMyNumber,
-        onOpenExchangeContact,
-    } = vm;
+    const socials = useMemo(() => {
+        return Object.entries(v.socials || {})
+            .filter(([, url]) => nonEmpty(url))
+            .map(([key, url]) => ({
+                key,
+                url,
+                label: key.replace("_url", "").toUpperCase(),
+            }));
+    }, [v.socials]);
 
-    const shell = { maxWidth: 860, margin: "0 auto", padding: "34px 18px 56px" };
-    const hr = { border: 0, height: 1, background: "rgba(0,0,0,0.12)", margin: "20px 0" };
+    const hasHeroCtas = !!(v.hasExchangeContact || nonEmpty(v.email) || nonEmpty(v.phone));
 
-    const header = {
-        display: "grid",
-        gridTemplateColumns: "1fr auto",
-        gap: 14,
-        alignItems: "center",
-    };
-
-    const btn = {
-        ...ctaStyle,
-        padding: "12px 18px",
-        borderRadius: 14,
-        border: "none",
-        fontWeight: 900,
-        cursor: "pointer",
-    };
-
-    const Head = () =>
-        showMainSection ? (
-            <>
-                {nonEmpty(cover) && (
-                    <div style={{ borderRadius: 18, overflow: "hidden" }}>
-                        <img src={cover} alt="Cover" style={{ width: "100%", height: 240, objectFit: "cover" }} />
-                    </div>
-                )}
-
-                <div style={{ marginTop: 18, ...header }}>
-                    <div style={{ minWidth: 0 }}>
-                        {nonEmpty(mainHeading) && (
-                            <h1
-                                style={{
-                                    margin: 0,
-                                    fontSize: 34,
-                                    fontWeight: 1000,
-                                    letterSpacing: -0.5,
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                }}
-                            >
-                                {mainHeading}
-                            </h1>
-                        )}
-                        {nonEmpty(subHeading) && <div style={{ marginTop: 10, opacity: 0.85, fontSize: 16 }}>{subHeading}</div>}
-
-                        {(nonEmpty(fullName) || nonEmpty(jobTitle)) && (
-                            <div style={{ marginTop: 14, opacity: 0.85 }}>
-                                {nonEmpty(fullName) && <div style={{ fontWeight: 900 }}>{fullName}</div>}
-                                {nonEmpty(jobTitle) && <div style={{ fontSize: 14 }}>{jobTitle}</div>}
+    return (
+        <div className="kc-tpl kc-tpl-4">
+            {/* HERO */}
+            {v.showMainSection && (
+                <section className="t4-hero">
+                    <div className="t4-hero-bg" aria-hidden="true" />
+                    <div className="t4-hero-card">
+                        <div className="t4-hero-top">
+                            <div className="t4-avatar-wrap">
+                                {nonEmpty(avatar) ? (
+                                    <img className="t4-avatar" src={avatar} alt="Avatar" />
+                                ) : (
+                                    <div className="t4-avatar t4-avatar--ph" aria-hidden="true" />
+                                )}
                             </div>
-                        )}
-                    </div>
 
-                    {nonEmpty(avatar) && (
-                        <img
-                            src={avatar}
-                            alt="Avatar"
-                            style={{ width: 74, height: 74, borderRadius: 18, objectFit: "cover" }}
-                        />
-                    )}
-                </div>
+                            <div className="t4-hero-text">
+                                <h1 className="t4-h1">{v.mainHeading || "Your Main Heading"}</h1>
+                                {nonEmpty(v.subHeading) ? <p className="t4-sub">{v.subHeading}</p> : null}
 
-                {hasContact && (
-                    <div style={{ marginTop: 16, display: "grid", gap: 10, maxWidth: 420 }}>
-                        {/* ✅ existing: download vCard */}
-                        <button type="button" onClick={onSaveMyNumber} style={btn}>
-                            Save My Number
-                        </button>
-
-                        {/* ✅ new: open exchange modal */}
-                        <button type="button" onClick={onOpenExchangeContact} style={btn}>
-                            Exchange Contact
-                        </button>
-                    </div>
-                )}
-            </>
-        ) : null;
-
-    const About = () =>
-        showAboutMeSection ? (
-            <>
-                <div style={hr} />
-                <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 1000 }}>About</h3>
-                {nonEmpty(bio) && <div style={{ opacity: 0.92, lineHeight: 1.55, whiteSpace: "pre-wrap" }}>{bio}</div>}
-            </>
-        ) : null;
-
-    const Work = () =>
-        showWorkSection ? (
-            <>
-                <div style={hr} />
-                <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 1000 }}>Work</h3>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10 }}>
-                    {(works || []).map((url, i) => (
-                        <img
-                            key={i}
-                            src={url}
-                            alt={`work-${i}`}
-                            style={{ width: "100%", height: 170, borderRadius: 16, objectFit: "cover" }}
-                        />
-                    ))}
-                </div>
-            </>
-        ) : null;
-
-    const Services = () =>
-        showServicesSection ? (
-            <>
-                <div style={hr} />
-                <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 1000 }}>Services</h3>
-                <div style={{ display: "grid", gap: 10 }}>
-                    {(services || []).map((s, i) => (
-                        <div
-                            key={i}
-                            style={{
-                                padding: 14,
-                                borderRadius: 16,
-                                border: "1px solid rgba(0,0,0,0.10)",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                gap: 10,
-                            }}
-                        >
-                            <div style={{ fontWeight: 900 }}>{s?.name || ""}</div>
-                            {nonEmpty(s?.price) && <div style={{ opacity: 0.85 }}>{s.price}</div>}
-                        </div>
-                    ))}
-                </div>
-            </>
-        ) : null;
-
-    const Reviews = () =>
-        showReviewsSection ? (
-            <>
-                <div style={hr} />
-                <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 1000 }}>Reviews</h3>
-                <div style={{ display: "grid", gap: 10 }}>
-                    {(reviews || []).map((r, i) => {
-                        const rating = Number(r?.rating || 0);
-                        const fullStars = Math.min(5, Math.max(0, rating));
-                        const emptyStars = Math.max(0, 5 - fullStars);
-
-                        return (
-                            <div
-                                key={i}
-                                style={{
-                                    padding: 14,
-                                    borderRadius: 16,
-                                    border: "1px solid rgba(0,0,0,0.10)",
-                                }}
-                            >
-                                <div style={{ fontWeight: 900 }}>{r?.name || "Review"}</div>
-                                {nonEmpty(r?.text) && <div style={{ marginTop: 8, opacity: 0.9 }}>{`"${r.text}"`}</div>}
-
-                                {fullStars > 0 && (
-                                    <div style={{ marginTop: 8, opacity: 0.9 }}>
-                                        {"★".repeat(fullStars)}
-                                        <span style={{ opacity: 0.35 }}>{"★".repeat(emptyStars)}</span>
+                                {(nonEmpty(v.fullName) || nonEmpty(v.jobTitle)) && (
+                                    <div className="t4-meta">
+                                        {nonEmpty(v.fullName) ? <span className="t4-meta-pill">{v.fullName}</span> : null}
+                                        {nonEmpty(v.jobTitle) ? <span className="t4-meta-pill t4-meta-pill--ghost">{v.jobTitle}</span> : null}
                                     </div>
                                 )}
                             </div>
-                        );
-                    })}
-                </div>
-            </>
-        ) : null;
+                        </div>
 
-    const Contact = () =>
-        showContactSection ? (
-            <>
-                <div style={hr} />
-                <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 1000 }}>Contact</h3>
-                <div style={{ display: "grid", gap: 8 }}>
-                    {nonEmpty(email) && <div style={{ opacity: 0.9 }}>{email}</div>}
-                    {nonEmpty(phone) && <div style={{ opacity: 0.9 }}>{phone}</div>}
-                </div>
+                        {nonEmpty(cover) ? (
+                            <div className="t4-cover">
+                                <img className="t4-cover-img" src={cover} alt="Cover" />
+                            </div>
+                        ) : (
+                            <div className="t4-cover t4-cover--ph" aria-hidden="true" />
+                        )}
 
-                {socialLinks?.length > 0 && (
-                    <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
-                        {socialLinks.map((s) => (
-                            <a
-                                key={s.key}
-                                href={s.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{
-                                    width: 44,
-                                    height: 44,
-                                    borderRadius: 14,
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    border: "1px solid rgba(0,0,0,0.10)",
-                                }}
-                                aria-label={s.label}
-                            >
-                                <img src={s.icon} alt="" style={{ width: 20, height: 20 }} />
-                            </a>
+                        {hasHeroCtas ? (
+                            <div className="t4-cta">
+                                <button type="button" className="t4-btn t4-btn-primary" onClick={v.onSaveMyNumber}>
+                                    Save My Number
+                                </button>
+                                <button type="button" className="t4-btn t4-btn-ghost" onClick={v.onOpenExchangeContact}>
+                                    Exchange Contact
+                                </button>
+                            </div>
+                        ) : null}
+                    </div>
+                </section>
+            )}
+
+            {/* ABOUT */}
+            {v.showAboutMeSection && (nonEmpty(v.bio) || nonEmpty(v.fullName) || nonEmpty(v.jobTitle)) ? (
+                <section className="t4-section">
+                    <div className="t4-head">
+                        <h2 className="t4-h2">About</h2>
+                    </div>
+                    <div className="t4-card t4-about">
+                        {nonEmpty(v.bio) ? <p className="t4-bio">{v.bio}</p> : null}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* WORK */}
+            {v.showWorkSection && works.length > 0 ? (
+                <section className="t4-section">
+                    <div className="t4-head">
+                        <h2 className="t4-h2">My work</h2>
+                    </div>
+                    <div className="t4-work">
+                        {works.slice(0, 12).map((url, i) => (
+                            <div key={i} className="t4-work-tile">
+                                <img src={url} alt={`Work ${i + 1}`} className="t4-work-img" />
+                            </div>
                         ))}
                     </div>
-                )}
-            </>
-        ) : null;
+                </section>
+            ) : null}
 
-    const sectionMap = {
-        main: <Head key="main" />,
-        about: <About key="about" />,
-        work: <Work key="work" />,
-        services: <Services key="services" />,
-        reviews: <Reviews key="reviews" />,
-        contact: <Contact key="contact" />,
-    };
+            {/* SERVICES */}
+            {v.showServicesSection && services.length > 0 ? (
+                <section className="t4-section">
+                    <div className="t4-head">
+                        <h2 className="t4-h2">Services</h2>
+                    </div>
+                    <div className="t4-services">
+                        {services.slice(0, 14).map((s, i) => (
+                            <div key={i} className="t4-service">
+                                <div className="t4-service-name">{s?.name || "Service"}</div>
+                                {nonEmpty(s?.price) ? <div className="t4-service-price">{s.price}</div> : null}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
 
-    return (
-        <div className="user-landing-page template-4" style={themeStyles}>
-            <div style={shell}>{(sectionOrder || []).map((k) => sectionMap[k]).filter(Boolean)}</div>
+            {/* REVIEWS */}
+            {v.showReviewsSection && reviews.length > 0 ? (
+                <section className="t4-section">
+                    <div className="t4-head">
+                        <h2 className="t4-h2">Reviews</h2>
+                    </div>
+
+                    <div className="t4-reviews">
+                        {reviews.slice(0, 10).map((r, i) => (
+                            <div key={i} className="t4-card t4-review">
+                                <Stars rating={r?.rating} />
+                                {nonEmpty(r?.text) ? <p className="t4-review-text">“{r.text}”</p> : null}
+                                {nonEmpty(r?.name) ? <div className="t4-review-name">{r.name}</div> : null}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* CONTACT */}
+            {v.showContactSection && (nonEmpty(v.email) || nonEmpty(v.phone) || socials.length > 0) ? (
+                <section className="t4-section t4-section-last">
+                    <div className="t4-head">
+                        <h2 className="t4-h2">Contact</h2>
+                    </div>
+
+                    <div className="t4-card t4-contact">
+                        <div className="t4-contact-grid">
+                            {nonEmpty(v.email) ? (
+                                <a className="t4-contact-row" href={`mailto:${v.email}`}>
+                                    <span className="t4-k">Email</span>
+                                    <span className="t4-v">{v.email}</span>
+                                </a>
+                            ) : null}
+
+                            {nonEmpty(v.phone) ? (
+                                <a className="t4-contact-row" href={`tel:${v.phone}`}>
+                                    <span className="t4-k">Phone</span>
+                                    <span className="t4-v">{v.phone}</span>
+                                </a>
+                            ) : null}
+                        </div>
+
+                        {socials.length > 0 ? (
+                            <div className="t4-socials" aria-label="Social links">
+                                {socials.map((s) => (
+                                    <a key={s.key} className="t4-social" href={s.url} target="_blank" rel="noreferrer">
+                                        {s.label}
+                                    </a>
+                                ))}
+                            </div>
+                        ) : null}
+                    </div>
+                </section>
+            ) : null}
         </div>
     );
 }
