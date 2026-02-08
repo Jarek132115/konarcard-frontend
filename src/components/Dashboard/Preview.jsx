@@ -2,25 +2,34 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { previewPlaceholders } from "../../store/businessCardStore";
 import "../../styling/dashboard/preview.css";
 
-/* Social icons (✅ case-sensitive on Vercel!) */
-import FacebookIcon from "../../assets/icons/icons8-facebook.svg";
-import InstagramIcon from "../../assets/icons/icons8-instagram.svg";
-import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
-import XIcon from "../../assets/icons/icons8-x.svg";
-import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
+/* ✅ Your 5 template components */
+import Template1 from "./Template1";
+import Template2 from "./Template2";
+import Template3 from "./Template3";
+import Template4 from "./Template4";
+import Template5 from "./Template5";
 
 const asArray = (v) => (Array.isArray(v) ? v : []);
 const asString = (v) => (typeof v === "string" ? v : "");
 const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
 
+const getTemplateId = (raw) => {
+    const t = (raw || "template-1").toString();
+    const allowed = new Set(["template-1", "template-2", "template-3", "template-4", "template-5"]);
+    return allowed.has(t) ? t : "template-1";
+};
+
 export default function Preview({
     state,
     isMobile,
     hasSavedData,
+
+    // We will ignore these customization props now (safe to receive them)
     servicesDisplayMode,
     reviewsDisplayMode,
     aboutMeLayout,
 
+    // ✅ Only thing user can control: show/hide sections
     showMainSection,
     showAboutMeSection,
     showWorkSection,
@@ -35,104 +44,115 @@ export default function Preview({
     const [previewOpen, setPreviewOpen] = useState(true);
     const mpWrapRef = useRef(null);
 
-    // ✅ Never crash if state is null while loading
     const s = state || {};
     const ph = previewPlaceholders || {};
     const shouldShowPlaceholders = !hasSavedData;
 
-    const isDarkMode = (s.pageTheme || s.page_theme || "light") === "dark";
+    const templateId = getTemplateId(s.template_id || s.templateId || "template-1");
 
     // ---------------------------
-    // Templates (background)
+    // Build ONE canonical data object
+    // (all templates read the same data)
     // ---------------------------
-    const templateIdRaw = (s.template_id || s.templateId || "template-1").toString();
-    const templateId = ["template-1", "template-2", "template-3", "template-4", "template-5"].includes(templateIdRaw)
-        ? templateIdRaw
-        : "template-1";
+    const templateData = useMemo(() => {
+        const full_name = asString(s.full_name) || (shouldShowPlaceholders ? asString(ph.full_name) : "");
+        const job_title = asString(s.job_title) || (shouldShowPlaceholders ? asString(ph.job_title) : "");
+        const bio = asString(s.bio) || (shouldShowPlaceholders ? asString(ph.bio) : "");
 
-    const templateBgMap = {
-        "template-1": "#fff2ea",
-        "template-2": "#eef4ff",
-        "template-3": "#fff7dd",
-        "template-4": "#ecfff1",
-        "template-5": "#f5eeff",
-    };
+        const main_heading =
+            asString(s.mainHeading) ||
+            asString(s.main_heading) ||
+            (shouldShowPlaceholders ? asString(ph.main_heading) : "");
 
-    const templateBg = templateBgMap[templateId] || templateBgMap["template-1"];
+        const sub_heading =
+            asString(s.subHeading) ||
+            asString(s.sub_heading) ||
+            (shouldShowPlaceholders ? asString(ph.sub_heading) : "");
 
-    const phoneBgStyle = isDarkMode
-        ? { backgroundColor: "#0f1115" }
-        : { backgroundColor: templateBg };
+        const contact_email =
+            asString(s.contact_email) || (shouldShowPlaceholders ? asString(ph.contact_email) : "");
+        const phone_number =
+            asString(s.phone_number) || (shouldShowPlaceholders ? asString(ph.phone_number) : "");
 
-    // CTA button style
-    const ctaStyle = {
-        backgroundColor: s.buttonBgColor || s.button_bg_color || "#1E2A38",
-        color: (s.buttonTextColor || s.button_text_color) === "black" ? "#000" : "#fff",
-    };
+        const cover_photo =
+            s.coverPhotoPreview ||
+            (isBlobUrl(s.coverPhoto) ? "" : s.coverPhoto) ||
+            (isBlobUrl(s.cover_photo) ? "" : s.cover_photo) ||
+            (shouldShowPlaceholders ? ph.coverPhoto : "");
 
-    const contentAlign = { textAlign: s.textAlignment || s.text_alignment || "left" };
+        const avatar =
+            s.avatarPreview || (isBlobUrl(s.avatar) ? "" : s.avatar) || (shouldShowPlaceholders ? ph.avatar : "");
+
+        const worksRaw = asArray(s.workImages || s.works);
+        const worksPlaceholders = asArray(ph.workImages || ph.works);
+        const works = worksRaw.length ? worksRaw : shouldShowPlaceholders ? worksPlaceholders : [];
+
+        const servicesRaw = asArray(s.services);
+        const services = servicesRaw.length ? servicesRaw : shouldShowPlaceholders ? asArray(ph.services) : [];
+
+        const reviewsRaw = asArray(s.reviews);
+        const reviews = reviewsRaw.length ? reviewsRaw : shouldShowPlaceholders ? asArray(ph.reviews) : [];
+
+        const socials = {
+            facebook_url: asString(s.facebook_url),
+            instagram_url: asString(s.instagram_url),
+            linkedin_url: asString(s.linkedin_url),
+            x_url: asString(s.x_url),
+            tiktok_url: asString(s.tiktok_url),
+        };
+
+        const visibility = {
+            showMainSection: !!showMainSection,
+            showAboutMeSection: !!showAboutMeSection,
+            showWorkSection: !!showWorkSection,
+            showServicesSection: !!showServicesSection,
+            showReviewsSection: !!showReviewsSection,
+            showContactSection: !!showContactSection,
+        };
+
+        return {
+            templateId,
+            shouldShowPlaceholders,
+            hasExchangeContact: !!hasExchangeContact,
+            visitUrl: visitUrl || "#",
+
+            main_heading,
+            sub_heading,
+            cover_photo,
+
+            full_name,
+            job_title,
+            bio,
+            avatar,
+
+            works,
+            services,
+            reviews,
+
+            contact_email,
+            phone_number,
+            socials,
+
+            visibility,
+        };
+    }, [
+        s,
+        ph,
+        shouldShowPlaceholders,
+        templateId,
+        hasExchangeContact,
+        visitUrl,
+        showMainSection,
+        showAboutMeSection,
+        showWorkSection,
+        showServicesSection,
+        showReviewsSection,
+        showContactSection,
+    ]);
 
     // ---------------------------
-    // Section order (sanitized)
+    // Mobile expand/collapse animation (keep)
     // ---------------------------
-    const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
-
-    const sanitizeOrder = (order) => {
-        const KNOWN = new Set(defaultOrder);
-        const seen = new Set();
-        const cleaned = (Array.isArray(order) ? order : defaultOrder)
-            .filter((k) => KNOWN.has(k))
-            .filter((k) => (seen.has(k) ? false : seen.add(k)));
-
-        const missing = defaultOrder.filter((k) => !cleaned.includes(k));
-        return [...cleaned, ...missing];
-    };
-
-    const sectionOrder = sanitizeOrder(s.sectionOrder || s.section_order);
-
-    // ---------------------------
-    // Preview values
-    // ---------------------------
-    const previewFullName = asString(s.full_name) || (shouldShowPlaceholders ? asString(ph.full_name) : "");
-    const previewJobTitle = asString(s.job_title) || (shouldShowPlaceholders ? asString(ph.job_title) : "");
-    const previewBio = asString(s.bio) || (shouldShowPlaceholders ? asString(ph.bio) : "");
-    const previewEmail = asString(s.contact_email) || (shouldShowPlaceholders ? asString(ph.contact_email) : "");
-    const previewPhone = asString(s.phone_number) || (shouldShowPlaceholders ? asString(ph.phone_number) : "");
-
-    // ✅ Prefer local preview fields, then persisted URLs. Ignore raw blob urls stored in persisted fields.
-    const previewCoverPhotoSrc =
-        s.coverPhotoPreview ||
-        (isBlobUrl(s.coverPhoto) ? "" : s.coverPhoto) ||
-        (isBlobUrl(s.cover_photo) ? "" : s.cover_photo) ||
-        (shouldShowPlaceholders ? ph.coverPhoto : "");
-
-    const previewAvatarSrc =
-        s.avatarPreview ||
-        (isBlobUrl(s.avatar) ? "" : s.avatar) ||
-        (shouldShowPlaceholders ? ph.avatar : null);
-
-    const previewWorkImages = useMemo(() => {
-        const fromState = asArray(s.workImages || s.works);
-        if (fromState.length > 0) return fromState;
-        const fromPlaceholders = asArray(ph.workImages || ph.works);
-        return shouldShowPlaceholders ? fromPlaceholders : [];
-    }, [s.workImages, s.works, shouldShowPlaceholders, ph.workImages, ph.works]);
-
-    const servicesForPreview = useMemo(() => {
-        const fromState = asArray(s.services);
-        if (fromState.length > 0) return fromState;
-        const fromPlaceholders = asArray(ph.services);
-        return shouldShowPlaceholders ? fromPlaceholders : [];
-    }, [s.services, shouldShowPlaceholders, ph.services]);
-
-    const reviewsForPreview = useMemo(() => {
-        const fromState = asArray(s.reviews);
-        if (fromState.length > 0) return fromState;
-        const fromPlaceholders = asArray(ph.reviews);
-        return shouldShowPlaceholders ? fromPlaceholders : [];
-    }, [s.reviews, shouldShowPlaceholders, ph.reviews]);
-
-    // Mobile expand/collapse animation
     useEffect(() => {
         if (!isMobile) return;
         const el = mpWrapRef.current;
@@ -173,190 +193,24 @@ export default function Preview({
         return () => el.removeEventListener("transitionend", handleEnd);
     }, [isMobile, previewOpen]);
 
-    // Normalize display modes
-    const workMode = (s.workDisplayMode || "list").toLowerCase(); // list | grid
-    const servicesMode = (servicesDisplayMode || "list").toLowerCase(); // list | cards
-    const reviewsMode = (reviewsDisplayMode || "list").toLowerCase(); // list | cards
-
-    const ContactSocials = () => {
-        const links = [
-            { key: "facebook_url", label: "Facebook", href: s.facebook_url, icon: FacebookIcon },
-            { key: "instagram_url", label: "Instagram", href: s.instagram_url, icon: InstagramIcon },
-            { key: "linkedin_url", label: "LinkedIn", href: s.linkedin_url, icon: LinkedInIcon },
-            { key: "x_url", label: "X", href: s.x_url, icon: XIcon },
-            { key: "tiktok_url", label: "TikTok", href: s.tiktok_url, icon: TikTokIcon },
-        ].filter((x) => typeof x.href === "string" && x.href.trim());
-
-        if (!links.length) return null;
-
-        return (
-            <div className="mock-contact-socials">
-                {links.map((l) => (
-                    <a
-                        key={l.key}
-                        href={l.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={l.label}
-                        className="contact-social-chip"
-                    >
-                        <img src={l.icon} alt="" className="contact-social-glyph" />
-                    </a>
-                ))}
-            </div>
-        );
-    };
-
-    const MainSection = () =>
-        showMainSection ? (
-            <>
-                {(shouldShowPlaceholders || !!previewCoverPhotoSrc) && previewCoverPhotoSrc ? (
-                    <img src={previewCoverPhotoSrc} alt="Cover" className="mock-cover" />
-                ) : null}
-
-                <h2 className="mock-title" style={contentAlign}>
-                    {s.mainHeading || s.main_heading || (!hasSavedData ? ph.main_heading : "Your Main Heading Here")}
-                </h2>
-
-                <p className="mock-subtitle" style={contentAlign}>
-                    {s.subHeading || s.sub_heading || (!hasSavedData ? ph.sub_heading : "Your Tagline or Slogan Goes Here")}
-                </p>
-
-                {(shouldShowPlaceholders || hasExchangeContact) && (
-                    <button type="button" className="mock-button" style={ctaStyle}>
-                        Save My Number
-                    </button>
-                )}
-            </>
-        ) : null;
-
-    const AboutSection = () =>
-        showAboutMeSection && (previewFullName || previewJobTitle || previewBio || previewAvatarSrc) ? (
-            <>
-                <p className="mock-section-title">About me</p>
-
-                <div className={`mock-about-container ${aboutMeLayout || "stacked"}`}>
-                    <div className="mock-about-header-group">
-                        {previewAvatarSrc ? <img src={previewAvatarSrc} alt="Avatar" className="mock-avatar" /> : null}
-                        <div>
-                            <p className="mock-profile-name">{previewFullName}</p>
-                            <p className="mock-profile-role">{previewJobTitle}</p>
-                        </div>
-                    </div>
-
-                    <p className="mock-bio-text" style={contentAlign}>
-                        {previewBio}
-                    </p>
-                </div>
-            </>
-        ) : null;
-
-    const WorkSection = () =>
-        showWorkSection && previewWorkImages.length > 0 ? (
-            <>
-                <p className="mock-section-title">My Work</p>
-
-                <div className={`mock-work-gallery ${workMode}`}>
-                    {previewWorkImages.map((item, i) => (
-                        <div key={i} className="mock-work-image-item-wrapper">
-                            <img
-                                src={item?.preview || item?.url || item}
-                                alt={`work-${i}`}
-                                className="mock-work-image-item"
-                            />
-                        </div>
-                    ))}
-                </div>
-            </>
-        ) : null;
-
-    const ServicesSection = () =>
-        showServicesSection && (servicesForPreview.length > 0 || !hasSavedData) ? (
-            <>
-                <p className="mock-section-title">My Services</p>
-
-                <div className={`mock-services-list ${servicesMode}`}>
-                    {servicesForPreview.map((sv, i) => (
-                        <div key={i} className="mock-service-item">
-                            <p className="mock-service-name">{sv?.name}</p>
-                            <span className="mock-service-price">{sv?.price}</span>
-                        </div>
-                    ))}
-                </div>
-            </>
-        ) : null;
-
-    const ReviewsSection = () =>
-        showReviewsSection && (reviewsForPreview.length > 0 || !hasSavedData) ? (
-            <>
-                <p className="mock-section-title">Reviews</p>
-
-                <div className={`mock-reviews-list ${reviewsMode}`}>
-                    {reviewsForPreview.map((r, i) => (
-                        <div key={i} className="mock-review-card">
-                            <div className="mock-star-rating" aria-label={`Rating ${r?.rating || 0} out of 5`}>
-                                {Array(Math.min(5, r?.rating || 0))
-                                    .fill(null)
-                                    .map((_, idx) => (
-                                        <span key={`f-${idx}`}>★</span>
-                                    ))}
-                                {Array(Math.max(0, 5 - (r?.rating || 0)))
-                                    .fill(null)
-                                    .map((_, idx) => (
-                                        <span key={`e-${idx}`} className="empty-star">
-                                            ★
-                                        </span>
-                                    ))}
-                            </div>
-                            <p className="mock-review-text">{`"${r?.text || ""}"`}</p>
-                            <p className="mock-reviewer-name">{r?.name}</p>
-                        </div>
-                    ))}
-                </div>
-            </>
-        ) : null;
-
-    const ContactSection = () =>
-        showContactSection && (previewEmail || previewPhone) ? (
-            <>
-                <p className="mock-section-title">Contact Details</p>
-
-                <div className="mock-contact-details">
-                    {previewEmail ? (
-                        <div className="mock-contact-item">
-                            <p className="mock-contact-label">Email</p>
-                            <p className="mock-contact-value">{previewEmail}</p>
-                        </div>
-                    ) : null}
-
-                    {previewPhone ? (
-                        <div className="mock-contact-item">
-                            <p className="mock-contact-label">Phone</p>
-                            <p className="mock-contact-value">{previewPhone}</p>
-                        </div>
-                    ) : null}
-
-                    <ContactSocials />
-                </div>
-            </>
-        ) : null;
-
-    const sectionMap = {
-        main: <MainSection key="main" />,
-        about: <AboutSection key="about" />,
-        work: <WorkSection key="work" />,
-        services: <ServicesSection key="services" />,
-        reviews: <ReviewsSection key="reviews" />,
-        contact: <ContactSection key="contact" />,
-    };
-
-    const rootClasses = `myprofile-preview ${isDarkMode ? "dark" : ""} template-${templateId}`;
-    const fontFamily = s.font || s.style || ph.font || "Inter";
+    // ---------------------------
+    // Render chosen template
+    // ---------------------------
+    const TemplateComponent =
+        templateId === "template-2"
+            ? Template2
+            : templateId === "template-3"
+                ? Template3
+                : templateId === "template-4"
+                    ? Template4
+                    : templateId === "template-5"
+                        ? Template5
+                        : Template1;
 
     if (isMobile) {
         return (
             <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
-                <div className={rootClasses} style={{ fontFamily }}>
+                <div className={`myprofile-preview template-${templateId}`}>
                     <div className="mp-toolbar" role="tablist" aria-label="Preview controls">
                         <button
                             type="button"
@@ -382,11 +236,7 @@ export default function Preview({
                     </div>
 
                     <div className={`mp-preview-wrap ${previewOpen ? "open" : "closed"}`} ref={mpWrapRef}>
-                        <div className="mock-phone mobile-preview" style={phoneBgStyle}>
-                            <div className="mock-phone-scrollable-content">
-                                {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}
-                            </div>
-                        </div>
+                        <TemplateComponent data={templateData} isMobile />
                     </div>
                 </div>
             </div>
@@ -395,12 +245,8 @@ export default function Preview({
 
     return (
         <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
-            <div className={rootClasses} style={{ fontFamily }}>
-                <div className="mock-phone" style={phoneBgStyle}>
-                    <div className="mock-phone-scrollable-content desktop-no-inner-scroll">
-                        {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}
-                    </div>
-                </div>
+            <div className={`myprofile-preview template-${templateId}`}>
+                <TemplateComponent data={templateData} />
             </div>
         </div>
     );

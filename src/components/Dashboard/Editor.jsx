@@ -8,20 +8,7 @@ import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
 import XIcon from "../../assets/icons/icons8-x.svg";
 import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
 
-/* Color wheel lib */
-import iro from "@jaames/iro";
 import "../../styling/dashboard/editor.css";
-
-/* contrast helper */
-const getContrastColor = (hex = "#000000") => {
-    const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec((hex || "").trim());
-    if (!m) return "#111";
-    const r = parseInt(m[1], 16);
-    const g = parseInt(m[2], 16);
-    const b = parseInt(m[3], 16);
-    const L = 0.2126 * (r / 255) + 0.7152 * (g / 255) + 0.0722 * (b / 255);
-    return L > 0.6 ? "#111" : "#fff";
-};
 
 const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
 
@@ -54,6 +41,7 @@ export default function Editor({
     onResetPage,
     onSubmit,
 
+    // These props may still be passed by MyProfile.jsx (safe to ignore)
     servicesDisplayMode,
     setServicesDisplayMode,
     reviewsDisplayMode,
@@ -99,7 +87,6 @@ export default function Editor({
 
     useEffect(() => {
         return () => {
-            // cleanup any created object urls
             for (const url of objectUrlsRef.current) {
                 try {
                     URL.revokeObjectURL(url);
@@ -109,12 +96,9 @@ export default function Editor({
         };
     }, []);
 
-    // color wheel popover
-    const [wheelOpen, setWheelOpen] = useState(false);
-    const triggerRef = useRef(null);
-    const popoverRef = useRef(null);
-    const wheelMountRef = useRef(null);
-
+    // ---------------------------------------------------------
+    // Templates (we control design, font, colors, layout)
+    // ---------------------------------------------------------
     const TEMPLATE_IDS = ["template-1", "template-2", "template-3", "template-4", "template-5"];
     const currentTemplate = (state.templateId || "template-1").toString();
 
@@ -131,48 +115,9 @@ export default function Editor({
         updateState({ templateId: id });
     };
 
-    // button bg + contrast
-    const pickedBg = state.buttonBgColor || "#1E2A38";
-    const pickedInk = useMemo(() => getContrastColor(pickedBg), [pickedBg]);
-
-    // init iro when open
-    useEffect(() => {
-        if (!wheelOpen || !wheelMountRef.current) return;
-
-        wheelMountRef.current.innerHTML = "";
-
-        const picker = new iro.ColorPicker(wheelMountRef.current, {
-            width: 210,
-            color: pickedBg,
-            layout: [
-                { component: iro.ui.Wheel },
-                { component: iro.ui.Slider, options: { sliderType: "value" } },
-            ],
-        });
-
-        const onChange = (color) => updateState({ buttonBgColor: color.hexString });
-        picker.on("color:change", onChange);
-
-        return () => {
-            picker.off("color:change", onChange);
-            if (wheelMountRef.current) wheelMountRef.current.innerHTML = "";
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [wheelOpen]);
-
-    // close popover
-    useEffect(() => {
-        if (!wheelOpen) return;
-        const onDocClick = (e) => {
-            const t = e.target;
-            if (popoverRef.current?.contains(t) || triggerRef.current?.contains(t)) return;
-            setWheelOpen(false);
-        };
-        document.addEventListener("mousedown", onDocClick);
-        return () => document.removeEventListener("mousedown", onDocClick);
-    }, [wheelOpen]);
-
-    // services
+    // ---------------------------------------------------------
+    // Services
+    // ---------------------------------------------------------
     const handleServiceChange = (i, field, value) => {
         const next = [...(state.services || [])];
         next[i] = { ...(next[i] || {}), [field]: value };
@@ -185,7 +130,9 @@ export default function Editor({
     const handleRemoveService = (i) =>
         updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
 
-    // reviews
+    // ---------------------------------------------------------
+    // Reviews
+    // ---------------------------------------------------------
     const handleReviewChange = (i, field, value) => {
         const next = [...(state.reviews || [])];
         if (field === "rating") {
@@ -203,57 +150,11 @@ export default function Editor({
     const handleRemoveReview = (i) =>
         updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
-    // section order
-    const readableSectionName = (key) =>
-    ({
-        main: "Main",
-        about: "About Me",
-        work: "My Work",
-        services: "My Services",
-        reviews: "Reviews",
-        contact: "Contact",
-    }[key] || key);
-
-    const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
-
-    const sanitizeOrder = (order) => {
-        const KNOWN = new Set(defaultOrder);
-        const seen = new Set();
-        const cleaned = (Array.isArray(order) ? order : defaultOrder)
-            .filter((k) => KNOWN.has(k))
-            .filter((k) => (seen.has(k) ? false : seen.add(k)));
-
-        const rest = cleaned.filter((k) => k !== "main");
-        const missing = defaultOrder.filter((k) => !cleaned.includes(k) && k !== "main");
-        return ["main", ...rest, ...missing];
-    };
-
-    const currentOrder = sanitizeOrder(state.sectionOrder?.length ? state.sectionOrder : defaultOrder);
-
-    const moveSectionUp = (idx) => {
-        if (idx <= 1) return;
-        const next = [...currentOrder];
-        [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
-        updateState({ sectionOrder: sanitizeOrder(next) });
-    };
-
-    const moveSectionDown = (idx) => {
-        if (currentOrder[idx] === "main" || idx >= currentOrder.length - 1) return;
-        const next = [...currentOrder];
-        [next[idx + 1], next[idx]] = [next[idx], next[idx + 1]];
-        updateState({ sectionOrder: sanitizeOrder(next) });
-    };
-
     // Prefer explicit preview fields, then persisted URLs, but NEVER force blob into persisted field.
     const coverSrc =
-        state.coverPhotoPreview ||
-        (isBlobUrl(state.coverPhoto) ? "" : state.coverPhoto) ||
-        previewPlaceholders.coverPhoto;
+        state.coverPhotoPreview || (isBlobUrl(state.coverPhoto) ? "" : state.coverPhoto) || previewPlaceholders.coverPhoto;
 
-    const avatarSrc =
-        state.avatarPreview ||
-        (isBlobUrl(state.avatar) ? "" : state.avatar) ||
-        "";
+    const avatarSrc = state.avatarPreview || (isBlobUrl(state.avatar) ? "" : state.avatar) || "";
 
     return (
         <div className="kc-editor-scope" id="myprofile-editor" style={columnScrollStyle}>
@@ -277,7 +178,7 @@ export default function Editor({
 
                 {/* Template picker */}
                 <div className="kc-block">
-                    <div className="kc-block-title">Template</div>
+                    <div className="kc-block-title">Choose a template</div>
                     <div className="kc-template-row">
                         {TEMPLATE_IDS.map((t) => {
                             const locked = isTemplateLocked(t);
@@ -298,161 +199,15 @@ export default function Editor({
                         })}
                     </div>
 
+                    <div className="kc-help">
+                        Templates control the design (fonts, colors, layout). You only add your content.
+                    </div>
+
                     {!isSubscribed ? (
                         <div className="kc-help">
-                            Free users can use <strong>TEMPLATE 1</strong> only. Upgrade to unlock Templates 2–5.
+                            Free users can use <strong>TEMPLATE 1</strong>. Upgrade to unlock Templates 2–5.
                         </div>
                     ) : null}
-                </div>
-
-                {/* Theme + Font */}
-                <div className="kc-grid-2">
-                    <div className="kc-block">
-                        <div className="kc-block-title">Page theme</div>
-                        <div className="kc-chip-row">
-                            <button
-                                type="button"
-                                className={`kc-chip ${state.pageTheme === "light" ? "active" : ""}`}
-                                onClick={() => updateState({ pageTheme: "light" })}
-                            >
-                                Light
-                            </button>
-                            <button
-                                type="button"
-                                className={`kc-chip ${state.pageTheme === "dark" ? "active" : ""}`}
-                                onClick={() => updateState({ pageTheme: "dark" })}
-                            >
-                                Dark
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="kc-block">
-                        <div className="kc-block-title">Font</div>
-                        <div className="kc-chip-row">
-                            {["Inter", "Montserrat", "Poppins"].map((font) => (
-                                <button
-                                    type="button"
-                                    key={font}
-                                    className={`kc-chip ${state.font === font ? "active" : ""}`}
-                                    onClick={() => updateState({ font })}
-                                >
-                                    {font}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Button style */}
-                <div className="kc-divider" />
-
-                <div className="kc-block">
-                    <div className="kc-block-title">Button style</div>
-
-                    <div className="kc-grid-2">
-                        <div className="kc-mini">
-                            <div className="kc-mini-label">Background</div>
-
-                            <div className="kc-color-wrap">
-                                <button
-                                    ref={triggerRef}
-                                    type="button"
-                                    className="kc-color-chip"
-                                    style={{ "--picked": pickedBg, "--pickedInk": pickedInk }}
-                                    onClick={() => setWheelOpen((v) => !v)}
-                                >
-                                    <span className="kc-color-chip-text">Choose colour</span>
-                                </button>
-
-                                {wheelOpen && (
-                                    <div ref={popoverRef} className="kc-color-pop">
-                                        <div ref={wheelMountRef} />
-                                        <div className="kc-color-preview" style={{ background: pickedBg }} />
-                                        <div className="kc-color-actions">
-                                            <button type="button" className="kc-btn kc-btn-primary" onClick={() => setWheelOpen(false)}>
-                                                Done
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="kc-mini">
-                            <div className="kc-mini-label">Text colour</div>
-                            <div className="kc-chip-row">
-                                {["white", "black"].map((c) => (
-                                    <button
-                                        key={c}
-                                        type="button"
-                                        className={`kc-chip ${state.buttonTextColor === c ? "active" : ""}`}
-                                        onClick={() => updateState({ buttonTextColor: c })}
-                                    >
-                                        {c[0].toUpperCase() + c.slice(1)}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Alignment */}
-                <div className="kc-block">
-                    <div className="kc-block-title">Text alignment</div>
-                    <div className="kc-chip-row">
-                        {["left", "center", "right"].map((a) => (
-                            <button
-                                key={a}
-                                type="button"
-                                className={`kc-chip ${state.textAlignment === a ? "active" : ""}`}
-                                onClick={() => updateState({ textAlignment: a })}
-                            >
-                                {a[0].toUpperCase() + a.slice(1)}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Section order */}
-                <div className="kc-divider" />
-                <div className="kc-block">
-                    <div className="kc-block-title">Section order</div>
-
-                    <ul className="kc-sort">
-                        {currentOrder.map((key, idx) => {
-                            const isMain = key === "main";
-                            const canMoveUp = !isMain && idx > 1;
-                            const canMoveDown = !isMain && idx < currentOrder.length - 1;
-
-                            return (
-                                <li key={key} className="kc-sort-item">
-                                    <span className="kc-grip" aria-hidden="true">
-                                        ⋮⋮
-                                    </span>
-
-                                    <span className="kc-sort-name">{readableSectionName(key)}</span>
-
-                                    <div className="kc-sort-actions">
-                                        {isMain ? (
-                                            <button type="button" className="kc-iconbtn" disabled title="Main section is locked">
-                                                🔒
-                                            </button>
-                                        ) : (
-                                            <>
-                                                <button type="button" className="kc-iconbtn" disabled={!canMoveUp} onClick={() => moveSectionUp(idx)}>
-                                                    ↑
-                                                </button>
-                                                <button type="button" className="kc-iconbtn" disabled={!canMoveDown} onClick={() => moveSectionDown(idx)}>
-                                                    ↓
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
-                                </li>
-                            );
-                        })}
-                    </ul>
                 </div>
 
                 {/* MAIN */}
@@ -478,27 +233,21 @@ export default function Editor({
                                         const file = e.target.files?.[0];
                                         if (!file) return;
 
-                                        // Create local preview URL (do NOT store in coverPhoto)
                                         const url = URL.createObjectURL(file);
                                         rememberObjectUrl(url);
 
                                         updateState({
                                             coverPhotoPreview: url,
-                                            coverPhotoFile: file, // used later by submit to upload
+                                            coverPhotoFile: file,
                                         });
 
-                                        // keep calling legacy handler if parent uses it
                                         onCoverUpload?.(file);
                                     }}
                                     style={{ display: "none" }}
                                 />
 
                                 <button type="button" className="kc-upload" onClick={() => coverInputRef.current?.click()}>
-                                    {coverSrc ? (
-                                        <img src={coverSrc} alt="Cover" className="kc-upload-img" />
-                                    ) : (
-                                        <span className="kc-upload-text">+ Upload cover image</span>
-                                    )}
+                                    {coverSrc ? <img src={coverSrc} alt="Cover" className="kc-upload-img" /> : <span className="kc-upload-text">+ Upload cover image</span>}
 
                                     {coverSrc ? (
                                         <span
@@ -517,7 +266,6 @@ export default function Editor({
                                     ) : null}
                                 </button>
 
-                                {/* Optional tiny hint if preview is local-only */}
                                 {isBlobUrl(state.coverPhotoPreview) && !state.coverPhoto ? (
                                     <div className="kc-help">This image is previewing locally — publish to save it.</div>
                                 ) : null}
@@ -560,79 +308,53 @@ export default function Editor({
 
                     {showAboutMeSection ? (
                         <div className="kc-section-body">
-                            <div className="kc-grid-2">
-                                <div className="kc-block">
-                                    <div className="kc-block-title">Profile photo</div>
+                            <div className="kc-block">
+                                <div className="kc-block-title">Profile photo</div>
 
-                                    <input
-                                        ref={avatarInputRef}
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => {
-                                            const file = e.target.files?.[0];
-                                            if (!file) return;
+                                <input
+                                    ref={avatarInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
 
-                                            const url = URL.createObjectURL(file);
-                                            rememberObjectUrl(url);
+                                        const url = URL.createObjectURL(file);
+                                        rememberObjectUrl(url);
 
-                                            updateState({
-                                                avatarPreview: url,
-                                                avatarFile: file,
-                                            });
+                                        updateState({
+                                            avatarPreview: url,
+                                            avatarFile: file,
+                                        });
 
-                                            onAvatarUpload?.(file);
-                                        }}
-                                        style={{ display: "none" }}
-                                    />
+                                        onAvatarUpload?.(file);
+                                    }}
+                                    style={{ display: "none" }}
+                                />
 
-                                    <button type="button" className="kc-upload kc-upload-square" onClick={() => avatarInputRef.current?.click()}>
-                                        {avatarSrc ? (
-                                            <img src={avatarSrc} alt="Avatar" className="kc-upload-img" />
-                                        ) : (
-                                            <span className="kc-upload-text">+ Add profile picture / logo</span>
-                                        )}
+                                <button type="button" className="kc-upload kc-upload-square" onClick={() => avatarInputRef.current?.click()}>
+                                    {avatarSrc ? <img src={avatarSrc} alt="Avatar" className="kc-upload-img" /> : <span className="kc-upload-text">+ Add profile picture / logo</span>}
 
-                                        {avatarSrc ? (
-                                            <span
-                                                className="kc-upload-x"
-                                                role="button"
-                                                aria-label="Remove avatar"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    updateState({ avatarPreview: "", avatarFile: null });
-                                                    onRemoveAvatar?.();
-                                                }}
-                                            >
-                                                ✕
-                                            </span>
-                                        ) : null}
-                                    </button>
-
-                                    {isBlobUrl(state.avatarPreview) && !state.avatar ? (
-                                        <div className="kc-help">This image is previewing locally — publish to save it.</div>
+                                    {avatarSrc ? (
+                                        <span
+                                            className="kc-upload-x"
+                                            role="button"
+                                            aria-label="Remove avatar"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                updateState({ avatarPreview: "", avatarFile: null });
+                                                onRemoveAvatar?.();
+                                            }}
+                                        >
+                                            ✕
+                                        </span>
                                     ) : null}
-                                </div>
+                                </button>
 
-                                <div className="kc-block">
-                                    <div className="kc-block-title">About layout</div>
-                                    <div className="kc-chip-row">
-                                        <button
-                                            type="button"
-                                            className={`kc-chip ${aboutMeLayout === "side-by-side" ? "active" : ""}`}
-                                            onClick={() => setAboutMeLayout?.("side-by-side")}
-                                        >
-                                            Side-by-side
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`kc-chip ${aboutMeLayout === "stacked" ? "active" : ""}`}
-                                            onClick={() => setAboutMeLayout?.("stacked")}
-                                        >
-                                            Stacked
-                                        </button>
-                                    </div>
-                                </div>
+                                {isBlobUrl(state.avatarPreview) && !state.avatar ? (
+                                    <div className="kc-help">This image is previewing locally — publish to save it.</div>
+                                ) : null}
                             </div>
 
                             <div className="kc-grid-2">
@@ -679,20 +401,6 @@ export default function Editor({
                         subtitle="Upload up to 10 images"
                         open={showWorkSection}
                         onToggle={() => setShowWorkSection(!showWorkSection)}
-                        rightSlot={
-                            <div className="kc-chip-row kc-chip-row-mini">
-                                {["list", "grid"].map((m) => (
-                                    <button
-                                        key={m}
-                                        type="button"
-                                        className={`kc-chip kc-chip-sm ${String(state.workDisplayMode || "list") === m ? "active" : ""}`}
-                                        onClick={() => updateState({ workDisplayMode: m })}
-                                    >
-                                        {m[0].toUpperCase() + m.slice(1)}
-                                    </button>
-                                ))}
-                            </div>
-                        }
                     />
 
                     {showWorkSection ? (
@@ -701,12 +409,7 @@ export default function Editor({
                                 {(state.workImages || []).map((item, i) => (
                                     <div key={i} className="kc-work-item">
                                         <img src={item?.preview || item} alt={`work-${i}`} />
-                                        <button
-                                            type="button"
-                                            className="kc-work-x"
-                                            onClick={() => onRemoveWorkImage?.(i)}
-                                            aria-label="Remove image"
-                                        >
+                                        <button type="button" className="kc-work-x" onClick={() => onRemoveWorkImage?.(i)} aria-label="Remove image">
                                             ✕
                                         </button>
                                     </div>
@@ -729,18 +432,15 @@ export default function Editor({
                                     const files = Array.from(e.target.files || []).filter((f) => f && f.type.startsWith("image/"));
                                     if (!files.length) return;
 
-                                    // create preview items w/ File
                                     const items = files.map((file) => {
                                         const url = URL.createObjectURL(file);
                                         rememberObjectUrl(url);
                                         return { preview: url, file };
                                     });
 
-                                    // keep existing items (strings or objects)
                                     const existing = Array.isArray(state.workImages) ? state.workImages : [];
                                     updateState({ workImages: [...existing, ...items].slice(0, 10) });
 
-                                    // keep calling legacy handler if parent uses it
                                     onAddWorkImages?.(files);
                                 }}
                             />
@@ -751,26 +451,7 @@ export default function Editor({
                 {/* SERVICES */}
                 <div className="kc-divider" />
                 <div className="kc-section">
-                    <SectionHeader
-                        title="My services"
-                        subtitle="Add services & pricing"
-                        open={showServicesSection}
-                        onToggle={() => setShowServicesSection(!showServicesSection)}
-                        rightSlot={
-                            <div className="kc-chip-row kc-chip-row-mini">
-                                {["list", "cards"].map((m) => (
-                                    <button
-                                        key={m}
-                                        type="button"
-                                        className={`kc-chip kc-chip-sm ${String(servicesDisplayMode || "list") === m ? "active" : ""}`}
-                                        onClick={() => setServicesDisplayMode?.(m)}
-                                    >
-                                        {m[0].toUpperCase() + m.slice(1)}
-                                    </button>
-                                ))}
-                            </div>
-                        }
-                    />
+                    <SectionHeader title="My services" subtitle="Add services & pricing" open={showServicesSection} onToggle={() => setShowServicesSection(!showServicesSection)} />
 
                     {showServicesSection ? (
                         <div className="kc-section-body">
@@ -780,12 +461,7 @@ export default function Editor({
                                         <div className="kc-grid-2">
                                             <div className="kc-field">
                                                 <label className="kc-label">Service</label>
-                                                <input
-                                                    className="kc-input"
-                                                    placeholder="Service name"
-                                                    value={s.name || ""}
-                                                    onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                                                />
+                                                <input className="kc-input" placeholder="Service name" value={s.name || ""} onChange={(e) => handleServiceChange(i, "name", e.target.value)} />
                                             </div>
 
                                             <div className="kc-field">
@@ -818,26 +494,7 @@ export default function Editor({
                 {/* REVIEWS */}
                 <div className="kc-divider" />
                 <div className="kc-section">
-                    <SectionHeader
-                        title="Reviews"
-                        subtitle="Show social proof"
-                        open={showReviewsSection}
-                        onToggle={() => setShowReviewsSection(!showReviewsSection)}
-                        rightSlot={
-                            <div className="kc-chip-row kc-chip-row-mini">
-                                {["list", "cards"].map((m) => (
-                                    <button
-                                        key={m}
-                                        type="button"
-                                        className={`kc-chip kc-chip-sm ${String(reviewsDisplayMode || "list") === m ? "active" : ""}`}
-                                        onClick={() => setReviewsDisplayMode?.(m)}
-                                    >
-                                        {m[0].toUpperCase() + m.slice(1)}
-                                    </button>
-                                ))}
-                            </div>
-                        }
-                    />
+                    <SectionHeader title="Reviews" subtitle="Show social proof" open={showReviewsSection} onToggle={() => setShowReviewsSection(!showReviewsSection)} />
 
                     {showReviewsSection ? (
                         <div className="kc-section-body">
@@ -847,12 +504,7 @@ export default function Editor({
                                         <div className="kc-grid-2">
                                             <div className="kc-field">
                                                 <label className="kc-label">Name</label>
-                                                <input
-                                                    className="kc-input"
-                                                    placeholder="Reviewer name"
-                                                    value={r.name || ""}
-                                                    onChange={(e) => handleReviewChange(i, "name", e.target.value)}
-                                                />
+                                                <input className="kc-input" placeholder="Reviewer name" value={r.name || ""} onChange={(e) => handleReviewChange(i, "name", e.target.value)} />
                                             </div>
 
                                             <div className="kc-field">
@@ -899,12 +551,7 @@ export default function Editor({
                 {/* CONTACT */}
                 <div className="kc-divider" />
                 <div className="kc-section">
-                    <SectionHeader
-                        title="Contact"
-                        subtitle="Email, phone & socials"
-                        open={showContactSection}
-                        onToggle={() => setShowContactSection(!showContactSection)}
-                    />
+                    <SectionHeader title="Contact" subtitle="Email, phone & socials" open={showContactSection} onToggle={() => setShowContactSection(!showContactSection)} />
 
                     {showContactSection ? (
                         <div className="kc-section-body">
@@ -937,59 +584,34 @@ export default function Editor({
                             <div className="kc-social">
                                 <div className="kc-social-row">
                                     <img src={FacebookIcon} alt="" />
-                                    <input
-                                        className="kc-input"
-                                        placeholder="Facebook URL"
-                                        value={state.facebook_url || ""}
-                                        onChange={(e) => updateState({ facebook_url: e.target.value })}
-                                    />
+                                    <input className="kc-input" placeholder="Facebook URL" value={state.facebook_url || ""} onChange={(e) => updateState({ facebook_url: e.target.value })} />
                                 </div>
 
                                 <div className="kc-social-row">
                                     <img src={InstagramIcon} alt="" />
-                                    <input
-                                        className="kc-input"
-                                        placeholder="Instagram URL"
-                                        value={state.instagram_url || ""}
-                                        onChange={(e) => updateState({ instagram_url: e.target.value })}
-                                    />
+                                    <input className="kc-input" placeholder="Instagram URL" value={state.instagram_url || ""} onChange={(e) => updateState({ instagram_url: e.target.value })} />
                                 </div>
 
                                 <div className="kc-social-row">
                                     <img src={LinkedInIcon} alt="" />
-                                    <input
-                                        className="kc-input"
-                                        placeholder="LinkedIn URL"
-                                        value={state.linkedin_url || ""}
-                                        onChange={(e) => updateState({ linkedin_url: e.target.value })}
-                                    />
+                                    <input className="kc-input" placeholder="LinkedIn URL" value={state.linkedin_url || ""} onChange={(e) => updateState({ linkedin_url: e.target.value })} />
                                 </div>
 
                                 <div className="kc-social-row">
                                     <img src={XIcon} alt="" />
-                                    <input
-                                        className="kc-input"
-                                        placeholder="X (Twitter) URL"
-                                        value={state.x_url || ""}
-                                        onChange={(e) => updateState({ x_url: e.target.value })}
-                                    />
+                                    <input className="kc-input" placeholder="X (Twitter) URL" value={state.x_url || ""} onChange={(e) => updateState({ x_url: e.target.value })} />
                                 </div>
 
                                 <div className="kc-social-row">
                                     <img src={TikTokIcon} alt="" />
-                                    <input
-                                        className="kc-input"
-                                        placeholder="TikTok URL"
-                                        value={state.tiktok_url || ""}
-                                        onChange={(e) => updateState({ tiktok_url: e.target.value })}
-                                    />
+                                    <input className="kc-input" placeholder="TikTok URL" value={state.tiktok_url || ""} onChange={(e) => updateState({ tiktok_url: e.target.value })} />
                                 </div>
                             </div>
                         </div>
                     ) : null}
                 </div>
 
-                {/* Bottom actions (desktop + long forms) */}
+                {/* Bottom actions */}
                 <div className="kc-bottom-actions">
                     <button type="button" className="kc-btn kc-btn-ghost" onClick={onResetPage}>
                         Reset page

@@ -1,307 +1,215 @@
-import React, { useRef } from "react";
+import React from "react";
+
+/**
+ * Template 1 (Default)
+ * - Clean, modern, “trustworthy trades” look
+ * - Fixed typography/colors/layout (no user customization)
+ * - Uses same data object as every template
+ * - Only respects visibility toggles
+ */
+import "./templates/template1.css";
+
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
+const asArray = (v) => (Array.isArray(v) ? v : []);
 
-export default function Template1({ vm }) {
-    const workCarouselRef = useRef(null);
-    const servicesCarouselRef = useRef(null);
-    const reviewsCarouselRef = useRef(null);
+function Stars({ rating = 0 }) {
+    const r = Math.max(0, Math.min(5, Number(rating) || 0));
+    return (
+        <div className="t1-stars" aria-label={`Rating ${r} out of 5`}>
+            {Array(r)
+                .fill(null)
+                .map((_, i) => (
+                    <span key={`f-${i}`} className="t1-star">
+                        ★
+                    </span>
+                ))}
+            {Array(5 - r)
+                .fill(null)
+                .map((_, i) => (
+                    <span key={`e-${i}`} className="t1-star t1-star--empty">
+                        ★
+                    </span>
+                ))}
+        </div>
+    );
+}
 
-    const scrollCarousel = (ref, dir) => {
-        if (!ref.current || !ref.current.children.length) return;
-        const el = ref.current;
-        const w = el.children[0].offsetWidth;
-        const max = el.scrollWidth - el.offsetWidth;
-        let next = dir === "left" ? el.scrollLeft - w : el.scrollLeft + w;
-        if (next < 0) next = max;
-        if (next >= max) next = 0;
-        el.scrollTo({ left: next, behavior: "smooth" });
-    };
+export default function Template1({ data }) {
+    const v = data?.visibility || {};
 
-    const {
-        themeStyles,
-        sectionOrder,
+    const cover = data?.cover_photo || "";
+    const avatar = data?.avatar || "";
 
-        // toggles decided already
-        showMainSection,
-        showAboutMeSection,
-        showWorkSection,
-        showServicesSection,
-        showReviewsSection,
-        showContactSection,
+    const works = asArray(data?.works)
+        .map((x) => x?.preview || x?.url || x)
+        .filter(Boolean);
 
-        // content
-        cover,
-        avatar,
-        mainHeading,
-        subHeading,
-        fullName,
-        jobTitle,
-        bio,
-        works,
-        services,
-        reviews,
-        email,
-        phone,
-        hasContact,
-        socialLinks,
+    const services = asArray(data?.services).filter((s) => s?.name || s?.price);
+    const reviews = asArray(data?.reviews).filter((r) => r?.name || r?.text);
 
-        // display
-        contentAlign,
-        ctaStyle,
-        flexJustify,
-        aboutLayout,
-        workMode,
-        servicesMode,
-        reviewsMode,
-
-        // ✅ actions (new names)
-        onSaveMyNumber,
-        onOpenExchangeContact,
-    } = vm;
-
-    const MainSection = () =>
-        showMainSection ? (
-            <>
-                {nonEmpty(cover) && <img src={cover} alt="Cover" className="landing-cover-photo" />}
-                {nonEmpty(mainHeading) && (
-                    <h2 className="landing-main-heading" style={contentAlign}>
-                        {mainHeading}
-                    </h2>
-                )}
-                {nonEmpty(subHeading) && (
-                    <p className="landing-sub-heading" style={contentAlign}>
-                        {subHeading}
-                    </p>
-                )}
-
-                {hasContact && (
-                    <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
-                        {/* ✅ Existing button = Save vCard */}
-                        <button
-                            type="button"
-                            onClick={onSaveMyNumber}
-                            className="landing-action-button"
-                            style={ctaStyle}
-                        >
-                            Save My Number
-                        </button>
-
-                        {/* ✅ NEW button under it = Exchange contact modal */}
-                        <button
-                            type="button"
-                            onClick={onOpenExchangeContact}
-                            className="landing-action-button"
-                            style={ctaStyle}
-                        >
-                            Exchange Contact
-                        </button>
-                    </div>
-                )}
-            </>
-        ) : null;
-
-    const AboutSection = () =>
-        showAboutMeSection ? (
-            <>
-                <p className="landing-section-title">About Me</p>
-                <div className={`landing-about-section ${aboutLayout}`}>
-                    {nonEmpty(avatar) && <img src={avatar} alt="Avatar" className="landing-avatar" />}
-                    <div className="landing-about-header">
-                        {nonEmpty(fullName) && <p className="landing-profile-name">{fullName}</p>}
-                        {nonEmpty(jobTitle) && <p className="landing-profile-role">{jobTitle}</p>}
-                    </div>
-                    {nonEmpty(bio) && (
-                        <p className="landing-bio-text" style={contentAlign}>
-                            {bio}
-                        </p>
-                    )}
-                </div>
-            </>
-        ) : null;
-
-    const WorkSection = () =>
-        showWorkSection ? (
-            <>
-                <p className="landing-section-title">My Work</p>
-
-                {(workMode === "list" || workMode === "grid") && (
-                    <div className={`landing-work-gallery ${workMode}`}>
-                        {works.map((url, i) => (
-                            <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />
-                        ))}
-                    </div>
-                )}
-
-                {workMode === "carousel" && (
-                    <div className="user-carousel-container">
-                        <div className="user-carousel-nav-buttons">
-                            <button
-                                type="button"
-                                className="user-carousel-nav-button left-arrow"
-                                onClick={() => scrollCarousel(workCarouselRef, "left")}
-                            >
-                                &#9664;
-                            </button>
-                            <button
-                                type="button"
-                                className="user-carousel-nav-button right-arrow"
-                                onClick={() => scrollCarousel(workCarouselRef, "right")}
-                            >
-                                &#9654;
-                            </button>
-                        </div>
-                        <div ref={workCarouselRef} className="user-work-gallery-carousel">
-                            {works.map((url, i) => (
-                                <img key={i} src={url} alt={`work-${i}`} className="landing-work-image" />
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </>
-        ) : null;
-
-    const ServicesSection = () =>
-        showServicesSection ? (
-            <>
-                <p className="landing-section-title">My Services</p>
-                <div className="user-carousel-container">
-                    {servicesMode === "carousel" && (
-                        <div className="user-carousel-nav-buttons">
-                            <button
-                                type="button"
-                                className="user-carousel-nav-button left-arrow"
-                                onClick={() => scrollCarousel(servicesCarouselRef, "left")}
-                            >
-                                &#9664;
-                            </button>
-                            <button
-                                type="button"
-                                className="user-carousel-nav-button right-arrow"
-                                onClick={() => scrollCarousel(servicesCarouselRef, "right")}
-                            >
-                                &#9654;
-                            </button>
-                        </div>
-                    )}
-                    <div
-                        ref={servicesCarouselRef}
-                        className={`user-services-list-carousel ${servicesMode === "carousel" ? "" : "list"}`}
-                        style={contentAlign}
-                    >
-                        {services.map((s, i) => (
-                            <div key={i} className="landing-service-item">
-                                {nonEmpty(s.name) && <p className="landing-service-name">{s.name}</p>}
-                                {nonEmpty(s.price) && <span className="landing-service-price">{s.price}</span>}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </>
-        ) : null;
-
-    const ReviewsSection = () =>
-        showReviewsSection ? (
-            <>
-                <p className="landing-section-title">Reviews</p>
-                <div className="user-carousel-container">
-                    {reviewsMode === "carousel" && (
-                        <div className="user-carousel-nav-buttons">
-                            <button
-                                type="button"
-                                className="user-carousel-nav-button left-arrow"
-                                onClick={() => scrollCarousel(reviewsCarouselRef, "left")}
-                            >
-                                &#9664;
-                            </button>
-                            <button
-                                type="button"
-                                className="user-carousel-nav-button right-arrow"
-                                onClick={() => scrollCarousel(reviewsCarouselRef, "right")}
-                            >
-                                &#9654;
-                            </button>
-                        </div>
-                    )}
-                    <div
-                        ref={reviewsCarouselRef}
-                        className={`user-reviews-list-carousel ${reviewsMode === "carousel" ? "" : "list"}`}
-                        style={contentAlign}
-                    >
-                        {reviews.map((r, i) => (
-                            <div key={i} className="landing-review-card" style={contentAlign}>
-                                <div className="landing-star-rating" style={{ justifyContent: flexJustify }}>
-                                    {Array(r.rating || 0)
-                                        .fill()
-                                        .map((_, j) => (
-                                            <span key={`f-${j}`}>★</span>
-                                        ))}
-                                    {Array(Math.max(0, 5 - (r.rating || 0)))
-                                        .fill()
-                                        .map((_, j) => (
-                                            <span key={`e-${j}`} className="empty-star">
-                                                ★
-                                            </span>
-                                        ))}
-                                </div>
-                                {nonEmpty(r.text) && <p className="landing-review-text">{`"${r.text}"`}</p>}
-                                {nonEmpty(r.name) && <p className="landing-reviewer-name">{r.name}</p>}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </>
-        ) : null;
-
-    const ContactSection = () =>
-        showContactSection ? (
-            <>
-                <p className="landing-section-title">Contact Details</p>
-                <div className="landing-contact-details">
-                    {nonEmpty(email) && (
-                        <div className="landing-contact-item">
-                            <p className="landing-contact-label">Email:</p>
-                            <p className="landing-contact-value">{email}</p>
-                        </div>
-                    )}
-                    {nonEmpty(phone) && (
-                        <div className="landing-contact-item">
-                            <p className="landing-contact-label">Phone:</p>
-                            <p className="landing-contact-value">{phone}</p>
-                        </div>
-                    )}
-                    {(socialLinks?.length || 0) > 0 && (
-                        <div className="landing-contact-socials" aria-label="Social links">
-                            {socialLinks.map((s) => (
-                                <a
-                                    key={s.key}
-                                    href={s.url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="landing-contact-social-chip"
-                                    aria-label={s.label}
-                                >
-                                    <img src={s.icon} alt="" className="landing-contact-social-glyph" />
-                                </a>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </>
-        ) : null;
-
-    const sectionMap = {
-        main: <MainSection key="main" />,
-        about: <AboutSection key="about" />,
-        work: <WorkSection key="work" />,
-        services: <ServicesSection key="services" />,
-        reviews: <ReviewsSection key="reviews" />,
-        contact: <ContactSection key="contact" />,
-    };
+    const hasHeroCtas =
+        data?.hasExchangeContact || nonEmpty(data?.contact_email) || nonEmpty(data?.phone_number);
 
     return (
-        <div className="user-landing-page template-1" style={themeStyles}>
-            {sectionOrder.map((k) => sectionMap[k]).filter(Boolean)}
+        <div className="kc-tpl kc-tpl-1">
+            {/* HERO */}
+            {v.showMainSection && (
+                <section className="t1-hero">
+                    <div className="t1-hero-card">
+                        {nonEmpty(cover) ? (
+                            <div className="t1-cover">
+                                <img src={cover} alt="Cover" className="t1-cover-img" />
+                            </div>
+                        ) : (
+                            <div className="t1-cover t1-cover--placeholder" aria-hidden="true" />
+                        )}
+
+                        <div className="t1-hero-body">
+                            <div className="t1-hero-top">
+                                {nonEmpty(avatar) ? (
+                                    <img src={avatar} alt="Avatar" className="t1-avatar" />
+                                ) : (
+                                    <div className="t1-avatar t1-avatar--placeholder" aria-hidden="true" />
+                                )}
+
+                                <div className="t1-hero-names">
+                                    <h1 className="t1-h1">{data?.main_heading || "Your Main Heading"}</h1>
+                                    {nonEmpty(data?.sub_heading) ? (
+                                        <p className="t1-sub">{data.sub_heading}</p>
+                                    ) : null}
+                                </div>
+                            </div>
+
+                            {/* CTA buttons (placeholder wiring for now) */}
+                            {hasHeroCtas ? (
+                                <div className="t1-cta-row">
+                                    <a className="t1-btn t1-btn-primary" href={`${data?.visitUrl || "#"}?action=save`}>
+                                        Save My Number
+                                    </a>
+                                    <a className="t1-btn t1-btn-ghost" href={`${data?.visitUrl || "#"}?action=exchange`}>
+                                        Exchange Contact
+                                    </a>
+                                </div>
+                            ) : null}
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* ABOUT */}
+            {v.showAboutMeSection && (nonEmpty(data?.full_name) || nonEmpty(data?.job_title) || nonEmpty(data?.bio)) ? (
+                <section className="t1-section">
+                    <div className="t1-section-head">
+                        <h2 className="t1-h2">About</h2>
+                        <div className="t1-divider" />
+                    </div>
+
+                    <div className="t1-about">
+                        <div className="t1-about-card">
+                            {nonEmpty(data?.full_name) ? <div className="t1-name">{data.full_name}</div> : null}
+                            {nonEmpty(data?.job_title) ? <div className="t1-role">{data.job_title}</div> : null}
+                            {nonEmpty(data?.bio) ? <p className="t1-bio">{data.bio}</p> : null}
+                        </div>
+                    </div>
+                </section>
+            ) : null}
+
+            {/* WORK */}
+            {v.showWorkSection && works.length > 0 ? (
+                <section className="t1-section">
+                    <div className="t1-section-head">
+                        <h2 className="t1-h2">My work</h2>
+                        <div className="t1-divider" />
+                    </div>
+
+                    <div className="t1-work-grid">
+                        {works.slice(0, 12).map((url, i) => (
+                            <div key={i} className="t1-work-tile">
+                                <img src={url} alt={`Work ${i + 1}`} className="t1-work-img" />
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* SERVICES */}
+            {v.showServicesSection && services.length > 0 ? (
+                <section className="t1-section">
+                    <div className="t1-section-head">
+                        <h2 className="t1-h2">Services</h2>
+                        <div className="t1-divider" />
+                    </div>
+
+                    <div className="t1-services">
+                        {services.slice(0, 12).map((s, i) => (
+                            <div key={i} className="t1-service">
+                                <div className="t1-service-left">
+                                    <div className="t1-service-name">{s?.name}</div>
+                                    {nonEmpty(s?.price) ? <div className="t1-service-sub">{s.price}</div> : null}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* REVIEWS */}
+            {v.showReviewsSection && reviews.length > 0 ? (
+                <section className="t1-section">
+                    <div className="t1-section-head">
+                        <h2 className="t1-h2">Reviews</h2>
+                        <div className="t1-divider" />
+                    </div>
+
+                    <div className="t1-reviews">
+                        {reviews.slice(0, 10).map((r, i) => (
+                            <div key={i} className="t1-review">
+                                <Stars rating={r?.rating} />
+                                {nonEmpty(r?.text) ? <p className="t1-review-text">“{r.text}”</p> : null}
+                                {nonEmpty(r?.name) ? <div className="t1-review-name">{r.name}</div> : null}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* CONTACT */}
+            {v.showContactSection && (nonEmpty(data?.contact_email) || nonEmpty(data?.phone_number)) ? (
+                <section className="t1-section t1-section-last">
+                    <div className="t1-section-head">
+                        <h2 className="t1-h2">Contact</h2>
+                        <div className="t1-divider" />
+                    </div>
+
+                    <div className="t1-contact">
+                        {nonEmpty(data?.contact_email) ? (
+                            <a className="t1-contact-row" href={`mailto:${data.contact_email}`}>
+                                <span className="t1-contact-k">Email</span>
+                                <span className="t1-contact-v">{data.contact_email}</span>
+                            </a>
+                        ) : null}
+
+                        {nonEmpty(data?.phone_number) ? (
+                            <a className="t1-contact-row" href={`tel:${data.phone_number}`}>
+                                <span className="t1-contact-k">Phone</span>
+                                <span className="t1-contact-v">{data.phone_number}</span>
+                            </a>
+                        ) : null}
+
+                        {/* socials (simple pills, templates control styling) */}
+                        <div className="t1-socials">
+                            {Object.entries(data?.socials || {})
+                                .filter(([, url]) => nonEmpty(url))
+                                .map(([key, url]) => (
+                                    <a key={key} className="t1-social" href={url} target="_blank" rel="noreferrer">
+                                        {key.replace("_url", "").replace("x", "x").toUpperCase()}
+                                    </a>
+                                ))}
+                        </div>
+                    </div>
+                </section>
+            ) : null}
         </div>
     );
 }
