@@ -1,9 +1,7 @@
-/* frontend/src/styling/reviews.css */
-
 /* =========================================================
-   REVIEWS — minimal, consistent with design system classes
-   - Cal Sans must always be font-weight: 500 (enforced here)
-   - No blue accents: use orange tokens only
+   REVIEWS — improved card layout + mobile breathing room
+   - Cal Sans always 500
+   - Orange accents only
    ========================================================= */
 
 .kc-rev {
@@ -22,7 +20,6 @@
 .kc-rev__trustNum,
 .kc-rev__summaryTitle,
 .kc-rev__statValue,
-.kc-rev__ctaTitle,
 .kc-rev__name {
     font-family: "Cal Sans", sans-serif;
     font-weight: 500 !important;
@@ -89,7 +86,6 @@
     color: var(--kc-text-secondary);
 }
 
-/* chips */
 .kc-rev__chips {
     display: flex;
     flex-wrap: wrap;
@@ -97,7 +93,7 @@
     margin-top: 12px;
 }
 
-/* ✅ Override your global .pill inside this page to be ORANGE accented */
+/* Orange pill styling inside this page */
 .kc-rev .pill {
     border: 1px solid rgba(249, 115, 22, 0.28);
     background: rgba(249, 115, 22, 0.08);
@@ -105,7 +101,7 @@
 }
 
 /* =========================
-   SUMMARY CARD
+   SUMMARY
    ========================= */
 .kc-rev__summary {
     border: 1px solid var(--kc-border);
@@ -207,11 +203,11 @@
 }
 
 /* =========================
-   GRID
+   LIST / GRID
    ========================= */
-/* ✅ More breathing room before footer (since CTA removed) */
 .kc-rev__list {
     padding: 12px 0 120px;
+    /* more space before footer */
 }
 
 .kc-rev__grid {
@@ -220,7 +216,9 @@
     gap: 14px;
 }
 
-/* card */
+/* =========================
+   CARD (improved layout)
+   ========================= */
 .kc-rev__card {
     border: 1px solid var(--kc-border);
     background: #ffffff;
@@ -228,7 +226,7 @@
     padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     transition: transform 0.12s ease;
 }
 
@@ -236,24 +234,25 @@
     transform: translateY(-1px);
 }
 
-/* header */
+/* ✅ Better header layout: grid instead of tight flex */
 .kc-rev__cardHeader {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
     gap: 12px;
 }
 
 .kc-rev__person {
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 44px 1fr;
     gap: 10px;
+    align-items: start;
     min-width: 0;
 }
 
 .kc-rev__avatar {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     border-radius: 999px;
     object-fit: cover;
     border: 1px solid rgba(15, 23, 42, 0.10);
@@ -266,9 +265,14 @@
 .kc-rev__nameLine {
     margin: 0;
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     gap: 6px;
-    flex-wrap: wrap;
+    line-height: 1.25;
+}
+
+.kc-rev__name {
+    color: var(--kc-text-primary);
 }
 
 .kc-rev__trade {
@@ -276,19 +280,24 @@
     font-weight: 400;
 }
 
-.kc-rev__subLine {
-    margin: 2px 0 0;
+.kc-rev__metaLine {
+    margin: 4px 0 0;
+    color: var(--kc-text-secondary);
+    line-height: 1.2;
 }
 
-.kc-rev__dot {
+.kc-rev__sep {
     color: rgba(15, 23, 42, 0.35);
 }
 
+/* Rating block is now cleaner */
 .kc-rev__rating {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 8px;
     flex-shrink: 0;
+    padding-top: 2px;
 }
 
 .kc-rev__ratingText {
@@ -302,9 +311,10 @@
     gap: 6px;
 }
 
-/* text */
+/* review text */
 .kc-rev__text {
     margin: 0;
+    line-height: 1.75;
 }
 
 /* =========================
@@ -319,7 +329,6 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
-    /* ✅ slightly more space before footer on tablet */
     .kc-rev__list {
         padding-bottom: 130px;
     }
@@ -328,9 +337,38 @@
 @media (max-width: 640px) {
     .kc-rev__grid {
         grid-template-columns: 1fr;
+        gap: 12px;
     }
 
-    /* ✅ even more space before footer on mobile */
+    .kc-rev__card {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    /* ✅ Mobile: stack rating under the name/meta for breathing room */
+    .kc-rev__cardHeader {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .kc-rev__rating {
+        justify-content: flex-start;
+    }
+
+    .kc-rev__person {
+        grid-template-columns: 42px 1fr;
+    }
+
+    .kc-rev__avatar {
+        width: 42px;
+        height: 42px;
+    }
+
+    .kc-rev__text {
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
     .kc-rev__list {
         padding-bottom: 150px;
     }

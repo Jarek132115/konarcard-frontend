@@ -1,4 +1,3 @@
-// frontend/src/pages/website/Reviews.jsx
 import React, { useMemo } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -288,22 +287,25 @@ export default function Reviews() {
             <div className="kc-rev__grid">
               {reviews.map((r) => {
                 const oneParagraph = r.text.replace(/\s*\n\s*/g, " ").trim();
+
                 return (
                   <article className="kc-rev__card" key={r.id}>
                     <header className="kc-rev__cardHeader">
                       <div className="kc-rev__person">
                         <img className="kc-rev__avatar" src={r.avatar} alt={`${r.name} avatar`} />
+
                         <div className="kc-rev__personMeta">
                           <p className="kc-rev__nameLine">
                             <span className="kc-rev__name">{r.name}</span>
-                            <span className="kc-rev__dot" aria-hidden="true">
+                            <span className="kc-rev__sep" aria-hidden="true">
                               •
                             </span>
                             <span className="kc-rev__trade">{r.trade}</span>
                           </p>
-                          <p className="body-xs kc-rev__subLine">
+
+                          <p className="body-xs kc-rev__metaLine">
                             {r.location}
-                            <span className="kc-rev__dot" aria-hidden="true">
+                            <span className="kc-rev__sep" aria-hidden="true">
                               •
                             </span>
                             {r.date}
