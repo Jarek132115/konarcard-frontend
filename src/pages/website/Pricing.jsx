@@ -13,6 +13,9 @@ import { BASE_URL } from "../../services/api";
 
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
 
+/* =========================
+   Helpers (auth + jwt)
+   ========================= */
 function safeGetToken() {
     try {
         return localStorage.getItem("token") || "";
@@ -74,6 +77,22 @@ function planRank(plan) {
     return 0;
 }
 
+/* =========================
+   Money helpers
+   ========================= */
+function fmtGBP(n) {
+    // keep it simple: 2dp, £ sign
+    const num = Number(n);
+    if (!Number.isFinite(num)) return "—";
+    return `£${num.toFixed(2)}`;
+}
+
+function savingsLabel(fromPerMonth, toPerMonth) {
+    const diff = Number(fromPerMonth) - Number(toPerMonth);
+    if (!Number.isFinite(diff) || diff <= 0) return "";
+    return `Save ${fmtGBP(diff)}/mo`;
+}
+
 export default function Pricing() {
     const [billing, setBilling] = useState("monthly"); // monthly | quarterly | yearly
     const [loadingKey, setLoadingKey] = useState(null);
@@ -87,31 +106,69 @@ export default function Pricing() {
     const navigate = useNavigate();
     const apiBase = BASE_URL;
 
-    const prices = useMemo(
-        () => ({
-            monthly: {
-                free: { price: "£0", sub: "No monthly cost" },
-                plus: { price: "£4.95", sub: "per month" },
-                teams: { price: "£19.95", sub: "per month" },
-                note: "Billed monthly. Cancel anytime.",
-            },
-            quarterly: {
-                free: { price: "£0", sub: "No monthly cost" },
-                plus: { price: "£13.95", sub: "per quarter" },
-                teams: { price: "£54.95", sub: "per quarter" },
-                note: "Billed every 3 months. Cancel anytime.",
-            },
-            yearly: {
-                free: { price: "£0", sub: "No yearly cost" },
-                plus: { price: "£49.95", sub: "per year" },
-                teams: { price: "£189.95", sub: "per year" },
-                note: "Best value. Billed yearly.",
-            },
-        }),
-        []
-    );
+    /* =========================
+       Pricing rules (your exact spec)
+       ========================= */
+    const PRICES = useMemo(() => {
+        const plusMonthly = 4.95;
+        const plusQuarterlyPerMonth = 4.45; // ✅ effective per month
+        const plusYearlyPerMonth = 3.95; // ✅ effective per month
 
-    const p = prices[billing];
+        const addOnPerExtraProfilePerMonth = 1.95; // ✅ teams add-on
+
+        const quarterMonths = 3;
+        const yearMonths = 12;
+
+        const plusQuarterTotal = plusQuarterlyPerMonth * quarterMonths; // 13.35
+        const plusYearTotal = plusYearlyPerMonth * yearMonths; // 47.40
+
+        return {
+            addOnPerExtraProfilePerMonth,
+            plus: {
+                monthly: { perMonth: plusMonthly, billedLabel: `${fmtGBP(plusMonthly)} / month` },
+                quarterly: {
+                    perMonth: plusQuarterlyPerMonth,
+                    billedTotal: plusQuarterTotal,
+                    billedLabel: `${fmtGBP(plusQuarterTotal)} / quarter`,
+                },
+                yearly: {
+                    perMonth: plusYearlyPerMonth,
+                    billedTotal: plusYearTotal,
+                    billedLabel: `${fmtGBP(plusYearTotal)} / year`,
+                },
+            },
+            free: {
+                monthly: { perMonth: 0, billedLabel: "£0" },
+                quarterly: { perMonth: 0, billedLabel: "£0" },
+                yearly: { perMonth: 0, billedLabel: "£0" },
+            },
+        };
+    }, []);
+
+    const plusMonthly = PRICES.plus.monthly.perMonth;
+    const plusPerMonth =
+        billing === "monthly"
+            ? PRICES.plus.monthly.perMonth
+            : billing === "quarterly"
+                ? PRICES.plus.quarterly.perMonth
+                : PRICES.plus.yearly.perMonth;
+
+    const plusBilledLabel =
+        billing === "monthly"
+            ? PRICES.plus.monthly.billedLabel
+            : billing === "quarterly"
+                ? PRICES.plus.quarterly.billedLabel
+                : PRICES.plus.yearly.billedLabel;
+
+    const plusSavings =
+        billing === "monthly" ? "" : savingsLabel(plusMonthly, plusPerMonth);
+
+    const billingNote =
+        billing === "monthly"
+            ? "Billed monthly. Cancel anytime."
+            : billing === "quarterly"
+                ? "Billed every 3 months. Cancel anytime."
+                : "Best value. Billed yearly.";
 
     /* ---------------- Subscription status ---------------- */
     useEffect(() => {
@@ -295,7 +352,6 @@ export default function Pricing() {
     const getPlanButton = (planName, planKeyForPaid) => {
         const logged = isLoggedIn();
 
-        // ✅ no “login required” text
         if (!logged) {
             if (planName === "free") {
                 return { type: "link", label: "Get started free", to: "/register", disabled: false, helper: "" };
@@ -373,18 +429,26 @@ export default function Pricing() {
         };
     };
 
+    /* =========================
+       Card data
+       ========================= */
     const planCards = useMemo(() => {
         const plusKey = `plus-${billing}`;
+        // teams checkout still uses teams-{interval} key,
+        // but UI reflects real pricing model (Plus + add-ons)
         const teamsKey = `teams-${billing}`;
+
+        const teamsExample3Profiles = plusPerMonth + (PRICES.addOnPerExtraProfilePerMonth * 2);
 
         return [
             {
                 key: "free",
                 title: "Individual",
-                price: p.free.price,
-                sub: p.free.sub,
-                featured: false,
                 tag: "Best for starting out",
+                featured: false,
+                price: "£0",
+                sub: "No monthly cost",
+                priceMeta: [],
                 highlights: [
                     "Claim your unique KonarCard link",
                     "Basic profile & contact buttons",
@@ -398,10 +462,14 @@ export default function Pricing() {
             {
                 key: "plus",
                 title: "Plus",
-                price: p.plus.price,
-                sub: p.plus.sub,
-                featured: true,
                 tag: "Most popular",
+                featured: true,
+                price: fmtGBP(plusPerMonth),
+                sub: "per month",
+                priceMeta: [
+                    billing === "monthly" ? "Cancel anytime." : `Billed ${plusBilledLabel}.`,
+                    plusSavings ? plusSavings : null,
+                ].filter(Boolean),
                 highlights: [
                     "Full profile customisation",
                     "Services & pricing sections",
@@ -415,68 +483,62 @@ export default function Pricing() {
             {
                 key: "teams",
                 title: "Teams",
-                price: p.teams.price,
-                sub: p.teams.sub,
+                tag: "For small teams",
                 featured: false,
-                tag: "Best for teams",
+                // ✅ Teams is Plus + add-ons
+                price: fmtGBP(plusPerMonth),
+                sub: "per month + add-ons",
+                priceMeta: [
+                    `£${PRICES.addOnPerExtraProfilePerMonth.toFixed(2)} / extra profile / month`,
+                    billing === "monthly" ? "Billed monthly." : `Base billed ${plusBilledLabel}.`,
+                    `Example: 3 profiles = ${fmtGBP(teamsExample3Profiles)} / month`,
+                ],
                 highlights: [
-                    "Multiple team profiles",
-                    "Role & staff management",
-                    "Centralised branding",
-                    "Priority support",
-                    "Built for growing businesses",
-                    "Company controls & access",
+                    "Everything in Plus",
+                    "Add extra staff profiles when you need them",
+                    "Centralised branding & controls",
+                    "Role & staff management (placeholder)",
+                    "Priority support (placeholder)",
+                    "Company access settings (placeholder)",
                 ],
                 button: getPlanButton("teams", teamsKey),
             },
         ];
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [billing, p, currentPlan, isActive, hasFutureAccess, activeUntilLabel, loadingKey, subLoading]);
+    }, [billing, plusPerMonth, plusBilledLabel, plusSavings, currentPlan, isActive, hasFutureAccess, activeUntilLabel, loadingKey, subLoading, PRICES]);
 
-    // ✅ NEW: comparison data based on your exact rules
+    /* =========================
+       Compare (cleaner + more modern)
+       ========================= */
     const compareSections = useMemo(
         () => [
             {
-                title: "Basics",
+                title: "Core",
                 rows: [
-                    { label: "1 profile + 1 link + 1 QR code", free: true, plus: true, teams: true },
-                    { label: "Fully customise your profile", free: true, plus: true, teams: true },
-                    { label: "Your own KonarCard link", free: true, plus: true, teams: true },
-                    { label: "Your own QR code", free: true, plus: true, teams: true },
+                    { label: "Your KonarCard link + QR code", hint: "Share by tap or scan", free: true, plus: true, teams: true },
+                    { label: "Profile customisation", hint: "Edit anytime", free: true, plus: true, teams: true },
+                    { label: "Works on every phone", hint: "iPhone + Android", free: true, plus: true, teams: true },
                 ],
             },
             {
-                title: "Templates & branding",
+                title: "Brand & content",
                 rows: [
-                    { label: "Templates", hint: "Choose a design layout", free: "1 template", plus: "5 templates", teams: "5 templates" },
+                    { label: "Templates", hint: "Design layouts (icons placeholder)", free: "1", plus: "5", teams: "5" },
                     { label: "Remove KonarCard branding", free: false, plus: true, teams: true },
-                ],
-            },
-            {
-                title: "Content limits",
-                rows: [
-                    { label: "Work photos", hint: "Upload images to your profile", free: "Up to 6", plus: "Up to 12", teams: "Up to 12" },
-                    { label: "Services & prices", free: "Up to 6", plus: "Up to 12", teams: "Up to 12" },
+                    { label: "Photo gallery", hint: "Work photos", free: "Up to 6", plus: "Up to 12", teams: "Up to 12" },
+                    { label: "Services & pricing", free: "Up to 6", plus: "Up to 12", teams: "Up to 12" },
                     { label: "Reviews", free: "Up to 6", plus: "Up to 12", teams: "Up to 12" },
                 ],
             },
             {
                 title: "Analytics",
-                rows: [
-                    { label: "Analytics", free: "Basic", plus: "Deep", teams: "Deep" },
-                ],
+                rows: [{ label: "Analytics depth", free: "Basic", plus: "Deep", teams: "Deep" }],
             },
             {
                 title: "Teams",
                 rows: [
-                    { label: "Add extra profiles", hint: "For staff / team members", free: false, plus: false, teams: true },
-                    {
-                        label: "Extra profile price",
-                        hint: "Monthly add-on per extra profile",
-                        free: "—",
-                        plus: "—",
-                        teams: "£1.95 / extra profile / month",
-                    },
+                    { label: "Extra staff profiles", hint: "Add profiles as your team grows", free: false, plus: false, teams: true },
+                    { label: "Extra profile add-on", hint: "Per extra profile, per month", free: "—", plus: "—", teams: "£1.95" },
                 ],
             },
         ],
@@ -485,10 +547,10 @@ export default function Pricing() {
 
     const pricingFaqs = useMemo(
         () => [
-            { q: "Do I need to pay upfront?", a: "No. Start on Free, then upgrade when you’re ready. Paid plans are billed on your chosen interval." },
-            { q: "Can I cancel anytime?", a: "Yes. You can manage or cancel your plan anytime via the Billing portal." },
-            { q: "Can I upgrade later?", a: "Absolutely. Upgrade whenever you want — your profile stays live and your link never changes." },
-            { q: "What happens if my plan ends?", a: "You’ll keep access to the Free plan. Any paid features simply stop until you re-subscribe." },
+            { q: "Do I need to pay upfront?", a: "No. Start on Free, then upgrade when it’s worth it. Paid plans bill on your chosen interval." },
+            { q: "Can I cancel anytime?", a: "Yes. You can cancel or manage billing anytime from the Billing portal." },
+            { q: "How does Teams pricing work?", a: "Teams uses the Plus plan as your base, then you add extra profiles for staff at £1.95 per extra profile per month." },
+            { q: "What happens if my plan ends?", a: "You’ll stay on Free. Your link remains live — paid features simply pause until you re-subscribe." },
         ],
         []
     );
@@ -538,7 +600,7 @@ export default function Pricing() {
                                 ))}
                             </div>
 
-                            <div className="body-s pr-note">{p.note}</div>
+                            <div className="body-s pr-note">{billingNote}</div>
                         </div>
                     </div>
                 </section>
@@ -553,7 +615,7 @@ export default function Pricing() {
 
                                 return (
                                     <article key={card.key} className={`pr-card ${isFeatured ? "is-featured" : ""}`}>
-                                        <div className={`pr-card__topRow ${isFeatured ? "is-featured" : ""}`}>
+                                        <div className="pr-card__topRow">
                                             <h3 className="h5 pr-card__title">{card.title}</h3>
                                             <div className={`pr-card__pill ${isFeatured ? "is-featured" : ""}`}>{card.tag}</div>
                                         </div>
@@ -561,6 +623,16 @@ export default function Pricing() {
                                         <div className="pr-card__priceRow">
                                             <div className="pr-card__price">{card.price}</div>
                                             <div className="body-s pr-card__priceSub">{card.sub}</div>
+
+                                            {card.priceMeta?.length ? (
+                                                <div className="pr-priceMeta">
+                                                    {card.priceMeta.map((m) => (
+                                                        <div key={m} className="pr-priceMeta__line">
+                                                            {m.includes("Save") ? <span className="pr-saveBadge">{m}</span> : m}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : null}
                                         </div>
 
                                         <div className="pr-card__divider" aria-hidden="true" />
@@ -569,9 +641,7 @@ export default function Pricing() {
                                         <ul className="pr-card__list">
                                             {card.highlights.map((h) => (
                                                 <li key={h}>
-                                                    <span className="pr-check" aria-hidden="true">
-                                                        ✓
-                                                    </span>
+                                                    <span className="pr-check" aria-hidden="true">✓</span>
                                                     <span className="body-s pr-liText">{h}</span>
                                                 </li>
                                             ))}
@@ -609,7 +679,7 @@ export default function Pricing() {
                     </div>
                 </section>
 
-                {/* ✅ NEW COMPARE */}
+                {/* COMPARE */}
                 <section className="pr-compare">
                     <div className="pr-container">
                         <div className="pr-sectionHead">
@@ -618,7 +688,6 @@ export default function Pricing() {
                         </div>
 
                         <div className="pr-compareWrap" role="region" aria-label="Plan comparison">
-                            {/* Header */}
                             <div className="pr-compareHeader" aria-hidden="true">
                                 <div className="pr-compareHeader__left">Feature</div>
 
@@ -629,18 +698,21 @@ export default function Pricing() {
 
                                 <div className="pr-compareHeader__plan pr-compareHeader__plan--plus">
                                     <div className="pr-compareHeader__name">Plus</div>
-                                    <div className="pr-compareHeader__sub">{billing === "monthly" ? "£4.95/mo" : billing === "quarterly" ? "£13.95/qtr" : "£49.95/yr"}</div>
+                                    <div className="pr-compareHeader__sub">
+                                        {billing === "monthly"
+                                            ? "£4.95/mo"
+                                            : billing === "quarterly"
+                                                ? "£4.45/mo • £13.35/qtr"
+                                                : "£3.95/mo • £47.40/yr"}
+                                    </div>
                                 </div>
 
                                 <div className="pr-compareHeader__plan">
                                     <div className="pr-compareHeader__name">Teams</div>
-                                    <div className="pr-compareHeader__sub">
-                                        {billing === "monthly" ? "£4.95 + add-ons" : billing === "quarterly" ? "£13.95 + add-ons" : "£49.95 + add-ons"}
-                                    </div>
+                                    <div className="pr-compareHeader__sub">Plus + £1.95/profile/mo</div>
                                 </div>
                             </div>
 
-                            {/* Body */}
                             <div className="pr-compareBody">
                                 {compareSections.map((sec) => (
                                     <div className="pr-compareSection" key={sec.title}>
@@ -651,7 +723,11 @@ export default function Pricing() {
                                                 <div className="pr-compareRow" role="row" key={r.label}>
                                                     <div className="pr-compareCell pr-compareCell--feature" role="cell">
                                                         <div className="pr-compareFeat">
-                                                            <div className="pr-compareFeat__label">{r.label}</div>
+                                                            <div className="pr-compareFeat__label">
+                                                                {/* icon placeholder (we swap later) */}
+                                                                <span className="pr-iconPh" aria-hidden="true" />
+                                                                {r.label}
+                                                            </div>
                                                             {r.hint ? <div className="pr-compareFeat__hint">{r.hint}</div> : null}
                                                         </div>
                                                     </div>
@@ -708,7 +784,7 @@ export default function Pricing() {
                                     <div className="pr-miniCard__title">Plus</div>
                                     <div className="pr-miniCard__pill">Solo trades</div>
                                 </div>
-                                <p className="body-s pr-miniCard__p">Best for trades who want more templates, higher limits, and deeper analytics.</p>
+                                <p className="body-s pr-miniCard__p">Best for trades who want higher limits, better presentation, and deeper analytics.</p>
                             </div>
 
                             <div className="pr-miniCard">
@@ -716,7 +792,7 @@ export default function Pricing() {
                                     <div className="pr-miniCard__title">Teams</div>
                                     <div className="pr-miniCard__pill">Growing business</div>
                                 </div>
-                                <p className="body-s pr-miniCard__p">For teams — everything in Plus, with extra profiles available for staff.</p>
+                                <p className="body-s pr-miniCard__p">For teams — start with Plus, then add extra staff profiles as you grow.</p>
                             </div>
                         </div>
                     </div>
