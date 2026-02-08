@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, { useRef, useEffect } from "react";
 import { previewPlaceholders } from "../../store/businessCardStore";
 
 /* Social icons */
@@ -40,14 +40,6 @@ export default function Editor({
     onStartSubscription,
     onResetPage,
     onSubmit,
-
-    // These props may still be passed by MyProfile.jsx (safe to ignore)
-    servicesDisplayMode,
-    setServicesDisplayMode,
-    reviewsDisplayMode,
-    setReviewsDisplayMode,
-    aboutMeLayout,
-    setAboutMeLayout,
 
     showMainSection,
     setShowMainSection,
