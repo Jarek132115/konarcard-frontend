@@ -613,7 +613,7 @@ export default function Register() {
                                         </p>
                                     </form>
 
-                                    <div className="kc-divider"><span>or</span></div>
+                                    <div className="kc-divider-new"><span>or</span></div>
 
                                     <div className="kc-social">
                                         <button type="button" className="kc-social-btn" onClick={() => startOAuth("google")}>

@@ -300,13 +300,15 @@
 }
 
 /* ✅ Divider spacing (more space above + below “or”) */
-.kc-divider {
-    margin: 44px 0 40px;
+.kc-divider-new{
+    margin: 88px 0 80px;
+    /* ✅ double bigger than before */
     display: flex;
     align-items: center;
     gap: 16px;
     width: 100%;
 }
+
 
 .kc-divider::before,
 .kc-divider::after {
@@ -338,17 +340,20 @@
 .kc-social-btn {
     width: 100%;
     max-width: 300px;
-    /* ✅ requested */
+    /* requested */
     min-height: 48px;
+
+    margin: 0 auto;
+    /* ✅ forces centering */
+    display: flex;
+    /* ✅ stronger centering than inline-flex */
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 
     border-radius: 999px;
     border: 1px solid rgba(15, 23, 42, 0.12);
     background: rgba(255, 255, 255, 0.9);
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
 
     font-family: "Inter", sans-serif;
     font-size: 14px;
@@ -359,6 +364,7 @@
     box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
     transition: transform 0.08s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
+
 
 .kc-social-btn:hover {
     transform: translateY(-1px);
@@ -380,8 +386,10 @@
    ------------------------- */
 .kc-claim {
     width: 100%;
-    max-width: 460px;
-    margin: 6px auto 0;
+    max-width: 100%;
+    /* ✅ same width as form inputs */
+    margin: 6px 0 0;
+    /* ✅ no auto-centering shrink */
     display: flex;
     align-items: center;
     border-radius: 14px;
@@ -390,6 +398,7 @@
     box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
     overflow: hidden;
 }
+
 
 .kc-claim-prefix {
     padding: 12px 12px;
