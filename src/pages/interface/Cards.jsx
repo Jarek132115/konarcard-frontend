@@ -1,11 +1,19 @@
+// frontend/src/pages/interface/Cards.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
+import PageHeader from "../../components/Dashboard/PageHeader";
 import "../../styling/dashboard/cards.css";
 import api from "../../services/api";
 
 /* -----------------------------
    Helpers
 ----------------------------- */
+
+const centerTrim = (v) => (v ?? "").toString().trim();
+
+function safeUpper(v) {
+    return centerTrim(v).toUpperCase();
+}
 
 function prettyProduct(productKey) {
     if (productKey === "plastic-card") return "Plastic Card";
@@ -66,12 +74,7 @@ function assignedProfileFromOrder(order) {
 }
 
 function profileSlugFromOrder(order) {
-    return (
-        order?.profile?.profile_slug ||
-        order?.profile?.slug ||
-        order?.profile?.username ||
-        ""
-    );
+    return order?.profile?.profile_slug || order?.profile?.slug || order?.profile?.username || "";
 }
 
 function profileLinkFromOrder(order) {
@@ -83,52 +86,23 @@ function profileLinkFromOrder(order) {
 function formatMoneyMinor(amountMinor, currency) {
     const a = Number(amountMinor || 0);
     const c = String(currency || "").toUpperCase();
-    // amountTotal stored in minor units by Stripe (e.g. 1299 => £12.99)
     const major = (a / 100).toFixed(2);
     return c ? `${c} ${major}` : major;
 }
 
 /* -----------------------------
-   Thumbnail (static) for list
+   Theme helpers for preview
 ----------------------------- */
 
-function thumbTheme(productKey, variant) {
+function themeClass(productKey, variant) {
     const pk = String(productKey || "");
     const v = String(variant || "").toLowerCase();
 
-    // CSS classes only; actual look is in cards.css (added below)
-    if (pk === "metal-card") {
-        if (v === "gold") return "thumb thumb-metal thumb-gold";
-        return "thumb thumb-metal thumb-black";
-    }
-    if (pk === "konartag") {
-        if (v === "white") return "thumb thumb-tag thumb-white";
-        return "thumb thumb-tag thumb-black";
-    }
+    if (pk === "metal-card") return v === "gold" ? "kc-cardtheme-metal-gold" : "kc-cardtheme-metal-black";
+    if (pk === "konartag") return v === "white" ? "kc-cardtheme-tag-white" : "kc-cardtheme-tag-black";
 
     // plastic default
-    if (v === "black") return "thumb thumb-plastic thumb-black";
-    return "thumb thumb-plastic thumb-white";
-}
-
-function CardThumb({ productKey, variant, logoUrl }) {
-    const cls = thumbTheme(productKey, variant);
-
-    return (
-        <div className={cls} aria-hidden="true">
-            <div className="thumb-inner">
-                <div className="thumb-logo">
-                    {logoUrl ? (
-                        <img src={logoUrl} alt="" />
-                    ) : (
-                        <span className="thumb-k">K</span>
-                    )}
-                </div>
-                <div className="thumb-chip" />
-                <div className="thumb-line" />
-            </div>
-        </div>
-    );
+    return v === "black" ? "kc-cardtheme-plastic-black" : "kc-cardtheme-plastic-white";
 }
 
 /* -----------------------------
@@ -151,11 +125,11 @@ export default function Cards() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [orders, setOrders] = useState([]);
-
-    // local UI enable/disable override (until you add backend field)
     const [overrides, setOverrides] = useState({}); // { [id]: "active" | "inactive" }
-
     const [selectedId, setSelectedId] = useState(null);
+
+    const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
+    const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
 
     const orderIdFromUrl = useMemo(() => {
         try {
@@ -211,15 +185,15 @@ export default function Cards() {
                 orderStatus: String(o?.status || ""),
                 assignedProfile: assignedProfileFromOrder(o),
                 profileSlug: profileSlugFromOrder(o),
-                logoUrl: o?.logoUrl || "",
-                createdAtISO: o?.createdAt || "",
+                logoUrl: String(o?.logoUrl || ""),
+                createdAtISO: String(o?.createdAt || ""),
                 createdAt: o?.createdAt ? new Date(o.createdAt).toLocaleString() : "",
                 link: profileLinkFromOrder(o),
                 amountTotal: Number(o?.amountTotal || 0),
                 currency: String(o?.currency || ""),
                 stripeCheckoutSessionId: String(o?.stripeCheckoutSessionId || ""),
                 stripePaymentIntentId: String(o?.stripePaymentIntentId || ""),
-                _raw: o, // ✅ keep full order for any future UI
+                _raw: o,
             };
         });
     }, [orders, overrides]);
@@ -231,7 +205,6 @@ export default function Cards() {
             setSelectedId(orderIdFromUrl);
             return;
         }
-
         if (selectedId && cards.some((c) => c.id === selectedId)) return;
 
         setSelectedId(cards[0].id);
@@ -278,7 +251,6 @@ export default function Cards() {
         if (!selectedCard) return;
 
         const link = selectedCard.link || `${window.location.origin}/products`;
-
         if (navigator.share) {
             try {
                 await navigator.share({
@@ -287,7 +259,7 @@ export default function Cards() {
                     url: link,
                 });
             } catch {
-                // user cancelled
+                // ignore cancel
             }
         } else {
             await handleCopyLink();
@@ -305,291 +277,285 @@ export default function Cards() {
             subtitle="Manage your KonarCards and what profile each one links to."
             rightSlot={
                 isLimitReached ? (
-                    <button className="cards-btn cards-btn-primary locked" type="button" disabled>
+                    <button className="kc-cards-btn kc-cards-btn-primary" type="button" disabled>
                         Locked
                     </button>
                 ) : (
-                    <button className="cards-btn cards-btn-primary" type="button" onClick={handleOrderCard}>
+                    <button className="kc-cards-btn kc-cards-btn-primary" type="button" onClick={handleOrderCard}>
                         + Order a card
                     </button>
                 )
             }
+            hideDesktopHeader
         >
-            <div className="cards-shell">
-                {/* Header */}
-                <div className="cards-header">
-                    <div>
-                        <h1 className="cards-title">Cards</h1>
-                        <p className="cards-subtitle">
-                            Your KonarCards are physical NFC products. Assign each card to a profile so customers always land on the right page.
-                        </p>
+            <div className="kc-cards-shell">
+                <PageHeader
+                    title="Cards"
+                    subtitle="Your KonarCards are physical NFC products. Assign each card to a profile so customers always land on the right page."
+                    isMobile={isMobile}
+                    isSmallMobile={isSmallMobile}
+                    rightSlot={
+                        <div className="kc-cards-header-badges">
+                            <span className="kc-cards-pill">
+                                Plan: <strong>{safeUpper(plan)}</strong>
+                            </span>
+                            <span className="kc-cards-pill">
+                                Cards: <strong>{cards.length}</strong> / <strong>{maxCards === 999 ? "∞" : maxCards}</strong>
+                            </span>
+                        </div>
+                    }
+                />
 
-                        {loading ? (
-                            <p className="cards-muted" style={{ marginTop: 10 }}>
-                                Loading your orders…
-                            </p>
-                        ) : error ? (
-                            <p className="cards-muted" style={{ marginTop: 10 }}>
-                                {error}
-                            </p>
-                        ) : null}
-                    </div>
-
-                    <div className="cards-header-meta">
-                        <span className="cards-pill">
-                            Plan: <strong>{plan.toUpperCase()}</strong>
-                        </span>
-                        <span className="cards-pill">
-                            Cards: <strong>{cards.length}</strong> / <strong>{maxCards === 999 ? "∞" : maxCards}</strong>
-                        </span>
-                    </div>
-                </div>
+                {/* Loading / error */}
+                {loading ? (
+                    <section className="kc-cards-card kc-cards-mutedblock">
+                        Loading your orders…
+                    </section>
+                ) : error ? (
+                    <section className="kc-cards-card kc-cards-mutedblock">
+                        {error}
+                    </section>
+                ) : null}
 
                 {/* Empty */}
                 {!loading && !error && cards.length === 0 ? (
-                    <section className="cards-card cards-empty">
-                        <h2 className="cards-card-title">Order your first KonarCard</h2>
-                        <p className="cards-muted">
+                    <section className="kc-cards-card kc-cards-empty">
+                        <h2 className="kc-cards-card-title">Order your first KonarCard</h2>
+                        <p className="kc-cards-muted">
                             Your card lets customers tap their phone to instantly save your contact and open your profile.
                         </p>
 
-                        <div className="cards-actions-row">
-                            <button className="cards-btn cards-btn-primary" type="button" onClick={handleOrderCard}>
+                        <div className="kc-cards-actions-row">
+                            <button className="kc-cards-btn kc-cards-btn-primary" type="button" onClick={handleOrderCard}>
                                 Order a card
                             </button>
-                            <a className="cards-btn cards-btn-ghost" href="/products">
+                            <a className="kc-cards-btn kc-cards-btn-ghost" href="/products">
                                 View card options
                             </a>
                         </div>
 
-                        <div className="cards-empty-preview" aria-hidden="true">
-                            <div className="cards-mock">
-                                <div className="cards-mock-top" />
-                                <div className="cards-mock-row">
-                                    <div className="cards-mock-chip" />
-                                    <div className="cards-mock-chip" />
+                        <div className="kc-cards-empty-preview" aria-hidden="true">
+                            <div className="kc-cards-mock">
+                                <div className="kc-cards-mock-top" />
+                                <div className="kc-cards-mock-row">
+                                    <div className="kc-cards-mock-chip" />
+                                    <div className="kc-cards-mock-chip" />
                                 </div>
-                                <div className="cards-mock-block" />
-                                <div className="cards-mock-line" />
-                                <div className="cards-mock-line short" />
+                                <div className="kc-cards-mock-block" />
+                                <div className="kc-cards-mock-line" />
+                                <div className="kc-cards-mock-line short" />
                             </div>
                         </div>
                     </section>
                 ) : (
-                    <div className="cards-grid">
-                        {/* List */}
-                        <section className="cards-card cards-span-7">
-                            <div className="cards-card-head">
+                    <>
+                        {/* SECTION 1: Your cards (tiles) */}
+                        <section className="kc-cards-card">
+                            <div className="kc-cards-card-head">
                                 <div>
-                                    <h2 className="cards-card-title">Your cards</h2>
-                                    <p className="cards-muted">Select a card to manage assignment & settings.</p>
+                                    <h2 className="kc-cards-card-title">Your cards</h2>
+                                    <p className="kc-cards-muted">Tap a card to view details below.</p>
                                 </div>
                             </div>
 
-                            <div className="cards-list">
-                                {cards.map((c) => (
-                                    <button
-                                        key={c.id}
-                                        type="button"
-                                        className={`cards-item ${selectedCard?.id === c.id ? "active" : ""}`}
-                                        onClick={() => setSelectedId(c.id)}
-                                    >
-                                        <div className="cards-item-left">
-                                            {/* ✅ STATIC THUMBNAIL */}
-                                            <CardThumb productKey={c.productKey} variant={c.variantRaw} logoUrl={c.logoUrl} />
+                            <div className="kc-cards-tiles">
+                                {cards.map((c) => {
+                                    const active = selectedCard?.id === c.id;
+                                    const theme = themeClass(c.productKey, c.variantRaw);
 
-                                            <div className="cards-item-meta">
-                                                <div className="cards-item-title">
-                                                    {c.name}
-                                                    <span className="cards-type">
-                                                        {" "}
-                                                        • {c.material}
-                                                        {c.variant ? ` • ${c.variant}` : ""}
-                                                        {c.quantity > 1 ? ` • x${c.quantity}` : ""}
-                                                    </span>
+                                    return (
+                                        <button
+                                            key={c.id}
+                                            type="button"
+                                            className={`kc-card-tile ${active ? "active" : ""}`}
+                                            onClick={() => setSelectedId(c.id)}
+                                        >
+                                            {/* square preview area */}
+                                            <div className={`kc-card-preview ${theme}`}>
+                                                <div className="kc-card-spin">
+                                                    <div className="kc-card-face">
+                                                        <div className="kc-card-logo">
+                                                            {c.logoUrl ? <img src={c.logoUrl} alt="" /> : <span>K</span>}
+                                                        </div>
+                                                        <div className="kc-card-chip" />
+                                                        <div className="kc-card-mark" />
+                                                    </div>
                                                 </div>
-                                                <div className="cards-item-sub">
-                                                    <span className="cards-muted">
+
+                                                <div className="kc-card-preview-badges">
+                                                    <span className={`kc-cards-status ${c.status}`}>{c.status === "active" ? "ACTIVE" : "INACTIVE"}</span>
+                                                    {c.variant ? <span className="kc-cards-status neutral">{c.variant}</span> : null}
+                                                </div>
+                                            </div>
+
+                                            {/* tile meta */}
+                                            <div className="kc-card-meta">
+                                                <div className="kc-card-name">{c.name}</div>
+                                                <div className="kc-card-sub">
+                                                    <span className="kc-cards-muted">{c.material} • {prettyProduct(c.productKey)}</span>
+                                                    <span className="kc-card-dot">•</span>
+                                                    <span className="kc-cards-muted">{c.orderStatus ? `Order: ${safeUpper(c.orderStatus)}` : "Order: —"}</span>
+                                                </div>
+
+                                                <div className="kc-card-sub">
+                                                    <span className="kc-cards-muted">
                                                         Assigned: <strong>{c.assignedProfile}</strong>
                                                     </span>
-                                                    <span className="cards-dot">•</span>
-                                                    <span className="cards-muted">
-                                                        {c.orderStatus ? `Order: ${String(c.orderStatus).toUpperCase()}` : "—"}
-                                                    </span>
                                                 </div>
+                                            </div>
+
+                                            {/* tile action */}
+                                            <div className="kc-card-tile-actions">
+                                                <button
+                                                    type="button"
+                                                    className="kc-cards-mini-btn"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeactivate(c.id);
+                                                    }}
+                                                >
+                                                    {c.status === "active" ? "Disable" : "Enable"}
+                                                </button>
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </section>
+
+                        {/* SECTION 2: Details (below) */}
+                        <section className="kc-cards-card">
+                            <div className="kc-cards-card-head">
+                                <div>
+                                    <h2 className="kc-cards-card-title">Card details</h2>
+                                    <p className="kc-cards-muted">Everything about your selected order.</p>
+                                </div>
+                            </div>
+
+                            {!selectedCard ? (
+                                <div className="kc-cards-muted">Select a card above.</div>
+                            ) : (
+                                <div className="kc-cards-details-wrap">
+                                    <div className="kc-cards-details-top">
+                                        <div>
+                                            <div className="kc-cards-details-title">{selectedCard.name}</div>
+                                            <div className="kc-cards-details-sub">
+                                                {selectedCard.material} • {selectedCard.type}
+                                                {selectedCard.variant ? ` • ${selectedCard.variant}` : ""}
                                             </div>
                                         </div>
 
-                                        <div className="cards-item-right">
-                                            <span className={`cards-status ${c.status}`}>
-                                                {c.status === "active" ? "ACTIVE" : "INACTIVE"}
-                                            </span>
+                                        <div className="kc-cards-details-actions">
+                                            <button className="kc-cards-btn kc-cards-btn-primary" type="button" onClick={handleAssignProfile}>
+                                                Assign profile
+                                            </button>
 
                                             <button
+                                                className="kc-cards-btn kc-cards-btn-ghost"
                                                 type="button"
-                                                className="cards-mini-btn"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleDeactivate(c.id);
-                                                }}
+                                                onClick={handleOpenProfile}
+                                                disabled={!selectedCard.link}
                                             >
-                                                {c.status === "active" ? "Disable" : "Enable"}
+                                                Open profile
+                                            </button>
+
+                                            <button className="kc-cards-btn kc-cards-btn-ghost" type="button" onClick={handleShare}>
+                                                Share link
+                                            </button>
+
+                                            <button className="kc-cards-btn kc-cards-btn-ghost" type="button" onClick={handleCopyLink}>
+                                                Copy link
                                             </button>
                                         </div>
-                                    </button>
-                                ))}
-                            </div>
+                                    </div>
+
+                                    <div className="kc-cards-order-details">
+                                        <div className="kc-cards-order-details-title">Order details</div>
+
+                                        <div className="kc-cards-detail-row">
+                                            <span className="kc-cards-muted">Product</span>
+                                            <strong>{prettyProduct(selectedCard.productKey)}</strong>
+                                        </div>
+
+                                        <div className="kc-cards-detail-row">
+                                            <span className="kc-cards-muted">Variant</span>
+                                            <strong>{selectedCard.variantRaw || "—"}</strong>
+                                        </div>
+
+                                        <div className="kc-cards-detail-row">
+                                            <span className="kc-cards-muted">Quantity</span>
+                                            <strong>{selectedCard.quantity}</strong>
+                                        </div>
+
+                                        <div className="kc-cards-detail-row">
+                                            <span className="kc-cards-muted">Status</span>
+                                            <strong>{safeUpper(selectedCard.orderStatus || "—")}</strong>
+                                        </div>
+
+                                        <div className="kc-cards-detail-row">
+                                            <span className="kc-cards-muted">Total</span>
+                                            <strong>{formatMoneyMinor(selectedCard.amountTotal, selectedCard.currency)}</strong>
+                                        </div>
+
+                                        <div className="kc-cards-detail-row">
+                                            <span className="kc-cards-muted">Profile</span>
+                                            <strong>{selectedCard.profileSlug || "—"}</strong>
+                                        </div>
+
+                                        <div className="kc-cards-detail-row">
+                                            <span className="kc-cards-muted">Custom logo</span>
+                                            <strong>{selectedCard.logoUrl ? "YES" : "NO"}</strong>
+                                        </div>
+
+                                        {selectedCard.createdAt ? (
+                                            <div className="kc-cards-detail-row">
+                                                <span className="kc-cards-muted">Ordered</span>
+                                                <strong>{selectedCard.createdAt}</strong>
+                                            </div>
+                                        ) : null}
+
+                                        {selectedCard.stripeCheckoutSessionId ? (
+                                            <div className="kc-cards-detail-row">
+                                                <span className="kc-cards-muted">Stripe session</span>
+                                                <strong className="kc-cards-mono">{selectedCard.stripeCheckoutSessionId.slice(0, 14)}…</strong>
+                                            </div>
+                                        ) : null}
+                                    </div>
+
+                                    <div className="kc-cards-note">
+                                        Tip: When you connect “Assign profile”, we’ll update the backend so the NFC card opens the correct profile.
+                                    </div>
+                                </div>
+                            )}
                         </section>
 
-                        {/* Preview + Details */}
-                        <section className="cards-card cards-span-5">
-                            <div className="cards-card-head">
+                        {/* SECTION 3: Upsell */}
+                        <section className="kc-cards-card">
+                            <div className="kc-cards-upsell">
                                 <div>
-                                    <h2 className="cards-card-title">Card preview</h2>
-                                    <p className="cards-muted">Quick view of your selected card setup.</p>
-                                </div>
-                            </div>
-
-                            <div className="cards-preview">
-                                <div className="cards-preview-card">
-                                    <div className="cards-preview-logo">
-                                        {selectedCard?.logoUrl ? (
-                                            <img
-                                                src={selectedCard.logoUrl}
-                                                alt="Logo"
-                                                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "999px" }}
-                                            />
-                                        ) : (
-                                            "K"
-                                        )}
-                                    </div>
-
-                                    <div className="cards-preview-name">{selectedCard?.name || "KonarCard"}</div>
-                                    <div className="cards-preview-sub">
-                                        {selectedCard?.material} • {selectedCard?.type}
-                                        {selectedCard?.variant ? ` • ${selectedCard.variant}` : ""}
-                                    </div>
-
-                                    <div className="cards-preview-qr" />
-                                    <div className="cards-preview-row">
-                                        <div className="cards-preview-pill" />
-                                        <div className="cards-preview-pill" />
-                                    </div>
-
-                                    {selectedCard?.createdAt ? (
-                                        <div className="cards-muted" style={{ marginTop: 10, fontSize: 12 }}>
-                                            Ordered: {selectedCard.createdAt}
-                                        </div>
-                                    ) : null}
-
-                                    {/* ✅ REAL DETAILS */}
-                                    {selectedCard ? (
-                                        <div className="cards-order-details">
-                                            <div className="cards-order-details-title">Order details</div>
-
-                                            <div className="cards-detail-row">
-                                                <span className="cards-muted">Product</span>
-                                                <strong>{prettyProduct(selectedCard.productKey)}</strong>
-                                            </div>
-
-                                            <div className="cards-detail-row">
-                                                <span className="cards-muted">Variant</span>
-                                                <strong>{selectedCard.variantRaw || "—"}</strong>
-                                            </div>
-
-                                            <div className="cards-detail-row">
-                                                <span className="cards-muted">Quantity</span>
-                                                <strong>{selectedCard.quantity}</strong>
-                                            </div>
-
-                                            <div className="cards-detail-row">
-                                                <span className="cards-muted">Status</span>
-                                                <strong>{String(selectedCard.orderStatus || "—").toUpperCase()}</strong>
-                                            </div>
-
-                                            <div className="cards-detail-row">
-                                                <span className="cards-muted">Total</span>
-                                                <strong>{formatMoneyMinor(selectedCard.amountTotal, selectedCard.currency)}</strong>
-                                            </div>
-
-                                            <div className="cards-detail-row">
-                                                <span className="cards-muted">Profile</span>
-                                                <strong>{selectedCard.profileSlug || "—"}</strong>
-                                            </div>
-
-                                            <div className="cards-detail-row">
-                                                <span className="cards-muted">Custom logo</span>
-                                                <strong>{selectedCard.logoUrl ? "YES" : "NO"}</strong>
-                                            </div>
-
-                                            {/* Optional advanced info (kept small) */}
-                                            {selectedCard.stripeCheckoutSessionId ? (
-                                                <div className="cards-detail-row">
-                                                    <span className="cards-muted">Stripe session</span>
-                                                    <strong className="cards-mono">
-                                                        {selectedCard.stripeCheckoutSessionId.slice(0, 10)}…
-                                                    </strong>
-                                                </div>
-                                            ) : null}
-                                        </div>
-                                    ) : null}
-                                </div>
-
-                                <div className="cards-actions">
-                                    <h3 className="cards-actions-title">Card actions</h3>
-
-                                    <div className="cards-actions-row">
-                                        <button className="cards-btn cards-btn-primary" type="button" onClick={handleAssignProfile}>
-                                            Assign profile
-                                        </button>
-
-                                        <button className="cards-btn cards-btn-ghost" type="button" onClick={handleOpenProfile} disabled={!selectedCard?.link}>
-                                            Open profile
-                                        </button>
-
-                                        <button className="cards-btn cards-btn-ghost" type="button" onClick={handleShare}>
-                                            Share link
-                                        </button>
-
-                                        <button className="cards-btn cards-btn-ghost" type="button" onClick={handleCopyLink}>
-                                            Copy link
-                                        </button>
-                                    </div>
-
-                                    <div className="cards-note">
-                                        Tip: Assign each card to a profile so the right details open when customers tap.
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        {/* Teams Upsell */}
-                        <section className="cards-card cards-span-12">
-                            <div className="cards-upsell">
-                                <div>
-                                    <h2 className="cards-card-title">Need multiple cards?</h2>
-                                    <p className="cards-muted">
+                                    <h2 className="kc-cards-card-title">Need multiple cards?</h2>
+                                    <p className="kc-cards-muted">
                                         Teams lets you manage multiple cards and assign them to multiple profiles — perfect for staff or growing businesses.
                                     </p>
                                 </div>
 
-                                <div className="cards-upsell-right">
+                                <div className="kc-cards-upsell-right">
                                     {isLimitReached ? (
                                         <>
-                                            <div className="cards-locked-note">You’ve reached your plan limit.</div>
-                                            <a className="cards-btn cards-btn-primary" href="/subscription">
+                                            <div className="kc-cards-locked-note">You’ve reached your plan limit.</div>
+                                            <a className="kc-cards-btn kc-cards-btn-primary" href="/subscription">
                                                 Upgrade to Teams
                                             </a>
                                         </>
                                     ) : (
-                                        <button className="cards-btn cards-btn-primary" type="button" onClick={handleOrderCard}>
+                                        <button className="kc-cards-btn kc-cards-btn-primary" type="button" onClick={handleOrderCard}>
                                             + Order another card
                                         </button>
                                     )}
                                 </div>
                             </div>
                         </section>
-                    </div>
+                    </>
                 )}
             </div>
         </DashboardLayout>
