@@ -62,7 +62,6 @@ export default function Login() {
                 localStorage.removeItem(CHECKOUT_INTENT_KEY);
                 return null;
             }
-
             return intent;
         } catch {
             return null;
@@ -72,9 +71,7 @@ export default function Login() {
     const clearCheckoutIntent = () => {
         try {
             localStorage.removeItem(CHECKOUT_INTENT_KEY);
-        } catch {
-            // ignore
-        }
+        } catch { }
     };
 
     const readNfcIntent = () => {
@@ -89,7 +86,6 @@ export default function Login() {
                 localStorage.removeItem(NFC_INTENT_KEY);
                 return null;
             }
-
             return intent;
         } catch {
             return null;
@@ -99,9 +95,7 @@ export default function Login() {
     const clearNfcIntent = () => {
         try {
             localStorage.removeItem(NFC_INTENT_KEY);
-        } catch {
-            // ignore
-        }
+        } catch { }
     };
 
     const startOAuth = (provider) => {
@@ -116,13 +110,10 @@ export default function Login() {
         try {
             localStorage.setItem("oauthSource", "login");
             if (!subIntent && !nfcIntent) localStorage.removeItem("pendingClaimUsername");
-        } catch {
-            // ignore
-        }
+        } catch { }
 
         window.location.href = `${BASE_URL}/auth/${provider}`;
     };
-
 
     useEffect(() => {
         try {
@@ -132,20 +123,15 @@ export default function Login() {
                 setRememberMe(true);
                 setData((d) => ({ ...d, email }));
             }
-        } catch {
-            // ignore
-        }
+        } catch { }
     }, []);
 
-    // Store postAuthAction if passed in navigation state
     useEffect(() => {
         const action = location.state?.postAuthAction;
         if (action) {
             try {
                 localStorage.setItem(POST_AUTH_KEY, JSON.stringify(action));
-            } catch {
-                // ignore
-            }
+            } catch { }
         }
     }, [location.state]);
 
@@ -155,30 +141,16 @@ export default function Login() {
         return () => clearTimeout(t);
     }, [cooldown]);
 
-    /**
-     * ✅ After login we decide where to go:
-     * Priority:
-     * 1) Subscription checkout intent (Stripe)
-     * 2) postAuthAction (buy_nfc / buy_card / etc)
-     * 3) NFC intent fallback (if it exists without postAuthAction)
-     * 4) default: /myprofile
-     */
     const runPendingActionOrDefault = async () => {
-        // pull stored postAuthAction
         let action = null;
         try {
             const saved = localStorage.getItem(POST_AUTH_KEY);
             if (saved) action = JSON.parse(saved);
-        } catch {
-            // ignore
-        }
+        } catch { }
         try {
             localStorage.removeItem(POST_AUTH_KEY);
-        } catch {
-            // ignore
-        }
+        } catch { }
 
-        // ✅ NEW: buy_nfc support (return to product page)
         if (action?.type === "buy_nfc") {
             const returnTo =
                 (typeof action?.payload?.returnTo === "string" && action.payload.returnTo.trim()) ||
@@ -190,20 +162,14 @@ export default function Login() {
             return;
         }
 
-
-        // legacy: buy_card
         if (action?.type === "buy_card") {
             navigate("/productandplan/konarcard", {
-                state: {
-                    triggerCheckout: true,
-                    quantity: Number(action?.payload?.quantity) || 1,
-                },
+                state: { triggerCheckout: true, quantity: Number(action?.payload?.quantity) || 1 },
                 replace: true,
             });
             return;
         }
 
-        // ✅ If no action but NFC intent exists, go back
         const nfc = readNfcIntent();
         if (nfc?.returnTo) {
             navigate(nfc.returnTo, { replace: true });
@@ -220,17 +186,12 @@ export default function Login() {
         const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
 
         try {
-            const res = await api.post("/subscribe", {
-                planKey: intent.planKey,
-                returnUrl,
-            });
-
+            const res = await api.post("/subscribe", { planKey: intent.planKey, returnUrl });
             const url = res?.data?.url;
             if (!url) {
                 toast.error("Stripe checkout URL missing. Please try again.");
                 return false;
             }
-
             clearCheckoutIntent();
             window.location.href = url;
             return true;
@@ -261,23 +222,15 @@ export default function Login() {
                 localStorage.removeItem(REMEMBER_KEY);
                 localStorage.removeItem(REMEMBERED_EMAIL_KEY);
             }
-        } catch {
-            // ignore
-        }
+        } catch { }
 
         setIsSubmitting(true);
         try {
-            const res = await api.post("/login", {
-                email: cleanEmail,
-                password: data.password,
-            });
+            const res = await api.post("/login", { email: cleanEmail, password: data.password });
 
             if (res.data?.error) {
-                if (res.data?.resend) {
-                    goToVerificationStep(res.data?.error || "Email not verified. Code sent.");
-                } else {
-                    toast.error(res.data.error);
-                }
+                if (res.data?.resend) goToVerificationStep(res.data?.error || "Email not verified. Code sent.");
+                else toast.error(res.data.error);
                 return;
             }
 
@@ -291,7 +244,6 @@ export default function Login() {
                 return;
             }
 
-            // ✅ keep subscription flow exactly as-is
             const resumed = await resumeCheckoutIfNeeded();
             if (resumed) return;
 
@@ -314,7 +266,6 @@ export default function Login() {
             setVerificationStep(false);
             return;
         }
-
         if (cleanOtp.length !== 6) {
             toast.error("Please enter the 6-digit code.");
             return;
@@ -322,10 +273,7 @@ export default function Login() {
 
         setIsVerifying(true);
         try {
-            const res = await api.post("/verify-email", {
-                email: cleanEmail,
-                code: cleanOtp,
-            });
+            const res = await api.post("/verify-email", { email: cleanEmail, code: cleanOtp });
 
             if (res?.data?.error) {
                 toast.error(res.data.error || "Verification failed.");
@@ -334,10 +282,7 @@ export default function Login() {
 
             toast.success("Email verified!");
 
-            const loginRes = await api.post("/login", {
-                email: cleanEmail,
-                password: data.password,
-            });
+            const loginRes = await api.post("/login", { email: cleanEmail, password: data.password });
 
             if (loginRes.data?.error) {
                 if (loginRes.data?.resend) {
@@ -368,17 +313,14 @@ export default function Login() {
             setVerificationStep(false);
             return;
         }
-
         if (cooldown > 0) return;
 
         try {
             const res = await api.post("/resend-code", { email: cleanEmail });
-
             if (res.data?.error) {
                 toast.error(res.data.error);
                 return;
             }
-
             toast.success("New code sent!");
             setCode("");
             setCooldown(30);
@@ -393,9 +335,7 @@ export default function Login() {
         e.preventDefault();
         setIsSendingReset(true);
         try {
-            const res = await api.post("/forgot-password", {
-                email: emailForReset.trim().toLowerCase(),
-            });
+            const res = await api.post("/forgot-password", { email: emailForReset.trim().toLowerCase() });
             if (res.data?.error) toast.error(res.data.error);
             else toast.success("Reset link sent!");
         } catch {
@@ -412,166 +352,158 @@ export default function Login() {
             <div className="kc-auth-page">
                 <div className="kc-auth-topActions">
                     <button type="button" className="kc-auth-closeBtn" onClick={closeAuth} aria-label="Close">
-                        <span className="kc-auth-closeIcon" aria-hidden="true">
-                            ×
-                        </span>
+                        <span className="kc-auth-closeIcon" aria-hidden="true">×</span>
                     </button>
                 </div>
 
                 <main className="kc-auth-main">
                     <div className="kc-auth-inner">
-                        {forgotPasswordStep ? (
-                            <>
-                                <h1 className="kc-title">Reset password</h1>
-                                <p className="kc-subtitle">We’ll email you a reset link.</p>
+                        {/* Soft surface container (not a heavy white card) */}
+                        <div className="kc-auth-panel">
+                            {forgotPasswordStep ? (
+                                <>
+                                    <h1 className="kc-title">Reset password</h1>
+                                    <p className="kc-subtitle">We’ll email you a reset link.</p>
 
-                                <form className="kc-form" onSubmit={sendResetLink}>
-                                    <div className="kc-field">
-                                        <label className="kc-label" htmlFor="resetEmail">
-                                            Email
-                                        </label>
-                                        <input
-                                            className="kc-input"
-                                            id="resetEmail"
-                                            type="email"
-                                            placeholder="Enter your email"
-                                            value={emailForReset}
-                                            onChange={(e) => setEmailForReset(e.target.value)}
-                                            required
-                                        />
+                                    <form className="kc-form" onSubmit={sendResetLink}>
+                                        <div className="kc-field">
+                                            <label className="kc-label" htmlFor="resetEmail">Email</label>
+                                            <input
+                                                className="kc-input"
+                                                id="resetEmail"
+                                                type="email"
+                                                placeholder="Enter your email"
+                                                value={emailForReset}
+                                                onChange={(e) => setEmailForReset(e.target.value)}
+                                                required
+                                            />
+                                        </div>
+
+                                        <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isSendingReset} aria-busy={isSendingReset}>
+                                            {isSendingReset ? "Sending…" : "Send reset link"}
+                                        </button>
+
+                                        <button type="button" className="kc-btn kc-btn-ghost kc-btn-center" onClick={() => setForgotPasswordStep(false)}>
+                                            Back
+                                        </button>
+                                    </form>
+                                </>
+                            ) : verificationStep ? (
+                                <>
+                                    <h1 className="kc-title">Verify email</h1>
+                                    <p className="kc-subtitle">Enter the code we sent to your email.</p>
+
+                                    <form className="kc-form" onSubmit={verifyCode}>
+                                        <div className="kc-field">
+                                            <label className="kc-label" htmlFor="code">Verification code</label>
+                                            <input
+                                                className="kc-input"
+                                                id="code"
+                                                type="text"
+                                                placeholder="123456"
+                                                value={code}
+                                                onChange={(e) => setCode((e.target.value || "").replace(/\D/g, "").slice(0, 6))}
+                                                maxLength={6}
+                                                inputMode="numeric"
+                                                autoComplete="one-time-code"
+                                                required
+                                            />
+                                        </div>
+
+                                        <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isVerifying} aria-busy={isVerifying}>
+                                            {isVerifying ? "Verifying…" : "Verify"}
+                                        </button>
+
+                                        <button type="button" className="kc-btn kc-btn-ghost kc-btn-center" onClick={resendCode} disabled={cooldown > 0}>
+                                            {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            className="kc-text-link"
+                                            onClick={() => {
+                                                setVerificationStep(false);
+                                                setCode("");
+                                            }}
+                                        >
+                                            Back to login
+                                        </button>
+                                    </form>
+                                </>
+                            ) : (
+                                <>
+                                    <h1 className="kc-title">Welcome back</h1>
+                                    <p className="kc-subtitle">
+                                        New to KonarCard?{" "}
+                                        <Link className="kc-link" to="/register" state={{ from: location.state?.from || "/" }}>
+                                            Create an account
+                                        </Link>
+                                    </p>
+
+                                    <form className="kc-form" onSubmit={loginUser}>
+                                        <div className="kc-field">
+                                            <label className="kc-label" htmlFor="email">Email</label>
+                                            <input
+                                                className="kc-input"
+                                                id="email"
+                                                type="email"
+                                                placeholder="Enter your email"
+                                                value={data.email}
+                                                onChange={(e) => setData({ ...data, email: e.target.value })}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="kc-field">
+                                            <label className="kc-label" htmlFor="password">Password</label>
+                                            <input
+                                                className="kc-input"
+                                                id="password"
+                                                type="password"
+                                                placeholder="Enter your password"
+                                                value={data.password}
+                                                onChange={(e) => setData({ ...data, password: e.target.value })}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="kc-row">
+                                            <label className="kc-remember">
+                                                <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
+                                                Remember me
+                                            </label>
+
+                                            <button type="button" className="kc-text-link" onClick={() => setForgotPasswordStep(true)}>
+                                                Forgot password?
+                                            </button>
+                                        </div>
+
+                                        <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isSubmitting} aria-busy={isSubmitting}>
+                                            {isSubmitting ? "Signing in…" : "Sign in"}
+                                        </button>
+                                    </form>
+
+                                    <div className="kc-divider"><span>or</span></div>
+
+                                    <div className="kc-social">
+                                        <button type="button" className="kc-social-btn" onClick={() => startOAuth("google")}>
+                                            <img className="kc-social-icon" src={GoogleIcon} alt="" aria-hidden="true" />
+                                            <span>Sign in with Google</span>
+                                        </button>
+
+                                        <button type="button" className="kc-social-btn" onClick={() => startOAuth("facebook")}>
+                                            <img className="kc-social-icon" src={FacebookIcon} alt="" aria-hidden="true" />
+                                            <span>Sign in with Facebook</span>
+                                        </button>
+
+                                        <button type="button" className="kc-social-btn" onClick={() => startOAuth("apple")}>
+                                            <img className="kc-social-icon" src={AppleIcon} alt="" aria-hidden="true" />
+                                            <span>Sign in with Apple</span>
+                                        </button>
                                     </div>
-
-                                    <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isSendingReset} aria-busy={isSendingReset}>
-                                        {isSendingReset ? "Sending…" : "Send reset link"}
-                                    </button>
-
-                                    <button type="button" className="kc-btn kc-btn-secondary kc-btn-center" onClick={() => setForgotPasswordStep(false)}>
-                                        Back
-                                    </button>
-                                </form>
-                            </>
-                        ) : verificationStep ? (
-                            <>
-                                <h1 className="kc-title">Verify email</h1>
-                                <p className="kc-subtitle">Enter the code we sent to your email.</p>
-
-                                <form className="kc-form" onSubmit={verifyCode}>
-                                    <div className="kc-field">
-                                        <label className="kc-label" htmlFor="code">
-                                            Verification code
-                                        </label>
-                                        <input
-                                            className="kc-input"
-                                            id="code"
-                                            type="text"
-                                            placeholder="123456"
-                                            value={code}
-                                            onChange={(e) => setCode((e.target.value || "").replace(/\D/g, "").slice(0, 6))}
-                                            maxLength={6}
-                                            inputMode="numeric"
-                                            autoComplete="one-time-code"
-                                            required
-                                        />
-                                    </div>
-
-                                    <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isVerifying} aria-busy={isVerifying}>
-                                        {isVerifying ? "Verifying…" : "Verify"}
-                                    </button>
-
-                                    <button type="button" className="kc-btn kc-btn-secondary kc-btn-center" onClick={resendCode} disabled={cooldown > 0}>
-                                        {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        className="kc-text-back"
-                                        onClick={() => {
-                                            setVerificationStep(false);
-                                            setCode("");
-                                        }}
-                                        style={{ marginTop: 10 }}
-                                    >
-                                        Back to login
-                                    </button>
-                                </form>
-                            </>
-                        ) : (
-                            <>
-                                <h1 className="kc-title">Welcome back</h1>
-                                <p className="kc-subtitle">
-                                    New to KonarCard?{" "}
-                                    <Link className="kc-link" to="/register" state={{ from: location.state?.from || "/" }}>
-                                        Create an account
-                                    </Link>
-                                </p>
-
-                                <form className="kc-form" onSubmit={loginUser}>
-                                    <div className="kc-field">
-                                        <label className="kc-label" htmlFor="email">
-                                            Email
-                                        </label>
-                                        <input
-                                            className="kc-input"
-                                            id="email"
-                                            type="email"
-                                            placeholder="Enter your email"
-                                            value={data.email}
-                                            onChange={(e) => setData({ ...data, email: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-
-                                    <div className="kc-field">
-                                        <label className="kc-label" htmlFor="password">
-                                            Password
-                                        </label>
-                                        <input
-                                            className="kc-input"
-                                            id="password"
-                                            type="password"
-                                            placeholder="Enter your password"
-                                            value={data.password}
-                                            onChange={(e) => setData({ ...data, password: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-
-                                    <label className="kc-remember">
-                                        <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
-                                        Remember me
-                                    </label>
-
-                                    <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isSubmitting} aria-busy={isSubmitting}>
-                                        {isSubmitting ? "Signing in…" : "Sign in"}
-                                    </button>
-
-                                    <button type="button" className="kc-text-back" onClick={() => setForgotPasswordStep(true)}>
-                                        Forgot Password?
-                                    </button>
-                                </form>
-
-                                <div className="kc-divider">
-                                    <span>or</span>
-                                </div>
-
-                                <div className="kc-social">
-                                    <button type="button" className="kc-social-btn" onClick={() => startOAuth("google")}>
-                                        <img className="kc-social-icon" src={GoogleIcon} alt="" aria-hidden="true" />
-                                        <span>Sign in with Google</span>
-                                    </button>
-
-                                    <button type="button" className="kc-social-btn" onClick={() => startOAuth("facebook")}>
-                                        <img className="kc-social-icon" src={FacebookIcon} alt="" aria-hidden="true" />
-                                        <span>Sign in with Facebook</span>
-                                    </button>
-
-                                    <button type="button" className="kc-social-btn" onClick={() => startOAuth("apple")}>
-                                        <img className="kc-social-icon" src={AppleIcon} alt="" aria-hidden="true" />
-                                        <span>Sign in with Apple</span>
-                                    </button>
-                                </div>
-                            </>
-                        )}
+                                </>
+                            )}
+                        </div>
                     </div>
                 </main>
             </div>
