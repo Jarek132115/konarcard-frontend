@@ -1,280 +1,211 @@
-// src/components/Dashboard/Template3.jsx
-import React from "react";
+import React, { useMemo } from "react";
+import "../../styling/dashboard/templates/template3.css";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
+const asArray = (v) => (Array.isArray(v) ? v : []);
+
+function Stars({ rating = 0 }) {
+    const r = Math.max(0, Math.min(5, Number(rating) || 0));
+    return (
+        <div className="t3-stars" aria-label={`Rating ${r} out of 5`}>
+            {Array(5)
+                .fill(null)
+                .map((_, i) => (
+                    <span key={i} className={`t3-star ${i < r ? "on" : "off"}`}>
+                        ★
+                    </span>
+                ))}
+        </div>
+    );
+}
 
 export default function Template3({ vm }) {
-    const {
-        themeStyles,
-        sectionOrder,
+    const v = vm || {};
 
-        showMainSection,
-        showAboutMeSection,
-        showWorkSection,
-        showServicesSection,
-        showReviewsSection,
-        showContactSection,
+    const cover = v.cover || "";
+    const avatar = v.avatar || "";
 
-        cover,
-        avatar,
-        mainHeading,
-        subHeading,
-        fullName,
-        jobTitle,
-        bio,
-        works,
-        services,
-        reviews,
-        email,
-        phone,
-        hasContact,
-        socialLinks,
+    const works = useMemo(() => {
+        return asArray(v.works)
+            .map((x) => x?.preview || x?.url || x)
+            .filter(Boolean);
+    }, [v.works]);
 
-        ctaStyle,
+    const services = useMemo(() => asArray(v.services).filter((s) => s?.name || s?.price), [v.services]);
+    const reviews = useMemo(() => asArray(v.reviews).filter((r) => r?.name || r?.text), [v.reviews]);
 
-        // ✅ actions from UserPage vm
-        onSaveMyNumber,
-        onOpenExchangeContact,
-    } = vm;
+    const socials = useMemo(() => {
+        return Object.entries(v.socials || {})
+            .filter(([, url]) => nonEmpty(url))
+            .map(([key, url]) => ({
+                key,
+                url,
+                label: key.replace("_url", "").toUpperCase(),
+            }));
+    }, [v.socials]);
 
-    const wrap = {
-        maxWidth: 1100,
-        margin: "0 auto",
-        padding: "24px 16px 48px",
-        display: "grid",
-        gridTemplateColumns: "340px 1fr",
-        gap: 16,
-    };
+    const hasHeroCtas = !!(v.hasExchangeContact || nonEmpty(v.email) || nonEmpty(v.phone));
 
-    const card = {
-        borderRadius: 18,
-        overflow: "hidden",
-        border: "1px solid rgba(0,0,0,0.08)",
-        background: themeStyles?.backgroundColor === "#1F1F1F" ? "rgba(255,255,255,0.04)" : "#fff",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-    };
+    return (
+        <div className="kc-tpl kc-tpl-3">
+            {/* HERO */}
+            {v.showMainSection && (
+                <section className="t3-hero">
+                    <div className="t3-hero-inner">
+                        <div className="t3-left">
+                            <div className="t3-brand">
+                                {nonEmpty(avatar) ? (
+                                    <img className="t3-avatar" src={avatar} alt="Avatar" />
+                                ) : (
+                                    <div className="t3-avatar t3-avatar--ph" aria-hidden="true" />
+                                )}
 
-    const section = {
-        padding: 16,
-        borderRadius: 18,
-        border: "1px solid rgba(0,0,0,0.08)",
-        background: themeStyles?.backgroundColor === "#1F1F1F" ? "rgba(255,255,255,0.04)" : "#fff",
-        marginBottom: 12,
-    };
+                                <div className="t3-brandtext">
+                                    <h1 className="t3-h1">{v.mainHeading || "Your Main Heading"}</h1>
+                                    {nonEmpty(v.subHeading) ? <p className="t3-sub">{v.subHeading}</p> : null}
+                                </div>
+                            </div>
 
-    const title = { margin: "0 0 10px", fontWeight: 950, fontSize: 18 };
+                            {hasHeroCtas ? (
+                                <div className="t3-cta">
+                                    <button type="button" className="t3-btn t3-btn-primary" onClick={v.onSaveMyNumber}>
+                                        Save My Number
+                                    </button>
+                                    <button type="button" className="t3-btn t3-btn-ghost" onClick={v.onOpenExchangeContact}>
+                                        Exchange Contact
+                                    </button>
+                                </div>
+                            ) : null}
 
-    const leftBtnStyle = {
-        ...ctaStyle,
-        width: "100%",
-        padding: "12px 14px",
-        borderRadius: 12,
-        border: "none",
-        fontWeight: 900,
-        cursor: "pointer",
-    };
-
-    const Left = () => (
-        <div style={{ position: "sticky", top: 14, alignSelf: "start" }}>
-            <div style={card}>
-                {nonEmpty(cover) && (
-                    <img src={cover} alt="Cover" style={{ width: "100%", height: 170, objectFit: "cover" }} />
-                )}
-
-                <div style={{ padding: 16 }}>
-                    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                        {nonEmpty(avatar) && (
-                            <img
-                                src={avatar}
-                                alt="Avatar"
-                                style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover" }}
-                            />
-                        )}
-                        <div style={{ minWidth: 0 }}>
-                            {nonEmpty(fullName) && (
-                                <div style={{ fontWeight: 950, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                    {fullName}
+                            {(nonEmpty(v.fullName) || nonEmpty(v.jobTitle)) && (
+                                <div className="t3-meta">
+                                    {nonEmpty(v.fullName) ? <div className="t3-name">{v.fullName}</div> : null}
+                                    {nonEmpty(v.jobTitle) ? <div className="t3-role">{v.jobTitle}</div> : null}
                                 </div>
                             )}
-                            {nonEmpty(jobTitle) && (
-                                <div style={{ opacity: 0.8, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis" }}>
-                                    {jobTitle}
+                        </div>
+
+                        <div className="t3-right" aria-hidden={!nonEmpty(cover)}>
+                            {nonEmpty(cover) ? (
+                                <div className="t3-cover">
+                                    <img src={cover} alt="Cover" className="t3-cover-img" />
                                 </div>
+                            ) : (
+                                <div className="t3-cover t3-cover--ph" aria-hidden="true" />
                             )}
                         </div>
                     </div>
+                </section>
+            )}
 
-                    {nonEmpty(mainHeading) && <h2 style={{ margin: "14px 0 0", fontSize: 22 }}>{mainHeading}</h2>}
-                    {nonEmpty(subHeading) && <p style={{ margin: "6px 0 0", opacity: 0.85 }}>{subHeading}</p>}
+            {/* ABOUT */}
+            {v.showAboutMeSection && (nonEmpty(v.bio) || nonEmpty(v.fullName) || nonEmpty(v.jobTitle)) ? (
+                <section className="t3-section">
+                    <div className="t3-head">
+                        <h2 className="t3-h2">About</h2>
+                        <div className="t3-rule" />
+                    </div>
 
-                    {hasContact && (
-                        <div style={{ marginTop: 14, display: "grid", gap: 10 }}>
-                            {/* ✅ Save contact (vCard download) */}
-                            <button type="button" onClick={onSaveMyNumber} style={leftBtnStyle}>
-                                Save My Number
-                            </button>
+                    <div className="t3-card t3-about">
+                        {nonEmpty(v.bio) ? <p className="t3-bio">{v.bio}</p> : null}
+                    </div>
+                </section>
+            ) : null}
 
-                            {/* ✅ New: open exchange modal */}
-                            <button type="button" onClick={onOpenExchangeContact} style={leftBtnStyle}>
-                                Exchange Contact
-                            </button>
-                        </div>
-                    )}
+            {/* WORK */}
+            {v.showWorkSection && works.length > 0 ? (
+                <section className="t3-section">
+                    <div className="t3-head">
+                        <h2 className="t3-h2">Work</h2>
+                        <div className="t3-rule" />
+                    </div>
 
-                    {(nonEmpty(email) || nonEmpty(phone)) && (
-                        <div style={{ marginTop: 12, display: "grid", gap: 6 }}>
-                            {nonEmpty(email) && <div style={{ opacity: 0.9, fontSize: 14 }}>{email}</div>}
-                            {nonEmpty(phone) && <div style={{ opacity: 0.9, fontSize: 14 }}>{phone}</div>}
-                        </div>
-                    )}
-
-                    {socialLinks?.length > 0 && (
-                        <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
-                            {socialLinks.map((s) => (
-                                <a
-                                    key={s.key}
-                                    href={s.url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    style={{
-                                        width: 40,
-                                        height: 40,
-                                        borderRadius: 12,
-                                        display: "inline-flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        border: "1px solid rgba(0,0,0,0.10)",
-                                        background:
-                                            themeStyles?.backgroundColor === "#1F1F1F"
-                                                ? "rgba(255,255,255,0.05)"
-                                                : "rgba(0,0,0,0.03)",
-                                    }}
-                                    aria-label={s.label}
-                                >
-                                    <img src={s.icon} alt="" style={{ width: 18, height: 18 }} />
-                                </a>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-
-    const MainSection = () =>
-        showMainSection ? (
-            <div style={section}>
-                <div style={title}>Main</div>
-                {nonEmpty(mainHeading) && <div style={{ fontWeight: 950, fontSize: 18 }}>{mainHeading}</div>}
-                {nonEmpty(subHeading) && <div style={{ opacity: 0.85, marginTop: 6 }}>{subHeading}</div>}
-            </div>
-        ) : null;
-
-    const AboutSection = () =>
-        showAboutMeSection ? (
-            <div style={section}>
-                <div style={title}>About</div>
-                {nonEmpty(bio) && <div style={{ opacity: 0.92, lineHeight: 1.5, whiteSpace: "pre-wrap" }}>{bio}</div>}
-            </div>
-        ) : null;
-
-    const WorkSection = () =>
-        showWorkSection ? (
-            <div style={section}>
-                <div style={title}>Work</div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10 }}>
-                    {(works || []).map((url, i) => (
-                        <img
-                            key={i}
-                            src={url}
-                            alt={`work-${i}`}
-                            style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 14 }}
-                        />
-                    ))}
-                </div>
-            </div>
-        ) : null;
-
-    const ServicesSection = () =>
-        showServicesSection ? (
-            <div style={section}>
-                <div style={title}>Services</div>
-                <div style={{ display: "grid", gap: 8 }}>
-                    {(services || []).map((s, i) => (
-                        <div
-                            key={i}
-                            style={{
-                                padding: 12,
-                                borderRadius: 14,
-                                border: "1px solid rgba(0,0,0,0.10)",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                gap: 10,
-                            }}
-                        >
-                            <div style={{ fontWeight: 900 }}>{s?.name || ""}</div>
-                            {nonEmpty(s?.price) && <div style={{ opacity: 0.85 }}>{s.price}</div>}
-                        </div>
-                    ))}
-                </div>
-            </div>
-        ) : null;
-
-    const ReviewsSection = () =>
-        showReviewsSection ? (
-            <div style={section}>
-                <div style={title}>Reviews</div>
-                <div style={{ display: "grid", gap: 10 }}>
-                    {(reviews || []).map((r, i) => {
-                        const rating = Number(r?.rating || 0);
-                        const fullStars = Math.min(5, Math.max(0, rating));
-                        const emptyStars = Math.max(0, 5 - fullStars);
-
-                        return (
-                            <div
-                                key={i}
-                                style={{ padding: 12, borderRadius: 14, border: "1px solid rgba(0,0,0,0.10)" }}
-                            >
-                                <div style={{ fontWeight: 900 }}>{r?.name || "Review"}</div>
-                                {nonEmpty(r?.text) && <div style={{ opacity: 0.9, marginTop: 6 }}>{`"${r.text}"`}</div>}
-
-                                {fullStars > 0 && (
-                                    <div style={{ marginTop: 8, opacity: 0.9 }}>
-                                        {"★".repeat(fullStars)}
-                                        <span style={{ opacity: 0.35 }}>{"★".repeat(emptyStars)}</span>
-                                    </div>
-                                )}
+                    <div className="t3-work">
+                        {works.slice(0, 12).map((url, i) => (
+                            <div key={i} className="t3-work-tile">
+                                <img src={url} alt={`Work ${i + 1}`} className="t3-work-img" />
                             </div>
-                        );
-                    })}
-                </div>
-            </div>
-        ) : null;
+                        ))}
+                    </div>
+                </section>
+            ) : null}
 
-    const ContactSection = () =>
-        showContactSection ? (
-            <div style={section}>
-                <div style={title}>Contact</div>
-                {nonEmpty(email) && <div style={{ opacity: 0.9 }}>{email}</div>}
-                {nonEmpty(phone) && <div style={{ opacity: 0.9, marginTop: 6 }}>{phone}</div>}
-            </div>
-        ) : null;
+            {/* SERVICES */}
+            {v.showServicesSection && services.length > 0 ? (
+                <section className="t3-section">
+                    <div className="t3-head">
+                        <h2 className="t3-h2">Services</h2>
+                        <div className="t3-rule" />
+                    </div>
 
-    const sectionMap = {
-        main: <MainSection key="main" />,
-        about: <AboutSection key="about" />,
-        work: <WorkSection key="work" />,
-        services: <ServicesSection key="services" />,
-        reviews: <ReviewsSection key="reviews" />,
-        contact: <ContactSection key="contact" />,
-    };
+                    <div className="t3-services">
+                        {services.slice(0, 14).map((s, i) => (
+                            <div key={i} className="t3-service">
+                                <div className="t3-service-name">{s?.name || "Service"}</div>
+                                {nonEmpty(s?.price) ? <div className="t3-service-price">{s.price}</div> : null}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
 
-    return (
-        <div className="user-landing-page template-3" style={themeStyles}>
-            <div style={wrap}>
-                <Left />
-                <div>{(sectionOrder || []).map((k) => sectionMap[k]).filter(Boolean)}</div>
-            </div>
+            {/* REVIEWS */}
+            {v.showReviewsSection && reviews.length > 0 ? (
+                <section className="t3-section">
+                    <div className="t3-head">
+                        <h2 className="t3-h2">Reviews</h2>
+                        <div className="t3-rule" />
+                    </div>
+
+                    <div className="t3-reviews">
+                        {reviews.slice(0, 10).map((r, i) => (
+                            <div key={i} className="t3-card t3-review">
+                                <Stars rating={r?.rating} />
+                                {nonEmpty(r?.text) ? <p className="t3-review-text">“{r.text}”</p> : null}
+                                {nonEmpty(r?.name) ? <div className="t3-review-name">{r.name}</div> : null}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* CONTACT */}
+            {v.showContactSection && (nonEmpty(v.email) || nonEmpty(v.phone) || socials.length > 0) ? (
+                <section className="t3-section t3-section-last">
+                    <div className="t3-head">
+                        <h2 className="t3-h2">Contact</h2>
+                        <div className="t3-rule" />
+                    </div>
+
+                    <div className="t3-card t3-contact">
+                        <div className="t3-contact-grid">
+                            {nonEmpty(v.email) ? (
+                                <a className="t3-contact-row" href={`mailto:${v.email}`}>
+                                    <span className="t3-k">Email</span>
+                                    <span className="t3-v">{v.email}</span>
+                                </a>
+                            ) : null}
+
+                            {nonEmpty(v.phone) ? (
+                                <a className="t3-contact-row" href={`tel:${v.phone}`}>
+                                    <span className="t3-k">Phone</span>
+                                    <span className="t3-v">{v.phone}</span>
+                                </a>
+                            ) : null}
+                        </div>
+
+                        {socials.length > 0 ? (
+                            <div className="t3-socials" aria-label="Social links">
+                                {socials.map((s) => (
+                                    <a key={s.key} className="t3-social" href={s.url} target="_blank" rel="noreferrer">
+                                        {s.label}
+                                    </a>
+                                ))}
+                            </div>
+                        ) : null}
+                    </div>
+                </section>
+            ) : null}
         </div>
     );
 }
