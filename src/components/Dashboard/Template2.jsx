@@ -1,292 +1,204 @@
-// src/components/Dashboard/Template2.jsx
-import React from "react";
+import React, { useMemo } from "react";
+import "../../styling/dashboard/templates/template2.css";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
+const asArray = (v) => (Array.isArray(v) ? v : []);
+
+function Stars({ rating = 0 }) {
+    const r = Math.max(0, Math.min(5, Number(rating) || 0));
+    return (
+        <div className="t2-stars" aria-label={`Rating ${r} out of 5`}>
+            {Array(5)
+                .fill(null)
+                .map((_, i) => (
+                    <span key={i} className={`t2-star ${i < r ? "on" : "off"}`}>
+                        ★
+                    </span>
+                ))}
+        </div>
+    );
+}
 
 export default function Template2({ vm }) {
-    const {
-        themeStyles,
-        sectionOrder,
+    const v = vm || {};
 
-        showMainSection,
-        showAboutMeSection,
-        showWorkSection,
-        showServicesSection,
-        showReviewsSection,
-        showContactSection,
+    const cover = v.cover || "";
+    const avatar = v.avatar || "";
 
-        cover,
-        avatar,
-        mainHeading,
-        subHeading,
-        fullName,
-        jobTitle,
-        bio,
-        works,
-        services,
-        reviews,
-        email,
-        phone,
-        hasContact,
-        socialLinks,
+    const works = useMemo(() => {
+        return asArray(v.works)
+            .map((x) => x?.preview || x?.url || x)
+            .filter(Boolean);
+    }, [v.works]);
 
-        ctaStyle,
+    const services = useMemo(() => asArray(v.services).filter((s) => s?.name || s?.price), [v.services]);
+    const reviews = useMemo(() => asArray(v.reviews).filter((r) => r?.name || r?.text), [v.reviews]);
 
-        // ✅ NEW actions (coming from UserPage.jsx vm)
-        onSaveMyNumber,
-        onOpenExchangeContact,
-    } = vm;
+    const hasHeroCtas = !!(v.hasExchangeContact || nonEmpty(v.email) || nonEmpty(v.phone));
 
-    const shell = {
-        maxWidth: 980,
-        margin: "0 auto",
-        padding: "28px 18px 48px",
-    };
-
-    const heroCard = {
-        borderRadius: 18,
-        overflow: "hidden",
-        border: "1px solid rgba(0,0,0,0.08)",
-        background: themeStyles?.backgroundColor === "#1F1F1F" ? "rgba(255,255,255,0.04)" : "#fff",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-    };
-
-    const sectionTitle = {
-        margin: "26px 0 10px",
-        fontWeight: 900,
-        fontSize: 18,
-        letterSpacing: 0.2,
-        textAlign: "center",
-    };
-
-    const grid = {
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-        gap: 10,
-    };
-
-    const pill = {
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 10,
-        padding: "10px 14px",
-        borderRadius: 999,
-        border: "1px solid rgba(0,0,0,0.10)",
-        background: themeStyles?.backgroundColor === "#1F1F1F" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
-        maxWidth: "100%",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-    };
-
-    const heroBtn = {
-        ...ctaStyle,
-        padding: "12px 18px",
-        borderRadius: 12,
-        border: "none",
-        fontWeight: 900,
-        cursor: "pointer",
-        width: "100%",
-        maxWidth: 360,
-    };
-
-    const MainSection = () =>
-        showMainSection ? (
-            <div style={heroCard}>
-                {nonEmpty(cover) && (
-                    <div style={{ height: 260, width: "100%", overflow: "hidden" }}>
-                        <img src={cover} alt="Cover" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    </div>
-                )}
-
-                <div style={{ padding: 18, textAlign: "center" }}>
-                    {nonEmpty(mainHeading) && <h2 style={{ margin: 0, fontSize: 26, fontWeight: 950 }}>{mainHeading}</h2>}
-                    {nonEmpty(subHeading) && <p style={{ margin: "8px 0 0", opacity: 0.85 }}>{subHeading}</p>}
-
-                    {(nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(avatar)) && (
-                        <div style={{ marginTop: 16, display: "flex", justifyContent: "center", gap: 12 }}>
-                            {nonEmpty(avatar) && (
-                                <img
-                                    src={avatar}
-                                    alt="Avatar"
-                                    style={{
-                                        width: 56,
-                                        height: 56,
-                                        borderRadius: 14,
-                                        objectFit: "cover",
-                                        border: "1px solid rgba(0,0,0,0.10)",
-                                    }}
-                                />
-                            )}
-                            <div style={{ textAlign: "left" }}>
-                                {nonEmpty(fullName) && <div style={{ fontWeight: 900 }}>{fullName}</div>}
-                                {nonEmpty(jobTitle) && <div style={{ opacity: 0.8, fontSize: 14 }}>{jobTitle}</div>}
-                            </div>
-                        </div>
-                    )}
-
-                    {hasContact && (
-                        <div style={{ marginTop: 18, display: "grid", gap: 10, justifyItems: "center" }}>
-                            {/* ✅ Save contact (vCard download) */}
-                            <button type="button" onClick={onSaveMyNumber} style={heroBtn}>
-                                Save My Number
-                            </button>
-
-                            {/* ✅ NEW: Exchange contact modal */}
-                            <button type="button" onClick={onOpenExchangeContact} style={heroBtn}>
-                                Exchange Contact
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </div>
-        ) : null;
-
-    const AboutSection = () =>
-        showAboutMeSection ? (
-            <div>
-                <div style={sectionTitle}>About</div>
-                {nonEmpty(bio) && (
-                    <div
-                        style={{
-                            padding: 16,
-                            borderRadius: 16,
-                            border: "1px solid rgba(0,0,0,0.08)",
-                            background: themeStyles?.backgroundColor === "#1F1F1F" ? "rgba(255,255,255,0.04)" : "#fff",
-                            lineHeight: 1.45,
-                            textAlign: "center",
-                            opacity: 0.95,
-                            whiteSpace: "pre-wrap",
-                        }}
-                    >
-                        {bio}
-                    </div>
-                )}
-            </div>
-        ) : null;
-
-    const WorkSection = () =>
-        showWorkSection ? (
-            <div>
-                <div style={sectionTitle}>Work</div>
-                <div style={grid}>
-                    {(works || []).map((url, i) => (
-                        <div
-                            key={i}
-                            style={{
-                                borderRadius: 14,
-                                overflow: "hidden",
-                                border: "1px solid rgba(0,0,0,0.08)",
-                                background: themeStyles?.backgroundColor === "#1F1F1F" ? "rgba(255,255,255,0.04)" : "#fff",
-                            }}
-                        >
-                            <img src={url} alt={`work-${i}`} style={{ width: "100%", height: 160, objectFit: "cover" }} />
-                        </div>
-                    ))}
-                </div>
-            </div>
-        ) : null;
-
-    const ServicesSection = () =>
-        showServicesSection ? (
-            <div>
-                <div style={sectionTitle}>Services</div>
-                <div style={{ display: "grid", gap: 10 }}>
-                    {(services || []).map((s, i) => (
-                        <div key={i} style={{ ...pill, justifyContent: "space-between" }}>
-                            <div style={{ fontWeight: 900 }}>{s?.name || ""}</div>
-                            {nonEmpty(s?.price) && <div style={{ opacity: 0.85 }}>{s.price}</div>}
-                        </div>
-                    ))}
-                </div>
-            </div>
-        ) : null;
-
-    const ReviewsSection = () =>
-        showReviewsSection ? (
-            <div>
-                <div style={sectionTitle}>Reviews</div>
-                <div style={{ display: "grid", gap: 10 }}>
-                    {(reviews || []).map((r, i) => {
-                        const rating = Number(r?.rating || 0);
-                        const fullStars = Math.min(5, Math.max(0, rating));
-                        const emptyStars = Math.max(0, 5 - fullStars);
-
-                        return (
-                            <div
-                                key={i}
-                                style={{
-                                    padding: 14,
-                                    borderRadius: 16,
-                                    border: "1px solid rgba(0,0,0,0.08)",
-                                    background: themeStyles?.backgroundColor === "#1F1F1F" ? "rgba(255,255,255,0.04)" : "#fff",
-                                }}
-                            >
-                                <div style={{ fontWeight: 900, marginBottom: 6 }}>{nonEmpty(r?.name) ? r.name : "Review"}</div>
-                                {nonEmpty(r?.text) && <div style={{ opacity: 0.9 }}>{`"${r.text}"`}</div>}
-
-                                {fullStars > 0 && (
-                                    <div style={{ marginTop: 8, opacity: 0.9 }}>
-                                        {"★".repeat(fullStars)}
-                                        <span style={{ opacity: 0.35 }}>{"★".repeat(emptyStars)}</span>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-        ) : null;
-
-    const ContactSection = () =>
-        showContactSection ? (
-            <div>
-                <div style={sectionTitle}>Contact</div>
-                <div style={{ display: "grid", gap: 10, justifyItems: "center" }}>
-                    {nonEmpty(email) && <div style={pill}>{email}</div>}
-                    {nonEmpty(phone) && <div style={pill}>{phone}</div>}
-
-                    {socialLinks?.length > 0 && (
-                        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
-                            {socialLinks.map((s) => (
-                                <a
-                                    key={s.key}
-                                    href={s.url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    style={{
-                                        width: 44,
-                                        height: 44,
-                                        borderRadius: 12,
-                                        display: "inline-flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        border: "1px solid rgba(0,0,0,0.10)",
-                                        background: themeStyles?.backgroundColor === "#1F1F1F" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
-                                    }}
-                                    aria-label={s.label}
-                                >
-                                    <img src={s.icon} alt="" style={{ width: 20, height: 20 }} />
-                                </a>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </div>
-        ) : null;
-
-    const sectionMap = {
-        main: <MainSection key="main" />,
-        about: <AboutSection key="about" />,
-        work: <WorkSection key="work" />,
-        services: <ServicesSection key="services" />,
-        reviews: <ReviewsSection key="reviews" />,
-        contact: <ContactSection key="contact" />,
-    };
+    const socials = useMemo(() => {
+        return Object.entries(v.socials || {})
+            .filter(([, url]) => nonEmpty(url))
+            .map(([key, url]) => ({
+                key,
+                url,
+                label: key.replace("_url", "").toUpperCase(),
+            }));
+    }, [v.socials]);
 
     return (
-        <div className="user-landing-page template-2" style={themeStyles}>
-            <div style={shell}>{(sectionOrder || []).map((k) => sectionMap[k]).filter(Boolean)}</div>
+        <div className="kc-tpl kc-tpl-2">
+            {/* HERO */}
+            {v.showMainSection && (
+                <section className="t2-hero">
+                    <div className="t2-hero-bg" aria-hidden="true">
+                        {nonEmpty(cover) ? <img src={cover} alt="" className="t2-hero-bgimg" /> : null}
+                        <div className="t2-hero-overlay" />
+                    </div>
+
+                    <div className="t2-hero-card">
+                        <div className="t2-hero-top">
+                            {nonEmpty(avatar) ? (
+                                <img src={avatar} alt="Avatar" className="t2-avatar" />
+                            ) : (
+                                <div className="t2-avatar t2-avatar--ph" aria-hidden="true" />
+                            )}
+
+                            <div className="t2-hero-text">
+                                <h1 className="t2-h1">{v.mainHeading || "Your Main Heading"}</h1>
+                                {nonEmpty(v.subHeading) ? <p className="t2-sub">{v.subHeading}</p> : null}
+                            </div>
+                        </div>
+
+                        {hasHeroCtas ? (
+                            <div className="t2-cta-row">
+                                <button type="button" className="t2-btn t2-btn-primary" onClick={v.onSaveMyNumber}>
+                                    Save My Number
+                                </button>
+                                <button type="button" className="t2-btn t2-btn-ghost" onClick={v.onOpenExchangeContact}>
+                                    Exchange Contact
+                                </button>
+                            </div>
+                        ) : null}
+
+                        {(nonEmpty(v.fullName) || nonEmpty(v.jobTitle)) && (
+                            <div className="t2-mini">
+                                {nonEmpty(v.fullName) ? <div className="t2-name">{v.fullName}</div> : null}
+                                {nonEmpty(v.jobTitle) ? <div className="t2-role">{v.jobTitle}</div> : null}
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+
+            {/* ABOUT */}
+            {v.showAboutMeSection && (nonEmpty(v.bio) || nonEmpty(v.fullName) || nonEmpty(v.jobTitle)) ? (
+                <section className="t2-section">
+                    <div className="t2-section-head">
+                        <div className="t2-kicker">ABOUT</div>
+                        <div className="t2-line" />
+                    </div>
+
+                    <div className="t2-glass t2-about">
+                        {nonEmpty(v.bio) ? <p className="t2-bio">{v.bio}</p> : null}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* WORK */}
+            {v.showWorkSection && works.length > 0 ? (
+                <section className="t2-section">
+                    <div className="t2-section-head">
+                        <div className="t2-kicker">WORK</div>
+                        <div className="t2-line" />
+                    </div>
+
+                    <div className="t2-work-scroll" role="region" aria-label="Work gallery">
+                        {works.slice(0, 14).map((url, i) => (
+                            <div key={i} className="t2-work-tile">
+                                <img src={url} alt={`Work ${i + 1}`} className="t2-work-img" />
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* SERVICES */}
+            {v.showServicesSection && services.length > 0 ? (
+                <section className="t2-section">
+                    <div className="t2-section-head">
+                        <div className="t2-kicker">SERVICES</div>
+                        <div className="t2-line" />
+                    </div>
+
+                    <div className="t2-services">
+                        {services.slice(0, 12).map((s, i) => (
+                            <div key={i} className="t2-service">
+                                <div className="t2-service-name">{s?.name || "Service"}</div>
+                                {nonEmpty(s?.price) ? <div className="t2-service-price">{s.price}</div> : null}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* REVIEWS */}
+            {v.showReviewsSection && reviews.length > 0 ? (
+                <section className="t2-section">
+                    <div className="t2-section-head">
+                        <div className="t2-kicker">REVIEWS</div>
+                        <div className="t2-line" />
+                    </div>
+
+                    <div className="t2-reviews">
+                        {reviews.slice(0, 10).map((r, i) => (
+                            <div key={i} className="t2-review t2-glass">
+                                <Stars rating={r?.rating} />
+                                {nonEmpty(r?.text) ? <div className="t2-review-text">“{r.text}”</div> : null}
+                                {nonEmpty(r?.name) ? <div className="t2-review-name">{r.name}</div> : null}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
+
+            {/* CONTACT */}
+            {v.showContactSection && (nonEmpty(v.email) || nonEmpty(v.phone) || socials.length > 0) ? (
+                <section className="t2-section t2-section-last">
+                    <div className="t2-section-head">
+                        <div className="t2-kicker">CONTACT</div>
+                        <div className="t2-line" />
+                    </div>
+
+                    <div className="t2-contact t2-glass">
+                        <div className="t2-contact-actions">
+                            {nonEmpty(v.email) ? (
+                                <a className="t2-pill" href={`mailto:${v.email}`}>
+                                    <span className="t2-pill-k">Email</span>
+                                    <span className="t2-pill-v">{v.email}</span>
+                                </a>
+                            ) : null}
+
+                            {nonEmpty(v.phone) ? (
+                                <a className="t2-pill" href={`tel:${v.phone}`}>
+                                    <span className="t2-pill-k">Phone</span>
+                                    <span className="t2-pill-v">{v.phone}</span>
+                                </a>
+                            ) : null}
+                        </div>
+
+                        {socials.length > 0 ? (
+                            <div className="t2-socials" aria-label="Social links">
+                                {socials.map((s) => (
+                                    <a key={s.key} className="t2-social" href={s.url} target="_blank" rel="noreferrer">
+                                        {s.label}
+                                    </a>
+                                ))}
+                            </div>
+                        ) : null}
+                    </div>
+                </section>
+            ) : null}
         </div>
     );
 }
