@@ -179,7 +179,7 @@
     box-shadow: var(--focus);
 }
 
-/* Status */
+/* Status pills */
 .kc-cards-status {
     font-family: "Cal Sans", sans-serif;
     font-weight: 900;
@@ -207,27 +207,30 @@
     background: rgba(11, 18, 32, 0.03);
 }
 
-/* Tiles grid */
-.kc-cards-tiles {
+/* =========================================================
+   NEW: compact top row layout
+========================================================= */
+
+.kc-toprow {
     margin-top: 14px;
     display: grid;
-    gap: 12px;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(260px, 360px) minmax(260px, 360px);
+    gap: 14px;
+    align-items: start;
 }
 
-@media (max-width: 1100px) {
-    .kc-cards-tiles {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 640px) {
-    .kc-cards-tiles {
+@media (max-width: 900px) {
+    .kc-toprow {
         grid-template-columns: 1fr;
     }
 }
 
-.kc-card-tile {
+.kc-toprow-col {
+    min-width: 0;
+}
+
+/* Compact selected card tile */
+.kc-card-compact {
     width: 100%;
     text-align: left;
     background: #fff;
@@ -240,47 +243,42 @@
     gap: 12px;
 }
 
-.kc-card-tile:hover {
+.kc-card-compact:hover {
     background: rgba(11, 18, 32, 0.02);
 }
 
-.kc-card-tile:active {
+.kc-card-compact:active {
     transform: translateY(1px);
 }
 
-.kc-card-tile:focus-visible {
+.kc-card-compact:focus-visible {
     outline: none;
     box-shadow: var(--focus);
 }
 
-.kc-card-tile.active {
+.kc-card-compact.active {
     border-color: rgb(var(--accent-rgb) / 0.35);
     box-shadow: 0 12px 30px rgb(var(--accent-rgb) / 0.12);
 }
 
-/* 1x1 preview area */
-.kc-card-preview {
+.kc-card-compact-preview {
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
-    border-radius: 18px;
+    border-radius: 16px;
     border: 1px solid rgba(11, 18, 32, 0.08);
     overflow: hidden;
-    box-shadow: var(--shadow-sm);
     background: linear-gradient(180deg, #fff, #fafafa);
+    box-shadow: var(--shadow-sm);
 }
 
-/* center the thumb inside the 1x1 square */
-.kc-card-thumb-center {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    place-items: center;
-    transform: scale(1.35);
+/* make the 3D fill but keep lightweight */
+.kc-compact-3dwrap {
+    position: absolute;
+    inset: 0;
 }
 
-/* badges on preview */
-.kc-card-preview-badges {
+.kc-compact-badges {
     position: absolute;
     left: 10px;
     right: 10px;
@@ -292,7 +290,7 @@
     pointer-events: none;
 }
 
-.kc-card-meta {
+.kc-card-compact-meta {
     min-width: 0;
 }
 
@@ -317,12 +315,102 @@
     color: rgba(11, 18, 32, 0.25);
 }
 
-.kc-card-tile-actions {
+.kc-card-compact-actions {
+    margin-top: 10px;
     display: flex;
     justify-content: flex-end;
 }
 
-/* Details */
+/* Buy another product tile */
+.kc-buy-tile {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 18px;
+    border: 1px dashed rgba(11, 18, 32, 0.18);
+    background: linear-gradient(180deg, #fff, rgba(249, 115, 22, 0.06));
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    text-align: center;
+}
+
+.kc-buy-tile:hover {
+    border-color: rgb(var(--accent-rgb) / 0.45);
+    box-shadow: 0 12px 28px rgb(var(--accent-rgb) / 0.10);
+}
+
+.kc-buy-tile:active {
+    transform: translateY(1px);
+}
+
+.kc-buy-tile:focus-visible {
+    outline: none;
+    box-shadow: var(--focus);
+}
+
+.kc-buy-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    background: rgb(var(--accent-rgb) / 0.12);
+    border: 1px solid rgb(var(--accent-rgb) / 0.20);
+    color: rgb(var(--accent-rgb));
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.kc-buy-title {
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    color: var(--ink);
+    font-size: 16px;
+}
+
+.kc-buy-sub {
+    margin-top: 6px;
+    color: rgba(91, 102, 122, 0.95);
+    font-weight: 800;
+    font-size: 13px;
+}
+
+/* Mini selector row if user has multiple orders */
+.kc-mini-picker {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.kc-mini-pill {
+    border: 1px solid rgba(11, 18, 32, 0.12);
+    background: var(--surface-2);
+    border-radius: 999px;
+    padding: 10px 12px;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.kc-mini-pill:hover {
+    background: rgba(11, 18, 32, 0.04);
+}
+
+.kc-mini-pill.active {
+    border-color: rgb(var(--accent-rgb) / 0.35);
+    background: rgb(var(--accent-rgb) / 0.10);
+}
+
+/* =========================================================
+   Details
+========================================================= */
+
 .kc-cards-details-wrap {
     margin-top: 14px;
     display: grid;
@@ -383,7 +471,7 @@
     color: rgba(91, 102, 122, 0.95);
 }
 
-/* order details */
+/* Order details table */
 .kc-cards-order-details {
     padding-top: 12px;
     border-top: 1px solid rgba(11, 18, 32, 0.08);
@@ -456,126 +544,4 @@
     padding: 10px 12px;
     border-radius: 999px;
     border: 1px solid rgb(var(--accent-rgb) / 0.22);
-}
-
-/* =========================================================
-   Static thumb styles (from your previous file)
-========================================================= */
-
-.thumb {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    flex: 0 0 auto;
-    overflow: hidden;
-    border: 1px solid rgba(17, 24, 39, 0.08);
-    box-shadow: 0 8px 18px rgba(17, 24, 39, 0.06);
-}
-
-.thumb-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.thumb-logo {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    width: 18px;
-    height: 18px;
-    border-radius: 999px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.85);
-    display: grid;
-    place-items: center;
-    border: 1px solid rgba(17, 24, 39, 0.10);
-}
-
-.thumb-logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.thumb-k {
-    font-weight: 800;
-    font-size: 12px;
-    color: rgba(17, 24, 39, 0.85);
-}
-
-.thumb-chip {
-    position: absolute;
-    right: 8px;
-    bottom: 9px;
-    width: 14px;
-    height: 10px;
-    border-radius: 4px;
-    opacity: 0.9;
-    background: rgba(255, 255, 255, 0.5);
-}
-
-.thumb-line {
-    position: absolute;
-    left: 8px;
-    bottom: 8px;
-    width: 18px;
-    height: 3px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.55);
-}
-
-/* Plastic */
-.thumb-plastic.thumb-white {
-    background: linear-gradient(180deg, #ffffff, #f3f4f6);
-}
-
-.thumb-plastic.thumb-black {
-    background: linear-gradient(180deg, #111827, #0b1220);
-}
-
-.thumb-plastic.thumb-black .thumb-logo {
-    background: rgba(255, 255, 255, 0.10);
-}
-
-.thumb-plastic.thumb-black .thumb-k {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.thumb-plastic.thumb-black .thumb-chip,
-.thumb-plastic.thumb-black .thumb-line {
-    background: rgba(255, 255, 255, 0.20);
-}
-
-/* Metal */
-.thumb-metal.thumb-black {
-    background: linear-gradient(180deg, #0b0f16, #1f2937);
-}
-
-.thumb-metal.thumb-gold {
-    background: linear-gradient(180deg, #f7d36a, #caa43d);
-}
-
-.thumb-metal .thumb-chip,
-.thumb-metal .thumb-line {
-    background: rgba(255, 255, 255, 0.20);
-}
-
-/* Tag */
-.thumb-tag.thumb-white {
-    background: linear-gradient(180deg, #ffffff, #f3f4f6);
-    border-radius: 999px;
-}
-
-.thumb-tag.thumb-black {
-    background: linear-gradient(180deg, #111827, #0b1220);
-    border-radius: 999px;
-}
-
-.thumb-tag.thumb-black .thumb-logo {
-    background: rgba(255, 255, 255, 0.10);
-}
-
-.thumb-tag.thumb-black .thumb-k {
-    color: rgba(255, 255, 255, 0.9);
 }

@@ -5,7 +5,7 @@ import PageHeader from "../../components/Dashboard/PageHeader";
 import "../../styling/dashboard/cards.css";
 import api from "../../services/api";
 
-// ✅ 3D components you already have
+// ✅ 3D components
 import PlasticCard3D from "../../components/PlasticCard3D";
 import MetalCard3D from "../../components/MetalCard3D";
 import KonarTag3D from "../../components/KonarTag3D";
@@ -22,7 +22,6 @@ class CardPreviewErrorBoundary extends React.Component {
         return { hasError: true };
     }
     componentDidCatch(err) {
-        // keep console log so we can diagnose props later
         // eslint-disable-next-line no-console
         console.error("3D preview crashed:", err);
     }
@@ -115,61 +114,43 @@ function formatMoneyMinor(amountMinor, currency) {
 }
 
 /* -----------------------------
-   SAFE Static Thumbnail (tile)
+   Konar default logo (SVG data URL) – so 3D never shows blank
 ----------------------------- */
-
-function thumbTheme(productKey, variant) {
-    const pk = String(productKey || "");
-    const v = String(variant || "").toLowerCase();
-
-    if (pk === "metal-card") {
-        if (v === "gold") return "thumb thumb-metal thumb-gold";
-        return "thumb thumb-metal thumb-black";
-    }
-    if (pk === "konartag") {
-        if (v === "white") return "thumb thumb-tag thumb-white";
-        return "thumb thumb-tag thumb-black";
-    }
-
-    if (v === "black") return "thumb thumb-plastic thumb-black";
-    return "thumb thumb-plastic thumb-white";
-}
-
-function CardThumb({ productKey, variant, logoUrl }) {
-    const cls = thumbTheme(productKey, variant);
-
-    return (
-        <div className={cls} aria-hidden="true">
-            <div className="thumb-inner">
-                <div className="thumb-logo">
-                    {logoUrl ? <img src={logoUrl} alt="" /> : <span className="thumb-k">K</span>}
-                </div>
-                <div className="thumb-chip" />
-                <div className="thumb-line" />
-            </div>
-        </div>
-    );
-}
+const KONAR_LOGO_SVG = encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
+  <defs>
+    <radialGradient id="g" cx="30%" cy="25%" r="80%">
+      <stop offset="0" stop-color="#FFB07A"/>
+      <stop offset="1" stop-color="#F97316"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="120" fill="url(#g)"/>
+  <text x="50%" y="56%" text-anchor="middle" font-size="260" font-family="Arial, Helvetica, sans-serif" font-weight="900" fill="#0B1220">K</text>
+</svg>
+`);
+const DEFAULT_LOGO_DATAURL = `data:image/svg+xml;charset=utf-8,${KONAR_LOGO_SVG}`;
 
 /* -----------------------------
-   3D Details Preview (ONLY here, with ErrorBoundary)
-   IMPORTANT: we render without custom props first to avoid undefined-loader crashes.
-   After it works, we will pass the correct prop names matching your Product page usage.
+   QR from profile link (safe external generator)
+   You can swap this to your own backend QR endpoint later.
 ----------------------------- */
+function qrSrcFromLink(link) {
+    const url = centerTrim(link);
+    if (!url) return "";
+    const data = encodeURIComponent(url);
+    // stable public generator
+    return `https://api.qrserver.com/v1/create-qr-code/?size=700x700&margin=10&data=${data}`;
+}
 
-function Card3DDetails({ productKey }) {
-    const pk = String(productKey || "");
-
-    // ✅ Render the same way your product page likely does: no risky props yet.
-    if (pk === "metal-card") return <MetalCard3D />;
-    if (pk === "konartag") return <KonarTag3D />;
-    return <PlasticCard3D />;
+function finishFromVariant(variantRawValue) {
+    const v = String(variantRawValue || "").toLowerCase();
+    if (v === "gold") return "gold";
+    return "black";
 }
 
 /* -----------------------------
    API
 ----------------------------- */
-
 async function getMyOrders() {
     const r = await api.get("/api/nfc-orders/mine");
     if (r.status !== 200) throw new Error(r.data?.message || r.data?.error || "Failed to load orders");
@@ -177,9 +158,23 @@ async function getMyOrders() {
 }
 
 /* -----------------------------
+   3D Details Preview (now passes QR + logo correctly)
+----------------------------- */
+function Card3DDetails({ productKey, logoSrc, qrSrc, variantRaw }) {
+    const pk = String(productKey || "");
+
+    if (pk === "metal-card") {
+        return <MetalCard3D logoSrc={logoSrc} qrSrc={qrSrc} finish={finishFromVariant(variantRaw)} />;
+    }
+    if (pk === "konartag") {
+        return <KonarTag3D logoSrc={logoSrc} qrSrc={qrSrc} finish={finishFromVariant(variantRaw)} />;
+    }
+    return <PlasticCard3D logoSrc={logoSrc} qrSrc={qrSrc} />;
+}
+
+/* -----------------------------
    Page
 ----------------------------- */
-
 export default function Cards() {
     const [plan] = useState("free"); // later wire to subscription
 
@@ -328,6 +323,10 @@ export default function Cards() {
         window.open(selectedCard.link, "_blank", "noopener,noreferrer");
     };
 
+    // ✅ 3D props derived from selected order (safe + correct)
+    const detailsLogoSrc = selectedCard?.logoUrl ? selectedCard.logoUrl : DEFAULT_LOGO_DATAURL;
+    const detailsQrSrc = qrSrcFromLink(selectedCard?.link);
+
     return (
         <DashboardLayout
             title="Cards"
@@ -381,84 +380,123 @@ export default function Cards() {
                                 Order a card
                             </button>
                             <a className="kc-cards-btn kc-cards-btn-ghost" href="/products">
-                                View card options
+                                View products
                             </a>
                         </div>
                     </section>
                 ) : (
                     <>
-                        {/* SECTION 1: cards tiles */}
+                        {/* SECTION 1: compact top row (selected card + buy another) */}
                         <section className="kc-cards-card">
                             <div className="kc-cards-card-head">
                                 <div>
                                     <h2 className="kc-cards-card-title">Your cards</h2>
-                                    <p className="kc-cards-muted">Tap a card to view details below.</p>
+                                    <p className="kc-cards-muted">Tap your card to view details below.</p>
                                 </div>
                             </div>
 
-                            <div className="kc-cards-tiles">
-                                {cards.map((c) => {
-                                    const active = selectedCard?.id === c.id;
-
-                                    return (
+                            <div className="kc-toprow">
+                                {/* Selected card tile (smaller, minimal) */}
+                                <div className="kc-toprow-col">
+                                    {selectedCard ? (
                                         <button
-                                            key={c.id}
                                             type="button"
-                                            className={`kc-card-tile ${active ? "active" : ""}`}
-                                            onClick={() => setSelectedId(c.id)}
+                                            className="kc-card-compact active"
+                                            onClick={() => setSelectedId(selectedCard.id)}
                                         >
-                                            <div className="kc-card-preview static">
-                                                <div className="kc-card-thumb-center">
-                                                    <CardThumb productKey={c.productKey} variant={c.variantRaw} logoUrl={c.logoUrl} />
+                                            <div className="kc-card-compact-preview">
+                                                <div className="kc-compact-3dwrap">
+                                                    <CardPreviewErrorBoundary
+                                                        fallback={<div className="kc-3d-fallback">Preview unavailable</div>}
+                                                    >
+                                                        <Card3DDetails
+                                                            productKey={selectedCard.productKey}
+                                                            logoSrc={detailsLogoSrc}
+                                                            qrSrc={detailsQrSrc}
+                                                            variantRaw={selectedCard.variantRaw}
+                                                        />
+                                                    </CardPreviewErrorBoundary>
                                                 </div>
 
-                                                <div className="kc-card-preview-badges">
-                                                    <span className={`kc-cards-status ${c.status}`}>
-                                                        {c.status === "active" ? "ACTIVE" : "INACTIVE"}
+                                                <div className="kc-compact-badges">
+                                                    <span className={`kc-cards-status ${selectedCard.status}`}>
+                                                        {selectedCard.status === "active" ? "ACTIVE" : "INACTIVE"}
                                                     </span>
-                                                    {c.variant ? <span className="kc-cards-status neutral">{c.variant}</span> : null}
+                                                    {selectedCard.variant ? (
+                                                        <span className="kc-cards-status neutral">{selectedCard.variant}</span>
+                                                    ) : null}
                                                 </div>
                                             </div>
 
-                                            <div className="kc-card-meta">
-                                                <div className="kc-card-name">{c.name}</div>
+                                            <div className="kc-card-compact-meta">
+                                                <div className="kc-card-name">{selectedCard.name}</div>
 
                                                 <div className="kc-card-sub">
                                                     <span className="kc-cards-muted">
-                                                        {c.material} • {prettyProduct(c.productKey)}
+                                                        {selectedCard.material} • {prettyProduct(selectedCard.productKey)}
                                                     </span>
                                                     <span className="kc-card-dot">•</span>
                                                     <span className="kc-cards-muted">
-                                                        {c.orderStatus ? `Order: ${safeUpper(c.orderStatus)}` : "Order: —"}
+                                                        {selectedCard.orderStatus ? `Order: ${safeUpper(selectedCard.orderStatus)}` : "Order: —"}
                                                     </span>
                                                 </div>
 
                                                 <div className="kc-card-sub">
                                                     <span className="kc-cards-muted">
-                                                        Assigned: <strong>{c.assignedProfile}</strong>
+                                                        Assigned: <strong>{selectedCard.assignedProfile}</strong>
                                                     </span>
                                                 </div>
-                                            </div>
 
-                                            <div className="kc-card-tile-actions">
-                                                <button
-                                                    type="button"
-                                                    className="kc-cards-mini-btn"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDeactivate(c.id);
-                                                    }}
-                                                >
-                                                    {c.status === "active" ? "Disable" : "Enable"}
-                                                </button>
+                                                <div className="kc-card-compact-actions">
+                                                    <button
+                                                        type="button"
+                                                        className="kc-cards-mini-btn"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDeactivate(selectedCard.id);
+                                                        }}
+                                                    >
+                                                        {selectedCard.status === "active" ? "Disable" : "Enable"}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </button>
-                                    );
-                                })}
+                                    ) : (
+                                        <div className="kc-cards-muted">Select a card.</div>
+                                    )}
+                                </div>
+
+                                {/* Buy another product tile (same size square) */}
+                                <div className="kc-toprow-col">
+                                    <button type="button" className="kc-buy-tile" onClick={handleOrderCard}>
+                                        <div className="kc-buy-icon" aria-hidden="true">
+                                            +
+                                        </div>
+                                        <div className="kc-buy-title">Buy another product</div>
+                                        <div className="kc-buy-sub">View cards, tags & bundles</div>
+                                    </button>
+                                </div>
                             </div>
+
+                            {/* If user ever has more than 1 card: show tiny selector row under */}
+                            {cards.length > 1 ? (
+                                <div className="kc-mini-picker">
+                                    {cards.map((c) => (
+                                        <button
+                                            key={c.id}
+                                            type="button"
+                                            className={`kc-mini-pill ${selectedCard?.id === c.id ? "active" : ""}`}
+                                            onClick={() => setSelectedId(c.id)}
+                                        >
+                                            {prettyProduct(c.productKey)}
+                                            {c.variant ? ` • ${c.variant}` : ""}
+                                        </button>
+                                    ))}
+                                </div>
+                            ) : null}
                         </section>
 
-                        {/* SECTION 2: details */}
+                        {/* SECTION 2: details (clean + minimal) */}
                         <section className="kc-cards-card">
                             <div className="kc-cards-card-head">
                                 <div>
@@ -504,16 +542,15 @@ export default function Cards() {
                                         </div>
                                     </div>
 
-                                    {/* ✅ BIG 3D PREVIEW BUT SAFE */}
+                                    {/* Big 3D panel (correct QR + logo now) */}
                                     <div className="kc-details-3dpanel">
-                                        <CardPreviewErrorBoundary
-                                            fallback={
-                                                <div className="kc-3d-fallback">
-                                                    3D preview unavailable (we’ll fix props next).
-                                                </div>
-                                            }
-                                        >
-                                            <Card3DDetails productKey={selectedCard.productKey} />
+                                        <CardPreviewErrorBoundary fallback={<div className="kc-3d-fallback">3D preview unavailable</div>}>
+                                            <Card3DDetails
+                                                productKey={selectedCard.productKey}
+                                                logoSrc={detailsLogoSrc}
+                                                qrSrc={detailsQrSrc}
+                                                variantRaw={selectedCard.variantRaw}
+                                            />
                                         </CardPreviewErrorBoundary>
                                     </div>
 
@@ -565,16 +602,13 @@ export default function Cards() {
                                         {selectedCard.stripeCheckoutSessionId ? (
                                             <div className="kc-cards-detail-row">
                                                 <span className="kc-cards-muted">Stripe session</span>
-                                                <strong className="kc-cards-mono">
-                                                    {selectedCard.stripeCheckoutSessionId.slice(0, 14)}…
-                                                </strong>
+                                                <strong className="kc-cards-mono">{selectedCard.stripeCheckoutSessionId.slice(0, 14)}…</strong>
                                             </div>
                                         ) : null}
                                     </div>
 
                                     <div className="kc-cards-note">
-                                        Next: we’ll pass the *correct prop names* to the 3D component (same as your Products page),
-                                        then we can safely show 3D inside each tile too.
+                                        3D preview now uses your profile link QR + your uploaded logo (or Konar logo if none).
                                     </div>
                                 </div>
                             )}
