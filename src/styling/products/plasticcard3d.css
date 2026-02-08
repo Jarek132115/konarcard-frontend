@@ -2,27 +2,44 @@
 
 .pc3d {
     width: 100%;
-    height: 520px;
+    height: 500px;
+    /* ✅ more vertical room so rotation never clips */
     cursor: grab;
     overflow: visible;
-    /* ✅ never clip the card */
-    padding: 18px 0;
-    /* ✅ extra top/bottom breathing room */
+    /* ✅ don't clip the DOM */
+    padding: 40px 0 80px;
+    /* ✅ extra bottom breathing room */
 }
 
 .pc3d:active {
     cursor: grabbing;
 }
 
+/* stage wrapper (important: never clip) */
+.pc3d__stage {
+    width: min(920px, 100%);
+    margin: 0 auto;
+    overflow: visible;
+    padding: 0 8px;
+}
+
+/* make sure the canvas is not clipped by parent sizing quirks */
+.pc3d__stage>canvas,
 .pc3d canvas {
     width: 100% !important;
     height: 100% !important;
     display: block;
+    overflow: visible;
 }
 
 @media (max-width: 560px) {
     .pc3d {
-        height: 360px;
-        padding: 10px 0;
+        height: 440px;
+        /* ✅ more room on mobile too */
+        padding: 10px 0 34px;
+    }
+
+    .pc3d__stage {
+        padding: 0 6px;
     }
 }

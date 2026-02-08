@@ -1,3 +1,5 @@
+/* frontend/src/styling/products/konarcard.css */
+
 :root {
     --kc-orange: #ff7b00;
     --kc-orange-hover: #e66f00;
@@ -134,53 +136,127 @@
     margin-top: 18px;
 }
 
-/* ✅ IMPORTANT: extra bottom spacing so the 3D shadow is never clipped/covered */
+/* ✅ Let the 3D area breathe (actual height is controlled by plasticcard3d.css) */
 .kc-premStage__canvasPad {
-    padding: 18px 0 26px;
+    padding: 24px 0 8px;
+    overflow: visible;
 }
 
-/* Controls */
-.kc-premControls {
-    margin-top: 14px;
-    border-radius: 18px;
-    border: 1px solid var(--kc-border-2);
-    background: rgba(255, 255, 255, 0.82);
-    box-shadow: 0 18px 44px rgba(12, 24, 48, 0.05);
-    padding: 14px;
+/* ---------- Variant pills under card ---------- */
+.kc-variantRow {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
+    justify-content: center;
+    margin: 6px 0 18px;
 }
 
-.kc-premControls__left {
-    display: grid;
-    gap: 2px;
+.kc-variantToggle {
+    display: inline-flex;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(12, 24, 48, 0.12);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 16px 36px rgba(12, 24, 48, 0.06);
 }
 
-.kc-premControls__label {
+.kc-variantBtn {
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(12, 24, 48, 0.12);
+    background: rgba(12, 24, 48, 0.03);
+    color: rgba(12, 24, 48, 0.9);
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-weight: 900;
-    font-size: 13px;
-    color: rgba(12, 24, 48, 0.88);
+    font-size: 12px;
+    cursor: pointer;
 }
 
-.kc-premControls__sub {
+.kc-variantBtn.is-active {
+    background: rgba(255, 123, 0, 0.12);
+    border-color: rgba(255, 123, 0, 0.25);
+    color: rgba(12, 24, 48, 0.95);
+}
+
+/* ---------- Two panel layout (logo left, buy right) ---------- */
+.kc-pc-panels {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 18px;
+    align-items: start;
+    margin-top: 12px;
+}
+
+.kc-pc-card {
+    border-radius: 18px;
+    border: 1px solid var(--kc-border-2);
+    background: #fff;
+    box-shadow: 0 18px 44px rgba(12, 24, 48, 0.05);
+}
+
+/* Left logo card (MAKE IT SMALLER) */
+.kc-pc-logoCard {
+    padding: 14px;
+}
+
+.kc-pc-logoHead {
+    display: grid;
+    gap: 2px;
+    margin-bottom: 10px;
+}
+
+.kc-pc-logoTitle {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 950;
+    font-size: 13px;
+    color: rgba(12, 24, 48, 0.92);
+}
+
+.kc-pc-logoSub {
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-weight: 700;
     font-size: 12px;
-    color: rgba(12, 24, 48, 0.6);
+    color: rgba(12, 24, 48, 0.62);
 }
 
-.kc-premControls__right {
+/* ✅ KEY CHANGE: not square anymore, much shorter */
+.kc-pc-logoPreview {
+    width: 100%;
+    height: 150px;
+    /* ✅ smaller */
+    border-radius: 16px;
+    border: 1px dashed rgba(12, 24, 48, 0.18);
+    background: rgba(12, 24, 48, 0.03);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+}
+
+.kc-pc-logoPreview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* fill */
+    display: block;
+}
+
+/* plus placeholder */
+.kc-pc-plus {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 40px;
+    line-height: 1;
+    color: rgba(12, 24, 48, 0.35);
+}
+
+.kc-pc-logoActions {
     display: flex;
     gap: 10px;
-    align-items: center;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    margin-top: 10px;
 }
 
+/* Buttons */
 .kc-premBtn {
     height: 42px;
     padding: 0 14px;
@@ -215,56 +291,38 @@
     cursor: not-allowed;
 }
 
-.kc-premSlider {
-    height: 42px;
-    display: inline-flex;
+/* Slider row (compact) */
+.kc-pc-sliderRow {
+    margin-top: 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(12, 24, 48, 0.10);
+    background: rgba(255, 255, 255, 0.8);
+    padding: 10px 12px;
+    display: flex;
     align-items: center;
     gap: 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(12, 24, 48, 0.12);
-    background: rgba(255, 255, 255, 0.78);
-    padding: 0 12px;
 }
 
-.kc-premSlider__k {
+.kc-pc-sliderRow span {
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-weight: 900;
     font-size: 12px;
     color: rgba(12, 24, 48, 0.72);
 }
 
-.kc-premSlider input[type="range"] {
-    width: 220px;
+.kc-pc-sliderRow input[type="range"] {
+    width: 100%;
     accent-color: var(--kc-orange);
 }
 
-.kc-premSlider__v {
+.kc-pc-sliderVal {
     width: 44px;
     text-align: right;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 900;
-    font-size: 12px;
-    color: rgba(12, 24, 48, 0.74);
 }
 
-/* Buy row */
-.kc-premBuy {
-    margin-top: 14px;
-    border-radius: 18px;
-    border: 1px solid var(--kc-border-2);
-    background: #ffffff;
-    box-shadow: 0 18px 44px rgba(12, 24, 48, 0.05);
+/* Right buy card */
+.kc-pc-buyCard {
     padding: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-
-.kc-premPrice {
-    display: grid;
-    gap: 4px;
 }
 
 .kc-premPrice__value {
@@ -280,17 +338,15 @@
     font-size: 12px;
     font-weight: 800;
     color: rgba(12, 24, 48, 0.6);
+    margin-top: 2px;
 }
 
-.kc-premBuy__right {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+.kc-pc-buyGrid {
+    margin-top: 14px;
+    display: grid;
+    gap: 12px;
 }
 
-/* Qty + CTAs */
 .kc-konarcard__qty {
     display: inline-flex;
     align-items: center;
@@ -299,6 +355,7 @@
     overflow: hidden;
     height: 52px;
     background: #fff;
+    width: max-content;
 }
 
 .kc-konarcard__qtyBtn {
@@ -329,6 +386,7 @@
     color: rgba(12, 24, 48, 0.85);
 }
 
+/* CTA */
 .kc-konarcard__cta {
     height: 52px;
     border-radius: 999px;
@@ -343,6 +401,7 @@
     letter-spacing: -0.01em;
     transition: transform 0.1s ease, filter 0.15s ease, box-shadow 0.15s ease;
     white-space: nowrap;
+    width: max-content;
 }
 
 .kc-konarcard__cta:active {
@@ -360,10 +419,10 @@
     box-shadow: 0 20px 44px rgba(255, 123, 0, 0.26);
 }
 
-.kc-konarcard__cta--ghost {
-    background: rgba(255, 255, 255, 0.9);
-    color: rgba(12, 24, 48, 0.9);
-    border: 1px solid rgba(12, 24, 48, 0.14);
+/* What you get */
+.kc-konarcard__section {
+    margin-top: 0;
+    padding: 80px 0;
 }
 
 .kc-konarcard__sectionHead {
@@ -437,15 +496,30 @@
     .kc-konarcard__featureGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .kc-pc-panels {
+        grid-template-columns: 380px 1fr;
+    }
+}
+
+@media (max-width: 860px) {
+    .kc-konarcard__section {
+        padding: 64px 0;
+    }
+
+    .kc-pc-panels {
+        grid-template-columns: 1fr;
+    }
+
+    /* on stacked layout we can make preview a bit taller */
+    .kc-pc-logoPreview {
+        height: 200px;
+    }
 }
 
 @media (max-width: 560px) {
     .kc-premHero__title {
         font-size: 34px;
-    }
-
-    .kc-premSlider input[type="range"] {
-        width: 160px;
     }
 
     .kc-konarcard__h2 {
@@ -456,57 +530,191 @@
         grid-template-columns: 1fr;
     }
 
-    .kc-konarcard__qty {
-        justify-content: center;
-        width: 100%;
-    }
-}
-
-/* =========================
-   Stage spacing (fix card too close + shadow getting clipped)
-   ========================= */
-.kc-premStage {
-    margin-top: 18px;
-}
-
-/* More breathing room above/below the 3D card */
-.kc-premStage__canvasPad {
-    /* was too tight -> make space so shadow + bottom edge never clip */
-    padding: 34px 0 56px;
-    overflow: visible;
-}
-
-/* On smaller screens give even more bottom room */
-@media (max-width: 860px) {
-    .kc-premStage__canvasPad {
-        padding: 28px 0 64px;
-    }
-}
-
-@media (max-width: 560px) {
-    .kc-premStage__canvasPad {
-        padding: 22px 0 74px;
-    }
-}
-
-/* =========================
-   What you get spacing (80px top/bottom, responsive)
-   ========================= */
-.kc-konarcard__section {
-    /* was margin-top: 34px; -> we want consistent section spacing via padding */
-    margin-top: 0;
-    padding: 80px 0;
-}
-
-/* Responsive section padding */
-@media (max-width: 860px) {
-    .kc-konarcard__section {
-        padding: 64px 0;
-    }
-}
-
-@media (max-width: 560px) {
     .kc-konarcard__section {
         padding: 48px 0;
+    }
+
+    .kc-pc-logoPreview {
+        height: 160px;
+    }
+}
+
+/* =========================
+   Buy row (qty + select same row)
+   ========================= */
+.kc-buyRow {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-top: 14px;
+}
+
+.kc-buyRow__select {
+    display: grid;
+    gap: 6px;
+}
+
+/* smaller quantity control */
+.kc-qtySm {
+    display: inline-flex;
+    align-items: center;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(12, 24, 48, 0.12);
+    background: #fff;
+    overflow: hidden;
+}
+
+.kc-qtySm__btn {
+    width: 38px;
+    height: 40px;
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+    font-weight: 900;
+    font-size: 18px;
+    color: rgba(12, 24, 48, 0.86);
+}
+
+.kc-qtySm__btn:hover {
+    background: rgba(12, 24, 48, 0.05);
+}
+
+.kc-qtySm__val {
+    width: 36px;
+    text-align: center;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    color: rgba(12, 24, 48, 0.9);
+}
+
+/* profile select */
+.kc-profileSelect {
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid rgba(12, 24, 48, 0.12);
+    background: #fff;
+    padding: 0 12px;
+    color: rgba(12, 24, 48, 0.92);
+    outline: none;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.kc-buyHint {
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.62);
+}
+
+/* =========================
+   Main buy button (no black border)
+   ========================= */
+.kc-buyMainBtn {
+    margin-top: 14px;
+    height: 52px;
+    border-radius: 999px;
+    padding: 0 18px;
+    border: none;
+    outline: none;
+    background: var(--kc-orange);
+    color: #fff;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    box-shadow: 0 16px 34px rgba(255, 123, 0, 0.22);
+    transition: transform 0.1s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    width: max-content;
+}
+
+.kc-buyMainBtn:hover {
+    filter: brightness(0.98);
+    box-shadow: 0 20px 44px rgba(255, 123, 0, 0.26);
+}
+
+.kc-buyMainBtn:active {
+    transform: translateY(1px);
+}
+
+.kc-buyMainBtn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* =========================
+   Specs / product details card
+   ========================= */
+.kc-specCard {
+    margin-top: 18px;
+    padding: 16px;
+}
+
+.kc-specHead {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.kc-specTitle {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 950;
+    font-size: 14px;
+    color: rgba(12, 24, 48, 0.95);
+}
+
+.kc-specSub {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.62);
+}
+
+.kc-specGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.kc-specItem {
+    border: 1px solid rgba(12, 24, 48, 0.10);
+    background: rgba(12, 24, 48, 0.02);
+    border-radius: 14px;
+    padding: 12px;
+}
+
+.kc-specK {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.9);
+    margin-bottom: 6px;
+}
+
+.kc-specV {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: rgba(12, 24, 48, 0.68);
+    line-height: 1.5;
+}
+
+/* Responsive for buy/spec rows */
+@media (max-width: 860px) {
+    .kc-buyRow {
+        grid-template-columns: 1fr;
+    }
+
+    .kc-buyMainBtn {
+        width: 100%;
+    }
+
+    .kc-specGrid {
+        grid-template-columns: 1fr;
     }
 }

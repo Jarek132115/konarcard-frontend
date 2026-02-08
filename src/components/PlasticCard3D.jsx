@@ -1,15 +1,13 @@
-// frontend/src/components/PlasticCard3D.jsx
 import React, { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, Environment, useTexture } from "@react-three/drei";
 
 import "../styling/products/plasticcard3d.css";
 
 /**
  * ✅ CRITICAL SAFETY:
- * useTexture MUST NEVER receive undefined / "" / null,
- * otherwise it throws "Could not load undefined" and your page crash-loops.
+ * useTexture MUST NEVER receive undefined / "" / null
  */
 const TRANSPARENT_1PX =
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO9qWZkAAAAASUVORK5CYII=";
@@ -19,41 +17,75 @@ const safeTexSrc = (src) => {
     return s ? s : TRANSPARENT_1PX;
 };
 
-export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44 }) {
+export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44, variant = "white" }) {
     const safeLogo = safeTexSrc(logoSrc);
     const safeQr = safeTexSrc(qrSrc);
 
     return (
-        <div className="pc3d">
-            <Canvas
-                dpr={[1, 2]}
-                camera={{ position: [0, 0.16, 1.22], fov: 36 }}
-                gl={{
-                    antialias: true,
-                    alpha: true,
-                    premultipliedAlpha: false,
-                    powerPreference: "high-performance",
-                }}
-                onCreated={({ gl }) => {
-                    gl.setClearColor(0x000000, 0);
-                    gl.outputColorSpace = THREE.SRGBColorSpace;
-                    gl.domElement.style.touchAction = "none";
-                }}
-            >
-                <ambientLight intensity={0.78} />
-                <directionalLight position={[2.3, 3.3, 2.3]} intensity={1.12} castShadow />
-                <directionalLight position={[-2, 1.2, -2]} intensity={0.6} />
+        <div className="pc3d" aria-label="3D KonarCard preview">
+            <div className="pc3d__stage">
+                <Canvas
+                    dpr={[1, 2]}
+                    /* ✅ Pull camera back a touch so rotations never clip */
+                    camera={{ position: [0, 0.18, 1.55], fov: 34 }}
+                    gl={{
+                        antialias: true,
+                        alpha: true,
+                        premultipliedAlpha: false,
+                        powerPreference: "high-performance",
+                    }}
+                    onCreated={({ gl }) => {
+                        gl.setClearColor(0x000000, 0);
+                        gl.outputColorSpace = THREE.SRGBColorSpace;
 
-                <Environment preset="studio" />
+                        // ✅ Only the canvas blocks scroll (drag rotate works). White space scrolls.
+                        gl.domElement.style.touchAction = "none";
+                    }}
+                >
+                    <ambientLight intensity={0.78} />
+                    <directionalLight position={[2.3, 3.3, 2.3]} intensity={1.12} castShadow />
+                    <directionalLight position={[-2, 1.2, -2]} intensity={0.6} />
 
-                <CardRig>
-                    <CardMesh logoSrc={safeLogo} qrSrc={safeQr} logoSize={logoSize} />
-                </CardRig>
+                    <Environment preset="studio" />
 
-                <ContactShadows position={[0, -0.42, 0]} opacity={0.32} blur={1.9} scale={2.35} far={2.4} />
-            </Canvas>
+                    <ResponsiveRig>
+                        <CardRig>
+                            {/* ✅ Nudge card up slightly so bottom edge never clips on spin */}
+                            <group position={[0, 0.095, 0]}>
+                                <CardMesh logoSrc={safeLogo} qrSrc={safeQr} logoSize={logoSize} variant={variant} />
+                            </group>
+                        </CardRig>
+                    </ResponsiveRig>
+
+                    {/* ✅ Shadow lower so it doesn't visually “eat” space */}
+                    <ContactShadows
+                        position={[0, -0.58, 0]}
+                        opacity={0.30}
+                        blur={2.1}
+                        scale={2.7}
+                        far={3.0}
+                    />
+                </Canvas>
+            </div>
         </div>
     );
+}
+
+/**
+ * ✅ Scale down slightly on small screens
+ * so the card always fits comfortably.
+ */
+function ResponsiveRig({ children }) {
+    const g = useRef();
+    const { size } = useThree();
+
+    useEffect(() => {
+        if (!g.current) return;
+        const isSmall = size.width < 520;
+        g.current.scale.setScalar(isSmall ? 0.90 : 1.0);
+    }, [size.width]);
+
+    return <group ref={g}>{children}</group>;
 }
 
 /**
@@ -113,8 +145,8 @@ function CardRig({ children }) {
         const dx = e.clientX - drag.current.startX;
         const dy = e.clientY - drag.current.startY;
 
-        const gainX = 0.0062;
-        const gainY = 0.0044;
+        const gainX = 0.0064;
+        const gainY = 0.0046;
 
         drag.current.ry = drag.current.baseRY + dx * gainX;
         drag.current.rx = clamp(drag.current.baseRX - dy * gainY, -0.55, 0.55);
@@ -140,7 +172,7 @@ function CardRig({ children }) {
     );
 }
 
-function CardMesh({ logoSrc, qrSrc, logoSize }) {
+function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
     const w = 0.92;
     const h = w * (54 / 85.6);
     const t = 0.010;
@@ -160,7 +192,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
         return geo;
     }, [w, h, t]);
 
-    // ✅ Now ALWAYS valid strings (never undefined)
     const [logoTex, qrTex] = useTexture([logoSrc, qrSrc]);
 
     useEffect(() => {
@@ -205,25 +236,23 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
         () => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH),
         [logoPlaneDims]
     );
-
     const qrPlaneGeo = useMemo(
         () => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH),
         [qrPlaneDims]
     );
 
-    const edgeMat = useMemo(
-        () =>
-            new THREE.MeshPhysicalMaterial({
-                color: "#ffffff",
-                roughness: 0.42,
-                metalness: 0.0,
-                clearcoat: 0.55,
-                clearcoatRoughness: 0.28,
-                sheen: 0.08,
-                sheenRoughness: 0.75,
-            }),
-        []
-    );
+    const edgeMat = useMemo(() => {
+        const isBlack = variant === "black";
+        return new THREE.MeshPhysicalMaterial({
+            color: isBlack ? "#0b1220" : "#ffffff",
+            roughness: isBlack ? 0.48 : 0.42,
+            metalness: isBlack ? 0.06 : 0.0,
+            clearcoat: isBlack ? 0.62 : 0.55,
+            clearcoatRoughness: isBlack ? 0.26 : 0.28,
+            sheen: isBlack ? 0.10 : 0.08,
+            sheenRoughness: 0.75,
+        });
+    }, [variant]);
 
     const logoMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
@@ -262,17 +291,8 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
     return (
         <group>
             <mesh geometry={bodyGeo} material={edgeMat} castShadow receiveShadow />
-
             <mesh geometry={logoPlaneGeo} material={logoMat} position={[0, 0, zFront]} castShadow receiveShadow />
-
-            <mesh
-                geometry={qrPlaneGeo}
-                material={qrMat}
-                position={[0, 0, zBack]}
-                rotation={[0, Math.PI, 0]}
-                castShadow
-                receiveShadow
-            />
+            <mesh geometry={qrPlaneGeo} material={qrMat} position={[0, 0, zBack]} rotation={[0, Math.PI, 0]} castShadow receiveShadow />
         </group>
     );
 }
