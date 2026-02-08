@@ -1,5 +1,3 @@
-/* Footer.css */
-
 /* =========================
    Footer base
    ========================= */
@@ -43,8 +41,6 @@
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
-
-    /* ✅ let vertical drags scroll the page */
     touch-action: pan-y;
 }
 
@@ -61,18 +57,12 @@
     cursor: grabbing;
 }
 
-/* ✅ Constrain each item so text never runs too long on mobile */
 .kc-footer__item {
     display: flex;
     gap: 14px;
     align-items: flex-start;
-
-    /* instead of huge widths, keep readable measure */
-    width: 320px;
-    /* consistent “card width” */
-    max-width: 320px;
-    flex: 0 0 320px;
-
+    min-width: 320px;
+    max-width: 360px;
     color: #fff;
 }
 
@@ -85,16 +75,12 @@
 
 .kc-footer__itemText {
     text-align: left;
-    min-width: 0;
 }
 
 .kc-footer__itemTitle {
     font-weight: 800;
     font-size: 14px;
     margin: 0 0 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .kc-footer__itemDesc {
@@ -102,9 +88,6 @@
     font-size: 12px;
     line-height: 1.35;
     color: rgba(255, 255, 255, 0.76);
-
-    /* ✅ keep desc readable instead of super-long single line */
-    max-width: 240px;
 }
 
 /* Edge fades */
@@ -141,26 +124,14 @@
     text-decoration: none;
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
     border: 2px solid rgba(255, 123, 0, 0.55);
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
-}
-
-.kc-footer__heroCta:hover {
-    filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26);
-}
-
-.kc-footer__heroCta:active {
-    transform: translateY(1px);
 }
 
 /* =========================
-   Main footer (WHITE SECTION)
-   ✅ more padding top & bottom on desktop
+   Main footer (white)
    ========================= */
 .kc-footer__main {
     background: #fff;
-    padding: 84px 20px 0;
-    /* ✅ increased from 62px */
+    padding: 72px 20px 0;
 }
 
 .kc-footer__mainInner {
@@ -169,17 +140,10 @@
     display: grid;
     grid-template-columns: 1.2fr 2fr;
     gap: 80px;
-
-    /* ✅ give more breathing room before bottom divider */
-    padding-bottom: 56px;
-    /* ✅ increased from 40px */
+    padding-bottom: 48px;
 }
 
 /* Left */
-.kc-footer__left {
-    justify-self: start;
-}
-
 .kc-footer__brand {
     display: inline-flex;
     align-items: center;
@@ -190,19 +154,17 @@
 .kc-footer__brandLogo {
     width: 42px;
     height: 42px;
-    object-fit: contain;
 }
 
 .kc-footer__brandName {
     font-weight: 800;
     font-size: 22px;
-    letter-spacing: -0.02em;
     color: #0c1830;
 }
 
 .kc-footer__desc {
     margin: 0 0 22px;
-    max-width: 330px;
+    max-width: 340px;
     color: #3a4050;
     line-height: 1.55;
     font-size: 15px;
@@ -210,26 +172,13 @@
 
 .kc-footer__socials {
     display: flex;
-    gap: 14px;
-    align-items: center;
-}
-
-.kc-footer__socials a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.08s ease;
-}
-
-.kc-footer__socials a:active {
-    transform: translateY(1px);
+    gap: 16px;
 }
 
 .kc-footer__socials img {
     width: 40px;
     height: 40px;
 }
-
 
 /* Columns */
 .kc-footer__cols {
@@ -251,19 +200,10 @@
     color: #3a4050;
     margin-bottom: 10px;
     font-size: 15px;
-    transition: color 0.15s ease, transform 0.08s ease;
-}
-
-.kc-footer__col a:hover {
-    color: #0c1830;
-}
-
-.kc-footer__col a:active {
-    transform: translateY(1px);
 }
 
 /* =========================
-   Bottom bar
+   Bottom bar (adaptive alignment)
    ========================= */
 .kc-footer__bottomBar {
     border-top: 1px solid rgba(12, 24, 48, 0.12);
@@ -273,6 +213,7 @@
 .kc-footer__bottomInner {
     max-width: 1140px;
     margin: 0 auto;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -280,110 +221,80 @@
     flex-wrap: wrap;
 }
 
+/* Copyright */
 .kc-footer__copyright {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     font-size: 13px;
     color: #6b778e;
+    text-align: left;
+    white-space: nowrap;
 }
 
-.kc-footer__copyright img {
-    width: 14px;
-    height: 14px;
-    opacity: 0.9;
-}
-
+/* Policies */
 .kc-footer__policies {
-    display: inline-flex;
-    align-items: center;
-    gap: 26px;
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
 }
 
 .kc-footer__policies a {
     font-size: 13px;
     color: #6b778e;
     text-decoration: none;
-    transition: color 0.15s ease, transform 0.08s ease;
-}
-
-.kc-footer__policies a:hover {
-    color: #0c1830;
-}
-
-.kc-footer__policies a:active {
-    transform: translateY(1px);
+    white-space: nowrap;
 }
 
 /* =========================
-   Responsive
+   RESPONSIVE BEHAVIOUR
    ========================= */
 @media (max-width: 1000px) {
-
-    /* ✅ tighter white padding on tablet while still spacious */
-    .kc-footer__main {
-        padding: 68px 20px 0;
-    }
-
-    /* ✅ stack + center the white section content */
     .kc-footer__mainInner {
         grid-template-columns: 1fr;
         gap: 44px;
-        padding-bottom: 48px;
-        text-align: center;
-        justify-items: center;
     }
 
-    .kc-footer__left {
-        justify-self: center;
-        text-align: center;
-    }
-
-    .kc-footer__desc {
-        max-width: 460px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .kc-footer__socials {
-        justify-content: center;
-    }
-
-    /* ✅ one column per row (Product, Support, Company stacked) */
     .kc-footer__cols {
         grid-template-columns: 1fr;
-        gap: 26px;
-        width: 100%;
-        max-width: 520px;
-        justify-items: center;
+        text-align: center;
     }
 
-    .kc-footer__col {
-        width: 100%;
-        text-align: center;
+    .kc-footer__desc,
+    .kc-footer__socials {
+        margin-left: auto;
+        margin-right: auto;
+        justify-content: center;
     }
 }
 
-@media (max-width: 640px) {
-
-    /* ✅ carousel items slightly narrower on small phones */
-    .kc-footer__item {
-        width: 290px;
-        max-width: 290px;
-        flex: 0 0 290px;
+/* 🔑 When bottom bar wraps → CENTER EVERYTHING */
+@media (max-width: 720px) {
+    .kc-footer__bottomInner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
 
-    .kc-footer__itemDesc {
-        max-width: 210px;
+    .kc-footer__copyright {
+        justify-content: center;
+        text-align: center;
     }
 
     .kc-footer__policies {
-        gap: 16px;
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .kc-footer__left {
+        text-align: center;
     }
 
-    .kc-footer__bottomInner {
+    .kc-footer__brand {
         justify-content: center;
-        text-align: center;
+        /* ✅ centers logo + text */
     }
 }

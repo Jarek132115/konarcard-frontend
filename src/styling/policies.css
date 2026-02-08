@@ -31,29 +31,39 @@
     min-width: 0;
 }
 
-/* ✅ The actual sticky container */
+/* ✅ Sticky container */
 .kc-pol__side {
     position: sticky;
     top: calc(var(--kc-page-top-space) + 16px);
 }
 
-/* Side cards */
+/* =========================
+   SIDE CARDS (FIXED LOOK)
+   - Remove heavy shadow
+   - Use crisp border + subtle shadow
+   ========================= */
 .kc-pol__sideCard {
     background: #ffffff;
-    border: 1px solid var(--kc-border);
-    border-radius: 14px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
-    padding: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 16px;
+
+    /* ✅ soft, professional shadow (no big blur) */
+    box-shadow:
+        0 1px 0 rgba(15, 23, 42, 0.04),
+        0 10px 24px rgba(15, 23, 42, 0.04);
+
+    padding: 14px;
 }
 
 .kc-pol__sideCard+.kc-pol__sideCard {
-    margin-top: 16px;
+    margin-top: 14px;
 }
 
 .kc-pol__sideTitle {
     margin: 0 0 10px;
 }
 
+/* List */
 .kc-pol__sideList {
     list-style: none;
     margin: 0;
@@ -61,10 +71,12 @@
     display: grid;
 }
 
+/* Lighter dividers */
 .kc-pol__sideList li+li {
-    border-top: 1px solid var(--kc-border);
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
 }
 
+/* Buttons */
 .kc-pol__sideBtn {
     width: 100%;
     text-align: left;
@@ -75,7 +87,7 @@
     gap: 12px;
 
     padding: 12px 10px;
-    border-radius: 10px;
+    border-radius: 12px;
 
     border: none;
     background: transparent;
@@ -98,21 +110,31 @@
     box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
 }
 
+/* ✅ Cleaner active state (less “glow”, more premium) */
 .kc-pol__sideBtn.is-active {
-    background: rgba(249, 115, 22, 0.10);
+    background: rgba(249, 115, 22, 0.08);
+    border: 1px solid rgba(249, 115, 22, 0.22);
+}
+
+.kc-pol__sideBtn.is-active .kc-pol__sideArrow {
+    color: var(--kc-accent-primary);
 }
 
 .kc-pol__sideArrow {
-    color: var(--kc-text-secondary);
+    color: rgba(71, 85, 105, 0.9);
     font-weight: 700;
 }
 
+/* Contact card text */
 .kc-pol__contactText {
     margin: 0 0 8px;
+    color: var(--kc-text-secondary);
+    line-height: 1.6;
 }
 
 .kc-pol__contactEmail {
     margin: 0;
+    color: var(--kc-text-primary);
 }
 
 /* RIGHT */
