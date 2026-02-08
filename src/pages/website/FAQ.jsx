@@ -1,6 +1,5 @@
 // frontend/src/pages/FAQ/index.jsx
 import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import "../../styling/fonts.css";
@@ -38,7 +37,7 @@ export default function FAQPage() {
       {
         tab: "getting-started",
         q: "Who is KonarCard best for?",
-        a: "It’s ideal for electricians, plumbers, builders, landscapers, and any service business that wants more calls, more quotes, and easier referrals.",
+        a: "It’s ideal for electricians, plumbers, builders, landscapers, and any service businesses that want more calls, more quotes, and easier referrals.",
       },
 
       {
@@ -85,7 +84,7 @@ export default function FAQPage() {
       {
         tab: "pricing",
         q: "Do you offer refunds or replacements for cards?",
-        a: "If there’s a delivery or print issue, we’ll make it right. For order help, message us via live chat or the Contact Us page.",
+        a: "If there’s a delivery or print issue, we’ll make it right. For order help, message us via live chat.",
       },
 
       {
@@ -112,7 +111,7 @@ export default function FAQPage() {
       {
         tab: "support",
         q: "How can I contact support?",
-        a: "Use live chat or head to the Contact Us page — we’ll reply as fast as possible.",
+        a: "Use live chat — it’s the fastest way to get help.",
       },
     ],
     []
@@ -126,11 +125,21 @@ export default function FAQPage() {
     [faqs, activeTab]
   );
 
+  const openLiveChat = () => {
+    // Try to trigger the existing chat launcher button
+    const chatBtn =
+      document.querySelector(".chat-with-us") ||
+      document.querySelector("[data-chat-launcher]");
+
+    if (chatBtn) {
+      chatBtn.click();
+    }
+  };
+
   return (
     <>
       <Navbar />
 
-      {/* kc-page gives the consistent navbar->heading gap across all pages */}
       <main className="kc-faq kc-page">
         {/* Hero */}
         <section className="kc-faq__hero">
@@ -143,7 +152,6 @@ export default function FAQPage() {
             <div className="kc-faq__tabs" role="tablist" aria-label="FAQ categories">
               {tabs.map((t) => {
                 const isActive = t.key === activeTab;
-
                 return (
                   <button
                     key={t.key}
@@ -197,9 +205,13 @@ export default function FAQPage() {
             If you can’t find what you’re looking for, our team is here to help.
           </p>
 
-          <Link to="/contactus" className="kc-faq__helpCta button-text bg-orange text-white">
-            Start A Live Chat
-          </Link>
+          <button
+            type="button"
+            onClick={openLiveChat}
+            className="kc-faq__helpCta button-text bg-orange text-white"
+          >
+            Start Live Chat
+          </button>
         </section>
       </main>
 
