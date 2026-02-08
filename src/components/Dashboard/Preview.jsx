@@ -208,6 +208,9 @@ export default function Preview({
                         ? Template5
                         : Template1;
 
+    // ✅ IMPORTANT: pass BOTH props for compatibility (Template1 uses `data`, others use `vm`)
+    const templateProps = { vm, data: vm, isMobile };
+
     if (isMobile) {
         return (
             <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
@@ -237,7 +240,7 @@ export default function Preview({
                     </div>
 
                     <div className={`mp-preview-wrap ${previewOpen ? "open" : "closed"}`} ref={mpWrapRef}>
-                        <TemplateComponent vm={vm} isMobile />
+                        <TemplateComponent {...templateProps} />
                     </div>
                 </div>
             </div>
@@ -247,7 +250,7 @@ export default function Preview({
     return (
         <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
             <div className={`myprofile-preview template-${templateId}`}>
-                <TemplateComponent vm={vm} />
+                <TemplateComponent vm={vm} data={vm} />
             </div>
         </div>
     );
