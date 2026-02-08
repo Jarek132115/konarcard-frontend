@@ -1,4 +1,4 @@
-// src/pages/website/products/PlasticCard3D.jsx
+// frontend/src/components/PlasticCard3D.jsx
 import React, { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -6,7 +6,23 @@ import { ContactShadows, Environment, useTexture } from "@react-three/drei";
 
 import "../styling/products/plasticcard3d.css";
 
+/**
+ * ✅ CRITICAL SAFETY:
+ * useTexture MUST NEVER receive undefined / "" / null,
+ * otherwise it throws "Could not load undefined" and your page crash-loops.
+ */
+const TRANSPARENT_1PX =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO9qWZkAAAAASUVORK5CYII=";
+
+const safeTexSrc = (src) => {
+    const s = (src ?? "").toString().trim();
+    return s ? s : TRANSPARENT_1PX;
+};
+
 export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44 }) {
+    const safeLogo = safeTexSrc(logoSrc);
+    const safeQr = safeTexSrc(qrSrc);
+
     return (
         <div className="pc3d">
             <Canvas
@@ -31,7 +47,7 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44 }) {
                 <Environment preset="studio" />
 
                 <CardRig>
-                    <CardMesh logoSrc={logoSrc} qrSrc={qrSrc} logoSize={logoSize} />
+                    <CardMesh logoSrc={safeLogo} qrSrc={safeQr} logoSize={logoSize} />
                 </CardRig>
 
                 <ContactShadows position={[0, -0.42, 0]} opacity={0.32} blur={1.9} scale={2.35} far={2.4} />
@@ -41,7 +57,7 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 44 }) {
 }
 
 /**
- * Drag rotate + slow idle spin (unchanged speed)
+ * Drag rotate + slow idle spin
  */
 function CardRig({ children }) {
     const group = useRef();
@@ -65,7 +81,7 @@ function CardRig({ children }) {
 
         if (drag.current.idle) {
             drag.current.t += dt;
-            drag.current.ry += 0.32 * dt; // ✅ slow spin
+            drag.current.ry += 0.32 * dt;
             const breathe = Math.sin(drag.current.t * 1.05) * 0.03;
             drag.current.rx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
         }
@@ -125,14 +141,10 @@ function CardRig({ children }) {
 }
 
 function CardMesh({ logoSrc, qrSrc, logoSize }) {
-    // Real card proportions
     const w = 0.92;
     const h = w * (54 / 85.6);
-
-    // ✅ Thin plastic feel
     const t = 0.010;
 
-    // Body geometry
     const bodyGeo = useMemo(() => {
         const shape = roundedRectShape(w, h, 0.06);
         const geo = new THREE.ExtrudeGeometry(shape, {
@@ -148,9 +160,9 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
         return geo;
     }, [w, h, t]);
 
+    // ✅ Now ALWAYS valid strings (never undefined)
     const [logoTex, qrTex] = useTexture([logoSrc, qrSrc]);
 
-    // Texture setup (stable, not messing with repeat/offset anymore)
     useEffect(() => {
         const setup = (tex) => {
             if (!tex) return;
@@ -167,19 +179,15 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
         setup(qrTex);
     }, [logoTex, qrTex]);
 
-    // ✅ Instead of UV scaling (which kept breaking), we render the logo/QR on their own planes,
-    // sized by % of CARD HEIGHT and centered perfectly.
     const logoPlaneDims = useMemo(() => {
-        const desiredH = h * 0.55; // 55% of card height
-        const maxW = w * 0.78;     // keep it visually nice (won't ever stretch edge-to-edge)
+        const desiredH = h * 0.55;
+        const maxW = w * 0.78;
 
-        // slider 28..70 => scale multiplier around the 55% base
         const s = Math.max(28, Math.min(70, Number(logoSize || 44))) / 44;
-        const scaledH = desiredH * (s * 0.55); // tame the slider so it doesn't explode
+        const scaledH = desiredH * (s * 0.55);
 
         const img = logoTex?.image;
-        const aspect =
-            img && img.width && img.height ? img.width / img.height : 1;
+        const aspect = img && img.width && img.height ? img.width / img.height : 1;
 
         const planeH = Math.min(h * 0.70, Math.max(h * 0.18, scaledH));
         const planeW = Math.min(maxW, planeH * aspect);
@@ -188,9 +196,9 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
     }, [logoTex, w, h, logoSize]);
 
     const qrPlaneDims = useMemo(() => {
-        const desired = h * 0.45; // 45% of card height
+        const desired = h * 0.45;
         const plane = Math.min(h * 0.62, Math.max(h * 0.18, desired));
-        return { planeW: plane, planeH: plane }; // square
+        return { planeW: plane, planeH: plane };
     }, [h]);
 
     const logoPlaneGeo = useMemo(
@@ -203,7 +211,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
         [qrPlaneDims]
     );
 
-    // Materials
     const edgeMat = useMemo(
         () =>
             new THREE.MeshPhysicalMaterial({
@@ -218,7 +225,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
         []
     );
 
-    // Use BasicMaterial so logo/QR never go dark/black from lighting angles
     const logoMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
             map: logoTex || null,
@@ -226,7 +232,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
             opacity: 1,
             toneMapped: false,
         });
-        // Helps cut faint edge/fringing if the logo has alpha
         m.alphaTest = 0.02;
         m.side = THREE.DoubleSide;
         m.polygonOffset = true;
@@ -250,26 +255,16 @@ function CardMesh({ logoSrc, qrSrc, logoSize }) {
         return m;
     }, [qrTex]);
 
-    // Z offsets (avoid z-fighting)
     const halfT = t / 2;
     const zFront = halfT + 0.002;
     const zBack = -halfT - 0.002;
 
     return (
         <group>
-            {/* Body */}
             <mesh geometry={bodyGeo} material={edgeMat} castShadow receiveShadow />
 
-            {/* Front: logo plane centered */}
-            <mesh
-                geometry={logoPlaneGeo}
-                material={logoMat}
-                position={[0, 0, zFront]}
-                castShadow
-                receiveShadow
-            />
+            <mesh geometry={logoPlaneGeo} material={logoMat} position={[0, 0, zFront]} castShadow receiveShadow />
 
-            {/* Back: QR plane centered */}
             <mesh
                 geometry={qrPlaneGeo}
                 material={qrMat}

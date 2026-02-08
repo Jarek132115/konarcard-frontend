@@ -6,7 +6,23 @@ import { ContactShadows, Environment, useTexture } from "@react-three/drei";
 
 import "../styling/products/konartag3d.css";
 
+/**
+ * ✅ CRITICAL SAFETY:
+ * useTexture MUST NEVER receive undefined / "" / null
+ * otherwise it throws "Could not load undefined" and your page crash-loops.
+ */
+const TRANSPARENT_1PX =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO9qWZkAAAAASUVORK5CYII=";
+
+const safeTexSrc = (src) => {
+    const s = (src ?? "").toString().trim();
+    return s ? s : TRANSPARENT_1PX;
+};
+
 export default function KonarTag3D({ logoSrc, qrSrc, logoSize = 44, finish = "black" }) {
+    const safeLogo = safeTexSrc(logoSrc);
+    const safeQr = safeTexSrc(qrSrc);
+
     return (
         <div className="kt3d">
             <Canvas
@@ -31,7 +47,7 @@ export default function KonarTag3D({ logoSrc, qrSrc, logoSize = 44, finish = "bl
                 <Environment preset="studio" />
 
                 <TagRig>
-                    <TagMesh logoSrc={logoSrc} qrSrc={qrSrc} logoSize={logoSize} finish={finish} />
+                    <TagMesh logoSrc={safeLogo} qrSrc={safeQr} logoSize={logoSize} finish={finish} />
                 </TagRig>
 
                 <ContactShadows position={[0, -0.52, 0]} opacity={0.28} blur={2.2} scale={2.6} far={3} />
@@ -111,17 +127,19 @@ function TagRig({ children }) {
     };
 
     return (
-        <group ref={group} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
+        <group
+            ref={group}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
+        >
             {children}
         </group>
     );
 }
 
 function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
-    // ✅ more unique than a rectangle:
-    // - rounded capsule-ish top
-    // - side “waist” curves
-    // - keyring hole cutout
     const w = 0.84;
     const h = w * 0.86;
     const t = 0.014;
@@ -144,6 +162,7 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
         return geo;
     }, [w, h, t, holeR, holeY]);
 
+    // ✅ safeLogo/safeQr already guaranteed valid strings
     const [logoTex, qrTex] = useTexture([logoSrc, qrSrc]);
 
     useEffect(() => {
@@ -162,7 +181,6 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
         setup(qrTex);
     }, [logoTex, qrTex]);
 
-    // planes sized by % of tag height, and pushed slightly down because of the hole
     const artY = -h * 0.08;
 
     const logoPlaneDims = useMemo(() => {
@@ -184,24 +202,30 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
         return { planeW: plane, planeH: plane };
     }, [h]);
 
-    const logoPlaneGeo = useMemo(() => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH), [logoPlaneDims]);
-    const qrPlaneGeo = useMemo(() => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH), [qrPlaneDims]);
+    const logoPlaneGeo = useMemo(
+        () => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH),
+        [logoPlaneDims]
+    );
+
+    const qrPlaneGeo = useMemo(
+        () => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH),
+        [qrPlaneDims]
+    );
 
     const metalMat = useMemo(() => {
-        const isGold = finish === "gold";
-
-        // a nicer “metal” feel
+        const isGold = String(finish).toLowerCase() === "gold";
         const base = isGold ? "#b38a2f" : "#101318";
         const rough = isGold ? 0.22 : 0.30;
 
-        return new THREE.MeshPhysicalMaterial({
+        const m = new THREE.MeshPhysicalMaterial({
             color: base,
             metalness: 1.0,
             roughness: rough,
             clearcoat: 0.6,
             clearcoatRoughness: 0.22,
-            envMapIntensity: isGold ? 1.35 : 1.15,
         });
+        m.envMapIntensity = isGold ? 1.35 : 1.15;
+        return m;
     }, [finish]);
 
     const logoMat = useMemo(() => {
@@ -242,55 +266,47 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
         <group>
             <mesh geometry={bodyGeo} material={metalMat} castShadow receiveShadow />
             <mesh geometry={logoPlaneGeo} material={logoMat} position={[0, artY, zFront]} castShadow receiveShadow />
-            <mesh geometry={qrPlaneGeo} material={qrMat} position={[0, artY, zBack]} rotation={[0, Math.PI, 0]} castShadow receiveShadow />
+            <mesh
+                geometry={qrPlaneGeo}
+                material={qrMat}
+                position={[0, artY, zBack]}
+                rotation={[0, Math.PI, 0]}
+                castShadow
+                receiveShadow
+            />
         </group>
     );
 }
 
-/**
- * More unique tag silhouette (not a plain rectangle):
- * - rounded top “cap”
- * - slightly pinched sides
- * - rounded bottom
- * - hole cut-out at top center
- */
 function tagShape(w, h, holeR, holeY) {
     const shape = new THREE.Shape();
     const x = -w / 2;
     const y = -h / 2;
 
-    const topR = w * 0.22;        // top cap radius
-    const botR = w * 0.16;        // bottom radius
-    const pinch = w * 0.06;       // side waist pinch
+    const topR = w * 0.22;
+    const botR = w * 0.16;
+    const pinch = w * 0.06;
 
-    // start bottom-left
     shape.moveTo(x + botR, y);
 
-    // bottom edge
     shape.lineTo(x + w - botR, y);
     shape.quadraticCurveTo(x + w, y, x + w, y + botR);
 
-    // right side up with pinch
     shape.lineTo(x + w, y + h * 0.44);
     shape.quadraticCurveTo(x + w - pinch, y + h * 0.55, x + w, y + h * 0.66);
 
-    // top-right into rounded cap
     shape.lineTo(x + w, y + h - topR);
     shape.quadraticCurveTo(x + w, y + h, x + w - topR, y + h);
 
-    // top edge
     shape.lineTo(x + topR, y + h);
     shape.quadraticCurveTo(x, y + h, x, y + h - topR);
 
-    // left side down with pinch
     shape.lineTo(x, y + h * 0.66);
     shape.quadraticCurveTo(x + pinch, y + h * 0.55, x, y + h * 0.44);
 
-    // bottom-left corner
     shape.lineTo(x, y + botR);
     shape.quadraticCurveTo(x, y, x + botR, y);
 
-    // hole (top center)
     const hole = new THREE.Path();
     hole.absellipse(0, holeY, holeR, holeR, 0, Math.PI * 2, false, 0);
     shape.holes.push(hole);

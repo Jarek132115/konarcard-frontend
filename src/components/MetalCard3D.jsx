@@ -1,3 +1,4 @@
+// frontend/src/components/MetalCard3D.jsx
 import React, { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -5,7 +6,23 @@ import { ContactShadows, Environment, useTexture } from "@react-three/drei";
 
 import "../styling/products/plasticcard3d.css";
 
+/**
+ * ✅ CRITICAL SAFETY:
+ * useTexture MUST NEVER receive undefined / "" / null,
+ * otherwise it throws "Could not load undefined" and your page crash-loops.
+ */
+const TRANSPARENT_1PX =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO9qWZkAAAAASUVORK5CYII=";
+
+const safeTexSrc = (src) => {
+    const s = (src ?? "").toString().trim();
+    return s ? s : TRANSPARENT_1PX;
+};
+
 export default function MetalCard3D({ logoSrc, qrSrc, logoSize = 44, finish = "black" }) {
+    const safeLogo = safeTexSrc(logoSrc);
+    const safeQr = safeTexSrc(qrSrc);
+
     return (
         <div className="pc3d">
             <Canvas
@@ -30,7 +47,7 @@ export default function MetalCard3D({ logoSrc, qrSrc, logoSize = 44, finish = "b
                 <Environment preset="studio" />
 
                 <CardRig>
-                    <CardMesh logoSrc={logoSrc} qrSrc={qrSrc} logoSize={logoSize} finish={finish} />
+                    <CardMesh logoSrc={safeLogo} qrSrc={safeQr} logoSize={logoSize} finish={finish} />
                 </CardRig>
 
                 <ContactShadows position={[0, -0.42, 0]} opacity={0.32} blur={1.9} scale={2.35} far={2.4} />
@@ -127,7 +144,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize, finish }) {
     const w = 0.92;
     const h = w * (54 / 85.6);
 
-    // ✅ slightly thicker than plastic, still realistic for metal
     const t = 0.013;
 
     const bodyGeo = useMemo(() => {
@@ -163,7 +179,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize, finish }) {
         setup(qrTex);
     }, [logoTex, qrTex]);
 
-    // planes sized the same as plastic (55% logo height / 45% QR height)
     const logoPlaneDims = useMemo(() => {
         const desiredH = h * 0.55;
         const maxW = w * 0.78;
@@ -196,7 +211,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize, finish }) {
         [qrPlaneDims]
     );
 
-    // ✅ metal finish presets
     const metalPreset = useMemo(() => {
         if (String(finish).toLowerCase() === "gold") {
             return {
@@ -209,7 +223,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize, finish }) {
                 env: 1.35,
             };
         }
-        // black metal default
         return {
             base: "#121417",
             edge: "#1a1d22",
@@ -221,7 +234,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize, finish }) {
         };
     }, [finish]);
 
-    // Body material (real metal look)
     const bodyMat = useMemo(() => {
         const m = new THREE.MeshPhysicalMaterial({
             color: metalPreset.base,
@@ -234,7 +246,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize, finish }) {
         return m;
     }, [metalPreset]);
 
-    // Edge material (slightly different tone for nicer bevel)
     const edgeMat = useMemo(() => {
         const m = new THREE.MeshPhysicalMaterial({
             color: metalPreset.edge,
@@ -247,7 +258,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize, finish }) {
         return m;
     }, [metalPreset]);
 
-    // Logo/QR always readable (not affected by lighting)
     const logoMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
             map: logoTex || null,
@@ -284,15 +294,11 @@ function CardMesh({ logoSrc, qrSrc, logoSize, finish }) {
 
     return (
         <group>
-            {/* Body split: main + edges for nicer bevel contrast */}
             <mesh geometry={bodyGeo} material={bodyMat} castShadow receiveShadow />
-            {/* subtle second pass edge tint (same geo, different mat, helps bevel pop) */}
             <mesh geometry={bodyGeo} material={edgeMat} castShadow receiveShadow />
 
-            {/* Front */}
             <mesh geometry={logoPlaneGeo} material={logoMat} position={[0, 0, zFront]} castShadow receiveShadow />
 
-            {/* Back */}
             <mesh
                 geometry={qrPlaneGeo}
                 material={qrMat}
