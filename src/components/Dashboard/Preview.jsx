@@ -19,15 +19,13 @@ const getTemplateId = (raw) => {
     return allowed.has(t) ? t : "template-1";
 };
 
+// ✅ Fixed order. Users cannot reorder.
+const SECTION_ORDER = ["main", "about", "work", "services", "reviews", "contact"];
+
 export default function Preview({
     state,
     isMobile,
     hasSavedData,
-
-    // We will ignore these customization props now (safe to receive them)
-    servicesDisplayMode,
-    reviewsDisplayMode,
-    aboutMeLayout,
 
     // ✅ Only thing user can control: show/hide sections
     showMainSection,
@@ -51,37 +49,39 @@ export default function Preview({
     const templateId = getTemplateId(s.template_id || s.templateId || "template-1");
 
     // ---------------------------
-    // Build ONE canonical data object
-    // (all templates read the same data)
+    // ✅ Build ONE canonical VM
+    // Templates decide fonts/colors/layout.
     // ---------------------------
-    const templateData = useMemo(() => {
-        const full_name = asString(s.full_name) || (shouldShowPlaceholders ? asString(ph.full_name) : "");
-        const job_title = asString(s.job_title) || (shouldShowPlaceholders ? asString(ph.job_title) : "");
+    const vm = useMemo(() => {
+        const fullName = asString(s.full_name) || (shouldShowPlaceholders ? asString(ph.full_name) : "");
+        const jobTitle = asString(s.job_title) || (shouldShowPlaceholders ? asString(ph.job_title) : "");
         const bio = asString(s.bio) || (shouldShowPlaceholders ? asString(ph.bio) : "");
 
-        const main_heading =
+        const mainHeading =
             asString(s.mainHeading) ||
             asString(s.main_heading) ||
             (shouldShowPlaceholders ? asString(ph.main_heading) : "");
 
-        const sub_heading =
+        const subHeading =
             asString(s.subHeading) ||
             asString(s.sub_heading) ||
             (shouldShowPlaceholders ? asString(ph.sub_heading) : "");
 
-        const contact_email =
-            asString(s.contact_email) || (shouldShowPlaceholders ? asString(ph.contact_email) : "");
-        const phone_number =
-            asString(s.phone_number) || (shouldShowPlaceholders ? asString(ph.phone_number) : "");
+        const email = asString(s.contact_email) || (shouldShowPlaceholders ? asString(ph.contact_email) : "");
+        const phone = asString(s.phone_number) || (shouldShowPlaceholders ? asString(ph.phone_number) : "");
 
-        const cover_photo =
+        // ✅ Prefer local preview fields, then persisted URLs. Ignore blob accidentally stored in persisted fields.
+        const cover =
             s.coverPhotoPreview ||
             (isBlobUrl(s.coverPhoto) ? "" : s.coverPhoto) ||
             (isBlobUrl(s.cover_photo) ? "" : s.cover_photo) ||
             (shouldShowPlaceholders ? ph.coverPhoto : "");
 
         const avatar =
-            s.avatarPreview || (isBlobUrl(s.avatar) ? "" : s.avatar) || (shouldShowPlaceholders ? ph.avatar : "");
+            s.avatarPreview ||
+            (isBlobUrl(s.avatar) ? "" : s.avatar) ||
+            (isBlobUrl(s.avatar_url) ? "" : s.avatar_url) ||
+            (shouldShowPlaceholders ? ph.avatar : "");
 
         const worksRaw = asArray(s.workImages || s.works);
         const worksPlaceholders = asArray(ph.workImages || ph.works);
@@ -101,39 +101,43 @@ export default function Preview({
             tiktok_url: asString(s.tiktok_url),
         };
 
-        const visibility = {
+        const hasContact = !!(email || phone);
+
+        return {
+            templateId,
+            sectionOrder: SECTION_ORDER,
+
+            // visibility toggles (only controls user has)
             showMainSection: !!showMainSection,
             showAboutMeSection: !!showAboutMeSection,
             showWorkSection: !!showWorkSection,
             showServicesSection: !!showServicesSection,
             showReviewsSection: !!showReviewsSection,
             showContactSection: !!showContactSection,
-        };
 
-        return {
-            templateId,
-            shouldShowPlaceholders,
-            hasExchangeContact: !!hasExchangeContact,
-            visitUrl: visitUrl || "#",
-
-            main_heading,
-            sub_heading,
-            cover_photo,
-
-            full_name,
-            job_title,
-            bio,
+            // content
+            cover,
             avatar,
-
+            mainHeading,
+            subHeading,
+            fullName,
+            jobTitle,
+            bio,
             works,
             services,
             reviews,
-
-            contact_email,
-            phone_number,
+            email,
+            phone,
             socials,
 
-            visibility,
+            // flags
+            hasContact,
+            hasExchangeContact: !!hasExchangeContact,
+            visitUrl: visitUrl || "#",
+
+            // ✅ preview-only actions (templates can render buttons without errors)
+            onSaveMyNumber: () => { },
+            onOpenExchangeContact: () => { },
         };
     }, [
         s,
@@ -193,9 +197,6 @@ export default function Preview({
         return () => el.removeEventListener("transitionend", handleEnd);
     }, [isMobile, previewOpen]);
 
-    // ---------------------------
-    // Render chosen template
-    // ---------------------------
     const TemplateComponent =
         templateId === "template-2"
             ? Template2
@@ -236,7 +237,7 @@ export default function Preview({
                     </div>
 
                     <div className={`mp-preview-wrap ${previewOpen ? "open" : "closed"}`} ref={mpWrapRef}>
-                        <TemplateComponent data={templateData} isMobile />
+                        <TemplateComponent vm={vm} isMobile />
                     </div>
                 </div>
             </div>
@@ -246,7 +247,7 @@ export default function Preview({
     return (
         <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
             <div className={`myprofile-preview template-${templateId}`}>
-                <TemplateComponent data={templateData} />
+                <TemplateComponent vm={vm} />
             </div>
         </div>
     );
