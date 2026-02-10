@@ -53,7 +53,6 @@ export default function PlasticCard() {
     const PRODUCT_KEY = "plastic-card";
 
     const [qty, setQty] = useState(1);
-
     const [cardVariant, setCardVariant] = useState("white"); // "white" | "black"
 
     const [logoUrl, setLogoUrl] = useState("");
@@ -180,12 +179,12 @@ export default function PlasticCard() {
 
     const features = useMemo(
         () => [
-            { t: "Tap to share instantly", s: "Open your profile on any modern phone with an NFC tap." },
-            { t: "QR code backup", s: "If NFC is off, they can scan and still save your details." },
-            { t: "Works with your Konar profile", s: "Your card always links to your live profile — edits update instantly." },
-            { t: "No app needed", s: "Works in the browser on iPhone and Android." },
-            { t: "Built for real trades", s: "Clean, durable, and made to be shared every day." },
-            { t: "One-time purchase", s: "Buy once. Share forever." },
+            { t: "One job pays for everything", s: "Land one extra job and it covers your card and profile." },
+            { t: "No reprints, ever", s: "Update your details anytime without reordering cards." },
+            { t: "Always up to date", s: "Your latest work, reviews, and services — instantly." },
+            { t: "Works everywhere", s: "In person, online, on any phone. No apps needed." },
+            { t: "Built for real trades", s: "Simple, practical, and made for how you actually work." },
+            { t: "Looks professional fast", s: "Build trust before you even speak." },
         ],
         []
     );
@@ -300,14 +299,14 @@ export default function PlasticCard() {
 
                             <h1 className="kc-premHero__title">KonarCard — Plastic Edition</h1>
 
+                            <p className="kc-premHero__sub">
+                                A clean NFC business card that shares your Konar profile instantly — with QR backup on the back.
+                            </p>
+
                             <div className="kc-premHero__badges">
                                 <span className="kc-konarcard__pill kc-konarcard__pill--best">Best Value</span>
                                 <span className="kc-konarcard__pill kc-konarcard__pill--warranty">12 Month Warranty</span>
                             </div>
-
-                            <p className="kc-premHero__sub">
-                                A clean NFC business card that shares your Konar profile instantly — with QR backup on the back.
-                            </p>
 
                             {(errorMsg || infoMsg) && (
                                 <div className="kc-msgBox">{errorMsg ? `⚠️ ${errorMsg}` : `ℹ️ ${infoMsg}`}</div>
@@ -316,63 +315,59 @@ export default function PlasticCard() {
 
                         <div className="kc-premStage">
                             <div className="kc-premStage__canvasPad">
-                                <PlasticCard3D
-                                    logoSrc={displayedLogo}
-                                    qrSrc={CardQrCode}
-                                    logoSize={logoPercent}
-                                    variant={cardVariant}
-                                />
+                                <PlasticCard3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoPercent} variant={cardVariant} />
                             </div>
 
-                            <div className="kc-variantRow">
-                                <div className="kc-variantToggle" role="group" aria-label="Choose card colour">
-                                    <button
-                                        type="button"
-                                        className={`kc-variantBtn ${cardVariant === "white" ? "is-active" : ""}`}
-                                        onClick={() => setCardVariant("white")}
-                                    >
-                                        White
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`kc-variantBtn ${cardVariant === "black" ? "is-active" : ""}`}
-                                        onClick={() => setCardVariant("black")}
-                                    >
-                                        Black
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="kc-pc-panels">
-                                <div className="kc-pc-card kc-pc-logoCard">
-                                    <div className="kc-pc-logoHead">
-                                        <div className="kc-pc-logoTitle">Your logo</div>
-                                        <div className="kc-pc-logoSub">Upload any image — preview updates instantly.</div>
+                            {/* PREMIUM CONFIG BAR */}
+                            <div className="kc-configBar" aria-label="Configure your card">
+                                <div className="kc-configBar__row">
+                                    <div className="kc-configGroup">
+                                        <div className="kc-configLabel">Colour</div>
+                                        <div className="kc-variantToggle" role="group" aria-label="Choose card colour">
+                                            <button
+                                                type="button"
+                                                className={`kc-variantBtn ${cardVariant === "white" ? "is-active" : ""}`}
+                                                onClick={() => setCardVariant("white")}
+                                                disabled={busy}
+                                            >
+                                                White
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={`kc-variantBtn ${cardVariant === "black" ? "is-active" : ""}`}
+                                                onClick={() => setCardVariant("black")}
+                                                disabled={busy}
+                                            >
+                                                Black
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    <div className="kc-pc-logoPreview" aria-label="Logo preview">
-                                        {logoUrl ? <img src={logoUrl} alt="Uploaded logo preview" /> : <div className="kc-pc-plus">+</div>}
+                                    <div className="kc-configGroup">
+                                        <div className="kc-configLabel">Logo</div>
+
+                                        <div className="kc-logoActions">
+                                            <label className="kc-uploadPill">
+                                                <input type="file" accept="image/*" onChange={onPickLogo} />
+                                                {logoUrl ? "Replace logo" : "Upload logo"}
+                                            </label>
+
+                                            <button
+                                                type="button"
+                                                className="kc-uploadPill kc-uploadPill--ghost"
+                                                onClick={clearLogo}
+                                                disabled={!logoUrl || busy}
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+
+                                        <div className="kc-configHint">Optional — if skipped, we’ll use the Konar “K”.</div>
                                     </div>
 
-                                    <div className="kc-pc-logoActions">
-                                        <label className="kc-premBtn">
-                                            <input type="file" accept="image/*" onChange={onPickLogo} />
-                                            Upload logo
-                                        </label>
-
-                                        <button
-                                            type="button"
-                                            className="kc-premBtn kc-premBtn--ghost"
-                                            onClick={clearLogo}
-                                            disabled={!logoUrl || busy}
-                                        >
-                                            Remove
-                                        </button>
-                                    </div>
-
-                                    <div className="kc-sizeRow" role="group" aria-label="Choose logo size">
-                                        <div className="kc-sizeLabel">Size</div>
-                                        <div className="kc-sizePills">
+                                    <div className="kc-configGroup">
+                                        <div className="kc-configLabel">Logo size</div>
+                                        <div className="kc-sizePills" role="group" aria-label="Choose logo size">
                                             <button
                                                 type="button"
                                                 className={`kc-sizeBtn ${logoPreset === "small" ? "is-active" : ""}`}
@@ -400,14 +395,17 @@ export default function PlasticCard() {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div className="kc-pc-card kc-pc-buyCard" aria-label="Checkout options">
-                                    <div className="kc-premPrice__value">£29.99</div>
-                                    <div className="kc-premPrice__note">
-                                        One-time purchase • {cardVariant === "black" ? "Black card" : "White card"} • Works with your profile
-                                    </div>
+                            {/* PURCHASE CARD (LESS NOISE) */}
+                            <div className="kc-purchaseCard" aria-label="Purchase">
+                                <div className="kc-purchaseCard__price">
+                                    <div className="kc-purchasePrice">£29.99</div>
+                                    <div className="kc-purchaseMicro">Premium PVC • NFC + QR backup • Ships fast</div>
+                                </div>
 
-                                    <div className="kc-buyRow">
+                                <div className="kc-purchaseCard__controls">
+                                    <div className="kc-purchaseTop">
                                         <div className="kc-qtySm" aria-label="Quantity">
                                             <button
                                                 type="button"
@@ -429,11 +427,9 @@ export default function PlasticCard() {
                                                 +
                                             </button>
                                         </div>
-                                    </div>
 
-                                    <div className="kc-buyRow__select">
                                         <select
-                                            className="kc-profileSelect"
+                                            className="kc-profileSelect kc-profileSelect--premium"
                                             value={profileId}
                                             onChange={(e) => setProfileId(e.target.value)}
                                             disabled={!isLoggedIn || busy || isProfilesLoading}
@@ -467,22 +463,23 @@ export default function PlasticCard() {
                                                 );
                                             })}
                                         </select>
-
-                                        {!isLoggedIn && (
-                                            <div className="kc-buyHint">You must be logged in to link a profile before checkout.</div>
-                                        )}
                                     </div>
 
-                                    <button type="button" onClick={handleBuy} className="kc-buyMainBtn" disabled={busy}>
+                                    {!isLoggedIn && (
+                                        <div className="kc-buyHint">You must be logged in to link a profile before checkout.</div>
+                                    )}
+
+                                    <button type="button" onClick={handleBuy} className="kc-buyMainBtn kc-buyMainBtn--wide" disabled={busy}>
                                         {busy ? "Starting checkout..." : "Buy KonarCard"}
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="kc-pc-card kc-specCard">
+                            {/* PRODUCT DETAILS (MORE BREATHING ROOM) */}
+                            <div className="kc-specSection" aria-label="Product details">
                                 <div className="kc-specHead">
                                     <div className="kc-specTitle">Product details</div>
-                                    <div className="kc-specSub">Everything you need to know — materials, sizing, and tech.</div>
+                                    <div className="kc-specSub">Materials, sizing, and tech — simple and clear.</div>
                                 </div>
 
                                 <div className="kc-specGrid">
@@ -495,28 +492,54 @@ export default function PlasticCard() {
                                 </div>
                             </div>
 
-                            <div className="kc-konarcard__section">
-                                <div className="kc-konarcard__sectionHead">
-                                    <h2 className="kc-konarcard__h2">What you get</h2>
-                                    <p className="kc-konarcard__p">
-                                        Everything you need to share your profile instantly — no paper cards, no typing numbers.
+                            {/* WHAT YOU GET — PREMIUM GRID */}
+                            <section className="kc-benefits" aria-label="What you get">
+                                <div className="kc-benefits__head">
+                                    <h2 className="kc-benefits__title">What you get</h2>
+                                    <p className="kc-benefits__sub">
+                                        A simple tool that makes you look professional instantly — and keeps everything up to date.
                                     </p>
                                 </div>
 
-                                <div className="kc-konarcard__featureGrid">
+                                <div className="kc-benefits__grid">
                                     {features.map((f, i) => (
-                                        <div className="kc-konarcard__feature" key={i}>
-                                            <div className="kc-konarcard__ico" aria-hidden="true">
-                                                ✓
+                                        <article className="kc-benefitCard" key={i}>
+                                            <div className="kc-benefitCard__icon" aria-hidden="true">
+                                                <span className="kc-benefitDot" />
                                             </div>
-                                            <div>
-                                                <div className="kc-konarcard__featureT">{f.t}</div>
-                                                <div className="kc-konarcard__featureS">{f.s}</div>
+                                            <div className="kc-benefitCard__body">
+                                                <div className="kc-benefitCard__t">{f.t}</div>
+                                                <div className="kc-benefitCard__s">{f.s}</div>
+                                            </div>
+                                            <div className="kc-benefitCard__sheen" aria-hidden="true" />
+                                        </article>
+                                    ))}
+                                </div>
+                            </section>
+
+                            {/* GALLERY SECTION (PLACEHOLDERS) */}
+                            <section className="kc-gallery" aria-label="In the wild">
+                                <div className="kc-gallery__head">
+                                    <h2 className="kc-gallery__title">Made to look premium</h2>
+                                    <p className="kc-gallery__sub">
+                                        Swap in your real graphics later — these are placeholders for a clean “logo card grid” section.
+                                    </p>
+                                </div>
+
+                                <div className="kc-gallery__grid">
+                                    {Array.from({ length: 8 }).map((_, i) => (
+                                        <div className="kc-galleryTile" key={i}>
+                                            <div className="kc-galleryTile__inner">
+                                                <div className="kc-galleryMark">K</div>
+                                                <div className="kc-galleryMeta">
+                                                    <div className="kc-galleryLine" />
+                                                    <div className="kc-galleryLine kc-galleryLine--short" />
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                            </div>
+                            </section>
                         </div>
                     </section>
                 </div>
