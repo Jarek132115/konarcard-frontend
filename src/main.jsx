@@ -25,6 +25,10 @@ import "./styling/admin.css";
 import App from "./App.jsx";
 import { AuthProvider } from "./components/AuthContext";
 
+// Anti-flash defaults:
+// - no refetch on focus/reconnect/mount
+// - generous staleTime so data is “fresh” longer
+// - keepPreviousData to prevent UI flicker on key changes
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -32,11 +36,13 @@ const queryClient = new QueryClient({
       refetchOnReconnect: false,
       refetchOnMount: false,
       retry: 1,
-      staleTime: 5 * 60 * 1000,
-      gcTime: 15 * 60 * 1000,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 15 * 60 * 1000, // 15 minutes
       keepPreviousData: true,
     },
-    mutations: { retry: 0 },
+    mutations: {
+      retry: 0,
+    },
   },
 });
 
@@ -58,5 +64,7 @@ createRoot(document.getElementById("root")).render(
 
 // OPTIONAL: ensure no stale service worker
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
+  navigator.serviceWorker
+    .getRegistrations()
+    .then((rs) => rs.forEach((r) => r.unregister()));
 }
