@@ -1,4 +1,3 @@
-// frontend/src/components/home/Examples.jsx
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 
@@ -20,11 +19,15 @@ export default function Examples() {
     );
 
     return (
-        <section className="khe-examples" aria-label="Real examples">
+        <section className="khe-examples" aria-labelledby="khe-title">
             <div className="khe-container">
-                <div className="khe-hero">
+                <header className="khe-hero">
                     <div className="khe-hero__inner">
-                        <h2 className="h2 khe-title">
+                        {/* ✅ pill like other sections */}
+                        <p className="khe-kicker">Real examples</p>
+
+                        {/* ✅ match sizing to other sections (Value/Trust style) */}
+                        <h2 id="khe-title" className="h3 khe-title">
                             See How Other Tradies
                             <br />
                             Use KonarCard
@@ -34,13 +37,13 @@ export default function Examples() {
                             Real profiles. Real cards. Real examples of how KonarCard helps win more work.
                         </p>
                     </div>
-                </div>
+                </header>
 
                 <div className="khe-grid" aria-label="Example profiles">
                     {items.map((it) => (
                         <article className="khe-card" key={`${it.role}-${it.name}`}>
                             <div className="khe-imageWrap" aria-hidden="true">
-                                <img src={ExampleTest} alt="" className="khe-image" loading="lazy" />
+                                <img src={ExampleTest} alt="" className="khe-image" loading="lazy" decoding="async" />
                             </div>
 
                             <div className="khe-cardBody">

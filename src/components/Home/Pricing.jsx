@@ -1,109 +1,147 @@
-// frontend/src/components/home/Pricing.jsx
-import React from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../../styling/home/pricing.css";
 
-function Feature({ title, desc }) {
+/* Plan icons (above plan name) */
+import FreePlanIcon from "../../assets/icons/FreePlan.svg";
+import PlusPlanIcon from "../../assets/icons/PlusPlan.svg";
+import TeamsPlanIcon from "../../assets/icons/TeamsPlan.svg";
+
+/* Feature tick icon */
+import PricingTick from "../../assets/icons/PricingTick.svg";
+
+function FeatureRow({ featured, title, desc }) {
     return (
-        <li className="khp-feature">
-            <span className="khp-check" aria-hidden="true">✓</span>
-            <div className="khp-featureCopy">
-                <div className="khp-featureTitle">{title}</div>
-                <div className="khp-featureDesc">{desc}</div>
+        <li className="kpr-feature">
+            <span className={`kpr-check ${featured ? "is-featured" : ""}`} aria-hidden="true">
+                <img src={PricingTick} alt="" loading="lazy" decoding="async" />
+            </span>
+
+            <div className="kpr-featureCopy">
+                <div className={`kpr-featureTitle ${featured ? "is-featured" : ""}`}>{title}</div>
+                <div className={`kpr-featureDesc ${featured ? "is-featured" : ""}`}>{desc}</div>
             </div>
         </li>
     );
 }
 
 export default function Pricing() {
-    const cards = [
-        {
-            title: "Free",
-            sub: "Perfect to start sharing today",
-            tag: "Start free",
-            price: "£0",
-            cadence: "Forever",
-            features: [
-                { t: "1 profile + 1 link + 1 QR", d: "Everything you need to share your details." },
-                { t: "Fully customise your profile", d: "Edit your details anytime." },
-                { t: "Works on any phone", d: "Tap or scan — no app needed." },
-                { t: "Unlimited link updates", d: "Your link never changes." },
-            ],
-            ctaText: "Get started free",
-            ctaTo: "/register",
-            featured: false,
-        },
-        {
-            title: "Plus",
-            sub: "Most popular for solo trades",
-            tag: "Most popular",
-            price: "£4.95",
-            cadence: "per month",
-            note: "Cancel anytime",
-            features: [
-                { t: "More templates", d: "Choose from 5 layouts." },
-                { t: "Higher limits", d: "More photos, services, and reviews." },
-                { t: "Deep analytics", d: "See what customers click." },
-                { t: "Remove Konar branding", d: "Make it fully yours." },
-            ],
-            ctaText: "Upgrade to Plus",
-            ctaTo: "/pricing",
-            featured: true,
-        },
-        {
-            title: "Teams",
-            sub: "Built for growing businesses",
-            tag: "For teams",
-            price: "£19.95",
-            cadence: "per month",
-            note: "Add extra profiles",
-            features: [
-                { t: "Multiple team profiles", d: "Great for staff and contractors." },
-                { t: "Centralised branding", d: "Keep everything consistent." },
-                { t: "Deep analytics", d: "Track performance across profiles." },
-                { t: "Extra profiles available", d: "£1.95 / extra profile / month." },
-            ],
-            ctaText: "See Teams options",
-            ctaTo: "/pricing",
-            featured: false,
-        },
-    ];
+    const cards = useMemo(
+        () => [
+            {
+                title: "Free",
+                icon: FreePlanIcon,
+                sub: "Perfect to start sharing today",
+                tag: "Start free",
+                price: "£0",
+                cadence: "Forever",
+                note: "",
+                features: [
+                    { t: "1 profile + 1 link + 1 QR", d: "Everything you need to share your details." },
+                    { t: "Fully customise your profile", d: "Edit your details anytime." },
+                    { t: "Works on any phone", d: "Tap or scan — no app needed." },
+                    { t: "Unlimited link updates", d: "Your link never changes." },
+                ],
+                ctaText: "Get started free",
+                ctaTo: "/register",
+                featured: false,
+            },
+            {
+                title: "Plus",
+                icon: PlusPlanIcon,
+                sub: "Most popular for solo trades",
+                tag: "Most popular",
+                price: "£4.95",
+                cadence: "per month",
+                note: "Cancel anytime",
+                features: [
+                    { t: "More templates", d: "Choose from 5 layouts." },
+                    { t: "Higher limits", d: "More photos, services, and reviews." },
+                    { t: "Deep analytics", d: "See what customers click." },
+                    { t: "Remove Konar branding", d: "Make it fully yours." },
+                    { t: "Priority support", d: "Get help faster when you need it." }, // ✅ extra bullet point
+                ],
+                ctaText: "Upgrade to Plus",
+                ctaTo: "/pricing",
+                featured: true,
+            },
+            {
+                title: "Teams",
+                icon: TeamsPlanIcon,
+                sub: "Built for growing businesses",
+                tag: "For teams",
+                price: "£19.95",
+                cadence: "per month",
+                note: "Add extra profiles",
+                features: [
+                    { t: "Multiple team profiles", d: "Great for staff and contractors." },
+                    { t: "Centralised branding", d: "Keep everything consistent." },
+                    { t: "Deep analytics", d: "Track performance across profiles." },
+                    { t: "Extra profiles available", d: "£1.95 / extra profile / month." },
+                ],
+                ctaText: "See Teams options",
+                ctaTo: "/pricing",
+                featured: false,
+            },
+        ],
+        []
+    );
 
     return (
-        <section className="khp-pricing" aria-label="Pricing">
-            <div className="khp-container">
-                <header className="khp-head">
-                    <p className="khp-kicker">Simple pricing</p>
-                    <h2 className="h3 khp-title">Pricing That Pays For Itself</h2>
-                    <p className="body-s khp-sub">Start free. Upgrade only when you need more.</p>
+        <section className="kpr" aria-labelledby="kpr-title">
+            <div className="kpr__container">
+                <header className="kpr__head">
+                    <p className="kpr__kicker">Simple pricing</p>
+
+                    <h2 id="kpr-title" className="h3 kpr__title">
+                        Pricing That Pays For Itself
+                    </h2>
+
+                    <p className="body-s kpr__sub">
+                        Start free. Upgrade only when you need more — built for trades using NFC business cards and a digital business card profile.
+                    </p>
                 </header>
 
-                <div className="khp-grid">
+                <div className="kpr__grid" role="list" aria-label="KonarCard pricing plans">
                     {cards.map((c) => (
-                        <article key={c.title} className={`khp-card ${c.featured ? "is-featured" : ""}`}>
-                            <div className="khp-cardTop">
-                                <div className={`khp-pill ${c.featured ? "is-featured" : ""}`}>{c.tag}</div>
-                                <p className="h5 khp-cardTitle">{c.title}</p>
-                                <p className="body-s khp-cardSub">{c.sub}</p>
+                        <article
+                            key={c.title}
+                            className={`kpr-card ${c.featured ? "is-featured" : ""}`}
+                            role="listitem"
+                            aria-label={`${c.title} plan`}
+                        >
+                            <div className="kpr-cardTop">
+                                <div className={`kpr-pill ${c.featured ? "is-featured" : ""}`}>{c.tag}</div>
+
+                                <div className="kpr-planRow">
+                                    <span className={`kpr-planIcon ${c.featured ? "is-featured" : ""}`} aria-hidden="true">
+                                        <img src={c.icon} alt="" loading="lazy" decoding="async" />
+                                    </span>
+
+                                    <p className={`h5 kpr-plan ${c.featured ? "kpr-plan--featured" : ""}`}>{c.title}</p>
+                                </div>
+
+                                <p className={`body-s kpr-cardSub ${c.featured ? "is-featured" : ""}`}>{c.sub}</p>
                             </div>
 
-                            <div className="khp-priceRow">
-                                <div className="khp-price">{c.price}</div>
-                                <div className="khp-cadence">{c.cadence}</div>
+                            <div className="kpr-priceRow">
+                                <div className={`kpr-price ${c.featured ? "is-featured" : ""}`}>{c.price}</div>
+                                <div className={`kpr-cadence ${c.featured ? "is-featured" : ""}`}>{c.cadence}</div>
                             </div>
 
-                            {c.note ? <div className="khp-note">{c.note}</div> : <div className="khp-note khp-note--empty" aria-hidden="true" />}
+                            <div className={`kpr-divider ${c.featured ? "is-featured" : ""}`} aria-hidden="true" />
 
-                            <div className="khp-divider" aria-hidden="true" />
-
-                            <ul className="khp-list" aria-label={`${c.title} plan features`}>
+                            <ul className="kpr-list" aria-label={`${c.title} plan features`}>
                                 {c.features.map((f, idx) => (
-                                    <Feature key={idx} title={f.t} desc={f.d} />
+                                    <FeatureRow key={idx} featured={c.featured} title={f.t} desc={f.d} />
                                 ))}
                             </ul>
 
-                            <div className="khp-actions">
-                                <Link to={c.ctaTo} className={`khp-btn ${c.featured ? "is-primary" : "is-ghost"}`}>
+                            {/* ✅ small note ABOVE CTA (italic, no big spacer) */}
+                            {c.note ? <p className={`kpr-noteLine ${c.featured ? "is-featured" : ""}`}>{c.note}</p> : null}
+
+                            <div className="kpr-actions">
+                                <Link to={c.ctaTo} className={`kpr-btn ${c.featured ? "is-primary" : "is-ghost"}`}>
                                     {c.ctaText}
                                 </Link>
                             </div>
@@ -111,15 +149,16 @@ export default function Pricing() {
                     ))}
                 </div>
 
-                <div className="khp-bottom">
-                    <p className="body-s khp-bottomNote">
+                <div className="kpr-bottom">
+                    <p className="body-s kpr-bottomNote">
                         Want full details? Compare plans and billing intervals on the pricing page.
                     </p>
-                    <div className="khp-bottomBtns">
-                        <Link to="/pricing" className="khp-btn is-primary khp-btn--inline">
+
+                    <div className="kpr-bottomBtns">
+                        <Link to="/pricing" className="kpr-btn is-primary kpr-btn--inline">
                             View full pricing
                         </Link>
-                        <Link to="/products" className="khp-btn is-ghost khp-btn--inline">
+                        <Link to="/products" className="kpr-btn is-ghost kpr-btn--inline">
                             Shop cards
                         </Link>
                     </div>

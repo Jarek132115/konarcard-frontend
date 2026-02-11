@@ -1,10 +1,11 @@
 /* =========================================================
-   HOME — PAPER vs KONAR COMPARISON (Droxy-ish)
+   HOME — PAPER vs KONAR COMPARISON
    File: frontend/src/styling/home/comparison.css
    ========================================================= */
 
 .kc-comp {
-    background: var(--kc-bg-main);
+    background: #fafafa;
+    /* ✅ requested */
     color: var(--kc-text-primary);
     padding: 80px 0;
 }
@@ -36,7 +37,7 @@
     font-size: 12px;
     font-weight: 700;
     color: rgba(15, 23, 42, 0.62);
-    background: var(--kc-bg-soft);
+    background: #fff;
     border: 1px solid var(--kc-border);
     padding: 8px 12px;
     border-radius: 999px;
@@ -61,52 +62,52 @@
     align-items: stretch;
 }
 
-/* Card */
+/* Card base */
 .kc-comp__card {
-    position: relative;
-    border: 1px solid var(--kc-border);
-    background: #fff;
     border-radius: 16px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     overflow: hidden;
     padding: 18px;
     display: flex;
     flex-direction: column;
 
-    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
-.kc-comp__card:hover {
+/* ✅ Left: Orange card + white content */
+.kc-comp__card--good {
+    background: var(--kc-accent-primary);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.08);
+    color: #ffffff;
+}
+
+.kc-comp__card--good:hover {
     transform: translateY(-2px);
-    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.10);
+    box-shadow: 0 14px 34px rgba(16, 24, 40, 0.12);
 }
 
-.kc-comp__card::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 120px;
-    pointer-events: none;
-    opacity: 0.85;
+/* ✅ Right: White card, no orange */
+.kc-comp__card--bad {
+    background: #ffffff;
+    border: 1px solid var(--kc-border);
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    color: rgba(15, 23, 42, 0.95);
 }
 
-.kc-comp__card--good::before {
-    background: radial-gradient(700px 170px at 30% 0%, rgba(249, 115, 22, 0.18) 0%, rgba(249, 115, 22, 0) 60%);
-}
-
-.kc-comp__card--bad::before {
-    background: radial-gradient(700px 170px at 30% 0%, rgba(225, 29, 72, 0.10) 0%, rgba(225, 29, 72, 0) 60%);
+.kc-comp__card--bad:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 34px rgba(16, 24, 40, 0.10);
 }
 
 /* Header inside card */
 .kc-comp__cardHead {
-    position: relative;
-    z-index: 1;
     padding-bottom: 12px;
     margin-bottom: 12px;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.10);
+}
+
+.kc-comp__card--good .kc-comp__cardHead {
+    border-bottom-color: rgba(255, 255, 255, 0.22);
 }
 
 .kc-comp__cardTitle {
@@ -116,48 +117,34 @@
     font-family: "Cal Sans", sans-serif;
     font-weight: 500;
     font-size: 18px;
-    color: rgba(15, 23, 42, 0.95);
-}
-
-.kc-comp__brand {
     letter-spacing: -0.02em;
 }
 
-.kc-comp__badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 8px;
-    font-weight: 900;
-    font-size: 14px;
-    line-height: 1;
+.kc-comp__card--good .kc-comp__cardTitle {
+    color: #ffffff;
 }
 
-.kc-comp__badge--good {
-    background: rgba(249, 115, 22, 0.12);
-    color: var(--kc-accent-primary);
-    border: 1px solid rgba(249, 115, 22, 0.22);
-}
-
-.kc-comp__badge--bad {
-    background: rgba(225, 29, 72, 0.10);
-    color: #e11d48;
-    border: 1px solid rgba(225, 29, 72, 0.18);
+.kc-comp__card--bad .kc-comp__cardTitle {
+    color: rgba(15, 23, 42, 0.95);
 }
 
 .kc-comp__hint {
     margin-top: 6px;
     font-family: "Inter", sans-serif;
     font-size: 12px;
+    line-height: 1.5;
+}
+
+.kc-comp__card--good .kc-comp__hint {
+    color: rgba(255, 255, 255, 0.86);
+}
+
+.kc-comp__card--bad .kc-comp__hint {
     color: rgba(15, 23, 42, 0.62);
 }
 
 /* List */
 .kc-comp__list {
-    position: relative;
-    z-index: 1;
     list-style: none;
     padding: 6px 0 0;
     margin: 0;
@@ -173,8 +160,15 @@
 
 .kc-comp__rowText {
     margin: 0;
-    color: rgba(15, 23, 42, 0.86);
     line-height: 1.55;
+}
+
+.kc-comp__card--good .kc-comp__rowText {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.kc-comp__card--bad .kc-comp__rowText {
+    color: rgba(15, 23, 42, 0.86);
 }
 
 /* Icons */
@@ -187,16 +181,22 @@
     margin-top: 2px;
 }
 
-.kc-comp__icon svg {
+.kc-comp__iconImg {
+    width: 18px;
+    height: 18px;
     display: block;
 }
 
-.kc-comp__icon--good {
-    color: var(--kc-accent-primary);
+/* ✅ Force PricingTick to white */
+.kc-comp__iconImg--white {
+    filter: brightness(0) invert(1);
 }
 
-.kc-comp__icon--bad {
-    color: #e11d48;
+/* ✅ Ensure ONLY the X icon is red */
+.kc-comp__iconImg--red {
+    /* If your XTick.svg is already red, this does nothing.
+       If it’s dark/black, this filter pushes it close to the site red. */
+    filter: invert(17%) sepia(84%) saturate(6026%) hue-rotate(343deg) brightness(97%) contrast(96%);
 }
 
 /* Responsive */

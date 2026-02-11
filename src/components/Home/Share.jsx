@@ -39,7 +39,7 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
     ];
 
     return (
-        <section className="khs-share" aria-label="How to share your profile">
+        <section className="khs-share" aria-label="How to share your KonarCard profile">
             <div className="khs-container">
                 <header className="khs-head">
                     <p className="khs-kicker">One profile, everywhere</p>
@@ -53,29 +53,32 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
                     </p>
                 </header>
 
-                <div className="khs-grid">
+                <div className="khs-grid" aria-label="Sharing methods">
                     {items.map((it) => (
                         <article className="khs-card" key={it.k}>
-                            <div className="khs-cardTop">
+                            {/* Media (1:1, edge-to-edge) */}
+                            <div className="khs-media" aria-label={`${it.badge}: ${it.title}`}>
                                 <span className="khs-pill">{it.badge}</span>
-                            </div>
 
-                            <div className="khs-media" aria-hidden="true">
                                 {it.img ? (
-                                    <img src={it.img} alt="" loading="lazy" />
+                                    <img
+                                        src={it.img}
+                                        alt={`${it.title} — KonarCard sharing method`}
+                                        loading="lazy"
+                                    />
                                 ) : (
-                                    <div className={`khs-mock khs-mock--${it.k}`}>
+                                    <div className={`khs-mock khs-mock--${it.k}`} aria-hidden="true">
                                         <div className="khs-mock__icon">{it.icon}</div>
                                         <div className="khs-mock__lines">
                                             <span />
                                             <span />
                                             <span />
                                         </div>
-                                        <div className="khs-mock__chip" />
                                     </div>
                                 )}
                             </div>
 
+                            {/* Text */}
                             <div className="khs-body">
                                 <p className="h6 khs-cardTitle">{it.title}</p>
                                 <p className="body-s khs-cardDesc">{it.desc}</p>

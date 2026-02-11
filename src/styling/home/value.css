@@ -1,10 +1,11 @@
 /* =========================================================
-   HOME — VALUE SECTION (Upgraded to match site tokens/vibe)
+   HOME — VALUE SECTION (Match Customer Trust)
    File: frontend/src/styling/home/value.css
    ========================================================= */
 
 .khv {
-    background: var(--kc-bg-main);
+    background: #fafafa;
+    /* ✅ requested */
     color: var(--kc-text-primary);
     padding: 80px 0;
 }
@@ -36,7 +37,7 @@
     font-size: 12px;
     font-weight: 700;
     color: rgba(15, 23, 42, 0.62);
-    background: var(--kc-bg-soft);
+    background: #fff;
     border: 1px solid var(--kc-border);
     padding: 8px 12px;
     border-radius: 999px;
@@ -66,59 +67,40 @@
     border: 1px solid var(--kc-border);
     background: #fff;
     border-radius: 16px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
-    padding: 16px;
 
-    display: grid;
-    grid-template-columns: 62px 1fr;
-    gap: 14px;
-    align-items: start;
+    /* ✅ lighter/smaller shadow */
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.06);
+
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
 
     transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
 .khv__card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.10);
+    box-shadow: 0 12px 26px rgba(16, 24, 40, 0.08);
     border-color: rgba(249, 115, 22, 0.22);
 }
 
-/* Icon */
-.khv__iconWrap {
-    position: relative;
-    width: 52px;
-    height: 52px;
-}
-
-.khv__icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 16px;
+/* ✅ Icon on top, no background/border */
+.khv__iconTop {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 12px;
     display: grid;
     place-items: center;
-
-    color: var(--kc-accent-primary);
-    background: rgba(249, 115, 22, 0.12);
-    border: 1px solid rgba(249, 115, 22, 0.22);
-
-    box-shadow: 0 10px 22px rgba(249, 115, 22, 0.12);
 }
 
-.khv__shine {
-    position: absolute;
-    inset: -8px;
-    border-radius: 18px;
-    background: radial-gradient(circle at 35% 25%, rgba(249, 115, 22, 0.18), rgba(249, 115, 22, 0.0) 62%);
-    pointer-events: none;
-    filter: blur(8px);
-    opacity: 0.9;
+.khv__iconImg {
+    width: 40px;
+    height: 40px;
+    display: block;
+    object-fit: contain;
 }
 
 /* Copy */
-.khv__copy {
-    padding-top: 2px;
-}
-
 .khv__cardTitle {
     margin: 0 0 6px;
 }
@@ -195,15 +177,16 @@
     .khv__grid {
         grid-template-columns: 1fr;
     }
+}
 
-    .khv__card {
-        grid-template-columns: 58px 1fr;
+@media (prefers-reduced-motion: reduce) {
+
+    .khv__card,
+    .khv__btn {
+        transition: none !important;
     }
 
-    .khv__iconWrap,
-    .khv__icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 14px;
+    .khv__card:hover {
+        transform: none;
     }
 }
