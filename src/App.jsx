@@ -70,8 +70,9 @@ import Settings from "./pages/interface/Settings.jsx";
 // Admin
 import AdminOrders from "./pages/admin/AdminDashboard.jsx";
 
-/* -------------------------------------------------- */
-
+/* --------------------------------------------------
+   Tidio chat logic
+-------------------------------------------------- */
 function TidioWrapper() {
   const location = useLocation();
 
@@ -96,8 +97,9 @@ function TidioWrapper() {
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
 }
 
-/* -------------------------------------------------- */
-
+/* --------------------------------------------------
+   App
+-------------------------------------------------- */
 export default function App() {
   useContext(AuthContext);
 
@@ -109,7 +111,6 @@ export default function App() {
 
       <RouteErrorBoundary>
         <Routes>
-
           {/* ---------------- PUBLIC ---------------- */}
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
@@ -163,29 +164,148 @@ export default function App() {
           <Route path="/u/:slug" element={<UserPage />} />
 
           {/* ---------------- PROTECTED ---------------- */}
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/profiles" element={<ProtectedRoute><Profiles /></ProtectedRoute>} />
-          <Route path="/profiles/edit" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
-          <Route path="/cards" element={<ProtectedRoute><Cards /></ProtectedRoute>} />
-          <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-          <Route path="/contact-book" element={<ProtectedRoute><ContactBook /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profiles"
+            element={
+              <ProtectedRoute>
+                <Profiles />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profiles/edit"
+            element={
+              <ProtectedRoute>
+                <MyProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cards"
+            element={
+              <ProtectedRoute>
+                <Cards />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <Analytics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contact-book"
+            element={
+              <ProtectedRoute>
+                <ContactBook />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Legacy redirect */}
-          <Route path="/myprofile" element={<ProtectedRoute><Navigate to="/dashboard" replace /></ProtectedRoute>} />
+          <Route
+            path="/myprofile"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/dashboard" replace />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Legacy protected */}
-          <Route path="/claim" element={<ProtectedRoute><ClaimLink /></ProtectedRoute>} />
-          <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
-          <Route path="/helpcentreinterface" element={<ProtectedRoute><HelpCentreInterface /></ProtectedRoute>} />
-          <Route path="/contact-support" element={<ProtectedRoute><ContactSupport /></ProtectedRoute>} />
-          <Route path="/myorders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
-          <Route path="/nfccards" element={<ProtectedRoute><NFCCards /></ProtectedRoute>} />
-          <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route
+            path="/claim"
+            element={
+              <ProtectedRoute>
+                <ClaimLink />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/billing"
+            element={
+              <ProtectedRoute>
+                <Billing />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/helpcentreinterface"
+            element={
+              <ProtectedRoute>
+                <HelpCentreInterface />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contact-support"
+            element={
+              <ProtectedRoute>
+                <ContactSupport />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/myorders"
+            element={
+              <ProtectedRoute>
+                <MyOrders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/nfccards"
+            element={
+              <ProtectedRoute>
+                <NFCCards />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <Notifications />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Admin */}
-          <Route path="/admin" element={<ProtectedRoute><AdminOrders /></ProtectedRoute>} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminOrders />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
