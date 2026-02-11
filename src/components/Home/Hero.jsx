@@ -56,11 +56,11 @@ export default function Hero() {
 
     const speedRef = useRef(0.55); // px per frame
 
-    // ✅ 3 groups = true "infinite" feel during drag (always keep user in the middle copy)
+    // ✅ 3 groups
     const renderGroups = 3;
     const groups = useMemo(() => new Array(renderGroups).fill(0), []);
 
-    // keep a stable idea of one "group width"
+    // group width cache
     const groupWidthRef = useRef(0);
 
     useEffect(() => {
@@ -71,13 +71,13 @@ export default function Hero() {
     const computeGroupWidth = () => {
         const track = trackRef.current;
         if (!track) return 0;
-        // total scrollWidth = 3x groupWidth
+
         const gw = track.scrollWidth / renderGroups;
         if (Number.isFinite(gw) && gw > 0) groupWidthRef.current = gw;
         return groupWidthRef.current;
     };
 
-    // ✅ keep scrollLeft inside the middle group
+    // keep inside middle band [gw, 2gw)
     const normalizeLoop = (alsoAdjustDragBase = false) => {
         const el = scrollerRef.current;
         if (!el) return;
@@ -85,21 +85,21 @@ export default function Hero() {
         const gw = groupWidthRef.current || computeGroupWidth();
         if (!gw) return;
 
-        // middle band is [gw, 2gw)
-        // give a little buffer so we wrap BEFORE hitting real edges
-        const leftGuard = gw * 0.8;
-        const rightGuard = gw * 2.2;
+        const min = gw;
+        const max = gw * 2;
 
-        if (el.scrollLeft < leftGuard) {
+        if (el.scrollLeft < min) {
             el.scrollLeft += gw;
-            if (alsoAdjustDragBase) startScrollRef.current += gw; // ✅ prevents “jump” while dragging
-        } else if (el.scrollLeft > rightGuard) {
+            if (alsoAdjustDragBase) startScrollRef.current += gw;
+        }
+
+        if (el.scrollLeft >= max) {
             el.scrollLeft -= gw;
-            if (alsoAdjustDragBase) startScrollRef.current -= gw; // ✅ prevents “jump” while dragging
+            if (alsoAdjustDragBase) startScrollRef.current -= gw;
         }
     };
 
-    // set initial scroll into the middle group
+    // initial
     useEffect(() => {
         const el = scrollerRef.current;
         const track = trackRef.current;
@@ -107,7 +107,7 @@ export default function Hero() {
 
         const setInitial = () => {
             const gw = computeGroupWidth();
-            if (gw > 0) el.scrollLeft = gw; // start at beginning of middle copy
+            if (gw > 0) el.scrollLeft = gw;
             normalizeLoop(false);
         };
 
@@ -116,7 +116,6 @@ export default function Hero() {
         const t2 = setTimeout(setInitial, 520);
 
         const onResize = () => {
-            // recompute and re-center to middle on resize/layout shift
             const gw = computeGroupWidth();
             if (gw > 0) el.scrollLeft = gw;
             normalizeLoop(false);
@@ -132,14 +131,14 @@ export default function Hero() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // autoplay (no hover pause)
+    // autoplay
     useEffect(() => {
         const el = scrollerRef.current;
         if (!el) return;
 
         const tick = () => {
             if (!draggingRef.current) {
-                el.scrollLeft -= speedRef.current; // LEFT ➜ RIGHT visual motion
+                el.scrollLeft -= speedRef.current;
                 normalizeLoop(false);
             }
             rafRef.current = requestAnimationFrame(tick);
@@ -150,7 +149,7 @@ export default function Hero() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // also normalize if the user wheels/trackpads (not just pointer drag)
+    // normalize on wheel/trackpad scroll too
     useEffect(() => {
         const el = scrollerRef.current;
         if (!el) return;
@@ -164,7 +163,7 @@ export default function Hero() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // dragging (allow vertical page scroll)
+    // drag
     useEffect(() => {
         const el = scrollerRef.current;
         if (!el) return;
@@ -182,7 +181,6 @@ export default function Hero() {
             startYRef.current = e.clientY;
             startScrollRef.current = el.scrollLeft;
 
-            // ensure groupWidth is known for drag wrapping
             computeGroupWidth();
         };
 
@@ -200,11 +198,7 @@ export default function Hero() {
 
             if (axisLockedRef.current === "x") {
                 e.preventDefault();
-
-                // normal drag scroll
                 el.scrollLeft = startScrollRef.current - dx;
-
-                // ✅ wrap DURING drag so you never hit the true edges
                 normalizeLoop(true);
             } else if (axisLockedRef.current === "y") {
                 draggingRef.current = false;
@@ -298,7 +292,7 @@ export default function Hero() {
                                                         src={it.src}
                                                         alt={`Example profile ${i + 1}`}
                                                         draggable={false}
-                                                        loading={gi === 1 ? "eager" : "lazy"} // middle group eager
+                                                        loading={gi === 1 ? "eager" : "lazy"}
                                                     />
                                                 </div>
                                             </div>

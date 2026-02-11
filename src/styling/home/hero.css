@@ -173,12 +173,12 @@
 .kc-homeHero__btn--primary {
     background: #ff7b00;
     color: #fff;
-    box-shadow: 0 14px 30px rgba(255, 123, 0, 0.22);
+    box-shadow: 0 0px 20px rgb(255 123 0 / 36%);
 }
 
 .kc-homeHero__btn--primary:hover {
     filter: brightness(0.98);
-    box-shadow: 0 18px 36px rgba(255, 123, 0, 0.28);
+    box-shadow: 0 0px 20px rgba(255, 123, 0, 0.534);
 }
 
 .kc-homeHero__btn--ghost {
@@ -196,7 +196,7 @@
    ========================= */
 .kc-homeHero__carousel {
     /* ✅ gap from CTA to carousel */
-    margin-top: 36px;
+    margin-top: 24px;
 
     /* ✅ pure white behind carousel too */
     background: #fff;
