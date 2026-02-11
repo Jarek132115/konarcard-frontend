@@ -1,3 +1,4 @@
+// frontend/src/pages/website/products/PlasticCard.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -281,6 +282,144 @@ export default function PlasticCard() {
         }
     };
 
+    /* =========================================================
+       SEO — Meta upsert + JSON-LD (SPA-safe)
+       (NO className changes, NO layout changes)
+       NOTE: Canonical set to WWW to match sitemap/robots standardisation.
+    ========================================================= */
+    useEffect(() => {
+        const CANONICAL = "https://www.konarcard.com/products/plastic";
+        const title = "Plastic NFC Business Card (UK) — KonarCard Plastic Edition";
+        const description =
+            "KonarCard Plastic Edition is a premium plastic NFC business card in the UK. Tap to share your digital business card instantly on iPhone/Android, with QR backup on the back.";
+
+        const ogImage = "https://www.konarcard.com/og/plastic-card.png"; // optional
+
+        const upsertMeta = (nameOrProp, content, isProperty = false) => {
+            if (!content) return;
+            const selector = isProperty ? `meta[property="${nameOrProp}"]` : `meta[name="${nameOrProp}"]`;
+            let el = document.head.querySelector(selector);
+            if (!el) {
+                el = document.createElement("meta");
+                if (isProperty) el.setAttribute("property", nameOrProp);
+                else el.setAttribute("name", nameOrProp);
+                document.head.appendChild(el);
+            }
+            el.setAttribute("content", content);
+        };
+
+        const upsertLink = (rel, href) => {
+            if (!href) return;
+            let el = document.head.querySelector(`link[rel="${rel}"]`);
+            if (!el) {
+                el = document.createElement("link");
+                el.setAttribute("rel", rel);
+                document.head.appendChild(el);
+            }
+            el.setAttribute("href", href);
+        };
+
+        const upsertJsonLd = (id, json) => {
+            const scriptId = `jsonld-${id}`;
+            let el = document.getElementById(scriptId);
+            if (!el) {
+                el = document.createElement("script");
+                el.type = "application/ld+json";
+                el.id = scriptId;
+                document.head.appendChild(el);
+            }
+            el.text = JSON.stringify(json);
+        };
+
+        document.title = title;
+
+        upsertLink("canonical", CANONICAL);
+        upsertMeta("description", description);
+        upsertMeta("robots", "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1");
+
+        // Open Graph
+        upsertMeta("og:type", "product", true);
+        upsertMeta("og:site_name", "KonarCard", true);
+        upsertMeta("og:title", title, true);
+        upsertMeta("og:description", description, true);
+        upsertMeta("og:url", CANONICAL, true);
+        upsertMeta("og:image", ogImage, true);
+
+        // Twitter
+        upsertMeta("twitter:card", "summary_large_image");
+        upsertMeta("twitter:title", title);
+        upsertMeta("twitter:description", description);
+        upsertMeta("twitter:image", ogImage);
+
+        // Product JSON-LD
+        upsertJsonLd("plastic-product", {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: "KonarCard Plastic Edition",
+            description:
+                "Premium plastic NFC business card for instantly sharing a Konar digital business card profile, with QR backup. UK-focused.",
+            brand: { "@type": "Brand", name: "KonarCard" },
+            image: [ogImage],
+            sku: "plastic-card",
+            offers: {
+                "@type": "Offer",
+                url: CANONICAL,
+                priceCurrency: "GBP",
+                price: "29.99",
+                availability: "https://schema.org/InStock",
+                itemCondition: "https://schema.org/NewCondition",
+            },
+        });
+
+        // FAQ JSON-LD (kept in sync with on-page content if you add an FAQ section later)
+        upsertJsonLd("plastic-faq", {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+                {
+                    "@type": "Question",
+                    name: "Does the plastic KonarCard work with iPhone and Android?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Yes. KonarCard Plastic Edition works with modern iPhone and Android devices that support NFC. No app is required — it opens in the browser. If NFC is off, the QR code backup still works.",
+                    },
+                },
+                {
+                    "@type": "Question",
+                    name: "Do I need an app to use the card?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "No. The card opens your Konar profile in the browser so people can view and save your details without downloading anything.",
+                    },
+                },
+                {
+                    "@type": "Question",
+                    name: "What happens if NFC is turned off?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Every card includes a QR code on the back. If NFC is off or unsupported, contacts can scan the QR code to open your profile.",
+                    },
+                },
+                {
+                    "@type": "Question",
+                    name: "Can I update my details after I buy?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Yes. Your card links to your Konar profile, so you can update your details anytime and the card will always share the latest version.",
+                    },
+                },
+                {
+                    "@type": "Question",
+                    name: "Is there a warranty?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Yes — KonarCard Plastic Edition includes a 12 month warranty.",
+                    },
+                },
+            ],
+        });
+    }, []);
+
     return (
         <>
             <Navbar />
@@ -297,10 +436,12 @@ export default function PlasticCard() {
                                 <span className="kc-konarcard__crumbHere">KonarCard – Plastic</span>
                             </div>
 
-                            <h1 className="kc-premHero__title">KonarCard — Plastic Edition</h1>
+                            {/* ✅ SEO H1: keyword-complete, UK intent, still clean */}
+                            <h1 className="kc-premHero__title">Plastic NFC Business Card (UK) — KonarCard Plastic Edition</h1>
 
                             <p className="kc-premHero__sub">
-                                A clean NFC business card that shares your Konar profile instantly — with QR backup on the back.
+                                A premium plastic NFC business card for the UK. Tap to share your digital business card instantly — with QR
+                                backup on the back if NFC is off.
                             </p>
 
                             <div className="kc-premHero__badges">
@@ -315,7 +456,12 @@ export default function PlasticCard() {
 
                         <div className="kc-premStage">
                             <div className="kc-premStage__canvasPad">
-                                <PlasticCard3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoPercent} variant={cardVariant} />
+                                <PlasticCard3D
+                                    logoSrc={displayedLogo}
+                                    qrSrc={CardQrCode}
+                                    logoSize={logoPercent}
+                                    variant={cardVariant}
+                                />
                             </div>
 
                             {/* PREMIUM CONFIG BAR */}
@@ -469,7 +615,12 @@ export default function PlasticCard() {
                                         <div className="kc-buyHint">You must be logged in to link a profile before checkout.</div>
                                     )}
 
-                                    <button type="button" onClick={handleBuy} className="kc-buyMainBtn kc-buyMainBtn--wide" disabled={busy}>
+                                    <button
+                                        type="button"
+                                        onClick={handleBuy}
+                                        className="kc-buyMainBtn kc-buyMainBtn--wide"
+                                        disabled={busy}
+                                    >
                                         {busy ? "Starting checkout..." : "Buy KonarCard"}
                                     </button>
                                 </div>
