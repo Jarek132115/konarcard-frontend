@@ -199,28 +199,6 @@
     color: #e11d48;
 }
 
-/* Mini CTA inside each card */
-.kc-comp__cardCta {
-    margin-top: 12px;
-    position: relative;
-    z-index: 1;
-}
-
-.kc-comp__miniLink {
-    font-family: "Inter", sans-serif;
-    font-weight: 900;
-    color: rgba(15, 23, 42, 0.92);
-    text-decoration: none;
-}
-
-.kc-comp__miniLink:hover {
-    text-decoration: underline;
-}
-
-.kc-comp__miniLink--muted {
-    color: rgba(15, 23, 42, 0.70);
-}
-
 /* Responsive */
 @media (max-width: 980px) {
     .kc-comp__grid {

@@ -55,12 +55,12 @@ export default function Comparison() {
     ];
 
     return (
-        <section className="kc-comp" aria-label="KonarCard vs Paper Business Cards">
+        <section className="kc-comp" aria-labelledby="kc-comp-title">
             <div className="kc-comp__inner">
-                <div className="kc-comp__header">
+                <header className="kc-comp__header">
                     <p className="kc-comp__kicker">The upgrade</p>
 
-                    <h2 className="h3 kc-comp__title text-center">
+                    <h2 id="kc-comp-title" className="h3 kc-comp__title text-center">
                         Paper business cards don’t
                         <br />
                         work like they used to
@@ -68,23 +68,24 @@ export default function Comparison() {
 
                     <p className="body-s kc-comp__sub text-center">
                         They get lost, go out of date, and don’t show the quality of your work.
+                        KonarCard gives you a digital business card that’s always ready to share.
                     </p>
-                </div>
+                </header>
 
-                <div className="kc-comp__grid">
+                <div className="kc-comp__grid" role="list" aria-label="Comparison: KonarCard vs paper business cards">
                     {/* Konar */}
-                    <div className="kc-comp__card kc-comp__card--good">
+                    <article className="kc-comp__card kc-comp__card--good" role="listitem" aria-label="KonarCard benefits">
                         <div className="kc-comp__cardHead">
                             <div className="kc-comp__cardTitle">
                                 <span className="kc-comp__brand">KonarCard</span>
-                                <span className="kc-comp__badge kc-comp__badge--good" aria-label="Good">
+                                <span className="kc-comp__badge kc-comp__badge--good" aria-label="Recommended">
                                     ✓
                                 </span>
                             </div>
-                            <div className="kc-comp__hint">A modern profile that sells your work.</div>
+                            <p className="kc-comp__hint">A modern profile that sells your work.</p>
                         </div>
 
-                        <ul className="kc-comp__list">
+                        <ul className="kc-comp__list" aria-label="KonarCard features">
                             {konar.map((t, i) => (
                                 <li key={i} className="kc-comp__row">
                                     <CheckIcon />
@@ -92,27 +93,21 @@ export default function Comparison() {
                                 </li>
                             ))}
                         </ul>
-
-                        <div className="kc-comp__cardCta">
-                            <a className="kc-comp__miniLink" href="/register">
-                                Start free →
-                            </a>
-                        </div>
-                    </div>
+                    </article>
 
                     {/* Paper */}
-                    <div className="kc-comp__card kc-comp__card--bad">
+                    <article className="kc-comp__card kc-comp__card--bad" role="listitem" aria-label="Paper business card limitations">
                         <div className="kc-comp__cardHead">
                             <div className="kc-comp__cardTitle">
                                 <span className="kc-comp__brand">Paper Business Cards</span>
-                                <span className="kc-comp__badge kc-comp__badge--bad" aria-label="Bad">
+                                <span className="kc-comp__badge kc-comp__badge--bad" aria-label="Not recommended">
                                     ✕
                                 </span>
                             </div>
-                            <div className="kc-comp__hint">Old-school, easy to lose, hard to trust.</div>
+                            <p className="kc-comp__hint">Old-school, easy to lose, hard to trust.</p>
                         </div>
 
-                        <ul className="kc-comp__list">
+                        <ul className="kc-comp__list" aria-label="Paper business card drawbacks">
                             {paper.map((t, i) => (
                                 <li key={i} className="kc-comp__row">
                                     <XIcon />
@@ -120,13 +115,7 @@ export default function Comparison() {
                                 </li>
                             ))}
                         </ul>
-
-                        <div className="kc-comp__cardCta">
-                            <a className="kc-comp__miniLink kc-comp__miniLink--muted" href="/products">
-                                Shop cards →
-                            </a>
-                        </div>
-                    </div>
+                    </article>
                 </div>
             </div>
         </section>
