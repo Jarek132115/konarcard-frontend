@@ -18,7 +18,6 @@ import Login from "./pages/website/Login.jsx";
 import ResetPassword from "./pages/website/ResetPassword.jsx";
 
 // ✅ Legacy product pages (do not remove)
-import ProductAndPlan from "./pages/website/ProductAndPlan.jsx";
 import KonarCard from "./pages/website/KonarCard.jsx";
 import KonarSubscription from "./pages/website/KonarSubscription.jsx";
 
@@ -126,7 +125,6 @@ export default function App() {
           <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           {/* Legacy product routes (keep) */}
-          <Route path="/productandplan" element={<ProductAndPlan />} />
           <Route path="/productandplan/konarcard" element={<KonarCard />} />
           <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
           <Route path="/whatisnfc" element={<KonarCard />} />
