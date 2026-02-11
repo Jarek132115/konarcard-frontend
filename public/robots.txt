@@ -3,3 +3,5 @@ Allow: /
 
 # Primary UK sitemap
 Sitemap: https://konarcard.com/sitemap.xml
+
+
