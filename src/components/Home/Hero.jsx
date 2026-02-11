@@ -1,9 +1,6 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 
-/* Background */
-import BackgroundHeroNew from "../../assets/images/Background-Hero-New.jpg";
-
 /* Profiles */
 import UP1 from "../../assets/images/UP1.jpg";
 import UP2 from "../../assets/images/UP2.jpg";
@@ -18,9 +15,6 @@ import UP8 from "../../assets/images/UP8.jpg";
 import "../../styling/home/hero.css";
 
 export default function Hero() {
-    /* =========================================================
-       PROFILES MARQUEE (auto + drag) — LEFT ➜ RIGHT
-       ========================================================= */
     const items = useMemo(
         () => [
             { src: UP1, tone: "#FFECD2" },
@@ -35,77 +29,139 @@ export default function Hero() {
         []
     );
 
+    const logos = useMemo(
+        () => [
+            { label: "Oakridge\nPlumbing", variant: "serif" },
+            { label: "BRIGHTSPARK\nELECTRICAL", variant: "caps" },
+            { label: "Northline\nRoofing Co.", variant: "mono" },
+            { label: "Stone & Steel\nRenovations", variant: "wide" },
+            { label: "Greenway\nLandscapes", variant: "script" },
+            { label: "Harbourview\nKitchens", variant: "clean" },
+            { label: "ProFix\nProperty Care", variant: "bold" },
+            { label: "BluePeak\nBuilders", variant: "slab" },
+        ],
+        []
+    );
+
     const scrollerRef = useRef(null);
     const trackRef = useRef(null);
 
     const rafRef = useRef(0);
     const draggingRef = useRef(false);
-    const pauseRef = useRef(false);
 
     const startXRef = useRef(0);
     const startYRef = useRef(0);
     const startScrollRef = useRef(0);
     const axisLockedRef = useRef(null); // 'x' | 'y' | null
 
-    const speedRef = useRef(0.55); // px per frame (tweak if needed)
+    const speedRef = useRef(0.55); // px per frame
 
-    // ✅ IMPORTANT: render exactly 2 groups so our "half width" wrap logic is correct
-    const renderGroups = 2;
+    // ✅ 3 groups = true "infinite" feel during drag (always keep user in the middle copy)
+    const renderGroups = 3;
     const groups = useMemo(() => new Array(renderGroups).fill(0), []);
 
-    // ensure 10px gap
+    // keep a stable idea of one "group width"
+    const groupWidthRef = useRef(0);
+
     useEffect(() => {
         const el = scrollerRef.current;
         if (el) el.style.setProperty("--gap", "10px");
     }, []);
 
-    // set a safe starting scroll so looping works immediately
+    const computeGroupWidth = () => {
+        const track = trackRef.current;
+        if (!track) return 0;
+        // total scrollWidth = 3x groupWidth
+        const gw = track.scrollWidth / renderGroups;
+        if (Number.isFinite(gw) && gw > 0) groupWidthRef.current = gw;
+        return groupWidthRef.current;
+    };
+
+    // ✅ keep scrollLeft inside the middle group
+    const normalizeLoop = (alsoAdjustDragBase = false) => {
+        const el = scrollerRef.current;
+        if (!el) return;
+
+        const gw = groupWidthRef.current || computeGroupWidth();
+        if (!gw) return;
+
+        // middle band is [gw, 2gw)
+        // give a little buffer so we wrap BEFORE hitting real edges
+        const leftGuard = gw * 0.8;
+        const rightGuard = gw * 2.2;
+
+        if (el.scrollLeft < leftGuard) {
+            el.scrollLeft += gw;
+            if (alsoAdjustDragBase) startScrollRef.current += gw; // ✅ prevents “jump” while dragging
+        } else if (el.scrollLeft > rightGuard) {
+            el.scrollLeft -= gw;
+            if (alsoAdjustDragBase) startScrollRef.current -= gw; // ✅ prevents “jump” while dragging
+        }
+    };
+
+    // set initial scroll into the middle group
     useEffect(() => {
         const el = scrollerRef.current;
         const track = trackRef.current;
         if (!el || !track) return;
 
         const setInitial = () => {
-            const max = track.scrollWidth;
-            if (max > 0) el.scrollLeft = max / 2;
+            const gw = computeGroupWidth();
+            if (gw > 0) el.scrollLeft = gw; // start at beginning of middle copy
+            normalizeLoop(false);
         };
 
         setInitial();
-        const t1 = setTimeout(setInitial, 150);
-        const t2 = setTimeout(setInitial, 600);
+        const t1 = setTimeout(setInitial, 120);
+        const t2 = setTimeout(setInitial, 520);
+
+        const onResize = () => {
+            // recompute and re-center to middle on resize/layout shift
+            const gw = computeGroupWidth();
+            if (gw > 0) el.scrollLeft = gw;
+            normalizeLoop(false);
+        };
+
+        window.addEventListener("resize", onResize);
 
         return () => {
             clearTimeout(t1);
             clearTimeout(t2);
+            window.removeEventListener("resize", onResize);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // autoplay LEFT ➜ RIGHT (scrollLeft goes DOWN)
+    // autoplay (no hover pause)
     useEffect(() => {
         const el = scrollerRef.current;
         if (!el) return;
 
         const tick = () => {
-            if (!pauseRef.current && !draggingRef.current) {
-                el.scrollLeft -= speedRef.current; // ✅ LEFT ➜ RIGHT visual motion
-
-                const maxScroll = trackRef.current?.scrollWidth || 0;
-                if (maxScroll > 0) {
-                    const half = maxScroll / 2;
-
-                    // if we go too far left, jump forward by half
-                    if (el.scrollLeft <= 0) el.scrollLeft += half;
-
-                    // safety: if we drift too far right, jump back by half
-                    if (el.scrollLeft >= half) el.scrollLeft -= half;
-                }
+            if (!draggingRef.current) {
+                el.scrollLeft -= speedRef.current; // LEFT ➜ RIGHT visual motion
+                normalizeLoop(false);
             }
-
             rafRef.current = requestAnimationFrame(tick);
         };
 
         rafRef.current = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(rafRef.current);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // also normalize if the user wheels/trackpads (not just pointer drag)
+    useEffect(() => {
+        const el = scrollerRef.current;
+        if (!el) return;
+
+        const onScroll = () => {
+            if (!draggingRef.current) normalizeLoop(false);
+        };
+
+        el.addEventListener("scroll", onScroll, { passive: true });
+        return () => el.removeEventListener("scroll", onScroll);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // dragging (allow vertical page scroll)
@@ -120,12 +176,14 @@ export default function Hero() {
             el.setPointerCapture?.(pointerId);
 
             draggingRef.current = true;
-            pauseRef.current = true;
-
             axisLockedRef.current = null;
+
             startXRef.current = e.clientX;
             startYRef.current = e.clientY;
             startScrollRef.current = el.scrollLeft;
+
+            // ensure groupWidth is known for drag wrapping
+            computeGroupWidth();
         };
 
         const onPointerMove = (e) => {
@@ -134,7 +192,6 @@ export default function Hero() {
             const dx = e.clientX - startXRef.current;
             const dy = e.clientY - startYRef.current;
 
-            // lock axis when movement becomes clear
             if (axisLockedRef.current == null) {
                 if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
                     axisLockedRef.current = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
@@ -143,11 +200,15 @@ export default function Hero() {
 
             if (axisLockedRef.current === "x") {
                 e.preventDefault();
+
+                // normal drag scroll
                 el.scrollLeft = startScrollRef.current - dx;
+
+                // ✅ wrap DURING drag so you never hit the true edges
+                normalizeLoop(true);
             } else if (axisLockedRef.current === "y") {
-                // user intends to scroll the page
                 draggingRef.current = false;
-                pauseRef.current = false;
+                axisLockedRef.current = null;
                 try {
                     el.releasePointerCapture?.(pointerId);
                 } catch { }
@@ -158,7 +219,8 @@ export default function Hero() {
             if (!draggingRef.current) return;
             draggingRef.current = false;
             axisLockedRef.current = null;
-            pauseRef.current = false;
+
+            normalizeLoop(false);
 
             if (pointerId != null) {
                 try {
@@ -173,59 +235,48 @@ export default function Hero() {
         window.addEventListener("pointercancel", endDrag);
         window.addEventListener("blur", endDrag);
 
-        const onEnter = () => (pauseRef.current = true);
-        const onLeave = () => (pauseRef.current = false);
-        el.addEventListener("mouseenter", onEnter);
-        el.addEventListener("mouseleave", onLeave);
-
         return () => {
             el.removeEventListener("pointerdown", onPointerDown);
             window.removeEventListener("pointermove", onPointerMove);
             window.removeEventListener("pointerup", endDrag);
             window.removeEventListener("pointercancel", endDrag);
             window.removeEventListener("blur", endDrag);
-            el.removeEventListener("mouseenter", onEnter);
-            el.removeEventListener("mouseleave", onLeave);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
-        <header
-            className="kc-homeHero"
-            style={{ backgroundImage: `url(${BackgroundHeroNew})` }}
-        >
+        <header className="kc-homeHero">
             <div className="kc-homeHero__inner">
-                <div className="kc-homeHero__badge">Built To Help Tradies Win More Work</div>
-
-                <h1 className="kc-homeHero__title">
-                    The Modern Business Card
-                    <br />
-                    Made For Tradies
-                </h1>
-
-                <p className="kc-homeHero__sub">
-                    Show your work, prove your quality, and get hired — all
-                    <br />
-                    from one link.
-                </p>
-
-                <div className="kc-homeHero__ctaRow">
-                    <Link to="/register" className="kc-homeHero__btn kc-homeHero__btn--primary">
-                        Claim Your Link
-                    </Link>
-
-                    <Link to="/examples" className="kc-homeHero__btn kc-homeHero__btn--ghost">
-                        View Examples
-                    </Link>
-                </div>
-
-                {/* Carousel inside hero */}
-                <div className="kc-homeHero__carousel">
-                    <div className="kc-homeHero__logos" aria-hidden="true">
-                        <span>LOGO</span><span>LOGO</span><span>LOGO</span><span>LOGO</span>
-                        <span>LOGO</span><span>LOGO</span><span>LOGO</span><span>LOGO</span>
+                <div className="kc-homeHero__copyGrid">
+                    <div className="kc-homeHero__badge">
+                        Built for UK businesses — tap, share, update anytime
                     </div>
 
+                    <h1 className="kc-homeHero__title">
+                        Digital Business Cards
+                        <br />
+                        That Work Instantly
+                    </h1>
+
+                    <p className="kc-homeHero__sub">
+                        Share your details with a tap or QR scan. No app needed.
+                        <br />
+                        Update your profile anytime — in seconds.
+                    </p>
+
+                    <div className="kc-homeHero__ctaRow">
+                        <Link to="/products" className="kc-homeHero__btn kc-homeHero__btn--primary">
+                            Shop NFC Cards
+                        </Link>
+
+                        <Link to="/register" className="kc-homeHero__btn kc-homeHero__btn--ghost">
+                            Claim Your Link
+                        </Link>
+                    </div>
+                </div>
+
+                <div className="kc-homeHero__carousel">
                     <div className="kc-homeHero__scrollerOuter">
                         <div
                             ref={scrollerRef}
@@ -247,7 +298,7 @@ export default function Hero() {
                                                         src={it.src}
                                                         alt={`Example profile ${i + 1}`}
                                                         draggable={false}
-                                                        loading={gi === 0 ? "eager" : "lazy"}
+                                                        loading={gi === 1 ? "eager" : "lazy"} // middle group eager
                                                     />
                                                 </div>
                                             </div>
@@ -257,8 +308,17 @@ export default function Hero() {
                             </div>
                         </div>
                     </div>
-                </div>
 
+                    <div className="kc-homeHero__logoGrid" aria-label="Trusted by trades">
+                        {logos.map((l, idx) => (
+                            <div key={idx} className={`kc-homeHero__logo kc-homeHero__logo--${l.variant}`}>
+                                {l.label.split("\n").map((line, li) => (
+                                    <div key={li}>{line}</div>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
         </header>
     );
