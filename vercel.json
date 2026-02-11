@@ -1,11 +1,4 @@
 {
-  "redirects": [
-    {
-      "source": "https://www.konarcard.com/:path*",
-      "destination": "https://konarcard.com/:path*",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     {
       "source": "/(.*)",
