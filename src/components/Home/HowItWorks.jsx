@@ -7,17 +7,17 @@ const steps = [
     {
         step: "Step 1",
         title: "Claim Your Link",
-        desc: "Secure your KonarCard link in seconds. No payment required.",
+        desc: "Reserve your KonarCard link in seconds and start your digital business card straight away.",
     },
     {
         step: "Step 2",
         title: "Build Your Profile",
-        desc: "Add your services, photos, reviews, and contact details — all in one place.",
+        desc: "Add services, photos, reviews, and contact details — everything customers need in one place.",
     },
     {
         step: "Step 3",
         title: "Share It Anywhere",
-        desc: "Tap your card, share your link, or use a QR code — online or in person.",
+        desc: "Share contactless with an NFC business card, QR code, or link — online or in person.",
     },
 ];
 
@@ -58,7 +58,7 @@ export default function HowItWorks() {
                     <p className="hiw__kicker">3 steps</p>
                     <h2 className="h3 hiw__title">How it works</h2>
                     <p className="body-s hiw__sub">
-                        Create your digital business card in minutes — no apps, no hassle.
+                        Create a digital business card in minutes — share by NFC tap, QR code, or link.
                     </p>
                 </header>
 
@@ -71,12 +71,10 @@ export default function HowItWorks() {
                                 <div className="hiw__stepPill">{s.step}</div>
                             </div>
 
-                            {/* ✅ NEW WRAPPER */}
                             <div className="hiw__content">
                                 <h3 className="h5 hiw__stepTitle">{s.title}</h3>
                                 <p className="body-s hiw__stepDesc">{s.desc}</p>
                             </div>
-
                         </li>
                     ))}
                 </ol>

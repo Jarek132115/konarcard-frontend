@@ -7,7 +7,7 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
         {
             k: "nfc",
             title: "Tap with KonarCard",
-            desc: "Instantly opens your profile on modern phones — no app needed.",
+            desc: "A contactless NFC business card tap opens your digital business card instantly — no app needed.",
             img: nfcImage,
             badge: "Fastest",
             icon: "↯",
@@ -15,7 +15,7 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
         {
             k: "qr",
             title: "Scan the QR backup",
-            desc: "Works even when NFC is off — anyone can scan with a camera.",
+            desc: "Works even when NFC is off — scan with any phone camera to open your profile.",
             img: qrImage,
             badge: "Works for everyone",
             icon: "⌁",
@@ -23,7 +23,7 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
         {
             k: "msg",
             title: "Send your link",
-            desc: "Share in WhatsApp, SMS, Messenger, email — wherever they reply.",
+            desc: "Share your digital business card link in WhatsApp, SMS, Messenger, or email — wherever they reply.",
             img: smsImage,
             badge: "Best for follow-ups",
             icon: "✉",
@@ -31,7 +31,7 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
         {
             k: "bio",
             title: "Link in bio",
-            desc: "Add to Instagram, Facebook, TikTok, Google Business, or your site.",
+            desc: "Add your profile link to Instagram, Facebook, TikTok, Google Business Profile, or your website.",
             img: linkImage,
             badge: "Always visible",
             icon: "⛓",
@@ -39,7 +39,7 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
     ];
 
     return (
-        <section className="khs-share" aria-label="How to share your KonarCard profile">
+        <section className="khs-share" aria-label="How to share your digital business card with KonarCard">
             <div className="khs-container">
                 <header className="khs-head">
                     <p className="khs-kicker">One profile, everywhere</p>

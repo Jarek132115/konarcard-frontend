@@ -41,7 +41,7 @@ export default function CustomerTrust() {
                 icon: LooksProfessional,
                 alt: "Looks professional icon",
                 title: "Looks professional",
-                desc: "Clean profile that builds trust fast.",
+                desc: "A clean profile that builds trust fast.",
             },
             {
                 icon: ShareAnywhere,
@@ -59,8 +59,8 @@ export default function CustomerTrust() {
                 <header className="kht__head">
                     <h2 className="h3 kht__title">Everything Customers Need to Trust You</h2>
                     <p className="body-s kht__sub">
-                        Your KonarCard profile puts your work, reviews, and contact details in one place — so
-                        customers can quickly see you’re legit and get in touch without friction.
+                        Your KonarCard digital business card puts your work, reviews, and contact details in one place — so
+                        customers can see you’re legit and get in touch fast. Share contactless with an NFC tap, QR code, or link.
                     </p>
                 </header>
 

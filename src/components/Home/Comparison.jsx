@@ -25,7 +25,7 @@ export default function Comparison() {
         "One link that never gets lost",
         "Always up to date — edit anytime",
         "Photos, reviews, and proof of work built in",
-        "Share instantly by tap, QR, or message",
+        "Share instantly by NFC tap, QR, or message",
         "Looks premium and builds trust fast",
         "No reprinting costs — ever",
     ];
@@ -52,8 +52,8 @@ export default function Comparison() {
                     </h2>
 
                     <p className="body-s kc-comp__sub text-center">
-                        They get lost, go out of date, and don’t show the quality of your work. KonarCard gives you a digital business card
-                        that’s always ready to share.
+                        They get lost, go out of date, and don’t show the quality of your work. KonarCard replaces paper with a digital
+                        business card you can share instantly — contactless by NFC tap, QR, or link.
                     </p>
                 </header>
 

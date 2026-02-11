@@ -70,7 +70,9 @@ export default function Products() {
                     "@type": "Product",
                     name: p.name,
                     description: p.desc,
-                    image: `${origin}${p.img?.startsWith("/") ? p.img : ""}`,
+                    // In a bundled React app, imported images resolve to a full URL string.
+                    // Use it directly rather than trying to prefix origin.
+                    image: p.img,
                     sku: p.sku,
                     brand: { "@type": "Brand", name: "KonarCard" },
                     offers: {
@@ -89,15 +91,16 @@ export default function Products() {
         <section className="khp-products" aria-labelledby="khp-products-title">
             <div className="khp-container">
                 <header className="khp-hero">
-                    <p className="khp-kicker">NFC business cards for trades & small businesses</p>
+                    <p className="khp-kicker">NFC business cards that share your details instantly</p>
 
                     <h2 id="khp-products-title" className="h2 khp-title">
-                        Business Cards That Share Your Profile Instantly
+                        Contactless NFC Business Cards for Your Digital Profile
                     </h2>
 
                     <p className="body-s khp-sub">
-                        KonarCard is an <strong>NFC business card</strong> that opens your digital profile with a tap.
-                        It’s the easiest way to share your details in person — without paper cards.
+                        KonarCard is a <strong>digital business card</strong> you can share in person with an{" "}
+                        <strong>NFC business card</strong> tap — plus QR code and link sharing. A modern contactless business card
+                        that replaces paper.
                     </p>
                 </header>
 
@@ -113,6 +116,7 @@ export default function Products() {
                             <meta itemProp="name" content={item.name} />
                             <meta itemProp="description" content={item.desc} />
                             <meta itemProp="sku" content={item.sku} />
+                            <meta itemProp="image" content={item.img} />
 
                             <div className="khp-media">
                                 <span className="khp-pill" aria-label={item.tag}>
@@ -125,7 +129,6 @@ export default function Products() {
                                     className="khp-media__img"
                                     loading="lazy"
                                     decoding="async"
-                                    itemProp="image"
                                 />
                             </div>
 
@@ -145,7 +148,7 @@ export default function Products() {
                                 </div>
 
                                 <div className="khp-actions">
-                                    <Link to={item.to} className="khp-btn" aria-label={`View ${item.name}`}>
+                                    <Link to={item.to} className="khp-btn" aria-label={`View ${item.name}`} itemProp="url">
                                         View product
                                     </Link>
                                 </div>
@@ -168,10 +171,7 @@ export default function Products() {
                 </div>
 
                 {/* ✅ SEO schema */}
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
-                />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
             </div>
         </section>
     );

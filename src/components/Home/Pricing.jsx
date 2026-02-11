@@ -88,7 +88,7 @@ export default function Pricing() {
     );
 
     return (
-        <section className="kpr" aria-labelledby="kpr-title">
+        <section className="kpr" aria-labelledby="kpr-title" aria-label="KonarCard pricing for digital business cards">
             <div className="kpr__container">
                 <header className="kpr__head">
                     <p className="kpr__kicker">Simple pricing</p>
@@ -98,7 +98,8 @@ export default function Pricing() {
                     </h2>
 
                     <p className="body-s kpr__sub">
-                        Start free. Upgrade only when you need more — built for trades using NFC business cards and a digital business card profile.
+                        Start free, then upgrade when you need more. KonarCard combines an NFC business card with a digital business card
+                        profile you can update anytime.
                     </p>
                 </header>
 
@@ -137,7 +138,6 @@ export default function Pricing() {
                                 ))}
                             </ul>
 
-                            {/* ✅ small note ABOVE CTA (italic, no big spacer) */}
                             {c.note ? <p className={`kpr-noteLine ${c.featured ? "is-featured" : ""}`}>{c.note}</p> : null}
 
                             <div className="kpr-actions">

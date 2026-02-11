@@ -248,15 +248,15 @@ export default function Hero() {
                     </div>
 
                     <h1 className="kc-homeHero__title">
-                        Digital Business Cards
+                        Digital Business Card
                         <br />
-                        That Work Instantly
+                        That Works Instantly
                     </h1>
 
                     <p className="kc-homeHero__sub">
-                        Share your details with a tap or QR scan. No app needed.
+                        Share your details with an NFC business card, QR code, or link — no app needed.
                         <br />
-                        Update your profile anytime — in seconds.
+                        Update your digital business card anytime in seconds.
                     </p>
 
                     <div className="kc-homeHero__ctaRow">
@@ -265,7 +265,7 @@ export default function Hero() {
                         </Link>
 
                         <Link to="/register" className="kc-homeHero__btn kc-homeHero__btn--ghost">
-                            Claim Your Link
+                            Create Your Digital Card
                         </Link>
                     </div>
                 </div>
@@ -276,7 +276,7 @@ export default function Hero() {
                             ref={scrollerRef}
                             className="kc-homeHero__scroller"
                             style={{ touchAction: "pan-y" }}
-                            aria-label="Real profiles in action"
+                            aria-label="Example digital business cards"
                         >
                             <div ref={trackRef} className="kc-homeHero__track">
                                 {groups.map((_, gi) => (
@@ -290,7 +290,7 @@ export default function Hero() {
                                                 <div className="kc-homeHero__viewport">
                                                     <img
                                                         src={it.src}
-                                                        alt={`Example profile ${i + 1}`}
+                                                        alt={`Example digital business card profile ${i + 1}`}
                                                         draggable={false}
                                                         loading={gi === 1 ? "eager" : "lazy"}
                                                     />
@@ -303,7 +303,7 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    <div className="kc-homeHero__logoGrid" aria-label="Trusted by trades">
+                    <div className="kc-homeHero__logoGrid" aria-label="Trusted by UK businesses">
                         {logos.map((l, idx) => (
                             <div key={idx} className={`kc-homeHero__logo kc-homeHero__logo--${l.variant}`}>
                                 {l.label.split("\n").map((line, li) => (

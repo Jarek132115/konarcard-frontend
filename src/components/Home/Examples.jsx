@@ -23,18 +23,17 @@ export default function Examples() {
             <div className="khe-container">
                 <header className="khe-hero">
                     <div className="khe-hero__inner">
-                        {/* ✅ pill like other sections */}
                         <p className="khe-kicker">Real examples</p>
 
-                        {/* ✅ match sizing to other sections (Value/Trust style) */}
                         <h2 id="khe-title" className="h3 khe-title">
-                            See How Other Tradies
+                            See How UK Tradespeople
                             <br />
                             Use KonarCard
                         </h2>
 
                         <p className="body-s khe-sub">
-                            Real profiles. Real cards. Real examples of how KonarCard helps win more work.
+                            Real profiles. Real cards. Real examples of how a digital business card helps you win more work — shared by NFC
+                            tap, QR code, or link.
                         </p>
                     </div>
                 </header>
@@ -43,7 +42,13 @@ export default function Examples() {
                     {items.map((it) => (
                         <article className="khe-card" key={`${it.role}-${it.name}`}>
                             <div className="khe-imageWrap" aria-hidden="true">
-                                <img src={ExampleTest} alt="" className="khe-image" loading="lazy" decoding="async" />
+                                <img
+                                    src={ExampleTest}
+                                    alt="Example KonarCard digital business card profile preview"
+                                    className="khe-image"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
                             </div>
 
                             <div className="khe-cardBody">

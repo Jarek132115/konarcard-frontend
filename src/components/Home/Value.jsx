@@ -16,22 +16,22 @@ export default function Value() {
             {
                 icon: SmartPhoneTapIcon,
                 title: "Works everywhere",
-                desc: "In person, online, on any phone. No apps needed.",
+                desc: "In person or online, on any phone — a contactless digital business card with no app needed.",
             },
             {
                 icon: ToolsIcon,
                 title: "Built for real trades",
-                desc: "Simple, practical, and made for how you actually work.",
+                desc: "Simple, practical, and made for how you actually work on-site and on the move.",
             },
             {
                 icon: MoneyShieldIcon,
                 title: "One job pays for everything",
-                desc: "Land one extra job and it covers your card and profile.",
+                desc: "Land one extra job and it covers your NFC business card and profile.",
             },
             {
                 icon: TrophyIcon,
                 title: "Looks professional fast",
-                desc: "Instantly builds trust before you even speak.",
+                desc: "Builds trust instantly before you even speak.",
             },
             {
                 icon: NoPrintIcon,
@@ -53,7 +53,9 @@ export default function Value() {
                 <header className="khv__head">
                     <p className="khv__kicker">Built for trades</p>
                     <h2 className="h3 khv__title">Why KonarCard Is Worth It</h2>
-                    <p className="body-s khv__sub">Practical, fast, and designed for how you actually work.</p>
+                    <p className="body-s khv__sub">
+                        A practical digital business card you can share contactless — by NFC tap, QR code, or link.
+                    </p>
                 </header>
 
                 <div className="khv__grid" aria-label="KonarCard benefits">
