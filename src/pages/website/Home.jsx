@@ -1,6 +1,4 @@
-import React from "react";
-import { useHead } from "@unhead/react";
-
+import React, { useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
@@ -25,58 +23,83 @@ import SMSSend from "../../assets/images/SMSSend.jpg";
 import "../../styling/fonts.css";
 import "../../styling/home.css";
 
+function upsertMeta(attr, key, value) {
+  const selector = `meta[${attr}="${key}"]`;
+  let el = document.head.querySelector(selector);
+  if (!el) {
+    el = document.createElement("meta");
+    el.setAttribute(attr, key);
+    document.head.appendChild(el);
+  }
+  el.setAttribute("content", value);
+}
+
+function upsertLink(rel, href) {
+  const selector = `link[rel="${rel}"]`;
+  let el = document.head.querySelector(selector);
+  if (!el) {
+    el = document.createElement("link");
+    el.setAttribute("rel", rel);
+    document.head.appendChild(el);
+  }
+  el.setAttribute("href", href);
+}
+
+function upsertJsonLd(id, json) {
+  const selector = `script[type="application/ld+json"][data-kc="${id}"]`;
+  let el = document.head.querySelector(selector);
+  if (!el) {
+    el = document.createElement("script");
+    el.type = "application/ld+json";
+    el.setAttribute("data-kc", id);
+    document.head.appendChild(el);
+  }
+  el.textContent = JSON.stringify(json);
+}
+
 export default function Home() {
-  const siteUrl = "https://konarcard.com";
+  useEffect(() => {
+    const siteUrl = "https://konarcard.com";
 
-  useHead({
-    title: "Digital Business Card & NFC Business Card UK | KonarCard",
-    meta: [
-      {
-        name: "description",
-        content:
-          "KonarCard is a digital business card and NFC business card for UK trades. Share your details with a tap, QR code or link. Replace paper business cards today.",
-      },
+    const title = "Digital Business Card & NFC Business Card UK | KonarCard";
+    const description =
+      "KonarCard is a digital business card and NFC business card for the UK. Share your details with a tap, QR code or link. Replace paper business cards today.";
 
-      // Open Graph
-      { property: "og:title", content: "Digital Business Card & NFC Business Card UK | KonarCard" },
-      {
-        property: "og:description",
-        content:
-          "Share your details instantly with an NFC business card and digital business card profile. Built for UK trades.",
-      },
-      { property: "og:url", content: siteUrl },
-      { property: "og:type", content: "website" },
+    document.title = title;
 
-      // Twitter
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Digital Business Card & NFC Business Card UK | KonarCard" },
-      { name: "twitter:description", content: "A modern contactless digital business card for UK trades." },
-    ],
-    link: [{ rel: "canonical", href: siteUrl }],
-    script: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          name: "KonarCard",
-          url: siteUrl,
-          description:
-            "KonarCard is a digital business card and NFC business card built for UK trades. Share your contact details, services and reviews instantly.",
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "KonarCard",
-          url: siteUrl,
-          logo: `${siteUrl}/logo.png`,
-        }),
-      },
-    ],
-  });
+    upsertMeta("name", "description", description);
+    upsertLink("canonical", siteUrl);
+
+    // Open Graph
+    upsertMeta("property", "og:title", title);
+    upsertMeta("property", "og:description", description);
+    upsertMeta("property", "og:url", siteUrl);
+    upsertMeta("property", "og:type", "website");
+
+    // Twitter
+    upsertMeta("name", "twitter:card", "summary_large_image");
+    upsertMeta("name", "twitter:title", title);
+    upsertMeta("name", "twitter:description", description);
+
+    // JSON-LD
+    upsertJsonLd("website", {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "KonarCard",
+      url: siteUrl,
+      description:
+        "KonarCard is a digital business card and NFC business card built for UK businesses. Share contact details, services and reviews instantly.",
+    });
+
+    upsertJsonLd("org", {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "KonarCard",
+      url: siteUrl,
+      // If you don’t have this file yet, either add it or remove this line:
+      logo: `${siteUrl}/logo.png`,
+    });
+  }, []);
 
   return (
     <>
