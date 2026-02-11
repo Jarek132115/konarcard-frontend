@@ -170,6 +170,165 @@ export default function Pricing() {
                 ? "Billed every 3 months. Cancel anytime."
                 : "Best value. Billed yearly.";
 
+    /* =========================
+       SEO — Meta upsert + JSON-LD (SPA-safe)
+       (NO className changes, NO layout changes)
+       NOTE: Canonical set to WWW.
+    ========================= */
+    useEffect(() => {
+        const CANONICAL = "https://www.konarcard.com/pricing";
+        const title = "KonarCard Pricing (UK) — Free, Plus & Teams Plans";
+        const description =
+            "KonarCard pricing for the UK: start free, upgrade to Plus for deeper customisation and analytics, or use Teams for multi-profile businesses. Cancel anytime.";
+
+        const ogImage = "https://www.konarcard.com/og/pricing.png"; // optional (safe if it 404s)
+
+        const upsertMeta = (nameOrProp, content, isProperty = false) => {
+            if (!content) return;
+            const selector = isProperty ? `meta[property="${nameOrProp}"]` : `meta[name="${nameOrProp}"]`;
+            let el = document.head.querySelector(selector);
+            if (!el) {
+                el = document.createElement("meta");
+                if (isProperty) el.setAttribute("property", nameOrProp);
+                else el.setAttribute("name", nameOrProp);
+                document.head.appendChild(el);
+            }
+            el.setAttribute("content", content);
+        };
+
+        const upsertLink = (rel, href) => {
+            if (!href) return;
+            let el = document.head.querySelector(`link[rel="${rel}"]`);
+            if (!el) {
+                el = document.createElement("link");
+                el.setAttribute("rel", rel);
+                document.head.appendChild(el);
+            }
+            el.setAttribute("href", href);
+        };
+
+        const upsertJsonLd = (id, json) => {
+            const scriptId = `jsonld-${id}`;
+            let el = document.getElementById(scriptId);
+            if (!el) {
+                el = document.createElement("script");
+                el.type = "application/ld+json";
+                el.id = scriptId;
+                document.head.appendChild(el);
+            }
+            el.text = JSON.stringify(json);
+        };
+
+        // Core
+        document.title = title;
+        upsertLink("canonical", CANONICAL);
+        upsertMeta("description", description);
+        upsertMeta("robots", "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1");
+
+        // Open Graph
+        upsertMeta("og:type", "website", true);
+        upsertMeta("og:site_name", "KonarCard", true);
+        upsertMeta("og:title", title, true);
+        upsertMeta("og:description", description, true);
+        upsertMeta("og:url", CANONICAL, true);
+        upsertMeta("og:image", ogImage, true);
+
+        // Twitter
+        upsertMeta("twitter:card", "summary_large_image");
+        upsertMeta("twitter:title", title);
+        upsertMeta("twitter:description", description);
+        upsertMeta("twitter:image", ogImage);
+
+        // Pricing / Service JSON-LD (OfferCatalog)
+        upsertJsonLd("pricing-offers", {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: "KonarCard Pricing",
+            url: CANONICAL,
+            description,
+            isPartOf: {
+                "@type": "WebSite",
+                name: "KonarCard",
+                url: "https://www.konarcard.com",
+            },
+            mainEntity: {
+                "@type": "OfferCatalog",
+                name: "KonarCard Plans",
+                itemListElement: [
+                    {
+                        "@type": "Offer",
+                        name: "Free (Individual)",
+                        priceCurrency: "GBP",
+                        price: "0.00",
+                        url: CANONICAL,
+                        availability: "https://schema.org/InStock",
+                    },
+                    {
+                        "@type": "Offer",
+                        name: "Plus",
+                        priceCurrency: "GBP",
+                        // NOTE: This page supports multiple billing intervals; we describe the headline entry.
+                        price: "4.95",
+                        url: CANONICAL,
+                        availability: "https://schema.org/InStock",
+                        category: "subscription",
+                    },
+                    {
+                        "@type": "Offer",
+                        name: "Teams",
+                        priceCurrency: "GBP",
+                        // Teams is Plus base + add-ons; keep it explicit for clarity.
+                        price: "4.95",
+                        url: CANONICAL,
+                        availability: "https://schema.org/InStock",
+                        category: "subscription",
+                        description: "Plus base plan + £1.95 per extra profile per month.",
+                    },
+                ],
+            },
+        });
+
+        // FAQ JSON-LD (keep in sync with pricingFaqs below)
+        upsertJsonLd("pricing-faq", {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+                {
+                    "@type": "Question",
+                    name: "Do I need to pay upfront?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "No. Start on Free, then upgrade when it’s worth it. Paid plans bill on your chosen interval.",
+                    },
+                },
+                {
+                    "@type": "Question",
+                    name: "Can I cancel anytime?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Yes. You can cancel or manage billing anytime from the Billing portal.",
+                    },
+                },
+                {
+                    "@type": "Question",
+                    name: "How does Teams pricing work?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Teams uses the Plus plan as your base, then you add extra profiles for staff at £1.95 per extra profile per month.",
+                    },
+                },
+                {
+                    "@type": "Question",
+                    name: "What happens if my plan ends?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "You’ll stay on Free. Your link remains live — paid features simply pause until you re-subscribe.",
+                    },
+                },
+            ],
+        });
+    }, []);
+
     /* ---------------- Subscription status ---------------- */
     useEffect(() => {
         let mounted = true;
