@@ -61,7 +61,7 @@ function upsertJsonLd(id, json) {
 
 export default function Home() {
   useEffect(() => {
-    const siteUrl = "https://konarcard.com";
+    const siteUrl = "https://www.konarcard.com";
 
     const title = "Digital Business Card & NFC Business Card UK | KonarCard";
     const description =
