@@ -17,8 +17,11 @@
 
     position: relative;
 
-    /* ✅ allow top/bottom overflow for the carousel (no clipping) */
-    overflow: visible;
+    /* ✅ FIX: stop homepage horizontal scroll caused by 100vw full-bleed */
+    overflow-x: clip;
+    /* modern */
+    overflow-y: visible;
+    /* keep your top/bottom visible */
 }
 
 /* Inner container */
@@ -27,7 +30,6 @@
     max-width: 1200px;
     padding: 0 20px;
 
-    /* content pushed down so it doesn’t sit under the nav */
     padding-top: 120px;
     padding-bottom: 40px;
 
@@ -42,6 +44,9 @@
     display: inline-block;
     width: min(920px, 100%);
     padding: 18px 18px 8px;
+
+    /* ✅ FIX: ensure grid stack sits UNDER carousel */
+    z-index: 1;
 }
 
 /* Grid background with fade on ALL sides (top matches bottom) */
@@ -50,15 +55,15 @@
     position: absolute;
     inset: -46px -70px -54px;
     pointer-events: none;
+
+    /* ✅ FIX: force background layers behind everything */
     z-index: 0;
 
-    /* grid */
     background-image:
         linear-gradient(to right, rgba(12, 24, 48, 0.06) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(12, 24, 48, 0.06) 1px, transparent 1px);
     background-size: 64px 64px;
 
-    /* soft fade */
     -webkit-mask-image: radial-gradient(ellipse at center,
             rgba(0, 0, 0, 1) 0%,
             rgba(0, 0, 0, 1) 52%,
@@ -70,12 +75,13 @@
     opacity: 1;
 }
 
-/* fade top/bottom equally (no hard top line) */
 .kc-homeHero__copyGrid::after {
     content: "";
     position: absolute;
     inset: -46px -70px -54px;
     pointer-events: none;
+
+    /* ✅ FIX: same layer as before, still behind content */
     z-index: 0;
 
     background: linear-gradient(to bottom,
@@ -143,8 +149,6 @@
     justify-content: center;
     gap: 12px;
     flex-wrap: wrap;
-
-    /* ✅ spacing handled inside copy block */
     margin-bottom: 0;
 }
 
@@ -195,14 +199,13 @@
    Carousel
    ========================= */
 .kc-homeHero__carousel {
-    /* ✅ gap from CTA to carousel */
     margin-top: 24px;
-
-    /* ✅ pure white behind carousel too */
     background: #fff;
-
-    /* ✅ don’t clip card tops/bottoms */
     overflow: visible;
+
+    /* ✅ FIX: ensure carousel always sits above the grid */
+    position: relative;
+    z-index: 5;
 }
 
 /* Edge-to-edge scroller */
@@ -210,17 +213,17 @@
     width: 100vw;
     margin-left: calc(50% - 50vw);
 
-    /* ✅ extra vertical breathing room so no clipping */
     padding: 10px 0 14px;
-
     background: #fff;
+
+    /* ✅ FIX: don’t let the 100vw full-bleed create page overflow */
+    overflow-x: clip;
 }
 
 /* Scroller */
 .kc-homeHero__scroller {
     overflow-x: auto;
     overflow-y: visible;
-    /* ✅ allow vertical overflow visibility */
     scrollbar-width: none;
     -ms-overflow-style: none;
 
@@ -245,30 +248,22 @@
     gap: var(--gap, 10px);
     align-items: flex-start;
     width: max-content;
-
-    /* ✅ allow vertical overflow */
     padding: 10px 0;
 }
 
 /* Phone cards */
 .kc-homeHero__phone {
     width: 210px;
-
-    /* ✅ no clipping */
     overflow: visible;
 
-    /* ✅ “shadow as border” so images don’t blend */
     border-radius: 12px;
     background: #fff;
     box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.25);
-
 }
 
 /* Viewport (taller) */
 .kc-homeHero__viewport {
     width: 100%;
-
-    /* ✅ a tiny bit taller */
     height: 428px;
 
     border-radius: 12px;
@@ -307,14 +302,11 @@
     color: rgba(11, 18, 32, 0.92);
     text-align: center;
 
-    /* ✅ bigger + fatter */
     font-size: 15px;
     line-height: 1.05;
     font-weight: 800;
-
     letter-spacing: -0.01em;
 
-    /* ✅ no border / no background */
     padding: 0;
 }
 
