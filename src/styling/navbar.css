@@ -92,7 +92,7 @@
   color: #111111;
   text-decoration: none;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   transition: opacity 0.15s ease, transform 0.08s ease;
 }
 
@@ -136,7 +136,7 @@
   border: none;
   color: #111111;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   padding: 0;
   transition: opacity 0.15s ease, transform 0.08s ease;
