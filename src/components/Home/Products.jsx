@@ -1,4 +1,3 @@
-// frontend/src/components/home/Products.jsx
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 
@@ -14,72 +13,140 @@ export default function Products() {
     const products = useMemo(
         () => [
             {
-                tag: "Best seller",
-                name: "KonarCard — Plastic Edition",
+                tag: "Best Value",
+                name: "KonarCard – Plastic Edition",
                 desc: "Durable, lightweight NFC business card for everyday use.",
-                price: "£29.99",
+                priceText: "£29.99",
+                priceValue: 29.99,
+                currency: "GBP",
                 to: "/products/plastic-card",
-                cta: "View Plastic Card",
                 img: PlasticCardImg,
+                alt: "KonarCard Plastic Edition – plastic NFC business card with QR code",
+                sku: "konarcard-plastic",
             },
             {
                 tag: "Premium",
-                name: "KonarCard — Metal Edition",
+                name: "KonarCard – Metal Edition",
                 desc: "Premium metal NFC card designed to make a strong first impression.",
-                price: "£44.99",
+                priceText: "£44.99",
+                priceValue: 44.99,
+                currency: "GBP",
                 to: "/products/metal-card",
-                cta: "View Metal Card",
                 img: MetalCardImg,
+                alt: "KonarCard Metal Edition – metal NFC business card with QR code",
+                sku: "konarcard-metal",
             },
             {
                 tag: "Accessory",
                 name: "KonarTag",
                 desc: "Compact NFC key tag that shares your profile with a tap.",
-                price: "£9.99",
+                priceText: "£9.99",
+                priceValue: 9.99,
+                currency: "GBP",
                 to: "/products/konartag",
-                cta: "View KonarTag",
                 img: KonarTagImg,
+                alt: "KonarTag – NFC key tag that opens your digital business card profile",
+                sku: "konartag",
             },
         ],
         []
     );
 
+    // ✅ SEO: Product list schema (JSON-LD)
+    const productSchema = useMemo(() => {
+        const origin =
+            typeof window !== "undefined" && window.location?.origin
+                ? window.location.origin
+                : "https://konarcard.com";
+
+        return {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: "KonarCard NFC Business Cards",
+            itemListElement: products.map((p, idx) => ({
+                "@type": "ListItem",
+                position: idx + 1,
+                item: {
+                    "@type": "Product",
+                    name: p.name,
+                    description: p.desc,
+                    image: `${origin}${p.img?.startsWith("/") ? p.img : ""}`,
+                    sku: p.sku,
+                    brand: { "@type": "Brand", name: "KonarCard" },
+                    offers: {
+                        "@type": "Offer",
+                        priceCurrency: p.currency,
+                        price: p.priceValue,
+                        availability: "https://schema.org/InStock",
+                        url: `${origin}${p.to}`,
+                    },
+                },
+            })),
+        };
+    }, [products]);
+
     return (
-        <section className="khp-products" aria-label="Products">
+        <section className="khp-products" aria-labelledby="khp-products-title">
             <div className="khp-container">
-                <div className="khp-hero">
-                    <div className="khp-hero__inner">
-                        <p className="khp-kicker">Cards that link directly to your KonarCard profile</p>
-                        <h2 className="h2 khp-title">Business Cards That Share Your Profile Instantly</h2>
-                        <p className="body-s khp-sub">
-                            The KonarCard is an NFC business card that opens your digital profile with a tap. It’s the easiest way to share your
-                            details in person — without paper cards.
-                        </p>
-                    </div>
-                </div>
+                <header className="khp-hero">
+                    <p className="khp-kicker">NFC business cards for trades & small businesses</p>
 
-                <div className="khp-grid">
+                    <h2 id="khp-products-title" className="h2 khp-title">
+                        Business Cards That Share Your Profile Instantly
+                    </h2>
+
+                    <p className="body-s khp-sub">
+                        KonarCard is an <strong>NFC business card</strong> that opens your digital profile with a tap.
+                        It’s the easiest way to share your details in person — without paper cards.
+                    </p>
+                </header>
+
+                <div className="khp-grid" role="list">
                     {products.map((item) => (
-                        <article key={item.name} className="khp-card">
-                            <div className="khp-card__topRow">
-                                <span className="khp-pill">{item.tag}</span>
+                        <article
+                            key={item.sku}
+                            className="khp-card"
+                            role="listitem"
+                            itemScope
+                            itemType="https://schema.org/Product"
+                        >
+                            <meta itemProp="name" content={item.name} />
+                            <meta itemProp="description" content={item.desc} />
+                            <meta itemProp="sku" content={item.sku} />
+
+                            <div className="khp-media">
+                                <span className="khp-pill" aria-label={item.tag}>
+                                    {item.tag}
+                                </span>
+
+                                <img
+                                    src={item.img}
+                                    alt={item.alt}
+                                    className="khp-media__img"
+                                    loading="lazy"
+                                    decoding="async"
+                                    itemProp="image"
+                                />
                             </div>
 
-                            <div className="khp-media" aria-hidden="true">
-                                <img src={item.img} alt="" className="khp-media__img" loading="lazy" />
-                            </div>
+                            <div className="khp-divider" aria-hidden="true" />
 
                             <div className="khp-card__body">
-                                <p className="h6 khp-card__name">{item.name}</p>
+                                <h3 className="h6 khp-card__name">{item.name}</h3>
                                 <p className="body-s khp-desc">{item.desc}</p>
 
-                                <div className="khp-priceRow">
-                                    <p className="h6 khp-price">{item.price}</p>
+                                <div className="khp-priceRow" itemProp="offers" itemScope itemType="https://schema.org/Offer">
+                                    <p className="h6 khp-price">
+                                        {item.priceText}
+                                        <meta itemProp="priceCurrency" content={item.currency} />
+                                        <meta itemProp="price" content={String(item.priceValue)} />
+                                        <link itemProp="availability" href="https://schema.org/InStock" />
+                                    </p>
                                 </div>
 
                                 <div className="khp-actions">
-                                    <Link to={item.to} className="khp-btn">
-                                        {item.cta}
+                                    <Link to={item.to} className="khp-btn" aria-label={`View ${item.name}`}>
+                                        View product
                                     </Link>
                                 </div>
                             </div>
@@ -99,6 +166,12 @@ export default function Products() {
                         See How The Cards Work
                     </Link>
                 </div>
+
+                {/* ✅ SEO schema */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+                />
             </div>
         </section>
     );

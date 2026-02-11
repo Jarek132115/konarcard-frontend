@@ -1,10 +1,10 @@
 /* =========================================================
-   HOME — PRODUCTS SECTION (match Products page kp- styling)
+   HOME — PRODUCTS SECTION (Figma match)
    File: frontend/src/styling/home/products.css
    ========================================================= */
 
 .khp-products {
-    background: var(--kc-bg-main);
+    background: #fff;
     color: var(--kc-text-primary);
     padding: 80px 0;
 }
@@ -25,11 +25,8 @@
    HERO
    ========================= */
 .khp-hero {
-    padding: 0 0 30px;
-}
-
-.khp-hero__inner {
     text-align: center;
+    padding: 0 0 30px;
 }
 
 .khp-kicker {
@@ -58,7 +55,7 @@
 }
 
 /* =========================
-   GRID + CARDS (same layout as products page)
+   GRID + CARDS
    ========================= */
 .khp-grid {
     display: grid;
@@ -71,43 +68,20 @@
     border: 1px solid var(--kc-border);
     background: #fff;
     border-radius: 16px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     overflow: hidden;
+
+    /* lighter than before (match figma) */
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.05);
 
     display: flex;
     flex-direction: column;
 }
 
-.khp-card__topRow {
-    padding: 14px 16px 10px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.khp-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 999px;
-    padding: 7px 10px;
-    font-size: 12px;
-    font-weight: 800;
-
-    border: 1px solid rgba(249, 115, 22, 0.30);
-    background: rgba(249, 115, 22, 0.10);
-    color: var(--kc-accent-primary);
-}
-
-/* 1:1 media like Products page */
 .khp-media {
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
     background: #f3f4f6;
-    border-top: 1px solid rgba(15, 23, 42, 0.06);
-    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
     overflow: hidden;
 }
 
@@ -118,6 +92,34 @@
     height: 100%;
     object-fit: cover;
     object-position: center;
+    display: block;
+}
+
+/* pill sits ON the image (top-left) */
+.khp-pill {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 500;
+
+    border: 1px solid rgba(249, 115, 22, 0.30);
+    background: rgba(249, 115, 22, 0.14);
+    color: var(--kc-accent-primary);
+}
+
+/* subtle divider like figma */
+.khp-divider {
+    height: 1px;
+    background: rgba(15, 23, 42, 0.06);
 }
 
 .khp-card__body {
@@ -125,6 +127,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    text-align: left;
 }
 
 .khp-card__name,
@@ -141,11 +144,11 @@
     margin-top: 2px;
 }
 
+/* actions */
 .khp-actions {
     margin-top: 10px;
 }
 
-/* Button: match Products page primary */
 .khp-btn {
     display: inline-flex;
     align-items: center;
@@ -161,19 +164,19 @@
 
     font-family: "Cal Sans", sans-serif;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.4px;
 
     background: var(--kc-accent-primary);
     color: #fff;
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.25);
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.20);
 
     transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
 }
 
 .khp-btn:hover {
     filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.32);
+    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.26);
 }
 
 .khp-btn:active {
@@ -211,7 +214,7 @@
 
     font-family: "Cal Sans", sans-serif;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.4px;
 
     transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
@@ -224,19 +227,19 @@
 .khp-cta--primary {
     background: var(--kc-accent-primary);
     color: #fff;
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.25);
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.22);
 }
 
 .khp-cta--primary:hover {
     filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.32);
+    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.30);
 }
 
 .khp-cta--ghost {
     background: #fff;
     color: var(--kc-text-primary);
     border: 1px solid var(--kc-border);
-    box-shadow: 0 10px 24px rgba(16, 24, 40, 0.06);
+    box-shadow: 0 10px 22px rgba(16, 24, 40, 0.05);
 }
 
 .khp-cta--ghost:hover {
@@ -244,7 +247,7 @@
 }
 
 /* =========================
-   RESPONSIVE (same breakpoint behavior)
+   RESPONSIVE
    ========================= */
 @media (max-width: 980px) {
     .khp-grid {
