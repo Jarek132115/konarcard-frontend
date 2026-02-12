@@ -1,3 +1,4 @@
+/* frontend/src/styling/home/pricing.css */
 /* =========================================================
    HOME — PRICING SECTION
    File: frontend/src/styling/home/pricing.css
@@ -5,7 +6,6 @@
 
 .kpr {
     background: #ffffff;
-    /* ✅ plain white */
     color: var(--kc-text-primary);
     padding: 80px 0;
 }
@@ -37,7 +37,8 @@
     font-size: 12px;
     font-weight: 700;
     color: rgba(15, 23, 42, 0.62);
-    background: var(--kc-bg-soft);
+
+    background: #fff;
     border: 1px solid var(--kc-border);
     padding: 8px 12px;
     border-radius: 999px;
@@ -55,12 +56,11 @@
 
 /* Grid */
 .kpr__grid {
-    margin-top: 18px;
+    margin-top: 28px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
     align-items: center;
-    /* ✅ makes the “raised” featured feel intentional */
 }
 
 /* Card */
@@ -80,7 +80,6 @@
     border-color: rgba(249, 115, 22, 0.85);
     box-shadow: 0 18px 44px rgba(249, 115, 22, 0.22);
     transform: translateY(-10px);
-    /* ✅ slightly higher than others */
 }
 
 /* Top */
@@ -113,7 +112,16 @@
 .kpr-planRow {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 10px;
+}
+
+.kpr-plan {
+    margin: 0;
+}
+
+.kpr-plan--featured {
+    color: #ffffff !important;
 }
 
 .kpr-planIcon {
@@ -130,18 +138,8 @@
     display: block;
 }
 
-/* ✅ make featured icon white */
 .kpr-planIcon.is-featured img {
     filter: brightness(0) invert(1);
-}
-
-.kpr-plan {
-    margin: 0;
-}
-
-/* ✅ force featured title white */
-.kpr-plan--featured {
-    color: #ffffff !important;
 }
 
 .kpr-cardSub {
@@ -202,49 +200,43 @@
 
 .kpr-feature {
     display: grid;
-    grid-template-columns: 18px 1fr;
+    grid-template-columns: 24px 1fr;
     gap: 10px;
     align-items: start;
 }
 
 .kpr-check {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
     display: grid;
     place-items: center;
     margin-top: 2px;
 }
 
 .kpr-check img {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
     display: block;
 }
 
-/* ✅ make featured ticks white */
 .kpr-check.is-featured img {
     filter: brightness(0) invert(1);
 }
 
-.kpr-featureTitle {
-    font-weight: 900;
-    color: var(--kc-text-primary);
-    font-size: 13px;
-}
-
-.kpr-featureDesc {
-    margin-top: 2px;
-    color: var(--kc-text-secondary);
+/* ✅ single line feature text */
+.kpr-featureLine {
+    margin: 0;
     font-size: 13px;
     line-height: 1.5;
+    color: var(--kc-text-secondary);
+    font-weight: 600;
 }
 
-.kpr-featureTitle.is-featured,
-.kpr-featureDesc.is-featured {
+.kpr-featureLine.is-featured {
     color: rgba(255, 255, 255, 0.92);
 }
 
-/* Note (italic) above CTA */
+/* Note */
 .kpr-noteLine {
     padding: 10px 18px 0;
     margin: 0;
@@ -260,58 +252,14 @@
 
 /* Actions */
 .kpr-actions {
-    margin-top: 10px;
-    padding: 0 18px 18px;
+    margin-top: 16px;
+    /* ✅ bigger gap from list to CTA (double rule) */
+    padding: 16px 18px 18px;
+    /* ✅ extra top padding = more breathing room */
 }
 
-.kpr-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
+.kpr-ctaBtn {
     width: 100%;
-    padding: 14px 18px;
-    border-radius: 999px;
-    border: 1px solid transparent;
-
-    text-decoration: none;
-    cursor: pointer;
-
-    font-family: "Cal Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.4px;
-
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.kpr-btn:active {
-    transform: translateY(1px);
-}
-
-.kpr-btn.is-primary {
-    background: #ffffff;
-    color: var(--kc-text-primary);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
-}
-
-.kpr-btn.is-primary:hover {
-    filter: brightness(0.98);
-}
-
-.kpr-btn.is-ghost {
-    background: #fff;
-    color: var(--kc-text-primary);
-    border-color: rgba(15, 23, 42, 0.18);
-}
-
-.kpr-btn.is-ghost:hover {
-    border-color: rgba(15, 23, 42, 0.28);
-}
-
-.kpr-btn--inline {
-    min-width: 170px;
-    width: auto;
 }
 
 /* Bottom row */
@@ -327,9 +275,7 @@
 
 .kpr-bottomBtns {
     display: flex;
-    gap: 10px;
     justify-content: center;
-    flex-wrap: wrap;
 }
 
 /* Responsive */
@@ -337,12 +283,11 @@
     .kpr__grid {
         grid-template-columns: 1fr;
         max-width: 560px;
-        margin: 18px auto 0;
+        margin: 28px auto 0;
         align-items: stretch;
     }
 
     .kpr-card.is-featured {
         transform: none;
-        /* ✅ don’t raise on stacked layout */
     }
 }

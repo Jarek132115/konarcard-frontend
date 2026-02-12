@@ -121,10 +121,7 @@ export default function FAQPage() {
   const [activeTab, setActiveTab] = useState("getting-started");
   const [openIndex, setOpenIndex] = useState(0);
 
-  const visibleFaqs = useMemo(
-    () => faqs.filter((f) => f.tab === activeTab),
-    [faqs, activeTab]
-  );
+  const visibleFaqs = useMemo(() => faqs.filter((f) => f.tab === activeTab), [faqs, activeTab]);
 
   const openLiveChat = () => {
     const started = Date.now();
@@ -155,7 +152,13 @@ export default function FAQPage() {
         {/* Hero */}
         <section className="kc-faq__hero">
           <div className="kc-faq__heroInner">
+            {/* NEW PILL (pricing-style) */}
+            <div className="kc-pill kc-faq__pill" aria-label="FAQ page label">
+              Help centre
+            </div>
+
             <h1 className="h2 kc-faq__title">Frequently Asked Questions</h1>
+
             <p className="body-s kc-faq__subtitle">
               Everything you need to know before getting started with KonarCard.
             </p>
@@ -217,14 +220,10 @@ export default function FAQPage() {
             If you can’t find what you’re looking for, our team is here to help.
           </p>
 
-          <button
-            type="button"
-            onClick={openLiveChat}
-            className="kc-faq__helpCta kc-faq__helpCta--outline"
-          >
+          {/* Updated CTA (fonts.css button system) */}
+          <button type="button" onClick={openLiveChat} className="kx-btn kx-btn--orange kc-faq__helpCta">
             Start Live Chat
           </button>
-
         </section>
       </main>
 

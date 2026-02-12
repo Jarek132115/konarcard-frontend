@@ -1,28 +1,45 @@
+/* frontend/src/styling/faq.css */
 /* =========================================================
-   FAQ PAGE — Layout only (tokens + typography via fonts.css)
-   Minimal, premium, no glow
+   FAQ PAGE — Flat, minimal, divider-based layout
+   No card container
    ========================================================= */
+
+.kc-faq {
+    background: var(--kc-bg-main);
+    color: var(--kc-text-primary);
+}
 
 /* =========================
    HERO
    ========================= */
-.kc-faq__hero {
-    padding: 0 20px 28px;
+
+@media (max-width: 640px) {
+    .kc-faq__hero {
+        padding: 40px 20px 14px;
+    }
 }
 
 .kc-faq__heroInner {
-    max-width: 980px;
+    max-width: 920px;
     margin: 0 auto;
     text-align: center;
 }
 
+/* NEW pill spacing (above H1) */
+.kc-faq__pill {
+    margin: 0 auto 14px;
+}
+
+/* Title / subtitle */
 .kc-faq__title {
-    margin: 0 0 8px;
+    margin: 0 0 10px;
+    letter-spacing: -0.02em;
 }
 
 .kc-faq__subtitle {
     margin: 0 auto;
-    max-width: 62ch;
+    max-width: 60ch;
+    color: var(--kc-text-secondary);
 }
 
 /* =========================
@@ -38,10 +55,10 @@
 
 .kc-faq__tab {
     appearance: none;
-    background: #ffffff;
+    background: transparent;
     color: var(--kc-text-primary);
 
-    border: 1px solid rgba(15, 23, 42, 0.16);
+    border: 1px solid rgba(15, 23, 42, 0.14);
     border-radius: 999px;
 
     padding: 9px 14px;
@@ -52,15 +69,11 @@
     font-weight: 600;
 
     cursor: pointer;
-    transition: border-color 0.15s ease, transform 0.08s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .kc-faq__tab:hover {
-    border-color: rgba(15, 23, 42, 0.26);
-}
-
-.kc-faq__tab:active {
-    transform: translateY(1px);
+    background: rgba(15, 23, 42, 0.04);
 }
 
 .kc-faq__tab.is-active {
@@ -70,26 +83,33 @@
 }
 
 /* =========================
-   FAQ LIST
+   FAQ LIST (NO CONTAINER CARD)
    ========================= */
 .kc-faq__listSection {
-    padding: 0 20px 64px;
+    padding: 26px 20px 62px;
 }
 
 .kc-faq__list {
     max-width: 920px;
     margin: 0 auto;
-    border-top: 1px solid rgba(15, 23, 42, 0.10);
 }
 
 .kc-faq__item {
     border-bottom: 1px solid rgba(15, 23, 42, 0.10);
 }
 
+.kc-faq__item:first-child {
+    border-top: 1px solid rgba(15, 23, 42, 0.10);
+}
+
+/* =========================
+   Question Row
+   ========================= */
 .kc-faq__qRow {
     width: 100%;
     text-align: left;
-    padding: 22px 6px;
+
+    padding: 22px 0;
     background: transparent;
     border: none;
 
@@ -101,16 +121,18 @@
 }
 
 .kc-faq__qRow:hover {
-    background: rgba(15, 23, 42, 0.02);
+    background: transparent;
 }
 
 .kc-faq__q {
     margin: 0;
     max-width: 70ch;
+    line-height: 1.25;
 }
 
+/* Chevron minimal */
 .kc-faq__chev {
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(71, 85, 105, 0.9);
     transition: transform 0.15s ease;
 }
@@ -119,17 +141,21 @@
     transform: rotate(180deg);
 }
 
+/* =========================
+   Answer
+   ========================= */
 .kc-faq__a {
-    padding: 0 6px 22px;
-    max-width: 78ch;
+    padding: 0 0 22px;
+    max-width: 76ch;
     line-height: 1.65;
+    color: var(--kc-text-secondary);
 }
 
 /* =========================
    HELP SECTION
    ========================= */
 .kc-faq__help {
-    padding: 54px 20px 84px;
+    padding: 54px 20px 92px;
     text-align: center;
 }
 
@@ -140,40 +166,12 @@
 .kc-faq__helpSub {
     margin: 0 auto 22px;
     max-width: 60ch;
+    color: var(--kc-text-secondary);
 }
 
-/* =========================
-   HELP CTA — EXACT MATCH
-   Contact Us "Read more FAQs"
-   ========================= */
+/* CTA spacing only (button styling comes from fonts.css .kx-btn) */
 .kc-faq__helpCta {
-    appearance: none;
-    background: #ffffff;
-    color: var(--kc-accent-primary);
-
-    border: 1.5px solid var(--kc-accent-primary);
-    border-radius: 999px;
-
-    padding: 14px 32px;
-
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-
-    cursor: pointer;
-    text-decoration: none;
-
-    /* ❌ NO SHADOW */
-    box-shadow: none;
-    transition: background-color 0.15s ease, transform 0.08s ease;
-}
-
-.kc-faq__helpCta:hover {
-    background: rgba(249, 115, 22, 0.06);
-}
-
-.kc-faq__helpCta:active {
-    transform: translateY(1px);
+    min-width: 190px;
 }
 
 /* =========================
@@ -181,10 +179,14 @@
    ========================= */
 @media (max-width: 640px) {
     .kc-faq__qRow {
-        padding: 16px 6px;
+        padding: 18px 0;
     }
 
     .kc-faq__a {
-        padding-bottom: 16px;
+        padding-bottom: 18px;
+    }
+
+    .kc-faq__pill {
+        margin-bottom: 12px;
     }
 }

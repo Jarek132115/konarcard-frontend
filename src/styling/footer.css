@@ -1,3 +1,4 @@
+/* frontend/src/styling/footer.css */
 /* =========================
    Footer base
    ========================= */
@@ -12,7 +13,7 @@
 .kc-footer__hero {
     background: #0c1830;
     color: #fff;
-    padding: 84px 20px 70px;
+    padding: 60px 20px 54px;
 }
 
 .kc-footer__heroInner {
@@ -22,11 +23,30 @@
 }
 
 .kc-footer__heroTitle {
-    font-size: clamp(36px, 4.2vw, 64px);
-    font-weight: 800;
+    font-size: clamp(28px, 3.4vw, 48px);
+    font-weight: 500;
+    /* Cal Sans 500 */
     letter-spacing: -0.03em;
-    margin: 0 0 28px;
-    line-height: 1.08;
+    margin: 0 0 18px;
+    line-height: 1.1;
+    color: #fff;
+}
+
+.kc-footer__heroBreak {
+    display: inline;
+}
+
+@media (max-width: 560px) {
+    .kc-footer__heroTitle {
+        font-size: 28px;
+        line-height: 1.14;
+        letter-spacing: -0.02em;
+        margin-bottom: 14px;
+    }
+
+    .kc-footer__heroBreak {
+        display: none;
+    }
 }
 
 /* =========================
@@ -34,7 +54,7 @@
    ========================= */
 .kc-footer__carouselWrap {
     position: relative;
-    margin: 10px auto 0;
+    margin: 6px auto 0;
 }
 
 .kc-footer__carouselViewport {
@@ -46,8 +66,8 @@
 
 .kc-footer__track {
     display: flex;
-    gap: 42px;
-    padding: 14px 10px 16px;
+    gap: 34px;
+    padding: 10px 10px;
     width: max-content;
     will-change: transform;
     cursor: grab;
@@ -59,16 +79,16 @@
 
 .kc-footer__item {
     display: flex;
-    gap: 14px;
+    gap: 12px;
     align-items: flex-start;
-    min-width: 320px;
-    max-width: 360px;
+    min-width: 300px;
+    max-width: 340px;
     color: #fff;
 }
 
 .kc-footer__itemIcon {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     margin-top: 2px;
     opacity: 0.95;
 }
@@ -79,14 +99,14 @@
 
 .kc-footer__itemTitle {
     font-weight: 800;
-    font-size: 14px;
-    margin: 0 0 4px;
+    font-size: 13px;
+    margin: 0 0 3px;
 }
 
 .kc-footer__itemDesc {
     margin: 0;
     font-size: 12px;
-    line-height: 1.35;
+    line-height: 1.32;
     color: rgba(255, 255, 255, 0.76);
 }
 
@@ -96,7 +116,7 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 80px;
+    width: 72px;
     z-index: 2;
 }
 
@@ -110,20 +130,22 @@
     background: linear-gradient(270deg, #0c1830 0%, rgba(12, 24, 48, 0) 100%);
 }
 
-/* CTA */
+/* =========================
+   CTA — DO NOT override kx-btn styles
+   We only control spacing/placement here.
+   ========================= */
 .kc-footer__heroCta {
-    margin-top: 26px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 14px 34px;
-    background: #fff;
-    color: #0c1830;
-    border-radius: 999px;
-    font-weight: 800;
-    text-decoration: none;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
-    border: 2px solid rgba(255, 123, 0, 0.55);
+    margin-top: 18px;
+    min-width: 190px;
+    /* ✅ IMPORTANT: no border-radius override, no border override, no background override */
+    /* Let .kx-btn + .kx-btn--white handle ALL visuals so it matches homepage FAQ buttons */
+}
+
+/* On dark background, keep hover readable (kx-btn--white hover is very subtle) */
+.kc-footer__heroCta.kx-btn--white:hover {
+    background: rgba(255, 255, 255, 0.96);
+    /* still "white", just slightly tinted */
+    border-color: rgba(255, 255, 255, 0.85);
 }
 
 /* =========================
@@ -131,7 +153,7 @@
    ========================= */
 .kc-footer__main {
     background: #fff;
-    padding: 72px 20px 0;
+    padding: 92px 20px 0;
 }
 
 .kc-footer__mainInner {
@@ -139,8 +161,8 @@
     margin: 0 auto;
     display: grid;
     grid-template-columns: 1.2fr 2fr;
-    gap: 80px;
-    padding-bottom: 48px;
+    gap: 90px;
+    padding-bottom: 68px;
 }
 
 /* Left */
@@ -148,7 +170,7 @@
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 
 .kc-footer__brandLogo {
@@ -163,8 +185,8 @@
 }
 
 .kc-footer__desc {
-    margin: 0 0 22px;
-    max-width: 340px;
+    margin: 0 0 26px;
+    max-width: 360px;
     color: #3a4050;
     line-height: 1.55;
     font-size: 15px;
@@ -184,13 +206,13 @@
 .kc-footer__cols {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 60px;
+    gap: 64px;
 }
 
 .kc-footer__col h4 {
     font-weight: 800;
     font-size: 16px;
-    margin: 0 0 14px;
+    margin: 0 0 16px;
     color: #0c1830;
 }
 
@@ -198,16 +220,16 @@
     display: block;
     text-decoration: none;
     color: #3a4050;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-size: 15px;
 }
 
 /* =========================
-   Bottom bar (adaptive alignment)
+   Bottom bar
    ========================= */
 .kc-footer__bottomBar {
     border-top: 1px solid rgba(12, 24, 48, 0.12);
-    padding: 22px 20px 26px;
+    padding: 30px 20px;
 }
 
 .kc-footer__bottomInner {
@@ -221,7 +243,6 @@
     flex-wrap: wrap;
 }
 
-/* Copyright */
 .kc-footer__copyright {
     display: inline-flex;
     align-items: center;
@@ -232,7 +253,6 @@
     white-space: nowrap;
 }
 
-/* Policies */
 .kc-footer__policies {
     display: flex;
     gap: 22px;
@@ -247,9 +267,13 @@
 }
 
 /* =========================
-   RESPONSIVE BEHAVIOUR
+   Responsive
    ========================= */
 @media (max-width: 1000px) {
+    .kc-footer__main {
+        padding: 76px 20px 0;
+    }
+
     .kc-footer__mainInner {
         grid-template-columns: 1fr;
         gap: 44px;
@@ -268,17 +292,18 @@
     }
 }
 
-/* 🔑 When bottom bar wraps → CENTER EVERYTHING */
 @media (max-width: 720px) {
     .kc-footer__bottomInner {
         flex-direction: column;
         align-items: center;
         text-align: center;
+        gap: 14px;
     }
 
     .kc-footer__copyright {
         justify-content: center;
         text-align: center;
+        white-space: normal;
     }
 
     .kc-footer__policies {
@@ -295,6 +320,5 @@
 
     .kc-footer__brand {
         justify-content: center;
-        /* ✅ centers logo + text */
     }
 }

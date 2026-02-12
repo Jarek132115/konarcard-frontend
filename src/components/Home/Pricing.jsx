@@ -1,3 +1,4 @@
+// frontend/src/components/Home/Pricing.jsx
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../../styling/home/pricing.css";
@@ -10,17 +11,15 @@ import TeamsPlanIcon from "../../assets/icons/TeamsPlan.svg";
 /* Feature tick icon */
 import PricingTick from "../../assets/icons/PricingTick.svg";
 
-function FeatureRow({ featured, title, desc }) {
+/* ✅ Single-line feature row (no title + desc split) */
+function FeatureRow({ featured, text }) {
     return (
         <li className="kpr-feature">
             <span className={`kpr-check ${featured ? "is-featured" : ""}`} aria-hidden="true">
                 <img src={PricingTick} alt="" loading="lazy" decoding="async" />
             </span>
 
-            <div className="kpr-featureCopy">
-                <div className={`kpr-featureTitle ${featured ? "is-featured" : ""}`}>{title}</div>
-                <div className={`kpr-featureDesc ${featured ? "is-featured" : ""}`}>{desc}</div>
-            </div>
+            <p className={`kpr-featureLine ${featured ? "is-featured" : ""}`}>{text}</p>
         </li>
     );
 }
@@ -37,10 +36,11 @@ export default function Pricing() {
                 cadence: "Forever",
                 note: "",
                 features: [
-                    { t: "1 profile + 1 link + 1 QR", d: "Everything you need to share your details." },
-                    { t: "Fully customise your profile", d: "Edit your details anytime." },
-                    { t: "Works on any phone", d: "Tap or scan — no app needed." },
-                    { t: "Unlimited link updates", d: "Your link never changes." },
+                    "1 profile + 1 link + 1 QR code",
+                    "Fully customise your profile anytime",
+                    "Works on any phone — tap or scan, no app",
+                    "Unlimited link updates (your link never changes)",
+                    "Add contact info, socials, website, and reviews",
                 ],
                 ctaText: "Get started free",
                 ctaTo: "/register",
@@ -54,12 +54,15 @@ export default function Pricing() {
                 price: "£4.95",
                 cadence: "per month",
                 note: "Cancel anytime",
+                /* ✅ more bullets so it’s taller and stands out more */
                 features: [
-                    { t: "More templates", d: "Choose from 5 layouts." },
-                    { t: "Higher limits", d: "More photos, services, and reviews." },
-                    { t: "Deep analytics", d: "See what customers click." },
-                    { t: "Remove Konar branding", d: "Make it fully yours." },
-                    { t: "Priority support", d: "Get help faster when you need it." }, // ✅ extra bullet point
+                    "Choose from 5 premium layouts",
+                    "Higher limits for photos, services, and reviews",
+                    "Add more links (WhatsApp, booking, quote form)",
+                    "Deep analytics — see what customers click",
+                    "Remove Konar branding (make it fully yours)",
+                    "Priority support when you need help fast",
+                    "Showcase your best work with featured galleries",
                 ],
                 ctaText: "Upgrade to Plus",
                 ctaTo: "/pricing",
@@ -70,14 +73,15 @@ export default function Pricing() {
                 icon: TeamsPlanIcon,
                 sub: "Built for growing businesses",
                 tag: "For teams",
-                price: "£19.95",
+                price: "£4.95",
                 cadence: "per month",
                 note: "Add extra profiles",
                 features: [
-                    { t: "Multiple team profiles", d: "Great for staff and contractors." },
-                    { t: "Centralised branding", d: "Keep everything consistent." },
-                    { t: "Deep analytics", d: "Track performance across profiles." },
-                    { t: "Extra profiles available", d: "£1.95 / extra profile / month." },
+                    "Multiple team profiles for staff and contractors",
+                    "Centralised branding to keep everything consistent",
+                    "Deep analytics across profiles",
+                    "Extra profiles available — £1.95 per profile / month",
+                    "Manage profiles from one place",
                 ],
                 ctaText: "See Teams options",
                 ctaTo: "/pricing",
@@ -98,8 +102,8 @@ export default function Pricing() {
                     </h2>
 
                     <p className="body-s kpr__sub">
-                        Start free, then upgrade when you need more. KonarCard combines an NFC business card with a digital business card
-                        profile you can update anytime.
+                        Start free, then upgrade when you need more. KonarCard combines an NFC business card with a digital business card profile
+                        you can update anytime.
                     </p>
                 </header>
 
@@ -115,11 +119,11 @@ export default function Pricing() {
                                 <div className={`kpr-pill ${c.featured ? "is-featured" : ""}`}>{c.tag}</div>
 
                                 <div className="kpr-planRow">
+                                    <p className={`h5 kpr-plan ${c.featured ? "kpr-plan--featured" : ""}`}>{c.title}</p>
+
                                     <span className={`kpr-planIcon ${c.featured ? "is-featured" : ""}`} aria-hidden="true">
                                         <img src={c.icon} alt="" loading="lazy" decoding="async" />
                                     </span>
-
-                                    <p className={`h5 kpr-plan ${c.featured ? "kpr-plan--featured" : ""}`}>{c.title}</p>
                                 </div>
 
                                 <p className={`body-s kpr-cardSub ${c.featured ? "is-featured" : ""}`}>{c.sub}</p>
@@ -133,15 +137,15 @@ export default function Pricing() {
                             <div className={`kpr-divider ${c.featured ? "is-featured" : ""}`} aria-hidden="true" />
 
                             <ul className="kpr-list" aria-label={`${c.title} plan features`}>
-                                {c.features.map((f, idx) => (
-                                    <FeatureRow key={idx} featured={c.featured} title={f.t} desc={f.d} />
+                                {c.features.map((text, idx) => (
+                                    <FeatureRow key={idx} featured={c.featured} text={text} />
                                 ))}
                             </ul>
 
                             {c.note ? <p className={`kpr-noteLine ${c.featured ? "is-featured" : ""}`}>{c.note}</p> : null}
 
                             <div className="kpr-actions">
-                                <Link to={c.ctaTo} className={`kpr-btn ${c.featured ? "is-primary" : "is-ghost"}`}>
+                                <Link to={c.ctaTo} className={`kx-btn ${c.featured ? "kx-btn--white" : "kx-btn--black"} kpr-ctaBtn`}>
                                     {c.ctaText}
                                 </Link>
                             </div>
@@ -150,16 +154,11 @@ export default function Pricing() {
                 </div>
 
                 <div className="kpr-bottom">
-                    <p className="body-s kpr-bottomNote">
-                        Want full details? Compare plans and billing intervals on the pricing page.
-                    </p>
+                    <p className="body-s kpr-bottomNote">Want full details? Compare plans and billing intervals on the pricing page.</p>
 
                     <div className="kpr-bottomBtns">
-                        <Link to="/pricing" className="kpr-btn is-primary kpr-btn--inline">
+                        <Link to="/pricing" className="kx-btn kx-btn--black">
                             View full pricing
-                        </Link>
-                        <Link to="/products" className="kpr-btn is-ghost kpr-btn--inline">
-                            Shop cards
                         </Link>
                     </div>
                 </div>

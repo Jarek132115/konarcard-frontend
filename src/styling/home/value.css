@@ -1,11 +1,10 @@
 /* =========================================================
-   HOME — VALUE SECTION (Match Customer Trust)
-   File: frontend/src/styling/home/value.css
+   HOME — VALUE SECTION
+   Clean, consistent, uses global design system
    ========================================================= */
 
 .khv {
     background: #fafafa;
-    /* ✅ requested */
     color: var(--kc-text-primary);
     padding: 80px 0;
 }
@@ -22,29 +21,21 @@
     padding: 0 20px;
 }
 
-/* Head */
+/* =========================
+   HEAD
+   ========================= */
+
 .khv__head {
     text-align: center;
-    margin-bottom: 18px;
+    margin-bottom: 24px;
 }
 
 .khv__kicker {
-    margin: 0 0 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 12px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.62);
-    background: #fff;
-    border: 1px solid var(--kc-border);
-    padding: 8px 12px;
-    border-radius: 999px;
+    margin: 0 0 12px;
 }
 
 .khv__title {
-    margin: 0 0 8px;
+    margin: 0 0 10px;
 }
 
 .khv__sub {
@@ -53,29 +44,34 @@
     color: var(--kc-text-secondary);
 }
 
-/* Grid */
+/* =========================
+   GRID
+   ========================= */
+
 .khv__grid {
-    margin-top: 18px;
+    margin-top: 24px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 18px;
     align-items: stretch;
 }
 
-/* Card */
+/* =========================
+   CARD
+   ========================= */
+
 .khv__card {
     border: 1px solid var(--kc-border);
-    background: #fff;
+    background: #ffffff;
     border-radius: 16px;
-
-    /* ✅ lighter/smaller shadow */
     box-shadow: 0 8px 18px rgba(16, 24, 40, 0.06);
 
-    padding: 18px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
 
-    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+    transition: transform 0.12s ease, box-shadow 0.12s ease,
+        border-color 0.12s ease;
 }
 
 .khv__card:hover {
@@ -84,11 +80,14 @@
     border-color: rgba(249, 115, 22, 0.22);
 }
 
-/* ✅ Icon on top, no background/border */
+/* =========================
+   ICON
+   ========================= */
+
 .khv__iconTop {
     width: 40px;
     height: 40px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     display: grid;
     place-items: center;
 }
@@ -100,7 +99,10 @@
     object-fit: contain;
 }
 
-/* Copy */
+/* =========================
+   COPY
+   ========================= */
+
 .khv__cardTitle {
     margin: 0 0 6px;
 }
@@ -111,62 +113,20 @@
     line-height: 1.55;
 }
 
-/* CTAs */
+/* =========================
+   CTA
+   ========================= */
+
 .khv__cta {
-    margin-top: 18px;
+    margin-top: 32px;
     display: flex;
-    gap: 10px;
     justify-content: center;
-    flex-wrap: wrap;
 }
 
-.khv__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+/* =========================
+   RESPONSIVE
+   ========================= */
 
-    padding: 14px 22px;
-    border-radius: 999px;
-    border: 1px solid transparent;
-
-    text-decoration: none;
-    cursor: pointer;
-
-    font-family: "Cal Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.4px;
-
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.khv__btn:active {
-    transform: translateY(1px);
-}
-
-.khv__btn--primary {
-    background: var(--kc-accent-primary);
-    color: #fff;
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.25);
-}
-
-.khv__btn--primary:hover {
-    filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.32);
-}
-
-.khv__btn--ghost {
-    background: #fff;
-    color: var(--kc-text-primary);
-    border-color: rgba(15, 23, 42, 0.18);
-    box-shadow: 0 10px 22px rgba(16, 24, 40, 0.06);
-}
-
-.khv__btn--ghost:hover {
-    border-color: rgba(15, 23, 42, 0.28);
-}
-
-/* Responsive */
 @media (max-width: 980px) {
     .khv__grid {
         grid-template-columns: repeat(2, 1fr);
@@ -180,9 +140,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-
-    .khv__card,
-    .khv__btn {
+    .khv__card {
         transition: none !important;
     }
 

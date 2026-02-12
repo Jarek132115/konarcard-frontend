@@ -1,295 +1,192 @@
-// frontend/src/components/Home/FAQ.jsx
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import "../../styling/fonts.css";
 import "../../styling/home/faq.css";
 
-const CATS = [
-    { key: "getting-started", label: "Getting started" },
-    { key: "cards-profiles", label: "Cards & profiles" },
-    { key: "pricing-plans", label: "Pricing & plans" },
-    { key: "teams", label: "Teams" },
-    { key: "support", label: "Technical & support" },
-];
-
-export default function FAQ() {
-    const [activeCat, setActiveCat] = useState("getting-started");
-    const [openId, setOpenId] = useState("what-is-konarcard");
+export default function HomeFAQ() {
+    const tabs = useMemo(
+        () => [
+            { key: "getting-started", label: "Getting started" },
+            { key: "cards-profiles", label: "Cards & profiles" },
+            { key: "pricing", label: "Pricing & plans" },
+            { key: "teams", label: "Teams" },
+            { key: "support", label: "Technical & support" },
+        ],
+        []
+    );
 
     const faqs = useMemo(
         () => [
-            // ======================
-            // Getting started
-            // ======================
             {
-                id: "what-is-konarcard",
-                cat: "getting-started",
+                tab: "getting-started",
                 q: "What is KonarCard?",
-                a: (
-                    <>
-                        KonarCard is a <strong>digital business card</strong> built for UK trades and small businesses.
-                        You share your profile instantly using an <strong>NFC business card</strong> tap, a QR scan, or a simple link —
-                        no app needed. Your details stay up to date, so you don’t lose work because of old phone numbers or emails.
-                    </>
-                ),
+                a: "KonarCard is a digital business card built for trades and service businesses. Share your details instantly using one link, an NFC tap, or a QR code — no app needed.",
             },
             {
-                id: "how-do-i-get-started",
-                cat: "getting-started",
+                tab: "getting-started",
                 q: "How do I get started?",
-                a: (
-                    <>
-                        Create your free profile, claim your link, and add your contact details, services, photos, and reviews.
-                        When you’re ready, you can order a card (plastic or metal) or a key tag. Start here:{" "}
-                        <Link to="/register">create your profile</Link>.
-                    </>
-                ),
+                a: "Claim your KonarCard link in seconds, create your profile, and start sharing straight away. You can add your contact info, socials, website, reviews, or booking link.",
             },
             {
-                id: "do-i-need-to-pay-to-start",
-                cat: "getting-started",
+                tab: "getting-started",
                 q: "Do I need to pay to start?",
-                a: (
-                    <>
-                        No — you can start free. Build your profile and share your link right away. If you want tap-to-share,
-                        you can purchase an NFC product like the <Link to="/products/plastic-card">Plastic Card</Link>,{" "}
-                        <Link to="/products/metal-card">Metal Card</Link>, or <Link to="/products/konartag">KonarTag</Link>.
-                    </>
-                ),
+                a: "No. You can claim your link and create a basic profile for free. Paid plans unlock extra features and physical NFC cards.",
             },
             {
-                id: "who-is-it-best-for",
-                cat: "getting-started",
+                tab: "getting-started",
                 q: "Who is KonarCard best for?",
-                a: (
-                    <>
-                        KonarCard is designed for <strong>tradies and service businesses</strong> — plumbers, electricians,
-                        builders, landscapers, cleaners, mechanics, and more. If you rely on referrals, quotes, and repeat work,
-                        a digital profile that shows reviews and proof of work helps clients trust you faster.
-                    </>
-                ),
+                a: "It’s ideal for electricians, plumbers, builders, landscapers, and any service businesses that want more calls, more quotes, and easier referrals.",
             },
 
-            // ======================
-            // Cards & profiles
-            // ======================
             {
-                id: "does-it-work-on-iphone-android",
-                cat: "cards-profiles",
-                q: "Does the NFC business card work on iPhone and Android?",
-                a: (
-                    <>
-                        Yes. Most modern iPhones and Android phones support NFC tap-to-open. And every KonarCard also supports a
-                        QR backup, so people can scan even if NFC is off.
-                    </>
-                ),
+                tab: "cards-profiles",
+                q: "How does the physical card work?",
+                a: "KonarCard cards use NFC. When someone taps your card with their phone, your profile opens instantly. If NFC isn’t supported, they can scan the QR code instead.",
             },
             {
-                id: "what-can-i-put-on-profile",
-                cat: "cards-profiles",
-                q: "What can I add to my digital business card profile?",
-                a: (
-                    <>
-                        Add your contact buttons (call, text, WhatsApp), your services, photos of your work, reviews/testimonials,
-                        and links (Instagram, Facebook, website, booking). The goal is: clients see you’re legit and can contact you
-                        in one tap.
-                    </>
-                ),
+                tab: "cards-profiles",
+                q: "Can I update my profile anytime?",
+                a: "Yes. Edit your details whenever you like and updates show instantly. No reprinting, no waiting.",
             },
             {
-                id: "can-i-update-anytime",
-                cat: "cards-profiles",
-                q: "Can I update my details anytime?",
-                a: (
-                    <>
-                        Yes — your link stays the same, but you can update the content whenever you want (new number, new services,
-                        fresh photos). That’s why it beats paper cards: no reprints, no outdated details.
-                    </>
-                ),
+                tab: "cards-profiles",
+                q: "What happens if I lose my card?",
+                a: "Your profile stays live. You can order a replacement card and link it to the same profile without losing anything.",
             },
             {
-                id: "do-i-need-an-app",
-                cat: "cards-profiles",
-                q: "Do customers need an app?",
-                a: (
-                    <>
-                        No. Customers just tap or scan and your profile opens in their browser. That’s what makes it frictionless for
-                        on-site jobs and quick quotes.
-                    </>
-                ),
+                tab: "cards-profiles",
+                q: "Does KonarCard work on all phones?",
+                a: "Yes. It works on iPhone and Android. Most modern phones support NFC, and QR scanning works on any phone with a camera.",
+            },
+            {
+                tab: "cards-profiles",
+                q: "Can I add a booking link, WhatsApp, or reviews?",
+                a: "Yes. You can add your preferred contact methods and links — including WhatsApp, website, Google reviews, quote forms, and more.",
             },
 
-            // ======================
-            // Pricing & plans
-            // ======================
             {
-                id: "is-card-one-time-purchase",
-                cat: "pricing-plans",
-                q: "Is the NFC card a one-time purchase?",
-                a: (
-                    <>
-                        Yes — the NFC products are a one-time purchase. Your profile can be started for free.
-                        You can view plan options on the <Link to="/pricing">pricing page</Link>.
-                    </>
-                ),
+                tab: "pricing",
+                q: "What plans are available?",
+                a: "There’s a free plan to get started, plus paid plans for extra features and physical cards. See full details on the pricing page.",
             },
             {
-                id: "what-is-plus",
-                cat: "pricing-plans",
-                q: "What do I get with Plus?",
-                a: (
-                    <>
-                        Plus is for trades who want more templates, higher limits (more photos/services/reviews), deeper analytics,
-                        and a cleaner branded look. See full plan details on <Link to="/pricing">Pricing</Link>.
-                    </>
-                ),
+                tab: "pricing",
+                q: "Can I upgrade or downgrade later?",
+                a: "Yes. You can change your plan anytime from your account dashboard.",
             },
             {
-                id: "can-i-cancel",
-                cat: "pricing-plans",
-                q: "Can I cancel a paid plan?",
-                a: (
-                    <>
-                        Yes. Paid plans are optional and you can cancel when you no longer need the extra features.
-                    </>
-                ),
+                tab: "pricing",
+                q: "What happens if I cancel?",
+                a: "If you cancel a paid plan, your profile stays accessible, but premium features will no longer be available.",
+            },
+            {
+                tab: "pricing",
+                q: "Do you offer refunds or replacements for cards?",
+                a: "If there’s a delivery or print issue, we’ll make it right. For order help, message us via live chat.",
             },
 
-            // ======================
-            // Teams
-            // ======================
             {
-                id: "teams-who-for",
-                cat: "teams",
-                q: "Who is Teams for?",
-                a: (
-                    <>
-                        Teams is built for companies with multiple staff or contractors. You can keep branding consistent and track
-                        performance across profiles.
-                    </>
-                ),
+                tab: "teams",
+                q: "Can I create cards for my team?",
+                a: "Yes. Team plans let you manage multiple profiles under one account — perfect for companies, crews, and growing businesses.",
             },
             {
-                id: "teams-extra-profiles",
-                cat: "teams",
-                q: "Can I add more team profiles?",
-                a: (
-                    <>
-                        Yes — Teams supports additional profiles as you grow. Check the <Link to="/pricing">Teams section</Link> for
-                        the latest options.
-                    </>
-                ),
+                tab: "teams",
+                q: "Can I control what my team members can edit?",
+                a: "Yes. Team setups can be managed from one place so branding and key details stay consistent.",
             },
 
-            // ======================
-            // Technical & support
-            // ======================
             {
-                id: "what-if-nfc-doesnt-work",
-                cat: "support",
-                q: "What if NFC doesn’t work on someone’s phone?",
-                a: (
-                    <>
-                        No problem — use the QR backup or send your link by WhatsApp/SMS. Your profile is always shareable in multiple
-                        ways, which is ideal for busy on-site work.
-                    </>
-                ),
+                tab: "support",
+                q: "Do I need an app?",
+                a: "No app needed. People tap the card or scan the QR code to open your profile instantly in their browser.",
             },
             {
-                id: "help-setting-up",
-                cat: "support",
-                q: "Can you help me set it up?",
-                a: (
-                    <>
-                        Yes. If you get stuck, contact support and we’ll help you get your profile live and ready to share.
-                        Visit <Link to="/contactus">Contact</Link>.
-                    </>
-                ),
+                tab: "support",
+                q: "The tap isn’t working — what should I do?",
+                a: "Make sure NFC is enabled and tap the card near the top/back of the phone. If the phone doesn’t support NFC, use the QR code instead.",
+            },
+            {
+                tab: "support",
+                q: "How can I contact support?",
+                a: "Use live chat — it’s the fastest way to get help.",
             },
         ],
         []
     );
 
-    const filtered = useMemo(() => faqs.filter((f) => f.cat === activeCat), [faqs, activeCat]);
+    const [activeTab, setActiveTab] = useState("getting-started");
+    const [openIndex, setOpenIndex] = useState(0);
+
+    const visibleFaqs = useMemo(() => faqs.filter((f) => f.tab === activeTab), [faqs, activeTab]);
 
     return (
-        <section className="kc-faq" aria-labelledby="kc-faq-title">
-            <div className="kc-faq__inner">
-                <header className="kc-faq__head">
-                    <h2 id="kc-faq-title" className="kc-faq__title">
-                        Frequently Asked Questions
-                    </h2>
-                    <p className="kc-faq__sub">
-                        Everything you need to know before getting started with KonarCard — a digital business card and NFC business card for the UK.
+        <section className="khq" aria-label="Frequently asked questions">
+            <div className="khq__inner">
+                {/* ✅ Header spacing + look matches Value section */}
+                <header className="khq__head">
+                    <p className="khq__kicker">FAQs</p>
+                    <h2 className="h3 khq__title">Frequently Asked Questions</h2>
+                    <p className="body-s khq__sub">
+                        Everything you need to know before getting started with KonarCard.
                     </p>
 
-                    <nav className="kc-faq__tabs" aria-label="FAQ categories">
-                        {CATS.map((c) => {
-                            const active = c.key === activeCat;
+                    {/* ✅ Tabs same UI as FAQ page */}
+                    <div className="khq__tabs" role="tablist" aria-label="FAQ categories">
+                        {tabs.map((t) => {
+                            const isActive = t.key === activeTab;
                             return (
                                 <button
-                                    key={c.key}
+                                    key={t.key}
                                     type="button"
-                                    className={`kc-faq__tab ${active ? "is-active" : ""}`}
-                                    aria-pressed={active}
+                                    className={`khq__tab pill ${isActive ? "is-active" : ""}`}
+                                    role="tab"
+                                    aria-selected={isActive}
                                     onClick={() => {
-                                        setActiveCat(c.key);
-                                        // open first question in that category for nicer UX
-                                        const first = faqs.find((f) => f.cat === c.key);
-                                        if (first) setOpenId(first.id);
+                                        setActiveTab(t.key);
+                                        setOpenIndex(0);
                                     }}
                                 >
-                                    {c.label}
+                                    {t.label}
                                 </button>
                             );
                         })}
-                    </nav>
+                    </div>
                 </header>
 
-                <div className="kc-faq__list" role="list" aria-label="FAQ list">
-                    {filtered.map((item) => {
-                        const open = openId === item.id;
-                        const btnId = `faq-btn-${item.id}`;
-                        const panelId = `faq-panel-${item.id}`;
-
+                {/* ✅ Question UI matches FAQ page (divider list + chevron) */}
+                <div className="khq__list" role="region" aria-label="FAQ list">
+                    {visibleFaqs.map((item, idx) => {
+                        const isOpen = idx === openIndex;
                         return (
-                            <div key={item.id} className={`kc-faq__item ${open ? "is-open" : ""}`} role="listitem">
+                            <div className="khq__item" key={`${item.q}-${idx}`}>
                                 <button
-                                    id={btnId}
                                     type="button"
-                                    className="kc-faq__q"
-                                    aria-expanded={open}
-                                    aria-controls={panelId}
-                                    onClick={() => setOpenId(open ? "" : item.id)}
+                                    className="khq__qRow"
+                                    onClick={() => setOpenIndex(isOpen ? -1 : idx)}
+                                    aria-expanded={isOpen}
                                 >
-                                    <span className="kc-faq__qText">{item.q}</span>
-                                    <span className="kc-faq__chev" aria-hidden="true">
-                                        {open ? "–" : "+"}
+                                    <span className="h6 khq__q">{item.q}</span>
+                                    <span className={`khq__chev ${isOpen ? "is-open" : ""}`} aria-hidden="true">
+                                        ▾
                                     </span>
                                 </button>
 
-                                <div
-                                    id={panelId}
-                                    role="region"
-                                    aria-labelledby={btnId}
-                                    className="kc-faq__aWrap"
-                                    style={{ display: open ? "block" : "none" }}
-                                >
-                                    <div className="kc-faq__a">{item.a}</div>
-                                </div>
+                                {isOpen && <div className="body-s khq__a">{item.a}</div>}
                             </div>
                         );
                     })}
                 </div>
 
-                <div className="kc-faq__bottom">
-                    <p className="kc-faq__bottomText">
-                        Still got questions? We’re happy to help.
-                    </p>
-                    <div className="kc-faq__bottomBtns">
-                        <Link to="/contactus" className="kc-faq__btn kc-faq__btn--primary">
+                {/* ✅ CTA area keeps same rhythm as Value section bottom area */}
+                <div className="khq__cta">
+                    <p className="body-s khq__ctaText">Still got questions? We’re happy to help.</p>
+
+                    <div className="khq__ctaBtns">
+                        <Link to="/contactus" className="kx-btn kx-btn--black">
                             Contact support
                         </Link>
-                        <Link to="/products" className="kc-faq__btn kc-faq__btn--ghost">
+                        <Link to="/products" className="kx-btn kx-btn--white">
                             Shop NFC cards
                         </Link>
                     </div>

@@ -1,187 +1,198 @@
-/* frontend/src/styling/home/faq.css */
+/* =========================================================
+   HOME — FAQ SECTION
+   - Match Value section spacing/layout exactly
+   - Match FAQ page question UI (divider list)
+   File: frontend/src/styling/home/faq.css
+   ========================================================= */
 
-.kc-faq {
-    background: #ffffff;
-    padding: 88px 0;
+.khq {
+    background: #fafafa;
+    /* ✅ same as Value */
+    color: var(--kc-text-primary);
+    padding: 80px 0;
+    /* ✅ same as Value */
 }
 
-.kc-faq__inner {
+@media (max-width: 600px) {
+    .khq {
+        padding: 56px 0;
+        /* ✅ same as Value */
+    }
+}
+
+.khq__inner {
     max-width: 1040px;
+    /* ✅ same as Value */
     margin: 0 auto;
     padding: 0 20px;
+    /* ✅ same as Value */
 }
 
-.kc-faq__head {
+/* Head */
+.khq__head {
     text-align: center;
+    margin-bottom: 18px;
+    /* ✅ same rhythm as Value */
 }
 
-.kc-faq__title {
-    font-size: clamp(34px, 4vw, 52px);
-    line-height: 1.05;
+.khq__kicker {
     margin: 0 0 10px;
-    letter-spacing: -0.02em;
-    color: #0b1220;
-}
-
-.kc-faq__sub {
-    margin: 0 auto;
-    max-width: 760px;
-    font-size: 16px;
-    line-height: 1.6;
-    color: rgba(11, 18, 32, 0.72);
-}
-
-.kc-faq__tabs {
-    margin-top: 22px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
+
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.62);
+
+    background: #fff;
+    border: 1px solid var(--kc-border);
+    padding: 8px 12px;
+    border-radius: 999px;
 }
 
-.kc-faq__tab {
+.khq__title {
+    margin: 0 0 8px;
+}
+
+.khq__sub {
+    margin: 0 auto;
+    max-width: 720px;
+    color: var(--kc-text-secondary);
+}
+
+/* Tabs — match FAQ page pills */
+.khq__tabs {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.khq__tab {
     appearance: none;
-    border: 1px solid rgba(11, 18, 32, 0.14);
     background: #fff;
     color: rgba(11, 18, 32, 0.86);
+
+    border: 1px solid rgba(11, 18, 32, 0.14);
     border-radius: 999px;
-    padding: 10px 14px;
-    font-size: 13px;
+
+    padding: 9px 14px;
+    min-height: 34px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
     font-weight: 600;
+
     cursor: pointer;
-    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.kc-faq__tab:hover {
-    transform: translateY(-1px);
+.khq__tab:hover {
+    background: rgba(15, 23, 42, 0.04);
     border-color: rgba(11, 18, 32, 0.22);
 }
 
-.kc-faq__tab.is-active {
-    border-color: transparent;
-    background: #d9782a;
-    /* warm orange like your screenshot */
+.khq__tab.is-active {
+    background: var(--kc-accent-primary);
+    border-color: var(--kc-accent-primary);
     color: #fff;
 }
 
-.kc-faq__list {
-    margin-top: 34px;
-    border-top: 1px solid rgba(11, 18, 32, 0.10);
+/* Divider list — same feel as FAQ page */
+.khq__list {
+    margin-top: 18px;
+    max-width: 920px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.kc-faq__item {
+.khq__item {
     border-bottom: 1px solid rgba(11, 18, 32, 0.10);
 }
 
-.kc-faq__q {
+.khq__item:first-child {
+    border-top: 1px solid rgba(11, 18, 32, 0.10);
+}
+
+.khq__qRow {
     width: 100%;
+    text-align: left;
+
+    padding: 22px 0;
+    background: transparent;
+    border: none;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 14px;
 
-    padding: 18px 6px;
-    background: transparent;
-    border: 0;
-    text-align: left;
     cursor: pointer;
 }
 
-.kc-faq__qText {
-    font-size: 18px;
-    line-height: 1.35;
-    font-weight: 700;
-    color: #0b1220;
+.khq__q {
+    margin: 0;
+    max-width: 70ch;
+    line-height: 1.25;
 }
 
-.kc-faq__chev {
-    min-width: 34px;
+/* Chevron pill (same as your “value-style FAQ” but cleaner) */
+.khq__chev {
+    width: 34px;
     height: 34px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     border-radius: 999px;
     border: 1px solid rgba(11, 18, 32, 0.14);
-    color: rgba(11, 18, 32, 0.82);
-    font-weight: 800;
+    color: rgba(11, 18, 32, 0.80);
+    font-size: 12px;
+
+    transition: transform 0.15s ease;
 }
 
-.kc-faq__aWrap {
-    padding: 0 6px 18px;
+.khq__chev.is-open {
+    transform: rotate(180deg);
 }
 
-.kc-faq__a {
-    max-width: 860px;
-    color: rgba(11, 18, 32, 0.72);
-    font-size: 15px;
-    line-height: 1.7;
+.khq__a {
+    padding: 0 0 22px;
+    max-width: 78ch;
+    line-height: 1.65;
+    color: var(--kc-text-secondary);
 }
 
-.kc-faq__a a {
-    color: #0b1220;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
-
-.kc-faq__bottom {
-    margin-top: 28px;
+/* Bottom CTA */
+.khq__cta {
+    margin-top: 18px;
     display: grid;
     gap: 12px;
     justify-items: center;
     text-align: center;
 }
 
-.kc-faq__bottomText {
+.khq__ctaText {
     margin: 0;
-    color: rgba(11, 18, 32, 0.70);
-    font-size: 14px;
+    color: rgba(15, 23, 42, 0.70);
 }
 
-.kc-faq__bottomBtns {
+.khq__ctaBtns {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
 }
 
-.kc-faq__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    height: 44px;
-    padding: 0 16px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 14px;
-    text-decoration: none;
-
-    border: 1px solid rgba(11, 18, 32, 0.14);
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
-}
-
-.kc-faq__btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 26px rgba(11, 18, 32, 0.10);
-}
-
-.kc-faq__btn--primary {
-    background: #0b1220;
-    color: #fff;
-    border-color: transparent;
-}
-
-.kc-faq__btn--ghost {
-    background: #fff;
-    color: #0b1220;
-}
-
+/* Responsive */
 @media (max-width: 720px) {
-    .kc-faq {
-        padding: 64px 0;
+    .khq__qRow {
+        padding: 18px 0;
     }
 
-    .kc-faq__qText {
-        font-size: 16px;
+    .khq__a {
+        padding-bottom: 18px;
     }
 }

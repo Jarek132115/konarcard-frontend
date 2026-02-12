@@ -1,10 +1,10 @@
+// frontend/src/components/Footer.jsx
 import React, { useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 
 import { gsap } from "gsap";
 import { Draggable } from "gsap/all";
 gsap.registerPlugin(Draggable);
-
 
 import LogoIcon from "../assets/icons/Logo-Icon.svg";
 import CopyrightIcon from "../assets/icons/Copyright-Icon.svg";
@@ -25,8 +25,6 @@ import ShareByTapQR from "../assets/icons/Share_By_Tap_QR.svg";
 import BuiltForRealTrades from "../assets/icons/Built_For_Real_Trades.svg";
 import LooksProfessional from "../assets/icons/Looks_Professional.svg";
 import SetUpInMinutes from "../assets/icons/Set_Up_In_Minutes.svg";
-
-gsap.registerPlugin(Draggable);
 
 export default function Footer() {
     const carouselItems = useMemo(
@@ -75,16 +73,14 @@ export default function Footer() {
         []
     );
 
-    // Duplicate once for seamless looping
     const loopItems = useMemo(() => [...carouselItems, ...carouselItems], [carouselItems]);
 
     const viewportRef = useRef(null);
     const trackRef = useRef(null);
 
     useEffect(() => {
-        const viewport = viewportRef.current;
         const track = trackRef.current;
-        if (!viewport || !track) return;
+        if (!track) return;
 
         let draggable;
         let rafId;
@@ -97,14 +93,11 @@ export default function Footer() {
 
             gsap.set(track, { x: 0 });
 
-            // Width of ONE set (because we duplicated)
             const half = track.scrollWidth / 2;
-
-            // Start at -half so it scrolls "through" the middle
             let x = -half;
 
             const wrap = gsap.utils.wrap(-half, 0);
-            const speed = 40; // px/sec (tweak)
+            const speed = 40;
 
             let last = performance.now();
             let paused = false;
@@ -118,7 +111,7 @@ export default function Footer() {
                 last = now;
 
                 if (!paused) {
-                    x = wrap(x + speed * dt); // ✅ left->right motion
+                    x = wrap(x + speed * dt);
                     gsap.set(track, { x });
                 }
 
@@ -130,10 +123,9 @@ export default function Footer() {
             draggable = Draggable.create(track, {
                 type: "x",
                 lockAxis: true,
-                allowNativeTouchScrolling: true, // ✅ vertical swipe scrolls page
+                allowNativeTouchScrolling: true,
                 onPress() {
                     paused = true;
-                    // sync x with current position when grabbing
                     x = wrap(gsap.getProperty(track, "x"));
                 },
                 onDrag() {
@@ -163,13 +155,13 @@ export default function Footer() {
 
     return (
         <footer className="kc-footer">
-            {/* =========================
-          Top navy section
-         ========================= */}
+            {/* Top navy section */}
             <section className="kc-footer__hero">
                 <div className="kc-footer__heroInner">
-                    <h2 className="kc-footer__heroTitle">
-                        Because Business Cards<br />Should Work Harder
+                    {/* ✅ Cal Sans via .h2 (Cal Sans 500) + keep your custom sizing in CSS */}
+                    <h2 className="h2 kc-footer__heroTitle">
+                        Because Business Cards <br className="kc-footer__heroBreak" />
+                        Should Work Harder
                     </h2>
 
                     <div className="kc-footer__carouselWrap">
@@ -191,15 +183,14 @@ export default function Footer() {
                         <div className="kc-footer__fade kc-footer__fade--right" aria-hidden="true" />
                     </div>
 
-                    <Link to="/register" className="kc-footer__heroCta">
+                    {/* ✅ Use the white button system from fonts.css */}
+                    <Link to="/register" className="kx-btn kx-btn--white kc-footer__heroCta">
                         Claim Your Link
                     </Link>
                 </div>
             </section>
 
-            {/* =========================
-          Main footer
-         ========================= */}
+            {/* Main footer */}
             <section className="kc-footer__main">
                 <div className="kc-footer__mainInner">
                     {/* Left */}
@@ -213,14 +204,22 @@ export default function Footer() {
                             Follow us on our socials to stay up to date with new features and updates.
                         </p>
 
-
                         <div className="kc-footer__socials">
-                            {/* keeping your same placeholder links */}
-                            <Link to="/#" aria-label="Instagram"><img src={FooterInstagram} alt="" aria-hidden="true" /></Link>
-                            <Link to="/#" aria-label="Facebook"><img src={FooterFacebook} alt="" aria-hidden="true" /></Link>
-                            <Link to="/#" aria-label="LinkedIn"><img src={FooterLinkedIn} alt="" aria-hidden="true" /></Link>
-                            <Link to="/#" aria-label="TikTok"><img src={FooterTiktok} alt="" aria-hidden="true" /></Link>
-                            <Link to="/#" aria-label="YouTube"><img src={FooterYoutube} alt="" aria-hidden="true" /></Link>
+                            <Link to="/#" aria-label="Instagram">
+                                <img src={FooterInstagram} alt="" aria-hidden="true" />
+                            </Link>
+                            <Link to="/#" aria-label="Facebook">
+                                <img src={FooterFacebook} alt="" aria-hidden="true" />
+                            </Link>
+                            <Link to="/#" aria-label="LinkedIn">
+                                <img src={FooterLinkedIn} alt="" aria-hidden="true" />
+                            </Link>
+                            <Link to="/#" aria-label="TikTok">
+                                <img src={FooterTiktok} alt="" aria-hidden="true" />
+                            </Link>
+                            <Link to="/#" aria-label="YouTube">
+                                <img src={FooterYoutube} alt="" aria-hidden="true" />
+                            </Link>
                         </div>
                     </div>
 
@@ -252,7 +251,7 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* Bottom styled like your 2nd image */}
+                {/* Bottom */}
                 <div className="kc-footer__bottomBar">
                     <div className="kc-footer__bottomInner">
                         <div className="kc-footer__copyright">
