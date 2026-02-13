@@ -16,7 +16,7 @@ import PlasticCardImg from "../../assets/images/PlasticCard.jpg";
 import MetalCardImg from "../../assets/images/MetalCard.jpg";
 import KonarTagImg from "../../assets/images/KonarTag.jpg";
 
-/* ✅ Real world icons (your new Icons8 SVGs already in /assets/icons/) */
+/* ✅ Real world icons */
 import OnSiteIcon from "../../assets/icons/OnSite.svg";
 import AfterQuoteIcon from "../../assets/icons/AfterQuote.svg";
 import TradeCounterIcon from "../../assets/icons/TradeCounter.svg";
@@ -210,7 +210,8 @@ export default function Products() {
                                             </div>
 
                                             <div className="kp-actions">
-                                                <Link to={item.to} className="kx-btn kx-btn--orange kp-btn" aria-label={`View ${item.name}`}>
+                                                {/* ✅ WHITE CTA */}
+                                                <Link to={item.to} className="kx-btn kx-btn--white kp-btn kp-btn--white" aria-label={`View ${item.name}`}>
                                                     View product
                                                 </Link>
                                             </div>
@@ -251,12 +252,18 @@ export default function Products() {
                                             <span className="kp-bundleWas">{b.was}</span>
                                         </div>
 
-                                        <Link to={b.to} className="kx-btn kx-btn--orange kp-bundleBtn">
+                                        {/* ✅ WHITE CTA */}
+                                        <Link to={b.to} className="kx-btn kx-btn--white kp-bundleBtn kp-btn--white">
                                             View bundle
                                         </Link>
                                     </div>
 
                                     <div className="kp-bundleRight" aria-label="Bundle includes">
+                                        <div className="kp-bundleRightTop">
+                                            <div className="kp-bundleRightTitle">Includes</div>
+                                            <div className="kp-bundleRightSub">One setup, share anywhere — tap, scan, or link.</div>
+                                        </div>
+
                                         <div className="kp-bundleItems">
                                             <div className="kp-bundleItem">
                                                 <div className="kp-bundleLabel">{b.cardLabel}</div>
@@ -288,8 +295,6 @@ export default function Products() {
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <p className="kp-bundleFoot">One setup, share anywhere — tap, scan, or link.</p>
                                     </div>
                                 </article>
                             ))}
@@ -333,15 +338,11 @@ export default function Products() {
                                         <img src={g.icon} alt="" />
                                     </div>
                                     <h3 className="h6 kp-realTitle">{g.title}</h3>
-                                    <p className="body-s kp-realDesc">{g.desc}</p>
+
+                                    {/* ✅ IMPORTANT: This class now matches the CSS clamp */}
+                                    <p className="body-s kp-rwCardDesc">{g.desc}</p>
                                 </article>
                             ))}
-                        </div>
-
-                        <div className="kp-realCta">
-                            <Link to="/examples" className="kx-btn kx-btn--black">
-                                See real profile examples
-                            </Link>
                         </div>
                     </div>
                 </section>

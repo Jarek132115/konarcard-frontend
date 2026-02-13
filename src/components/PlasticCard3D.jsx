@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Environment, useTexture } from "@react-three/drei";
+import { Environment, useTexture } from "@react-three/drei";
 
 import "../styling/products/plasticcard3d.css";
 
@@ -22,7 +22,7 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 70, variant =
             <div className="pc3d__stage">
                 <Canvas
                     dpr={[1, 2]}
-                    camera={{ position: [0, 0.18, 1.48], fov: 34 }} // ✅ slightly further back + better vertical framing
+                    camera={{ position: [0, 0.22, 1.58], fov: 34 }}
                     gl={{
                         antialias: true,
                         alpha: true,
@@ -36,54 +36,40 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 70, variant =
                     }}
                 >
                     <ambientLight intensity={0.78} />
-                    <directionalLight position={[2.3, 3.3, 2.3]} intensity={1.12} castShadow />
+                    <directionalLight position={[2.3, 3.3, 2.3]} intensity={1.12} />
                     <directionalLight position={[-2, 1.2, -2]} intensity={0.6} />
 
                     <Environment preset="studio" />
 
                     <ResponsiveRig>
                         <CardRig>
-                            {/* ✅ put card closer to true center (was pushing up too much) */}
-                            <group position={[0, 0.05, 0]}>
+                            {/* keep the current top spacing behaviour (card nudged slightly down) */}
+                            <group position={[0, -0.01, 0]}>
                                 <CardMesh logoSrc={safeLogo} qrSrc={safeQr} logoSize={logoSize} variant={variant} />
                             </group>
                         </CardRig>
                     </ResponsiveRig>
-
-                    {/* ✅ shadow sits centered under the card (not creating huge bottom whitespace) */}
-                    <ContactShadows
-                        position={[0, -0.44, 0]}
-                        opacity={0.28}
-                        blur={2.6}
-                        scale={2.45}
-                        far={3.2}
-                    />
                 </Canvas>
             </div>
         </div>
     );
 }
 
-/**
- * ✅ Real scaling:
- * - Desktop: slightly smaller
- * - Mobile: noticeably smaller (this was missing before)
- */
 function ResponsiveRig({ children }) {
     const g = useRef();
     const { size } = useThree();
 
     useEffect(() => {
         if (!g.current) return;
-
         const w = size.width;
 
         const scale =
-            w >= 1200 ? 0.96 :  // desktop ~ smaller
-                w >= 980 ? 0.92 :
-                    w >= 720 ? 0.88 :
-                        w >= 520 ? 0.84 :
-                            0.80;              // ✅ mobile actually smaller
+            w >= 1400 ? 0.96 :
+                w >= 1200 ? 0.94 :
+                    w >= 980 ? 0.92 :
+                        w >= 720 ? 0.88 :
+                            w >= 520 ? 0.84 :
+                                0.80;
 
         g.current.scale.setScalar(scale);
     }, [size.width]);
@@ -91,9 +77,6 @@ function ResponsiveRig({ children }) {
     return <group ref={g}>{children}</group>;
 }
 
-/**
- * Drag rotate + slow idle spin
- */
 function CardRig({ children }) {
     const group = useRef();
 
@@ -237,8 +220,14 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
         return { planeW: plane, planeH: plane };
     }, [h]);
 
-    const logoPlaneGeo = useMemo(() => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH), [logoPlaneDims]);
-    const qrPlaneGeo = useMemo(() => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH), [qrPlaneDims]);
+    const logoPlaneGeo = useMemo(
+        () => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH),
+        [logoPlaneDims]
+    );
+    const qrPlaneGeo = useMemo(
+        () => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH),
+        [qrPlaneDims]
+    );
 
     const edgeMat = useMemo(() => {
         const isBlack = variant === "black";
@@ -259,12 +248,14 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
             transparent: true,
             opacity: 1,
             toneMapped: false,
+            side: THREE.FrontSide,
+            depthTest: true,
+            depthWrite: false,
         });
         m.alphaTest = 0.02;
-        m.side = THREE.DoubleSide;
         m.polygonOffset = true;
-        m.polygonOffsetFactor = -3;
-        m.polygonOffsetUnits = -3;
+        m.polygonOffsetFactor = -6;
+        m.polygonOffsetUnits = -6;
         return m;
     }, [logoTex]);
 
@@ -274,24 +265,26 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
             transparent: true,
             opacity: 1,
             toneMapped: false,
+            side: THREE.FrontSide,
+            depthTest: true,
+            depthWrite: false,
         });
         m.alphaTest = 0.02;
-        m.side = THREE.DoubleSide;
         m.polygonOffset = true;
-        m.polygonOffsetFactor = -3;
-        m.polygonOffsetUnits = -3;
+        m.polygonOffsetFactor = -6;
+        m.polygonOffsetUnits = -6;
         return m;
     }, [qrTex]);
 
     const halfT = t / 2;
-    const zFront = halfT + 0.002;
-    const zBack = -halfT - 0.002;
+    const zFront = halfT + 0.004;
+    const zBack = -halfT - 0.004;
 
     return (
         <group>
-            <mesh geometry={bodyGeo} material={edgeMat} castShadow receiveShadow />
-            <mesh geometry={logoPlaneGeo} material={logoMat} position={[0, 0, zFront]} castShadow receiveShadow />
-            <mesh geometry={qrPlaneGeo} material={qrMat} position={[0, 0, zBack]} rotation={[0, Math.PI, 0]} castShadow receiveShadow />
+            <mesh geometry={bodyGeo} material={edgeMat} />
+            <mesh geometry={logoPlaneGeo} material={logoMat} position={[0, 0, zFront]} />
+            <mesh geometry={qrPlaneGeo} material={qrMat} position={[0, 0, zBack]} rotation={[0, Math.PI, 0]} />
         </group>
     );
 }

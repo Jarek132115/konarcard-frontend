@@ -1,7 +1,10 @@
 /* frontend/src/styling/products.css */
 
 /* =========================================================
-   PRODUCTS — Final (Hero grid fade fix + products bottom padding)
+   PRODUCTS — Updated
+   - White CTAs for products + bundles
+   - Bundles redesigned (cleaner, responsive)
+   - Real world grid descriptions clamped to 2 lines
    ========================================================= */
 
 .kp-page {
@@ -30,7 +33,7 @@
 }
 
 /* =========================
-   HERO (grid confined + NO flat top/bottom edges)
+   HERO
    ========================= */
 .kp-hero {
     padding: 0 0 24px;
@@ -60,7 +63,6 @@
     z-index: 1;
 }
 
-/* ✅ grid with all-sides fade (no flat edges top/bottom) */
 .kp-heroCopyGrid::before {
     content: "";
     position: absolute;
@@ -85,11 +87,6 @@
             rgba(0, 0, 0, 0.75) 58%,
             rgba(0, 0, 0, 0.25) 72%,
             rgba(0, 0, 0, 0) 86%);
-}
-
-/* ✅ remove vertical fade overlay (this caused the “flat” top/bottom feel) */
-.kp-heroCopyGrid::after {
-    content: none;
 }
 
 .kp-heroPill,
@@ -122,10 +119,6 @@
 
 .kp-section--cards {
     overflow: visible;
-}
-
-/* ✅ IMPORTANT: bottom padding only (do not add more top padding) */
-.kp-section--cards {
     padding-bottom: 56px;
 }
 
@@ -135,14 +128,12 @@
     }
 }
 
-/* grid + cards (match home products) */
 .kp-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
     align-items: stretch;
     padding-top: 6px;
-    /* shadow breathing room only */
 }
 
 .kp-card {
@@ -241,6 +232,15 @@
     width: 100%;
 }
 
+/* ✅ make white buttons still feel like a CTA */
+.kp-btn--white {
+    border-color: rgba(15, 23, 42, 0.16) !important;
+}
+
+.kp-btn--white:hover {
+    background: rgba(15, 23, 42, 0.02);
+}
+
 .kp-note {
     margin: 16px auto 0;
     max-width: 760px;
@@ -274,7 +274,7 @@
 }
 
 /* =========================
-   Bundles (fafafa background + 1 per row)
+   Bundles — redesigned
    ========================= */
 .kp-bundlesSection {
     background: #fafafa;
@@ -297,14 +297,14 @@
 .kp-bundleCard {
     border: 1px solid var(--kc-border);
     background: #ffffff;
-    border-radius: 16px;
+    border-radius: 18px;
     box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     padding: 18px;
 
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: 1.1fr 1fr;
     gap: 18px;
-    align-items: center;
+    align-items: stretch;
 }
 
 .kp-bundleLeft {
@@ -312,6 +312,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding: 4px 2px;
 }
 
 .kp-softPill {
@@ -331,7 +332,6 @@
     color: rgba(11, 18, 32, 0.78);
 
     width: fit-content;
-    /* ✅ never stretch */
 }
 
 .kp-bundleTitle {
@@ -355,7 +355,7 @@
 .kp-bundlePrice {
     font-family: "Inter", sans-serif;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--kc-text-primary);
 }
 
@@ -371,11 +371,33 @@
     margin-top: 6px;
 }
 
+/* right side is now a clean “included” panel */
 .kp-bundleRight {
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: rgba(15, 23, 42, 0.02);
+    padding: 14px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    align-items: flex-end;
+    gap: 12px;
+}
+
+.kp-bundleRightTop {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.kp-bundleRightTitle {
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(11, 18, 32, 0.82);
+}
+
+.kp-bundleRightSub {
+    font-size: 12px;
+    color: rgba(15, 23, 42, 0.60);
+    line-height: 1.45;
 }
 
 .kp-bundleItems {
@@ -395,7 +417,7 @@
 
 .kp-bundleLabel {
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
     color: rgba(15, 23, 42, 0.62);
     margin-bottom: 6px;
 }
@@ -452,15 +474,8 @@
     color: rgba(11, 18, 32, 0.68);
 }
 
-.kp-bundleFoot {
-    margin: 0;
-    font-size: 12px;
-    color: rgba(15, 23, 42, 0.55);
-    text-align: right;
-}
-
 /* =========================
-   Real world section (white background)
+   Real world section
    ========================= */
 .kp-realWorld {
     background: #ffffff;
@@ -554,7 +569,6 @@
     margin: 0;
     color: var(--kc-text-secondary);
     line-height: 1.55;
-
     /* ✅ force 2 lines */
     display: -webkit-box;
     line-clamp: 2;
@@ -570,7 +584,7 @@
 }
 
 /* =========================
-   FAQ (fafafa background + single CTA)
+   FAQ
    ========================= */
 .kp-faq {
     background: #fafafa;
@@ -682,20 +696,13 @@
 
     .kp-bundleCard {
         grid-template-columns: 1fr;
-        align-items: stretch;
-    }
-
-    .kp-bundleRight {
-        align-items: stretch;
     }
 
     .kp-bundleItems {
         grid-template-columns: 1fr auto 1fr;
-        grid-auto-rows: auto;
-        justify-items: center;
     }
 
-    /* in the 2-col layout, hide one plus so it wraps cleanly */
+    /* hide the second plus so it wraps cleanly */
     .kp-bundleItems .kp-bundlePlus:nth-of-type(2) {
         display: none;
     }

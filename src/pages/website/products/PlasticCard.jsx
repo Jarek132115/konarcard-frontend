@@ -1,4 +1,3 @@
-// frontend/src/pages/website/products/PlasticCard.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -214,6 +213,10 @@ export default function PlasticCard() {
     const defaultLogo = cardVariant === "black" ? LogoIconWhite : LogoIcon;
     const displayedLogo = logoUrl || defaultLogo;
 
+    const goLogin = () => {
+        navigate("/login", { state: { from: location.pathname } });
+    };
+
     const handleBuy = async () => {
         setErrorMsg("");
         setInfoMsg("");
@@ -233,7 +236,7 @@ export default function PlasticCard() {
                 updatedAt: Date.now(),
             });
 
-            navigate("/login", { state: { from: location.pathname } });
+            goLogin();
             return;
         }
 
@@ -291,111 +294,103 @@ export default function PlasticCard() {
         }
     };
 
+    const logoLabel = logoFile?.name || "Upload logo";
+    const sizeLabel = (k) => (k === "small" ? "S" : k === "medium" ? "M" : "L");
+
     return (
         <>
             <Navbar />
 
             <main className="kc-konarcard kc-konarcard--premium kc-page">
-                {/* ===== TOP HERO (grid bg) ===== */}
                 <section className="kc-topHero" aria-label="Plastic KonarCard hero">
                     <div className="kc-konarcard__wrap">
-                        <div className="kc-topHero__head">
-                            {/* breadcrumb pill */}
-                            <div className="kc-crumbPill" aria-label="Breadcrumb">
-                                <Link to="/products" className="kc-crumbPill__link">
-                                    Products
-                                </Link>
-                                <span className="kc-crumbPill__sep">/</span>
-                                <span className="kc-crumbPill__here">KonarCard – Plastic</span>
+                        {/* bigger grid area behind heading */}
+                        <div className="kc-heroHeadWrap kc-heroHeadWrap--lg">
+                            <div className="kc-topHero__head">
+                                <div className="kc-crumbPill" aria-label="Breadcrumb">
+                                    <Link to="/products" className="kc-crumbPill__link">
+                                        Products
+                                    </Link>
+                                    <span className="kc-crumbPill__sep">/</span>
+                                    <span className="kc-crumbPill__here">KonarCard – Plastic</span>
+                                </div>
+
+                                <h1 className="kc-premHero__title">Plastic NFC Business Card (UK)</h1>
+                                <p className="kc-premHero__sub">Tap to share your Konar profile instantly — with QR backup on the back.</p>
+
+                                <div className="kc-topHero__badges">
+                                    <span className="kc-badge kc-badge--orange">Best Value</span>
+                                    <span className="kc-badge">12 Month Warranty</span>
+                                </div>
+
+                                {(errorMsg || infoMsg) && (
+                                    <div className="kc-msgBox">{errorMsg ? `⚠️ ${errorMsg}` : `ℹ️ ${infoMsg}`}</div>
+                                )}
                             </div>
-
-                            {/* tightened copy */}
-                            <h1 className="kc-premHero__title">Plastic NFC Business Card (UK)</h1>
-                            <p className="kc-premHero__sub">Tap to share your Konar profile instantly — with QR backup on the back.</p>
-
-                            {/* badges */}
-                            <div className="kc-topHero__badges">
-                                <span className="kc-badge kc-badge--orange">Best Value</span>
-                                <span className="kc-badge">12 Month Warranty</span>
-                            </div>
-
-                            {(errorMsg || infoMsg) && <div className="kc-msgBox">{errorMsg ? `⚠️ ${errorMsg}` : `ℹ️ ${infoMsg}`}</div>}
                         </div>
 
-                        {/* preview (do not style the actual 3D card component) */}
                         <div className="kc-premStage">
                             <div className="kc-premStage__canvasPad">
-                                <PlasticCard3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoPercent} variant={cardVariant} />
+                                <PlasticCard3D
+                                    logoSrc={displayedLogo}
+                                    qrSrc={CardQrCode}
+                                    logoSize={logoPercent}
+                                    variant={cardVariant}
+                                />
                             </div>
 
-                            {/* CONTROLS (2x2, no background container) */}
+                            {/* ✅ NEW LAYOUT WRAPPER */}
                             <div className="kc-controls" aria-label="Configure your card">
-                                <div className="kc-controlsGrid">
-                                    {/* Upload logo */}
-                                    <div className="kc-controlCell">
+                                <div className="kc-configGrid">
+                                    {/* Logo */}
+                                    <div className="kc-controlCell kc-cell--logo">
                                         <div className="kc-controlK">Logo</div>
 
-                                        <div className="kc-controlStack">
-                                            <div className="kc-controlRow kc-controlRow--center">
-                                                <label className="kc-controlBtn">
-                                                    <input type="file" accept="image/*" onChange={onPickLogo} />
-                                                    {logoUrl ? "Replace logo" : "Upload logo"}
-                                                </label>
+                                        <div className="kc-inlineRow">
+                                            <label className="kc-textAction" title="Upload logo">
+                                                <input type="file" accept="image/*" onChange={onPickLogo} />
+                                                {logoLabel}
+                                            </label>
 
-                                                <button
-                                                    type="button"
-                                                    className="kc-controlBtn kc-controlBtn--ghost"
-                                                    onClick={clearLogo}
-                                                    disabled={!logoUrl || busy}
-                                                >
-                                                    Remove
-                                                </button>
-                                            </div>
-
-                                            <div className="kc-controlHint">Optional — if skipped, we’ll use the Konar “K”.</div>
+                                            <button
+                                                type="button"
+                                                className="kc-textAction kc-textAction--muted"
+                                                onClick={clearLogo}
+                                                disabled={!logoUrl || busy}
+                                                title="Remove logo"
+                                            >
+                                                Remove
+                                            </button>
                                         </div>
                                     </div>
 
                                     {/* Logo size */}
-                                    <div className="kc-controlCell">
+                                    <div className="kc-controlCell kc-cell--size">
                                         <div className="kc-controlK">Logo size</div>
 
-                                        <div className="kc-controlRow kc-controlRow--center" role="group" aria-label="Choose logo size">
-                                            <button
-                                                type="button"
-                                                className={`kc-chip ${logoPreset === "small" ? "is-active" : ""}`}
-                                                onClick={() => setLogoPreset("small")}
-                                                disabled={busy}
-                                            >
-                                                Small
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={`kc-chip ${logoPreset === "medium" ? "is-active" : ""}`}
-                                                onClick={() => setLogoPreset("medium")}
-                                                disabled={busy}
-                                            >
-                                                Medium
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={`kc-chip ${logoPreset === "large" ? "is-active" : ""}`}
-                                                onClick={() => setLogoPreset("large")}
-                                                disabled={busy}
-                                            >
-                                                Large
-                                            </button>
+                                        <div className="kc-inlineRow" role="group" aria-label="Choose logo size">
+                                            {["small", "medium", "large"].map((k) => (
+                                                <button
+                                                    key={k}
+                                                    type="button"
+                                                    className={`kc-toggleText ${logoPreset === k ? "is-active" : ""}`}
+                                                    onClick={() => setLogoPreset(k)}
+                                                    disabled={busy}
+                                                >
+                                                    {sizeLabel(k)}
+                                                </button>
+                                            ))}
                                         </div>
                                     </div>
 
                                     {/* Colour */}
-                                    <div className="kc-controlCell">
+                                    <div className="kc-controlCell kc-cell--colour">
                                         <div className="kc-controlK">Colour</div>
 
-                                        <div className="kc-controlRow kc-controlRow--center" role="group" aria-label="Choose card colour">
+                                        <div className="kc-inlineRow" role="group" aria-label="Choose card colour">
                                             <button
                                                 type="button"
-                                                className={`kc-chip ${cardVariant === "white" ? "is-active" : ""}`}
+                                                className={`kc-toggleText ${cardVariant === "white" ? "is-active" : ""}`}
                                                 onClick={() => setCardVariant("white")}
                                                 disabled={busy}
                                             >
@@ -403,7 +398,7 @@ export default function PlasticCard() {
                                             </button>
                                             <button
                                                 type="button"
-                                                className={`kc-chip ${cardVariant === "black" ? "is-active" : ""}`}
+                                                className={`kc-toggleText ${cardVariant === "black" ? "is-active" : ""}`}
                                                 onClick={() => setCardVariant("black")}
                                                 disabled={busy}
                                             >
@@ -412,86 +407,93 @@ export default function PlasticCard() {
                                         </div>
                                     </div>
 
-                                    {/* Choose profile */}
-                                    <div className="kc-controlCell">
+                                    {/* Profile */}
+                                    <div className="kc-controlCell kc-cell--profile">
                                         <div className="kc-controlK">Link to profile</div>
 
-                                        <div className="kc-controlStack">
-                                            <select
-                                                className="kc-profileSelect kc-profileSelect--clean"
-                                                value={profileId}
-                                                onChange={(e) => setProfileId(e.target.value)}
-                                                disabled={!isLoggedIn || busy || isProfilesLoading}
-                                                aria-label="Choose profile"
-                                            >
-                                                <option value="">
-                                                    {!isLoggedIn
-                                                        ? "Log in to choose a profile"
-                                                        : isProfilesLoading
-                                                            ? "Loading profiles..."
-                                                            : myProfiles.length
-                                                                ? "Choose profile to link"
-                                                                : "No profiles found"}
-                                                </option>
+                                        <div className="kc-profileBox kc-profileBox--sm">
+                                            {!isLoggedIn ? (
+                                                <div className="kc-profileLoggedOut">
+                                                    <span>Please login</span>
+                                                    <button type="button" className="kc-loginInline" onClick={goLogin}>
+                                                        Login
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <select
+                                                    className="kc-profileSelect kc-profileSelect--boxed"
+                                                    value={profileId}
+                                                    onChange={(e) => setProfileId(e.target.value)}
+                                                    disabled={busy || isProfilesLoading}
+                                                    aria-label="Choose profile"
+                                                >
+                                                    <option value="">
+                                                        {isProfilesLoading ? "Loading..." : myProfiles.length ? "Choose profile" : "No profiles"}
+                                                    </option>
 
-                                                {myProfiles.map((p) => {
-                                                    const id = String(p?._id || "");
-                                                    if (!id) return null;
-                                                    const label =
-                                                        p?.business_card_name || p?.full_name || p?.main_heading || p?.profile_slug || "Profile";
-                                                    const slug = p?.profile_slug ? ` (@${p.profile_slug})` : "";
-                                                    return (
-                                                        <option key={id} value={id}>
-                                                            {label}
-                                                            {slug}
-                                                        </option>
-                                                    );
-                                                })}
-                                            </select>
+                                                    {myProfiles.map((p) => {
+                                                        const id = String(p?._id || "");
+                                                        if (!id) return null;
 
-                                            {!isLoggedIn && <div className="kc-controlHint">You must be logged in to link a profile before checkout.</div>}
+                                                        const label =
+                                                            p?.business_card_name ||
+                                                            p?.full_name ||
+                                                            p?.main_heading ||
+                                                            p?.profile_slug ||
+                                                            "Profile";
+
+                                                        return (
+                                                            <option key={id} value={id}>
+                                                                {label}
+                                                            </option>
+                                                        );
+                                                    })}
+                                                </select>
+                                            )}
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* BUY AREA (qty above black CTA) */}
-                                <div className="kc-buyArea" aria-label="Buy">
-                                    <div className="kc-buyMeta">
-                                        <div className="kc-buyPrice">£29.99</div>
-                                        <div className="kc-buyMicro">Premium PVC • NFC + QR backup • Ships fast</div>
-                                    </div>
-
-                                    <div className="kc-buyControls">
-                                        <div className="kc-qtySm" aria-label="Quantity">
-                                            <button
-                                                type="button"
-                                                className="kc-qtySm__btn"
-                                                onClick={() => setQty((q) => Math.max(1, q - 1))}
-                                                disabled={busy}
-                                                aria-label="Decrease quantity"
-                                            >
-                                                −
-                                            </button>
-                                            <div className="kc-qtySm__val">{qty}</div>
-                                            <button
-                                                type="button"
-                                                className="kc-qtySm__btn"
-                                                onClick={() => setQty((q) => Math.min(20, q + 1))}
-                                                disabled={busy}
-                                                aria-label="Increase quantity"
-                                            >
-                                                +
-                                            </button>
+                                    {/* ✅ BUY IN THE MIDDLE ON WIDE */}
+                                    <div className="kc-buyArea kc-cell--buy" aria-label="Buy">
+                                        <div className="kc-buyMeta">
+                                            <div className="kc-buyPrice">£29.99</div>
                                         </div>
 
-                                        <button type="button" onClick={handleBuy} className="kc-buyBlackBtn" disabled={busy}>
-                                            {busy ? "Starting checkout..." : "Buy KonarCard"}
-                                        </button>
+                                        <div className="kc-buyControls">
+                                            <div className="kc-qtySm" aria-label="Quantity">
+                                                <button
+                                                    type="button"
+                                                    className="kc-qtySm__btn"
+                                                    onClick={() => setQty((q) => Math.max(1, q - 1))}
+                                                    disabled={busy}
+                                                    aria-label="Decrease quantity"
+                                                >
+                                                    −
+                                                </button>
+                                                <div className="kc-qtySm__val">{qty}</div>
+                                                <button
+                                                    type="button"
+                                                    className="kc-qtySm__btn"
+                                                    onClick={() => setQty((q) => Math.min(20, q + 1))}
+                                                    disabled={busy}
+                                                    aria-label="Increase quantity"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                onClick={handleBuy}
+                                                className="kx-btn kx-btn--black kc-buyBtnFit"
+                                                disabled={busy}
+                                            >
+                                                {busy ? "Starting checkout..." : "Buy KonarCard"}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            {/* end hero wrap */}
                         </div>
                     </div>
                 </section>
@@ -521,7 +523,9 @@ export default function PlasticCard() {
                         <div className="kc-section__head">
                             <p className="kc-pill kc-section__pill">What you get</p>
                             <h2 className="kc-section__title">Everything you need to look professional</h2>
-                            <p className="kc-section__sub">A simple tool that makes you look professional instantly — and keeps everything up to date.</p>
+                            <p className="kc-section__sub">
+                                A simple tool that makes you look professional instantly — and keeps everything up to date.
+                            </p>
                         </div>
 
                         <div className="kc-whatGrid" role="list" aria-label="What you get features">
