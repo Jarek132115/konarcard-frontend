@@ -301,7 +301,7 @@
 
 /* ✅ Divider spacing (more space above + below “or”) */
 .kc-divider {
-    margin: 88px 0 80px;
+    margin: 24px 0;
     /* ✅ double bigger than before */
     display: flex;
     align-items: center;

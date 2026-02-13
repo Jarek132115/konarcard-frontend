@@ -157,12 +157,6 @@
     box-shadow: 0 8px 18px rgba(11, 18, 32, 0.06);
 }
 
-.kc-block+.kc-block,
-.kc-block+.kc-divider,
-.kc-divider+.kc-block,
-.kc-divider+.kc-section {
-    margin-top: 14px;
-}
 
 .kc-block-title {
     font-family: "Cal Sans", sans-serif;
@@ -183,12 +177,7 @@
     color: rgb(var(--accent-rgb));
 }
 
-.kc-divider {
-    height: 1px;
-    background: rgba(11, 18, 32, 0.08);
-    border: 0;
-    margin: 14px 0;
-}
+
 
 /* Layout helpers */
 .kc-grid-2 {
