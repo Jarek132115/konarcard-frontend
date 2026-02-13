@@ -15,6 +15,14 @@ import CardQrCode from "../../../assets/images/CardQrCode.png";
 import api from "../../../services/api";
 import { useMyProfiles } from "../../../hooks/useBusinessCard";
 
+/* ✅ your saved SVG icons */
+import OneJobIcon from "../../../assets/icons/OneJob.svg";
+import NoReprintsIcon from "../../../assets/icons/NoReprints.svg";
+import UpToDateIcon from "../../../assets/icons/UpToDate.svg";
+import WorksEverywhereIcon from "../../../assets/icons/WorksEverywhere.svg";
+import HammerIcon from "../../../assets/icons/Hammer.svg";
+import ProfessionalFastIcon from "../../../assets/icons/ProfessionalFast.svg";
+
 const INTENT_KEY = "konar_nfc_intent_v1";
 
 function readIntent() {
@@ -125,6 +133,7 @@ export default function PlasticCard() {
         }
 
         if (intent.hadLogo) setInfoMsg("Please re-upload your logo to continue checkout.");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -180,12 +189,12 @@ export default function PlasticCard() {
 
     const features = useMemo(
         () => [
-            { t: "One job pays for everything", s: "Land one extra job and it covers your card and profile." },
-            { t: "No reprints, ever", s: "Update your details anytime without reordering cards." },
-            { t: "Always up to date", s: "Your latest work, reviews, and services — instantly." },
-            { t: "Works everywhere", s: "In person, online, on any phone. No apps needed." },
-            { t: "Built for real trades", s: "Simple, practical, and made for how you actually work." },
-            { t: "Looks professional fast", s: "Build trust before you even speak." },
+            { icon: OneJobIcon, t: "One job pays for everything", s: "Land one extra job and it covers your card and profile." },
+            { icon: NoReprintsIcon, t: "No reprints, ever", s: "Update your details anytime without reordering cards." },
+            { icon: UpToDateIcon, t: "Always up to date", s: "Your latest work, reviews, and services — instantly." },
+            { icon: WorksEverywhereIcon, t: "Works everywhere", s: "In person, online, on any phone. No apps needed." },
+            { icon: HammerIcon, t: "Built for real trades", s: "Simple, practical, and made for how you actually work." },
+            { icon: ProfessionalFastIcon, t: "Looks professional fast", s: "Build trust before you even speak." },
         ],
         []
     );
@@ -282,197 +291,111 @@ export default function PlasticCard() {
         }
     };
 
-    /* =========================================================
-       SEO — Meta upsert + JSON-LD (SPA-safe)
-       (NO className changes, NO layout changes)
-       NOTE: Canonical set to WWW to match sitemap/robots standardisation.
-    ========================================================= */
-    useEffect(() => {
-        const CANONICAL = "https://www.konarcard.com/products/plastic";
-        const title = "Plastic NFC Business Card (UK) — KonarCard Plastic Edition";
-        const description =
-            "KonarCard Plastic Edition is a premium plastic NFC business card in the UK. Tap to share your digital business card instantly on iPhone/Android, with QR backup on the back.";
-
-        const ogImage = "https://www.konarcard.com/og/plastic-card.png"; // optional
-
-        const upsertMeta = (nameOrProp, content, isProperty = false) => {
-            if (!content) return;
-            const selector = isProperty ? `meta[property="${nameOrProp}"]` : `meta[name="${nameOrProp}"]`;
-            let el = document.head.querySelector(selector);
-            if (!el) {
-                el = document.createElement("meta");
-                if (isProperty) el.setAttribute("property", nameOrProp);
-                else el.setAttribute("name", nameOrProp);
-                document.head.appendChild(el);
-            }
-            el.setAttribute("content", content);
-        };
-
-        const upsertLink = (rel, href) => {
-            if (!href) return;
-            let el = document.head.querySelector(`link[rel="${rel}"]`);
-            if (!el) {
-                el = document.createElement("link");
-                el.setAttribute("rel", rel);
-                document.head.appendChild(el);
-            }
-            el.setAttribute("href", href);
-        };
-
-        const upsertJsonLd = (id, json) => {
-            const scriptId = `jsonld-${id}`;
-            let el = document.getElementById(scriptId);
-            if (!el) {
-                el = document.createElement("script");
-                el.type = "application/ld+json";
-                el.id = scriptId;
-                document.head.appendChild(el);
-            }
-            el.text = JSON.stringify(json);
-        };
-
-        document.title = title;
-
-        upsertLink("canonical", CANONICAL);
-        upsertMeta("description", description);
-        upsertMeta("robots", "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1");
-
-        // Open Graph
-        upsertMeta("og:type", "product", true);
-        upsertMeta("og:site_name", "KonarCard", true);
-        upsertMeta("og:title", title, true);
-        upsertMeta("og:description", description, true);
-        upsertMeta("og:url", CANONICAL, true);
-        upsertMeta("og:image", ogImage, true);
-
-        // Twitter
-        upsertMeta("twitter:card", "summary_large_image");
-        upsertMeta("twitter:title", title);
-        upsertMeta("twitter:description", description);
-        upsertMeta("twitter:image", ogImage);
-
-        // Product JSON-LD
-        upsertJsonLd("plastic-product", {
-            "@context": "https://schema.org",
-            "@type": "Product",
-            name: "KonarCard Plastic Edition",
-            description:
-                "Premium plastic NFC business card for instantly sharing a Konar digital business card profile, with QR backup. UK-focused.",
-            brand: { "@type": "Brand", name: "KonarCard" },
-            image: [ogImage],
-            sku: "plastic-card",
-            offers: {
-                "@type": "Offer",
-                url: CANONICAL,
-                priceCurrency: "GBP",
-                price: "29.99",
-                availability: "https://schema.org/InStock",
-                itemCondition: "https://schema.org/NewCondition",
-            },
-        });
-
-        // FAQ JSON-LD (kept in sync with on-page content if you add an FAQ section later)
-        upsertJsonLd("plastic-faq", {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: [
-                {
-                    "@type": "Question",
-                    name: "Does the plastic KonarCard work with iPhone and Android?",
-                    acceptedAnswer: {
-                        "@type": "Answer",
-                        text: "Yes. KonarCard Plastic Edition works with modern iPhone and Android devices that support NFC. No app is required — it opens in the browser. If NFC is off, the QR code backup still works.",
-                    },
-                },
-                {
-                    "@type": "Question",
-                    name: "Do I need an app to use the card?",
-                    acceptedAnswer: {
-                        "@type": "Answer",
-                        text: "No. The card opens your Konar profile in the browser so people can view and save your details without downloading anything.",
-                    },
-                },
-                {
-                    "@type": "Question",
-                    name: "What happens if NFC is turned off?",
-                    acceptedAnswer: {
-                        "@type": "Answer",
-                        text: "Every card includes a QR code on the back. If NFC is off or unsupported, contacts can scan the QR code to open your profile.",
-                    },
-                },
-                {
-                    "@type": "Question",
-                    name: "Can I update my details after I buy?",
-                    acceptedAnswer: {
-                        "@type": "Answer",
-                        text: "Yes. Your card links to your Konar profile, so you can update your details anytime and the card will always share the latest version.",
-                    },
-                },
-                {
-                    "@type": "Question",
-                    name: "Is there a warranty?",
-                    acceptedAnswer: {
-                        "@type": "Answer",
-                        text: "Yes — KonarCard Plastic Edition includes a 12 month warranty.",
-                    },
-                },
-            ],
-        });
-    }, []);
-
     return (
         <>
             <Navbar />
 
             <main className="kc-konarcard kc-konarcard--premium kc-page">
-                <div className="kc-konarcard__wrap">
-                    <section className="kc-premHero kc-premHero--clean">
-                        <div className="kc-premHero__top">
-                            <div className="kc-premHero__crumbs">
-                                <Link to="/products" className="kc-konarcard__crumbLink">
+                {/* ===== TOP HERO (grid bg) ===== */}
+                <section className="kc-topHero" aria-label="Plastic KonarCard hero">
+                    <div className="kc-konarcard__wrap">
+                        <div className="kc-topHero__head">
+                            {/* breadcrumb pill */}
+                            <div className="kc-crumbPill" aria-label="Breadcrumb">
+                                <Link to="/products" className="kc-crumbPill__link">
                                     Products
                                 </Link>
-                                <span className="kc-konarcard__crumbSep">/</span>
-                                <span className="kc-konarcard__crumbHere">KonarCard – Plastic</span>
+                                <span className="kc-crumbPill__sep">/</span>
+                                <span className="kc-crumbPill__here">KonarCard – Plastic</span>
                             </div>
 
-                            {/* ✅ SEO H1: keyword-complete, UK intent, still clean */}
-                            <h1 className="kc-premHero__title">Plastic NFC Business Card (UK) — KonarCard Plastic Edition</h1>
+                            {/* tightened copy */}
+                            <h1 className="kc-premHero__title">Plastic NFC Business Card (UK)</h1>
+                            <p className="kc-premHero__sub">Tap to share your Konar profile instantly — with QR backup on the back.</p>
 
-                            <p className="kc-premHero__sub">
-                                A premium plastic NFC business card for the UK. Tap to share your digital business card instantly — with QR
-                                backup on the back if NFC is off.
-                            </p>
-
-                            <div className="kc-premHero__badges">
-                                <span className="kc-konarcard__pill kc-konarcard__pill--best">Best Value</span>
-                                <span className="kc-konarcard__pill kc-konarcard__pill--warranty">12 Month Warranty</span>
+                            {/* badges */}
+                            <div className="kc-topHero__badges">
+                                <span className="kc-badge kc-badge--orange">Best Value</span>
+                                <span className="kc-badge">12 Month Warranty</span>
                             </div>
 
-                            {(errorMsg || infoMsg) && (
-                                <div className="kc-msgBox">{errorMsg ? `⚠️ ${errorMsg}` : `ℹ️ ${infoMsg}`}</div>
-                            )}
+                            {(errorMsg || infoMsg) && <div className="kc-msgBox">{errorMsg ? `⚠️ ${errorMsg}` : `ℹ️ ${infoMsg}`}</div>}
                         </div>
 
+                        {/* preview (do not style the actual 3D card component) */}
                         <div className="kc-premStage">
                             <div className="kc-premStage__canvasPad">
-                                <PlasticCard3D
-                                    logoSrc={displayedLogo}
-                                    qrSrc={CardQrCode}
-                                    logoSize={logoPercent}
-                                    variant={cardVariant}
-                                />
+                                <PlasticCard3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoPercent} variant={cardVariant} />
                             </div>
 
-                            {/* PREMIUM CONFIG BAR */}
-                            <div className="kc-configBar" aria-label="Configure your card">
-                                <div className="kc-configBar__row">
-                                    <div className="kc-configGroup">
-                                        <div className="kc-configLabel">Colour</div>
-                                        <div className="kc-variantToggle" role="group" aria-label="Choose card colour">
+                            {/* CONTROLS (2x2, no background container) */}
+                            <div className="kc-controls" aria-label="Configure your card">
+                                <div className="kc-controlsGrid">
+                                    {/* Upload logo */}
+                                    <div className="kc-controlCell">
+                                        <div className="kc-controlK">Logo</div>
+
+                                        <div className="kc-controlStack">
+                                            <div className="kc-controlRow kc-controlRow--center">
+                                                <label className="kc-controlBtn">
+                                                    <input type="file" accept="image/*" onChange={onPickLogo} />
+                                                    {logoUrl ? "Replace logo" : "Upload logo"}
+                                                </label>
+
+                                                <button
+                                                    type="button"
+                                                    className="kc-controlBtn kc-controlBtn--ghost"
+                                                    onClick={clearLogo}
+                                                    disabled={!logoUrl || busy}
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+
+                                            <div className="kc-controlHint">Optional — if skipped, we’ll use the Konar “K”.</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Logo size */}
+                                    <div className="kc-controlCell">
+                                        <div className="kc-controlK">Logo size</div>
+
+                                        <div className="kc-controlRow kc-controlRow--center" role="group" aria-label="Choose logo size">
                                             <button
                                                 type="button"
-                                                className={`kc-variantBtn ${cardVariant === "white" ? "is-active" : ""}`}
+                                                className={`kc-chip ${logoPreset === "small" ? "is-active" : ""}`}
+                                                onClick={() => setLogoPreset("small")}
+                                                disabled={busy}
+                                            >
+                                                Small
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={`kc-chip ${logoPreset === "medium" ? "is-active" : ""}`}
+                                                onClick={() => setLogoPreset("medium")}
+                                                disabled={busy}
+                                            >
+                                                Medium
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={`kc-chip ${logoPreset === "large" ? "is-active" : ""}`}
+                                                onClick={() => setLogoPreset("large")}
+                                                disabled={busy}
+                                            >
+                                                Large
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Colour */}
+                                    <div className="kc-controlCell">
+                                        <div className="kc-controlK">Colour</div>
+
+                                        <div className="kc-controlRow kc-controlRow--center" role="group" aria-label="Choose card colour">
+                                            <button
+                                                type="button"
+                                                className={`kc-chip ${cardVariant === "white" ? "is-active" : ""}`}
                                                 onClick={() => setCardVariant("white")}
                                                 disabled={busy}
                                             >
@@ -480,7 +403,7 @@ export default function PlasticCard() {
                                             </button>
                                             <button
                                                 type="button"
-                                                className={`kc-variantBtn ${cardVariant === "black" ? "is-active" : ""}`}
+                                                className={`kc-chip ${cardVariant === "black" ? "is-active" : ""}`}
                                                 onClick={() => setCardVariant("black")}
                                                 disabled={busy}
                                             >
@@ -489,69 +412,56 @@ export default function PlasticCard() {
                                         </div>
                                     </div>
 
-                                    <div className="kc-configGroup">
-                                        <div className="kc-configLabel">Logo</div>
+                                    {/* Choose profile */}
+                                    <div className="kc-controlCell">
+                                        <div className="kc-controlK">Link to profile</div>
 
-                                        <div className="kc-logoActions">
-                                            <label className="kc-uploadPill">
-                                                <input type="file" accept="image/*" onChange={onPickLogo} />
-                                                {logoUrl ? "Replace logo" : "Upload logo"}
-                                            </label>
+                                        <div className="kc-controlStack">
+                                            <select
+                                                className="kc-profileSelect kc-profileSelect--clean"
+                                                value={profileId}
+                                                onChange={(e) => setProfileId(e.target.value)}
+                                                disabled={!isLoggedIn || busy || isProfilesLoading}
+                                                aria-label="Choose profile"
+                                            >
+                                                <option value="">
+                                                    {!isLoggedIn
+                                                        ? "Log in to choose a profile"
+                                                        : isProfilesLoading
+                                                            ? "Loading profiles..."
+                                                            : myProfiles.length
+                                                                ? "Choose profile to link"
+                                                                : "No profiles found"}
+                                                </option>
 
-                                            <button
-                                                type="button"
-                                                className="kc-uploadPill kc-uploadPill--ghost"
-                                                onClick={clearLogo}
-                                                disabled={!logoUrl || busy}
-                                            >
-                                                Remove
-                                            </button>
-                                        </div>
+                                                {myProfiles.map((p) => {
+                                                    const id = String(p?._id || "");
+                                                    if (!id) return null;
+                                                    const label =
+                                                        p?.business_card_name || p?.full_name || p?.main_heading || p?.profile_slug || "Profile";
+                                                    const slug = p?.profile_slug ? ` (@${p.profile_slug})` : "";
+                                                    return (
+                                                        <option key={id} value={id}>
+                                                            {label}
+                                                            {slug}
+                                                        </option>
+                                                    );
+                                                })}
+                                            </select>
 
-                                        <div className="kc-configHint">Optional — if skipped, we’ll use the Konar “K”.</div>
-                                    </div>
-
-                                    <div className="kc-configGroup">
-                                        <div className="kc-configLabel">Logo size</div>
-                                        <div className="kc-sizePills" role="group" aria-label="Choose logo size">
-                                            <button
-                                                type="button"
-                                                className={`kc-sizeBtn ${logoPreset === "small" ? "is-active" : ""}`}
-                                                onClick={() => setLogoPreset("small")}
-                                                disabled={busy}
-                                            >
-                                                Small
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={`kc-sizeBtn ${logoPreset === "medium" ? "is-active" : ""}`}
-                                                onClick={() => setLogoPreset("medium")}
-                                                disabled={busy}
-                                            >
-                                                Medium
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={`kc-sizeBtn ${logoPreset === "large" ? "is-active" : ""}`}
-                                                onClick={() => setLogoPreset("large")}
-                                                disabled={busy}
-                                            >
-                                                Large
-                                            </button>
+                                            {!isLoggedIn && <div className="kc-controlHint">You must be logged in to link a profile before checkout.</div>}
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* PURCHASE CARD (LESS NOISE) */}
-                            <div className="kc-purchaseCard" aria-label="Purchase">
-                                <div className="kc-purchaseCard__price">
-                                    <div className="kc-purchasePrice">£29.99</div>
-                                    <div className="kc-purchaseMicro">Premium PVC • NFC + QR backup • Ships fast</div>
-                                </div>
+                                {/* BUY AREA (qty above black CTA) */}
+                                <div className="kc-buyArea" aria-label="Buy">
+                                    <div className="kc-buyMeta">
+                                        <div className="kc-buyPrice">£29.99</div>
+                                        <div className="kc-buyMicro">Premium PVC • NFC + QR backup • Ships fast</div>
+                                    </div>
 
-                                <div className="kc-purchaseCard__controls">
-                                    <div className="kc-purchaseTop">
+                                    <div className="kc-buyControls">
                                         <div className="kc-qtySm" aria-label="Quantity">
                                             <button
                                                 type="button"
@@ -574,126 +484,75 @@ export default function PlasticCard() {
                                             </button>
                                         </div>
 
-                                        <select
-                                            className="kc-profileSelect kc-profileSelect--premium"
-                                            value={profileId}
-                                            onChange={(e) => setProfileId(e.target.value)}
-                                            disabled={!isLoggedIn || busy || isProfilesLoading}
-                                            aria-label="Choose profile"
-                                        >
-                                            <option value="">
-                                                {!isLoggedIn
-                                                    ? "Log in to choose a profile"
-                                                    : isProfilesLoading
-                                                        ? "Loading profiles..."
-                                                        : myProfiles.length
-                                                            ? "Choose profile to link"
-                                                            : "No profiles found"}
-                                            </option>
-
-                                            {myProfiles.map((p) => {
-                                                const id = String(p?._id || "");
-                                                if (!id) return null;
-                                                const label =
-                                                    p?.business_card_name ||
-                                                    p?.full_name ||
-                                                    p?.main_heading ||
-                                                    p?.profile_slug ||
-                                                    "Profile";
-                                                const slug = p?.profile_slug ? ` (@${p.profile_slug})` : "";
-                                                return (
-                                                    <option key={id} value={id}>
-                                                        {label}
-                                                        {slug}
-                                                    </option>
-                                                );
-                                            })}
-                                        </select>
+                                        <button type="button" onClick={handleBuy} className="kc-buyBlackBtn" disabled={busy}>
+                                            {busy ? "Starting checkout..." : "Buy KonarCard"}
+                                        </button>
                                     </div>
-
-                                    {!isLoggedIn && (
-                                        <div className="kc-buyHint">You must be logged in to link a profile before checkout.</div>
-                                    )}
-
-                                    <button
-                                        type="button"
-                                        onClick={handleBuy}
-                                        className="kc-buyMainBtn kc-buyMainBtn--wide"
-                                        disabled={busy}
-                                    >
-                                        {busy ? "Starting checkout..." : "Buy KonarCard"}
-                                    </button>
                                 </div>
                             </div>
 
-                            {/* PRODUCT DETAILS (MORE BREATHING ROOM) */}
-                            <div className="kc-specSection" aria-label="Product details">
-                                <div className="kc-specHead">
-                                    <div className="kc-specTitle">Product details</div>
-                                    <div className="kc-specSub">Materials, sizing, and tech — simple and clear.</div>
-                                </div>
-
-                                <div className="kc-specGrid">
-                                    {specs.map((s, i) => (
-                                        <div className="kc-specItem" key={i}>
-                                            <div className="kc-specK">{s.k}</div>
-                                            <div className="kc-specV">{s.v}</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* WHAT YOU GET — PREMIUM GRID */}
-                            <section className="kc-benefits" aria-label="What you get">
-                                <div className="kc-benefits__head">
-                                    <h2 className="kc-benefits__title">What you get</h2>
-                                    <p className="kc-benefits__sub">
-                                        A simple tool that makes you look professional instantly — and keeps everything up to date.
-                                    </p>
-                                </div>
-
-                                <div className="kc-benefits__grid">
-                                    {features.map((f, i) => (
-                                        <article className="kc-benefitCard" key={i}>
-                                            <div className="kc-benefitCard__icon" aria-hidden="true">
-                                                <span className="kc-benefitDot" />
-                                            </div>
-                                            <div className="kc-benefitCard__body">
-                                                <div className="kc-benefitCard__t">{f.t}</div>
-                                                <div className="kc-benefitCard__s">{f.s}</div>
-                                            </div>
-                                            <div className="kc-benefitCard__sheen" aria-hidden="true" />
-                                        </article>
-                                    ))}
-                                </div>
-                            </section>
-
-                            {/* GALLERY SECTION (PLACEHOLDERS) */}
-                            <section className="kc-gallery" aria-label="In the wild">
-                                <div className="kc-gallery__head">
-                                    <h2 className="kc-gallery__title">Made to look premium</h2>
-                                    <p className="kc-gallery__sub">
-                                        Swap in your real graphics later — these are placeholders for a clean “logo card grid” section.
-                                    </p>
-                                </div>
-
-                                <div className="kc-gallery__grid">
-                                    {Array.from({ length: 8 }).map((_, i) => (
-                                        <div className="kc-galleryTile" key={i}>
-                                            <div className="kc-galleryTile__inner">
-                                                <div className="kc-galleryMark">K</div>
-                                                <div className="kc-galleryMeta">
-                                                    <div className="kc-galleryLine" />
-                                                    <div className="kc-galleryLine kc-galleryLine--short" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
+                            {/* end hero wrap */}
                         </div>
-                    </section>
-                </div>
+                    </div>
+                </section>
+
+                {/* ====== FULL-WIDTH SECTIONS ====== */}
+                <section className="kc-section kc-section--soft" aria-label="Product details">
+                    <div className="kc-section__inner">
+                        <div className="kc-section__head">
+                            <p className="kc-pill kc-section__pill">Product details</p>
+                            <h2 className="kc-section__title">Everything you need to know</h2>
+                            <p className="kc-section__sub">Materials, sizing, and tech — simple and clear.</p>
+                        </div>
+
+                        <div className="kc-detailsGrid">
+                            {specs.map((s, i) => (
+                                <div className="kc-detailsItem" key={i}>
+                                    <div className="kc-detailsK">{s.k}</div>
+                                    <div className="kc-detailsV">{s.v}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section className="kc-section kc-section--white" aria-label="What you get">
+                    <div className="kc-section__inner">
+                        <div className="kc-section__head">
+                            <p className="kc-pill kc-section__pill">What you get</p>
+                            <h2 className="kc-section__title">Everything you need to look professional</h2>
+                            <p className="kc-section__sub">A simple tool that makes you look professional instantly — and keeps everything up to date.</p>
+                        </div>
+
+                        <div className="kc-whatGrid" role="list" aria-label="What you get features">
+                            {features.map((f, i) => (
+                                <article className="kc-whatCard" key={i} role="listitem">
+                                    <div className="kc-whatIcon" aria-hidden="true">
+                                        <img className="kc-whatSvg" src={f.icon} alt="" loading="lazy" decoding="async" />
+                                    </div>
+                                    <h3 className="kc-whatTitle">{f.t}</h3>
+                                    <p className="kc-whatDesc">{f.s}</p>
+                                </article>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section className="kc-section kc-section--soft" aria-label="Made to look premium">
+                    <div className="kc-section__inner">
+                        <div className="kc-section__head">
+                            <p className="kc-pill kc-section__pill">Made to look premium</p>
+                            <h2 className="kc-section__title">Made to look premium</h2>
+                            <p className="kc-section__sub">Placeholder gallery (swap these for real photos later).</p>
+                        </div>
+
+                        <div className="kc-premiumGrid" aria-label="Premium gallery placeholders">
+                            {Array.from({ length: 8 }).map((_, i) => (
+                                <div className="kc-premiumTile" key={i} aria-hidden="true" />
+                            ))}
+                        </div>
+                    </div>
+                </section>
             </main>
 
             <Footer />

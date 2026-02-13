@@ -1,3 +1,5 @@
+/* frontend/src/styling/products/konarcard.css */
+
 :root {
     --kc-orange: #ff7b00;
     --kc-orange-hover: #e66f00;
@@ -5,17 +7,40 @@
     --kc-text: #0b1220;
     --kc-muted: rgba(12, 24, 48, 0.72);
 
-    --kc-border: rgba(12, 24, 48, 0.1);
+    --kc-border: rgba(12, 24, 48, 0.10);
     --kc-border-2: rgba(12, 24, 48, 0.08);
 
-    --kc-soft: 0 10px 24px rgba(12, 24, 48, 0.06);
+    --kc-softShadow: 0 10px 24px rgba(12, 24, 48, 0.06);
 }
 
-/* Page shell */
+/* =========================================================
+   Global sanity
+========================================================= */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+img,
+svg,
+video,
+canvas {
+    max-width: 100%;
+    display: block;
+}
+
+/* =========================================================
+   Page shell
+========================================================= */
 .kc-konarcard {
     width: 100%;
     background: #fff;
     color: var(--kc-text);
+}
+
+.kc-konarcard--premium {
+    background: #ffffff;
 }
 
 .kc-konarcard__wrap {
@@ -24,66 +49,106 @@
     padding: 0 18px;
 }
 
-/* Premium base */
-.kc-konarcard--premium {
-    background: #ffffff;
+/* =========================================================
+   TOP HERO (grid background)
+========================================================= */
+.kc-topHero {
+    position: relative;
+    overflow: clip;
+    /* prevents tiny pseudo-element bleed without hiding x globally */
 }
 
-/* Hero must float */
-.kc-premHero--clean {
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
+/* full-width subtle grid background */
+.kc-topHero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100vw - (100vw - 100%));
+    pointer-events: none;
+    z-index: 0;
+
+    background-color: #ffffff;
+    background-image:
+        linear-gradient(to right, rgba(12, 24, 48, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(12, 24, 48, 0.06) 1px, transparent 1px);
+    background-size: 64px 64px;
+    background-position: center;
+    opacity: 0.55;
 }
 
-/* Centered hero block */
-.kc-premHero__top {
+/* fade edges slightly */
+.kc-topHero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100vw - (100vw - 100%));
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(closest-side, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.85) 78%, rgba(255, 255, 255, 1) 100%);
+    opacity: 0.9;
+}
+
+.kc-topHero>* {
+    position: relative;
+    z-index: 1;
+}
+
+.kc-topHero__head {
     text-align: center;
-    max-width: 980px;
+    max-width: 920px;
     margin: 0 auto;
-    padding-top: 22px;
 }
 
-/* Crumbs */
-.kc-premHero__crumbs {
+/* =========================================================
+   Breadcrumb pill (clickable Products)
+========================================================= */
+.kc-crumbPill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
+
+    padding: 8px 14px;
+    border-radius: 999px;
+
+    background: #ffffff;
+    border: 1px solid rgba(12, 24, 48, 0.12);
+    box-shadow: 0 10px 22px rgba(12, 24, 48, 0.06);
+
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 13px;
-    color: rgba(12, 24, 48, 0.55);
-    margin-bottom: 14px;
+    font-size: 12px;
+    font-weight: 900;
+    color: rgba(12, 24, 48, 0.72);
+    margin: 0 auto 16px;
+    white-space: nowrap;
 }
 
-.kc-konarcard__crumbLink {
-    color: rgba(12, 24, 48, 0.75);
+.kc-crumbPill__link {
     text-decoration: none;
-    font-weight: 700;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: rgba(12, 24, 48, 0.82);
 }
 
-.kc-konarcard__crumbLink:hover {
+.kc-crumbPill__link:hover {
     text-decoration: underline;
 }
 
-.kc-konarcard__crumbSep {
+.kc-crumbPill__sep {
     opacity: 0.5;
 }
 
-.kc-konarcard__crumbHere {
-    font-weight: 800;
-    color: rgba(12, 24, 48, 0.72);
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+.kc-crumbPill__here {
+    color: rgba(12, 24, 48, 0.68);
 }
 
 /* =========================
    CAL SANS MUST ALWAYS BE 500
-   ========================= */
+========================= */
 .kc-premHero__title,
-.kc-benefits__title,
-.kc-gallery__title {
+.kc-section__title {
     font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-weight: 500 !important;
     font-synthesis: none;
@@ -92,7 +157,7 @@
 /* Title */
 .kc-premHero__title {
     margin: 0;
-    font-size: 42px;
+    font-size: 44px;
     letter-spacing: -0.04em;
     line-height: 1.03;
     color: rgba(12, 24, 48, 0.95);
@@ -101,15 +166,17 @@
 /* Subtitle */
 .kc-premHero__sub {
     margin: 10px auto 0;
-    max-width: 900px;
+    max-width: 760px;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.7;
     color: rgba(12, 24, 48, 0.68);
 }
 
-/* Badges below subheading */
-.kc-premHero__badges {
+/* =========================================================
+   Badges under hero
+========================================================= */
+.kc-topHero__badges {
     margin-top: 12px;
     display: flex;
     gap: 10px;
@@ -117,35 +184,35 @@
     justify-content: center;
 }
 
-/* Pills */
-.kc-konarcard__pill {
+.kc-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 7px 12px;
+    padding: 8px 12px;
     border-radius: 999px;
+
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 12px;
     font-weight: 900;
+    letter-spacing: 0.01em;
+
+    background: rgba(12, 24, 48, 0.06);
     border: 1px solid rgba(12, 24, 48, 0.12);
-    background: rgba(255, 255, 255, 0.85);
+    color: rgba(12, 24, 48, 0.78);
     white-space: nowrap;
 }
 
-.kc-konarcard__pill--best {
-    border-color: rgba(255, 123, 0, 0.28);
-    background: rgba(255, 123, 0, 0.12);
-    color: #7a3300;
-}
-
-.kc-konarcard__pill--warranty {
-    background: rgba(12, 24, 48, 0.06);
-    color: rgba(12, 24, 48, 0.75);
+.kc-badge--orange {
+    background: var(--kc-orange);
+    border-color: rgba(255, 123, 0, 0.30);
+    color: #ffffff;
+    box-shadow: 0 16px 34px rgba(255, 123, 0, 0.18);
 }
 
 /* Message box */
 .kc-msgBox {
-    margin-top: 12px;
+    margin: 14px auto 0;
+    max-width: 860px;
     padding: 10px 12px;
     border-radius: 12px;
     border: 1px solid rgba(12, 24, 48, 0.12);
@@ -154,7 +221,9 @@
     font-size: 14px;
 }
 
-/* Stage spacing */
+/* =========================================================
+   Stage spacing (does not style the actual 3D card component)
+========================================================= */
 .kc-premStage {
     margin-top: 14px;
 }
@@ -164,188 +233,204 @@
     overflow: visible;
 }
 
-/* =========================
-   CONFIG BAR (NO MORE SQUISH)
-   ========================= */
-.kc-configBar {
+/* =========================================================
+   Controls (2x2, clean, centered)
+========================================================= */
+.kc-controls {
     max-width: 980px;
-    margin: 6px auto 18px;
-    border-radius: 22px;
-    border: 1px solid rgba(12, 24, 48, 0.10);
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 20px 54px rgba(12, 24, 48, 0.06);
-    padding: 14px 14px;
+    margin: 10px auto 0;
+    padding-bottom: 10px;
 }
 
-.kc-configBar__row {
+.kc-controlsGrid {
     display: grid;
-    grid-template-columns: 1fr 1.2fr 1fr;
-    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
     align-items: start;
 }
 
-.kc-configGroup {
-    min-width: 0;
+.kc-controlCell {
+    text-align: center;
+    padding: 14px 8px;
 }
 
-.kc-configLabel {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 900;
-    font-size: 12px;
-    color: rgba(12, 24, 48, 0.68);
-    margin-bottom: 8px;
-}
-
-.kc-configHint {
-    margin-top: 8px;
-    font-size: 12px;
-    color: rgba(12, 24, 48, 0.56);
-    line-height: 1.4;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-/* Variant toggle */
-.kc-variantToggle {
+.kc-controlK {
     display: inline-flex;
-    gap: 8px;
-    padding: 8px;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
     border-radius: 999px;
-    border: 1px solid rgba(12, 24, 48, 0.12);
-    background: rgba(12, 24, 48, 0.03);
-}
 
-.kc-variantBtn {
-    height: 34px;
-    padding: 0 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(12, 24, 48, 0.12);
-    background: rgba(255, 255, 255, 0.88);
-    color: rgba(12, 24, 48, 0.92);
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-weight: 900;
     font-size: 12px;
-    cursor: pointer;
+    letter-spacing: -0.01em;
+
+    background: rgba(12, 24, 48, 0.06);
+    border: 1px solid rgba(12, 24, 48, 0.10);
+    color: rgba(12, 24, 48, 0.82);
+
+    margin: 0 auto 12px;
+    white-space: nowrap;
 }
 
-.kc-variantBtn.is-active {
-    background: rgba(255, 123, 0, 0.12);
-    border-color: rgba(255, 123, 0, 0.25);
-    color: rgba(12, 24, 48, 0.95);
+.kc-controlStack {
+    display: grid;
+    gap: 10px;
+    justify-items: center;
 }
 
-/* Upload pills */
-.kc-logoActions {
+.kc-controlRow {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
-.kc-uploadPill {
+.kc-controlRow--center {
+    justify-content: center;
+}
+
+.kc-controlHint {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(12, 24, 48, 0.56);
+    line-height: 1.4;
+    max-width: 360px;
+}
+
+/* Upload buttons (clean, no big container) */
+.kc-controlBtn {
     height: 38px;
     padding: 0 14px;
     border-radius: 999px;
     border: 1px solid rgba(12, 24, 48, 0.14);
     background: rgba(255, 255, 255, 0.92);
+
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-weight: 900;
     font-size: 12px;
     color: rgba(12, 24, 48, 0.88);
+
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     transition: transform 0.1s ease, filter 0.15s ease;
 }
 
-.kc-uploadPill:active {
+.kc-controlBtn:active {
     transform: translateY(1px);
 }
 
-.kc-uploadPill input {
+.kc-controlBtn input {
     display: none;
 }
 
-.kc-uploadPill--ghost {
+.kc-controlBtn--ghost {
     background: rgba(12, 24, 48, 0.05);
 }
 
-.kc-uploadPill[disabled] {
+.kc-controlBtn:disabled {
     opacity: 0.55;
     cursor: not-allowed;
 }
 
-/* Size pills */
-.kc-sizePills {
-    display: inline-flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.kc-sizeBtn {
-    height: 32px;
-    padding: 0 12px;
+/* chips used for colour + size */
+.kc-chip {
+    height: 34px;
+    padding: 0 14px;
     border-radius: 999px;
+
     border: 1px solid rgba(12, 24, 48, 0.12);
-    background: rgba(12, 24, 48, 0.03);
-    color: rgba(12, 24, 48, 0.86);
+    background: rgba(255, 255, 255, 0.86);
+
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-weight: 900;
     font-size: 12px;
+    color: rgba(12, 24, 48, 0.88);
+
     cursor: pointer;
+    white-space: nowrap;
 }
 
-.kc-sizeBtn.is-active {
+.kc-chip.is-active {
     background: rgba(255, 123, 0, 0.12);
     border-color: rgba(255, 123, 0, 0.25);
     color: rgba(12, 24, 48, 0.95);
 }
 
-.kc-sizeBtn:disabled {
+.kc-chip:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-/* =========================
-   PURCHASE CARD (CLEAN)
-   ========================= */
-.kc-purchaseCard {
-    max-width: 980px;
-    margin: 0 auto 26px;
-    border-radius: 22px;
-    border: 1px solid rgba(12, 24, 48, 0.10);
+/* profile select (clean) */
+.kc-profileSelect {
+    width: min(420px, 100%);
+    height: 44px;
+    border-radius: 14px;
+    border: 1px solid rgba(12, 24, 48, 0.12);
     background: #fff;
-    box-shadow: 0 22px 64px rgba(12, 24, 48, 0.08);
-    padding: 16px;
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 16px;
-    align-items: center;
+    padding: 0 12px;
+
+    color: rgba(12, 24, 48, 0.92);
+    outline: none;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    min-width: 0;
 }
 
-.kc-purchasePrice {
+.kc-profileSelect--clean:focus {
+    border-color: rgba(12, 24, 48, 0.22);
+    box-shadow: 0 0 0 3px rgba(12, 24, 48, 0.10);
+}
+
+/* =========================================================
+   Buy area (qty above black CTA)
+========================================================= */
+.kc-buyArea {
+    margin: 18px auto 0;
+    max-width: 980px;
+    padding: 18px 12px 6px;
+    text-align: center;
+    display: grid;
+    gap: 14px;
+    justify-items: center;
+}
+
+.kc-buyMeta {
+    display: grid;
+    gap: 6px;
+}
+
+.kc-buyPrice {
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 38px;
+    font-size: 34px;
     font-weight: 950;
     letter-spacing: -0.03em;
     color: rgba(12, 24, 48, 0.95);
     line-height: 1.05;
 }
 
-.kc-purchaseMicro {
-    margin-top: 6px;
+.kc-buyMicro {
     font-size: 12px;
     color: rgba(12, 24, 48, 0.62);
     font-weight: 700;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-.kc-purchaseTop {
+.kc-buyControls {
     display: grid;
-    grid-template-columns: auto 1fr;
     gap: 12px;
-    align-items: center;
+    justify-items: center;
+    width: 100%;
 }
 
+/* qty pill (kept from your previous styles, but safe) */
 .kc-qtySm {
     display: inline-flex;
     align-items: center;
@@ -355,6 +440,7 @@
     background: #fff;
     overflow: hidden;
     width: max-content;
+    max-width: 100%;
 }
 
 .kc-qtySm__btn {
@@ -382,197 +468,237 @@
     color: rgba(12, 24, 48, 0.9);
 }
 
-.kc-profileSelect {
-    width: 100%;
-    height: 44px;
-    border-radius: 14px;
-    border: 1px solid rgba(12, 24, 48, 0.12);
-    background: #fff;
-    padding: 0 12px;
-    color: rgba(12, 24, 48, 0.92);
-    outline: none;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-}
-
-.kc-profileSelect--premium:focus {
-    border-color: rgba(255, 123, 0, 0.32);
-    box-shadow: 0 0 0 3px rgba(255, 123, 0, 0.16);
-}
-
-.kc-buyHint {
-    margin-top: 8px;
-    font-size: 12px;
-    color: rgba(12, 24, 48, 0.62);
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-/* Buy button */
-.kc-buyMainBtn {
-    margin-top: 12px;
+/* black CTA */
+.kc-buyBlackBtn {
+    width: min(520px, 100%);
     height: 52px;
     border-radius: 999px;
     padding: 0 18px;
-    border: none;
-    outline: none;
-    background: var(--kc-orange);
-    color: #fff;
+
+    border: 1px solid rgba(12, 24, 48, 0.14);
+    background: #0b1220;
+    color: #ffffff;
+
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 14px;
     font-weight: 900;
     letter-spacing: -0.01em;
+
     cursor: pointer;
-    box-shadow: 0 18px 42px rgba(255, 123, 0, 0.22);
+    box-shadow: 0 18px 42px rgba(11, 18, 32, 0.18);
     transition: transform 0.1s ease, filter 0.15s ease, box-shadow 0.15s ease;
 }
 
-.kc-buyMainBtn:hover {
-    filter: brightness(0.98);
-    box-shadow: 0 22px 52px rgba(255, 123, 0, 0.26);
+.kc-buyBlackBtn:hover {
+    filter: brightness(1.04);
+    box-shadow: 0 22px 52px rgba(11, 18, 32, 0.22);
 }
 
-.kc-buyMainBtn:active {
+.kc-buyBlackBtn:active {
     transform: translateY(1px);
 }
 
-.kc-buyMainBtn:disabled {
+.kc-buyBlackBtn:disabled {
     opacity: 0.65;
     cursor: not-allowed;
 }
 
-.kc-buyMainBtn--wide {
-    width: 100%;
-}
+/* =========================================================
+   PILL (used in sections below)
+========================================================= */
+.kc-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 12px;
+    border-radius: 999px;
 
-/* =========================
-   PRODUCT DETAILS SECTION
-   ========================= */
-.kc-specSection {
-    max-width: 980px;
-    margin: 14px auto 56px;
-}
-
-.kc-specHead {
-    display: grid;
-    gap: 6px;
-    margin-bottom: 14px;
-    text-align: center;
-}
-
-.kc-specTitle {
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 950;
-    font-size: 14px;
-    color: rgba(12, 24, 48, 0.95);
-}
-
-.kc-specSub {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 700;
     font-size: 12px;
-    color: rgba(12, 24, 48, 0.62);
-}
-
-.kc-specGrid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.kc-specItem {
-    border: 1px solid rgba(12, 24, 48, 0.10);
-    background: rgba(12, 24, 48, 0.02);
-    border-radius: 16px;
-    padding: 14px;
-}
-
-.kc-specK {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-weight: 900;
-    font-size: 12px;
-    color: rgba(12, 24, 48, 0.9);
-    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+
+    background: #ffffff;
+    border: 1px solid rgba(12, 24, 48, 0.12);
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.06);
+
+    color: rgba(12, 24, 48, 0.72);
+    white-space: nowrap;
 }
 
-.kc-specV {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 700;
-    font-size: 12px;
-    color: rgba(12, 24, 48, 0.68);
-    line-height: 1.55;
+/* =========================================================
+   SECTION SYSTEM
+========================================================= */
+.kc-section {
+    width: 100%;
+    padding: 62px 0;
 }
 
-/* =========================
-   WHAT YOU GET (PREMIUM GRID)
-   ========================= */
-.kc-benefits {
-    padding: 46px 0 34px;
+.kc-section--soft {
+    background: #fafafa;
 }
 
-.kc-benefits__head {
+.kc-section--white {
+    background: #ffffff;
+}
+
+.kc-section__inner {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 18px;
+}
+
+.kc-section__head {
     text-align: center;
-    max-width: 760px;
-    margin: 0 auto 18px;
+    max-width: 780px;
+    margin: 0 auto 22px;
+    padding: 0 2px;
 }
 
-.kc-benefits__title {
+.kc-section__pill {
+    margin: 0 0 12px;
+}
+
+.kc-section__title {
     margin: 0 0 10px;
     font-size: 40px;
     letter-spacing: -0.03em;
+    color: rgba(12, 24, 48, 0.95);
 }
 
-.kc-benefits__sub {
-    margin: 0;
+.kc-section__sub {
+    margin: 0 auto;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    color: var(--kc-muted);
-    line-height: 1.7;
     font-size: 14px;
+    line-height: 1.7;
+    color: rgba(12, 24, 48, 0.62);
+    max-width: 720px;
 }
 
-.kc-benefits__grid {
-    margin-top: 18px;
+/* =========================================================
+   PRODUCT DETAILS (3x2 + lines)
+========================================================= */
+.kc-detailsGrid {
+    position: relative;
+    max-width: 980px;
+    margin: 18px auto 0;
+
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
 }
 
-.kc-benefitCard {
+/* Tic-tac-toe lines: 2 vertical + 1 horizontal */
+.kc-detailsGrid::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+
+    background-image:
+        linear-gradient(to right,
+            transparent 0,
+            transparent calc(33.333% - 0.5px),
+            rgba(12, 24, 48, 0.12) calc(33.333% - 0.5px),
+            rgba(12, 24, 48, 0.12) calc(33.333% + 0.5px),
+            transparent calc(33.333% + 0.5px),
+            transparent calc(66.666% - 0.5px),
+            rgba(12, 24, 48, 0.12) calc(66.666% - 0.5px),
+            rgba(12, 24, 48, 0.12) calc(66.666% + 0.5px),
+            transparent calc(66.666% + 0.5px),
+            transparent 100%),
+        linear-gradient(to bottom,
+            transparent 0,
+            transparent calc(50% - 0.5px),
+            rgba(12, 24, 48, 0.12) calc(50% - 0.5px),
+            rgba(12, 24, 48, 0.12) calc(50% + 0.5px),
+            transparent calc(50% + 0.5px),
+            transparent 100%);
+}
+
+.kc-detailsItem {
+    padding: 28px 18px;
+    text-align: center;
     position: relative;
-    border-radius: 18px;
-    border: 1px solid rgba(12, 24, 48, 0.10);
-    background: #fff;
-    box-shadow: 0 14px 34px rgba(12, 24, 48, 0.05);
-    padding: 18px;
-    display: flex;
-    gap: 12px;
-    overflow: hidden;
-    transform: translateZ(0);
+    z-index: 1;
 }
 
-.kc-benefitCard__icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 14px;
-    background: rgba(255, 123, 0, 0.12);
+.kc-detailsK {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: -0.01em;
+
+    background: rgba(12, 24, 48, 0.06);
+    border: 1px solid rgba(12, 24, 48, 0.10);
+    color: rgba(12, 24, 48, 0.82);
+
+    margin: 0 auto 12px;
+    white-space: nowrap;
+}
+
+.kc-detailsV {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 1.65;
+    color: rgba(12, 24, 48, 0.65);
+}
+
+/* =========================================================
+   WHAT YOU GET
+========================================================= */
+.kc-whatGrid {
+    max-width: 1040px;
+    margin: 22px auto 0;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    align-items: stretch;
+}
+
+.kc-whatCard {
+    border: 1px solid rgba(12, 24, 48, 0.10);
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.06);
+
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+.kc-whatCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(16, 24, 40, 0.08);
+    border-color: rgba(12, 24, 48, 0.14);
+}
+
+.kc-whatIcon {
+    width: 44px;
+    height: 44px;
     display: grid;
     place-items: center;
-    flex: 0 0 auto;
+    margin-bottom: 14px;
 }
 
-.kc-benefitDot {
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
-    background: rgba(255, 123, 0, 0.95);
-    box-shadow: 0 10px 18px rgba(255, 123, 0, 0.22);
+.kc-whatSvg {
+    width: 34px;
+    height: 34px;
 }
 
-.kc-benefitCard__body {
-    min-width: 0;
-}
-
-.kc-benefitCard__t {
+.kc-whatTitle {
+    margin: 0 0 8px;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-weight: 950;
     font-size: 16px;
@@ -580,144 +706,77 @@
     color: rgba(12, 24, 48, 0.95);
 }
 
-.kc-benefitCard__s {
-    margin-top: 6px;
+.kc-whatDesc {
+    margin: 0;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-weight: 700;
     font-size: 13px;
-    color: rgba(12, 24, 48, 0.66);
     line-height: 1.6;
+    color: rgba(12, 24, 48, 0.66);
 }
 
-.kc-benefitCard__sheen {
-    position: absolute;
-    inset: -40% -30% auto auto;
-    width: 220px;
-    height: 220px;
-    border-radius: 999px;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 123, 0, 0.14), transparent 60%);
-    transform: rotate(18deg);
-    pointer-events: none;
-    filter: blur(0px);
-}
+/* =========================================================
+   MADE TO LOOK PREMIUM
+========================================================= */
+.kc-premiumGrid {
+    max-width: 980px;
+    margin: 22px auto 0;
 
-.kc-benefitCard:hover {
-    box-shadow: 0 20px 46px rgba(12, 24, 48, 0.08);
-    border-color: rgba(12, 24, 48, 0.14);
-}
-
-/* =========================
-   GALLERY (PLACEHOLDERS)
-   ========================= */
-.kc-gallery {
-    padding: 22px 0 72px;
-}
-
-.kc-gallery__head {
-    text-align: center;
-    max-width: 760px;
-    margin: 0 auto 16px;
-}
-
-.kc-gallery__title {
-    margin: 0 0 10px;
-    font-size: 36px;
-    letter-spacing: -0.03em;
-}
-
-.kc-gallery__sub {
-    margin: 0;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    color: rgba(12, 24, 48, 0.62);
-    line-height: 1.7;
-    font-size: 14px;
-}
-
-.kc-gallery__grid {
-    margin-top: 16px;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 14px;
 }
 
-.kc-galleryTile {
+.kc-premiumTile {
+    aspect-ratio: 1 / 1;
     border-radius: 18px;
+    background: var(--kc-text);
+    box-shadow: 0 16px 40px rgba(12, 24, 48, 0.12);
     border: 1px solid rgba(12, 24, 48, 0.10);
-    background: linear-gradient(180deg, rgba(12, 24, 48, 0.02), rgba(12, 24, 48, 0.01));
-    box-shadow: 0 14px 34px rgba(12, 24, 48, 0.05);
-    overflow: hidden;
-    aspect-ratio: 4 / 3;
-}
-
-.kc-galleryTile__inner {
-    height: 100%;
-    width: 100%;
-    padding: 14px;
-    display: grid;
-    align-content: space-between;
-}
-
-.kc-galleryMark {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    display: grid;
-    place-items: center;
-    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 500 !important;
-    font-size: 20px;
-    color: rgba(12, 24, 48, 0.92);
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(12, 24, 48, 0.10);
-}
-
-.kc-galleryMeta {
-    display: grid;
-    gap: 8px;
-}
-
-.kc-galleryLine {
-    height: 10px;
-    border-radius: 999px;
-    background: rgba(12, 24, 48, 0.08);
-}
-
-.kc-galleryLine--short {
-    width: 62%;
 }
 
 /* =========================
    RESPONSIVE
-   ========================= */
+========================= */
 @media (max-width: 1020px) {
-    .kc-configBar__row {
+    .kc-controlsGrid {
         grid-template-columns: 1fr;
+        gap: 14px;
     }
 
-    .kc-purchaseCard {
-        grid-template-columns: 1fr;
+    .kc-detailsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
     }
 
-    .kc-purchaseTop {
-        grid-template-columns: 1fr;
+    .kc-detailsGrid::before {
+        display: none;
     }
 
-    .kc-benefits__grid {
+    .kc-detailsItem {
+        padding: 18px 14px;
+    }
+
+    .kc-whatGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .kc-gallery__grid {
+    .kc-premiumGrid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 720px) {
-    .kc-gallery__grid {
+    .kc-premiumGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 560px) {
+    .kc-topHero {
+        padding: 44px 0 26px;
+    }
+
     .kc-premHero__title {
         font-size: 34px;
     }
@@ -726,15 +785,24 @@
         padding: 20px 0 16px;
     }
 
-    .kc-benefits__title {
+    .kc-section {
+        padding: 48px 0;
+    }
+
+    .kc-section__title {
         font-size: 30px;
     }
 
-    .kc-benefits__grid {
+    .kc-detailsGrid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .kc-whatGrid {
         grid-template-columns: 1fr;
     }
 
-    .kc-specGrid {
+    .kc-premiumGrid {
         grid-template-columns: 1fr;
     }
 }
