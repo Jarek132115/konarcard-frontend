@@ -11,7 +11,7 @@
     width: min(920px, 100%);
     max-width: 920px;
 
-    /* ✅ back to a sane height so the card is NOT huge on desktop */
+    /* ✅ sane height so card is not huge */
     height: clamp(520px, 60vh, 720px);
 
     /* ✅ 24px padding on ALL screen sizes */

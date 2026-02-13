@@ -73,7 +73,7 @@ export default function MetalCard() {
     const [logoUrl, setLogoUrl] = useState("");
     const [logoFile, setLogoFile] = useState(null);
 
-    const [logoPreset, setLogoPreset] = useState("medium"); // small | medium | large
+    const [logoPreset, setLogoPreset] = useState("medium");
     const logoPercent = PRESET_TO_PERCENT[logoPreset] || 70;
 
     const [profileId, setProfileId] = useState("");
@@ -225,7 +225,7 @@ export default function MetalCard() {
         []
     );
 
-    // for the preview: black finish should use white icon by default
+    // preview: black finish uses white icon by default
     const defaultLogo = finish === "black" ? LogoIconWhite : LogoIcon;
     const displayedLogo = logoUrl || defaultLogo;
 
@@ -317,7 +317,6 @@ export default function MetalCard() {
             <main className="kc-konarcard kc-konarcard--premium kc-page">
                 <section className="kc-topHero" aria-label="Metal KonarCard hero">
                     <div className="kc-konarcard__wrap">
-                        {/* same grid head as plastic */}
                         <div className="kc-heroHeadWrap kc-heroHeadWrap--lg">
                             <div className="kc-topHero__head">
                                 <div className="kc-crumbPill" aria-label="Breadcrumb">
@@ -338,20 +337,27 @@ export default function MetalCard() {
                                     <span className="kc-badge">12 Month Warranty</span>
                                 </div>
 
-                                {(errorMsg || infoMsg) && <div className="kc-msgBox">{errorMsg ? `⚠️ ${errorMsg}` : `ℹ️ ${infoMsg}`}</div>}
+                                {(errorMsg || infoMsg) && (
+                                    <div className="kc-msgBox">{errorMsg ? `⚠️ ${errorMsg}` : `ℹ️ ${infoMsg}`}</div>
+                                )}
                             </div>
                         </div>
 
                         <div className="kc-premStage">
                             <div className="kc-premStage__canvasPad">
-                                <MetalCard3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoPercent} finish={finish} />
+                                <MetalCard3D
+                                    logoSrc={displayedLogo}
+                                    qrSrc={CardQrCode}
+                                    logoSize={logoPercent}
+                                    finish={finish}
+                                />
                             </div>
 
-                            {/* CONTROLS (2x2) */}
+                            {/* ✅ SAME layout system as Plastic (wide: 3 cols with BUY in middle; else 2x2 + buy below) */}
                             <div className="kc-controls" aria-label="Configure your card">
-                                <div className="kc-controlsGrid">
+                                <div className="kc-configGrid">
                                     {/* Logo */}
-                                    <div className="kc-controlCell">
+                                    <div className="kc-controlCell kc-cell--logo">
                                         <div className="kc-controlK">Logo</div>
 
                                         <div className="kc-inlineRow">
@@ -373,7 +379,7 @@ export default function MetalCard() {
                                     </div>
 
                                     {/* Logo size */}
-                                    <div className="kc-controlCell">
+                                    <div className="kc-controlCell kc-cell--size">
                                         <div className="kc-controlK">Logo size</div>
 
                                         <div className="kc-inlineRow" role="group" aria-label="Choose logo size">
@@ -392,7 +398,7 @@ export default function MetalCard() {
                                     </div>
 
                                     {/* Finish */}
-                                    <div className="kc-controlCell">
+                                    <div className="kc-controlCell kc-cell--colour">
                                         <div className="kc-controlK">Finish</div>
 
                                         <div className="kc-inlineRow" role="group" aria-label="Choose metal finish">
@@ -416,7 +422,7 @@ export default function MetalCard() {
                                     </div>
 
                                     {/* Profile */}
-                                    <div className="kc-controlCell">
+                                    <div className="kc-controlCell kc-cell--profile">
                                         <div className="kc-controlK">Link to profile</div>
 
                                         <div className="kc-profileBox kc-profileBox--sm">
@@ -436,14 +442,24 @@ export default function MetalCard() {
                                                     aria-label="Choose profile"
                                                 >
                                                     <option value="">
-                                                        {isProfilesLoading ? "Loading..." : myProfiles.length ? "Choose profile" : "No profiles"}
+                                                        {isProfilesLoading
+                                                            ? "Loading..."
+                                                            : myProfiles.length
+                                                                ? "Choose profile"
+                                                                : "No profiles"}
                                                     </option>
 
                                                     {myProfiles.map((p) => {
                                                         const id = String(p?._id || "");
                                                         if (!id) return null;
+
                                                         const label =
-                                                            p?.business_card_name || p?.full_name || p?.main_heading || p?.profile_slug || "Profile";
+                                                            p?.business_card_name ||
+                                                            p?.full_name ||
+                                                            p?.main_heading ||
+                                                            p?.profile_slug ||
+                                                            "Profile";
+
                                                         return (
                                                             <option key={id} value={id}>
                                                                 {label}
@@ -454,40 +470,45 @@ export default function MetalCard() {
                                             )}
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* BUY AREA */}
-                                <div className="kc-buyArea kc-buyArea--pad" aria-label="Buy">
-                                    <div className="kc-buyMeta">
-                                        <div className="kc-buyPrice">£59.99</div>
-                                    </div>
-
-                                    <div className="kc-buyControls">
-                                        <div className="kc-qtySm" aria-label="Quantity">
-                                            <button
-                                                type="button"
-                                                className="kc-qtySm__btn"
-                                                onClick={() => setQty((q) => Math.max(1, q - 1))}
-                                                disabled={busy}
-                                                aria-label="Decrease quantity"
-                                            >
-                                                −
-                                            </button>
-                                            <div className="kc-qtySm__val">{qty}</div>
-                                            <button
-                                                type="button"
-                                                className="kc-qtySm__btn"
-                                                onClick={() => setQty((q) => Math.min(20, q + 1))}
-                                                disabled={busy}
-                                                aria-label="Increase quantity"
-                                            >
-                                                +
-                                            </button>
+                                    {/* BUY AREA (middle on wide) */}
+                                    <div className="kc-buyArea kc-buyArea--pad kc-cell--buy" aria-label="Buy">
+                                        <div className="kc-buyMeta">
+                                            <div className="kc-buyPrice">£44.99</div>
                                         </div>
 
-                                        <button type="button" onClick={handleBuy} className="kx-btn kx-btn--black kc-buyBtnFit" disabled={busy}>
-                                            {busy ? "Starting checkout..." : "Buy KonarCard"}
-                                        </button>
+                                        <div className="kc-buyControls">
+                                            <div className="kc-qtySm" aria-label="Quantity">
+                                                <button
+                                                    type="button"
+                                                    className="kc-qtySm__btn"
+                                                    onClick={() => setQty((q) => Math.max(1, q - 1))}
+                                                    disabled={busy}
+                                                    aria-label="Decrease quantity"
+                                                >
+                                                    −
+                                                </button>
+                                                <div className="kc-qtySm__val">{qty}</div>
+                                                <button
+                                                    type="button"
+                                                    className="kc-qtySm__btn"
+                                                    onClick={() => setQty((q) => Math.min(20, q + 1))}
+                                                    disabled={busy}
+                                                    aria-label="Increase quantity"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                onClick={handleBuy}
+                                                className="kx-btn kx-btn--black kc-buyBtnFit"
+                                                disabled={busy}
+                                            >
+                                                {busy ? "Starting checkout..." : "Buy KonarCard"}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
