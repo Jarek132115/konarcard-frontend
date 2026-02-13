@@ -355,3 +355,59 @@
     display: block;
   }
 }
+
+/* =========================
+   Burger → Perfect X
+   ========================= */
+
+.kc-navbar__burger {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+}
+
+/* base lines */
+.kc-navbar__burger span {
+  position: absolute;
+  width: 22px;
+  height: 2px;
+  background: #0b1220;
+  border-radius: 2px;
+  transition: transform 0.22s ease, opacity 0.18s ease;
+  transform-origin: center;
+}
+
+/* perfectly spaced burger */
+.kc-navbar__burger span:nth-child(1) {
+  transform: translateY(-6px);
+}
+
+.kc-navbar__burger span:nth-child(2) {
+  transform: translateY(0);
+}
+
+.kc-navbar__burger span:nth-child(3) {
+  transform: translateY(6px);
+}
+
+/* ===== OPEN STATE (perfect centered X) ===== */
+
+.kc-navbar__burger.is-open span:nth-child(1) {
+  transform: rotate(45deg);
+}
+
+.kc-navbar__burger.is-open span:nth-child(2) {
+  opacity: 0;
+}
+
+.kc-navbar__burger.is-open span:nth-child(3) {
+  transform: rotate(-45deg);
+}
