@@ -1,4 +1,3 @@
-// frontend/src/components/Footer.jsx
 import React, { useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 
@@ -158,7 +157,6 @@ export default function Footer() {
             {/* Top navy section */}
             <section className="kc-footer__hero">
                 <div className="kc-footer__heroInner">
-                    {/* ✅ Cal Sans via .h2 (Cal Sans 500) + keep your custom sizing in CSS */}
                     <h2 className="h2 kc-footer__heroTitle">
                         Because Business Cards <br className="kc-footer__heroBreak" />
                         Should Work Harder
@@ -183,7 +181,6 @@ export default function Footer() {
                         <div className="kc-footer__fade kc-footer__fade--right" aria-hidden="true" />
                     </div>
 
-                    {/* ✅ Use the white button system from fonts.css */}
                     <Link to="/register" className="kx-btn kx-btn--white kc-footer__heroCta">
                         Claim Your Link
                     </Link>
@@ -204,6 +201,7 @@ export default function Footer() {
                             Follow us on our socials to stay up to date with new features and updates.
                         </p>
 
+                        {/* Socials: keep Link placeholders for now (swap to <a href> when you have URLs) */}
                         <div className="kc-footer__socials">
                             <Link to="/#" aria-label="Instagram">
                                 <img src={FooterInstagram} alt="" aria-hidden="true" />
@@ -227,9 +225,9 @@ export default function Footer() {
                     <div className="kc-footer__cols">
                         <div className="kc-footer__col">
                             <h4>Product</h4>
-                            <Link to="/productandplan">How KonarCard Works</Link>
-                            <Link to="/productandplan">Digital Business Cards</Link>
-                            <Link to="/productandplan/konarcard">NFC Cards</Link>
+                            <Link to="/products/plastic">Plastic KonarCard</Link>
+                            <Link to="/products/metal">Metal KonarCard</Link>
+                            <Link to="/products/konartag">KonarTag</Link>
                             <Link to="/pricing">Pricing</Link>
                             <Link to="/examples">Examples</Link>
                         </div>
@@ -244,7 +242,6 @@ export default function Footer() {
 
                         <div className="kc-footer__col">
                             <h4>Company</h4>
-                            <Link to="/about">About KonarCard</Link>
                             <Link to="/reviews">Reviews</Link>
                             <Link to="/blog">Blog</Link>
                         </div>

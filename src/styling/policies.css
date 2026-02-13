@@ -2,7 +2,12 @@
 
 /* =========================================================
    POLICIES
-   Sticky sidebar + tokens + fonts.css
+   - Inter for nav links
+   - No background/border around the main policy text area
+   - Sidebar cards padded 24px
+   - Active state = black + white text + white arrow
+   - Inset dividers (not full width)
+   - Sticky works at 160px (kc-page-top-space)
    ========================================================= */
 
 .kc-pol {
@@ -10,12 +15,12 @@
     color: var(--kc-text-primary);
 }
 
-/* Main wrapper (kc-page handles top spacing; we only do bottom + side padding) */
+/* Wrap */
 .kc-pol__wrap {
     padding: 0 20px 80px;
 }
 
-/* Grid */
+/* Layout */
 .kc-pol__grid {
     max-width: 1040px;
     margin: 0 auto;
@@ -26,33 +31,29 @@
     align-items: start;
 }
 
-/* LEFT */
+/* Ensure sticky works in grid */
 .kc-pol__left {
     min-width: 0;
+    align-self: start;
 }
 
-/* ✅ Sticky container */
+/* ✅ Sticky: sticks right under navbar spacing */
 .kc-pol__side {
     position: sticky;
-    top: calc(var(--kc-page-top-space) + 16px);
+    top: var(--kc-page-top-space);
 }
 
-/* =========================
-   SIDE CARDS (FIXED LOOK)
-   - Remove heavy shadow
-   - Use crisp border + subtle shadow
-   ========================= */
+/* Side cards */
 .kc-pol__sideCard {
     background: #ffffff;
     border: 1px solid rgba(15, 23, 42, 0.08);
     border-radius: 16px;
 
-    /* ✅ soft, professional shadow (no big blur) */
     box-shadow:
         0 1px 0 rgba(15, 23, 42, 0.04),
         0 10px 24px rgba(15, 23, 42, 0.04);
 
-    padding: 14px;
+    padding: 24px;
 }
 
 .kc-pol__sideCard+.kc-pol__sideCard {
@@ -60,7 +61,7 @@
 }
 
 .kc-pol__sideTitle {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
 }
 
 /* List */
@@ -71,12 +72,22 @@
     display: grid;
 }
 
-/* Lighter dividers */
-.kc-pol__sideList li+li {
-    border-top: 1px solid rgba(15, 23, 42, 0.06);
+.kc-pol__sideList li {
+    position: relative;
 }
 
-/* Buttons */
+/* ✅ Inset dividers (not full width) */
+.kc-pol__sideList li+li::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 0;
+    height: 1px;
+    background: rgba(15, 23, 42, 0.06);
+}
+
+/* Buttons (force Inter) */
 .kc-pol__sideBtn {
     width: 100%;
     text-align: left;
@@ -89,12 +100,16 @@
     padding: 12px 10px;
     border-radius: 12px;
 
-    border: none;
+    border: 1px solid transparent;
     background: transparent;
+
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
     color: var(--kc-text-primary);
 
     cursor: pointer;
-    transition: background-color 0.15s ease, transform 0.08s ease;
+    transition: background-color 0.15s ease, transform 0.08s ease, color 0.15s ease;
 }
 
 .kc-pol__sideBtn:hover {
@@ -107,34 +122,53 @@
 
 .kc-pol__sideBtn:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
 }
 
-/* ✅ Cleaner active state (less “glow”, more premium) */
+/* Arrow */
+.kc-pol__sideArrowIcon {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    opacity: 0.6;
+}
+
+/* ✅ ACTIVE (black) */
 .kc-pol__sideBtn.is-active {
-    background: rgba(249, 115, 22, 0.08);
-    border: 1px solid rgba(249, 115, 22, 0.22);
+    background: #0b1220;
+    color: #ffffff;
+    border-color: #0b1220;
 }
 
-.kc-pol__sideBtn.is-active .kc-pol__sideArrow {
-    color: var(--kc-accent-primary);
+.kc-pol__sideBtn.is-active:hover {
+    background: #0b1220;
 }
 
-.kc-pol__sideArrow {
-    color: rgba(71, 85, 105, 0.9);
-    font-weight: 700;
+.kc-pol__sideBtn.is-active .kc-pol__sideArrowIcon {
+    opacity: 1;
+    filter: invert(1);
 }
 
-/* Contact card text */
+/* Contact card links (match email look) */
 .kc-pol__contactText {
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     color: var(--kc-text-secondary);
     line-height: 1.6;
 }
 
-.kc-pol__contactEmail {
-    margin: 0;
+.kc-pol__contactLink {
+    display: inline-block;
+    margin: 0 0 8px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 22px;
     color: var(--kc-text-primary);
+    text-decoration: none;
+}
+
+.kc-pol__contactLink:hover {
+    text-decoration: underline;
 }
 
 /* RIGHT */
@@ -142,11 +176,14 @@
     min-width: 0;
 }
 
-/* Content */
-.kc-pol__contentCard {
+/* ✅ No card/background/border around the policy content */
+.kc-pol__content {
     background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
+/* Typography spacing */
 .kc-pol__head {
     margin-bottom: 18px;
 }
@@ -163,29 +200,31 @@
 
 .kc-pol__lead {
     margin: 0;
-    max-width: 720px;
+    max-width: 760px;
 }
 
 .kc-pol__block {
-    margin-top: 18px;
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .kc-pol__h {
-    margin: 0 0 6px;
+    margin: 0 0 8px;
 }
 
 .kc-pol__p {
     margin: 0 0 10px;
-    max-width: 860px;
+    max-width: 880px;
 }
 
 .kc-pol__ul {
     list-style: none;
     padding: 0;
-    margin: 10px 0 12px;
+    margin: 12px 0 12px;
     display: grid;
-    gap: 8px;
-    max-width: 860px;
+    gap: 10px;
+    max-width: 880px;
 }
 
 .kc-pol__ul li {
@@ -193,24 +232,22 @@
     grid-template-columns: 14px 1fr;
     gap: 10px;
     align-items: start;
-    line-height: 1.6;
+    line-height: 1.65;
 }
 
 .kc-pol__dot {
     width: 10px;
-    margin-top: 6px;
+    margin-top: 7px;
     opacity: 0.9;
 }
 
-/* =========================
-   RESPONSIVE
-   ========================= */
+/* Responsive */
 @media (max-width: 1000px) {
     .kc-pol__grid {
         grid-template-columns: 1fr;
     }
 
-    /* Sticky off on mobile/tablet stacked layout */
+    /* Sticky off when stacked */
     .kc-pol__side {
         position: static;
         top: auto;
@@ -222,4 +259,9 @@
         margin-left: auto;
         margin-right: auto;
     }
+}
+
+@media (max-width: 600px) {
+    /* If you want sticky on mobile later, we can add it,
+     but right now you were stacking, so it stays normal. */
 }
