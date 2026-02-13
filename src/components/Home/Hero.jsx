@@ -11,7 +11,7 @@ import UP6 from "../../assets/images/UP6.jpg";
 import UP7 from "../../assets/images/UP7.jpg";
 import UP8 from "../../assets/images/UP8.jpg";
 
-/* ✅ Correct logo images (green in VSCode) */
+/* ✅ Correct logo images */
 import Logo1 from "../../assets/images/CarouselImage1.png";
 import Logo2 from "../../assets/images/CarouselImage2.png";
 import Logo3 from "../../assets/images/CarouselImage3.png";
@@ -38,7 +38,6 @@ export default function Hero() {
         []
     );
 
-    // ✅ 7 real logos (4 first row + 3 second row)
     const logos = useMemo(
         () => [
             { src: Logo1, alt: "Customer logo 1" },
@@ -65,11 +64,9 @@ export default function Hero() {
 
     const speedRef = useRef(0.55); // px per frame
 
-    // ✅ 3 groups
     const renderGroups = 3;
     const groups = useMemo(() => new Array(renderGroups).fill(0), []);
 
-    // group width cache
     const groupWidthRef = useRef(0);
 
     useEffect(() => {
@@ -86,7 +83,6 @@ export default function Hero() {
         return groupWidthRef.current;
     };
 
-    // keep inside middle band [gw, 2gw)
     const normalizeLoop = (alsoAdjustDragBase = false) => {
         const el = scrollerRef.current;
         if (!el) return;
@@ -108,7 +104,6 @@ export default function Hero() {
         }
     };
 
-    // initial
     useEffect(() => {
         const el = scrollerRef.current;
         const track = trackRef.current;
@@ -140,7 +135,6 @@ export default function Hero() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // autoplay
     useEffect(() => {
         const el = scrollerRef.current;
         if (!el) return;
@@ -158,7 +152,6 @@ export default function Hero() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // normalize on wheel/trackpad scroll too
     useEffect(() => {
         const el = scrollerRef.current;
         if (!el) return;
@@ -172,7 +165,6 @@ export default function Hero() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // drag
     useEffect(() => {
         const el = scrollerRef.current;
         if (!el) return;
@@ -312,7 +304,6 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    {/* ✅ Real logo images */}
                     <div className="kc-homeHero__logoGrid" aria-label="Trusted by UK businesses">
                         {logos.map((l, idx) => (
                             <div key={idx} className="kc-homeHero__logoImgWrap">

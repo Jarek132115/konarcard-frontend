@@ -3,7 +3,6 @@
    File: frontend/src/styling/home/hero.css
    ========================================================= */
 
-/* ✅ PURE WHITE ONLY */
 .kc-homeHero {
     width: 100%;
     min-height: 90vh;
@@ -13,13 +12,10 @@
     display: flex;
     justify-content: center;
     position: relative;
-
-    /* stop homepage horizontal scroll caused by 100vw full-bleed */
     overflow-x: clip;
     overflow-y: visible;
 }
 
-/* Inner container */
 .kc-homeHero__inner {
     width: 100%;
     max-width: 1200px;
@@ -29,9 +25,6 @@
     text-align: center;
 }
 
-/* =========================
-   GRID AROUND COPY ONLY
-   ========================= */
 .kc-homeHero__copyGrid {
     position: relative;
     display: inline-block;
@@ -40,7 +33,6 @@
     z-index: 1;
 }
 
-/* Grid background with fade on ALL sides */
 .kc-homeHero__copyGrid::before {
     content: "";
     position: absolute;
@@ -78,7 +70,6 @@
             #fff 100%);
 }
 
-/* Keep content above grid */
 .kc-homeHero__badge,
 .kc-homeHero__title,
 .kc-homeHero__sub,
@@ -87,7 +78,6 @@
     z-index: 1;
 }
 
-/* Badge */
 .kc-homeHero__badge {
     display: inline-flex;
     align-items: center;
@@ -107,7 +97,6 @@
     margin-bottom: 16px;
 }
 
-/* H1 */
 .kc-homeHero__title {
     font-size: 72px;
     line-height: 1.02;
@@ -119,12 +108,10 @@
     color: #0b1220;
 }
 
-/* ✅ Orange word in title */
 .kc-homeHero__accent {
     color: var(--kc-accent-primary);
 }
 
-/* Subtitle */
 .kc-homeHero__sub {
     margin: 0 auto 22px;
     max-width: 720px;
@@ -135,7 +122,6 @@
     color: rgba(12, 24, 48, 0.78);
 }
 
-/* CTA row */
 .kc-homeHero__ctaRow {
     display: flex;
     justify-content: center;
@@ -144,13 +130,17 @@
     margin-bottom: 0;
 }
 
-/* ✅ Make kx buttons feel “hero sized” without changing global */
+/* ✅ Hero CTAs should look exactly like other kx-btn buttons */
 .kc-homeHero__ctaBtn {
-    height: 46px;
-    padding: 0 20px;
-    border-radius: 999px;
-    /* pill look in hero */
+    /* DO NOT reset padding/radius — let .kx-btn control it */
+    display: inline-flex;
+    /* ensures proper button sizing */
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    /* prevents weird wraps */
 }
+
 
 /* =========================
    Carousel
@@ -163,7 +153,6 @@
     z-index: 5;
 }
 
-/* Edge-to-edge scroller */
 .kc-homeHero__scrollerOuter {
     width: 100vw;
     margin-left: calc(50% - 50vw);
@@ -172,7 +161,6 @@
     overflow-x: clip;
 }
 
-/* Scroller */
 .kc-homeHero__scroller {
     overflow-x: auto;
     overflow-y: visible;
@@ -194,7 +182,6 @@
     display: none;
 }
 
-/* Track */
 .kc-homeHero__track {
     display: flex;
     gap: var(--gap, 10px);
@@ -203,7 +190,6 @@
     padding: 10px 0;
 }
 
-/* Phone cards */
 .kc-homeHero__phone {
     width: 210px;
     overflow: visible;
@@ -212,7 +198,6 @@
     box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.25);
 }
 
-/* Viewport (taller) */
 .kc-homeHero__viewport {
     width: 100%;
     height: 428px;
@@ -231,10 +216,6 @@
     -webkit-user-drag: none;
 }
 
-/* =========================
-   Logos under carousel (REAL images)
-   7 total, 4 + 3 naturally via wrap
-   ========================= */
 .kc-homeHero__logoGrid {
     width: min(980px, 100%);
     margin: 18px auto 0;
@@ -242,18 +223,13 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-
-    /* equal spacing */
     gap: 14px 28px;
-
     background: #fff;
 }
 
 .kc-homeHero__logoImgWrap {
-    /* this nudges layout into 4 then 3 on most desktop widths */
     flex: 0 0 auto;
     width: 180px;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -262,92 +238,15 @@
 .kc-homeHero__logoImg {
     max-width: 100%;
     height: 28px;
-    /* consistent height */
     width: auto;
     object-fit: contain;
     display: block;
 
-    /* optional: keep them looking consistent */
     opacity: 0.92;
     filter: grayscale(100%);
 }
 
-/* responsive */
-@media (max-width: 820px) {
-    .kc-homeHero__logoImgWrap {
-        width: 160px;
-    }
-
-    .kc-homeHero__logoImg {
-        height: 26px;
-    }
-}
-
-@media (max-width: 520px) {
-    .kc-homeHero__logoGrid {
-        gap: 12px 18px;
-    }
-
-    .kc-homeHero__logoImgWrap {
-        width: 140px;
-    }
-
-    .kc-homeHero__logoImg {
-        height: 24px;
-        opacity: 0.95;
-    }
-}
-
-
-/* Variants */
-.kc-homeHero__logo--serif {
-    font-family: Georgia, "Times New Roman", serif;
-    font-weight: 800;
-}
-
-.kc-homeHero__logo--caps {
-    font-family: "Inter", system-ui, sans-serif;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    font-weight: 900;
-    font-size: 13px;
-}
-
-.kc-homeHero__logo--mono {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 800;
-    font-size: 13px;
-}
-
-.kc-homeHero__logo--wide {
-    font-family: "Trebuchet MS", "Inter", system-ui, sans-serif;
-    font-weight: 900;
-    font-size: 14px;
-}
-
-.kc-homeHero__logo--script {
-    font-family: "Georgia", serif;
-    font-style: italic;
-    font-weight: 800;
-    font-size: 14px;
-}
-
-.kc-homeHero__logo--clean {
-    font-family: "Inter", system-ui, sans-serif;
-    font-weight: 900;
-}
-
-.kc-homeHero__logo--bold {
-    font-family: "Arial Black", "Inter", system-ui, sans-serif;
-    font-weight: 900;
-    font-size: 14px;
-}
-
-/* =========================
-   Responsive
-   ========================= */
+/* Responsive */
 @media (max-width: 1100px) {
     .kc-homeHero__title {
         font-size: 58px;
@@ -371,8 +270,12 @@
         height: 392px;
     }
 
-    .kc-homeHero__logo {
-        min-width: 150px;
+    .kc-homeHero__logoImgWrap {
+        width: 160px;
+    }
+
+    .kc-homeHero__logoImg {
+        height: 26px;
     }
 }
 
@@ -389,8 +292,16 @@
         height: 372px;
     }
 
-    .kc-homeHero__logo {
-        font-size: 14px;
-        min-width: 140px;
+    .kc-homeHero__logoGrid {
+        gap: 12px 18px;
+    }
+
+    .kc-homeHero__logoImgWrap {
+        width: 140px;
+    }
+
+    .kc-homeHero__logoImg {
+        height: 24px;
+        opacity: 0.95;
     }
 }

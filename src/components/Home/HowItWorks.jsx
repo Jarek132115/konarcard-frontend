@@ -62,10 +62,9 @@ export default function HowItWorks() {
                         Create Your <span className="hiw-accent">Digital Card</span> in Minutes
                     </h2>
 
-
+                    {/* ✅ Shortened subtitle */}
                     <p className="body-s hiw__sub">
-                        Set up your profile once, add your services and reviews, and
-                        share it instantly with a tap or link — no apps, no tech skills needed.
+                        Set up once, customise your profile, and share instantly — no apps needed.
                     </p>
                 </header>
 
@@ -82,10 +81,16 @@ export default function HowItWorks() {
                     ))}
                 </ol>
 
+                {/* ✅ NEW short supporting line above CTA */}
+                <p className="body-s hiw__ctaDesc">
+                    Ready to get your own KonarCard link and start sharing today?
+                </p>
+
                 <div className="hiw__cta">
                     <Link to="/register" className="kx-btn kx-btn--black">
                         Claim your link
                     </Link>
+
                     <Link to="/how-it-works" className="kx-btn kx-btn--white">
                         Watch how it works
                     </Link>

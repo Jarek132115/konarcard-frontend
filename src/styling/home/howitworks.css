@@ -236,3 +236,11 @@
 .hiw-accent {
     color: var(--kc-accent-primary);
 }
+
+/* Supporting CTA description */
+.hiw__ctaDesc {
+    margin: 22px auto 8px;
+    text-align: center;
+    max-width: 560px;
+    color: var(--kc-text-secondary);
+}
