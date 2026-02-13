@@ -95,9 +95,7 @@ export default function Register() {
     const clearCheckoutIntent = () => {
         try {
             localStorage.removeItem(CHECKOUT_INTENT_KEY);
-        } catch {
-            // ignore
-        }
+        } catch { }
     };
 
     // ✅ NFC intent read (for returning to product page after register)
@@ -124,7 +122,6 @@ export default function Register() {
     const checkoutIntent = useMemo(() => readCheckoutIntent(), []);
     const hasCheckoutIntent = !!checkoutIntent;
 
-    // ✅ NFC intent presence matters too (needs claimed username)
     const nfcIntent = useMemo(() => readNfcIntent(), []);
     const hasNfcIntent = !!nfcIntent;
 
@@ -182,11 +179,7 @@ export default function Register() {
         const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
 
         try {
-            const res = await api.post("/subscribe", {
-                planKey: intent.planKey,
-                returnUrl,
-            });
-
+            const res = await api.post("/subscribe", { planKey: intent.planKey, returnUrl });
             const url = res?.data?.url;
             if (!url) {
                 toast.error("Stripe checkout URL missing. Please try again.");
@@ -202,7 +195,6 @@ export default function Register() {
         }
     };
 
-    // ✅ If NFC intent exists, return to product page after verify+login
     const resumeNfcIfNeeded = () => {
         const intent = readNfcIntent();
         if (!intent) return false;
@@ -240,13 +232,10 @@ export default function Register() {
 
             try {
                 localStorage.setItem(PENDING_CLAIM_KEY, cleaned);
-            } catch {
-                // ignore
-            }
+            } catch { }
 
             setTimeout(() => {
                 nameInputRef.current?.focus?.();
-                document.getElementById("name")?.focus?.();
             }, 0);
         } catch (err) {
             toast.error(err?.response?.data?.error || "Link not available");
@@ -319,7 +308,7 @@ export default function Register() {
     // ---------------------------------
     // Verify email (step 3) + login + (optional) Stripe
     // ---------------------------------
-    const verifyCode = async (e) => {
+    const verifyUserCode = async (e) => {
         e.preventDefault();
         setIsVerifying(true);
 
@@ -352,10 +341,7 @@ export default function Register() {
 
             toast.success("Email verified!");
 
-            const loginRes = await api.post("/login", {
-                email,
-                password: data.password,
-            });
+            const loginRes = await api.post("/login", { email, password: data.password });
 
             if (loginRes?.data?.error) {
                 if (loginRes.data?.resend) {
@@ -465,189 +451,211 @@ export default function Register() {
             <div className="kc-auth-page">
                 <div className="kc-auth-topActions">
                     <button type="button" className="kc-auth-closeBtn" onClick={closeAuth} aria-label="Close">
-                        <span className="kc-auth-closeIcon" aria-hidden="true">×</span>
+                        <span className="kc-auth-closeIcon" aria-hidden="true">
+                            ×
+                        </span>
                     </button>
                 </div>
 
                 <main className="kc-auth-main">
                     <div className="kc-auth-inner">
-                        {/* ✅ Match Login layout */}
-                        <div className="kc-auth-panel">
-                            {verificationStep ? (
-                                <>
-                                    <h1 className="kc-title">Verify your email</h1>
-                                    <p className="kc-subtitle">Enter the 6-digit code we sent to your email.</p>
+                        {/* ✅ SAME grid wrap as Login */}
+                        <div className="kc-auth-wrap">
+                            <div className="kc-auth-panel">
+                                {verificationStep ? (
+                                    <>
+                                        <h1 className="kc-title">Verify your email</h1>
+                                        <p className="kc-subtitle">Enter the 6-digit code we sent to your email.</p>
 
-                                    <form onSubmit={verifyCode} className="kc-form">
-                                        <div className="kc-field">
-                                            <label className="kc-label" htmlFor="code">Verification code</label>
-                                            <input
-                                                id="code"
-                                                className="kc-input"
-                                                value={code}
-                                                onChange={(e) => setCode(cleanCode(e.target.value))}
-                                                maxLength={6}
-                                                inputMode="numeric"
-                                                autoComplete="one-time-code"
-                                                placeholder="123456"
-                                                required
-                                            />
-                                        </div>
-
-                                        <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isVerifying} aria-busy={isVerifying}>
-                                            {isVerifying ? "Verifying…" : "Verify"}
-                                        </button>
-
-                                        <button type="button" className="kc-btn kc-btn-secondary kc-btn-center" disabled={cooldown > 0} onClick={resendCode}>
-                                            {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
-                                        </button>
-
-                                        <button type="button" className="kc-text-link" onClick={backFromVerify} style={{ marginTop: 10 }}>
-                                            Back
-                                        </button>
-                                    </form>
-                                </>
-                            ) : shouldShowClaimStep ? (
-                                <>
-                                    <h1 className="kc-title">Claim Your Link</h1>
-                                    <p className="kc-subtitle">
-                                        This is your unique link. When someone clicks it, they see your digital business card.
-                                    </p>
-
-                                    {(hasCheckoutIntent || hasNfcIntent) ? (
-                                        <p className="kc-microcopy" style={{ marginTop: 8 }}>
-                                            Before continuing, you must claim your KonarCard link.
-                                        </p>
-                                    ) : null}
-
-                                    <form onSubmit={claimLinkContinue} className="kc-form kc-form-claim">
-                                        <div className="kc-field">
-                                            <label className="kc-label">Claim Your Link Name</label>
-
-                                            <div className="kc-claim">
-                                                <div className="kc-claim-prefix">www.konarcard.com/u/</div>
-                                                <div className="kc-claim-sep" />
+                                        <form onSubmit={verifyUserCode} className="kc-form">
+                                            <div className="kc-field">
+                                                <label className="kc-label" htmlFor="code">
+                                                    Verification code
+                                                </label>
                                                 <input
-                                                    ref={claimInputRef}
-                                                    className="kc-input kc-claim-input"
-                                                    placeholder="yourbusinessname"
-                                                    value={claimInput}
-                                                    onChange={(e) => setClaimInput(e.target.value)}
-                                                    autoComplete="off"
+                                                    id="code"
+                                                    className="kc-input"
+                                                    value={code}
+                                                    onChange={(e) => setCode(cleanCode(e.target.value))}
+                                                    maxLength={6}
+                                                    inputMode="numeric"
+                                                    autoComplete="one-time-code"
+                                                    placeholder="123456"
                                                     required
                                                 />
                                             </div>
 
-                                            <p className="kc-microcopy">Free to claim. No payment needed.</p>
+                                            <div className="kc-actionsCenter">
+                                                <button className="kx-btn kx-btn--black kc-authBtn" disabled={isVerifying} aria-busy={isVerifying}>
+                                                    {isVerifying ? "Verifying…" : "Verify"}
+                                                </button>
+                                            </div>
+
+                                            <div className="kc-actionsCenter">
+                                                <button
+                                                    type="button"
+                                                    className="kx-btn kx-btn--white kc-authBtn"
+                                                    disabled={cooldown > 0}
+                                                    onClick={resendCode}
+                                                >
+                                                    {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
+                                                </button>
+                                            </div>
+
+                                            <button type="button" className="kc-text-link kc-text-link--center" onClick={backFromVerify}>
+                                                Back
+                                            </button>
+                                        </form>
+                                    </>
+                                ) : shouldShowClaimStep ? (
+                                    <>
+                                        <h1 className="kc-title">Claim your link</h1>
+                                        <p className="kc-subtitle">This becomes your public profile link for sharing your digital card.</p>
+                                        <form onSubmit={claimLinkContinue} className="kc-form">
+                                            <div className="kc-field">
+                                                <label className="kc-label">KonarCard link</label>
+
+                                                <div className="kc-claim">
+                                                    <div className="kc-claim-prefix">www.konarcard.com/u/</div>
+                                                    <div className="kc-claim-sep" />
+                                                    <input
+                                                        ref={claimInputRef}
+                                                        className="kc-input kc-claim-input"
+                                                        placeholder="yourbusinessname"
+                                                        value={claimInput}
+                                                        onChange={(e) => setClaimInput(e.target.value)}
+                                                        autoComplete="off"
+                                                        required
+                                                    />
+                                                </div>
+
+                                                <p className="kc-microcopy">Free to claim. No payment needed.</p>
+                                            </div>
+
+                                            <div className="kc-actionsCenter">
+                                                <button className="kx-btn kx-btn--black kc-authBtn">Claim link</button>
+                                            </div>
+
+                                            <p className="kc-bottom-line">
+                                                Already have an account?{" "}
+                                                <Link className="kc-link" to="/login" state={{ from: location.state?.from || "/" }}>
+                                                    Sign in
+                                                </Link>
+                                            </p>
+                                        </form>
+                                    </>
+                                ) : (
+                                    <>
+                                        <h1 className="kc-title">Create your account</h1>
+                                        <p className="kc-subtitle">Save your digital card so you can share it, edit it, and access it anytime.</p>
+
+                                        <form onSubmit={registerUser} className="kc-form">
+                                            <div className="kc-field">
+                                                <label className="kc-label" htmlFor="name">
+                                                    Full name
+                                                </label>
+                                                <input
+                                                    ref={nameInputRef}
+                                                    id="name"
+                                                    className="kc-input"
+                                                    placeholder="Enter your name"
+                                                    value={data.name}
+                                                    onChange={(e) => setData((d) => ({ ...d, name: e.target.value }))}
+                                                    autoComplete="name"
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div className="kc-field">
+                                                <label className="kc-label" htmlFor="email">
+                                                    Email
+                                                </label>
+                                                <input
+                                                    id="email"
+                                                    className="kc-input"
+                                                    type="email"
+                                                    placeholder="Enter your email"
+                                                    value={data.email}
+                                                    onChange={(e) => setData((d) => ({ ...d, email: e.target.value }))}
+                                                    autoComplete="email"
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div className="kc-field">
+                                                <label className="kc-label" htmlFor="password">
+                                                    Password
+                                                </label>
+                                                <input
+                                                    id="password"
+                                                    className="kc-input"
+                                                    type="password"
+                                                    placeholder="Create a password"
+                                                    value={data.password}
+                                                    onChange={(e) => setData((d) => ({ ...d, password: e.target.value }))}
+                                                    autoComplete="new-password"
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div className="kc-actionsCenter">
+                                                <button
+                                                    className="kx-btn kx-btn--black kc-authBtn"
+                                                    disabled={isSubmitting}
+                                                    aria-busy={isSubmitting}
+                                                >
+                                                    {isSubmitting ? "Creating…" : "Create account"}
+                                                </button>
+                                            </div>
+
+                                            <p className="kc-bottom-line">
+                                                Already have an account?{" "}
+                                                <Link className="kc-link" to="/login" state={{ from: location.state?.from || "/" }}>
+                                                    Sign in
+                                                </Link>
+                                            </p>
+                                        </form>
+
+                                        <div className="kc-divider kc-divider--matchWidth">
+                                            <span>or</span>
                                         </div>
 
-                                        <button className="kc-btn kc-btn-primary kc-btn-center" style={{ maxWidth: 280, margin: "0 auto" }}>
-                                            Claim Link
-                                        </button>
+                                        <div className="kc-social">
+                                            <button type="button" className="kx-btn kx-btn--white kc-authBtn kc-socialBtn" onClick={() => startOAuth("google")}>
+                                                <img className="kc-social-icon" src={GoogleIcon} alt="" aria-hidden="true" />
+                                                <span>Sign in with Google</span>
+                                            </button>
 
-                                        <p className="kc-bottom-line">
-                                            Already have an account?{" "}
-                                            <Link className="kc-link" to="/login" state={{ from: location.state?.from || "/" }}>
-                                                Sign In
-                                            </Link>
-                                        </p>
-                                    </form>
-                                </>
-                            ) : (
-                                <>
-                                    <h1 className="kc-title">Create an account to save your card</h1>
-                                    <p className="kc-subtitle">Save your digital card so you can share it, edit it, and access it anytime.</p>
+                                            <button type="button" className="kx-btn kx-btn--white kc-authBtn kc-socialBtn" onClick={() => startOAuth("facebook")}>
+                                                <img className="kc-social-icon" src={FacebookIcon} alt="" aria-hidden="true" />
+                                                <span>Sign in with Facebook</span>
+                                            </button>
 
-                                    <form onSubmit={registerUser} className="kc-form kc-form-register">
-                                        <div className="kc-field">
-                                            <label className="kc-label" htmlFor="name">Full name</label>
-                                            <input
-                                                ref={nameInputRef}
-                                                id="name"
-                                                className="kc-input"
-                                                placeholder="Enter your name"
-                                                value={data.name}
-                                                onChange={(e) => setData((d) => ({ ...d, name: e.target.value }))}
-                                                autoComplete="name"
-                                                required
-                                            />
+                                            <button type="button" className="kx-btn kx-btn--white kc-authBtn kc-socialBtn" onClick={() => startOAuth("apple")}>
+                                                <img className="kc-social-icon" src={AppleIcon} alt="" aria-hidden="true" />
+                                                <span>Sign in with Apple</span>
+                                            </button>
                                         </div>
 
-                                        <div className="kc-field">
-                                            <label className="kc-label" htmlFor="email">Email</label>
-                                            <input
-                                                id="email"
-                                                className="kc-input"
-                                                type="email"
-                                                placeholder="Enter your email"
-                                                value={data.email}
-                                                onChange={(e) => setData((d) => ({ ...d, email: e.target.value }))}
-                                                autoComplete="email"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="kc-field">
-                                            <label className="kc-label" htmlFor="password">Password</label>
-                                            <input
-                                                id="password"
-                                                className="kc-input"
-                                                type="password"
-                                                placeholder="Create a password"
-                                                value={data.password}
-                                                onChange={(e) => setData((d) => ({ ...d, password: e.target.value }))}
-                                                autoComplete="new-password"
-                                                required
-                                            />
-                                        </div>
-
-                                        <button className="kc-btn kc-btn-primary kc-btn-center" disabled={isSubmitting} aria-busy={isSubmitting}>
-                                            {isSubmitting ? "Saving…" : "Save my digital card"}
-                                        </button>
-
-                                        <p className="kc-bottom-line">
-                                            Already have an account?{" "}
-                                            <Link className="kc-link" to="/login" state={{ from: location.state?.from || "/" }}>
-                                                Sign In
-                                            </Link>
-                                        </p>
-                                    </form>
-
-                                    <div className="kc-divider-new"><span>or</span></div>
-
-                                    <div className="kc-social">
-                                        <button type="button" className="kc-social-btn" onClick={() => startOAuth("google")}>
-                                            <img className="kc-social-icon" src={GoogleIcon} alt="" aria-hidden="true" />
-                                            <span>Sign in with Google</span>
-                                        </button>
-
-                                        <button type="button" className="kc-social-btn" onClick={() => startOAuth("facebook")}>
-                                            <img className="kc-social-icon" src={FacebookIcon} alt="" aria-hidden="true" />
-                                            <span>Sign in with Facebook</span>
-                                        </button>
-
-                                        <button type="button" className="kc-social-btn" onClick={() => startOAuth("apple")}>
-                                            <img className="kc-social-icon" src={AppleIcon} alt="" aria-hidden="true" />
-                                            <span>Sign in with Apple</span>
-                                        </button>
-                                    </div>
-
-                                    <p className="kc-bottom-line" style={{ marginTop: 18 }}>
-                                        Your link: <strong>{displayUsername ? `konarcard.com/u/${displayUsername}` : "—"}</strong>{" "}
-                                        <button
-                                            type="button"
-                                            className="kc-link"
-                                            onClick={() => {
-                                                setClaimInput(displayUsername);
-                                                setForceClaimStep(true);
-                                                setTimeout(() => claimInputRef.current?.focus?.(), 0);
-                                            }}
-                                        >
-                                            Edit
-                                        </button>
-                                    </p>
-                                </>
-                            )}
+                                        {displayUsername ? (
+                                            <p className="kc-bottom-line" style={{ marginTop: 18 }}>
+                                                Your link: <strong>{`konarcard.com/u/${displayUsername}`}</strong>{" "}
+                                                <button
+                                                    type="button"
+                                                    className="kc-link"
+                                                    onClick={() => {
+                                                        setClaimInput(displayUsername);
+                                                        setForceClaimStep(true);
+                                                        setTimeout(() => claimInputRef.current?.focus?.(), 0);
+                                                    }}
+                                                >
+                                                    Edit
+                                                </button>
+                                            </p>
+                                        ) : null}
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </main>
