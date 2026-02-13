@@ -1,16 +1,11 @@
 // frontend/src/components/KonarTag3D.jsx
 import React, { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { ContactShadows, Environment, useTexture } from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Environment, useTexture } from "@react-three/drei";
 
-import "../styling/products/konartag3d.css";
+import "../styling/products/plasticcard3d.css";
 
-/**
- * ✅ CRITICAL SAFETY:
- * useTexture MUST NEVER receive undefined / "" / null
- * otherwise it throws "Could not load undefined" and your page crash-loops.
- */
 const TRANSPARENT_1PX =
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO9qWZkAAAAASUVORK5CYII=";
 
@@ -19,46 +14,76 @@ const safeTexSrc = (src) => {
     return s ? s : TRANSPARENT_1PX;
 };
 
-export default function KonarTag3D({ logoSrc, qrSrc, logoSize = 44, finish = "black" }) {
+export default function KonarTag3D({ logoSrc, qrSrc, logoSize = 70, finish = "black" }) {
     const safeLogo = safeTexSrc(logoSrc);
     const safeQr = safeTexSrc(qrSrc);
 
     return (
-        <div className="kt3d">
-            <Canvas
-                dpr={[1, 2]}
-                camera={{ position: [0, 0.20, 1.32], fov: 36 }}
-                gl={{
-                    antialias: true,
-                    alpha: true,
-                    premultipliedAlpha: false,
-                    powerPreference: "high-performance",
-                }}
-                onCreated={({ gl }) => {
-                    gl.setClearColor(0x000000, 0);
-                    gl.outputColorSpace = THREE.SRGBColorSpace;
-                    gl.domElement.style.touchAction = "none";
-                }}
-            >
-                <ambientLight intensity={0.72} />
-                <directionalLight position={[2.8, 3.6, 2.6]} intensity={1.18} castShadow />
-                <directionalLight position={[-2, 1.1, -2]} intensity={0.55} />
+        <div className="pc3d" aria-label="3D KonarTag preview">
+            <div className="pc3d__stage">
+                <Canvas
+                    dpr={[1, 2]}
+                    camera={{ position: [0, 0.24, 1.62], fov: 34 }}
+                    gl={{
+                        antialias: true,
+                        alpha: true,
+                        premultipliedAlpha: false,
+                        powerPreference: "high-performance",
+                    }}
+                    onCreated={({ gl }) => {
+                        gl.setClearColor(0x000000, 0);
+                        gl.outputColorSpace = THREE.SRGBColorSpace;
 
-                <Environment preset="studio" />
+                        // ✅ keeps gold bright + not muddy
+                        gl.toneMapping = THREE.ACESFilmicToneMapping;
+                        gl.toneMappingExposure = 1.25;
 
-                <TagRig>
-                    <TagMesh logoSrc={safeLogo} qrSrc={safeQr} logoSize={logoSize} finish={finish} />
-                </TagRig>
+                        gl.domElement.style.touchAction = "none";
+                    }}
+                >
+                    <ambientLight intensity={1.05} />
+                    <directionalLight position={[3.2, 3.6, 2.6]} intensity={1.4} />
+                    <directionalLight position={[-3.4, 2.4, 2.1]} intensity={1.0} />
+                    <directionalLight position={[0, 1.8, -3.2]} intensity={0.85} />
 
-                <ContactShadows position={[0, -0.52, 0]} opacity={0.28} blur={2.2} scale={2.6} far={3} />
-            </Canvas>
+                    <Environment preset="warehouse" />
+
+                    <ResponsiveRig>
+                        <TagRig>
+                            <group position={[0, -0.01, 0]}>
+                                <TagMesh logoSrc={safeLogo} qrSrc={safeQr} logoSize={logoSize} finish={finish} />
+                            </group>
+                        </TagRig>
+                    </ResponsiveRig>
+                </Canvas>
+            </div>
         </div>
     );
 }
 
-/**
- * Drag rotate + slow idle spin (same speed as PlasticCard3D)
- */
+/** ✅ same scale breakpoints as Plastic/Metal */
+function ResponsiveRig({ children }) {
+    const g = useRef();
+    const { size } = useThree();
+
+    useEffect(() => {
+        if (!g.current) return;
+        const w = size.width;
+
+        const scale =
+            w >= 1400 ? 0.96 :
+                w >= 1200 ? 0.94 :
+                    w >= 980 ? 0.92 :
+                        w >= 720 ? 0.88 :
+                            w >= 520 ? 0.84 :
+                                0.80;
+
+        g.current.scale.setScalar(scale);
+    }, [size.width]);
+
+    return <group ref={g}>{children}</group>;
+}
+
 function TagRig({ children }) {
     const group = useRef();
 
@@ -98,6 +123,7 @@ function TagRig({ children }) {
 
         drag.current.startX = e.clientX;
         drag.current.startY = e.clientY;
+
         drag.current.baseRX = drag.current.rx;
         drag.current.baseRY = drag.current.ry;
 
@@ -112,8 +138,8 @@ function TagRig({ children }) {
         const dx = e.clientX - drag.current.startX;
         const dy = e.clientY - drag.current.startY;
 
-        const gainX = 0.0062;
-        const gainY = 0.0044;
+        const gainX = 0.0064;
+        const gainY = 0.0046;
 
         drag.current.ry = drag.current.baseRY + dx * gainX;
         drag.current.rx = clamp(drag.current.baseRX - dy * gainY, -0.55, 0.55);
@@ -140,11 +166,12 @@ function TagRig({ children }) {
 }
 
 function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
-    const w = 0.84;
-    const h = w * 0.86;
+    // tag is slightly smaller than card, but we keep the same overall canvas sizing
+    const w = 0.86;
+    const h = w * 0.96;
     const t = 0.014;
 
-    const holeR = w * 0.088;
+    const holeR = w * 0.09;
     const holeY = h * 0.30;
 
     const bodyGeo = useMemo(() => {
@@ -162,7 +189,6 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
         return geo;
     }, [w, h, t, holeR, holeY]);
 
-    // ✅ safeLogo/safeQr already guaranteed valid strings
     const [logoTex, qrTex] = useTexture([logoSrc, qrSrc]);
 
     useEffect(() => {
@@ -181,17 +207,22 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
         setup(qrTex);
     }, [logoTex, qrTex]);
 
-    const artY = -h * 0.08;
+    // art area slightly below center (feels like a real tag)
+    const artY = -h * 0.06;
 
     const logoPlaneDims = useMemo(() => {
-        const baseH = h * 0.46;
-        const s = Math.max(28, Math.min(70, Number(logoSize || 44))) / 44;
-        const planeH = Math.min(h * 0.62, Math.max(h * 0.16, baseH * (0.58 + (s - 1) * 0.25)));
+        const desiredH = h * 0.46;
+        const maxW = w * 0.74;
+
+        const clamped = Math.max(60, Math.min(80, Number(logoSize || 70)));
+        const s = clamped / 70;
+
+        const scaledH = desiredH * (s * 0.72);
 
         const img = logoTex?.image;
         const aspect = img && img.width && img.height ? img.width / img.height : 1;
 
-        const maxW = w * 0.78;
+        const planeH = Math.min(h * 0.62, Math.max(h * 0.18, scaledH));
         const planeW = Math.min(maxW, planeH * aspect);
 
         return { planeW, planeH };
@@ -202,44 +233,80 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
         return { planeW: plane, planeH: plane };
     }, [h]);
 
-    const logoPlaneGeo = useMemo(
-        () => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH),
-        [logoPlaneDims]
-    );
+    const logoPlaneGeo = useMemo(() => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH), [logoPlaneDims]);
+    const qrPlaneGeo = useMemo(() => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH), [qrPlaneDims]);
 
-    const qrPlaneGeo = useMemo(
-        () => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH),
-        [qrPlaneDims]
-    );
-
-    const metalMat = useMemo(() => {
-        const isGold = String(finish).toLowerCase() === "gold";
-        const base = isGold ? "#b38a2f" : "#101318";
-        const rough = isGold ? 0.22 : 0.30;
-
-        const m = new THREE.MeshPhysicalMaterial({
-            color: base,
+    const metalPreset = useMemo(() => {
+        const f = String(finish).toLowerCase();
+        if (f === "gold") {
+            return {
+                base: "#d6b24a",
+                edge: "#e1c36a",
+                roughness: 0.16,
+                metalness: 1.0,
+                clearcoat: 0.42,
+                clearcoatRoughness: 0.12,
+                env: 2.2,
+                specularIntensity: 0.95,
+                specularColor: "#fff4c8",
+            };
+        }
+        return {
+            base: "#14171c",
+            edge: "#1c2027",
+            roughness: 0.26,
             metalness: 1.0,
-            roughness: rough,
-            clearcoat: 0.6,
+            clearcoat: 0.28,
             clearcoatRoughness: 0.22,
-        });
-        m.envMapIntensity = isGold ? 1.35 : 1.15;
-        return m;
+            env: 1.55,
+            specularIntensity: 0.75,
+            specularColor: "#ffffff",
+        };
     }, [finish]);
 
+    const bodyMat = useMemo(() => {
+        const m = new THREE.MeshPhysicalMaterial({
+            color: metalPreset.base,
+            roughness: metalPreset.roughness,
+            metalness: metalPreset.metalness,
+            clearcoat: metalPreset.clearcoat,
+            clearcoatRoughness: metalPreset.clearcoatRoughness,
+            specularIntensity: metalPreset.specularIntensity,
+            specularColor: new THREE.Color(metalPreset.specularColor),
+        });
+        m.envMapIntensity = metalPreset.env;
+        return m;
+    }, [metalPreset]);
+
+    const edgeMat = useMemo(() => {
+        const m = new THREE.MeshPhysicalMaterial({
+            color: metalPreset.edge,
+            roughness: Math.min(0.5, metalPreset.roughness + 0.08),
+            metalness: metalPreset.metalness,
+            clearcoat: metalPreset.clearcoat,
+            clearcoatRoughness: metalPreset.clearcoatRoughness,
+            specularIntensity: metalPreset.specularIntensity,
+            specularColor: new THREE.Color(metalPreset.specularColor),
+        });
+        m.envMapIntensity = metalPreset.env;
+        return m;
+    }, [metalPreset]);
+
+    // ✅ front-only (no bleed), like Plastic/Metal
     const logoMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
             map: logoTex || null,
             transparent: true,
             opacity: 1,
             toneMapped: false,
+            side: THREE.FrontSide,
+            depthTest: true,
+            depthWrite: false,
         });
         m.alphaTest = 0.02;
-        m.side = THREE.DoubleSide;
         m.polygonOffset = true;
-        m.polygonOffsetFactor = -3;
-        m.polygonOffsetUnits = -3;
+        m.polygonOffsetFactor = -6;
+        m.polygonOffsetUnits = -6;
         return m;
     }, [logoTex]);
 
@@ -249,31 +316,28 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
             transparent: true,
             opacity: 1,
             toneMapped: false,
+            side: THREE.FrontSide,
+            depthTest: true,
+            depthWrite: false,
         });
         m.alphaTest = 0.02;
-        m.side = THREE.DoubleSide;
         m.polygonOffset = true;
-        m.polygonOffsetFactor = -3;
-        m.polygonOffsetUnits = -3;
+        m.polygonOffsetFactor = -6;
+        m.polygonOffsetUnits = -6;
         return m;
     }, [qrTex]);
 
     const halfT = t / 2;
-    const zFront = halfT + 0.002;
-    const zBack = -halfT - 0.002;
+    const zFront = halfT + 0.004;
+    const zBack = -halfT - 0.004;
 
     return (
         <group>
-            <mesh geometry={bodyGeo} material={metalMat} castShadow receiveShadow />
-            <mesh geometry={logoPlaneGeo} material={logoMat} position={[0, artY, zFront]} castShadow receiveShadow />
-            <mesh
-                geometry={qrPlaneGeo}
-                material={qrMat}
-                position={[0, artY, zBack]}
-                rotation={[0, Math.PI, 0]}
-                castShadow
-                receiveShadow
-            />
+            <mesh geometry={bodyGeo} material={bodyMat} />
+            <mesh geometry={bodyGeo} material={edgeMat} />
+
+            <mesh geometry={logoPlaneGeo} material={logoMat} position={[0, artY, zFront]} />
+            <mesh geometry={qrPlaneGeo} material={qrMat} position={[0, artY, zBack]} rotation={[0, Math.PI, 0]} />
         </group>
     );
 }

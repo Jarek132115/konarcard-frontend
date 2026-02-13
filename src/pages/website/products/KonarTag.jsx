@@ -6,7 +6,7 @@ import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import KonarTag3D from "../../../components/KonarTag3D";
 
-/* ✅ USE SAME CSS SYSTEM AS PLASTIC/METAL */
+/* ✅ USE SAME CSS SYSTEM AS PLASTIC/METAL (includes kc-configGrid layout) */
 import "../../../styling/products/konarcard.css";
 
 /* Logos */
@@ -102,14 +102,13 @@ export default function KonarTag() {
 
     /* =========================================================
        SEO — Meta upsert + JSON-LD (SPA-safe)
-       NOTE: Canonical set to WWW to match sitemap/robots standardisation.
     ========================================================= */
     useEffect(() => {
         const CANONICAL = "https://www.konarcard.com/products/konartag";
         const title = "KonarTag — NFC Key Tag for Digital Business Cards (UK) | KonarCard";
         const description =
             "KonarTag is a premium NFC key tag for instantly sharing your digital business card in the UK. Tap on iPhone/Android to open your Konar profile, with QR backup if NFC is off.";
-        const ogImage = "https://www.konarcard.com/og/konartag.png"; // optional
+        const ogImage = "https://www.konarcard.com/og/konartag.png";
 
         const upsertMeta = (nameOrProp, content, isProperty = false) => {
             if (!content) return;
@@ -172,8 +171,7 @@ export default function KonarTag() {
             "@context": "https://schema.org",
             "@type": "Product",
             name: "KonarTag",
-            description:
-                "Premium NFC key tag for sharing a Konar digital business card profile instantly, with QR backup. UK-focused.",
+            description: "Premium NFC key tag for sharing a Konar digital business card profile instantly, with QR backup. UK-focused.",
             brand: { "@type": "Brand", name: "KonarCard" },
             image: [ogImage],
             sku: "konartag",
@@ -187,7 +185,7 @@ export default function KonarTag() {
             },
         });
 
-        // FAQ JSON-LD (kept, simplified)
+        // FAQ JSON-LD
         upsertJsonLd("konartag-faq", {
             "@context": "https://schema.org",
             "@type": "FAQPage",
@@ -348,8 +346,8 @@ export default function KonarTag() {
     const logoLabel = logoFile?.name || "Upload logo";
     const sizeLabel = (k) => (k === "small" ? "S" : k === "medium" ? "M" : "L");
 
-    // default logo: black finish looks best with white icon
-    const defaultLogo = finish === "black" ? LogoIconWhite : LogoIcon;
+    // ✅ KonarTag: BOTH finishes default to white logo (matches your request)
+    const defaultLogo = LogoIconWhite;
     const displayedLogo = logoUrl || defaultLogo;
 
     const handleBuy = async () => {
@@ -437,7 +435,6 @@ export default function KonarTag() {
             <main className="kc-konarcard kc-konarcard--premium kc-page">
                 <section className="kc-topHero" aria-label="KonarTag hero">
                     <div className="kc-konarcard__wrap">
-                        {/* same grid head block */}
                         <div className="kc-heroHeadWrap kc-heroHeadWrap--lg">
                             <div className="kc-topHero__head">
                                 <div className="kc-crumbPill" aria-label="Breadcrumb">
@@ -458,7 +455,9 @@ export default function KonarTag() {
                                     <span className="kc-badge">12 Month Warranty</span>
                                 </div>
 
-                                {(errorMsg || infoMsg) && <div className="kc-msgBox">{errorMsg ? `⚠️ ${errorMsg}` : `ℹ️ ${infoMsg}`}</div>}
+                                {(errorMsg || infoMsg) && (
+                                    <div className="kc-msgBox">{errorMsg ? `⚠️ ${errorMsg}` : `ℹ️ ${infoMsg}`}</div>
+                                )}
                             </div>
                         </div>
 
@@ -467,11 +466,14 @@ export default function KonarTag() {
                                 <KonarTag3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoPercent} finish={finish} />
                             </div>
 
-                            {/* CONTROLS */}
+                            {/* ✅ EXACT SAME GRID SYSTEM AS PLASTIC:
+                                Wide: 3 columns (2 controls left, BUY middle, 2 controls right)
+                                Not wide: controls become 2x2 and BUY drops underneath (handled by CSS)
+                            */}
                             <div className="kc-controls" aria-label="Configure your KonarTag">
-                                <div className="kc-controlsGrid">
-                                    {/* Logo */}
-                                    <div className="kc-controlCell">
+                                <div className="kc-configGrid">
+                                    {/* Logo (left) */}
+                                    <div className="kc-controlCell kc-cell--logo">
                                         <div className="kc-controlK">Logo</div>
 
                                         <div className="kc-inlineRow">
@@ -492,27 +494,8 @@ export default function KonarTag() {
                                         </div>
                                     </div>
 
-                                    {/* Logo size */}
-                                    <div className="kc-controlCell">
-                                        <div className="kc-controlK">Logo size</div>
-
-                                        <div className="kc-inlineRow" role="group" aria-label="Choose logo size">
-                                            {["small", "medium", "large"].map((k) => (
-                                                <button
-                                                    key={k}
-                                                    type="button"
-                                                    className={`kc-toggleText ${logoPreset === k ? "is-active" : ""}`}
-                                                    onClick={() => setLogoPreset(k)}
-                                                    disabled={busy}
-                                                >
-                                                    {sizeLabel(k)}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Finish */}
-                                    <div className="kc-controlCell">
+                                    {/* Finish (left bottom) */}
+                                    <div className="kc-controlCell kc-cell--colour">
                                         <div className="kc-controlK">Finish</div>
 
                                         <div className="kc-inlineRow" role="group" aria-label="Choose finish">
@@ -535,8 +518,27 @@ export default function KonarTag() {
                                         </div>
                                     </div>
 
-                                    {/* Profile */}
-                                    <div className="kc-controlCell">
+                                    {/* Logo size (right top) */}
+                                    <div className="kc-controlCell kc-cell--size">
+                                        <div className="kc-controlK">Logo size</div>
+
+                                        <div className="kc-inlineRow" role="group" aria-label="Choose logo size">
+                                            {["small", "medium", "large"].map((k) => (
+                                                <button
+                                                    key={k}
+                                                    type="button"
+                                                    className={`kc-toggleText ${logoPreset === k ? "is-active" : ""}`}
+                                                    onClick={() => setLogoPreset(k)}
+                                                    disabled={busy}
+                                                >
+                                                    {sizeLabel(k)}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Profile (right bottom) */}
+                                    <div className="kc-controlCell kc-cell--profile">
                                         <div className="kc-controlK">Link to profile</div>
 
                                         <div className="kc-profileBox kc-profileBox--sm">
@@ -562,8 +564,14 @@ export default function KonarTag() {
                                                     {myProfiles.map((p) => {
                                                         const id = String(p?._id || "");
                                                         if (!id) return null;
+
                                                         const label =
-                                                            p?.business_card_name || p?.full_name || p?.main_heading || p?.profile_slug || "Profile";
+                                                            p?.business_card_name ||
+                                                            p?.full_name ||
+                                                            p?.main_heading ||
+                                                            p?.profile_slug ||
+                                                            "Profile";
+
                                                         return (
                                                             <option key={id} value={id}>
                                                                 {label}
@@ -574,40 +582,40 @@ export default function KonarTag() {
                                             )}
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* BUY AREA */}
-                                <div className="kc-buyArea kc-buyArea--pad" aria-label="Buy">
-                                    <div className="kc-buyMeta">
-                                        <div className="kc-buyPrice">£9.99</div>
-                                    </div>
-
-                                    <div className="kc-buyControls">
-                                        <div className="kc-qtySm" aria-label="Quantity">
-                                            <button
-                                                type="button"
-                                                className="kc-qtySm__btn"
-                                                onClick={() => setQty((q) => Math.max(1, q - 1))}
-                                                disabled={busy}
-                                                aria-label="Decrease quantity"
-                                            >
-                                                −
-                                            </button>
-                                            <div className="kc-qtySm__val">{qty}</div>
-                                            <button
-                                                type="button"
-                                                className="kc-qtySm__btn"
-                                                onClick={() => setQty((q) => Math.min(50, q + 1))}
-                                                disabled={busy}
-                                                aria-label="Increase quantity"
-                                            >
-                                                +
-                                            </button>
+                                    {/* ✅ BUY (middle column on wide) */}
+                                    <div className="kc-buyArea kc-cell--buy" aria-label="Buy">
+                                        <div className="kc-buyMeta">
+                                            <div className="kc-buyPrice">£9.99</div>
                                         </div>
 
-                                        <button type="button" onClick={handleBuy} className="kx-btn kx-btn--black kc-buyBtnFit" disabled={busy}>
-                                            {busy ? "Starting checkout..." : "Buy KonarTag"}
-                                        </button>
+                                        <div className="kc-buyControls">
+                                            <div className="kc-qtySm" aria-label="Quantity">
+                                                <button
+                                                    type="button"
+                                                    className="kc-qtySm__btn"
+                                                    onClick={() => setQty((q) => Math.max(1, q - 1))}
+                                                    disabled={busy}
+                                                    aria-label="Decrease quantity"
+                                                >
+                                                    −
+                                                </button>
+                                                <div className="kc-qtySm__val">{qty}</div>
+                                                <button
+                                                    type="button"
+                                                    className="kc-qtySm__btn"
+                                                    onClick={() => setQty((q) => Math.min(50, q + 1))}
+                                                    disabled={busy}
+                                                    aria-label="Increase quantity"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+
+                                            <button type="button" onClick={handleBuy} className="kx-btn kx-btn--black kc-buyBtnFit" disabled={busy}>
+                                                {busy ? "Starting checkout..." : "Buy KonarTag"}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
