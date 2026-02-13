@@ -87,11 +87,6 @@ export default function CustomerTrust() {
                     ))}
                 </div>
 
-                <div className="kht__cta">
-                    <Link to="/examples" className="kx-btn kx-btn--black">
-                        See real profile examples
-                    </Link>
-                </div>
             </div>
         </section>
     );

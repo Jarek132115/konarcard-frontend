@@ -96,10 +96,9 @@ export default function Products() {
                     </h2>
 
                     <p className="body-s khp-sub">
-                        KonarCard is a <strong>digital business card</strong> you can share in person with an{" "}
-                        <strong>NFC business card</strong> tap — plus QR code and link sharing. A modern contactless business card
-                        that replaces paper.
+                        Share your digital profile instantly with a tap or QR code.
                     </p>
+
                 </header>
 
                 <div className="khp-grid" role="list" aria-label="KonarCard products">
@@ -154,10 +153,10 @@ export default function Products() {
                                     </div>
 
                                     <div className="khp-actions">
-                                        {/* ✅ ORANGE buttons for all products */}
+                                        {/* ✅ WHITE buttons for all products */}
                                         <Link
                                             to={item.to}
-                                            className="kx-btn kx-btn--orange khp-btn"
+                                            className="kx-btn kx-btn--white khp-btn"
                                             aria-label={`View ${item.name}`}
                                             itemProp="url"
                                         >

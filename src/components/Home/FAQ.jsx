@@ -186,9 +186,6 @@ export default function HomeFAQ() {
                         <Link to="/contactus" className="kx-btn kx-btn--black">
                             Contact support
                         </Link>
-                        <Link to="/products" className="kx-btn kx-btn--white">
-                            Shop NFC cards
-                        </Link>
                     </div>
                 </div>
             </div>

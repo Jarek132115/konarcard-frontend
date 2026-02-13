@@ -135,7 +135,7 @@
     color: var(--kc-text-secondary);
 }
 
-/* ✅ PRICE (make it feel “pricing-y”) */
+/* ✅ PRICE */
 .khp-price {
     font-family: "Inter", sans-serif;
     font-size: 16px;
@@ -146,7 +146,6 @@
 /* ✅ double-gap rule (16px) between top copy and buy block */
 .khp-buy {
     margin-top: 8px;
-    /* + base gap (8) from parent = feels like 16 rhythm */
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -160,16 +159,23 @@
     margin: 0;
 }
 
-/* CTA inside cards: pricing-style white button, full width */
+/* CTA inside cards: white button, full width */
 .khp-btn {
     width: 100%;
+}
+
+/* ✅ Make white button feel premium inside product cards */
+.khp-btn.kx-btn--white {
+    border: 1px solid rgba(15, 23, 42, 0.18);
+}
+
+.khp-btn.kx-btn--white:hover {
+    background: rgba(15, 23, 42, 0.04);
 }
 
 /* =========================
    NOTE + CTA
    ========================= */
-
-/* ✅ smaller + not italic (matches your pricing note vibe) */
 .khp-note {
     margin: 16px auto 0;
     max-width: 760px;

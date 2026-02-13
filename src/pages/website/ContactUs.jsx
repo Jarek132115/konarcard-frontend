@@ -8,8 +8,8 @@ import Footer from "../../components/Footer";
 import "../../styling/fonts.css";
 import "../../styling/contactus.css";
 
-import ContactIcon from "../../assets/icons/Contact-Icon.svg";
-import ChatIcon from "../../assets/icons/Contact-Interface.svg";
+import ContactIcon from "../../assets/icons/ChatIcon.svg";      // ✅ Email icon
+import ChatIcon from "../../assets/icons/Contact-Interface.svg";    // ✅ Live chat icon
 
 export default function ContactUs() {
   useEffect(() => {
@@ -96,9 +96,11 @@ export default function ContactUs() {
 
             {/* Cards OUTSIDE grid */}
             <div className="kc-contact__cards" role="list" aria-label="Contact options">
-              <article className="kc-contact__card kc-contact__card--orange" role="listitem">
+              {/* ✅ LIVE CHAT (same white card design, black button) */}
+              <article className="kc-contact__card kc-contact__card--plain" role="listitem">
                 <div className="kc-contact__iconWrap" aria-hidden="true">
-                  <img className="kc-contact__icon kc-contact__icon--white" src={ChatIcon} alt="" />
+                  {/* ✅ Chat icon goes here */}
+                  <img className="kc-contact__icon" src={ContactIcon} alt="" />
                 </div>
 
                 <p className="h6 kc-contact__cardTitle">Live chat (fastest)</p>
@@ -106,7 +108,7 @@ export default function ContactUs() {
                   Quick help during working hours. Best for setup questions and fixes.
                 </p>
 
-                <button type="button" className="kx-btn kx-btn--white kc-contact__cardBtn" onClick={openChat}>
+                <button type="button" className="kx-btn kx-btn--black kc-contact__cardBtn" onClick={openChat}>
                   Start live chat
                 </button>
 
@@ -115,16 +117,17 @@ export default function ContactUs() {
                 </p>
               </article>
 
+              {/* ✅ EMAIL (white card, white outlined button) */}
               <article className="kc-contact__card kc-contact__card--plain" role="listitem">
                 <div className="kc-contact__iconWrap" aria-hidden="true">
-                  <img className="kc-contact__icon" src={ContactIcon} alt="" />
+                  {/* ✅ Email icon goes here */}
+                  <img className="kc-contact__icon" src={ChatIcon} alt="" />
                 </div>
 
                 <p className="h6 kc-contact__cardTitle">Email</p>
                 <p className="body-s kc-contact__cardText">
                   We aim to reply within one working day with helpful and clear guidance.
                 </p>
-
 
                 <a
                   className="kx-btn kx-btn--white kc-contact__cardBtn kc-contact__cardBtn--outlined"

@@ -1,4 +1,3 @@
-// frontend/src/pages/website/Pricing.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -10,6 +9,15 @@ import "../../styling/pricing.css";
 
 // ✅ Canonical backend base URL
 import { BASE_URL } from "../../services/api";
+
+// ✅ compare icons
+import PricingTick from "../../assets/icons/PricingTick.svg";
+import XTick from "../../assets/icons/XTick.svg";
+
+// ✅ plan icons (for the 3 cards)
+import FreePlanIcon from "../../assets/icons/FreePlan.svg";
+import PlusPlanIcon from "../../assets/icons/PlusPlan.svg";
+import TeamsPlanIcon from "../../assets/icons/TeamsPlan.svg";
 
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
 
@@ -81,7 +89,6 @@ function planRank(plan) {
    Money helpers
    ========================= */
 function fmtGBP(n) {
-    // keep it simple: 2dp, £ sign
     const num = Number(n);
     if (!Number.isFinite(num)) return "—";
     return `£${num.toFixed(2)}`;
@@ -160,8 +167,7 @@ export default function Pricing() {
                 ? PRICES.plus.quarterly.billedLabel
                 : PRICES.plus.yearly.billedLabel;
 
-    const plusSavings =
-        billing === "monthly" ? "" : savingsLabel(plusMonthly, plusPerMonth);
+    const plusSavings = billing === "monthly" ? "" : savingsLabel(plusMonthly, plusPerMonth);
 
     const billingNote =
         billing === "monthly"
@@ -172,7 +178,6 @@ export default function Pricing() {
 
     /* =========================
        SEO — Meta upsert + JSON-LD (SPA-safe)
-       (NO className changes, NO layout changes)
        NOTE: Canonical set to WWW.
     ========================= */
     useEffect(() => {
@@ -181,7 +186,7 @@ export default function Pricing() {
         const description =
             "KonarCard pricing for the UK: start free, upgrade to Plus for deeper customisation and analytics, or use Teams for multi-profile businesses. Cancel anytime.";
 
-        const ogImage = "https://www.konarcard.com/og/pricing.png"; // optional (safe if it 404s)
+        const ogImage = "https://www.konarcard.com/og/pricing.png";
 
         const upsertMeta = (nameOrProp, content, isProperty = false) => {
             if (!content) return;
@@ -219,13 +224,11 @@ export default function Pricing() {
             el.text = JSON.stringify(json);
         };
 
-        // Core
         document.title = title;
         upsertLink("canonical", CANONICAL);
         upsertMeta("description", description);
         upsertMeta("robots", "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1");
 
-        // Open Graph
         upsertMeta("og:type", "website", true);
         upsertMeta("og:site_name", "KonarCard", true);
         upsertMeta("og:title", title, true);
@@ -233,51 +236,28 @@ export default function Pricing() {
         upsertMeta("og:url", CANONICAL, true);
         upsertMeta("og:image", ogImage, true);
 
-        // Twitter
         upsertMeta("twitter:card", "summary_large_image");
         upsertMeta("twitter:title", title);
         upsertMeta("twitter:description", description);
         upsertMeta("twitter:image", ogImage);
 
-        // Pricing / Service JSON-LD (OfferCatalog)
         upsertJsonLd("pricing-offers", {
             "@context": "https://schema.org",
             "@type": "WebPage",
             name: "KonarCard Pricing",
             url: CANONICAL,
             description,
-            isPartOf: {
-                "@type": "WebSite",
-                name: "KonarCard",
-                url: "https://www.konarcard.com",
-            },
+            isPartOf: { "@type": "WebSite", name: "KonarCard", url: "https://www.konarcard.com" },
             mainEntity: {
                 "@type": "OfferCatalog",
                 name: "KonarCard Plans",
                 itemListElement: [
-                    {
-                        "@type": "Offer",
-                        name: "Free (Individual)",
-                        priceCurrency: "GBP",
-                        price: "0.00",
-                        url: CANONICAL,
-                        availability: "https://schema.org/InStock",
-                    },
-                    {
-                        "@type": "Offer",
-                        name: "Plus",
-                        priceCurrency: "GBP",
-                        // NOTE: This page supports multiple billing intervals; we describe the headline entry.
-                        price: "4.95",
-                        url: CANONICAL,
-                        availability: "https://schema.org/InStock",
-                        category: "subscription",
-                    },
+                    { "@type": "Offer", name: "Free (Individual)", priceCurrency: "GBP", price: "0.00", url: CANONICAL, availability: "https://schema.org/InStock" },
+                    { "@type": "Offer", name: "Plus", priceCurrency: "GBP", price: "4.95", url: CANONICAL, availability: "https://schema.org/InStock", category: "subscription" },
                     {
                         "@type": "Offer",
                         name: "Teams",
                         priceCurrency: "GBP",
-                        // Teams is Plus base + add-ons; keep it explicit for clarity.
                         price: "4.95",
                         url: CANONICAL,
                         availability: "https://schema.org/InStock",
@@ -288,43 +268,14 @@ export default function Pricing() {
             },
         });
 
-        // FAQ JSON-LD (keep in sync with pricingFaqs below)
         upsertJsonLd("pricing-faq", {
             "@context": "https://schema.org",
             "@type": "FAQPage",
             mainEntity: [
-                {
-                    "@type": "Question",
-                    name: "Do I need to pay upfront?",
-                    acceptedAnswer: {
-                        "@type": "Answer",
-                        text: "No. Start on Free, then upgrade when it’s worth it. Paid plans bill on your chosen interval.",
-                    },
-                },
-                {
-                    "@type": "Question",
-                    name: "Can I cancel anytime?",
-                    acceptedAnswer: {
-                        "@type": "Answer",
-                        text: "Yes. You can cancel or manage billing anytime from the Billing portal.",
-                    },
-                },
-                {
-                    "@type": "Question",
-                    name: "How does Teams pricing work?",
-                    acceptedAnswer: {
-                        "@type": "Answer",
-                        text: "Teams uses the Plus plan as your base, then you add extra profiles for staff at £1.95 per extra profile per month.",
-                    },
-                },
-                {
-                    "@type": "Question",
-                    name: "What happens if my plan ends?",
-                    acceptedAnswer: {
-                        "@type": "Answer",
-                        text: "You’ll stay on Free. Your link remains live — paid features simply pause until you re-subscribe.",
-                    },
-                },
+                { "@type": "Question", name: "Do I need to pay upfront?", acceptedAnswer: { "@type": "Answer", text: "No. Start on Free, then upgrade when it’s worth it. Paid plans bill on your chosen interval." } },
+                { "@type": "Question", name: "Can I cancel anytime?", acceptedAnswer: { "@type": "Answer", text: "Yes. You can cancel or manage billing anytime from the Billing portal." } },
+                { "@type": "Question", name: "How does Teams pricing work?", acceptedAnswer: { "@type": "Answer", text: "Teams uses the Plus plan as your base, then you add extra profiles for staff at £1.95 per extra profile per month." } },
+                { "@type": "Question", name: "What happens if my plan ends?", acceptedAnswer: { "@type": "Answer", text: "You’ll stay on Free. Your link remains live — paid features simply pause until you re-subscribe." } },
             ],
         });
     }, []);
@@ -593,58 +544,41 @@ export default function Pricing() {
        ========================= */
     const planCards = useMemo(() => {
         const plusKey = `plus-${billing}`;
-        // teams checkout still uses teams-{interval} key,
-        // but UI reflects real pricing model (Plus + add-ons)
         const teamsKey = `teams-${billing}`;
 
-        const teamsExample3Profiles = plusPerMonth + (PRICES.addOnPerExtraProfilePerMonth * 2);
+        const teamsExample3Profiles = plusPerMonth + PRICES.addOnPerExtraProfilePerMonth * 2;
 
         return [
             {
                 key: "free",
                 title: "Individual",
+                icon: FreePlanIcon,
                 tag: "Best for starting out",
                 featured: false,
                 price: "£0",
                 sub: "No monthly cost",
                 priceMeta: [],
-                highlights: [
-                    "Claim your unique KonarCard link",
-                    "Basic profile & contact buttons",
-                    "QR code sharing",
-                    "Works on iPhone & Android",
-                    "Unlimited link updates",
-                    "Share by tap or scan",
-                ],
+                highlights: ["Your KonarCard link", "Contact buttons", "QR sharing", "Works on any phone", "Unlimited updates", "Tap or scan share"],
                 button: getPlanButton("free"),
             },
             {
                 key: "plus",
                 title: "Plus",
+                icon: PlusPlanIcon,
                 tag: "Most popular",
                 featured: true,
                 price: fmtGBP(plusPerMonth),
                 sub: "per month",
-                priceMeta: [
-                    billing === "monthly" ? "Cancel anytime." : `Billed ${plusBilledLabel}.`,
-                    plusSavings ? plusSavings : null,
-                ].filter(Boolean),
-                highlights: [
-                    "Full profile customisation",
-                    "Services & pricing sections",
-                    "Photo gallery",
-                    "Reviews & ratings",
-                    "Unlimited edits",
-                    "Remove KonarCard branding",
-                ],
+                priceMeta: [billing === "monthly" ? "Cancel anytime." : `Billed ${plusBilledLabel}.`, plusSavings ? plusSavings : null].filter(Boolean),
+                highlights: ["Full customisation", "More photos", "Services & pricing", "Reviews & ratings", "Unlimited edits", "Remove branding", "Deeper analytics"],
                 button: getPlanButton("plus", plusKey),
             },
             {
                 key: "teams",
                 title: "Teams",
+                icon: TeamsPlanIcon,
                 tag: "For small teams",
                 featured: false,
-                // ✅ Teams is Plus + add-ons
                 price: fmtGBP(plusPerMonth),
                 sub: "per month + add-ons",
                 priceMeta: [
@@ -652,14 +586,7 @@ export default function Pricing() {
                     billing === "monthly" ? "Billed monthly." : `Base billed ${plusBilledLabel}.`,
                     `Example: 3 profiles = ${fmtGBP(teamsExample3Profiles)} / month`,
                 ],
-                highlights: [
-                    "Everything in Plus",
-                    "Add extra staff profiles when you need them",
-                    "Centralised branding & controls",
-                    "Role & staff management (placeholder)",
-                    "Priority support (placeholder)",
-                    "Company access settings (placeholder)",
-                ],
+                highlights: ["Everything in Plus", "Add staff profiles", "Centralised controls", "Shared branding", "Team analytics", "Manage in one place"],
                 button: getPlanButton("teams", teamsKey),
             },
         ];
@@ -667,7 +594,7 @@ export default function Pricing() {
     }, [billing, plusPerMonth, plusBilledLabel, plusSavings, currentPlan, isActive, hasFutureAccess, activeUntilLabel, loadingKey, subLoading, PRICES]);
 
     /* =========================
-       Compare (cleaner + more modern)
+       Compare (UPDATED)
        ========================= */
     const compareSections = useMemo(
         () => [
@@ -682,22 +609,19 @@ export default function Pricing() {
             {
                 title: "Brand & content",
                 rows: [
-                    { label: "Templates", hint: "Design layouts (icons placeholder)", free: "1", plus: "5", teams: "5" },
+                    { label: "Templates", hint: "Design layouts", free: "1", plus: "5", teams: "5" },
                     { label: "Remove KonarCard branding", free: false, plus: true, teams: true },
                     { label: "Photo gallery", hint: "Work photos", free: "Up to 6", plus: "Up to 12", teams: "Up to 12" },
                     { label: "Services & pricing", free: "Up to 6", plus: "Up to 12", teams: "Up to 12" },
                     { label: "Reviews", free: "Up to 6", plus: "Up to 12", teams: "Up to 12" },
                 ],
             },
+            { title: "Analytics", rows: [{ label: "Analytics depth", free: "Basic", plus: "Deep", teams: "Deep" }] },
             {
-                title: "Analytics",
-                rows: [{ label: "Analytics depth", free: "Basic", plus: "Deep", teams: "Deep" }],
-            },
-            {
-                title: "Teams",
+                title: "Profiles",
                 rows: [
-                    { label: "Extra staff profiles", hint: "Add profiles as your team grows", free: false, plus: false, teams: true },
-                    { label: "Extra profile add-on", hint: "Per extra profile, per month", free: "—", plus: "—", teams: "£1.95" },
+                    { label: "Profiles included", hint: "Your base profiles", free: "1", plus: "1", teams: "Unlimited @ £1.95/profile" },
+                    { label: "Extra staff profiles", hint: "Add profiles as you grow", free: false, plus: false, teams: true },
                 ],
             },
         ],
@@ -720,19 +644,20 @@ export default function Pricing() {
 
             <main className="pr-page kc-page">
                 {/* HERO */}
-                <section className="pr-hero">
+                <section className="pr-hero" aria-label="Pricing hero">
                     <div className="pr-container pr-hero__inner">
-                        <p className="pr-kicker">Start free • Upgrade when it’s worth it</p>
+                        <div className="pr-hero__grid">
+                            <div className="kc-pill pr-hero__pill">Pricing</div>
 
-                        <h1 className="h2 pr-title">
-                            Plans & pricing built <br />
-                            for real trades
-                        </h1>
+                            <h1 className="h2 pr-title">
+                                Plans & pricing <span className="pr-built">built</span> for real trades
+                            </h1>
 
-                        <p className="body-s pr-sub">Clean plans. Clear value. Cancel anytime — no stress.</p>
+                            <p className="body-s pr-sub">Clean plans. Clear value. Cancel anytime — no stress.</p>
+                        </div>
 
                         {isLoggedIn() && (
-                            <div className="pr-status">
+                            <div className="pr-status" aria-live="polite">
                                 {subLoading ? (
                                     <span className="pr-status__muted">Checking your plan…</span>
                                 ) : subErr ? (
@@ -749,7 +674,7 @@ export default function Pricing() {
                                     <button
                                         key={v}
                                         type="button"
-                                        className={`pr-pill ${billing === v ? "is-active" : ""}`}
+                                        className={`pr-billPill ${billing === v ? "is-active" : ""}`}
                                         onClick={() => setBilling(v)}
                                         role="tab"
                                         aria-selected={billing === v}
@@ -765,26 +690,32 @@ export default function Pricing() {
                 </section>
 
                 {/* PLAN CARDS */}
-                <section className="pr-plans">
+                <section className="pr-plans" aria-label="Pricing plans">
                     <div className="pr-container">
-                        <div className="pr-plans__grid">
+                        <div className="pr-plans__grid" role="list" aria-label="KonarCard plans">
                             {planCards.map((card) => {
                                 const btn = card.button;
                                 const isFeatured = card.featured;
 
                                 return (
-                                    <article key={card.key} className={`pr-card ${isFeatured ? "is-featured" : ""}`}>
-                                        <div className="pr-card__topRow">
-                                            <h3 className="h5 pr-card__title">{card.title}</h3>
-                                            <div className={`pr-card__pill ${isFeatured ? "is-featured" : ""}`}>{card.tag}</div>
-                                        </div>
+                                    <article key={card.key} className={`pr-card ${isFeatured ? "is-featured" : ""}`} role="listitem">
+                                        <div className="pr-cardTop">
+                                            <div className={`pr-pill ${isFeatured ? "is-featured" : ""}`}>{card.tag}</div>
 
-                                        <div className="pr-card__priceRow">
-                                            <div className="pr-card__price">{card.price}</div>
-                                            <div className="body-s pr-card__priceSub">{card.sub}</div>
+                                            <div className="pr-planRow">
+                                                <p className={`h5 pr-plan ${isFeatured ? "is-featured" : ""}`}>{card.title}</p>
+                                                <span className={`pr-planIcon ${isFeatured ? "is-featured" : ""}`} aria-hidden="true">
+                                                    <img src={card.icon} alt="" loading="lazy" decoding="async" />
+                                                </span>
+                                            </div>
+
+                                            <div className="pr-priceRow">
+                                                <div className={`pr-price ${isFeatured ? "is-featured" : ""}`}>{card.price}</div>
+                                                <div className={`pr-cadence ${isFeatured ? "is-featured" : ""}`}>{card.sub}</div>
+                                            </div>
 
                                             {card.priceMeta?.length ? (
-                                                <div className="pr-priceMeta">
+                                                <div className={`pr-priceMeta ${isFeatured ? "is-featured" : ""}`}>
                                                     {card.priceMeta.map((m) => (
                                                         <div key={m} className="pr-priceMeta__line">
                                                             {m.includes("Save") ? <span className="pr-saveBadge">{m}</span> : m}
@@ -794,27 +725,32 @@ export default function Pricing() {
                                             ) : null}
                                         </div>
 
-                                        <div className="pr-card__divider" aria-hidden="true" />
-                                        <div className="pr-card__included">What’s included</div>
+                                        <div className={`pr-divider ${isFeatured ? "is-featured" : ""}`} aria-hidden="true" />
 
-                                        <ul className="pr-card__list">
+                                        <div className={`pr-included ${isFeatured ? "is-featured" : ""}`}>What’s included</div>
+
+                                        <ul className={`pr-bullets ${isFeatured ? "is-featured" : ""}`} aria-label={`${card.title} plan features`}>
                                             {card.highlights.map((h) => (
-                                                <li key={h}>
-                                                    <span className="pr-check" aria-hidden="true">✓</span>
+                                                <li key={h} className="pr-bulletItem">
                                                     <span className="body-s pr-liText">{h}</span>
                                                 </li>
                                             ))}
                                         </ul>
 
-                                        <div className="pr-card__actions">
+                                        <div className="pr-actions">
                                             {btn.type === "link" ? (
-                                                <Link to={btn.to} className={`pr-btn ${isFeatured ? "is-primary" : "is-ghost"}`}>
+                                                <Link
+                                                    to={btn.to}
+                                                    className={`kx-btn ${isFeatured ? "kx-btn--black" : "kx-btn--white"} pr-ctaBtn ${isFeatured ? "pr-ctaBtn--orange" : "pr-ctaBtn--outline"
+                                                        }`}
+                                                >
                                                     {btn.label}
                                                 </Link>
                                             ) : (
                                                 <button
                                                     type="button"
-                                                    className={`pr-btn ${isFeatured ? "is-primary" : "is-ghost"}`}
+                                                    className={`kx-btn ${isFeatured ? "kx-btn--black" : "kx-btn--white"} pr-ctaBtn ${isFeatured ? "pr-ctaBtn--orange" : "pr-ctaBtn--outline"
+                                                        }`}
                                                     onClick={btn.onClick || undefined}
                                                     disabled={!!btn.disabled}
                                                     aria-disabled={!!btn.disabled}
@@ -823,10 +759,10 @@ export default function Pricing() {
                                                 </button>
                                             )}
 
-                                            {btn.helper ? <div className="body-s pr-helper">{btn.helper}</div> : null}
+                                            {btn.helper ? <div className={`body-s pr-helper ${isFeatured ? "is-featured" : ""}`}>{btn.helper}</div> : null}
 
                                             {isLoggedIn() && card.key !== "free" && currentPlan !== "free" ? (
-                                                <button type="button" className="pr-linkBtn" onClick={openBillingPortal}>
+                                                <button type="button" className={`pr-linkBtn ${isFeatured ? "is-featured" : ""}`} onClick={openBillingPortal}>
                                                     Manage plan in Billing
                                                 </button>
                                             ) : null}
@@ -838,134 +774,130 @@ export default function Pricing() {
                     </div>
                 </section>
 
-                {/* COMPARE */}
-                <section className="pr-compare">
+                {/* WHO */}
+                <section className="pr-who" aria-label="Who each plan is for">
                     <div className="pr-container">
                         <div className="pr-sectionHead">
+                            <div className="kc-pill pr-sectionPill">Plans</div>
+                            <h2 className="h3 pr-h2">
+                                Who each <span className="pr-accent">plan</span> is for
+                            </h2>
+                            <p className="body-s pr-sectionSub">Pick the plan that fits your day-to-day.</p>
+                        </div>
+
+                        <div className="pr-whoGrid" role="list" aria-label="Plan fit">
+                            <article className="pr-whoCard" role="listitem">
+                                <div className="pr-whoImage" aria-hidden="true" />
+                                <div className="pr-whoOverlay">
+                                    <div className="pr-whoTitle">Free</div>
+                                    <p className="body-s pr-whoDesc">Perfect if you just want your link, contact buttons, and a clean profile.</p>
+                                </div>
+                            </article>
+
+                            <article className="pr-whoCard" role="listitem">
+                                <div className="pr-whoImage" aria-hidden="true" />
+                                <div className="pr-whoOverlay">
+                                    <div className="pr-whoTitle">Plus</div>
+                                    <p className="body-s pr-whoDesc">Best for higher limits, better presentation, and deeper analytics.</p>
+                                </div>
+                            </article>
+
+                            <article className="pr-whoCard" role="listitem">
+                                <div className="pr-whoImage" aria-hidden="true" />
+                                <div className="pr-whoOverlay">
+                                    <div className="pr-whoTitle">Teams</div>
+                                    <p className="body-s pr-whoDesc">Start with Plus, then add extra staff profiles as you grow.</p>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+
+                {/* COMPARE */}
+                <section className="pr-compare" aria-label="Compare plans">
+                    <div className="pr-container">
+                        <div className="pr-sectionHead">
+                            <div className="kc-pill pr-sectionPill">Compare</div>
                             <h2 className="h3 pr-h2">Compare plans</h2>
                             <p className="body-s pr-sectionSub">Clear differences — no fluff. Pick what matches how you work.</p>
                         </div>
 
                         <div className="pr-compareWrap" role="region" aria-label="Plan comparison">
-                            <div className="pr-compareHeader" aria-hidden="true">
-                                <div className="pr-compareHeader__left">Feature</div>
+                            <div className="pr-compareScroll">
+                                <div className="pr-compareTable" role="table" aria-label="Pricing comparison table">
+                                    <div className="pr-compareHeader" role="row">
+                                        <div className="pr-th pr-th--feature" role="columnheader">
+                                            <div className="pr-thName">Feature</div>
+                                        </div>
 
-                                <div className="pr-compareHeader__plan">
-                                    <div className="pr-compareHeader__name">Free</div>
-                                    <div className="pr-compareHeader__sub">£0</div>
-                                </div>
+                                        <div className="pr-th pr-th--free" role="columnheader">
+                                            <div className="pr-thName">Free</div>
+                                            <div className="pr-thSub">£0</div>
+                                        </div>
 
-                                <div className="pr-compareHeader__plan pr-compareHeader__plan--plus">
-                                    <div className="pr-compareHeader__name">Plus</div>
-                                    <div className="pr-compareHeader__sub">
-                                        {billing === "monthly"
-                                            ? "£4.95/mo"
-                                            : billing === "quarterly"
-                                                ? "£4.45/mo • £13.35/qtr"
-                                                : "£3.95/mo • £47.40/yr"}
+                                        <div className="pr-th pr-th--plus" role="columnheader">
+                                            <div className="pr-thName">Plus</div>
+                                            <div className="pr-thSub">
+                                                {billing === "monthly"
+                                                    ? "£4.95/mo"
+                                                    : billing === "quarterly"
+                                                        ? "£4.45/mo"
+                                                        : "£3.95/mo"}
+                                            </div>
+                                        </div>
+
+                                        <div className="pr-th pr-th--teams" role="columnheader">
+                                            <div className="pr-thName">Teams</div>
+                                            <div className="pr-thSub">Plus + £1.95/profile/mo</div>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="pr-compareHeader__plan">
-                                    <div className="pr-compareHeader__name">Teams</div>
-                                    <div className="pr-compareHeader__sub">Plus + £1.95/profile/mo</div>
-                                </div>
-                            </div>
+                                    {compareSections.map((sec) => (
+                                        <div className="pr-sec" key={sec.title} role="rowgroup" aria-label={sec.title}>
+                                            <div className="pr-secTitle" role="row">
+                                                <div className="pr-secTitleInner">{sec.title}</div>
+                                            </div>
 
-                            <div className="pr-compareBody">
-                                {compareSections.map((sec) => (
-                                    <div className="pr-compareSection" key={sec.title}>
-                                        <div className="pr-compareSection__title">{sec.title}</div>
-
-                                        <div className="pr-compareGrid" role="table" aria-label={`${sec.title} comparison`}>
                                             {sec.rows.map((r) => (
-                                                <div className="pr-compareRow" role="row" key={r.label}>
-                                                    <div className="pr-compareCell pr-compareCell--feature" role="cell">
-                                                        <div className="pr-compareFeat">
-                                                            <div className="pr-compareFeat__label">
-                                                                {/* icon placeholder (we swap later) */}
-                                                                <span className="pr-iconPh" aria-hidden="true" />
-                                                                {r.label}
-                                                            </div>
-                                                            {r.hint ? <div className="pr-compareFeat__hint">{r.hint}</div> : null}
+                                                <div className="pr-tr" role="row" key={r.label}>
+                                                    <div className="pr-td pr-td--feature" role="cell">
+                                                        <div className="pr-featLabel">
+                                                            <span className="pr-featText">{r.label}</span>
                                                         </div>
+                                                        {r.hint ? <div className="pr-featHint">{r.hint}</div> : null}
                                                     </div>
 
-                                                    <div className="pr-compareCell pr-compareCell--center" role="cell">
-                                                        <CompareValue v={r.free} />
+                                                    <div className="pr-td pr-td--free pr-td--center" role="cell">
+                                                        <CompareValue v={r.free} PricingTick={PricingTick} XTick={XTick} />
                                                     </div>
 
-                                                    <div className="pr-compareCell pr-compareCell--center pr-compareCell--plus" role="cell">
-                                                        <CompareValue v={r.plus} />
+                                                    <div className="pr-td pr-td--plus pr-td--center" role="cell">
+                                                        <CompareValue v={r.plus} PricingTick={PricingTick} XTick={XTick} />
                                                     </div>
 
-                                                    <div className="pr-compareCell pr-compareCell--center" role="cell">
-                                                        <CompareValue v={r.teams} />
+                                                    <div className="pr-td pr-td--teams pr-td--center" role="cell">
+                                                        <CompareValue v={r.teams} PricingTick={PricingTick} XTick={XTick} />
                                                     </div>
                                                 </div>
                                             ))}
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="pr-compareCtas">
-                            <Link to="/register" className="pr-btn is-primary pr-btn--inline">
-                                Start free
-                            </Link>
-                            <Link to="/products" className="pr-btn is-ghost pr-btn--inline">
-                                Shop cards
-                            </Link>
-                        </div>
-                    </div>
-                </section>
-
-                {/* WHO */}
-                <section className="pr-who">
-                    <div className="pr-container">
-                        <div className="pr-sectionHead">
-                            <h2 className="h3 pr-h2">Who each plan is for</h2>
-                            <p className="body-s pr-sectionSub">Pick the plan that fits your day-to-day.</p>
-                        </div>
-
-                        <div className="pr-3col">
-                            <div className="pr-miniCard">
-                                <div className="pr-miniCard__top">
-                                    <div className="pr-miniCard__title">Free</div>
-                                    <div className="pr-miniCard__pill">Trying it out</div>
+                                    ))}
                                 </div>
-                                <p className="body-s pr-miniCard__p">Perfect if you just want your link, contact buttons, and a clean profile.</p>
-                            </div>
-
-                            <div className="pr-miniCard is-accent">
-                                <div className="pr-miniCard__top">
-                                    <div className="pr-miniCard__title">Plus</div>
-                                    <div className="pr-miniCard__pill">Solo trades</div>
-                                </div>
-                                <p className="body-s pr-miniCard__p">Best for trades who want higher limits, better presentation, and deeper analytics.</p>
-                            </div>
-
-                            <div className="pr-miniCard">
-                                <div className="pr-miniCard__top">
-                                    <div className="pr-miniCard__title">Teams</div>
-                                    <div className="pr-miniCard__pill">Growing business</div>
-                                </div>
-                                <p className="body-s pr-miniCard__p">For teams — start with Plus, then add extra staff profiles as you grow.</p>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 {/* FAQ */}
-                <section className="pr-faq">
+                <section className="pr-faq" aria-label="Pricing FAQs">
                     <div className="pr-container">
                         <div className="pr-sectionHead">
+                            <div className="kc-pill pr-sectionPill">FAQs</div>
                             <h2 className="h3 pr-h2">Pricing FAQs</h2>
                             <p className="body-s pr-sectionSub">Quick answers before you commit.</p>
                         </div>
 
-                        <div className="pr-faqList" role="region" aria-label="Pricing FAQs">
+                        <div className="pr-faqList" role="region" aria-label="Pricing FAQs list">
                             {pricingFaqs.map((item, idx) => {
                                 const isOpen = idx === openIndex;
                                 return (
@@ -987,6 +919,13 @@ export default function Pricing() {
                                 );
                             })}
                         </div>
+
+                        <div className="pr-faqHelp" aria-label="Need more help">
+                            <p className="body-s pr-faqHelpText">Still got questions? We’re happy to help.</p>
+                            <Link to="/contact-us" className="kx-btn kx-btn--black">
+                                Start live chat
+                            </Link>
+                        </div>
                     </div>
                 </section>
             </main>
@@ -996,12 +935,29 @@ export default function Pricing() {
     );
 }
 
-function CompareValue({ v }) {
+function CompareValue({ v, PricingTick, XTick }) {
     const isBool = typeof v === "boolean";
+
     if (isBool) {
-        return v ? <span className="pr-cv pr-cv--yes">✓</span> : <span className="pr-cv pr-cv--no">—</span>;
+        return v ? (
+            <span className="pr-cv pr-cv--icon pr-cv--yes" aria-label="Included">
+                <img src={PricingTick} alt="" />
+            </span>
+        ) : (
+            <span className="pr-cv pr-cv--icon pr-cv--no" aria-label="Not included">
+                <img src={XTick} alt="" />
+            </span>
+        );
     }
+
     const s = String(v ?? "—");
-    if (!s || s === "—") return <span className="pr-cv pr-cv--no">—</span>;
+    if (!s || s === "—") {
+        return (
+            <span className="pr-cv pr-cv--icon pr-cv--no" aria-label="Not included">
+                <img src={XTick} alt="" />
+            </span>
+        );
+    }
+
     return <span className="pr-cv pr-cv--text">{s}</span>;
 }

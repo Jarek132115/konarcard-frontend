@@ -82,11 +82,7 @@ export default function Value() {
                     ))}
                 </div>
 
-                <div className="khv__cta">
-                    <Link to="/register" className="kx-btn kx-btn--black">
-                        Claim Your Link
-                    </Link>
-                </div>
+            
             </div>
         </section>
     );

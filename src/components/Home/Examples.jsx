@@ -1,4 +1,3 @@
-// frontend/src/components/home/Examples.jsx
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 
@@ -32,9 +31,9 @@ export default function Examples() {
                         </h2>
 
                         <p className="body-s khe-sub">
-                            Real profiles. Real cards. Real examples of how a digital business card helps you win more work — shared by NFC tap, QR code,
-                            or link.
+                            Real profiles showing how trades use KonarCard to win more work.
                         </p>
+
                     </div>
                 </header>
 
@@ -62,6 +61,11 @@ export default function Examples() {
                         </article>
                     ))}
                 </div>
+
+                {/* ✅ NEW: short helper line above CTA */}
+                <p className="body-s khe-ctaHint">
+                    Want to see more real profiles and how different trades use KonarCard day-to-day?
+                </p>
 
                 <div className="khe-ctaRow">
                     <Link to="/examples" className="kx-btn kx-btn--black">

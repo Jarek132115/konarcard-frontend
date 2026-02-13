@@ -1,8 +1,7 @@
-/* frontend/src/styling/home/pricing.css */
 /* =========================================================
    HOME — PRICING SECTION
-   File: frontend/src/styling/home/pricing.css
-   ========================================================= */
+   Matches pricing page plan cards
+========================================================= */
 
 .kpr {
     background: #ffffff;
@@ -22,26 +21,20 @@
     padding: 0 20px;
 }
 
-/* Head */
-.kpr__head {
-    text-align: center;
-    margin-bottom: 18px;
+/* Cal Sans 500 enforcement */
+.kpr__title,
+.kpr-plan {
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 500 !important;
 }
 
-.kpr__kicker {
-    margin: 0 0 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.kpr__head {
+    text-align: center;
+    margin: 0 auto 18px;
+}
 
-    font-size: 12px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.62);
-
-    background: #fff;
-    border: 1px solid var(--kc-border);
-    padding: 8px 12px;
-    border-radius: 999px;
+.kpr__pill {
+    margin: 0 auto 12px;
 }
 
 .kpr__title {
@@ -66,18 +59,19 @@
 /* Card */
 .kpr-card {
     border: 1px solid var(--kc-border);
-    background: #fff;
+    background: #ffffff;
     border-radius: 16px;
     box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+    overflow: hidden;
+
     display: flex;
     flex-direction: column;
-    overflow: hidden;
 }
 
-/* Featured (Plus) */
+/* Featured */
 .kpr-card.is-featured {
     background: var(--kc-accent-primary);
-    border-color: rgba(249, 115, 22, 0.85);
+    border-color: rgba(249, 115, 22, 0.95);
     box-shadow: 0 18px 44px rgba(249, 115, 22, 0.22);
     transform: translateY(-10px);
 }
@@ -85,43 +79,54 @@
 /* Top */
 .kpr-cardTop {
     padding: 18px 18px 12px;
+
+    /* ✅ forces rows (pill above, then plan row) */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.kpr-pill {
+/* pill */
+.kpr-pillCard {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
+    width: fit-content;
+    max-width: 100%;
 
     border-radius: 999px;
     padding: 7px 10px;
     font-size: 12px;
     font-weight: 800;
 
-    background: var(--kc-bg-soft);
-    border: 1px solid var(--kc-border);
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.22);
     color: rgba(15, 23, 42, 0.75);
-    margin-bottom: 10px;
+
+    margin-bottom: 12px;
 }
 
-.kpr-pill.is-featured {
+.kpr-pillCard.is-featured {
     background: rgba(255, 255, 255, 0.16);
-    border-color: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.26);
     color: #ffffff;
 }
 
+/* plan row (always below pill) */
 .kpr-planRow {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 10px;
+    gap: 12px;
 }
 
 .kpr-plan {
     margin: 0;
 }
 
-.kpr-plan--featured {
-    color: #ffffff !important;
+.kpr-plan.is-featured {
+    color: #ffffff;
 }
 
 .kpr-planIcon {
@@ -142,18 +147,9 @@
     filter: brightness(0) invert(1);
 }
 
-.kpr-cardSub {
-    margin: 8px 0 0;
-    color: var(--kc-text-secondary);
-}
-
-.kpr-cardSub.is-featured {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-/* Price */
+/* price */
 .kpr-priceRow {
-    padding: 0 18px 10px;
+    margin-top: 10px;
     display: flex;
     align-items: baseline;
     gap: 10px;
@@ -168,7 +164,7 @@
 }
 
 .kpr-cadence {
-    font-weight: 800;
+    font-weight: 700;
     font-size: 13px;
     color: rgba(15, 23, 42, 0.62);
 }
@@ -178,91 +174,115 @@
     color: #ffffff;
 }
 
+/* meta */
+.kpr-priceMeta {
+    margin-top: 10px;
+    display: grid;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(15, 23, 42, 0.62);
+}
+
+.kpr-priceMeta.is-featured {
+    color: rgba(255, 255, 255, 0.88);
+}
+
 .kpr-divider {
     height: 1px;
     width: 100%;
     background: rgba(15, 23, 42, 0.12);
-    margin: 10px 0 14px;
+    margin: 10px 0 12px;
 }
 
 .kpr-divider.is-featured {
     background: rgba(255, 255, 255, 0.22);
 }
 
-/* Features */
-.kpr-list {
-    list-style: none;
+/* included */
+.kpr-included {
     padding: 0 18px;
-    margin: 0;
-    display: grid;
-    gap: 12px;
-}
-
-.kpr-feature {
-    display: grid;
-    grid-template-columns: 24px 1fr;
-    gap: 10px;
-    align-items: start;
-}
-
-.kpr-check {
-    width: 24px;
-    height: 24px;
-    display: grid;
-    place-items: center;
-    margin-top: 2px;
-}
-
-.kpr-check img {
-    width: 24px;
-    height: 24px;
-    display: block;
-}
-
-.kpr-check.is-featured img {
-    filter: brightness(0) invert(1);
-}
-
-/* ✅ single line feature text */
-.kpr-featureLine {
-    margin: 0;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--kc-text-secondary);
-    font-weight: 600;
-}
-
-.kpr-featureLine.is-featured {
-    color: rgba(255, 255, 255, 0.92);
-}
-
-/* Note */
-.kpr-noteLine {
-    padding: 10px 18px 0;
-    margin: 0;
     font-size: 12px;
-    font-weight: 700;
-    font-style: italic;
-    color: rgba(15, 23, 42, 0.6);
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.62);
 }
 
-.kpr-noteLine.is-featured {
+.kpr-included.is-featured {
     color: rgba(255, 255, 255, 0.9);
 }
 
-/* Actions */
+/* bullets */
+.kpr-bullets {
+    margin: 10px 0 0;
+    padding: 0 18px;
+    list-style: disc;
+    list-style-position: inside;
+    display: grid;
+    gap: 10px;
+}
+
+/* ✅ THIS fixes the Plus bullet markers being black */
+.kpr-card.is-featured .kpr-bullets {
+    color: #ffffff;
+}
+
+.kpr-bulletItem {
+    margin: 0;
+}
+
+.kpr-liText {
+    display: inline;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.45;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.72);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* ✅ Plus bullet text = white */
+.kpr-card.is-featured .kpr-liText {
+    color: #ffffff;
+}
+
+/* actions */
 .kpr-actions {
-    margin-top: 16px;
-    /* ✅ bigger gap from list to CTA (double rule) */
     padding: 16px 18px 18px;
-    /* ✅ extra top padding = more breathing room */
+    margin-top: 12px;
+    display: grid;
 }
 
 .kpr-ctaBtn {
     width: 100%;
 }
 
-/* Bottom row */
+/* Free/Teams */
+.kpr-ctaBtn--outline {
+    background: #ffffff !important;
+    color: rgba(15, 23, 42, 0.92) !important;
+    border: 1px solid rgba(15, 23, 42, 0.18) !important;
+}
+
+.kpr-ctaBtn--outline:hover {
+    background: rgba(15, 23, 42, 0.02) !important;
+}
+
+/* Plus button (same style as pricing page screenshot: light/outlined white) */
+.kpr-ctaBtn--orange {
+    background: rgba(255, 255, 255, 0.16) !important;
+    border: 1px solid rgba(255, 255, 255, 0.30) !important;
+    color: #ffffff !important;
+}
+
+.kpr-ctaBtn--orange:hover {
+    background: rgba(255, 255, 255, 0.22) !important;
+}
+
+/* bottom */
 .kpr-bottom {
     margin-top: 18px;
     text-align: center;
@@ -278,7 +298,7 @@
     justify-content: center;
 }
 
-/* Responsive */
+/* responsive */
 @media (max-width: 980px) {
     .kpr__grid {
         grid-template-columns: 1fr;
@@ -290,4 +310,8 @@
     .kpr-card.is-featured {
         transform: none;
     }
+}
+
+.kpr-accent {
+    color: var(--kc-accent-primary);
 }
