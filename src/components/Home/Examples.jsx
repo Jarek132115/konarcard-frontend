@@ -1,3 +1,4 @@
+// frontend/src/components/home/Examples.jsx
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 
@@ -23,17 +24,16 @@ export default function Examples() {
             <div className="khe-container">
                 <header className="khe-hero">
                     <div className="khe-hero__inner">
-                        <p className="khe-kicker">Real examples</p>
+                        <p className="kc-pill khe-kicker">Real examples</p>
 
+                        {/* ✅ Keep as one line until it naturally wraps */}
                         <h2 id="khe-title" className="h3 khe-title">
-                            See How UK Tradespeople
-                            <br />
-                            Use KonarCard
+                            See How UK <span className="khe-accent">Tradespeople</span> Use KonarCard
                         </h2>
 
                         <p className="body-s khe-sub">
-                            Real profiles. Real cards. Real examples of how a digital business card helps you win more work — shared by NFC
-                            tap, QR code, or link.
+                            Real profiles. Real cards. Real examples of how a digital business card helps you win more work — shared by NFC tap, QR code,
+                            or link.
                         </p>
                     </div>
                 </header>
@@ -41,20 +41,22 @@ export default function Examples() {
                 <div className="khe-grid" aria-label="Example profiles">
                     {items.map((it) => (
                         <article className="khe-card" key={`${it.role}-${it.name}`}>
-                            <div className="khe-imageWrap" aria-hidden="true">
+                            {/* ✅ 1:1 media + role pill (top-left) like Share */}
+                            <div className="khe-media" aria-label={`${it.role} example`}>
+                                <span className="khe-pill">{it.role}</span>
+
                                 <img
                                     src={ExampleTest}
                                     alt="Example KonarCard digital business card profile preview"
-                                    className="khe-image"
+                                    className="khe-img"
                                     loading="lazy"
                                     decoding="async"
                                 />
                             </div>
 
-                            <div className="khe-cardBody">
-                                <p className="h6 khe-cardTitle">
-                                    {it.role} — {it.name}
-                                </p>
+                            <div className="khe-body">
+                                {/* ✅ name only */}
+                                <p className="h6 khe-cardTitle">{it.name}</p>
                                 <p className="body-s khe-cardDesc">{it.desc}</p>
                             </div>
                         </article>
@@ -62,12 +64,8 @@ export default function Examples() {
                 </div>
 
                 <div className="khe-ctaRow">
-                    <Link to="/examples" className="khe-btn khe-btn--primary">
+                    <Link to="/examples" className="kx-btn kx-btn--black">
                         See More Real Examples
-                    </Link>
-
-                    <Link to="/register" className="khe-btn khe-btn--ghost">
-                        Create Your Own Profile
                     </Link>
                 </div>
             </div>

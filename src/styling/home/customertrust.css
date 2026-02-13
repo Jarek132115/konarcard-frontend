@@ -1,11 +1,10 @@
+/* frontend/src/styling/home/customertrust.css */
 /* =========================================================
-   HOME — CUSTOMER TRUST (match Figma)
-   File: frontend/src/styling/home/customertrust.css
+   HOME — CUSTOMER TRUST (match VALUE section)
    ========================================================= */
 
 .kht {
     background: #fafafa;
-    /* ✅ per request */
     color: var(--kc-text-primary);
     padding: 80px 0;
 }
@@ -22,14 +21,25 @@
     padding: 0 20px;
 }
 
-/* Head */
+/* =========================
+   HEAD
+   ========================= */
+
 .kht__head {
     text-align: center;
-    margin-bottom: 22px;
+    margin-bottom: 24px;
+}
+
+.kht__kicker {
+    margin: 0 0 12px;
 }
 
 .kht__title {
     margin: 0 0 10px;
+}
+
+.kht__accent {
+    color: var(--kc-accent-primary);
 }
 
 .kht__sub {
@@ -39,43 +49,55 @@
     line-height: 1.6;
 }
 
-/* Grid */
+/* =========================
+   GRID
+   ========================= */
+
 .kht__grid {
-    margin-top: 22px;
+    margin-top: 24px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 18px;
+    align-items: stretch;
 }
 
-/* Card */
-.kht__card {
-    background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 16px;
+/* =========================
+   CARD (like VALUE)
+   ========================= */
 
-    /* ✅ very light shadow */
+.kht__card {
+    border: 1px solid var(--kc-border);
+    background: #ffffff;
+    border-radius: 16px;
     box-shadow: 0 8px 18px rgba(16, 24, 40, 0.06);
 
-    padding: 18px;
-    text-align: left;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
 
     transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
 .kht__card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(16, 24, 40, 0.08);
-    border-color: rgba(15, 23, 42, 0.16);
+    box-shadow: 0 12px 26px rgba(16, 24, 40, 0.08);
+    border-color: rgba(249, 115, 22, 0.22);
 }
 
-/* ✅ Icon on top, no background/border */
-.kht__icon {
+/* Icon (top, no bg) */
+.kht__iconTop {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 14px;
+    display: grid;
+    place-items: center;
+}
+
+.kht__iconImg {
     width: 40px;
     height: 40px;
     display: block;
-    margin: 2px 0 12px;
-    user-select: none;
-    -webkit-user-drag: none;
+    object-fit: contain;
 }
 
 /* Copy */
@@ -91,47 +113,15 @@
 
 /* CTA */
 .kht__cta {
-    margin-top: 18px;
+    margin-top: 32px;
     display: flex;
     justify-content: center;
 }
 
-.kht__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+/* =========================
+   RESPONSIVE
+   ========================= */
 
-    padding: 14px 22px;
-    border-radius: 999px;
-    border: 1px solid transparent;
-
-    text-decoration: none;
-    cursor: pointer;
-
-    font-family: "Cal Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.2px;
-
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
-}
-
-.kht__btn:active {
-    transform: translateY(1px);
-}
-
-.kht__btn--primary {
-    background: var(--kc-accent-primary);
-    color: #fff;
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.22);
-}
-
-.kht__btn--primary:hover {
-    filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.28);
-}
-
-/* Responsive */
 @media (max-width: 980px) {
     .kht__grid {
         grid-template-columns: repeat(2, 1fr);
@@ -145,9 +135,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-
-    .kht__card,
-    .kht__btn {
+    .kht__card {
         transition: none !important;
     }
 

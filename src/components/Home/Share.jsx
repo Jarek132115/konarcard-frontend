@@ -7,7 +7,8 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
         {
             k: "nfc",
             title: "Tap with KonarCard",
-            desc: "Tap your NFC business card to instantly open your digital profile — no app required.",
+            // ✅ shortened to sit ~2 lines like others
+            desc: "Tap your NFC card to open your digital profile instantly — no app needed.",
             img: nfcImage,
             badge: "Fastest",
             icon: "↯",
@@ -15,7 +16,7 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
         {
             k: "qr",
             title: "Scan the QR backup",
-            desc: "Scan the QR code with any phone camera to access your digital business card.",
+            desc: "Scan the QR code with any phone camera to open your digital business card.",
             img: qrImage,
             badge: "Works for everyone",
             icon: "⌁",
@@ -23,7 +24,8 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
         {
             k: "msg",
             title: "Send your link",
-            desc: "Share your digital business card link by WhatsApp, SMS, or email in seconds.",
+            // ✅ tightened
+            desc: "Share your profile link by WhatsApp, SMS, or email in seconds.",
             img: smsImage,
             badge: "Best for follow-ups",
             icon: "✉",
@@ -31,6 +33,7 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
         {
             k: "bio",
             title: "Link in bio",
+            // ✅ tightened
             desc: "Add your profile link to Instagram, TikTok, Google Business Profile, or your site.",
             img: linkImage,
             badge: "Always visible",
@@ -39,13 +42,11 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
     ];
 
     return (
-        <section
-            className="khs-share"
-            aria-label="How to share your digital business card with KonarCard"
-        >
+        <section className="khs-share" aria-label="How to share your digital business card with KonarCard">
             <div className="khs-container">
                 <header className="khs-head">
-                    <p className="khs-kicker">One profile, everywhere</p>
+                    {/* ✅ use global pill */}
+                    <p className="kc-pill khs-kicker">One profile, everywhere</p>
 
                     <h2 className="h3 khs-title">
                         One Profile. <span className="khs-accent">Shared</span> Every Way.
@@ -59,11 +60,9 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
                 <div className="khs-grid" aria-label="Sharing methods">
                     {items.map((it) => (
                         <article className="khs-card" key={it.k}>
-                            <div
-                                className="khs-media"
-                                aria-label={`${it.badge}: ${it.title}`}
-                            >
-                                <span className="khs-pill">{it.badge}</span>
+                            <div className="khs-media" aria-label={`${it.badge}: ${it.title}`}>
+                                {/* ✅ use global pill styling inside the card too */}
+                                <span className="kc-pill kc-pill--soft khs-pill">{it.badge}</span>
 
                                 {it.img ? (
                                     <img
@@ -74,13 +73,8 @@ export default function Share({ nfcImage, qrImage, smsImage, linkImage }) {
                                         decoding="async"
                                     />
                                 ) : (
-                                    <div
-                                        className={`khs-mock khs-mock--${it.k}`}
-                                        aria-hidden="true"
-                                    >
-                                        <div className="khs-mock__icon">
-                                            {it.icon}
-                                        </div>
+                                    <div className={`khs-mock khs-mock--${it.k}`} aria-hidden="true">
+                                        <div className="khs-mock__icon">{it.icon}</div>
                                         <div className="khs-mock__lines">
                                             <span />
                                             <span />

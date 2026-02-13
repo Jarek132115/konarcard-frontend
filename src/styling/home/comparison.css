@@ -5,7 +5,6 @@
 
 .kc-comp {
     background: #fafafa;
-    /* ✅ requested */
     color: var(--kc-text-primary);
     padding: 80px 0;
 }
@@ -22,7 +21,9 @@
     padding: 0 20px;
 }
 
-/* Head */
+/* =========================
+   SECTION HEADER
+   ========================= */
 .kc-comp__header {
     text-align: center;
     margin-bottom: 18px;
@@ -53,7 +54,9 @@
     color: var(--kc-text-secondary);
 }
 
-/* Grid */
+/* =========================
+   GRID
+   ========================= */
 .kc-comp__grid {
     margin-top: 18px;
     display: grid;
@@ -62,18 +65,20 @@
     align-items: stretch;
 }
 
-/* Card base */
+/* =========================
+   CARD BASE
+   ========================= */
 .kc-comp__card {
     border-radius: 16px;
     overflow: hidden;
-    padding: 18px;
+    padding: 22px;
     display: flex;
     flex-direction: column;
 
     transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
-/* ✅ Left: Orange card + white content */
+/* Left: Orange card */
 .kc-comp__card--good {
     background: var(--kc-accent-primary);
     border: 1px solid rgba(0, 0, 0, 0.04);
@@ -86,7 +91,7 @@
     box-shadow: 0 14px 34px rgba(16, 24, 40, 0.12);
 }
 
-/* ✅ Right: White card, no orange */
+/* Right: White card */
 .kc-comp__card--bad {
     background: #ffffff;
     border: 1px solid var(--kc-border);
@@ -99,10 +104,15 @@
     box-shadow: 0 14px 34px rgba(16, 24, 40, 0.10);
 }
 
-/* Header inside card */
+/* =========================
+   CARD HEAD (spacing rules)
+   - title -> hint: 4px
+   - hint -> line: 8px (via padding-bottom)
+   ========================= */
 .kc-comp__cardHead {
-    padding-bottom: 12px;
-    margin-bottom: 12px;
+    padding-bottom: 8px;
+    /* ✅ 8px gap to the line */
+    margin-bottom: 0;
     border-bottom: 1px solid rgba(15, 23, 42, 0.10);
 }
 
@@ -114,9 +124,11 @@
     display: flex;
     align-items: center;
     gap: 10px;
+
     font-family: "Cal Sans", sans-serif;
     font-weight: 500;
-    font-size: 18px;
+    font-size: 20px;
+    line-height: 1.2;
     letter-spacing: -0.02em;
 }
 
@@ -128,28 +140,35 @@
     color: rgba(15, 23, 42, 0.95);
 }
 
+/* ✅ 4px gap from title */
 .kc-comp__hint {
-    margin-top: 6px;
+    margin-top: 4px;
+    /* ✅ requested */
     font-family: "Inter", sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.5;
 }
 
 .kc-comp__card--good .kc-comp__hint {
-    color: rgba(255, 255, 255, 0.86);
+    color: rgba(255, 255, 255, 0.88);
 }
 
 .kc-comp__card--bad .kc-comp__hint {
     color: rgba(15, 23, 42, 0.62);
 }
 
-/* List */
+/* =========================
+   LIST (spacing rules)
+   - line -> first bullet: 8px (padding-top)
+   - keep readable gaps between bullets
+   ========================= */
 .kc-comp__list {
     list-style: none;
-    padding: 6px 0 0;
+    padding: 8px 0 0;
+    /* ✅ 8px after line */
     margin: 0;
     display: grid;
-    gap: 12px;
+    gap: 14px;
 }
 
 .kc-comp__row {
@@ -161,17 +180,20 @@
 .kc-comp__rowText {
     margin: 0;
     line-height: 1.55;
+    font-size: 15px;
 }
 
 .kc-comp__card--good .kc-comp__rowText {
-    color: rgba(255, 255, 255, 0.92);
+    color: rgba(255, 255, 255, 0.94);
 }
 
 .kc-comp__card--bad .kc-comp__rowText {
-    color: rgba(15, 23, 42, 0.86);
+    color: rgba(15, 23, 42, 0.88);
 }
 
-/* Icons */
+/* =========================
+   ICONS
+   ========================= */
 .kc-comp__icon {
     width: 22px;
     height: 22px;
@@ -187,23 +209,51 @@
     display: block;
 }
 
-/* ✅ Force PricingTick to white */
+/* Force PricingTick to white */
 .kc-comp__iconImg--white {
     filter: brightness(0) invert(1);
 }
 
-/* ✅ Ensure ONLY the X icon is red */
+/* Ensure ONLY the X icon is red */
 .kc-comp__iconImg--red {
-    /* If your XTick.svg is already red, this does nothing.
-       If it’s dark/black, this filter pushes it close to the site red. */
     filter: invert(17%) sepia(84%) saturate(6026%) hue-rotate(343deg) brightness(97%) contrast(96%);
 }
 
-/* Responsive */
+/* =========================
+   FOOTER LINE + LAST SENTENCE (spacing rules)
+   - last bullet -> line: 8px (margin-top)
+   - line -> last sentence: 8px (padding-top)
+   NOTE: your JSX should render:
+   <div className="kc-comp__foot kc-comp__foot--good/bad">...</div>
+   ========================= */
+.kc-comp__foot {
+    margin-top: 8px;
+    /* ✅ 8px after last bullet */
+    padding-top: 8px;
+    /* ✅ 8px after the line */
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+    letter-spacing: 0.01em;
+}
+
+.kc-comp__foot--good {
+    color: rgba(255, 255, 255, 0.92);
+    border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.kc-comp__foot--bad {
+    color: rgba(15, 23, 42, 0.62);
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
 @media (max-width: 980px) {
     .kc-comp__grid {
         grid-template-columns: 1fr;
-        max-width: 640px;
+        max-width: 680px;
         margin-left: auto;
         margin-right: auto;
     }

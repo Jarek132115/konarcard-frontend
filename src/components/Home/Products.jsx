@@ -70,8 +70,6 @@ export default function Products() {
                     "@type": "Product",
                     name: p.name,
                     description: p.desc,
-                    // In a bundled React app, imported images resolve to a full URL string.
-                    // Use it directly rather than trying to prefix origin.
                     image: p.img,
                     sku: p.sku,
                     brand: { "@type": "Brand", name: "KonarCard" },
@@ -90,11 +88,11 @@ export default function Products() {
     return (
         <section className="khp-products" aria-labelledby="khp-products-title">
             <div className="khp-container">
-                <header className="khp-hero">
-                    <p className="khp-kicker">NFC business cards that share your details instantly</p>
+                <header className="khp-head">
+                    <p className="kc-pill">NFC business cards that share your details instantly</p>
 
-                    <h2 id="khp-products-title" className="h2 khp-title">
-                        Contactless NFC Business Cards for Your Digital Profile
+                    <h2 id="khp-products-title" className="h3 khp-title">
+                        Contactless NFC <span className="khp-accent">Business Cards</span> for Your Digital Profile
                     </h2>
 
                     <p className="body-s khp-sub">
@@ -104,7 +102,7 @@ export default function Products() {
                     </p>
                 </header>
 
-                <div className="khp-grid" role="list">
+                <div className="khp-grid" role="list" aria-label="KonarCard products">
                     {products.map((item) => (
                         <article
                             key={item.sku}
@@ -135,42 +133,51 @@ export default function Products() {
                             <div className="khp-divider" aria-hidden="true" />
 
                             <div className="khp-card__body">
-                                <h3 className="h6 khp-card__name">{item.name}</h3>
-                                <p className="body-s khp-desc">{item.desc}</p>
-
-                                <div className="khp-priceRow" itemProp="offers" itemScope itemType="https://schema.org/Offer">
-                                    <p className="h6 khp-price">
-                                        {item.priceText}
-                                        <meta itemProp="priceCurrency" content={item.currency} />
-                                        <meta itemProp="price" content={String(item.priceValue)} />
-                                        <link itemProp="availability" href="https://schema.org/InStock" />
-                                    </p>
+                                <div className="khp-topCopy">
+                                    <h3 className="h6 khp-card__name">{item.name}</h3>
+                                    <p className="body-s khp-desc">{item.desc}</p>
                                 </div>
 
-                                <div className="khp-actions">
-                                    <Link to={item.to} className="khp-btn" aria-label={`View ${item.name}`} itemProp="url">
-                                        View product
-                                    </Link>
+                                <div className="khp-buy">
+                                    <div
+                                        className="khp-priceRow"
+                                        itemProp="offers"
+                                        itemScope
+                                        itemType="https://schema.org/Offer"
+                                    >
+                                        <p className="khp-price">
+                                            {item.priceText}
+                                            <meta itemProp="priceCurrency" content={item.currency} />
+                                            <meta itemProp="price" content={String(item.priceValue)} />
+                                            <link itemProp="availability" href="https://schema.org/InStock" />
+                                        </p>
+                                    </div>
+
+                                    <div className="khp-actions">
+                                        {/* ✅ ORANGE buttons for all products */}
+                                        <Link
+                                            to={item.to}
+                                            className="kx-btn kx-btn--orange khp-btn"
+                                            aria-label={`View ${item.name}`}
+                                            itemProp="url"
+                                        >
+                                            View product
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                         </article>
                     ))}
                 </div>
 
-                <p className="khp-note">
-                    Your KonarCard works with your digital profile. The card is a one-time purchase. Profiles are free to start.
-                </p>
+                <p className="khp-note">One-time card purchase — profiles are free to start.</p>
 
                 <div className="khp-ctaRow">
-                    <Link to="/products" className="khp-cta khp-cta--primary">
-                        Shop Business Cards
-                    </Link>
-                    <Link to="/how-it-works" className="khp-cta khp-cta--ghost">
-                        See How The Cards Work
+                    <Link to="/products" className="kx-btn kx-btn--black">
+                        View all products
                     </Link>
                 </div>
 
-                {/* ✅ SEO schema */}
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
             </div>
         </section>

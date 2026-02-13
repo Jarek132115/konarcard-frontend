@@ -1,6 +1,6 @@
 /* frontend/src/styling/home/howitworks.css
    =========================================================
-   HOME — HOW IT WORKS
+   HOME — HOW IT WORKS (match Share cards)
    ========================================================= */
 
 .hiw {
@@ -29,17 +29,6 @@
 
 .hiw__kicker {
     margin: 0 0 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 12px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.62);
-    background: var(--kc-bg-soft);
-    border: 1px solid var(--kc-border);
-    padding: 8px 12px;
-    border-radius: 999px;
 }
 
 .hiw__title {
@@ -57,151 +46,76 @@
     margin-top: 18px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    gap: 16px;
     align-items: stretch;
 
     list-style: none;
     padding: 0;
 }
 
-/* Card */
+/* Card (share-style) */
 .hiw__card {
     border: 1px solid var(--kc-border);
-    background: #fff;
+    background: #ffffff;
     border-radius: 16px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
-    padding: 16px;
     overflow: hidden;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
 
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    min-width: 0;
 
-    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .hiw__card:hover {
     transform: translateY(-2px);
     box-shadow: 0 16px 34px rgba(16, 24, 40, 0.10);
-    border-color: rgba(249, 115, 22, 0.22);
 }
 
-.hiw__stepRow {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-/* Step pill */
-.hiw__stepPill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 30px;
-    padding: 0 12px;
-    border-radius: 999px;
-
-    background: rgba(15, 23, 42, 0.92);
-    color: #fff;
-
-    font-family: "Inter", sans-serif;
-    font-weight: 900;
-    font-size: 12px;
-    letter-spacing: -0.01em;
-}
-
-.hiw__stepTitle {
-    margin: 0;
-}
-
-.hiw__stepDesc {
-    margin: 0;
-    color: var(--kc-text-secondary);
-    line-height: 1.6;
-}
-
-.hiw__miniCta {
-    margin-top: 2px;
-}
-
-.hiw__miniLink {
-    font-family: "Inter", sans-serif;
-    font-weight: 900;
-    color: var(--kc-text-primary);
-    text-decoration: none;
-}
-
-.hiw__miniLink:hover {
-    text-decoration: underline;
-}
-
-/* Bottom CTAs */
-.hiw__cta {
-    margin-top: 18px;
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.hiw__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 14px 22px;
-    border-radius: 999px;
-    border: 1px solid transparent;
-
-    text-decoration: none;
-    cursor: pointer;
-
-    font-family: "Cal Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.4px;
-
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.hiw__btn:active {
-    transform: translateY(1px);
-}
-
-.hiw__btn--primary {
-    background: var(--kc-accent-primary);
-    color: #fff;
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.25);
-}
-
-.hiw__btn--primary:hover {
-    filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.32);
-}
-
-.hiw__btn--ghost {
-    background: #fff;
-    color: var(--kc-text-primary);
-    border-color: rgba(15, 23, 42, 0.18);
-    box-shadow: 0 10px 22px rgba(16, 24, 40, 0.06);
-}
-
-.hiw__btn--ghost:hover {
-    border-color: rgba(15, 23, 42, 0.28);
-}
-
-/* =========================
-   PLACEHOLDER MOCK UI
-   ========================= */
-
-.hiw-mock {
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: linear-gradient(180deg, rgba(249, 115, 22, 0.06), rgba(255, 255, 255, 1) 55%);
-    border-radius: 16px;
-    box-shadow: 0 10px 24px rgba(16, 24, 40, 0.06);
+/* ✅ 1:1 media, edge-to-edge */
+.hiw-media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: var(--kc-bg-soft);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
     overflow: hidden;
 }
 
+/* ✅ pill top-left like Share */
+.hiw-pill {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 3;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 800;
+
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: rgba(255, 255, 255, 0.92);
+    color: rgba(15, 23, 42, 0.78);
+
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+/* Mock fills the media area */
+.hiw-mock {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Mock UI */
 .hiw-mock__top {
     padding: 14px 14px 10px;
     text-align: center;
@@ -222,7 +136,6 @@
     background: rgba(15, 23, 42, 0.14);
 }
 
-/* Placeholder header bars */
 .hiw-mock__phTitle {
     height: 16px;
     width: 58%;
@@ -242,6 +155,7 @@
 .hiw-mock__body {
     padding: 14px;
     background: #fff;
+    flex: 1;
 }
 
 .hiw-mock__phBlock {
@@ -270,12 +184,33 @@
     border: 1px solid rgba(249, 115, 22, 0.18);
 }
 
-.hiw-mock__phHint {
-    margin-top: 10px;
-    text-align: center;
-    font-family: "Inter", sans-serif;
-    font-size: 11px;
-    color: rgba(15, 23, 42, 0.56);
+/* Body */
+.hiw__body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.hiw__stepTitle {
+    margin: 0;
+}
+
+.hiw__stepDesc {
+    margin: 0;
+    color: var(--kc-text-secondary);
+    line-height: 1.55;
+    max-width: 42ch;
+    /* helps keep it ~2 lines */
+}
+
+/* Bottom CTAs */
+.hiw__cta {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 /* Responsive */
@@ -289,9 +224,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-
-    .hiw__card,
-    .hiw__btn {
+    .hiw__card {
         transition: none !important;
     }
 
@@ -300,9 +233,6 @@
     }
 }
 
-/* Title + description wrapper */
-.hiw__content {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+.hiw-accent {
+    color: var(--kc-accent-primary);
 }

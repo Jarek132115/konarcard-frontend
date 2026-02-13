@@ -1,5 +1,5 @@
 /* =========================================================
-   HOME — PRODUCTS SECTION (Figma match)
+   HOME — PRODUCTS SECTION
    File: frontend/src/styling/home/products.css
    ========================================================= */
 
@@ -22,30 +22,26 @@
 }
 
 /* =========================
-   HERO
+   HEADER (match other sections)
    ========================= */
-.khp-hero {
+.khp-head {
     text-align: center;
     padding: 0 0 30px;
 }
 
-.khp-kicker {
-    margin: 0 0 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 12px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.62);
-    background: var(--kc-bg-soft);
-    border: 1px solid var(--kc-border);
-    padding: 8px 12px;
-    border-radius: 999px;
+.khp-topCopy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .khp-title {
-    margin: 0 0 8px;
+    margin: 10px 0 8px;
+    letter-spacing: -0.02em;
+}
+
+.khp-accent {
+    color: var(--kc-accent-primary);
 }
 
 .khp-sub {
@@ -69,14 +65,12 @@
     background: #fff;
     border-radius: 16px;
     overflow: hidden;
-
-    /* lighter than before (match figma) */
     box-shadow: 0 8px 18px rgba(16, 24, 40, 0.05);
-
     display: flex;
     flex-direction: column;
 }
 
+/* Media */
 .khp-media {
     position: relative;
     width: 100%;
@@ -95,7 +89,7 @@
     display: block;
 }
 
-/* pill sits ON the image (top-left) */
+/* ✅ Pill on image — PURE ORANGE + WHITE TEXT */
 .khp-pill {
     position: absolute;
     top: 14px;
@@ -108,20 +102,21 @@
 
     border-radius: 999px;
     padding: 7px 10px;
-    font-size: 12px;
-    font-weight: 500;
 
-    border: 1px solid rgba(249, 115, 22, 0.30);
-    background: rgba(249, 115, 22, 0.14);
-    color: var(--kc-accent-primary);
+    font-size: 12px;
+    font-weight: 700;
+
+    border: 1px solid transparent;
+    background: var(--kc-accent-primary);
+    color: #ffffff;
 }
 
-/* subtle divider like figma */
 .khp-divider {
     height: 1px;
     background: rgba(15, 23, 42, 0.06);
 }
 
+/* Body: base spacing is 8px */
 .khp-card__body {
     padding: 16px;
     display: flex;
@@ -140,110 +135,56 @@
     color: var(--kc-text-secondary);
 }
 
-.khp-priceRow {
-    margin-top: 2px;
-}
-
-/* actions */
-.khp-actions {
-    margin-top: 10px;
-}
-
-.khp-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-
-    padding: 14px 18px;
-    border-radius: 999px;
-    border: 1px solid transparent;
-
-    text-decoration: none;
-    cursor: pointer;
-
-    font-family: "Cal Sans", sans-serif;
-    font-size: 14px;
+/* ✅ PRICE (make it feel “pricing-y”) */
+.khp-price {
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
     font-weight: 500;
-    letter-spacing: 0.4px;
-
-    background: var(--kc-accent-primary);
-    color: #fff;
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.20);
-
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    color: var(--kc-text-primary);
 }
 
-.khp-btn:hover {
-    filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.26);
+/* ✅ double-gap rule (16px) between top copy and buy block */
+.khp-buy {
+    margin-top: 8px;
+    /* + base gap (8) from parent = feels like 16 rhythm */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.khp-btn:active {
-    transform: translateY(1px);
+.khp-priceRow {
+    margin: 0;
+}
+
+.khp-actions {
+    margin: 0;
+}
+
+/* CTA inside cards: pricing-style white button, full width */
+.khp-btn {
+    width: 100%;
 }
 
 /* =========================
-   NOTE + CTA ROW
+   NOTE + CTA
    ========================= */
+
+/* ✅ smaller + not italic (matches your pricing note vibe) */
 .khp-note {
-    margin: 18px auto 0;
+    margin: 16px auto 0;
     max-width: 760px;
     text-align: center;
-    color: var(--kc-text-secondary);
-    font-style: italic;
+
+    font-style: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: rgba(15, 23, 42, 0.62);
 }
 
 .khp-ctaRow {
     margin-top: 14px;
     display: flex;
     justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.khp-cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    height: 46px;
-    padding: 0 22px;
-    border-radius: 999px;
-    text-decoration: none;
-
-    font-family: "Cal Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.4px;
-
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
-}
-
-.khp-cta:active {
-    transform: translateY(1px);
-}
-
-.khp-cta--primary {
-    background: var(--kc-accent-primary);
-    color: #fff;
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.22);
-}
-
-.khp-cta--primary:hover {
-    filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.30);
-}
-
-.khp-cta--ghost {
-    background: #fff;
-    color: var(--kc-text-primary);
-    border: 1px solid var(--kc-border);
-    box-shadow: 0 10px 22px rgba(16, 24, 40, 0.05);
-}
-
-.khp-cta--ghost:hover {
-    filter: brightness(0.99);
 }
 
 /* =========================

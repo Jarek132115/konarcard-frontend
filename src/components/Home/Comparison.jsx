@@ -1,4 +1,5 @@
-import React from "react";
+// frontend/src/components/Home/Comparison.jsx
+import React, { useMemo } from "react";
 import "../../styling/home/comparison.css";
 
 import PricingTick from "../../assets/icons/PricingTick.svg";
@@ -21,39 +22,43 @@ function XIcon() {
 }
 
 export default function Comparison() {
-    const konar = [
-        "One link that never gets lost",
-        "Always up to date — edit anytime",
-        "Photos, reviews, and proof of work built in",
-        "Share instantly by NFC tap, QR, or message",
-        "Looks premium and builds trust fast",
-        "No reprinting costs — ever",
-    ];
+    const konar = useMemo(
+        () => [
+            "One link that never goes missing",
+            "Update your details anytime (no reprints)",
+            "Show photos, reviews, and proof of work",
+            "Instant sharing by NFC tap, QR, or link",
+            "Looks premium and builds trust faster",
+            "Works everywhere — in person or online",
+        ],
+        []
+    );
 
-    const paper = [
-        "Get lost, damaged, or thrown away",
-        "Run out when you need them most",
-        "Outdated details mean missed jobs",
-        "No photos, reviews, or proof of work",
-        "Hard to share online or on the spot",
-        "Cost money every time you reprint",
-    ];
+    const paper = useMemo(
+        () => [
+            "Gets lost, damaged, or binned",
+            "Runs out when you need it",
+            "Outdated details = missed jobs",
+            "No photos, reviews, or proof",
+            "Awkward to share online",
+            "Costs money every reprint",
+        ],
+        []
+    );
 
     return (
         <section className="kc-comp" aria-labelledby="kc-comp-title">
             <div className="kc-comp__inner">
                 <header className="kc-comp__header">
-                    <p className="kc-comp__kicker">The upgrade</p>
+                    <p className="kc-pill kc-comp__kicker">The upgrade</p>
 
-                    <h2 id="kc-comp-title" className="h3 kc-comp__title text-center">
-                        Paper business cards don’t
-                        <br />
-                        work like they used to
+                    <h2 id="kc-comp-title" className="h3 kc-comp__title">
+                        Ditch paper — win trust <span className="kc-comp__accent">faster</span>
                     </h2>
 
-                    <p className="body-s kc-comp__sub text-center">
-                        They get lost, go out of date, and don’t show the quality of your work. KonarCard replaces paper with a digital
-                        business card you can share instantly — contactless by NFC tap, QR, or link.
+                    <p className="body kc-comp__sub">
+                        Paper cards get lost and go out of date. KonarCard keeps your details, work, and reviews in one link — ready to share
+                        instantly.
                     </p>
                 </header>
 
@@ -71,10 +76,14 @@ export default function Comparison() {
                             {konar.map((t, i) => (
                                 <li key={i} className="kc-comp__row">
                                     <TickIcon />
-                                    <span className="body-s kc-comp__rowText">{t}</span>
+                                    <span className="kc-comp__rowText">{t}</span>
                                 </li>
                             ))}
                         </ul>
+
+                        <div className="kc-comp__foot kc-comp__foot--good" aria-hidden="true">
+                            Share in seconds. Look legit instantly.
+                        </div>
                     </article>
 
                     {/* Paper */}
@@ -90,10 +99,14 @@ export default function Comparison() {
                             {paper.map((t, i) => (
                                 <li key={i} className="kc-comp__row">
                                     <XIcon />
-                                    <span className="body-s kc-comp__rowText">{t}</span>
+                                    <span className="kc-comp__rowText">{t}</span>
                                 </li>
                             ))}
                         </ul>
+
+                        <div className="kc-comp__foot kc-comp__foot--bad" aria-hidden="true">
+                            Fine for 2012. Not great today.
+                        </div>
                     </article>
                 </div>
             </div>

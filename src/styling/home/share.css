@@ -1,5 +1,6 @@
+/* frontend/src/styling/home/share.css */
 /* =========================================================
-   HOME — SHARE SECTION (Redesign)
+   HOME — SHARE SECTION
    File: frontend/src/styling/home/share.css
    ========================================================= */
 
@@ -29,19 +30,9 @@
     margin-bottom: 22px;
 }
 
+/* ✅ spacing only (visual from .kc-pill) */
 .khs-kicker {
     margin: 0 0 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 12px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.62);
-    background: var(--kc-bg-soft);
-    border: 1px solid var(--kc-border);
-    padding: 8px 12px;
-    border-radius: 999px;
 }
 
 .khs-title {
@@ -88,51 +79,35 @@
 
 .khs-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.10);
+    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.1);
 }
 
 /* =========================
-   Media (hard 1:1, flush, no gaps)
+   Media (1:1, flush)
    ========================= */
 .khs-media {
     position: relative;
     width: 100%;
-
-    /* hard square */
     aspect-ratio: 1 / 1;
-
     background: var(--kc-bg-soft);
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-
     overflow: hidden;
 }
 
-/* Pill overlaps the media (top-left) */
+/* ✅ override kc-pill box-shadow for media overlay */
 .khs-pill {
     position: absolute;
     top: 12px;
     left: 12px;
     z-index: 3;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 999px;
-    padding: 7px 10px;
-    font-size: 12px;
-    font-weight: 800;
-
-    border: 1px solid rgba(15, 23, 42, 0.14);
+    box-shadow: none;
+    border-color: rgba(15, 23, 42, 0.14);
     background: rgba(255, 255, 255, 0.92);
-    color: rgba(15, 23, 42, 0.78);
-
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
 }
 
-/* IMPORTANT:
-   Use a class + stronger overrides to defeat global img rules (height:auto etc.) */
+/* Image fill */
 .khs-media>.khs-img {
     position: absolute;
     inset: 0;
@@ -143,12 +118,8 @@
     max-width: none !important;
     max-height: none !important;
 
-    /* Fill the square, no letterbox gaps */
     object-fit: cover !important;
-
-    /* Keep subject centered */
     object-position: center center;
-
     border-radius: 0;
 }
 
@@ -158,8 +129,7 @@
 .khs-mock {
     position: absolute;
     inset: 0;
-
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.90), rgba(255, 255, 255, 0.55));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.55));
     display: grid;
     place-items: center;
 }
@@ -176,8 +146,8 @@
     color: rgba(15, 23, 42, 0.86);
 
     background: rgba(255, 255, 255, 0.82);
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    box-shadow: 0 14px 28px rgba(16, 24, 40, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    box-shadow: 0 14px 28px rgba(16, 24, 40, 0.1);
 }
 
 .khs-mock__lines {
@@ -213,11 +183,11 @@
 }
 
 .khs-mock--msg {
-    background: linear-gradient(180deg, rgba(249, 115, 22, 0.05), rgba(255, 255, 255, 0.70));
+    background: linear-gradient(180deg, rgba(249, 115, 22, 0.05), rgba(255, 255, 255, 0.7));
 }
 
 .khs-mock--bio {
-    background: linear-gradient(180deg, rgba(15, 23, 42, 0.04), rgba(255, 255, 255, 0.70));
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.04), rgba(255, 255, 255, 0.7));
 }
 
 /* =========================

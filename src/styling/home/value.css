@@ -38,6 +38,11 @@
     margin: 0 0 10px;
 }
 
+/* ✅ Orange highlight for KonarCard */
+.khv__accent {
+    color: var(--kc-accent-primary);
+}
+
 .khv__sub {
     margin: 0 auto;
     max-width: 720px;

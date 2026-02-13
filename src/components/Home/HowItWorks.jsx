@@ -7,44 +7,45 @@ const steps = [
     {
         step: "Step 1",
         title: "Claim Your Link",
-        desc: "Reserve your KonarCard link in seconds and start your digital business card straight away.",
+        desc: "Reserve your KonarCard link in seconds — start sharing right away.",
     },
     {
         step: "Step 2",
         title: "Build Your Profile",
-        desc: "Add services, photos, reviews, and contact details — everything customers need in one place.",
+        desc: "Add services, photos, reviews, and contact details in one place.",
     },
     {
         step: "Step 3",
         title: "Share It Anywhere",
-        desc: "Share contactless with an NFC business card, QR code, or link — online or in person.",
+        desc: "Share by NFC tap, QR code, or link — online or in person.",
     },
 ];
 
 function PlaceholderMock({ label }) {
     return (
-        <div className="hiw-mock" aria-hidden="true">
-            <div className="hiw-mock__top">
-                <div className="hiw-mock__window">
-                    <span />
-                    <span />
-                    <span />
-                </div>
-                <div className="hiw-mock__phTitle" />
-                <div className="hiw-mock__phSub" />
-            </div>
+        <div className="hiw-media" aria-hidden="true">
+            <span className="hiw-pill">{label}</span>
 
-            <div className="hiw-mock__body">
-                <div className="hiw-mock__phBlock hiw-mock__phBlock--lg" />
-                <div className="hiw-mock__phBlock" />
-                <div className="hiw-mock__phBlock" />
-
-                <div className="hiw-mock__phRow">
-                    <div className="hiw-mock__phPill" />
-                    <div className="hiw-mock__phPill" />
+            <div className="hiw-mock">
+                <div className="hiw-mock__top">
+                    <div className="hiw-mock__window">
+                        <span />
+                        <span />
+                        <span />
+                    </div>
+                    <div className="hiw-mock__phTitle" />
+                    <div className="hiw-mock__phSub" />
                 </div>
 
-                <div className="hiw-mock__phHint">{label}</div>
+                <div className="hiw-mock__body">
+                    <div className="hiw-mock__phBlock hiw-mock__phBlock--lg" />
+                    <div className="hiw-mock__phBlock" />
+                    <div className="hiw-mock__phBlock" />
+                    <div className="hiw-mock__phRow">
+                        <div className="hiw-mock__phPill" />
+                        <div className="hiw-mock__phPill" />
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -52,27 +53,29 @@ function PlaceholderMock({ label }) {
 
 export default function HowItWorks() {
     return (
-        <section className="hiw" aria-label="How KonarCard works in 3 steps">
+        <section className="hiw" aria-label="How KonarCard works in 3 simple steps">
             <div className="hiw__inner">
                 <header className="hiw__head">
-                    <p className="hiw__kicker">3 steps</p>
-                    <h2 className="h3 hiw__title">How it works</h2>
+                    <p className="kc-pill hiw__kicker">3 simple steps</p>
+
+                    <h2 className="h3 hiw__title">
+                        Create Your <span className="hiw-accent">Digital Card</span> in Minutes
+                    </h2>
+
+
                     <p className="body-s hiw__sub">
-                        Create a digital business card in minutes — share by NFC tap, QR code, or link.
+                        Set up your profile once, add your services and reviews, and
+                        share it instantly with a tap or link — no apps, no tech skills needed.
                     </p>
                 </header>
 
                 <ol className="hiw__grid" aria-label="Step-by-step setup">
                     {steps.map((s, idx) => (
                         <li className="hiw__card" key={idx}>
-                            <PlaceholderMock label={s.title} />
+                            <PlaceholderMock label={s.step} />
 
-                            <div className="hiw__stepRow">
-                                <div className="hiw__stepPill">{s.step}</div>
-                            </div>
-
-                            <div className="hiw__content">
-                                <h3 className="h5 hiw__stepTitle">{s.title}</h3>
+                            <div className="hiw__body">
+                                <h3 className="h6 hiw__stepTitle">{s.title}</h3>
                                 <p className="body-s hiw__stepDesc">{s.desc}</p>
                             </div>
                         </li>
@@ -80,11 +83,11 @@ export default function HowItWorks() {
                 </ol>
 
                 <div className="hiw__cta">
-                    <Link to="/register" className="hiw__btn hiw__btn--primary">
+                    <Link to="/register" className="kx-btn kx-btn--black">
                         Claim your link
                     </Link>
-                    <Link to="/products" className="hiw__btn hiw__btn--ghost">
-                        Shop cards
+                    <Link to="/how-it-works" className="kx-btn kx-btn--white">
+                        Watch how it works
                     </Link>
                 </div>
             </div>

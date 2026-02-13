@@ -53,7 +53,9 @@ export default function Value() {
                 <header className="khv__head">
                     <p className="kc-pill khv__kicker">Built for trades</p>
 
-                    <h2 className="h3 khv__title">Why KonarCard Is Worth It</h2>
+                    <h2 className="h3 khv__title">
+                        Why <span className="khv__accent">KonarCard</span> Is Worth It
+                    </h2>
 
                     <p className="body-s khv__sub">
                         A practical digital business card you can share contactless — by NFC tap, QR code, or link.
@@ -80,7 +82,6 @@ export default function Value() {
                     ))}
                 </div>
 
-                {/* Single CTA */}
                 <div className="khv__cta">
                     <Link to="/register" className="kx-btn kx-btn--black">
                         Claim Your Link
