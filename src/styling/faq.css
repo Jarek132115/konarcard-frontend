@@ -1,7 +1,5 @@
-/* frontend/src/styling/faq.css */
 /* =========================================================
-   FAQ PAGE — Flat, minimal, divider-based layout
-   No card container
+   FAQ PAGE — match Examples/Products hero grid + clean FAQ list
    ========================================================= */
 
 .kc-faq {
@@ -10,27 +8,98 @@
 }
 
 /* =========================
-   HERO
+   HERO (grid background like other pages)
    ========================= */
+.kc-faq__hero {
+    padding: 0 0 26px;
+    /* ✅ matches the rhythm used elsewhere */
+    position: relative;
+    overflow: clip;
+}
 
-@media (max-width: 640px) {
+@supports not (overflow: clip) {
     .kc-faq__hero {
-        padding: 40px 20px 14px;
+        overflow: hidden;
     }
 }
 
 .kc-faq__heroInner {
-    max-width: 920px;
+    max-width: 980px;
     margin: 0 auto;
+    padding: 0 20px;
     text-align: center;
 }
 
-/* NEW pill spacing (above H1) */
+/* Accent word */
+.kc-faq__accent {
+    color: var(--kc-accent-primary);
+}
+
+/* Grid wrapper (controls grid size + spacing so it matches other pages) */
+.kc-faq__heroGrid {
+    position: relative;
+    display: inline-block;
+    width: min(980px, 100%);
+    padding: 18px 18px 14px;
+    /* ✅ not “too big” */
+    z-index: 1;
+}
+
+/* ✅ Rounded fade grid (no flat top/bottom bands) */
+.kc-faq__heroGrid::before {
+    content: "";
+    position: absolute;
+    inset: -54px -76px -56px;
+    pointer-events: none;
+    z-index: 0;
+
+    background-image:
+        linear-gradient(to right, rgba(12, 24, 48, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(12, 24, 48, 0.06) 1px, transparent 1px);
+    background-size: 64px 64px;
+
+    -webkit-mask-image: radial-gradient(circle at center,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 1) 52%,
+            rgba(0, 0, 0, 0) 86%);
+    mask-image: radial-gradient(circle at center,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 1) 52%,
+            rgba(0, 0, 0, 0) 86%);
+}
+
+/* Soft white fade so grid dissolves naturally */
+.kc-faq__heroGrid::after {
+    content: "";
+    position: absolute;
+    inset: -54px -76px -56px;
+    pointer-events: none;
+    z-index: 0;
+
+    background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0) 40%, #fff 92%),
+        linear-gradient(to bottom,
+            #fff 0%,
+            rgba(255, 255, 255, 0) 18%,
+            rgba(255, 255, 255, 0) 82%,
+            #fff 100%);
+}
+
+/* Ensure content sits above grid */
+.kc-faq__pill,
+.kc-faq__title,
+.kc-faq__subtitle,
+.kc-faq__tabs {
+    position: relative;
+    z-index: 1;
+}
+
+/* Pill spacing */
 .kc-faq__pill {
     margin: 0 auto 14px;
 }
 
-/* Title / subtitle */
+/* Title/subtitle spacing */
 .kc-faq__title {
     margin: 0 0 10px;
     letter-spacing: -0.02em;
@@ -43,7 +112,7 @@
 }
 
 /* =========================
-   TABS
+   TABS (white background so grid does NOT show underneath)
    ========================= */
 .kc-faq__tabs {
     margin-top: 22px;
@@ -55,7 +124,8 @@
 
 .kc-faq__tab {
     appearance: none;
-    background: transparent;
+    background: #ffffff;
+    /* ✅ important */
     color: var(--kc-text-primary);
 
     border: 1px solid rgba(15, 23, 42, 0.14);
@@ -69,11 +139,11 @@
     font-weight: 600;
 
     cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .kc-faq__tab:hover {
-    background: rgba(15, 23, 42, 0.04);
+    border-color: rgba(15, 23, 42, 0.22);
 }
 
 .kc-faq__tab.is-active {
@@ -83,7 +153,7 @@
 }
 
 /* =========================
-   FAQ LIST (NO CONTAINER CARD)
+   FAQ LIST (divider layout)
    ========================= */
 .kc-faq__listSection {
     padding: 26px 20px 62px;
@@ -102,9 +172,6 @@
     border-top: 1px solid rgba(15, 23, 42, 0.10);
 }
 
-/* =========================
-   Question Row
-   ========================= */
 .kc-faq__qRow {
     width: 100%;
     text-align: left;
@@ -120,17 +187,12 @@
     cursor: pointer;
 }
 
-.kc-faq__qRow:hover {
-    background: transparent;
-}
-
 .kc-faq__q {
     margin: 0;
     max-width: 70ch;
     line-height: 1.25;
 }
 
-/* Chevron minimal */
 .kc-faq__chev {
     font-size: 13px;
     color: rgba(71, 85, 105, 0.9);
@@ -141,9 +203,6 @@
     transform: rotate(180deg);
 }
 
-/* =========================
-   Answer
-   ========================= */
 .kc-faq__a {
     padding: 0 0 22px;
     max-width: 76ch;
@@ -152,11 +211,13 @@
 }
 
 /* =========================
-   HELP SECTION
+   HELP SECTION (WHITE background + BLACK CTA)
    ========================= */
 .kc-faq__help {
     padding: 54px 20px 92px;
     text-align: center;
+    background: #ffffff;
+    /* ✅ keep white */
 }
 
 .kc-faq__helpTitle {
@@ -169,14 +230,19 @@
     color: var(--kc-text-secondary);
 }
 
-/* CTA spacing only (button styling comes from fonts.css .kx-btn) */
-.kc-faq__helpCta {
-    min-width: 190px;
-}
 
 /* =========================
    RESPONSIVE
    ========================= */
+@media (max-width: 900px) {
+
+    .kc-faq__heroGrid::before,
+    .kc-faq__heroGrid::after {
+        inset: -44px -30px -48px;
+        /* ✅ same scaling as other pages */
+    }
+}
+
 @media (max-width: 640px) {
     .kc-faq__qRow {
         padding: 18px 0;
@@ -188,5 +254,9 @@
 
     .kc-faq__pill {
         margin-bottom: 12px;
+    }
+
+    .kc-faq__hero {
+        padding: 0 0 18px;
     }
 }

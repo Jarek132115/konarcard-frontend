@@ -61,7 +61,8 @@ export default function Reviews() {
         location: "Manchester",
         rating: 5,
         date: "2 days ago",
-        tags: ["Verified purchase", "NFC card"],
+        plan: "Plus plan",
+        products: ["KonarCard"],
         text:
           "Since using KonarCard I’m actually getting replies.\nClients say it looks slick and I’m getting referrals.",
       },
@@ -73,7 +74,8 @@ export default function Reviews() {
         location: "Leeds",
         rating: 4.5,
         date: "1 week ago",
-        tags: ["Verified purchase"],
+        plan: "Free plan",
+        products: ["KonarCard"],
         text:
           "Saved me a fortune on printing.\nTap the card and customers have everything in seconds.",
       },
@@ -85,7 +87,8 @@ export default function Reviews() {
         location: "Birmingham",
         rating: 5,
         date: "3 weeks ago",
-        tags: ["Team use"],
+        plan: "Teams plan",
+        products: ["KonarCard"],
         text:
           "Gives me a proper online presence without a pricey website.\nPhotos and reviews do the selling.",
       },
@@ -97,7 +100,8 @@ export default function Reviews() {
         location: "Sheffield",
         rating: 4,
         date: "1 month ago",
-        tags: ["Profile edit"],
+        plan: "Plus plan",
+        products: [],
         text:
           "I update prices and services on my phone. No reprinting, no fuss.\nMore enquiries coming in.",
       },
@@ -109,7 +113,8 @@ export default function Reviews() {
         location: "Liverpool",
         rating: 5,
         date: "5 days ago",
-        tags: ["Live chat help"],
+        plan: "Plus plan",
+        products: ["KonarCard"],
         text:
           "Looks professional on mobile.\nClients can call, WhatsApp or request a quote right away.",
       },
@@ -121,7 +126,8 @@ export default function Reviews() {
         location: "Glasgow",
         rating: 5,
         date: "2 months ago",
-        tags: ["Verified purchase"],
+        plan: "Plus plan",
+        products: ["KonarCard"],
         text:
           "Before this I relied on word of mouth.\nNow people find me online and book.\nWorth every penny.",
       },
@@ -133,7 +139,8 @@ export default function Reviews() {
         location: "Nottingham",
         rating: 4.5,
         date: "2 weeks ago",
-        tags: ["Gallery"],
+        plan: "Free plan",
+        products: [],
         text:
           "Cheaper than keeping a website going.\nThe gallery shows my best work and wins trust.",
       },
@@ -145,7 +152,8 @@ export default function Reviews() {
         location: "Newcastle",
         rating: 5,
         date: "6 days ago",
-        tags: ["QR backup"],
+        plan: "Plus plan",
+        products: ["KonarCard"],
         text:
           "Tap, scan or share the link — it just works.\nBooking more local jobs than ever.",
       },
@@ -157,7 +165,8 @@ export default function Reviews() {
         location: "Bristol",
         rating: 5,
         date: "3 months ago",
-        tags: ["Easy setup"],
+        plan: "Free plan",
+        products: [],
         text:
           "Not techy at all and still set it up in minutes.\nTidy, modern and saves me on marketing.",
       },
@@ -169,7 +178,8 @@ export default function Reviews() {
         location: "Cardiff",
         rating: 4,
         date: "4 weeks ago",
-        tags: ["Map + services"],
+        plan: "Plus plan",
+        products: [],
         text:
           "Clients love the map and service list.\nStopped reprinting cards — this pays for itself.",
       },
@@ -181,7 +191,8 @@ export default function Reviews() {
         location: "London",
         rating: 5,
         date: "8 days ago",
-        tags: ["Quote form"],
+        plan: "Plus plan",
+        products: [],
         text:
           "All my links in one place — quote form, photos, socials.\nHelped me close jobs faster.",
       },
@@ -193,7 +204,8 @@ export default function Reviews() {
         location: "Belfast",
         rating: 4.5,
         date: "2 months ago",
-        tags: ["On-site"],
+        plan: "Plus plan",
+        products: ["KonarCard"],
         text:
           "Looks professional when I’m on site.\nOne tap and the client has my details + portfolio.\n(Edited after 2 weeks)",
       },
@@ -220,63 +232,66 @@ export default function Reviews() {
 
       <main className="kc-rev kc-page">
         {/* HERO */}
-        <section className="kc-rev__hero">
+        <section className="kc-rev__hero" aria-label="Reviews hero">
           <div className="kc-rev__container">
-            <div className="kc-rev__heroGrid">
-              <div className="kc-rev__heroCopy">
-                <p className="label kc-rev__kicker">Customer reviews</p>
+            {/* grid backdrop wrapper (slightly larger than cards + oval fade) */}
+            <div className="kc-rev__heroGridWrap">
+              <div className="kc-rev__heroGrid">
+                <div className="kc-rev__heroCopy">
+                  <p className="label kc-rev__kicker">Customer reviews</p>
 
-                <h1 className="h2 kc-rev__title">
-                  Tradespeople use KonarCard to look more professional — fast.
-                </h1>
+                  <h1 className="h2 kc-rev__title">
+                    Tradespeople use KonarCard to look more professional — fast.
+                  </h1>
 
-                <p className="body kc-rev__subtitle">
-                  Clear profiles, easy sharing, and a better first impression. Here’s what customers
-                  are saying after switching.
-                </p>
+                  <p className="body kc-rev__subtitle">
+                    Clear profiles, easy sharing, and a better first impression. Here’s what
+                    customers are saying after switching.
+                  </p>
 
-                <div className="kc-rev__trustRow" aria-label="Average rating">
-                  <div className="kc-rev__trustScore">
-                    <span className="kc-rev__trustNum">{summary.avg}</span>
-                    <span className="body-xs kc-rev__trustOut">/5</span>
+                  <div className="kc-rev__trustRow" aria-label="Average rating">
+                    <div className="kc-rev__trustScore">
+                      <span className="kc-rev__trustNum">{summary.avg}</span>
+                      <span className="body-xs kc-rev__trustOut">/5</span>
+                    </div>
+
+                    <Stars value={summary.avg} />
+
+                    <span className="body-xs kc-rev__trustNote">
+                      Based on {summary.total} reviews
+                    </span>
                   </div>
 
-                  <Stars value={summary.avg} />
-
-                  <span className="body-xs kc-rev__trustNote">
-                    Based on {summary.total} reviews
-                  </span>
+                  <div className="kc-rev__chips" aria-label="Highlights">
+                    <span className="pill">Verified purchases</span>
+                    <span className="pill">Real trades</span>
+                    <span className="pill">UK customers</span>
+                  </div>
                 </div>
 
-                <div className="kc-rev__chips" aria-label="Highlights">
-                  <span className="pill">Verified purchases</span>
-                  <span className="pill">Real trades</span>
-                  <span className="pill">UK customers</span>
-                </div>
+                <aside className="kc-rev__summary" aria-label="Review summary">
+                  <div className="kc-rev__summaryTop">
+                    <p className="h6 kc-rev__summaryTitle">Summary</p>
+                    <p className="body-xs kc-rev__summaryDesc">
+                      Short, honest feedback from people using KonarCard day-to-day.
+                    </p>
+                  </div>
+
+                  <div className="kc-rev__stats" role="list">
+                    {summary.stats.map((s) => (
+                      <div key={s.label} role="listitem">
+                        <Stat label={s.label} value={s.value} />
+                      </div>
+                    ))}
+                  </div>
+
+                  <a className="kc-rev__summaryBtn button-text" href="/claimyourlink">
+                    Claim your link
+                  </a>
+
+                  <p className="body-xs kc-rev__summaryHint">Set up in minutes. Update anytime.</p>
+                </aside>
               </div>
-
-              <aside className="kc-rev__summary" aria-label="Review summary">
-                <div className="kc-rev__summaryTop">
-                  <p className="h6 kc-rev__summaryTitle">Summary</p>
-                  <p className="body-xs kc-rev__summaryDesc">
-                    Short, honest feedback from people using KonarCard day-to-day.
-                  </p>
-                </div>
-
-                <div className="kc-rev__stats" role="list">
-                  {summary.stats.map((s) => (
-                    <div key={s.label} role="listitem">
-                      <Stat label={s.label} value={s.value} />
-                    </div>
-                  ))}
-                </div>
-
-                <a className="kc-rev__summaryBtn button-text" href="/claimyourlink">
-                  Claim your link
-                </a>
-
-                <p className="body-xs kc-rev__summaryHint">Set up in minutes. Update anytime.</p>
-              </aside>
             </div>
           </div>
         </section>
@@ -300,7 +315,9 @@ export default function Reviews() {
                             <span className="kc-rev__sep" aria-hidden="true">
                               •
                             </span>
-                            <span className="kc-rev__trade">{r.trade}</span>
+                            <span className="kc-rev__trade" title={r.trade}>
+                              {r.trade}
+                            </span>
                           </p>
 
                           <p className="body-xs kc-rev__metaLine">
@@ -319,20 +336,31 @@ export default function Reviews() {
                       </div>
                     </header>
 
-                    {r.tags?.length ? (
-                      <div className="kc-rev__tags" aria-label="Tags">
-                        {r.tags.map((t) => (
-                          <span key={t} className="pill">
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                    ) : null}
+                    {/* plan + product pills (grey style) */}
+                    <div className="kc-rev__tags" aria-label="Tags">
+                      {r.plan ? (
+                        <span className="pill kc-rev__pill kc-rev__pill--plan">{r.plan}</span>
+                      ) : null}
+
+                      {r.products?.map((p) => (
+                        <span key={p} className="pill kc-rev__pill kc-rev__pill--product">
+                          {p}
+                        </span>
+                      ))}
+                    </div>
 
                     <p className="body-s kc-rev__text">“{oneParagraph}”</p>
                   </article>
                 );
               })}
+            </div>
+
+            {/* CTA (like FAQ page style) */}
+            <div className="kc-rev__cta">
+              <p className="body-s kc-rev__ctaText">Share your personal experience with KonarCard.</p>
+              <button type="button" className="kx-btn kx-btn--black kc-rev__ctaBtn">
+                Add your own review
+              </button>
             </div>
           </div>
         </section>

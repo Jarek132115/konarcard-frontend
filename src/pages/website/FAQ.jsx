@@ -1,8 +1,8 @@
-// frontend/src/pages/FAQ/index.jsx
 import React, { useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+
 import "../../styling/fonts.css";
 import "../../styling/faq.css";
 
@@ -149,40 +149,43 @@ export default function FAQPage() {
       <Navbar />
 
       <main className="kc-faq kc-page">
-        {/* Hero */}
-        <section className="kc-faq__hero">
+        {/* HERO (same grid style as other pages) */}
+        <section className="kc-faq__hero" aria-label="FAQ hero">
           <div className="kc-faq__heroInner">
-            {/* NEW PILL (pricing-style) */}
-            <div className="kc-pill kc-faq__pill" aria-label="FAQ page label">
-              Help centre
-            </div>
+            <div className="kc-faq__heroGrid">
+              <div className="kc-pill kc-faq__pill" aria-label="FAQ page label">
+                Help centre
+              </div>
 
-            <h1 className="h2 kc-faq__title">Frequently Asked Questions</h1>
+              <h1 className="h2 kc-faq__title">
+                Frequently <span className="kc-faq__accent">Asked</span> Questions
+              </h1>
 
-            <p className="body-s kc-faq__subtitle">
-              Everything you need to know before getting started with KonarCard.
-            </p>
+              <p className="body-s kc-faq__subtitle">
+                Everything you need to know before getting started with KonarCard.
+              </p>
 
-            <div className="kc-faq__tabs" role="tablist" aria-label="FAQ categories">
-              {tabs.map((t) => {
-                const isActive = t.key === activeTab;
+              <div className="kc-faq__tabs" role="tablist" aria-label="FAQ categories">
+                {tabs.map((t) => {
+                  const isActive = t.key === activeTab;
 
-                return (
-                  <button
-                    key={t.key}
-                    type="button"
-                    className={`kc-faq__tab pill ${isActive ? "is-active" : ""}`}
-                    onClick={() => {
-                      setActiveTab(t.key);
-                      setOpenIndex(0);
-                    }}
-                    role="tab"
-                    aria-selected={isActive}
-                  >
-                    {t.label}
-                  </button>
-                );
-              })}
+                  return (
+                    <button
+                      key={t.key}
+                      type="button"
+                      className={`kc-faq__tab pill ${isActive ? "is-active" : ""}`}
+                      onClick={() => {
+                        setActiveTab(t.key);
+                        setOpenIndex(0);
+                      }}
+                      role="tab"
+                      aria-selected={isActive}
+                    >
+                      {t.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </section>
@@ -213,15 +216,15 @@ export default function FAQPage() {
           </div>
         </section>
 
-        {/* Still need help */}
+        {/* Still need help (WHITE background) */}
         <section className="kc-faq__help">
           <h2 className="h3 kc-faq__helpTitle">Still need help?</h2>
           <p className="body-s kc-faq__helpSub">
             If you can’t find what you’re looking for, our team is here to help.
           </p>
 
-          {/* Updated CTA (fonts.css button system) */}
-          <button type="button" onClick={openLiveChat} className="kx-btn kx-btn--orange kc-faq__helpCta">
+          {/* ✅ Black CTA (same as examples page CTA style) */}
+          <button type="button" onClick={openLiveChat} className="kx-btn kx-btn--black kc-faq__helpCta">
             Start Live Chat
           </button>
         </section>

@@ -1,7 +1,7 @@
 /* =========================================================
-   REVIEWS — improved card layout + mobile breathing room
+   REVIEWS — hero grid backdrop + grey pills + CTA
    - Cal Sans always 500
-   - Orange accents only
+   - Hero grid wraps BOTH top cards and fades oval (not a rectangle)
    ========================================================= */
 
 .kc-rev {
@@ -30,20 +30,103 @@
    ========================= */
 .kc-rev__hero {
     padding: 26px 0 18px;
+    position: relative;
+    overflow: clip;
+}
+
+@supports not (overflow: clip) {
+    .kc-rev__hero {
+        overflow: hidden;
+    }
+}
+
+/* Wrapper that owns the grid (bigger than the two cards) */
+.kc-rev__heroGridWrap {
+    position: relative;
+    width: 100%;
+    padding: 10px 0;
+    /* breathing room so grid never overlaps cards */
+    z-index: 1;
+}
+
+/* Grid backdrop (bigger + visible on sides + oval fade) */
+.kc-rev__heroGridWrap::before {
+    content: "";
+    position: absolute;
+    inset: -66px -110px -66px;
+    /* bigger than the cards + visible on sides */
+    pointer-events: none;
+    z-index: 0;
+
+    background-image:
+        linear-gradient(to right, rgba(12, 24, 48, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(12, 24, 48, 0.06) 1px, transparent 1px);
+    background-size: 64px 64px;
+
+    -webkit-mask-image: radial-gradient(ellipse at center,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 1) 46%,
+            rgba(0, 0, 0, 0.55) 62%,
+            rgba(0, 0, 0, 0.18) 74%,
+            rgba(0, 0, 0, 0) 88%);
+    mask-image: radial-gradient(ellipse at center,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 1) 46%,
+            rgba(0, 0, 0, 0.55) 62%,
+            rgba(0, 0, 0, 0.18) 74%,
+            rgba(0, 0, 0, 0) 88%);
+}
+
+/* Soft white dissolve so it never looks like a hard rectangle */
+.kc-rev__heroGridWrap::after {
+    content: "";
+    position: absolute;
+    inset: -66px -110px -66px;
+    pointer-events: none;
+    z-index: 0;
+
+    background:
+        radial-gradient(ellipse at center, rgba(255, 255, 255, 0) 42%, #fff 92%),
+        linear-gradient(to bottom,
+            #fff 0%,
+            rgba(255, 255, 255, 0) 18%,
+            rgba(255, 255, 255, 0) 82%,
+            #fff 100%);
 }
 
 .kc-rev__heroGrid {
+    position: relative;
+    z-index: 1;
+
     display: grid;
     grid-template-columns: 1.25fr 0.75fr;
     gap: 18px;
-    align-items: start;
+
+    /* ✅ make both cards same height */
+    align-items: stretch;
 }
 
+/* Left hero card */
 .kc-rev__heroCopy {
     border: 1px solid var(--kc-border);
     border-radius: 18px;
     background: #ffffff;
     padding: 18px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* Right summary card */
+.kc-rev__summary {
+    border: 1px solid var(--kc-border);
+    border-radius: 18px;
+    background: #ffffff;
+    padding: 18px;
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .kc-rev__kicker {
@@ -93,8 +176,8 @@
     margin-top: 12px;
 }
 
-/* Orange pill styling inside this page */
-.kc-rev .pill {
+/* Keep these chips as the existing soft/orange highlight */
+.kc-rev__chips .pill {
     border: 1px solid rgba(249, 115, 22, 0.28);
     background: rgba(249, 115, 22, 0.08);
     color: var(--kc-accent-primary);
@@ -103,13 +186,6 @@
 /* =========================
    SUMMARY
    ========================= */
-.kc-rev__summary {
-    border: 1px solid var(--kc-border);
-    border-radius: 18px;
-    background: #ffffff;
-    padding: 18px;
-}
-
 .kc-rev__summaryTop {
     padding-bottom: 12px;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
@@ -177,6 +253,11 @@
     color: var(--kc-text-secondary);
 }
 
+/* Push CTA area up if needed */
+.kc-rev__summary {
+    justify-content: flex-start;
+}
+
 /* =========================
    STARS
    ========================= */
@@ -207,7 +288,6 @@
    ========================= */
 .kc-rev__list {
     padding: 12px 0 120px;
-    /* more space before footer */
 }
 
 .kc-rev__grid {
@@ -217,7 +297,7 @@
 }
 
 /* =========================
-   CARD (improved layout)
+   CARD
    ========================= */
 .kc-rev__card {
     border: 1px solid var(--kc-border);
@@ -234,7 +314,6 @@
     transform: translateY(-1px);
 }
 
-/* ✅ Better header layout: grid instead of tight flex */
 .kc-rev__cardHeader {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -265,19 +344,27 @@
 .kc-rev__nameLine {
     margin: 0;
     display: flex;
-    flex-wrap: wrap;
     align-items: baseline;
     gap: 6px;
     line-height: 1.25;
+    min-width: 0;
 }
 
 .kc-rev__name {
     color: var(--kc-text-primary);
+    flex: 0 0 auto;
 }
 
 .kc-rev__trade {
     color: var(--kc-text-secondary);
     font-weight: 400;
+
+    /* ✅ do NOT wrap */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    max-width: 170px;
 }
 
 .kc-rev__metaLine {
@@ -290,7 +377,7 @@
     color: rgba(15, 23, 42, 0.35);
 }
 
-/* Rating block is now cleaner */
+/* Rating */
 .kc-rev__rating {
     display: inline-flex;
     align-items: center;
@@ -311,10 +398,51 @@
     gap: 6px;
 }
 
+/* ✅ Grey pills for reviews (NOT orange) */
+.kc-rev__pill {
+    border-radius: 999px;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+}
+
+/* plan = normal grey */
+.kc-rev__pill--plan {
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    color: rgba(15, 23, 42, 0.72);
+}
+
+/* product = slightly darker */
+.kc-rev__pill--product {
+    background: rgba(15, 23, 42, 0.07);
+    border: 1px solid rgba(15, 23, 42, 0.18);
+    color: rgba(15, 23, 42, 0.82);
+}
+
 /* review text */
 .kc-rev__text {
     margin: 0;
     line-height: 1.75;
+}
+
+/* =========================
+   CTA (bottom)
+   ========================= */
+.kc-rev__cta {
+    margin-top: 18px;
+    display: grid;
+    gap: 10px;
+    justify-items: center;
+}
+
+.kc-rev__ctaText {
+    margin: 0;
+    color: rgba(15, 23, 42, 0.70);
+    text-align: center;
+}
+
+.kc-rev__ctaBtn {
+    min-width: 280px;
 }
 
 /* =========================
@@ -329,8 +457,10 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .kc-rev__list {
-        padding-bottom: 130px;
+    /* tighten grid inset on smaller screens */
+    .kc-rev__heroGridWrap::before,
+    .kc-rev__heroGridWrap::after {
+        inset: -54px -34px -58px;
     }
 }
 
@@ -340,12 +470,6 @@
         gap: 12px;
     }
 
-    .kc-rev__card {
-        padding: 16px;
-        gap: 12px;
-    }
-
-    /* ✅ Mobile: stack rating under the name/meta for breathing room */
     .kc-rev__cardHeader {
         grid-template-columns: 1fr;
         gap: 10px;
@@ -369,7 +493,13 @@
         line-height: 1.8;
     }
 
-    .kc-rev__list {
-        padding-bottom: 150px;
+    .kc-rev__ctaBtn {
+        width: 100%;
+        max-width: 360px;
+    }
+
+    /* allow a bit more truncation room on mobile */
+    .kc-rev__trade {
+        max-width: 140px;
     }
 }

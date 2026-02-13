@@ -136,7 +136,6 @@
    ========================= */
 .kc-footer__heroCta {
     margin-top: 18px;
-    min-width: 190px;
     /* ✅ IMPORTANT: no border-radius override, no border override, no background override */
     /* Let .kx-btn + .kx-btn--white handle ALL visuals so it matches homepage FAQ buttons */
 }

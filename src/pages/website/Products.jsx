@@ -11,10 +11,18 @@ import "../../styling/fonts.css";
 /* Page CSS */
 import "../../styling/products.css";
 
-/* ✅ Product images (from src/assets/images/) */
+/* ✅ Product images */
 import PlasticCardImg from "../../assets/images/PlasticCard.jpg";
 import MetalCardImg from "../../assets/images/MetalCard.jpg";
 import KonarTagImg from "../../assets/images/KonarTag.jpg";
+
+/* ✅ Real world icons (your new Icons8 SVGs already in /assets/icons/) */
+import OnSiteIcon from "../../assets/icons/OnSite.svg";
+import AfterQuoteIcon from "../../assets/icons/AfterQuote.svg";
+import TradeCounterIcon from "../../assets/icons/TradeCounter.svg";
+import VanQRIcon from "../../assets/icons/VanQR.svg";
+import LinkInSocialIcon from "../../assets/icons/LinkInSocial.svg";
+import UpdateSecondsIcon from "../../assets/icons/UpdateSeconds.svg";
 
 export default function Products() {
     const products = useMemo(
@@ -25,7 +33,6 @@ export default function Products() {
                 desc: "Durable, lightweight NFC business card for everyday use.",
                 price: "£29.99",
                 to: "/products/plastic-card",
-                cta: "View Plastic Card",
                 img: PlasticCardImg,
             },
             {
@@ -34,7 +41,6 @@ export default function Products() {
                 desc: "Premium metal NFC card designed to make a strong first impression.",
                 price: "£44.99",
                 to: "/products/metal-card",
-                cta: "View Metal Card",
                 img: MetalCardImg,
             },
             {
@@ -43,7 +49,6 @@ export default function Products() {
                 desc: "Compact NFC key tag that shares your profile with a tap.",
                 price: "£9.99",
                 to: "/products/konartag",
-                cta: "View KonarTag",
                 img: KonarTagImg,
             },
         ],
@@ -55,22 +60,28 @@ export default function Products() {
             {
                 tag: "Best value",
                 name: "Plastic Bundle",
-                desc: "Plastic KonarCard + KonarTag + 1 month subscription.",
+                desc: "A complete starter setup for sharing your profile everywhere.",
                 price: "£39.99",
                 was: "£49.97",
                 to: "/products/plastic-bundle",
-                cta: "View Plastic Bundle",
-                img: PlasticCardImg,
+                cardLabel: "KonarCard",
+                tagLabel: "KonarTag",
+                subLabel: "Subscription",
+                imgCard: PlasticCardImg,
+                imgTag: KonarTagImg,
             },
             {
                 tag: "Premium bundle",
                 name: "Metal Bundle",
-                desc: "Metal KonarCard + KonarTag + 1 month subscription.",
+                desc: "Premium setup designed to make a stronger first impression.",
                 price: "£54.99",
                 was: "£69.97",
                 to: "/products/metal-bundle",
-                cta: "View Metal Bundle",
-                img: MetalCardImg,
+                cardLabel: "KonarCard",
+                tagLabel: "KonarTag",
+                subLabel: "Subscription",
+                imgCard: MetalCardImg,
+                imgTag: KonarTagImg,
             },
         ],
         []
@@ -79,18 +90,14 @@ export default function Products() {
     const realWorldTop = useMemo(
         () => [
             {
-                tag: "Use it on-site",
+                pill: "Use it on-site",
                 title: "Tap to swap details on the spot",
-                points: ["Tap to open your profile instantly", "Works even when you’re busy on a job", "No app needed — just tap or scan"],
+                points: ["Tap to open your profile instantly", "Works even when you’re busy on a job", "No app needed, just tap or scan"],
             },
             {
-                tag: "Win more jobs",
+                pill: "Win more jobs",
                 title: "Turn taps into customers",
-                points: [
-                    "Create a clean, trustworthy profile",
-                    "Show photos, services, reviews and contact buttons",
-                    "Faster follow-ups and fewer missed calls",
-                ],
+                points: ["Create a clean, trustworthy profile", "Show photos, services, reviews and contact buttons", "Faster follow-ups and fewer missed calls"],
             },
         ],
         []
@@ -99,28 +106,40 @@ export default function Products() {
     const realWorldGrid = useMemo(
         () => [
             {
+                icon: OnSiteIcon,
+                alt: "On-site icon",
                 title: "On site, with a client",
-                desc: "Tap your KonarCard. Their phone opens your profile and saves your details instantly — no typing.",
+                desc: "Tap your KonarCard. Their phone opens your profile and saves your details instantly, no typing.",
             },
             {
+                icon: AfterQuoteIcon,
+                alt: "After quote icon",
                 title: "After a quote",
-                desc: "Send your link by WhatsApp so they can review your work, services and reviews while deciding.",
+                desc: "Send your link by WhatsApp so they can review your work and contact you fast.",
             },
             {
+                icon: TradeCounterIcon,
+                alt: "Trade counter icon",
                 title: "Networking / trade counter",
-                desc: "No stacks of cards. Tap to share your details as many times as you want.",
+                desc: "Tap to share your details as many times as you want, no stacks of cards.",
             },
             {
+                icon: VanQRIcon,
+                alt: "Van QR icon",
                 title: "Van QR & site boards",
-                desc: "Stick the QR on your van or signage so customers can scan and call you straight away.",
+                desc: "Add the QR to your van or signage so customers can scan and call straight away.",
             },
             {
+                icon: LinkInSocialIcon,
+                alt: "Link in social icon",
                 title: "Social & link in bio",
-                desc: "Add your KonarCard link to Instagram, Facebook or TikTok so new leads land on your profile.",
+                desc: "Add your KonarCard link to socials so new leads land on your profile first.",
             },
             {
+                icon: UpdateSecondsIcon,
+                alt: "Update icon",
                 title: "Updates in seconds",
-                desc: "New number, new prices, new photos — update once and it’s live everywhere instantly.",
+                desc: "Update once and it’s live everywhere instantly, new number, prices, photos or services.",
             },
         ],
         []
@@ -130,12 +149,12 @@ export default function Products() {
         () => [
             {
                 q: "Will it work on iPhone and Android?",
-                a: "Yes — KonarCard works on iPhone and Android. Most modern phones support NFC. QR works on any phone with a camera.",
+                a: "Yes. KonarCard works on iPhone and Android. Most modern phones support NFC. QR works on any phone with a camera.",
             },
             { q: "Do customers need an app to tap my card?", a: "No app needed. The tap opens your KonarCard profile instantly in their browser." },
-            { q: "Can I update my details after ordering?", a: "Yes. Update your profile anytime — changes go live instantly without reprinting anything." },
+            { q: "Can I update my details after ordering?", a: "Yes. Update your profile anytime, changes go live instantly without reprinting anything." },
             { q: "What if someone’s phone doesn’t support NFC?", a: "Every card includes a QR code backup, so anyone can scan and view your profile." },
-            { q: "Can I use one profile on multiple products?", a: "Yes — your card and keytag can link to the same KonarCard profile." },
+            { q: "Can I use one profile on multiple products?", a: "Yes. Your card and keytag can link to the same KonarCard profile." },
         ],
         []
     );
@@ -150,17 +169,15 @@ export default function Products() {
                 {/* HERO */}
                 <section className="kp-hero">
                     <div className="kp-container kp-hero__inner">
-                        {/* ✅ grid background wrapper (confined to hero) */}
                         <div className="kp-heroCopyGrid">
                             <p className="kc-pill kp-heroPill">Cards that link directly to your KonarCard profile</p>
 
-                            {/* ✅ longer title + Konar in orange (font-size unchanged) */}
                             <h1 className="h2 kp-title">
                                 Shop the <span className="kp-accent">Konar</span> product range
                             </h1>
 
                             <p className="body-s kp-sub">
-                                Physical NFC business cards that open your profile instantly — so customers can save your details and contact you fast.
+                                Physical NFC business cards that open your profile instantly, so customers can save your details and contact you fast.
                             </p>
                         </div>
                     </div>
@@ -169,9 +186,9 @@ export default function Products() {
                 {/* PRODUCTS */}
                 <section className="kp-section kp-section--cards">
                     <div className="kp-container">
-                        <div className="kp-grid">
+                        <div className="kp-grid" role="list" aria-label="KonarCard products">
                             {products.map((item) => (
-                                <article key={item.name} className="kp-card">
+                                <article key={item.name} className="kp-card" role="listitem">
                                     <div className="kp-media" aria-hidden="true">
                                         <span className="kp-mediaPill" aria-label={item.tag}>
                                             {item.tag}
@@ -193,7 +210,7 @@ export default function Products() {
                                             </div>
 
                                             <div className="kp-actions">
-                                                <Link to={item.to} className="kx-btn kx-btn--orange kp-btn">
+                                                <Link to={item.to} className="kx-btn kx-btn--orange kp-btn" aria-label={`View ${item.name}`}>
                                                     View product
                                                 </Link>
                                             </div>
@@ -207,39 +224,72 @@ export default function Products() {
                     </div>
                 </section>
 
-                {/* BUNDLES (leave as-is for now; we’ll style later) */}
-                <section className="kp-section kp-section--spaced">
+                {/* BUNDLES */}
+                <section className="kp-bundlesSection">
                     <div className="kp-container">
-                        <div className="kp-sectionHead">
-                            <h2 className="h3 kp-h2">Save More With KonarCard Bundles</h2>
-                            <p className="body-s kp-sectionSub">Everything you need to share your profile everywhere — at a better price.</p>
-                        </div>
+                        <header className="kp-sectionHead">
+                            <p className="kc-pill kp-kicker">Bundles</p>
+                            <h2 className="h3 kp-h2">
+                                Save More With KonarCard <span className="kp-accent">Bundles</span>
+                            </h2>
+                            <p className="body-s kp-sectionSub">Each bundle includes a card, a KonarTag, and 12 months subscription.</p>
+                        </header>
 
-                        <div className="kp-bundles">
+                        <div className="kp-bundleList" role="list" aria-label="KonarCard bundles">
                             {bundles.map((b) => (
-                                <article key={b.name} className="kp-card">
-                                    <div className="kp-card__topRow">
-                                        <span className="kp-pill">{b.tag}</span>
-                                    </div>
+                                <article key={b.name} className="kp-bundleCard" role="listitem">
+                                    <div className="kp-bundleLeft">
+                                        <span className="kp-softPill" aria-label={b.tag}>
+                                            {b.tag}
+                                        </span>
 
-                                    <div className="kp-media" aria-hidden="true">
-                                        <img src={b.img} alt="" className="kp-media__img" loading="lazy" />
-                                    </div>
+                                        <h3 className="h6 kp-bundleTitle">{b.name}</h3>
+                                        <p className="body-s kp-bundleDesc">{b.desc}</p>
 
-                                    <div className="kp-card__body">
-                                        <p className="h6 kp-card__name">{b.name}</p>
-                                        <p className="body-s kp-desc">{b.desc}</p>
-
-                                        <div className="kp-bundlePrice">
-                                            <p className="h6 kp-price">{b.price}</p>
-                                            <p className="body-s kp-strike">{b.was}</p>
+                                        <div className="kp-bundlePriceRow">
+                                            <span className="kp-bundlePrice">{b.price}</span>
+                                            <span className="kp-bundleWas">{b.was}</span>
                                         </div>
 
-                                        <div className="kp-actions">
-                                            <Link to={b.to} className="kp-btn">
-                                                {b.cta}
-                                            </Link>
+                                        <Link to={b.to} className="kx-btn kx-btn--orange kp-bundleBtn">
+                                            View bundle
+                                        </Link>
+                                    </div>
+
+                                    <div className="kp-bundleRight" aria-label="Bundle includes">
+                                        <div className="kp-bundleItems">
+                                            <div className="kp-bundleItem">
+                                                <div className="kp-bundleLabel">{b.cardLabel}</div>
+                                                <div className="kp-bundleThumb">
+                                                    <img src={b.imgCard} alt={`${b.name} card`} loading="lazy" />
+                                                </div>
+                                            </div>
+
+                                            <div className="kp-bundlePlus" aria-hidden="true">
+                                                +
+                                            </div>
+
+                                            <div className="kp-bundleItem">
+                                                <div className="kp-bundleLabel">{b.tagLabel}</div>
+                                                <div className="kp-bundleThumb">
+                                                    <img src={b.imgTag} alt={`${b.name} KonarTag`} loading="lazy" />
+                                                </div>
+                                            </div>
+
+                                            <div className="kp-bundlePlus" aria-hidden="true">
+                                                +
+                                            </div>
+
+                                            <div className="kp-bundleItem">
+                                                <div className="kp-bundleLabel">{b.subLabel}</div>
+                                                <div className="kp-bundleThumb kp-bundleSubBox" aria-label="Subscription included">
+                                                    <div className="kp-subTop">12 months</div>
+                                                    <div className="kp-subBottom">INCLUDED</div>
+                                                </div>
+                                            </div>
                                         </div>
+
+                                        <p className="kp-bundleFoot">One setup, share anywhere — tap, scan, or link.</p>
                                     </div>
                                 </article>
                             ))}
@@ -248,21 +298,23 @@ export default function Products() {
                 </section>
 
                 {/* REAL WORLD */}
-                <section className="kp-section kp-section--spaced">
+                <section className="kp-realWorld">
                     <div className="kp-container">
-                        <div className="kp-sectionHead">
-                            <h2 className="h3 kp-h2">How you’ll use it in the real world</h2>
+                        <header className="kp-sectionHead">
+                            <p className="kc-pill kp-kicker">Built for trades</p>
+                            <h2 className="h3 kp-h2">
+                                How you’ll use it in the <span className="kp-accent">real world</span>
+                            </h2>
                             <p className="body-s kp-sectionSub">
-                                Your KonarCard profile puts your work, reviews and contact details in one place — so customers can see you’re legit and
-                                get in touch fast.
+                                Your KonarCard profile puts your work, reviews and contact details in one place, so customers can trust you fast and get in touch quickly.
                             </p>
-                        </div>
+                        </header>
 
-                        <div className="kp-twoUp">
+                        <div className="kp-twoUp" role="list" aria-label="Real world highlights">
                             {realWorldTop.map((box) => (
-                                <div key={box.title} className="kp-miniCard">
-                                    <span className="kp-pill kp-pill--soft">{box.tag}</span>
-                                    <p className="h6 kp-miniCard__title">{box.title}</p>
+                                <article key={box.title} className="kp-highlightCard" role="listitem">
+                                    <span className="kp-softPill kp-softPill--tight">{box.pill}</span>
+                                    <h3 className="h6 kp-highlightTitle">{box.title}</h3>
                                     <ul className="kp-bullets">
                                         {box.points.map((pt) => (
                                             <li key={pt} className="body-s">
@@ -270,18 +322,26 @@ export default function Products() {
                                             </li>
                                         ))}
                                     </ul>
-                                </div>
+                                </article>
                             ))}
                         </div>
 
-                        <div className="kp-realGrid">
+                        <div className="kp-realGrid" role="list" aria-label="Real world examples">
                             {realWorldGrid.map((g) => (
-                                <div key={g.title} className="kp-realCard">
-                                    <div className="kp-miniIcon" aria-hidden="true" />
-                                    <p className="h6 kp-realTitle">{g.title}</p>
-                                    <p className="body-s kp-muted kp-realDesc">{g.desc}</p>
-                                </div>
+                                <article key={g.title} className="kp-realCard" role="listitem">
+                                    <div className="kp-realIconTop" aria-hidden="true">
+                                        <img src={g.icon} alt="" />
+                                    </div>
+                                    <h3 className="h6 kp-realTitle">{g.title}</h3>
+                                    <p className="body-s kp-realDesc">{g.desc}</p>
+                                </article>
                             ))}
+                        </div>
+
+                        <div className="kp-realCta">
+                            <Link to="/examples" className="kx-btn kx-btn--black">
+                                See real profile examples
+                            </Link>
                         </div>
                     </div>
                 </section>
@@ -289,8 +349,11 @@ export default function Products() {
                 {/* FAQ */}
                 <section className="kp-faq">
                     <div className="kp-container kp-faq__inner">
-                        <h2 className="h3 kp-h2">Product FAQs</h2>
-                        <p className="body-s kp-sectionSub">Quick answers before you order.</p>
+                        <header className="kp-faqHead">
+                            <p className="kc-pill kp-kicker">FAQs</p>
+                            <h2 className="h3 kp-h2">Product FAQs</h2>
+                            <p className="body-s kp-sectionSub">Quick answers before you order.</p>
+                        </header>
 
                         <div className="kp-faqList" role="region" aria-label="Product FAQs">
                             {productFaqs.map((item, idx) => {
@@ -313,6 +376,13 @@ export default function Products() {
                                     </div>
                                 );
                             })}
+                        </div>
+
+                        <div className="kp-faqCta">
+                            <p className="body-s kp-faqCtaText">Still got questions? We’re happy to help.</p>
+                            <Link to="/contactus" className="kx-btn kx-btn--black">
+                                Contact support
+                            </Link>
                         </div>
                     </div>
                 </section>

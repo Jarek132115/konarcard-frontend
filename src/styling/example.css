@@ -1,14 +1,15 @@
 /* frontend/src/styling/example.css */
 
 /* =========================================================
-   EXAMPLES PAGE
-   Layout-only styles (tokens/type from fonts.css)
+   EXAMPLES PAGE — match Products hero grid + Home examples cards
    ========================================================= */
 
-/* =========================
-   PAGE SAFETY SPACING
-   (Navbar can be taller than expected; ensure hero never touches it)
-   ========================= */
+.ex-page {
+    background: var(--kc-bg-main);
+    color: var(--kc-text-primary);
+}
+
+/* Keep your existing kc-page spacing behavior */
 .kc-examples.kc-page {
     padding-top: max(var(--kc-page-top-space), 160px);
 }
@@ -19,40 +20,117 @@
     }
 }
 
-/* =========================
-   HERO
-   ========================= */
-.kc-examples__hero {
-    padding: 0 20px 32px;
+.ex-container {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 20px;
+    overflow: visible;
 }
 
-.kc-examples__heroInner {
-    max-width: 980px;
-    margin: 0 auto;
+/* =========================
+   HERO (Products-style grid, NO flat top/bottom edges)
+   ========================= */
+.ex-hero {
+    padding: 0 0 26px;
+    /* ✅ bottom padding so it matches rhythm */
+    position: relative;
+    overflow: clip;
+}
+
+@supports not (overflow: clip) {
+    .ex-hero {
+        overflow: hidden;
+    }
+}
+
+.ex-hero__inner {
     text-align: center;
 }
 
-.kc-examples__title {
+/* Accent word */
+.ex-accent {
+    color: var(--kc-accent-primary);
+}
+
+/* Grid wrapper */
+.ex-heroCopyGrid {
+    position: relative;
+    display: inline-block;
+    width: min(980px, 100%);
+    padding: 18px 18px 14px;
+    z-index: 1;
+}
+
+/* ✅ Rounded fade in ALL directions (no flat top/bottom bands) */
+.ex-heroCopyGrid::before {
+    content: "";
+    position: absolute;
+    inset: -54px -76px -56px;
+    pointer-events: none;
+    z-index: 0;
+
+    background-image:
+        linear-gradient(to right, rgba(12, 24, 48, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(12, 24, 48, 0.06) 1px, transparent 1px);
+    background-size: 64px 64px;
+
+    /* fully rounded mask (prevents flat edges top/bottom) */
+    -webkit-mask-image: radial-gradient(circle at center,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 1) 52%,
+            rgba(0, 0, 0, 0) 86%);
+    mask-image: radial-gradient(circle at center,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 1) 52%,
+            rgba(0, 0, 0, 0) 86%);
+}
+
+/* Soft white fade overlay so grid dissolves naturally */
+.ex-heroCopyGrid::after {
+    content: "";
+    position: absolute;
+    inset: -54px -76px -56px;
+    pointer-events: none;
+    z-index: 0;
+
+    background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0) 40%, #fff 92%),
+        linear-gradient(to bottom, #fff 0%, rgba(255, 255, 255, 0) 18%, rgba(255, 255, 255, 0) 82%, #fff 100%);
+}
+
+/* Content above grid */
+.ex-heroPill,
+.ex-title,
+.ex-sub,
+.ex-tabs {
+    position: relative;
+    z-index: 1;
+}
+
+.ex-heroPill {
+    margin: 0 0 10px;
+}
+
+.ex-title {
     margin: 0 0 8px;
 }
 
-.kc-examples__subtitle {
+.ex-sub {
     margin: 0 auto;
-    max-width: 720px;
+    max-width: 760px;
+    color: var(--kc-text-secondary);
 }
 
-/* =========================
-   TABS (same as FAQ pills)
-   ========================= */
-.kc-examples__tabs {
-    margin-top: 24px;
+/* Tabs (same behavior as your other pill tabs) */
+.ex-tabs {
+    margin-top: 18px;
     display: flex;
     justify-content: center;
     gap: 8px;
     flex-wrap: wrap;
 }
 
-.kc-examples__tab {
+.ex-tab {
     appearance: none;
     background: #ffffff;
     color: var(--kc-text-primary);
@@ -69,47 +147,47 @@
     line-height: 1;
 
     cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease,
-        color 0.15s ease, transform 0.08s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.08s ease;
 }
 
-.kc-examples__tab:hover {
+.ex-tab:hover {
     border-color: rgba(15, 23, 42, 0.48);
 }
 
-.kc-examples__tab:active {
+.ex-tab:active {
     transform: translateY(1px);
 }
 
-.kc-examples__tab:focus-visible {
+.ex-tab:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px var(--kc-focus-ring);
     border-color: rgba(249, 115, 22, 0.65);
 }
 
-.kc-examples__tab.is-active {
+.ex-tab.is-active {
     background: var(--kc-accent-primary);
     border-color: var(--kc-accent-primary);
     color: #ffffff;
 }
 
 /* =========================
-   GRID
+   EXAMPLES GRID (Home examples card style)
    ========================= */
-.kc-examples__gridSection {
-    padding: 0 20px 64px;
+.ex-gridSection {
+    padding: 10px 0 70px;
 }
 
-.kc-examples__grid {
+.ex-grid {
+    width: 100%;
     max-width: 1040px;
     margin: 0 auto;
 
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
+    align-items: stretch;
 }
 
-/* Card shell */
 .ex-card {
     border: 1px solid var(--kc-border);
     background: #ffffff;
@@ -117,6 +195,10 @@
     overflow: hidden;
     box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     transition: transform 0.12s ease, box-shadow 0.12s ease;
+
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
 }
 
 .ex-card:hover {
@@ -124,181 +206,222 @@
     box-shadow: 0 16px 34px rgba(16, 24, 40, 0.1);
 }
 
-/* Square image block */
-.ex-imageWrap {
+/* Share-style 1:1 media */
+.ex-media {
+    position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
-    /* 1:1 */
     background: var(--kc-bg-soft);
-    display: grid;
-    place-items: center;
-    padding: 14px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    overflow: hidden;
 }
 
-.ex-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px;
+.ex-rolePill {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 3;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 800;
+
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: rgba(255, 255, 255, 0.92);
+    color: rgba(15, 23, 42, 0.78);
+
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
 }
 
-/* Text area */
-.ex-cardBody {
+.ex-img {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    object-fit: cover !important;
+    object-position: center center;
+    border-radius: 0;
+}
+
+.ex-body {
     padding: 16px;
+    flex: 1;
 }
 
 .ex-cardTitle {
     margin: 0 0 6px;
+    color: var(--kc-text-primary);
 }
 
 .ex-cardDesc {
     margin: 0;
+    color: var(--kc-text-secondary);
     line-height: 1.55;
+
+    /* ✅ clamp to 2 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    /* ✅ add this */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
 }
 
 /* =========================
-   WHY SECTION
+   WHY SECTION (fafafa + padding matches other sections)
    ========================= */
-.kc-examples__why {
-    padding: 72px 20px 24px;
+.ex-why {
+    background: #fafafa;
+    padding: 80px 0;
+}
+
+@media (max-width: 600px) {
+    .ex-why {
+        padding: 56px 0;
+    }
+}
+
+.ex-whyHead {
     text-align: center;
-}
-
-.kc-examples__whyInner {
-    max-width: 1040px;
-    margin: 0 auto;
-}
-
-.kc-examples__whyTitle {
-    margin: 0 0 8px;
-}
-
-.kc-examples__whySub {
-    margin: 0 auto 24px;
-    max-width: 720px;
-}
-
-.kc-examples__whyGrid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-}
-
-.ex-whyCard {
-    border: 1px solid var(--kc-border);
-    background: #ffffff;
-    border-radius: 14px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
-    padding: 16px;
-    text-align: left;
-}
-
-.ex-whyIcon {
-    width: 22px;
-    height: 22px;
-    margin-bottom: 10px;
+    margin-bottom: 24px;
 }
 
 .ex-whyTitle {
+    margin: 0 0 8px;
+}
+
+.ex-whySub {
+    margin: 0 auto;
+    max-width: 720px;
+    color: var(--kc-text-secondary);
+}
+
+/* ✅ grid */
+.ex-whyGrid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    align-items: stretch;
+}
+
+/* ✅ card padding updated to match your other pages */
+.ex-whyCard {
+    border: 1px solid var(--kc-border);
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+
+    padding: 20px;
+    /* ✅ was smaller before — now matches your “trust/value” cards */
+    text-align: left;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.ex-whyIconWrap {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 12px;
+    display: grid;
+    place-items: center;
+}
+
+.ex-whyIcon {
+    width: 40px;
+    height: 40px;
+    display: block;
+}
+
+.ex-whyCardTitle {
     margin: 0 0 6px;
 }
 
 .ex-whyDesc {
     margin: 0;
+    color: var(--kc-text-secondary);
+    line-height: 1.55;
+
+    /* ✅ keep these ~2 lines and consistent */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    /* ✅ add this */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
 }
 
 /* =========================
-   CTA (orange only)
+   CTA (single black button)
    ========================= */
-.kc-examples__cta {
-    padding: 72px 20px;
+.ex-cta {
+    padding: 76px 0 82px;
     text-align: center;
+    background: #ffffff;
 }
 
-.kc-examples__ctaInner {
+@media (max-width: 600px) {
+    .ex-cta {
+        padding: 56px 0 64px;
+    }
+}
+
+.ex-ctaInner {
     max-width: 980px;
     margin: 0 auto;
 }
 
-.kc-examples__ctaTitle {
+.ex-ctaTitle {
     margin: 0 0 8px;
 }
 
-.kc-examples__ctaSub {
-    margin: 0 auto 24px;
+.ex-ctaSub {
+    margin: 0 auto 22px;
     max-width: 720px;
+    color: var(--kc-text-secondary);
 }
 
-.kc-examples__ctaBtns {
+.ex-ctaBtns {
     display: flex;
-    gap: 10px;
     justify-content: center;
-    flex-wrap: wrap;
-}
-
-.kc-examples__ctaBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 14px 30px;
-    border-radius: 999px;
-
-    background: var(--kc-accent-primary);
-    color: #ffffff;
-
-    text-decoration: none;
-    font-family: "Cal Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.4px;
-
-    box-shadow: var(--kc-shadow-accent);
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
-}
-
-.kc-examples__ctaBtn:hover {
-    filter: brightness(0.98);
-    box-shadow: var(--kc-shadow-accent-hover);
-}
-
-.kc-examples__ctaBtn:active {
-    transform: translateY(1px);
-}
-
-.kc-examples__ctaBtn--ghost {
-    background: #ffffff;
-    color: var(--kc-text-primary);
-    border: 1px solid var(--kc-border);
-    box-shadow: none;
-}
-
-.kc-examples__ctaBtn--ghost:hover {
-    box-shadow: none;
-    filter: none;
 }
 
 /* =========================
    RESPONSIVE
    ========================= */
 @media (max-width: 1100px) {
-    .kc-examples__grid {
-        grid-template-columns: repeat(3, 1fr);
+    .ex-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 900px) {
-    .kc-examples__grid {
-        grid-template-columns: repeat(2, 1fr);
+    .ex-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .kc-examples__whyGrid {
+    .ex-whyGrid {
         grid-template-columns: 1fr;
+    }
+
+    .ex-heroCopyGrid::before,
+    .ex-heroCopyGrid::after {
+        inset: -44px -30px -48px;
     }
 }
 
 @media (max-width: 640px) {
-    .kc-examples__grid {
+    .ex-grid {
         grid-template-columns: 1fr;
     }
 }

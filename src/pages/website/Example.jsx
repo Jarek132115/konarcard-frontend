@@ -1,4 +1,3 @@
-// frontend/src/pages/website/Example.jsx
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -14,10 +13,10 @@ import "../../styling/example.css";
 /* Images */
 import ExampleTest from "../../assets/images/ExampleTest.jpg";
 
-/* Icons */
-import WorksOnEveryPhone from "../../assets/icons/Works_On_Every_Phone.svg";
-import BuiltForRealTrades from "../../assets/icons/Built_For_Real_Trades.svg";
-import OneLinkForEverything from "../../assets/icons/One_Link_For_Everything.svg";
+/* Icons (you said you saved them with these exact names) */
+import WorksOnEveryPhone from "../../assets/icons/WorksOnEveryPhone.svg";
+import BuiltForRealJobs from "../../assets/icons/BuiltForRealJobs.svg";
+import LinkInSocial from "../../assets/icons/LinkInSocial.svg";
 
 export default function Example() {
     const categories = useMemo(
@@ -33,43 +32,44 @@ export default function Example() {
         []
     );
 
+    // ✅ Descriptions tightened so they don’t exceed ~2 lines (also clamped in CSS)
     const examples = useMemo(
         () => [
             // Electrician (4)
-            { id: "el-1", category: "electrician", role: "Electrician", name: "James Carter", desc: "Shares contact details instantly after jobs and quotes." },
-            { id: "el-2", category: "electrician", role: "Electrician", name: "Liam Hughes", desc: "Taps to send a booking link + Google reviews — no paper cards." },
-            { id: "el-3", category: "electrician", role: "Electrician", name: "Aaron Walsh", desc: "Shares services + pricing from his profile on-site." },
-            { id: "el-4", category: "electrician", role: "Electrician", name: "Kai Reynolds", desc: "Uses QR backup so every lead still gets details." },
+            { id: "el-1", category: "electrician", role: "Electrician", name: "James", desc: "Shares contact details instantly after jobs and quotes." },
+            { id: "el-2", category: "electrician", role: "Electrician", name: "Liam", desc: "Sends a booking link and reviews in one quick tap." },
+            { id: "el-3", category: "electrician", role: "Electrician", name: "Aaron", desc: "Shows services and pricing clearly while quoting on-site." },
+            { id: "el-4", category: "electrician", role: "Electrician", name: "Kai", desc: "Uses QR backup so every lead still saves the details." },
 
             // Plumber (4)
-            { id: "pl-1", category: "plumber", role: "Plumber", name: "Ben Thompson", desc: "Shares emergency call-out details and saves contacts fast." },
-            { id: "pl-2", category: "plumber", role: "Plumber", name: "Oliver Price", desc: "Shows before/after photos to build trust on visit one." },
-            { id: "pl-3", category: "plumber", role: "Plumber", name: "Ethan Brooks", desc: "Sends invoice email + WhatsApp link in one tap." },
-            { id: "pl-4", category: "plumber", role: "Plumber", name: "Noah Davies", desc: "Gets referrals at supply stores with a quick tap." },
+            { id: "pl-1", category: "plumber", role: "Plumber", name: "Ben", desc: "Shares emergency call-out details and saves contacts fast." },
+            { id: "pl-2", category: "plumber", role: "Plumber", name: "Oliver", desc: "Shows before/after photos to build trust on visit one." },
+            { id: "pl-3", category: "plumber", role: "Plumber", name: "Ethan", desc: "Shares invoice email and WhatsApp link in one tap." },
+            { id: "pl-4", category: "plumber", role: "Plumber", name: "Noah", desc: "Gets referrals at supply stores with a quick tap share." },
 
             // Builder (4)
-            { id: "bu-1", category: "builder", role: "Builder", name: "Ryan Mitchell", desc: "Shares portfolio + booking link to win higher-value jobs." },
-            { id: "bu-2", category: "builder", role: "Builder", name: "Jack Foster", desc: "Shows services and timeline expectations on the profile." },
-            { id: "bu-3", category: "builder", role: "Builder", name: "Callum Baker", desc: "Uses reviews + gallery to stand out when quoting." },
-            { id: "bu-4", category: "builder", role: "Builder", name: "Mason Clarke", desc: "Shares one link for phone, email, socials and website." },
+            { id: "bu-1", category: "builder", role: "Builder", name: "Ryan", desc: "Shares portfolio and booking link to win higher-value jobs." },
+            { id: "bu-2", category: "builder", role: "Builder", name: "Jack", desc: "Sets clear timelines and services so customers know what to expect." },
+            { id: "bu-3", category: "builder", role: "Builder", name: "Callum", desc: "Uses reviews and gallery to stand out when quoting." },
+            { id: "bu-4", category: "builder", role: "Builder", name: "Mason", desc: "Shares one link for phone, email, socials and website." },
 
             // Renovator (4)
-            { id: "re-1", category: "renovator", role: "Renovator", name: "Daniel Evans", desc: "Shows transformations so customers decide faster." },
-            { id: "re-2", category: "renovator", role: "Renovator", name: "Harvey Scott", desc: "Collects new leads at showrooms with a tap." },
-            { id: "re-3", category: "renovator", role: "Renovator", name: "Theo Morgan", desc: "Shares a quote request form for easy survey booking." },
-            { id: "re-4", category: "renovator", role: "Renovator", name: "Finley Green", desc: "Updates photos weekly — no reprints when branding changes." },
+            { id: "re-1", category: "renovator", role: "Renovator", name: "Daniel", desc: "Shows transformations so customers decide faster with confidence." },
+            { id: "re-2", category: "renovator", role: "Renovator", name: "Harvey", desc: "Collects new leads at showrooms with a fast tap." },
+            { id: "re-3", category: "renovator", role: "Renovator", name: "Theo", desc: "Shares a quote request form for easy survey booking." },
+            { id: "re-4", category: "renovator", role: "Renovator", name: "Finley", desc: "Updates photos weekly so branding stays consistent everywhere." },
 
             // Landscaper (4)
-            { id: "la-1", category: "landscaper", role: "Landscaper", name: "Charlie Turner", desc: "Shares seasonal packages + availability on-site." },
-            { id: "la-2", category: "landscaper", role: "Landscaper", name: "Oscar Reed", desc: "Uses gallery + reviews to secure maintenance clients." },
-            { id: "la-3", category: "landscaper", role: "Landscaper", name: "Alfie King", desc: "Shares Instagram + booking link from one profile." },
-            { id: "la-4", category: "landscaper", role: "Landscaper", name: "Harrison Cox", desc: "Adds QR to quotes so customers follow up instantly." },
+            { id: "la-1", category: "landscaper", role: "Landscaper", name: "Charlie", desc: "Shares seasonal packages and availability while on-site." },
+            { id: "la-2", category: "landscaper", role: "Landscaper", name: "Oscar", desc: "Uses gallery and reviews to secure maintenance clients." },
+            { id: "la-3", category: "landscaper", role: "Landscaper", name: "Alfie", desc: "Shares Instagram and booking link from one clean profile." },
+            { id: "la-4", category: "landscaper", role: "Landscaper", name: "Harrison", desc: "Adds QR to quotes so customers follow up instantly." },
 
             // Handyman (4)
-            { id: "ha-1", category: "handyman", role: "Handyman", name: "George Ward", desc: "Customers can call instantly while he’s on-site." },
-            { id: "ha-2", category: "handyman", role: "Handyman", name: "Leo Phillips", desc: "Perfect for repeat work — always the right details." },
-            { id: "ha-3", category: "handyman", role: "Handyman", name: "Sam Bennett", desc: "Shares services list and pricing so customers know what’s covered." },
-            { id: "ha-4", category: "handyman", role: "Handyman", name: "Alex Parker", desc: "One tap to save contact, view reviews, and message." },
+            { id: "ha-1", category: "handyman", role: "Handyman", name: "George", desc: "Customers can call instantly while he’s still on-site." },
+            { id: "ha-2", category: "handyman", role: "Handyman", name: "Leo", desc: "Perfect for repeat work — always the right details." },
+            { id: "ha-3", category: "handyman", role: "Handyman", name: "Sam", desc: "Shares services and pricing so customers know what’s covered." },
+            { id: "ha-4", category: "handyman", role: "Handyman", name: "Alex", desc: "One tap to save contact, view reviews, and message." },
         ],
         []
     );
@@ -81,109 +81,128 @@ export default function Example() {
         return examples.filter((x) => x.category === active);
     }, [active, examples]);
 
+    // ✅ “Why” section copy made longer so each sits ~2 lines (also clamped)
+    const whyCards = useMemo(
+        () => [
+            {
+                icon: WorksOnEveryPhone,
+                title: "Works on every phone",
+                desc: "Tap or scan and your profile opens instantly — no downloads needed, ever.",
+            },
+            {
+                icon: BuiltForRealJobs,
+                title: "Built for real jobs",
+                desc: "Made for on-site work so customers can trust you quickly and contact you fast.",
+            },
+            {
+                icon: LinkInSocial,
+                title: "One link for everything",
+                desc: "Keep photos, services, reviews and contact buttons together in one place.",
+            },
+        ],
+        []
+    );
+
     return (
         <>
             <Navbar />
 
-            {/* kc-page gives spacing; we also add extra safety padding in CSS */}
-            <main className="kc-examples kc-page">
-                {/* HERO */}
-                <section className="kc-examples__hero">
-                    <div className="kc-examples__heroInner">
-                        <h1 className="h2 kc-examples__title">
-                            See How Other Tradies
-                            <br />
-                            Use KonarCard
-                        </h1>
+            <main className="kc-examples kc-page ex-page">
+                {/* HERO (Products-style grid background) */}
+                <section className="ex-hero" aria-label="Examples hero">
+                    <div className="ex-container ex-hero__inner">
+                        <div className="ex-heroCopyGrid">
+                            <p className="kc-pill ex-heroPill">Real profiles built with KonarCard</p>
 
-                        <p className="body-s kc-examples__subtitle">
-                            Real profiles. Real cards. Real examples of how KonarCard helps win more work.
-                        </p>
+                            <h1 className="h2 ex-title">
+                                See how other <span className="ex-accent">tradies</span> use KonarCard
+                            </h1>
 
-                        <div className="kc-examples__tabs" role="tablist" aria-label="Example categories">
-                            {categories.map((c) => {
-                                const isActive = active === c.key;
-                                return (
-                                    <button
-                                        key={c.key}
-                                        type="button"
-                                        className={`kc-examples__tab pill ${isActive ? "is-active" : ""}`}
-                                        onClick={() => setActive(c.key)}
-                                        role="tab"
-                                        aria-selected={isActive}
-                                    >
-                                        {c.label}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </section>
+                            <p className="body-s ex-sub">
+                                Real profiles. Real cards. Real examples of how a digital business card helps you win more work — shared by NFC tap, QR
+                                code, or link.
+                            </p>
 
-                {/* GRID */}
-                <section className="kc-examples__gridSection" aria-label="Example profiles">
-                    <div className="kc-examples__grid">
-                        {visible.map((item) => (
-                            <article className="ex-card" key={item.id}>
-                                {/* 1:1 image */}
-                                <div className="ex-imageWrap">
-                                    <img src={ExampleTest} alt="" className="ex-image" loading="lazy" />
-                                </div>
-
-                                {/* info underneath */}
-                                <div className="ex-cardBody">
-                                    <p className="h6 ex-cardTitle">
-                                        {item.role} — {item.name.split(" ")[0]}
-                                    </p>
-                                    <p className="body-s ex-cardDesc">{item.desc}</p>
-                                </div>
-                            </article>
-                        ))}
-                    </div>
-                </section>
-
-                {/* WHY */}
-                <section className="kc-examples__why">
-                    <div className="kc-examples__whyInner">
-                        <h2 className="h3 kc-examples__whyTitle">Why This Works For Any Trade</h2>
-                        <p className="body-s kc-examples__whySub">The common reasons tradies get more work with KonarCard.</p>
-
-                        <div className="kc-examples__whyGrid">
-                            <div className="ex-whyCard">
-                                <img src={WorksOnEveryPhone} alt="" className="ex-whyIcon" />
-                                <p className="h6 ex-whyTitle">Works on every phone</p>
-                                <p className="body-s ex-whyDesc">No apps. Just tap or scan.</p>
-                            </div>
-
-                            <div className="ex-whyCard">
-                                <img src={BuiltForRealTrades} alt="" className="ex-whyIcon" />
-                                <p className="h6 ex-whyTitle">Built for real jobs</p>
-                                <p className="body-s ex-whyDesc">Designed for on-site, not offices.</p>
-                            </div>
-
-                            <div className="ex-whyCard">
-                                <img src={OneLinkForEverything} alt="" className="ex-whyIcon" />
-                                <p className="h6 ex-whyTitle">One link for everything</p>
-                                <p className="body-s ex-whyDesc">Details, work, and contact options in one place.</p>
+                            <div className="ex-tabs" role="tablist" aria-label="Example categories">
+                                {categories.map((c) => {
+                                    const isActive = active === c.key;
+                                    return (
+                                        <button
+                                            key={c.key}
+                                            type="button"
+                                            className={`ex-tab pill ${isActive ? "is-active" : ""}`}
+                                            onClick={() => setActive(c.key)}
+                                            role="tab"
+                                            aria-selected={isActive}
+                                        >
+                                            {c.label}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* CTA */}
-                <section className="kc-examples__cta">
-                    <div className="kc-examples__ctaInner">
-                        <h2 className="h3 kc-examples__ctaTitle">Ready to make yours?</h2>
-                        <p className="body-s kc-examples__ctaSub">
+                {/* EXAMPLES GRID (match Home examples cards) */}
+                <section className="ex-gridSection" aria-label="Example profiles">
+                    <div className="ex-container">
+                        <div className="ex-grid">
+                            {visible.map((item) => (
+                                <article className="ex-card" key={item.id}>
+                                    <div className="ex-media" aria-label={`${item.role} example`}>
+                                        <span className="ex-rolePill">{item.role}</span>
+                                        <img src={ExampleTest} alt="" className="ex-img" loading="lazy" decoding="async" />
+                                    </div>
+
+                                    <div className="ex-body">
+                                        <p className="h6 ex-cardTitle">
+                                            {item.role} — {item.name}
+                                        </p>
+                                        <p className="body-s ex-cardDesc">{item.desc}</p>
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* WHY (fafafa background + same spacing/padding style as other sections) */}
+                <section className="ex-why" aria-label="Why this works">
+                    <div className="ex-container">
+                        <header className="ex-whyHead">
+                            <h2 className="h3 ex-whyTitle">
+                                Why This <span className="ex-accent">Works</span> For Any Trade
+                            </h2>
+
+                            <p className="body-s ex-whySub">The common reasons tradies get more work with KonarCard.</p>
+                        </header>
+
+                        <div className="ex-whyGrid" role="list" aria-label="Reasons it works">
+                            {whyCards.map((c) => (
+                                <article className="ex-whyCard" key={c.title} role="listitem">
+                                    <div className="ex-whyIconWrap" aria-hidden="true">
+                                        <img src={c.icon} alt="" className="ex-whyIcon" />
+                                    </div>
+                                    <p className="h6 ex-whyCardTitle">{c.title}</p>
+                                    <p className="body-s ex-whyDesc">{c.desc}</p>
+                                </article>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* CTA (single black button) */}
+                <section className="ex-cta" aria-label="Claim your link call to action">
+                    <div className="ex-container ex-ctaInner">
+                        <h2 className="h3 ex-ctaTitle">Ready to make yours?</h2>
+                        <p className="body-s ex-ctaSub">
                             Claim your KonarCard link, build your profile, then choose a card or keytag when you’re ready.
                         </p>
 
-                        <div className="kc-examples__ctaBtns">
-                            <Link to="/claimyourlink" className="kc-examples__ctaBtn">
+                        <div className="ex-ctaBtns">
+                            <Link to="/claimyourlink" className="kx-btn kx-btn--black">
                                 Claim your link
-                            </Link>
-                            <Link to="/productandplan/konarcard" className="kc-examples__ctaBtn kc-examples__ctaBtn--ghost">
-                                Shop cards
                             </Link>
                         </div>
                     </div>
