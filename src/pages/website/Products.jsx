@@ -150,11 +150,19 @@ export default function Products() {
                 {/* HERO */}
                 <section className="kp-hero">
                     <div className="kp-container kp-hero__inner">
-                        <p className="kp-kicker">Cards that link directly to your KonarCard profile</p>
-                        <h1 className="h2 kp-title">Shop KonarCards</h1>
-                        <p className="body-s kp-sub">
-                            Physical NFC business cards that open your profile instantly — so customers can save your details and contact you fast.
-                        </p>
+                        {/* ✅ grid background wrapper (confined to hero) */}
+                        <div className="kp-heroCopyGrid">
+                            <p className="kc-pill kp-heroPill">Cards that link directly to your KonarCard profile</p>
+
+                            {/* ✅ longer title + Konar in orange (font-size unchanged) */}
+                            <h1 className="h2 kp-title">
+                                Shop the <span className="kp-accent">Konar</span> product range
+                            </h1>
+
+                            <p className="body-s kp-sub">
+                                Physical NFC business cards that open your profile instantly — so customers can save your details and contact you fast.
+                            </p>
+                        </div>
                     </div>
                 </section>
 
@@ -164,36 +172,42 @@ export default function Products() {
                         <div className="kp-grid">
                             {products.map((item) => (
                                 <article key={item.name} className="kp-card">
-                                    <div className="kp-card__topRow">
-                                        <span className="kp-pill">{item.tag}</span>
-                                    </div>
-
                                     <div className="kp-media" aria-hidden="true">
+                                        <span className="kp-mediaPill" aria-label={item.tag}>
+                                            {item.tag}
+                                        </span>
                                         <img src={item.img} alt="" className="kp-media__img" loading="lazy" />
                                     </div>
 
-                                    {/* ✅ Only: name + desc + price (removed the extra line under price) */}
-                                    <div className="kp-card__body">
-                                        <p className="h6 kp-card__name">{item.name}</p>
-                                        <p className="body-s kp-desc">{item.desc}</p>
+                                    <div className="kp-divider" aria-hidden="true" />
 
-                                        <div className="kp-priceRow">
-                                            <p className="h6 kp-price">{item.price}</p>
+                                    <div className="kp-card__body">
+                                        <div className="kp-topCopy">
+                                            <p className="h6 kp-card__name">{item.name}</p>
+                                            <p className="body-s kp-desc">{item.desc}</p>
                                         </div>
 
-                                        <div className="kp-actions">
-                                            <Link to={item.to} className="kp-btn">
-                                                {item.cta}
-                                            </Link>
+                                        <div className="kp-buy">
+                                            <div className="kp-priceRow">
+                                                <p className="kp-price">{item.price}</p>
+                                            </div>
+
+                                            <div className="kp-actions">
+                                                <Link to={item.to} className="kx-btn kx-btn--orange kp-btn">
+                                                    View product
+                                                </Link>
+                                            </div>
                                         </div>
                                     </div>
                                 </article>
                             ))}
                         </div>
+
+                        <p className="kp-note">One-time card purchase — profiles are free to start.</p>
                     </div>
                 </section>
 
-                {/* BUNDLES */}
+                {/* BUNDLES (leave as-is for now; we’ll style later) */}
                 <section className="kp-section kp-section--spaced">
                     <div className="kp-container">
                         <div className="kp-sectionHead">

@@ -11,6 +11,15 @@ import UP6 from "../../assets/images/UP6.jpg";
 import UP7 from "../../assets/images/UP7.jpg";
 import UP8 from "../../assets/images/UP8.jpg";
 
+/* ✅ Correct logo images (green in VSCode) */
+import Logo1 from "../../assets/images/CarouselImage1.png";
+import Logo2 from "../../assets/images/CarouselImage2.png";
+import Logo3 from "../../assets/images/CarouselImage3.png";
+import Logo4 from "../../assets/images/CarouselImage4.png";
+import Logo5 from "../../assets/images/CarouselImage5.png";
+import Logo6 from "../../assets/images/CarouselImage6.png";
+import Logo7 from "../../assets/images/CarouselImage7.png";
+
 /* CSS */
 import "../../styling/home/hero.css";
 
@@ -29,16 +38,16 @@ export default function Hero() {
         []
     );
 
+    // ✅ 7 real logos (4 first row + 3 second row)
     const logos = useMemo(
         () => [
-            { label: "Oakridge\nPlumbing", variant: "serif" },
-            { label: "BRIGHTSPARK\nELECTRICAL", variant: "caps" },
-            { label: "Northline\nRoofing Co.", variant: "mono" },
-            { label: "Stone & Steel\nRenovations", variant: "wide" },
-            { label: "Greenway\nLandscapes", variant: "script" },
-            { label: "Harbourview\nKitchens", variant: "clean" },
-            { label: "ProFix\nProperty Care", variant: "bold" },
-            { label: "BluePeak\nBuilders", variant: "slab" },
+            { src: Logo1, alt: "Customer logo 1" },
+            { src: Logo2, alt: "Customer logo 2" },
+            { src: Logo3, alt: "Customer logo 3" },
+            { src: Logo4, alt: "Customer logo 4" },
+            { src: Logo5, alt: "Customer logo 5" },
+            { src: Logo6, alt: "Customer logo 6" },
+            { src: Logo7, alt: "Customer logo 7" },
         ],
         []
     );
@@ -244,28 +253,28 @@ export default function Hero() {
             <div className="kc-homeHero__inner">
                 <div className="kc-homeHero__copyGrid">
                     <div className="kc-homeHero__badge">
-                        Built for UK businesses — tap, share, update anytime
+                        Built for UK businesses, tap, share, update anytime
                     </div>
 
                     <h1 className="kc-homeHero__title">
-                        Digital Business Card
+                        Digital <span className="kc-homeHero__accent">Business Card</span>
                         <br />
                         That Works Instantly
                     </h1>
 
                     <p className="kc-homeHero__sub">
-                        Share your details with an NFC business card, QR code, or link — no app needed.
+                        Share your details with an NFC business card, QR code, or link. No app needed.
                         <br />
                         Update your digital business card anytime in seconds.
                     </p>
 
                     <div className="kc-homeHero__ctaRow">
-                        <Link to="/products" className="kc-homeHero__btn kc-homeHero__btn--primary">
-                            Shop NFC Cards
+                        <Link to="/register" className="kx-btn kx-btn--orange kc-homeHero__ctaBtn">
+                            Claim Your Link
                         </Link>
 
-                        <Link to="/register" className="kc-homeHero__btn kc-homeHero__btn--ghost">
-                            Create Your Digital Card
+                        <Link to="/pricing" className="kx-btn kx-btn--white kc-homeHero__ctaBtn">
+                            View Pricing
                         </Link>
                     </div>
                 </div>
@@ -303,12 +312,17 @@ export default function Hero() {
                         </div>
                     </div>
 
+                    {/* ✅ Real logo images */}
                     <div className="kc-homeHero__logoGrid" aria-label="Trusted by UK businesses">
                         {logos.map((l, idx) => (
-                            <div key={idx} className={`kc-homeHero__logo kc-homeHero__logo--${l.variant}`}>
-                                {l.label.split("\n").map((line, li) => (
-                                    <div key={li}>{line}</div>
-                                ))}
+                            <div key={idx} className="kc-homeHero__logoImgWrap">
+                                <img
+                                    src={l.src}
+                                    alt={l.alt}
+                                    className="kc-homeHero__logoImg"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
                             </div>
                         ))}
                     </div>

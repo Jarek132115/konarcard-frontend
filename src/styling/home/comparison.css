@@ -1,17 +1,17 @@
 /* =========================================================
    HOME — PAPER vs KONAR COMPARISON
-   File: frontend/src/styling/home/comparison.css
+   Clean, premium, tight spacing system (12px rhythm)
    ========================================================= */
 
 .kc-comp {
     background: #fafafa;
     color: var(--kc-text-primary);
-    padding: 80px 0;
+    padding: 96px 0;
 }
 
 @media (max-width: 600px) {
     .kc-comp {
-        padding: 56px 0;
+        padding: 64px 0;
     }
 }
 
@@ -21,250 +21,207 @@
     padding: 0 20px;
 }
 
-/* =========================
+/* =========================================================
    SECTION HEADER
-   ========================= */
+   ========================================================= */
+
 .kc-comp__header {
     text-align: center;
-    margin-bottom: 18px;
+    margin-bottom: 32px;
 }
 
 .kc-comp__kicker {
-    margin: 0 0 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 12px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.62);
-    background: #fff;
-    border: 1px solid var(--kc-border);
-    padding: 8px 12px;
-    border-radius: 999px;
+    margin-bottom: 12px;
 }
 
 .kc-comp__title {
-    margin: 0 0 8px;
+    margin: 0 0 12px;
+}
+
+.kc-comp__accent {
+    color: var(--kc-accent-primary);
 }
 
 .kc-comp__sub {
     margin: 0 auto;
-    max-width: 760px;
+    max-width: 720px;
     color: var(--kc-text-secondary);
 }
 
-/* =========================
+/* =========================================================
    GRID
-   ========================= */
+   ========================================================= */
+
 .kc-comp__grid {
-    margin-top: 18px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 18px;
+    gap: 24px;
     align-items: stretch;
 }
 
-/* =========================
+/* =========================================================
    CARD BASE
-   ========================= */
+   ========================================================= */
+
 .kc-comp__card {
-    border-radius: 16px;
-    overflow: hidden;
-    padding: 22px;
+    border-radius: 18px;
+    padding: 28px;
     display: flex;
     flex-direction: column;
-
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
-/* Left: Orange card */
+/* ---------- Konar (Orange) ---------- */
+
 .kc-comp__card--good {
     background: var(--kc-accent-primary);
-    border: 1px solid rgba(0, 0, 0, 0.04);
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.08);
     color: #ffffff;
+    box-shadow: 0 16px 40px rgba(16, 24, 40, 0.10);
 }
 
-.kc-comp__card--good:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 34px rgba(16, 24, 40, 0.12);
-}
+/* ---------- Paper (White) ---------- */
 
-/* Right: White card */
 .kc-comp__card--bad {
     background: #ffffff;
     border: 1px solid var(--kc-border);
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
-    color: rgba(15, 23, 42, 0.95);
+    box-shadow: 0 16px 40px rgba(16, 24, 40, 0.06);
 }
 
-.kc-comp__card--bad:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 34px rgba(16, 24, 40, 0.10);
-}
+/* =========================================================
+   CARD HEADER SPACING SYSTEM
+   Title → 4px → Sub → 12px → Divider
+   ========================================================= */
 
-/* =========================
-   CARD HEAD (spacing rules)
-   - title -> hint: 4px
-   - hint -> line: 8px (via padding-bottom)
-   ========================= */
 .kc-comp__cardHead {
-    padding-bottom: 8px;
-    /* ✅ 8px gap to the line */
-    margin-bottom: 0;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.10);
+    padding-bottom: 12px;
+    /* 12px to divider */
+    border-bottom: 1px solid rgba(15, 23, 42, 0.12);
 }
 
 .kc-comp__card--good .kc-comp__cardHead {
-    border-bottom-color: rgba(255, 255, 255, 0.22);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .kc-comp__cardTitle {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
     font-family: "Cal Sans", sans-serif;
+    font-size: 22px;
     font-weight: 500;
-    font-size: 20px;
     line-height: 1.2;
-    letter-spacing: -0.02em;
-}
-
-.kc-comp__card--good .kc-comp__cardTitle {
-    color: #ffffff;
+    margin: 0;
 }
 
 .kc-comp__card--bad .kc-comp__cardTitle {
-    color: rgba(15, 23, 42, 0.95);
+    color: var(--kc-text-primary);
 }
 
-/* ✅ 4px gap from title */
+/* 🔥 NO bottom spacing on subheading */
 .kc-comp__hint {
-    margin-top: 4px;
-    /* ✅ requested */
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
+    margin: 4px 0 0 0;
+    /* only 4px from title */
+    font-size: 15px;
     line-height: 1.5;
 }
 
 .kc-comp__card--good .kc-comp__hint {
-    color: rgba(255, 255, 255, 0.88);
+    color: rgba(255, 255, 255, 0.90);
 }
 
 .kc-comp__card--bad .kc-comp__hint {
-    color: rgba(15, 23, 42, 0.62);
+    color: var(--kc-text-secondary);
 }
 
-/* =========================
-   LIST (spacing rules)
-   - line -> first bullet: 8px (padding-top)
-   - keep readable gaps between bullets
-   ========================= */
+/* =========================================================
+   BULLET LIST
+   Divider → 12px → bullets
+   Smaller row spacing + tighter icon gap
+   ========================================================= */
+
 .kc-comp__list {
     list-style: none;
-    padding: 8px 0 0;
-    /* ✅ 8px after line */
+    padding: 12px 0 0;
     margin: 0;
     display: grid;
-    gap: 14px;
+    gap: 12px;
+    /* 🔥 tighter bullet spacing */
 }
 
 .kc-comp__row {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 8px;
+    /* 🔥 smaller icon → text gap */
 }
 
 .kc-comp__rowText {
     margin: 0;
-    line-height: 1.55;
-    font-size: 15px;
+    font-size: 16px;
+    line-height: 1.5;
 }
 
 .kc-comp__card--good .kc-comp__rowText {
-    color: rgba(255, 255, 255, 0.94);
+    color: rgba(255, 255, 255, 0.95);
 }
 
 .kc-comp__card--bad .kc-comp__rowText {
-    color: rgba(15, 23, 42, 0.88);
+    color: rgba(15, 23, 42, 0.90);
 }
 
-/* =========================
+/* =========================================================
    ICONS
-   ========================= */
+   ========================================================= */
+
 .kc-comp__icon {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     flex: 0 0 auto;
-    display: grid;
-    place-items: center;
-    margin-top: 2px;
+    margin-top: 3px;
 }
 
 .kc-comp__iconImg {
-    width: 18px;
-    height: 18px;
+    width: 100%;
+    height: 100%;
     display: block;
 }
 
-/* Force PricingTick to white */
 .kc-comp__iconImg--white {
     filter: brightness(0) invert(1);
 }
 
-/* Ensure ONLY the X icon is red */
 .kc-comp__iconImg--red {
     filter: invert(17%) sepia(84%) saturate(6026%) hue-rotate(343deg) brightness(97%) contrast(96%);
 }
 
-/* =========================
-   FOOTER LINE + LAST SENTENCE (spacing rules)
-   - last bullet -> line: 8px (margin-top)
-   - line -> last sentence: 8px (padding-top)
-   NOTE: your JSX should render:
-   <div className="kc-comp__foot kc-comp__foot--good/bad">...</div>
-   ========================= */
+/* =========================================================
+   FOOTER SECTION
+   Bullets → 12px → divider → 12px → sentence
+   ========================================================= */
+
 .kc-comp__foot {
-    margin-top: 8px;
-    /* ✅ 8px after last bullet */
-    padding-top: 8px;
-    /* ✅ 8px after the line */
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    line-height: 1.45;
-    letter-spacing: 0.01em;
+    margin-top: 12px;
+    /* after last bullet */
+    padding-top: 12px;
+    /* after divider */
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 .kc-comp__foot--good {
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
     color: rgba(255, 255, 255, 0.92);
-    border-top: 1px solid rgba(255, 255, 255, 0.22);
 }
 
 .kc-comp__foot--bad {
-    color: rgba(15, 23, 42, 0.62);
-    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    border-top: 1px solid rgba(15, 23, 42, 0.10);
+    color: rgba(15, 23, 42, 0.60);
 }
 
-/* =========================
+/* =========================================================
    RESPONSIVE
-   ========================= */
+   ========================================================= */
+
 @media (max-width: 980px) {
     .kc-comp__grid {
         grid-template-columns: 1fr;
         max-width: 680px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .kc-comp__card {
-        transition: none !important;
-    }
-
-    .kc-comp__card:hover {
-        transform: none;
+        margin: 0 auto;
     }
 }

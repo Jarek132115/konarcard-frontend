@@ -29,7 +29,7 @@ export default function Comparison() {
             "Show photos, reviews, and proof of work",
             "Instant sharing by NFC tap, QR, or link",
             "Looks premium and builds trust faster",
-            "Works everywhere — in person or online",
+            "Works everywhere in person or online",
         ],
         []
     );
@@ -53,11 +53,11 @@ export default function Comparison() {
                     <p className="kc-pill kc-comp__kicker">The upgrade</p>
 
                     <h2 id="kc-comp-title" className="h3 kc-comp__title">
-                        Ditch paper — win trust <span className="kc-comp__accent">faster</span>
+                        Ditch paper and win trust <span className="kc-comp__accent">faster</span>
                     </h2>
 
                     <p className="body kc-comp__sub">
-                        Paper cards get lost and go out of date. KonarCard keeps your details, work, and reviews in one link — ready to share
+                        Paper cards get lost and go out of date. KonarCard keeps your details, work, and reviews in one link, ready to share
                         instantly.
                     </p>
                 </header>

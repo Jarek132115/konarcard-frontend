@@ -1,7 +1,8 @@
 /* frontend/src/styling/products.css */
 
 /* =========================================================
-   PRODUCTS — Match Pricing spacing/tokens (Droxy-ish)
+   PRODUCTS — Match Home Products card styling + Hero grid
+   (Only styling requested sections for now)
    ========================================================= */
 
 .kp-page {
@@ -9,14 +10,10 @@
     color: var(--kc-text-primary);
 }
 
-/* ✅ CRITICAL FIX:
-   If for ANY reason .kc-page isn't taking effect (override/order),
-   this guarantees the exact same top spacing token is applied on Products.
-*/
+/* ✅ CRITICAL FIX (kept) */
 .kc-products {
     background: var(--kc-bg-main);
     color: var(--kc-text-primary);
-
     padding-top: var(--kc-page-top-space) !important;
 }
 
@@ -30,32 +27,97 @@
     max-width: 1040px;
     margin: 0 auto;
     padding: 0 20px;
+
+    /* ✅ ensure nothing clips card shadows */
+    overflow: visible;
 }
 
 /* =========================
-   HERO
+   HERO (pill + grid background around heading area)
+   ✅ grid is CONFINED to hero (won’t overlap products)
    ========================= */
 .kp-hero {
-    padding: 0 0 30px;
+    padding: 0 0 24px;
+    position: relative;
+
+    /* ✅ this prevents the hero grid pseudo elements from bleeding into product section */
+    overflow: clip;
+}
+
+@supports not (overflow: clip) {
+    .kp-hero {
+        overflow: hidden;
+    }
 }
 
 .kp-hero__inner {
     text-align: center;
 }
 
-.kp-kicker {
-    margin: 0 0 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+/* accent word */
+.kp-accent {
+    color: var(--kc-accent-primary);
+}
 
-    font-size: 12px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.62);
-    background: var(--kc-bg-soft);
-    border: 1px solid var(--kc-border);
-    padding: 8px 12px;
-    border-radius: 999px;
+/* ✅ grid background wrapper (same idea as Home hero copyGrid) */
+.kp-heroCopyGrid {
+    position: relative;
+    display: inline-block;
+    width: min(920px, 100%);
+    padding: 18px 18px 10px;
+    z-index: 1;
+}
+
+/* grid */
+.kp-heroCopyGrid::before {
+    content: "";
+    position: absolute;
+    inset: -46px -70px -54px;
+    pointer-events: none;
+    z-index: 0;
+
+    background-image:
+        linear-gradient(to right, rgba(12, 24, 48, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(12, 24, 48, 0.06) 1px, transparent 1px);
+    background-size: 64px 64px;
+
+    -webkit-mask-image: radial-gradient(ellipse at center,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 1) 52%,
+            rgba(0, 0, 0, 0) 86%);
+    mask-image: radial-gradient(ellipse at center,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 1) 52%,
+            rgba(0, 0, 0, 0) 86%);
+    opacity: 1;
+}
+
+/* fade overlay */
+.kp-heroCopyGrid::after {
+    content: "";
+    position: absolute;
+    inset: -46px -70px -54px;
+    pointer-events: none;
+    z-index: 0;
+
+    background: linear-gradient(to bottom,
+            #fff 0%,
+            rgba(255, 255, 255, 0) 18%,
+            rgba(255, 255, 255, 0) 82%,
+            #fff 100%);
+}
+
+/* keep content above grid */
+.kp-heroPill,
+.kp-title,
+.kp-sub {
+    position: relative;
+    z-index: 1;
+}
+
+/* ✅ pill uses kc-pill; just spacing here */
+.kp-heroPill {
+    margin: 0 0 10px;
 }
 
 .kp-title {
@@ -71,12 +133,9 @@
 /* =========================
    SECTIONS
    ========================= */
-.kp-section {
-    padding: 18px 0 0;
-}
 
 .kp-section--cards {
-    padding: 18px 0 56px;
+    overflow: visible;
 }
 
 .kp-section--spaced {
@@ -103,15 +162,21 @@
 }
 
 /* =========================
-   GRID + CARDS
+   PRODUCTS GRID + CARDS (Match Home)
    ========================= */
 .kp-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
     align-items: stretch;
+
+    /* ✅ give the top shadow breathing room */
+    padding-top: 6px;
+
+    overflow: visible;
 }
 
+/* keep bundles grid as-is (we’ll style later) */
 .kp-bundles {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -119,17 +184,19 @@
     align-items: stretch;
 }
 
+/* ✅ card base matches Home products */
 .kp-card {
     border: 1px solid var(--kc-border);
     background: #fff;
     border-radius: 16px;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
     overflow: hidden;
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.05);
 
     display: flex;
     flex-direction: column;
 }
 
+/* (bundles still use this topRow — leaving untouched for now) */
 .kp-card__topRow {
     padding: 14px 16px 10px;
     display: flex;
@@ -137,6 +204,7 @@
     justify-content: flex-start;
 }
 
+/* existing kp-pill left for other sections (bundles/realworld) */
 .kp-pill {
     display: inline-flex;
     align-items: center;
@@ -156,14 +224,12 @@
     margin-bottom: 12px;
 }
 
-/* ✅ 1:1 media area with cover */
+/* ✅ media matches Home */
 .kp-media {
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
     background: #f3f4f6;
-    border-top: 1px solid rgba(15, 23, 42, 0.06);
-    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
     overflow: hidden;
 }
 
@@ -174,19 +240,55 @@
     height: 100%;
     object-fit: cover;
     object-position: center;
+    display: block;
 }
 
-/* ✅ Tighter + consistent spacing */
+/* ✅ pill ON image (pure orange + white text) */
+.kp-mediaPill {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+    padding: 7px 10px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    border: 1px solid transparent;
+    background: var(--kc-accent-primary);
+    color: #ffffff;
+}
+
+/* divider like Home products */
+.kp-divider {
+    height: 1px;
+    background: rgba(15, 23, 42, 0.06);
+}
+
+/* body */
 .kp-card__body {
     padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    text-align: left;
+}
+
+/* top copy block like Home (tight) */
+.kp-topCopy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .kp-card__name,
 .kp-desc,
-.kp-subline,
 .kp-price,
 .kp-strike {
     margin: 0;
@@ -196,14 +298,50 @@
     color: var(--kc-text-secondary);
 }
 
-.kp-subline {
-    color: rgba(15, 23, 42, 0.58);
+/* ✅ price matches Home products */
+.kp-price {
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--kc-text-primary);
+}
+
+/* buy block spacing */
+.kp-buy {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .kp-priceRow {
-    margin-top: 2px;
+    margin: 0;
 }
 
+.kp-actions {
+    margin: 0;
+}
+
+/* ✅ use kx button system */
+.kp-btn {
+    width: 100%;
+}
+
+/* note under products (match Home note vibe) */
+.kp-note {
+    margin: 16px auto 0;
+    max-width: 760px;
+    text-align: center;
+
+    font-style: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: rgba(15, 23, 42, 0.62);
+}
+
+/* =========================
+   BUNDLES (kept as-is for now)
+   ========================= */
 .kp-bundlePrice {
     display: flex;
     align-items: baseline;
@@ -215,47 +353,8 @@
     opacity: 0.65;
 }
 
-.kp-actions {
-    margin-top: 10px;
-}
-
-/* Button (match Pricing primary) */
-.kp-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-
-    padding: 14px 18px;
-    border-radius: 999px;
-    border: 1px solid transparent;
-
-    text-decoration: none;
-    cursor: pointer;
-
-    font-family: "Cal Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.4px;
-
-    background: var(--kc-accent-primary);
-    color: #fff;
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.25);
-
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
-}
-
-.kp-btn:hover {
-    filter: brightness(0.98);
-    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.32);
-}
-
-.kp-btn:active {
-    transform: translateY(1px);
-}
-
 /* =========================
-   REAL WORLD
+   REAL WORLD (unchanged)
    ========================= */
 .kp-twoUp {
     display: grid;
@@ -319,7 +418,7 @@
 }
 
 /* =========================
-   FAQ
+   FAQ (unchanged)
    ========================= */
 .kp-faq {
     padding: 56px 0 88px;
@@ -393,6 +492,7 @@
         grid-template-columns: 1fr;
         max-width: 560px;
         margin: 0 auto;
+        padding-top: 6px;
     }
 
     .kp-bundles {
@@ -415,5 +515,11 @@
 
     .kp-a {
         padding-bottom: 16px;
+    }
+
+    /* tighten hero grid inset on small screens */
+    .kp-heroCopyGrid::before,
+    .kp-heroCopyGrid::after {
+        inset: -36px -26px -44px;
     }
 }
