@@ -1,8 +1,10 @@
+// src/pages/interface/Dashboard.jsx
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../../styling/dashboard/dashboard.css";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
+import PageHeader from "../../components/Dashboard/PageHeader";
 import { useAuthUser } from "../../hooks/useAuthUser";
 
 export default function Dashboard() {
@@ -30,36 +32,29 @@ export default function Dashboard() {
 
     const displayName = authUser?.name?.split(" ")?.[0] || "there";
 
-    return (
-        <DashboardLayout
-            title="Dashboard"
-            subtitle="Complete your profile and start using KonarCard."
-            rightSlot={
-                <Link to="/profiles" className="dash-btn dash-btn-primary">
-                    Edit profile
-                </Link>
-            }
-        >
-            <div className="dash-shell">
-                {/* Page header */}
-                <div className="dash-header">
-                    <div className="dash-header-left">
-                        <h1 className="dash-title">Dashboard</h1>
-                        <p className="dash-subtitle">
-                            Welcome back, <span className="dash-name">{displayName}</span>. Let’s
-                            finish your profile and start using KonarCard.
-                        </p>
-                    </div>
+    // PageHeader flags (matches Profiles approach)
+    const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
+    const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
 
-                    <div className="dash-header-right">
-                        <span className={`dash-badge ${isFreePlan ? "free" : "paid"}`}>
-                            {isFreePlan ? "FREE PLAN" : "PAID PLAN"}
-                        </span>
-                        <Link to="/profiles" className="dash-btn dash-btn-primary">
-                            Edit profile
-                        </Link>
-                    </div>
-                </div>
+    return (
+        <DashboardLayout title={null} subtitle={null} rightSlot={null} hideDesktopHeader>
+            <div className="dash-shell">
+                <PageHeader
+                    title="Dashboard"
+                    subtitle={`Welcome back, ${displayName}. Finish your profile and start using KonarCard.`}
+                    isMobile={isMobile}
+                    isSmallMobile={isSmallMobile}
+                    rightSlot={
+                        <div className="dash-header-right">
+                            <span className={`dash-pill ${isFreePlan ? "free" : "paid"}`}>
+                                {isFreePlan ? "Plan: FREE" : "Plan: PAID"}
+                            </span>
+                            <Link to="/profiles" className="dash-btn dash-btn-primary">
+                                Edit profile
+                            </Link>
+                        </div>
+                    }
+                />
 
                 {/* If no profile/card exists yet */}
                 {!hasProfile && (
@@ -67,9 +62,9 @@ export default function Dashboard() {
                         <div className="dash-empty-left">
                             <h2 className="dash-card-title">Create your first profile</h2>
                             <p className="dash-muted">
-                                Your KonarCard profile is what customers scan, save, and share.
-                                Create it once — update anytime.
+                                Your profile is what customers scan, save, and share. Create it once — update anytime.
                             </p>
+
                             <div className="dash-actions-row">
                                 <Link to="/profiles" className="dash-btn dash-btn-primary">
                                     Create your profile
@@ -97,7 +92,7 @@ export default function Dashboard() {
 
                 {/* Main grid */}
                 <div className="dash-grid">
-                    {/* 3. Profile Completion */}
+                    {/* Profile Completion */}
                     <section className="dash-card dash-span-6">
                         <div className="dash-card-head">
                             <div>
@@ -107,30 +102,22 @@ export default function Dashboard() {
                                 </p>
                             </div>
 
-                            <div className="dash-progress-wrap">
+                            <div className="dash-progress-wrap" aria-label="Profile completion">
                                 <div className="dash-progress-text">
-                                    <span className="dash-progress-percent">
-                                        {profileCompletion.percent}%
-                                    </span>
+                                    <span className="dash-progress-percent">{profileCompletion.percent}%</span>
                                     <span className="dash-muted">complete</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="dash-progress-bar">
-                            <div
-                                className="dash-progress-fill"
-                                style={{ width: `${profileCompletion.percent}%` }}
-                            />
+                        <div className="dash-progress-bar" role="progressbar" aria-valuenow={profileCompletion.percent} aria-valuemin={0} aria-valuemax={100}>
+                            <div className="dash-progress-fill" style={{ width: `${profileCompletion.percent}%` }} />
                         </div>
 
                         <ul className="dash-checklist">
                             {profileCompletion.items.map((item) => (
-                                <li
-                                    key={item.key}
-                                    className={`dash-check ${item.done ? "done" : ""}`}
-                                >
-                                    <span className="dash-check-dot" />
+                                <li key={item.key} className={`dash-check ${item.done ? "done" : ""}`}>
+                                    <span className="dash-check-dot" aria-hidden="true" />
                                     <span className="dash-check-label">{item.label}</span>
                                     {!item.done && <span className="dash-check-cta">Recommended</span>}
                                 </li>
@@ -147,12 +134,14 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    {/* 4. Quick Actions */}
+                    {/* Quick Actions */}
                     <section className="dash-card dash-span-6">
-                        <h2 className="dash-card-title">Quick actions</h2>
-                        <p className="dash-muted">
-                            The fastest way to start getting value from KonarCard.
-                        </p>
+                        <div className="dash-card-head">
+                            <div>
+                                <h2 className="dash-card-title">Quick actions</h2>
+                                <p className="dash-muted">Fast ways to start getting value from KonarCard.</p>
+                            </div>
+                        </div>
 
                         <div className="dash-quick">
                             <Link to="/profiles" className="dash-quick-tile">
@@ -177,14 +166,12 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    {/* 5. Digital Profile Preview */}
+                    {/* Digital Profile Preview */}
                     <section className="dash-card dash-span-7">
                         <div className="dash-card-head">
                             <div>
                                 <h2 className="dash-card-title">Your digital profile</h2>
-                                <p className="dash-muted">
-                                    This is what customers see when they scan your card.
-                                </p>
+                                <p className="dash-muted">This is what customers see when they scan your card.</p>
                             </div>
                             <Link to="/profiles" className="dash-btn dash-btn-ghost">
                                 Edit profile
@@ -214,6 +201,7 @@ export default function Dashboard() {
                                     <li>Add 1–2 reviews</li>
                                     <li>Share your link after each job</li>
                                 </ul>
+
                                 <div className="dash-actions-row">
                                     <Link to="/profiles" className="dash-btn dash-btn-primary">
                                         Improve profile
@@ -226,7 +214,7 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    {/* 6. Usage Snapshot */}
+                    {/* Usage Snapshot */}
                     <section className="dash-card dash-span-5">
                         <div className="dash-card-head">
                             <div>
@@ -258,15 +246,15 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    {/* 7. Upgrade Prompt */}
+                    {/* Upgrade Prompt */}
                     {isFreePlan && (
                         <section className="dash-card dash-upgrade dash-span-12">
                             <div className="dash-upgrade-left">
                                 <h2 className="dash-card-title">Unlock more with Plus</h2>
                                 <p className="dash-muted">
-                                    Get all templates, full customization, and advanced features to look
-                                    more professional and win more work.
+                                    Get all templates, full customization, and advanced features to look more professional and win more work.
                                 </p>
+
                                 <ul className="dash-upgrade-list">
                                     <li>All templates (5 designs)</li>
                                     <li>Full profile customization</li>
@@ -285,14 +273,12 @@ export default function Dashboard() {
                         </section>
                     )}
 
-                    {/* 8. Help & Support */}
+                    {/* Help & Support */}
                     <section className="dash-card dash-span-12">
                         <div className="dash-help">
                             <div>
                                 <h2 className="dash-card-title">Help & support</h2>
-                                <p className="dash-muted">
-                                    Need help setting up? We’ll get you sorted quickly.
-                                </p>
+                                <p className="dash-muted">Need help setting up? We’ll get you sorted quickly.</p>
                             </div>
 
                             <div className="dash-actions-row">
