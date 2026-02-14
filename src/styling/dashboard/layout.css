@@ -16,6 +16,9 @@
     --border: rgba(11, 18, 32, 0.10);
     --shadow: 0 14px 34px rgba(11, 18, 32, 0.10);
     --focus: 0 0 0 3px rgb(var(--kc-accent-rgb) / 0.28);
+
+    /* ✅ global dashboard spacing */
+    --dash-gutter: 16px;
 }
 
 .dash-layout {
@@ -23,16 +26,12 @@
     background: var(--kc-bg);
 }
 
-/* Desktop main area sits next to fixed sidebar */
-/* ✅ Desktop main area sits next to fixed sidebar */
+/* ✅ Desktop main area sits next to fixed sidebar with clean spacing */
 .dash-main {
-    /* was: margin-left: calc(var(--sidebar-w) + 32px); */
-    margin-left: var(--sidebar-w);
-
-    /* was: padding: 18px 26px 28px; */
-    padding: 26px;
+    /* sidebar is fixed at left:16px and width:272px */
+    margin-left: calc(var(--sidebar-w) + var(--dash-gutter));
+    padding: var(--dash-gutter);
 }
-
 
 /* Desktop header */
 .dash-desktop-header {
@@ -149,7 +148,7 @@
 @media (max-width: 1000px) {
     .dash-main {
         margin-left: 0;
-        padding: 14px;
+        padding: var(--dash-gutter);
     }
 
     .dash-topbar {
