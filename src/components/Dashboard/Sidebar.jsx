@@ -36,11 +36,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
         navigate("/");
     };
 
-    /**
-     * ✅ MAIN NAV (Settings removed from here)
-     * ✅ Help & Support moved INTO nav (swap with settings)
-     * ✅ Settings goes to footer (bottom)
-     */
     const NAV_ITEMS = useMemo(
         () => [
             { to: "/dashboard", label: "Dashboard", icon: DashboardIcon },

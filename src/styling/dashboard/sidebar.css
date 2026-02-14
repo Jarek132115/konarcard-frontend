@@ -58,6 +58,7 @@
     border-bottom: 1px solid rgba(11, 18, 32, 0.08);
     background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(10px);
+    position: relative;
 }
 
 .sidebar-brand {
@@ -97,7 +98,8 @@
 .sidebar-tagline {
     margin-top: 2px;
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 600;
+    font-family: "Inter", sans-serif;
     color: rgba(91, 102, 122, 0.95);
     white-space: nowrap;
     overflow: hidden;
@@ -138,7 +140,8 @@
 .sidebar-nav-label {
     font-size: 11px;
     letter-spacing: 0.12em;
-    font-weight: 900;
+    font-weight: 700;
+    font-family: "Inter", sans-serif;
     text-transform: uppercase;
     color: rgba(91, 102, 122, 0.9);
     padding: 6px 8px;
@@ -152,9 +155,12 @@
     padding: 12px 12px;
     border-radius: 16px;
     text-decoration: none;
-    font-family: "Cal Sans", sans-serif;
+
+    /* ✅ Inter for sidebar links */
+    font-family: "Inter", sans-serif;
     font-size: 14px;
-    font-weight: 900;
+    font-weight: 600;
+
     color: rgba(91, 102, 122, 0.95);
     border: 1px solid transparent;
     transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
@@ -240,9 +246,12 @@
     background: #fff;
     cursor: pointer;
     transition: background 0.2s, transform 0.08s ease, box-shadow 0.2s;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
+
+    /* ✅ Inter for logout too */
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
     font-size: 14px;
+
     color: var(--ink);
 }
 
@@ -275,7 +284,8 @@
 
 .sidebar-footnote {
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 600;
+    font-family: "Inter", sans-serif;
     color: rgba(91, 102, 122, 0.85);
     text-align: center;
 }
