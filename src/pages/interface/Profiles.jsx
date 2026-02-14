@@ -157,9 +157,6 @@ export default function Profiles() {
     // =========================================================
     const handleDownloadQr = async () => {
         if (!selectedProfile?.slug) return;
-
-        // If you already have a backend endpoint, swap this to it.
-        // For now we do a safe fallback: open the public page and let you screenshot/QR it later.
         alert("QR download endpoint not wired yet. Tell me your backend QR endpoint and I’ll connect it.");
     };
 
@@ -409,19 +406,17 @@ export default function Profiles() {
 
     if (isError) {
         return (
-            <DashboardLayout
-                title={null}
-                subtitle={null}
-                rightSlot={
-                    <button type="button" className="profiles-btn profiles-btn-primary" onClick={() => refetchProfiles()}>
-                        Retry
-                    </button>
-                }
-            >
+            <DashboardLayout title={null} subtitle={null}>
                 <div className="profiles-shell">
                     <section className="profiles-card profiles-empty">
                         <h2 className="profiles-card-title">We couldn’t load your profiles</h2>
                         <p className="profiles-muted">Please try again. If this keeps happening, contact support.</p>
+
+                        <div className="profiles-actions-row">
+                            <button type="button" className="kx-btn kx-btn--black" onClick={() => refetchProfiles()}>
+                                Retry
+                            </button>
+                        </div>
                     </section>
                 </div>
             </DashboardLayout>
@@ -429,33 +424,28 @@ export default function Profiles() {
     }
 
     return (
-        <DashboardLayout
-            title="Profiles"
-            subtitle="Create, view, and manage your digital business card profiles."
-            rightSlot={
-                <button type="button" className="profiles-btn profiles-btn-primary" onClick={handleCreateButtonClick}>
-                    + Add Profile
-                </button>
-            }
-            hideDesktopHeader
-        >
+        <DashboardLayout title={null} subtitle={null} rightSlot={null} hideDesktopHeader>
             <div className="profiles-shell">
                 <PageHeader
                     title="Profiles"
                     subtitle="Profiles are your public digital business cards. Each profile has its own link you can share after every job."
-                    onShareCard={handleShare}
+                    onShareCard={sortedProfiles.length ? handleShare : undefined}
                     visitUrl={selectedProfile ? buildPublicUrl(selectedProfile.slug) : undefined}
                     onVisitPage={() => handleVisit(selectedProfile?.slug)}
                     isMobile={isMobile}
                     isSmallMobile={isSmallMobile}
                     rightSlot={
-                        <div className="profiles-header-badges">
-                            <span className="profiles-pill">
+                        <div className="profiles-header-rightslot">
+                            <span className="kc-pill">
                                 Plan: <strong>{plan.toUpperCase()}</strong>
                             </span>
-                            <span className="profiles-pill">
+                            <span className="kc-pill">
                                 Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong>
                             </span>
+
+                            <button type="button" className="kx-btn kx-btn--orange" onClick={handleCreateButtonClick}>
+                                + Add profile
+                            </button>
                         </div>
                     }
                 />
@@ -474,17 +464,17 @@ export default function Profiles() {
                                 </p>
                             </div>
 
-                            <button type="button" className="profiles-btn profiles-btn-ghost" onClick={closeClaimPanel}>
+                            <button type="button" className="kx-btn kx-btn--white" onClick={closeClaimPanel}>
                                 Close
                             </button>
                         </div>
 
                         <div className="profiles-claim-grid">
                             <div className="profiles-claim-row">
-                                <div className="profiles-input-wrap">
+                                <div className="profiles-input-wrap" aria-label="Claim link input">
                                     <span className="profiles-input-prefix">{window.location.origin}/u/</span>
                                     <input
-                                        className="text-input profiles-input"
+                                        className="profiles-input"
                                         value={claimSlugInput}
                                         onChange={(e) => {
                                             setClaimSlugInput(e.target.value);
@@ -498,11 +488,9 @@ export default function Profiles() {
 
                                 <button
                                     type="button"
-                                    className="profiles-btn profiles-btn-primary"
+                                    className="kx-btn kx-btn--black"
                                     onClick={checkSlugAvailability}
-                                    disabled={
-                                        claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"
-                                    }
+                                    disabled={claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"}
                                 >
                                     {claimStatus === "checking" ? "Checking..." : "Check availability"}
                                 </button>
@@ -526,7 +514,7 @@ export default function Profiles() {
                                     {canCreateMoreProfilesWithoutCheckout ? (
                                         <button
                                             type="button"
-                                            className="profiles-btn profiles-btn-primary"
+                                            className="kx-btn kx-btn--orange"
                                             onClick={createTeamsProfileNow}
                                             disabled={claimStatus === "creating"}
                                         >
@@ -535,7 +523,7 @@ export default function Profiles() {
                                     ) : (
                                         <button
                                             type="button"
-                                            className="profiles-btn profiles-btn-primary"
+                                            className="kx-btn kx-btn--orange"
                                             onClick={startTeamsCheckout}
                                             disabled={claimStatus === "subscribing"}
                                         >
@@ -553,8 +541,7 @@ export default function Profiles() {
 
                             {isTeams && (
                                 <div className="profiles-hint">
-                                    Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit,
-                                    increase quantity.
+                                    Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit, increase quantity.
                                 </div>
                             )}
                         </div>
@@ -569,7 +556,7 @@ export default function Profiles() {
                         </p>
 
                         <div className="profiles-actions-row">
-                            <button type="button" className="profiles-btn profiles-btn-primary" onClick={() => handleEdit("")}>
+                            <button type="button" className="kx-btn kx-btn--orange" onClick={() => handleEdit("")}>
                                 Create your first profile
                             </button>
                         </div>
@@ -616,13 +603,13 @@ export default function Profiles() {
 
                                             <div className="profiles-item-right">
                                                 <span className={`profiles-status ${p.status}`}>
-                                                    {p.status === "complete" ? "COMPLETE" : "INCOMPLETE"}
+                                                    {p.status === "complete" ? "Complete" : "Incomplete"}
                                                 </span>
 
                                                 <div className="profiles-inline-actions">
                                                     <button
                                                         type="button"
-                                                        className="profiles-mini-btn"
+                                                        className="kx-btn kx-btn--white profiles-mini"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             handleEdit(p.slug);
@@ -633,7 +620,7 @@ export default function Profiles() {
 
                                                     <button
                                                         type="button"
-                                                        className="profiles-mini-btn"
+                                                        className="kx-btn kx-btn--white profiles-mini"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             handleVisit(p.slug);
@@ -644,7 +631,7 @@ export default function Profiles() {
 
                                                     <button
                                                         type="button"
-                                                        className="profiles-mini-btn danger"
+                                                        className="kx-btn kx-btn--white profiles-mini profiles-mini-danger"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             handleDelete(p.slug);
@@ -673,7 +660,7 @@ export default function Profiles() {
                                         )}
                                     </div>
 
-                                    <button type="button" className="profiles-btn profiles-btn-primary" onClick={handleCreateButtonClick}>
+                                    <button type="button" className="kx-btn kx-btn--orange" onClick={handleCreateButtonClick}>
                                         + Add profile
                                     </button>
                                 </div>
@@ -705,19 +692,11 @@ export default function Profiles() {
                                     </div>
 
                                     <div className="profiles-actions-row">
-                                        <button
-                                            type="button"
-                                            className="profiles-btn profiles-btn-primary"
-                                            onClick={() => handleEdit(selectedProfile?.slug)}
-                                        >
+                                        <button type="button" className="kx-btn kx-btn--black" onClick={() => handleEdit(selectedProfile?.slug)}>
                                             Edit profile
                                         </button>
 
-                                        <button
-                                            type="button"
-                                            className="profiles-btn profiles-btn-ghost"
-                                            onClick={() => handleVisit(selectedProfile?.slug)}
-                                        >
+                                        <button type="button" className="kx-btn kx-btn--white" onClick={() => handleVisit(selectedProfile?.slug)}>
                                             Visit
                                         </button>
                                     </div>
@@ -727,24 +706,24 @@ export default function Profiles() {
                                     <h3 className="profiles-actions-title">Profile actions</h3>
 
                                     <div className="profiles-actions-grid">
-                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleShare}>
+                                        <button type="button" className="kx-btn kx-btn--white" onClick={handleShare}>
                                             Share link
                                         </button>
 
-                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleCopyLink}>
+                                        <button type="button" className="kx-btn kx-btn--white" onClick={handleCopyLink}>
                                             Copy link
                                         </button>
 
-                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleDownloadQr}>
-                                            Download QR code
+                                        <button type="button" className="kx-btn kx-btn--white" onClick={handleDownloadQr}>
+                                            Download QR
                                         </button>
 
-                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleAddGoogleWallet}>
-                                            Add to Google Wallet
+                                        <button type="button" className="kx-btn kx-btn--white" onClick={handleAddGoogleWallet}>
+                                            Google Wallet
                                         </button>
 
-                                        <button type="button" className="profiles-btn profiles-btn-ghost" onClick={handleAddAppleWallet}>
-                                            Add to Apple Wallet
+                                        <button type="button" className="kx-btn kx-btn--white" onClick={handleAddAppleWallet}>
+                                            Apple Wallet
                                         </button>
                                     </div>
                                 </div>

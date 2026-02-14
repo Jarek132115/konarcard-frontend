@@ -1,111 +1,50 @@
 /* frontend/src/styling/dashboard/profiles.css */
 
-/* =========================================================
-   Production-ready dashboard styling for Profiles page
-   - Keeps your brand orange, modern neutral UI
-   - Good focus styles, responsive, sticky preview
-========================================================= */
+/* Uses global tokens from fonts.css:
+   --kc-bg-main, --kc-bg-soft, --kc-text-primary, --kc-text-secondary, --kc-border, etc.
+*/
 
 :root {
-    --bg: #ffffff;
-    --surface: #ffffff;
-    --surface-2: #fafafa;
-    --surface-3: #f6f7f9;
+    --p-ink: var(--kc-text-primary, #0f172a);
+    --p-muted: var(--kc-text-secondary, #475569);
+    --p-soft: var(--kc-bg-soft, #fafafa);
+    --p-border: var(--kc-border, #e5e7eb);
 
-    --ink: #0b1220;
-    --muted: #5b667a;
-
-    --accent: #f97316;
-    --accent-rgb: 249 115 22;
-
-    --ok: #16a34a;
-    --ok-rgb: 22 163 74;
-
-    --danger: #dc2626;
-    --danger-rgb: 220 38 38;
-
-    --border: rgba(11, 18, 32, 0.10);
-    --border-2: rgba(11, 18, 32, 0.08);
-
-    --radius: 18px;
-    --radius-lg: 22px;
-
-    --shadow-sm: 0 8px 18px rgba(11, 18, 32, 0.06);
-    --shadow-md: 0 14px 34px rgba(11, 18, 32, 0.10);
-
-    --focus: 0 0 0 3px rgb(var(--accent-rgb) / 0.28);
+    --p-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+    --p-shadow-sm: 0 10px 26px rgba(15, 23, 42, 0.06);
 }
 
-/* ✅ full-width content area */
+/* Page shell */
 .profiles-shell {
     width: 100%;
-    padding: 0 0 10px;
-    /* ✅ remove extra top padding so it aligns */
-}
-
-
-/* =========================================================
-   Top bar
-========================================================= */
-.profiles-topbar {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 18px;
-    margin-bottom: 16px;
-}
-
-.profiles-title {
-    font-family: "Cal Sans", sans-serif;
-    font-size: clamp(26px, 2.2vw, 38px);
-    letter-spacing: -0.02em;
+    padding: 0;
     margin: 0;
-    color: var(--ink);
 }
 
-.profiles-subtitle {
-    margin: 8px 0 0;
-    color: var(--muted);
-    font-size: 15px;
-    max-width: 860px;
-    line-height: 1.55;
-}
-
-.profiles-topbar-right {
-    display: flex;
+/* RightSlot (inside PageHeader) */
+.profiles-header-rightslot {
+    display: inline-flex;
+    align-items: center;
     gap: 10px;
     flex-wrap: wrap;
     justify-content: flex-end;
 }
 
-.profiles-pill {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    letter-spacing: 0.06em;
-    padding: 10px 12px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--surface-2);
-    color: var(--ink);
-    white-space: nowrap;
-}
-
-/* =========================================================
-   Cards + layout grid
-========================================================= */
+/* Grid layout */
 .profiles-grid {
     display: grid;
     grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.95fr);
     gap: 16px;
     align-items: start;
+    margin-top: 16px;
 }
 
+/* Cards */
 .profiles-card {
-    background: var(--surface);
-    border: 1px solid var(--border-2);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 20px;
+    box-shadow: var(--p-shadow-sm);
     padding: 16px;
 }
 
@@ -116,22 +55,26 @@
     gap: 12px;
 }
 
+/* Card titles should NOT be Cal Sans (rule: Cal Sans only for main page heading) */
 .profiles-card-title {
     margin: 0;
-    font-family: "Cal Sans", sans-serif;
-    color: var(--ink);
-    font-size: 18px;
+    font-family: "Inter", sans-serif;
+    font-weight: 650;
+    font-size: 16px;
+    color: var(--p-ink);
     letter-spacing: -0.01em;
 }
 
 .profiles-muted {
-    color: var(--muted);
     margin: 8px 0 0;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
     font-size: 14px;
     line-height: 1.55;
+    color: var(--p-muted);
 }
 
-/* Right column sticky */
+/* Sticky right column */
 .profiles-right {
     position: relative;
 }
@@ -141,131 +84,21 @@
     top: 12px;
 }
 
-/* =========================================================
-   Buttons
-========================================================= */
-.profiles-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border-radius: 14px;
-    padding: 12px 14px;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    font-size: 14px;
-    text-decoration: none;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: transform 0.08s ease, background 0.2s, border 0.2s, opacity 0.2s, box-shadow 0.2s;
-}
-
-.profiles-btn:active {
-    transform: translateY(1px);
-}
-
-.profiles-btn:focus-visible {
-    outline: none;
-    box-shadow: var(--focus);
-}
-
-.profiles-btn-primary {
-    background: var(--accent);
-    color: #fff;
-    border-color: rgb(var(--accent-rgb) / 0.35);
-    box-shadow: 0 12px 22px rgb(var(--accent-rgb) / 0.18);
-}
-
-.profiles-btn-primary:hover {
-    background: rgb(var(--accent-rgb) / 0.92);
-}
-
-.profiles-btn-primary:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-.profiles-btn-ghost {
-    background: var(--surface-2);
-    color: var(--ink);
-    border-color: rgba(11, 18, 32, 0.14);
-}
-
-.profiles-btn-ghost:hover {
-    background: rgba(11, 18, 32, 0.04);
-}
-
+/* Action rows */
 .profiles-actions-row {
     display: flex;
     gap: 10px;
-    margin-top: 14px;
     flex-wrap: wrap;
+    margin-top: 14px;
 }
 
-/* =========================================================
-   Inputs (local, so you aren’t dependent on global styles)
-========================================================= */
-.text-input {
-    width: 100%;
-    border: 1px solid rgba(11, 18, 32, 0.14);
-    background: #fff;
-    border-radius: 14px;
-    padding: 12px 12px;
-    font-size: 14px;
-    color: var(--ink);
-    outline: none;
-    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
-}
-
-.text-input::placeholder {
-    color: rgba(91, 102, 122, 0.8);
-    font-weight: 700;
-}
-
-.text-input:focus {
-    border-color: rgb(var(--accent-rgb) / 0.5);
-    box-shadow: var(--focus);
-}
-
-.profiles-input-wrap {
-    display: flex;
-    align-items: center;
-    border: 1px solid rgba(11, 18, 32, 0.14);
-    background: #fff;
-    border-radius: 14px;
-    overflow: hidden;
-    min-width: 0;
-}
-
-.profiles-input-prefix {
-    flex: 0 0 auto;
-    padding: 12px 12px;
-    font-weight: 900;
-    font-size: 13px;
-    color: rgba(11, 18, 32, 0.65);
-    background: var(--surface-2);
-    border-right: 1px solid rgba(11, 18, 32, 0.10);
-    white-space: nowrap;
-}
-
-.profiles-input {
-    border: none;
-    border-radius: 0;
-    padding: 12px 12px;
-}
-
-.profiles-input:focus {
-    box-shadow: none;
-}
-
-/* =========================================================
-   Claim panel
-========================================================= */
+/* Claim panel */
 .profiles-claim {
+    margin-top: 14px;
     margin-bottom: 16px;
-    background: linear-gradient(180deg, #fff, var(--surface-2));
-    border-color: rgba(11, 18, 32, 0.10);
+    background: linear-gradient(180deg, #ffffff, rgba(15, 23, 42, 0.02));
+    border-color: rgba(15, 23, 42, 0.10);
+    box-shadow: var(--p-shadow);
 }
 
 .profiles-claim-grid {
@@ -281,27 +114,67 @@
     align-items: center;
 }
 
+/* Input */
+.profiles-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.profiles-input-prefix {
+    flex: 0 0 auto;
+    padding: 12px 12px;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: rgba(15, 23, 42, 0.60);
+    background: rgba(15, 23, 42, 0.03);
+    border-right: 1px solid rgba(15, 23, 42, 0.10);
+    white-space: nowrap;
+}
+
+.profiles-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 12px 12px;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--p-ink);
+}
+
+.profiles-input::placeholder {
+    color: rgba(71, 85, 105, 0.75);
+}
+
+/* Alerts */
 .profiles-alert {
     padding: 12px 12px;
     border-radius: 14px;
-    border: 1px solid rgba(11, 18, 32, 0.10);
-    background: var(--surface);
-    font-weight: 800;
-    color: var(--ink);
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: #fff;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    color: var(--p-ink);
 }
 
 .profiles-alert.success {
-    border-color: rgb(var(--ok-rgb) / 0.25);
-    background: rgb(var(--ok-rgb) / 0.08);
+    border-color: rgba(22, 163, 74, 0.25);
+    background: rgba(22, 163, 74, 0.08);
 }
 
 .profiles-alert.danger {
-    border-color: rgb(var(--danger-rgb) / 0.25);
-    background: rgb(var(--danger-rgb) / 0.08);
+    border-color: rgba(220, 38, 38, 0.25);
+    background: rgba(220, 38, 38, 0.08);
 }
 
 .profiles-alert.neutral {
-    background: rgba(11, 18, 32, 0.03);
+    background: rgba(15, 23, 42, 0.03);
 }
 
 .profiles-claim-actions {
@@ -311,22 +184,17 @@
 }
 
 .profiles-hint {
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
     font-size: 13px;
-    font-weight: 800;
-    color: rgba(91, 102, 122, 0.95);
+    color: rgba(71, 85, 105, 0.95);
 }
 
 .profiles-hint strong {
-    color: rgb(var(--accent-rgb));
+    color: var(--kc-accent-primary, #f97316);
 }
 
-/* =========================================================
-   Profiles list (left card)
-========================================================= */
-.profiles-list-card {
-    background: var(--surface);
-}
-
+/* List */
 .profiles-list {
     margin-top: 12px;
     display: grid;
@@ -337,7 +205,7 @@
 .profiles-item {
     width: 100%;
     background: #fff;
-    border: 1px solid rgba(11, 18, 32, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 18px;
     padding: 14px;
     display: flex;
@@ -346,11 +214,11 @@
     gap: 12px;
     cursor: pointer;
     text-align: left;
-    transition: background 0.2s, transform 0.08s ease, box-shadow 0.2s, border-color 0.2s;
+    transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .profiles-item:hover {
-    background: rgba(11, 18, 32, 0.02);
+    background: rgba(15, 23, 42, 0.02);
 }
 
 .profiles-item:active {
@@ -359,12 +227,12 @@
 
 .profiles-item:focus-visible {
     outline: none;
-    box-shadow: var(--focus);
+    box-shadow: 0 0 0 3px var(--kc-focus-ring, rgba(249, 115, 22, 0.2));
 }
 
 .profiles-item.active {
-    border-color: rgb(var(--accent-rgb) / 0.35);
-    box-shadow: 0 12px 30px rgb(var(--accent-rgb) / 0.12);
+    border-color: rgba(249, 115, 22, 0.35);
+    box-shadow: 0 12px 26px rgba(249, 115, 22, 0.12);
 }
 
 .profiles-item-left {
@@ -382,14 +250,14 @@
     width: 44px;
     height: 44px;
     border-radius: 16px;
-    background: rgb(var(--accent-rgb) / 0.14);
+    background: rgba(249, 115, 22, 0.14);
     display: grid;
     place-items: center;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--p-ink);
     flex: 0 0 auto;
-    border: 1px solid rgb(var(--accent-rgb) / 0.18);
+    border: 1px solid rgba(249, 115, 22, 0.18);
 }
 
 .profiles-item-title {
@@ -400,19 +268,19 @@
 }
 
 .profiles-item-name {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--p-ink);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 340px;
+    max-width: 420px;
 }
 
 .profiles-trade {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: rgba(91, 102, 122, 0.95);
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.95);
     font-size: 13px;
     white-space: nowrap;
 }
@@ -423,17 +291,18 @@
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
-    font-weight: 800;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
     font-size: 13px;
 }
 
 .profiles-link {
-    color: rgb(var(--accent-rgb));
-    font-weight: 900;
+    color: var(--kc-accent-primary, #f97316);
+    font-weight: 650;
 }
 
 .profiles-dot {
-    color: rgba(11, 18, 32, 0.25);
+    color: rgba(15, 23, 42, 0.25);
 }
 
 .profiles-item-right {
@@ -443,31 +312,30 @@
     flex: 0 0 auto;
 }
 
-/* status pill */
+/* Status */
 .profiles-status {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
+    font-family: "Inter", sans-serif;
+    font-weight: 650;
     font-size: 12px;
     padding: 8px 10px;
     border-radius: 999px;
-    border: 1px solid rgba(11, 18, 32, 0.12);
-    background: var(--surface-2);
-    color: var(--ink);
-    letter-spacing: 0.06em;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(15, 23, 42, 0.03);
+    color: var(--p-ink);
     white-space: nowrap;
 }
 
 .profiles-status.complete {
-    border-color: rgb(var(--ok-rgb) / 0.25);
-    background: rgb(var(--ok-rgb) / 0.08);
+    border-color: rgba(22, 163, 74, 0.25);
+    background: rgba(22, 163, 74, 0.08);
 }
 
 .profiles-status.incomplete {
-    border-color: rgb(var(--accent-rgb) / 0.20);
-    background: rgb(var(--accent-rgb) / 0.08);
+    border-color: rgba(249, 115, 22, 0.20);
+    background: rgba(249, 115, 22, 0.08);
 }
 
-/* inline actions */
+/* Inline actions use kx-btn but smaller */
 .profiles-inline-actions {
     display: flex;
     gap: 8px;
@@ -475,44 +343,25 @@
     justify-content: flex-end;
 }
 
-.profiles-mini-btn {
-    border: 1px solid rgba(11, 18, 32, 0.14);
-    background: #fff;
+.profiles-mini {
+    height: 36px;
+    padding: 0 12px;
     border-radius: 12px;
-    padding: 10px 12px;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    font-size: 12px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.2s, transform 0.08s ease, border-color 0.2s;
+    font-size: 13px;
 }
 
-.profiles-mini-btn:hover {
-    background: rgba(11, 18, 32, 0.03);
+.profiles-mini-danger {
+    border-color: rgba(220, 38, 38, 0.25) !important;
 }
 
-.profiles-mini-btn:active {
-    transform: translateY(1px);
-}
-
-.profiles-mini-btn:focus-visible {
-    outline: none;
-    box-shadow: var(--focus);
-}
-
-.profiles-mini-btn.danger {
-    border-color: rgb(var(--danger-rgb) / 0.22);
-}
-
-.profiles-mini-btn.danger:hover {
-    background: rgb(var(--danger-rgb) / 0.06);
+.profiles-mini-danger:hover {
+    background: rgba(220, 38, 38, 0.06) !important;
 }
 
 /* Under list */
 .profiles-under-list {
     margin-top: 14px;
-    border-top: 1px solid rgba(11, 18, 32, 0.08);
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
     padding-top: 14px;
 }
 
@@ -521,25 +370,24 @@
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-    background: var(--surface-2);
-    border: 1px solid rgba(11, 18, 32, 0.10);
+    background: rgba(15, 23, 42, 0.02);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 18px;
     padding: 14px;
 }
 
 .profiles-upsell-text {
-    color: var(--ink);
-    font-weight: 900;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    color: var(--p-ink);
     line-height: 1.35;
 }
 
 .profiles-upsell-text strong {
-    color: rgb(var(--accent-rgb));
+    color: var(--kc-accent-primary, #f97316);
 }
 
-/* =========================================================
-   Preview phone (right panel)
-========================================================= */
+/* Preview phone */
 .profiles-preview {
     margin-top: 14px;
 }
@@ -548,39 +396,40 @@
     width: 100%;
     border-radius: 28px;
     background: #fff;
-    border: 1px solid rgba(11, 18, 32, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     padding: 14px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--p-shadow-sm);
 }
 
 .profiles-phone-top {
     height: 14px;
     width: 64%;
     border-radius: 999px;
-    background: rgba(11, 18, 32, 0.10);
+    background: rgba(15, 23, 42, 0.10);
     margin: 0 auto 14px;
 }
 
 .profiles-preview-name {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--p-ink);
     font-size: 16px;
     text-align: center;
 }
 
 .profiles-preview-trade {
     margin-top: 4px;
-    color: rgba(91, 102, 122, 0.95);
+    color: rgba(71, 85, 105, 0.95);
     text-align: center;
-    font-weight: 900;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
     font-size: 13px;
 }
 
 .profiles-phone-line {
     height: 12px;
     border-radius: 999px;
-    background: rgba(11, 18, 32, 0.10);
+    background: rgba(15, 23, 42, 0.10);
     margin-top: 10px;
 }
 
@@ -591,9 +440,9 @@
 .profiles-phone-block {
     height: 92px;
     border-radius: 18px;
-    background: rgb(var(--accent-rgb) / 0.12);
+    background: rgba(249, 115, 22, 0.10);
     margin-top: 12px;
-    border: 1px solid rgb(var(--accent-rgb) / 0.14);
+    border: 1px solid rgba(249, 115, 22, 0.14);
 }
 
 .profiles-phone-row {
@@ -606,217 +455,36 @@
     height: 28px;
     flex: 1;
     border-radius: 999px;
-    background: rgba(11, 18, 32, 0.10);
+    background: rgba(15, 23, 42, 0.10);
 }
 
 /* Actions card */
 .profiles-actions-card {
     margin-top: 14px;
     border-radius: 18px;
-    background: var(--surface-2);
-    border: 1px solid rgba(11, 18, 32, 0.10);
+    background: rgba(15, 23, 42, 0.02);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     padding: 14px;
 }
 
 .profiles-actions-title {
     margin: 0;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
+    font-family: "Inter", sans-serif;
+    font-weight: 650;
+    color: var(--p-ink);
     font-size: 14px;
 }
 
-/* Templates card */
-.profiles-templates-card {
-    margin-top: 14px;
-    border-radius: 18px;
-    background: var(--surface-2);
-    border: 1px solid rgba(11, 18, 32, 0.10);
-    padding: 14px;
-}
-
-.profiles-templates-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
-.profiles-templates-note {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    font-size: 12px;
-    padding: 8px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(11, 18, 32, 0.12);
-    background: #fff;
-    color: rgba(91, 102, 122, 0.95);
-    white-space: nowrap;
-}
-
-.profiles-templates-grid {
+.profiles-actions-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
-}
-
-.profiles-template {
-    position: relative;
-    text-align: left;
-    border: 1px solid rgba(11, 18, 32, 0.12);
-    border-radius: 16px;
-    background: #fff;
-    padding: 12px;
-    cursor: pointer;
-    transition: transform 0.08s ease, box-shadow 0.2s, border 0.2s, background 0.2s;
-}
-
-.profiles-template:hover {
-    background: rgba(11, 18, 32, 0.02);
-}
-
-.profiles-template:active {
-    transform: translateY(1px);
-}
-
-.profiles-template:focus-visible {
-    outline: none;
-    box-shadow: var(--focus);
-}
-
-.profiles-template.active {
-    border-color: rgb(var(--accent-rgb) / 0.35);
-    box-shadow: 0 12px 26px rgb(var(--accent-rgb) / 0.12);
-}
-
-.profiles-template-thumb {
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    border-radius: 12px;
-    background: linear-gradient(135deg,
-            rgba(11, 18, 32, 0.06),
-            rgba(249, 115, 22, 0.12));
-    border: 1px solid rgba(11, 18, 32, 0.08);
-}
-
-.profiles-template-name {
-    margin-top: 10px;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
-    font-size: 12px;
-}
-
-.profiles-template-lock {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    padding: 8px 10px;
-    border-radius: 999px;
-    background: rgba(11, 18, 32, 0.86);
-    color: #fff;
-}
-
-.profiles-templates-grid.locked .profiles-template {
-    opacity: 0.86;
-}
-
-/* =========================================================
-   Upgrade modal
-========================================================= */
-.profiles-modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(11, 18, 32, 0.55);
-    display: grid;
-    place-items: center;
-    padding: 18px;
-    z-index: 9999;
-}
-
-.profiles-modal {
-    width: min(560px, 100%);
-    background: #fff;
-    border-radius: 22px;
-    border: 1px solid rgba(11, 18, 32, 0.12);
-    box-shadow: 0 30px 80px rgba(11, 18, 32, 0.28);
-    padding: 18px;
-    position: relative;
-}
-
-.profiles-modal-x {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 40px;
-    height: 40px;
-    border-radius: 14px;
-    border: 1px solid rgba(11, 18, 32, 0.12);
-    background: rgba(11, 18, 32, 0.04);
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 900;
-}
-
-.profiles-modal-x:hover {
-    background: rgba(11, 18, 32, 0.07);
-}
-
-.profiles-modal-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    font-size: 12px;
-    padding: 10px 12px;
-    border-radius: 999px;
-    background: rgb(var(--accent-rgb) / 0.12);
-    border: 1px solid rgb(var(--accent-rgb) / 0.22);
-    color: rgb(var(--accent-rgb));
-}
-
-.profiles-modal-title {
-    margin: 14px 0 6px;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    font-size: 22px;
-}
-
-.profiles-modal-sub {
-    margin: 0;
-    color: var(--muted);
-    line-height: 1.55;
-    font-weight: 800;
-}
-
-.profiles-modal-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 14px;
-}
-
-.profiles-modal-fine {
     margin-top: 12px;
-    font-size: 12px;
-    color: rgba(91, 102, 122, 0.92);
-    font-weight: 800;
 }
 
-/* =========================================================
-   Empty + Loading skeleton
-========================================================= */
+/* Empty / Skeleton */
 .profiles-empty {
-    padding: 26px;
-    text-align: left;
+    padding: 22px;
 }
 
 .profiles-skeleton {
@@ -828,9 +496,9 @@
 
 .profiles-skel-card {
     height: 420px;
-    border-radius: var(--radius-lg);
-    border: 1px solid rgba(11, 18, 32, 0.08);
-    background: linear-gradient(90deg, rgba(11, 18, 32, 0.05), rgba(11, 18, 32, 0.03), rgba(11, 18, 32, 0.05));
+    border-radius: 20px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: linear-gradient(90deg, rgba(15, 23, 42, 0.05), rgba(15, 23, 42, 0.03), rgba(15, 23, 42, 0.05));
     background-size: 200% 100%;
     animation: profilesShimmer 1.1s ease-in-out infinite;
 }
@@ -845,9 +513,7 @@
     }
 }
 
-/* =========================================================
-   Responsive
-========================================================= */
+/* Responsive */
 @media (max-width: 1100px) {
     .profiles-grid {
         grid-template-columns: 1fr;
@@ -857,17 +523,8 @@
         position: static;
     }
 
-    .profiles-topbar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .profiles-topbar-right {
+    .profiles-header-rightslot {
         justify-content: flex-start;
-    }
-
-    .profiles-templates-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .profiles-skeleton {
@@ -883,8 +540,11 @@
     }
 
     .profiles-item-right {
-        justify-content: space-between;
         width: 100%;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        flex-wrap: wrap;
     }
 
     .profiles-inline-actions {
@@ -897,67 +557,13 @@
         align-items: flex-start;
     }
 
-    .profiles-templates-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
     .profiles-claim-row {
         grid-template-columns: 1fr;
     }
-}
-
-.profiles-header-badges {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-}
-
-@media (max-width: 1000px) {
-    .profiles-header-badges {
-        justify-content: flex-start;
-    }
-}
-
-.profiles-actions-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 12px;
 }
 
 @media (max-width: 520px) {
     .profiles-actions-grid {
         grid-template-columns: 1fr;
     }
-}
-
-/* =========================================================
-   Perfect alignment with dash-main padding (layout.css)
-   dash-main uses padding: 26px; so we match that grid here
-========================================================= */
-
-/* Kill any hidden left/right offsets inside the page */
-.profiles-shell {
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-/* PageHeader wrapper sometimes has its own margins/padding */
-.profiles-shell>* {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-}
-
-/* If PageHeader component has internal margin-bottom that differs */
-.profiles-shell .page-header,
-.profiles-shell .kc-pageheader,
-.profiles-shell .dash-pageheader {
-    margin-top: 0 !important;
-}
-
-/* Ensure first content card sits on the same vertical rhythm */
-.profiles-shell .profiles-grid {
-    margin-top: 16px;
 }
