@@ -1,5 +1,5 @@
 // src/pages/interface/HelpCentreInterface.jsx
-import React, { useMemo } from "react";
+import React, { useMemo, useContext } from "react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -7,9 +7,6 @@ import "../../styling/dashboard/helpcentreinterface.css";
 
 import { AuthContext } from "../../components/AuthContext";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
-import { useContext } from "react";
-
-const safeLower = (v) => String(v || "").toLowerCase();
 
 export default function HelpCentreInterface() {
   const { user: authUser } = useContext(AuthContext);
@@ -27,11 +24,11 @@ export default function HelpCentreInterface() {
 
   const sections = useMemo(
     () => [
-      { id: "getting-started", title: "Getting Started", icon: "🚀" },
-      { id: "profile", title: "Create & Edit Your Profile", icon: "🧩" },
-      { id: "konar-card", title: "Using Your Konar Card", icon: "📲" },
-      { id: "branding", title: "Branding & Themes", icon: "🎨" },
-      { id: "troubleshooting", title: "Troubleshooting", icon: "🛠️" },
+      { id: "getting-started", title: "Getting Started", icon: "🚀", desc: "Set up your first profile and share it." },
+      { id: "profile", title: "Create & Edit Your Profile", icon: "🧩", desc: "Update your details, services and links." },
+      { id: "konar-card", title: "Using Your KonarCard", icon: "📲", desc: "How taps work, sharing, and best practices." },
+      { id: "branding", title: "Branding & Themes", icon: "🎨", desc: "Themes, colors, layout and customization." },
+      { id: "troubleshooting", title: "Troubleshooting", icon: "🛠️", desc: "Common issues and quick fixes." },
     ],
     []
   );
@@ -44,13 +41,14 @@ export default function HelpCentreInterface() {
     }
   };
 
+  const scrollTo = (id) => {
+    const el = document.getElementById(`hc-${id}`);
+    el?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+  };
+
   return (
-    <DashboardLayout
-      title="Help Centre"
-      subtitle="Tutorials, guides, and support for your KonarCard."
-      hideDesktopHeader
-    >
-      <div className="help-shell">
+    <DashboardLayout title="Help Centre" subtitle="Tutorials, guides, and support for your KonarCard." hideDesktopHeader>
+      <div className="hc-shell">
         <PageHeader
           title="Help Centre"
           subtitle="Find quick answers, tutorials, and best practices."
@@ -58,126 +56,112 @@ export default function HelpCentreInterface() {
           isSmallMobile={isSmallMobile}
           visitUrl={currentProfileUrl}
           rightSlot={
-            <div className="help-header-actions">
-              <button type="button" className="help-btn help-btn-ghost" onClick={openChat}>
+            <div className="hc-header-actions">
+              <button type="button" className="kx-btn kx-btn--white" onClick={openChat}>
                 Live chat
               </button>
-              <Link to="/contact" className="help-btn help-btn-primary">
+              <Link to="/contact" className="kx-btn kx-btn--orange">
                 Contact support
               </Link>
             </div>
           }
         />
 
-        <div className="help-grid">
-          {/* LEFT: navigation / quick actions */}
-          <aside className="help-card help-rail">
-            <div className="help-card-head">
-              <div>
-                <h2 className="help-card-title">Browse</h2>
-                <p className="help-muted">Tutorial sections (more coming soon).</p>
+        <div className="hc-grid">
+          {/* LEFT: rail */}
+          <aside className="hc-rail">
+            <div className="hc-rail-card">
+              <div className="hc-rail-head">
+                <div>
+                  <div className="hc-eyebrow">Browse</div>
+                  <div className="hc-rail-title">Help topics</div>
+                  <div className="hc-muted">Quick links to sections (more coming soon).</div>
+                </div>
+                <span className="hc-chip">BETA</span>
               </div>
 
-              <span className="help-pill">STATUS: BETA</span>
-            </div>
-
-            <div className="help-rail-list">
-              {sections.map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  className="help-rail-item"
-                  onClick={() => {
-                    const el = document.getElementById(`hc-${s.id}`);
-                    el?.scrollIntoView?.({ behavior: "smooth", block: "start" });
-                  }}
-                >
-                  <span className="help-rail-ico" aria-hidden="true">
-                    {s.icon}
-                  </span>
-                  <div className="help-rail-meta">
-                    <div className="help-rail-title">{s.title}</div>
-                    <div className="help-rail-sub">Under maintenance</div>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            <div className="help-rail-cta">
-              <div className="help-alert neutral">
-                Need help now? Use{" "}
-                <button type="button" className="help-linklike" onClick={openChat}>
-                  live chat
-                </button>{" "}
-                or contact support.
+              <div className="hc-rail-list">
+                {sections.map((s) => (
+                  <button key={s.id} type="button" className="hc-rail-item" onClick={() => scrollTo(s.id)}>
+                    <span className="hc-rail-ico" aria-hidden="true">
+                      {s.icon}
+                    </span>
+                    <div className="hc-rail-meta">
+                      <div className="hc-rail-item-title">{s.title}</div>
+                      <div className="hc-rail-item-sub">{s.desc}</div>
+                    </div>
+                    <span className="hc-rail-tag">Soon</span>
+                  </button>
+                ))}
               </div>
 
-              <div className="help-rail-actions">
-                <button type="button" className="help-btn help-btn-ghost" onClick={openChat}>
-                  Live chat
-                </button>
-                <Link to="/contact" className="help-btn help-btn-primary">
-                  Contact support
-                </Link>
+              <div className="hc-rail-divider" />
+
+              <div className="hc-rail-cta">
+                <div className="hc-callout">
+                  Need help now? Use <button type="button" className="hc-linklike" onClick={openChat}>live chat</button> or contact support.
+                </div>
+
+                <div className="hc-rail-actions">
+                  <button type="button" className="kx-btn kx-btn--white" onClick={openChat}>
+                    Live chat
+                  </button>
+                  <Link to="/contact" className="kx-btn kx-btn--black">
+                    Contact support
+                  </Link>
+                </div>
               </div>
             </div>
           </aside>
 
-          {/* RIGHT: content cards */}
-          <section className="help-right">
-            <div className="help-list">
+          {/* RIGHT: content */}
+          <section className="hc-main">
+            <div className="hc-list">
               {sections.map((s) => (
-                <article key={s.id} id={`hc-${s.id}`} className="help-card help-item">
-                  <div className="help-item-top">
-                    <div className="help-item-titlewrap">
-                      <div className="help-item-emoji" aria-hidden="true">
+                <article key={s.id} id={`hc-${s.id}`} className="hc-card">
+                  <div className="hc-card-top">
+                    <div className="hc-card-titlewrap">
+                      <div className="hc-card-emoji" aria-hidden="true">
                         {s.icon}
                       </div>
                       <div>
-                        <h3 className="help-item-title">{s.title}</h3>
-                        <p className="help-muted">Short videos and step-by-step tutorials.</p>
+                        <h3 className="hc-card-title">{s.title}</h3>
+                        <p className="hc-muted">{s.desc}</p>
                       </div>
                     </div>
 
-                    <span className="help-badge maintenance">Under maintenance</span>
+                    <span className="hc-status">Under maintenance</span>
                   </div>
 
-                  <div className="help-item-body">
-                    <div className="help-kv">
-                      <div className="help-k">What’s happening</div>
-                      <div className="help-v">
+                  <div className="hc-card-body">
+                    <div className="hc-kv">
+                      <div className="hc-k">What’s happening</div>
+                      <div className="hc-v">
                         This section is being improved. We’re polishing the tutorials for a smoother experience.
                       </div>
                     </div>
 
-                    <div className="help-kv">
-                      <div className="help-k">What you’ll get</div>
-                      <div className="help-v">
-                        Short videos, best practices, and quick fixes you can follow on-site.
+                    <div className="hc-kv">
+                      <div className="hc-k">What you’ll get</div>
+                      <div className="hc-v">
+                        Short videos, step-by-step guides, best practices, and quick fixes you can follow on-site.
                       </div>
                     </div>
 
-                    <div className="help-kv">
-                      <div className="help-k">Need help now?</div>
-                      <div className="help-v">
-                        Use{" "}
-                        <button type="button" className="help-linklike" onClick={openChat}>
-                          live chat
-                        </button>{" "}
-                        or go to{" "}
-                        <Link to="/contact" className="help-inline-link">
-                          contact support
-                        </Link>
-                        .
+                    <div className="hc-kv">
+                      <div className="hc-k">Need help now?</div>
+                      <div className="hc-v">
+                        Use <button type="button" className="hc-linklike" onClick={openChat}>live chat</button> or go to{" "}
+                        <Link to="/contact" className="hc-inline-link">contact support</Link>.
                       </div>
                     </div>
                   </div>
 
-                  <div className="help-item-actions">
-                    <button type="button" onClick={openChat} className="help-btn help-btn-ghost">
+                  <div className="hc-card-actions">
+                    <button type="button" onClick={openChat} className="kx-btn kx-btn--white">
                       Live chat
                     </button>
-                    <Link to="/contact" className="help-btn help-btn-primary">
+                    <Link to="/contact" className="kx-btn kx-btn--orange">
                       Contact support
                     </Link>
                   </div>
