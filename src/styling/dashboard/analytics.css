@@ -1,66 +1,20 @@
-:root {
-    --bg: #ffffff;
-    --bg-soft: #fafafa;
-
-    --ink: #0f172a;
-    --muted: #475569;
-
-    --accent: #f97316;
-    --accent-rgb: 249 115 22;
-
-    --radius: 18px;
-    --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-    --border: rgba(15, 23, 42, 0.08);
-}
+/* frontend/src/styling/dashboard/analytics.css
+=========================================================
+Analytics — Dashboard system
+- Uses PageHeader
+- Cal Sans ONLY for section titles, always weight 500
+- Buttons use global kx-btn
+========================================================= */
 
 .an-shell {
-    padding: 22px 22px 28px;
-    background: var(--bg);
-}
-
-/* Header */
-.an-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 18px;
-    margin-bottom: 18px;
-}
-
-.an-title {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 34px;
-    letter-spacing: -0.02em;
+    width: 100%;
+    padding: 0;
     margin: 0;
-    color: var(--ink);
 }
 
-.an-subtitle {
-    margin: 8px 0 0;
-    color: var(--muted);
-    font-size: 15px;
-    max-width: 760px;
-}
-
-.an-meta {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.an-pill {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    padding: 10px 12px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--bg-soft);
-    color: var(--ink);
-}
-
-/* Layout top range selector in header slot */
+/* =========================================================
+   Range selector (PageHeader rightSlot)
+========================================================= */
 .an-range {
     display: inline-flex;
     gap: 8px;
@@ -76,11 +30,13 @@
     padding: 10px 12px;
     border-radius: 999px;
     cursor: pointer;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
+
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
     font-size: 13px;
-    color: var(--ink);
-    transition: background 0.2s, transform 0.08s ease;
+    color: var(--kc-text-primary);
+
+    transition: background 0.15s ease, transform 0.12s ease, border-color 0.15s ease;
 }
 
 .an-range-btn:active {
@@ -92,22 +48,24 @@
 }
 
 .an-range-btn.active {
-    background: rgb(var(--accent-rgb) / 0.12);
-    border-color: rgb(var(--accent-rgb) / 0.25);
-    color: rgb(var(--accent-rgb));
+    background: rgba(249, 115, 22, 0.12);
+    border-color: rgba(249, 115, 22, 0.25);
+    color: rgba(249, 115, 22, 1);
 }
 
-/* Cards + grid */
+/* =========================================================
+   Cards + grid
+========================================================= */
 .an-card {
-    background: var(--bg-soft);
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 18px;
+    background: var(--kc-bg-main);
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 22px;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+    padding: 16px;
 }
 
 .an-card+.an-grid {
-    margin-top: 14px;
+    margin-top: 16px;
 }
 
 .an-card-head {
@@ -120,18 +78,35 @@
 .an-card-title {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
-    color: var(--ink);
+    font-weight: 500;
+    color: var(--kc-text-primary);
     font-size: 18px;
     letter-spacing: -0.01em;
 }
 
 .an-muted {
-    color: var(--muted);
+    color: var(--kc-text-secondary);
     margin: 8px 0 0;
     font-size: 14px;
+    line-height: 1.55;
 }
 
-/* Metrics */
+.an-pill {
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 10px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: var(--kc-bg-soft);
+    color: var(--kc-text-primary);
+    white-space: nowrap;
+}
+
+/* =========================================================
+   Metrics
+========================================================= */
 .an-metrics {
     margin-top: 14px;
     display: grid;
@@ -141,48 +116,51 @@
 
 .an-metric {
     background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 18px;
     padding: 14px;
 }
 
 .an-metric-num {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
     font-size: 30px;
-    color: var(--ink);
+    color: var(--kc-text-primary);
     letter-spacing: -0.01em;
 }
 
 .an-metric-label {
     margin-top: 6px;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--kc-text-primary);
 }
 
 .an-metric-sub {
     margin-top: 4px;
-    color: var(--muted);
-    font-weight: 700;
+    color: rgba(71, 85, 105, 0.95);
+    font-weight: 600;
     font-size: 13px;
 }
 
 .an-empty-note {
     margin-top: 14px;
-    background: #fff;
-    border: 1px solid rgb(var(--accent-rgb) / 0.2);
-    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.02);
+    border: 1px solid rgba(249, 115, 22, 0.22);
+    border-radius: 18px;
     padding: 14px;
-    font-weight: 800;
-    color: var(--muted);
+    font-weight: 600;
+    color: var(--kc-text-secondary);
 }
 
-/* Grid sections */
+/* =========================================================
+   Grid sections
+========================================================= */
 .an-grid {
+    margin-top: 16px;
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: 14px;
+    gap: 16px;
 }
 
 .an-span-7 {
@@ -193,7 +171,9 @@
     grid-column: span 5;
 }
 
-/* Timeline bars */
+/* =========================================================
+   Timeline
+========================================================= */
 .an-timeline {
     margin-top: 14px;
     display: grid;
@@ -209,10 +189,10 @@
 }
 
 .an-bar-top {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
     font-size: 12px;
-    color: var(--muted);
+    color: rgba(71, 85, 105, 0.95);
 }
 
 .an-bar-track {
@@ -220,7 +200,7 @@
     height: 140px;
     border-radius: 14px;
     background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     display: flex;
     align-items: flex-end;
     overflow: hidden;
@@ -228,18 +208,27 @@
 
 .an-bar-fill {
     width: 100%;
-    background: rgb(var(--accent-rgb) / 0.28);
+    background: rgba(249, 115, 22, 0.28);
     border-top-left-radius: 14px;
     border-top-right-radius: 14px;
 }
 
 .an-bar-label {
     font-size: 12px;
-    font-weight: 800;
-    color: var(--muted);
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.95);
 }
 
-/* Traffic sources */
+.an-hint {
+    margin-top: 12px;
+    color: rgba(71, 85, 105, 0.95);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* =========================================================
+   Sources
+========================================================= */
 .an-sources {
     margin-top: 14px;
     display: grid;
@@ -248,8 +237,8 @@
 
 .an-source {
     background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 18px;
     padding: 14px;
 }
 
@@ -260,16 +249,11 @@
     gap: 10px;
 }
 
-.an-source-name {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
-}
-
+.an-source-name,
 .an-source-num {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--kc-text-primary);
 }
 
 .an-source-bar {
@@ -283,17 +267,17 @@
 .an-source-fill {
     height: 100%;
     border-radius: 999px;
-    background: rgb(var(--accent-rgb) / 0.45);
+    background: rgba(249, 115, 22, 0.45);
 }
 
 .an-source-foot {
     margin-top: 8px;
-    font-weight: 900;
-    color: var(--muted);
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.95);
     font-size: 12px;
 }
 
-/* CTA buttons */
+/* CTA row */
 .an-cta {
     display: flex;
     gap: 10px;
@@ -301,65 +285,14 @@
     margin-top: 14px;
 }
 
-.an-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border-radius: 14px;
-    padding: 12px 14px;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    font-size: 14px;
-    text-decoration: none;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: transform 0.08s ease, background 0.2s, border 0.2s;
-}
-
-.an-btn:active {
-    transform: translateY(1px);
-}
-
-.an-btn-primary {
-    background: var(--accent);
-    color: #fff;
-    border-color: rgb(var(--accent-rgb) / 0.35);
-    box-shadow: 0 12px 22px rgb(var(--accent-rgb) / 0.18);
-}
-
-.an-btn-primary:hover {
-    background: rgb(var(--accent-rgb) / 0.92);
-}
-
-.an-btn-ghost {
-    background: var(--bg-soft);
-    color: var(--ink);
-    border-color: rgba(15, 23, 42, 0.12);
-}
-
-.an-btn-ghost:hover {
-    background: rgba(15, 23, 42, 0.04);
-}
-
-.an-hint {
-    margin-top: 12px;
-    color: var(--muted);
-    font-weight: 800;
-    font-size: 13px;
-}
-
-/* Responsive */
+/* =========================================================
+   Responsive
+========================================================= */
 @media (max-width: 1100px) {
 
     .an-span-7,
     .an-span-5 {
         grid-column: span 12;
-    }
-
-    .an-header {
-        flex-direction: column;
-        align-items: flex-start;
     }
 
     .an-metrics {
@@ -368,5 +301,26 @@
 
     .an-timeline {
         grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .an-range {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .an-range-btn {
+        width: 50%;
+        justify-content: center;
+    }
+
+    .an-cta {
+        width: 100%;
+    }
+
+    .an-cta .kx-btn {
+        width: 100%;
+        justify-content: center;
     }
 }
