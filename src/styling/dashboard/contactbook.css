@@ -1,40 +1,12 @@
 /* frontend/src/styling/dashboard/contactbook.css
 =========================================================
-Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
-- Uses same token system + focus ring + card shadows
-- Responsive 12-col grid -> stacks on mobile
+Contact Book — KonarCard Dashboard system
+- Uses PageHeader
+- Uses kx-btn from fonts.css (black/white/orange)
+- Cal Sans ONLY for main headings, always weight 500
+- Layout never collapses during loading (skeletons inside cards)
 ========================================================= */
 
-:root {
-    --bg: #ffffff;
-    --surface: #ffffff;
-    --surface-2: #fafafa;
-    --surface-3: #f6f7f9;
-
-    --ink: #0b1220;
-    --muted: #5b667a;
-
-    --accent: #f97316;
-    --accent-rgb: 249 115 22;
-
-    --danger: #dc2626;
-    --danger-rgb: 220 38 38;
-
-    --border: rgba(11, 18, 32, 0.10);
-    --border-2: rgba(11, 18, 32, 0.08);
-
-    --radius: 18px;
-    --radius-lg: 22px;
-
-    --shadow-sm: 0 8px 18px rgba(11, 18, 32, 0.06);
-    --shadow-md: 0 14px 34px rgba(11, 18, 32, 0.10);
-
-    --focus: 0 0 0 3px rgb(var(--accent-rgb) / 0.28);
-}
-
-/* =========================================================
-   Shell
-========================================================= */
 .cb-shell {
     width: 100%;
     padding: 0;
@@ -42,74 +14,34 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
 }
 
 /* =========================================================
-   Buttons
+   Grid
 ========================================================= */
-.cb-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border-radius: 14px;
-    padding: 12px 14px;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    font-size: 14px;
-    text-decoration: none;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: transform 0.08s ease, background 0.2s, border 0.2s, opacity 0.2s, box-shadow 0.2s;
-    user-select: none;
+.cb-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+    align-items: start;
 }
 
-.cb-btn:active {
-    transform: translateY(1px);
+.cb-span-7 {
+    grid-column: span 7;
 }
 
-.cb-btn:focus-visible {
-    outline: none;
-    box-shadow: var(--focus);
-}
-
-.cb-btn-primary {
-    background: var(--accent);
-    color: #fff;
-    border-color: rgb(var(--accent-rgb) / 0.35);
-    box-shadow: 0 12px 22px rgb(var(--accent-rgb) / 0.18);
-}
-
-.cb-btn-primary:hover {
-    background: rgb(var(--accent-rgb) / 0.92);
-}
-
-.cb-btn-ghost {
-    background: var(--surface-2);
-    color: var(--ink);
-    border-color: rgba(11, 18, 32, 0.14);
-}
-
-.cb-btn-ghost:hover {
-    background: rgba(11, 18, 32, 0.04);
-}
-
-.cb-btn-danger {
-    background: rgb(var(--danger-rgb) / 0.08);
-    border-color: rgb(var(--danger-rgb) / 0.18);
-    color: #b91c1c;
-}
-
-.cb-btn-danger:hover {
-    background: rgb(var(--danger-rgb) / 0.12);
+.cb-span-5 {
+    grid-column: span 5;
 }
 
 /* =========================================================
    Cards
 ========================================================= */
 .cb-card {
-    background: var(--surface);
-    border: 1px solid var(--border-2);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    background: var(--kc-bg-main);
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 22px;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
     padding: 16px;
+    min-width: 0;
 }
 
 .cb-card-head {
@@ -122,69 +54,46 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
 .cb-card-title {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
-    color: var(--ink);
+    font-weight: 500;
+    color: var(--kc-text-primary);
     font-size: 18px;
     letter-spacing: -0.01em;
 }
 
 .cb-muted {
     margin: 8px 0 0;
-    color: var(--muted);
+    color: var(--kc-text-secondary);
     font-size: 14px;
     line-height: 1.55;
-    font-weight: 800;
 }
 
-/* Empty states */
-.cb-empty {
-    display: grid;
-    gap: 10px;
-}
-
-.cb-actions-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 14px;
-    flex-wrap: wrap;
-}
-
-/* =========================================================
-   Grid
-========================================================= */
-.cb-grid {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: 14px;
-}
-
-.cb-span-7 {
-    grid-column: span 7;
-}
-
-.cb-span-5 {
-    grid-column: span 5;
+.cb-mutedInline {
+    color: rgba(71, 85, 105, 0.95);
 }
 
 /* =========================================================
    Search
 ========================================================= */
 .cb-search {
-    min-width: 240px;
+    min-width: 260px;
 }
 
 .cb-search-input {
     width: 100%;
     padding: 12px 14px;
     border-radius: 14px;
-    border: 1px solid rgba(11, 18, 32, 0.14);
+    border: 1px solid rgba(15, 23, 42, 0.14);
     background: #fff;
-    font-weight: 800;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
     outline: none;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .cb-search-input:focus {
-    border-color: rgb(var(--accent-rgb) / 0.35);
-    box-shadow: 0 0 0 4px rgb(var(--accent-rgb) / 0.12);
+    border-color: rgba(249, 115, 22, 0.45);
+    box-shadow: 0 0 0 3px var(--kc-focus-ring);
 }
 
 /* =========================================================
@@ -198,8 +107,9 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
 
 .cb-item {
     width: 100%;
+    text-align: left;
     background: #fff;
-    border: 1px solid rgba(11, 18, 32, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 18px;
     padding: 14px;
     display: flex;
@@ -207,12 +117,11 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
     justify-content: space-between;
     gap: 12px;
     cursor: pointer;
-    text-align: left;
-    transition: background 0.2s, transform 0.08s ease, box-shadow 0.2s, border-color 0.2s;
+    transition: background 0.15s ease, transform 0.10s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .cb-item:hover {
-    background: rgba(11, 18, 32, 0.02);
+    background: rgba(15, 23, 42, 0.02);
 }
 
 .cb-item:active {
@@ -221,12 +130,12 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
 
 .cb-item:focus-visible {
     outline: none;
-    box-shadow: var(--focus);
+    box-shadow: 0 0 0 3px var(--kc-focus-ring);
 }
 
 .cb-item.active {
-    border-color: rgb(var(--accent-rgb) / 0.35);
-    box-shadow: 0 10px 24px rgb(var(--accent-rgb) / 0.14);
+    border-color: rgba(249, 115, 22, 0.35);
+    box-shadow: 0 10px 24px rgba(249, 115, 22, 0.12);
 }
 
 .cb-item-left {
@@ -240,13 +149,13 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
     width: 44px;
     height: 44px;
     border-radius: 16px;
-    background: rgb(var(--accent-rgb) / 0.14);
+    background: rgba(249, 115, 22, 0.14);
+    border: 1px solid rgba(249, 115, 22, 0.18);
     display: grid;
     place-items: center;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
-    border: 1px solid rgb(var(--accent-rgb) / 0.18);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--kc-text-primary);
     flex: 0 0 auto;
 }
 
@@ -255,9 +164,9 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
 }
 
 .cb-item-title {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--kc-text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -269,70 +178,71 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
-    font-weight: 800;
     font-size: 13px;
-    color: rgba(91, 102, 122, 0.95);
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.95);
 }
 
 .cb-source {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: rgb(var(--accent-rgb));
+    font-weight: 700;
+    color: rgba(249, 115, 22, 1);
 }
 
 .cb-dot {
-    color: rgba(11, 18, 32, 0.25);
+    color: rgba(15, 23, 42, 0.25);
 }
 
 .cb-item-right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex: 0 0 auto;
 }
 
 .cb-count {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
-    background: var(--surface-2);
-    border: 1px solid rgba(11, 18, 32, 0.14);
-    padding: 8px 10px;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--kc-text-primary);
+    background: var(--kc-bg-soft);
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    padding: 7px 10px;
     border-radius: 999px;
 }
 
 .cb-view {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--muted);
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.95);
 }
 
 /* Inline empty */
 .cb-empty-inline {
     margin-top: 10px;
-    background: #fff;
-    border: 1px dashed rgba(11, 18, 32, 0.18);
+    background: rgba(15, 23, 42, 0.02);
+    border: 1px dashed rgba(15, 23, 42, 0.18);
     border-radius: 18px;
     padding: 14px;
-    font-weight: 900;
-    color: var(--muted);
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.95);
 }
 
 /* =========================================================
-   Detail
+   Detail (sticky on desktop)
 ========================================================= */
-.cb-detail {
-    margin-top: 14px;
+.cb-detailCard {
+    position: sticky;
+    top: 12px;
 }
 
-.cb-empty-detail {
+.cb-detailTopActions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.cb-detail {
     margin-top: 14px;
-    background: #fff;
-    border: 1px dashed rgba(11, 18, 32, 0.18);
-    border-radius: 18px;
-    padding: 14px;
-    font-weight: 900;
-    color: var(--muted);
 }
 
 .cb-detail-top {
@@ -345,26 +255,34 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
     width: 52px;
     height: 52px;
     border-radius: 18px;
-    background: rgb(var(--accent-rgb) / 0.14);
-    border: 1px solid rgb(var(--accent-rgb) / 0.18);
+    background: rgba(249, 115, 22, 0.14);
+    border: 1px solid rgba(249, 115, 22, 0.18);
     display: grid;
     place-items: center;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--kc-text-primary);
+    flex: 0 0 auto;
+}
+
+.cb-detail-meta {
+    min-width: 0;
 }
 
 .cb-detail-name {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    font-size: 18px;
-    color: var(--ink);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--kc-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .cb-detail-sub {
     margin-top: 4px;
-    color: var(--muted);
-    font-weight: 800;
+    color: rgba(71, 85, 105, 0.95);
+    font-weight: 600;
     font-size: 13px;
 }
 
@@ -376,7 +294,7 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
 
 .cb-detail-row {
     background: #fff;
-    border: 1px solid rgba(11, 18, 32, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 18px;
     padding: 12px 14px;
     display: flex;
@@ -385,15 +303,15 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
 }
 
 .cb-detail-label {
-    font-weight: 900;
-    color: rgba(91, 102, 122, 0.95);
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.95);
 }
 
 .cb-detail-value {
-    font-weight: 900;
-    color: var(--ink);
+    font-weight: 700;
+    color: var(--kc-text-primary);
     text-align: right;
-    max-width: 60%;
+    max-width: 62%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -402,38 +320,128 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
 .cb-note {
     margin-top: 14px;
     background: #fff;
-    border: 1px solid rgba(11, 18, 32, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 18px;
     padding: 14px;
 }
 
 .cb-note-title {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    color: var(--ink);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--kc-text-primary);
 }
 
 .cb-note-body {
     margin-top: 8px;
-    color: rgba(91, 102, 122, 0.95);
-    font-weight: 800;
+    color: rgba(71, 85, 105, 0.95);
+    font-weight: 600;
     font-size: 13px;
     line-height: 1.5;
     white-space: pre-wrap;
 }
 
-.cb-manage {
-    margin-top: 14px;
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
 .cb-hint {
     margin-top: 12px;
-    color: var(--muted);
-    font-weight: 800;
+    color: rgba(71, 85, 105, 0.95);
+    font-weight: 600;
     font-size: 13px;
+}
+
+/* =========================================================
+   Inline states (error / empty) that don't break layout
+========================================================= */
+.cb-inlineState {
+    margin-top: 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(15, 23, 42, 0.02);
+    padding: 14px;
+    display: grid;
+    gap: 8px;
+}
+
+.cb-inlineState.cb-error {
+    background: rgba(220, 38, 38, 0.06);
+    border-color: rgba(220, 38, 38, 0.18);
+}
+
+.cb-inlineTitle {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--kc-text-primary);
+}
+
+.cb-inlineText {
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.95);
+}
+
+/* =========================================================
+   Skeletons (stable card height feel)
+========================================================= */
+.cb-skelItem {
+    height: 76px;
+    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: linear-gradient(90deg,
+            rgba(15, 23, 42, 0.05),
+            rgba(15, 23, 42, 0.03),
+            rgba(15, 23, 42, 0.05));
+    background-size: 200% 100%;
+    animation: cbShimmer 1.1s ease-in-out infinite;
+}
+
+.cb-detailSkel {
+    margin-top: 14px;
+    display: grid;
+    gap: 10px;
+}
+
+.cb-skelHead {
+    height: 70px;
+    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: linear-gradient(90deg,
+            rgba(15, 23, 42, 0.05),
+            rgba(15, 23, 42, 0.03),
+            rgba(15, 23, 42, 0.05));
+    background-size: 200% 100%;
+    animation: cbShimmer 1.1s ease-in-out infinite;
+}
+
+.cb-skelRow {
+    height: 52px;
+    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: linear-gradient(90deg,
+            rgba(15, 23, 42, 0.05),
+            rgba(15, 23, 42, 0.03),
+            rgba(15, 23, 42, 0.05));
+    background-size: 200% 100%;
+    animation: cbShimmer 1.1s ease-in-out infinite;
+}
+
+.cb-skelNote {
+    height: 110px;
+    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: linear-gradient(90deg,
+            rgba(15, 23, 42, 0.05),
+            rgba(15, 23, 42, 0.03),
+            rgba(15, 23, 42, 0.05));
+    background-size: 200% 100%;
+    animation: cbShimmer 1.1s ease-in-out infinite;
+}
+
+@keyframes cbShimmer {
+    0% {
+        background-position: 0% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
 }
 
 /* =========================================================
@@ -450,6 +458,15 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
         width: 100%;
         min-width: 0;
     }
+
+    .cb-detailCard {
+        position: static;
+        top: auto;
+    }
+
+    .cb-detailTopActions {
+        justify-content: flex-start;
+    }
 }
 
 @media (max-width: 520px) {
@@ -458,13 +475,13 @@ Contact Book (Dashboard) — Matches HelpCentre/Profiles UI
         align-items: stretch;
     }
 
-    .cb-actions-row,
-    .cb-manage {
+    .cb-detailTopActions,
+    .cb-actions-row {
         width: 100%;
     }
 
-    .cb-actions-row .cb-btn,
-    .cb-manage .cb-btn {
+    .cb-detailTopActions .kx-btn,
+    .cb-actions-row .kx-btn {
         width: 100%;
         justify-content: center;
     }

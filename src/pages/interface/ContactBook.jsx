@@ -27,11 +27,9 @@ export default function ContactBook() {
     const [search, setSearch] = useState("");
     const [selectedId, setSelectedId] = useState(null);
 
-    // match other pages’ responsive logic
     const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
     const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
 
-    // ✅ Fetch real contact exchanges (protected)
     const {
         data: exchanges,
         isLoading,
@@ -48,7 +46,6 @@ export default function ContactBook() {
         retry: 1,
     });
 
-    // ✅ Transform backend schema -> UI model
     const contacts = useMemo(() => {
         const xs = Array.isArray(exchanges) ? exchanges : [];
         return xs.map((x) => {
@@ -72,16 +69,19 @@ export default function ContactBook() {
         });
     }, [exchanges]);
 
-    // ✅ Pick first contact when loaded
     useEffect(() => {
+        if (isLoading) return;
+
         if (!selectedId && contacts.length > 0) {
             setSelectedId(contacts[0].id);
+            return;
         }
+
         if (selectedId && contacts.length > 0) {
             const stillExists = contacts.some((c) => c.id === selectedId);
             if (!stillExists) setSelectedId(contacts[0].id);
         }
-    }, [contacts, selectedId]);
+    }, [contacts, selectedId, isLoading]);
 
     const selected = useMemo(() => {
         if (!contacts.length) return null;
@@ -154,12 +154,14 @@ export default function ContactBook() {
         }
     };
 
-    // ✅ Page header right slot like other dashboard pages
     const rightSlot = (
-        <button type="button" className="cb-btn cb-btn-primary" onClick={exportCSV}>
+        <button type="button" className="kx-btn kx-btn--black" onClick={exportCSV}>
             Export CSV
         </button>
     );
+
+    // Keep layout stable: always render grid + cards, swap content inside
+    const showEmpty = !isLoading && !isError && contacts.length === 0;
 
     return (
         <DashboardLayout title="Contact Book" subtitle="People who exchanged details with you." hideDesktopHeader>
@@ -172,167 +174,196 @@ export default function ContactBook() {
                     rightSlot={rightSlot}
                 />
 
-                {/* Loading / Error */}
-                {isLoading ? (
-                    <section className="cb-card cb-empty" style={{ marginTop: 16 }}>
-                        <h2 className="cb-card-title">Loading contacts…</h2>
-                        <p className="cb-muted">Fetching your latest exchanges.</p>
-                    </section>
-                ) : isError ? (
-                    <section className="cb-card cb-empty" style={{ marginTop: 16 }}>
-                        <h2 className="cb-card-title">Couldn’t load contacts</h2>
-                        <p className="cb-muted">
-                            {error?.response?.data?.error || error?.message || "Something went wrong."}
-                        </p>
-                    </section>
-                ) : contacts.length === 0 ? (
-                    <section className="cb-card cb-empty" style={{ marginTop: 16 }}>
-                        <h2 className="cb-card-title">No contacts yet</h2>
-                        <p className="cb-muted">
-                            This page will populate when someone presses <strong>Exchange Contact</strong> on your public profile.
-                        </p>
-                        <div className="cb-actions-row">
-                            <a className="cb-btn cb-btn-primary" href="/profiles">
-                                Go to profiles
-                            </a>
-                            <a className="cb-btn cb-btn-ghost" href="/cards">
-                                Manage cards
-                            </a>
-                        </div>
-                    </section>
-                ) : (
-                    <div className="cb-grid" style={{ marginTop: 16 }}>
-                        {/* LEFT: list */}
-                        <section className="cb-card cb-span-7">
-                            <div className="cb-card-head">
-                                <div>
-                                    <h2 className="cb-card-title">Contacts list</h2>
-                                    <p className="cb-muted">Search and select a contact to view details.</p>
-                                </div>
-
-                                <div className="cb-search">
-                                    <input
-                                        className="cb-search-input"
-                                        value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
-                                        placeholder="Search contacts…"
-                                    />
-                                </div>
+                <div className="cb-grid">
+                    {/* LEFT: LIST */}
+                    <section className="cb-card cb-span-7">
+                        <div className="cb-card-head">
+                            <div>
+                                <h2 className="cb-card-title">Contacts</h2>
+                                <p className="cb-muted">Search and select a contact to view details.</p>
                             </div>
 
-                            <div className="cb-list">
-                                {filtered.map((c) => (
-                                    <button
-                                        key={c.id}
-                                        type="button"
-                                        className={`cb-item ${selected?.id === c.id ? "active" : ""}`}
-                                        onClick={() => setSelectedId(c.id)}
-                                    >
-                                        <div className="cb-item-left">
-                                            <div className="cb-avatar" aria-hidden="true">
-                                                {(c.name || "U").slice(0, 1).toUpperCase()}
-                                            </div>
+                            <div className="cb-search">
+                                <input
+                                    className="cb-search-input"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    placeholder="Search contacts…"
+                                    aria-label="Search contacts"
+                                />
+                            </div>
+                        </div>
 
-                                            <div className="cb-item-meta">
-                                                <div className="cb-item-title">{c.name || "Unknown"}</div>
-                                                <div className="cb-item-sub">
-                                                    <span className="cb-source">{sourceLabel(c.source)}</span>
-                                                    <span className="cb-dot">•</span>
-                                                    <span className="cb-muted">Received {c.lastSeen || "—"}</span>
+                        {isError ? (
+                            <div className="cb-inlineState cb-error">
+                                <div className="cb-inlineTitle">Couldn’t load contacts</div>
+                                <div className="cb-inlineText">
+                                    {error?.response?.data?.error || error?.message || "Something went wrong."}
+                                </div>
+                            </div>
+                        ) : showEmpty ? (
+                            <div className="cb-inlineState">
+                                <div className="cb-inlineTitle">No contacts yet</div>
+                                <div className="cb-inlineText">
+                                    This will populate when someone presses <strong>Exchange Contact</strong> on your public profile.
+                                </div>
+
+                                <div className="cb-actions-row">
+                                    <a className="kx-btn kx-btn--black" href="/profiles">
+                                        Go to profiles
+                                    </a>
+                                    <a className="kx-btn kx-btn--white" href="/cards">
+                                        Manage cards
+                                    </a>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="cb-list" aria-busy={isLoading ? "true" : "false"}>
+                                {isLoading ? (
+                                    <>
+                                        <div className="cb-skelItem" />
+                                        <div className="cb-skelItem" />
+                                        <div className="cb-skelItem" />
+                                        <div className="cb-skelItem" />
+                                        <div className="cb-skelItem" />
+                                    </>
+                                ) : (
+                                    <>
+                                        {filtered.map((c) => (
+                                            <button
+                                                key={c.id}
+                                                type="button"
+                                                className={`cb-item ${selected?.id === c.id ? "active" : ""}`}
+                                                onClick={() => setSelectedId(c.id)}
+                                            >
+                                                <div className="cb-item-left">
+                                                    <div className="cb-avatar" aria-hidden="true">
+                                                        {(c.name || "U").slice(0, 1).toUpperCase()}
+                                                    </div>
+
+                                                    <div className="cb-item-meta">
+                                                        <div className="cb-item-title">{c.name || "Unknown"}</div>
+                                                        <div className="cb-item-sub">
+                                                            <span className="cb-source">{sourceLabel(c.source)}</span>
+                                                            <span className="cb-dot">•</span>
+                                                            <span className="cb-mutedInline">Received {c.lastSeen || "—"}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
 
-                                        <div className="cb-item-right">
-                                            <span className="cb-count">{c.interactions}×</span>
-                                            <span className="cb-view">View</span>
-                                        </div>
-                                    </button>
-                                ))}
+                                                <div className="cb-item-right">
+                                                    <span className="cb-count">{c.interactions}×</span>
+                                                    <span className="cb-view">View</span>
+                                                </div>
+                                            </button>
+                                        ))}
 
-                                {filtered.length === 0 && (
-                                    <div className="cb-empty-inline">No contacts match “{search}”.</div>
+                                        {filtered.length === 0 && (
+                                            <div className="cb-empty-inline">No contacts match “{search}”.</div>
+                                        )}
+                                    </>
                                 )}
                             </div>
-                        </section>
+                        )}
+                    </section>
 
-                        {/* RIGHT: detail */}
-                        <section className="cb-card cb-span-5">
-                            <div className="cb-card-head">
-                                <div>
-                                    <h2 className="cb-card-title">Contact detail</h2>
-                                    <p className="cb-muted">Details submitted through Exchange Contact.</p>
-                                </div>
+                    {/* RIGHT: DETAIL */}
+                    <section className="cb-card cb-span-5 cb-detailCard">
+                        <div className="cb-card-head">
+                            <div>
+                                <h2 className="cb-card-title">Details</h2>
+                                <p className="cb-muted">Information submitted through Exchange Contact.</p>
                             </div>
 
-                            {!selected ? (
-                                <div className="cb-empty-detail">Select a contact to view details.</div>
-                            ) : (
-                                <div className="cb-detail">
-                                    <div className="cb-detail-top">
-                                        <div className="cb-detail-avatar" aria-hidden="true">
-                                            {(selected.name || "U").slice(0, 1).toUpperCase()}
-                                        </div>
+                            {!isLoading && selected ? (
+                                <div className="cb-detailTopActions">
+                                    <button type="button" className="kx-btn kx-btn--white" onClick={exportCSV}>
+                                        Export
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--orange"
+                                        onClick={() => deleteContact(selected.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            ) : null}
+                        </div>
 
-                                        <div>
-                                            <div className="cb-detail-name">{selected.name || "Unknown"}</div>
-                                            <div className="cb-detail-sub">
-                                                Source: <strong>{sourceLabel(selected.source)}</strong>
-                                            </div>
-                                        </div>
+                        {isLoading ? (
+                            <div className="cb-detailSkel">
+                                <div className="cb-skelHead" />
+                                <div className="cb-skelRow" />
+                                <div className="cb-skelRow" />
+                                <div className="cb-skelRow" />
+                                <div className="cb-skelRow" />
+                                <div className="cb-skelNote" />
+                            </div>
+                        ) : isError ? (
+                            <div className="cb-inlineState cb-error">
+                                <div className="cb-inlineTitle">Details unavailable</div>
+                                <div className="cb-inlineText">Fix the error on the left and try again.</div>
+                            </div>
+                        ) : showEmpty ? (
+                            <div className="cb-inlineState">
+                                <div className="cb-inlineTitle">Nothing to show</div>
+                                <div className="cb-inlineText">When you receive contacts, select one to view details.</div>
+                            </div>
+                        ) : !selected ? (
+                            <div className="cb-inlineState">
+                                <div className="cb-inlineTitle">Select a contact</div>
+                                <div className="cb-inlineText">Pick someone from the list to view their details.</div>
+                            </div>
+                        ) : (
+                            <div className="cb-detail">
+                                <div className="cb-detail-top">
+                                    <div className="cb-detail-avatar" aria-hidden="true">
+                                        {(selected.name || "U").slice(0, 1).toUpperCase()}
                                     </div>
 
-                                    <div className="cb-detail-grid">
-                                        <div className="cb-detail-row">
-                                            <div className="cb-detail-label">Email</div>
-                                            <div className="cb-detail-value">{nonEmpty(selected.email) ? selected.email : "—"}</div>
+                                    <div className="cb-detail-meta">
+                                        <div className="cb-detail-name">{selected.name || "Unknown"}</div>
+                                        <div className="cb-detail-sub">
+                                            Source: <strong>{sourceLabel(selected.source)}</strong>
                                         </div>
-
-                                        <div className="cb-detail-row">
-                                            <div className="cb-detail-label">Phone</div>
-                                            <div className="cb-detail-value">{nonEmpty(selected.phone) ? selected.phone : "—"}</div>
-                                        </div>
-
-                                        <div className="cb-detail-row">
-                                            <div className="cb-detail-label">Received</div>
-                                            <div className="cb-detail-value">{selected.firstSeen || "—"}</div>
-                                        </div>
-
-                                        <div className="cb-detail-row">
-                                            <div className="cb-detail-label">Profile</div>
-                                            <div className="cb-detail-value">{selected.raw?.profile_slug || "—"}</div>
-                                        </div>
-                                    </div>
-
-                                    <div className="cb-note">
-                                        <div className="cb-note-title">Message</div>
-                                        <div className="cb-note-body">
-                                            {nonEmpty(selected.note) ? selected.note : "No message."}
-                                        </div>
-                                    </div>
-
-                                    <div className="cb-manage">
-                                        <button type="button" className="cb-btn cb-btn-ghost" onClick={exportCSV}>
-                                            Export CSV
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className="cb-btn cb-btn-danger"
-                                            onClick={() => deleteContact(selected.id)}
-                                        >
-                                            Delete contact
-                                        </button>
-                                    </div>
-
-                                    <div className="cb-hint">
-                                        Tip: Add “Exchange Contact” on your profile to collect leads faster.
                                     </div>
                                 </div>
-                            )}
-                        </section>
-                    </div>
-                )}
+
+                                <div className="cb-detail-grid">
+                                    <div className="cb-detail-row">
+                                        <div className="cb-detail-label">Email</div>
+                                        <div className="cb-detail-value">{nonEmpty(selected.email) ? selected.email : "—"}</div>
+                                    </div>
+
+                                    <div className="cb-detail-row">
+                                        <div className="cb-detail-label">Phone</div>
+                                        <div className="cb-detail-value">{nonEmpty(selected.phone) ? selected.phone : "—"}</div>
+                                    </div>
+
+                                    <div className="cb-detail-row">
+                                        <div className="cb-detail-label">Received</div>
+                                        <div className="cb-detail-value">{selected.firstSeen || "—"}</div>
+                                    </div>
+
+                                    <div className="cb-detail-row">
+                                        <div className="cb-detail-label">Profile</div>
+                                        <div className="cb-detail-value">{selected.raw?.profile_slug || "—"}</div>
+                                    </div>
+                                </div>
+
+                                <div className="cb-note">
+                                    <div className="cb-note-title">Message</div>
+                                    <div className="cb-note-body">{nonEmpty(selected.note) ? selected.note : "No message."}</div>
+                                </div>
+
+                                <div className="cb-hint">
+                                    Tip: Add “Exchange Contact” on your profile to collect leads faster.
+                                </div>
+                            </div>
+                        )}
+                    </section>
+                </div>
             </div>
         </DashboardLayout>
     );
