@@ -12,7 +12,7 @@ import "../../styling/dashboard/pageheader.css";
  * Props:
  * - title?: string
  * - subtitle?: string
- * - onShareCard: () => void
+ * - onShareCard?: () => void
  * - onVisitPage?: () => void
  * - visitUrl?: string
  * - isMobile: boolean
@@ -34,6 +34,9 @@ export default function PageHeader({
   const displayName = user?.name || "Your Name";
   const displayEmail = user?.email || "you@example.com";
 
+  const canShare = typeof onShareCard === "function";
+  const canVisit = Boolean(visitUrl) || typeof onVisitPage === "function";
+
   const handleVisitClick = (e) => {
     if (!visitUrl && typeof onVisitPage === "function") {
       e.preventDefault();
@@ -44,48 +47,53 @@ export default function PageHeader({
   return (
     <div className="ph-wrap">
       <div className="ph-card">
-        <div className="ph-left">
-          <div className="ph-avatar-wrap" aria-hidden="true">
-            <img src={Avatar} alt="" className="ph-avatar" />
-          </div>
+        <div className="ph-top">
+          <div className="ph-id">
+            <div className="ph-avatarWrap" aria-hidden="true">
+              <img src={Avatar} alt="" className="ph-avatar" />
+            </div>
 
-          <div className="ph-meta">
-            <div className="ph-userline">
+            <div className="ph-user">
               <div className="ph-name">{displayName}</div>
-              <div className="ph-dot" aria-hidden="true">
-                •
-              </div>
               <div className="ph-email">{displayEmail}</div>
             </div>
+          </div>
 
-            <div className="ph-titleline">
-              {title ? <h1 className="ph-title">{title}</h1> : null}
-              {subtitle ? <p className="ph-sub">{subtitle}</p> : null}
-            </div>
+          <div className="ph-actions">
+            {rightSlot ? <div className="ph-slot">{rightSlot}</div> : null}
+
+            {!isMobile && canVisit ? (
+              <a
+                href={visitUrl || "#"}
+                target={visitUrl ? "_blank" : undefined}
+                rel={visitUrl ? "noopener noreferrer" : undefined}
+                onClick={handleVisitClick}
+                className="kx-btn kx-btn--white ph-btn"
+              >
+                <img src={ExternalLinkIcon} alt="" className="ph-ico" />
+                <span>Visit page</span>
+              </a>
+            ) : null}
+
+            {canShare ? (
+              <button
+                type="button"
+                className="kx-btn kx-btn--black ph-btn"
+                onClick={onShareCard}
+              >
+                <img src={ShareProfileIcon} alt="" className="ph-ico" />
+                <span>{isSmallMobile ? "Share" : "Share page"}</span>
+              </button>
+            ) : null}
           </div>
         </div>
 
-        <div className="ph-right">
-          {rightSlot ? <div className="ph-slot">{rightSlot}</div> : null}
-
-          {!isMobile && (
-            <a
-              href={visitUrl || "#"}
-              target={visitUrl ? "_blank" : undefined}
-              rel={visitUrl ? "noopener noreferrer" : undefined}
-              onClick={handleVisitClick}
-              className="ph-btn ph-btn-ghost"
-            >
-              <img src={ExternalLinkIcon} alt="" className="ph-ico" />
-              <span>Visit Page</span>
-            </a>
-          )}
-
-          <button type="button" className="ph-btn ph-btn-primary" onClick={onShareCard}>
-            <img src={ShareProfileIcon} alt="" className="ph-ico" />
-            <span>{isSmallMobile ? "Share" : "Share Your Page"}</span>
-          </button>
-        </div>
+        {(title || subtitle) && (
+          <div className="ph-main">
+            {title ? <h1 className="ph-title">{title}</h1> : null}
+            {subtitle ? <p className="ph-sub">{subtitle}</p> : null}
+          </div>
+        )}
       </div>
     </div>
   );
