@@ -34,7 +34,6 @@ class CardPreviewErrorBoundary extends React.Component {
 /* -----------------------------
    Helpers
 ----------------------------- */
-
 const centerTrim = (v) => (v ?? "").toString().trim();
 const safeUpper = (v) => centerTrim(v).toUpperCase();
 
@@ -114,7 +113,7 @@ function formatMoneyMinor(amountMinor, currency) {
 }
 
 /* -----------------------------
-   Konar default logo (SVG data URL) – so 3D never shows blank
+   Konar default logo (SVG data URL)
 ----------------------------- */
 const KONAR_LOGO_SVG = encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
@@ -131,14 +130,12 @@ const KONAR_LOGO_SVG = encodeURIComponent(`
 const DEFAULT_LOGO_DATAURL = `data:image/svg+xml;charset=utf-8,${KONAR_LOGO_SVG}`;
 
 /* -----------------------------
-   QR from profile link (safe external generator)
-   You can swap this to your own backend QR endpoint later.
+   QR generator (safe external)
 ----------------------------- */
 function qrSrcFromLink(link) {
     const url = centerTrim(link);
     if (!url) return "";
     const data = encodeURIComponent(url);
-    // stable public generator
     return `https://api.qrserver.com/v1/create-qr-code/?size=700x700&margin=10&data=${data}`;
 }
 
@@ -158,11 +155,10 @@ async function getMyOrders() {
 }
 
 /* -----------------------------
-   3D Details Preview (now passes QR + logo correctly)
+   3D Details Preview
 ----------------------------- */
 function Card3DDetails({ productKey, logoSrc, qrSrc, variantRaw }) {
     const pk = String(productKey || "");
-
     if (pk === "metal-card") {
         return <MetalCard3D logoSrc={logoSrc} qrSrc={qrSrc} finish={finishFromVariant(variantRaw)} />;
     }
@@ -264,10 +260,7 @@ export default function Cards() {
         setSelectedId(cards[0].id);
     }, [cards, orderIdFromUrl, selectedId]);
 
-    const selectedCard = useMemo(
-        () => cards.find((c) => c.id === selectedId) || cards[0] || null,
-        [cards, selectedId]
-    );
+    const selectedCard = useMemo(() => cards.find((c) => c.id === selectedId) || cards[0] || null, [cards, selectedId]);
 
     const maxCards = plan === "teams" ? 999 : 1;
     const canAddCard = cards.length < maxCards;
@@ -323,325 +316,286 @@ export default function Cards() {
         window.open(selectedCard.link, "_blank", "noopener,noreferrer");
     };
 
-    // ✅ 3D props derived from selected order (safe + correct)
     const detailsLogoSrc = selectedCard?.logoUrl ? selectedCard.logoUrl : DEFAULT_LOGO_DATAURL;
     const detailsQrSrc = qrSrcFromLink(selectedCard?.link);
 
     return (
-        <DashboardLayout
-            title="Cards"
-            subtitle="Manage your KonarCards and what profile each one links to."
-            rightSlot={
-                isLimitReached ? (
-                    <button className="kc-cards-btn kc-cards-btn-primary" type="button" disabled>
-                        Locked
-                    </button>
-                ) : (
-                    <button className="kc-cards-btn kc-cards-btn-primary" type="button" onClick={handleOrderCard}>
-                        + Order a card
-                    </button>
-                )
-            }
-            hideDesktopHeader
-        >
-            <div className="kc-cards-shell">
+        <DashboardLayout title="Cards" subtitle="Manage your KonarCards." hideDesktopHeader>
+            <div className="cards-shell">
                 <PageHeader
                     title="Cards"
                     subtitle="Your KonarCards are physical NFC products. Assign each card to a profile so customers always land on the right page."
                     isMobile={isMobile}
                     isSmallMobile={isSmallMobile}
                     rightSlot={
-                        <div className="kc-cards-header-badges">
-                            <span className="kc-cards-pill">
-                                Plan: <strong>{safeUpper(plan)}</strong>
-                            </span>
-                            <span className="kc-cards-pill">
-                                Cards: <strong>{cards.length}</strong> / <strong>{maxCards === 999 ? "∞" : maxCards}</strong>
-                            </span>
+                        <div className="cards-header-right">
+                            <div className="cards-header-badges">
+                                <span className="cards-pill">
+                                    Plan: <strong>{safeUpper(plan)}</strong>
+                                </span>
+                                <span className="cards-pill">
+                                    Cards: <strong>{cards.length}</strong> / <strong>{maxCards === 999 ? "∞" : maxCards}</strong>
+                                </span>
+                            </div>
+
+                            <div className="cards-header-actions">
+                                {isLimitReached ? (
+                                    <button className="kx-btn kx-btn--black" type="button" disabled>
+                                        Locked
+                                    </button>
+                                ) : (
+                                    <button className="kx-btn kx-btn--orange" type="button" onClick={handleOrderCard}>
+                                        + Order a card
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     }
                 />
 
-                {loading ? (
-                    <section className="kc-cards-card kc-cards-mutedblock">Loading your orders…</section>
-                ) : error ? (
-                    <section className="kc-cards-card kc-cards-mutedblock">{error}</section>
-                ) : null}
-
-                {!loading && !error && cards.length === 0 ? (
-                    <section className="kc-cards-card kc-cards-empty">
-                        <h2 className="kc-cards-card-title">Order your first KonarCard</h2>
-                        <p className="kc-cards-muted">
-                            Your card lets customers tap their phone to instantly save your contact and open your profile.
-                        </p>
-
-                        <div className="kc-cards-actions-row">
-                            <button className="kc-cards-btn kc-cards-btn-primary" type="button" onClick={handleOrderCard}>
-                                Order a card
-                            </button>
-                            <a className="kc-cards-btn kc-cards-btn-ghost" href="/products">
-                                View products
-                            </a>
+                {/* IMPORTANT: layout never collapses — cards always render */}
+                <section className="cards-card">
+                    <div className="cards-card-head">
+                        <div>
+                            <h2 className="cards-card-title">Your cards</h2>
+                            <p className="cards-muted">Tap a card to view details below.</p>
                         </div>
-                    </section>
-                ) : (
-                    <>
-                        {/* SECTION 1: compact top row (selected card + buy another) */}
-                        <section className="kc-cards-card">
-                            <div className="kc-cards-card-head">
-                                <div>
-                                    <h2 className="kc-cards-card-title">Your cards</h2>
-                                    <p className="kc-cards-muted">Tap your card to view details below.</p>
-                                </div>
-                            </div>
+                    </div>
 
-                            <div className="kc-toprow">
-                                {/* Selected card tile (smaller, minimal) */}
-                                <div className="kc-toprow-col">
-                                    {selectedCard ? (
-                                        <button
-                                            type="button"
-                                            className="kc-card-compact active"
-                                            onClick={() => setSelectedId(selectedCard.id)}
-                                        >
-                                            <div className="kc-card-compact-preview">
-                                                <div className="kc-compact-3dwrap">
-                                                    <CardPreviewErrorBoundary
-                                                        fallback={<div className="kc-3d-fallback">Preview unavailable</div>}
-                                                    >
-                                                        <Card3DDetails
-                                                            productKey={selectedCard.productKey}
-                                                            logoSrc={detailsLogoSrc}
-                                                            qrSrc={detailsQrSrc}
-                                                            variantRaw={selectedCard.variantRaw}
-                                                        />
-                                                    </CardPreviewErrorBoundary>
-                                                </div>
-
-                                                <div className="kc-compact-badges">
-                                                    <span className={`kc-cards-status ${selectedCard.status}`}>
-                                                        {selectedCard.status === "active" ? "ACTIVE" : "INACTIVE"}
-                                                    </span>
-                                                    {selectedCard.variant ? (
-                                                        <span className="kc-cards-status neutral">{selectedCard.variant}</span>
-                                                    ) : null}
-                                                </div>
-                                            </div>
-
-                                            <div className="kc-card-compact-meta">
-                                                <div className="kc-card-name">{selectedCard.name}</div>
-
-                                                <div className="kc-card-sub">
-                                                    <span className="kc-cards-muted">
-                                                        {selectedCard.material} • {prettyProduct(selectedCard.productKey)}
-                                                    </span>
-                                                    <span className="kc-card-dot">•</span>
-                                                    <span className="kc-cards-muted">
-                                                        {selectedCard.orderStatus ? `Order: ${safeUpper(selectedCard.orderStatus)}` : "Order: —"}
-                                                    </span>
-                                                </div>
-
-                                                <div className="kc-card-sub">
-                                                    <span className="kc-cards-muted">
-                                                        Assigned: <strong>{selectedCard.assignedProfile}</strong>
-                                                    </span>
-                                                </div>
-
-                                                <div className="kc-card-compact-actions">
-                                                    <button
-                                                        type="button"
-                                                        className="kc-cards-mini-btn"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleDeactivate(selectedCard.id);
-                                                        }}
-                                                    >
-                                                        {selectedCard.status === "active" ? "Disable" : "Enable"}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </button>
-                                    ) : (
-                                        <div className="kc-cards-muted">Select a card.</div>
-                                    )}
-                                </div>
-
-                                {/* Buy another product tile (same size square) */}
-                                <div className="kc-toprow-col">
-                                    <button type="button" className="kc-buy-tile" onClick={handleOrderCard}>
-                                        <div className="kc-buy-icon" aria-hidden="true">
-                                            +
+                    <div className="cards-toprow">
+                        {/* Selected tile */}
+                        <div className="cards-topcol">
+                            <div className={`cards-compact ${loading ? "is-loading" : ""}`}>
+                                <div className="cards-compact-preview">
+                                    <div className={`cards-compact-skel ${loading ? "" : "hide"}`} />
+                                    {!loading && selectedCard ? (
+                                        <div className="cards-compact-3dwrap">
+                                            <CardPreviewErrorBoundary fallback={<div className="cards-3d-fallback">Preview unavailable</div>}>
+                                                <Card3DDetails
+                                                    productKey={selectedCard.productKey}
+                                                    logoSrc={detailsLogoSrc}
+                                                    qrSrc={detailsQrSrc}
+                                                    variantRaw={selectedCard.variantRaw}
+                                                />
+                                            </CardPreviewErrorBoundary>
                                         </div>
-                                        <div className="kc-buy-title">Buy another product</div>
-                                        <div className="kc-buy-sub">View cards, tags & bundles</div>
-                                    </button>
+                                    ) : null}
+
+                                    <div className="cards-compact-badges">
+                                        <span className={`cards-status ${selectedCard?.status || "neutral"}`}>
+                                            {selectedCard ? (selectedCard.status === "active" ? "ACTIVE" : "INACTIVE") : "—"}
+                                        </span>
+                                        <span className="cards-status neutral">{selectedCard?.variant || "—"}</span>
+                                    </div>
+                                </div>
+
+                                <div className="cards-compact-meta">
+                                    <div className={`cards-name ${loading ? "skel-line w80" : ""}`}>{loading ? "" : selectedCard?.name || "—"}</div>
+
+                                    <div className="cards-sub">
+                                        <span className={`cards-muted ${loading ? "skel-line w55" : ""}`}>
+                                            {loading ? "" : `${selectedCard?.material || "—"} • ${prettyProduct(selectedCard?.productKey || "")}`}
+                                        </span>
+                                        <span className="cards-dot">•</span>
+                                        <span className={`cards-muted ${loading ? "skel-line w40" : ""}`}>
+                                            {loading ? "" : selectedCard?.orderStatus ? `Order: ${safeUpper(selectedCard.orderStatus)}` : "Order: —"}
+                                        </span>
+                                    </div>
+
+                                    <div className="cards-sub">
+                                        <span className={`cards-muted ${loading ? "skel-line w70" : ""}`}>
+                                            {loading ? "" : (
+                                                <>
+                                                    Assigned: <strong>{selectedCard?.assignedProfile || "—"}</strong>
+                                                </>
+                                            )}
+                                        </span>
+                                    </div>
+
+                                    <div className="cards-compact-actions">
+                                        <button
+                                            type="button"
+                                            className="kx-btn kx-btn--white"
+                                            disabled={loading || !selectedCard}
+                                            onClick={() => selectedCard && handleDeactivate(selectedCard.id)}
+                                        >
+                                            {selectedCard?.status === "active" ? "Disable" : "Enable"}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Buy tile */}
+                        <div className="cards-topcol">
+                            <button type="button" className="cards-buy" onClick={handleOrderCard} disabled={loading}>
+                                <div className="cards-buy-icon" aria-hidden="true">
+                                    +
+                                </div>
+                                <div className="cards-buy-title">Buy another product</div>
+                                <div className="cards-buy-sub">View cards, tags & bundles</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Mini picker stays mounted too */}
+                    <div className="cards-mini-picker">
+                        {(loading ? Array.from({ length: 3 }) : cards).map((c, idx) => {
+                            const isActive = !loading && selectedCard?.id === c.id;
+                            return (
+                                <button
+                                    key={loading ? `sk-${idx}` : c.id}
+                                    type="button"
+                                    className={`cards-mini-pill ${isActive ? "active" : ""} ${loading ? "is-loading" : ""}`}
+                                    onClick={() => !loading && setSelectedId(c.id)}
+                                    disabled={loading}
+                                >
+                                    {loading ? "" : `${prettyProduct(c.productKey)}${c.variant ? ` • ${c.variant}` : ""}`}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    {/* Error inside the mounted card */}
+                    {error ? <div className="cards-alert danger">{error}</div> : null}
+                </section>
+
+                {/* Details always mounted */}
+                <section className="cards-card">
+                    <div className="cards-card-head">
+                        <div>
+                            <h2 className="cards-card-title">Card details</h2>
+                            <p className="cards-muted">Everything about your selected order.</p>
+                        </div>
+                    </div>
+
+                    <div className="cards-details">
+                        <div className="cards-details-top">
+                            <div className="cards-details-left">
+                                <div className={`cards-details-title ${loading ? "skel-line w70" : ""}`}>{loading ? "" : selectedCard?.name || "—"}</div>
+                                <div className={`cards-details-sub ${loading ? "skel-line w55" : ""}`}>
+                                    {loading ? "" : `${selectedCard?.material || "—"} • ${selectedCard?.type || "—"}${selectedCard?.variant ? ` • ${selectedCard.variant}` : ""}`}
                                 </div>
                             </div>
 
-                            {/* If user ever has more than 1 card: show tiny selector row under */}
-                            {cards.length > 1 ? (
-                                <div className="kc-mini-picker">
-                                    {cards.map((c) => (
-                                        <button
-                                            key={c.id}
-                                            type="button"
-                                            className={`kc-mini-pill ${selectedCard?.id === c.id ? "active" : ""}`}
-                                            onClick={() => setSelectedId(c.id)}
-                                        >
-                                            {prettyProduct(c.productKey)}
-                                            {c.variant ? ` • ${c.variant}` : ""}
-                                        </button>
-                                    ))}
-                                </div>
+                            <div className="cards-details-actions">
+                                <button className="kx-btn kx-btn--orange" type="button" onClick={handleAssignProfile} disabled={loading}>
+                                    Assign profile
+                                </button>
+
+                                <button className="kx-btn kx-btn--white" type="button" onClick={handleOpenProfile} disabled={loading || !selectedCard?.link}>
+                                    Open profile
+                                </button>
+
+                                <button className="kx-btn kx-btn--white" type="button" onClick={handleShare} disabled={loading}>
+                                    Share link
+                                </button>
+
+                                <button className="kx-btn kx-btn--white" type="button" onClick={handleCopyLink} disabled={loading}>
+                                    Copy link
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="cards-3dpanel">
+                            <div className={`cards-3d-skel ${loading ? "" : "hide"}`} />
+                            {!loading && selectedCard ? (
+                                <CardPreviewErrorBoundary fallback={<div className="cards-3d-fallback">3D preview unavailable</div>}>
+                                    <Card3DDetails
+                                        productKey={selectedCard.productKey}
+                                        logoSrc={detailsLogoSrc}
+                                        qrSrc={detailsQrSrc}
+                                        variantRaw={selectedCard.variantRaw}
+                                    />
+                                </CardPreviewErrorBoundary>
                             ) : null}
-                        </section>
+                        </div>
 
-                        {/* SECTION 2: details (clean + minimal) */}
-                        <section className="kc-cards-card">
-                            <div className="kc-cards-card-head">
-                                <div>
-                                    <h2 className="kc-cards-card-title">Card details</h2>
-                                    <p className="kc-cards-muted">Everything about your selected order.</p>
-                                </div>
+                        <div className="cards-order">
+                            <div className="cards-order-title">Order details</div>
+
+                            <div className="cards-row">
+                                <span className="cards-muted">Product</span>
+                                <strong className={loading ? "skel-line w35" : ""}>{loading ? "" : prettyProduct(selectedCard?.productKey)}</strong>
                             </div>
 
-                            {!selectedCard ? (
-                                <div className="kc-cards-muted">Select a card above.</div>
+                            <div className="cards-row">
+                                <span className="cards-muted">Variant</span>
+                                <strong className={loading ? "skel-line w30" : ""}>{loading ? "" : selectedCard?.variantRaw || "—"}</strong>
+                            </div>
+
+                            <div className="cards-row">
+                                <span className="cards-muted">Quantity</span>
+                                <strong className={loading ? "skel-line w15" : ""}>{loading ? "" : selectedCard?.quantity}</strong>
+                            </div>
+
+                            <div className="cards-row">
+                                <span className="cards-muted">Status</span>
+                                <strong className={loading ? "skel-line w35" : ""}>{loading ? "" : safeUpper(selectedCard?.orderStatus || "—")}</strong>
+                            </div>
+
+                            <div className="cards-row">
+                                <span className="cards-muted">Total</span>
+                                <strong className={loading ? "skel-line w25" : ""}>
+                                    {loading ? "" : formatMoneyMinor(selectedCard?.amountTotal, selectedCard?.currency)}
+                                </strong>
+                            </div>
+
+                            <div className="cards-row">
+                                <span className="cards-muted">Profile</span>
+                                <strong className={loading ? "skel-line w35" : ""}>{loading ? "" : selectedCard?.profileSlug || "—"}</strong>
+                            </div>
+
+                            <div className="cards-row">
+                                <span className="cards-muted">Custom logo</span>
+                                <strong className={loading ? "skel-line w20" : ""}>{loading ? "" : selectedCard?.logoUrl ? "YES" : "NO"}</strong>
+                            </div>
+
+                            <div className="cards-row">
+                                <span className="cards-muted">Ordered</span>
+                                <strong className={loading ? "skel-line w35" : ""}>{loading ? "" : selectedCard?.createdAt || "—"}</strong>
+                            </div>
+
+                            <div className="cards-row">
+                                <span className="cards-muted">Stripe session</span>
+                                <strong className={`cards-mono ${loading ? "skel-line w55" : ""}`}>
+                                    {loading ? "" : selectedCard?.stripeCheckoutSessionId ? `${selectedCard.stripeCheckoutSessionId.slice(0, 14)}…` : "—"}
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div className="cards-note">
+                            3D preview uses your profile link QR + your uploaded logo (or Konar logo if none).
+                        </div>
+                    </div>
+                </section>
+
+                {/* Upsell always mounted */}
+                <section className="cards-card">
+                    <div className="cards-upsell">
+                        <div>
+                            <h2 className="cards-card-title">Need multiple cards?</h2>
+                            <p className="cards-muted">
+                                Teams lets you manage multiple cards and assign them to multiple profiles — perfect for staff or growing businesses.
+                            </p>
+                        </div>
+
+                        <div className="cards-upsell-right">
+                            {isLimitReached ? (
+                                <>
+                                    <div className="cards-locked">You’ve reached your plan limit.</div>
+                                    <a className="kx-btn kx-btn--orange" href="/subscription">
+                                        Upgrade to Teams
+                                    </a>
+                                </>
                             ) : (
-                                <div className="kc-cards-details-wrap">
-                                    <div className="kc-cards-details-top">
-                                        <div>
-                                            <div className="kc-cards-details-title">{selectedCard.name}</div>
-                                            <div className="kc-cards-details-sub">
-                                                {selectedCard.material} • {selectedCard.type}
-                                                {selectedCard.variant ? ` • ${selectedCard.variant}` : ""}
-                                            </div>
-                                        </div>
-
-                                        <div className="kc-cards-details-actions">
-                                            <button className="kc-cards-btn kc-cards-btn-primary" type="button" onClick={handleAssignProfile}>
-                                                Assign profile
-                                            </button>
-
-                                            <button
-                                                className="kc-cards-btn kc-cards-btn-ghost"
-                                                type="button"
-                                                onClick={handleOpenProfile}
-                                                disabled={!selectedCard.link}
-                                            >
-                                                Open profile
-                                            </button>
-
-                                            <button className="kc-cards-btn kc-cards-btn-ghost" type="button" onClick={handleShare}>
-                                                Share link
-                                            </button>
-
-                                            <button className="kc-cards-btn kc-cards-btn-ghost" type="button" onClick={handleCopyLink}>
-                                                Copy link
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Big 3D panel (correct QR + logo now) */}
-                                    <div className="kc-details-3dpanel">
-                                        <CardPreviewErrorBoundary fallback={<div className="kc-3d-fallback">3D preview unavailable</div>}>
-                                            <Card3DDetails
-                                                productKey={selectedCard.productKey}
-                                                logoSrc={detailsLogoSrc}
-                                                qrSrc={detailsQrSrc}
-                                                variantRaw={selectedCard.variantRaw}
-                                            />
-                                        </CardPreviewErrorBoundary>
-                                    </div>
-
-                                    <div className="kc-cards-order-details">
-                                        <div className="kc-cards-order-details-title">Order details</div>
-
-                                        <div className="kc-cards-detail-row">
-                                            <span className="kc-cards-muted">Product</span>
-                                            <strong>{prettyProduct(selectedCard.productKey)}</strong>
-                                        </div>
-
-                                        <div className="kc-cards-detail-row">
-                                            <span className="kc-cards-muted">Variant</span>
-                                            <strong>{selectedCard.variantRaw || "—"}</strong>
-                                        </div>
-
-                                        <div className="kc-cards-detail-row">
-                                            <span className="kc-cards-muted">Quantity</span>
-                                            <strong>{selectedCard.quantity}</strong>
-                                        </div>
-
-                                        <div className="kc-cards-detail-row">
-                                            <span className="kc-cards-muted">Status</span>
-                                            <strong>{safeUpper(selectedCard.orderStatus || "—")}</strong>
-                                        </div>
-
-                                        <div className="kc-cards-detail-row">
-                                            <span className="kc-cards-muted">Total</span>
-                                            <strong>{formatMoneyMinor(selectedCard.amountTotal, selectedCard.currency)}</strong>
-                                        </div>
-
-                                        <div className="kc-cards-detail-row">
-                                            <span className="kc-cards-muted">Profile</span>
-                                            <strong>{selectedCard.profileSlug || "—"}</strong>
-                                        </div>
-
-                                        <div className="kc-cards-detail-row">
-                                            <span className="kc-cards-muted">Custom logo</span>
-                                            <strong>{selectedCard.logoUrl ? "YES" : "NO"}</strong>
-                                        </div>
-
-                                        {selectedCard.createdAt ? (
-                                            <div className="kc-cards-detail-row">
-                                                <span className="kc-cards-muted">Ordered</span>
-                                                <strong>{selectedCard.createdAt}</strong>
-                                            </div>
-                                        ) : null}
-
-                                        {selectedCard.stripeCheckoutSessionId ? (
-                                            <div className="kc-cards-detail-row">
-                                                <span className="kc-cards-muted">Stripe session</span>
-                                                <strong className="kc-cards-mono">{selectedCard.stripeCheckoutSessionId.slice(0, 14)}…</strong>
-                                            </div>
-                                        ) : null}
-                                    </div>
-
-                                    <div className="kc-cards-note">
-                                        3D preview now uses your profile link QR + your uploaded logo (or Konar logo if none).
-                                    </div>
-                                </div>
+                                <button className="kx-btn kx-btn--orange" type="button" onClick={handleOrderCard} disabled={loading}>
+                                    + Order another card
+                                </button>
                             )}
-                        </section>
-
-                        {/* SECTION 3: Upsell */}
-                        <section className="kc-cards-card">
-                            <div className="kc-cards-upsell">
-                                <div>
-                                    <h2 className="kc-cards-card-title">Need multiple cards?</h2>
-                                    <p className="kc-cards-muted">
-                                        Teams lets you manage multiple cards and assign them to multiple profiles — perfect for staff or growing businesses.
-                                    </p>
-                                </div>
-
-                                <div className="kc-cards-upsell-right">
-                                    {isLimitReached ? (
-                                        <>
-                                            <div className="kc-cards-locked-note">You’ve reached your plan limit.</div>
-                                            <a className="kc-cards-btn kc-cards-btn-primary" href="/subscription">
-                                                Upgrade to Teams
-                                            </a>
-                                        </>
-                                    ) : (
-                                        <button className="kc-cards-btn kc-cards-btn-primary" type="button" onClick={handleOrderCard}>
-                                            + Order another card
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        </section>
-                    </>
-                )}
+                        </div>
+                    </div>
+                </section>
             </div>
         </DashboardLayout>
     );
