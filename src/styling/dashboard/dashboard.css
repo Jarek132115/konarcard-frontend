@@ -6,7 +6,6 @@
 
 /* Shell */
 .dash-shell {
-    padding: 16px;
     background: var(--kc-bg-main);
     min-height: calc(100vh - 32px);
     box-sizing: border-box;
