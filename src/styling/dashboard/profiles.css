@@ -562,10 +562,6 @@
 }
 
 @media (max-width: 520px) {
-    .profiles-shell {
-        padding: 12px;
-    }
-
     .profiles-actions-grid {
         grid-template-columns: 1fr;
     }
