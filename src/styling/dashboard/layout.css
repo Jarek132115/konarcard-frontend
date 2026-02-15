@@ -28,10 +28,16 @@
 
 /* ✅ Desktop main area sits next to fixed sidebar with clean spacing */
 .dash-main {
-    /* sidebar is fixed at left:16px and width:272px */
-    margin-left: calc(var(--sidebar-w) + var(--dash-gutter));
+    /*
+      Sidebar is fixed at: left: 16px;
+      Sidebar width: var(--sidebar-w) (272px)
+      Gap between sidebar and content: 16px
+      => total offset = 16 + 272 + 16 = 304px
+    */
+    margin-left: calc(var(--sidebar-w) + (var(--dash-gutter) * 2));
     padding: var(--dash-gutter);
 }
+
 
 /* Desktop header */
 .dash-desktop-header {
