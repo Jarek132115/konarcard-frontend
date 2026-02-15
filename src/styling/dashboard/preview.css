@@ -12,13 +12,11 @@
     position: relative;
     height: 100%;
     min-height: 0;
-    /* ✅ critical inside flex layouts */
     display: flex;
-    /* ✅ allow child to stretch */
     flex-direction: column;
 }
 
-/* ✅ Preview fills available height and scrolls internally */
+/* ✅ Preview fills available height (desktop + mobile) */
 .preview-scope .myprofile-preview {
     background: transparent;
     border: 0;
@@ -28,40 +26,52 @@
     margin: 0;
 
     flex: 1;
-    /* ✅ fill wrapper */
     min-height: 0;
-    /* ✅ allow scrolling instead of shrinking */
     height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
 
+    /* IMPORTANT:
+       - desktop iframe should handle scroll
+       - mobile uses internal template scroll */
+    overflow: hidden;
     -webkit-overflow-scrolling: touch;
     box-shadow: none;
 }
 
-/* Scrollbar */
-.preview-scope .myprofile-preview::-webkit-scrollbar {
-    width: 10px;
+/* ---------------------------
+   ✅ IFRAME LAYOUT (DESKTOP)
+--------------------------- */
+
+.preview-iframe-shell {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 }
 
-.preview-scope .myprofile-preview::-webkit-scrollbar-track {
+.preview-iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    flex: 1;
+    border: 0;
+    display: block;
     background: transparent;
-    border-radius: 14px;
 }
 
-.preview-scope .myprofile-preview::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, rgba(30, 42, 56, .55), rgba(30, 42, 56, .75));
-    border-radius: 14px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
+/* ✅ Padding wrapper so templates don’t stick to edges */
+.preview-iframe-padding {
+    min-height: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    /* matches previous mp-preview-wrap padding feel */
 }
 
-.preview-scope .myprofile-preview {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(30, 42, 56, .6) transparent;
-}
+/* ---------------------------
+   ✅ MOBILE TOOLBAR
+--------------------------- */
 
-/* Mobile toolbar */
 .preview-scope .mp-toolbar {
     display: grid;
     grid-template-columns: 1fr 1fr;

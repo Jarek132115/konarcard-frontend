@@ -36,18 +36,30 @@ function IframePreview({ className, children, title = "Preview" }) {
         const iframe = iframeRef.current;
         if (!iframe) return;
 
+        const ensureDoc = () => iframe.contentDocument;
+
         const handleLoad = () => {
-            const doc = iframe.contentDocument;
+            const doc = ensureDoc();
             if (!doc) return;
 
-            // Reset document for consistent rendering
+            // Reset iframe doc
             doc.open();
-            doc.write("<!doctype html><html><head></head><body></body></html>");
+            doc.write(`
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body></body>
+</html>`);
             doc.close();
 
-            // Basic body reset
+            // Basic iframe body reset
             doc.documentElement.style.height = "100%";
+            doc.documentElement.style.width = "100%";
             doc.body.style.height = "100%";
+            doc.body.style.width = "100%";
             doc.body.style.margin = "0";
             doc.body.style.background = "transparent";
 
@@ -63,20 +75,18 @@ function IframePreview({ className, children, title = "Preview" }) {
             root.setAttribute("id", "preview-iframe-root");
             root.style.minHeight = "100%";
             root.style.height = "100%";
+            root.style.width = "100%";
+            root.style.boxSizing = "border-box";
             doc.body.appendChild(root);
+
             setMountNode(root);
         };
 
-        // Some browsers fire load only once; handle both cases safely
-        if (iframe.contentDocument?.readyState === "complete") {
-            handleLoad();
-        } else {
-            iframe.addEventListener("load", handleLoad);
-        }
+        // ✅ Force a load event reliably using srcDoc
+        iframe.srcdoc = "<!doctype html><html><head></head><body></body></html>";
 
-        return () => {
-            iframe.removeEventListener("load", handleLoad);
-        };
+        iframe.addEventListener("load", handleLoad);
+        return () => iframe.removeEventListener("load", handleLoad);
     }, []);
 
     return (
@@ -85,7 +95,6 @@ function IframePreview({ className, children, title = "Preview" }) {
                 ref={iframeRef}
                 className="preview-iframe"
                 title={title}
-                // sandbox allows same-origin DOM access for portals + cloning styles
                 sandbox="allow-same-origin"
             />
             {mountNode ? createPortal(children, mountNode) : null}
@@ -209,7 +218,7 @@ export default function Preview({
             // ✅ preview-only actions (templates can render buttons without errors)
             onSaveMyNumber: () => { },
             onOpenExchangeContact: () => { },
-            onExchangeContact: () => { }, // backwards compat if any template still uses it
+            onExchangeContact: () => { }, // backwards compat
         };
     }, [
         s,
@@ -280,11 +289,10 @@ export default function Preview({
                         ? Template5
                         : Template1;
 
-    // ✅ IMPORTANT: pass BOTH props for compatibility (Template1 uses `data`, others use `vm`)
     const templateProps = { vm, data: vm, isMobile };
 
     // ---------------------------
-    // MOBILE: direct render (same as before)
+    // MOBILE: direct render
     // ---------------------------
     if (isMobile) {
         return (
@@ -323,12 +331,13 @@ export default function Preview({
     }
 
     // ---------------------------
-    // DESKTOP: iframe render so media queries match preview panel size
+    // DESKTOP: iframe render (media queries match panel width)
     // ---------------------------
     return (
         <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
-            <div className={`myprofile-preview template-${templateId}`}>
+            <div className={`myprofile-preview template-${templateId} preview-desktop`}>
                 <IframePreview className="preview-iframe-mode" title={`Template Preview (${templateId})`}>
+                    {/* ✅ Keep padding OUTSIDE templates for consistent frame spacing */}
                     <div className="preview-iframe-padding">
                         <TemplateComponent {...templateProps} />
                     </div>
