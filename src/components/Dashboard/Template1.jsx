@@ -8,11 +8,8 @@ function Stars({ rating = 0 }) {
     const r = Math.max(0, Math.min(5, Number(rating) || 0));
     return (
         <div className="t1-stars" aria-label={`Rating ${r} out of 5`}>
-            {Array(r).fill(null).map((_, i) => (
-                <span key={`f-${i}`} className="t1-star">★</span>
-            ))}
-            {Array(5 - r).fill(null).map((_, i) => (
-                <span key={`e-${i}`} className="t1-star t1-star--empty">★</span>
+            {Array(5).fill(null).map((_, i) => (
+                <span key={i} className={`t1-star ${i < r ? "" : "t1-star--empty"}`}>★</span>
             ))}
         </div>
     );
@@ -20,14 +17,10 @@ function Stars({ rating = 0 }) {
 
 export default function Template1({ vm }) {
     const v = vm || {};
-
     const cover = v.cover || "";
     const avatar = v.avatar || "";
 
-    const works = asArray(v.works)
-        .map((x) => x?.preview || x?.url || x)
-        .filter(Boolean);
-
+    const works = asArray(v.works).map((x) => x?.preview || x?.url || x).filter(Boolean);
     const services = asArray(v.services).filter((s) => s?.name || s?.price);
     const reviews = asArray(v.reviews).filter((r) => r?.name || r?.text);
 
@@ -35,7 +28,6 @@ export default function Template1({ vm }) {
 
     return (
         <div className="kc-tpl kc-tpl-1">
-            {/* HERO */}
             {v.showMainSection && (
                 <section className="t1-hero">
                     <div className="t1-hero-card">
@@ -76,7 +68,6 @@ export default function Template1({ vm }) {
                 </section>
             )}
 
-            {/* ABOUT */}
             {v.showAboutMeSection && (nonEmpty(v.fullName) || nonEmpty(v.jobTitle) || nonEmpty(v.bio)) ? (
                 <section className="t1-section">
                     <div className="t1-section-head">
@@ -84,17 +75,14 @@ export default function Template1({ vm }) {
                         <div className="t1-divider" />
                     </div>
 
-                    <div className="t1-about">
-                        <div className="t1-about-card">
-                            {nonEmpty(v.fullName) ? <div className="t1-name">{v.fullName}</div> : null}
-                            {nonEmpty(v.jobTitle) ? <div className="t1-role">{v.jobTitle}</div> : null}
-                            {nonEmpty(v.bio) ? <p className="t1-bio">{v.bio}</p> : null}
-                        </div>
+                    <div className="t1-about-card">
+                        {nonEmpty(v.fullName) ? <div className="t1-name">{v.fullName}</div> : null}
+                        {nonEmpty(v.jobTitle) ? <div className="t1-role">{v.jobTitle}</div> : null}
+                        {nonEmpty(v.bio) ? <p className="t1-bio">{v.bio}</p> : null}
                     </div>
                 </section>
             ) : null}
 
-            {/* WORK */}
             {v.showWorkSection && works.length > 0 ? (
                 <section className="t1-section">
                     <div className="t1-section-head">
@@ -112,7 +100,6 @@ export default function Template1({ vm }) {
                 </section>
             ) : null}
 
-            {/* SERVICES */}
             {v.showServicesSection && services.length > 0 ? (
                 <section className="t1-section">
                     <div className="t1-section-head">
@@ -123,17 +110,14 @@ export default function Template1({ vm }) {
                     <div className="t1-services">
                         {services.slice(0, 12).map((s, i) => (
                             <div key={i} className="t1-service">
-                                <div className="t1-service-left">
-                                    <div className="t1-service-name">{s?.name}</div>
-                                    {nonEmpty(s?.price) ? <div className="t1-service-sub">{s.price}</div> : null}
-                                </div>
+                                <div className="t1-service-name">{s?.name}</div>
+                                {nonEmpty(s?.price) ? <div className="t1-service-sub">{s.price}</div> : null}
                             </div>
                         ))}
                     </div>
                 </section>
             ) : null}
 
-            {/* REVIEWS */}
             {v.showReviewsSection && reviews.length > 0 ? (
                 <section className="t1-section">
                     <div className="t1-section-head">
@@ -153,7 +137,6 @@ export default function Template1({ vm }) {
                 </section>
             ) : null}
 
-            {/* CONTACT */}
             {v.showContactSection && (nonEmpty(v.email) || nonEmpty(v.phone)) ? (
                 <section className="t1-section t1-section-last">
                     <div className="t1-section-head">
