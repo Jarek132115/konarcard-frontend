@@ -6,30 +6,43 @@
     --stroke: rgba(30, 42, 56, 0.22);
     --shadow: 0 10px 26px rgba(11, 18, 32, 0.10);
 
-    /* ✅ fallback: top area above the preview (header/title/etc) */
-    --preview-top-offset: 220px;
+    /* ✅ fallback if not defined elsewhere */
+    --preview-top-offset: 240px;
 }
 
-/* ✅ Make wrapper stretch. If parent has no height, fall back to viewport. */
+/* -------------------------------------------------------
+   ✅ THE REAL FIX:
+   Parent cards/columns must allow the preview to stretch.
+   In your DOM this is: section.profiles-card.myprofile-col1
+-------------------------------------------------------- */
+.profiles-card.myprofile-col1 {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    /* ✅ critical so inner scroll works */
+}
+
+/* If your grid wrapper exists, this helps too (safe even if missing) */
+.myprofile-grid,
+.myprofile-shell,
+.dash-content {
+    min-height: 0;
+}
+
+/* ✅ Make wrapper fill “editor-height” (viewport minus top content) */
 .preview-scope.myprofile-preview-wrapper {
     position: relative;
     display: flex;
     flex-direction: column;
-
-    height: 100%;
     min-height: 0;
-    flex: 1;
 
-    /* ✅ fallback when parent height chain is missing */
+    /* ✅ this is what forces full height like the editor column */
+    height: calc(100vh - var(--preview-top-offset));
     max-height: calc(100vh - var(--preview-top-offset));
 }
 
-/* ✅ Preview fills available height */
+/* ✅ Preview fills available height and scrolls internally */
 .preview-scope .myprofile-preview {
-    flex: 1;
-    min-height: 0;
-    height: 100%;
-
     background: transparent;
     border: 0;
     border-radius: 0;
@@ -37,46 +50,69 @@
     max-width: none;
     margin: 0;
 
-    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+
     -webkit-overflow-scrolling: touch;
     box-shadow: none;
 }
 
-/* ---------------------------
-   ✅ IFRAME LAYOUT (DESKTOP)
---------------------------- */
+/* Scrollbar */
+.preview-scope .myprofile-preview::-webkit-scrollbar {
+    width: 10px;
+}
 
+.preview-scope .myprofile-preview::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 14px;
+}
+
+.preview-scope .myprofile-preview::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(30, 42, 56, .55), rgba(30, 42, 56, .75));
+    border-radius: 14px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.preview-scope .myprofile-preview {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(30, 42, 56, .6) transparent;
+}
+
+/* -------------------------------------------------------
+   IFRAME MODE (desktop)
+-------------------------------------------------------- */
 .preview-iframe-shell {
-    width: 100%;
-    height: 100%;
+    flex: 1;
     min-height: 0;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
 
 .preview-iframe {
-    width: 100%;
-    height: 100%;
-    min-height: 0;
     flex: 1;
+    min-height: 0;
+    height: 100%;
+    width: 100%;
     border: 0;
     display: block;
     background: transparent;
 }
 
-/* ✅ keep spacing consistent */
+/* inner padding inside iframe root */
 .preview-iframe-padding {
+    box-sizing: border-box;
     min-height: 100%;
     height: 100%;
-    width: 100%;
-    box-sizing: border-box;
     padding: 14px;
 }
 
-/* ---------------------------
-   ✅ MOBILE TOOLBAR
---------------------------- */
-
+/* -------------------------------------------------------
+   Mobile toolbar
+-------------------------------------------------------- */
 .preview-scope .mp-toolbar {
     display: grid;
     grid-template-columns: 1fr 1fr;

@@ -36,57 +36,41 @@ function IframePreview({ className, children, title = "Preview" }) {
         const iframe = iframeRef.current;
         if (!iframe) return;
 
-        const ensureDoc = () => iframe.contentDocument;
-
-        const handleLoad = () => {
-            const doc = ensureDoc();
+        const build = () => {
+            const doc = iframe.contentDocument;
             if (!doc) return;
 
-            // Reset iframe doc
             doc.open();
-            doc.write(`
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-  </head>
-  <body></body>
-</html>`);
+            doc.write("<!doctype html><html><head></head><body></body></html>");
             doc.close();
 
-            // Basic iframe body reset
             doc.documentElement.style.height = "100%";
-            doc.documentElement.style.width = "100%";
             doc.body.style.height = "100%";
-            doc.body.style.width = "100%";
             doc.body.style.margin = "0";
             doc.body.style.background = "transparent";
 
-            // ✅ Clone styles from parent (links + style tags)
+            // ✅ clone parent styles into iframe
             const parentHeadNodes = Array.from(document.head.querySelectorAll('link[rel="stylesheet"], style'));
             parentHeadNodes.forEach((node) => {
                 const clone = node.cloneNode(true);
                 doc.head.appendChild(clone);
             });
 
-            // Mount point
             const root = doc.createElement("div");
-            root.setAttribute("id", "preview-iframe-root");
-            root.style.minHeight = "100%";
+            root.id = "preview-iframe-root";
             root.style.height = "100%";
-            root.style.width = "100%";
+            root.style.minHeight = "100%";
             root.style.boxSizing = "border-box";
             doc.body.appendChild(root);
 
             setMountNode(root);
         };
 
-        // ✅ Force a load event reliably using srcDoc
-        iframe.srcdoc = "<!doctype html><html><head></head><body></body></html>";
+        // ensure it builds even if load already fired
+        if (iframe.contentDocument?.readyState === "complete") build();
+        iframe.addEventListener("load", build);
 
-        iframe.addEventListener("load", handleLoad);
-        return () => iframe.removeEventListener("load", handleLoad);
+        return () => iframe.removeEventListener("load", build);
     }, []);
 
     return (
@@ -128,10 +112,6 @@ export default function Preview({
 
     const templateId = getTemplateId(s.template_id || s.templateId || "template-1");
 
-    // ---------------------------
-    // ✅ Build ONE canonical VM
-    // Templates decide fonts/colors/layout.
-    // ---------------------------
     const vm = useMemo(() => {
         const fullName = asString(s.full_name) || (shouldShowPlaceholders ? asString(ph.full_name) : "");
         const jobTitle = asString(s.job_title) || (shouldShowPlaceholders ? asString(ph.job_title) : "");
@@ -150,7 +130,6 @@ export default function Preview({
         const email = asString(s.contact_email) || (shouldShowPlaceholders ? asString(ph.contact_email) : "");
         const phone = asString(s.phone_number) || (shouldShowPlaceholders ? asString(ph.phone_number) : "");
 
-        // ✅ Prefer local preview fields, then persisted URLs. Ignore blob accidentally stored in persisted fields.
         const cover =
             s.coverPhotoPreview ||
             (isBlobUrl(s.coverPhoto) ? "" : s.coverPhoto) ||
@@ -187,7 +166,6 @@ export default function Preview({
             templateId,
             sectionOrder: SECTION_ORDER,
 
-            // visibility toggles (only controls user has)
             showMainSection: !!showMainSection,
             showAboutMeSection: !!showAboutMeSection,
             showWorkSection: !!showWorkSection,
@@ -195,7 +173,6 @@ export default function Preview({
             showReviewsSection: !!showReviewsSection,
             showContactSection: !!showContactSection,
 
-            // content
             cover,
             avatar,
             mainHeading,
@@ -210,15 +187,14 @@ export default function Preview({
             phone,
             socials,
 
-            // flags
             hasContact,
             hasExchangeContact: !!hasExchangeContact,
             visitUrl: visitUrl || "#",
 
-            // ✅ preview-only actions (templates can render buttons without errors)
+            // ✅ preview-only actions
             onSaveMyNumber: () => { },
             onOpenExchangeContact: () => { },
-            onExchangeContact: () => { }, // backwards compat
+            onExchangeContact: () => { },
         };
     }, [
         s,
@@ -235,9 +211,7 @@ export default function Preview({
         showContactSection,
     ]);
 
-    // ---------------------------
-    // Mobile expand/collapse animation (keep)
-    // ---------------------------
+    // mobile expand/collapse
     useEffect(() => {
         if (!isMobile) return;
         const el = mpWrapRef.current;
@@ -291,9 +265,7 @@ export default function Preview({
 
     const templateProps = { vm, data: vm, isMobile };
 
-    // ---------------------------
-    // MOBILE: direct render
-    // ---------------------------
+    // MOBILE (direct)
     if (isMobile) {
         return (
             <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
@@ -330,14 +302,11 @@ export default function Preview({
         );
     }
 
-    // ---------------------------
-    // DESKTOP: iframe render (media queries match panel width)
-    // ---------------------------
+    // DESKTOP (iframe)
     return (
         <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
-            <div className={`myprofile-preview template-${templateId} preview-desktop`}>
+            <div className={`myprofile-preview template-${templateId}`}>
                 <IframePreview className="preview-iframe-mode" title={`Template Preview (${templateId})`}>
-                    {/* ✅ Keep padding OUTSIDE templates for consistent frame spacing */}
                     <div className="preview-iframe-padding">
                         <TemplateComponent {...templateProps} />
                     </div>
