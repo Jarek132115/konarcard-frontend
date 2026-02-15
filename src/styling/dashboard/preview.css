@@ -18,11 +18,8 @@
     border: 0;
     border-radius: 0;
     padding: 0;
-    /* ✅ no inner padding */
     max-width: none;
-    /* ✅ no fixed width */
     margin: 0;
-    /* ✅ no centering */
     height: 100%;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -107,7 +104,7 @@
     will-change: max-height, opacity, transform;
     transition: max-height .28s ease, opacity .2s ease, transform .2s ease;
 
-    /* ✅ give the template a little breathing room now that inner card padding is removed */
+    /* ✅ breathing room */
     padding: 12px;
 }
 
@@ -132,4 +129,37 @@
 .preview-scope .mp-tab:focus-visible {
     outline: 2px solid rgb(var(--accent-rgb) / 0.6);
     outline-offset: 2px;
+}
+
+/* =========================================================
+   ✅ DESKTOP IFRAME MODE
+   - media queries now match preview panel width (not window)
+   ========================================================= */
+
+.preview-iframe-shell {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* The iframe IS the "screen" */
+.preview-iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    background: transparent;
+}
+
+/* This padding lives INSIDE the iframe (via portal wrapper) */
+.preview-iframe-padding {
+    padding: 14px;
+    box-sizing: border-box;
+    min-height: 100%;
+}
+
+@media (max-width: 520px) {
+    .preview-iframe-padding {
+        padding: 12px;
+    }
 }

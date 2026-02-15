@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { previewPlaceholders } from "../../store/businessCardStore";
 import "../../styling/dashboard/preview.css";
 
@@ -21,6 +22,76 @@ const getTemplateId = (raw) => {
 
 // ✅ Fixed order. Users cannot reorder.
 const SECTION_ORDER = ["main", "about", "work", "services", "reviews", "contact"];
+
+/* -------------------------------------------------------
+   IFRAME RENDERER
+   - makes media queries match preview panel size (desktop)
+   - clones parent styles into iframe so templates look identical
+-------------------------------------------------------- */
+function IframePreview({ className, children, title = "Preview" }) {
+    const iframeRef = useRef(null);
+    const [mountNode, setMountNode] = useState(null);
+
+    useEffect(() => {
+        const iframe = iframeRef.current;
+        if (!iframe) return;
+
+        const handleLoad = () => {
+            const doc = iframe.contentDocument;
+            if (!doc) return;
+
+            // Reset document for consistent rendering
+            doc.open();
+            doc.write("<!doctype html><html><head></head><body></body></html>");
+            doc.close();
+
+            // Basic body reset
+            doc.documentElement.style.height = "100%";
+            doc.body.style.height = "100%";
+            doc.body.style.margin = "0";
+            doc.body.style.background = "transparent";
+
+            // ✅ Clone styles from parent (links + style tags)
+            const parentHeadNodes = Array.from(document.head.querySelectorAll('link[rel="stylesheet"], style'));
+            parentHeadNodes.forEach((node) => {
+                const clone = node.cloneNode(true);
+                doc.head.appendChild(clone);
+            });
+
+            // Mount point
+            const root = doc.createElement("div");
+            root.setAttribute("id", "preview-iframe-root");
+            root.style.minHeight = "100%";
+            root.style.height = "100%";
+            doc.body.appendChild(root);
+            setMountNode(root);
+        };
+
+        // Some browsers fire load only once; handle both cases safely
+        if (iframe.contentDocument?.readyState === "complete") {
+            handleLoad();
+        } else {
+            iframe.addEventListener("load", handleLoad);
+        }
+
+        return () => {
+            iframe.removeEventListener("load", handleLoad);
+        };
+    }, []);
+
+    return (
+        <div className={`preview-iframe-shell ${className || ""}`}>
+            <iframe
+                ref={iframeRef}
+                className="preview-iframe"
+                title={title}
+                // sandbox allows same-origin DOM access for portals + cloning styles
+                sandbox="allow-same-origin"
+            />
+            {mountNode ? createPortal(children, mountNode) : null}
+        </div>
+    );
+}
 
 export default function Preview({
     state,
@@ -138,6 +209,7 @@ export default function Preview({
             // ✅ preview-only actions (templates can render buttons without errors)
             onSaveMyNumber: () => { },
             onOpenExchangeContact: () => { },
+            onExchangeContact: () => { }, // backwards compat if any template still uses it
         };
     }, [
         s,
@@ -211,6 +283,9 @@ export default function Preview({
     // ✅ IMPORTANT: pass BOTH props for compatibility (Template1 uses `data`, others use `vm`)
     const templateProps = { vm, data: vm, isMobile };
 
+    // ---------------------------
+    // MOBILE: direct render (same as before)
+    // ---------------------------
     if (isMobile) {
         return (
             <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
@@ -247,10 +322,17 @@ export default function Preview({
         );
     }
 
+    // ---------------------------
+    // DESKTOP: iframe render so media queries match preview panel size
+    // ---------------------------
     return (
         <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
             <div className={`myprofile-preview template-${templateId}`}>
-                <TemplateComponent vm={vm} data={vm} />
+                <IframePreview className="preview-iframe-mode" title={`Template Preview (${templateId})`}>
+                    <div className="preview-iframe-padding">
+                        <TemplateComponent {...templateProps} />
+                    </div>
+                </IframePreview>
             </div>
         </div>
     );
