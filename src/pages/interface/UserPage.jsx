@@ -13,6 +13,9 @@ import Template3 from "../../components/Dashboard/Template3";
 import Template4 from "../../components/Dashboard/Template4";
 import Template5 from "../../components/Dashboard/Template5";
 
+/* ✅ UserPage shell CSS (SAFE: does not style templates) */
+import "../../styling/userPage.css";
+
 /* Social icons */
 import FacebookIcon from "../../assets/icons/icons8-facebook.svg";
 import InstagramIcon from "../../assets/icons/icons8-instagram.svg";
@@ -166,19 +169,11 @@ function ExchangeContactModal({ open, onClose, profileSlug, ownerName }) {
                     <div style={{ display: "grid", gap: 10 }}>
                         <div>
                             <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>Your name</label>
-                            <input
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="kc-input"
-                                placeholder="John Smith"
-                                required
-                            />
+                            <input value={name} onChange={(e) => setName(e.target.value)} className="kc-input" placeholder="John Smith" required />
                         </div>
 
                         <div>
-                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
-                                Email (optional)
-                            </label>
+                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>Email (optional)</label>
                             <input
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -189,9 +184,7 @@ function ExchangeContactModal({ open, onClose, profileSlug, ownerName }) {
                         </div>
 
                         <div>
-                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
-                                Phone (optional)
-                            </label>
+                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>Phone (optional)</label>
                             <input
                                 value={phone}
                                 onChange={(e) => setPhone(cleanPhone(e.target.value))}
@@ -472,6 +465,10 @@ export default function UserPage() {
 
     const tid = (templateId || "template-1").toString();
 
+    // ✅ shell background: keeps page looking premium, templates remain untouched
+    const isDarkTemplate = tid === "template-2" || tid === "template-5";
+    const shellClass = `userpage-shell ${isDarkTemplate ? "userpage-shell--dark" : "userpage-shell--light"}`;
+
     return (
         <>
             <ExchangeContactModal
@@ -481,13 +478,17 @@ export default function UserPage() {
                 ownerName={fullName || publicSlug}
             />
 
-            {tid === "template-2" ? <Template2 vm={vm} /> : null}
-            {tid === "template-3" ? <Template3 vm={vm} /> : null}
-            {tid === "template-4" ? <Template4 vm={vm} /> : null}
-            {tid === "template-5" ? <Template5 vm={vm} /> : null}
-            {tid === "template-1" || !["template-2", "template-3", "template-4", "template-5"].includes(tid) ? (
-                <Template1 vm={vm} />
-            ) : null}
+            <div className={shellClass}>
+                <div className="userpage-inner">
+                    {tid === "template-2" ? <Template2 vm={vm} /> : null}
+                    {tid === "template-3" ? <Template3 vm={vm} /> : null}
+                    {tid === "template-4" ? <Template4 vm={vm} /> : null}
+                    {tid === "template-5" ? <Template5 vm={vm} /> : null}
+                    {tid === "template-1" || !["template-2", "template-3", "template-4", "template-5"].includes(tid) ? (
+                        <Template1 vm={vm} />
+                    ) : null}
+                </div>
+            </div>
         </>
     );
 
@@ -502,21 +503,29 @@ export default function UserPage() {
                         <li className="unavailable-item">
                             <span className="dot" />
                             <div className="reason">
-                                <div className="desktop-body-s"><strong>No content published yet.</strong></div>
+                                <div className="desktop-body-s">
+                                    <strong>No content published yet.</strong>
+                                </div>
                                 <div className="desktop-body-xs">The owner might not have created their page.</div>
                             </div>
                         </li>
                         <li className="unavailable-item">
                             <span className="dot" />
                             <div className="reason">
-                                <div className="desktop-body-s"><strong>Access expired.</strong></div>
+                                <div className="desktop-body-s">
+                                    <strong>Access expired.</strong>
+                                </div>
                                 <div className="desktop-body-xs">A subscription may be required to keep this profile live.</div>
                             </div>
                         </li>
                     </ul>
                     <div className="unavailable-actions">
-                        <button className="desktop-button cta-blue-button" onClick={onEdit}>Create / Edit My Profile</button>
-                        <button className="desktop-button cta-black-button" onClick={onContact}>Contact us</button>
+                        <button className="desktop-button cta-blue-button" onClick={onEdit}>
+                            Create / Edit My Profile
+                        </button>
+                        <button className="desktop-button cta-black-button" onClick={onContact}>
+                            Contact us
+                        </button>
                     </div>
                     {slugValue ? (
                         <div style={{ marginTop: 12, opacity: 0.7, fontSize: 12 }}>
