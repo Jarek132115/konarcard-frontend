@@ -1,6 +1,5 @@
 /* =========================================================
-   KonarCard Editor (scoped) — matches new dashboard UI
-   ✅ Updated to stretch to outer card edges (no inner card)
+   KonarCard Editor (scoped) — clean + consistent dashboard UI
 ========================================================= */
 
 .kc-editor-scope {
@@ -13,7 +12,6 @@
     --accent: #1e2a38;
     --accent-rgb: 30 42 56;
 
-    --danger: #dc2626;
     --danger-rgb: 220 38 38;
 
     --border: rgba(11, 18, 32, 0.10);
@@ -21,14 +19,15 @@
 
     --radius: 18px;
     --shadow: 0 14px 34px rgba(11, 18, 32, 0.10);
-    --focus: 0 0 0 3px rgb(var(--accent-rgb) / 0.28);
+    --focus: 0 0 0 3px rgb(var(--accent-rgb) / 0.24);
 
     width: 100%;
     min-width: 0;
-
-    /* ✅ since we removed the inner card padding, give scope padding */
     padding: 14px;
     box-sizing: border-box;
+
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    color: var(--ink);
 }
 
 @media (min-width: 1001px) {
@@ -37,13 +36,12 @@
     }
 }
 
-/* ✅ Inner card removed: now just a “form wrapper” that stretches */
+/* Wrapper only */
 .kc-editor-card {
     background: transparent;
     border: 0;
     border-radius: 0;
     box-shadow: none;
-
     padding: 0;
     width: 100%;
     max-width: none;
@@ -65,10 +63,9 @@
 }
 
 .kc-editor-h1 {
-    font-family: "Cal Sans", sans-serif;
+    font-family: "Cal Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     font-weight: 900;
     letter-spacing: -0.02em;
-    color: var(--ink);
     font-size: 18px;
     line-height: 1.15;
 }
@@ -76,7 +73,7 @@
 .kc-editor-h2 {
     margin-top: 4px;
     color: var(--muted);
-    font-weight: 800;
+    font-weight: 700;
     font-size: 13px;
     line-height: 1.4;
 }
@@ -93,15 +90,15 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
     border-radius: 14px;
-    padding: 12px 14px;
-    font-family: "Cal Sans", sans-serif;
+    padding: 10px 14px;
+    font-family: "Cal Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     font-weight: 900;
-    font-size: 14px;
+    font-size: 13px;
     border: 1px solid transparent;
     cursor: pointer;
     transition: transform 0.08s ease, background 0.2s, border 0.2s, box-shadow 0.2s, opacity 0.2s;
+    white-space: nowrap;
 }
 
 .kc-btn:active {
@@ -117,21 +114,21 @@
     background: var(--accent);
     color: #fff;
     border-color: rgb(var(--accent-rgb) / 0.35);
-    box-shadow: 0 12px 22px rgb(var(--accent-rgb) / 0.16);
+    box-shadow: 0 10px 18px rgb(var(--accent-rgb) / 0.14);
 }
 
 .kc-btn-primary:hover {
-    background: rgb(var(--accent-rgb) / 0.92);
+    opacity: 0.92;
 }
 
 .kc-btn-ghost {
-    background: var(--soft);
+    background: #fff;
     color: var(--ink);
     border-color: rgba(11, 18, 32, 0.14);
 }
 
 .kc-btn-ghost:hover {
-    background: rgba(11, 18, 32, 0.04);
+    background: rgba(11, 18, 32, 0.03);
 }
 
 .kc-btn-danger {
@@ -157,27 +154,38 @@
     box-shadow: 0 8px 18px rgba(11, 18, 32, 0.06);
 }
 
+.kc-block--flat {
+    background: linear-gradient(180deg, #fff, var(--soft));
+    box-shadow: none;
+}
 
 .kc-block-title {
-    font-family: "Cal Sans", sans-serif;
+    font-family: "Cal Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     font-weight: 900;
     color: var(--ink);
-    font-size: 14px;
+    font-size: 13px;
+    letter-spacing: -0.01em;
     margin-bottom: 10px;
 }
 
 .kc-help {
     margin-top: 10px;
-    font-size: 13px;
-    font-weight: 800;
-    color: rgba(91, 102, 122, 0.95);
+    font-size: 12.5px;
+    font-weight: 650;
+    color: rgba(91, 102, 122, 0.96);
 }
 
 .kc-help strong {
     color: rgb(var(--accent-rgb));
 }
 
-
+/* Divider between accordions */
+.kc-divider {
+    height: 1px;
+    background: rgba(11, 18, 32, 0.08);
+    margin: 14px 2px;
+    border-radius: 99px;
+}
 
 /* Layout helpers */
 .kc-grid-2 {
@@ -190,6 +198,48 @@
     .kc-grid-2 {
         grid-template-columns: 1fr;
     }
+}
+
+/* Labels */
+.kc-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(11, 18, 32, 0.72);
+    letter-spacing: 0.02em;
+}
+
+/* Inputs */
+.kc-field {
+    display: grid;
+    gap: 8px;
+}
+
+.kc-input {
+    width: 100%;
+    border: 1px solid rgba(11, 18, 32, 0.14);
+    background: #fff;
+    border-radius: 14px;
+    padding: 11px 12px;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+    box-sizing: border-box;
+}
+
+.kc-input::placeholder {
+    color: rgba(11, 18, 32, 0.38);
+    font-weight: 650;
+}
+
+.kc-input:focus {
+    border-color: rgb(var(--accent-rgb) / 0.55);
+    box-shadow: var(--focus);
+}
+
+.kc-textarea {
+    resize: vertical;
+    min-height: 110px;
 }
 
 /* Template row */
@@ -213,17 +263,23 @@
 
 .kc-template-chip {
     width: 100%;
-    text-align: center;
     border-radius: 16px;
     padding: 12px 10px;
     border: 1px solid rgba(11, 18, 32, 0.14);
     background: #fff;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
-    font-size: 12px;
-    letter-spacing: 0.06em;
     cursor: pointer;
     transition: background 0.2s, border 0.2s, transform 0.08s ease, box-shadow 0.2s, opacity 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.kc-template-chip-label {
+    font-family: "Cal Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: 0.08em;
 }
 
 .kc-template-chip:hover {
@@ -241,46 +297,17 @@
 
 .kc-template-chip.active {
     border-color: rgb(var(--accent-rgb) / 0.35);
-    background: rgb(var(--accent-rgb) / 0.10);
-    box-shadow: 0 10px 22px rgb(var(--accent-rgb) / 0.12);
+    background: rgb(var(--accent-rgb) / 0.08);
+    box-shadow: 0 10px 18px rgb(var(--accent-rgb) / 0.10);
 }
 
 .kc-template-chip.locked {
-    opacity: 0.65;
+    opacity: 0.62;
     border-style: dashed;
 }
 
 .kc-lock {
-    margin-left: 6px;
-}
-
-/* Fields */
-.kc-field {
-    display: grid;
-    gap: 8px;
-}
-
-.kc-input {
-    width: 100%;
-    border: 1px solid rgba(11, 18, 32, 0.14);
-    background: #fff;
-    border-radius: 14px;
-    padding: 12px 12px;
-    font-size: 14px;
-    color: var(--ink);
-    outline: none;
-    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
-    box-sizing: border-box;
-}
-
-.kc-input:focus {
-    border-color: rgb(var(--accent-rgb) / 0.5);
-    box-shadow: var(--focus);
-}
-
-.kc-textarea {
-    resize: vertical;
-    min-height: 110px;
+    margin-left: 4px;
 }
 
 /* Section accordion */
@@ -296,7 +323,7 @@
 }
 
 .kc-sec-toggle {
-    flex: 1;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -319,18 +346,23 @@
     box-shadow: var(--focus);
 }
 
+.kc-sec-titlewrap {
+    min-width: 0;
+}
+
 .kc-sec-title {
-    font-family: "Cal Sans", sans-serif;
+    font-family: "Cal Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     font-weight: 900;
     color: var(--ink);
-    font-size: 14px;
+    font-size: 13px;
+    letter-spacing: -0.01em;
 }
 
 .kc-sec-sub {
     margin-top: 2px;
     color: var(--muted);
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .kc-sec-chevron {
@@ -355,6 +387,12 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+}
+
+@media (max-width: 560px) {
+    .kc-work-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .kc-work-item,
@@ -395,16 +433,10 @@
     place-items: center;
     cursor: pointer;
     border-style: dashed;
-    font-family: "Cal Sans", sans-serif;
+    font-family: "Cal Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     font-weight: 900;
     color: rgb(var(--accent-rgb));
     background: rgb(var(--accent-rgb) / 0.06);
-}
-
-@media (max-width: 560px) {
-    .kc-work-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 /* Upload cards */
@@ -440,7 +472,7 @@
 }
 
 .kc-upload-text {
-    font-family: "Cal Sans", sans-serif;
+    font-family: "Cal Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     font-weight: 900;
     color: rgb(var(--accent-rgb));
     z-index: 1;
@@ -465,7 +497,7 @@
     background: #fff;
 }
 
-/* Repeat blocks (services/reviews) */
+/* Repeat blocks */
 .kc-repeat {
     display: grid;
     gap: 12px;
@@ -473,7 +505,7 @@
 
 .kc-repeat-card {
     border: 1px solid rgba(11, 18, 32, 0.10);
-    background: var(--soft);
+    background: linear-gradient(180deg, #fff, var(--soft));
     border-radius: 18px;
     padding: 12px;
 }
@@ -484,19 +516,24 @@
     margin-top: 10px;
 }
 
+/* Social rows */
+.kc-social {
+    display: grid;
+    gap: 10px;
+}
 
 .kc-social-row {
     display: grid;
-    grid-template-columns: 36px minmax(0, 1fr);
+    grid-template-columns: 34px minmax(0, 1fr);
     gap: 10px;
     align-items: center;
 }
 
 .kc-social-row img {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
     object-fit: contain;
-    opacity: 0.9;
+    opacity: 0.85;
 }
 
 /* Bottom actions */
@@ -506,6 +543,7 @@
     gap: 10px;
     flex-wrap: wrap;
     margin-top: 16px;
+    padding-top: 2px;
 }
 
 @media (max-width: 560px) {

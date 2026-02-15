@@ -12,7 +12,7 @@ import "../../styling/dashboard/editor.css";
 
 const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
 
-function SectionHeader({ title, subtitle, open, onToggle, rightSlot }) {
+function SectionHeader({ title, subtitle, open, onToggle }) {
     return (
         <div className="kc-sec-head">
             <button type="button" className="kc-sec-toggle" onClick={onToggle} aria-expanded={open}>
@@ -24,8 +24,6 @@ function SectionHeader({ title, subtitle, open, onToggle, rightSlot }) {
                     ▾
                 </span>
             </button>
-
-            {rightSlot ? <div className="kc-sec-right">{rightSlot}</div> : null}
         </div>
     );
 }
@@ -34,7 +32,7 @@ export default function Editor({
     state,
     updateState,
 
-    isSubscribed, // plus/teams
+    isSubscribed,
     hasTrialEnded, // legacy ignored
 
     onStartSubscription,
@@ -54,7 +52,7 @@ export default function Editor({
     showContactSection,
     setShowContactSection,
 
-    // legacy handlers (we keep calling them for compatibility)
+    // legacy handlers
     onCoverUpload,
     onRemoveCover,
     onAvatarUpload,
@@ -70,11 +68,8 @@ export default function Editor({
 
     // track object URLs so we can revoke (avoid memory leaks)
     const objectUrlsRef = useRef(new Set());
-
     const rememberObjectUrl = (url) => {
-        if (typeof url === "string" && url.startsWith("blob:")) {
-            objectUrlsRef.current.add(url);
-        }
+        if (typeof url === "string" && url.startsWith("blob:")) objectUrlsRef.current.add(url);
     };
 
     useEffect(() => {
@@ -89,15 +84,12 @@ export default function Editor({
     }, []);
 
     // ---------------------------------------------------------
-    // Templates (we control design, font, colors, layout)
+    // Templates
     // ---------------------------------------------------------
     const TEMPLATE_IDS = ["template-1", "template-2", "template-3", "template-4", "template-5"];
     const currentTemplate = (state.templateId || "template-1").toString();
 
-    const isTemplateLocked = (templateId) => {
-        if (!isSubscribed && templateId !== "template-1") return true;
-        return false;
-    };
+    const isTemplateLocked = (templateId) => !isSubscribed && templateId !== "template-1";
 
     const handleTemplateSelect = (id) => {
         if (isTemplateLocked(id)) {
@@ -116,11 +108,9 @@ export default function Editor({
         updateState({ services: next });
     };
 
-    const handleAddService = () =>
-        updateState({ services: [...(state.services || []), { name: "", price: "" }] });
+    const handleAddService = () => updateState({ services: [...(state.services || []), { name: "", price: "" }] });
 
-    const handleRemoveService = (i) =>
-        updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
+    const handleRemoveService = (i) => updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
 
     // ---------------------------------------------------------
     // Reviews
@@ -136,15 +126,15 @@ export default function Editor({
         updateState({ reviews: next });
     };
 
-    const handleAddReview = () =>
-        updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
+    const handleAddReview = () => updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
 
-    const handleRemoveReview = (i) =>
-        updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
+    const handleRemoveReview = (i) => updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
     // Prefer explicit preview fields, then persisted URLs, but NEVER force blob into persisted field.
     const coverSrc =
-        state.coverPhotoPreview || (isBlobUrl(state.coverPhoto) ? "" : state.coverPhoto) || previewPlaceholders.coverPhoto;
+        state.coverPhotoPreview ||
+        (isBlobUrl(state.coverPhoto) ? "" : state.coverPhoto) ||
+        previewPlaceholders.coverPhoto;
 
     const avatarSrc = state.avatarPreview || (isBlobUrl(state.avatar) ? "" : state.avatar) || "";
 
@@ -171,7 +161,8 @@ export default function Editor({
                 {/* Template picker */}
                 <div className="kc-block">
                     <div className="kc-block-title">Choose a template</div>
-                    <div className="kc-template-row">
+
+                    <div className="kc-template-row" role="tablist" aria-label="Template selector">
                         {TEMPLATE_IDS.map((t) => {
                             const locked = isTemplateLocked(t);
                             const active = currentTemplate === t;
@@ -183,17 +174,17 @@ export default function Editor({
                                     onClick={() => handleTemplateSelect(t)}
                                     title={locked ? "Upgrade to unlock this template" : "Select template"}
                                     aria-label={locked ? `${t} locked` : t}
+                                    role="tab"
+                                    aria-selected={active}
                                 >
-                                    <span>{t.replace("-", " ").toUpperCase()}</span>
-                                    {locked ? <span className="kc-lock">🔒</span> : null}
+                                    <span className="kc-template-chip-label">{t.replace("-", " ").toUpperCase()}</span>
+                                    {locked ? <span className="kc-lock" aria-hidden="true">🔒</span> : null}
                                 </button>
                             );
                         })}
                     </div>
 
-                    <div className="kc-help">
-                        Templates control the design (fonts, colors, layout). You only add your content.
-                    </div>
+                    <div className="kc-help">Templates control the design (fonts, colors, layout). You only add your content.</div>
 
                     {!isSubscribed ? (
                         <div className="kc-help">
@@ -228,18 +219,18 @@ export default function Editor({
                                         const url = URL.createObjectURL(file);
                                         rememberObjectUrl(url);
 
-                                        updateState({
-                                            coverPhotoPreview: url,
-                                            coverPhotoFile: file,
-                                        });
-
+                                        updateState({ coverPhotoPreview: url, coverPhotoFile: file });
                                         onCoverUpload?.(file);
                                     }}
                                     style={{ display: "none" }}
                                 />
 
                                 <button type="button" className="kc-upload" onClick={() => coverInputRef.current?.click()}>
-                                    {coverSrc ? <img src={coverSrc} alt="Cover" className="kc-upload-img" /> : <span className="kc-upload-text">+ Upload cover image</span>}
+                                    {coverSrc ? (
+                                        <img src={coverSrc} alt="Cover" className="kc-upload-img" />
+                                    ) : (
+                                        <span className="kc-upload-text">+ Upload cover image</span>
+                                    )}
 
                                     {coverSrc ? (
                                         <span
@@ -314,18 +305,22 @@ export default function Editor({
                                         const url = URL.createObjectURL(file);
                                         rememberObjectUrl(url);
 
-                                        updateState({
-                                            avatarPreview: url,
-                                            avatarFile: file,
-                                        });
-
+                                        updateState({ avatarPreview: url, avatarFile: file });
                                         onAvatarUpload?.(file);
                                     }}
                                     style={{ display: "none" }}
                                 />
 
-                                <button type="button" className="kc-upload kc-upload-square" onClick={() => avatarInputRef.current?.click()}>
-                                    {avatarSrc ? <img src={avatarSrc} alt="Avatar" className="kc-upload-img" /> : <span className="kc-upload-text">+ Add profile picture / logo</span>}
+                                <button
+                                    type="button"
+                                    className="kc-upload kc-upload-square"
+                                    onClick={() => avatarInputRef.current?.click()}
+                                >
+                                    {avatarSrc ? (
+                                        <img src={avatarSrc} alt="Avatar" className="kc-upload-img" />
+                                    ) : (
+                                        <span className="kc-upload-text">+ Add profile picture / logo</span>
+                                    )}
 
                                     {avatarSrc ? (
                                         <span
@@ -401,14 +396,23 @@ export default function Editor({
                                 {(state.workImages || []).map((item, i) => (
                                     <div key={i} className="kc-work-item">
                                         <img src={item?.preview || item} alt={`work-${i}`} />
-                                        <button type="button" className="kc-work-x" onClick={() => onRemoveWorkImage?.(i)} aria-label="Remove image">
+                                        <button
+                                            type="button"
+                                            className="kc-work-x"
+                                            onClick={() => onRemoveWorkImage?.(i)}
+                                            aria-label="Remove image"
+                                        >
                                             ✕
                                         </button>
                                     </div>
                                 ))}
 
                                 {(state.workImages || []).length < 10 ? (
-                                    <button type="button" className="kc-work-add" onClick={() => workImageInputRef.current?.click()}>
+                                    <button
+                                        type="button"
+                                        className="kc-work-add"
+                                        onClick={() => workImageInputRef.current?.click()}
+                                    >
                                         + Add image(s)
                                     </button>
                                 ) : null}
@@ -443,7 +447,12 @@ export default function Editor({
                 {/* SERVICES */}
                 <div className="kc-divider" />
                 <div className="kc-section">
-                    <SectionHeader title="My services" subtitle="Add services & pricing" open={showServicesSection} onToggle={() => setShowServicesSection(!showServicesSection)} />
+                    <SectionHeader
+                        title="My services"
+                        subtitle="Add services & pricing"
+                        open={showServicesSection}
+                        onToggle={() => setShowServicesSection(!showServicesSection)}
+                    />
 
                     {showServicesSection ? (
                         <div className="kc-section-body">
@@ -453,7 +462,12 @@ export default function Editor({
                                         <div className="kc-grid-2">
                                             <div className="kc-field">
                                                 <label className="kc-label">Service</label>
-                                                <input className="kc-input" placeholder="Service name" value={s.name || ""} onChange={(e) => handleServiceChange(i, "name", e.target.value)} />
+                                                <input
+                                                    className="kc-input"
+                                                    placeholder="Service name"
+                                                    value={s.name || ""}
+                                                    onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                                                />
                                             </div>
 
                                             <div className="kc-field">
@@ -486,7 +500,12 @@ export default function Editor({
                 {/* REVIEWS */}
                 <div className="kc-divider" />
                 <div className="kc-section">
-                    <SectionHeader title="Reviews" subtitle="Show social proof" open={showReviewsSection} onToggle={() => setShowReviewsSection(!showReviewsSection)} />
+                    <SectionHeader
+                        title="Reviews"
+                        subtitle="Show social proof"
+                        open={showReviewsSection}
+                        onToggle={() => setShowReviewsSection(!showReviewsSection)}
+                    />
 
                     {showReviewsSection ? (
                         <div className="kc-section-body">
@@ -496,7 +515,12 @@ export default function Editor({
                                         <div className="kc-grid-2">
                                             <div className="kc-field">
                                                 <label className="kc-label">Name</label>
-                                                <input className="kc-input" placeholder="Reviewer name" value={r.name || ""} onChange={(e) => handleReviewChange(i, "name", e.target.value)} />
+                                                <input
+                                                    className="kc-input"
+                                                    placeholder="Reviewer name"
+                                                    value={r.name || ""}
+                                                    onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                                                />
                                             </div>
 
                                             <div className="kc-field">
@@ -543,7 +567,12 @@ export default function Editor({
                 {/* CONTACT */}
                 <div className="kc-divider" />
                 <div className="kc-section">
-                    <SectionHeader title="Contact" subtitle="Email, phone & socials" open={showContactSection} onToggle={() => setShowContactSection(!showContactSection)} />
+                    <SectionHeader
+                        title="Contact"
+                        subtitle="Email, phone & socials"
+                        open={showContactSection}
+                        onToggle={() => setShowContactSection(!showContactSection)}
+                    />
 
                     {showContactSection ? (
                         <div className="kc-section-body">
@@ -573,30 +602,34 @@ export default function Editor({
                                 </div>
                             </div>
 
-                            <div className="kc-social">
-                                <div className="kc-social-row">
-                                    <img src={FacebookIcon} alt="" />
-                                    <input className="kc-input" placeholder="Facebook URL" value={state.facebook_url || ""} onChange={(e) => updateState({ facebook_url: e.target.value })} />
-                                </div>
+                            <div className="kc-block kc-block--flat">
+                                <div className="kc-block-title">Social links</div>
 
-                                <div className="kc-social-row">
-                                    <img src={InstagramIcon} alt="" />
-                                    <input className="kc-input" placeholder="Instagram URL" value={state.instagram_url || ""} onChange={(e) => updateState({ instagram_url: e.target.value })} />
-                                </div>
+                                <div className="kc-social">
+                                    <div className="kc-social-row">
+                                        <img src={FacebookIcon} alt="" />
+                                        <input className="kc-input" placeholder="Facebook URL" value={state.facebook_url || ""} onChange={(e) => updateState({ facebook_url: e.target.value })} />
+                                    </div>
 
-                                <div className="kc-social-row">
-                                    <img src={LinkedInIcon} alt="" />
-                                    <input className="kc-input" placeholder="LinkedIn URL" value={state.linkedin_url || ""} onChange={(e) => updateState({ linkedin_url: e.target.value })} />
-                                </div>
+                                    <div className="kc-social-row">
+                                        <img src={InstagramIcon} alt="" />
+                                        <input className="kc-input" placeholder="Instagram URL" value={state.instagram_url || ""} onChange={(e) => updateState({ instagram_url: e.target.value })} />
+                                    </div>
 
-                                <div className="kc-social-row">
-                                    <img src={XIcon} alt="" />
-                                    <input className="kc-input" placeholder="X (Twitter) URL" value={state.x_url || ""} onChange={(e) => updateState({ x_url: e.target.value })} />
-                                </div>
+                                    <div className="kc-social-row">
+                                        <img src={LinkedInIcon} alt="" />
+                                        <input className="kc-input" placeholder="LinkedIn URL" value={state.linkedin_url || ""} onChange={(e) => updateState({ linkedin_url: e.target.value })} />
+                                    </div>
 
-                                <div className="kc-social-row">
-                                    <img src={TikTokIcon} alt="" />
-                                    <input className="kc-input" placeholder="TikTok URL" value={state.tiktok_url || ""} onChange={(e) => updateState({ tiktok_url: e.target.value })} />
+                                    <div className="kc-social-row">
+                                        <img src={XIcon} alt="" />
+                                        <input className="kc-input" placeholder="X (Twitter) URL" value={state.x_url || ""} onChange={(e) => updateState({ x_url: e.target.value })} />
+                                    </div>
+
+                                    <div className="kc-social-row">
+                                        <img src={TikTokIcon} alt="" />
+                                        <input className="kc-input" placeholder="TikTok URL" value={state.tiktok_url || ""} onChange={(e) => updateState({ tiktok_url: e.target.value })} />
+                                    </div>
                                 </div>
                             </div>
                         </div>
