@@ -10,7 +10,6 @@ import { useAuthUser } from "../../hooks/useAuthUser";
 export default function Dashboard() {
     const { data: authUser } = useAuthUser();
 
-    // Placeholder: later we compute this from real card/profile data
     const profileCompletion = useMemo(() => {
         const items = [
             { key: "profilePhoto", label: "Add a profile photo", done: false },
@@ -26,13 +25,11 @@ export default function Dashboard() {
         return { percent, items };
     }, []);
 
-    // Placeholder: later we detect actual cards/profiles
-    const hasProfile = true; // set false to see Empty State UI
-    const isFreePlan = true; // replace with real plan state later
+    const hasProfile = true;
+    const isFreePlan = true;
 
     const displayName = authUser?.name?.split(" ")?.[0] || "there";
 
-    // PageHeader flags (matches Profiles approach)
     const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
     const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
 
@@ -49,14 +46,14 @@ export default function Dashboard() {
                             <span className={`dash-pill ${isFreePlan ? "free" : "paid"}`}>
                                 {isFreePlan ? "Plan: FREE" : "Plan: PAID"}
                             </span>
-                            <Link to="/profiles" className="dash-btn dash-btn-primary">
+
+                            <Link to="/profiles" className="kx-btn kx-btn--black">
                                 Edit profile
                             </Link>
                         </div>
                     }
                 />
 
-                {/* If no profile/card exists yet */}
                 {!hasProfile && (
                     <section className="dash-card dash-empty">
                         <div className="dash-empty-left">
@@ -66,10 +63,10 @@ export default function Dashboard() {
                             </p>
 
                             <div className="dash-actions-row">
-                                <Link to="/profiles" className="dash-btn dash-btn-primary">
+                                <Link to="/profiles" className="kx-btn kx-btn--black">
                                     Create your profile
                                 </Link>
-                                <Link to="/helpcentreinterface" className="dash-btn dash-btn-ghost">
+                                <Link to="/helpcentreinterface" className="kx-btn kx-btn--white">
                                     Learn how it works
                                 </Link>
                             </div>
@@ -90,9 +87,7 @@ export default function Dashboard() {
                     </section>
                 )}
 
-                {/* Main grid */}
                 <div className="dash-grid">
-                    {/* Profile Completion */}
                     <section className="dash-card dash-span-6">
                         <div className="dash-card-head">
                             <div>
@@ -110,7 +105,13 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="dash-progress-bar" role="progressbar" aria-valuenow={profileCompletion.percent} aria-valuemin={0} aria-valuemax={100}>
+                        <div
+                            className="dash-progress-bar"
+                            role="progressbar"
+                            aria-valuenow={profileCompletion.percent}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                        >
                             <div className="dash-progress-fill" style={{ width: `${profileCompletion.percent}%` }} />
                         </div>
 
@@ -125,16 +126,15 @@ export default function Dashboard() {
                         </ul>
 
                         <div className="dash-actions-row">
-                            <Link to="/profiles" className="dash-btn dash-btn-primary">
+                            <Link to="/profiles" className="kx-btn kx-btn--black">
                                 Complete your profile
                             </Link>
-                            <Link to="/cards" className="dash-btn dash-btn-ghost">
+                            <Link to="/cards" className="kx-btn kx-btn--white">
                                 Order a card
                             </Link>
                         </div>
                     </section>
 
-                    {/* Quick Actions */}
                     <section className="dash-card dash-span-6">
                         <div className="dash-card-head">
                             <div>
@@ -166,14 +166,13 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    {/* Digital Profile Preview */}
                     <section className="dash-card dash-span-7">
                         <div className="dash-card-head">
                             <div>
                                 <h2 className="dash-card-title">Your digital profile</h2>
                                 <p className="dash-muted">This is what customers see when they scan your card.</p>
                             </div>
-                            <Link to="/profiles" className="dash-btn dash-btn-ghost">
+                            <Link to="/profiles" className="kx-btn kx-btn--white">
                                 Edit profile
                             </Link>
                         </div>
@@ -203,10 +202,10 @@ export default function Dashboard() {
                                 </ul>
 
                                 <div className="dash-actions-row">
-                                    <Link to="/profiles" className="dash-btn dash-btn-primary">
+                                    <Link to="/profiles" className="kx-btn kx-btn--black">
                                         Improve profile
                                     </Link>
-                                    <Link to="/cards" className="dash-btn dash-btn-ghost">
+                                    <Link to="/cards" className="kx-btn kx-btn--white">
                                         Order a card
                                     </Link>
                                 </div>
@@ -214,14 +213,13 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    {/* Usage Snapshot */}
                     <section className="dash-card dash-span-5">
                         <div className="dash-card-head">
                             <div>
                                 <h2 className="dash-card-title">Usage snapshot</h2>
                                 <p className="dash-muted">Last 7 days</p>
                             </div>
-                            <Link to="/analytics" className="dash-btn dash-btn-ghost">
+                            <Link to="/analytics" className="kx-btn kx-btn--white">
                                 View analytics
                             </Link>
                         </div>
@@ -246,7 +244,6 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    {/* Upgrade Prompt */}
                     {isFreePlan && (
                         <section className="dash-card dash-upgrade dash-span-12">
                             <div className="dash-upgrade-left">
@@ -263,17 +260,16 @@ export default function Dashboard() {
                             </div>
 
                             <div className="dash-upgrade-right">
-                                <Link to="/subscription" className="dash-btn dash-btn-primary">
+                                <Link to="/subscription" className="kx-btn kx-btn--black">
                                     Upgrade plan
                                 </Link>
-                                <Link to="/pricing" className="dash-btn dash-btn-ghost">
+                                <Link to="/pricing" className="kx-btn kx-btn--white">
                                     Compare plans
                                 </Link>
                             </div>
                         </section>
                     )}
 
-                    {/* Help & Support */}
                     <section className="dash-card dash-span-12">
                         <div className="dash-help">
                             <div>
@@ -282,10 +278,10 @@ export default function Dashboard() {
                             </div>
 
                             <div className="dash-actions-row">
-                                <Link to="/helpcentreinterface" className="dash-btn dash-btn-ghost">
+                                <Link to="/helpcentreinterface" className="kx-btn kx-btn--white">
                                     View FAQs
                                 </Link>
-                                <Link to="/contact-support" className="dash-btn dash-btn-primary">
+                                <Link to="/contact-support" className="kx-btn kx-btn--black">
                                     Contact support
                                 </Link>
                             </div>
