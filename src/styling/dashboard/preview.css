@@ -5,19 +5,31 @@
     --accent-rgb: 30 42 56;
     --stroke: rgba(30, 42, 56, 0.22);
     --shadow: 0 10px 26px rgba(11, 18, 32, 0.10);
+
+    /* ✅ fallback: top area above the preview (header/title/etc) */
+    --preview-top-offset: 220px;
 }
 
-/* ✅ Make wrapper fill the editor column height */
+/* ✅ Make wrapper stretch. If parent has no height, fall back to viewport. */
 .preview-scope.myprofile-preview-wrapper {
     position: relative;
-    height: 100%;
-    min-height: 0;
     display: flex;
     flex-direction: column;
+
+    height: 100%;
+    min-height: 0;
+    flex: 1;
+
+    /* ✅ fallback when parent height chain is missing */
+    max-height: calc(100vh - var(--preview-top-offset));
 }
 
-/* ✅ Preview fills available height (desktop + mobile) */
+/* ✅ Preview fills available height */
 .preview-scope .myprofile-preview {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+
     background: transparent;
     border: 0;
     border-radius: 0;
@@ -25,13 +37,6 @@
     max-width: none;
     margin: 0;
 
-    flex: 1;
-    min-height: 0;
-    height: 100%;
-
-    /* IMPORTANT:
-       - desktop iframe should handle scroll
-       - mobile uses internal template scroll */
     overflow: hidden;
     -webkit-overflow-scrolling: touch;
     box-shadow: none;
@@ -59,13 +64,13 @@
     background: transparent;
 }
 
-/* ✅ Padding wrapper so templates don’t stick to edges */
+/* ✅ keep spacing consistent */
 .preview-iframe-padding {
     min-height: 100%;
     height: 100%;
+    width: 100%;
     box-sizing: border-box;
     padding: 14px;
-    /* matches previous mp-preview-wrap padding feel */
 }
 
 /* ---------------------------
