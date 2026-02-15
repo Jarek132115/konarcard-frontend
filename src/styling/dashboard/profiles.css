@@ -1,5 +1,3 @@
-/* frontend/src/styling/dashboard/profiles.css */
-
 :root {
     --p-ink: var(--kc-text-primary, #0f172a);
     --p-muted: var(--kc-text-secondary, #475569);
@@ -10,7 +8,6 @@
     --p-shadow-sm: 0 10px 26px rgba(15, 23, 42, 0.06);
 }
 
-/* ✅ Page shell: gives your content a clean 16px inset from page edges */
 /* Page shell — NO extra padding.
    DashboardLayout already provides global 16px padding. */
 .profiles-shell {
@@ -18,7 +15,6 @@
     margin: 0;
     padding: 0;
 }
-
 
 /* RightSlot (inside PageHeader) */
 .profiles-header-rightslot {
@@ -91,15 +87,42 @@
     margin-top: 14px;
 }
 
-/* Claim panel */
-.profiles-claim {
-    margin-top: 14px;
-    margin-bottom: 16px;
-    background: linear-gradient(180deg, #ffffff, rgba(15, 23, 42, 0.02));
-    border-color: rgba(15, 23, 42, 0.10);
-    box-shadow: var(--p-shadow);
+/* =========================================================
+   ✅ Inline Claim Panel (NEW)
+   - Looks like part of the list
+   - Renders under the first profile
+========================================================= */
+.profiles-claim-inline {
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(15, 23, 42, 0.02);
+    border-radius: 18px;
+    padding: 14px;
+    margin-top: 10px;
 }
 
+.profiles-claim-inline-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.profiles-claim-inline-title {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--p-ink);
+}
+
+.profiles-claim-inline-sub {
+    margin-top: 4px;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: rgba(71, 85, 105, 0.95);
+}
+
+/* Claim grid (reuse your original) */
 .profiles-claim-grid {
     display: grid;
     gap: 12px;
