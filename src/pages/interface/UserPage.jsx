@@ -14,7 +14,7 @@ import Template4 from "../../components/Dashboard/Template4";
 import Template5 from "../../components/Dashboard/Template5";
 
 /* ✅ UserPage shell CSS (SAFE: does not style templates) */
-import "../../styling/userPage.css";
+import "../../styling/userpage.css";
 
 /* Social icons */
 import FacebookIcon from "../../assets/icons/icons8-facebook.svg";
