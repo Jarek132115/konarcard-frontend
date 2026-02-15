@@ -7,12 +7,18 @@
     --shadow: 0 10px 26px rgba(11, 18, 32, 0.10);
 }
 
+/* ✅ Make wrapper fill the editor column height */
 .preview-scope.myprofile-preview-wrapper {
     position: relative;
     height: 100%;
+    min-height: 0;
+    /* ✅ critical inside flex layouts */
+    display: flex;
+    /* ✅ allow child to stretch */
+    flex-direction: column;
 }
 
-/* ✅ Preview wrapper card (REMOVE inner card look, stretch to outer card) */
+/* ✅ Preview fills available height and scrolls internally */
 .preview-scope .myprofile-preview {
     background: transparent;
     border: 0;
@@ -20,8 +26,15 @@
     padding: 0;
     max-width: none;
     margin: 0;
+
+    flex: 1;
+    /* ✅ fill wrapper */
+    min-height: 0;
+    /* ✅ allow scrolling instead of shrinking */
     height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
+
     -webkit-overflow-scrolling: touch;
     box-shadow: none;
 }
@@ -61,10 +74,9 @@
     background: #fff;
     border: 1px solid rgba(11, 18, 32, 0.14);
     box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
-    margin-bottom: 12px;
+    margin: 8px 8px 12px;
 }
 
-/* Tabs */
 .preview-scope .mp-tab {
     border: 0;
     background: transparent;
@@ -103,8 +115,6 @@
     overflow: hidden;
     will-change: max-height, opacity, transform;
     transition: max-height .28s ease, opacity .2s ease, transform .2s ease;
-
-    /* ✅ breathing room */
     padding: 12px;
 }
 
@@ -129,37 +139,4 @@
 .preview-scope .mp-tab:focus-visible {
     outline: 2px solid rgb(var(--accent-rgb) / 0.6);
     outline-offset: 2px;
-}
-
-/* =========================================================
-   ✅ DESKTOP IFRAME MODE
-   - media queries now match preview panel width (not window)
-   ========================================================= */
-
-.preview-iframe-shell {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-/* The iframe IS the "screen" */
-.preview-iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
-    background: transparent;
-}
-
-/* This padding lives INSIDE the iframe (via portal wrapper) */
-.preview-iframe-padding {
-    padding: 14px;
-    box-sizing: border-box;
-    min-height: 100%;
-}
-
-@media (max-width: 520px) {
-    .preview-iframe-padding {
-        padding: 12px;
-    }
 }

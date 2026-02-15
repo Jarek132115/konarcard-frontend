@@ -1,3 +1,4 @@
+// frontend/src/components/Dashboard/Template1.jsx
 import React from "react";
 import "../../styling/dashboard/templates/template1.css";
 
@@ -8,19 +9,28 @@ function Stars({ rating = 0 }) {
     const r = Math.max(0, Math.min(5, Number(rating) || 0));
     return (
         <div className="t1-stars" aria-label={`Rating ${r} out of 5`}>
-            {Array(5).fill(null).map((_, i) => (
-                <span key={i} className={`t1-star ${i < r ? "" : "t1-star--empty"}`}>★</span>
-            ))}
+            {Array(5)
+                .fill(null)
+                .map((_, i) => (
+                    <span key={i} className={`t1-star ${i < r ? "" : "t1-star--empty"}`}>
+                        ★
+                    </span>
+                ))}
         </div>
     );
 }
 
-export default function Template1({ vm }) {
-    const v = vm || {};
+export default function Template1(props) {
+    // ✅ Support BOTH (Preview passes data sometimes; UserPage passes vm)
+    const v = props?.vm || props?.data || {};
+
     const cover = v.cover || "";
     const avatar = v.avatar || "";
 
-    const works = asArray(v.works).map((x) => x?.preview || x?.url || x).filter(Boolean);
+    const works = asArray(v.works)
+        .map((x) => x?.preview || x?.url || x)
+        .filter(Boolean);
+
     const services = asArray(v.services).filter((s) => s?.name || s?.price);
     const reviews = asArray(v.reviews).filter((r) => r?.name || r?.text);
 
@@ -28,6 +38,7 @@ export default function Template1({ vm }) {
 
     return (
         <div className="kc-tpl kc-tpl-1">
+            {/* HERO */}
             {v.showMainSection && (
                 <section className="t1-hero">
                     <div className="t1-hero-card">
@@ -68,6 +79,7 @@ export default function Template1({ vm }) {
                 </section>
             )}
 
+            {/* ABOUT */}
             {v.showAboutMeSection && (nonEmpty(v.fullName) || nonEmpty(v.jobTitle) || nonEmpty(v.bio)) ? (
                 <section className="t1-section">
                     <div className="t1-section-head">
@@ -83,6 +95,7 @@ export default function Template1({ vm }) {
                 </section>
             ) : null}
 
+            {/* WORK */}
             {v.showWorkSection && works.length > 0 ? (
                 <section className="t1-section">
                     <div className="t1-section-head">
@@ -100,6 +113,7 @@ export default function Template1({ vm }) {
                 </section>
             ) : null}
 
+            {/* SERVICES */}
             {v.showServicesSection && services.length > 0 ? (
                 <section className="t1-section">
                     <div className="t1-section-head">
@@ -118,6 +132,7 @@ export default function Template1({ vm }) {
                 </section>
             ) : null}
 
+            {/* REVIEWS */}
             {v.showReviewsSection && reviews.length > 0 ? (
                 <section className="t1-section">
                     <div className="t1-section-head">
@@ -137,6 +152,7 @@ export default function Template1({ vm }) {
                 </section>
             ) : null}
 
+            {/* CONTACT */}
             {v.showContactSection && (nonEmpty(v.email) || nonEmpty(v.phone)) ? (
                 <section className="t1-section t1-section-last">
                     <div className="t1-section-head">
