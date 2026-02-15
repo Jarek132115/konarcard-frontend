@@ -1,5 +1,5 @@
 /* =========================================================
-   TEMPLATE 2 — Dark / Premium / Glass
+   TEMPLATE 2 — Dark / Premium / Glass (RESPONSIVE UPGRADE)
    ========================================================= */
 
 .kc-tpl {
@@ -7,11 +7,12 @@
 }
 
 .kc-tpl-2 {
-    color: rgba(255, 255, 255, 0.92);
+    color: rgba(255, 255, 255, .92);
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    background: radial-gradient(1200px 600px at 20% 0%, rgba(124, 58, 237, 0.22), transparent 55%),
-        radial-gradient(900px 500px at 90% 10%, rgba(34, 211, 238, 0.14), transparent 55%),
-        radial-gradient(800px 600px at 50% 100%, rgba(249, 115, 22, 0.10), transparent 60%),
+    background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(124, 58, 237, .22), transparent 55%),
+        radial-gradient(900px 500px at 90% 10%, rgba(34, 211, 238, .14), transparent 55%),
+        radial-gradient(800px 600px at 50% 100%, rgba(249, 115, 22, .10), transparent 60%),
         #0a0d14;
     min-height: 100%;
     padding: 14px;
@@ -36,22 +37,22 @@
     height: 100%;
     object-fit: cover;
     filter: saturate(1.05) contrast(1.05);
-    transform: scale(1.05);
+    transform: scale(1.06);
 }
 
 .t2-hero-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(10, 13, 20, 0.35), rgba(10, 13, 20, 0.92));
-    backdrop-filter: blur(8px);
+    background: linear-gradient(180deg, rgba(10, 13, 20, .30), rgba(10, 13, 20, .92));
+    backdrop-filter: blur(10px);
 }
 
 .t2-hero-card {
     position: relative;
     padding: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    background: rgba(255, 255, 255, 0.06);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, .10);
+    background: rgba(255, 255, 255, .06);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, .38);
     border-radius: 18px;
 }
 
@@ -59,36 +60,43 @@
     display: flex;
     gap: 12px;
     align-items: center;
+    min-width: 0;
 }
 
 .t2-avatar {
-    width: 52px;
-    height: 52px;
+    width: 54px;
+    height: 54px;
     border-radius: 16px;
     object-fit: cover;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, .16);
+    background: rgba(255, 255, 255, .08);
     flex: 0 0 auto;
 }
 
 .t2-avatar--ph {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02));
+    background: linear-gradient(135deg, rgba(255, 255, 255, .10), rgba(255, 255, 255, .02));
+}
+
+.t2-hero-text {
+    min-width: 0;
 }
 
 .t2-h1 {
     margin: 0;
-    font-size: 18px;
     font-weight: 950;
     letter-spacing: -0.02em;
     line-height: 1.12;
+    font-size: clamp(18px, 2.8vw, 24px);
+    word-break: break-word;
 }
 
 .t2-sub {
     margin: 6px 0 0;
-    font-size: 13px;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.75);
-    line-height: 1.35;
+    font-weight: 750;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, .76);
+    font-size: clamp(13px, 1.7vw, 14px);
+    word-break: break-word;
 }
 
 /* CTA */
@@ -99,16 +107,27 @@
     margin-top: 12px;
 }
 
+@media (max-width: 420px) {
+    .t2-cta-row {
+        grid-template-columns: 1fr;
+    }
+}
+
 .t2-btn {
-    height: 40px;
+    height: 42px;
     border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, .14);
     font-weight: 900;
     font-size: 13px;
     cursor: pointer;
-    color: rgba(255, 255, 255, 0.92);
-    background: rgba(255, 255, 255, 0.06);
-    transition: transform 0.06s, opacity 0.2s, box-shadow 0.2s;
+    color: rgba(255, 255, 255, .92);
+    background: rgba(255, 255, 255, .06);
+    transition: transform .06s ease, opacity .18s ease, box-shadow .18s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.t2-btn:hover {
+    opacity: .94;
 }
 
 .t2-btn:active {
@@ -116,35 +135,37 @@
 }
 
 .t2-btn-primary {
-    border-color: rgba(124, 58, 237, 0.35);
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.95), rgba(34, 211, 238, 0.55));
-    box-shadow: 0 14px 28px rgba(124, 58, 237, 0.25);
+    border-color: rgba(124, 58, 237, .35);
+    background: linear-gradient(135deg, rgba(124, 58, 237, .95), rgba(34, 211, 238, .55));
+    box-shadow: 0 16px 34px rgba(124, 58, 237, .28);
 }
 
-.t2-btn-ghost:hover,
-.t2-btn-primary:hover {
-    opacity: 0.92;
+.t2-btn-ghost {
+    background: rgba(255, 255, 255, .06);
 }
 
+/* mini line */
 .t2-mini {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
     gap: 10px;
     margin-top: 12px;
     padding-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.10);
+    border-top: 1px solid rgba(255, 255, 255, .10);
+    flex-wrap: wrap;
 }
 
 .t2-name {
     font-weight: 950;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, .92);
 }
 
 .t2-role {
-    font-weight: 800;
+    font-weight: 850;
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.65);
+    color: rgba(255, 255, 255, .68);
 }
 
 /* ---------- SECTIONS ---------- */
@@ -166,24 +187,24 @@
 .t2-kicker {
     font-size: 12px;
     font-weight: 950;
-    letter-spacing: 0.14em;
+    letter-spacing: .14em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.65);
+    color: rgba(255, 255, 255, .65);
 }
 
 .t2-line {
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.20), transparent);
+    background: linear-gradient(90deg, rgba(255, 255, 255, .22), transparent);
 }
 
 /* Glass container */
 .t2-glass {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, .12);
+    background: rgba(255, 255, 255, .06);
     border-radius: 18px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .25);
+    backdrop-filter: blur(12px);
 }
 
 /* ABOUT */
@@ -194,21 +215,26 @@
 .t2-bio {
     margin: 0;
     font-size: 13px;
-    line-height: 1.55;
+    line-height: 1.6;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.78);
+    color: rgba(255, 255, 255, .78);
+    word-break: break-word;
 }
 
-/* WORK */
+/* WORK (scroll + snap) */
 .t2-work-scroll {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: 72%;
+    grid-auto-columns: 78%;
     gap: 10px;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+    scrollbar-color: rgba(255, 255, 255, .25) transparent;
 }
 
 .t2-work-scroll::-webkit-scrollbar {
@@ -220,15 +246,16 @@
 }
 
 .t2-work-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, .22);
     border-radius: 999px;
 }
 
 .t2-work-tile {
+    scroll-snap-align: start;
     border-radius: 18px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, .12);
+    background: rgba(255, 255, 255, .06);
     aspect-ratio: 4 / 3;
 }
 
@@ -249,21 +276,23 @@
 .t2-service {
     border-radius: 18px;
     padding: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, .12);
+    background: rgba(255, 255, 255, .06);
 }
 
 .t2-service-name {
     font-weight: 950;
     font-size: 14px;
     letter-spacing: -0.01em;
+    word-break: break-word;
 }
 
 .t2-service-price {
     margin-top: 6px;
     font-weight: 900;
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.72);
+    color: rgba(255, 255, 255, .72);
+    word-break: break-word;
 }
 
 /* REVIEWS */
@@ -284,27 +313,28 @@
 }
 
 .t2-star.on {
-    color: rgba(34, 211, 238, 0.92);
-    text-shadow: 0 10px 18px rgba(34, 211, 238, 0.18);
+    color: rgba(34, 211, 238, .92);
+    text-shadow: 0 10px 18px rgba(34, 211, 238, .18);
 }
 
 .t2-star.off {
-    color: rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, .16);
 }
 
 .t2-review-text {
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.6;
     font-weight: 750;
-    color: rgba(255, 255, 255, 0.82);
+    color: rgba(255, 255, 255, .84);
+    word-break: break-word;
 }
 
 .t2-review-name {
     margin-top: 10px;
     font-weight: 950;
     font-size: 12px;
-    letter-spacing: 0.02em;
-    color: rgba(255, 255, 255, 0.65);
+    letter-spacing: .02em;
+    color: rgba(255, 255, 255, .65);
 }
 
 /* CONTACT */
@@ -326,22 +356,22 @@
     border-radius: 16px;
     text-decoration: none;
     color: inherit;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    background: rgba(0, 0, 0, 0.14);
+    border: 1px solid rgba(255, 255, 255, .10);
+    background: rgba(0, 0, 0, .16);
 }
 
 .t2-pill-k {
     font-size: 12px;
     font-weight: 950;
-    letter-spacing: 0.12em;
+    letter-spacing: .12em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, .55);
 }
 
 .t2-pill-v {
     font-size: 13px;
     font-weight: 900;
-    color: rgba(255, 255, 255, 0.86);
+    color: rgba(255, 255, 255, .86);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -358,15 +388,15 @@
     text-decoration: none;
     font-size: 12px;
     font-weight: 950;
-    letter-spacing: 0.08em;
+    letter-spacing: .08em;
     padding: 8px 10px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.80);
+    border: 1px solid rgba(255, 255, 255, .14);
+    background: rgba(255, 255, 255, .06);
+    color: rgba(255, 255, 255, .82);
 }
 
-/* Responsive */
+/* Responsive upgrades */
 @media (min-width: 520px) {
     .t2-work-scroll {
         grid-auto-columns: 46%;
@@ -375,4 +405,18 @@
     .t2-services {
         grid-template-columns: 1fr 1fr;
     }
+}
+
+@media (min-width: 820px) {
+    .t2-work-scroll {
+        grid-auto-columns: 34%;
+    }
+}
+
+/* A11y focus */
+.t2-btn:focus-visible,
+.t2-pill:focus-visible,
+.t2-social:focus-visible {
+    outline: 2px solid rgba(34, 211, 238, .55);
+    outline-offset: 2px;
 }
