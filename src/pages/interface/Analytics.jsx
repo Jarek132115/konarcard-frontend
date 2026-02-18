@@ -8,9 +8,6 @@ export default function Analytics() {
     // TEMP: later hook to real analytics API
     const [range, setRange] = useState("7"); // "7" | "30"
 
-    const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
-    const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
-
     // Placeholder numbers (set these from backend later)
     const raw = useMemo(() => {
         if (range === "30") {
@@ -76,8 +73,6 @@ export default function Analytics() {
                 <PageHeader
                     title="Analytics"
                     subtitle="Track profile views, card taps, and link clicks so you can see what’s working — and improve results over time."
-                    isMobile={isMobile}
-                    isSmallMobile={isSmallMobile}
                     rightSlot={rangeSlot}
                 />
 
