@@ -21,11 +21,13 @@ export default function Dashboard() {
 
         const doneCount = items.filter((i) => i.done).length;
         const percent = Math.round((doneCount / items.length) * 100);
+
         return { percent, items };
     }, []);
 
     const hasProfile = true;
     const isFreePlan = true;
+
     const displayName = authUser?.name?.split(" ")?.[0] || "there";
 
     return (
@@ -34,19 +36,16 @@ export default function Dashboard() {
                 <PageHeader
                     title="Dashboard"
                     subtitle={`Welcome back, ${displayName}. Finish your profile and start using KonarCard.`}
-                    rightSlot={
-                        <div className="ph-rightStack">
-                            <span className="kc-pill">{isFreePlan ? "Plan: FREE" : "Plan: PAID"}</span>
-
-                            <div className="ph-actionsInline">
-                                <Link to="/cards" className="kx-btn kx-btn--white">
-                                    Order a card
-                                </Link>
-                                <Link to="/profiles" className="kx-btn kx-btn--black">
-                                    Edit profile
-                                </Link>
-                            </div>
-                        </div>
+                    badge={<span className="kc-pill">{isFreePlan ? "Plan: FREE" : "Plan: PAID"}</span>}
+                    primaryAction={
+                        <Link to="/profiles" className="kx-btn kx-btn--black">
+                            Edit profile
+                        </Link>
+                    }
+                    secondaryAction={
+                        <Link to="/cards" className="kx-btn kx-btn--white">
+                            Order a card
+                        </Link>
                     }
                 />
 
@@ -84,7 +83,7 @@ export default function Dashboard() {
                 )}
 
                 <div className="dash-grid">
-                    {/* ✅ SWAPPED: Quick actions FIRST (left on desktop, top on mobile) */}
+                    {/* ✅ TOP: Quick actions + Profile completion */}
                     <section className="dash-card dash-span-6 dash-order-1">
                         <div className="dash-card-head">
                             <div>
@@ -116,12 +115,13 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    {/* ✅ SWAPPED: Profile completion SECOND */}
                     <section className="dash-card dash-span-6 dash-order-2">
                         <div className="dash-card-head">
                             <div>
                                 <h2 className="dash-card-title">Profile completion</h2>
-                                <p className="dash-muted">Complete your profile to look more professional and get more leads.</p>
+                                <p className="dash-muted">
+                                    Complete your profile to look more professional and get more leads.
+                                </p>
                             </div>
 
                             <div className="dash-progress-wrap" aria-label="Profile completion">
@@ -162,6 +162,7 @@ export default function Dashboard() {
                         </div>
                     </section>
 
+                    {/* Your digital profile */}
                     <section className="dash-card dash-span-7">
                         <div className="dash-card-head">
                             <div>
@@ -209,6 +210,7 @@ export default function Dashboard() {
                         </div>
                     </section>
 
+                    {/* Usage snapshot */}
                     <section className="dash-card dash-span-5">
                         <div className="dash-card-head">
                             <div>
@@ -238,34 +240,34 @@ export default function Dashboard() {
                         <div className="dash-note">Analytics will populate as soon as you start sharing your profile.</div>
                     </section>
 
+                    {/* Upgrade */}
                     {isFreePlan && (
                         <section className="dash-card dash-upgrade dash-span-12">
-                            <div className="dash-upgrade-inner">
-                                <div className="dash-upgrade-left">
-                                    <h2 className="dash-upgrade-title">Unlock more with Plus</h2>
-                                    <p className="dash-upgrade-sub">
-                                        More templates, full customization, and advanced features to win more work.
-                                    </p>
+                            <div className="dash-upgrade-left">
+                                <h2 className="dash-card-title">Unlock more with Plus</h2>
+                                <p className="dash-muted">
+                                    Get all templates, full customization, and advanced features to look more professional and win more work.
+                                </p>
 
-                                    <ul className="dash-upgrade-list">
-                                        <li>All templates (5 designs)</li>
-                                        <li>Full profile customization</li>
-                                        <li>Better trust + conversion</li>
-                                    </ul>
-                                </div>
+                                <ul className="dash-upgrade-list">
+                                    <li>All templates (5 designs)</li>
+                                    <li>Full profile customization</li>
+                                    <li>Better trust + conversion</li>
+                                </ul>
+                            </div>
 
-                                <div className="dash-upgrade-right">
-                                    <Link to="/subscription" className="kx-btn kx-btn--white">
-                                        Upgrade plan
-                                    </Link>
-                                    <Link to="/pricing" className="kx-btn kx-btn--black">
-                                        Compare plans
-                                    </Link>
-                                </div>
+                            <div className="dash-upgrade-right">
+                                <Link to="/subscription" className="kx-btn kx-btn--white">
+                                    Upgrade plan
+                                </Link>
+                                <Link to="/pricing" className="kx-btn kx-btn--black">
+                                    Compare plans
+                                </Link>
                             </div>
                         </section>
                     )}
 
+                    {/* Help & support */}
                     <section className="dash-card dash-span-12">
                         <div className="dash-help">
                             <div>
