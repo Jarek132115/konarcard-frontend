@@ -1,6 +1,8 @@
 // src/components/Dashboard/DashboardLayout.jsx
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Sidebar from "./Sidebar";
+
+import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import "../../styling/dashboard/layout.css";
 
 /**
@@ -21,32 +23,76 @@ export default function DashboardLayout({
     hideMobileTopbar = false,
 }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(() =>
+        typeof window !== "undefined" ? window.innerWidth <= 1000 : false
+    );
+
+    useEffect(() => {
+        const onResize = () => {
+            const mobileNow = window.innerWidth <= 1000;
+            setIsMobile(mobileNow);
+
+            // If we switch to desktop, ensure the mobile drawer isn't stuck open
+            if (!mobileNow) setSidebarOpen(false);
+        };
+
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+    }, []);
+
+    // Prevent background scroll when sidebar is open on mobile
+    useEffect(() => {
+        if (!isMobile) return;
+
+        if (sidebarOpen) document.body.style.overflow = "hidden";
+        else document.body.style.overflow = "";
+
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [sidebarOpen, isMobile]);
+
+    const mobileTopbar = useMemo(() => {
+        if (hideMobileTopbar) return null;
+
+        return (
+            <header className="dash-topbar" role="banner">
+                {/* ✅ Logo LEFT */}
+                <div className="dash-topbar-left" aria-label="KonarCard">
+                    <span className="dash-topbar-logo">
+                        <img src={LogoIcon} alt="KonarCard" />
+                    </span>
+
+                    <div className="dash-topbar-text">
+                        <div className="dash-topbar-title">{title || "KonarCard"}</div>
+                        {subtitle ? <div className="dash-topbar-sub">{subtitle}</div> : null}
+                    </div>
+                </div>
+
+                {/* ✅ Menu RIGHT */}
+                <div className="dash-topbar-right">
+                    {rightSlot ? <div className="dash-topbar-slot">{rightSlot}</div> : null}
+
+                    <button
+                        type="button"
+                        className="dash-burger"
+                        aria-label="Open menu"
+                        onClick={() => setSidebarOpen(true)}
+                    >
+                        ☰
+                    </button>
+                </div>
+            </header>
+        );
+    }, [hideMobileTopbar, rightSlot, subtitle, title]);
 
     return (
         <div className="dash-layout">
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
             <div className="dash-main">
-                {/* Mobile top bar */}
-                {!hideMobileTopbar && (
-                    <header className="dash-topbar">
-                        <button
-                            type="button"
-                            className="dash-burger"
-                            aria-label="Open menu"
-                            onClick={() => setSidebarOpen(true)}
-                        >
-                            ☰
-                        </button>
-
-                        <div className="dash-topbar-text">
-                            {title ? <div className="dash-topbar-title">{title}</div> : null}
-                            {subtitle ? <div className="dash-topbar-sub">{subtitle}</div> : null}
-                        </div>
-
-                        <div className="dash-topbar-right">{rightSlot}</div>
-                    </header>
-                )}
+                {/* Mobile topbar */}
+                {mobileTopbar}
 
                 {/* Desktop header */}
                 {!hideDesktopHeader && (title || subtitle || rightSlot) ? (

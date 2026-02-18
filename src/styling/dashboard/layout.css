@@ -1,43 +1,30 @@
+/* src/styling/dashboard/layout.css */
+
+/* ✅ Uses ONLY global tokens from fonts.css */
 :root {
-    --kc-bg: #ffffff;
-    --kc-surface: #ffffff;
-    --kc-soft: #fafafa;
-
-    --kc-ink: #0b1220;
-    --kc-muted: #5b667a;
-
-    --kc-accent: #f97316;
-    --kc-accent-rgb: 249 115 22;
-
     --sidebar-w: 272px;
-
-    --border: rgba(11, 18, 32, 0.10);
-    --shadow: 0 14px 34px rgba(11, 18, 32, 0.10);
-    --focus: 0 0 0 3px rgb(var(--kc-accent-rgb) / 0.28);
-
-    /* ✅ global dashboard spacing */
     --dash-gutter: 16px;
+
+    --dash-border: rgba(15, 23, 42, 0.10);
+    --dash-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
 }
 
+/* Layout wrapper */
 .dash-layout {
     min-height: 100vh;
-    background: var(--kc-bg);
+    background: var(--kc-bg-main);
 
-    /* ✅ TRUE layout spacing:
-       - 16px from page edges
-       - 16px gap between sidebar and content */
     display: flex;
     gap: var(--dash-gutter);
     padding: var(--dash-gutter);
+    box-sizing: border-box;
 }
 
-/* ✅ Content column */
+/* Content column */
 .dash-main {
     flex: 1;
     min-width: 0;
-    /* prevents overflow in flex layouts */
     padding: 0;
-    /* outer padding is handled by .dash-layout */
 }
 
 /* Desktop header */
@@ -51,17 +38,18 @@
 
 .dash-desktop-title {
     font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
+    font-weight: 500;
     letter-spacing: -0.02em;
-    color: var(--kc-ink);
+    color: var(--kc-text-primary);
     font-size: 26px;
     line-height: 1.05;
 }
 
 .dash-desktop-sub {
     margin-top: 6px;
-    color: var(--kc-muted);
-    font-weight: 800;
+    color: var(--kc-text-secondary);
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
     font-size: 14px;
     line-height: 1.5;
     max-width: 980px;
@@ -74,56 +62,59 @@
     flex-wrap: wrap;
 }
 
-/* Mobile topbar */
+/* ✅ Mobile topbar (logo left, menu right) */
 .dash-topbar {
     display: none;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    background: var(--kc-surface);
-    border: 1px solid var(--border);
+
+    background: #ffffff;
+    border: 1px solid var(--dash-border);
     border-radius: 18px;
     padding: 14px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--dash-shadow);
+
     margin: 0 0 14px;
 }
 
-.dash-burger {
-    width: 44px;
-    height: 44px;
+.dash-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex: 1;
+}
+
+.dash-topbar-logo {
+    width: 38px;
+    height: 38px;
     border-radius: 14px;
-    border: 1px solid rgba(11, 18, 32, 0.12);
-    background: #fff;
-    cursor: pointer;
-    font-size: 20px;
-    line-height: 1;
-    transition: background 0.2s, transform 0.08s ease, box-shadow 0.2s;
+    display: grid;
+    place-items: center;
+
+    background: rgb(249 115 22 / 0.12);
+    border: 1px solid rgb(249 115 22 / 0.16);
+    flex: 0 0 auto;
 }
 
-.dash-burger:hover {
-    background: rgb(var(--kc-accent-rgb) / 0.08);
-}
-
-.dash-burger:active {
-    transform: translateY(1px);
-}
-
-.dash-burger:focus-visible {
-    outline: none;
-    box-shadow: var(--focus);
+.dash-topbar-logo img {
+    width: 20px;
+    height: 20px;
+    display: block;
 }
 
 .dash-topbar-text {
-    flex: 1;
     min-width: 0;
 }
 
 .dash-topbar-title {
     font-family: "Cal Sans", sans-serif;
-    font-weight: 900;
+    font-weight: 500;
     letter-spacing: -0.01em;
-    color: var(--kc-ink);
+    color: var(--kc-text-primary);
     font-size: 16px;
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -131,18 +122,58 @@
 
 .dash-topbar-sub {
     margin-top: 2px;
+    font-family: "Inter", sans-serif;
     font-size: 13px;
-    font-weight: 800;
-    color: var(--kc-muted);
+    font-weight: 600;
+    color: var(--kc-text-secondary);
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+/* Right group: optional slot + burger */
 .dash-topbar-right {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 10px;
+    flex: 0 0 auto;
+}
+
+.dash-topbar-slot {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Burger */
+.dash-burger {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #fff;
+    cursor: pointer;
+
+    font-size: 20px;
+    line-height: 1;
+
+    transition: transform 0.08s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dash-burger:hover {
+    background: rgba(15, 23, 42, 0.02);
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
+}
+
+.dash-burger:active {
+    transform: translateY(1px);
+    box-shadow: none;
+}
+
+.dash-burger:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--kc-focus-ring);
 }
 
 /* Content area */
@@ -151,7 +182,7 @@
     max-width: none;
 }
 
-/* ✅ Mobile: layout becomes stacked, padding stays 16px */
+/* Mobile: stacked layout */
 @media (max-width: 1000px) {
     .dash-layout {
         display: block;

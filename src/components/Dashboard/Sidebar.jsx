@@ -13,12 +13,16 @@ import SettingsIcon from "../../assets/icons/Settings-Interface.svg";
 import HelpIcon from "../../assets/icons/Help-Interface.svg";
 import LogoutIcon from "../../assets/icons/Logout-Interface.svg";
 
+import "../../styling/dashboard/sidebar.css";
+
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const { logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 1000);
+    const [isMobile, setIsMobile] = useState(() =>
+        typeof window !== "undefined" ? window.innerWidth <= 1000 : false
+    );
 
     useEffect(() => {
         const onResize = () => setIsMobile(window.innerWidth <= 1000);
@@ -51,11 +55,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     return (
         <>
             <div
-                className={`sidebar-overlay ${sidebarOpen ? "active" : ""}`}
+                className={`sidebar-overlay ${isMobile && sidebarOpen ? "active" : ""}`}
                 onClick={closeSidebar}
             />
 
-            <aside className={`sidebar ${sidebarOpen ? "open" : ""}`} aria-label="Sidebar">
+            <aside className={`sidebar ${isMobile ? "mobile" : ""} ${sidebarOpen ? "open" : ""}`} aria-label="Sidebar">
                 {/* Header */}
                 <div className="sidebar-header">
                     <div className="sidebar-brand">
@@ -68,7 +72,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         </div>
                     </div>
 
-                    {isMobile && (
+                    {isMobile ? (
                         <button
                             className="sidebar-close"
                             aria-label="Close menu"
@@ -77,7 +81,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         >
                             ✕
                         </button>
-                    )}
+                    ) : null}
                 </div>
 
                 {/* Nav */}
@@ -118,12 +122,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         </span>
                     </Link>
 
-                    <button
-                        className="sidebar-logout"
-                        onClick={handleLogout}
-                        aria-label="Logout"
-                        type="button"
-                    >
+                    <button className="sidebar-logout" onClick={handleLogout} aria-label="Logout" type="button">
                         <span className="sidebar-logout-inner">
                             <img src={LogoutIcon} alt="" aria-hidden="true" />
                             <span>Logout</span>

@@ -30,27 +30,22 @@ export default function Dashboard() {
 
     const displayName = authUser?.name?.split(" ")?.[0] || "there";
 
-    const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
-    const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
-
     return (
-        <DashboardLayout title={null} subtitle={null} rightSlot={null} hideDesktopHeader>
+        <DashboardLayout hideDesktopHeader>
             <div className="dash-shell">
                 <PageHeader
                     title="Dashboard"
                     subtitle={`Welcome back, ${displayName}. Finish your profile and start using KonarCard.`}
-                    isMobile={isMobile}
-                    isSmallMobile={isSmallMobile}
-                    rightSlot={
-                        <div className="dash-header-right">
-                            <span className={`dash-pill ${isFreePlan ? "free" : "paid"}`}>
-                                {isFreePlan ? "Plan: FREE" : "Plan: PAID"}
-                            </span>
-
-                            <Link to="/profiles" className="kx-btn kx-btn--black">
-                                Edit profile
-                            </Link>
-                        </div>
+                    badge={<span className="kc-pill">{isFreePlan ? "Plan: FREE" : "Plan: PAID"}</span>}
+                    primaryAction={
+                        <Link to="/profiles" className="kx-btn kx-btn--black">
+                            Edit profile
+                        </Link>
+                    }
+                    secondaryAction={
+                        <Link to="/cards" className="kx-btn kx-btn--white">
+                            Order a card
+                        </Link>
                     }
                 />
 
@@ -292,5 +287,3 @@ export default function Dashboard() {
         </DashboardLayout>
     );
 }
-
-

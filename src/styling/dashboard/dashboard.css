@@ -4,11 +4,12 @@
    ✅ Only Inter + Cal Sans
 */
 
-/* Shell */
 .dash-shell {
     background: var(--kc-bg-main);
-    min-height: calc(100vh - 32px);
+    min-height: 100vh;
     box-sizing: border-box;
+    padding: 16px;
+    /* ✅ add this */
 }
 
 /* Right header slot (inside PageHeader) */
@@ -481,6 +482,7 @@
 @media (max-width: 520px) {
     .dash-shell {
         padding: 14px;
+        /* already matches your style */
     }
 
     .dash-card {
