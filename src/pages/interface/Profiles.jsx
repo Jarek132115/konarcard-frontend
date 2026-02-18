@@ -1,6 +1,7 @@
 // src/pages/interface/Profiles.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
 import "../../styling/dashboard/profiles.css";
@@ -14,13 +15,11 @@ const TEAMS_CHECKOUT_ENDPOINT = "/api/checkout/teams";
 const centerTrim = (v) => (v ?? "").toString().trim();
 const safeLower = (v) => centerTrim(v).toLowerCase();
 
-const normalizeSlug = (raw) => {
-    return safeLower(raw)
+const normalizeSlug = (raw) =>
+    safeLower(raw)
         .replace(/[^a-z0-9-]/g, "")
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "");
-};
-
 
 export default function Profiles() {
     const navigate = useNavigate();
@@ -39,10 +38,6 @@ export default function Profiles() {
     const { data: cards, isLoading, isError, refetch: refetchProfiles } = useMyProfiles();
     const createProfile = useCreateProfile();
     const deleteProfile = useDeleteProfile();
-
-    // --- PageHeader flags ---
-    const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
-    const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
 
     const profiles = useMemo(() => {
         const xs = Array.isArray(cards) ? cards : [];
@@ -147,6 +142,12 @@ export default function Profiles() {
         try {
             await deleteProfile.mutateAsync(slug);
             await refetchProfiles();
+            // if we deleted the selected one, reselect the first available
+            setSelectedSlug((prev) => {
+                if (prev !== slug) return prev;
+                const remaining = sortedProfiles.filter((p) => p.slug !== slug);
+                return remaining[0]?.slug || null;
+            });
         } catch (e) {
             const msg = e?.response?.data?.error || e?.message || "Delete failed.";
             alert(msg);
@@ -154,7 +155,7 @@ export default function Profiles() {
     };
 
     // =========================================================
-    // Profile actions (right panel)
+    // Profile actions (right panel placeholders)
     // =========================================================
     const handleDownloadQr = async () => {
         if (!selectedProfile?.slug) return;
@@ -170,7 +171,7 @@ export default function Profiles() {
     };
 
     /* =========================================================
-          INLINE "CLAIM YOUR LINK" FLOW (now renders INSIDE list)
+          INLINE "CLAIM YOUR LINK" FLOW
     ========================================================= */
     const [claimOpen, setClaimOpen] = useState(false);
     const [claimSlugInput, setClaimSlugInput] = useState("");
@@ -192,7 +193,6 @@ export default function Profiles() {
     const openClaimPanel = () => {
         setClaimOpen(true);
         resetClaim();
-        // scroll to the inline area under first profile
         setTimeout(() => {
             claimRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
         }, 80);
@@ -267,9 +267,7 @@ export default function Profiles() {
 
         if (sortedProfiles.length >= maxProfiles) {
             setClaimStatus("error");
-            setClaimMessage(
-                `You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase quantity to add more.`
-            );
+            setClaimMessage(`You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase quantity to add more.`);
             return;
         }
 
@@ -347,6 +345,7 @@ export default function Profiles() {
         }
     };
 
+    // Handle return from Teams checkout
     useEffect(() => {
         const params = new URLSearchParams(location.search);
 
@@ -373,14 +372,9 @@ export default function Profiles() {
 
                 try {
                     await refetchProfiles?.();
-
-                    const current = Array.isArray(cards) ? cards : [];
-                    const found = current.find((c) => normalizeSlug(c?.profile_slug) === returnedSlug);
-
-                    if (found) {
-                        setSelectedSlug(returnedSlug);
-                        break;
-                    }
+                    // select returned slug regardless (if it exists it will show, if not it won’t break)
+                    setSelectedSlug(returnedSlug);
+                    break;
                 } catch { }
 
                 await new Promise((r) => setTimeout(r, 900));
@@ -401,9 +395,12 @@ export default function Profiles() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.search, refetchProfiles, refetchAuthUser]);
 
+    // =========================================================
+    // Loading / Error states
+    // =========================================================
     if (isLoading) {
         return (
-            <DashboardLayout title={null} subtitle={null}>
+            <DashboardLayout hideDesktopHeader>
                 <div className="profiles-shell">
                     <div className="profiles-skeleton">
                         <div className="profiles-skel-card" />
@@ -416,7 +413,7 @@ export default function Profiles() {
 
     if (isError) {
         return (
-            <DashboardLayout title={null} subtitle={null}>
+            <DashboardLayout hideDesktopHeader>
                 <div className="profiles-shell">
                     <section className="profiles-card profiles-empty">
                         <h2 className="profiles-card-title">We couldn’t load your profiles</h2>
@@ -433,18 +430,16 @@ export default function Profiles() {
         );
     }
 
+    // =========================================================
+    // Main render
+    // =========================================================
     return (
-        <DashboardLayout title={null} subtitle={null} rightSlot={null} hideDesktopHeader>
+        <DashboardLayout hideDesktopHeader>
             <div className="profiles-shell">
                 <PageHeader
                     title="Profiles"
                     subtitle="Profiles are your public digital business cards. Each profile has its own link you can share after every job."
-                    onShareCard={sortedProfiles.length ? handleShare : undefined}
-                    visitUrl={selectedProfile ? buildPublicUrl(selectedProfile.slug) : undefined}
-                    onVisitPage={() => handleVisit(selectedProfile?.slug)}
-                    isMobile={isMobile}
-                    isSmallMobile={isSmallMobile}
-                    rightSlot={
+                    badge={
                         <div className="profiles-header-rightslot">
                             <span className="kc-pill">
                                 Plan: <strong>{plan.toUpperCase()}</strong>
@@ -452,11 +447,19 @@ export default function Profiles() {
                             <span className="kc-pill">
                                 Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong>
                             </span>
-
-                            <button type="button" className="kx-btn kx-btn--orange" onClick={handleCreateButtonClick}>
-                                + Add profile
-                            </button>
                         </div>
+                    }
+                    primaryAction={
+                        <button type="button" className="kx-btn kx-btn--orange" onClick={handleCreateButtonClick}>
+                            + Add profile
+                        </button>
+                    }
+                    secondaryAction={
+                        sortedProfiles.length ? (
+                            <button type="button" className="kx-btn kx-btn--black" onClick={handleShare}>
+                                Share
+                            </button>
+                        ) : null
                     }
                 />
 
@@ -468,7 +471,7 @@ export default function Profiles() {
                         </p>
 
                         <div className="profiles-actions-row">
-                            <button type="button" className="kx-btn kx-btn--orange" onClick={() => openClaimPanel()}>
+                            <button type="button" className="kx-btn kx-btn--orange" onClick={openClaimPanel}>
                                 + Add profile
                             </button>
                             <button type="button" className="kx-btn kx-btn--white" onClick={() => handleEdit("")}>
@@ -476,7 +479,6 @@ export default function Profiles() {
                             </button>
                         </div>
 
-                        {/* Inline claim (even when no profiles) */}
                         {claimOpen && (
                             <div ref={claimRef} className="profiles-claim-inline">
                                 <div className="profiles-claim-inline-head">
@@ -653,7 +655,7 @@ export default function Profiles() {
                                                 </div>
                                             </button>
 
-                                            {/* ✅ Inline claim panel — renders directly UNDER FIRST profile */}
+                                            {/* Inline claim under first profile */}
                                             {idx === 0 && claimOpen && (
                                                 <div ref={claimRef} className="profiles-claim-inline">
                                                     <div className="profiles-claim-inline-head">
@@ -690,7 +692,9 @@ export default function Profiles() {
                                                                 type="button"
                                                                 className="kx-btn kx-btn--black"
                                                                 onClick={checkSlugAvailability}
-                                                                disabled={claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"}
+                                                                disabled={
+                                                                    claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"
+                                                                }
                                                             >
                                                                 {claimStatus === "checking" ? "Checking..." : "Check availability"}
                                                             </button>
@@ -727,7 +731,9 @@ export default function Profiles() {
                                                                         onClick={startTeamsCheckout}
                                                                         disabled={claimStatus === "subscribing"}
                                                                     >
-                                                                        {claimStatus === "subscribing" ? "Opening checkout..." : "Subscribe / Update Teams to add it"}
+                                                                        {claimStatus === "subscribing"
+                                                                            ? "Opening checkout..."
+                                                                            : "Subscribe / Update Teams to add it"}
                                                                     </button>
                                                                 )}
                                                             </div>
@@ -741,7 +747,8 @@ export default function Profiles() {
 
                                                         {isTeams && (
                                                             <div className="profiles-hint">
-                                                                Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit, increase quantity.
+                                                                Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the
+                                                                limit, increase quantity.
                                                             </div>
                                                         )}
                                                     </div>
