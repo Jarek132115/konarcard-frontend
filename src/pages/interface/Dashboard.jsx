@@ -36,16 +36,19 @@ export default function Dashboard() {
                 <PageHeader
                     title="Dashboard"
                     subtitle={`Welcome back, ${displayName}. Finish your profile and start using KonarCard.`}
-                    badge={<span className="kc-pill">{isFreePlan ? "Plan: FREE" : "Plan: PAID"}</span>}
-                    primaryAction={
-                        <Link to="/profiles" className="kx-btn kx-btn--black">
-                            Edit profile
-                        </Link>
-                    }
-                    secondaryAction={
-                        <Link to="/cards" className="kx-btn kx-btn--white">
-                            Order a card
-                        </Link>
+                    rightSlot={
+                        <div className="ph-rightStack">
+                            <span className="kc-pill">{isFreePlan ? "Plan: FREE" : "Plan: PAID"}</span>
+
+                            <div className="ph-actionsInline">
+                                <Link to="/cards" className="kx-btn kx-btn--white">
+                                    Order a card
+                                </Link>
+                                <Link to="/profiles" className="kx-btn kx-btn--black">
+                                    Edit profile
+                                </Link>
+                            </div>
+                        </div>
                     }
                 />
 
@@ -83,8 +86,8 @@ export default function Dashboard() {
                 )}
 
                 <div className="dash-grid">
-                    {/* ✅ ROW 1 (TOP): Quick actions + Profile completion */}
-                    <section className="dash-card dash-span-6 dash-top-quick">
+                    {/* TOP: Quick actions + Profile completion */}
+                    <section className="dash-card dash-span-6 dash-order-1">
                         <div className="dash-card-head">
                             <div>
                                 <h2 className="dash-card-title">Quick actions</h2>
@@ -115,11 +118,13 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    <section className="dash-card dash-span-6 dash-top-steps">
+                    <section className="dash-card dash-span-6 dash-order-2">
                         <div className="dash-card-head">
                             <div>
                                 <h2 className="dash-card-title">Profile completion</h2>
-                                <p className="dash-muted">Complete your profile to look more professional and get more leads.</p>
+                                <p className="dash-muted">
+                                    Complete your profile to look more professional and get more leads.
+                                </p>
                             </div>
 
                             <div className="dash-progress-wrap" aria-label="Profile completion">
@@ -160,7 +165,7 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    {/* ✅ ROW 2: Your profile + Usage */}
+                    {/* Your digital profile */}
                     <section className="dash-card dash-span-7">
                         <div className="dash-card-head">
                             <div>
@@ -208,6 +213,7 @@ export default function Dashboard() {
                         </div>
                     </section>
 
+                    {/* Usage snapshot */}
                     <section className="dash-card dash-span-5">
                         <div className="dash-card-head">
                             <div>
@@ -237,11 +243,11 @@ export default function Dashboard() {
                         <div className="dash-note">Analytics will populate as soon as you start sharing your profile.</div>
                     </section>
 
-                    {/* ✅ ROW 3: Upgrade (fixed markup so CSS applies) */}
+                    {/* Upgrade */}
                     {isFreePlan && (
                         <section className="dash-card dash-upgrade dash-span-12">
                             <div className="dash-upgrade-inner">
-                                <div>
+                                <div className="dash-upgrade-left">
                                     <h2 className="dash-upgrade-title">Unlock more with Plus</h2>
                                     <p className="dash-upgrade-sub">
                                         More templates, full customization, and advanced features to win more work.
@@ -266,7 +272,7 @@ export default function Dashboard() {
                         </section>
                     )}
 
-                    {/* ✅ ROW 4: Help */}
+                    {/* Help & support */}
                     <section className="dash-card dash-span-12">
                         <div className="dash-help">
                             <div>

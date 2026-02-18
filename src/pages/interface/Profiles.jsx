@@ -439,29 +439,32 @@ export default function Profiles() {
                 <PageHeader
                     title="Profiles"
                     subtitle="Profiles are your public digital business cards. Each profile has its own link you can share after every job."
-                    badge={
-                        <div className="profiles-header-rightslot">
-                            <span className="kc-pill">
-                                Plan: <strong>{plan.toUpperCase()}</strong>
-                            </span>
-                            <span className="kc-pill">
-                                Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong>
-                            </span>
+                    rightSlot={
+                        <div className="ph-rightStack">
+                            <div className="profiles-header-rightslot">
+                                <span className="kc-pill">
+                                    Plan: <strong>{plan.toUpperCase()}</strong>
+                                </span>
+                                <span className="kc-pill">
+                                    Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong>
+                                </span>
+                            </div>
+
+                            <div className="ph-actionsInline">
+                                {sortedProfiles.length ? (
+                                    <button type="button" className="kx-btn kx-btn--white" onClick={handleShare}>
+                                        Share
+                                    </button>
+                                ) : null}
+
+                                <button type="button" className="kx-btn kx-btn--orange" onClick={handleCreateButtonClick}>
+                                    + Add profile
+                                </button>
+                            </div>
                         </div>
                     }
-                    primaryAction={
-                        <button type="button" className="kx-btn kx-btn--orange" onClick={handleCreateButtonClick}>
-                            + Add profile
-                        </button>
-                    }
-                    secondaryAction={
-                        sortedProfiles.length ? (
-                            <button type="button" className="kx-btn kx-btn--black" onClick={handleShare}>
-                                Share
-                            </button>
-                        ) : null
-                    }
                 />
+
 
                 {sortedProfiles.length === 0 ? (
                     <section className="profiles-card profiles-empty">
