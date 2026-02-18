@@ -21,13 +21,11 @@ export default function Dashboard() {
 
         const doneCount = items.filter((i) => i.done).length;
         const percent = Math.round((doneCount / items.length) * 100);
-
         return { percent, items };
     }, []);
 
     const hasProfile = true;
     const isFreePlan = true;
-
     const displayName = authUser?.name?.split(" ")?.[0] || "there";
 
     return (
@@ -36,16 +34,19 @@ export default function Dashboard() {
                 <PageHeader
                     title="Dashboard"
                     subtitle={`Welcome back, ${displayName}. Finish your profile and start using KonarCard.`}
-                    badge={<span className="kc-pill">{isFreePlan ? "Plan: FREE" : "Plan: PAID"}</span>}
-                    primaryAction={
-                        <Link to="/profiles" className="kx-btn kx-btn--black">
-                            Edit profile
-                        </Link>
-                    }
-                    secondaryAction={
-                        <Link to="/cards" className="kx-btn kx-btn--white">
-                            Order a card
-                        </Link>
+                    rightSlot={
+                        <div className="ph-rightStack">
+                            <span className="kc-pill">{isFreePlan ? "Plan: FREE" : "Plan: PAID"}</span>
+
+                            <div className="ph-actionsInline">
+                                <Link to="/cards" className="kx-btn kx-btn--white">
+                                    Order a card
+                                </Link>
+                                <Link to="/profiles" className="kx-btn kx-btn--black">
+                                    Edit profile
+                                </Link>
+                            </div>
+                        </div>
                     }
                 />
 
@@ -83,19 +84,50 @@ export default function Dashboard() {
                 )}
 
                 <div className="dash-grid">
-                    <section className="dash-card dash-span-6">
+                    {/* ✅ SWAPPED: Quick actions FIRST (left on desktop, top on mobile) */}
+                    <section className="dash-card dash-span-6 dash-order-1">
+                        <div className="dash-card-head">
+                            <div>
+                                <h2 className="dash-card-title">Quick actions</h2>
+                                <p className="dash-muted">Fast ways to start getting value from KonarCard.</p>
+                            </div>
+                        </div>
+
+                        <div className="dash-quick">
+                            <Link to="/profiles" className="dash-quick-tile">
+                                <div className="dash-quick-title">Create / edit profile</div>
+                                <div className="dash-quick-sub">Update your details anytime</div>
+                            </Link>
+
+                            <Link to="/profiles" className="dash-quick-tile">
+                                <div className="dash-quick-title">Share your profile link</div>
+                                <div className="dash-quick-sub">Copy + send to customers</div>
+                            </Link>
+
+                            <Link to="/cards" className="dash-quick-tile">
+                                <div className="dash-quick-title">Order a KonarCard</div>
+                                <div className="dash-quick-sub">Tap-to-share in seconds</div>
+                            </Link>
+
+                            <Link to="/contact-book" className="dash-quick-tile">
+                                <div className="dash-quick-title">View contact book</div>
+                                <div className="dash-quick-sub">People who saved you</div>
+                            </Link>
+                        </div>
+                    </section>
+
+                    {/* ✅ SWAPPED: Profile completion SECOND */}
+                    <section className="dash-card dash-span-6 dash-order-2">
                         <div className="dash-card-head">
                             <div>
                                 <h2 className="dash-card-title">Profile completion</h2>
-                                <p className="dash-muted">
-                                    Complete your profile to look more professional and get more leads.
-                                </p>
+                                <p className="dash-muted">Complete your profile to look more professional and get more leads.</p>
                             </div>
 
                             <div className="dash-progress-wrap" aria-label="Profile completion">
                                 <div className="dash-progress-text">
                                     <span className="dash-progress-percent">{profileCompletion.percent}%</span>
-                                    <span className="dash-muted">complete</span>
+                                    <span className="dash-muted dash-muted-inline">complete</span>
                                 </div>
                             </div>
                         </div>
@@ -126,37 +158,6 @@ export default function Dashboard() {
                             </Link>
                             <Link to="/cards" className="kx-btn kx-btn--white">
                                 Order a card
-                            </Link>
-                        </div>
-                    </section>
-
-                    <section className="dash-card dash-span-6">
-                        <div className="dash-card-head">
-                            <div>
-                                <h2 className="dash-card-title">Quick actions</h2>
-                                <p className="dash-muted">Fast ways to start getting value from KonarCard.</p>
-                            </div>
-                        </div>
-
-                        <div className="dash-quick">
-                            <Link to="/profiles" className="dash-quick-tile">
-                                <div className="dash-quick-title">Create / edit profile</div>
-                                <div className="dash-quick-sub">Update your details anytime</div>
-                            </Link>
-
-                            <Link to="/profiles" className="dash-quick-tile">
-                                <div className="dash-quick-title">Share your profile link</div>
-                                <div className="dash-quick-sub">Copy + send to customers</div>
-                            </Link>
-
-                            <Link to="/cards" className="dash-quick-tile">
-                                <div className="dash-quick-title">Order a KonarCard</div>
-                                <div className="dash-quick-sub">Tap-to-share in seconds</div>
-                            </Link>
-
-                            <Link to="/contact-book" className="dash-quick-tile">
-                                <div className="dash-quick-title">View contact book</div>
-                                <div className="dash-quick-sub">People who saved you</div>
                             </Link>
                         </div>
                     </section>
@@ -234,33 +235,33 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="dash-note">
-                            Analytics will populate as soon as you start sharing your profile.
-                        </div>
+                        <div className="dash-note">Analytics will populate as soon as you start sharing your profile.</div>
                     </section>
 
                     {isFreePlan && (
                         <section className="dash-card dash-upgrade dash-span-12">
-                            <div className="dash-upgrade-left">
-                                <h2 className="dash-card-title">Unlock more with Plus</h2>
-                                <p className="dash-muted">
-                                    Get all templates, full customization, and advanced features to look more professional and win more work.
-                                </p>
+                            <div className="dash-upgrade-inner">
+                                <div className="dash-upgrade-left">
+                                    <h2 className="dash-upgrade-title">Unlock more with Plus</h2>
+                                    <p className="dash-upgrade-sub">
+                                        More templates, full customization, and advanced features to win more work.
+                                    </p>
 
-                                <ul className="dash-upgrade-list">
-                                    <li>All templates (5 designs)</li>
-                                    <li>Full profile customization</li>
-                                    <li>Better trust + conversion</li>
-                                </ul>
-                            </div>
+                                    <ul className="dash-upgrade-list">
+                                        <li>All templates (5 designs)</li>
+                                        <li>Full profile customization</li>
+                                        <li>Better trust + conversion</li>
+                                    </ul>
+                                </div>
 
-                            <div className="dash-upgrade-right">
-                                <Link to="/subscription" className="kx-btn kx-btn--black">
-                                    Upgrade plan
-                                </Link>
-                                <Link to="/pricing" className="kx-btn kx-btn--white">
-                                    Compare plans
-                                </Link>
+                                <div className="dash-upgrade-right">
+                                    <Link to="/subscription" className="kx-btn kx-btn--white">
+                                        Upgrade plan
+                                    </Link>
+                                    <Link to="/pricing" className="kx-btn kx-btn--black">
+                                        Compare plans
+                                    </Link>
+                                </div>
                             </div>
                         </section>
                     )}
@@ -274,7 +275,7 @@ export default function Dashboard() {
 
                             <div className="dash-actions-row">
                                 <Link to="/helpcentreinterface" className="kx-btn kx-btn--white">
-                                    View FAQs
+                                    View help centre
                                 </Link>
                                 <Link to="/contact-support" className="kx-btn kx-btn--black">
                                     Contact support

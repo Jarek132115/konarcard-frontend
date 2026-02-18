@@ -32,11 +32,6 @@
     min-width: 0;
 }
 
-.ph-badge {
-    margin-bottom: 10px;
-}
-
-/* Title */
 .ph-title {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
@@ -47,7 +42,6 @@
     line-height: 1.15;
 }
 
-/* Subtitle */
 .ph-sub {
     margin: 8px 0 0;
     font-family: "Inter", sans-serif;
@@ -58,26 +52,43 @@
     max-width: 920px;
 }
 
-/* Actions */
-.ph-actions {
+.ph-right {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+/* Right-slot helpers (used by Dashboard.jsx) */
+.ph-rightStack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.ph-actionsInline {
     display: inline-flex;
-    align-items: center;
     gap: 10px;
     flex-wrap: wrap;
     justify-content: flex-end;
 }
 
-.ph-action>* {
-    white-space: nowrap;
-}
-
-/* Responsive */
 @media (max-width: 1000px) {
     .ph-row {
         flex-direction: column;
     }
 
-    .ph-actions {
+    .ph-right {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .ph-rightStack {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .ph-actionsInline {
         width: 100%;
         justify-content: flex-start;
     }
@@ -92,12 +103,12 @@
         font-size: 20px;
     }
 
-    .ph-actions {
+    .ph-actionsInline {
         flex-direction: column;
         align-items: stretch;
     }
 
-    .ph-actions .kx-btn {
+    .ph-actionsInline .kx-btn {
         width: 100%;
         justify-content: center;
     }
