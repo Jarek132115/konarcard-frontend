@@ -27,9 +27,6 @@ export default function ContactBook() {
     const [search, setSearch] = useState("");
     const [selectedId, setSelectedId] = useState(null);
 
-    const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
-    const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
-
     const {
         data: exchanges,
         isLoading,
@@ -169,8 +166,6 @@ export default function ContactBook() {
                 <PageHeader
                     title="Contact Book"
                     subtitle="People who exchanged their details from your public KonarCard profile."
-                    isMobile={isMobile}
-                    isSmallMobile={isSmallMobile}
                     rightSlot={rightSlot}
                 />
 
@@ -357,9 +352,7 @@ export default function ContactBook() {
                                     <div className="cb-note-body">{nonEmpty(selected.note) ? selected.note : "No message."}</div>
                                 </div>
 
-                                <div className="cb-hint">
-                                    Tip: Add “Exchange Contact” on your profile to collect leads faster.
-                                </div>
+                                <div className="cb-hint">Tip: Add “Exchange Contact” on your profile to collect leads faster.</div>
                             </div>
                         )}
                     </section>

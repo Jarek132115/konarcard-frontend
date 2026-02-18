@@ -36,7 +36,7 @@ Contact Book — KonarCard Dashboard system
    Cards
 ========================================================= */
 .cb-card {
-    background: var(--kc-bg-main);
+    background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 22px;
     box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
@@ -224,6 +224,22 @@ Contact Book — KonarCard Dashboard system
     padding: 14px;
     font-weight: 600;
     color: rgba(71, 85, 105, 0.95);
+}
+
+/* =========================================================
+   Empty state action row (was referenced but missing)
+========================================================= */
+.cb-actions-row {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.cb-actions-row .kx-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* =========================================================
