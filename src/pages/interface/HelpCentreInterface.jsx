@@ -19,9 +19,6 @@ export default function HelpCentreInterface() {
 
   const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "";
 
-  const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
-  const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
-
   const sections = useMemo(
     () => [
       { id: "getting-started", title: "Getting Started", icon: "🚀", desc: "Set up your first profile and share it." },
@@ -52,17 +49,26 @@ export default function HelpCentreInterface() {
         <PageHeader
           title="Help Centre"
           subtitle="Find quick answers, tutorials, and best practices."
-          isMobile={isMobile}
-          isSmallMobile={isSmallMobile}
-          visitUrl={currentProfileUrl}
           rightSlot={
-            <div className="hc-header-actions">
-              <button type="button" className="kx-btn kx-btn--white" onClick={openChat}>
-                Live chat
-              </button>
-              <Link to="/contact" className="kx-btn kx-btn--orange">
-                Contact support
-              </Link>
+            <div className="hc-headRight">
+              <div className="hc-headPills">
+                {currentProfileUrl ? (
+                  <a className="kc-pill hc-pillLink" href={currentProfileUrl} target="_blank" rel="noreferrer">
+                    Visit your profile
+                  </a>
+                ) : (
+                  <span className="kc-pill">Profile: —</span>
+                )}
+              </div>
+
+              <div className="hc-header-actions">
+                <button type="button" className="kx-btn kx-btn--white" onClick={openChat}>
+                  Live chat
+                </button>
+                <Link to="/contact" className="kx-btn kx-btn--orange">
+                  Contact support
+                </Link>
+              </div>
             </div>
           }
         />
@@ -99,7 +105,11 @@ export default function HelpCentreInterface() {
 
               <div className="hc-rail-cta">
                 <div className="hc-callout">
-                  Need help now? Use <button type="button" className="hc-linklike" onClick={openChat}>live chat</button> or contact support.
+                  Need help now? Use{" "}
+                  <button type="button" className="hc-linklike" onClick={openChat}>
+                    live chat
+                  </button>{" "}
+                  or contact support.
                 </div>
 
                 <div className="hc-rail-actions">
@@ -136,23 +146,22 @@ export default function HelpCentreInterface() {
                   <div className="hc-card-body">
                     <div className="hc-kv">
                       <div className="hc-k">What’s happening</div>
-                      <div className="hc-v">
-                        This section is being improved. We’re polishing the tutorials for a smoother experience.
-                      </div>
+                      <div className="hc-v">This section is being improved. We’re polishing the tutorials for a smoother experience.</div>
                     </div>
 
                     <div className="hc-kv">
                       <div className="hc-k">What you’ll get</div>
-                      <div className="hc-v">
-                        Short videos, step-by-step guides, best practices, and quick fixes you can follow on-site.
-                      </div>
+                      <div className="hc-v">Short videos, step-by-step guides, best practices, and quick fixes you can follow on-site.</div>
                     </div>
 
                     <div className="hc-kv">
                       <div className="hc-k">Need help now?</div>
                       <div className="hc-v">
-                        Use <button type="button" className="hc-linklike" onClick={openChat}>live chat</button> or go to{" "}
-                        <Link to="/contact" className="hc-inline-link">contact support</Link>.
+                        Use{" "}
+                        <button type="button" className="hc-linklike" onClick={openChat}>
+                          live chat
+                        </button>{" "}
+                        or go to <Link to="/contact" className="hc-inline-link">contact support</Link>.
                       </div>
                     </div>
                   </div>
