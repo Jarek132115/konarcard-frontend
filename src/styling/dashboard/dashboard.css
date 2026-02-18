@@ -8,7 +8,6 @@
     background: var(--kc-bg-main);
     min-height: 100vh;
     box-sizing: border-box;
-    padding: 16px;
     /* ✅ add this */
 }
 
@@ -480,11 +479,6 @@
 }
 
 @media (max-width: 520px) {
-    .dash-shell {
-        padding: 14px;
-        /* already matches your style */
-    }
-
     .dash-card {
         padding: 14px;
     }

@@ -73,8 +73,6 @@
     border: 1px solid var(--dash-border);
     border-radius: 18px;
     padding: 14px;
-    box-shadow: var(--dash-shadow);
-
     margin: 0 0 14px;
 }
 
