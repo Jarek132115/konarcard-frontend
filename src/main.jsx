@@ -15,7 +15,6 @@ import "./styling/dashboard/sidebar.css";
 import "./styling/subscription.css";
 import "./styling/contactus.css";
 import "./styling/userpage.css";
-import "./styling/shareprofile.css";
 import "./styling/contactinterface.css";
 import "./styling/nfccard.css";
 import "./styling/myorders.css";
