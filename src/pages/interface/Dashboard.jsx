@@ -83,8 +83,8 @@ export default function Dashboard() {
                 )}
 
                 <div className="dash-grid">
-                    {/* ✅ TOP: Quick actions + Profile completion */}
-                    <section className="dash-card dash-span-6 dash-order-1">
+                    {/* ✅ ROW 1 (TOP): Quick actions + Profile completion */}
+                    <section className="dash-card dash-span-6 dash-top-quick">
                         <div className="dash-card-head">
                             <div>
                                 <h2 className="dash-card-title">Quick actions</h2>
@@ -115,13 +115,11 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    <section className="dash-card dash-span-6 dash-order-2">
+                    <section className="dash-card dash-span-6 dash-top-steps">
                         <div className="dash-card-head">
                             <div>
                                 <h2 className="dash-card-title">Profile completion</h2>
-                                <p className="dash-muted">
-                                    Complete your profile to look more professional and get more leads.
-                                </p>
+                                <p className="dash-muted">Complete your profile to look more professional and get more leads.</p>
                             </div>
 
                             <div className="dash-progress-wrap" aria-label="Profile completion">
@@ -162,7 +160,7 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    {/* Your digital profile */}
+                    {/* ✅ ROW 2: Your profile + Usage */}
                     <section className="dash-card dash-span-7">
                         <div className="dash-card-head">
                             <div>
@@ -210,7 +208,6 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    {/* Usage snapshot */}
                     <section className="dash-card dash-span-5">
                         <div className="dash-card-head">
                             <div>
@@ -240,34 +237,36 @@ export default function Dashboard() {
                         <div className="dash-note">Analytics will populate as soon as you start sharing your profile.</div>
                     </section>
 
-                    {/* Upgrade */}
+                    {/* ✅ ROW 3: Upgrade (fixed markup so CSS applies) */}
                     {isFreePlan && (
                         <section className="dash-card dash-upgrade dash-span-12">
-                            <div className="dash-upgrade-left">
-                                <h2 className="dash-card-title">Unlock more with Plus</h2>
-                                <p className="dash-muted">
-                                    Get all templates, full customization, and advanced features to look more professional and win more work.
-                                </p>
+                            <div className="dash-upgrade-inner">
+                                <div>
+                                    <h2 className="dash-upgrade-title">Unlock more with Plus</h2>
+                                    <p className="dash-upgrade-sub">
+                                        More templates, full customization, and advanced features to win more work.
+                                    </p>
 
-                                <ul className="dash-upgrade-list">
-                                    <li>All templates (5 designs)</li>
-                                    <li>Full profile customization</li>
-                                    <li>Better trust + conversion</li>
-                                </ul>
-                            </div>
+                                    <ul className="dash-upgrade-list">
+                                        <li>All templates (5 designs)</li>
+                                        <li>Full profile customization</li>
+                                        <li>Better trust + conversion</li>
+                                    </ul>
+                                </div>
 
-                            <div className="dash-upgrade-right">
-                                <Link to="/subscription" className="kx-btn kx-btn--white">
-                                    Upgrade plan
-                                </Link>
-                                <Link to="/pricing" className="kx-btn kx-btn--black">
-                                    Compare plans
-                                </Link>
+                                <div className="dash-upgrade-right">
+                                    <Link to="/subscription" className="kx-btn kx-btn--white">
+                                        Upgrade plan
+                                    </Link>
+                                    <Link to="/pricing" className="kx-btn kx-btn--black">
+                                        Compare plans
+                                    </Link>
+                                </div>
                             </div>
                         </section>
                     )}
 
-                    {/* Help & support */}
+                    {/* ✅ ROW 4: Help */}
                     <section className="dash-card dash-span-12">
                         <div className="dash-help">
                             <div>

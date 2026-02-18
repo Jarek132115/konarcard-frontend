@@ -5,7 +5,6 @@
     min-height: 100vh;
     box-sizing: border-box;
     padding: 0;
-    /* DashboardLayout handles outer padding */
 }
 
 /* Grid */
@@ -32,13 +31,13 @@
     grid-column: span 5;
 }
 
-/* ✅ Order helpers (mobile) */
-.dash-order-1 {
-    order: 1;
+/* ✅ Force these two sections to always be FIRST ROW on desktop */
+.dash-top-quick {
+    grid-row: 1;
 }
 
-.dash-order-2 {
-    order: 2;
+.dash-top-steps {
+    grid-row: 1;
 }
 
 /* Cards */
@@ -77,14 +76,12 @@
     color: var(--kc-text-secondary);
 }
 
-/* small muted inline helper */
 .dash-muted-inline {
     margin: 0;
     font-size: 13px;
     font-weight: 600;
 }
 
-/* Action row */
 .dash-actions-row {
     display: flex;
     align-items: center;
@@ -174,7 +171,7 @@
     border-radius: 999px;
 }
 
-/* Quick action tiles */
+/* Quick tiles */
 .dash-quick {
     margin-top: 14px;
     display: grid;
@@ -212,7 +209,7 @@
     font-weight: 600;
 }
 
-/* Preview (unchanged) */
+/* Preview (same) */
 .dash-preview {
     margin-top: 14px;
     display: grid;
@@ -321,7 +318,7 @@
     line-height: 1.5;
 }
 
-/* ✅ Upgrade (FULL ORANGE + WHITE TEXT, CLEANER + SHORTER) */
+/* ✅ Upgrade (FULL ORANGE + WHITE TEXT) */
 .dash-upgrade {
     background: var(--kc-accent-primary);
     border: none;
@@ -395,15 +392,6 @@
     gap: 16px;
 }
 
-/* Empty state (unchanged) */
-.dash-empty {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 18px;
-    margin-top: 16px;
-}
-
 /* Responsive */
 @media (max-width: 1100px) {
 
@@ -411,6 +399,15 @@
     .dash-span-6,
     .dash-span-5 {
         grid-column: span 12;
+    }
+
+    /* ✅ On tablet/mobile, we want quick + steps still first */
+    .dash-top-quick {
+        grid-row: auto;
+    }
+
+    .dash-top-steps {
+        grid-row: auto;
     }
 
     .dash-preview {
