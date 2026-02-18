@@ -16,18 +16,55 @@
     margin: 0;
 }
 
-/* Header right slot */
-.settings-header-rightslot {
+/* Header right slot (PageHeader rightSlot) */
+.settings-headActions {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.settings-headPills {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
-    justify-content: flex-end;
 }
 
+.settings-headButtons {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Responsive: make right slot stack and go full width under title */
 @media (max-width: 1000px) {
-    .settings-header-rightslot {
+    .settings-headActions {
+        width: 100%;
         justify-content: flex-start;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 520px) {
+    .settings-headActions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .settings-headPills {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .settings-headButtons {
+        width: 100%;
+    }
+
+    .settings-headButtons .kx-btn {
+        width: 100%;
+        justify-content: center;
     }
 }
 

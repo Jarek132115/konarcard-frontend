@@ -42,16 +42,12 @@ const pick = (v, fallback = "—") => (v == null || v === "" ? fallback : String
 export default function Settings() {
     const { data: authUser, isLoading: authLoading, isError: authError, refetch: refetchAuth } = useAuthUser();
 
-    // Data
     const [summary, setSummary] = useState(null);
     const [invoices, setInvoices] = useState([]);
     const [payments, setPayments] = useState([]);
 
     const [loading, setLoading] = useState(true);
     const [loadErr, setLoadErr] = useState("");
-
-    const isMobile = typeof window !== "undefined" ? window.innerWidth <= 1000 : false;
-    const isSmallMobile = typeof window !== "undefined" ? window.innerWidth <= 520 : false;
 
     useEffect(() => {
         if (authLoading) return;
@@ -104,22 +100,30 @@ export default function Settings() {
     }, [authLoading, authUser]);
 
     const provider = useMemo(() => {
-        const p = safeLower(summary?.account?.authProvider || authUser?.authProvider || authUser?.provider || authUser?.loginProvider);
+        const p = safeLower(
+            summary?.account?.authProvider ||
+            authUser?.authProvider ||
+            authUser?.provider ||
+            authUser?.loginProvider
+        );
         return p === "google" ? "google" : "local";
     }, [summary, authUser]);
 
     const isGoogle = provider === "google";
 
-    // Account details (stable placeholders while loading)
+    // Account
     const accountName = summary?.account?.name || authUser?.name || authUser?.full_name || "—";
     const accountEmail = summary?.account?.email || authUser?.email || "—";
     const accountAvatar = summary?.account?.avatar || authUser?.avatar || authUser?.picture || authUser?.photoURL || "";
 
     // Billing
-    const plan = summary?.plan || "free";
+    const plan = summary?.plan || authUser?.plan || "free";
     const planInterval = summary?.planInterval || null;
     const subscriptionStatus = summary?.subscriptionStatus || "free";
     const currentPeriodEnd = summary?.currentPeriodEnd || null;
+
+    const isBusy = authLoading || loading;
+    const hasError = Boolean(authError || loadErr);
 
     const openBillingPortal = async () => {
         try {
@@ -138,31 +142,35 @@ export default function Settings() {
         await refetchAuth?.();
     };
 
-    // IMPORTANT: Always render the same layout.
-    // When loading, we keep cards/tables visible and just skeleton the inner values.
-    const isBusy = authLoading || loading;
-    const hasError = Boolean(authError || loadErr);
-
-    // Header pills: keep stable width with skeletons
-    const headerRight = (
-        <div className="settings-header-rightslot">
-            <span className={`kc-pill ${isBusy ? "settings-skel-pill" : ""}`}>
-                Plan: <strong>{String(plan || "free").toUpperCase()}</strong>
-            </span>
-            <span className={`kc-pill ${isBusy ? "settings-skel-pill" : ""}`}>
-                Status: <strong>{String(subscriptionStatus || "free").toUpperCase()}</strong>
-            </span>
-            {hasError ? (
-                <button type="button" className="kx-btn kx-btn--black" onClick={retryAll}>
-                    Retry
-                </button>
-            ) : null}
-        </div>
+    // Skeleton helper
+    const SkelText = ({ w = "60%" }) => (
+        <span className="settings-skelText" style={{ width: w }} aria-hidden="true" />
     );
 
-    // Small helpers for skeleton text blocks
-    const SkelText = ({ w = "60%" }) => <span className="settings-skelText" style={{ width: w }} aria-hidden="true" />;
-    const showOrSkel = (value, skelWidth) => (isBusy ? <SkelText w={skelWidth} /> : <span>{value}</span>);
+    const headerRight = (
+        <div className="settings-headActions">
+            <div className="settings-headPills">
+                <span className={`kc-pill ${isBusy ? "settings-skel-pill" : ""}`}>
+                    Plan: <strong>{String(plan || "free").toUpperCase()}</strong>
+                </span>
+                <span className={`kc-pill ${isBusy ? "settings-skel-pill" : ""}`}>
+                    Status: <strong>{String(subscriptionStatus || "free").toUpperCase()}</strong>
+                </span>
+            </div>
+
+            <div className="settings-headButtons">
+                {hasError ? (
+                    <button type="button" className="kx-btn kx-btn--black" onClick={retryAll}>
+                        Retry
+                    </button>
+                ) : (
+                    <button type="button" className="kx-btn kx-btn--black" onClick={openBillingPortal} disabled={isBusy}>
+                        Manage billing
+                    </button>
+                )}
+            </div>
+        </div>
+    );
 
     return (
         <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
@@ -170,12 +178,9 @@ export default function Settings() {
                 <PageHeader
                     title="Settings"
                     subtitle="Manage your account, billing, invoices and payments."
-                    isMobile={isMobile}
-                    isSmallMobile={isSmallMobile}
                     rightSlot={headerRight}
                 />
 
-                {/* Global error banner (keeps layout) */}
                 {hasError ? (
                     <div className="settings-banner settings-banner-danger">
                         <div className="settings-banner-title">Couldn’t load your settings</div>
@@ -193,6 +198,7 @@ export default function Settings() {
                                     <h2 className="settings-card-title">Account</h2>
                                     <p className="settings-muted">Your login method determines what details can be edited.</p>
                                 </div>
+
                                 <span className="kc-pill">
                                     Login: <strong>{isBusy ? "…" : isGoogle ? "GOOGLE" : "EMAIL"}</strong>
                                 </span>
@@ -210,12 +216,8 @@ export default function Settings() {
                                 </div>
 
                                 <div className="settings-accountSummary">
-                                    <div className="settings-accountName">
-                                        {showOrSkel(accountName, "52%")}
-                                    </div>
-                                    <div className="settings-accountEmail">
-                                        {showOrSkel(accountEmail, "72%")}
-                                    </div>
+                                    <div className="settings-accountName">{isBusy ? <SkelText w="52%" /> : accountName}</div>
+                                    <div className="settings-accountEmail">{isBusy ? <SkelText w="72%" /> : accountEmail}</div>
 
                                     <div className="settings-accountChips">
                                         <span className={`settings-chip ${isBusy ? "settings-skel-chip" : ""}`}>
@@ -231,21 +233,21 @@ export default function Settings() {
                             <div className="settings-fields2">
                                 <div className="settings-field">
                                     <label className="settings-label">Name</label>
-                                    <div className={`settings-inputFake ${isBusy ? "settings-skelLine" : ""}`}>
-                                        {isBusy ? "" : accountName}
-                                    </div>
+                                    <div className={`settings-inputFake ${isBusy ? "settings-skelLine" : ""}`}>{isBusy ? "" : accountName}</div>
                                     {isGoogle && !isBusy ? (
-                                        <div className="settings-hint">This account is managed by Google. Changes must be made through Google.</div>
+                                        <div className="settings-hint">
+                                            This account is managed by Google. Changes must be made through Google.
+                                        </div>
                                     ) : null}
                                 </div>
 
                                 <div className="settings-field">
                                     <label className="settings-label">Email</label>
-                                    <div className={`settings-inputFake ${isBusy ? "settings-skelLine" : ""}`}>
-                                        {isBusy ? "" : accountEmail}
-                                    </div>
+                                    <div className={`settings-inputFake ${isBusy ? "settings-skelLine" : ""}`}>{isBusy ? "" : accountEmail}</div>
                                     {isGoogle && !isBusy ? (
-                                        <div className="settings-hint">This account is managed by Google. Changes must be made through Google.</div>
+                                        <div className="settings-hint">
+                                            This account is managed by Google. Changes must be made through Google.
+                                        </div>
                                     ) : null}
                                 </div>
                             </div>
@@ -258,6 +260,7 @@ export default function Settings() {
                                     <h2 className="settings-card-title">Billing</h2>
                                     <p className="settings-muted">Plan status and renewal information.</p>
                                 </div>
+
                                 <span className={`kc-pill ${isBusy ? "settings-skel-pill" : ""}`}>
                                     Plan: <strong>{String(plan || "free").toUpperCase()}</strong>
                                 </span>
@@ -273,9 +276,7 @@ export default function Settings() {
 
                                 <div className="settings-stat">
                                     <div className="settings-statK">Interval</div>
-                                    <div className="settings-statV">
-                                        {isBusy ? <SkelText w="60%" /> : pick(planInterval)}
-                                    </div>
+                                    <div className="settings-statV">{isBusy ? <SkelText w="60%" /> : pick(planInterval)}</div>
                                 </div>
 
                                 <div className="settings-stat">
@@ -290,12 +291,7 @@ export default function Settings() {
                                 <button type="button" className="kx-btn kx-btn--black" onClick={openBillingPortal} disabled={isBusy || hasError}>
                                     Manage billing
                                 </button>
-                                <button
-                                    type="button"
-                                    className="kx-btn kx-btn--white"
-                                    onClick={() => (window.location.href = "/pricing")}
-                                    disabled={isBusy}
-                                >
+                                <button type="button" className="kx-btn kx-btn--white" onClick={() => (window.location.href = "/pricing")} disabled={isBusy}>
                                     View plans
                                 </button>
                             </div>
