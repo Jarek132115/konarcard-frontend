@@ -1,15 +1,77 @@
 // src/pages/interface/Dashboard.jsx
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../../styling/dashboard/dashboard.css";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
+import ShareProfile from "../../components/ShareProfile";
+
 import { useAuthUser } from "../../hooks/useAuthUser";
+import { useMyProfiles } from "../../hooks/useBusinessCard";
+
+const centerTrim = (v) => (v ?? "").toString().trim();
+const safeLower = (v) => centerTrim(v).toLowerCase();
+
+const normalizeSlug = (raw) =>
+    safeLower(raw)
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+
+const buildPublicUrl = (profileSlug) => {
+    const s = normalizeSlug(profileSlug);
+    if (!s) return `${window.location.origin}/u/`;
+    return `${window.location.origin}/u/${encodeURIComponent(s)}`;
+};
 
 export default function Dashboard() {
     const { data: authUser } = useAuthUser();
+    const { data: cards } = useMyProfiles();
 
+    const plan = safeLower(authUser?.plan || "free");
+    const isFreePlan = plan === "free";
+    const displayPlan = `Plan: ${plan.toUpperCase()}`;
+
+    const displayName = authUser?.name?.split(" ")?.[0] || "there";
+
+    // ✅ Profiles list (for ShareProfile modal)
+    const profilesForShare = useMemo(() => {
+        const xs = Array.isArray(cards) ? cards : [];
+        return xs
+            .map((c) => {
+                const slug = centerTrim(c.profile_slug);
+                if (!slug) return null;
+
+                const name =
+                    centerTrim(c.business_card_name) ||
+                    centerTrim(c.full_name) ||
+                    (slug === "main" ? "Main Profile" : "Profile");
+
+                return { slug, name, url: buildPublicUrl(slug) };
+            })
+            .filter(Boolean);
+    }, [cards]);
+
+    // ✅ Share modal state
+    const [shareOpen, setShareOpen] = useState(false);
+    const [selectedSlug, setSelectedSlug] = useState(null);
+
+    // default selected profile
+    useEffect(() => {
+        if (!profilesForShare.length) {
+            setSelectedSlug(null);
+            return;
+        }
+        setSelectedSlug((prev) => prev || profilesForShare[0].slug);
+    }, [profilesForShare]);
+
+    const selectedProfile = useMemo(() => {
+        if (!profilesForShare.length) return null;
+        return profilesForShare.find((p) => p.slug === selectedSlug) || profilesForShare[0];
+    }, [profilesForShare, selectedSlug]);
+
+    // ✅ (same placeholder logic as your current file)
     const profileCompletion = useMemo(() => {
         const items = [
             { key: "profilePhoto", label: "Add a profile photo", done: false },
@@ -26,9 +88,6 @@ export default function Dashboard() {
     }, []);
 
     const hasProfile = true;
-    const isFreePlan = true;
-
-    const displayName = authUser?.name?.split(" ")?.[0] || "there";
 
     return (
         <DashboardLayout hideDesktopHeader>
@@ -37,19 +96,31 @@ export default function Dashboard() {
                     title="Dashboard"
                     subtitle={`Welcome back, ${displayName}. Finish your profile and start using KonarCard.`}
                     rightSlot={
-                        <div className="ph-rightStack">
-                            <span className="kc-pill">{isFreePlan ? "Plan: FREE" : "Plan: PAID"}</span>
+                        <div className="dash-headActions">
+                            <span className="kc-pill">{displayPlan}</span>
 
-                            <div className="ph-actionsInline">
-                                <Link to="/cards" className="kx-btn kx-btn--white">
-                                    Order a card
-                                </Link>
-                                <Link to="/profiles" className="kx-btn kx-btn--black">
-                                    Edit profile
-                                </Link>
-                            </div>
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--black"
+                                onClick={() => setShareOpen(true)}
+                                disabled={!selectedProfile}
+                                title={!selectedProfile ? "Create a profile first" : "Share your profile"}
+                            >
+                                Share your profile
+                            </button>
                         </div>
                     }
+                />
+
+                {/* ✅ Share modal */}
+                <ShareProfile
+                    isOpen={shareOpen}
+                    onClose={() => setShareOpen(false)}
+                    profiles={profilesForShare}
+                    selectedSlug={selectedSlug}
+                    onSelectSlug={setSelectedSlug}
+                    username={authUser?.name || "konarcard"}
+                    profileUrl={selectedProfile?.url || ""}
                 />
 
                 {!hasProfile && (
@@ -86,8 +157,8 @@ export default function Dashboard() {
                 )}
 
                 <div className="dash-grid">
-                    {/* TOP: Quick actions + Profile completion */}
-                    <section className="dash-card dash-span-6 dash-order-1">
+                    {/* ✅ Force these two sections to be FIRST ROW */}
+                    <section className="dash-card dash-span-6 dash-top-quick">
                         <div className="dash-card-head">
                             <div>
                                 <h2 className="dash-card-title">Quick actions</h2>
@@ -101,10 +172,15 @@ export default function Dashboard() {
                                 <div className="dash-quick-sub">Update your details anytime</div>
                             </Link>
 
-                            <Link to="/profiles" className="dash-quick-tile">
+                            <button
+                                type="button"
+                                className="dash-quick-tile dash-quick-btn"
+                                onClick={() => setShareOpen(true)}
+                                disabled={!selectedProfile}
+                            >
                                 <div className="dash-quick-title">Share your profile link</div>
                                 <div className="dash-quick-sub">Copy + send to customers</div>
-                            </Link>
+                            </button>
 
                             <Link to="/cards" className="dash-quick-tile">
                                 <div className="dash-quick-title">Order a KonarCard</div>
@@ -118,13 +194,11 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    <section className="dash-card dash-span-6 dash-order-2">
+                    <section className="dash-card dash-span-6 dash-top-steps">
                         <div className="dash-card-head">
                             <div>
                                 <h2 className="dash-card-title">Profile completion</h2>
-                                <p className="dash-muted">
-                                    Complete your profile to look more professional and get more leads.
-                                </p>
+                                <p className="dash-muted">Complete your profile to look more professional and get more leads.</p>
                             </div>
 
                             <div className="dash-progress-wrap" aria-label="Profile completion">

@@ -7,6 +7,29 @@
     padding: 0;
 }
 
+/* ✅ Header right slot: Plan pill + ONE CTA */
+.dash-headActions {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+@media (max-width: 520px) {
+    .dash-headActions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+    }
+
+    .dash-headActions .kx-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 /* Grid */
 .dash-grid {
     display: grid;
@@ -186,12 +209,25 @@
     padding: 14px;
     text-decoration: none;
     transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    display: block;
+    text-align: left;
+}
+
+.dash-quick-btn {
+    cursor: pointer;
 }
 
 .dash-quick-tile:hover {
     transform: translateY(-1px);
     background: rgba(15, 23, 42, 0.02);
     box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
+}
+
+.dash-quick-tile:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .dash-quick-title {
@@ -209,7 +245,7 @@
     font-weight: 600;
 }
 
-/* Preview (same) */
+/* Preview */
 .dash-preview {
     margin-top: 14px;
     display: grid;
@@ -318,7 +354,7 @@
     line-height: 1.5;
 }
 
-/* ✅ Upgrade (FULL ORANGE + WHITE TEXT) */
+/* Upgrade */
 .dash-upgrade {
     background: var(--kc-accent-primary);
     border: none;
@@ -401,11 +437,7 @@
         grid-column: span 12;
     }
 
-    /* ✅ On tablet/mobile, we want quick + steps still first */
-    .dash-top-quick {
-        grid-row: auto;
-    }
-
+    .dash-top-quick,
     .dash-top-steps {
         grid-row: auto;
     }
