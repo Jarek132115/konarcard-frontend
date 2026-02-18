@@ -21,6 +21,7 @@ const normalizeSlug = (raw) => {
         .replace(/^-|-$/g, "");
 };
 
+
 export default function Profiles() {
     const navigate = useNavigate();
     const location = useLocation();
