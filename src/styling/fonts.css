@@ -185,8 +185,10 @@ body {
 }
 
 /* =========================================================
-   NEW: PREMIUM PILL (Pricing-style)
-   Use for eyebrow labels above headings
+   REUSABLE PILL (Hero / Pricing-style)
+   White background + subtle drop shadow (0,0,2)
+   Padding: 6px top/bottom, 10px left/right
+   Shadow color: primary text (#0F172A) at 50% opacity
    ========================================================= */
 
 .kc-pill {
@@ -194,7 +196,7 @@ body {
   align-items: center;
   justify-content: center;
 
-  padding: 8px 14px;
+  padding: 6px 10px;
   border-radius: 999px;
 
   background: #ffffff;
@@ -206,7 +208,8 @@ body {
   line-height: 1;
   color: rgba(15, 23, 42, 0.78);
 
-  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+  /* ✅ Figma drop shadow: x0 y0 blur2, color #0F172A @ 50% */
+  box-shadow: 0 0 2px rgba(15, 23, 42, 0.5);
 }
 
 /* Optional variant (if you ever want a softer pill) */
@@ -360,7 +363,7 @@ body {
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
 }
 
-.kx-btn--white:hover { 
+.kx-btn--white:hover {
   background: rgba(15, 23, 42, 0.02);
 }
 

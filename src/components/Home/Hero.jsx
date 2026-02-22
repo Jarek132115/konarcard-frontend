@@ -11,14 +11,16 @@ import UP6 from "../../assets/images/UP6.jpg";
 import UP7 from "../../assets/images/UP7.jpg";
 import UP8 from "../../assets/images/UP8.jpg";
 
-/* ✅ Correct logo images */
-import Logo1 from "../../assets/images/CarouselImage1.png";
-import Logo2 from "../../assets/images/CarouselImage2.png";
-import Logo3 from "../../assets/images/CarouselImage3.png";
-import Logo4 from "../../assets/images/CarouselImage4.png";
-import Logo5 from "../../assets/images/CarouselImage5.png";
-import Logo6 from "../../assets/images/CarouselImage6.png";
-import Logo7 from "../../assets/images/CarouselImage7.png";
+/* ✅ New logo images (LogoHero1 - 9) */
+import LogoHero1 from "../../assets/images/LogoHero1.jpg";
+import LogoHero2 from "../../assets/images/LogoHero2.jpg";
+import LogoHero3 from "../../assets/images/LogoHero3.jpg";
+import LogoHero4 from "../../assets/images/LogoHero4.jpg";
+import LogoHero5 from "../../assets/images/LogoHero5.jpg";
+import LogoHero6 from "../../assets/images/LogoHero6.jpg";
+import LogoHero7 from "../../assets/images/LogoHero7.jpg";
+import LogoHero8 from "../../assets/images/LogoHero8.jpg";
+import LogoHero9 from "../../assets/images/LogoHero9.jpg";
 
 /* CSS */
 import "../../styling/home/hero.css";
@@ -40,13 +42,15 @@ export default function Hero() {
 
     const logos = useMemo(
         () => [
-            { src: Logo1, alt: "Customer logo 1" },
-            { src: Logo2, alt: "Customer logo 2" },
-            { src: Logo3, alt: "Customer logo 3" },
-            { src: Logo4, alt: "Customer logo 4" },
-            { src: Logo5, alt: "Customer logo 5" },
-            { src: Logo6, alt: "Customer logo 6" },
-            { src: Logo7, alt: "Customer logo 7" },
+            { src: LogoHero1, alt: "Customer logo 1" },
+            { src: LogoHero2, alt: "Customer logo 2" },
+            { src: LogoHero3, alt: "Customer logo 3" },
+            { src: LogoHero4, alt: "Customer logo 4" },
+            { src: LogoHero5, alt: "Customer logo 5" },
+            { src: LogoHero6, alt: "Customer logo 6" },
+            { src: LogoHero7, alt: "Customer logo 7" },
+            { src: LogoHero8, alt: "Customer logo 8" },
+            { src: LogoHero9, alt: "Customer logo 9" },
         ],
         []
     );
@@ -243,21 +247,24 @@ export default function Hero() {
     return (
         <header className="kc-homeHero">
             <div className="kc-homeHero__inner">
+                {/* Copy */}
                 <div className="kc-homeHero__copyGrid">
-                    <div className="kc-homeHero__badge">
-                        Built for UK businesses, tap, share, update anytime
+                    {/* ✅ Reusable pill (from fonts.css) */}
+                    <div className="kc-pill kc-homeHero__pill">
+                        NFC + QR Digital Business Card for Trades
                     </div>
 
                     <h1 className="kc-homeHero__title">
-                        Digital <span className="kc-homeHero__accent">Business Card</span>
+                        The Digital{" "}
+                        <span className="kc-homeHero__accent">Business Card</span>
                         <br />
-                        That Works Instantly
+                        Built For Trades
                     </h1>
 
                     <p className="kc-homeHero__sub">
-                        Share your details with an NFC business card, QR code, or link. No app needed.
+                        Share your contact details with a tap, QR, or link - and update
                         <br />
-                        Update your digital business card anytime in seconds.
+                        them anytime.
                     </p>
 
                     <div className="kc-homeHero__ctaRow">
@@ -265,19 +272,34 @@ export default function Hero() {
                             Claim Your Link
                         </Link>
 
-                        <Link to="/pricing" className="kx-btn kx-btn--white kc-homeHero__ctaBtn">
-                            View Pricing
+                        <Link to="/how-it-works" className="kx-btn kx-btn--white kc-homeHero__ctaBtn">
+                            Watch How It Works
                         </Link>
                     </div>
                 </div>
 
-                <div className="kc-homeHero__carousel">
+                {/* Logos (now ABOVE the example cards like your 2nd design) */}
+                <div className="kc-homeHero__logoGrid" aria-label="Trusted by UK businesses">
+                    {logos.map((l, idx) => (
+                        <div key={idx} className="kc-homeHero__logoCard">
+                            <img
+                                src={l.src}
+                                alt={l.alt}
+                                className="kc-homeHero__logoImg"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                        </div>
+                    ))}
+                </div>
+
+                {/* Carousel */}
+                <div className="kc-homeHero__carousel" aria-label="Example digital business cards">
                     <div className="kc-homeHero__scrollerOuter">
                         <div
                             ref={scrollerRef}
                             className="kc-homeHero__scroller"
                             style={{ touchAction: "pan-y" }}
-                            aria-label="Example digital business cards"
                         >
                             <div ref={trackRef} className="kc-homeHero__track">
                                 {groups.map((_, gi) => (
@@ -302,20 +324,6 @@ export default function Hero() {
                                 ))}
                             </div>
                         </div>
-                    </div>
-
-                    <div className="kc-homeHero__logoGrid" aria-label="Trusted by UK businesses">
-                        {logos.map((l, idx) => (
-                            <div key={idx} className="kc-homeHero__logoImgWrap">
-                                <img
-                                    src={l.src}
-                                    alt={l.alt}
-                                    className="kc-homeHero__logoImg"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
-                            </div>
-                        ))}
                     </div>
                 </div>
             </div>
