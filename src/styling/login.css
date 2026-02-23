@@ -124,6 +124,10 @@
     position: relative;
     z-index: 1;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 /* =========================================================
@@ -363,47 +367,45 @@
 /* =========================================================
    Centered button sizing (shared)
    ========================================================= */
+
+/* single source of truth for auth button width */
+:root {
+    --kc-auth-btn-width: min(340px, 100%);
+}
+
 .kc-actionsCenter {
+    width: 100%;
     display: flex;
     justify-content: center;
 }
 
 .kc-authBtn {
-    width: min(340px, 100%);
-}
-
-/* Social group */
-.kc-social {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-}
-
-.kc-socialBtn {
-    justify-content: center;
-    gap: 10px;
-}
-
-.kc-social-icon {
-    width: 18px;
-    height: 18px;
-}
-
-/* Divider matches button width */
-.kc-divider {
-    margin: 22px 0;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    width: 100%;
-}
-
-.kc-divider--matchWidth {
-    width: min(340px, 100%);
+    width: 300px;
     margin-left: auto;
     margin-right: auto;
+    display: flex;
+    /* ensures consistent centering + same width everywhere */
+    align-items: center;
+    justify-content: center;
+}
+
+/* =========================================================
+   Divider matches button width (FIXED CENTERING)
+   - your screenshot shows "or" sitting left because the divider container
+     is not forced into the same centered width block.
+   ========================================================= */
+
+.kc-divider {
+    /* IMPORTANT: make divider itself the centered block with the same width as buttons */
+    width: var(--kc-auth-btn-width);
+    margin: 18px auto 18px;
+    /* centers the whole divider block */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* keeps "or" perfectly centered */
+    gap: 14px;
+    text-align: center;
 }
 
 .kc-divider::before,
@@ -414,12 +416,61 @@
     background: rgba(15, 23, 42, 0.12);
 }
 
+/* keep this class for backwards compatibility but make it harmless */
+.kc-divider--matchWidth {
+    width: var(--kc-auth-btn-width);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* make sure the "or" cannot drift */
 .kc-divider span {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    text-align: center;
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 600;
     color: rgba(15, 23, 42, 0.55);
     line-height: 1;
+}
+
+/* =========================================================
+   Social group (FIXED CENTERING + SAME WIDTH AS BLACK BUTTON)
+   ========================================================= */
+
+.kc-social {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* centers the stack */
+    justify-content: center;
+    gap: 12px;
+    text-align: center;
+}
+
+/* social button layout */
+.kc-socialBtn {
+    width: 300px;
+    /* forces SAME WIDTH as primary button */
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* centers icon+text */
+    gap: 10px;
+    text-align: center;
+}
+
+.kc-social-icon {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
 }
 
 /* =========================================================

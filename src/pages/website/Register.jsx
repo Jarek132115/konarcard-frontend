@@ -460,7 +460,6 @@ export default function Register() {
 
                 <main className="kc-auth-main">
                     <div className="kc-auth-inner">
-                        {/* ✅ SAME grid wrap as Login */}
                         <div className="kc-auth-wrap">
                             <div className="kc-auth-panel">
                                 {verificationStep ? (
@@ -513,9 +512,8 @@ export default function Register() {
                                 ) : shouldShowClaimStep ? (
                                     <>
                                         <h1 className="h2 kc-auth-title">
-                                            Claim Your <span className="kc-auth-accent">Link</span>
+                                            Claim your <span className="kc-auth-accent">Link</span>
                                         </h1>
-
                                         <p className="kc-subtitle">
                                             This is your unique link. When someone clicks it, they see your digital business card.
                                         </p>
@@ -556,9 +554,10 @@ export default function Register() {
                                 ) : (
                                     <>
                                         <h1 className="h2 kc-auth-title">
-                                            Create an account to <span className="kc-auth-accent">save</span> your card
+                                            Create an account to <span className="kc-auth-accent">save</span>
+                                            <br />
+                                            your card
                                         </h1>
-
                                         <p className="kc-subtitle">
                                             Save your digital card so you can share it, edit it, and access it anytime.
                                         </p>
@@ -626,37 +625,40 @@ export default function Register() {
                                             </p>
                                         </form>
 
-                                        <div className="kc-divider kc-divider--matchWidth">
-                                            <span>or</span>
-                                        </div>
+                                        {/* ✅ Center the divider + social buttons (don’t inherit kc-form left alignment) */}
+                                        <div style={{ textAlign: "center" }}>
+                                            <div className="kc-divider kc-divider--matchWidth">
+                                                <span>or</span>
+                                            </div>
 
-                                        <div className="kc-social">
-                                            <button
-                                                type="button"
-                                                className="kx-btn kx-btn--white kc-authBtn kc-socialBtn"
-                                                onClick={() => startOAuth("google")}
-                                            >
-                                                <img className="kc-social-icon" src={GoogleIcon} alt="" aria-hidden="true" />
-                                                <span>Sign in with Google</span>
-                                            </button>
+                                            <div className="kc-social">
+                                                <button
+                                                    type="button"
+                                                    className="kx-btn kx-btn--white kc-authBtn kc-socialBtn"
+                                                    onClick={() => startOAuth("google")}
+                                                >
+                                                    <img className="kc-social-icon" src={GoogleIcon} alt="" aria-hidden="true" />
+                                                    <span>Sign in with Google</span>
+                                                </button>
 
-                                            <button
-                                                type="button"
-                                                className="kx-btn kx-btn--white kc-authBtn kc-socialBtn"
-                                                onClick={() => startOAuth("facebook")}
-                                            >
-                                                <img className="kc-social-icon" src={FacebookIcon} alt="" aria-hidden="true" />
-                                                <span>Sign in with Facebook</span>
-                                            </button>
+                                                <button
+                                                    type="button"
+                                                    className="kx-btn kx-btn--white kc-authBtn kc-socialBtn"
+                                                    onClick={() => startOAuth("facebook")}
+                                                >
+                                                    <img className="kc-social-icon" src={FacebookIcon} alt="" aria-hidden="true" />
+                                                    <span>Sign in with Facebook</span>
+                                                </button>
 
-                                            <button
-                                                type="button"
-                                                className="kx-btn kx-btn--white kc-authBtn kc-socialBtn"
-                                                onClick={() => startOAuth("apple")}
-                                            >
-                                                <img className="kc-social-icon" src={AppleIcon} alt="" aria-hidden="true" />
-                                                <span>Sign in with Apple</span>
-                                            </button>
+                                                <button
+                                                    type="button"
+                                                    className="kx-btn kx-btn--white kc-authBtn kc-socialBtn"
+                                                    onClick={() => startOAuth("apple")}
+                                                >
+                                                    <img className="kc-social-icon" src={AppleIcon} alt="" aria-hidden="true" />
+                                                    <span>Sign in with Apple</span>
+                                                </button>
+                                            </div>
                                         </div>
 
                                         {displayUsername ? (
