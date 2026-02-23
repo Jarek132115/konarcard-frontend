@@ -4,16 +4,26 @@ import { Link } from "react-router-dom";
 import "../../styling/fonts.css";
 import "../../styling/home/examples.css";
 
-/* ✅ Use the same image as Examples page for now (swap later) */
 import ExampleTest from "../../assets/images/ExampleTest.jpg";
 
 export default function Examples() {
     const items = useMemo(
         () => [
-            { role: "Electrician", name: "James", desc: "Shares contact details instantly after jobs and quotes." },
-            { role: "Plumber", name: "Ben", desc: "Shows reviews + gallery to build trust on the first visit." },
-            { role: "Builder", name: "Ryan", desc: "Shares portfolio + booking link to win higher-value work." },
-            { role: "Landscaper", name: "Charlie", desc: "Shares seasonal packages and availability on-site." },
+            {
+                role: "Electrician",
+                name: "James",
+                desc: "Shares contact details instantly after jobs and quotes.",
+            },
+            {
+                role: "Builder",
+                name: "David",
+                desc: "Shows reviews + gallery to build trust on the first visit.",
+            },
+            {
+                role: "Plumber",
+                name: "Ryan",
+                desc: "Shares portfolio + booking link to win higher-value work.",
+            },
         ],
         []
     );
@@ -25,25 +35,28 @@ export default function Examples() {
                     <div className="khe-hero__inner">
                         <p className="kc-pill khe-kicker">Real examples</p>
 
-                        {/* ✅ Keep as one line until it naturally wraps */}
+                        {/* ✅ No <br />, constrained width instead */}
                         <h2 id="khe-title" className="h3 khe-title">
-                            See How UK <span className="khe-accent">Tradespeople</span> Use KonarCard
+                            See How UK Trades <span className="khe-accent">Win More Work</span> With KonarCard
                         </h2>
 
-                        <p className="body-s khe-sub">
-                            Real profiles showing how trades use KonarCard to win more work.
+                        <p className="kc-subheading khe-sub">
+                            Real examples of trades turning taps into booked jobs.
                         </p>
-
                     </div>
                 </header>
 
-                <div className="khe-grid" aria-label="Example profiles">
+                <div className="khe-grid" role="list" aria-label="Example profiles">
                     {items.map((it) => (
-                        <article className="khe-card" key={`${it.role}-${it.name}`}>
-                            {/* ✅ 1:1 media + role pill (top-left) like Share */}
-                            <div className="khe-media" aria-label={`${it.role} example`}>
-                                <span className="khe-pill">{it.role}</span>
+                        <article className="khe-card" key={`${it.role}-${it.name}`} role="listitem">
+                            <span className="khe-pill">{it.role}</span>
 
+                            <div className="khe-copy">
+                                <p className="kc-title khe-name">{it.name}</p>
+                                <p className="body khe-desc">{it.desc}</p>
+                            </div>
+
+                            <div className="khe-media" aria-hidden="true">
                                 <img
                                     src={ExampleTest}
                                     alt="Example KonarCard digital business card profile preview"
@@ -52,24 +65,17 @@ export default function Examples() {
                                     decoding="async"
                                 />
                             </div>
-
-                            <div className="khe-body">
-                                {/* ✅ name only */}
-                                <p className="h6 khe-cardTitle">{it.name}</p>
-                                <p className="body-s khe-cardDesc">{it.desc}</p>
-                            </div>
                         </article>
                     ))}
                 </div>
 
-                {/* ✅ NEW: short helper line above CTA */}
-                <p className="body-s khe-ctaHint">
-                    Want to see more real profiles and how different trades use KonarCard day-to-day?
+                <p className="body khe-ctaHint">
+                    See more real profiles from UK trades.
                 </p>
 
                 <div className="khe-ctaRow">
                     <Link to="/examples" className="kx-btn kx-btn--black">
-                        See More Real Examples
+                        View More Real Profiles
                     </Link>
                 </div>
             </div>

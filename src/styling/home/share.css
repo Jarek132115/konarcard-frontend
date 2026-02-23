@@ -1,43 +1,42 @@
 /* frontend/src/styling/home/share.css */
 /* =========================================================
-   HOME — SHARE SECTION
-   File: frontend/src/styling/home/share.css
+   HOME — SHARE SECTION (match target mock)
+   Typography comes ONLY from fonts.css
    ========================================================= */
 
 .khs-share {
     background: var(--kc-bg-main);
     color: var(--kc-text-primary);
-    padding: 80px 0;
+    padding: 96px 0;
 }
 
 @media (max-width: 600px) {
     .khs-share {
-        padding: 56px 0;
+        padding: 64px 0;
     }
 }
 
 .khs-container {
-    max-width: 1040px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* =========================
-   Header
-   ========================= */
+/* Header */
 .khs-head {
     text-align: center;
-    margin-bottom: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* ✅ spacing only (visual from .kc-pill) */
 .khs-kicker {
-    margin: 0 0 10px;
+    margin: 0 0 8px 0;
 }
 
 .khs-title {
-    margin: 0 0 8px;
-    letter-spacing: -0.02em;
+    margin: 0 0 8px 0;
+    max-width: 760px;
 }
 
 .khs-accent {
@@ -45,180 +44,129 @@
 }
 
 .khs-sub {
-    margin: 0 auto;
-    max-width: 720px;
-    color: var(--kc-text-secondary);
+    margin: 0;
+    max-width: 520px;
 }
 
-/* =========================
-   Grid
-   ========================= */
+/* Grid */
 .khs-grid {
-    margin-top: 18px;
+    margin-top: 36px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
     align-items: stretch;
 }
 
-/* =========================
-   Card
-   ========================= */
+/* Card */
 .khs-card {
-    border: 1px solid var(--kc-border);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     background: #ffffff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    border-radius: 22px;
+    box-shadow: 0 12px 28px rgba(16, 24, 40, 0.06);
 
+    padding: 18px;
     display: flex;
     flex-direction: column;
+    gap: 12px;
     min-width: 0;
+
+    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
 .khs-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.1);
+    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.08);
+    border-color: rgba(249, 115, 22, 0.20);
 }
 
-/* =========================
-   Media (1:1, flush)
-   ========================= */
-.khs-media {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    background: var(--kc-bg-soft);
-    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-    overflow: hidden;
-}
-
-/* ✅ override kc-pill box-shadow for media overlay */
+/* Badge pill */
 .khs-pill {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    z-index: 3;
-    box-shadow: none;
-    border-color: rgba(15, 23, 42, 0.14);
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-}
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
 
-/* Image fill */
-.khs-media>.khs-img {
-    position: absolute;
-    inset: 0;
-    width: 100% !important;
-    height: 100% !important;
-
-    display: block !important;
-    max-width: none !important;
-    max-height: none !important;
-
-    object-fit: cover !important;
-    object-position: center center;
-    border-radius: 0;
-}
-
-/* =========================
-   Placeholder (no images)
-   ========================= */
-.khs-mock {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.55));
-    display: grid;
-    place-items: center;
-}
-
-.khs-mock__icon {
-    width: 86px;
-    height: 86px;
-    border-radius: 18px;
-    display: grid;
-    place-items: center;
-
-    font-weight: 900;
-    font-size: 26px;
-    color: rgba(15, 23, 42, 0.86);
-
-    background: rgba(255, 255, 255, 0.82);
-    border: 1px solid rgba(15, 23, 42, 0.1);
-    box-shadow: 0 14px 28px rgba(16, 24, 40, 0.1);
-}
-
-.khs-mock__lines {
-    position: absolute;
-    left: 16px;
-    right: 16px;
-    bottom: 14px;
-    display: grid;
-    gap: 8px;
-}
-
-.khs-mock__lines span {
-    height: 8px;
     border-radius: 999px;
-    background: rgba(15, 23, 42, 0.08);
+    padding: 7px 10px;
+
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    color: rgba(15, 23, 42, 0.85);
+
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
 }
 
-.khs-mock__lines span:nth-child(2) {
-    width: 78%;
-}
-
-.khs-mock__lines span:nth-child(3) {
-    width: 62%;
-}
-
-/* subtle variety */
-.khs-mock--nfc {
-    background: linear-gradient(180deg, rgba(249, 115, 22, 0.06), rgba(255, 255, 255, 0.65));
-}
-
-.khs-mock--qr {
-    background: linear-gradient(180deg, rgba(15, 23, 42, 0.05), rgba(255, 255, 255, 0.65));
-}
-
-.khs-mock--msg {
-    background: linear-gradient(180deg, rgba(249, 115, 22, 0.05), rgba(255, 255, 255, 0.7));
-}
-
-.khs-mock--bio {
-    background: linear-gradient(180deg, rgba(15, 23, 42, 0.04), rgba(255, 255, 255, 0.7));
-}
-
-/* =========================
-   Body
-   ========================= */
-.khs-body {
-    padding: 16px;
-    flex: 1;
+/* Copy */
+.khs-copy {
+    text-align: left;
 }
 
 .khs-cardTitle {
-    margin: 0 0 6px;
+    margin: 0 0 6px 0;
 }
 
 .khs-cardDesc {
     margin: 0;
-    color: var(--kc-text-secondary);
-    line-height: 1.55;
 }
 
-/* =========================
-   Responsive
-   ========================= */
+/* =========================================================
+   ✅ MEDIA — identical 1:1 frame + same visual size
+   - Use the soft grey backing like the target design
+   - Image fills the square consistently (cover)
+   ========================================================= */
+
+.khs-media {
+    margin-top: 8px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 18px;
+    overflow: hidden;
+
+    background: rgba(15, 23, 42, 0.06);
+    /* ✅ matches the mock */
+}
+
+/* ✅ This is what makes them look identical */
+.khs-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    /* ✅ forces consistent sizing */
+    object-position: center;
+    /* ✅ centered crop */
+}
+
+/* Responsive */
 @media (max-width: 1100px) {
     .khs-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 640px) {
     .khs-grid {
         grid-template-columns: 1fr;
+    }
+
+    .khs-card {
+        border-radius: 18px;
+        padding: 16px;
+    }
+
+    .khs-media {
+        border-radius: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .khs-card {
+        transition: none !important;
+    }
+
+    .khs-card:hover {
+        transform: none;
     }
 }

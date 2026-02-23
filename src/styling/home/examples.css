@@ -1,22 +1,23 @@
 /* =========================================================
-   HOME — EXAMPLES SECTION
-   Match Share section media + pill overlay
+   HOME — EXAMPLES SECTION (match new design)
+   File: frontend/src/styling/home/examples.css
+   Typography comes ONLY from fonts.css
    ========================================================= */
 
 .khe-examples {
-    background: #fafafa;
+    background: var(--kc-bg-soft);
     color: var(--kc-text-primary);
-    padding: 80px 0;
+    padding: 96px 0;
 }
 
 @media (max-width: 600px) {
     .khe-examples {
-        padding: 56px 0;
+        padding: 64px 0;
     }
 }
 
 .khe-container {
-    max-width: 1040px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -24,89 +25,77 @@
 /* =========================
    HEADER
    ========================= */
-.khe-hero {
-    padding: 0 0 30px;
-}
 
 .khe-hero__inner {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .khe-kicker {
-    margin: 0 0 10px;
+    margin: 0 0 8px 0;
 }
 
+/* ✅ 600px max width */
 .khe-title {
-    margin: 0 0 8px;
-    letter-spacing: -0.02em;
-    /* ✅ ensures it stays on one line until it naturally must wrap */
-    max-width: 980px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 0 8px 0;
+    max-width: 600px;
 }
 
 .khe-accent {
     color: var(--kc-accent-primary);
 }
 
+/* ✅ 500px max width */
 .khe-sub {
-    margin: 0 auto;
-    max-width: 720px;
-    color: var(--kc-text-secondary);
+    margin: 0;
+    max-width: 500px;
 }
 
 /* =========================
    GRID
    ========================= */
-.khe-grid {
-    width: 100%;
-    max-width: 1040px;
-    margin: 0 auto;
 
+.khe-grid {
+    margin-top: 36px;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
     align-items: stretch;
 }
 
 /* =========================
    CARD
    ========================= */
-.khe-card {
-    border: 1px solid var(--kc-border);
-    background: #ffffff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
 
+.khe-card {
+    position: relative;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: #ffffff;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 12px 28px rgba(16, 24, 40, 0.06);
+
+    padding: 18px;
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    gap: 14px;
+
+    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
 .khe-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.1);
+    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.08);
+    border-color: rgba(249, 115, 22, 0.20);
 }
 
-/* =========================
-   MEDIA (Share-style 1:1 + overlay pill)
-   ========================= */
-.khe-media {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    background: var(--kc-bg-soft);
-    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-    overflow: hidden;
-}
-
-/* ✅ pill overlay (same style as Share section pill) */
+/* role pill */
 .khe-pill {
     position: absolute;
-    top: 12px;
-    left: 12px;
+    top: 14px;
+    left: 14px;
     z-index: 3;
 
     display: inline-flex;
@@ -115,66 +104,61 @@
 
     border-radius: 999px;
     padding: 7px 10px;
-    font-size: 12px;
-    font-weight: 800;
 
-    border: 1px solid rgba(15, 23, 42, 0.14);
     background: rgba(255, 255, 255, 0.92);
-    color: rgba(15, 23, 42, 0.78);
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    color: rgba(15, 23, 42, 0.85);
+
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
 
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
 }
 
-.khe-media>.khe-img {
-    position: absolute;
-    inset: 0;
-    width: 100% !important;
-    height: 100% !important;
-
-    display: block !important;
-    max-width: none !important;
-    max-height: none !important;
-
-    object-fit: cover !important;
-    object-position: center center;
-    border-radius: 0;
+/* copy */
+.khe-copy {
+    padding-top: 34px;
+    /* leaves room for pill */
+    text-align: left;
 }
 
-/* =========================
-   BODY
-   ========================= */
-.khe-body {
-    padding: 16px;
-    flex: 1;
+.khe-name {
+    margin: 0 0 6px 0;
 }
 
-.khe-cardTitle {
-    margin: 0 0 6px;
-    color: var(--kc-text-primary);
-}
-
-.khe-cardDesc {
+.khe-desc {
     margin: 0;
-    color: var(--kc-text-secondary);
-    line-height: 1.55;
 }
 
-/* =========================
-   CTA HINT (NEW)
-   ========================= */
-.khe-ctaHint {
-    margin: 18px auto 10px;
-    text-align: center;
-    max-width: 64ch;
-    color: rgba(15, 23, 42, 0.62);
+/* media */
+.khe-media {
+    width: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--kc-bg-soft);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.khe-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
 }
 
 /* =========================
    CTA
    ========================= */
+
+.khe-ctaHint {
+    margin: 22px auto 10px;
+    text-align: center;
+    color: rgba(15, 23, 42, 0.62);
+}
+
 .khe-ctaRow {
-    margin-top: 0;
     display: flex;
     justify-content: center;
 }
@@ -182,29 +166,37 @@
 /* =========================
    RESPONSIVE
    ========================= */
-@media (max-width: 1100px) {
-    .khe-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
 
-@media (max-width: 900px) {
+@media (max-width: 980px) {
     .khe-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
+        max-width: 820px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    .khe-title {
-        max-width: 720px;
+    .khe-card {
+        border-radius: 18px;
+    }
+
+    .khe-media {
+        border-radius: 16px;
     }
 }
 
 @media (max-width: 640px) {
-    .khe-grid {
-        grid-template-columns: 1fr;
-    }
-
     .khe-ctaRow .kx-btn {
         width: 100%;
         max-width: 420px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .khe-card {
+        transition: none !important;
+    }
+
+    .khe-card:hover {
+        transform: none;
     }
 }
