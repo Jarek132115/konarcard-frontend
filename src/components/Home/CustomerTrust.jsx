@@ -1,54 +1,53 @@
 // frontend/src/components/Home/CustomerTrust.jsx
 import React, { useMemo } from "react";
-import { Link } from "react-router-dom";
 import "../../styling/home/customertrust.css";
 
-/* Icons */
-import WorksOnEveryPhone from "../../assets/icons/WorksOnEveryPhone.svg";
-import YourWorkAllInOnePlace from "../../assets/icons/YourWorkAllInOnePlace.svg";
-import InstantContactOptions from "../../assets/icons/InstantContactOptions.svg";
-import UpdateAnytime from "../../assets/icons/UpdateAnytime.svg";
-import LooksProfessional from "../../assets/icons/LooksProfessional.svg";
-import ShareAnywhere from "../../assets/icons/ShareAnywhere.svg";
+/* ✅ New trust section images */
+import TrustSection1 from "../../assets/images/TrustSection1.jpg";
+import TrustSection2 from "../../assets/images/TrustSection2.jpg";
+import TrustSection3 from "../../assets/images/TrustSection3.jpg";
+import TrustSection4 from "../../assets/images/TrustSection4.jpg";
+import TrustSection5 from "../../assets/images/TrustSection5.jpg";
+import TrustSection6 from "../../assets/images/TrustSection6.jpg";
 
 export default function CustomerTrust() {
     const cards = useMemo(
         () => [
             {
-                icon: WorksOnEveryPhone,
-                alt: "Works on every phone icon",
+                img: TrustSection1,
+                alt: "KonarCard works on every phone example",
                 title: "Works on every phone",
-                desc: "No apps. Just tap or scan.",
+                desc: "Tap or scan to open your profile instantly - no apps, no setup.",
             },
             {
-                icon: YourWorkAllInOnePlace,
-                alt: "Your work all in one place icon",
+                img: TrustSection2,
+                alt: "KonarCard shows your work in one place example",
                 title: "Your work, all in one place",
-                desc: "Photos, services, and reviews together.",
+                desc: "Show photos, services, pricing, and reviews clearly in one simple layout.",
             },
             {
-                icon: InstantContactOptions,
-                alt: "Instant contact options icon",
+                img: TrustSection3,
+                alt: "KonarCard instant contact options example",
                 title: "Instant contact options",
-                desc: "Call, message, or save details instantly.",
+                desc: "Let customers call, WhatsApp, email, or save your number in one tap.",
             },
             {
-                icon: UpdateAnytime,
-                alt: "Update anytime icon",
+                img: TrustSection4,
+                alt: "KonarCard update anytime example",
                 title: "Update anytime",
-                desc: "Change details without reprinting cards.",
+                desc: "Change your details, prices, or photos once - it updates everywhere.",
             },
             {
-                icon: LooksProfessional,
-                alt: "Looks professional icon",
+                img: TrustSection5,
+                alt: "KonarCard looks professional example",
                 title: "Looks professional",
-                desc: "A clean profile that builds trust fast.",
+                desc: "Make a strong first impression before you even speak.",
             },
             {
-                icon: ShareAnywhere,
-                alt: "Share anywhere icon",
+                img: TrustSection6,
+                alt: "KonarCard share anywhere example",
                 title: "Share anywhere",
-                desc: "Online, in person, or after the job.",
+                desc: "In person, on site, online, or across social media.",
             },
         ],
         []
@@ -61,32 +60,38 @@ export default function CustomerTrust() {
                     <p className="kc-pill kht__kicker">Built for trades</p>
 
                     <h2 className="h3 kht__title">
-                        Everything <span className="kht__accent">Customers</span> Need to{" "}
-                        <span className="kht__accent">Trust</span>{" "}
-                        <span className="kht__accent">You</span>
+                        Everything <span className="kht__accent">Customers</span> Need
+                        <br />
+                        to <span className="kht__accent">Trust You</span>
                     </h2>
 
-                    {/* ✅ Shorter, cleaner subheading */}
-                    <p className="body-s kht__sub">
-                        Your KonarCard puts your work, reviews, and contact details in one place — so customers can trust you fast.
+                    <p className="kc-subheading kht__sub">
+                        Put your work, reviews, and contact options in one place — so
+                        <br />
+                        customers choose you faster.
                     </p>
                 </header>
 
                 <div className="kht__grid" role="list" aria-label="Trust builder features">
                     {cards.map((c, i) => (
                         <article key={i} className="kht__card" role="listitem">
-                            <div className="kht__iconTop" aria-hidden="true">
-                                <img className="kht__iconImg" src={c.icon} alt="" loading="lazy" />
+                            <div className="kht__copy">
+                                <h3 className="kc-title kht__cardTitle">{c.title}</h3>
+                                <p className="body kht__cardDesc">{c.desc}</p>
                             </div>
 
-                            <div className="kht__copy">
-                                <h3 className="h6 kht__cardTitle">{c.title}</h3>
-                                <p className="body-s kht__cardDesc">{c.desc}</p>
+                            <div className="kht__imgWrap" aria-hidden="true">
+                                <img
+                                    className="kht__img"
+                                    src={c.img}
+                                    alt={c.alt}
+                                    loading="lazy"
+                                    decoding="async"
+                                />
                             </div>
                         </article>
                     ))}
                 </div>
-
             </div>
         </section>
     );

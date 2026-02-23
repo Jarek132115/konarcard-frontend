@@ -1,6 +1,6 @@
 /* =========================================================
    HOME — COMPARISON (Paper vs Konar)
-   Matches Figma (image 2)
+   Typography comes ONLY from fonts.css
    Gap rules:
    - pill -> h3 : 8px
    - h3 -> subheading : 8px
@@ -8,7 +8,7 @@
    ========================================================= */
 
 .kc-comp {
-    background: #ffffff;
+    background: var(--kc-bg-soft);
     color: var(--kc-text-primary);
     padding: 96px 0;
 }
@@ -38,12 +38,10 @@
 
 .kc-comp__kicker {
     margin: 0 0 8px 0;
-    /* pill -> h3 */
 }
 
 .kc-comp__title {
     margin: 0 0 8px 0;
-    /* h3 -> subheading */
     max-width: 860px;
 }
 
@@ -54,13 +52,6 @@
 .kc-comp__sub {
     margin: 0;
     max-width: 720px;
-
-    /* Desktop Subheading 16/24 (Figma) */
-    font-family: "Inter", sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    color: var(--kc-text-secondary);
 }
 
 /* header -> cards = 36px */
@@ -77,12 +68,11 @@
    ========================= */
 
 .kc-comp__or {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 1;
-    color: rgba(15, 23, 42, 0.90);
     padding: 0 10px;
+    color: rgba(15, 23, 42, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* =========================
@@ -107,7 +97,7 @@
     box-shadow: 0 18px 46px rgba(249, 115, 22, 0.28);
 }
 
-/* little pill inside cards */
+/* little pill inside cards (NOT the global kc-pill) */
 .kc-comp__cardPill {
     display: inline-flex;
     align-items: center;
@@ -116,14 +106,13 @@
     padding: 6px 12px;
     border-radius: 999px;
 
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 12px;
-    line-height: 1;
-    color: rgba(15, 23, 42, 0.85);
-
     background: #ffffff;
     border: 1px solid rgba(15, 23, 42, 0.14);
+    color: rgba(15, 23, 42, 0.85);
+
+    /* ✅ make 14px on desktop */
+    font-size: 14px;
+    line-height: 1;
 
     margin-bottom: 16px;
 }
@@ -134,13 +123,9 @@
     color: rgba(255, 255, 255, 0.92);
 }
 
+/* titles + hints spacing only */
 .kc-comp__cardTitle {
     margin: 0 0 6px 0;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
-    font-size: 22px;
-    line-height: 30px;
-    color: var(--kc-text-primary);
 }
 
 .kc-comp__cardTitle--white {
@@ -149,10 +134,6 @@
 
 .kc-comp__cardHint {
     margin: 0 0 18px 0;
-    font-family: "Inter", sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-    line-height: 22px;
     color: rgba(15, 23, 42, 0.70);
 }
 
@@ -171,20 +152,15 @@
     background: rgba(255, 255, 255, 0.22);
 }
 
+/* list */
 .kc-comp__listTitle {
     margin: 0 0 12px 0;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 22px;
-    color: rgba(15, 23, 42, 0.90);
 }
 
 .kc-comp__listTitle--white {
     color: rgba(255, 255, 255, 0.95);
 }
 
-/* list */
 .kc-comp__list {
     list-style: none;
     padding: 0;
@@ -211,22 +187,16 @@
 }
 
 .kc-comp__rowText {
-    font-family: "Inter", sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-    line-height: 22px;
     color: rgba(15, 23, 42, 0.85);
 }
 
+.kc-comp__row--white .kc-comp__rowText,
 .kc-comp__rowText--white {
     color: rgba(255, 255, 255, 0.95);
 }
 
 .kc-comp__note {
     margin: 18px 0 0 0;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    line-height: 20px;
     color: rgba(15, 23, 42, 0.60);
 }
 
@@ -250,7 +220,6 @@
 
     .kc-comp__or {
         padding: 6px 0;
-        text-align: center;
     }
 }
 

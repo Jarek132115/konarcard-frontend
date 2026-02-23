@@ -1,34 +1,31 @@
 /* frontend/src/styling/home/howitworks.css
-   =========================================================
-   HOME — HOW IT WORKS (match Share cards)
-   ========================================================= */
+   Layout only — typography comes from fonts.css
+*/
 
 .hiw {
     background: var(--kc-bg-main);
-    color: var(--kc-text-primary);
-    padding: 80px 0;
+    padding: 96px 0;
 }
 
 @media (max-width: 600px) {
     .hiw {
-        padding: 56px 0;
+        padding: 64px 0;
     }
 }
 
 .hiw__inner {
-    max-width: 1040px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* Head */
+/* Header spacing */
 .hiw__head {
     text-align: center;
-    margin-bottom: 18px;
 }
 
 .hiw__kicker {
-    margin: 0 0 10px;
+    margin: 0 0 8px;
 }
 
 .hiw__title {
@@ -38,209 +35,124 @@
 .hiw__sub {
     margin: 0 auto;
     max-width: 760px;
-    color: var(--kc-text-secondary);
+}
+
+.hiw__accent {
+    color: var(--kc-accent-primary);
 }
 
 /* Grid */
 .hiw__grid {
-    margin-top: 18px;
+    margin: 36px 0 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    align-items: stretch;
-
+    gap: 24px;
     list-style: none;
     padding: 0;
 }
 
-/* Card (share-style) */
+/* Card */
 .hiw__card {
-    border: 1px solid var(--kc-border);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     background: #ffffff;
-    border-radius: 16px;
+    border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+
+    box-shadow: 0 18px 44px rgba(16, 24, 40, 0.06);
 
     display: flex;
     flex-direction: column;
-    min-width: 0;
 
     transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .hiw__card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.10);
+    box-shadow: 0 22px 54px rgba(16, 24, 40, 0.09);
 }
 
-/* ✅ 1:1 media, edge-to-edge */
-.hiw-media {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    background: var(--kc-bg-soft);
-    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-    overflow: hidden;
+.hiw__cardTop {
+    padding: 22px;
+    padding-bottom: 16px;
 }
 
-/* ✅ pill top-left like Share */
-.hiw-pill {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    z-index: 3;
-
+/* Step pill */
+.hiw__stepPill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
     border-radius: 999px;
-    padding: 7px 10px;
-    font-size: 12px;
-    font-weight: 800;
+    padding: 8px 14px;
 
     border: 1px solid rgba(15, 23, 42, 0.14);
     background: rgba(255, 255, 255, 0.92);
     color: rgba(15, 23, 42, 0.78);
 
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    margin-bottom: 16px;
 }
 
-/* Mock fills the media area */
-.hiw-mock {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
+.hiw__cardTitle {
+    margin: 0 0 8px;
 }
 
-/* Mock UI */
-.hiw-mock__top {
-    padding: 14px 14px 10px;
+.hiw__cardDesc {
+    margin: 0;
+    max-width: 48ch;
+}
+
+/* Image */
+.hiw__imgWrap {
+    padding: 0 22px 22px;
+    margin-top: auto;
+}
+
+.hiw__img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 16px;
+    display: block;
+    background: var(--kc-bg-soft);
+}
+
+/* CTA */
+.hiw__ctaDesc {
+    margin: 32px auto 12px;
     text-align: center;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-    background: rgba(255, 255, 255, 0.85);
 }
 
-.hiw-mock__window {
-    display: inline-flex;
-    gap: 6px;
-    margin-bottom: 10px;
-}
-
-.hiw-mock__window span {
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.14);
-}
-
-.hiw-mock__phTitle {
-    height: 16px;
-    width: 58%;
-    margin: 0 auto 8px;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.10);
-}
-
-.hiw-mock__phSub {
-    height: 10px;
-    width: 76%;
-    margin: 0 auto;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.08);
-}
-
-.hiw-mock__body {
-    padding: 14px;
-    background: #fff;
-    flex: 1;
-}
-
-.hiw-mock__phBlock {
-    height: 36px;
-    border-radius: 12px;
-    background: rgba(15, 23, 42, 0.06);
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    margin-bottom: 10px;
-}
-
-.hiw-mock__phBlock--lg {
-    height: 52px;
-}
-
-.hiw-mock__phRow {
-    display: flex;
-    gap: 10px;
-    margin-top: 6px;
-}
-
-.hiw-mock__phPill {
-    flex: 1;
-    height: 30px;
-    border-radius: 999px;
-    background: rgba(249, 115, 22, 0.10);
-    border: 1px solid rgba(249, 115, 22, 0.18);
-}
-
-/* Body */
-.hiw__body {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.hiw__stepTitle {
-    margin: 0;
-}
-
-.hiw__stepDesc {
-    margin: 0;
-    color: var(--kc-text-secondary);
-    line-height: 1.55;
-    max-width: 42ch;
-    /* helps keep it ~2 lines */
-}
-
-/* Bottom CTAs */
 .hiw__cta {
-    margin-top: 18px;
     display: flex;
-    gap: 10px;
     justify-content: center;
+    gap: 16px;
     flex-wrap: wrap;
 }
 
 /* Responsive */
-@media (max-width: 980px) {
+@media (max-width: 1020px) {
     .hiw__grid {
         grid-template-columns: 1fr;
-        max-width: 560px;
+        max-width: 720px;
         margin-left: auto;
         margin-right: auto;
     }
-}
 
-@media (prefers-reduced-motion: reduce) {
-    .hiw__card {
-        transition: none !important;
-    }
-
-    .hiw__card:hover {
-        transform: none;
+    .hiw__img {
+        height: 320px;
     }
 }
 
-.hiw-accent {
-    color: var(--kc-accent-primary);
-}
+@media (max-width: 600px) {
+    .hiw__img {
+        height: 240px;
+    }
 
-/* Supporting CTA description */
-.hiw__ctaDesc {
-    margin: 22px auto 8px;
-    text-align: center;
-    max-width: 560px;
-    color: var(--kc-text-secondary);
+    .hiw__cardTop {
+        padding: 18px;
+    }
+
+    .hiw__imgWrap {
+        padding: 0 18px 18px;
+    }
 }

@@ -1,22 +1,23 @@
 /* frontend/src/styling/home/customertrust.css */
 /* =========================================================
-   HOME — CUSTOMER TRUST (match VALUE section)
+   HOME — CUSTOMER TRUST (new photo cards)
+   Typography comes ONLY from fonts.css
    ========================================================= */
 
 .kht {
-    background: #fafafa;
+    background: var(--kc-bg-soft);
     color: var(--kc-text-primary);
-    padding: 80px 0;
+    padding: 96px 0;
 }
 
 @media (max-width: 600px) {
     .kht {
-        padding: 56px 0;
+        padding: 64px 0;
     }
 }
 
 .kht__inner {
-    max-width: 1040px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -27,15 +28,18 @@
 
 .kht__head {
     text-align: center;
-    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .kht__kicker {
-    margin: 0 0 12px;
+    margin: 0 0 8px 0;
 }
 
 .kht__title {
-    margin: 0 0 10px;
+    margin: 0 0 8px 0;
+    max-width: 860px;
 }
 
 .kht__accent {
@@ -43,18 +47,13 @@
 }
 
 .kht__sub {
-    margin: 0 auto;
+    margin: 0;
     max-width: 760px;
-    color: var(--kc-text-secondary);
-    line-height: 1.6;
 }
 
-/* =========================
-   GRID
-   ========================= */
-
+/* header -> grid spacing */
 .kht__grid {
-    margin-top: 24px;
+    margin-top: 36px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
@@ -62,60 +61,54 @@
 }
 
 /* =========================
-   CARD (like VALUE)
+   CARD
    ========================= */
 
 .kht__card {
     border: 1px solid var(--kc-border);
     background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.06);
+    border-radius: 18px;
+    box-shadow: 0 10px 24px rgba(16, 24, 40, 0.06);
 
     padding: 20px;
     display: flex;
     flex-direction: column;
+    gap: 14px;
 
     transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
 .kht__card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 26px rgba(16, 24, 40, 0.08);
+    box-shadow: 0 14px 30px rgba(16, 24, 40, 0.08);
     border-color: rgba(249, 115, 22, 0.22);
 }
 
-/* Icon (top, no bg) */
-.kht__iconTop {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 14px;
-    display: grid;
-    place-items: center;
+.kht__copy {
+    text-align: left;
 }
 
-.kht__iconImg {
-    width: 40px;
-    height: 40px;
-    display: block;
-    object-fit: contain;
-}
-
-/* Copy */
 .kht__cardTitle {
-    margin: 0 0 6px;
+    margin: 0 0 6px 0;
 }
 
 .kht__cardDesc {
     margin: 0;
-    color: var(--kc-text-secondary);
-    line-height: 1.55;
 }
 
-/* CTA */
-.kht__cta {
-    margin-top: 32px;
-    display: flex;
-    justify-content: center;
+/* image block inside card */
+.kht__imgWrap {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--kc-bg-soft);
+}
+
+.kht__img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
 }
 
 /* =========================
@@ -131,6 +124,15 @@
 @media (max-width: 640px) {
     .kht__grid {
         grid-template-columns: 1fr;
+    }
+
+    .kht__card {
+        padding: 18px;
+        border-radius: 16px;
+    }
+
+    .kht__imgWrap {
+        border-radius: 14px;
     }
 }
 

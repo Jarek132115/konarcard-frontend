@@ -85,23 +85,13 @@
 /* ✅ Gap scale rules */
 .kc-homeHero__pill {
     margin-bottom: 8px;
-    /* pill -> h1 */
 }
 
+/* ✅ Typography is from fonts.css (.h1). Here we only do layout/spacing. */
 .kc-homeHero__title {
-    margin: 0 auto;
-    margin-bottom: 8px;
-    /* h1 -> subheading */
-    max-width: 800px;
+    margin: 0 auto 8px;
+    max-width: 900px;
 
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 400;
-    font-size: 72px;
-    line-height: 84px;
-    letter-spacing: -0.03em;
-    color: var(--kc-text-primary);
-
-    /* allow natural wrapping */
     word-break: normal;
     overflow-wrap: anywhere;
 }
@@ -110,24 +100,16 @@
     color: var(--kc-accent-primary);
 }
 
+/* ✅ Typography is from fonts.css (.kc-subheading). Here we only do spacing. */
 .kc-homeHero__sub {
-    margin: 0 auto;
-    margin-bottom: 24px;
-    /* subheading -> CTA */
+    margin: 0 auto 24px;
     max-width: 720px;
-
-    font-family: "Inter", sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    color: var(--kc-text-secondary);
 }
 
 .kc-homeHero__ctaRow {
     display: flex;
     justify-content: center;
     gap: 16px;
-    /* CTA gap */
     flex-wrap: wrap;
 }
 
@@ -136,31 +118,33 @@
 }
 
 /* =========================
-   LOGOS — ALWAYS 5 + 4
-   Bigger on desktop, still scales down.
-   Tight consistent gaps.
+   LOGOS — Consistent gaps for 5 + 4
+   Centered, same gap on both rows
    ========================= */
 .kc-homeHero__logos {
     margin: 48px auto 0;
-    width: min(980px, 100%);
+    width: min(1120px, 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 16px;
-    /* tighter between rows */
 }
 
+/* ✅ Center both rows and force consistent gap */
 .kc-homeHero__logoRow {
     width: 100%;
     display: flex;
     justify-content: center;
+    /* ✅ centered */
     gap: 16px;
-    /* tighter between logos */
+    /* ✅ consistent gap top + bottom */
+    flex-wrap: nowrap;
 }
 
+/* ✅ Give each logo a consistent "slot" so 4 doesn't stretch */
 .kc-homeHero__logoItem {
-    /* ✅ bigger on desktop, shrink smoothly */
-    width: clamp(72px, 11vw, 140px);
+    width: clamp(140px, 16vw, 200px);
+    /* consistent slot width */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -170,13 +154,12 @@
 .kc-homeHero__logoImg {
     width: 100%;
     height: auto;
-    max-height: 72px;
-    /* bigger visibility on desktop */
+    max-height: 96px;
     object-fit: contain;
     display: block;
 }
 
-/* Small screens: a bit tighter + smaller height */
+/* Tablet */
 @media (max-width: 820px) {
     .kc-homeHero__logos {
         gap: 12px;
@@ -187,25 +170,28 @@
     }
 
     .kc-homeHero__logoItem {
-        width: clamp(56px, 12vw, 110px);
+        width: clamp(110px, 18vw, 160px);
     }
 
     .kc-homeHero__logoImg {
-        max-height: 54px;
+        max-height: 72px;
     }
 }
 
+/* Mobile */
 @media (max-width: 520px) {
     .kc-homeHero__logoRow {
         gap: 10px;
+        flex-wrap: wrap;
+        /* ✅ allow wrap if needed on tiny screens */
     }
 
     .kc-homeHero__logoItem {
-        width: clamp(44px, 14vw, 90px);
+        width: clamp(92px, 30vw, 140px);
     }
 
     .kc-homeHero__logoImg {
-        max-height: 42px;
+        max-height: 52px;
     }
 }
 
@@ -249,16 +235,17 @@
     display: none;
 }
 
+/* ✅ 24px gaps between all images (set by --gap in JS, with fallback) */
 .kc-homeHero__track {
     display: flex;
-    gap: var(--gap, 12px);
+    gap: 24px;
     align-items: flex-start;
     width: max-content;
     padding: 12px 0;
 }
 
+/* ✅ Keep aspect ratio: let the image define the height, cap at 400px */
 .kc-homeHero__phone {
-    width: 210px;
     overflow: visible;
     border-radius: 12px;
     background: #fff;
@@ -266,17 +253,26 @@
 }
 
 .kc-homeHero__viewport {
-    width: 100%;
-    height: 428px;
+    width: auto;
+    max-height: 400px;
+    /* ✅ max height */
     border-radius: 12px;
     background: var(--pill);
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .kc-homeHero__viewport img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-height: 400px;
+    /* ✅ cap height */
+    width: auto;
+    /* ✅ preserve aspect ratio */
+    height: auto;
+    /* ✅ preserve aspect ratio */
+    object-fit: contain;
+    /* ✅ do not crop */
     border-radius: inherit;
     display: block;
     user-select: none;
@@ -284,46 +280,23 @@
 }
 
 /* =========================
-   Responsive hero type + carousel
+   Responsive hero + carousel
    ========================= */
-@media (max-width: 1000px) {
-    .kc-homeHero__title {
-        font-size: 56px;
-        line-height: 64px;
-    }
-}
-
 @media (max-width: 820px) {
     .kc-homeHero__inner {
         padding-top: 104px;
     }
 
-    .kc-homeHero__title {
-        font-size: 44px;
-        line-height: 52px;
-    }
-
-    .kc-homeHero__phone {
-        width: 190px;
-    }
-
-    .kc-homeHero__viewport {
-        height: 392px;
+    .kc-homeHero__viewport,
+    .kc-homeHero__viewport img {
+        max-height: 360px;
     }
 }
 
 @media (max-width: 520px) {
-    .kc-homeHero__title {
-        font-size: 36px;
-        line-height: 44px;
-    }
 
-    .kc-homeHero__sub {
-        font-size: 15px;
-        line-height: 22px;
-    }
-
-    .kc-homeHero__viewport {
-        height: 372px;
+    .kc-homeHero__viewport,
+    .kc-homeHero__viewport img {
+        max-height: 320px;
     }
 }

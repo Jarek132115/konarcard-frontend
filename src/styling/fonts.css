@@ -2,6 +2,7 @@
 /* =========================================================
    KONARCARD DESIGN SYSTEM
    Global colours, typography & utilities
+   Responsive typography added (desktop → tablet → mobile)
    ========================================================= */
 
 /* ---------- Browser Fix ---------- */
@@ -53,6 +54,86 @@ body {
   --kc-focus-ring: rgba(249, 115, 22, 0.2);
   --kc-shadow-accent: 0 12px 28px rgba(249, 115, 22, 0.25);
   --kc-shadow-accent-hover: 0 16px 34px rgba(249, 115, 22, 0.32);
+
+  /* =========================================================
+     RESPONSIVE TYPE SCALE TOKENS
+     Desktop values match Figma exactly.
+     ========================================================= */
+  --kc-h1-size: 72px;
+  --kc-h1-line: 84px;
+
+  --kc-h2-size: 48px;
+  --kc-h2-line: 62px;
+
+  --kc-h3-size: 36px;
+  --kc-h3-line: 48px;
+
+  --kc-h4-size: 24px;
+  --kc-h4-line: normal;
+
+  --kc-title-size: 20px;
+  --kc-title-line: normal;
+
+  --kc-sub-size: 16px;
+  --kc-sub-line: 24px;
+
+  --kc-body-size: 14px;
+  --kc-body-line: 21px;
+
+  --kc-btn-size: 14px;
+  --kc-btn-line: normal;
+}
+
+/* Tablet */
+@media (max-width: 1000px) {
+  :root {
+    --kc-h1-size: 56px;
+    --kc-h1-line: 64px;
+
+    --kc-h2-size: 40px;
+    --kc-h2-line: 52px;
+
+    --kc-h3-size: 32px;
+    --kc-h3-line: 42px;
+
+    --kc-h4-size: 22px;
+
+    --kc-title-size: 18px;
+
+    --kc-sub-size: 16px;
+    --kc-sub-line: 24px;
+
+    --kc-body-size: 14px;
+    --kc-body-line: 21px;
+
+    --kc-btn-size: 14px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 520px) {
+  :root {
+    --kc-h1-size: 36px;
+    --kc-h1-line: 44px;
+
+    --kc-h2-size: 30px;
+    --kc-h2-line: 38px;
+
+    --kc-h3-size: 26px;
+    --kc-h3-line: 34px;
+
+    --kc-h4-size: 20px;
+
+    --kc-title-size: 18px;
+
+    --kc-sub-size: 15px;
+    --kc-sub-line: 22px;
+
+    --kc-body-size: 14px;
+    --kc-body-line: 21px;
+
+    --kc-btn-size: 14px;
+  }
 }
 
 /* =========================================================
@@ -70,87 +151,98 @@ body {
 
 /* =========================================================
    TYPOGRAPHY TOKENS (Match Figma styles)
-   IMPORTANT: we are not "removing" fonts — we are only
-   defining classes that use Cal Sans + Inter.
+   Now responsive via CSS variables above.
    ========================================================= */
 
-/* Desktop H1: 72/84, Cal Sans Regular */
+/* Desktop H1 (responsive) */
 .h1 {
   font-family: "Cal Sans", sans-serif;
   font-weight: 400;
-  font-size: 72px;
-  line-height: 84px;
+  font-size: var(--kc-h1-size);
+  line-height: var(--kc-h1-line);
+  letter-spacing: -0.03em;
   color: var(--kc-text-primary);
 }
 
-/* Desktop H2: 48/62, Cal Sans Regular */
+/* Desktop H2 (responsive) */
 .h2 {
   font-family: "Cal Sans", sans-serif;
   font-weight: 400;
-  font-size: 48px;
-  line-height: 62px;
+  font-size: var(--kc-h2-size);
+  line-height: var(--kc-h2-line);
+  letter-spacing: -0.02em;
   color: var(--kc-text-primary);
 }
 
-/* Desktop H3: 36/48, Cal Sans Regular */
+/* Desktop H3 (responsive) */
 .h3 {
   font-family: "Cal Sans", sans-serif;
   font-weight: 400;
-  font-size: 36px;
-  line-height: 48px;
+  font-size: var(--kc-h3-size);
+  line-height: var(--kc-h3-line);
+  letter-spacing: -0.02em;
   color: var(--kc-text-primary);
 }
 
-/* Desktop H4: 24/Auto, Cal Sans Regular */
+/* Desktop H4 (responsive) */
 .h4 {
   font-family: "Cal Sans", sans-serif;
   font-weight: 400;
-  font-size: 24px;
-  line-height: normal;
+  font-size: var(--kc-h4-size);
+  line-height: var(--kc-h4-line);
   color: var(--kc-text-primary);
 }
 
-/* Desktop Title: 20/Auto, Cal Sans Regular */
+/* Desktop Title (responsive) */
 .kc-title {
   font-family: "Cal Sans", sans-serif;
   font-weight: 400;
-  font-size: 20px;
-  line-height: normal;
+  font-size: var(--kc-title-size);
+  line-height: var(--kc-title-line);
   color: var(--kc-text-primary);
 }
 
-/* Desktop Subheading: 16/24, Inter Regular */
+/* Desktop Subheading (responsive) */
 .kc-subheading {
   font-family: "Inter", sans-serif;
   font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: var(--kc-sub-size);
+  line-height: var(--kc-sub-line);
   color: var(--kc-text-secondary);
 }
 
-/* Desktop Body: 14/21, Inter Regular */
+/* Desktop Body (responsive) */
 .body,
 .kc-body {
   font-family: "Inter", sans-serif;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 21px;
+  font-size: var(--kc-body-size);
+  line-height: var(--kc-body-line);
   color: var(--kc-text-secondary);
 }
 
-/* Button Text: Inter Medium 14 / Auto */
+/* Button Text (responsive) */
 .button-text {
   font-family: "Inter", sans-serif;
   font-weight: 500;
-  font-size: 14px;
-  line-height: normal;
+  font-size: var(--kc-btn-size);
+  line-height: var(--kc-btn-line);
   letter-spacing: 0;
+}
+
+/* (Optional) small helpers used across components */
+.body-s {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: var(--kc-body-size);
+  line-height: var(--kc-body-line);
+  color: var(--kc-text-secondary);
 }
 
 /* =========================================================
    REUSABLE PILL (Hero / Pricing-style)
    Padding: 6px TB, 10px LR
-   Drop shadow: x0 y0 blur2, #0F172A @ 50%
+   Shadow: 0 0 2px rgba(15, 23, 42, 0.5)
    ========================================================= */
 .kc-pill {
   display: inline-flex;
@@ -172,7 +264,6 @@ body {
 
 /* =========================================================
    BUTTONS — CTA System (kx-*)
-   FIX: restore proper colors and make sure they show.
    Hug contents, padding 12/18
    ========================================================= */
 .kx-btn {
@@ -187,7 +278,7 @@ body {
   border: 1px solid rgba(15, 23, 42, 0.14);
 
   font-family: "Inter", sans-serif;
-  font-size: 14px;
+  font-size: var(--kc-btn-size);
   font-weight: 600;
   line-height: 1;
 
@@ -244,4 +335,29 @@ body {
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+/* Slightly smaller buttons on very small screens (keeps 12/18 padding) */
+@media (max-width: 420px) {
+  .kx-btn {
+    padding: 12px 16px;
+  }
+}
+
+/* Desktop Subheading (responsive) */
+.kc-subheading {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: var(--kc-sub-size);
+  line-height: var(--kc-sub-line);
+  color: var(--kc-text-secondary);
+}
+
+/* ✅ Subheading (Medium) — same sizing as kc-subheading, but weight 500 */
+.kc-subheading-md {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: var(--kc-sub-size);
+  line-height: var(--kc-sub-line);
+  color: var(--kc-text-secondary);
 }

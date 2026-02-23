@@ -80,7 +80,7 @@ export default function Hero() {
 
     useEffect(() => {
         const el = scrollerRef.current;
-        if (el) el.style.setProperty("--gap", "10px");
+        if (el) el.style.setProperty("--gap", "24px"); // ✅ 24px gap between images
     }, []);
 
     const computeGroupWidth = () => {
@@ -257,29 +257,37 @@ export default function Hero() {
                         NFC + QR Digital Business Card for Trades
                     </div>
 
-                    {/* ✅ Auto-wrap (no forced line break) */}
-                    <h1 className="kc-homeHero__title">
-                        The Digital <span className="kc-homeHero__accent">Business Card</span> Built For Trades
+                    {/* ✅ typography comes from fonts.css */}
+                    <h1 className="h1 kc-homeHero__title">
+                        The Digital{" "}
+                        <span className="kc-homeHero__accent">Business Card</span> Built For Trades
                     </h1>
 
-                    <p className="kc-homeHero__sub">
+                    {/* ✅ typography comes from fonts.css */}
+                    <p className="kc-subheading kc-homeHero__sub">
                         Share your contact details with a tap, QR, or link - and update
                         <br />
                         them anytime.
                     </p>
 
                     <div className="kc-homeHero__ctaRow">
-                        <Link to="/register" className="kx-btn kx-btn--orange kc-homeHero__ctaBtn">
+                        <Link
+                            to="/register"
+                            className="kx-btn kx-btn--orange kc-homeHero__ctaBtn"
+                        >
                             Claim Your Link
                         </Link>
 
-                        <Link to="/how-it-works" className="kx-btn kx-btn--white kc-homeHero__ctaBtn">
+                        <Link
+                            to="/how-it-works"
+                            className="kx-btn kx-btn--white kc-homeHero__ctaBtn"
+                        >
                             Watch How It Works
                         </Link>
                     </div>
                 </div>
 
-                {/* ✅ Logos: ALWAYS 5 top + 4 bottom. Same size. Tight gaps. */}
+                {/* ✅ Logos: bigger on desktop, expand to near full width */}
                 <div className="kc-homeHero__logos" aria-label="Trusted by UK businesses">
                     <div className="kc-homeHero__logoRow kc-homeHero__logoRow--top">
                         {logosTop.map((l, idx) => (
