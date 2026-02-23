@@ -257,10 +257,9 @@ export default function Hero() {
                         NFC + QR Digital Business Card for Trades
                     </div>
 
+                    {/* ✅ Auto-wrap (no forced line break) */}
                     <h1 className="kc-homeHero__title">
-                        The Digital <span className="kc-homeHero__accent">Business Card</span>
-                        <br />
-                        Built For Trades
+                        The Digital <span className="kc-homeHero__accent">Business Card</span> Built For Trades
                     </h1>
 
                     <p className="kc-homeHero__sub">
