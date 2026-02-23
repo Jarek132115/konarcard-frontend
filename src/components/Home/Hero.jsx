@@ -40,13 +40,19 @@ export default function Hero() {
         []
     );
 
-    const logos = useMemo(
+    const logosTop = useMemo(
         () => [
             { src: LogoHero1, alt: "Customer logo 1" },
             { src: LogoHero2, alt: "Customer logo 2" },
             { src: LogoHero3, alt: "Customer logo 3" },
             { src: LogoHero4, alt: "Customer logo 4" },
             { src: LogoHero5, alt: "Customer logo 5" },
+        ],
+        []
+    );
+
+    const logosBottom = useMemo(
+        () => [
             { src: LogoHero6, alt: "Customer logo 6" },
             { src: LogoHero7, alt: "Customer logo 7" },
             { src: LogoHero8, alt: "Customer logo 8" },
@@ -70,7 +76,6 @@ export default function Hero() {
 
     const renderGroups = 3;
     const groups = useMemo(() => new Array(renderGroups).fill(0), []);
-
     const groupWidthRef = useRef(0);
 
     useEffect(() => {
@@ -247,16 +252,13 @@ export default function Hero() {
     return (
         <header className="kc-homeHero">
             <div className="kc-homeHero__inner">
-                {/* Copy */}
                 <div className="kc-homeHero__copyGrid">
-                    {/* ✅ Reusable pill (from fonts.css) */}
                     <div className="kc-pill kc-homeHero__pill">
                         NFC + QR Digital Business Card for Trades
                     </div>
 
                     <h1 className="kc-homeHero__title">
-                        The Digital{" "}
-                        <span className="kc-homeHero__accent">Business Card</span>
+                        The Digital <span className="kc-homeHero__accent">Business Card</span>
                         <br />
                         Built For Trades
                     </h1>
@@ -278,22 +280,37 @@ export default function Hero() {
                     </div>
                 </div>
 
-                {/* Logos (now ABOVE the example cards like your 2nd design) */}
-                <div className="kc-homeHero__logoGrid" aria-label="Trusted by UK businesses">
-                    {logos.map((l, idx) => (
-                        <div key={idx} className="kc-homeHero__logoCard">
-                            <img
-                                src={l.src}
-                                alt={l.alt}
-                                className="kc-homeHero__logoImg"
-                                loading="lazy"
-                                decoding="async"
-                            />
-                        </div>
-                    ))}
+                {/* ✅ Logos: ALWAYS 5 top + 4 bottom. Same size. Tight gaps. */}
+                <div className="kc-homeHero__logos" aria-label="Trusted by UK businesses">
+                    <div className="kc-homeHero__logoRow kc-homeHero__logoRow--top">
+                        {logosTop.map((l, idx) => (
+                            <div key={`top-${idx}`} className="kc-homeHero__logoItem">
+                                <img
+                                    src={l.src}
+                                    alt={l.alt}
+                                    className="kc-homeHero__logoImg"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="kc-homeHero__logoRow kc-homeHero__logoRow--bottom">
+                        {logosBottom.map((l, idx) => (
+                            <div key={`bottom-${idx}`} className="kc-homeHero__logoItem">
+                                <img
+                                    src={l.src}
+                                    alt={l.alt}
+                                    className="kc-homeHero__logoImg"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
-                {/* Carousel */}
                 <div className="kc-homeHero__carousel" aria-label="Example digital business cards">
                     <div className="kc-homeHero__scrollerOuter">
                         <div

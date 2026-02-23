@@ -23,10 +23,16 @@ body {
   box-sizing: border-box;
 }
 
+/* Ensure consistent box sizing everywhere */
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
 /* =========================================================
    COLOUR TOKENS
    ========================================================= */
-
 :root {
   --kc-bg-main: #ffffff;
   --kc-bg-soft: #fafafa;
@@ -39,9 +45,7 @@ body {
 
   --kc-border: #e5e7eb;
 
-  /* =========================================================
-     PAGE LAYOUT UTILITIES (CONSISTENT NAV GAP)
-     ========================================================= */
+  /* PAGE LAYOUT UTILITIES */
   --kc-page-top-space: 160px;
   --kc-page-top-space-mobile: 120px;
 
@@ -51,146 +55,103 @@ body {
   --kc-shadow-accent-hover: 0 16px 34px rgba(249, 115, 22, 0.32);
 }
 
-/* Utility colour classes (use sparingly) */
-.text-primary {
-  color: var(--kc-text-primary);
-}
-
-.text-secondary {
-  color: var(--kc-text-secondary);
-}
-
-.text-white {
-  color: #ffffff;
-}
-
-.bg-main {
-  background-color: var(--kc-bg-main);
-}
-
-.bg-soft {
-  background-color: var(--kc-bg-soft);
-}
-
-.bg-orange {
-  background-color: var(--kc-accent-primary);
-}
-
 /* =========================================================
    PAGE LAYOUT HELPERS
    ========================================================= */
-
-/* Apply to <main> on pages to keep spacing consistent site-wide */
 .kc-page {
   padding-top: var(--kc-page-top-space);
 }
 
+@media (max-width: 600px) {
+  .kc-page {
+    padding-top: var(--kc-page-top-space-mobile);
+  }
+}
+
 /* =========================================================
-   TYPOGRAPHY – DESKTOP FIRST
+   TYPOGRAPHY TOKENS (Match Figma styles)
+   IMPORTANT: we are not "removing" fonts — we are only
+   defining classes that use Cal Sans + Inter.
    ========================================================= */
 
-/* ---------- Headings (Cal Sans) ---------- */
-
+/* Desktop H1: 72/84, Cal Sans Regular */
 .h1 {
   font-family: "Cal Sans", sans-serif;
+  font-weight: 400;
   font-size: 72px;
-  font-weight: 500;
-  line-height: 80px;
+  line-height: 84px;
   color: var(--kc-text-primary);
 }
 
+/* Desktop H2: 48/62, Cal Sans Regular */
 .h2 {
   font-family: "Cal Sans", sans-serif;
+  font-weight: 400;
   font-size: 48px;
-  font-weight: 500;
-  line-height: 56px;
+  line-height: 62px;
   color: var(--kc-text-primary);
 }
 
+/* Desktop H3: 36/48, Cal Sans Regular */
 .h3 {
   font-family: "Cal Sans", sans-serif;
+  font-weight: 400;
   font-size: 36px;
-  font-weight: 500;
-  line-height: 44px;
+  line-height: 48px;
   color: var(--kc-text-primary);
 }
 
+/* Desktop H4: 24/Auto, Cal Sans Regular */
 .h4 {
   font-family: "Cal Sans", sans-serif;
-  font-size: 28px;
-  font-weight: 500;
-  line-height: 36px;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: normal;
   color: var(--kc-text-primary);
 }
 
-.h5 {
+/* Desktop Title: 20/Auto, Cal Sans Regular */
+.kc-title {
   font-family: "Cal Sans", sans-serif;
-  font-size: 22px;
-  font-weight: 500;
-  line-height: 30px;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: normal;
   color: var(--kc-text-primary);
 }
 
-.h6 {
-  font-family: "Cal Sans", sans-serif;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 26px;
-  color: var(--kc-text-primary);
-}
-
-/* ---------- Body Text ---------- */
-
-.body {
+/* Desktop Subheading: 16/24, Inter Regular */
+.kc-subheading {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
   font-size: 16px;
-  line-height: 26px;
+  line-height: 24px;
   color: var(--kc-text-secondary);
 }
 
-.body-s {
+/* Desktop Body: 14/21, Inter Regular */
+.body,
+.kc-body {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
   font-size: 14px;
-  line-height: 22px;
+  line-height: 21px;
   color: var(--kc-text-secondary);
 }
 
-.body-xs {
-  font-size: 12px;
-  line-height: 18px;
-  color: var(--kc-text-secondary);
-}
-
-/* ---------- UI Text ---------- */
-
-.label {
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.4px;
-  color: var(--kc-text-secondary);
-}
-
-.pill {
-  font-size: 12px;
-  font-weight: 500;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background-color: var(--kc-bg-soft);
-  color: var(--kc-text-primary);
-}
-
+/* Button Text: Inter Medium 14 / Auto */
 .button-text {
-  font-family: "Cal Sans", sans-serif;
-  font-size: 15px;
+  font-family: "Inter", sans-serif;
   font-weight: 500;
-  letter-spacing: 0.5px;
+  font-size: 14px;
+  line-height: normal;
+  letter-spacing: 0;
 }
 
 /* =========================================================
    REUSABLE PILL (Hero / Pricing-style)
-   White background + subtle drop shadow (0,0,2)
-   Padding: 6px top/bottom, 10px left/right
-   Shadow color: primary text (#0F172A) at 50% opacity
+   Padding: 6px TB, 10px LR
+   Drop shadow: x0 y0 blur2, #0F172A @ 50%
    ========================================================= */
-
 .kc-pill {
   display: inline-flex;
   align-items: center;
@@ -200,109 +161,27 @@ body {
   border-radius: 999px;
 
   background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-
   font-family: "Inter", sans-serif;
   font-size: 12px;
   font-weight: 600;
   line-height: 1;
   color: rgba(15, 23, 42, 0.78);
 
-  /* ✅ Figma drop shadow: x0 y0 blur2, color #0F172A @ 50% */
   box-shadow: 0 0 2px rgba(15, 23, 42, 0.5);
 }
 
-/* Optional variant (if you ever want a softer pill) */
-.kc-pill--soft {
-  background: rgba(15, 23, 42, 0.02);
-  box-shadow: none;
-}
-
 /* =========================================================
-   RESPONSIVE – TABLET
+   BUTTONS — CTA System (kx-*)
+   FIX: restore proper colors and make sure they show.
+   Hug contents, padding 12/18
    ========================================================= */
-
-@media (max-width: 1000px) {
-  .h1 {
-    font-size: 56px;
-    line-height: 64px;
-  }
-
-  .h2 {
-    font-size: 40px;
-    line-height: 48px;
-  }
-
-  .h3 {
-    font-size: 30px;
-    line-height: 38px;
-  }
-
-  .h4 {
-    font-size: 24px;
-    line-height: 32px;
-  }
-
-  .h5 {
-    font-size: 20px;
-    line-height: 28px;
-  }
-}
-
-/* =========================================================
-   RESPONSIVE – MOBILE
-   ========================================================= */
-
-@media (max-width: 600px) {
-
-  /* consistent top spacing under navbar */
-  .kc-page {
-    padding-top: var(--kc-page-top-space-mobile);
-  }
-
-  .h1 {
-    font-size: 36px;
-    line-height: 44px;
-  }
-
-  .h2 {
-    font-size: 28px;
-    line-height: 36px;
-  }
-
-  .h3 {
-    font-size: 24px;
-    line-height: 32px;
-  }
-
-  .h4 {
-    font-size: 22px;
-    line-height: 30px;
-  }
-
-  .h5 {
-    font-size: 18px;
-    line-height: 26px;
-  }
-
-  .body {
-    font-size: 15px;
-    line-height: 22px;
-  }
-}
-
-/* =========================================================
-   BUTTONS — Reusable CTA System (kx-*)
-   Matches the FAQ buttons (rounded, clean, premium)
-   ========================================================= */
-
 .kx-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  height: 44px;
-  padding: 0 18px;
+  height: auto;
+  padding: 12px 18px;
 
   border-radius: 12px;
   border: 1px solid rgba(15, 23, 42, 0.14);
@@ -317,7 +196,8 @@ body {
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 
-  transition: transform 0.12s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.12s ease, background-color 0.15s ease,
+    border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .kx-btn:hover {
@@ -335,39 +215,29 @@ body {
   box-shadow: 0 0 0 3px var(--kc-focus-ring);
 }
 
-/* ----- Variants ----- */
-
-/* Black / primary */
+/* Variants */
 .kx-btn--black {
-  background: #0b1220;
+  background: var(--kc-accent-secondary);
   color: #ffffff;
   border-color: transparent;
 }
 
-/* White / secondary */
 .kx-btn--white {
   background: #ffffff;
-  color: #0b1220;
+  color: var(--kc-text-primary);
+  border-color: rgba(15, 23, 42, 0.14);
 }
 
-/* Orange / accent */
 .kx-btn--orange {
   background: var(--kc-accent-primary);
   color: #ffffff;
   border-color: transparent;
 }
 
-/* Optional: make hover feel identical across all variants */
-.kx-btn--black:hover,
-.kx-btn--orange:hover {
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
-}
-
 .kx-btn--white:hover {
   background: rgba(15, 23, 42, 0.02);
 }
 
-/* Disabled */
 .kx-btn:disabled,
 .kx-btn[aria-disabled="true"] {
   opacity: 0.55;
