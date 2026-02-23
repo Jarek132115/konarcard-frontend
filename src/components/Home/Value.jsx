@@ -1,5 +1,5 @@
+// frontend/src/components/Home/Value.jsx
 import React, { useMemo } from "react";
-import { Link } from "react-router-dom";
 import "../../styling/home/value.css";
 
 /* Icons */
@@ -14,34 +14,34 @@ export default function Value() {
     const items = useMemo(
         () => [
             {
-                icon: SmartPhoneTapIcon,
-                title: "Works everywhere",
-                desc: "Share in person or online — on any phone, no app needed.",
-            },
-            {
-                icon: ToolsIcon,
-                title: "Built for real trades",
-                desc: "Simple, practical, and made for how you actually work on-site and on the move.",
-            },
-            {
                 icon: MoneyShieldIcon,
                 title: "One job pays for everything",
-                desc: "Land one extra job and it covers your NFC business card and profile.",
-            },
-            {
-                icon: TrophyIcon,
-                title: "Looks professional fast",
-                desc: "Builds trust instantly before you even speak.",
+                desc: "One extra job can cover your card cost.",
             },
             {
                 icon: NoPrintIcon,
                 title: "No reprints, ever",
-                desc: "Update your details anytime without reordering cards.",
+                desc: "Update details anytime - no reprints.",
             },
             {
                 icon: RefreshIcon,
                 title: "Always up to date",
-                desc: "Your latest work, reviews, and services — instantly.",
+                desc: "Your latest work and reviews stay up to date.",
+            },
+            {
+                icon: SmartPhoneTapIcon,
+                title: "Works everywhere",
+                desc: "Share anywhere - works on every phone.",
+            },
+            {
+                icon: ToolsIcon,
+                title: "Built for real trades",
+                desc: "Built for real jobs, not office desks.",
+            },
+            {
+                icon: TrophyIcon,
+                title: "Looks professional fast",
+                desc: "Look credible before you even speak.",
             },
         ],
         []
@@ -54,35 +54,26 @@ export default function Value() {
                     <p className="kc-pill khv__kicker">Built for trades</p>
 
                     <h2 className="h3 khv__title">
-                        Why <span className="khv__accent">KonarCard</span> Is Worth It
+                        Why KonarCard Is <span className="khv__accent">Worth It</span>
                     </h2>
 
-                    <p className="body-s khv__sub">
-                        A practical digital business card you can share contactless — by NFC tap, QR code, or link.
+                    <p className="kc-subheading khv__sub">
+                        A practical profile you can share by tap, QR, or link.
                     </p>
                 </header>
 
                 <div className="khv__grid" aria-label="KonarCard benefits">
                     {items.map((it, i) => (
-                        <article className="khv__card" key={i}>
-                            <div className="khv__iconTop" aria-hidden="true">
-                                <img
-                                    className="khv__iconImg"
-                                    src={it.icon}
-                                    alt=""
-                                    loading="lazy"
-                                />
+                        <article className="khv__cell" key={i}>
+                            <div className="khv__icon" aria-hidden="true">
+                                <img className="khv__iconImg" src={it.icon} alt="" loading="lazy" />
                             </div>
 
-                            <div className="khv__copy">
-                                <h3 className="h6 khv__cardTitle">{it.title}</h3>
-                                <p className="body-s khv__cardDesc">{it.desc}</p>
-                            </div>
+                            <h3 className="kc-title khv__cellTitle">{it.title}</h3>
+                            <p className="body khv__cellDesc">{it.desc}</p>
                         </article>
                     ))}
                 </div>
-
-            
             </div>
         </section>
     );

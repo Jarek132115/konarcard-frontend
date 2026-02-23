@@ -1,6 +1,6 @@
 /* =========================================================
-   HOME — VALUE SECTION
-   Clean, consistent, uses global design system
+   HOME — VALUE SECTION (MATCHES Value.jsx classNames)
+   File: frontend/src/styling/home/value.css
    ========================================================= */
 
 .khv {
@@ -27,7 +27,7 @@
 
 .khv__head {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 36px;
 }
 
 .khv__kicker {
@@ -38,7 +38,6 @@
     margin: 0 0 10px;
 }
 
-/* ✅ Orange highlight for KonarCard */
 .khv__accent {
     color: var(--kc-accent-primary);
 }
@@ -50,56 +49,61 @@
 }
 
 /* =========================
-   GRID
+   GRID (LINES ONLY BETWEEN CELLS)
    ========================= */
 
 .khv__grid {
-    margin-top: 24px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    /* borders create the separators */
     align-items: stretch;
 }
 
-/* =========================
-   CARD
-   ========================= */
+/* “Cell” look (no card box) */
+.khv__cell {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
 
-.khv__card {
-    border: 1px solid var(--kc-border);
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.06);
+    padding: 44px 28px;
 
-    padding: 20px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
 
-    transition: transform 0.12s ease, box-shadow 0.12s ease,
-        border-color 0.12s ease;
+    /* internal separators for 3-col layout */
+    border-top: 1px solid rgba(15, 23, 42, 0.18);
+    border-left: 1px solid rgba(15, 23, 42, 0.18);
 }
 
-.khv__card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 26px rgba(16, 24, 40, 0.08);
-    border-color: rgba(249, 115, 22, 0.22);
+/* remove TOP border for first row (1–3) */
+.khv__cell:nth-child(-n + 3) {
+    border-top: 0;
+}
+
+/* remove LEFT border for first column (1,4) */
+.khv__cell:nth-child(3n + 1) {
+    border-left: 0;
 }
 
 /* =========================
    ICON
    ========================= */
 
-.khv__iconTop {
-    width: 40px;
-    height: 40px;
+.khv__icon {
+    width: 44px;
+    height: 44px;
     margin-bottom: 14px;
     display: grid;
     place-items: center;
 }
 
 .khv__iconImg {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     display: block;
     object-fit: contain;
 }
@@ -108,48 +112,72 @@
    COPY
    ========================= */
 
-.khv__cardTitle {
-    margin: 0 0 6px;
+.khv__cellTitle {
+    margin: 0 0 8px;
 }
 
-.khv__cardDesc {
+.khv__cellDesc {
     margin: 0;
+    max-width: 34ch;
     color: var(--kc-text-secondary);
-    line-height: 1.55;
+    line-height: 1.6;
 }
 
 /* =========================
-   CTA
+   TABLET (2 columns)
+   - internal lines only
+   - NO left outer border
    ========================= */
-
-.khv__cta {
-    margin-top: 32px;
-    display: flex;
-    justify-content: center;
-}
-
-/* =========================
-   RESPONSIVE
-   ========================= */
-
 @media (max-width: 980px) {
     .khv__grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .khv__cell {
+        padding: 42px 24px;
+
+        /* reset then re-apply 2-col separators */
+        border-top: 1px solid rgba(15, 23, 42, 0.18);
+        border-left: 1px solid rgba(15, 23, 42, 0.18);
+    }
+
+    /* first row (1–2) no top border */
+    .khv__cell:nth-child(-n + 2) {
+        border-top: 0;
+    }
+
+    /* first column (1,3,5) no left border ✅ fixes left outer line */
+    .khv__cell:nth-child(2n + 1) {
+        border-left: 0;
     }
 }
 
+/* =========================
+   MOBILE (1 column)
+   - only horizontal dividers
+   - NO left border anywhere
+   ========================= */
 @media (max-width: 640px) {
     .khv__grid {
         grid-template-columns: 1fr;
     }
-}
 
-@media (prefers-reduced-motion: reduce) {
-    .khv__card {
-        transition: none !important;
+    .khv__cell {
+        padding: 34px 18px;
+
+        border-left: 0 !important;
+        /* ✅ never show left line */
+        border-top: 1px solid rgba(15, 23, 42, 0.18);
     }
 
-    .khv__card:hover {
-        transform: none;
+    .khv__cell:first-child {
+        border-top: 0;
+    }
+}
+
+/* Motion safety */
+@media (prefers-reduced-motion: reduce) {
+    .khv__cell {
+        transition: none !important;
     }
 }
