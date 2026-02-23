@@ -2,38 +2,7 @@
 import React, { useMemo } from "react";
 import "../../styling/home/comparison.css";
 
-import PricingTick from "../../assets/icons/PricingTick.svg";
-import XTick from "../../assets/icons/XTick.svg";
-
-function TickIcon() {
-    return (
-        <span className="kc-comp__icon kc-comp__icon--good" aria-hidden="true">
-            <img className="kc-comp__iconImg kc-comp__iconImg--white" src={PricingTick} alt="" loading="lazy" />
-        </span>
-    );
-}
-
-function XIcon() {
-    return (
-        <span className="kc-comp__icon kc-comp__icon--bad" aria-hidden="true">
-            <img className="kc-comp__iconImg kc-comp__iconImg--red" src={XTick} alt="" loading="lazy" />
-        </span>
-    );
-}
-
 export default function Comparison() {
-    const konar = useMemo(
-        () => [
-            "One link that never goes missing",
-            "Update your details anytime (no reprints)",
-            "Show photos, reviews, and proof of work",
-            "Instant sharing by NFC tap, QR, or link",
-            "Looks premium and builds trust faster",
-            "Works everywhere in person or online",
-        ],
-        []
-    );
-
     const paper = useMemo(
         () => [
             "Gets lost, damaged, or binned",
@@ -46,67 +15,95 @@ export default function Comparison() {
         []
     );
 
+    const konar = useMemo(
+        () => [
+            "One link that’s always ready to share",
+            "Update details anytime - no reprints",
+            "Show photos, reviews, and services",
+            "Share by tap, QR, or link",
+            "Look professional instantly",
+            "Works on every smartphone",
+        ],
+        []
+    );
+
     return (
         <section className="kc-comp" aria-labelledby="kc-comp-title">
             <div className="kc-comp__inner">
                 <header className="kc-comp__header">
-                    <p className="kc-pill kc-comp__kicker">The upgrade</p>
+                    <p className="kc-pill kc-comp__kicker">Why switch?</p>
 
                     <h2 id="kc-comp-title" className="h3 kc-comp__title">
-                        Ditch paper and win trust <span className="kc-comp__accent">faster</span>
+                        Stop handing out paper cards. <span className="kc-comp__accent">Start</span>
+                        <br />
+                        <span className="kc-comp__accent">winning</span> trust.
                     </h2>
 
-                    <p className="body kc-comp__sub">
-                        Paper cards get lost and go out of date. KonarCard keeps your details, work, and reviews in one link, ready to share
-                        instantly.
+                    <p className="kc-comp__sub">
+                        Paper cards get lost, go out of date, and can’t show your work
+                        <br />
+                        quality.
                     </p>
                 </header>
 
-                <div className="kc-comp__grid" role="list" aria-label="Comparison: KonarCard vs paper business cards">
-                    {/* Konar */}
-                    <article className="kc-comp__card kc-comp__card--good" role="listitem" aria-label="KonarCard benefits">
-                        <div className="kc-comp__cardHead">
-                            <div className="kc-comp__cardTitle">
-                                <span className="kc-comp__brand">KonarCard</span>
-                            </div>
-                            <p className="kc-comp__hint">A modern profile that sells your work.</p>
-                        </div>
+                <div className="kc-comp__layout" aria-label="Comparison: paper business cards vs KonarCard">
+                    {/* LEFT: Old way */}
+                    <article className="kc-comp__card kc-comp__card--paper" aria-label="Old way: Paper business cards">
+                        <div className="kc-comp__cardPill">Old way</div>
 
-                        <ul className="kc-comp__list" aria-label="KonarCard features">
-                            {konar.map((t, i) => (
-                                <li key={i} className="kc-comp__row">
-                                    <TickIcon />
-                                    <span className="kc-comp__rowText">{t}</span>
-                                </li>
-                            ))}
-                        </ul>
+                        <h3 className="kc-comp__cardTitle">Paper Business Cards</h3>
+                        <p className="kc-comp__cardHint">Easy to lose. Easy to ignore. Hard to trust.</p>
 
-                        <div className="kc-comp__foot kc-comp__foot--good" aria-hidden="true">
-                            Share in seconds. Look legit instantly.
-                        </div>
-                    </article>
+                        <div className="kc-comp__divider" />
 
-                    {/* Paper */}
-                    <article className="kc-comp__card kc-comp__card--bad" role="listitem" aria-label="Paper business card limitations">
-                        <div className="kc-comp__cardHead">
-                            <div className="kc-comp__cardTitle">
-                                <span className="kc-comp__brand">Paper Business Cards</span>
-                            </div>
-                            <p className="kc-comp__hint">Old-school, easy to lose, hard to trust.</p>
-                        </div>
+                        <h4 className="kc-comp__listTitle">What goes wrong</h4>
 
-                        <ul className="kc-comp__list" aria-label="Paper business card drawbacks">
+                        <ul className="kc-comp__list kc-comp__list--paper">
                             {paper.map((t, i) => (
                                 <li key={i} className="kc-comp__row">
-                                    <XIcon />
+                                    <span className="kc-comp__dot" aria-hidden="true">•</span>
                                     <span className="kc-comp__rowText">{t}</span>
                                 </li>
                             ))}
                         </ul>
 
-                        <div className="kc-comp__foot kc-comp__foot--bad" aria-hidden="true">
-                            Fine for 2012. Not great today.
-                        </div>
+                        <p className="kc-comp__note">
+                            <em>Fine for 2012. Not great today.</em>
+                        </p>
+                    </article>
+
+                    {/* CENTER: OR */}
+                    <div className="kc-comp__or" aria-hidden="true">
+                        OR
+                    </div>
+
+                    {/* RIGHT: Smarter option */}
+                    <article className="kc-comp__card kc-comp__card--konar" aria-label="Smarter option: KonarCard">
+                        <div className="kc-comp__cardPill kc-comp__cardPill--dark">The smarter option</div>
+
+                        <h3 className="kc-comp__cardTitle kc-comp__cardTitle--white">
+                            KonarCard - The Modern Alternative
+                        </h3>
+                        <p className="kc-comp__cardHint kc-comp__cardHint--white">
+                            A shareable profile that sells your work.
+                        </p>
+
+                        <div className="kc-comp__divider kc-comp__divider--white" />
+
+                        <h4 className="kc-comp__listTitle kc-comp__listTitle--white">What You Get</h4>
+
+                        <ul className="kc-comp__list kc-comp__list--konar">
+                            {konar.map((t, i) => (
+                                <li key={i} className="kc-comp__row kc-comp__row--white">
+                                    <span className="kc-comp__dot kc-comp__dot--white" aria-hidden="true">•</span>
+                                    <span className="kc-comp__rowText kc-comp__rowText--white">{t}</span>
+                                </li>
+                            ))}
+                        </ul>
+
+                        <p className="kc-comp__note kc-comp__note--white">
+                            <em>Share in seconds. Win trust faster.</em>
+                        </p>
                     </article>
                 </div>
             </div>

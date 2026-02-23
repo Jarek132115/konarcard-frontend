@@ -1,10 +1,14 @@
 /* =========================================================
-   HOME — PAPER vs KONAR COMPARISON
-   Clean, premium, tight spacing system (12px rhythm)
+   HOME — COMPARISON (Paper vs Konar)
+   Matches Figma (image 2)
+   Gap rules:
+   - pill -> h3 : 8px
+   - h3 -> subheading : 8px
+   - header -> cards : 36px
    ========================================================= */
 
 .kc-comp {
-    background: #fafafa;
+    background: #ffffff;
     color: var(--kc-text-primary);
     padding: 96px 0;
 }
@@ -16,26 +20,31 @@
 }
 
 .kc-comp__inner {
-    max-width: 1040px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* =========================================================
-   SECTION HEADER
-   ========================================================= */
+/* =========================
+   Header
+   ========================= */
 
 .kc-comp__header {
     text-align: center;
-    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .kc-comp__kicker {
-    margin-bottom: 12px;
+    margin: 0 0 8px 0;
+    /* pill -> h3 */
 }
 
 .kc-comp__title {
-    margin: 0 0 12px;
+    margin: 0 0 8px 0;
+    /* h3 -> subheading */
+    max-width: 860px;
 }
 
 .kc-comp__accent {
@@ -43,185 +52,215 @@
 }
 
 .kc-comp__sub {
-    margin: 0 auto;
+    margin: 0;
     max-width: 720px;
+
+    /* Desktop Subheading 16/24 (Figma) */
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
     color: var(--kc-text-secondary);
 }
 
-/* =========================================================
-   GRID
-   ========================================================= */
-
-.kc-comp__grid {
+/* header -> cards = 36px */
+.kc-comp__layout {
+    margin-top: 36px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    align-items: stretch;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 28px;
+    align-items: center;
 }
 
-/* =========================================================
-   CARD BASE
-   ========================================================= */
+/* =========================
+   OR
+   ========================= */
+
+.kc-comp__or {
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1;
+    color: rgba(15, 23, 42, 0.90);
+    padding: 0 10px;
+}
+
+/* =========================
+   Cards
+   ========================= */
 
 .kc-comp__card {
-    border-radius: 18px;
-    padding: 28px;
-    display: flex;
-    flex-direction: column;
+    border-radius: 22px;
+    padding: 28px 28px 26px;
+    box-shadow: 0 16px 40px rgba(16, 24, 40, 0.08);
 }
 
-/* ---------- Konar (Orange) ---------- */
-
-.kc-comp__card--good {
-    background: var(--kc-accent-primary);
-    color: #ffffff;
-    box-shadow: 0 16px 40px rgba(16, 24, 40, 0.10);
-}
-
-/* ---------- Paper (White) ---------- */
-
-.kc-comp__card--bad {
+.kc-comp__card--paper {
     background: #ffffff;
-    border: 1px solid var(--kc-border);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     box-shadow: 0 16px 40px rgba(16, 24, 40, 0.06);
 }
 
-/* =========================================================
-   CARD HEADER SPACING SYSTEM
-   Title → 4px → Sub → 12px → Divider
-   ========================================================= */
-
-.kc-comp__cardHead {
-    padding-bottom: 12px;
-    /* 12px to divider */
-    border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+.kc-comp__card--konar {
+    background: var(--kc-accent-primary);
+    border: 1px solid rgba(0, 0, 0, 0);
+    box-shadow: 0 18px 46px rgba(249, 115, 22, 0.28);
 }
 
-.kc-comp__card--good .kc-comp__cardHead {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+/* little pill inside cards */
+.kc-comp__cardPill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 6px 12px;
+    border-radius: 999px;
+
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1;
+    color: rgba(15, 23, 42, 0.85);
+
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+
+    margin-bottom: 16px;
+}
+
+.kc-comp__cardPill--dark {
+    background: rgba(0, 0, 0, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    color: rgba(255, 255, 255, 0.92);
 }
 
 .kc-comp__cardTitle {
+    margin: 0 0 6px 0;
     font-family: "Cal Sans", sans-serif;
-    font-size: 22px;
     font-weight: 500;
-    line-height: 1.2;
-    margin: 0;
-}
-
-.kc-comp__card--bad .kc-comp__cardTitle {
+    font-size: 22px;
+    line-height: 30px;
     color: var(--kc-text-primary);
 }
 
-/* 🔥 NO bottom spacing on subheading */
-.kc-comp__hint {
-    margin: 4px 0 0 0;
-    /* only 4px from title */
-    font-size: 15px;
-    line-height: 1.5;
+.kc-comp__cardTitle--white {
+    color: #ffffff;
 }
 
-.kc-comp__card--good .kc-comp__hint {
+.kc-comp__cardHint {
+    margin: 0 0 18px 0;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 22px;
+    color: rgba(15, 23, 42, 0.70);
+}
+
+.kc-comp__cardHint--white {
     color: rgba(255, 255, 255, 0.90);
 }
 
-.kc-comp__card--bad .kc-comp__hint {
-    color: var(--kc-text-secondary);
+.kc-comp__divider {
+    height: 1px;
+    width: 100%;
+    background: rgba(15, 23, 42, 0.10);
+    margin: 0 0 18px 0;
 }
 
-/* =========================================================
-   BULLET LIST
-   Divider → 12px → bullets
-   Smaller row spacing + tighter icon gap
-   ========================================================= */
+.kc-comp__divider--white {
+    background: rgba(255, 255, 255, 0.22);
+}
 
+.kc-comp__listTitle {
+    margin: 0 0 12px 0;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 22px;
+    color: rgba(15, 23, 42, 0.90);
+}
+
+.kc-comp__listTitle--white {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* list */
 .kc-comp__list {
     list-style: none;
-    padding: 12px 0 0;
+    padding: 0;
     margin: 0;
     display: grid;
-    gap: 12px;
-    /* 🔥 tighter bullet spacing */
+    gap: 10px;
 }
 
 .kc-comp__row {
     display: flex;
     align-items: flex-start;
-    gap: 8px;
-    /* 🔥 smaller icon → text gap */
+    gap: 10px;
 }
 
-.kc-comp__rowText {
-    margin: 0;
-    font-size: 16px;
-    line-height: 1.5;
+.kc-comp__dot {
+    line-height: 1;
+    font-size: 18px;
+    margin-top: 1px;
+    color: rgba(15, 23, 42, 0.85);
 }
 
-.kc-comp__card--good .kc-comp__rowText {
+.kc-comp__dot--white {
     color: rgba(255, 255, 255, 0.95);
 }
 
-.kc-comp__card--bad .kc-comp__rowText {
-    color: rgba(15, 23, 42, 0.90);
+.kc-comp__rowText {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 22px;
+    color: rgba(15, 23, 42, 0.85);
 }
 
-/* =========================================================
-   ICONS
-   ========================================================= */
-
-.kc-comp__icon {
-    width: 18px;
-    height: 18px;
-    flex: 0 0 auto;
-    margin-top: 3px;
+.kc-comp__rowText--white {
+    color: rgba(255, 255, 255, 0.95);
 }
 
-.kc-comp__iconImg {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-.kc-comp__iconImg--white {
-    filter: brightness(0) invert(1);
-}
-
-.kc-comp__iconImg--red {
-    filter: invert(17%) sepia(84%) saturate(6026%) hue-rotate(343deg) brightness(97%) contrast(96%);
-}
-
-/* =========================================================
-   FOOTER SECTION
-   Bullets → 12px → divider → 12px → sentence
-   ========================================================= */
-
-.kc-comp__foot {
-    margin-top: 12px;
-    /* after last bullet */
-    padding-top: 12px;
-    /* after divider */
+.kc-comp__note {
+    margin: 18px 0 0 0;
+    font-family: "Inter", sans-serif;
     font-size: 14px;
-    line-height: 1.5;
-}
-
-.kc-comp__foot--good {
-    border-top: 1px solid rgba(255, 255, 255, 0.25);
-    color: rgba(255, 255, 255, 0.92);
-}
-
-.kc-comp__foot--bad {
-    border-top: 1px solid rgba(15, 23, 42, 0.10);
+    line-height: 20px;
     color: rgba(15, 23, 42, 0.60);
 }
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
+.kc-comp__note--white {
+    color: rgba(255, 255, 255, 0.90);
+}
+
+/* =========================
+   Responsive
+   ========================= */
 
 @media (max-width: 980px) {
-    .kc-comp__grid {
+    .kc-comp__layout {
         grid-template-columns: 1fr;
-        max-width: 680px;
-        margin: 0 auto;
+        gap: 16px;
+        align-items: stretch;
+        max-width: 720px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .kc-comp__or {
+        padding: 6px 0;
+        text-align: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .kc-comp__card {
+        padding: 22px 18px 20px;
+        border-radius: 18px;
+    }
+
+    .kc-comp__title {
+        max-width: 520px;
     }
 }
