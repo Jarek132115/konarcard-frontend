@@ -1,6 +1,9 @@
+/* frontend/src/styling/home/value.css */
 /* =========================================================
-   HOME — VALUE SECTION (MATCHES Value.jsx classNames)
-   File: frontend/src/styling/home/value.css
+   HOME — VALUE SECTION (table-style lines)
+   - Desktop (3 cols): internal vertical + horizontal lines
+   - Tablet (2 cols): internal vertical line (between cols) + row lines
+   - Mobile (1 col): single divider line between items (no left lines)
    ========================================================= */
 
 .khv {
@@ -24,10 +27,9 @@
 /* =========================
    HEAD
    ========================= */
-
 .khv__head {
     text-align: center;
-    margin-bottom: 36px;
+    margin-bottom: 28px;
 }
 
 .khv__kicker {
@@ -44,59 +46,33 @@
 
 .khv__sub {
     margin: 0 auto;
-    max-width: 720px;
+    max-width: 520px;
     color: var(--kc-text-secondary);
 }
 
 /* =========================
-   GRID (LINES ONLY BETWEEN CELLS)
+   GRID (LINES ARE THE GRID)
    ========================= */
-
 .khv__grid {
+    /* IMPORTANT: no gap so borders touch */
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0;
-    /* borders create the separators */
     align-items: stretch;
 }
 
-/* “Cell” look (no card box) */
+/* Each cell */
 .khv__cell {
-    background: transparent;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-
-    padding: 44px 28px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: 44px 22px;
     text-align: center;
-
-    /* internal separators for 3-col layout */
-    border-top: 1px solid rgba(15, 23, 42, 0.18);
-    border-left: 1px solid rgba(15, 23, 42, 0.18);
+    background: transparent;
 }
 
-/* remove TOP border for first row (1–3) */
-.khv__cell:nth-child(-n + 3) {
-    border-top: 0;
-}
-
-/* remove LEFT border for first column (1,4) */
-.khv__cell:nth-child(3n + 1) {
-    border-left: 0;
-}
-
-/* =========================
-   ICON
-   ========================= */
-
+/* Icon */
 .khv__icon {
-    width: 44px;
-    height: 44px;
-    margin-bottom: 14px;
+    width: 46px;
+    height: 46px;
+    margin: 0 auto 14px;
     display: grid;
     place-items: center;
 }
@@ -108,76 +84,110 @@
     object-fit: contain;
 }
 
-/* =========================
-   COPY
-   ========================= */
-
+/* Copy */
 .khv__cellTitle {
     margin: 0 0 8px;
 }
 
 .khv__cellDesc {
     margin: 0;
-    max-width: 34ch;
     color: var(--kc-text-secondary);
-    line-height: 1.6;
+    line-height: 1.55;
+    max-width: 30ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Line color */
+:root {
+    --khv-line: rgba(15, 23, 42, 0.18);
 }
 
 /* =========================
-   TABLET (2 columns)
-   - internal lines only
-   - NO left outer border
+   DESKTOP LINES (3 columns)
+   - vertical lines: after col 1 and 2
+   - horizontal line: after row 1
    ========================= */
-@media (max-width: 980px) {
+
+/* vertical lines */
+.khv__cell:not(:nth-child(3n)) {
+    border-right: 1px solid var(--khv-line);
+}
+
+/* horizontal line between row 1 and row 2 */
+.khv__cell:nth-child(-n + 3) {
+    border-bottom: 1px solid var(--khv-line);
+}
+
+/* ✅ REPLACE your CURRENT tablet + mobile media queries in value.css with THIS.
+   Desktop rules stay exactly as-is (your desktop is already perfect). */
+
+/* =========================
+   TABLET (2 columns, 3 rows) — CUSTOM BORDERS EXACTLY AS REQUESTED
+   Breakpoint: when it goes from 3 cols -> 2 cols
+   ========================= */
+@media (max-width: 980px) and (min-width: 641px) {
     .khv__grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    /* reset ALL borders first (so we fully control them) */
     .khv__cell {
-        padding: 42px 24px;
-
-        /* reset then re-apply 2-col separators */
-        border-top: 1px solid rgba(15, 23, 42, 0.18);
-        border-left: 1px solid rgba(15, 23, 42, 0.18);
+        border: 0 !important;
     }
 
-    /* first row (1–2) no top border */
-    .khv__cell:nth-child(-n + 2) {
-        border-top: 0;
+    /* 1st: border RIGHT + BOTTOM */
+    .khv__cell:nth-child(1) {
+        border-right: 1px solid var(--khv-line) !important;
+        border-bottom: 1px solid var(--khv-line) !important;
     }
 
-    /* first column (1,3,5) no left border ✅ fixes left outer line */
-    .khv__cell:nth-child(2n + 1) {
-        border-left: 0;
+    /* 2nd: nothing */
+    .khv__cell:nth-child(2) {
+        border: 0 !important;
+    }
+
+    /* 3rd: nothing */
+    .khv__cell:nth-child(3) {
+        border: 0 !important;
+    }
+
+    /* 4th: border TOP + LEFT + BOTTOM */
+    .khv__cell:nth-child(4) {
+        border-top: 1px solid var(--khv-line) !important;
+        border-left: 1px solid var(--khv-line) !important;
+        border-bottom: 1px solid var(--khv-line) !important;
+    }
+
+    /* 5th: border TOP + RIGHT */
+    .khv__cell:nth-child(5) {
+        border-top: 1px solid var(--khv-line) !important;
+        border-right: 1px solid var(--khv-line) !important;
+    }
+
+    /* 6th: nothing */
+    .khv__cell:nth-child(6) {
+        border: 0 !important;
     }
 }
 
 /* =========================
-   MOBILE (1 column)
-   - only horizontal dividers
-   - NO left border anywhere
+   MOBILE (1 column, 6 rows)
+   - Each has bottom border except last
    ========================= */
 @media (max-width: 640px) {
     .khv__grid {
         grid-template-columns: 1fr;
     }
 
+    /* clear any tablet/desktop borders */
     .khv__cell {
-        padding: 34px 18px;
-
-        border-left: 0 !important;
-        /* ✅ never show left line */
-        border-top: 1px solid rgba(15, 23, 42, 0.18);
+        border: 0 !important;
+        padding: 40px 18px;
     }
 
-    .khv__cell:first-child {
-        border-top: 0;
-    }
-}
-
-/* Motion safety */
-@media (prefers-reduced-motion: reduce) {
-    .khv__cell {
-        transition: none !important;
+    /* bottom border on each except last */
+    .khv__cell:not(:last-child) {
+        border-bottom: 1px solid var(--khv-line) !important;
     }
 }
