@@ -339,7 +339,9 @@ export default function Login() {
                             <div className="kc-auth-panel">
                                 {forgotPasswordStep ? (
                                     <>
-                                        <h1 className="kc-title">Reset password</h1>
+                                        <h1 className="h2 kc-auth-title">
+                                            Reset <span className="kc-auth-accent">password</span>
+                                        </h1>
                                         <p className="kc-subtitle">We’ll email you a reset link.</p>
 
                                         <form className="kc-form" onSubmit={sendResetLink}>
@@ -373,7 +375,9 @@ export default function Login() {
                                     </>
                                 ) : verificationStep ? (
                                     <>
-                                        <h1 className="kc-title">Verify email</h1>
+                                        <h1 className="h2 kc-auth-title">
+                                            Verify <span className="kc-auth-accent">email</span>
+                                        </h1>
                                         <p className="kc-subtitle">Enter the code we sent to your email.</p>
 
                                         <form className="kc-form" onSubmit={verifyCode}>
@@ -421,7 +425,10 @@ export default function Login() {
                                     </>
                                 ) : (
                                     <>
-                                        <h1 className="kc-title">Welcome back</h1>
+                                        <h1 className="h2 kc-auth-title">
+                                            <span className="kc-auth-accent">Welcome</span> back
+                                        </h1>
+
                                         <p className="kc-subtitle">
                                             New to KonarCard?{" "}
                                             <Link className="kc-link" to="/register" state={{ from: location.state?.from || "/" }}>

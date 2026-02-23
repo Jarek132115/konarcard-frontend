@@ -23,9 +23,9 @@
 }
 
 .kc-footer__heroTitle {
+    /* keep your current look */
     font-size: clamp(28px, 3.4vw, 48px);
     font-weight: 500;
-    /* Cal Sans 500 */
     letter-spacing: -0.03em;
     margin: 0 0 18px;
     line-height: 1.1;
@@ -101,6 +101,7 @@
     font-weight: 800;
     font-size: 13px;
     margin: 0 0 3px;
+    color: #fff;
 }
 
 .kc-footer__itemDesc {
@@ -130,20 +131,13 @@
     background: linear-gradient(270deg, #0c1830 0%, rgba(12, 24, 48, 0) 100%);
 }
 
-/* =========================
-   CTA — DO NOT override kx-btn styles
-   We only control spacing/placement here.
-   ========================= */
+/* CTA spacing only (visuals come from kx-btn) */
 .kc-footer__heroCta {
     margin-top: 18px;
-    /* ✅ IMPORTANT: no border-radius override, no border override, no background override */
-    /* Let .kx-btn + .kx-btn--white handle ALL visuals so it matches homepage FAQ buttons */
 }
 
-/* On dark background, keep hover readable (kx-btn--white hover is very subtle) */
 .kc-footer__heroCta.kx-btn--white:hover {
     background: rgba(255, 255, 255, 0.96);
-    /* still "white", just slightly tinted */
     border-color: rgba(255, 255, 255, 0.85);
 }
 
@@ -186,11 +180,10 @@
 .kc-footer__desc {
     margin: 0 0 26px;
     max-width: 360px;
-    color: #3a4050;
     line-height: 1.55;
-    font-size: 15px;
 }
 
+/* Socials */
 .kc-footer__socials {
     display: flex;
     gap: 16px;
@@ -208,19 +201,18 @@
     gap: 64px;
 }
 
-.kc-footer__col h4 {
-    font-weight: 800;
-    font-size: 16px;
+/* ✅ Titles use kc-title (no font-size here) */
+.kc-footer__colTitle {
     margin: 0 0 16px;
     color: #0c1830;
 }
 
-.kc-footer__col a {
+/* ✅ Links use button-text (no font-size here) */
+.kc-footer__link {
     display: block;
     text-decoration: none;
     color: #3a4050;
     margin-bottom: 12px;
-    font-size: 15px;
 }
 
 /* =========================
@@ -242,24 +234,28 @@
     flex-wrap: wrap;
 }
 
+/* ✅ Copyright uses body */
 .kc-footer__copyright {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    font-size: 13px;
-    color: #6b778e;
     text-align: left;
     white-space: nowrap;
 }
 
+.kc-footer__copyrightText {
+    /* keep footer tone without changing the fact it's .body */
+    color: #6b778e;
+}
+
+/* ✅ Policies links use button-text */
 .kc-footer__policies {
     display: flex;
     gap: 22px;
     flex-wrap: wrap;
 }
 
-.kc-footer__policies a {
-    font-size: 13px;
+.kc-footer__policyLink {
     color: #6b778e;
     text-decoration: none;
     white-space: nowrap;
@@ -289,6 +285,14 @@
         margin-right: auto;
         justify-content: center;
     }
+
+    .kc-footer__left {
+        text-align: center;
+    }
+
+    .kc-footer__brand {
+        justify-content: center;
+    }
 }
 
 @media (max-width: 720px) {
@@ -309,15 +313,5 @@
         flex-direction: column;
         align-items: center;
         gap: 10px;
-    }
-}
-
-@media (max-width: 1000px) {
-    .kc-footer__left {
-        text-align: center;
-    }
-
-    .kc-footer__brand {
-        justify-content: center;
     }
 }

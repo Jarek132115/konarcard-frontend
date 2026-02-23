@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../../styling/home/pricing.css";
 
-/* Plan icons (same as pricing page) */
+/* Plan icons */
 import FreePlanIcon from "../../assets/icons/FreePlan.svg";
 import PlusPlanIcon from "../../assets/icons/PlusPlan.svg";
 import TeamsPlanIcon from "../../assets/icons/TeamsPlan.svg";
@@ -17,10 +17,17 @@ export default function Pricing() {
                 tag: "Best for starting out",
                 featured: false,
                 price: "£0",
-                sub: "No monthly cost",
-                priceMeta: [],
-                highlights: ["Your KonarCard link", "Contact buttons", "QR sharing", "Works on any phone", "Unlimited updates", "Tap or scan share"],
-                cta: { type: "link", label: "Get started free", to: "/register" },
+                cadence: "No monthly fees",
+                meta: [],
+                highlights: [
+                    "Your KonarCard link",
+                    "Contact buttons",
+                    "QR sharing",
+                    "Works on any phone",
+                    "Unlimited updates",
+                    "Tap or scan share",
+                ],
+                cta: { label: "Start Free", to: "/register" },
             },
             {
                 key: "plus",
@@ -29,10 +36,18 @@ export default function Pricing() {
                 tag: "Most popular",
                 featured: true,
                 price: "£4.95",
-                sub: "per month",
-                priceMeta: ["Cancel anytime."],
-                highlights: ["Full customisation", "More photos", "Services & pricing", "Reviews & ratings", "Unlimited edits", "Remove branding", "Deeper analytics"],
-                cta: { type: "link", label: "Continue to Plus", to: "/pricing" },
+                cadence: "per month",
+                meta: ["Cancel anytime. No contracts."],
+                highlights: [
+                    "Full customisation",
+                    "More photos",
+                    "Services & pricing",
+                    "Reviews & ratings",
+                    "Unlimited edits",
+                    "Remove branding",
+                    "Deeper analytics",
+                ],
+                cta: { label: "Upgrade to Plus", to: "/pricing" },
             },
             {
                 key: "teams",
@@ -41,10 +56,17 @@ export default function Pricing() {
                 tag: "For small teams",
                 featured: false,
                 price: "£4.95",
-                sub: "per month + add-ons",
-                priceMeta: ["£1.95 / extra profile / month", "Billed monthly.", "Example: 3 profiles = £8.85 / month"],
-                highlights: ["Everything in Plus", "Add staff profiles", "Centralised controls", "Shared branding", "Team analytics", "Manage in one place"],
-                cta: { type: "link", label: "Continue to Teams", to: "/pricing" },
+                cadence: "+ £1.95 per extra profile",
+                meta: ["Billed monthly. Cancel anytime."],
+                highlights: [
+                    "Everything in Plus",
+                    "Add staff profiles",
+                    "Centralised controls",
+                    "Shared branding",
+                    "Team analytics",
+                    "Manage in one place",
+                ],
+                cta: { label: "Upgrade to Teams", to: "/pricing" },
             },
         ],
         []
@@ -57,46 +79,53 @@ export default function Pricing() {
                     <div className="kc-pill kpr__pill">Simple pricing</div>
 
                     <h2 className="h3 kpr__title">
-                        Pricing That <span className="kpr-accent">Pays</span> For Itself
+                        Pricing That <span className="kpr__accent">Pays</span> For Itself
                     </h2>
 
-                    <p className="body-s kpr__sub">
-                        Start free. Upgrade when you’re ready. No stress.
+                    <p className="kc-subheading kpr__sub">
+                        Start free. Upgrade anytime. No contracts.
                     </p>
-
                 </header>
 
                 <div className="kpr__grid" role="list" aria-label="KonarCard plans">
                     {cards.map((card) => {
                         const isFeatured = card.featured;
-                        const btn = card.cta;
 
                         return (
-                            <article key={card.key} className={`kpr-card ${isFeatured ? "is-featured" : ""}`} role="listitem">
-                                <div className="kpr-cardTop">
-                                    {/* pill row */}
-                                    <div className={`kpr-pillCard ${isFeatured ? "is-featured" : ""}`}>{card.tag}</div>
+                            <article
+                                key={card.key}
+                                className={`kpr-card ${isFeatured ? "is-featured" : ""}`}
+                                role="listitem"
+                            >
+                                {/* TOP */}
+                                <div className={`kpr-top ${isFeatured ? "is-featured" : ""}`}>
+                                    <div className={`kpr-tag ${isFeatured ? "is-featured" : ""}`}>
+                                        {card.tag}
+                                    </div>
 
-                                    {/* ✅ ALWAYS next row */}
-                                    <div className="kpr-planRow">
-                                        <p className={`h5 kpr-plan ${isFeatured ? "is-featured" : ""}`}>{card.title}</p>
+                                    <div className="kpr-nameRow">
+                                        <div className={`kpr-name ${isFeatured ? "is-featured" : ""}`}>
+                                            {card.title}
+                                        </div>
 
-                                        <span className={`kpr-planIcon ${isFeatured ? "is-featured" : ""}`} aria-hidden="true">
+                                        <span className={`kpr-icon ${isFeatured ? "is-featured" : ""}`} aria-hidden="true">
                                             <img src={card.icon} alt="" loading="lazy" decoding="async" />
                                         </span>
                                     </div>
 
                                     <div className="kpr-priceRow">
-                                        <div className={`kpr-price ${isFeatured ? "is-featured" : ""}`}>{card.price}</div>
-                                        <div className={`kpr-cadence ${isFeatured ? "is-featured" : ""}`}>{card.sub}</div>
+                                        <div className={`kpr-price ${isFeatured ? "is-featured" : ""}`}>
+                                            {card.price}
+                                        </div>
+                                        <div className={`kpr-cadence ${isFeatured ? "is-featured" : ""}`}>
+                                            {card.cadence}
+                                        </div>
                                     </div>
 
-                                    {card.priceMeta?.length ? (
-                                        <div className={`kpr-priceMeta ${isFeatured ? "is-featured" : ""}`}>
-                                            {card.priceMeta.map((m) => (
-                                                <div key={m} className="kpr-priceMeta__line">
-                                                    {m}
-                                                </div>
+                                    {card.meta?.length ? (
+                                        <div className={`kpr-meta ${isFeatured ? "is-featured" : ""}`}>
+                                            {card.meta.map((m) => (
+                                                <div key={m}>{m}</div>
                                             ))}
                                         </div>
                                     ) : null}
@@ -104,20 +133,37 @@ export default function Pricing() {
 
                                 <div className={`kpr-divider ${isFeatured ? "is-featured" : ""}`} aria-hidden="true" />
 
-                                <div className={`kpr-included ${isFeatured ? "is-featured" : ""}`}>What’s included</div>
+                                {/* BODY (fit height) */}
+                                <div className="kpr-body">
+                                    {/* content wrapper */}
+                                    <div className="kpr-content">
+                                        <div className={`kpr-included ${isFeatured ? "is-featured" : ""}`}>
+                                            What’s Included
+                                        </div>
 
-                                <ul className={`kpr-bullets ${isFeatured ? "is-featured" : ""}`} aria-label={`${card.title} plan features`}>
-                                    {card.highlights.map((h) => (
-                                        <li key={h} className="kpr-bulletItem">
-                                            <span className="body-s kpr-liText">{h}</span>
-                                        </li>
-                                    ))}
-                                </ul>
+                                        <ul
+                                            className={`kpr-list ${isFeatured ? "is-featured" : ""}`}
+                                            aria-label={`${card.title} plan features`}
+                                        >
+                                            {card.highlights.map((h) => (
+                                                <li key={h} className="kpr-li">
+                                                    <span className={`kpr-liText ${isFeatured ? "is-featured" : ""}`}>
+                                                        {h}
+                                                    </span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
 
-                                <div className="kpr-actions">
-                                    <Link to={btn.to} className={`kx-btn kpr-ctaBtn ${isFeatured ? "kpr-ctaBtn--orange" : "kpr-ctaBtn--outline"}`}>
-                                        {btn.label}
-                                    </Link>
+                                    {/* ✅ CTA wrapper gives consistent spacing */}
+                                    <div className="kpr-actions">
+                                        <Link
+                                            to={card.cta.to}
+                                            className={`kx-btn kpr-btn ${isFeatured ? "kpr-btn--featured" : "kpr-btn--outline"}`}
+                                        >
+                                            {card.cta.label}
+                                        </Link>
+                                    </div>
                                 </div>
                             </article>
                         );
@@ -125,13 +171,11 @@ export default function Pricing() {
                 </div>
 
                 <div className="kpr-bottom">
-                    <p className="body-s kpr-bottomNote">Want full details? Compare plans and billing intervals on the pricing page.</p>
+                    <p className="body-s kpr-bottomText">Compare plans and see full details.</p>
 
-                    <div className="kpr-bottomBtns">
-                        <Link to="/pricing" className="kx-btn kx-btn--black">
-                            View full pricing
-                        </Link>
-                    </div>
+                    <Link to="/pricing" className="kx-btn kx-btn--black">
+                        View full Pricing
+                    </Link>
                 </div>
             </div>
         </section>

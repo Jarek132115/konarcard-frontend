@@ -361,3 +361,52 @@ body {
   line-height: var(--kc-sub-line);
   color: var(--kc-text-secondary);
 }
+
+/* =========================================================
+   REUSABLE TAB / FILTER PILL BUTTONS (NEW)
+   Use for: FAQ tabs, filters, segmented pills, etc.
+   ========================================================= */
+
+.kc-tabPill {
+  appearance: none;
+  background: #ffffff;
+  color: rgba(11, 18, 32, 0.86);
+
+  border: 1px solid rgba(11, 18, 32, 0.14);
+  border-radius: 12px;
+
+  padding: 10px 16px;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+}
+
+.kc-tabPill:hover {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(11, 18, 32, 0.22);
+  transform: translateY(-1px);
+}
+
+.kc-tabPill:active {
+  transform: translateY(0px);
+}
+
+.kc-tabPill:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--kc-focus-ring);
+}
+
+.kc-tabPill.is-active,
+.kc-tabPill[aria-selected="true"] {
+  background: var(--kc-accent-primary);
+  border-color: var(--kc-accent-primary);
+  color: #ffffff;
+  transform: none;
+}

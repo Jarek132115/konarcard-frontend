@@ -123,15 +123,17 @@ export default function HomeFAQ() {
     return (
         <section className="khq" aria-label="Frequently asked questions">
             <div className="khq__inner">
-                {/* ✅ Header spacing + look matches Value section */}
                 <header className="khq__head">
-                    <p className="khq__kicker">FAQs</p>
-                    <h2 className="h3 khq__title">Frequently Asked Questions</h2>
-                    <p className="body-s khq__sub">
+                    <p className="kc-pill khq__kicker">FAQs</p>
+
+                    <h2 className="h3 khq__title">
+                        Frequently <span className="khq__accent">Asked</span> Questions
+                    </h2>
+
+                    <p className="kc-subheading khq__sub">
                         Everything you need to know before getting started with KonarCard.
                     </p>
 
-                    {/* ✅ Tabs same UI as FAQ page */}
                     <div className="khq__tabs" role="tablist" aria-label="FAQ categories">
                         {tabs.map((t) => {
                             const isActive = t.key === activeTab;
@@ -139,7 +141,7 @@ export default function HomeFAQ() {
                                 <button
                                     key={t.key}
                                     type="button"
-                                    className={`khq__tab pill ${isActive ? "is-active" : ""}`}
+                                    className={`kc-tabPill ${isActive ? "is-active" : ""}`}
                                     role="tab"
                                     aria-selected={isActive}
                                     onClick={() => {
@@ -154,7 +156,6 @@ export default function HomeFAQ() {
                     </div>
                 </header>
 
-                {/* ✅ Question UI matches FAQ page (divider list + chevron) */}
                 <div className="khq__list" role="region" aria-label="FAQ list">
                     {visibleFaqs.map((item, idx) => {
                         const isOpen = idx === openIndex;
@@ -166,19 +167,21 @@ export default function HomeFAQ() {
                                     onClick={() => setOpenIndex(isOpen ? -1 : idx)}
                                     aria-expanded={isOpen}
                                 >
-                                    <span className="h6 khq__q">{item.q}</span>
+                                    {/* ✅ Question = Title class */}
+                                    <span className="kc-title khq__q">{item.q}</span>
+
                                     <span className={`khq__chev ${isOpen ? "is-open" : ""}`} aria-hidden="true">
                                         ▾
                                     </span>
                                 </button>
 
-                                {isOpen && <div className="body-s khq__a">{item.a}</div>}
+                                {/* ✅ Answer = Body class */}
+                                {isOpen && <div className="body khq__a">{item.a}</div>}
                             </div>
                         );
                     })}
                 </div>
 
-                {/* ✅ CTA area keeps same rhythm as Value section bottom area */}
                 <div className="khq__cta">
                     <p className="body-s khq__ctaText">Still got questions? We’re happy to help.</p>
 

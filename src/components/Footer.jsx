@@ -1,3 +1,4 @@
+// frontend/src/components/Footer.jsx
 import React, { useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 
@@ -167,7 +168,12 @@ export default function Footer() {
                             <div className="kc-footer__track" ref={trackRef}>
                                 {loopItems.map((item, i) => (
                                     <div className="kc-footer__item" key={`${item.title}-${i}`}>
-                                        <img src={item.icon} alt="" className="kc-footer__itemIcon" aria-hidden="true" />
+                                        <img
+                                            src={item.icon}
+                                            alt=""
+                                            className="kc-footer__itemIcon"
+                                            aria-hidden="true"
+                                        />
                                         <div className="kc-footer__itemText">
                                             <p className="kc-footer__itemTitle">{item.title}</p>
                                             <p className="kc-footer__itemDesc">{item.desc}</p>
@@ -197,11 +203,10 @@ export default function Footer() {
                             <span className="kc-footer__brandName">KonarCard</span>
                         </div>
 
-                        <p className="kc-footer__desc">
+                        <p className="kc-footer__desc body">
                             Follow us on our socials to stay up to date with new features and updates.
                         </p>
 
-                        {/* Socials: keep Link placeholders for now (swap to <a href> when you have URLs) */}
                         <div className="kc-footer__socials">
                             <Link to="/#" aria-label="Instagram">
                                 <img src={FooterInstagram} alt="" aria-hidden="true" />
@@ -224,26 +229,48 @@ export default function Footer() {
                     {/* Columns */}
                     <div className="kc-footer__cols">
                         <div className="kc-footer__col">
-                            <h4>Product</h4>
-                            <Link to="/products/plastic">Plastic KonarCard</Link>
-                            <Link to="/products/metal">Metal KonarCard</Link>
-                            <Link to="/products/konartag">KonarTag</Link>
-                            <Link to="/pricing">Pricing</Link>
-                            <Link to="/examples">Examples</Link>
+                            <h4 className="kc-title kc-footer__colTitle">Product</h4>
+                            <Link className="button-text kc-footer__link" to="/products/plastic">
+                                Plastic KonarCard
+                            </Link>
+                            <Link className="button-text kc-footer__link" to="/products/metal">
+                                Metal KonarCard
+                            </Link>
+                            <Link className="button-text kc-footer__link" to="/products/konartag">
+                                KonarTag
+                            </Link>
+                            <Link className="button-text kc-footer__link" to="/pricing">
+                                Pricing
+                            </Link>
+                            <Link className="button-text kc-footer__link" to="/examples">
+                                Examples
+                            </Link>
                         </div>
 
                         <div className="kc-footer__col">
-                            <h4>Support</h4>
-                            <Link to="/contactus">Contact Us</Link>
-                            <Link to="/faq">FAQs</Link>
-                            <Link to="/policies">Shipping &amp; Returns</Link>
-                            <Link to="/policies">Warranty</Link>
+                            <h4 className="kc-title kc-footer__colTitle">Support</h4>
+                            <Link className="button-text kc-footer__link" to="/contactus">
+                                Contact Us
+                            </Link>
+                            <Link className="button-text kc-footer__link" to="/faq">
+                                FAQs
+                            </Link>
+                            <Link className="button-text kc-footer__link" to="/policies">
+                                Shipping &amp; Returns
+                            </Link>
+                            <Link className="button-text kc-footer__link" to="/policies">
+                                Warranty
+                            </Link>
                         </div>
 
                         <div className="kc-footer__col">
-                            <h4>Company</h4>
-                            <Link to="/reviews">Reviews</Link>
-                            <Link to="/blog">Blog</Link>
+                            <h4 className="kc-title kc-footer__colTitle">Company</h4>
+                            <Link className="button-text kc-footer__link" to="/reviews">
+                                Reviews
+                            </Link>
+                            <Link className="button-text kc-footer__link" to="/blog">
+                                Blog
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -253,13 +280,21 @@ export default function Footer() {
                     <div className="kc-footer__bottomInner">
                         <div className="kc-footer__copyright">
                             <img src={CopyrightIcon} alt="" aria-hidden="true" />
-                            <span>2025 KONARCARD LTD. All Rights Reserved</span>
+                            <span className="body kc-footer__copyrightText">
+                                2025 KONARCARD LTD. All Rights Reserved
+                            </span>
                         </div>
 
                         <div className="kc-footer__policies">
-                            <Link to="/policies">Terms Of Service</Link>
-                            <Link to="/policies">Privacy Policy</Link>
-                            <Link to="/policies">Cookie Policy</Link>
+                            <Link className="button-text kc-footer__policyLink" to="/policies">
+                                Terms Of Service
+                            </Link>
+                            <Link className="button-text kc-footer__policyLink" to="/policies">
+                                Privacy Policy
+                            </Link>
+                            <Link className="button-text kc-footer__policyLink" to="/policies">
+                                Cookie Policy
+                            </Link>
                         </div>
                     </div>
                 </div>

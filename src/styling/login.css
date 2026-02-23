@@ -9,12 +9,6 @@
    - Remember checkbox: checked bg = primary text color, tick white
    ========================================================= */
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
 .kc-auth-page {
     min-height: 100dvh;
     background: #ffffff;
@@ -35,8 +29,8 @@
 }
 
 .kc-auth-closeBtn {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: 999px;
     border: 1px solid rgba(15, 23, 42, 0.12);
     background: rgba(255, 255, 255, 0.92);
@@ -50,7 +44,7 @@
 .kc-auth-closeIcon {
     display: inline-block;
     line-height: 1;
-    font-size: 26px;
+    font-size: 28px;
     color: var(--kc-text-primary);
 }
 
@@ -76,7 +70,7 @@
 
 .kc-auth-inner {
     width: 100%;
-    max-width: 560px;
+    max-width: 620px;
     text-align: center;
 }
 
@@ -98,12 +92,19 @@
     pointer-events: none;
     z-index: 0;
 
-    background-image: linear-gradient(to right, rgba(12, 24, 48, 0.055) 1px, transparent 1px),
+    background-image:
+        linear-gradient(to right, rgba(12, 24, 48, 0.055) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(12, 24, 48, 0.055) 1px, transparent 1px);
     background-size: 64px 64px;
 
-    -webkit-mask-image: radial-gradient(ellipse 96% 82% at 58% 55%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 44%, rgba(0, 0, 0, 0) 86%);
-    mask-image: radial-gradient(ellipse 96% 82% at 58% 55%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 44%, rgba(0, 0, 0, 0) 86%);
+    -webkit-mask-image: radial-gradient(ellipse 96% 82% at 58% 55%,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 1) 44%,
+            rgba(0, 0, 0, 0) 86%);
+    mask-image: radial-gradient(ellipse 96% 82% at 58% 55%,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 1) 44%,
+            rgba(0, 0, 0, 0) 86%);
 }
 
 .kc-auth-wrap::after {
@@ -113,7 +114,10 @@
     pointer-events: none;
     z-index: 0;
 
-    background: radial-gradient(ellipse 96% 82% at 58% 55%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.55) 62%, rgba(255, 255, 255, 0.92) 100%);
+    background: radial-gradient(ellipse 96% 82% at 58% 55%,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.55) 62%,
+            rgba(255, 255, 255, 0.92) 100%);
 }
 
 .kc-auth-panel {
@@ -122,10 +126,24 @@
     width: 100%;
 }
 
+/* =========================================================
+   Titles + subtitle (match screenshots)
+   ========================================================= */
+.kc-auth-title {
+    margin: 0 0 8px;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--kc-text-primary);
+}
+
+.kc-auth-accent {
+    color: var(--kc-accent-primary);
+}
 
 .kc-subtitle {
     margin: 0 auto 18px;
-    max-width: 520px;
+    max-width: 560px;
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 500;
@@ -135,7 +153,7 @@
 
 .kc-link {
     color: var(--kc-accent-primary);
-    font-weight: 500;
+    font-weight: 600;
     text-decoration: none;
     background: none;
     border: none;
@@ -194,7 +212,7 @@
 .kc-input:focus {
     background: rgba(15, 23, 42, 0.02);
     border-color: rgba(15, 23, 42, 0.22);
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.10);
 }
 
 /* Claim input row */
@@ -214,7 +232,7 @@
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 500;
-    color: rgba(15, 23, 42, 0.7);
+    color: rgba(15, 23, 42, 0.70);
     white-space: nowrap;
 }
 
@@ -351,7 +369,7 @@
 }
 
 .kc-authBtn {
-    width: min(320px, 100%);
+    width: min(340px, 100%);
 }
 
 /* Social group */
@@ -383,7 +401,7 @@
 }
 
 .kc-divider--matchWidth {
-    width: min(320px, 100%);
+    width: min(340px, 100%);
     margin-left: auto;
     margin-right: auto;
 }
@@ -404,13 +422,69 @@
     line-height: 1;
 }
 
+/* =========================================================
+   Password field (Reset page)
+   ========================================================= */
+.kc-password {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
 
+.kc-password .kc-input {
+    padding-right: 74px;
+}
 
+.kc-password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: #fff;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(15, 23, 42, 0.72);
+    cursor: pointer;
+}
+
+.kc-password-toggle:hover {
+    background: rgba(15, 23, 42, 0.02);
+}
+
+.kc-password-feedback {
+    width: 100%;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(15, 23, 42, 0.02);
+    border-radius: 14px;
+    padding: 12px 12px;
+    margin-top: 4px;
+}
+
+.kc-password-feedback p {
+    margin: 0;
+    padding: 4px 0;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(15, 23, 42, 0.62);
+}
+
+.kc-password-feedback p.is-valid {
+    color: rgba(15, 23, 42, 0.92);
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
 @media (max-width: 600px) {
     .kc-auth-topActions {
         padding-top: 88px;
     }
-    
+
     .kc-row {
         flex-wrap: wrap;
         row-gap: 10px;

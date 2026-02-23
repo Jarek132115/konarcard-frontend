@@ -1,3 +1,4 @@
+// src/pages/auth/Register.jsx
 import React, { useState, useEffect, useRef, useContext, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -464,7 +465,9 @@ export default function Register() {
                             <div className="kc-auth-panel">
                                 {verificationStep ? (
                                     <>
-                                        <h1 className="kc-title">Verify your email</h1>
+                                        <h1 className="h2 kc-auth-title">
+                                            Verify your <span className="kc-auth-accent">email</span>
+                                        </h1>
                                         <p className="kc-subtitle">Enter the 6-digit code we sent to your email.</p>
 
                                         <form onSubmit={verifyUserCode} className="kc-form">
@@ -509,11 +512,17 @@ export default function Register() {
                                     </>
                                 ) : shouldShowClaimStep ? (
                                     <>
-                                        <h1 className="kc-title">Claim your link</h1>
-                                        <p className="kc-subtitle">This becomes your public profile link for sharing your digital card.</p>
+                                        <h1 className="h2 kc-auth-title">
+                                            Claim Your <span className="kc-auth-accent">Link</span>
+                                        </h1>
+
+                                        <p className="kc-subtitle">
+                                            This is your unique link. When someone clicks it, they see your digital business card.
+                                        </p>
+
                                         <form onSubmit={claimLinkContinue} className="kc-form">
                                             <div className="kc-field">
-                                                <label className="kc-label">KonarCard link</label>
+                                                <label className="kc-label">Claim Your Link Name</label>
 
                                                 <div className="kc-claim">
                                                     <div className="kc-claim-prefix">www.konarcard.com/u/</div>
@@ -533,21 +542,26 @@ export default function Register() {
                                             </div>
 
                                             <div className="kc-actionsCenter">
-                                                <button className="kx-btn kx-btn--black kc-authBtn">Claim link</button>
+                                                <button className="kx-btn kx-btn--black kc-authBtn">Claim Your Link</button>
                                             </div>
 
                                             <p className="kc-bottom-line">
                                                 Already have an account?{" "}
                                                 <Link className="kc-link" to="/login" state={{ from: location.state?.from || "/" }}>
-                                                    Sign in
+                                                    Sign In
                                                 </Link>
                                             </p>
                                         </form>
                                     </>
                                 ) : (
                                     <>
-                                        <h1 className="kc-title">Create your account</h1>
-                                        <p className="kc-subtitle">Save your digital card so you can share it, edit it, and access it anytime.</p>
+                                        <h1 className="h2 kc-auth-title">
+                                            Create an account to <span className="kc-auth-accent">save</span> your card
+                                        </h1>
+
+                                        <p className="kc-subtitle">
+                                            Save your digital card so you can share it, edit it, and access it anytime.
+                                        </p>
 
                                         <form onSubmit={registerUser} className="kc-form">
                                             <div className="kc-field">
@@ -599,19 +613,15 @@ export default function Register() {
                                             </div>
 
                                             <div className="kc-actionsCenter">
-                                                <button
-                                                    className="kx-btn kx-btn--black kc-authBtn"
-                                                    disabled={isSubmitting}
-                                                    aria-busy={isSubmitting}
-                                                >
-                                                    {isSubmitting ? "Creating…" : "Create account"}
+                                                <button className="kx-btn kx-btn--black kc-authBtn" disabled={isSubmitting} aria-busy={isSubmitting}>
+                                                    {isSubmitting ? "Creating…" : "Save My Digital Card"}
                                                 </button>
                                             </div>
 
                                             <p className="kc-bottom-line">
                                                 Already have an account?{" "}
                                                 <Link className="kc-link" to="/login" state={{ from: location.state?.from || "/" }}>
-                                                    Sign in
+                                                    Sign In
                                                 </Link>
                                             </p>
                                         </form>
@@ -621,17 +631,29 @@ export default function Register() {
                                         </div>
 
                                         <div className="kc-social">
-                                            <button type="button" className="kx-btn kx-btn--white kc-authBtn kc-socialBtn" onClick={() => startOAuth("google")}>
+                                            <button
+                                                type="button"
+                                                className="kx-btn kx-btn--white kc-authBtn kc-socialBtn"
+                                                onClick={() => startOAuth("google")}
+                                            >
                                                 <img className="kc-social-icon" src={GoogleIcon} alt="" aria-hidden="true" />
                                                 <span>Sign in with Google</span>
                                             </button>
 
-                                            <button type="button" className="kx-btn kx-btn--white kc-authBtn kc-socialBtn" onClick={() => startOAuth("facebook")}>
+                                            <button
+                                                type="button"
+                                                className="kx-btn kx-btn--white kc-authBtn kc-socialBtn"
+                                                onClick={() => startOAuth("facebook")}
+                                            >
                                                 <img className="kc-social-icon" src={FacebookIcon} alt="" aria-hidden="true" />
                                                 <span>Sign in with Facebook</span>
                                             </button>
 
-                                            <button type="button" className="kx-btn kx-btn--white kc-authBtn kc-socialBtn" onClick={() => startOAuth("apple")}>
+                                            <button
+                                                type="button"
+                                                className="kx-btn kx-btn--white kc-authBtn kc-socialBtn"
+                                                onClick={() => startOAuth("apple")}
+                                            >
                                                 <img className="kc-social-icon" src={AppleIcon} alt="" aria-hidden="true" />
                                                 <span>Sign in with Apple</span>
                                             </button>
